@@ -4,6 +4,43 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Custom scrollbar for mobile menu */
+.mobile-menu-scrollbar::-webkit-scrollbar {
+  width: 4px;
+}
+
+.mobile-menu-scrollbar::-webkit-scrollbar-track {
+  background: #27272a;
+}
+
+.mobile-menu-scrollbar::-webkit-scrollbar-thumb {
+  background: #6B00D7;
+  border-radius: 4px;
+}
+
+.mobile-menu-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: #FF5AF7;
+}
+
+/* Custom scrollbar for security dashboard */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 4px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: rgba(107, 0, 215, 0.1);
+  border-radius: 4px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: #6B00D7;
+  border-radius: 4px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: #FF5AF7;
+}
+
 @layer utilities {
   .bg-300\% {
     background-size: 300% 300%;
