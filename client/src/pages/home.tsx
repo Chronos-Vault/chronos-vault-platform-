@@ -3,6 +3,7 @@ import { Link, useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import VaultCard from "@/components/vault/vault-card";
+import { BitcoinHalvingVault } from "@/components/bitcoin/BitcoinHalvingVault";
 
 const Home = () => {
   const [_, setLocation] = useLocation();
@@ -237,6 +238,20 @@ const Home = () => {
         <div className="absolute inset-0 -z-10">
           <div className="absolute top-1/4 left-1/4 w-64 h-64 bg-[#6B00D7] rounded-full filter blur-[100px] opacity-10 animate-pulse-slow"></div>
           <div className="absolute bottom-1/4 right-1/3 w-64 h-64 bg-[#FF5AF7] rounded-full filter blur-[100px] opacity-10 animate-pulse-slow" style={{animationDelay: '1s'}}></div>
+        </div>
+      </section>
+
+      {/* Special Vault Section */}
+      <section id="bitcoin-halving" className="py-16 bg-[#0D0D0D]">
+        <div className="container mx-auto px-4">
+          <div className="text-center mb-12">
+            <h2 className="font-poppins font-bold text-3xl">Bitcoin <span className="text-[#FF5AF7]">Halving</span> Vault</h2>
+            <p className="text-gray-200 mt-3 max-w-2xl mx-auto">Lock your assets until the next Bitcoin halving in 2028 and potentially benefit from price appreciation.</p>
+          </div>
+          
+          <div className="max-w-md mx-auto mt-8">
+            <BitcoinHalvingVault />
+          </div>
         </div>
       </section>
 
