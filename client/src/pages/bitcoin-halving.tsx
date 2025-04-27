@@ -2,7 +2,9 @@ import React from 'react';
 import { Container } from '@/components/ui/container';
 import { PageHeader } from '@/components/page-header';
 import { BitcoinHalvingVault } from '@/components/bitcoin/BitcoinHalvingVault';
+import { BitcoinHalvingRewards } from '@/components/bitcoin/bitcoin-halving-rewards';
 import { Helmet } from 'react-helmet';
+import { CVTTokenProvider } from '@/contexts/cvt-token-context';
 
 export default function BitcoinHalvingPage() {
   return (
@@ -22,8 +24,15 @@ export default function BitcoinHalvingPage() {
           separator
         />
         
-        <div className="mt-12">
-          <BitcoinHalvingVault />
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mt-12">
+          <div className="lg:col-span-2">
+            <BitcoinHalvingVault />
+          </div>
+          <div className="lg:col-span-1">
+            <CVTTokenProvider>
+              <BitcoinHalvingRewards />
+            </CVTTokenProvider>
+          </div>
         </div>
       </Container>
     </>

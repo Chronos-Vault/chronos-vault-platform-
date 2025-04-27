@@ -14,6 +14,7 @@ import About from "@/pages/about";
 import BitcoinHalvingPage from "@/pages/bitcoin-halving";
 import BitcoinHalvingVaultPage from "@/pages/bitcoin-halving-vault";
 import RoadmapPage from "@/pages/roadmap";
+import CVTTokenPage from "@/pages/cvt-token";
 import NotFound from "@/pages/not-found";
 
 function Router() {
@@ -30,6 +31,7 @@ function Router() {
           <Route path="/bitcoin-halving" component={BitcoinHalvingPage} />
           <Route path="/bitcoin-halving-vault" component={BitcoinHalvingVaultPage} />
           <Route path="/roadmap" component={RoadmapPage} />
+          <Route path="/cvt-token" component={CVTTokenPage} />
           <Route component={NotFound} />
         </Switch>
       </main>
