@@ -3,8 +3,8 @@ import { Button } from "@/components/ui/button";
 import { tonService, TonConnectionStatus } from '@/lib/ton/ton-service';
 
 interface TonConnectButtonProps {
-  variant?: 'default' | 'outline' | 'subtle' | 'ghost';
-  size?: 'sm' | 'md' | 'lg';
+  variant?: 'default' | 'outline' | 'secondary' | 'ghost';
+  size?: 'sm' | 'lg' | 'icon' | 'default';
   className?: string;
 }
 
@@ -15,7 +15,7 @@ interface TonConnectButtonProps {
  */
 const TonConnectButton: React.FC<TonConnectButtonProps> = ({
   variant = 'default',
-  size = 'md',
+  size = 'default',
   className = ''
 }) => {
   const [connectionStatus, setConnectionStatus] = useState<TonConnectionStatus>(TonConnectionStatus.DISCONNECTED);

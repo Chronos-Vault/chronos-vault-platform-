@@ -38,6 +38,7 @@ import {
   ShieldCheck 
 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import TonConnectButton from '@/components/ton/TonConnectButton';
 
 const TONIntegrationPage: React.FC = () => {
   const { toast } = useToast();
