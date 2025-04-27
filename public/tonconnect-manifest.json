@@ -1,7 +1,7 @@
 {
-  "url": "http://localhost:5000",
+  "url": "https://chronosvault.replit.app",
   "name": "Chronos Vault",
   "iconUrl": "/favicon.ico",
-  "termsOfUseUrl": "http://localhost:5000/terms",
-  "privacyPolicyUrl": "http://localhost:5000/privacy"
+  "termsOfUseUrl": "https://chronosvault.replit.app/terms",
+  "privacyPolicyUrl": "https://chronosvault.replit.app/privacy"
 }
