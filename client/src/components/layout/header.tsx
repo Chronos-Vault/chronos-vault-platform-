@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { Link, useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
 import {
@@ -11,22 +10,12 @@ import {
   SheetDescription
 } from "@/components/ui/sheet";
 import { Menu, X } from "lucide-react";
-import { useToast } from "@/hooks/use-toast";
+import { ConnectWalletButton } from "@/components/auth/connect-wallet-button";
+import { useAuthContext } from "@/contexts/auth-context";
 
 const Header = () => {
   const [location] = useLocation();
-  const { toast } = useToast();
-  const [isWalletConnected, setIsWalletConnected] = useState(false);
-
-  const handleConnectWallet = () => {
-    // This would be replaced with actual wallet connection logic
-    setIsWalletConnected(true);
-    toast({
-      title: "Wallet Connected",
-      description: "Your wallet has been successfully connected.",
-      duration: 3000,
-    });
-  };
+  const { isAuthenticated } = useAuthContext();
 
   const navigationLinks = [
     { name: "Features", href: "/#features", icon: "✨" },
@@ -76,15 +65,9 @@ const Header = () => {
           </div>
           
           <div className="flex items-center gap-4">
-            <Button
-              onClick={handleConnectWallet}
-              disabled={isWalletConnected}
-              className="hidden md:flex items-center gap-2 px-6 py-3 rounded-xl bg-[#1A1A1A]/80 backdrop-blur-sm border border-[#333333] hover:border-[#6B00D7] hover:shadow-lg hover:shadow-[#6B00D7]/20 transition-all font-poppins"
-              variant="outline"
-            >
-              <div className="w-3 h-3 rounded-full bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] animate-pulse"></div>
-              {isWalletConnected ? "Connected" : "Connect Wallet"}
-            </Button>
+            <div className="hidden md:block">
+              <ConnectWalletButton />
+            </div>
 
             {/* Mobile Menu */}
             <Sheet>
@@ -151,18 +134,9 @@ const Header = () => {
                   </div>
                   
                   <div className="mt-auto pt-8 border-t border-[#6B00D7]/30">
-                    <SheetClose asChild>
-                      <Button 
-                        onClick={handleConnectWallet}
-                        disabled={isWalletConnected}
-                        className="w-full py-5 rounded-xl bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] text-white font-poppins font-medium text-lg hover:shadow-lg hover:shadow-[#6B00D7]/30 transition-all"
-                      >
-                        <div className="flex items-center gap-2">
-                          <div className="w-3 h-3 rounded-full bg-white/90 animate-pulse"></div>
-                          {isWalletConnected ? "Connected" : "Connect Wallet"}
-                        </div>
-                      </Button>
-                    </SheetClose>
+                    <div className="w-full py-5 rounded-xl bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] text-white font-poppins font-medium text-lg transition-all p-2">
+                      <ConnectWalletButton />
+                    </div>
                   </div>
                 </div>
               </SheetContent>

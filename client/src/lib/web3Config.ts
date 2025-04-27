@@ -1,43 +1,18 @@
-import { createConfig, configureChains, mainnet, sepolia } from 'wagmi';
-import { publicProvider } from 'wagmi/providers/public';
-import { MetaMaskConnector } from 'wagmi/connectors/metaMask';
-import { WalletConnectConnector } from 'wagmi/connectors/walletConnect';
-import { CoinbaseWalletConnector } from 'wagmi/connectors/coinbaseWallet';
+import { createConfig, http } from 'wagmi';
+import { mainnet, sepolia } from 'wagmi/chains';
+import { injected } from 'wagmi/connectors';
 
-// Configure chains for the app
-const { chains, publicClient, webSocketPublicClient } = configureChains(
-  [mainnet, sepolia], // Include testnets for development
-  [publicProvider()]
-);
+// Define available chains
+export const chains = [mainnet, sepolia];
 
-// WalletConnect requires a project ID
-const projectId = 'YOUR_WALLET_CONNECT_PROJECT_ID'; // We'll replace this with an env variable later
-
-// Set up connectors for different wallet providers
-export const connectors = [
-  new MetaMaskConnector({ chains }),
-  new WalletConnectConnector({
-    chains,
-    options: {
-      projectId,
-      showQrModal: true,
-    },
-  }),
-  new CoinbaseWalletConnector({
-    chains,
-    options: {
-      appName: 'Chronos Vault',
-    },
-  }),
-];
-
-// Create wagmi config
+// Create wagmi config with connectors
 export const wagmiConfig = createConfig({
-  autoConnect: true,
-  connectors,
-  publicClient,
-  webSocketPublicClient,
+  chains: [mainnet, sepolia],
+  transports: {
+    [mainnet.id]: http(),
+    [sepolia.id]: http(),
+  },
+  connectors: [
+    injected(),
+  ],
 });
-
-// Export everything needed for the app
-export { chains };

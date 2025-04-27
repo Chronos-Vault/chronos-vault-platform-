@@ -1,43 +1,38 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useAccount, useConnect, useDisconnect, useSignMessage } from 'wagmi';
+import { injected } from 'wagmi/connectors';
 import { SiweMessage } from 'siwe';
-import { apiRequest } from '@/lib/queryClient';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 
 export function useAuth() {
   const queryClient = useQueryClient();
   const { address, isConnected } = useAccount();
-  const { connectAsync, connectors } = useConnect();
-  const { disconnectAsync } = useDisconnect();
-  const { signMessageAsync } = useSignMessage();
+  const { connect } = useConnect();
+  const { disconnect } = useDisconnect();
+  const { signMessage } = useSignMessage();
   
   const [isAuthenticating, setIsAuthenticating] = useState(false);
 
   // Fetch the current user session if it exists
   const { data: session, isLoading: isLoadingSession } = useQuery({
     queryKey: ['/api/auth/session'],
-    enabled: isConnected,
+    enabled: !!isConnected,
   });
 
   // Verify if the user is authenticated
-  const isAuthenticated = !!session?.address;
+  const isAuthenticated = session?.authenticated === true;
 
-  // Connect wallet and sign message for authentication
-  const connectWallet = async (connectorId?: string) => {
+  // Connect wallet
+  const connectWallet = async () => {
     try {
       if (isConnected) {
-        await disconnectAsync();
+        disconnect();
       }
 
-      // Find the connector by ID or use the first available one
-      const connector = connectorId 
-        ? connectors.find(c => c.id === connectorId) 
-        : connectors[0];
+      // Connect with the injected connector (MetaMask, etc.)
+      connect({ connector: injected() });
       
-      if (!connector) throw new Error("Connector not found");
-
-      const result = await connectAsync({ connector });
-      return result;
+      return { address };
     } catch (error) {
       console.error("Error connecting wallet:", error);
       throw error;
@@ -45,21 +40,26 @@ export function useAuth() {
   };
 
   // Sign in with Ethereum
-  const signIn = async (connectorId?: string) => {
+  const signIn = async () => {
     try {
       setIsAuthenticating(true);
       
+      let walletAddress = address;
+      
       // Connect wallet if not already connected
-      const { address: walletAddress } = isConnected 
-        ? { address } 
-        : await connectWallet(connectorId);
+      if (!isConnected || !walletAddress) {
+        const result = await connectWallet();
+        walletAddress = result.address;
+      }
       
       if (!walletAddress) throw new Error("No wallet address");
 
       // Get nonce from server
-      const { nonce } = await apiRequest('/api/auth/nonce', {
-        method: 'GET',
-      });
+      const nonceResponse = await fetch('/api/auth/nonce');
+      if (!nonceResponse.ok) {
+        throw new Error('Failed to get nonce');
+      }
+      const { nonce } = await nonceResponse.json();
 
       // Create and sign the SIWE message
       const message = new SiweMessage({
@@ -72,18 +72,25 @@ export function useAuth() {
         nonce,
       });
       
-      const signature = await signMessageAsync({ 
-        message: message.prepareMessage() 
-      });
+      const preparedMessage = message.prepareMessage();
+      
+      const signature = await signMessage({ message: preparedMessage });
 
       // Verify the signature with our server
-      const verifyResult = await apiRequest('/api/auth/verify', {
+      const verifyResponse = await fetch('/api/auth/verify', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({ message, signature }),
+        credentials: 'include',
       });
+
+      if (!verifyResponse.ok) {
+        throw new Error('Failed to verify signature');
+      }
+
+      const verifyResult = await verifyResponse.json();
 
       // Refresh user session data
       queryClient.invalidateQueries({ queryKey: ['/api/auth/session'] });
@@ -100,15 +107,20 @@ export function useAuth() {
   // Sign out
   const signOut = async () => {
     try {
-      await apiRequest('/api/auth/signout', {
+      const response = await fetch('/api/auth/signout', {
         method: 'POST',
+        credentials: 'include',
       });
+
+      if (!response.ok) {
+        throw new Error('Failed to sign out');
+      }
       
       // Refresh session data
       queryClient.invalidateQueries({ queryKey: ['/api/auth/session'] });
       
       // Disconnect wallet
-      await disconnectAsync();
+      disconnect();
     } catch (error) {
       console.error("Error signing out:", error);
       throw error;

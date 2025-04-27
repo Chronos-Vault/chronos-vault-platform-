@@ -1,10 +1,33 @@
 import express, { type Request, Response, NextFunction } from "express";
+import session from "express-session";
+import memorystore from "memorystore";
 import { registerRoutes } from "./routes";
 import { setupVite, serveStatic, log } from "./vite";
+import { initializeAuth } from "./auth";
 
 const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
+
+// Configure session store
+const MemoryStore = memorystore(session);
+
+// Set up session middleware
+app.use(
+  session({
+    cookie: {
+      maxAge: 86400000, // 24 hours
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "lax",
+    },
+    secret: process.env.SESSION_SECRET || "chronos-vault-secret-key", // Use env variable in production
+    resave: false,
+    saveUninitialized: false,
+    store: new MemoryStore({
+      checkPeriod: 86400000, // Prune expired entries every 24h
+    }),
+  })
+);
 
 app.use((req, res, next) => {
   const start = Date.now();
@@ -37,6 +60,9 @@ app.use((req, res, next) => {
 });
 
 (async () => {
+  // Initialize authentication routes
+  initializeAuth(app);
+  
   const server = await registerRoutes(app);
 
   app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {
