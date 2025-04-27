@@ -137,4 +137,100 @@ export class MemStorage implements IStorage {
   }
 }
 
-export const storage = new MemStorage();
+import { db } from "./db";
+import { eq } from "drizzle-orm";
+
+// Database Storage implementation
+export class DatabaseStorage implements IStorage {
+  async getUser(id: number): Promise<User | undefined> {
+    const [user] = await db.select().from(users).where(eq(users.id, id));
+    return user || undefined;
+  }
+
+  async getUserByUsername(username: string): Promise<User | undefined> {
+    const [user] = await db.select().from(users).where(eq(users.username, username));
+    return user || undefined;
+  }
+
+  async getUserByWalletAddress(walletAddress: string): Promise<User | undefined> {
+    const [user] = await db.select().from(users).where(eq(users.walletAddress, walletAddress));
+    return user || undefined;
+  }
+
+  async createUser(insertUser: InsertUser): Promise<User> {
+    const [user] = await db
+      .insert(users)
+      .values(insertUser)
+      .returning();
+    return user;
+  }
+
+  async getVault(id: number): Promise<Vault | undefined> {
+    const [vault] = await db.select().from(vaults).where(eq(vaults.id, id));
+    return vault || undefined;
+  }
+
+  async getVaultsByUser(userId: number): Promise<Vault[]> {
+    return await db.select().from(vaults).where(eq(vaults.userId, userId));
+  }
+
+  async createVault(insertVault: InsertVault): Promise<Vault> {
+    const [vault] = await db
+      .insert(vaults)
+      .values(insertVault)
+      .returning();
+    return vault;
+  }
+
+  async updateVault(id: number, updateData: Partial<Vault>): Promise<Vault | undefined> {
+    const [updatedVault] = await db
+      .update(vaults)
+      .set(updateData)
+      .where(eq(vaults.id, id))
+      .returning();
+    return updatedVault || undefined;
+  }
+
+  async deleteVault(id: number): Promise<boolean> {
+    const result = await db
+      .delete(vaults)
+      .where(eq(vaults.id, id))
+      .returning({ id: vaults.id });
+    return result.length > 0;
+  }
+
+  async getBeneficiariesByVault(vaultId: number): Promise<Beneficiary[]> {
+    return await db
+      .select()
+      .from(beneficiaries)
+      .where(eq(beneficiaries.vaultId, vaultId));
+  }
+
+  async createBeneficiary(insertBeneficiary: InsertBeneficiary): Promise<Beneficiary> {
+    const [beneficiary] = await db
+      .insert(beneficiaries)
+      .values(insertBeneficiary)
+      .returning();
+    return beneficiary;
+  }
+
+  async updateBeneficiary(id: number, updateData: Partial<Beneficiary>): Promise<Beneficiary | undefined> {
+    const [updatedBeneficiary] = await db
+      .update(beneficiaries)
+      .set(updateData)
+      .where(eq(beneficiaries.id, id))
+      .returning();
+    return updatedBeneficiary || undefined;
+  }
+
+  async deleteBeneficiary(id: number): Promise<boolean> {
+    const result = await db
+      .delete(beneficiaries)
+      .where(eq(beneficiaries.id, id))
+      .returning({ id: beneficiaries.id });
+    return result.length > 0;
+  }
+}
+
+// Use DatabaseStorage instead of MemStorage
+export const storage = new DatabaseStorage();
