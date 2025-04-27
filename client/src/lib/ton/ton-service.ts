@@ -86,7 +86,7 @@ class TONService {
       }
 
       const address = account.address;
-      const network = account.chain === '1' ? 'mainnet' : 'testnet';
+      const network = account.chain === 'ton:mainnet' ? 'mainnet' : 'testnet';
       const publicKey = account.publicKey || undefined;
       
       // Fetch balance

@@ -1,5 +1,5 @@
 import { tonService } from './ton-service';
-import { TonClient, TonClient4 } from '@tonclient/core';
+import { TonClient } from '@tonclient/core';
 
 /**
  * Interface for ChronosVault smart contract data
