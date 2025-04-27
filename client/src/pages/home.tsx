@@ -3,7 +3,6 @@ import { Link, useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import VaultCard from "@/components/vault/vault-card";
-import Hero from "@/components/layout/hero";
 
 const Home = () => {
   const [_, setLocation] = useLocation();
@@ -103,111 +102,91 @@ const Home = () => {
                     </button>
                   </div>
                 </div>
-                
-                <div className="relative w-[350px] h-[530px] md:w-[600px] md:h-[700px] flex items-center justify-center">
-                  {/* Vault visualization - Orbital rings */}
-                  <div className="absolute w-80 h-80 md:w-[550px] md:h-[550px] rounded-full border border-[#6B00D7]/30 animate-spin opacity-30" style={{animationDuration: '15s'}}></div>
-                  <div className="absolute w-72 h-72 md:w-[500px] md:h-[500px] rounded-full border border-[#FF5AF7]/20 animate-spin opacity-30" style={{animationDuration: '20s', animationDirection: 'reverse'}}></div>
-                  <div className="absolute w-64 h-64 md:w-[450px] md:h-[450px] rounded-full border-2 border-[#6B00D7]/10 animate-spin opacity-20" style={{animationDuration: '25s'}}></div>
-                
-                  <div className="relative w-72 h-[520px] md:w-[450px] md:h-[660px] bg-gradient-to-br from-[#1A1A1A] to-black rounded-3xl shadow-2xl border-4 border-[#333333] glow-border flex items-center justify-center animate-float overflow-hidden">
-                    {/* Top gradient overlay */}
+              
+                <div className="relative w-[350px] h-[350px] md:w-[450px] md:h-[450px] flex items-center justify-center">
+                  {/* Vault visualization */}
+                  <div className="absolute w-60 h-60 md:w-72 md:h-72 rounded-full border border-[#6B00D7]/30 animate-spin opacity-30" style={{animationDuration: '15s'}}></div>
+                  <div className="absolute w-48 h-48 md:w-56 md:h-56 rounded-full border border-[#FF5AF7]/20 animate-spin opacity-30" style={{animationDuration: '20s', animationDirection: 'reverse'}}></div>
+                  
+                  <div className="relative w-64 h-72 md:w-[350px] md:h-[400px] bg-gradient-to-br from-[#1A1A1A] to-[#141414] rounded-3xl shadow-2xl border-2 border-[#333333] glow-border flex items-center justify-center animate-float overflow-hidden">
                     <div className="absolute top-0 left-0 w-full h-1/3 bg-gradient-to-r from-[#6B00D7]/20 to-[#FF5AF7]/20"></div>
                     
                     {/* Hologram security lines */}
                     <div className="absolute inset-0 overflow-hidden opacity-20">
                       <div className="absolute top-0 left-0 right-0 h-full w-full">
-                        {Array.from({ length: 20 }).map((_, i) => (
+                        {Array.from({ length: 15 }).map((_, i) => (
                           <div 
                             key={i} 
                             className="absolute h-[1px] w-full bg-[#FF5AF7]"
                             style={{ 
-                              top: `${i * 5}%`, 
+                              top: `${i * 7}%`, 
                               left: 0, 
                               animationDelay: `${i * 0.1}s`,
                               opacity: 0.4,
-                              animation: 'scanLine 3s linear infinite'
+                              animation: 'scanLine 2s linear infinite'
                             }} 
                           />
                         ))}
                       </div>
                     </div>
                     
-                    {/* Background glow */}
-                    <div className="absolute inset-0 bg-gradient-to-r from-[#6B00D7]/5 via-transparent to-[#FF5AF7]/5 animate-pulse-slow"></div>
-                    
-                    {/* Lock icon */}
-                    <div className="absolute -top-5 -right-5 w-20 h-20 rounded-full bg-gradient-to-br from-[#6B00D7] to-[#FF5AF7] flex items-center justify-center text-white text-2xl shadow-lg shadow-[#FF5AF7]/30 border-2 border-white/30 animate-pulse-slow z-20">
+                    <div className="absolute -top-3 -right-3 w-14 h-14 rounded-full bg-gradient-to-br from-[#6B00D7] to-[#FF5AF7] flex items-center justify-center text-white text-lg shadow-lg shadow-[#FF5AF7]/30 border-2 border-white/20 animate-pulse-slow">
                       <i className="ri-lock-line"></i>
                     </div>
                     
-                    {/* Security indicators */}
-                    <div className="absolute top-6 left-6 flex items-center gap-3">
-                      <div className="w-5 h-5 rounded-full bg-[#FF5AF7] animate-pulse-slow"></div>
-                      <div className="text-base font-bold text-white uppercase tracking-widest">MULTI-SIGNATURE SECURITY</div>
+                    <div className="absolute top-5 left-5 flex items-center gap-2">
+                      <div className="w-4 h-4 rounded-full bg-[#FF5AF7] animate-pulse-slow"></div>
+                      <div className="text-sm font-medium text-white uppercase tracking-widest">MULTI-SIGNATURE</div>
                     </div>
                     
-                    {/* Content */}
-                    <div className="text-center p-8 z-10 mt-4 w-full">
-                      <div className="text-lg font-bold uppercase tracking-widest mb-5 animate-text-3d bg-clip-text text-transparent bg-gradient-to-r from-[#6B00D7] via-[#FF5AF7] to-[#6B00D7]">
-                        MESSAGE FROM THE FUTURE
+                    <div className="text-center p-6 z-10 mt-6 w-full">
+                      <div className="text-sm text-gray-200 uppercase tracking-wider mb-2 font-medium bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] inline-block text-transparent bg-clip-text animate-text-3d">MESSAGE TO THE FUTURE</div>
+                      <div className="font-poppins font-bold text-2xl md:text-3xl text-white mb-3 title-3d">TIME VAULT</div>
+                      <div className="flex justify-center mb-4">
+                        <div className="h-1 w-24 bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] rounded-full"></div>
                       </div>
                       
-                      <div className="font-poppins font-extrabold text-3xl md:text-5xl mb-5 title-3d">THE TIME VAULT</div>
-                      
-                      <div className="flex justify-center mb-6">
-                        <div className="h-1 w-44 bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] rounded-full"></div>
-                      </div>
-                      
-                      <div className="relative mb-8 p-5 text-base md:text-xl text-white leading-relaxed border-2 border-[#6B00D7]/50 rounded-lg backdrop-blur-sm bg-black/30">
-                        <div className="absolute -top-3 left-1/2 transform -translate-x-1/2 bg-black px-4 py-1 text-[#FF5AF7] text-sm font-bold uppercase tracking-wider border border-[#6B00D7]/50 rounded-full">
+                      <div className="relative mb-5 p-3 text-sm md:text-base text-white leading-relaxed border-2 border-[#444] rounded-lg backdrop-blur-sm bg-black/30">
+                        <div className="absolute -top-3 left-1/2 transform -translate-x-1/2 bg-black px-3 py-1 text-[#FF5AF7] text-xs font-bold uppercase tracking-wider border border-[#444] rounded-full">
                           2050 A.D.
                         </div>
-                        
-                        <p className="font-medium animate-text-3d tracking-wide">
-                          "We trust in your power to protect this knowledge. When opened in 2050, may our message guide your civilization toward harmony with technology and nature. The power of our united vision flows through time to reach you."
+                        <p className="animate-text-3d tracking-wide">
+                          "We trust in your power to protect this knowledge. May our message guide your civilization toward harmony."
                         </p>
                       </div>
                       
-                      <div className="flex justify-between items-center text-base md:text-lg text-gray-300 mb-5 bg-[#111]/80 p-4 rounded-lg border-2 border-[#444] backdrop-blur-sm shadow-inner">
-                        <span className="font-medium uppercase">PRESERVATION PROTOCOL</span>
-                        <div className="flex items-center">
-                          <span className="font-bold text-[#FF5AF7] text-2xl">16%</span>
-                          <span className="ml-2 text-xs text-gray-400 uppercase">COMPLETE</span>
-                        </div>
+                      <div className="flex justify-between items-center text-base text-gray-300 mb-3 bg-[#111]/70 p-3 rounded-lg border border-[#444] backdrop-blur-sm shadow-inner">
+                        <span className="font-medium uppercase">PRESERVATION</span>
+                        <span className="font-bold text-[#FF5AF7] text-xl">16%</span>
                       </div>
                       
-                      <div className="animate-scan relative h-4 bg-[#222] rounded-full overflow-hidden mb-8 border border-[#444]">
+                      <div className="animate-scan relative h-3 bg-[#222] rounded-full overflow-hidden mb-5 border border-[#444]">
                         <div className="absolute top-0 left-0 h-full w-[16%] bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7]"></div>
                       </div>
                       
-                      <div className="flex flex-col gap-3 bg-[#111]/60 p-5 rounded-lg border-2 border-[#333] mb-6 shadow-inner">
-                        <div className="flex justify-between items-center text-base">
-                          <span className="text-gray-400 font-bold uppercase">SEALED</span>
-                          <span className="text-gray-200 font-bold">APRIL 27, 2025</span>
+                      <div className="flex flex-col gap-2 bg-[#111]/40 p-3 rounded-lg border border-[#333] mb-5">
+                        <div className="flex justify-between text-sm">
+                          <span className="text-gray-400 font-medium uppercase">CREATED</span>
+                          <span className="text-gray-200 font-medium">TODAY</span>
                         </div>
-                        <div className="flex justify-between items-center text-base">
-                          <span className="text-gray-400 font-bold uppercase">UNLOCKS</span>
-                          <span className="text-gray-200 font-bold">JANUARY 16, 2050</span>
+                        <div className="flex justify-between text-sm">
+                          <span className="text-gray-400 font-medium uppercase">UNLOCKS</span>
+                          <span className="text-gray-200 font-medium">JAN 16, 2050</span>
                         </div>
-                        <div className="flex justify-between items-center text-base">
-                          <span className="text-gray-400 font-bold uppercase">TIME REMAINING</span>
-                          <span className="text-[#FF5AF7] font-bold text-xl">25 YEARS</span>
+                        <div className="flex justify-between text-sm">
+                          <span className="text-gray-400 font-medium uppercase">REMAINING</span>
+                          <span className="text-[#FF5AF7] font-bold">25 YEARS</span>
                         </div>
                       </div>
                       
-                      <div className="mt-4 pt-4 border-t-2 border-[#444] flex justify-between items-center">
-                        <div className="flex items-center gap-3">
-                          <i className="ri-file-list-3-line text-[#6B00D7] text-2xl"></i>
-                          <span className="text-base text-white font-bold">TAMPER-PROOF CONTRACT</span>
+                      <div className="mt-3 pt-3 border-t border-[#444] flex justify-between items-center">
+                        <div className="flex items-center gap-2">
+                          <i className="ri-file-list-3-line text-[#6B00D7] text-lg"></i>
+                          <span className="text-sm text-gray-300 font-medium">SMART CONTRACT</span>
                         </div>
-                        <div className="text-base text-[#FF5AF7] font-bold uppercase tracking-wider">MULTI-GENERATIONAL</div>
+                        <div className="text-sm text-[#FF5AF7] font-bold uppercase">MULTI-GEN</div>
                       </div>
                     </div>
-                    
-                    {/* Decorative corner elements */}
-                    <div className="absolute top-0 left-0 w-20 h-20 border-t-4 border-l-4 border-[#6B00D7] rounded-tl-3xl"></div>
-                    <div className="absolute bottom-0 right-0 w-20 h-20 border-b-4 border-r-4 border-[#FF5AF7] rounded-br-3xl"></div>
                   </div>
                 </div>
               </div>
