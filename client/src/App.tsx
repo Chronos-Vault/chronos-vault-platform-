@@ -29,6 +29,7 @@ function Router() {
           <Route path="/about" component={About} />
           <Route path="/bitcoin-halving" component={BitcoinHalvingPage} />
           <Route path="/bitcoin-halving-vault" component={BitcoinHalvingVaultPage} />
+          <Route path="/roadmap" component={RoadmapPage} />
           <Route component={NotFound} />
         </Switch>
       </main>
