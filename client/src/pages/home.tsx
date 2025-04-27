@@ -408,6 +408,183 @@ const Home = () => {
         </div>
       </section>
 
+      {/* CVT Token Ecosystem Section */}
+      <section id="cvt-ecosystem" className="py-20 bg-gradient-to-b from-[#0A0A0A] to-[#0D0D0D]">
+        <div className="container mx-auto px-4">
+          <div className="text-center mb-12">
+            <h2 className="font-poppins font-bold text-3xl">CVT <span className="text-[#FF5AF7]">Token</span> Ecosystem</h2>
+            <p className="text-gray-200 mt-3 max-w-2xl mx-auto">
+              The <strong className="text-[#FF5AF7]">ChronosToken (CVT)</strong> powers the entire Chronos Vault platform, providing utility, governance, and incentives.
+            </p>
+          </div>
+          
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+            <div className="rounded-xl overflow-hidden bg-gradient-to-br from-[#141414] to-[#0A0A0A] border border-[#333] p-6 relative">
+              <div className="absolute top-0 right-0 w-40 h-40 bg-[#6B00D7] rounded-full blur-3xl opacity-10"></div>
+              <div className="absolute bottom-0 left-0 w-40 h-40 bg-[#FF5AF7] rounded-full blur-3xl opacity-10"></div>
+              
+              <div className="relative z-10">
+                <div className="flex items-center justify-between mb-6">
+                  <div className="flex items-center gap-3">
+                    <div className="h-12 w-12 rounded-full bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] flex items-center justify-center animate-pulse-slow shadow-xl">
+                      <span className="text-white font-bold text-lg">CVT</span>
+                    </div>
+                    <div>
+                      <h3 className="text-xl font-bold text-white">ChronosToken</h3>
+                      <p className="text-[#FF5AF7]">Cross-Chain Utility Token</p>
+                    </div>
+                  </div>
+                  <div className="bg-[#0A0A0A] px-4 py-2 rounded-lg border border-[#333]">
+                    <span className="text-gray-400 text-sm">Price:</span>
+                    <span className="ml-2 text-white font-bold">Coming Soon</span>
+                  </div>
+                </div>
+                
+                <div className="grid grid-cols-2 gap-4 mb-6">
+                  <div className="bg-[#0A0A0A] p-4 rounded-lg border border-[#222]">
+                    <div className="text-gray-400 text-sm">Total Supply</div>
+                    <div className="text-white font-bold text-2xl">21,000,000</div>
+                    <div className="text-[#FF5AF7] text-sm">Fixed forever</div>
+                  </div>
+                  <div className="bg-[#0A0A0A] p-4 rounded-lg border border-[#222]">
+                    <div className="text-gray-400 text-sm">Tokenomics</div>
+                    <div className="text-white font-bold text-2xl">Deflationary</div>
+                    <div className="text-[#FF5AF7] text-sm">Regular buyback & burn</div>
+                  </div>
+                </div>
+                
+                <div className="mb-6">
+                  <h4 className="text-lg font-semibold text-white mb-3">Token Distribution</h4>
+                  <div className="bg-[#0A0A0A] p-4 rounded-lg border border-[#222]">
+                    <div className="space-y-4">
+                      <div>
+                        <div className="flex justify-between text-sm mb-1">
+                          <span className="text-gray-300">Community & Ecosystem</span>
+                          <span className="text-white font-medium">50%</span>
+                        </div>
+                        <div className="h-2 bg-[#111] rounded-full overflow-hidden">
+                          <div className="h-full w-[50%] bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7]"></div>
+                        </div>
+                      </div>
+                      <div>
+                        <div className="flex justify-between text-sm mb-1">
+                          <span className="text-gray-300">Development Fund</span>
+                          <span className="text-white font-medium">25%</span>
+                        </div>
+                        <div className="h-2 bg-[#111] rounded-full overflow-hidden">
+                          <div className="h-full w-[25%] bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7]"></div>
+                        </div>
+                      </div>
+                      <div>
+                        <div className="flex justify-between text-sm mb-1">
+                          <span className="text-gray-300">Team & Advisors</span>
+                          <span className="text-white font-medium">15%</span>
+                        </div>
+                        <div className="h-2 bg-[#111] rounded-full overflow-hidden">
+                          <div className="h-full w-[15%] bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7]"></div>
+                        </div>
+                      </div>
+                      <div>
+                        <div className="flex justify-between text-sm mb-1">
+                          <span className="text-gray-300">Partners & Cross-Chain Liquidity</span>
+                          <span className="text-white font-medium">10%</span>
+                        </div>
+                        <div className="h-2 bg-[#111] rounded-full overflow-hidden">
+                          <div className="h-full w-[10%] bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7]"></div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                
+                <div className="flex justify-center">
+                  <Link href="/cvt-token">
+                    <Button className="bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] text-white px-6 py-3">
+                      Explore CVT Tokenomics
+                    </Button>
+                  </Link>
+                </div>
+              </div>
+            </div>
+            
+            <div className="space-y-6">
+              <div className="rounded-xl overflow-hidden bg-gradient-to-br from-[#141414] to-[#0A0A0A] border border-[#333] p-6">
+                <h3 className="text-xl font-bold text-white mb-4 flex items-center gap-2">
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-[#FF5AF7]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                  </svg>
+                  Multi-Chain Presence
+                </h3>
+                <div className="grid grid-cols-3 gap-4">
+                  <div className="p-3 bg-[#0A0A0A] rounded-lg border border-[#222] text-center">
+                    <div className="flex justify-center">
+                      <i className="ri-flashlight-line text-2xl text-[#FF5AF7]"></i>
+                    </div>
+                    <div className="mt-2 font-medium text-white">TON</div>
+                    <div className="text-xs text-gray-400">Native</div>
+                  </div>
+                  <div className="p-3 bg-[#0A0A0A] rounded-lg border border-[#222] text-center">
+                    <div className="flex justify-center">
+                      <i className="ri-ethereum-line text-2xl text-[#FF5AF7]"></i>
+                    </div>
+                    <div className="mt-2 font-medium text-white">Ethereum</div>
+                    <div className="text-xs text-gray-400">Wrapped</div>
+                  </div>
+                  <div className="p-3 bg-[#0A0A0A] rounded-lg border border-[#222] text-center">
+                    <div className="flex justify-center">
+                      <i className="ri-sun-line text-2xl text-[#FF5AF7]"></i>
+                    </div>
+                    <div className="mt-2 font-medium text-white">Solana</div>
+                    <div className="text-xs text-gray-400">Wrapped</div>
+                  </div>
+                </div>
+              </div>
+              
+              <div className="rounded-xl overflow-hidden bg-gradient-to-br from-[#141414] to-[#0A0A0A] border border-[#333] p-6">
+                <h3 className="text-xl font-bold text-white mb-4 flex items-center gap-2">
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-[#FF5AF7]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 5v2m0 4v2m0 4v2M5 5a2 2 0 00-2 2v3a2 2 0 110 4v3a2 2 0 002 2h14a2 2 0 002-2v-3a2 2 0 110-4V7a2 2 0 00-2-2H5z" />
+                  </svg>
+                  CVT Utility & Benefits
+                </h3>
+                <div className="space-y-3">
+                  <div className="flex items-start gap-3">
+                    <div className="w-6 h-6 rounded-full bg-[#6B00D7]/20 flex items-center justify-center flex-shrink-0 mt-0.5">
+                      <i className="ri-checkbox-circle-fill text-[#FF5AF7]"></i>
+                    </div>
+                    <p className="text-gray-200">Platform fees and transaction costs</p>
+                  </div>
+                  <div className="flex items-start gap-3">
+                    <div className="w-6 h-6 rounded-full bg-[#6B00D7]/20 flex items-center justify-center flex-shrink-0 mt-0.5">
+                      <i className="ri-checkbox-circle-fill text-[#FF5AF7]"></i>
+                    </div>
+                    <p className="text-gray-200">Governance voting on platform upgrades</p>
+                  </div>
+                  <div className="flex items-start gap-3">
+                    <div className="w-6 h-6 rounded-full bg-[#6B00D7]/20 flex items-center justify-center flex-shrink-0 mt-0.5">
+                      <i className="ri-checkbox-circle-fill text-[#FF5AF7]"></i>
+                    </div>
+                    <p className="text-gray-200">Discounted vault creation and premium features</p>
+                  </div>
+                  <div className="flex items-start gap-3">
+                    <div className="w-6 h-6 rounded-full bg-[#6B00D7]/20 flex items-center justify-center flex-shrink-0 mt-0.5">
+                      <i className="ri-checkbox-circle-fill text-[#FF5AF7]"></i>
+                    </div>
+                    <p className="text-gray-200">Staking rewards with multi-level tiered benefits</p>
+                  </div>
+                  <div className="flex items-start gap-3">
+                    <div className="w-6 h-6 rounded-full bg-[#6B00D7]/20 flex items-center justify-center flex-shrink-0 mt-0.5">
+                      <i className="ri-checkbox-circle-fill text-[#FF5AF7]"></i>
+                    </div>
+                    <p className="text-gray-200">Time-based multipliers for longer staking periods</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+      
       {/* Special Vault Section */}
       <section id="bitcoin-halving" className="py-16 bg-[#0D0D0D]">
         <div className="container mx-auto px-4">
