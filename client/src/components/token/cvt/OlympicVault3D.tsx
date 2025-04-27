@@ -455,7 +455,7 @@ const OlympicVaults3D: React.FC<OlympicVaults3DProps> = ({ olympicVaults }) => {
           <DialogContent className="max-w-4xl max-h-[90vh] p-0 shadow-2xl border-0 backdrop-blur-md overflow-hidden">
             {/* Background gradient */}
             <div 
-              className={`absolute inset-0 bg-gradient-to-br ${activeVault.capsuleType === 'summer' ? 'from-amber-500/5 to-amber-800/5' : 'from-blue-500/5 to-blue-800/5'} opacity-100`}
+              className={`absolute inset-0 bg-gradient-to-br ${(activeVault.capsuleType || activeVault.type) === 'summer' ? 'from-amber-500/5 to-amber-800/5' : 'from-blue-500/5 to-blue-800/5'} opacity-100`}
               aria-hidden="true"
             />
             
@@ -470,7 +470,7 @@ const OlympicVaults3D: React.FC<OlympicVaults3DProps> = ({ olympicVaults }) => {
               <div 
                 className="h-2 absolute top-0 inset-x-0"
                 style={{
-                  background: `linear-gradient(to right, ${activeVault.capsuleType === 'summer' ? '#F59E0B, #D97706' : '#60A5FA, #3B82F6'})`,
+                  background: `linear-gradient(to right, ${(activeVault.capsuleType || activeVault.type) === 'summer' ? '#F59E0B, #D97706' : '#60A5FA, #3B82F6'})`,
                   boxShadow: '0 4px 12px -2px rgba(0, 0, 0, 0.2)'
                 }}
               />
@@ -489,7 +489,7 @@ const OlympicVaults3D: React.FC<OlympicVaults3DProps> = ({ olympicVaults }) => {
                         </Badge>
                         <DialogTitle className="text-4xl font-bold">
                           <span 
-                            className={`bg-gradient-to-r ${activeVault.capsuleType === 'summer' ? 'from-amber-500 to-amber-700' : 'from-blue-500 to-blue-700'} bg-clip-text text-transparent`}
+                            className={`bg-gradient-to-r ${(activeVault.capsuleType || activeVault.type) === 'summer' ? 'from-amber-500 to-amber-700' : 'from-blue-500 to-blue-700'} bg-clip-text text-transparent`}
                           >
                             {activeVault.name}
                           </span>
@@ -518,18 +518,18 @@ const OlympicVaults3D: React.FC<OlympicVaults3DProps> = ({ olympicVaults }) => {
                       <div className="space-y-4">
                         <div className="flex justify-between items-center p-3 bg-slate-50/20 dark:bg-slate-800/30 rounded-lg">
                           <span className="text-muted-foreground">Olympic Year:</span>
-                          <span className="font-medium">{activeVault.olympicYear}</span>
+                          <span className="font-medium">{activeVault.olympicYear || activeVault.year}</span>
                         </div>
                         
                         <div className="flex justify-between items-center p-3 bg-slate-50/20 dark:bg-slate-800/30 rounded-lg">
                           <span className="text-muted-foreground">Host City:</span>
-                          <span className="font-medium">{activeVault.hostCity}</span>
+                          <span className="font-medium">{activeVault.hostCity || activeVault.location}</span>
                         </div>
                         
                         <div className="flex justify-between items-center p-3 bg-slate-50/20 dark:bg-slate-800/30 rounded-lg">
                           <span className="text-muted-foreground">Type:</span>
                           <span className="font-medium flex items-center">
-                            {activeVault.capsuleType === 'summer' ? (
+                            {(activeVault.capsuleType || activeVault.type) === 'summer' ? (
                               <>
                                 <FireIcon className="h-4 w-4 mr-1 text-amber-500" />
                                 Summer Olympics
@@ -571,7 +571,7 @@ const OlympicVaults3D: React.FC<OlympicVaults3DProps> = ({ olympicVaults }) => {
                     <div 
                       className="absolute inset-0 -z-10 rounded-xl opacity-50"
                       style={{
-                        background: activeVault.capsuleType === 'summer' 
+                        background: (activeVault.capsuleType || activeVault.type) === 'summer' 
                           ? 'linear-gradient(135deg, rgba(245, 158, 11, 0.1), transparent)'
                           : 'linear-gradient(135deg, rgba(59, 130, 246, 0.1), transparent)',
                         transform: 'translateZ(-2px)',
@@ -618,7 +618,7 @@ const OlympicVaults3D: React.FC<OlympicVaults3DProps> = ({ olympicVaults }) => {
                               <div className="flex items-start">
                                 <LockIcon className="h-5 w-5 mr-2 mt-0.5 flex-shrink-0" />
                                 <p>
-                                  This content is securely time-locked until the opening ceremony of the {activeVault.olympicYear} Olympic Games in {activeVault.hostCity}. 
+                                  This content is securely time-locked until the opening ceremony of the {activeVault.olympicYear || activeVault.year} Olympic Games in {activeVault.hostCity || activeVault.location}. 
                                   Return on {formatDate(activeVault.unlockDate)} to access the complete vault.
                                 </p>
                               </div>
