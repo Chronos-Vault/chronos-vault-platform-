@@ -9,6 +9,17 @@ import {
 import { ZodError } from "zod";
 
 export async function registerRoutes(app: Express): Promise<Server> {
+  // Special route to serve TON Connect manifest with proper headers
+  app.get("/tonconnect-manifest.json", (_req: Request, res: Response) => {
+    res.setHeader("Content-Type", "application/json");
+    res.setHeader("Access-Control-Allow-Origin", "*");
+    res.json({
+      url: "https://8e33114e-6bdb-4fc9-a798-e4b7d77b5366-00-23l8s2c5r5iyx.spock.replit.dev",
+      name: "Chronos Vault",
+      iconUrl: "https://cdn-icons-png.flaticon.com/512/4021/4021708.png"
+    });
+  });
+  
   const httpServer = createServer(app);
 
   // Helper function to handle errors

@@ -48,8 +48,14 @@ class TONService {
       // To avoid duplicate initialization errors, check if there's already a TonConnectUI instance
       if (!this.tonConnectUI) {
         try {
+          // Get the current URL for manifest resolution
+          const currentUrl = window.location.origin;
+          const manifestUrl = `${currentUrl}/tonconnect-manifest.json`;
+          
+          console.log('Initializing TonConnectUI with manifest URL:', manifestUrl);
+          
           this.tonConnectUI = new TonConnectUI({
-            manifestUrl: '/tonconnect-manifest.json',
+            manifestUrl: manifestUrl,
             buttonRootId: 'ton-connect-button'
           });
           
