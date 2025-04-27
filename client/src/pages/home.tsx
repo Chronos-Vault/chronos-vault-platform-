@@ -56,10 +56,17 @@ const Home = () => {
             <div className="md:w-1/2">
               <div className="space-y-6">
                 <h1 className="font-poppins font-bold text-4xl md:text-5xl leading-tight">
-                  The <span className="bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] inline-block text-transparent bg-clip-text">Swiss Bank</span> of Web3
+                  <span className="bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] inline-block text-transparent bg-clip-text">Cutting-Edge</span> Technology
                 </h1>
-                <p className="text-xl text-gray-200">
-                  Secure your digital assets, messages, and files in decentralized, time-locked vaults across multiple blockchains.
+                <p className="text-lg text-gray-200 mt-4">
+                  The world's most advanced multi-chain digital time vault platform with military-grade security and seamless cross-chain integration across TON, Ethereum, Solana, and Bitcoin.
+                </p>
+                <div className="flex items-center mt-4 mb-2">
+                  <div className="h-1 w-16 bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7]"></div>
+                  <h2 className="text-xl font-semibold ml-4">Revolutionary Features</h2>
+                </div>
+                <p className="text-base text-gray-300">
+                  Time-Locked Digital Vaults Across Multiple Blockchains with advanced military-grade encryption and cross-chain interoperability.
                 </p>
                 <div className="pt-4 flex flex-col sm:flex-row gap-4">
                   <Button 
@@ -197,37 +204,65 @@ const Home = () => {
           {/* Trust indicators */}
           <div className="mt-16 border-t border-[#333333] pt-8">
             <div className="text-center mb-8">
-              <span className="text-gray-400 text-sm">TRUSTED BY BLOCKCHAIN LEADERS</span>
+              <h3 className="text-2xl font-bold mb-3">Multi-Chain Integration</h3>
+              <p className="text-gray-300 max-w-2xl mx-auto mb-4">
+                Chronos Vault operates seamlessly across multiple blockchain networks, providing a unified interface for managing your digital assets and time-locked vaults.
+              </p>
+              <span className="text-gray-400 text-sm uppercase">Supported Blockchain Networks</span>
             </div>
             <div className="grid grid-cols-2 md:grid-cols-6 gap-4">
               <div className="flex justify-center">
-                <div className="h-12 w-32 bg-[#1A1A1A] rounded-lg flex items-center justify-center text-gray-400 border border-[#333333] hover:border-[#6B00D7]/50 transition-all group">
-                  <i className="ri-flashlight-line mr-2 group-hover:text-[#FF5AF7] transition-colors"></i> TON
+                <div className="h-16 w-full bg-gradient-to-br from-[#0D0D0D] to-[#151515] rounded-lg flex items-center justify-center text-white border border-[#333333] hover:border-[#6B00D7]/50 transition-all group hover:bg-gradient-to-br hover:from-[#181818] hover:to-[#121212] hover:shadow-lg hover:shadow-[#6B00D7]/10">
+                  <div className="flex flex-col items-center">
+                    <i className="ri-flashlight-line text-xl group-hover:text-[#FF5AF7] transition-colors"></i>
+                    <span className="mt-1 font-medium">TON</span>
+                    <span className="text-xs text-gray-400 mt-1">Cross-Chain</span>
+                  </div>
                 </div>
               </div>
               <div className="flex justify-center">
-                <div className="h-12 w-32 bg-[#1A1A1A] rounded-lg flex items-center justify-center text-gray-400 border border-[#333333] hover:border-[#6B00D7]/50 transition-all group">
-                  <i className="ri-ethereum-line mr-2 group-hover:text-[#FF5AF7] transition-colors"></i> Ethereum
+                <div className="h-16 w-full bg-gradient-to-br from-[#0D0D0D] to-[#151515] rounded-lg flex items-center justify-center text-white border border-[#333333] hover:border-[#6B00D7]/50 transition-all group hover:bg-gradient-to-br hover:from-[#181818] hover:to-[#121212] hover:shadow-lg hover:shadow-[#6B00D7]/10">
+                  <div className="flex flex-col items-center">
+                    <i className="ri-ethereum-line text-xl group-hover:text-[#FF5AF7] transition-colors"></i>
+                    <span className="mt-1 font-medium">Ethereum</span>
+                    <span className="text-xs text-gray-400 mt-1">EVM Compatible</span>
+                  </div>
                 </div>
               </div>
               <div className="flex justify-center">
-                <div className="h-12 w-32 bg-[#1A1A1A] rounded-lg flex items-center justify-center text-gray-400 border border-[#333333] hover:border-[#6B00D7]/50 transition-all group">
-                  <i className="ri-layout-grid-line mr-2 group-hover:text-[#FF5AF7] transition-colors"></i> Polygon
+                <div className="h-16 w-full bg-gradient-to-br from-[#0D0D0D] to-[#151515] rounded-lg flex items-center justify-center text-white border border-[#333333] hover:border-[#6B00D7]/50 transition-all group hover:bg-gradient-to-br hover:from-[#181818] hover:to-[#121212] hover:shadow-lg hover:shadow-[#6B00D7]/10">
+                  <div className="flex flex-col items-center">
+                    <i className="ri-layout-grid-line text-xl group-hover:text-[#FF5AF7] transition-colors"></i>
+                    <span className="mt-1 font-medium">Polygon</span>
+                    <span className="text-xs text-gray-400 mt-1">Layer 2 Scaling</span>
+                  </div>
                 </div>
               </div>
               <div className="flex justify-center">
-                <div className="h-12 w-32 bg-[#1A1A1A] rounded-lg flex items-center justify-center text-gray-400 border border-[#333333] hover:border-[#6B00D7]/50 transition-all group">
-                  <i className="ri-sun-line mr-2 group-hover:text-[#FF5AF7] transition-colors"></i> Solana
+                <div className="h-16 w-full bg-gradient-to-br from-[#0D0D0D] to-[#151515] rounded-lg flex items-center justify-center text-white border border-[#333333] hover:border-[#6B00D7]/50 transition-all group hover:bg-gradient-to-br hover:from-[#181818] hover:to-[#121212] hover:shadow-lg hover:shadow-[#6B00D7]/10">
+                  <div className="flex flex-col items-center">
+                    <i className="ri-sun-line text-xl group-hover:text-[#FF5AF7] transition-colors"></i>
+                    <span className="mt-1 font-medium">Solana</span>
+                    <span className="text-xs text-gray-400 mt-1">High Performance</span>
+                  </div>
                 </div>
               </div>
               <div className="flex justify-center">
-                <div className="h-12 w-32 bg-[#1A1A1A] rounded-lg flex items-center justify-center text-gray-400 border border-[#333333] hover:border-[#6B00D7]/50 transition-all group">
-                  <i className="ri-link mr-2 group-hover:text-[#FF5AF7] transition-colors"></i> Chainlink
+                <div className="h-16 w-full bg-gradient-to-br from-[#0D0D0D] to-[#151515] rounded-lg flex items-center justify-center text-white border border-[#333333] hover:border-[#6B00D7]/50 transition-all group hover:bg-gradient-to-br hover:from-[#181818] hover:to-[#121212] hover:shadow-lg hover:shadow-[#6B00D7]/10">
+                  <div className="flex flex-col items-center">
+                    <i className="ri-bitcoin-line text-xl group-hover:text-[#FF5AF7] transition-colors"></i>
+                    <span className="mt-1 font-medium">Bitcoin</span>
+                    <span className="text-xs text-gray-400 mt-1">Halving Vaults</span>
+                  </div>
                 </div>
               </div>
               <div className="flex justify-center">
-                <div className="h-12 w-32 bg-[#1A1A1A] rounded-lg flex items-center justify-center text-gray-400 border border-[#333333] hover:border-[#6B00D7]/50 transition-all group">
-                  <i className="ri-hard-drive-2-line mr-2 group-hover:text-[#FF5AF7] transition-colors"></i> Arweave
+                <div className="h-16 w-full bg-gradient-to-br from-[#0D0D0D] to-[#151515] rounded-lg flex items-center justify-center text-white border border-[#333333] hover:border-[#6B00D7]/50 transition-all group hover:bg-gradient-to-br hover:from-[#181818] hover:to-[#121212] hover:shadow-lg hover:shadow-[#6B00D7]/10">
+                  <div className="flex flex-col items-center">
+                    <i className="ri-hard-drive-2-line text-xl group-hover:text-[#FF5AF7] transition-colors"></i>
+                    <span className="mt-1 font-medium">Arweave</span>
+                    <span className="text-xs text-gray-400 mt-1">Permanent Storage</span>
+                  </div>
                 </div>
               </div>
             </div>
