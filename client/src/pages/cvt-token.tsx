@@ -3,6 +3,7 @@ import { Container } from '@/components/ui/container';
 import { PageHeader } from '@/components/page-header';
 import { CVTTokenCard } from '@/components/token/cvt-token-card';
 import { CVTStakingForm } from '@/components/token/cvt-staking-form';
+import { CVTDistributionChart } from '@/components/token/cvt-distribution-chart';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Helmet } from 'react-helmet';
 import { useAuthContext } from '@/contexts/auth-context';
