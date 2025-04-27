@@ -27,6 +27,7 @@ const Header = () => {
     { name: "Token Vaults", href: "/token-vaults", icon: "⏳" },
     { name: "Cross-Chain", href: "/cross-chain", icon: "🔄" },
     { name: "TON Integration", href: "/ton-integration", icon: "💎" },
+    { name: "Solana Integration", href: "/solana-integration", icon: "◎" },
     { name: "Roadmap", href: "/roadmap", icon: "🗺️" },
     { name: "About", href: "/about", icon: "ℹ️" },
   ];

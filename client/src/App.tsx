@@ -5,6 +5,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { MultiChainProvider } from "@/contexts/multi-chain-context";
 import { TonProvider } from "@/contexts/ton-context";
+import { SolanaProvider } from "@/contexts/solana-context";
 
 import Header from "@/components/layout/header";
 import Footer from "@/components/layout/footer";
@@ -20,6 +21,7 @@ import CVTTokenPage from "@/pages/cvt-token";
 import TokenVaultsPage from "@/pages/token-vaults";
 import CrossChainPage from "@/pages/cross-chain";
 import TONIntegrationPage from "@/pages/ton-integration";
+import SolanaIntegrationPage from "@/pages/solana-integration";
 import NotFound from "@/pages/not-found";
 
 function Router() {
@@ -40,6 +42,7 @@ function Router() {
           <Route path="/token-vaults" component={TokenVaultsPage} />
           <Route path="/cross-chain" component={CrossChainPage} />
           <Route path="/ton-integration" component={TONIntegrationPage} />
+          <Route path="/solana-integration" component={SolanaIntegrationPage} />
           <Route component={NotFound} />
         </Switch>
       </main>
@@ -55,7 +58,9 @@ function App() {
         <Toaster />
         <MultiChainProvider>
           <TonProvider>
-            <Router />
+            <SolanaProvider>
+              <Router />
+            </SolanaProvider>
           </TonProvider>
         </MultiChainProvider>
       </TooltipProvider>
