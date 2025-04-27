@@ -1,0 +1,15 @@
+{
+  "url": "https://chronos-vault.app/",
+  "name": "Chronos Vault",
+  "iconUrl": "https://chronos-vault.app/logo.png",
+  "termsOfUseUrl": "https://chronos-vault.app/terms",
+  "privacyPolicyUrl": "https://chronos-vault.app/privacy",
+  "app_id": "chronosvault",
+  "extra": [
+    {
+      "name": "Chronos Vault",
+      "description": "A cross-chain digital vault platform for secure asset management",
+      "image": "https://chronos-vault.app/app-preview.png"
+    }
+  ]
+}
