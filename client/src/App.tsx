@@ -18,6 +18,7 @@ import RoadmapPage from "@/pages/roadmap";
 import CVTTokenPage from "@/pages/cvt-token";
 import TokenVaultsPage from "@/pages/token-vaults";
 import CrossChainPage from "@/pages/cross-chain";
+import TONIntegrationPage from "@/pages/ton-integration";
 import NotFound from "@/pages/not-found";
 
 function Router() {
@@ -37,6 +38,7 @@ function Router() {
           <Route path="/cvt-token" component={CVTTokenPage} />
           <Route path="/token-vaults" component={TokenVaultsPage} />
           <Route path="/cross-chain" component={CrossChainPage} />
+          <Route path="/ton-integration" component={TONIntegrationPage} />
           <Route component={NotFound} />
         </Switch>
       </main>
