@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import { Helmet } from 'react-helmet';
-import BitcoinHalvingVault from '@/components/bitcoin/BitcoinHalvingVault';
+import { BitcoinHalvingVault } from '@/components/bitcoin/BitcoinHalvingVault';
 import { Bitcoin, Lock, Shield, Clock, ChevronDown } from 'lucide-react';
 
 export default function BitcoinHalvingVaultPage() {

@@ -19,7 +19,7 @@ const Header = () => {
 
   const navigationLinks = [
     { name: "Features", href: "/#features", icon: "✨" },
-    { name: "Bitcoin Halving", href: "/#bitcoin-halving", icon: "₿" },
+    { name: "Bitcoin Halving", href: "/bitcoin-halving", icon: "₿" },
     { name: "How It Works", href: "/#how-it-works", icon: "⚙️" },
     { name: "Vaults", href: "/#vaults", icon: "🔐" },
     { name: "My Vaults", href: "/my-vaults", icon: "📊" },

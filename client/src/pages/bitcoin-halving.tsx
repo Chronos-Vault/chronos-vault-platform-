@@ -1,7 +1,7 @@
 import React from 'react';
 import { Container } from '@/components/ui/container';
 import { PageHeader } from '@/components/page-header';
-import BitcoinHalvingVault from '@/components/bitcoin/BitcoinHalvingVault';
+import { BitcoinHalvingVault } from '@/components/bitcoin/BitcoinHalvingVault';
 
 export default function BitcoinHalvingPage() {
   return (

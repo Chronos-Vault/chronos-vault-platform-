@@ -247,6 +247,13 @@ const Home = () => {
           <div className="text-center mb-12">
             <h2 className="font-poppins font-bold text-3xl">Bitcoin <span className="text-[#FF5AF7]">Halving</span> Vault</h2>
             <p className="text-gray-200 mt-3 max-w-2xl mx-auto">Lock your assets until the next Bitcoin halving in 2028 and potentially benefit from price appreciation.</p>
+            <div className="mt-4">
+              <Link href="/bitcoin-halving-vault">
+                <Button className="bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-white">
+                  Explore Halving Vault Details
+                </Button>
+              </Link>
+            </div>
           </div>
           
           <div className="max-w-md mx-auto mt-8">
