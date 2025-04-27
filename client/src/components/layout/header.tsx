@@ -30,7 +30,7 @@ const Header = () => {
       <div className="container mx-auto px-4 py-4">
         <nav className="flex justify-between items-center">
           <Link href="/" className="flex items-center gap-3 group">
-            <div className="h-20 w-20 sm:h-14 sm:w-14 rounded-full bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] flex items-center justify-center shadow-xl shadow-[#FF5AF7]/40 group-hover:shadow-[#FF5AF7]/50 transition-all p-4 sm:p-3.5 border-2 border-white/40 animate-logo-glow">
+            <div className="h-12 w-12 rounded-full bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] flex items-center justify-center shadow-xl shadow-[#FF5AF7]/40 group-hover:shadow-[#FF5AF7]/50 transition-all p-2.5 border-2 border-white/40 animate-logo-glow">
               <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="text-white">
                 <path d="M19 7H5C3.89543 7 3 7.89543 3 9V18C3 19.1046 3.89543 20 5 20H19C20.1046 20 21 19.1046 21 18V9C21 7.89543 20.1046 7 19 7Z" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
                 <path d="M12 14C13.1046 14 14 13.1046 14 12C14 10.8954 13.1046 10 12 10C10.8954 10 10 10.8954 10 12C10 13.1046 10.8954 14 12 14Z" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
@@ -39,11 +39,11 @@ const Header = () => {
               </svg>
             </div>
             <div className="relative">
-              <h1 className="text-2xl md:text-3xl font-poppins font-bold text-white">
+              <h1 className="text-xl md:text-2xl font-poppins font-bold text-white">
                 <span className="bg-clip-text text-transparent bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] group-hover:from-[#FF5AF7] group-hover:to-[#6B00D7] transition-all">Chronos</span> 
                 <span className="text-white">Vault</span>
               </h1>
-              <div className="absolute -top-4 -right-4 bg-[#FF5AF7] text-white text-[10px] px-2 py-0.5 rounded-full font-bold tracking-wider shadow-md shadow-[#FF5AF7]/30 animate-pulse">BETA</div>
+              <div className="absolute -top-3 -right-3 bg-[#FF5AF7] text-white text-[8px] px-1.5 py-0.5 rounded-full font-bold tracking-wider shadow-md shadow-[#FF5AF7]/30 animate-pulse">BETA</div>
             </div>
           </Link>
           
@@ -91,7 +91,7 @@ const Header = () => {
                 <div className="flex flex-col h-full">
                   <div className="flex justify-between items-center mb-10">
                     <div className="flex items-center gap-3">
-                      <div className="h-20 w-20 rounded-full bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] flex items-center justify-center shadow-xl shadow-[#FF5AF7]/40 p-3 border-2 border-white/40 animate-logo-glow">
+                      <div className="h-12 w-12 rounded-full bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] flex items-center justify-center shadow-xl shadow-[#FF5AF7]/40 p-2.5 border-2 border-white/40 animate-logo-glow">
                         <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="text-white">
                           <path d="M19 7H5C3.89543 7 3 7.89543 3 9V18C3 19.1046 3.89543 20 5 20H19C20.1046 20 21 19.1046 21 18V9C21 7.89543 20.1046 7 19 7Z" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
                           <path d="M12 14C13.1046 14 14 13.1046 14 12C14 10.8954 13.1046 10 12 10C10.8954 10 10 10.8954 10 12C10 13.1046 10.8954 14 12 14Z" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
@@ -100,11 +100,11 @@ const Header = () => {
                         </svg>
                       </div>
                       <div className="relative">
-                        <h1 className="text-2xl font-poppins font-bold text-white">
+                        <h1 className="text-xl font-poppins font-bold text-white">
                           <span className="bg-clip-text text-transparent bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7]">Chronos</span> 
                           <span className="text-white">Vault</span>
                         </h1>
-                        <div className="absolute -top-3 -right-3 bg-[#FF5AF7] text-white text-[9px] px-1.5 py-0.5 rounded-full font-bold tracking-wider shadow-md shadow-[#FF5AF7]/30 animate-pulse">BETA</div>
+                        <div className="absolute -top-3 -right-3 bg-[#FF5AF7] text-white text-[8px] px-1.5 py-0.5 rounded-full font-bold tracking-wider shadow-md shadow-[#FF5AF7]/30 animate-pulse">BETA</div>
                       </div>
                     </div>
                     <SheetClose asChild>
