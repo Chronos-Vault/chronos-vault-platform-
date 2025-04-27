@@ -46,7 +46,7 @@ const calculateTimeRemaining = (targetDate: Date): {
 
 // Timer component with 3D effects and seconds display
 const OlympicTimer: React.FC<{
-  targetDate: Date;
+  targetDate: string;
   vaultType: 'summer' | 'winter';
   isUnlocked: boolean;
 }> = ({ targetDate, vaultType, isUnlocked }) => {
@@ -169,7 +169,7 @@ const OlympicVault3DCard: React.FC<{
   vault: OlympicVault;
   onClick: () => void;
 }> = ({ vault, onClick }) => {
-  const isSummer = vault.capsuleType === 'summer';
+  const isSummer = vault.type === 'summer';
   const vaultIcon = isSummer ? <FireIcon className="h-5 w-5" /> : <SnowflakeIcon className="h-5 w-5" />;
   const vaultColors = isSummer 
     ? { primary: '#F59E0B', secondary: '#D97706', gradient: 'from-amber-500 to-amber-700' }
@@ -353,43 +353,29 @@ const OlympicVault3DCard: React.FC<{
 };
 
 // Main Olympic Vault 3D Grid component
-const OlympicVaults3D: React.FC = () => {
-  const [vaults, setVaults] = useState<OlympicVault[]>([]);
-  const [activeVaultId, setActiveVaultId] = useState<string | null>(null);
+interface OlympicVaults3DProps {
+  olympicVaults: OlympicVault[];
+}
+
+const OlympicVaults3D: React.FC<OlympicVaults3DProps> = ({ olympicVaults }) => {
+  const [activeVaultId, setActiveVaultId] = useState<number | null>(null);
   const [currentTab, setCurrentTab] = useState('all');
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   
   // Get the active vault if one is selected
-  const activeVault = activeVaultId !== null ? vaults.find(v => v.id === activeVaultId) : null;
-  
-  // Fetch Olympic vaults
-  useEffect(() => {
-    const loadVaults = async () => {
-      setLoading(true);
-      try {
-        const allVaults = await olympicVaultService.getAllVaults();
-        setVaults(allVaults);
-      } catch (error) {
-        console.error('Error loading Olympic vaults:', error);
-      } finally {
-        setLoading(false);
-      }
-    };
-    
-    loadVaults();
-  }, []);
+  const activeVault = activeVaultId !== null ? olympicVaults.find(v => v.id === activeVaultId) : null;
   
   // Filter vaults based on the active tab
   const filteredVaults = React.useMemo(() => {
     switch (currentTab) {
       case 'summer':
-        return vaults.filter(v => v.capsuleType === 'summer');
+        return olympicVaults.filter(v => v.type === 'summer');
       case 'winter':
-        return vaults.filter(v => v.capsuleType === 'winter');
+        return olympicVaults.filter(v => v.type === 'winter');
       default:
-        return vaults;
+        return olympicVaults;
     }
-  }, [vaults, currentTab]);
+  }, [olympicVaults, currentTab]);
   
   return (
     <div className="space-y-8">
