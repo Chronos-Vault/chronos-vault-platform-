@@ -71,7 +71,10 @@ const Home = () => {
               </div>
               
               <p className="text-xl md:text-2xl text-gray-200 max-w-4xl mx-auto mt-6">
-                Create tamper-proof digital and financial vaults with advanced unlock mechanisms, cross-chain redundancy, and secure multi-signature access protocols because we believe in your power to protect what matters most.
+                Create tamper-proof digital and financial vaults with advanced unlock mechanisms, cross-chain redundancy, and secure multi-signature access protocols.
+              </p>
+              <p className="text-xl md:text-2xl bg-gradient-to-r from-[#6B00D7] via-[#FF5AF7] to-[#6B00D7] inline-block text-transparent bg-clip-text font-bold mt-2 animate-text-shine bg-300%">
+                Because we believe in your power to protect what matters most.
               </p>
               
               <div className="flex justify-center gap-6 mt-10">
@@ -289,6 +292,38 @@ const Home = () => {
                           <div className="w-full h-2 bg-[#0A0A0A] rounded-full overflow-hidden">
                             <div className="h-full w-[16%] bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] rounded-full"></div>
                           </div>
+                        </div>
+                        
+                        <div className="mt-6 flex justify-end">
+                          <button 
+                            className="px-4 py-2 bg-gradient-to-r from-[#6B00D7]/80 to-[#FF5AF7]/80 rounded-lg text-white font-medium flex items-center gap-2 hover:from-[#6B00D7] hover:to-[#FF5AF7] transition-all shadow-sm hover:shadow-[#FF5AF7]/20 hover:shadow-lg"
+                            onClick={(e) => {
+                              const button = e.currentTarget;
+                              const originalText = button.innerHTML;
+                              
+                              // Simulate authentication attempt
+                              button.innerHTML = '<svg className="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg> Verifying';
+                              
+                              setTimeout(() => {
+                                button.innerHTML = 'Access Denied - Vault Locked';
+                                button.classList.add('bg-red-600');
+                                button.classList.add('hover:bg-red-700');
+                                button.classList.remove('bg-gradient-to-r', 'from-[#6B00D7]/80', 'to-[#FF5AF7]/80', 'hover:from-[#6B00D7]', 'hover:to-[#FF5AF7]');
+                                
+                                // Reset after 2 seconds
+                                setTimeout(() => {
+                                  button.innerHTML = originalText;
+                                  button.classList.remove('bg-red-600', 'hover:bg-red-700');
+                                  button.classList.add('bg-gradient-to-r', 'from-[#6B00D7]/80', 'to-[#FF5AF7]/80', 'hover:from-[#6B00D7]', 'hover:to-[#FF5AF7]');
+                                }, 2000);
+                              }, 1500);
+                            }}
+                          >
+                            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 11V7a4 4 0 118 0m-4 8v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2z" />
+                            </svg>
+                            Attempt Unlock
+                          </button>
                         </div>
                       </div>
                     </div>
