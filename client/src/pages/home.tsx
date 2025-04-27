@@ -400,51 +400,51 @@ const Home = () => {
         <div className="absolute bottom-1/4 -right-20 w-80 h-80 rounded-full bg-[#FF5AF7]/5 blur-3xl"></div>
         
         <div className="container mx-auto px-4 relative z-10">
-          <Card className="max-w-3xl mx-auto bg-[#1E1E1E] border border-[#333333] rounded-2xl p-8 md:p-12 shadow-xl">
+          <Card className="max-w-3xl mx-auto bg-[#242424] border border-[#6B00D7]/30 rounded-2xl p-8 md:p-12 shadow-xl hover:shadow-2xl hover:shadow-[#6B00D7]/20 transition-all">
             <CardContent className="p-0">
               <div className="text-center mb-8">
-                <h2 className="font-poppins font-bold text-3xl mb-4">Ready to Secure Your Digital Legacy?</h2>
-                <p className="text-gray-400">Start building your time-locked vault today and ensure your assets are protected for the future.</p>
+                <h2 className="font-poppins font-bold text-3xl mb-4 text-white">Ready to Secure Your <span className="text-[#FF5AF7]">Digital Legacy</span>?</h2>
+                <p className="text-gray-200">Start building your time-locked vault today and ensure your assets are protected for the future.</p>
               </div>
               
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
                 <div className="flex items-start">
-                  <div className="flex-shrink-0 w-10 h-10 rounded-full bg-[#6B00D7]/20 flex items-center justify-center mr-4">
-                    <i className="ri-shield-check-line text-[#6B00D7]"></i>
+                  <div className="flex-shrink-0 w-12 h-12 rounded-lg bg-gradient-to-br from-[#6B00D7]/30 to-[#FF5AF7]/20 shadow-inner shadow-[#6B00D7]/10 flex items-center justify-center mr-4">
+                    <i className="ri-shield-check-line text-[#FF5AF7] text-xl"></i>
                   </div>
                   <div>
-                    <h3 className="font-poppins font-semibold text-lg mb-1">Unbreakable Security</h3>
-                    <p className="text-gray-400 text-sm">Smart contracts audited by leading security firms.</p>
+                    <h3 className="font-poppins font-semibold text-lg mb-1 text-white">Unbreakable Security</h3>
+                    <p className="text-gray-200 text-sm">Smart contracts audited by leading security firms.</p>
                   </div>
                 </div>
                 
                 <div className="flex items-start">
-                  <div className="flex-shrink-0 w-10 h-10 rounded-full bg-[#6B00D7]/20 flex items-center justify-center mr-4">
-                    <i className="ri-global-line text-[#6B00D7]"></i>
+                  <div className="flex-shrink-0 w-12 h-12 rounded-lg bg-gradient-to-br from-[#6B00D7]/30 to-[#FF5AF7]/20 shadow-inner shadow-[#6B00D7]/10 flex items-center justify-center mr-4">
+                    <i className="ri-global-line text-[#FF5AF7] text-xl"></i>
                   </div>
                   <div>
-                    <h3 className="font-poppins font-semibold text-lg mb-1">Cross-Chain Support</h3>
-                    <p className="text-gray-400 text-sm">Works across multiple blockchains for maximum flexibility.</p>
+                    <h3 className="font-poppins font-semibold text-lg mb-1 text-white">Cross-Chain Support</h3>
+                    <p className="text-gray-200 text-sm">Works across multiple blockchains for maximum flexibility.</p>
                   </div>
                 </div>
                 
                 <div className="flex items-start">
-                  <div className="flex-shrink-0 w-10 h-10 rounded-full bg-[#6B00D7]/20 flex items-center justify-center mr-4">
-                    <i className="ri-wallet-3-line text-[#6B00D7]"></i>
+                  <div className="flex-shrink-0 w-12 h-12 rounded-lg bg-gradient-to-br from-[#6B00D7]/30 to-[#FF5AF7]/20 shadow-inner shadow-[#6B00D7]/10 flex items-center justify-center mr-4">
+                    <i className="ri-wallet-3-line text-[#FF5AF7] text-xl"></i>
                   </div>
                   <div>
-                    <h3 className="font-poppins font-semibold text-lg mb-1">Multi-Asset Compatible</h3>
-                    <p className="text-gray-400 text-sm">Store cryptocurrencies, NFTs, and tokenized assets.</p>
+                    <h3 className="font-poppins font-semibold text-lg mb-1 text-white">Multi-Asset Compatible</h3>
+                    <p className="text-gray-200 text-sm">Store cryptocurrencies, NFTs, and tokenized assets.</p>
                   </div>
                 </div>
                 
                 <div className="flex items-start">
-                  <div className="flex-shrink-0 w-10 h-10 rounded-full bg-[#6B00D7]/20 flex items-center justify-center mr-4">
-                    <i className="ri-customer-service-2-line text-[#6B00D7]"></i>
+                  <div className="flex-shrink-0 w-12 h-12 rounded-lg bg-gradient-to-br from-[#6B00D7]/30 to-[#FF5AF7]/20 shadow-inner shadow-[#6B00D7]/10 flex items-center justify-center mr-4">
+                    <i className="ri-customer-service-2-line text-[#FF5AF7] text-xl"></i>
                   </div>
                   <div>
-                    <h3 className="font-poppins font-semibold text-lg mb-1">24/7 Support</h3>
-                    <p className="text-gray-400 text-sm">Our team is always available to assist you.</p>
+                    <h3 className="font-poppins font-semibold text-lg mb-1 text-white">24/7 Support</h3>
+                    <p className="text-gray-200 text-sm">Our team is always available to assist you.</p>
                   </div>
                 </div>
               </div>
@@ -458,7 +458,7 @@ const Home = () => {
                 </Button>
                 <Button
                   variant="outline"
-                  className="px-8 py-4 rounded-lg bg-[#1A1A1A] border border-[#6B00D7]/30 text-white font-poppins font-medium hover:border-[#6B00D7] transition-all"
+                  className="px-8 py-4 rounded-lg bg-[#242424] border-2 border-[#FF5AF7]/30 text-white font-poppins font-medium hover:border-[#FF5AF7] hover:bg-[#FF5AF7]/10 transition-all"
                 >
                   Book a Demo
                 </Button>
