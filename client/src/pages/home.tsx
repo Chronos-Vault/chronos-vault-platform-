@@ -172,7 +172,7 @@ const Home = () => {
       </section>
 
       {/* Features Section */}
-      <section id="features" className="py-20 bg-[#121212]">
+      <section id="features" className="py-20 bg-[#1A1A1A]">
         <div className="container mx-auto px-4">
           <div className="text-center mb-16">
             <h2 className="font-poppins font-bold text-3xl">Future-Proof <span className="text-[#6B00D7]">Features</span></h2>
@@ -244,7 +244,7 @@ const Home = () => {
       </section>
 
       {/* How It Works Section */}
-      <section id="how-it-works" className="py-20 bg-gradient-to-b from-[#121212] to-[#1A1A1A]">
+      <section id="how-it-works" className="py-20 bg-gradient-to-b from-[#1A1A1A] to-[#222222]">
         <div className="container mx-auto px-4">
           <div className="text-center mb-16">
             <h2 className="font-poppins font-bold text-3xl">How <span className="text-[#6B00D7]">Chronos Vault</span> Works</h2>
@@ -392,7 +392,7 @@ const Home = () => {
       </section>
 
       {/* Create Vault CTA */}
-      <section className="py-20 bg-[#121212] relative overflow-hidden">
+      <section className="py-20 bg-[#1A1A1A] relative overflow-hidden">
         <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7]"></div>
         
         {/* Background decoration */}

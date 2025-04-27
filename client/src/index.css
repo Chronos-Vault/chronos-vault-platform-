@@ -5,16 +5,16 @@
 @tailwind utilities;
 
 :root {
-  --background: 0 0% 7%;
+  --background: 0 0% 11%;
   --foreground: 0 0% 98%;
   
-  --muted: 240 3.7% 15.9%;
-  --muted-foreground: 240 5% 64.9%;
+  --muted: 240 3.7% 25%;
+  --muted-foreground: 240 5% 75%;
   
-  --popover: 240 10% 3.9%;
+  --popover: 240 10% 15%;
   --popover-foreground: 0 0% 98%;
   
-  --card: 240 10% 3.9%;
+  --card: 240 10% 15%;
   --card-foreground: 0 0% 98%;
   
   --border: 240 3.7% 15.9%;
@@ -58,10 +58,10 @@
   }
 
   body {
-    @apply font-inter antialiased bg-[#121212] text-foreground;
+    @apply font-inter antialiased bg-[#1E1E1E] text-foreground;
     background-image: 
-      radial-gradient(circle at 15% 50%, rgba(107, 0, 215, 0.08) 0%, transparent 40%),
-      radial-gradient(circle at 85% 30%, rgba(255, 90, 247, 0.08) 0%, transparent 40%);
+      radial-gradient(circle at 15% 50%, rgba(107, 0, 215, 0.15) 0%, transparent 45%),
+      radial-gradient(circle at 85% 30%, rgba(255, 90, 247, 0.15) 0%, transparent 45%);
     background-attachment: fixed;
   }
 
@@ -112,7 +112,7 @@
 }
 
 ::-webkit-scrollbar-track {
-  background: #1A1A1A;
+  background: #2A2A2A;
 }
 
 ::-webkit-scrollbar-thumb {
