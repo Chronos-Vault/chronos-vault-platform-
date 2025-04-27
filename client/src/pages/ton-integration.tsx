@@ -53,9 +53,10 @@ import {
   Coins
 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
-import TonConnectButton from '@/components/ton/TonConnectButton';
+import SimpleTonButton from '@/components/ton/SimpleTonButton';
 import { useTon } from '@/contexts/ton-context';
 import { tonContractService, VaultData, CVTTokenData } from '@/lib/ton/ton-contract-service';
+import { tonService } from '@/lib/ton/ton-service';
 
 const TONIntegrationPage: React.FC = () => {
   const { toast } = useToast();
@@ -497,10 +498,15 @@ const TONIntegrationPage: React.FC = () => {
                 </div>
                 
                 <div>
-                  <TonConnectButton 
+                  <SimpleTonButton 
                     variant="default" 
                     size="lg"
                     className="w-full md:w-auto"
+                    isConnected={isConnected}
+                    isConnecting={isConnecting}
+                    address={walletInfo?.address}
+                    onConnect={() => tonService.connect()}
+                    onDisconnect={() => tonService.disconnect()}
                   />
                 </div>
               </div>
