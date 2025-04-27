@@ -4,6 +4,41 @@
 @tailwind components;
 @tailwind utilities;
 
+@layer utilities {
+  .bg-300\% {
+    background-size: 300% 300%;
+  }
+  
+  .animate-text-shine {
+    animation: textShine 5s linear infinite;
+  }
+  
+  @keyframes textShine {
+    0% {
+      background-position: 0% 50%;
+    }
+    50% {
+      background-position: 100% 50%;
+    }
+    100% {
+      background-position: 0% 50%;
+    }
+  }
+  
+  .animate-scan {
+    animation: scanDown 2s linear infinite;
+  }
+  
+  @keyframes scanDown {
+    0% {
+      transform: translateY(-100%);
+    }
+    100% {
+      transform: translateY(1000%);
+    }
+  }
+}
+
 :root {
   --background: 0 0% 11%;
   --foreground: 0 0% 98%;

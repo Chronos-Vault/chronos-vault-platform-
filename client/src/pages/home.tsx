@@ -52,147 +52,199 @@ const Home = () => {
       {/* Hero Section */}
       <section className="py-16 md:py-24 relative overflow-hidden">
         <div className="container mx-auto px-4 relative z-10">
-          <div className="flex flex-col md:flex-row gap-16 items-center">
-            <div className="md:w-1/2">
-              <div className="space-y-6">
-                <h1 className="font-poppins font-bold text-4xl md:text-5xl leading-tight">
-                  <span className="bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] inline-block text-transparent bg-clip-text">Cutting-Edge</span> Technology
-                </h1>
-                <p className="text-lg text-gray-200 mt-4">
-                  The world's most advanced multi-chain digital time vault platform with military-grade security and seamless cross-chain integration across TON, Ethereum, Solana, and Bitcoin.
-                </p>
-                <div className="flex items-center mt-4 mb-2">
-                  <div className="h-1 w-16 bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7]"></div>
-                  <h2 className="text-xl font-semibold ml-4">Revolutionary Features</h2>
+          {/* Main Hero Content */}
+          <div className="relative">
+            {/* Headline and Primary Content */}
+            <div className="text-center mb-12">
+              <h1 className="font-poppins font-bold text-4xl md:text-6xl leading-tight mb-6">
+                <span className="animate-text-shine bg-gradient-to-r from-[#6B00D7] via-[#FF5AF7] to-[#6B00D7] bg-clip-text text-transparent bg-300% inline-block">Military-Grade</span>
+                <br />
+                <span className="text-white">Multi-Chain Time Vaults</span>
+              </h1>
+              
+              <p className="text-xl md:text-2xl text-gray-200 max-w-4xl mx-auto mt-6">
+                The world's most advanced decentralized platform for secure, tamper-proof digital time vaults with seamless integration across TON, Ethereum, Solana, and Bitcoin.
+              </p>
+              
+              <div className="flex justify-center gap-6 mt-10">
+                <Button 
+                  className="bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] hover:from-[#5500AB] hover:to-[#FF46E8] text-white font-bold rounded-lg px-8 py-4 text-lg shadow-glow hover:shadow-lg hover:shadow-[#FF5AF7]/40 transition-all"
+                  onClick={() => setLocation("/create-vault")}
+                >
+                  Create Your Vault
+                </Button>
+                <Button
+                  variant="outline"
+                  className="border-2 border-[#6B00D7] text-white hover:bg-[#6B00D7]/10 hover:text-white font-bold rounded-lg px-8 py-4 text-lg transition-all"
+                  onClick={() => {
+                    const featuresSection = document.querySelector('#features');
+                    if (featuresSection) {
+                      featuresSection.scrollIntoView({ behavior: 'smooth' });
+                    }
+                  }}
+                >
+                  Explore Features
+                </Button>
+              </div>
+            </div>
+            
+            {/* Showcase Grid */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-12">
+              {/* Security Feature Block */}
+              <div className="bg-gradient-to-br from-[#151515] to-[#0A0A0A] rounded-xl overflow-hidden border border-[#333] hover:border-[#6B00D7]/50 transition-all group p-6 hover:shadow-lg hover:shadow-[#6B00D7]/10">
+                <div className="rounded-full w-14 h-14 bg-gradient-to-br from-[#6B00D7]/20 to-[#FF5AF7]/10 flex items-center justify-center mb-4">
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-7 w-7 text-[#FF5AF7]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                  </svg>
                 </div>
-                <p className="text-base text-gray-300">
-                  Time-Locked Digital Vaults Across Multiple Blockchains with advanced military-grade encryption and cross-chain interoperability.
-                </p>
-                <div className="pt-4 flex flex-col sm:flex-row gap-4">
-                  <Button 
-                    className="bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] hover:from-[#5500AB] hover:to-[#FF45ED] text-white font-medium rounded-lg px-8 py-3 shadow-glow transition-all"
-                    onClick={() => setLocation("/create-vault")}
-                  >
-                    Create Vault
-                  </Button>
-                  <Button
-                    variant="outline"
-                    className="border-[#6B00D7] text-white hover:bg-[#6B00D7]/10 hover:text-white font-medium rounded-lg px-8 py-3 transition-all"
-                    onClick={() => {
-                      const featuresSection = document.querySelector('#features');
-                      if (featuresSection) {
-                        featuresSection.scrollIntoView({ behavior: 'smooth' });
-                      }
-                    }}
-                  >
-                    Explore Features
-                  </Button>
+                <h3 className="text-xl font-bold text-white mb-3">Quantum-Resistant Security</h3>
+                <p className="text-gray-300">Military-grade encryption with zero-knowledge proofs and multi-signature authentication protect your assets across time.</p>
+                
+                <div className="mt-4 flex flex-wrap gap-2">
+                  <span className="px-2 py-1 bg-[#6B00D7]/20 text-[#FF5AF7] text-xs rounded">Multi-Sig</span>
+                  <span className="px-2 py-1 bg-[#6B00D7]/20 text-[#FF5AF7] text-xs rounded">Zero-Knowledge</span>
+                  <span className="px-2 py-1 bg-[#6B00D7]/20 text-[#FF5AF7] text-xs rounded">Post-Quantum</span>
+                </div>
+              </div>
+              
+              {/* Time Vault Block */}
+              <div className="bg-gradient-to-br from-[#151515] to-[#0A0A0A] rounded-xl overflow-hidden border border-[#333] hover:border-[#6B00D7]/50 transition-all group p-6 hover:shadow-lg hover:shadow-[#6B00D7]/10 md:translate-y-6">
+                <div className="rounded-full w-14 h-14 bg-gradient-to-br from-[#6B00D7]/20 to-[#FF5AF7]/10 flex items-center justify-center mb-4">
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-7 w-7 text-[#FF5AF7]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                </div>
+                <h3 className="text-xl font-bold text-white mb-3">Time-Locked Digital Vaults</h3>
+                <p className="text-gray-300">Create secure vaults for assets, messages, and media that unlock at predetermined future dates or based on specific conditions.</p>
+                
+                <div className="mt-4 flex flex-wrap gap-2">
+                  <span className="px-2 py-1 bg-[#6B00D7]/20 text-[#FF5AF7] text-xs rounded">Bitcoin Halving</span>
+                  <span className="px-2 py-1 bg-[#6B00D7]/20 text-[#FF5AF7] text-xs rounded">Smart Triggers</span>
+                  <span className="px-2 py-1 bg-[#6B00D7]/20 text-[#FF5AF7] text-xs rounded">Legacy Planning</span>
+                </div>
+              </div>
+              
+              {/* Multi-Chain Block */}
+              <div className="bg-gradient-to-br from-[#151515] to-[#0A0A0A] rounded-xl overflow-hidden border border-[#333] hover:border-[#6B00D7]/50 transition-all group p-6 hover:shadow-lg hover:shadow-[#6B00D7]/10">
+                <div className="rounded-full w-14 h-14 bg-gradient-to-br from-[#6B00D7]/20 to-[#FF5AF7]/10 flex items-center justify-center mb-4">
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-7 w-7 text-[#FF5AF7]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9" />
+                  </svg>
+                </div>
+                <h3 className="text-xl font-bold text-white mb-3">Cross-Chain Architecture</h3>
+                <p className="text-gray-300">Leverage the unique capabilities of multiple blockchains for enhanced security, reliability, and functionality.</p>
+                
+                <div className="mt-4 flex flex-wrap gap-2">
+                  <span className="px-2 py-1 bg-[#6B00D7]/20 text-[#FF5AF7] text-xs rounded">TON</span>
+                  <span className="px-2 py-1 bg-[#6B00D7]/20 text-[#FF5AF7] text-xs rounded">Ethereum</span>
+                  <span className="px-2 py-1 bg-[#6B00D7]/20 text-[#FF5AF7] text-xs rounded">Solana</span>
+                  <span className="px-2 py-1 bg-[#6B00D7]/20 text-[#FF5AF7] text-xs rounded">Bitcoin</span>
                 </div>
               </div>
             </div>
             
-            <div className="md:w-1/2 flex justify-center">
-              <div className="flex flex-col items-center">
-                {/* Vault Type Selector */}
-                <div className="mb-4 z-10 flex justify-center space-x-2 md:space-x-4">
-                  <div className="flex overflow-hidden rounded-lg border border-[#6B00D7] bg-[#0A0A0A]/70 backdrop-blur-sm">
-                    <button className="px-3 py-2 md:px-4 md:py-2 bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] text-white text-xs md:text-sm font-medium transition-all">
-                      Heritage
-                    </button>
-                    <button className="px-3 py-2 md:px-4 md:py-2 text-white text-xs md:text-sm font-medium transition-all hover:bg-white/5">
-                      Financial
-                    </button>
-                    <button className="px-3 py-2 md:px-4 md:py-2 text-white text-xs md:text-sm font-medium transition-all hover:bg-white/5">
-                      Personal
-                    </button>
-                    <button className="px-3 py-2 md:px-4 md:py-2 text-white text-xs md:text-sm font-medium transition-all hover:bg-white/5">
-                      Multi-Sig
-                    </button>
+            {/* Vault Platform Demo */}
+            <div className="mt-20 flex justify-center">
+              <div className="relative w-full max-w-4xl bg-gradient-to-br from-[#1A1A1A] to-[#0D0D0D] rounded-2xl overflow-hidden border border-[#333] shadow-2xl">
+                {/* Platform Header */}
+                <div className="bg-gradient-to-r from-[#6B00D7]/20 to-[#FF5AF7]/20 p-4 border-b border-[#333]">
+                  <div className="flex justify-between items-center">
+                    <div className="flex items-center gap-3">
+                      <div className="h-8 w-8 rounded-full bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] flex items-center justify-center shadow-md">
+                        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-white">
+                          <path d="M12 14C13.1046 14 14 13.1046 14 12C14 10.8954 13.1046 10 12 10C10.8954 10 10 10.8954 10 12C10 13.1046 10.8954 14 12 14Z" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
+                          <path d="M3 7V5C3 4.46957 3.21071 3.96086 3.58579 3.58579C3.96086 3.21071 4.46957 3 5 3H19C19.5304 3 20.0391 3.21071 20.4142 3.58579C20.7893 3.96086 21 4.46957 21 5V7" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
+                          <path d="M12 14V17" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
+                        </svg>
+                      </div>
+                      <h3 className="text-lg font-bold text-white">Chronos Vault Platform</h3>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <div className="px-3 py-1 rounded-full bg-[#6B00D7]/30 text-[#FF5AF7] text-xs font-medium">
+                        Military-Grade Security
+                      </div>
+                      <div className="px-3 py-1 rounded-full bg-[#6B00D7]/30 text-[#FF5AF7] text-xs font-medium">
+                        Cross-Chain
+                      </div>
+                    </div>
                   </div>
                 </div>
-              
-                <div className="relative w-[350px] h-[350px] md:w-[450px] md:h-[450px] flex items-center justify-center">
-                  {/* Vault visualization */}
-                  <div className="absolute w-60 h-60 md:w-72 md:h-72 rounded-full border border-[#6B00D7]/30 animate-spin opacity-30" style={{animationDuration: '15s'}}></div>
-                  <div className="absolute w-48 h-48 md:w-56 md:h-56 rounded-full border border-[#FF5AF7]/20 animate-spin opacity-30" style={{animationDuration: '20s', animationDirection: 'reverse'}}></div>
-                  
-                  <div className="relative w-64 h-72 md:w-[350px] md:h-[400px] bg-gradient-to-br from-[#1A1A1A] to-[#141414] rounded-3xl shadow-2xl border-2 border-[#333333] glow-border flex items-center justify-center animate-float overflow-hidden">
-                    <div className="absolute top-0 left-0 w-full h-1/3 bg-gradient-to-r from-[#6B00D7]/20 to-[#FF5AF7]/20"></div>
-                    
-                    {/* Hologram security lines */}
-                    <div className="absolute inset-0 overflow-hidden opacity-20">
-                      <div className="absolute top-0 left-0 right-0 h-full w-full">
-                        {Array.from({ length: 15 }).map((_, i) => (
-                          <div 
-                            key={i} 
-                            className="absolute h-[1px] w-full bg-[#FF5AF7]"
-                            style={{ 
-                              top: `${i * 7}%`, 
-                              left: 0, 
-                              animationDelay: `${i * 0.1}s`,
-                              opacity: 0.4,
-                              animation: 'scanLine 2s linear infinite'
-                            }} 
-                          />
-                        ))}
+                
+                {/* Platform Body */}
+                <div className="p-6 grid grid-cols-2 md:grid-cols-4 gap-4">
+                  {/* Vault Types */}
+                  {["Heritage", "Financial", "Personal", "Multi-Sig"].map((type, index) => (
+                    <div key={index} className={`rounded-lg p-4 border hover:shadow-md transition-all ${index === 0 ? 'bg-gradient-to-br from-[#6B00D7]/20 to-[#FF5AF7]/10 border-[#6B00D7]/30' : 'border-[#333] bg-[#121212] hover:border-[#6B00D7]/30'}`}>
+                      <div className="flex flex-col items-center text-center">
+                        <div className={`w-12 h-12 rounded-full mb-2 flex items-center justify-center ${index === 0 ? 'bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7]' : 'bg-[#181818]'}`}>
+                          <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                            <path strokeLinecap="round" strokeLinejoin="round" d={index === 0 ? "M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm12 0h2a1 1 0 001-1V5a1 1 0 00-1-1h-2a1 1 0 00-1 1v2a1 1 0 001 1zM5 20h2a1 1 0 001-1v-2a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1z" : 
+                                   index === 1 ? "M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" :
+                                   index === 2 ? "M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" :
+                                   "M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"} />
+                          </svg>
+                        </div>
+                        <span className={`font-medium ${index === 0 ? 'text-white' : 'text-gray-300'}`}>{type}</span>
+                        <span className="text-xs text-gray-400 mt-1">Vault</span>
                       </div>
                     </div>
-                    
-                    <div className="absolute -top-3 -right-3 w-14 h-14 rounded-full bg-gradient-to-br from-[#6B00D7] to-[#FF5AF7] flex items-center justify-center text-white text-lg shadow-lg shadow-[#FF5AF7]/30 border-2 border-white/20 animate-pulse-slow">
-                      <i className="ri-lock-line"></i>
+                  ))}
+                </div>
+                
+                {/* Active Vault Showcase */}
+                <div className="p-6 border-t border-[#333]">
+                  <div className="rounded-lg bg-gradient-to-br from-[#0A0A0A] to-[#121212] border border-[#333] p-5 relative overflow-hidden">
+                    {/* Security scan animation */}
+                    <div className="absolute inset-0 pointer-events-none">
+                      <div className="absolute top-0 left-0 w-full h-1 bg-[#FF5AF7]/10 animate-scan"></div>
                     </div>
                     
-                    <div className="absolute top-5 left-5 flex items-center gap-2">
-                      <div className="w-4 h-4 rounded-full bg-[#FF5AF7] animate-pulse-slow"></div>
-                      <div className="text-sm font-medium text-white uppercase tracking-widest">MULTI-SIGNATURE</div>
-                    </div>
-                    
-                    <div className="text-center p-6 z-10 mt-6 w-full">
-                      <div className="text-sm text-gray-200 uppercase tracking-wider mb-2 font-medium bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] inline-block text-transparent bg-clip-text animate-text-3d">MESSAGE TO THE FUTURE</div>
-                      <div className="font-poppins font-bold text-2xl md:text-3xl text-white mb-3 title-3d">TIME VAULT</div>
-                      <div className="flex justify-center mb-4">
-                        <div className="h-1 w-24 bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] rounded-full"></div>
+                    <div className="flex items-start gap-4">
+                      <div className="flex-shrink-0 w-16 h-16 rounded-lg bg-gradient-to-br from-[#6B00D7] to-[#FF5AF7] flex items-center justify-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                        </svg>
                       </div>
                       
-                      <div className="relative mb-5 p-3 text-sm md:text-base text-white leading-relaxed border-2 border-[#444] rounded-lg backdrop-blur-sm bg-black/30">
-                        <div className="absolute -top-3 left-1/2 transform -translate-x-1/2 bg-black px-3 py-1 text-[#FF5AF7] text-xs font-bold uppercase tracking-wider border border-[#444] rounded-full">
-                          2050 A.D.
+                      <div className="flex-grow">
+                        <div className="flex justify-between items-start">
+                          <div>
+                            <h3 className="text-xl font-bold text-white">Heritage Time Vault #1337</h3>
+                            <p className="text-[#FF5AF7]">Quantum-Encrypted • Multi-Chain • Private</p>
+                          </div>
+                          <div className="px-3 py-1 rounded-full bg-[#6B00D7]/20 border border-[#6B00D7]/30 text-[#FF5AF7] text-sm">
+                            Unlocks in 25 Years
+                          </div>
                         </div>
-                        <p className="animate-text-3d tracking-wide">
-                          "We trust in your power to protect this knowledge. May our message guide your civilization toward harmony."
-                        </p>
-                      </div>
-                      
-                      <div className="flex justify-between items-center text-base text-gray-300 mb-3 bg-[#111]/70 p-3 rounded-lg border border-[#444] backdrop-blur-sm shadow-inner">
-                        <span className="font-medium uppercase">PRESERVATION</span>
-                        <span className="font-bold text-[#FF5AF7] text-xl">16%</span>
-                      </div>
-                      
-                      <div className="animate-scan relative h-3 bg-[#222] rounded-full overflow-hidden mb-5 border border-[#444]">
-                        <div className="absolute top-0 left-0 h-full w-[16%] bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7]"></div>
-                      </div>
-                      
-                      <div className="flex flex-col gap-2 bg-[#111]/40 p-3 rounded-lg border border-[#333] mb-5">
-                        <div className="flex justify-between text-sm">
-                          <span className="text-gray-400 font-medium uppercase">CREATED</span>
-                          <span className="text-gray-200 font-medium">TODAY</span>
+                        
+                        <div className="mt-4 grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
+                          <div className="bg-[#0A0A0A] rounded p-2">
+                            <div className="text-gray-400">Created</div>
+                            <div className="text-white">April 27, 2025</div>
+                          </div>
+                          <div className="bg-[#0A0A0A] rounded p-2">
+                            <div className="text-gray-400">Unlocks</div>
+                            <div className="text-white">April 27, 2050</div>
+                          </div>
+                          <div className="bg-[#0A0A0A] rounded p-2">
+                            <div className="text-gray-400">Security</div>
+                            <div className="text-white">Military-Grade</div>
+                          </div>
+                          <div className="bg-[#0A0A0A] rounded p-2">
+                            <div className="text-gray-400">Status</div>
+                            <div className="text-[#FF5AF7]">Active</div>
+                          </div>
                         </div>
-                        <div className="flex justify-between text-sm">
-                          <span className="text-gray-400 font-medium uppercase">UNLOCKS</span>
-                          <span className="text-gray-200 font-medium">JAN 16, 2050</span>
+                        
+                        <div className="mt-4">
+                          <div className="text-sm text-gray-400 mb-1 flex justify-between">
+                            <span>Time Remaining</span>
+                            <span>16% Complete</span>
+                          </div>
+                          <div className="w-full h-2 bg-[#0A0A0A] rounded-full overflow-hidden">
+                            <div className="h-full w-[16%] bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] rounded-full"></div>
+                          </div>
                         </div>
-                        <div className="flex justify-between text-sm">
-                          <span className="text-gray-400 font-medium uppercase">REMAINING</span>
-                          <span className="text-[#FF5AF7] font-bold">25 YEARS</span>
-                        </div>
-                      </div>
-                      
-                      <div className="mt-3 pt-3 border-t border-[#444] flex justify-between items-center">
-                        <div className="flex items-center gap-2">
-                          <i className="ri-file-list-3-line text-[#6B00D7] text-lg"></i>
-                          <span className="text-sm text-gray-300 font-medium">SMART CONTRACT</span>
-                        </div>
-                        <div className="text-sm text-[#FF5AF7] font-bold uppercase">MULTI-GEN</div>
                       </div>
                     </div>
                   </div>
