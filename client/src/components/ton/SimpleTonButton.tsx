@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Button } from "@/components/ui/button";
 import { Loader2, Wallet, LogOut } from 'lucide-react';
 
@@ -17,6 +17,7 @@ interface SimpleTonButtonProps {
  * Simple TON Connect Button
  * 
  * A simplified button component that doesn't use TonConnect UI directly
+ * but creates a placeholder in the DOM for the TonConnectUI to attach to
  */
 export default function SimpleTonButton({
   variant = 'default',
@@ -28,6 +29,15 @@ export default function SimpleTonButton({
   onConnect,
   onDisconnect
 }: SimpleTonButtonProps) {
+  
+  // Ensure the button container is ready in the DOM before TonConnect tries to use it
+  useEffect(() => {
+    // This ensures our button container exists for TonConnectUI to find
+    const buttonContainer = document.getElementById('ton-connect-button');
+    if (!buttonContainer) {
+      console.error("TON Connect button container not found in DOM");
+    }
+  }, []);
   
   const handleClick = () => {
     if (isConnected) {
@@ -43,8 +53,11 @@ export default function SimpleTonButton({
   };
 
   return (
-    <div id="ton-connect-button">
-      {/* Custom button to match our UI */}
+    <>
+      {/* Create a hidden div for TonConnectUI to find and attach to */}
+      <div id="ton-connect-button" style={{ display: 'none' }}></div>
+      
+      {/* Our custom button to match our UI */}
       <Button
         variant={variant}
         size={size}
@@ -69,6 +82,6 @@ export default function SimpleTonButton({
           </>
         )}
       </Button>
-    </div>
+    </>
   );
 }

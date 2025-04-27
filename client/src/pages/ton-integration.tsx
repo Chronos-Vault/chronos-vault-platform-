@@ -505,8 +505,14 @@ const TONIntegrationPage: React.FC = () => {
                     isConnected={isConnected}
                     isConnecting={isConnecting}
                     address={walletInfo?.address}
-                    onConnect={() => tonService.connect()}
-                    onDisconnect={() => tonService.disconnect()}
+                    onConnect={() => {
+                      console.log("Connecting to TON wallet...")
+                      return connect();
+                    }}
+                    onDisconnect={() => {
+                      console.log("Disconnecting from TON wallet...")
+                      return disconnect();
+                    }}
                   />
                 </div>
               </div>

@@ -24,7 +24,7 @@ interface TonContextType {
 const TonContext = createContext<TonContextType | null>(null);
 
 // Define hook for using TON context
-export const useTon = (): TonContextType => {
+export function useTon(): TonContextType {
   const context = useContext(TonContext);
   if (!context) {
     throw new Error('useTon must be used within a TonProvider');
@@ -42,27 +42,50 @@ export const TonProvider: React.FC<TonProviderProps> = ({ children }) => {
   const [isInitializing, setIsInitializing] = useState(true);
 
   useEffect(() => {
+    let isComponentMounted = true;
+    let initInterval: NodeJS.Timeout | null = null;
+    let updateInterval: NodeJS.Timeout | null = null;
+    
     const initTon = async () => {
       try {
-        await tonService.initialize();
-        setConnectionStatus(tonService.getConnectionStatus());
-        setWalletInfo(tonService.getWalletInfo());
+        // Attempt to initialize TON service
+        const success = await tonService.initialize();
+        
+        if (success && isComponentMounted) {
+          // If successfully initialized, update state and clear init interval
+          setConnectionStatus(tonService.getConnectionStatus());
+          setWalletInfo(tonService.getWalletInfo());
+          setIsInitializing(false);
+          
+          if (initInterval) {
+            clearInterval(initInterval);
+            initInterval = null;
+          }
+          
+          // Start update interval only after successful initialization
+          updateInterval = setInterval(() => {
+            if (isComponentMounted) {
+              setConnectionStatus(tonService.getConnectionStatus());
+              setWalletInfo(tonService.getWalletInfo());
+            }
+          }, 3000);
+        }
       } catch (error) {
         console.error("Failed to initialize TON service:", error);
-      } finally {
-        setIsInitializing(false);
       }
     };
 
+    // First attempt immediately
     initTon();
+    
+    // If not successful, try again periodically
+    initInterval = setInterval(initTon, 1000);
 
-    // Setup the interval to check wallet status
-    const intervalId = setInterval(() => {
-      setConnectionStatus(tonService.getConnectionStatus());
-      setWalletInfo(tonService.getWalletInfo());
-    }, 3000);
-
-    return () => clearInterval(intervalId);
+    return () => {
+      isComponentMounted = false;
+      if (initInterval) clearInterval(initInterval);
+      if (updateInterval) clearInterval(updateInterval);
+    };
   }, []);
 
   // Connect to TON wallet

@@ -35,24 +35,41 @@ class TONService {
     try {
       if (this.isInitialized) return true;
       
+      // Create the button container directly if it doesn't exist
+      let buttonContainer = document.getElementById('ton-connect-button');
+      if (!buttonContainer) {
+        buttonContainer = document.createElement('div');
+        buttonContainer.id = 'ton-connect-button';
+        buttonContainer.style.display = 'none';
+        document.body.appendChild(buttonContainer);
+        console.log("Created TON connect button container in DOM");
+      }
+      
       // To avoid duplicate initialization errors, check if there's already a TonConnectUI instance
       if (!this.tonConnectUI) {
-        this.tonConnectUI = new TonConnectUI({
-          manifestUrl: '/tonconnect-manifest.json',
-          buttonRootId: 'ton-connect-button'
-        });
-        
-        // Add connection status change listener
-        this.tonConnectUI.onStatusChange(this.handleConnectionStatusChange);
+        try {
+          this.tonConnectUI = new TonConnectUI({
+            manifestUrl: '/tonconnect-manifest.json',
+            buttonRootId: 'ton-connect-button'
+          });
+          
+          // Add connection status change listener
+          this.tonConnectUI.onStatusChange(this.handleConnectionStatusChange);
+          
+          // If already connected, update wallet info
+          if (this.tonConnectUI.connected) {
+            await this.updateWalletInfo();
+          }
+          
+          this.isInitialized = true;
+          console.log("TON service successfully initialized");
+        } catch (initError) {
+          console.error("Error initializing TonConnectUI:", initError);
+          return false;
+        }
       }
       
-      // If already connected, update wallet info
-      if (this.tonConnectUI.connected) {
-        await this.updateWalletInfo();
-      }
-      
-      this.isInitialized = true;
-      return true;
+      return this.isInitialized;
     } catch (error) {
       console.error('Failed to initialize TON service:', error);
       return false;
