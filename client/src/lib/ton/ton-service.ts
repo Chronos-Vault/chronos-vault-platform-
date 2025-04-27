@@ -35,13 +35,16 @@ class TONService {
     try {
       if (this.isInitialized) return true;
       
-      this.tonConnectUI = new TonConnectUI({
-        manifestUrl: 'https://' + window.location.host + '/tonconnect-manifest.json',
-        buttonRootId: 'ton-connect-button'
-      });
-      
-      // Add connection status change listener
-      this.tonConnectUI.onStatusChange(this.handleConnectionStatusChange);
+      // To avoid duplicate initialization errors, check if there's already a TonConnectUI instance
+      if (!this.tonConnectUI) {
+        this.tonConnectUI = new TonConnectUI({
+          manifestUrl: '/tonconnect-manifest.json',
+          buttonRootId: 'ton-connect-button'
+        });
+        
+        // Add connection status change listener
+        this.tonConnectUI.onStatusChange(this.handleConnectionStatusChange);
+      }
       
       // If already connected, update wallet info
       if (this.tonConnectUI.connected) {
@@ -86,7 +89,9 @@ class TONService {
       }
 
       const address = account.address;
-      const network = account.chain === 'ton:mainnet' ? 'mainnet' : 'testnet';
+      // Use any type for chain value since the TonConnect types may change
+      const chain = account.chain as any;
+      const network = chain && typeof chain === 'string' && chain.includes('mainnet') ? 'mainnet' : 'testnet';
       const publicKey = account.publicKey || undefined;
       
       // Fetch balance

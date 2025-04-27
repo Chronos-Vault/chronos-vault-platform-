@@ -24,7 +24,7 @@ interface TonContextType {
 const TonContext = createContext<TonContextType | null>(null);
 
 // Define hook for using TON context
-export function useTon() {
+export const useTon = (): TonContextType => {
   const context = useContext(TonContext);
   if (!context) {
     throw new Error('useTon must be used within a TonProvider');
