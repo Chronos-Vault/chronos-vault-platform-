@@ -4,6 +4,7 @@ import { QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { MultiChainProvider } from "@/contexts/multi-chain-context";
+import { TonProvider } from "@/contexts/ton-context";
 
 import Header from "@/components/layout/header";
 import Footer from "@/components/layout/footer";
@@ -53,7 +54,9 @@ function App() {
       <TooltipProvider>
         <Toaster />
         <MultiChainProvider>
-          <Router />
+          <TonProvider>
+            <Router />
+          </TonProvider>
         </MultiChainProvider>
       </TooltipProvider>
     </QueryClientProvider>

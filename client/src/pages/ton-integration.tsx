@@ -39,12 +39,17 @@ import {
 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import TonConnectButton from '@/components/ton/TonConnectButton';
+import { useTon } from '@/contexts/ton-context';
 
 const TONIntegrationPage: React.FC = () => {
   const { toast } = useToast();
-  const isConnected = false;
-  const isConnecting = false;
-  const walletInfo = null;
+  const { 
+    isConnected, 
+    isConnecting, 
+    walletInfo, 
+    sendTON, 
+    createVault 
+  } = useTon();
   
   // State for transfer form
   const [recipient, setRecipient] = useState('');
@@ -82,14 +87,33 @@ const TONIntegrationPage: React.FC = () => {
     
     setIsSubmitting(true);
     
-    setTimeout(() => {
+    try {
+      const result = await sendTON(recipient, amount);
+      
+      if (result.success) {
+        toast({
+          title: 'Transfer Successful',
+          description: `Successfully sent ${amount} TON to ${recipient.substring(0, 6)}...${recipient.substring(recipient.length - 4)}`,
+          variant: 'default',
+        });
+        setRecipient('');
+        setAmount('');
+      } else {
+        toast({
+          title: 'Transfer Failed',
+          description: result.error || 'Unknown error occurred',
+          variant: 'destructive',
+        });
+      }
+    } catch (error: any) {
       toast({
-        title: 'Coming Soon',
-        description: 'TON wallet integration is coming soon',
-        variant: 'default',
+        title: 'Transfer Failed',
+        description: error.message || 'Unknown error occurred',
+        variant: 'destructive',
       });
+    } finally {
       setIsSubmitting(false);
-    }, 2000);
+    }
   };
   
   // Handle vault creation
@@ -107,14 +131,63 @@ const TONIntegrationPage: React.FC = () => {
     
     setIsCreatingVault(true);
     
-    setTimeout(() => {
-      toast({
-        title: 'Coming Soon',
-        description: 'TON vault creation is coming soon',
-        variant: 'default',
+    try {
+      // Convert duration to seconds
+      let unlockTimeSeconds: number;
+      const now = Math.floor(Date.now() / 1000); // current time in seconds
+      
+      switch(vaultDuration) {
+        case '1m':
+          unlockTimeSeconds = now + (30 * 24 * 60 * 60); // 30 days
+          break;
+        case '3m':
+          unlockTimeSeconds = now + (90 * 24 * 60 * 60); // 90 days
+          break;
+        case '6m':
+          unlockTimeSeconds = now + (180 * 24 * 60 * 60); // 180 days
+          break;
+        case '1y':
+          unlockTimeSeconds = now + (365 * 24 * 60 * 60); // 365 days
+          break;
+        case '4y':
+          unlockTimeSeconds = now + (4 * 365 * 24 * 60 * 60); // 4 years
+          break;
+        default:
+          unlockTimeSeconds = now + (30 * 24 * 60 * 60); // default to 30 days
+      }
+      
+      const result = await createVault({
+        unlockTime: unlockTimeSeconds,
+        recipient: vaultRecipient || undefined, // if empty, use sender's address
+        amount: vaultAmount,
+        comment: vaultComment || undefined
       });
+      
+      if (result.success) {
+        toast({
+          title: 'Vault Created Successfully',
+          description: `Time-locked vault created with ${vaultAmount} TON. Unlocks in ${vaultDuration.replace('m', ' months').replace('y', ' years')}`,
+          variant: 'default',
+        });
+        setVaultAmount('');
+        setVaultRecipient('');
+        setVaultComment('');
+      } else {
+        toast({
+          title: 'Vault Creation Failed',
+          description: result.error || 'Unknown error occurred',
+          variant: 'destructive',
+        });
+      }
+    } catch (error: any) {
+      toast({
+        title: 'Vault Creation Failed',
+        description: error.message || 'Unknown error occurred',
+        variant: 'destructive',
+      });
+    } finally {
       setIsCreatingVault(false);
-    }, 2000);
+    }
   };
   
   // Format balance display
@@ -195,20 +268,11 @@ const TONIntegrationPage: React.FC = () => {
                 </div>
                 
                 <div>
-                  <Button 
+                  <TonConnectButton 
                     variant="default" 
                     size="lg"
-                    className="w-full md:w-auto bg-[#0088CC] hover:bg-[#0099DD]"
-                    onClick={() => {
-                      toast({
-                        title: 'Coming Soon',
-                        description: 'TON wallet connection is coming soon',
-                        variant: 'default',
-                      });
-                    }}
-                  >
-                    Connect TON Wallet
-                  </Button>
+                    className="w-full md:w-auto"
+                  />
                 </div>
               </div>
             </CardContent>
