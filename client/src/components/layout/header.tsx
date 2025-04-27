@@ -41,7 +41,7 @@ const Header = () => {
       <div className="container mx-auto px-4 py-4">
         <nav className="flex justify-between items-center">
           <Link href="/" className="flex items-center gap-3 group">
-            <div className="h-14 w-14 rounded-full bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] flex items-center justify-center shadow-lg shadow-[#6B00D7]/20 group-hover:shadow-[#FF5AF7]/30 transition-all p-3.5">
+            <div className="h-16 w-16 sm:h-14 sm:w-14 rounded-full bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] flex items-center justify-center shadow-lg shadow-[#6B00D7]/20 group-hover:shadow-[#FF5AF7]/30 transition-all p-4 sm:p-3.5">
               <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="text-white">
                 <path d="M19 7H5C3.89543 7 3 7.89543 3 9V18C3 19.1046 3.89543 20 5 20H19C20.1046 20 21 19.1046 21 18V9C21 7.89543 20.1046 7 19 7Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
                 <path d="M12 14C13.1046 14 14 13.1046 14 12C14 10.8954 13.1046 10 12 10C10.8954 10 10 10.8954 10 12C10 13.1046 10.8954 14 12 14Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
@@ -50,7 +50,7 @@ const Header = () => {
               </svg>
             </div>
             <div className="relative">
-              <h1 className="text-3xl font-poppins font-bold text-white">
+              <h1 className="text-2xl md:text-3xl font-poppins font-bold text-white">
                 <span className="bg-clip-text text-transparent bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] group-hover:from-[#FF5AF7] group-hover:to-[#6B00D7] transition-all">Chronos</span> 
                 <span className="text-white">Vault</span>
               </h1>
@@ -99,7 +99,7 @@ const Header = () => {
               </SheetTrigger>
               <SheetContent 
                 side="right" 
-                className="bg-gradient-to-b from-[#1A1A1A] to-[#101010] border-l border-[#6B00D7]/20 shadow-xl"
+                className="bg-gradient-to-b from-[#242424] to-[#1E1E1E] border-l border-[#6B00D7]/30 shadow-xl"
               >
                 <SheetHeader className="sr-only">
                   <SheetTitle>Mobile Navigation Menu</SheetTitle>
@@ -108,7 +108,7 @@ const Header = () => {
                 <div className="flex flex-col h-full">
                   <div className="flex justify-between items-center mb-10">
                     <div className="flex items-center gap-3">
-                      <div className="h-12 w-12 rounded-full bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] flex items-center justify-center shadow-lg shadow-[#6B00D7]/20 p-3">
+                      <div className="h-14 w-14 rounded-full bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] flex items-center justify-center shadow-lg shadow-[#6B00D7]/20 p-3">
                         <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="text-white">
                           <path d="M19 7H5C3.89543 7 3 7.89543 3 9V18C3 19.1046 3.89543 20 5 20H19C20.1046 20 21 19.1046 21 18V9C21 7.89543 20.1046 7 19 7Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
                           <path d="M12 14C13.1046 14 14 13.1046 14 12C14 10.8954 13.1046 10 12 10C10.8954 10 10 10.8954 10 12C10 13.1046 10.8954 14 12 14Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
@@ -117,7 +117,7 @@ const Header = () => {
                         </svg>
                       </div>
                       <div className="relative">
-                        <h1 className="text-xl font-poppins font-bold text-white">
+                        <h1 className="text-2xl font-poppins font-bold text-white">
                           <span className="bg-clip-text text-transparent bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7]">Chronos</span> 
                           <span className="text-white">Vault</span>
                         </h1>
@@ -141,8 +141,8 @@ const Header = () => {
                             : 'text-gray-300 hover:text-white font-poppins font-medium transition-all hover:translate-x-1'
                           }`}
                         >
-                          <div className="flex items-center justify-center w-9 h-9 rounded-lg bg-[#6B00D7]/10 border border-[#6B00D7]/20 shadow-inner shadow-[#6B00D7]/5">
-                            <span className="text-xl">{link.icon}</span>
+                          <div className="flex items-center justify-center w-12 h-12 rounded-lg bg-gradient-to-br from-[#6B00D7]/30 to-[#FF5AF7]/20 shadow-inner shadow-[#6B00D7]/10 border border-[#6B00D7]/20">
+                            <span className="text-2xl text-[#FF5AF7]">{link.icon}</span>
                           </div>
                           <span className="text-xl">{link.name}</span>
                         </Link>
@@ -150,7 +150,7 @@ const Header = () => {
                     ))}
                   </div>
                   
-                  <div className="mt-auto pt-8 border-t border-[#333333]">
+                  <div className="mt-auto pt-8 border-t border-[#6B00D7]/30">
                     <SheetClose asChild>
                       <Button 
                         onClick={handleConnectWallet}
