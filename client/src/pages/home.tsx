@@ -156,16 +156,24 @@ const Home = () => {
                   
                   {/* Content */}
                   <div className="text-center p-8 z-10 mt-4 w-full">
-                    <div className="text-lg font-bold uppercase tracking-widest mb-3 bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] inline-block text-transparent bg-clip-text">MESSAGE TO THE FUTURE</div>
-                    
-                    <div className="font-poppins font-bold text-3xl md:text-4xl text-white mb-4">GLOBAL HERITAGE VAULT</div>
-                    
-                    <div className="flex justify-center mb-6">
-                      <div className="h-1 w-32 bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] rounded-full"></div>
+                    <div className="text-lg font-bold uppercase tracking-widest mb-5 animate-text-3d bg-clip-text text-transparent bg-gradient-to-r from-[#6B00D7] via-[#FF5AF7] to-[#6B00D7]">
+                      MESSAGE FROM THE FUTURE
                     </div>
                     
-                    <div className="mb-6 text-base md:text-lg text-gray-300 leading-relaxed italic border-l-4 border-[#6B00D7] pl-4 text-left">
-                      "This vault contains cultural artifacts of immense historical significance, preserved for future generations. May those who open it in 2050 find wisdom from our era."
+                    <div className="font-poppins font-extrabold text-3xl md:text-5xl mb-5 title-3d">THE TIME VAULT</div>
+                    
+                    <div className="flex justify-center mb-6">
+                      <div className="h-1 w-44 bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] rounded-full"></div>
+                    </div>
+                    
+                    <div className="relative mb-8 p-5 text-base md:text-xl text-white leading-relaxed border-2 border-[#6B00D7]/50 rounded-lg backdrop-blur-sm bg-black/30">
+                      <div className="absolute -top-3 left-1/2 transform -translate-x-1/2 bg-black px-4 py-1 text-[#FF5AF7] text-sm font-bold uppercase tracking-wider border border-[#6B00D7]/50 rounded-full">
+                        2050 A.D.
+                      </div>
+                      
+                      <p className="font-medium animate-text-3d tracking-wide">
+                        "We trust in your power to protect this knowledge. When opened in 2050, may our message guide your civilization toward harmony with technology and nature. The power of our united vision flows through time to reach you."
+                      </p>
                     </div>
                     
                     <div className="flex justify-between items-center text-base md:text-lg text-gray-300 mb-5 bg-[#111]/80 p-4 rounded-lg border-2 border-[#444] backdrop-blur-sm shadow-inner">

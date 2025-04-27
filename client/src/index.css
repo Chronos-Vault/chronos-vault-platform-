@@ -157,12 +157,69 @@
   }
 }
 
+@keyframes textFloat {
+  0% {
+    transform: translateX(0) translateZ(0) rotateY(0deg);
+    text-shadow: 
+      0 0 5px rgba(107, 0, 215, 0.8),
+      0 0 10px rgba(255, 90, 247, 0.5),
+      0 0 20px rgba(107, 0, 215, 0.3);
+  }
+  20% {
+    transform: translateX(-15px) translateZ(25px) rotateY(-2deg);
+    text-shadow: 
+      0 0 8px rgba(107, 0, 215, 0.9),
+      0 0 15px rgba(255, 90, 247, 0.7),
+      0 0 30px rgba(107, 0, 215, 0.5);
+  }
+  40% {
+    transform: translateX(0) translateZ(50px) rotateY(0deg);
+    text-shadow: 
+      0 0 12px rgba(107, 0, 215, 1),
+      0 0 24px rgba(255, 90, 247, 0.9),
+      0 0 45px rgba(107, 0, 215, 0.7);
+  }
+  60% {
+    transform: translateX(15px) translateZ(40px) rotateY(2deg);
+    text-shadow: 
+      0 0 15px rgba(107, 0, 215, 1),
+      0 0 30px rgba(255, 90, 247, 0.9),
+      0 0 60px rgba(107, 0, 215, 0.8);
+  }
+  80% {
+    transform: translateX(10px) translateZ(20px) rotateY(1deg);
+    text-shadow: 
+      0 0 10px rgba(107, 0, 215, 0.9),
+      0 0 20px rgba(255, 90, 247, 0.8),
+      0 0 40px rgba(107, 0, 215, 0.6);
+  }
+  100% {
+    transform: translateX(0) translateZ(0) rotateY(0deg);
+    text-shadow: 
+      0 0 5px rgba(107, 0, 215, 0.8),
+      0 0 10px rgba(255, 90, 247, 0.5),
+      0 0 20px rgba(107, 0, 215, 0.3);
+  }
+}
+
 @keyframes shimmer {
   0% {
     background-position: -200% 0;
   }
   100% {
     background-position: 200% 0;
+  }
+}
+
+@keyframes textShine {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
   }
 }
 
@@ -227,6 +284,31 @@
 
 .animate-cosmic {
   animation: cosmic-twinkle 5s ease infinite alternate;
+}
+
+.animate-text-3d {
+  perspective: 500px;
+  transform-style: preserve-3d;
+  animation: textFloat 7s ease-in-out infinite;
+}
+
+.title-3d {
+  perspective: 1000px;
+  transform-style: preserve-3d;
+  letter-spacing: 2px;
+  background-image: linear-gradient(
+    90deg,
+    #6B00D7,
+    #FF5AF7,
+    #ffffff,
+    #FF5AF7,
+    #6B00D7
+  );
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-size: 200% auto;
+  animation: textFloat 8s ease-in-out infinite, textShine 5s linear infinite;
 }
 
 .animate-scan {
