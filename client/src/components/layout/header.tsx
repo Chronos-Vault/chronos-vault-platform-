@@ -25,6 +25,7 @@ const Header = () => {
     { name: "My Vaults", href: "/my-vaults", icon: "📊" },
     { name: "CVT Token", href: "/cvt-token", icon: "🪙" },
     { name: "Token Vaults", href: "/token-vaults", icon: "⏳" },
+    { name: "Cross-Chain", href: "/cross-chain", icon: "🔄" },
     { name: "Roadmap", href: "/roadmap", icon: "🗺️" },
     { name: "About", href: "/about", icon: "ℹ️" },
   ];

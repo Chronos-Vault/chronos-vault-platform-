@@ -3,6 +3,7 @@ import { queryClient } from "./lib/queryClient";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
+import { MultiChainProvider } from "@/contexts/multi-chain-context";
 
 import Header from "@/components/layout/header";
 import Footer from "@/components/layout/footer";
@@ -16,6 +17,7 @@ import BitcoinHalvingVaultPage from "@/pages/bitcoin-halving-vault";
 import RoadmapPage from "@/pages/roadmap";
 import CVTTokenPage from "@/pages/cvt-token";
 import TokenVaultsPage from "@/pages/token-vaults";
+import CrossChainPage from "@/pages/cross-chain";
 import NotFound from "@/pages/not-found";
 
 function Router() {
@@ -34,6 +36,7 @@ function Router() {
           <Route path="/roadmap" component={RoadmapPage} />
           <Route path="/cvt-token" component={CVTTokenPage} />
           <Route path="/token-vaults" component={TokenVaultsPage} />
+          <Route path="/cross-chain" component={CrossChainPage} />
           <Route component={NotFound} />
         </Switch>
       </main>
@@ -47,7 +50,9 @@ function App() {
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
         <Toaster />
-        <Router />
+        <MultiChainProvider>
+          <Router />
+        </MultiChainProvider>
       </TooltipProvider>
     </QueryClientProvider>
   );
