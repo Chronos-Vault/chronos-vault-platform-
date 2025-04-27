@@ -1,4 +1,4 @@
-import { TokenReleasePhase } from '@/components/cvt/JourneyVaults';
+import { TokenReleasePhase } from '@/components/token/cvt/JourneyVaults';
 
 /**
  * Service class to interact with Vault smart contracts and data services

@@ -15,9 +15,9 @@ import {
   LayoutGrid,
   ListIcon
 } from 'lucide-react';
-import JourneyVaults from '@/components/cvt/JourneyVaults';
-import { OlympicVault3D } from '@/components/cvt/OlympicVault3D';
-import { VerificationVaults } from '@/components/cvt/VerificationVaults';
+import JourneyVaults from '@/components/token/cvt/JourneyVaults';
+import OlympicVault3D from '@/components/token/cvt/OlympicVault3D';
+import VerificationVaults from '@/components/token/cvt/VerificationVaults';
 import { vaultService } from '@/lib/cvt/vault-service';
 import { olympicVaultService } from '@/lib/cvt/olympic-vault-service';
 import { useToast } from '@/hooks/use-toast';
