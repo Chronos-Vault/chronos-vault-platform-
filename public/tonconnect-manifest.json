@@ -1,7 +1,7 @@
 {
-  "url": "https://chronosvault.app",
+  "url": "http://localhost:5000",
   "name": "Chronos Vault",
-  "iconUrl": "https://chronosvault.app/logo.png",
-  "termsOfUseUrl": "https://chronosvault.app/terms",
-  "privacyPolicyUrl": "https://chronosvault.app/privacy"
+  "iconUrl": "/favicon.ico",
+  "termsOfUseUrl": "http://localhost:5000/terms",
+  "privacyPolicyUrl": "http://localhost:5000/privacy"
 }
