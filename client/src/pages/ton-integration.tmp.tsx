@@ -37,8 +37,9 @@ import {
   Clock, 
   ShieldCheck 
 } from 'lucide-react';
-import TonConnectButton from '@/components/ton/TonConnectButton';
+import SimpleTonButton from '@/components/ton/SimpleTonButton';
 // import { useTon } from '@/contexts/ton-context';
+import { tonService } from '@/lib/ton/ton-service';
 import { useToast } from '@/hooks/use-toast';
 
 const TONIntegrationPage: React.FC = () => {
@@ -255,13 +256,16 @@ const TONIntegrationPage: React.FC = () => {
                 </div>
                 
                 <div>
-                  <Button 
+                  <SimpleTonButton
                     variant="default" 
                     size="lg"
-                    className="w-full md:w-auto bg-[#0088CC] hover:bg-[#0099DD]"
-                  >
-                    Connect TON Wallet
-                  </Button>
+                    className="w-full md:w-auto"
+                    isConnected={isConnected}
+                    isConnecting={isConnecting}
+                    address={walletInfo?.address}
+                    onConnect={() => tonService.connect()}
+                    onDisconnect={() => tonService.disconnect()}
+                  />
                 </div>
               </div>
             </CardContent>
