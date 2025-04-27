@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Helmet } from 'react-helmet';
 import { 
   Card, 
@@ -29,17 +29,33 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import {
+  Table,
+  TableBody,
+  TableCaption,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 import { 
   Wallet, 
   ArrowRight, 
   Loader2, 
   AlertCircle, 
   Clock, 
-  ShieldCheck 
+  ShieldCheck,
+  ArrowUpDown,
+  Lock,
+  Unlock,
+  ChevronRight,
+  Shield,
+  Coins
 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import TonConnectButton from '@/components/ton/TonConnectButton';
 import { useTon } from '@/contexts/ton-context';
+import { tonContractService, VaultData, CVTTokenData } from '@/lib/ton/ton-contract-service';
 
 const TONIntegrationPage: React.FC = () => {
   const { toast } = useToast();
@@ -62,6 +78,219 @@ const TONIntegrationPage: React.FC = () => {
   const [vaultDuration, setVaultDuration] = useState('1m'); // Default 1 month
   const [vaultComment, setVaultComment] = useState('');
   const [isCreatingVault, setIsCreatingVault] = useState(false);
+  
+  // State for vault and token data
+  const [cvtTokenData, setCvtTokenData] = useState<CVTTokenData | null>(null);
+  const [ownedVaults, setOwnedVaults] = useState<VaultData[]>([]);
+  const [isLoadingTokenData, setIsLoadingTokenData] = useState(false);
+  const [isLoadingVaults, setIsLoadingVaults] = useState(false);
+  
+  // CVT token transfer state
+  const [cvtRecipient, setCvtRecipient] = useState('');
+  const [cvtAmount, setCvtAmount] = useState('');
+  const [isTransferringCVT, setIsTransferringCVT] = useState(false);
+  
+  // CVT staking state
+  const [stakingAmount, setStakingAmount] = useState('');
+  const [stakingDuration, setStakingDuration] = useState('3m'); // Default 3 months
+  const [isStaking, setIsStaking] = useState(false);
+  
+  // Load CVT token data and vaults when wallet is connected
+  useEffect(() => {
+    if (isConnected && walletInfo) {
+      loadCVTTokenData();
+      loadOwnedVaults();
+    } else {
+      setCvtTokenData(null);
+      setOwnedVaults([]);
+    }
+  }, [isConnected, walletInfo]);
+  
+  // Load CVT token data
+  const loadCVTTokenData = async () => {
+    if (!isConnected || !walletInfo) return;
+    
+    setIsLoadingTokenData(true);
+    try {
+      const tokenData = await tonContractService.getCVTTokenData(walletInfo.address);
+      setCvtTokenData(tokenData);
+    } catch (error) {
+      console.error('Error loading CVT token data:', error);
+    } finally {
+      setIsLoadingTokenData(false);
+    }
+  };
+  
+  // Load owned vaults
+  const loadOwnedVaults = async () => {
+    if (!isConnected || !walletInfo) return;
+    
+    setIsLoadingVaults(true);
+    try {
+      const vaults = await tonContractService.getOwnedVaults();
+      setOwnedVaults(vaults);
+    } catch (error) {
+      console.error('Error loading owned vaults:', error);
+    } finally {
+      setIsLoadingVaults(false);
+    }
+  };
+  
+  // Handle CVT token transfer
+  const handleTransferCVT = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    if (!cvtRecipient) {
+      toast({
+        title: 'Recipient Required',
+        description: 'Please enter a recipient address.',
+        variant: 'destructive',
+      });
+      return;
+    }
+    
+    if (!cvtAmount || isNaN(parseFloat(cvtAmount)) || parseFloat(cvtAmount) <= 0) {
+      toast({
+        title: 'Invalid Amount',
+        description: 'Please enter a valid amount greater than 0.',
+        variant: 'destructive',
+      });
+      return;
+    }
+    
+    setIsTransferringCVT(true);
+    
+    try {
+      const result = await tonContractService.transferCVT(cvtRecipient, cvtAmount);
+      
+      if (result.success) {
+        toast({
+          title: 'CVT Transfer Successful',
+          description: `Successfully sent ${cvtAmount} CVT to ${cvtRecipient.substring(0, 6)}...${cvtRecipient.substring(cvtRecipient.length - 4)}`,
+          variant: 'default',
+        });
+        setCvtRecipient('');
+        setCvtAmount('');
+        // Refresh token data
+        loadCVTTokenData();
+      } else {
+        toast({
+          title: 'CVT Transfer Failed',
+          description: result.error || 'Unknown error occurred',
+          variant: 'destructive',
+        });
+      }
+    } catch (error: any) {
+      toast({
+        title: 'CVT Transfer Failed',
+        description: error.message || 'Unknown error occurred',
+        variant: 'destructive',
+      });
+    } finally {
+      setIsTransferringCVT(false);
+    }
+  };
+  
+  // Handle CVT token staking
+  const handleStakeCVT = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    if (!stakingAmount || isNaN(parseFloat(stakingAmount)) || parseFloat(stakingAmount) <= 0) {
+      toast({
+        title: 'Invalid Amount',
+        description: 'Please enter a valid amount greater than 0.',
+        variant: 'destructive',
+      });
+      return;
+    }
+    
+    setIsStaking(true);
+    
+    try {
+      // Convert duration to seconds
+      let durationSeconds: number;
+      
+      switch(stakingDuration) {
+        case '3m':
+          durationSeconds = 90 * 24 * 60 * 60; // 90 days
+          break;
+        case '6m':
+          durationSeconds = 180 * 24 * 60 * 60; // 180 days
+          break;
+        case '1y':
+          durationSeconds = 365 * 24 * 60 * 60; // 365 days
+          break;
+        case '2y':
+          durationSeconds = 2 * 365 * 24 * 60 * 60; // 2 years
+          break;
+        case '4y':
+          durationSeconds = 4 * 365 * 24 * 60 * 60; // 4 years
+          break;
+        default:
+          durationSeconds = 90 * 24 * 60 * 60; // default to 90 days
+      }
+      
+      const result = await tonContractService.stakeCVT(stakingAmount, durationSeconds);
+      
+      if (result.success) {
+        toast({
+          title: 'CVT Staking Successful',
+          description: `Successfully staked ${stakingAmount} CVT for ${stakingDuration.replace('m', ' months').replace('y', ' years')}`,
+          variant: 'default',
+        });
+        setStakingAmount('');
+        // Refresh token data
+        loadCVTTokenData();
+      } else {
+        toast({
+          title: 'CVT Staking Failed',
+          description: result.error || 'Unknown error occurred',
+          variant: 'destructive',
+        });
+      }
+    } catch (error: any) {
+      toast({
+        title: 'CVT Staking Failed',
+        description: error.message || 'Unknown error occurred',
+        variant: 'destructive',
+      });
+    } finally {
+      setIsStaking(false);
+    }
+  };
+  
+  // Handle CVT token unstaking
+  const handleUnstakeCVT = async () => {
+    try {
+      setIsStaking(true);
+      
+      const result = await tonContractService.unstakeCVT();
+      
+      if (result.success) {
+        toast({
+          title: 'CVT Unstaking Successful',
+          description: 'Successfully unstaked your CVT tokens',
+          variant: 'default',
+        });
+        // Refresh token data
+        loadCVTTokenData();
+      } else {
+        toast({
+          title: 'CVT Unstaking Failed',
+          description: result.error || 'Unknown error occurred',
+          variant: 'destructive',
+        });
+      }
+    } catch (error: any) {
+      toast({
+        title: 'CVT Unstaking Failed',
+        description: error.message || 'Unknown error occurred',
+        variant: 'destructive',
+      });
+    } finally {
+      setIsStaking(false);
+    }
+  };
   
   // Handle TON transfer
   const handleTransfer = async (e: React.FormEvent) => {
@@ -278,11 +507,104 @@ const TONIntegrationPage: React.FC = () => {
             </CardContent>
           </Card>
           
+          {/* CVT Token Data Card */}
+          {isConnected && (
+            <Card className="mb-8 border-purple-700/30 bg-gradient-to-b from-black/40 to-purple-700/5 backdrop-blur-sm shadow-xl">
+              <CardHeader>
+                <CardTitle className="flex items-center text-2xl">
+                  <Coins className="mr-2 h-6 w-6 text-purple-500" />
+                  CVT Token
+                </CardTitle>
+                <CardDescription>
+                  Chronos Vault Token - Utility and Governance
+                </CardDescription>
+              </CardHeader>
+              
+              <CardContent>
+                {isLoadingTokenData ? (
+                  <div className="py-8 flex justify-center">
+                    <Loader2 className="h-8 w-8 animate-spin text-purple-500" />
+                  </div>
+                ) : cvtTokenData ? (
+                  <div className="space-y-4">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div className="bg-black/20 rounded-lg p-4 border border-purple-700/20">
+                        <div className="text-sm text-gray-400 mb-1">CVT Balance</div>
+                        <div className="text-2xl font-bold text-purple-500">{formatBalance(cvtTokenData.balance)}</div>
+                      </div>
+                      
+                      <div className="bg-black/20 rounded-lg p-4 border border-purple-700/20">
+                        <div className="text-sm text-gray-400 mb-1">Total Supply</div>
+                        <div className="text-xl font-medium">{Number(cvtTokenData.totalSupply).toLocaleString()}</div>
+                      </div>
+                    </div>
+                    
+                    {cvtTokenData.isStaking && (
+                      <div className="bg-purple-900/20 rounded-lg p-4 border border-purple-700/30">
+                        <div className="flex items-center mb-2">
+                          <Shield className="h-5 w-5 text-purple-500 mr-2" />
+                          <div className="text-lg font-medium">Active Staking</div>
+                        </div>
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                          <div>
+                            <div className="text-sm text-gray-400">Staked Amount</div>
+                            <div className="text-lg font-medium">{formatBalance(cvtTokenData.stakingAmount || '0')} CVT</div>
+                          </div>
+                          <div>
+                            <div className="text-sm text-gray-400">Unlock Date</div>
+                            <div className="text-lg font-medium">
+                              {cvtTokenData.stakingEndTime 
+                                ? new Date(cvtTokenData.stakingEndTime * 1000).toLocaleDateString() 
+                                : 'N/A'}
+                            </div>
+                          </div>
+                          <div>
+                            <div className="text-sm text-gray-400">Estimated Reward</div>
+                            <div className="text-lg font-medium text-green-500">
+                              {formatBalance(cvtTokenData.stakingReward || '0')} CVT
+                            </div>
+                          </div>
+                        </div>
+                        <div className="mt-4">
+                          <Button
+                            onClick={handleUnstakeCVT}
+                            disabled={isStaking}
+                            variant="outline"
+                            className="border-purple-700 text-purple-400 hover:bg-purple-900/30"
+                          >
+                            {isStaking ? (
+                              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                            ) : (
+                              <Unlock className="mr-2 h-4 w-4" />
+                            )}
+                            Unstake CVT
+                          </Button>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                ) : (
+                  <div className="py-4">
+                    <Alert className="bg-purple-900/20 border-purple-400/30">
+                      <AlertCircle className="h-4 w-4 text-purple-400" />
+                      <AlertTitle>No CVT Data Available</AlertTitle>
+                      <AlertDescription>
+                        Connect your TON wallet to view CVT token data
+                      </AlertDescription>
+                    </Alert>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          )}
+          
           {/* Functionality Tabs */}
           <Tabs defaultValue="transfer" className="space-y-6">
-            <TabsList className="grid grid-cols-2">
+            <TabsList className="grid grid-cols-4">
               <TabsTrigger value="transfer">Transfer TON</TabsTrigger>
-              <TabsTrigger value="vault">Create Time Vault</TabsTrigger>
+              <TabsTrigger value="vault">Create Vault</TabsTrigger>
+              <TabsTrigger value="cvt">CVT Transfer</TabsTrigger>
+              <TabsTrigger value="staking">CVT Staking</TabsTrigger>
             </TabsList>
             
             {/* Transfer Tab */}
@@ -448,7 +770,297 @@ const TONIntegrationPage: React.FC = () => {
                 </CardFooter>
               </Card>
             </TabsContent>
+            
+            {/* CVT Transfer Tab */}
+            <TabsContent value="cvt">
+              <Card className="border-purple-700/30 bg-gradient-to-b from-black/40 to-purple-700/5">
+                <CardHeader>
+                  <CardTitle>Transfer CVT Token</CardTitle>
+                  <CardDescription>
+                    Send CVT tokens to any wallet address
+                  </CardDescription>
+                </CardHeader>
+                
+                <CardContent>
+                  <form onSubmit={handleTransferCVT} className="space-y-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="cvtRecipient">Recipient Address</Label>
+                      <Input
+                        id="cvtRecipient"
+                        placeholder="EQ..."
+                        value={cvtRecipient}
+                        onChange={(e) => setCvtRecipient(e.target.value)}
+                        disabled={!isConnected || isTransferringCVT}
+                        className="bg-black/20 border-purple-700/30"
+                      />
+                    </div>
+                    
+                    <div className="space-y-2">
+                      <Label htmlFor="cvtAmount">Amount (CVT)</Label>
+                      <Input
+                        id="cvtAmount"
+                        type="number"
+                        step="0.01"
+                        min="0"
+                        placeholder="0.00"
+                        value={cvtAmount}
+                        onChange={(e) => setCvtAmount(e.target.value)}
+                        disabled={!isConnected || isTransferringCVT}
+                        className="bg-black/20 border-purple-700/30"
+                      />
+                    </div>
+                    
+                    {cvtTokenData && (
+                      <div className="text-sm text-gray-400">
+                        Available: {formatBalance(cvtTokenData.balance)} CVT
+                      </div>
+                    )}
+                  </form>
+                </CardContent>
+                
+                <CardFooter>
+                  <Button 
+                    type="submit"
+                    onClick={handleTransferCVT}
+                    disabled={!isConnected || isTransferringCVT || !cvtRecipient || !cvtAmount}
+                    className="w-full bg-purple-700 hover:bg-purple-800 text-white"
+                  >
+                    {isTransferringCVT ? (
+                      <>
+                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                        Sending...
+                      </>
+                    ) : (
+                      <>
+                        <ArrowRight className="mr-2 h-4 w-4" />
+                        Send CVT
+                      </>
+                    )}
+                  </Button>
+                </CardFooter>
+              </Card>
+            </TabsContent>
+            
+            {/* CVT Staking Tab */}
+            <TabsContent value="staking">
+              <Card className="border-purple-700/30 bg-gradient-to-b from-black/40 to-purple-700/5">
+                <CardHeader>
+                  <CardTitle>Stake CVT Tokens</CardTitle>
+                  <CardDescription>
+                    Stake your CVT tokens to earn rewards and gain governance rights
+                  </CardDescription>
+                </CardHeader>
+                
+                <CardContent>
+                  {cvtTokenData?.isStaking ? (
+                    <div className="py-4">
+                      <Alert className="bg-purple-900/20 border-purple-400/30">
+                        <AlertCircle className="h-4 w-4 text-purple-400" />
+                        <AlertTitle>You already have staked CVT tokens</AlertTitle>
+                        <AlertDescription>
+                          You have {formatBalance(cvtTokenData.stakingAmount || '0')} CVT staked until{' '}
+                          {cvtTokenData.stakingEndTime 
+                            ? new Date(cvtTokenData.stakingEndTime * 1000).toLocaleDateString() 
+                            : 'unknown date'}
+                        </AlertDescription>
+                      </Alert>
+                      
+                      <div className="mt-4">
+                        <Button
+                          onClick={handleUnstakeCVT}
+                          disabled={isStaking}
+                          className="w-full bg-purple-700 hover:bg-purple-800 text-white"
+                        >
+                          {isStaking ? (
+                            <>
+                              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                              Processing...
+                            </>
+                          ) : (
+                            <>
+                              <Unlock className="mr-2 h-4 w-4" />
+                              Unstake CVT Tokens
+                            </>
+                          )}
+                        </Button>
+                      </div>
+                    </div>
+                  ) : (
+                    <form onSubmit={handleStakeCVT} className="space-y-4">
+                      <div className="space-y-2">
+                        <Label htmlFor="stakingAmount">Amount to Stake (CVT)</Label>
+                        <Input
+                          id="stakingAmount"
+                          type="number"
+                          step="0.01"
+                          min="0"
+                          placeholder="0.00"
+                          value={stakingAmount}
+                          onChange={(e) => setStakingAmount(e.target.value)}
+                          disabled={!isConnected || isStaking}
+                          className="bg-black/20 border-purple-700/30"
+                        />
+                      </div>
+                      
+                      <div className="space-y-2">
+                        <Label htmlFor="stakingDuration">Staking Duration</Label>
+                        <Select 
+                          value={stakingDuration}
+                          onValueChange={setStakingDuration}
+                          disabled={!isConnected || isStaking}
+                        >
+                          <SelectTrigger id="stakingDuration" className="bg-black/20 border-purple-700/30">
+                            <SelectValue placeholder="Select staking duration" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="3m">3 Months (1.2x Multiplier)</SelectItem>
+                            <SelectItem value="6m">6 Months (1.5x Multiplier)</SelectItem>
+                            <SelectItem value="1y">1 Year (2x Multiplier)</SelectItem>
+                            <SelectItem value="2y">2 Years (3x Multiplier)</SelectItem>
+                            <SelectItem value="4y">4 Years (5x Multiplier)</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+                      
+                      {cvtTokenData && (
+                        <div className="text-sm text-gray-400">
+                          Available: {formatBalance(cvtTokenData.balance)} CVT
+                        </div>
+                      )}
+                      
+                      <div className="bg-purple-900/20 rounded-lg p-4 border border-purple-700/30">
+                        <div className="text-sm font-medium mb-2">Staking Benefits:</div>
+                        <ul className="text-sm space-y-1 list-disc list-inside">
+                          <li>Earn passive income through staking rewards</li>
+                          <li>Gain voting rights in platform governance</li>
+                          <li>Access premium features on Chronos Vault</li>
+                          <li>Reduced fees on vault operations</li>
+                        </ul>
+                      </div>
+                    </form>
+                  )}
+                </CardContent>
+                
+                {(!cvtTokenData?.isStaking) && (
+                  <CardFooter>
+                    <Button 
+                      type="submit"
+                      onClick={handleStakeCVT}
+                      disabled={!isConnected || isStaking || !stakingAmount}
+                      className="w-full bg-purple-700 hover:bg-purple-800 text-white"
+                    >
+                      {isStaking ? (
+                        <>
+                          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                          Staking...
+                        </>
+                      ) : (
+                        <>
+                          <Shield className="mr-2 h-4 w-4" />
+                          Stake CVT Tokens
+                        </>
+                      )}
+                    </Button>
+                  </CardFooter>
+                )}
+              </Card>
+            </TabsContent>
           </Tabs>
+          
+          {/* My Vaults Section */}
+          <div className="mt-12">
+            <h2 className="text-2xl font-bold mb-4 flex items-center">
+              <Lock className="mr-2 h-5 w-5 text-[#0088CC]" />
+              My Time Vaults
+            </h2>
+            
+            {isLoadingVaults ? (
+              <div className="py-12 flex justify-center">
+                <Loader2 className="h-8 w-8 animate-spin text-[#0088CC]" />
+              </div>
+            ) : ownedVaults.length > 0 ? (
+              <div className="overflow-x-auto">
+                <Table>
+                  <TableCaption>Your time-locked vaults on TON blockchain</TableCaption>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Status</TableHead>
+                      <TableHead>Unlock Date</TableHead>
+                      <TableHead>Security Level</TableHead>
+                      <TableHead>Cross-Chain</TableHead>
+                      <TableHead className="text-right">Actions</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {ownedVaults.map((vault, index) => {
+                      const unlockDate = new Date(vault.unlockTime * 1000);
+                      return (
+                        <TableRow key={index}>
+                          <TableCell>
+                            <div className="flex items-center">
+                              {vault.isUnlocked ? (
+                                <div className="flex items-center text-green-500">
+                                  <Unlock className="h-4 w-4 mr-2" />
+                                  <span>Unlocked</span>
+                                </div>
+                              ) : (
+                                <div className="flex items-center text-amber-500">
+                                  <Lock className="h-4 w-4 mr-2" />
+                                  <span>Locked</span>
+                                </div>
+                              )}
+                            </div>
+                          </TableCell>
+                          <TableCell>
+                            <div className="font-medium">
+                              {unlockDate.toLocaleDateString()}
+                            </div>
+                            <div className="text-xs text-gray-400">
+                              {unlockDate.toLocaleTimeString()}
+                            </div>
+                          </TableCell>
+                          <TableCell>
+                            <div className="flex items-center">
+                              <ShieldCheck className="h-4 w-4 mr-1 text-[#0088CC]" />
+                              <span>Level {vault.securityLevel}</span>
+                            </div>
+                          </TableCell>
+                          <TableCell>
+                            {vault.crossChainLocations.length > 0 ? (
+                              <div className="flex items-center text-xs">
+                                <ArrowUpDown className="h-3 w-3 mr-1 text-purple-500" />
+                                <span>
+                                  {vault.crossChainLocations.join(', ')}
+                                </span>
+                              </div>
+                            ) : (
+                              <span className="text-gray-400 text-xs">None</span>
+                            )}
+                          </TableCell>
+                          <TableCell className="text-right">
+                            <Button variant="ghost" size="sm">
+                              <ChevronRight className="h-4 w-4" />
+                            </Button>
+                          </TableCell>
+                        </TableRow>
+                      );
+                    })}
+                  </TableBody>
+                </Table>
+              </div>
+            ) : (
+              <div className="py-8 text-center">
+                <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-blue-900/20 mb-4">
+                  <Lock className="h-8 w-8 text-blue-400" />
+                </div>
+                <h3 className="text-xl font-medium mb-2">No vaults found</h3>
+                <p className="text-gray-400 max-w-md mx-auto">
+                  You don't have any time-locked vaults created on TON blockchain yet. 
+                  Create your first vault to secure your assets for the future.
+                </p>
+              </div>
+            )}
+          </div>
           
           {/* Information Card */}
           <div className="mt-8">
