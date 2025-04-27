@@ -131,26 +131,30 @@ export const CVTDistributionChart: React.FC = () => {
               </defs>
             </svg>
             
-            <style dangerouslySetInnerHTML={{ __html: `
-              .stop-\\[\\#6B00D7\\] { stop-color: #6B00D7; }
-              .stop-\\[\\#9B00FF\\] { stop-color: #9B00FF; }
-              .stop-\\[\\#FF5AF7\\] { stop-color: #FF5AF7; }
-              .stop-\\[\\#FF8AFF\\] { stop-color: #FF8AFF; }
-              .stop-\\[\\#00A3FF\\] { stop-color: #00A3FF; }
-              .stop-\\[\\#00C2FF\\] { stop-color: #00C2FF; }
-              .stop-\\[\\#00D1B2\\] { stop-color: #00D1B2; }
-              .stop-\\[\\#00F5D4\\] { stop-color: #00F5D4; }
-              
-              @keyframes grow-segment {
-                from {
-                  opacity: 0;
-                  stroke-dasharray: 0 251.2;
-                }
-                to {
-                  opacity: 1;
-                }
-              }
-            `}} />
+            <style
+              dangerouslySetInnerHTML={{
+                __html: `
+                  .stop-\\[\\#6B00D7\\] { stop-color: #6B00D7; }
+                  .stop-\\[\\#9B00FF\\] { stop-color: #9B00FF; }
+                  .stop-\\[\\#FF5AF7\\] { stop-color: #FF5AF7; }
+                  .stop-\\[\\#FF8AFF\\] { stop-color: #FF8AFF; }
+                  .stop-\\[\\#00A3FF\\] { stop-color: #00A3FF; }
+                  .stop-\\[\\#00C2FF\\] { stop-color: #00C2FF; }
+                  .stop-\\[\\#00D1B2\\] { stop-color: #00D1B2; }
+                  .stop-\\[\\#00F5D4\\] { stop-color: #00F5D4; }
+                  
+                  @keyframes grow-segment {
+                    from {
+                      opacity: 0;
+                      stroke-dasharray: 0 251.2;
+                    }
+                    to {
+                      opacity: 1;
+                    }
+                  }
+                `
+              }}
+            />
           </div>
           
           {/* Distribution Legend */}

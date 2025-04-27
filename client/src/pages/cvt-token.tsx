@@ -239,6 +239,8 @@ const CVTTokenPage: React.FC = () => {
               </div>
             </div>
             
+            <CVTDistributionChart />
+            
             <TierBenefitsCard />
             
             <TokenInfoCard />
