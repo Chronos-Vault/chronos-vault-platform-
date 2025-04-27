@@ -37,7 +37,7 @@ const Header = () => {
   ];
 
   return (
-    <header className="relative z-20 border-b border-[#333333]/40 backdrop-blur-sm bg-black/50">
+    <header className="relative z-20 border-b border-[#6B00D7]/20 backdrop-blur-sm bg-gradient-to-r from-[#121212]/90 to-[#1A1A1A]/90">
       <div className="container mx-auto px-4 py-4">
         <nav className="flex justify-between items-center">
           <Link href="/" className="flex items-center gap-3 group">
@@ -96,7 +96,7 @@ const Header = () => {
               </SheetTrigger>
               <SheetContent 
                 side="right" 
-                className="bg-gradient-to-b from-[#121212] to-[#0A0A0A] border-l border-[#333333] shadow-xl"
+                className="bg-gradient-to-b from-[#1A1A1A] to-[#101010] border-l border-[#6B00D7]/20 shadow-xl"
               >
                 <SheetHeader className="sr-only">
                   <SheetTitle>Mobile Navigation Menu</SheetTitle>
@@ -135,7 +135,7 @@ const Header = () => {
                             : 'text-gray-300 hover:text-white font-poppins font-medium transition-all hover:translate-x-1'
                           }`}
                         >
-                          <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-[#1E1E1E]">
+                          <div className="flex items-center justify-center w-9 h-9 rounded-lg bg-[#6B00D7]/10 border border-[#6B00D7]/20 shadow-inner shadow-[#6B00D7]/5">
                             <span className="text-xl">{link.icon}</span>
                           </div>
                           <span className="text-xl">{link.name}</span>
