@@ -13,6 +13,7 @@ import VaultDetails from "@/pages/vault-details";
 import About from "@/pages/about";
 import BitcoinHalvingPage from "@/pages/bitcoin-halving";
 import BitcoinHalvingVaultPage from "@/pages/bitcoin-halving-vault";
+import RoadmapPage from "@/pages/roadmap";
 import NotFound from "@/pages/not-found";
 
 function Router() {
