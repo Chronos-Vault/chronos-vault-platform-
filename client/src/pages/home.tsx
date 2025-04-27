@@ -3,6 +3,7 @@ import { Link, useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import VaultCard from "@/components/vault/vault-card";
+import Hero from "@/components/layout/hero";
 
 const Home = () => {
   const [_, setLocation] = useLocation();
@@ -57,119 +58,7 @@ const Home = () => {
   return (
     <>
       {/* Hero Section */}
-      <section className="relative hero-gradient overflow-hidden pt-12 pb-20 md:pt-16 md:pb-32">
-        <div className="container mx-auto px-4 relative z-10">
-          <div className="flex flex-col md:flex-row gap-12 items-center">
-            <div className="md:w-1/2 space-y-8">
-              <div>
-                <h2 className="font-poppins font-bold text-3xl md:text-4xl lg:text-5xl leading-tight">
-                  <span className="bg-clip-text text-transparent bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7]">
-                    The Swiss Bank of Web3
-                  </span>
-                </h2>
-                <p className="text-2xl md:text-3xl font-light mt-2 text-gray-200">
-                  Lock your assets today,<br/>secure your tomorrow.
-                </p>
-              </div>
-              
-              <p className="text-gray-300 text-lg max-w-lg">
-                Chronos Vault redefines time-locked assets for the decentralized world. 
-                Secure, user-friendly, and unstoppable — the future of blockchain vaults.
-              </p>
-              
-              <div className="flex flex-col sm:flex-row gap-4">
-                <Button
-                  onClick={handleCreateVault}
-                  className="cta-button bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] px-8 py-4 rounded-lg font-poppins font-medium text-white shadow-lg hover:shadow-xl hover:shadow-[#6B00D7]/20 transition-all"
-                >
-                  Create Your Vault
-                </Button>
-                <Button
-                  variant="outline"
-                  className="px-8 py-4 rounded-lg bg-[#1A1A1A] border border-[#6B00D7]/30 text-white font-poppins font-medium hover:border-[#6B00D7] transition-all"
-                  asChild
-                >
-                  <a href="#features">Learn More</a>
-                </Button>
-              </div>
-              
-              <div className="flex flex-wrap items-center gap-6 text-sm text-gray-400">
-                <div className="flex items-center gap-2">
-                  <i className="ri-shield-check-line text-[#6B00D7] text-lg"></i>
-                  <span>Trustless Security</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <i className="ri-time-line text-[#6B00D7] text-lg"></i>
-                  <span>Time-Locked</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <i className="ri-global-line text-[#6B00D7] text-lg"></i>
-                  <span>Decentralized</span>
-                </div>
-              </div>
-            </div>
-            
-            <div className="md:w-1/2 flex justify-center">
-              <div className="relative w-[350px] h-[350px] md:w-[450px] md:h-[450px] flex items-center justify-center">
-                {/* Vault visualization */}
-                <div className="absolute w-60 h-60 md:w-72 md:h-72 rounded-full border border-[#6B00D7]/30 animate-spin opacity-30" style={{animationDuration: '15s'}}></div>
-                <div className="absolute w-48 h-48 md:w-56 md:h-56 rounded-full border border-[#FF5AF7]/20 animate-spin opacity-30" style={{animationDuration: '20s', animationDirection: 'reverse'}}></div>
-                
-                <div className="relative w-40 h-40 md:w-48 md:h-48 bg-gradient-to-br from-[#1A1A1A] to-[#1E1E1E] rounded-3xl shadow-xl border border-[#333333] glow-border flex items-center justify-center animate-float">
-                  <div className="absolute -top-3 -right-3 w-8 h-8 rounded-full bg-[#FF5AF7] flex items-center justify-center text-white text-sm">
-                    <i className="ri-lock-line"></i>
-                  </div>
-                  
-                  <div className="text-center p-4">
-                    <div className="text-xs text-gray-400 mb-2">TIME-LOCKED VAULT</div>
-                    <div className="font-poppins font-semibold text-xl text-white mb-2">Legacy Vault</div>
-                    <div className="flex justify-center mb-3">
-                      <div className="h-1 w-16 bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] rounded-full"></div>
-                    </div>
-                    <div className="flex justify-between text-sm text-gray-300 mb-2">
-                      <span>$ETH</span>
-                      <span>25.48</span>
-                    </div>
-                    <div className="relative h-2 bg-[#333333] rounded-full overflow-hidden">
-                      <div className="absolute top-0 left-0 h-full w-3/4 bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7]"></div>
-                    </div>
-                    <div className="text-xs text-gray-400 mt-2">Unlocks in 2 years, 45 days</div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-          
-          {/* Trust indicators */}
-          <div className="mt-16 border-t border-[#333333] pt-8">
-            <div className="text-center mb-8">
-              <span className="text-gray-400 text-sm">TRUSTED BY BLOCKCHAIN LEADERS</span>
-            </div>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
-              <div className="flex justify-center">
-                <div className="h-12 w-32 bg-[#1A1A1A] rounded-lg flex items-center justify-center text-gray-400 border border-[#333333]">
-                  <i className="ri-ethereum-line mr-2"></i> Ethereum
-                </div>
-              </div>
-              <div className="flex justify-center">
-                <div className="h-12 w-32 bg-[#1A1A1A] rounded-lg flex items-center justify-center text-gray-400 border border-[#333333]">
-                  <i className="ri-bit-coin-line mr-2"></i> Coinbase
-                </div>
-              </div>
-              <div className="flex justify-center">
-                <div className="h-12 w-32 bg-[#1A1A1A] rounded-lg flex items-center justify-center text-gray-400 border border-[#333333]">
-                  <i className="ri-layout-grid-line mr-2"></i> Polygon
-                </div>
-              </div>
-              <div className="flex justify-center">
-                <div className="h-12 w-32 bg-[#1A1A1A] rounded-lg flex items-center justify-center text-gray-400 border border-[#333333]">
-                  <i className="ri-link mr-2"></i> Chainlink
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
+      <Hero />
 
       {/* Features Section */}
       <section id="features" className="py-20 bg-[#1A1A1A]">
