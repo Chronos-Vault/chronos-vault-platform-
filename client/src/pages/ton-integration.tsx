@@ -65,7 +65,9 @@ const TONIntegrationPage: React.FC = () => {
     isConnecting, 
     walletInfo, 
     sendTON, 
-    createVault 
+    createVault,
+    connect,
+    disconnect
   } = useTon();
   
   // State for transfer form
