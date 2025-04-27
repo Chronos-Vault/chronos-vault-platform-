@@ -14,8 +14,9 @@ import { ArrowRightIcon, CalendarIcon, CheckCircleIcon, LockIcon, Medal as Medal
  */
 
 // Helper functions
-const formatDate = (date: Date): string => {
-  return date.toLocaleDateString(undefined, {
+const formatDate = (date: Date | string): string => {
+  const dateObj = typeof date === 'string' ? new Date(date) : date;
+  return dateObj.toLocaleDateString(undefined, {
     year: 'numeric',
     month: 'long',
     day: 'numeric'
@@ -23,14 +24,15 @@ const formatDate = (date: Date): string => {
 };
 
 // Calculate time remaining to a target date
-const calculateTimeRemaining = (targetDate: Date): {
+const calculateTimeRemaining = (targetDate: Date | string): {
   days: number;
   hours: number;
   minutes: number;
   seconds: number;
 } => {
   const now = new Date();
-  const difference = targetDate.getTime() - now.getTime();
+  const targetDateObj = typeof targetDate === 'string' ? new Date(targetDate) : targetDate;
+  const difference = targetDateObj.getTime() - now.getTime();
   
   if (difference <= 0) {
     return { days: 0, hours: 0, minutes: 0, seconds: 0 };
@@ -591,7 +593,7 @@ const OlympicVaults3D: React.FC<OlympicVaults3DProps> = ({ olympicVaults }) => {
                       <div className="mb-6">
                         <OlympicTimer 
                           targetDate={activeVault.unlockDate}
-                          vaultType={activeVault.capsuleType}
+                          vaultType={activeVault.capsuleType || activeVault.type}
                           isUnlocked={activeVault.isUnlocked}
                         />
                       </div>
