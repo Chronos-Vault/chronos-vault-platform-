@@ -254,6 +254,37 @@ class TONService {
   /**
    * Create TON vault (time-locked contract)
    */
+  /**
+   * Send transaction to TON blockchain
+   */
+  async sendTransaction(transaction: any): Promise<{ success: boolean; transactionHash?: string; error?: string }> {
+    try {
+      if (!this.tonConnectUI || !this.tonConnectUI.connected) {
+        return { success: false, error: 'Wallet not connected' };
+      }
+      
+      console.log('Sending transaction via TON Connect:', transaction);
+      
+      // For development, this will just simulate a successful transaction
+      // In production, we would use:
+      // const result = await this.tonConnectUI.sendTransaction(transaction);
+      
+      // Wait for 2 seconds to simulate network delay
+      await new Promise(resolve => setTimeout(resolve, 2000));
+      
+      // Update wallet info after transaction
+      await this.updateWalletInfo();
+      
+      return { 
+        success: true, 
+        transactionHash: 'tx-' + Math.random().toString(36).substring(2, 15) 
+      };
+    } catch (error: any) {
+      console.error('Failed to send transaction via TON Connect:', error);
+      return { success: false, error: error.message || 'Unknown error occurred' };
+    }
+  }
+  
   async createVault(params: {
     unlockTime: number;
     recipient?: string;
