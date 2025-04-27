@@ -176,67 +176,67 @@ const Home = () => {
         <div className="container mx-auto px-4">
           <div className="text-center mb-16">
             <h2 className="font-poppins font-bold text-3xl">Future-Proof <span className="text-[#6B00D7]">Features</span></h2>
-            <p className="text-gray-400 mt-3 max-w-2xl mx-auto">Experience the next generation of blockchain vaults with innovative features designed for security, accessibility, and peace of mind.</p>
+            <p className="text-gray-200 mt-3 max-w-2xl mx-auto">Experience the next generation of blockchain vaults with innovative features designed for security, accessibility, and peace of mind.</p>
           </div>
           
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <Card className="vault-card bg-[#1A1A1A]/60 border border-[#333333] rounded-xl p-6 hover:border-[#6B00D7]/50 transition-all">
+            <Card className="vault-card bg-[#242424] border border-[#6B00D7]/30 rounded-xl p-6 hover:border-[#FF5AF7] hover:shadow-lg hover:shadow-[#6B00D7]/30 transition-all">
               <CardContent className="p-0">
-                <div className="w-12 h-12 mb-4 rounded-lg bg-gradient-to-br from-[#6B00D7]/20 to-[#6B00D7]/10 flex items-center justify-center">
-                  <i className="ri-time-line text-[#6B00D7] text-2xl"></i>
+                <div className="w-14 h-14 mb-4 rounded-lg bg-gradient-to-br from-[#6B00D7]/30 to-[#FF5AF7]/20 shadow-inner shadow-[#6B00D7]/10 flex items-center justify-center">
+                  <i className="ri-time-line text-[#FF5AF7] text-2xl"></i>
                 </div>
-                <h3 className="font-poppins font-semibold text-xl mb-3">Time-Locked Security</h3>
-                <p className="text-gray-400">Create vaults with custom time locks that cannot be accessed until the specified date, guaranteed by blockchain technology.</p>
+                <h3 className="font-poppins font-semibold text-xl mb-3 text-white">Time-Locked Security</h3>
+                <p className="text-gray-200">Create vaults with custom time locks that cannot be accessed until the specified date, guaranteed by blockchain technology.</p>
               </CardContent>
             </Card>
             
-            <Card className="vault-card bg-[#1A1A1A]/60 border border-[#333333] rounded-xl p-6 hover:border-[#6B00D7]/50 transition-all">
+            <Card className="vault-card bg-[#242424] border border-[#6B00D7]/30 rounded-xl p-6 hover:border-[#FF5AF7] hover:shadow-lg hover:shadow-[#6B00D7]/30 transition-all">
               <CardContent className="p-0">
-                <div className="w-12 h-12 mb-4 rounded-lg bg-gradient-to-br from-[#6B00D7]/20 to-[#6B00D7]/10 flex items-center justify-center">
-                  <i className="ri-shield-keyhole-line text-[#6B00D7] text-2xl"></i>
+                <div className="w-14 h-14 mb-4 rounded-lg bg-gradient-to-br from-[#6B00D7]/30 to-[#FF5AF7]/20 shadow-inner shadow-[#6B00D7]/10 flex items-center justify-center">
+                  <i className="ri-shield-keyhole-line text-[#FF5AF7] text-2xl"></i>
                 </div>
-                <h3 className="font-poppins font-semibold text-xl mb-3">Decentralized Trust</h3>
-                <p className="text-gray-400">Your assets are secured by the blockchain, not by any institution. True decentralization means no single point of failure.</p>
+                <h3 className="font-poppins font-semibold text-xl mb-3 text-white">Decentralized Trust</h3>
+                <p className="text-gray-200">Your assets are secured by the blockchain, not by any institution. True decentralization means no single point of failure.</p>
               </CardContent>
             </Card>
             
-            <Card className="vault-card bg-[#1A1A1A]/60 border border-[#333333] rounded-xl p-6 hover:border-[#6B00D7]/50 transition-all">
+            <Card className="vault-card bg-[#242424] border border-[#6B00D7]/30 rounded-xl p-6 hover:border-[#FF5AF7] hover:shadow-lg hover:shadow-[#6B00D7]/30 transition-all">
               <CardContent className="p-0">
-                <div className="w-12 h-12 mb-4 rounded-lg bg-gradient-to-br from-[#6B00D7]/20 to-[#6B00D7]/10 flex items-center justify-center">
-                  <i className="ri-user-heart-line text-[#6B00D7] text-2xl"></i>
+                <div className="w-14 h-14 mb-4 rounded-lg bg-gradient-to-br from-[#6B00D7]/30 to-[#FF5AF7]/20 shadow-inner shadow-[#6B00D7]/10 flex items-center justify-center">
+                  <i className="ri-user-heart-line text-[#FF5AF7] text-2xl"></i>
                 </div>
-                <h3 className="font-poppins font-semibold text-xl mb-3">Legacy Planning</h3>
-                <p className="text-gray-400">Set up vaults for future generations with inheritance features that ensure your assets reach your loved ones.</p>
+                <h3 className="font-poppins font-semibold text-xl mb-3 text-white">Legacy Planning</h3>
+                <p className="text-gray-200">Set up vaults for future generations with inheritance features that ensure your assets reach your loved ones.</p>
               </CardContent>
             </Card>
             
-            <Card className="vault-card bg-[#1A1A1A]/60 border border-[#333333] rounded-xl p-6 hover:border-[#6B00D7]/50 transition-all">
+            <Card className="vault-card bg-[#242424] border border-[#6B00D7]/30 rounded-xl p-6 hover:border-[#FF5AF7] hover:shadow-lg hover:shadow-[#6B00D7]/30 transition-all">
               <CardContent className="p-0">
-                <div className="w-12 h-12 mb-4 rounded-lg bg-gradient-to-br from-[#6B00D7]/20 to-[#6B00D7]/10 flex items-center justify-center">
-                  <i className="ri-lock-password-line text-[#6B00D7] text-2xl"></i>
+                <div className="w-14 h-14 mb-4 rounded-lg bg-gradient-to-br from-[#6B00D7]/30 to-[#FF5AF7]/20 shadow-inner shadow-[#6B00D7]/10 flex items-center justify-center">
+                  <i className="ri-lock-password-line text-[#FF5AF7] text-2xl"></i>
                 </div>
-                <h3 className="font-poppins font-semibold text-xl mb-3">Multi-Asset Support</h3>
-                <p className="text-gray-400">Lock multiple cryptocurrencies and NFTs in a single vault, with full visibility and management.</p>
+                <h3 className="font-poppins font-semibold text-xl mb-3 text-white">Multi-Asset Support</h3>
+                <p className="text-gray-200">Lock multiple cryptocurrencies and NFTs in a single vault, with full visibility and management.</p>
               </CardContent>
             </Card>
             
-            <Card className="vault-card bg-[#1A1A1A]/60 border border-[#333333] rounded-xl p-6 hover:border-[#6B00D7]/50 transition-all">
+            <Card className="vault-card bg-[#242424] border border-[#6B00D7]/30 rounded-xl p-6 hover:border-[#FF5AF7] hover:shadow-lg hover:shadow-[#6B00D7]/30 transition-all">
               <CardContent className="p-0">
-                <div className="w-12 h-12 mb-4 rounded-lg bg-gradient-to-br from-[#6B00D7]/20 to-[#6B00D7]/10 flex items-center justify-center">
-                  <i className="ri-scales-line text-[#6B00D7] text-2xl"></i>
+                <div className="w-14 h-14 mb-4 rounded-lg bg-gradient-to-br from-[#6B00D7]/30 to-[#FF5AF7]/20 shadow-inner shadow-[#6B00D7]/10 flex items-center justify-center">
+                  <i className="ri-scales-line text-[#FF5AF7] text-2xl"></i>
                 </div>
-                <h3 className="font-poppins font-semibold text-xl mb-3">Smart Conditions</h3>
-                <p className="text-gray-400">Create vaults with conditional access based on price triggers, blockchain events, or multi-signature requirements.</p>
+                <h3 className="font-poppins font-semibold text-xl mb-3 text-white">Smart Conditions</h3>
+                <p className="text-gray-200">Create vaults with conditional access based on price triggers, blockchain events, or multi-signature requirements.</p>
               </CardContent>
             </Card>
             
-            <Card className="vault-card bg-[#1A1A1A]/60 border border-[#333333] rounded-xl p-6 hover:border-[#6B00D7]/50 transition-all">
+            <Card className="vault-card bg-[#242424] border border-[#6B00D7]/30 rounded-xl p-6 hover:border-[#FF5AF7] hover:shadow-lg hover:shadow-[#6B00D7]/30 transition-all">
               <CardContent className="p-0">
-                <div className="w-12 h-12 mb-4 rounded-lg bg-gradient-to-br from-[#6B00D7]/20 to-[#6B00D7]/10 flex items-center justify-center">
-                  <i className="ri-eye-line text-[#6B00D7] text-2xl"></i>
+                <div className="w-14 h-14 mb-4 rounded-lg bg-gradient-to-br from-[#6B00D7]/30 to-[#FF5AF7]/20 shadow-inner shadow-[#6B00D7]/10 flex items-center justify-center">
+                  <i className="ri-eye-line text-[#FF5AF7] text-2xl"></i>
                 </div>
-                <h3 className="font-poppins font-semibold text-xl mb-3">Transparent Security</h3>
-                <p className="text-gray-400">Verify the security of your vault at any time with full transparency of the smart contract on the blockchain.</p>
+                <h3 className="font-poppins font-semibold text-xl mb-3 text-white">Transparent Security</h3>
+                <p className="text-gray-200">Verify the security of your vault at any time with full transparency of the smart contract on the blockchain.</p>
               </CardContent>
             </Card>
           </div>
@@ -247,8 +247,8 @@ const Home = () => {
       <section id="how-it-works" className="py-20 bg-gradient-to-b from-[#1A1A1A] to-[#222222]">
         <div className="container mx-auto px-4">
           <div className="text-center mb-16">
-            <h2 className="font-poppins font-bold text-3xl">How <span className="text-[#6B00D7]">Chronos Vault</span> Works</h2>
-            <p className="text-gray-400 mt-3 max-w-2xl mx-auto">Creating and managing your time-locked vaults is simple, secure, and transparent.</p>
+            <h2 className="font-poppins font-bold text-3xl">How <span className="text-[#FF5AF7]">Chronos Vault</span> Works</h2>
+            <p className="text-gray-200 mt-3 max-w-2xl mx-auto">Creating and managing your time-locked vaults is simple, secure, and transparent.</p>
           </div>
           
           <div className="relative">
@@ -258,19 +258,19 @@ const Home = () => {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-6 relative z-10">
               {/* Step 1 */}
               <div className="relative">
-                <div className="hidden md:flex absolute -top-6 left-1/2 transform -translate-x-1/2 w-12 h-12 rounded-full bg-[#6B00D7] items-center justify-center font-poppins font-bold text-white">1</div>
-                <Card className="bg-[#1E1E1E] border border-[#333333] rounded-xl p-6 md:mt-12 hover:border-[#6B00D7]/50 transition-all">
+                <div className="hidden md:flex absolute -top-6 left-1/2 transform -translate-x-1/2 w-14 h-14 rounded-full bg-gradient-to-br from-[#6B00D7] to-[#FF5AF7] border-2 border-white/20 shadow-lg shadow-[#6B00D7]/30 items-center justify-center font-poppins font-bold text-white text-lg">1</div>
+                <Card className="bg-[#242424] border border-[#6B00D7]/30 rounded-xl p-6 md:mt-12 hover:border-[#FF5AF7] hover:shadow-lg hover:shadow-[#6B00D7]/30 transition-all">
                   <CardContent className="p-0">
-                    <div className="md:hidden flex w-10 h-10 mb-4 rounded-full bg-[#6B00D7] items-center justify-center font-poppins font-bold text-white">1</div>
-                    <h3 className="font-poppins font-semibold text-xl mb-3">Connect Your Wallet</h3>
-                    <p className="text-gray-400">Link your Web3 wallet to Chronos Vault with a simple, secure connection process.</p>
-                    <ul className="mt-4 space-y-2 text-sm text-gray-400">
+                    <div className="md:hidden flex w-12 h-12 mb-4 rounded-full bg-gradient-to-br from-[#6B00D7] to-[#FF5AF7] items-center justify-center font-poppins font-bold text-white text-lg">1</div>
+                    <h3 className="font-poppins font-semibold text-xl mb-3 text-white">Connect Your Wallet</h3>
+                    <p className="text-gray-200">Link your Web3 wallet to Chronos Vault with a simple, secure connection process.</p>
+                    <ul className="mt-4 space-y-2 text-sm text-gray-200">
                       <li className="flex items-start">
-                        <i className="ri-checkbox-circle-line text-[#6B00D7] mt-0.5 mr-2"></i>
+                        <i className="ri-checkbox-circle-line text-[#FF5AF7] mt-0.5 mr-2"></i>
                         <span>Compatible with MetaMask, Coinbase Wallet, and others</span>
                       </li>
                       <li className="flex items-start">
-                        <i className="ri-checkbox-circle-line text-[#6B00D7] mt-0.5 mr-2"></i>
+                        <i className="ri-checkbox-circle-line text-[#FF5AF7] mt-0.5 mr-2"></i>
                         <span>No personal data stored on our servers</span>
                       </li>
                     </ul>
@@ -280,19 +280,19 @@ const Home = () => {
               
               {/* Step 2 */}
               <div className="relative">
-                <div className="hidden md:flex absolute -top-6 left-1/2 transform -translate-x-1/2 w-12 h-12 rounded-full bg-[#6B00D7] items-center justify-center font-poppins font-bold text-white">2</div>
-                <Card className="bg-[#1E1E1E] border border-[#333333] rounded-xl p-6 md:mt-12 hover:border-[#6B00D7]/50 transition-all">
+                <div className="hidden md:flex absolute -top-6 left-1/2 transform -translate-x-1/2 w-14 h-14 rounded-full bg-gradient-to-br from-[#6B00D7] to-[#FF5AF7] border-2 border-white/20 shadow-lg shadow-[#6B00D7]/30 items-center justify-center font-poppins font-bold text-white text-lg">2</div>
+                <Card className="bg-[#242424] border border-[#6B00D7]/30 rounded-xl p-6 md:mt-12 hover:border-[#FF5AF7] hover:shadow-lg hover:shadow-[#6B00D7]/30 transition-all">
                   <CardContent className="p-0">
-                    <div className="md:hidden flex w-10 h-10 mb-4 rounded-full bg-[#6B00D7] items-center justify-center font-poppins font-bold text-white">2</div>
-                    <h3 className="font-poppins font-semibold text-xl mb-3">Create Your Vault</h3>
-                    <p className="text-gray-400">Design your vault with customized time locks, conditions, and security features.</p>
-                    <ul className="mt-4 space-y-2 text-sm text-gray-400">
+                    <div className="md:hidden flex w-12 h-12 mb-4 rounded-full bg-gradient-to-br from-[#6B00D7] to-[#FF5AF7] items-center justify-center font-poppins font-bold text-white text-lg">2</div>
+                    <h3 className="font-poppins font-semibold text-xl mb-3 text-white">Create Your Vault</h3>
+                    <p className="text-gray-200">Design your vault with customized time locks, conditions, and security features.</p>
+                    <ul className="mt-4 space-y-2 text-sm text-gray-200">
                       <li className="flex items-start">
-                        <i className="ri-checkbox-circle-line text-[#6B00D7] mt-0.5 mr-2"></i>
+                        <i className="ri-checkbox-circle-line text-[#FF5AF7] mt-0.5 mr-2"></i>
                         <span>Set time lock periods from days to decades</span>
                       </li>
                       <li className="flex items-start">
-                        <i className="ri-checkbox-circle-line text-[#6B00D7] mt-0.5 mr-2"></i>
+                        <i className="ri-checkbox-circle-line text-[#FF5AF7] mt-0.5 mr-2"></i>
                         <span>Add beneficiaries or multi-signature requirements</span>
                       </li>
                     </ul>
@@ -302,19 +302,19 @@ const Home = () => {
               
               {/* Step 3 */}
               <div className="relative">
-                <div className="hidden md:flex absolute -top-6 left-1/2 transform -translate-x-1/2 w-12 h-12 rounded-full bg-[#6B00D7] items-center justify-center font-poppins font-bold text-white">3</div>
-                <Card className="bg-[#1E1E1E] border border-[#333333] rounded-xl p-6 md:mt-12 hover:border-[#6B00D7]/50 transition-all">
+                <div className="hidden md:flex absolute -top-6 left-1/2 transform -translate-x-1/2 w-14 h-14 rounded-full bg-gradient-to-br from-[#6B00D7] to-[#FF5AF7] border-2 border-white/20 shadow-lg shadow-[#6B00D7]/30 items-center justify-center font-poppins font-bold text-white text-lg">3</div>
+                <Card className="bg-[#242424] border border-[#6B00D7]/30 rounded-xl p-6 md:mt-12 hover:border-[#FF5AF7] hover:shadow-lg hover:shadow-[#6B00D7]/30 transition-all">
                   <CardContent className="p-0">
-                    <div className="md:hidden flex w-10 h-10 mb-4 rounded-full bg-[#6B00D7] items-center justify-center font-poppins font-bold text-white">3</div>
-                    <h3 className="font-poppins font-semibold text-xl mb-3">Deposit & Monitor</h3>
-                    <p className="text-gray-400">Securely deposit your assets and monitor your vault's status at any time.</p>
-                    <ul className="mt-4 space-y-2 text-sm text-gray-400">
+                    <div className="md:hidden flex w-12 h-12 mb-4 rounded-full bg-gradient-to-br from-[#6B00D7] to-[#FF5AF7] items-center justify-center font-poppins font-bold text-white text-lg">3</div>
+                    <h3 className="font-poppins font-semibold text-xl mb-3 text-white">Deposit & Monitor</h3>
+                    <p className="text-gray-200">Securely deposit your assets and monitor your vault's status at any time.</p>
+                    <ul className="mt-4 space-y-2 text-sm text-gray-200">
                       <li className="flex items-start">
-                        <i className="ri-checkbox-circle-line text-[#6B00D7] mt-0.5 mr-2"></i>
+                        <i className="ri-checkbox-circle-line text-[#FF5AF7] mt-0.5 mr-2"></i>
                         <span>Verify your funds on-chain at any time</span>
                       </li>
                       <li className="flex items-start">
-                        <i className="ri-checkbox-circle-line text-[#6B00D7] mt-0.5 mr-2"></i>
+                        <i className="ri-checkbox-circle-line text-[#FF5AF7] mt-0.5 mr-2"></i>
                         <span>Receive notifications about your vault's status</span>
                       </li>
                     </ul>
@@ -339,8 +339,8 @@ const Home = () => {
       <section id="vaults" className="py-20 bg-[#1A1A1A]">
         <div className="container mx-auto px-4">
           <div className="text-center mb-16">
-            <h2 className="font-poppins font-bold text-3xl">Explore <span className="text-[#6B00D7]">Vault</span> Types</h2>
-            <p className="text-gray-400 mt-3 max-w-2xl mx-auto">Choose from a variety of specialized vaults designed for different purposes and security needs.</p>
+            <h2 className="font-poppins font-bold text-3xl">Explore <span className="text-[#FF5AF7]">Vault</span> Types</h2>
+            <p className="text-gray-200 mt-3 max-w-2xl mx-auto">Choose from a variety of specialized vaults designed for different purposes and security needs.</p>
           </div>
           
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
