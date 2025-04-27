@@ -93,9 +93,9 @@ const Header = () => {
                   <SheetDescription>Navigation links and wallet connection</SheetDescription>
                 </SheetHeader>
                 <div className="flex flex-col h-full">
-                  <div className="flex justify-between items-center mb-10">
+                  <div className="flex justify-between items-center mb-6">
                     <div className="flex items-center gap-3">
-                      <div className="h-12 w-12 rounded-full bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] flex items-center justify-center shadow-xl shadow-[#FF5AF7]/40 p-2.5 border-2 border-white/40 animate-logo-glow">
+                      <div className="h-10 w-10 rounded-full bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] flex items-center justify-center shadow-xl shadow-[#FF5AF7]/40 p-2 border-2 border-white/40 animate-logo-glow">
                         <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="text-white">
                           <path d="M19 7H5C3.89543 7 3 7.89543 3 9V18C3 19.1046 3.89543 20 5 20H19C20.1046 20 21 19.1046 21 18V9C21 7.89543 20.1046 7 19 7Z" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
                           <path d="M12 14C13.1046 14 14 13.1046 14 12C14 10.8954 13.1046 10 12 10C10.8954 10 10 10.8954 10 12C10 13.1046 10.8954 14 12 14Z" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
@@ -104,7 +104,7 @@ const Header = () => {
                         </svg>
                       </div>
                       <div className="relative">
-                        <h1 className="text-xl font-poppins font-bold text-white">
+                        <h1 className="text-lg font-poppins font-bold text-white">
                           <span className="bg-clip-text text-transparent bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7]">Chronos</span> 
                           <span className="text-white">Vault</span>
                         </h1>
@@ -118,27 +118,30 @@ const Header = () => {
                     </SheetClose>
                   </div>
                   
-                  <div className="flex flex-col gap-7 py-6">
-                    {navigationLinks.map((link) => (
-                      <SheetClose key={link.name} asChild>
-                        <Link 
-                          href={link.href}
-                          className={`flex items-center gap-3 ${location === link.href 
-                            ? 'font-poppins font-semibold text-white bg-gradient-to-r from-[#6B00D7]/20 to-transparent pl-4 py-2 border-l-2 border-[#6B00D7]' 
-                            : 'text-gray-300 hover:text-white font-poppins font-medium transition-all hover:translate-x-1'
-                          }`}
-                        >
-                          <div className="flex items-center justify-center w-12 h-12 rounded-lg bg-gradient-to-br from-[#6B00D7]/30 to-[#FF5AF7]/20 shadow-inner shadow-[#6B00D7]/10 border border-[#6B00D7]/20">
-                            <span className="text-2xl text-[#FF5AF7]">{link.icon}</span>
-                          </div>
-                          <span className="text-xl">{link.name}</span>
-                        </Link>
-                      </SheetClose>
-                    ))}
+                  {/* Scrollable navigation container */}
+                  <div className="flex-1 overflow-y-auto py-4 pr-2 -mr-2 mobile-menu-scrollbar">
+                    <div className="flex flex-col gap-5">
+                      {navigationLinks.map((link) => (
+                        <SheetClose key={link.name} asChild>
+                          <Link 
+                            href={link.href}
+                            className={`flex items-center gap-3 ${location === link.href 
+                              ? 'font-poppins font-semibold text-white bg-gradient-to-r from-[#6B00D7]/20 to-transparent pl-4 py-2 border-l-2 border-[#6B00D7]' 
+                              : 'text-gray-300 hover:text-white font-poppins font-medium transition-all hover:translate-x-1'
+                            }`}
+                          >
+                            <div className="flex items-center justify-center w-10 h-10 rounded-lg bg-gradient-to-br from-[#6B00D7]/30 to-[#FF5AF7]/20 shadow-inner shadow-[#6B00D7]/10 border border-[#6B00D7]/20">
+                              <span className="text-xl text-[#FF5AF7]">{link.icon}</span>
+                            </div>
+                            <span className="text-lg">{link.name}</span>
+                          </Link>
+                        </SheetClose>
+                      ))}
+                    </div>
                   </div>
                   
-                  <div className="mt-auto pt-8 border-t border-[#6B00D7]/30">
-                    <div className="w-full py-5 rounded-xl bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] text-white font-poppins font-medium text-lg transition-all p-2">
+                  <div className="pt-4 mt-4 border-t border-[#6B00D7]/30">
+                    <div className="w-full py-3 rounded-xl bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] text-white font-poppins font-medium text-lg transition-all">
                       <ConnectWalletButton />
                     </div>
                   </div>

@@ -25,6 +25,25 @@
     }
   }
   
+  /* Custom scrollbar for mobile menu */
+  .mobile-menu-scrollbar::-webkit-scrollbar {
+    width: 5px;
+  }
+  
+  .mobile-menu-scrollbar::-webkit-scrollbar-track {
+    background: rgba(107, 0, 215, 0.1);
+    border-radius: 10px;
+  }
+  
+  .mobile-menu-scrollbar::-webkit-scrollbar-thumb {
+    background: linear-gradient(to bottom, #6B00D7, #FF5AF7);
+    border-radius: 10px;
+  }
+  
+  .mobile-menu-scrollbar::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(to bottom, #FF5AF7, #6B00D7);
+  }
+  
   .animate-scan {
     animation: scanDown 2s linear infinite;
   }
