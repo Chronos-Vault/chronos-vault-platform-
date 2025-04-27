@@ -71,7 +71,7 @@ const Home = () => {
               </div>
               
               <p className="text-xl md:text-2xl text-gray-200 max-w-4xl mx-auto mt-6">
-                We build tamper-proof digital and financial vaults with advanced unlock mechanisms, cross-chain redundancy, and secure multi-signature access protocols because we believe in your power to protect what matters most.
+                Create tamper-proof digital and financial vaults with advanced unlock mechanisms, cross-chain redundancy, and secure multi-signature access protocols because we believe in your power to protect what matters most.
               </p>
               
               <div className="flex justify-center gap-6 mt-10">
