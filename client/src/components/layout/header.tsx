@@ -23,6 +23,7 @@ const Header = () => {
     { name: "How It Works", href: "/#how-it-works", icon: "⚙️" },
     { name: "Vaults", href: "/#vaults", icon: "🔐" },
     { name: "My Vaults", href: "/my-vaults", icon: "📊" },
+    { name: "CVT Token", href: "/cvt-token", icon: "🪙" },
     { name: "Roadmap", href: "/roadmap", icon: "🗺️" },
     { name: "About", href: "/about", icon: "ℹ️" },
   ];
