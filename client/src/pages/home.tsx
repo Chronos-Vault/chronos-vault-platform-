@@ -57,13 +57,21 @@ const Home = () => {
             {/* Headline and Primary Content */}
             <div className="text-center mb-12">
               <h1 className="font-poppins font-bold text-4xl md:text-6xl leading-tight mb-6">
-                <span className="animate-text-shine bg-gradient-to-r from-[#6B00D7] via-[#FF5AF7] to-[#6B00D7] bg-clip-text text-transparent bg-300% inline-block">Military-Grade</span>
+                <span className="animate-text-shine bg-gradient-to-r from-[#6B00D7] via-[#FF5AF7] to-[#6B00D7] bg-clip-text text-transparent bg-300% inline-block">Decentralized Digital</span>
                 <br />
-                <span className="text-white">Multi-Chain Time Vaults</span>
+                <span className="text-white">Chronos Vault Network</span>
               </h1>
               
+              <div className="flex justify-center gap-3 items-center my-4">
+                <span className="px-3 py-1 bg-[#6B00D7]/30 border border-[#6B00D7]/40 rounded-full text-[#FF5AF7] text-sm">TON</span>
+                <span className="px-3 py-1 bg-[#6B00D7]/30 border border-[#6B00D7]/40 rounded-full text-[#FF5AF7] text-sm">ETH</span>
+                <span className="px-3 py-1 bg-[#6B00D7]/30 border border-[#6B00D7]/40 rounded-full text-[#FF5AF7] text-sm">SOL</span>
+                <span className="px-3 py-1 bg-[#6B00D7]/30 border border-[#6B00D7]/40 rounded-full text-[#FF5AF7] text-sm">BTC</span>
+                <span className="px-3 py-1 bg-[#6B00D7]/30 border border-[#6B00D7]/40 rounded-full text-[#FF5AF7] text-sm">Military-Grade</span>
+              </div>
+              
               <p className="text-xl md:text-2xl text-gray-200 max-w-4xl mx-auto mt-6">
-                The world's most advanced decentralized platform for secure, tamper-proof digital time vaults with seamless integration across TON, Ethereum, Solana, and Bitcoin.
+                We build tamper-proof digital and financial vaults with advanced unlock mechanisms, cross-chain redundancy, and secure multi-signature access protocols because we believe in your power to protect what matters most.
               </p>
               
               <div className="flex justify-center gap-6 mt-10">
