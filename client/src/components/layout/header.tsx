@@ -49,10 +49,12 @@ const Header = () => {
           
           <div className="hidden md:flex items-center gap-8">
             {navigationLinks.map((link) => (
-              <Link key={link.name} href={link.href}>
-                <a className={`text-gray-300 hover:text-white transition-colors ${location === link.href ? 'text-white' : ''}`}>
-                  {link.name}
-                </a>
+              <Link 
+                key={link.name} 
+                href={link.href}
+                className={`text-gray-300 hover:text-white transition-colors ${location === link.href ? 'text-white' : ''}`}
+              >
+                {link.name}
               </Link>
             ))}
           </div>
@@ -96,10 +98,11 @@ const Header = () => {
                   <div className="flex flex-col gap-6 py-4">
                     {navigationLinks.map((link) => (
                       <SheetClose key={link.name} asChild>
-                        <Link href={link.href}>
-                          <a className={`text-gray-300 hover:text-white transition-colors ${location === link.href ? 'text-white font-medium' : ''}`}>
-                            {link.name}
-                          </a>
+                        <Link 
+                          href={link.href}
+                          className={`text-gray-300 hover:text-white transition-colors ${location === link.href ? 'text-white font-medium' : ''}`}
+                        >
+                          {link.name}
                         </Link>
                       </SheetClose>
                     ))}

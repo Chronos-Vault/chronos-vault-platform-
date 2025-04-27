@@ -8,16 +8,14 @@ const Footer = () => {
       <div className="container mx-auto px-4">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-12">
           <div>
-            <Link href="/">
-              <a className="flex items-center gap-2 mb-6">
-                <div className="h-10 w-10 rounded-full bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] flex items-center justify-center">
-                  <span className="text-white font-bold font-poppins text-lg">CV</span>
-                </div>
-                <h1 className="text-2xl font-poppins font-semibold text-white">
-                  <span className="text-[#6B00D7]">Chronos</span> 
-                  <span className="text-white">Vault</span>
-                </h1>
-              </a>
+            <Link href="/" className="flex items-center gap-2 mb-6">
+              <div className="h-10 w-10 rounded-full bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] flex items-center justify-center">
+                <span className="text-white font-bold font-poppins text-lg">CV</span>
+              </div>
+              <h1 className="text-2xl font-poppins font-semibold text-white">
+                <span className="text-[#6B00D7]">Chronos</span> 
+                <span className="text-white">Vault</span>
+              </h1>
             </Link>
             
             <p className="text-gray-400 mb-6">The Swiss Bank of Web3 — decentralized, unstoppable, and built with beauty and trust at the core.</p>
@@ -41,11 +39,11 @@ const Footer = () => {
           <div>
             <h3 className="font-poppins font-semibold text-lg mb-4">Products</h3>
             <ul className="space-y-3">
-              <li><Link href="/create-vault"><a className="text-gray-400 hover:text-[#6B00D7] transition-colors">Legacy Vault</a></Link></li>
-              <li><Link href="/create-vault"><a className="text-gray-400 hover:text-[#6B00D7] transition-colors">Investment Vault</a></Link></li>
-              <li><Link href="/create-vault"><a className="text-gray-400 hover:text-[#6B00D7] transition-colors">Project Vault</a></Link></li>
-              <li><Link href="/about"><a className="text-gray-400 hover:text-[#6B00D7] transition-colors">Custom Solutions</a></Link></li>
-              <li><Link href="/my-vaults"><a className="text-gray-400 hover:text-[#6B00D7] transition-colors">Vault Analytics</a></Link></li>
+              <li><Link href="/create-vault" className="text-gray-400 hover:text-[#6B00D7] transition-colors">Legacy Vault</Link></li>
+              <li><Link href="/create-vault" className="text-gray-400 hover:text-[#6B00D7] transition-colors">Investment Vault</Link></li>
+              <li><Link href="/create-vault" className="text-gray-400 hover:text-[#6B00D7] transition-colors">Project Vault</Link></li>
+              <li><Link href="/about" className="text-gray-400 hover:text-[#6B00D7] transition-colors">Custom Solutions</Link></li>
+              <li><Link href="/my-vaults" className="text-gray-400 hover:text-[#6B00D7] transition-colors">Vault Analytics</Link></li>
             </ul>
           </div>
           
@@ -63,7 +61,7 @@ const Footer = () => {
           <div>
             <h3 className="font-poppins font-semibold text-lg mb-4">Company</h3>
             <ul className="space-y-3">
-              <li><Link href="/about"><a className="text-gray-400 hover:text-[#6B00D7] transition-colors">About Us</a></Link></li>
+              <li><Link href="/about" className="text-gray-400 hover:text-[#6B00D7] transition-colors">About Us</Link></li>
               <li><a href="#" className="text-gray-400 hover:text-[#6B00D7] transition-colors">Careers</a></li>
               <li><a href="#" className="text-gray-400 hover:text-[#6B00D7] transition-colors">Partners</a></li>
               <li><a href="#" className="text-gray-400 hover:text-[#6B00D7] transition-colors">Contact</a></li>

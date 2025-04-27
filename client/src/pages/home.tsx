@@ -380,11 +380,12 @@ const Home = () => {
           </div>
           
           <div className="mt-12 text-center">
-            <Link href="/create-vault">
-              <a className="inline-flex items-center text-[#6B00D7] hover:text-[#FF5AF7] transition-colors">
-                <span>Need a custom vault solution?</span>
-                <i className="ri-arrow-right-line ml-2"></i>
-              </a>
+            <Link 
+              href="/create-vault" 
+              className="inline-flex items-center text-[#6B00D7] hover:text-[#FF5AF7] transition-colors"
+            >
+              <span>Need a custom vault solution?</span>
+              <i className="ri-arrow-right-line ml-2"></i>
             </Link>
           </div>
         </div>
