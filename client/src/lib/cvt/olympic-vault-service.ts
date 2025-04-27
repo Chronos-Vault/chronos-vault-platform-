@@ -8,8 +8,11 @@ export interface OlympicVault {
   id: number;
   name: string;
   type: 'summer' | 'winter';
+  capsuleType?: 'summer' | 'winter'; // Alias for backward compatibility
   location: string;
+  hostCity?: string; // Alias for backward compatibility 
   year: number;
+  olympicYear?: number; // Alias for backward compatibility
   startDate: string; // ISO date string
   unlockDate: string; // ISO date string
   tokenAmount: number;
@@ -17,6 +20,11 @@ export interface OlympicVault {
   isUnlocked: boolean;
   olympicNumber: number; // e.g., XXXIII Summer Olympics
   unlockRequirements: string[];
+  description?: string; // Added for compatibility
+  messageContent?: string; // Added for compatibility
+  blockchainAddress?: string; // Added for compatibility
+  signatureCount?: number; // Added for compatibility
+  mediaCount?: number; // Added for compatibility
 }
 
 /**
@@ -165,7 +173,18 @@ export class OlympicVaultService {
       }
     ];
     
-    return vaults;
+    // Add compatibility properties
+    return vaults.map(vault => ({
+      ...vault,
+      capsuleType: vault.type,
+      hostCity: vault.location,
+      olympicYear: vault.year,
+      description: `${vault.name} is a time-locked vault for the ${vault.year} Olympics in ${vault.location}. It contains ${vault.tokenAmount.toLocaleString()} CVT tokens with a ${vault.bonusPercentage}% bonus.`,
+      messageContent: `This vault contains exclusive Olympics memorabilia and predictions for the ${vault.year} Games.`,
+      blockchainAddress: `0x${Math.random().toString(16).substring(2, 10)}...${Math.random().toString(16).substring(2, 10)}`,
+      signatureCount: Math.floor(Math.random() * 5) + 3,
+      mediaCount: Math.floor(Math.random() * 10) + 2
+    }));
   }
   
   /**

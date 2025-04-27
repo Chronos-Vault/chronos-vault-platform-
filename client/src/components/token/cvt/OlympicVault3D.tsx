@@ -230,7 +230,7 @@ const OlympicVault3DCard: React.FC<{
                     transform: 'translateZ(5px)',
                   }}
                 >
-                  {vault.olympicYear}
+                  {vault.year}
                 </h3>
               </div>
               
@@ -248,7 +248,7 @@ const OlympicVault3DCard: React.FC<{
             
             <div className="flex items-center mb-4" style={{ transform: 'translateZ(3px)' }}>
               <GlobeIcon className="h-5 w-5 mr-2 text-muted-foreground" />
-              <span className="font-semibold text-lg">{vault.hostCity}</span>
+              <span className="font-semibold text-lg">{vault.location}</span>
             </div>
             
             <p 
@@ -272,7 +272,7 @@ const OlympicVault3DCard: React.FC<{
             <div className="mb-4" style={{ transform: 'translateZ(6px)' }}>
               <OlympicTimer 
                 targetDate={vault.unlockDate}
-                vaultType={vault.capsuleType}
+                vaultType={vault.type}
                 isUnlocked={vault.isUnlocked}
               />
             </div>
