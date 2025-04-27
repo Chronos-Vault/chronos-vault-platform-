@@ -1,7 +1,7 @@
 import React from 'react';
 import { Container } from '@/components/ui/container';
 import { PageHeader } from '@/components/page-header';
-import { BitcoinVaultFeature } from '@/pages/roadmap/BitcoinVaultRoadmap';
+import { BitcoinVaultFeature } from '@/components/roadmap/BitcoinVaultRoadmap';
 import { Helmet } from 'react-helmet';
 
 export default function RoadmapPage() {

@@ -1,207 +1,247 @@
-import React, { useState, useEffect } from 'react';
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Progress } from "@/components/ui/progress";
-import { useToast } from "@/hooks/use-toast";
-import { useVaultContract } from "@/hooks/use-contracts";
-import { SecurityLevel, VaultType } from "@/lib/contract-interfaces";
-import { useMultiChain } from "@/contexts/multi-chain-context";
-import { motion } from "framer-motion";
+import React, { useState } from 'react';
+import { Link } from 'wouter';
+import { Bitcoin, LockIcon, Calendar, ArrowRight, TrendingUp, Shield } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Progress } from '@/components/ui/progress';
+import { calculateTimeRemaining, formatDate } from '@/lib/utils';
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
-interface BitcoinData {
-  currentBlockHeight: number;
-  currentPrice: number;
-  subsidy?: {
-    current: number;
-    next: number;
-  };
-  nextHalving?: {
-    blockHeight: number;
-    blocksRemaining: number;
-    estimatedTimeRemaining: {
-      days: number;
-      hours: number;
-    };
-    percentage: number;
-  };
-  totalBitcoin?: {
-    mined: number;
-    remaining: number;
-    total: number;
-  };
-}
+// Simulating the next Bitcoin halving date
+const nextHalvingDate = new Date('2024-04-08');
+// Calculating days until next halving
+const daysUntilHalving = Math.max(0, Math.floor((nextHalvingDate.getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24)));
 
-// Sample data (Would be fetched from real API in production)
-const SAMPLE_BITCOIN_DATA: BitcoinData = {
-  currentBlockHeight: 843209,
-  currentPrice: 64835.42,
-  subsidy: {
-    current: 3.125,
-    next: 1.5625
-  },
-  nextHalving: {
-    blockHeight: 840000,
-    blocksRemaining: 0, // Already happened in April 2024
-    estimatedTimeRemaining: {
-      days: 0,
-      hours: 0
-    },
-    percentage: 100
-  },
-  totalBitcoin: {
-    mined: 19560342,
-    remaining: 1439658,
-    total: 21000000
-  }
-};
+export const BitcoinHalvingVault: React.FC = () => {
+  const [activeTab, setActiveTab] = useState('overview');
 
-export function BitcoinHalvingVault() {
-  const [bitcoinData, setBitcoinData] = useState<BitcoinData>(SAMPLE_BITCOIN_DATA);
-  const [loading, setLoading] = useState(false);
-  const { toast } = useToast();
-  const { createVault } = useVaultContract();
-
-  useEffect(() => {
-    const fetchBitcoinData = async () => {
-      try {
-        // In production, would fetch real data from blockchain API
-        // const response = await fetch("https://mempool.space/api/v1/blocks/tip/height");
-        // const blockHeight = await response.json();
-        
-        // Just simulating data update for now to avoid API dependencies
-        setTimeout(() => {
-          setBitcoinData({
-            ...SAMPLE_BITCOIN_DATA,
-            currentBlockHeight: SAMPLE_BITCOIN_DATA.currentBlockHeight + 1
-          });
-        }, 600000); // Update every 10 minutes
-      } catch (error) {
-        console.error("Error fetching Bitcoin data:", error);
-      }
-    };
-
-    fetchBitcoinData();
-    // Would set up interval in production: setInterval(fetchBitcoinData, 600000);
-    
-    return () => {
-      // Would clear interval in production
-    };
-  }, []);
-
-  const handleCreateHalvingVault = async () => {
-    try {
-      setLoading(true);
-      
-      // Calculate next halving block (approximately every 210,000 blocks)
-      const nextHalvingBlock = Math.ceil(bitcoinData.currentBlockHeight / 210000) * 210000;
-      
-      // Estimate date (roughly 10 minutes per block, converted to timestamp)
-      const now = new Date();
-      const minutesRemaining = (nextHalvingBlock - bitcoinData.currentBlockHeight) * 10;
-      const unlockDate = new Date(now.getTime() + minutesRemaining * 60 * 1000);
-      
-      await createVault({
-        asset: "0xbtc", // Would use actual token address in production
-        name: "Bitcoin Halving Vault",
-        symbol: "BTHV",
-        unlockTime: Math.floor(unlockDate.getTime() / 1000),
-        securityLevel: SecurityLevel.ENHANCED,
-        accessKey: "halving2028", // Would generate a secure key in production
-        isPublic: true,
-        vaultType: VaultType.INVESTMENT,
-      });
-      
-      toast({
-        title: "Halving Vault Created",
-        description: "Your Bitcoin Halving Vault has been created successfully!",
-      });
-    } catch (error) {
-      console.error("Error creating halving vault:", error);
-      toast({
-        title: "Creation Failed",
-        description: "Failed to create Bitcoin Halving Vault",
-        variant: "destructive",
-      });
-    } finally {
-      setLoading(false);
-    }
-  };
+  // Calculate the timeRemaining for the countdown
+  const timeRemaining = calculateTimeRemaining(nextHalvingDate);
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.5 }}
-    >
-      <Card className="w-full max-w-md mx-auto bg-gradient-to-br from-[#1a1a1a] to-[#232323] border-[#6B00D7] border-opacity-50 overflow-hidden">
-        <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7]"></div>
-        
-        <CardHeader className="pb-2">
-          <CardTitle className="text-xl font-bold flex items-center">
-            <svg className="w-6 h-6 mr-2 text-yellow-500" fill="currentColor" viewBox="0 0 24 24">
-              <path d="M12 22a10 10 0 1 1 0-20 10 10 0 0 1 0 20zm0-2a8 8 0 1 0 0-16 8 8 0 0 0 0 16zm-1-7.59V4h2v5h3v2h-3v2h-2V9H8V7h3z"/>
-            </svg>
-            Bitcoin Halving Vault
-          </CardTitle>
-          <CardDescription className="text-zinc-400">
-            Secure assets until the next Bitcoin halving event
-          </CardDescription>
-        </CardHeader>
-        
-        <CardContent className="space-y-4">
-          <div className="space-y-1">
-            <div className="flex justify-between text-sm">
-              <span className="text-zinc-400">Current BTC Price</span>
-              <span className="font-medium">${bitcoinData.currentPrice.toLocaleString()}</span>
-            </div>
-            
-            <div className="flex justify-between text-sm">
-              <span className="text-zinc-400">Block Height</span>
-              <span className="font-medium">{bitcoinData.currentBlockHeight.toLocaleString()}</span>
-            </div>
-            
-            <div className="flex justify-between text-sm">
-              <span className="text-zinc-400">Last Halving</span>
-              <span className="font-medium">Block 840,000</span>
-            </div>
-            
-            <div className="flex justify-between text-sm">
-              <span className="text-zinc-400">Next Halving</span>
-              <span className="font-medium">Block 1,050,000</span>
-            </div>
-
-            <div className="flex justify-between text-sm">
-              <span className="text-zinc-400">Current Reward</span>
-              <span className="font-medium">{bitcoinData.subsidy?.current} BTC</span>
-            </div>
-          </div>
-          
-          <div className="pt-2">
-            <div className="flex justify-between text-sm mb-1">
-              <span className="font-medium">Progress to Next Halving</span>
-              <span className="text-zinc-400">~{Math.floor((bitcoinData.currentBlockHeight - 840000) / 2100)}%</span>
-            </div>
-            <Progress value={(bitcoinData.currentBlockHeight - 840000) / 2100} className="h-2 bg-[#333333]" />
-          </div>
-          
-          <div className="p-3 bg-[#0f0f0f] bg-opacity-50 rounded-md border border-[#333333] text-sm">
-            <p className="text-zinc-300">
-              The next Bitcoin halving is expected in <span className="text-[#FF5AF7] font-medium">~{Math.floor((1050000 - bitcoinData.currentBlockHeight) / 144)} days</span>.
-              Creating a vault locked until this event may be a lucrative investment strategy.
+    <div className="w-full max-w-6xl mx-auto">
+      <div className="mb-10">
+        <div className="relative h-[250px] rounded-xl overflow-hidden mb-8">
+          <div className="absolute inset-0 bg-gradient-to-r from-orange-600 to-amber-700 opacity-90"></div>
+          <div className="absolute inset-0 flex flex-col justify-center items-center text-white p-8 text-center">
+            <Bitcoin className="h-16 w-16 mb-4 animate-pulse text-yellow-300" />
+            <h1 className="text-3xl md:text-4xl font-bold mb-2">Bitcoin Halving Vault</h1>
+            <p className="max-w-2xl text-lg text-white/90">
+              Secure your Bitcoin through market cycles with time-locked halvening-synchronized vaults
             </p>
           </div>
-        </CardContent>
+        </div>
         
-        <CardFooter>
-          <Button 
-            onClick={handleCreateHalvingVault}
-            disabled={loading}
-            className="w-full bg-gradient-to-r from-[#6B00D7] to-[#9500FF] hover:from-[#8400FF] hover:to-[#B700FF] text-white font-medium py-2 rounded-md transition-all transform hover:scale-[1.02] active:scale-[0.98]"
+        <Card className="bg-gradient-to-br from-orange-50 to-amber-50 dark:from-orange-950/30 dark:to-amber-950/30 border-orange-200 dark:border-orange-800/70 shadow-lg overflow-hidden">
+          <CardHeader className="pb-4">
+            <CardTitle className="flex items-center gap-2 text-orange-900 dark:text-orange-300">
+              <Calendar className="h-5 w-5 text-orange-600" />
+              Next Bitcoin Halving Countdown
+            </CardTitle>
+            <CardDescription className="text-orange-700 dark:text-orange-400">
+              Lock until the next halving to maximize your HODL strength
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="grid grid-cols-4 gap-3 text-center my-4">
+              <div className="bg-orange-100 dark:bg-orange-900/40 rounded-lg p-3 shadow-inner">
+                <div className="text-3xl font-bold text-orange-800 dark:text-orange-300">{timeRemaining.days}</div>
+                <div className="text-xs text-orange-600 dark:text-orange-500">Days</div>
+              </div>
+              <div className="bg-orange-100 dark:bg-orange-900/40 rounded-lg p-3 shadow-inner">
+                <div className="text-3xl font-bold text-orange-800 dark:text-orange-300">{timeRemaining.hours}</div>
+                <div className="text-xs text-orange-600 dark:text-orange-500">Hours</div>
+              </div>
+              <div className="bg-orange-100 dark:bg-orange-900/40 rounded-lg p-3 shadow-inner">
+                <div className="text-3xl font-bold text-orange-800 dark:text-orange-300">{timeRemaining.minutes}</div>
+                <div className="text-xs text-orange-600 dark:text-orange-500">Minutes</div>
+              </div>
+              <div className="bg-orange-100 dark:bg-orange-900/40 rounded-lg p-3 shadow-inner">
+                <div className="text-3xl font-bold text-orange-800 dark:text-orange-300">{timeRemaining.seconds}</div>
+                <div className="text-xs text-orange-600 dark:text-orange-500">Seconds</div>
+              </div>
+            </div>
+            
+            <div className="my-5">
+              <div className="flex justify-between text-sm text-orange-700 dark:text-orange-400 mb-2">
+                <span>Current Date</span>
+                <span>Next Halving: {formatDate(nextHalvingDate)}</span>
+              </div>
+              <Progress 
+                value={100 - (daysUntilHalving / 365 * 100)} 
+                className="h-2 bg-orange-100 dark:bg-orange-900/30"
+              />
+              <div className="text-xs text-orange-600 dark:text-orange-500 mt-2 text-center">
+                Only {daysUntilHalving} days left until the Bitcoin block reward halves!
+              </div>
+            </div>
+          </CardContent>
+          <CardFooter className="border-t border-orange-200 dark:border-orange-800/50 pt-4 pb-4">
+            <div className="w-full grid grid-cols-2 gap-4">
+              <Button 
+                variant="default" 
+                className="bg-gradient-to-r from-orange-600 to-amber-600 hover:from-orange-700 hover:to-amber-700 text-white"
+              >
+                <LockIcon className="h-4 w-4 mr-2" />
+                Create Halving Vault
+              </Button>
+              <Button variant="outline" className="border-orange-300 dark:border-orange-700 text-orange-700 dark:text-orange-400 hover:bg-orange-100 dark:hover:bg-orange-900/20">
+                Learn More
+                <ArrowRight className="h-4 w-4 ml-2" />
+              </Button>
+            </div>
+          </CardFooter>
+        </Card>
+      </div>
+      
+      <Tabs 
+        defaultValue="overview" 
+        value={activeTab}
+        onValueChange={setActiveTab}
+        className="mb-8"
+      >
+        <TabsList className="grid grid-cols-3 bg-orange-100 dark:bg-orange-900/30 border border-orange-200 dark:border-orange-800/50 p-1">
+          <TabsTrigger 
+            value="overview" 
+            className="data-[state=active]:bg-white dark:data-[state=active]:bg-black/70 data-[state=active]:text-orange-900 dark:data-[state=active]:text-orange-300"
           >
-            {loading ? "Creating Vault..." : "Create Halving Vault"}
+            Overview
+          </TabsTrigger>
+          <TabsTrigger 
+            value="benefits" 
+            className="data-[state=active]:bg-white dark:data-[state=active]:bg-black/70 data-[state=active]:text-orange-900 dark:data-[state=active]:text-orange-300"
+          >
+            Benefits
+          </TabsTrigger>
+          <TabsTrigger 
+            value="strategy" 
+            className="data-[state=active]:bg-white dark:data-[state=active]:bg-black/70 data-[state=active]:text-orange-900 dark:data-[state=active]:text-orange-300"
+          >
+            Halving Strategy
+          </TabsTrigger>
+        </TabsList>
+        
+        <TabsContent value="overview" className="mt-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <div className="bg-white dark:bg-black/20 rounded-xl border border-orange-200 dark:border-orange-800/50 p-6 shadow-sm">
+              <h3 className="text-xl font-bold text-orange-900 dark:text-orange-300 mb-4">What is a Bitcoin Halving?</h3>
+              <p className="text-orange-700 dark:text-orange-400 mb-4">
+                Bitcoin halving is a pre-programmed event where the reward for mining Bitcoin transactions is cut in half, 
+                effectively reducing the rate at which new bitcoins are created. This occurs approximately every four years.
+              </p>
+              <p className="text-orange-700 dark:text-orange-400">
+                Historically, halving events have been followed by significant bull runs in the Bitcoin market as the 
+                reduced supply meets increasing demand.
+              </p>
+            </div>
+            
+            <div className="bg-white dark:bg-black/20 rounded-xl border border-orange-200 dark:border-orange-800/50 p-6 shadow-sm">
+              <h3 className="text-xl font-bold text-orange-900 dark:text-orange-300 mb-4">Why Create a Halving Vault?</h3>
+              <p className="text-orange-700 dark:text-orange-400 mb-4">
+                Our specialized Bitcoin Halving Vaults help you commit to your HODL strategy by time-locking your Bitcoin 
+                until after the next halving, potentially maximizing your returns.
+              </p>
+              <p className="text-orange-700 dark:text-orange-400">
+                This removes the temptation to sell during market volatility and allows you to take advantage of the 
+                potential price appreciation that often follows halvings.
+              </p>
+            </div>
+          </div>
+        </TabsContent>
+        
+        <TabsContent value="benefits" className="mt-6">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="bg-white dark:bg-black/20 rounded-xl border border-orange-200 dark:border-orange-800/50 p-6 shadow-sm">
+              <div className="flex items-center justify-center h-12 w-12 rounded-full bg-orange-100 dark:bg-orange-900/50 mb-4">
+                <LockIcon className="h-6 w-6 text-orange-600 dark:text-orange-400" />
+              </div>
+              <h3 className="text-lg font-bold text-orange-900 dark:text-orange-300 mb-2">Forced HODL</h3>
+              <p className="text-orange-700 dark:text-orange-400">
+                Remove the temptation to sell during market dips by locking your Bitcoin until after the halving event.
+              </p>
+            </div>
+            
+            <div className="bg-white dark:bg-black/20 rounded-xl border border-orange-200 dark:border-orange-800/50 p-6 shadow-sm">
+              <div className="flex items-center justify-center h-12 w-12 rounded-full bg-orange-100 dark:bg-orange-900/50 mb-4">
+                <TrendingUp className="h-6 w-6 text-orange-600 dark:text-orange-400" />
+              </div>
+              <h3 className="text-lg font-bold text-orange-900 dark:text-orange-300 mb-2">Potential Gains</h3>
+              <p className="text-orange-700 dark:text-orange-400">
+                Historically, Bitcoin has seen significant price appreciation in the months following halving events.
+              </p>
+            </div>
+            
+            <div className="bg-white dark:bg-black/20 rounded-xl border border-orange-200 dark:border-orange-800/50 p-6 shadow-sm">
+              <div className="flex items-center justify-center h-12 w-12 rounded-full bg-orange-100 dark:bg-orange-900/50 mb-4">
+                <Shield className="h-6 w-6 text-orange-600 dark:text-orange-400" />
+              </div>
+              <h3 className="text-lg font-bold text-orange-900 dark:text-orange-300 mb-2">Enhanced Security</h3>
+              <p className="text-orange-700 dark:text-orange-400">
+                Our vaults provide multi-signature security and optional inheritance planning for your Bitcoin assets.
+              </p>
+            </div>
+          </div>
+        </TabsContent>
+        
+        <TabsContent value="strategy" className="mt-6">
+          <div className="bg-white dark:bg-black/20 rounded-xl border border-orange-200 dark:border-orange-800/50 p-6 shadow-sm">
+            <h3 className="text-xl font-bold text-orange-900 dark:text-orange-300 mb-4">Bitcoin Halving Investment Strategy</h3>
+            
+            <div className="space-y-6">
+              <div className="flex items-start gap-4">
+                <div className="flex items-center justify-center h-8 w-8 rounded-full bg-orange-100 dark:bg-orange-900/50 mt-1 flex-shrink-0">
+                  <span className="font-bold text-orange-600 dark:text-orange-400">1</span>
+                </div>
+                <div>
+                  <h4 className="text-lg font-semibold text-orange-900 dark:text-orange-300 mb-1">Create a Halving-Synchronized Vault</h4>
+                  <p className="text-orange-700 dark:text-orange-400">
+                    Set up a time-locked vault that automatically unlocks a predefined period after the next Bitcoin halving.
+                    This helps you maintain your investment discipline during market volatility.
+                  </p>
+                </div>
+              </div>
+              
+              <div className="flex items-start gap-4">
+                <div className="flex items-center justify-center h-8 w-8 rounded-full bg-orange-100 dark:bg-orange-900/50 mt-1 flex-shrink-0">
+                  <span className="font-bold text-orange-600 dark:text-orange-400">2</span>
+                </div>
+                <div>
+                  <h4 className="text-lg font-semibold text-orange-900 dark:text-orange-300 mb-1">Choose Your Lock-up Period</h4>
+                  <p className="text-orange-700 dark:text-orange-400">
+                    Select from predetermined periods: Halving + 6 months, Halving + 12 months, or Halving + 18 months.
+                    Longer lock-up periods earn additional CVT token rewards.
+                  </p>
+                </div>
+              </div>
+              
+              <div className="flex items-start gap-4">
+                <div className="flex items-center justify-center h-8 w-8 rounded-full bg-orange-100 dark:bg-orange-900/50 mt-1 flex-shrink-0">
+                  <span className="font-bold text-orange-600 dark:text-orange-400">3</span>
+                </div>
+                <div>
+                  <h4 className="text-lg font-semibold text-orange-900 dark:text-orange-300 mb-1">Receive a Bitcoin Halving NFT</h4>
+                  <p className="text-orange-700 dark:text-orange-400">
+                    Each vault comes with a unique Bitcoin Halving NFT that tracks your commitment and provides special
+                    benefits within the ChronosVault ecosystem.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </TabsContent>
+      </Tabs>
+      
+      <div className="flex justify-center">
+        <Link href="/bitcoin-halving-vault">
+          <Button 
+            size="lg"
+            className="bg-gradient-to-r from-orange-600 to-amber-600 hover:from-orange-700 hover:to-amber-700 text-white shadow-lg"
+          >
+            Create Your Bitcoin Halving Vault
+            <ArrowRight className="h-4 w-4 ml-2" />
           </Button>
-        </CardFooter>
-      </Card>
-    </motion.div>
+        </Link>
+      </div>
+    </div>
   );
-}
+};
