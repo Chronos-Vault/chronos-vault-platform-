@@ -49,10 +49,13 @@ const Header = () => {
                 <path d="M12 14V17" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
               </svg>
             </div>
-            <h1 className="text-3xl font-poppins font-bold text-white">
-              <span className="bg-clip-text text-transparent bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] group-hover:from-[#FF5AF7] group-hover:to-[#6B00D7] transition-all">Chronos</span> 
-              <span className="text-white">Vault</span>
-            </h1>
+            <div className="relative">
+              <h1 className="text-3xl font-poppins font-bold text-white">
+                <span className="bg-clip-text text-transparent bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] group-hover:from-[#FF5AF7] group-hover:to-[#6B00D7] transition-all">Chronos</span> 
+                <span className="text-white">Vault</span>
+              </h1>
+              <div className="absolute -top-4 -right-4 bg-[#FF5AF7] text-white text-[10px] px-2 py-0.5 rounded-full font-bold tracking-wider shadow-md shadow-[#FF5AF7]/30 animate-pulse">BETA</div>
+            </div>
           </Link>
           
           <div className="hidden md:flex items-center gap-8">
@@ -113,10 +116,13 @@ const Header = () => {
                           <path d="M12 14V17" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
                         </svg>
                       </div>
-                      <h1 className="text-xl font-poppins font-bold text-white">
-                        <span className="bg-clip-text text-transparent bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7]">Chronos</span> 
-                        <span className="text-white">Vault</span>
-                      </h1>
+                      <div className="relative">
+                        <h1 className="text-xl font-poppins font-bold text-white">
+                          <span className="bg-clip-text text-transparent bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7]">Chronos</span> 
+                          <span className="text-white">Vault</span>
+                        </h1>
+                        <div className="absolute -top-3 -right-3 bg-[#FF5AF7] text-white text-[9px] px-1.5 py-0.5 rounded-full font-bold tracking-wider shadow-md shadow-[#FF5AF7]/30 animate-pulse">BETA</div>
+                      </div>
                     </div>
                     <SheetClose asChild>
                       <Button variant="ghost" size="icon" className="rounded-full hover:bg-white/10">

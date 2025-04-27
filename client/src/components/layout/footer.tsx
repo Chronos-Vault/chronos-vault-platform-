@@ -4,11 +4,11 @@ const Footer = () => {
   const currentYear = new Date().getFullYear();
 
   return (
-    <footer className="bg-gradient-to-b from-[#181818] to-[#101010] pt-20 pb-10 border-t border-[#6B00D7]/20 relative overflow-hidden">
+    <footer className="bg-gradient-to-b from-[#242424] to-[#1E1E1E] pt-20 pb-10 border-t border-[#6B00D7]/30 relative overflow-hidden">
       {/* Decorative elements */}
       <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7]"></div>
-      <div className="absolute top-1/3 -left-40 w-80 h-80 rounded-full bg-[#6B00D7]/5 blur-[100px]"></div>
-      <div className="absolute bottom-1/3 -right-40 w-80 h-80 rounded-full bg-[#FF5AF7]/5 blur-[100px]"></div>
+      <div className="absolute top-1/3 -left-40 w-80 h-80 rounded-full bg-[#6B00D7]/10 blur-[100px]"></div>
+      <div className="absolute bottom-1/3 -right-40 w-80 h-80 rounded-full bg-[#FF5AF7]/10 blur-[100px]"></div>
       
       <div className="container mx-auto px-4 relative z-10">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-10 mb-16">
@@ -22,10 +22,13 @@ const Footer = () => {
                   <path d="M12 14V17" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
                 </svg>
               </div>
-              <h1 className="text-3xl font-poppins font-bold text-white">
-                <span className="bg-clip-text text-transparent bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] group-hover:from-[#FF5AF7] group-hover:to-[#6B00D7] transition-all">Chronos</span> 
-                <span className="text-white">Vault</span>
-              </h1>
+              <div className="relative">
+                <h1 className="text-3xl font-poppins font-bold text-white">
+                  <span className="bg-clip-text text-transparent bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] group-hover:from-[#FF5AF7] group-hover:to-[#6B00D7] transition-all">Chronos</span> 
+                  <span className="text-white">Vault</span>
+                </h1>
+                <div className="absolute -top-4 -right-4 bg-[#FF5AF7] text-white text-[10px] px-2 py-0.5 rounded-full font-bold tracking-wider shadow-md shadow-[#FF5AF7]/30 animate-pulse">BETA</div>
+              </div>
             </Link>
             
             <p className="text-gray-200 mb-8 text-lg font-poppins">The Swiss Bank of Web3 — decentralized, unstoppable, and built with beauty and trust at the core.</p>
@@ -80,9 +83,9 @@ const Footer = () => {
           </div>
         </div>
         
-        <div className="border-t border-[#6B00D7]/20 pt-10 pb-4 flex flex-col md:flex-row justify-between items-center">
+        <div className="border-t border-[#6B00D7]/30 pt-10 pb-4 flex flex-col md:flex-row justify-between items-center">
           <div className="flex items-center">
-            <div className="h-8 w-8 rounded-full bg-gradient-to-r from-[#6B00D7]/30 to-[#FF5AF7]/30 flex items-center justify-center mr-3 p-2">
+            <div className="h-8 w-8 rounded-lg bg-gradient-to-r from-[#6B00D7]/40 to-[#FF5AF7]/30 flex items-center justify-center mr-3 p-2 shadow-inner shadow-[#6B00D7]/10">
               <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="text-white">
                 <path d="M19 7H5C3.89543 7 3 7.89543 3 9V18C3 19.1046 3.89543 20 5 20H19C20.1046 20 21 19.1046 21 18V9C21 7.89543 20.1046 7 19 7Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
                 <path d="M12 14C13.1046 14 14 13.1046 14 12C14 10.8954 13.1046 10 12 10C10.8954 10 10 10.8954 10 12C10 13.1046 10.8954 14 12 14Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
@@ -90,13 +93,13 @@ const Footer = () => {
                 <path d="M12 14V17" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
               </svg>
             </div>
-            <p className="text-gray-400 font-poppins">© {currentYear} <span className="text-white">Chronos Vault</span>. All rights reserved.</p>
+            <p className="text-gray-200 font-poppins">© {currentYear} <span className="text-white font-semibold">Chronos Vault</span>. All rights reserved.</p>
           </div>
           
           <div className="flex space-x-8 mt-6 md:mt-0">
-            <a href="#" className="text-gray-400 hover:text-[#FF5AF7] font-poppins transition-all hover:translate-y-[-2px]">Privacy Policy</a>
-            <a href="#" className="text-gray-400 hover:text-[#FF5AF7] font-poppins transition-all hover:translate-y-[-2px]">Terms of Service</a>
-            <a href="#" className="text-gray-400 hover:text-[#FF5AF7] font-poppins transition-all hover:translate-y-[-2px]">Cookie Policy</a>
+            <a href="#" className="text-gray-200 hover:text-[#FF5AF7] font-poppins transition-all hover:translate-y-[-2px]">Privacy Policy</a>
+            <a href="#" className="text-gray-200 hover:text-[#FF5AF7] font-poppins transition-all hover:translate-y-[-2px]">Terms of Service</a>
+            <a href="#" className="text-gray-200 hover:text-[#FF5AF7] font-poppins transition-all hover:translate-y-[-2px]">Cookie Policy</a>
           </div>
         </div>
       </div>
