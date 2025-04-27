@@ -1,13 +1,9 @@
-import React, { createContext, ReactNode, useContext, useEffect, useState } from 'react';
-import { tonService, TonConnectionStatus } from '@/lib/ton/ton-service';
-import { useToast } from '@/hooks/use-toast';
-
-interface TONWalletInfo {
-  address: string;
-  balance: string;
-  network: string;
-  publicKey?: string;
-}
+import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import { 
+  tonService, 
+  TonConnectionStatus, 
+  TONWalletInfo 
+} from '@/lib/ton/ton-service';
 
 interface TonContextType {
   isConnected: boolean;
@@ -25,180 +21,116 @@ interface TonContextType {
   }) => Promise<{ success: boolean; vaultAddress?: string; error?: string }>;
 }
 
-const TonContext = createContext<TonContextType | undefined>(undefined);
+const TonContext = createContext<TonContextType | null>(null);
 
-export const useTon = () => {
+// Define hook for using TON context
+export function useTon() {
   const context = useContext(TonContext);
-  if (context === undefined) {
+  if (!context) {
     throw new Error('useTon must be used within a TonProvider');
   }
   return context;
-};
+}
 
 interface TonProviderProps {
   children: ReactNode;
 }
 
 export const TonProvider: React.FC<TonProviderProps> = ({ children }) => {
-  const { toast } = useToast();
-  const [isInitialized, setIsInitialized] = useState(false);
   const [connectionStatus, setConnectionStatus] = useState<TonConnectionStatus>(TonConnectionStatus.DISCONNECTED);
   const [walletInfo, setWalletInfo] = useState<TONWalletInfo | null>(null);
-  
-  // Initialize TON service
+  const [isInitializing, setIsInitializing] = useState(true);
+
   useEffect(() => {
-    const initService = async () => {
+    const initTon = async () => {
       try {
         await tonService.initialize();
         setConnectionStatus(tonService.getConnectionStatus());
         setWalletInfo(tonService.getWalletInfo());
-        setIsInitialized(true);
       } catch (error) {
-        console.error('Failed to initialize TON service:', error);
-        toast({
-          title: 'TON Initialization Failed',
-          description: 'Could not initialize TON wallet service. Please try again later.',
-          variant: 'destructive',
-        });
+        console.error("Failed to initialize TON service:", error);
+      } finally {
+        setIsInitializing(false);
       }
     };
-    
-    initService();
-    
-    // Poll for wallet updates
-    const interval = setInterval(() => {
+
+    initTon();
+
+    // Setup the interval to check wallet status
+    const intervalId = setInterval(() => {
       setConnectionStatus(tonService.getConnectionStatus());
       setWalletInfo(tonService.getWalletInfo());
     }, 3000);
-    
-    return () => clearInterval(interval);
-  }, [toast]);
-  
+
+    return () => clearInterval(intervalId);
+  }, []);
+
+  // Connect to TON wallet
   const connect = async (): Promise<boolean> => {
+    setConnectionStatus(TonConnectionStatus.CONNECTING);
     try {
-      const success = await tonService.connect();
-      if (success) {
-        setConnectionStatus(TonConnectionStatus.CONNECTED);
-        setWalletInfo(tonService.getWalletInfo());
-        toast({
-          title: 'TON Wallet Connected',
-          description: 'Successfully connected to TON wallet.',
-          variant: 'default',
-        });
-      }
-      return success;
+      const connected = await tonService.connect();
+      setConnectionStatus(tonService.getConnectionStatus());
+      setWalletInfo(tonService.getWalletInfo());
+      return connected;
     } catch (error) {
-      console.error('Failed to connect TON wallet:', error);
-      toast({
-        title: 'Connection Failed',
-        description: 'Could not connect to TON wallet. Please try again.',
-        variant: 'destructive',
-      });
+      setConnectionStatus(TonConnectionStatus.DISCONNECTED);
       return false;
     }
   };
-  
+
+  // Disconnect from TON wallet
   const disconnect = async (): Promise<boolean> => {
     try {
-      const success = await tonService.disconnect();
-      if (success) {
-        setConnectionStatus(TonConnectionStatus.DISCONNECTED);
-        setWalletInfo(null);
-        toast({
-          title: 'TON Wallet Disconnected',
-          description: 'Successfully disconnected from TON wallet.',
-          variant: 'default',
-        });
-      }
-      return success;
+      const disconnected = await tonService.disconnect();
+      setConnectionStatus(TonConnectionStatus.DISCONNECTED);
+      setWalletInfo(null);
+      return disconnected;
     } catch (error) {
-      console.error('Failed to disconnect TON wallet:', error);
       return false;
     }
   };
-  
-  const sendTON = async (toAddress: string, amount: string) => {
+
+  // Send TON tokens
+  const sendTON = async (toAddress: string, amount: string): Promise<{ success: boolean; transactionHash?: string; error?: string }> => {
     try {
       const result = await tonService.sendTON(toAddress, amount);
-      if (result.success) {
-        toast({
-          title: 'Transaction Successful',
-          description: `Successfully sent ${amount} TON to ${toAddress.substring(0, 6)}...${toAddress.substring(toAddress.length - 4)}`,
-          variant: 'default',
-        });
-      } else {
-        toast({
-          title: 'Transaction Failed',
-          description: result.error || 'Unknown error occurred',
-          variant: 'destructive',
-        });
-      }
+      // Refresh wallet info after transaction
+      setWalletInfo(tonService.getWalletInfo());
       return result;
     } catch (error: any) {
-      console.error('Failed to send TON:', error);
-      toast({
-        title: 'Transaction Failed',
-        description: error.message || 'Unknown error occurred',
-        variant: 'destructive',
-      });
-      return {
-        success: false,
-        error: error.message || 'Unknown error occurred'
-      };
+      return { success: false, error: error.message || 'Failed to send TON' };
     }
   };
-  
+
+  // Create time-locked vault
   const createVault = async (params: {
     unlockTime: number;
     recipient?: string;
     amount: string;
     comment?: string;
-  }) => {
+  }): Promise<{ success: boolean; vaultAddress?: string; error?: string }> => {
     try {
       const result = await tonService.createVault(params);
-      if (result.success) {
-        toast({
-          title: 'Vault Created',
-          description: `Successfully created a TON vault that unlocks on ${new Date(params.unlockTime * 1000).toLocaleDateString()}`,
-          variant: 'default',
-        });
-      } else {
-        toast({
-          title: 'Vault Creation Failed',
-          description: result.error || 'Unknown error occurred',
-          variant: 'destructive',
-        });
-      }
+      // Refresh wallet info after vault creation
+      setWalletInfo(tonService.getWalletInfo());
       return result;
     } catch (error: any) {
-      console.error('Failed to create TON vault:', error);
-      toast({
-        title: 'Vault Creation Failed',
-        description: error.message || 'Unknown error occurred',
-        variant: 'destructive',
-      });
-      return {
-        success: false,
-        error: error.message || 'Unknown error occurred'
-      };
+      return { success: false, error: error.message || 'Failed to create vault' };
     }
   };
-  
+
   const contextValue: TonContextType = {
     isConnected: connectionStatus === TonConnectionStatus.CONNECTED,
-    isConnecting: connectionStatus === TonConnectionStatus.CONNECTING,
+    isConnecting: connectionStatus === TonConnectionStatus.CONNECTING || isInitializing,
     walletInfo,
     connectionStatus,
     connect,
     disconnect,
     sendTON,
-    createVault
+    createVault,
   };
-  
-  if (!isInitialized) {
-    return <>{children}</>; // Render children while initializing
-  }
-  
+
   return (
     <TonContext.Provider value={contextValue}>
       {children}

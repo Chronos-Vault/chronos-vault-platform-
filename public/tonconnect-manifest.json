@@ -1,15 +1,7 @@
 {
-  "url": "https://chronos-vault.io",
+  "url": "https://chronos-vault.app",
   "name": "Chronos Vault",
-  "iconUrl": "https://chronos-vault.io/app-icon.png",
-  "termsOfUseUrl": "https://chronos-vault.io/terms",
-  "privacyPolicyUrl": "https://chronos-vault.io/privacy",
-  "apps": [
-    {
-      "name": "Chronos Vault - Time-Locked Vaults",
-      "url": "https://chronos-vault.io/app",
-      "lang": "en",
-      "platform": ["web"]
-    }
-  ]
+  "iconUrl": "https://chronos-vault.app/logo.png",
+  "termsOfUseUrl": "https://chronos-vault.app/terms",
+  "privacyPolicyUrl": "https://chronos-vault.app/privacy"
 }
