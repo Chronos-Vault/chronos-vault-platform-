@@ -182,9 +182,46 @@ const Home = () => {
                 <div className="p-6 grid grid-cols-2 md:grid-cols-4 gap-4">
                   {/* Vault Types */}
                   {["Heritage", "Financial", "Personal", "Multi-Sig"].map((type, index) => (
-                    <div key={index} className={`rounded-lg p-4 border hover:shadow-md transition-all ${index === 0 ? 'bg-gradient-to-br from-[#6B00D7]/20 to-[#FF5AF7]/10 border-[#6B00D7]/30' : 'border-[#333] bg-[#121212] hover:border-[#6B00D7]/30'}`}>
+                    <div 
+                      key={index} 
+                      className={`vault-type-button rounded-lg p-4 border cursor-pointer hover:shadow-md transition-all ${index === 0 ? 'bg-gradient-to-br from-[#6B00D7]/20 to-[#FF5AF7]/10 border-[#6B00D7]/30' : 'border-[#333] bg-[#121212] hover:border-[#6B00D7]/30'}`}
+                      onClick={() => {
+                        // This is where we would actually change vault types
+                        // For now we'll just make it look interactive with CSS
+                        const allVaultButtons = document.querySelectorAll('.vault-type-button');
+                        allVaultButtons.forEach((btn, i) => {
+                          if (i === index) {
+                            btn.classList.add('bg-gradient-to-br', 'from-[#6B00D7]/20', 'to-[#FF5AF7]/10', 'border-[#6B00D7]/30');
+                            btn.classList.remove('bg-[#121212]', 'border-[#333]');
+                            const icon = btn.querySelector('.vault-icon');
+                            if (icon) {
+                              icon.classList.add('bg-gradient-to-r', 'from-[#6B00D7]', 'to-[#FF5AF7]');
+                              icon.classList.remove('bg-[#181818]');
+                            }
+                            const label = btn.querySelector('.vault-label');
+                            if (label) {
+                              label.classList.add('text-white');
+                              label.classList.remove('text-gray-300');
+                            }
+                          } else {
+                            btn.classList.remove('bg-gradient-to-br', 'from-[#6B00D7]/20', 'to-[#FF5AF7]/10', 'border-[#6B00D7]/30');
+                            btn.classList.add('bg-[#121212]', 'border-[#333]');
+                            const icon = btn.querySelector('.vault-icon');
+                            if (icon) {
+                              icon.classList.remove('bg-gradient-to-r', 'from-[#6B00D7]', 'to-[#FF5AF7]');
+                              icon.classList.add('bg-[#181818]');
+                            }
+                            const label = btn.querySelector('.vault-label');
+                            if (label) {
+                              label.classList.remove('text-white');
+                              label.classList.add('text-gray-300');
+                            }
+                          }
+                        });
+                      }}
+                    >
                       <div className="flex flex-col items-center text-center">
-                        <div className={`w-12 h-12 rounded-full mb-2 flex items-center justify-center ${index === 0 ? 'bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7]' : 'bg-[#181818]'}`}>
+                        <div className={`vault-icon w-12 h-12 rounded-full mb-2 flex items-center justify-center ${index === 0 ? 'bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7]' : 'bg-[#181818]'}`}>
                           <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                             <path strokeLinecap="round" strokeLinejoin="round" d={index === 0 ? "M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm12 0h2a1 1 0 001-1V5a1 1 0 00-1-1h-2a1 1 0 00-1 1v2a1 1 0 001 1zM5 20h2a1 1 0 001-1v-2a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1z" : 
                                    index === 1 ? "M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" :
@@ -192,7 +229,7 @@ const Home = () => {
                                    "M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"} />
                           </svg>
                         </div>
-                        <span className={`font-medium ${index === 0 ? 'text-white' : 'text-gray-300'}`}>{type}</span>
+                        <span className={`vault-label font-medium ${index === 0 ? 'text-white' : 'text-gray-300'}`}>{type}</span>
                         <span className="text-xs text-gray-400 mt-1">Vault</span>
                       </div>
                     </div>
@@ -228,11 +265,11 @@ const Home = () => {
                         <div className="mt-4 grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
                           <div className="bg-[#0A0A0A] rounded p-2">
                             <div className="text-gray-400">Created</div>
-                            <div className="text-white">April 27, 2025</div>
+                            <div className="text-white">January 16, 2025</div>
                           </div>
                           <div className="bg-[#0A0A0A] rounded p-2">
                             <div className="text-gray-400">Unlocks</div>
-                            <div className="text-white">April 27, 2050</div>
+                            <div className="text-white">January 16, 2050</div>
                           </div>
                           <div className="bg-[#0A0A0A] rounded p-2">
                             <div className="text-gray-400">Security</div>
