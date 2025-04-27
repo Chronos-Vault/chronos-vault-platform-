@@ -111,81 +111,102 @@ const Home = () => {
             </div>
             
             <div className="md:w-1/2 flex justify-center">
-              <div className="relative w-[350px] h-[350px] md:w-[450px] md:h-[450px] flex items-center justify-center">
-                {/* Vault visualization */}
-                <div className="absolute w-60 h-60 md:w-72 md:h-72 rounded-full border border-[#6B00D7]/30 animate-spin opacity-30" style={{animationDuration: '15s'}}></div>
-                <div className="absolute w-48 h-48 md:w-56 md:h-56 rounded-full border border-[#FF5AF7]/20 animate-spin opacity-30" style={{animationDuration: '20s', animationDirection: 'reverse'}}></div>
+              <div className="relative w-[350px] h-[500px] md:w-[600px] md:h-[650px] flex items-center justify-center">
+                {/* Vault visualization - Orbital rings */}
+                <div className="absolute w-80 h-80 md:w-[550px] md:h-[550px] rounded-full border border-[#6B00D7]/30 animate-spin opacity-30" style={{animationDuration: '15s'}}></div>
+                <div className="absolute w-72 h-72 md:w-[500px] md:h-[500px] rounded-full border border-[#FF5AF7]/20 animate-spin opacity-30" style={{animationDuration: '20s', animationDirection: 'reverse'}}></div>
+                <div className="absolute w-64 h-64 md:w-[450px] md:h-[450px] rounded-full border-2 border-[#6B00D7]/10 animate-spin opacity-20" style={{animationDuration: '25s'}}></div>
                 
-                <div className="relative w-48 h-52 md:w-60 md:h-64 bg-gradient-to-br from-[#1A1A1A] to-[#141414] rounded-3xl shadow-xl border border-[#333333] glow-border flex items-center justify-center animate-float overflow-hidden">
+                <div className="relative w-72 h-[450px] md:w-[500px] md:h-[600px] bg-gradient-to-br from-[#1A1A1A] to-black rounded-3xl shadow-2xl border-4 border-[#333333] glow-border flex items-center justify-center animate-float overflow-hidden">
+                  {/* Top gradient overlay */}
                   <div className="absolute top-0 left-0 w-full h-1/3 bg-gradient-to-r from-[#6B00D7]/20 to-[#FF5AF7]/20"></div>
                   
                   {/* Hologram security lines */}
                   <div className="absolute inset-0 overflow-hidden opacity-20">
                     <div className="absolute top-0 left-0 right-0 h-full w-full">
-                      {Array.from({ length: 10 }).map((_, i) => (
+                      {Array.from({ length: 20 }).map((_, i) => (
                         <div 
                           key={i} 
                           className="absolute h-[1px] w-full bg-[#FF5AF7]"
                           style={{ 
-                            top: `${i * 10}%`, 
+                            top: `${i * 5}%`, 
                             left: 0, 
                             animationDelay: `${i * 0.1}s`,
                             opacity: 0.4,
-                            animation: 'scanLine 2s linear infinite'
+                            animation: 'scanLine 3s linear infinite'
                           }} 
                         />
                       ))}
                     </div>
                   </div>
                   
-                  <div className="absolute -top-2 -right-2 w-10 h-10 rounded-full bg-gradient-to-br from-[#6B00D7] to-[#FF5AF7] flex items-center justify-center text-white text-sm animate-pulse-slow shadow-lg shadow-[#FF5AF7]/30 border border-white/20">
+                  {/* Background glow */}
+                  <div className="absolute inset-0 bg-gradient-to-r from-[#6B00D7]/5 via-transparent to-[#FF5AF7]/5 animate-pulse-slow"></div>
+                  
+                  {/* Lock icon */}
+                  <div className="absolute -top-5 -right-5 w-20 h-20 rounded-full bg-gradient-to-br from-[#6B00D7] to-[#FF5AF7] flex items-center justify-center text-white text-2xl shadow-lg shadow-[#FF5AF7]/30 border-2 border-white/30 animate-pulse-slow z-20">
                     <i className="ri-lock-line"></i>
                   </div>
                   
-                  <div className="absolute top-3 left-3 flex items-center gap-1.5">
-                    <div className="w-3 h-3 rounded-full bg-[#FF5AF7] animate-pulse-slow"></div>
-                    <div className="text-[10px] font-medium text-gray-400 uppercase tracking-widest">MULTI-SIGNATURE</div>
+                  {/* Security indicators */}
+                  <div className="absolute top-6 left-6 flex items-center gap-3">
+                    <div className="w-5 h-5 rounded-full bg-[#FF5AF7] animate-pulse-slow"></div>
+                    <div className="text-base font-bold text-white uppercase tracking-widest">MULTI-SIGNATURE SECURITY</div>
                   </div>
                   
-                  <div className="text-center p-4 z-10 mt-4">
-                    <div className="text-xs text-gray-400 uppercase tracking-wider mb-1 font-medium">GLOBAL HERITAGE VAULT</div>
-                    <div className="font-poppins font-bold text-xl text-white mb-2">Cultural Artifacts</div>
-                    <div className="flex justify-center mb-2">
-                      <div className="h-0.5 w-20 bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] rounded-full"></div>
+                  {/* Content */}
+                  <div className="text-center p-8 z-10 mt-4 w-full">
+                    <div className="text-lg font-bold uppercase tracking-widest mb-3 bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] inline-block text-transparent bg-clip-text">MESSAGE TO THE FUTURE</div>
+                    
+                    <div className="font-poppins font-bold text-3xl md:text-4xl text-white mb-4">GLOBAL HERITAGE VAULT</div>
+                    
+                    <div className="flex justify-center mb-6">
+                      <div className="h-1 w-32 bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] rounded-full"></div>
                     </div>
                     
-                    <div className="flex justify-between items-center text-xs text-gray-300 mb-2 bg-[#111]/50 p-2 rounded border border-[#333] backdrop-blur-sm">
-                      <span className="font-medium">PRESERVATION</span>
-                      <span className="font-bold text-[#FF5AF7]">16%</span>
+                    <div className="mb-6 text-base md:text-lg text-gray-300 leading-relaxed italic border-l-4 border-[#6B00D7] pl-4 text-left">
+                      "This vault contains cultural artifacts of immense historical significance, preserved for future generations. May those who open it in 2050 find wisdom from our era."
                     </div>
                     
-                    <div className="animate-scan relative h-2 bg-[#222] rounded-full overflow-hidden mb-3 border border-[#333]">
+                    <div className="flex justify-between items-center text-base md:text-lg text-gray-300 mb-5 bg-[#111]/80 p-4 rounded-lg border-2 border-[#444] backdrop-blur-sm shadow-inner">
+                      <span className="font-medium uppercase">PRESERVATION PROTOCOL</span>
+                      <div className="flex items-center">
+                        <span className="font-bold text-[#FF5AF7] text-2xl">16%</span>
+                        <span className="ml-2 text-xs text-gray-400 uppercase">COMPLETE</span>
+                      </div>
+                    </div>
+                    
+                    <div className="animate-scan relative h-4 bg-[#222] rounded-full overflow-hidden mb-8 border border-[#444]">
                       <div className="absolute top-0 left-0 h-full w-[16%] bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7]"></div>
                     </div>
                     
-                    <div className="flex flex-col gap-0.5">
-                      <div className="flex justify-between text-xs">
-                        <span className="text-gray-500">CREATED</span>
-                        <span className="text-gray-400">TODAY</span>
+                    <div className="flex flex-col gap-3 bg-[#111]/60 p-5 rounded-lg border-2 border-[#333] mb-6 shadow-inner">
+                      <div className="flex justify-between items-center text-base">
+                        <span className="text-gray-400 font-bold uppercase">SEALED</span>
+                        <span className="text-gray-200 font-bold">APRIL 27, 2025</span>
                       </div>
-                      <div className="flex justify-between text-xs">
-                        <span className="text-gray-500">UNLOCKS</span>
-                        <span className="text-gray-400">JAN 16, 2050</span>
+                      <div className="flex justify-between items-center text-base">
+                        <span className="text-gray-400 font-bold uppercase">UNLOCKS</span>
+                        <span className="text-gray-200 font-bold">JANUARY 16, 2050</span>
                       </div>
-                      <div className="flex justify-between text-xs">
-                        <span className="text-gray-500">REMAINING</span>
-                        <span className="text-gray-400 font-medium">25 YEARS</span>
+                      <div className="flex justify-between items-center text-base">
+                        <span className="text-gray-400 font-bold uppercase">TIME REMAINING</span>
+                        <span className="text-[#FF5AF7] font-bold text-xl">25 YEARS</span>
                       </div>
                     </div>
                     
-                    <div className="mt-3 pt-2 border-t border-[#333] flex justify-between items-center">
-                      <div className="flex items-center gap-1">
-                        <i className="ri-file-list-3-line text-[#6B00D7] text-xs"></i>
-                        <span className="text-[10px] text-gray-400">DATA CONTRACT</span>
+                    <div className="mt-4 pt-4 border-t-2 border-[#444] flex justify-between items-center">
+                      <div className="flex items-center gap-3">
+                        <i className="ri-file-list-3-line text-[#6B00D7] text-2xl"></i>
+                        <span className="text-base text-white font-bold">TAMPER-PROOF CONTRACT</span>
                       </div>
-                      <div className="text-[10px] text-[#FF5AF7] font-medium">MULTI-GEN</div>
+                      <div className="text-base text-[#FF5AF7] font-bold uppercase tracking-wider">MULTI-GENERATIONAL</div>
                     </div>
                   </div>
+                  
+                  {/* Decorative corner elements */}
+                  <div className="absolute top-0 left-0 w-20 h-20 border-t-4 border-l-4 border-[#6B00D7] rounded-tl-3xl"></div>
+                  <div className="absolute bottom-0 right-0 w-20 h-20 border-b-4 border-r-4 border-[#FF5AF7] rounded-br-3xl"></div>
                 </div>
               </div>
             </div>
