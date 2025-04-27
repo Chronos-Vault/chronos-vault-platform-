@@ -29,11 +29,11 @@ const Header = () => {
   };
 
   const navigationLinks = [
-    { name: "Features", href: "/#features" },
-    { name: "How It Works", href: "/#how-it-works" },
-    { name: "Vaults", href: "/#vaults" },
-    { name: "My Vaults", href: "/my-vaults" },
-    { name: "About", href: "/about" },
+    { name: "Features", href: "/#features", icon: "✨" },
+    { name: "How It Works", href: "/#how-it-works", icon: "⚙️" },
+    { name: "Vaults", href: "/#vaults", icon: "🔐" },
+    { name: "My Vaults", href: "/my-vaults", icon: "📊" },
+    { name: "About", href: "/about", icon: "ℹ️" },
   ];
 
   return (
@@ -41,8 +41,13 @@ const Header = () => {
       <div className="container mx-auto px-4 py-4">
         <nav className="flex justify-between items-center">
           <Link href="/" className="flex items-center gap-3 group">
-            <div className="h-12 w-12 rounded-full bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] flex items-center justify-center shadow-lg shadow-[#6B00D7]/20 group-hover:shadow-[#FF5AF7]/30 transition-all">
-              <span className="text-white font-bold font-poppins text-xl">CV</span>
+            <div className="h-14 w-14 rounded-full bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] flex items-center justify-center shadow-lg shadow-[#6B00D7]/20 group-hover:shadow-[#FF5AF7]/30 transition-all p-3.5">
+              <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="text-white">
+                <path d="M19 7H5C3.89543 7 3 7.89543 3 9V18C3 19.1046 3.89543 20 5 20H19C20.1046 20 21 19.1046 21 18V9C21 7.89543 20.1046 7 19 7Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                <path d="M12 14C13.1046 14 14 13.1046 14 12C14 10.8954 13.1046 10 12 10C10.8954 10 10 10.8954 10 12C10 13.1046 10.8954 14 12 14Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                <path d="M3 7V5C3 4.46957 3.21071 3.96086 3.58579 3.58579C3.96086 3.21071 4.46957 3 5 3H19C19.5304 3 20.0391 3.21071 20.4142 3.58579C20.7893 3.96086 21 4.46957 21 5V7" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                <path d="M12 14V17" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
             </div>
             <h1 className="text-3xl font-poppins font-bold text-white">
               <span className="bg-clip-text text-transparent bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] group-hover:from-[#FF5AF7] group-hover:to-[#6B00D7] transition-all">Chronos</span> 
@@ -55,8 +60,13 @@ const Header = () => {
               <Link 
                 key={link.name} 
                 href={link.href}
-                className={`text-gray-300 hover:text-white font-poppins font-medium text-lg transition-all hover:scale-105 ${location === link.href ? 'text-white relative after:absolute after:bottom-[-8px] after:left-0 after:w-full after:h-[3px] after:bg-gradient-to-r after:from-[#6B00D7] after:to-[#FF5AF7] after:rounded-full' : ''}`}
+                className={`flex items-center gap-1.5 text-gray-300 hover:text-white font-poppins font-medium text-lg transition-all hover:scale-105 ${
+                  location === link.href 
+                  ? 'text-white relative after:absolute after:bottom-[-8px] after:left-0 after:w-full after:h-[3px] after:bg-gradient-to-r after:from-[#6B00D7] after:to-[#FF5AF7] after:rounded-full' 
+                  : ''
+                }`}
               >
+                <span className="text-base">{link.icon}</span>
                 {link.name}
               </Link>
             ))}
@@ -95,8 +105,13 @@ const Header = () => {
                 <div className="flex flex-col h-full">
                   <div className="flex justify-between items-center mb-10">
                     <div className="flex items-center gap-3">
-                      <div className="h-10 w-10 rounded-full bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] flex items-center justify-center shadow-lg shadow-[#6B00D7]/20">
-                        <span className="text-white font-bold font-poppins text-lg">CV</span>
+                      <div className="h-12 w-12 rounded-full bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] flex items-center justify-center shadow-lg shadow-[#6B00D7]/20 p-3">
+                        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="text-white">
+                          <path d="M19 7H5C3.89543 7 3 7.89543 3 9V18C3 19.1046 3.89543 20 5 20H19C20.1046 20 21 19.1046 21 18V9C21 7.89543 20.1046 7 19 7Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                          <path d="M12 14C13.1046 14 14 13.1046 14 12C14 10.8954 13.1046 10 12 10C10.8954 10 10 10.8954 10 12C10 13.1046 10.8954 14 12 14Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                          <path d="M3 7V5C3 4.46957 3.21071 3.96086 3.58579 3.58579C3.96086 3.21071 4.46957 3 5 3H19C19.5304 3 20.0391 3.21071 20.4142 3.58579C20.7893 3.96086 21 4.46957 21 5V7" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                          <path d="M12 14V17" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                        </svg>
                       </div>
                       <h1 className="text-xl font-poppins font-bold text-white">
                         <span className="bg-clip-text text-transparent bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7]">Chronos</span> 
@@ -115,12 +130,15 @@ const Header = () => {
                       <SheetClose key={link.name} asChild>
                         <Link 
                           href={link.href}
-                          className={`text-xl ${location === link.href 
+                          className={`flex items-center gap-3 ${location === link.href 
                             ? 'font-poppins font-semibold text-white bg-gradient-to-r from-[#6B00D7]/20 to-transparent pl-4 py-2 border-l-2 border-[#6B00D7]' 
                             : 'text-gray-300 hover:text-white font-poppins font-medium transition-all hover:translate-x-1'
                           }`}
                         >
-                          {link.name}
+                          <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-[#1E1E1E]">
+                            <span className="text-xl">{link.icon}</span>
+                          </div>
+                          <span className="text-xl">{link.name}</span>
                         </Link>
                       </SheetClose>
                     ))}
