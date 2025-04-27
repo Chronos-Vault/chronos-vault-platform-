@@ -184,6 +184,20 @@
   }
 }
 
+@keyframes scanLine {
+  0% {
+    transform: translateY(-100%);
+    opacity: 0.5;
+  }
+  50% {
+    opacity: 0.8;
+  }
+  100% {
+    transform: translateY(100%);
+    opacity: 0.5;
+  }
+}
+
 .animate-float {
   animation: float 6s ease-in-out infinite;
 }

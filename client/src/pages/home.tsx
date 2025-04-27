@@ -116,25 +116,75 @@ const Home = () => {
                 <div className="absolute w-60 h-60 md:w-72 md:h-72 rounded-full border border-[#6B00D7]/30 animate-spin opacity-30" style={{animationDuration: '15s'}}></div>
                 <div className="absolute w-48 h-48 md:w-56 md:h-56 rounded-full border border-[#FF5AF7]/20 animate-spin opacity-30" style={{animationDuration: '20s', animationDirection: 'reverse'}}></div>
                 
-                <div className="relative w-40 h-40 md:w-48 md:h-48 bg-gradient-to-br from-[#1A1A1A] to-[#1E1E1E] rounded-3xl shadow-xl border border-[#333333] glow-border flex items-center justify-center animate-float">
-                  <div className="absolute -top-3 -right-3 w-8 h-8 rounded-full bg-[#FF5AF7] flex items-center justify-center text-white text-sm animate-pulse-slow">
+                <div className="relative w-48 h-52 md:w-60 md:h-64 bg-gradient-to-br from-[#1A1A1A] to-[#141414] rounded-3xl shadow-xl border border-[#333333] glow-border flex items-center justify-center animate-float overflow-hidden">
+                  <div className="absolute top-0 left-0 w-full h-1/3 bg-gradient-to-r from-[#6B00D7]/20 to-[#FF5AF7]/20"></div>
+                  
+                  {/* Hologram security lines */}
+                  <div className="absolute inset-0 overflow-hidden opacity-20">
+                    <div className="absolute top-0 left-0 right-0 h-full w-full">
+                      {Array.from({ length: 10 }).map((_, i) => (
+                        <div 
+                          key={i} 
+                          className="absolute h-[1px] w-full bg-[#FF5AF7]"
+                          style={{ 
+                            top: `${i * 10}%`, 
+                            left: 0, 
+                            animationDelay: `${i * 0.1}s`,
+                            opacity: 0.4,
+                            animation: 'scanLine 2s linear infinite'
+                          }} 
+                        />
+                      ))}
+                    </div>
+                  </div>
+                  
+                  <div className="absolute -top-2 -right-2 w-10 h-10 rounded-full bg-gradient-to-br from-[#6B00D7] to-[#FF5AF7] flex items-center justify-center text-white text-sm animate-pulse-slow shadow-lg shadow-[#FF5AF7]/30 border border-white/20">
                     <i className="ri-lock-line"></i>
                   </div>
                   
-                  <div className="text-center p-4">
-                    <div className="text-xs text-gray-400 mb-2">TIME-LOCKED VAULT</div>
-                    <div className="font-poppins font-semibold text-xl text-white mb-2">Legacy Vault</div>
-                    <div className="flex justify-center mb-3">
-                      <div className="h-1 w-16 bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] rounded-full"></div>
+                  <div className="absolute top-3 left-3 flex items-center gap-1.5">
+                    <div className="w-3 h-3 rounded-full bg-[#FF5AF7] animate-pulse-slow"></div>
+                    <div className="text-[10px] font-medium text-gray-400 uppercase tracking-widest">MULTI-SIGNATURE</div>
+                  </div>
+                  
+                  <div className="text-center p-4 z-10 mt-4">
+                    <div className="text-xs text-gray-400 uppercase tracking-wider mb-1 font-medium">GLOBAL HERITAGE VAULT</div>
+                    <div className="font-poppins font-bold text-xl text-white mb-2">Cultural Artifacts</div>
+                    <div className="flex justify-center mb-2">
+                      <div className="h-0.5 w-20 bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] rounded-full"></div>
                     </div>
-                    <div className="flex justify-between text-sm text-gray-300 mb-2">
-                      <span>$ETH</span>
-                      <span>25.48</span>
+                    
+                    <div className="flex justify-between items-center text-xs text-gray-300 mb-2 bg-[#111]/50 p-2 rounded border border-[#333] backdrop-blur-sm">
+                      <span className="font-medium">PRESERVATION</span>
+                      <span className="font-bold text-[#FF5AF7]">16%</span>
                     </div>
-                    <div className="animate-scan relative h-2 bg-[#333333] rounded-full overflow-hidden">
-                      <div className="absolute top-0 left-0 h-full w-3/4 bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7]"></div>
+                    
+                    <div className="animate-scan relative h-2 bg-[#222] rounded-full overflow-hidden mb-3 border border-[#333]">
+                      <div className="absolute top-0 left-0 h-full w-[16%] bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7]"></div>
                     </div>
-                    <div className="text-xs text-gray-400 mt-2">Unlocks in 2 years, 45 days</div>
+                    
+                    <div className="flex flex-col gap-0.5">
+                      <div className="flex justify-between text-xs">
+                        <span className="text-gray-500">CREATED</span>
+                        <span className="text-gray-400">TODAY</span>
+                      </div>
+                      <div className="flex justify-between text-xs">
+                        <span className="text-gray-500">UNLOCKS</span>
+                        <span className="text-gray-400">JAN 16, 2050</span>
+                      </div>
+                      <div className="flex justify-between text-xs">
+                        <span className="text-gray-500">REMAINING</span>
+                        <span className="text-gray-400 font-medium">25 YEARS</span>
+                      </div>
+                    </div>
+                    
+                    <div className="mt-3 pt-2 border-t border-[#333] flex justify-between items-center">
+                      <div className="flex items-center gap-1">
+                        <i className="ri-file-list-3-line text-[#6B00D7] text-xs"></i>
+                        <span className="text-[10px] text-gray-400">DATA CONTRACT</span>
+                      </div>
+                      <div className="text-[10px] text-[#FF5AF7] font-medium">MULTI-GEN</div>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -146,15 +196,15 @@ const Home = () => {
             <div className="text-center mb-8">
               <span className="text-gray-400 text-sm">TRUSTED BY BLOCKCHAIN LEADERS</span>
             </div>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
+            <div className="grid grid-cols-2 md:grid-cols-6 gap-4">
               <div className="flex justify-center">
                 <div className="h-12 w-32 bg-[#1A1A1A] rounded-lg flex items-center justify-center text-gray-400 border border-[#333333] hover:border-[#6B00D7]/50 transition-all group">
-                  <i className="ri-ethereum-line mr-2 group-hover:text-[#FF5AF7] transition-colors"></i> Ethereum
+                  <i className="ri-flashlight-line mr-2 group-hover:text-[#FF5AF7] transition-colors"></i> TON
                 </div>
               </div>
               <div className="flex justify-center">
                 <div className="h-12 w-32 bg-[#1A1A1A] rounded-lg flex items-center justify-center text-gray-400 border border-[#333333] hover:border-[#6B00D7]/50 transition-all group">
-                  <i className="ri-bit-coin-line mr-2 group-hover:text-[#FF5AF7] transition-colors"></i> Coinbase
+                  <i className="ri-ethereum-line mr-2 group-hover:text-[#FF5AF7] transition-colors"></i> Ethereum
                 </div>
               </div>
               <div className="flex justify-center">
@@ -164,7 +214,17 @@ const Home = () => {
               </div>
               <div className="flex justify-center">
                 <div className="h-12 w-32 bg-[#1A1A1A] rounded-lg flex items-center justify-center text-gray-400 border border-[#333333] hover:border-[#6B00D7]/50 transition-all group">
+                  <i className="ri-sun-line mr-2 group-hover:text-[#FF5AF7] transition-colors"></i> Solana
+                </div>
+              </div>
+              <div className="flex justify-center">
+                <div className="h-12 w-32 bg-[#1A1A1A] rounded-lg flex items-center justify-center text-gray-400 border border-[#333333] hover:border-[#6B00D7]/50 transition-all group">
                   <i className="ri-link mr-2 group-hover:text-[#FF5AF7] transition-colors"></i> Chainlink
+                </div>
+              </div>
+              <div className="flex justify-center">
+                <div className="h-12 w-32 bg-[#1A1A1A] rounded-lg flex items-center justify-center text-gray-400 border border-[#333333] hover:border-[#6B00D7]/50 transition-all group">
+                  <i className="ri-hard-drive-2-line mr-2 group-hover:text-[#FF5AF7] transition-colors"></i> Arweave
                 </div>
               </div>
             </div>
