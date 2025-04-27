@@ -78,17 +78,21 @@ export const BitcoinHalvingVault: React.FC = () => {
           </CardContent>
           <CardFooter className="border-t border-orange-200 dark:border-orange-800/50 pt-4 pb-4">
             <div className="w-full grid grid-cols-2 gap-4">
-              <Button 
-                variant="default" 
-                className="bg-gradient-to-r from-orange-600 to-amber-600 hover:from-orange-700 hover:to-amber-700 text-white"
-              >
-                <LockIcon className="h-4 w-4 mr-2" />
-                Create Halving Vault
-              </Button>
-              <Button variant="outline" className="border-orange-300 dark:border-orange-700 text-orange-700 dark:text-orange-400 hover:bg-orange-100 dark:hover:bg-orange-900/20">
-                Learn More
-                <ArrowRight className="h-4 w-4 ml-2" />
-              </Button>
+              <Link href="/bitcoin-halving-vault">
+                <Button 
+                  variant="default" 
+                  className="bg-gradient-to-r from-orange-600 to-amber-600 hover:from-orange-700 hover:to-amber-700 text-white w-full"
+                >
+                  <LockIcon className="h-4 w-4 mr-2" />
+                  Create Halving Vault
+                </Button>
+              </Link>
+              <Link href="/bitcoin-halving" className="block w-full">
+                <Button variant="outline" className="border-orange-300 dark:border-orange-700 text-orange-700 dark:text-orange-400 hover:bg-orange-100 dark:hover:bg-orange-900/20 w-full">
+                  Learn More
+                  <ArrowRight className="h-4 w-4 ml-2" />
+                </Button>
+              </Link>
             </div>
           </CardFooter>
         </Card>
