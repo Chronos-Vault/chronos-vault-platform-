@@ -511,6 +511,7 @@ class TONContractService {
     solanaProof: string
   ): Promise<{ 
     success: boolean; 
+    transactionHash?: string;
     error?: string 
   }> {
     try {
