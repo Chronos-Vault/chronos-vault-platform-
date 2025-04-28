@@ -1,5 +1,8 @@
-import type { Express, Request, Response } from "express";
+import type { Express, Request, Response, NextFunction } from "express";
 import { createServer, type Server } from "http";
+import fs from "fs";
+import path from "path";
+import multer from "multer";
 import { storage } from "./storage";
 import { 
   insertUserSchema, 
@@ -8,6 +11,49 @@ import {
   insertAttachmentSchema
 } from "@shared/schema";
 import { ZodError } from "zod";
+
+// Configure multer for file uploads
+const fileStorage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    const uploadDir = path.join(process.cwd(), "uploads");
+    if (!fs.existsSync(uploadDir)) {
+      fs.mkdirSync(uploadDir, { recursive: true });
+    }
+    cb(null, uploadDir);
+  },
+  filename: (req, file, cb) => {
+    const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1E9);
+    const extension = path.extname(file.originalname);
+    cb(null, `${uniqueSuffix}${extension}`);
+  }
+});
+
+const upload = multer({ 
+  storage: fileStorage,
+  limits: {
+    fileSize: 10 * 1024 * 1024, // 10MB limit
+  },
+  fileFilter: (req, file, cb) => {
+    // Allow common file types
+    const allowedTypes = [
+      'image/jpeg', 'image/png', 'image/gif', 'image/webp',
+      'application/pdf', 'application/msword',
+      'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+      'application/vnd.ms-excel',
+      'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+      'application/vnd.ms-powerpoint',
+      'application/vnd.openxmlformats-officedocument.presentationml.presentation',
+      'text/plain', 'text/csv',
+      'audio/mpeg', 'audio/wav', 'audio/ogg',
+      'video/mp4', 'video/quicktime', 'video/webm'
+    ];
+    if (allowedTypes.includes(file.mimetype)) {
+      cb(null, true);
+    } else {
+      cb(new Error('File type not supported. Please upload a valid file.'), false);
+    }
+  }
+});
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // Special route to serve TON Connect manifest with proper headers
@@ -308,20 +354,62 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
   
-  // Create a new attachment
-  app.post("/api/attachments", async (req: Request, res: Response) => {
+  // Create a new attachment with file upload
+  app.post("/api/attachments", upload.single('file'), async (req: Request, res: Response) => {
     try {
-      const attachmentData = insertAttachmentSchema.parse(req.body);
+      if (!req.file) {
+        return res.status(400).json({ message: "No file uploaded" });
+      }
+      
+      // Get the file data
+      const { originalname, mimetype, filename, size, path: filePath } = req.file;
+      const fileUrl = `/uploads/${filename}`;
+      
+      // Extract attachment metadata from the request body
+      const { vaultId, name, description, type, isEncrypted } = req.body;
+      
+      if (!vaultId || isNaN(parseInt(vaultId))) {
+        return res.status(400).json({ message: "Valid vaultId is required" });
+      }
       
       // Verify that vault exists
-      const vault = await storage.getVault(attachmentData.vaultId);
+      const vault = await storage.getVault(parseInt(vaultId));
       if (!vault) {
+        // Delete the uploaded file if the vault doesn't exist
+        fs.unlinkSync(filePath);
         return res.status(404).json({ message: "Vault not found" });
       }
+      
+      // Create metadata object for the file
+      const metadata = {
+        originalName: originalname,
+        fileSize: size,
+        mimeType: mimetype,
+        fileUrl: fileUrl
+      };
+      
+      // Create the attachment record
+      const attachmentData = {
+        vaultId: parseInt(vaultId),
+        name: name || originalname,
+        description: description || "",
+        type: type || "file",
+        fileUrl: fileUrl,
+        isEncrypted: isEncrypted === "true",
+        metadata: JSON.stringify(metadata)
+      };
       
       const attachment = await storage.createAttachment(attachmentData);
       res.status(201).json(attachment);
     } catch (error) {
+      // If there was an error and a file was uploaded, delete it
+      if (req.file) {
+        try {
+          fs.unlinkSync(req.file.path);
+        } catch (unlinkError) {
+          console.error("Failed to delete file after error:", unlinkError);
+        }
+      }
       handleError(res, error);
     }
   });

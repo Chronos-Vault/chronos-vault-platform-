@@ -7,7 +7,9 @@
  */
 
 import React from 'react';
-import JourneyVaults, { TokenReleasePhase } from './JourneyVaults';
+// Import directly with JourneyVaults component we created
+import JourneyVaults from './JourneyVaults';
+import type { TokenReleasePhase } from './JourneyVaults';
 
 // Legacy interface for backward compatibility
 export interface JourneyDigitalTimeVaultProps {
