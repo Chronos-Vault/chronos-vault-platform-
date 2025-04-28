@@ -32,6 +32,7 @@ import DocumentationPage from "@/pages/documentation";
 import TechnicalSpecificationPage from "@/pages/technical-specification";
 import CVTTokenomicsPage from "@/pages/cvt-tokenomics";
 import WhitepaperPage from "@/pages/whitepaper";
+import PrivacyDashboardPage from "@/pages/privacy-dashboard";
 import NotFound from "@/pages/not-found";
 
 function Router() {

@@ -131,10 +131,17 @@ const crossChainVerifications: Record<string, CrossChainVerification> = {};
  * Zero-Knowledge Privacy Layer Service for enterprise-grade privacy features
  */
 class PrivacyLayerService {
-  private zkProofService = getZkProofService();
+  private _zkProofService = getZkProofService();
+  
+  /**
+   * Get the ZK proof service
+   */
+  public getZkProofService() {
+    return this._zkProofService;
+  }
   
   // Mapping of blockchain types to their adapters
-  private blockchainAdapters: Record<BlockchainType, BlockchainProofAdapter> = {
+  private blockchainAdapters: Record<string, BlockchainProofAdapter> = {
     'ETH': ethereumAdapter,
     'SOL': solanaAdapter,
     'TON': tonAdapter
