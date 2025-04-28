@@ -1,176 +1,182 @@
 import React, { useState } from 'react';
-import { useEthereum } from '@/contexts/ethereum-context';
-import { useSolana } from '@/contexts/solana-context';
-import { useTon } from '@/contexts/ton-context';
-import { useMultiChain, BlockchainType } from '@/contexts/multi-chain-context';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
+import { useMultiChain, BlockchainType } from '@/contexts/multi-chain-context';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { AlertCircle, Check, ChevronRight, Wallet } from 'lucide-react';
-import { SiEthereum, SiSolana, SiTon } from 'react-icons/si';
-import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
+import { Alert, AlertDescription } from '@/components/ui/alert';
+import { InfoIcon, WalletIcon, PlusIcon, PowerIcon } from 'lucide-react';
+import { SiEthereum, SiSolana, SiTelegram } from 'react-icons/si';
+import { useToast } from '@/hooks/use-toast';
 
 export function UnifiedWalletConnector() {
-  const [activeTab, setActiveTab] = useState<string>("ethereum");
-  const { currentChain, setCurrentChain } = useMultiChain();
-  const { isConnected: isEthConnected, connectionStatus: ethStatus, connect: connectEth, disconnect: disconnectEth, walletInfo: ethInfo } = useEthereum();
-  const { isConnected: isSolConnected, connect: connectSol, disconnect: disconnectSol, walletInfo: solInfo } = useSolana();
-  const { isConnected: isTonConnected, connect: connectTon, disconnect: disconnectTon, walletInfo: tonInfo } = useTon();
+  const { chainStatus, currentChain, setCurrentChain, connectChain, disconnectChain } = useMultiChain();
+  const [connecting, setConnecting] = useState(false);
+  const { toast } = useToast();
 
-  const handleTabChange = (value: string) => {
-    setActiveTab(value);
-
-    // Update the current blockchain in the multi-chain context
-    if (value === 'ethereum') {
-      setCurrentChain(BlockchainType.ETHEREUM);
-    } else if (value === 'solana') {
-      setCurrentChain(BlockchainType.SOLANA);
-    } else if (value === 'ton') {
-      setCurrentChain(BlockchainType.TON);
+  const handleConnect = async (chain: BlockchainType) => {
+    setConnecting(true);
+    
+    try {
+      // Set the current chain and then connect
+      setCurrentChain(chain);
+      const success = await connectChain(chain);
+      
+      if (success) {
+        toast({
+          title: 'Connected',
+          description: `Successfully connected to your ${chain.toUpperCase()} wallet`,
+        });
+      } else {
+        toast({
+          title: 'Connection Failed',
+          description: `Failed to connect to your ${chain.toUpperCase()} wallet`,
+          variant: 'destructive',
+        });
+      }
+    } catch (error) {
+      console.error('Error connecting wallet:', error);
+      toast({
+        title: 'Connection Error',
+        description: 'An unexpected error occurred while connecting your wallet',
+        variant: 'destructive',
+      });
+    } finally {
+      setConnecting(false);
     }
   };
 
-  const handleConnect = async () => {
-    if (activeTab === 'ethereum') {
-      await connectEth();
-    } else if (activeTab === 'solana') {
-      await connectSol();
-    } else if (activeTab === 'ton') {
-      await connectTon();
+  const handleDisconnect = async (chain: BlockchainType) => {
+    try {
+      await disconnectChain(chain);
+      toast({
+        title: 'Disconnected',
+        description: `Successfully disconnected from your ${chain.toUpperCase()} wallet`,
+      });
+    } catch (error) {
+      console.error('Error disconnecting wallet:', error);
+      toast({
+        title: 'Disconnection Error',
+        description: 'An unexpected error occurred while disconnecting your wallet',
+        variant: 'destructive',
+      });
     }
   };
 
-  const handleDisconnect = async () => {
-    if (activeTab === 'ethereum') {
-      await disconnectEth();
-    } else if (activeTab === 'solana') {
-      await disconnectSol();
-    } else if (activeTab === 'ton') {
-      await disconnectTon();
+  const getChainIcon = (chain: BlockchainType) => {
+    switch (chain) {
+      case BlockchainType.ETHEREUM:
+        return <SiEthereum className="h-6 w-6 text-blue-400" />;
+      case BlockchainType.SOLANA:
+        return <SiSolana className="h-6 w-6 text-purple-400" />;
+      case BlockchainType.TON:
+        return <SiTelegram className="h-6 w-6 text-cyan-400" />;
+      default:
+        return null;
     }
   };
 
-  const isConnected = () => {
-    if (activeTab === 'ethereum') return isEthConnected;
-    if (activeTab === 'solana') return isSolConnected;
-    if (activeTab === 'ton') return isTonConnected;
-    return false;
+  const formatBalance = (chain: BlockchainType, balance: string | null) => {
+    if (!balance) return '0.00';
+    
+    // Simple formatting, would be enhanced for production
+    const numBalance = parseFloat(balance);
+    return numBalance.toFixed(4);
   };
-
-  const getWalletInfo = () => {
-    if (activeTab === 'ethereum') return ethInfo;
-    if (activeTab === 'solana') return solInfo;
-    if (activeTab === 'ton') return tonInfo;
-    return null;
+  
+  const formatCurrency = (chain: BlockchainType) => {
+    switch (chain) {
+      case BlockchainType.ETHEREUM:
+        return 'ETH';
+      case BlockchainType.SOLANA:
+        return 'SOL';
+      case BlockchainType.TON:
+        return 'TON';
+      default:
+        return '';
+    }
   };
-
-  const formatAddress = (address: string) => {
-    if (!address) return '';
-    return `${address.substring(0, 6)}...${address.substring(address.length - 4)}`;
-  };
-
-  const getWalletIcon = () => {
-    if (activeTab === 'ethereum') return <SiEthereum className="h-6 w-6 text-purple-500" />;
-    if (activeTab === 'solana') return <SiSolana className="h-6 w-6 text-purple-500" />;
-    if (activeTab === 'ton') return <SiTon className="h-6 w-6 text-purple-500" />;
-    return <Wallet className="h-6 w-6 text-purple-500" />;
-  };
-
-  const walletInfo = getWalletInfo();
 
   return (
-    <Card className="w-full bg-white/5 backdrop-blur-sm border-purple-500/10">
-      <CardHeader className="pb-3">
-        <CardTitle className="text-xl font-bold flex items-center gap-2">
-          <Wallet className="h-5 w-5" /> Cross-Chain Wallet
-        </CardTitle>
+    <Card className="bg-white/5 backdrop-blur-sm border-purple-500/10">
+      <CardHeader>
+        <CardTitle>Cross-Chain Wallets</CardTitle>
         <CardDescription>
-          Connect to your preferred blockchain wallet
+          Connect and manage wallets across multiple blockchains
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <Tabs defaultValue="ethereum" value={activeTab} onValueChange={handleTabChange}>
-          <TabsList className="grid grid-cols-3 w-full bg-white/5">
-            <TabsTrigger value="ethereum" className="data-[state=active]:bg-purple-500/20">
-              <div className="flex items-center gap-2">
-                <SiEthereum />
-                <span className="hidden sm:inline">Ethereum</span>
-              </div>
-            </TabsTrigger>
-            <TabsTrigger value="solana" className="data-[state=active]:bg-purple-500/20">
-              <div className="flex items-center gap-2">
-                <SiSolana />
-                <span className="hidden sm:inline">Solana</span>
-              </div>
-            </TabsTrigger>
-            <TabsTrigger value="ton" className="data-[state=active]:bg-purple-500/20">
-              <div className="flex items-center gap-2">
-                <SiTon />
-                <span className="hidden sm:inline">TON</span>
-              </div>
-            </TabsTrigger>
+        <Tabs defaultValue={currentChain} onValueChange={(value) => setCurrentChain(value as BlockchainType)}>
+          <TabsList className="grid w-full grid-cols-3">
+            <TabsTrigger value={BlockchainType.ETHEREUM}>Ethereum</TabsTrigger>
+            <TabsTrigger value={BlockchainType.SOLANA}>Solana</TabsTrigger>
+            <TabsTrigger value={BlockchainType.TON}>TON</TabsTrigger>
           </TabsList>
-
-          <div className="mt-4">
-            {isConnected() ? (
-              <div className="space-y-4">
-                <div className="flex items-center gap-3 p-3 rounded-lg bg-white/5">
-                  {getWalletIcon()}
-                  <div className="flex-1">
-                    <div className="font-medium flex items-center gap-2">
-                      {formatAddress(walletInfo?.address || '')}
-                      <Check size={16} className="text-green-500" />
-                    </div>
-                    <div className="text-sm text-muted-foreground">
-                      Balance: {walletInfo?.balance || '0'} {activeTab === 'ethereum' ? 'ETH' : activeTab === 'solana' ? 'SOL' : 'TON'}
-                    </div>
-                  </div>
-                  <Button 
-                    size="sm" 
-                    variant="outline" 
-                    onClick={handleDisconnect}
-                    className="border-purple-500/50 hover:bg-purple-500/20"
+          
+          {Object.values(BlockchainType).filter(chain => 
+            chain !== BlockchainType.BITCOIN // Filter out chains we're not implementing yet
+          ).map((chain) => (
+            <TabsContent key={chain} value={chain} className="space-y-4">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  {getChainIcon(chain as BlockchainType)}
+                  <h3 className="text-lg font-medium">{chain.toUpperCase()}</h3>
+                </div>
+                
+                {chainStatus[chain as BlockchainType].isConnected ? (
+                  <Button
+                    variant="outline"
+                    className="border-red-500/30 hover:bg-red-500/10 hover:text-red-400 text-red-500"
+                    onClick={() => handleDisconnect(chain as BlockchainType)}
                   >
+                    <PowerIcon className="h-4 w-4 mr-2" />
                     Disconnect
                   </Button>
+                ) : (
+                  <Button
+                    className="bg-gradient-to-r from-[#6B00D7] to-[#C570FF] hover:from-[#5A00B8] hover:to-[#B14DFF]"
+                    onClick={() => handleConnect(chain as BlockchainType)}
+                    disabled={connecting}
+                  >
+                    <WalletIcon className="h-4 w-4 mr-2" />
+                    {connecting && currentChain === chain ? 'Connecting...' : 'Connect'}
+                  </Button>
+                )}
+              </div>
+              
+              {chainStatus[chain as BlockchainType].isConnected ? (
+                <div className="rounded-md border border-violet-500/20 p-4 bg-violet-950/10">
+                  <div className="flex flex-col gap-2">
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm text-muted-foreground">Address</span>
+                      <span className="text-sm font-medium">{chainStatus[chain as BlockchainType].address}</span>
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm text-muted-foreground">Balance</span>
+                      <span className="text-sm font-medium">
+                        {formatBalance(chain as BlockchainType, chainStatus[chain as BlockchainType].balance)}{' '}
+                        {formatCurrency(chain as BlockchainType)}
+                      </span>
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm text-muted-foreground">Network</span>
+                      <span className="text-sm font-medium">
+                        {chainStatus[chain as BlockchainType].network || 'Unknown'}
+                      </span>
+                    </div>
+                  </div>
                 </div>
-
-                {activeTab === 'ethereum' && ethInfo?.network && (
-                  <div className="text-sm rounded-lg p-2 bg-white/5">
-                    Network: {ethInfo.network}
-                  </div>
-                )}
-              </div>
-            ) : (
-              <div className="space-y-4">
-                {activeTab === 'ethereum' && ethStatus === 'error' && (
-                  <Alert variant="destructive">
-                    <AlertCircle className="h-4 w-4" />
-                    <AlertTitle>Connection Error</AlertTitle>
-                    <AlertDescription>
-                      MetaMask not detected. Please install MetaMask to connect to Ethereum.
-                    </AlertDescription>
-                  </Alert>
-                )}
-                
-                <Button 
-                  onClick={handleConnect} 
-                  className="w-full bg-gradient-to-r from-purple-600 to-pink-500 hover:from-purple-700 hover:to-pink-600"
-                >
-                  <div className="flex items-center gap-2">
-                    {getWalletIcon()}
-                    <span>Connect {activeTab === 'ethereum' ? 'MetaMask' : activeTab === 'solana' ? 'Phantom' : 'TON Wallet'}</span>
-                    <ChevronRight size={16} />
-                  </div>
-                </Button>
-              </div>
-            )}
-          </div>
+              ) : (
+                <Alert className="bg-violet-950/20 border border-violet-500/20">
+                  <InfoIcon className="h-4 w-4 text-violet-400" />
+                  <AlertDescription className="text-violet-200">
+                    Connect your {chain.toUpperCase()} wallet to create and manage vaults.
+                  </AlertDescription>
+                </Alert>
+              )}
+            </TabsContent>
+          ))}
         </Tabs>
       </CardContent>
-      <CardFooter className="text-xs text-muted-foreground">
-        Your keys, your crypto. Chronos Vault never stores your private keys.
-      </CardFooter>
     </Card>
   );
 }

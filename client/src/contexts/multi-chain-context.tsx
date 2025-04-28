@@ -35,9 +35,11 @@ interface MultiChainContextType {
   // Chain state
   activeChain: BlockchainType | null;
   chainStatus: Record<BlockchainType, ChainStatus>;
+  currentChain: BlockchainType; // Added for cross-chain components
   
   // Chain actions
   setActiveChain: (chain: BlockchainType) => void;
+  setCurrentChain: (chain: BlockchainType) => void; // Added for cross-chain components
   connectChain: (chain: BlockchainType) => Promise<boolean>;
   disconnectChain: (chain: BlockchainType) => Promise<boolean>;
   disconnectAllChains: () => Promise<void>;
@@ -71,6 +73,7 @@ interface MultiChainProviderProps {
 export const MultiChainProvider: React.FC<MultiChainProviderProps> = ({ children }) => {
   const { signIn, signOut } = useAuthContext();
   const [activeChain, setActiveChain] = useState<BlockchainType | null>(null);
+  const [currentChain, setCurrentChain] = useState<BlockchainType>(BlockchainType.ETHEREUM); // Default to Ethereum
   const [chainStatus, setChainStatus] = useState<Record<BlockchainType, ChainStatus>>({
     [BlockchainType.TON]: { ...defaultChainStatus },
     [BlockchainType.SOLANA]: { ...defaultChainStatus },
@@ -335,7 +338,9 @@ export const MultiChainProvider: React.FC<MultiChainProviderProps> = ({ children
   const contextValue: MultiChainContextType = {
     activeChain,
     chainStatus,
+    currentChain,
     setActiveChain,
+    setCurrentChain,
     connectChain,
     disconnectChain,
     disconnectAllChains,
