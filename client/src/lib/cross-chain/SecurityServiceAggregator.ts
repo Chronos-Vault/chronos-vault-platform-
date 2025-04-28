@@ -24,6 +24,45 @@ import { solanaService } from '../solana/solana-service';
 import { tonContractService as tonService } from '../ton/ton-contract-service';
 
 /**
+ * Cross-chain correlation incident
+ * Represents a security incident that spans multiple blockchains
+ */
+export interface CrossChainCorrelation {
+  id: string;
+  timestamp: number;
+  address: string;
+  relatedIncidents: SecurityIncident[];
+  correlatedChains: BlockchainType[];
+  correlationType: 'temporal' | 'pattern' | 'address' | 'asset';
+  confidenceScore: number;
+  severity: 'critical' | 'high' | 'medium' | 'low';
+  description: string;
+  status: 'active' | 'investigating' | 'resolved';
+  timeWindow: number; // time window in milliseconds for correlation
+  responseActions: {
+    action: string;
+    timestamp: number;
+    status: 'pending' | 'completed' | 'failed';
+    details?: string;
+  }[];
+}
+
+/**
+ * Network status for real-time blockchain monitoring
+ */
+export interface BlockchainNetworkStatus {
+  blockchain: BlockchainType;
+  status: 'online' | 'degraded' | 'offline' | 'unknown';
+  latency: number; // in milliseconds
+  lastBlock: number | string;
+  lastBlockTime: number;
+  nodeCount: number;
+  apiStatus: 'operational' | 'issues' | 'down';
+  lastChecked: number;
+  historicalUptime: number; // percentage (0-100)
+}
+
+/**
  * Security status for a blockchain network
  */
 export interface NetworkSecurityStatus {
@@ -92,6 +131,14 @@ class SecurityServiceAggregator {
   private monitoringIntervals: Map<string, NodeJS.Timeout> = new Map();
   private securityLevels: Map<string, number> = new Map();
   private readonly MONITORING_INTERVAL = 30000; // 30 seconds
+  
+  // Cross-chain correlation monitoring
+  private correlationMonitoringActive = false;
+  private correlationMonitoringInterval: NodeJS.Timeout | null = null;
+  private readonly CORRELATION_INTERVAL = 60000; // 1 minute
+  private readonly INCIDENT_CORRELATION_WINDOW = 600000; // 10 minutes
+  private crossChainCorrelations: Map<string, CrossChainCorrelation> = new Map();
+  private networkStatuses: Map<BlockchainType, BlockchainNetworkStatus> = new Map();
   
   /**
    * Get security metrics for an address
@@ -892,6 +939,479 @@ class SecurityServiceAggregator {
         lastUpdated: Date.now()
       };
     });
+  }
+  /**
+   * Start cross-chain correlation monitoring
+   * This enables global monitoring for correlated incidents across all chains
+   */
+  async startCrossChainCorrelationMonitoring(): Promise<boolean> {
+    if (this.correlationMonitoringActive) {
+      console.log('Cross-chain correlation monitoring is already active');
+      return true;
+    }
+    
+    console.log('Starting cross-chain correlation monitoring');
+    this.correlationMonitoringActive = true;
+    
+    // Start tracking blockchain network statuses
+    await this.updateAllBlockchainNetworkStatuses();
+    
+    // Start interval for correlation monitoring
+    this.correlationMonitoringInterval = setInterval(async () => {
+      try {
+        // Update blockchain network statuses
+        await this.updateAllBlockchainNetworkStatuses();
+        
+        // Check for correlated incidents
+        await this.checkForCorrelatedIncidents();
+      } catch (error) {
+        console.error('Error in cross-chain correlation monitoring:', error);
+      }
+    }, this.CORRELATION_INTERVAL);
+    
+    return true;
+  }
+  
+  /**
+   * Stop cross-chain correlation monitoring
+   */
+  stopCrossChainCorrelationMonitoring(): boolean {
+    if (!this.correlationMonitoringActive) {
+      return true;
+    }
+    
+    if (this.correlationMonitoringInterval) {
+      clearInterval(this.correlationMonitoringInterval);
+      this.correlationMonitoringInterval = null;
+    }
+    
+    this.correlationMonitoringActive = false;
+    console.log('Stopped cross-chain correlation monitoring');
+    
+    return true;
+  }
+  
+  /**
+   * Get all cross-chain correlations
+   */
+  async getCrossChainCorrelations(): Promise<CrossChainCorrelation[]> {
+    return Array.from(this.crossChainCorrelations.values());
+  }
+  
+  /**
+   * Get a specific cross-chain correlation
+   */
+  async getCrossChainCorrelation(id: string): Promise<CrossChainCorrelation | undefined> {
+    return this.crossChainCorrelations.get(id);
+  }
+  
+  /**
+   * Get all blockchain network statuses
+   */
+  async getBlockchainNetworkStatuses(): Promise<BlockchainNetworkStatus[]> {
+    return Array.from(this.networkStatuses.values());
+  }
+  
+  /**
+   * Mark a cross-chain correlation as resolved
+   */
+  async resolveCorrelation(id: string): Promise<boolean> {
+    const correlation = this.crossChainCorrelations.get(id);
+    
+    if (!correlation) {
+      return false;
+    }
+    
+    // Update correlation status
+    correlation.status = 'resolved';
+    this.crossChainCorrelations.set(id, correlation);
+    
+    // Also resolve related incidents
+    for (const incident of correlation.relatedIncidents) {
+      await this.resolveIncident(incident.id);
+    }
+    
+    return true;
+  }
+  
+  /**
+   * Update network status for all blockchains
+   * This checks the health and performance of each blockchain network
+   */
+  private async updateAllBlockchainNetworkStatuses(): Promise<void> {
+    // Update Ethereum network status
+    this.networkStatuses.set('ethereum', await this.getBlockchainNetworkStatus('ethereum'));
+    
+    // Update Solana network status
+    this.networkStatuses.set('solana', await this.getBlockchainNetworkStatus('solana'));
+    
+    // Update TON network status
+    this.networkStatuses.set('ton', await this.getBlockchainNetworkStatus('ton'));
+  }
+  
+  /**
+   * Get network status for a specific blockchain
+   */
+  private async getBlockchainNetworkStatus(blockchain: BlockchainType): Promise<BlockchainNetworkStatus> {
+    const startTime = Date.now();
+    let status: BlockchainNetworkStatus = {
+      blockchain,
+      status: 'unknown',
+      latency: 0,
+      lastBlock: 0,
+      lastBlockTime: 0,
+      nodeCount: 0,
+      apiStatus: 'operational',
+      lastChecked: Date.now(),
+      historicalUptime: 99.9
+    };
+    
+    try {
+      switch (blockchain) {
+        case 'ethereum':
+          // Get Ethereum network stats
+          try {
+            const blockNumber = await ethereumService.getCurrentBlockNumber();
+            const block = await ethereumService.getBlock(blockNumber);
+            
+            status = {
+              ...status,
+              status: 'online',
+              latency: Date.now() - startTime,
+              lastBlock: blockNumber,
+              lastBlockTime: block?.timestamp ? Number(block.timestamp) * 1000 : 0,
+              nodeCount: 1, // Mock value, in real implementation would fetch from network
+              apiStatus: 'operational'
+            };
+          } catch (error) {
+            console.error('Error fetching Ethereum network status:', error);
+            status.status = 'degraded';
+            status.apiStatus = 'issues';
+          }
+          break;
+          
+        case 'solana':
+          // Get Solana network stats
+          try {
+            const slot = await solanaService.getCurrentSlot();
+            const timestamp = Date.now(); // In real impl, would get block time
+            
+            status = {
+              ...status,
+              status: 'online',
+              latency: Date.now() - startTime,
+              lastBlock: slot,
+              lastBlockTime: timestamp,
+              nodeCount: 1, // Mock value, in real implementation would fetch from network
+              apiStatus: 'operational'
+            };
+          } catch (error) {
+            console.error('Error fetching Solana network status:', error);
+            status.status = 'degraded';
+            status.apiStatus = 'issues';
+          }
+          break;
+          
+        case 'ton':
+          // Get TON network stats
+          try {
+            const blockId = await tonService.getLatestBlockId();
+            const timestamp = Date.now(); // In real impl, would get block time
+            
+            status = {
+              ...status,
+              status: 'online',
+              latency: Date.now() - startTime,
+              lastBlock: blockId || 'unknown',
+              lastBlockTime: timestamp,
+              nodeCount: 1, // Mock value, in real implementation would fetch from network
+              apiStatus: 'operational'
+            };
+          } catch (error) {
+            console.error('Error fetching TON network status:', error);
+            status.status = 'degraded';
+            status.apiStatus = 'issues';
+          }
+          break;
+          
+        default:
+          throw new Error(`Unsupported blockchain: ${blockchain}`);
+      }
+    } catch (error) {
+      console.error(`Error getting network status for ${blockchain}:`, error);
+      status.status = 'degraded';
+      status.apiStatus = 'issues';
+    }
+    
+    return status;
+  }
+  
+  /**
+   * Check for correlated incidents across all blockchains
+   * This is the core cross-chain security monitoring algorithm
+   */
+  private async checkForCorrelatedIncidents(): Promise<void> {
+    console.log('Checking for cross-chain correlated incidents');
+    
+    // Get recent incidents from each blockchain
+    const cutoffTime = Date.now() - this.INCIDENT_CORRELATION_WINDOW;
+    
+    // Fetch all recent incidents
+    const allRecentIncidents = await this.getAllRecentIncidents(cutoffTime);
+    
+    if (allRecentIncidents.length === 0) {
+      return;
+    }
+    
+    console.log(`Found ${allRecentIncidents.length} recent incidents to analyze for correlations`);
+    
+    // Group incidents by address to detect multi-chain attacks on the same address
+    const incidentsByAddress = this.groupIncidentsByAddress(allRecentIncidents);
+    
+    // Check for temporal correlations (incidents happening close in time)
+    await this.detectTemporalCorrelations(allRecentIncidents);
+    
+    // Check for address-based correlations (multiple incidents for the same address)
+    await this.detectAddressCorrelations(incidentsByAddress);
+  }
+  
+  /**
+   * Get all recent incidents across all blockchains
+   */
+  private async getAllRecentIncidents(cutoffTime: number): Promise<SecurityIncident[]> {
+    // For a real implementation, this would query all incidents from a database
+    // Here we'll use a mock implementation that gets all incidents and filters
+    
+    // Get all incidents
+    const allIncidents: SecurityIncident[] = [];
+    
+    // Add mock incidents for demonstration
+    const mockIncidentAddresses = ['0x123...', '0x456...', 'solana:123...', 'ton:456...'];
+    
+    for (const address of mockIncidentAddresses) {
+      const incidents = await this.incidentService.getIncidentsForAddress(address);
+      allIncidents.push(...incidents);
+    }
+    
+    // Filter for recent incidents
+    return allIncidents.filter(incident => incident.timestamp >= cutoffTime);
+  }
+  
+  /**
+   * Group incidents by address
+   */
+  private groupIncidentsByAddress(incidents: SecurityIncident[]): Map<string, SecurityIncident[]> {
+    const result = new Map<string, SecurityIncident[]>();
+    
+    for (const incident of incidents) {
+      if (!result.has(incident.address)) {
+        result.set(incident.address, []);
+      }
+      
+      result.get(incident.address)?.push(incident);
+    }
+    
+    return result;
+  }
+  
+  /**
+   * Detect temporal correlations (incidents happening close in time)
+   */
+  private async detectTemporalCorrelations(incidents: SecurityIncident[]): Promise<void> {
+    // Sort incidents by timestamp
+    const sortedIncidents = [...incidents].sort((a, b) => a.timestamp - b.timestamp);
+    
+    // Look for clusters of incidents across different chains
+    const timeWindowMs = 60000; // 1 minute window for temporal correlation
+    
+    // Sliding window approach to find temporal clusters
+    for (let i = 0; i < sortedIncidents.length; i++) {
+      const windowStart = sortedIncidents[i].timestamp;
+      const windowEnd = windowStart + timeWindowMs;
+      
+      // Find all incidents in this time window
+      const windowIncidents = sortedIncidents.filter(
+        incident => incident.timestamp >= windowStart && incident.timestamp <= windowEnd
+      );
+      
+      // Only interested in multi-chain correlations
+      const blockchains = new Set(windowIncidents.map(incident => incident.blockchain));
+      
+      if (blockchains.size > 1 && windowIncidents.length >= 2) {
+        // Found a potential correlation across multiple chains
+        await this.createOrUpdateCorrelation(
+          windowIncidents,
+          'temporal',
+          `Multiple incidents across ${blockchains.size} blockchains within ${timeWindowMs / 1000} seconds`,
+          0.7 + (blockchains.size * 0.1) // Confidence increases with more chains involved
+        );
+      }
+    }
+  }
+  
+  /**
+   * Detect address-based correlations (multiple incidents for the same address)
+   */
+  private async detectAddressCorrelations(
+    incidentsByAddress: Map<string, SecurityIncident[]>
+  ): Promise<void> {
+    for (const [address, incidents] of incidentsByAddress.entries()) {
+      // Only interested in multi-chain correlations
+      const blockchains = new Set(incidents.map(incident => incident.blockchain));
+      
+      if (blockchains.size > 1) {
+        // Found a correlation - same address has incidents on multiple chains
+        await this.createOrUpdateCorrelation(
+          incidents,
+          'address',
+          `Security incidents detected on ${blockchains.size} blockchains for the same address`,
+          0.8 + (blockchains.size * 0.1) // Confidence increases with more chains involved
+        );
+        
+        // Automatically escalate security level for this address
+        const currentLevel = this.getSecurityLevel(address);
+        if (currentLevel < 5) {
+          await this.setSecurityLevel(address, Math.min(5, currentLevel + blockchains.size));
+          console.warn(`Automatically escalated security level for ${address} to ${
+            Math.min(5, currentLevel + blockchains.size)
+          } due to cross-chain incidents`);
+        }
+      }
+    }
+  }
+  
+  /**
+   * Create or update a correlation based on detected incidents
+   */
+  private async createOrUpdateCorrelation(
+    incidents: SecurityIncident[],
+    correlationType: CrossChainCorrelation['correlationType'],
+    description: string,
+    confidenceScore: number
+  ): Promise<CrossChainCorrelation> {
+    // Generate deterministic ID based on incident IDs
+    const incidentIds = incidents.map(i => i.id).sort().join('-');
+    const correlationId = `correlation-${correlationType}-${incidentIds.substring(0, 20)}`;
+    
+    // Check if correlation already exists
+    const existingCorrelation = this.crossChainCorrelations.get(correlationId);
+    
+    if (existingCorrelation) {
+      // Update existing correlation
+      const updatedCorrelation: CrossChainCorrelation = {
+        ...existingCorrelation,
+        relatedIncidents: incidents,
+        confidenceScore: Math.max(existingCorrelation.confidenceScore, confidenceScore),
+        correlatedChains: [...new Set(incidents.map(i => i.blockchain))],
+        status: existingCorrelation.status === 'resolved' ? 'active' : existingCorrelation.status
+      };
+      
+      this.crossChainCorrelations.set(correlationId, updatedCorrelation);
+      return updatedCorrelation;
+    } else {
+      // Determine severity based on incident severities and correlation type
+      const highestSeverity = this.determineHighestSeverity(incidents);
+      const correlationSeverity = this.escalateCorrelationSeverity(highestSeverity, correlationType);
+      
+      // Create new correlation
+      const newCorrelation: CrossChainCorrelation = {
+        id: correlationId,
+        timestamp: Date.now(),
+        address: incidents[0].address, // Use the first incident's address
+        relatedIncidents: incidents,
+        correlatedChains: [...new Set(incidents.map(i => i.blockchain))],
+        correlationType,
+        confidenceScore,
+        severity: correlationSeverity,
+        description,
+        status: 'active',
+        timeWindow: this.INCIDENT_CORRELATION_WINDOW,
+        responseActions: []
+      };
+      
+      this.crossChainCorrelations.set(correlationId, newCorrelation);
+      
+      // For critical correlations, trigger automated response
+      if (correlationSeverity === 'critical') {
+        await this.handleCriticalCorrelation(newCorrelation);
+      }
+      
+      console.warn(`New cross-chain correlation detected: ${description}`);
+      console.warn(`Correlation severity: ${correlationSeverity}, type: ${correlationType}`);
+      console.warn(`Affected chains: ${newCorrelation.correlatedChains.join(', ')}`);
+      
+      return newCorrelation;
+    }
+  }
+  
+  /**
+   * Determine the highest severity among a set of incidents
+   */
+  private determineHighestSeverity(incidents: SecurityIncident[]): SecurityIncident['severity'] {
+    // Priority: critical > high > medium > low
+    const severities = incidents.map(i => i.severity);
+    
+    if (severities.includes('critical')) return 'critical';
+    if (severities.includes('high')) return 'high';
+    if (severities.includes('medium')) return 'medium';
+    return 'low';
+  }
+  
+  /**
+   * Escalate severity for correlations
+   * Cross-chain correlations are generally more severe than single-chain incidents
+   */
+  private escalateCorrelationSeverity(
+    baseSeverity: SecurityIncident['severity'],
+    correlationType: CrossChainCorrelation['correlationType']
+  ): CrossChainCorrelation['severity'] {
+    // Escalate severity based on correlation type
+    switch (baseSeverity) {
+      case 'low':
+        return correlationType === 'temporal' ? 'medium' : 'high';
+        
+      case 'medium':
+        return correlationType === 'temporal' ? 'high' : 'critical';
+        
+      case 'high':
+      case 'critical':
+        return 'critical';
+    }
+  }
+  
+  /**
+   * Handle critical cross-chain correlations
+   * Takes immediate actions for the most severe correlated incidents
+   */
+  private async handleCriticalCorrelation(correlation: CrossChainCorrelation): Promise<void> {
+    console.error(`CRITICAL CROSS-CHAIN CORRELATION DETECTED: ${correlation.description}`);
+    console.error(`Affected address: ${correlation.address}`);
+    console.error(`Affected chains: ${correlation.correlatedChains.join(', ')}`);
+    
+    // Set maximum security level for the address
+    await this.setSecurityLevel(correlation.address, 5);
+    
+    // Trigger security scan
+    await this.triggerSecurityScan(correlation.address);
+    
+    // Create a high-severity incident for the correlation itself
+    const incidentId = await this.incidentService.reportIncident(
+      correlation.correlatedChains[0], // Use the first chain for the incident
+      correlation.address,
+      'cross_chain_attack',
+      `Cross-chain security correlation detected: ${correlation.description}`,
+      'critical'
+    );
+    
+    // Record the action
+    correlation.responseActions.push({
+      action: 'escalate_security',
+      timestamp: Date.now(),
+      status: 'completed',
+      details: 'Maximum security level set and security scan triggered'
+    });
+    
+    this.crossChainCorrelations.set(correlation.id, correlation);
   }
 }
 
