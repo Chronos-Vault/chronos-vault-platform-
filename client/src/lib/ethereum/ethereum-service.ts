@@ -52,12 +52,20 @@ const CHRONOS_VAULT_ABI = [
   "event AssetWithdrawn(address indexed to, uint256 amount)"
 ];
 
-// Vault Contract Address (will be different per network)
-const VAULT_CONTRACT_ADDRESS = {
+// Vault Factory Contract Address (will be different per network)
+const VAULT_FACTORY_ADDRESS = {
   mainnet: '0x1234567890123456789012345678901234567890', // Placeholder for real address
-  goerli: '0x1234567890123456789012345678901234567890',  // Placeholder for real address
-  sepolia: '0x1234567890123456789012345678901234567890'  // Placeholder for real address
+  goerli: '0x9876543210987654321098765432109876543210',  // Placeholder for real address
+  sepolia: '0xabcdefabcdefabcdefabcdefabcdefabcdefabcd'  // Placeholder for real address
 };
+
+// Vault Factory ABI - For creating new vaults
+const VAULT_FACTORY_ABI = [
+  "function createVault(address _asset, string memory _name, string memory _symbol, uint256 _unlockTime, uint8 _securityLevel, string memory _accessKey, bool _isPublic) returns (address)",
+  "function getVaults(address _creator) view returns (address[])",
+  "function getVaultCount() view returns (uint256)",
+  "event VaultCreated(address indexed creator, address indexed vaultAddress, uint256 unlockTime)"
+];
 
 // Connection state
 export interface EthereumConnectionState {
@@ -201,7 +209,7 @@ class EthereumService {
   }
   
   /**
-   * Initialize the vault contract
+   * Initialize the factory contract
    */
   private initializeContract() {
     try {
@@ -210,22 +218,22 @@ class EthereumService {
         return;
       }
       
-      const contractAddress = this.getContractAddressForNetwork();
+      const factoryAddress = this.getFactoryAddressForNetwork();
       
       this._vaultContract = new ethers.Contract(
-        contractAddress,
-        CHRONOS_VAULT_ABI,
+        factoryAddress,
+        VAULT_FACTORY_ABI,
         this._connectionState.signer
       );
       
-      console.log(`Vault contract initialized at ${contractAddress}`);
+      console.log(`Vault factory contract initialized at ${factoryAddress}`);
     } catch (error) {
-      console.error('Error initializing vault contract:', error);
+      console.error('Error initializing vault factory contract:', error);
     }
   }
   
   /**
-   * Create a new time-locked vault using the ChronosVault contract
+   * Create a new time-locked vault using the ChronosVault factory
    */
   public async createVault(params: VaultCreationParams): Promise<{ success: boolean; vaultAddress?: string; error?: string }> {
     try {
@@ -238,23 +246,20 @@ class EthereumService {
       
       const { unlockTime, amount, recipient, comment } = params;
       
-      // ChronosVault requires an ERC20 token address, name, symbol, and other parameters
-      // For this implementation, we'll use a dummy ERC20 token address
-      const dummyERC20Address = "0x0000000000000000000000000000000000000000"; // Use a real token address in production
-      const vaultName = `ChronosVault-${Date.now()}`;
-      const vaultSymbol = "CVT-TL";
+      // For now, we use ETH as the asset (zero address)
+      const ethAssetAddress = "0x0000000000000000000000000000000000000000";
+      const vaultName = comment ? `${comment}` : `ChronosVault-${Date.now()}`;
+      const vaultSymbol = "CVT-ETH";
       const securityLevel = 1; // Basic security level
       const accessKey = ""; // No access key for basic security level
       const isPublic = true;
       
       console.log(`Creating vault unlocking at ${new Date(unlockTime * 1000).toLocaleString()}`);
-      console.log(`Beneficiary: ${recipient || 'Self'}`);
+      console.log(`Vault Name: ${vaultName}`);
       
-      // Call contract constructor
-      // For a real implementation, we would deploy a new ChronosVault contract instance
-      // This is simplified for demonstration purposes
-      const tx = await this._vaultContract.constructor(
-        dummyERC20Address,
+      // Call factory to create a new vault
+      const tx = await this._vaultContract.createVault(
+        ethAssetAddress,
         vaultName,
         vaultSymbol,
         unlockTime,
@@ -266,9 +271,14 @@ class EthereumService {
       // Wait for transaction confirmation
       const receipt = await tx.wait();
       
-      // Extract vault address from the receipt
-      // In a real implementation, this would come from the deployment address
-      const vaultAddress = receipt.contractAddress || "0x";
+      // Extract vault address from event logs
+      const vaultCreatedEvent = receipt.logs.find(
+        (log: any) => log.eventName === 'VaultCreated'
+      );
+      
+      const vaultAddress = vaultCreatedEvent ? 
+        vaultCreatedEvent.args.vaultAddress : 
+        'Address not found in event logs';
       
       return {
         success: true,
@@ -347,6 +357,202 @@ class EthereumService {
   }
   
   /**
+   * Get all vaults created by the user
+   */
+  public async getUserVaults(): Promise<{ success: boolean; vaults?: string[]; error?: string }> {
+    try {
+      if (!this._connectionState.isConnected || !this._vaultContract || !this._connectionState.address) {
+        return { 
+          success: false, 
+          error: 'Not connected to Ethereum or contract not initialized' 
+        };
+      }
+      
+      // Call contract to get list of vaults created by this address
+      const vaults = await this._vaultContract.getVaults(this._connectionState.address);
+      
+      return {
+        success: true,
+        vaults
+      };
+    } catch (error: any) {
+      console.error('Error fetching user vaults:', error);
+      return {
+        success: false,
+        error: error.message || 'Unknown error fetching vaults'
+      };
+    }
+  }
+  
+  /**
+   * Get vault details
+   */
+  public async getVaultDetails(vaultAddress: string): Promise<{ 
+    success: boolean; 
+    details?: { 
+      name: string; 
+      symbol: string; 
+      unlockTime: number;
+      balance: string;
+      creator: string;
+      isPublic: boolean;
+      securityLevel: number;
+    }; 
+    error?: string 
+  }> {
+    try {
+      if (!this._connectionState.isConnected || !this._connectionState.signer) {
+        return { 
+          success: false, 
+          error: 'Not connected to Ethereum' 
+        };
+      }
+      
+      // Create contract instance for the specific vault
+      const vaultContract = new ethers.Contract(
+        vaultAddress, 
+        CHRONOS_VAULT_ABI, 
+        this._connectionState.signer
+      );
+      
+      // Get vault details
+      const [name, symbol, unlockTime, balance, creator, isPublic, securityLevel] = await Promise.all([
+        vaultContract.name(),
+        vaultContract.symbol(),
+        vaultContract.unlockTime(),
+        vaultContract.totalAssets(),
+        vaultContract.creator(),
+        vaultContract.isPublic(),
+        vaultContract.securityLevel()
+      ]);
+      
+      return {
+        success: true,
+        details: {
+          name,
+          symbol,
+          unlockTime: Number(unlockTime),
+          balance: ethers.formatEther(balance),
+          creator,
+          isPublic,
+          securityLevel: Number(securityLevel)
+        }
+      };
+    } catch (error: any) {
+      console.error('Error fetching vault details:', error);
+      return {
+        success: false,
+        error: error.message || 'Unknown error fetching vault details'
+      };
+    }
+  }
+  
+  /**
+   * Deposit ETH into a vault
+   */
+  public async depositToVault(
+    vaultAddress: string, 
+    amount: string
+  ): Promise<{ success: boolean; transactionHash?: string; error?: string }> {
+    try {
+      if (!this._connectionState.isConnected || !this._connectionState.signer) {
+        return { 
+          success: false, 
+          error: 'Not connected to Ethereum' 
+        };
+      }
+      
+      // Create contract instance for the specific vault
+      const vaultContract = new ethers.Contract(
+        vaultAddress, 
+        CHRONOS_VAULT_ABI, 
+        this._connectionState.signer
+      );
+      
+      // Convert amount to wei
+      const amountWei = ethers.parseEther(amount);
+      
+      // Call deposit function
+      const tx = await vaultContract.deposit(amountWei, this._connectionState.address, {
+        value: amountWei
+      });
+      
+      // Wait for confirmation
+      const receipt = await tx.wait();
+      
+      return {
+        success: true,
+        transactionHash: receipt?.hash
+      };
+    } catch (error: any) {
+      console.error('Error depositing to vault:', error);
+      return {
+        success: false,
+        error: error.message || 'Unknown error depositing to vault'
+      };
+    }
+  }
+  
+  /**
+   * Withdraw ETH from a vault (if unlocked)
+   */
+  public async withdrawFromVault(
+    vaultAddress: string, 
+    amount: string
+  ): Promise<{ success: boolean; transactionHash?: string; error?: string }> {
+    try {
+      if (!this._connectionState.isConnected || !this._connectionState.signer) {
+        return { 
+          success: false, 
+          error: 'Not connected to Ethereum' 
+        };
+      }
+      
+      // Create contract instance for the specific vault
+      const vaultContract = new ethers.Contract(
+        vaultAddress, 
+        CHRONOS_VAULT_ABI, 
+        this._connectionState.signer
+      );
+      
+      // Check if the vault is unlocked
+      const unlockTime = await vaultContract.unlockTime();
+      const currentTimestamp = Math.floor(Date.now() / 1000);
+      
+      if (currentTimestamp < Number(unlockTime)) {
+        return {
+          success: false,
+          error: `Vault is still locked until ${new Date(Number(unlockTime) * 1000).toLocaleString()}`
+        };
+      }
+      
+      // Convert amount to wei
+      const amountWei = ethers.parseEther(amount);
+      
+      // Call withdraw function
+      const tx = await vaultContract.withdraw(
+        amountWei, 
+        this._connectionState.address, 
+        this._connectionState.address
+      );
+      
+      // Wait for confirmation
+      const receipt = await tx.wait();
+      
+      return {
+        success: true,
+        transactionHash: receipt?.hash
+      };
+    } catch (error: any) {
+      console.error('Error withdrawing from vault:', error);
+      return {
+        success: false,
+        error: error.message || 'Unknown error withdrawing from vault'
+      };
+    }
+  }
+  
+  /**
    * Get available networks
    */
   public getAvailableNetworks() {
@@ -419,10 +625,10 @@ class EthereumService {
   }
   
   /**
-   * Get the contract address for the current network
+   * Get the factory address for the current network
    */
-  private getContractAddressForNetwork(): string {
-    return VAULT_CONTRACT_ADDRESS[this._currentNetwork as keyof typeof VAULT_CONTRACT_ADDRESS];
+  private getFactoryAddressForNetwork(): string {
+    return VAULT_FACTORY_ADDRESS[this._currentNetwork as keyof typeof VAULT_FACTORY_ADDRESS];
   }
   
   /**
