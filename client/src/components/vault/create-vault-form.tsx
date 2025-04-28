@@ -912,6 +912,178 @@ const CreateVaultForm = ({ initialVaultType = "legacy" }: CreateVaultFormProps) 
                   </div>
                 </TabsContent>
 
+                {/* Triple-Chain Security and Advanced Features Section */}
+                <div className="mt-8 pt-6 border-t border-[#333333]">
+                  <div className="bg-gradient-to-r from-[#6B00D7]/10 to-[#FF5AF7]/10 p-5 rounded-lg mb-6 border border-purple-500/30">
+                    <div className="flex items-start mb-4">
+                      <div className="bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] p-2 rounded-full mr-3 mt-1">
+                        <i className="ri-shield-keyhole-line text-white text-xl"></i>
+                      </div>
+                      <div>
+                        <h3 className="font-poppins font-semibold text-white text-lg">Revolutionary Triple-Chain Security</h3>
+                        <p className="text-sm text-gray-300 mt-1">
+                          Our exclusive multi-chain protection ensures your vault has unprecedented security by utilizing the strengths of multiple blockchains simultaneously.
+                        </p>
+                      </div>
+                    </div>
+                    
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-3 mb-4">
+                      <div className="flex items-center space-x-2 bg-[#1A1A1A] p-3 rounded-lg border border-purple-500/20">
+                        <input
+                          type="checkbox"
+                          id="enableEthereumChain"
+                          className="form-checkbox h-4 w-4 text-[#6B00D7] rounded border-gray-400 focus:ring-[#6B00D7]"
+                          defaultChecked
+                        />
+                        <div>
+                          <label htmlFor="enableEthereumChain" className="block text-sm text-gray-300">Ethereum</label>
+                          <span className="text-xs text-gray-500">Primary Security</span>
+                        </div>
+                      </div>
+                      
+                      <div className="flex items-center space-x-2 bg-[#1A1A1A] p-3 rounded-lg border border-purple-500/20">
+                        <input
+                          type="checkbox"
+                          id="enableSolanaChain"
+                          className="form-checkbox h-4 w-4 text-[#FF5AF7] rounded border-gray-400 focus:ring-[#FF5AF7]"
+                        />
+                        <div>
+                          <label htmlFor="enableSolanaChain" className="block text-sm text-gray-300">Solana</label>
+                          <span className="text-xs text-gray-500">Speed Layer</span>
+                        </div>
+                      </div>
+                      
+                      <div className="flex items-center space-x-2 bg-[#1A1A1A] p-3 rounded-lg border border-purple-500/20">
+                        <input
+                          type="checkbox"
+                          id="enableTONChain"
+                          className="form-checkbox h-4 w-4 text-blue-400 rounded border-gray-400 focus:ring-blue-400"
+                        />
+                        <div>
+                          <label htmlFor="enableTONChain" className="block text-sm text-gray-300">TON</label>
+                          <span className="text-xs text-gray-500">Backup Layer</span>
+                        </div>
+                      </div>
+                    </div>
+                    
+                    <div className="text-xs text-gray-400 p-3 bg-[#1A1A1A] rounded-lg">
+                      <p className="mb-1"><span className="text-white font-medium">How it works:</span> Your vault data is mirrored across all selected chains with unique cryptographic signing.</p>
+                      <p>If one chain experiences issues, the others maintain access and security. This ensures unparalleled protection against any single point of failure.</p>
+                    </div>
+                  </div>
+                  
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                    {/* IPFS & Arweave permanent storage */}
+                    <div className="border border-gray-700 p-4 rounded-lg bg-[#1A1A1A]">
+                      <div className="flex items-start mb-3">
+                        <div className="bg-gradient-to-r from-green-500 to-teal-500 p-1.5 rounded-full mr-3">
+                          <i className="ri-hard-drive-2-line text-black text-lg"></i>
+                        </div>
+                        <div>
+                          <h4 className="font-medium text-white mb-1">IPFS & Arweave Integration</h4>
+                          <p className="text-xs text-gray-400">Store vault data permanently with decentralized storage solutions</p>
+                        </div>
+                      </div>
+                      
+                      <div className="space-y-3">
+                        <div className="flex items-center p-2 bg-gray-900 rounded border border-gray-700">
+                          <input
+                            type="checkbox"
+                            id="enableIPFS"
+                            className="form-checkbox h-4 w-4 text-green-500 rounded border-gray-400 focus:ring-green-500"
+                          />
+                          <div className="ml-2">
+                            <label htmlFor="enableIPFS" className="block text-sm text-gray-300">IPFS Storage</label>
+                            <p className="text-xs text-gray-500">Content-addressed immutable storage</p>
+                          </div>
+                        </div>
+                        
+                        <div className="flex items-center p-2 bg-gray-900 rounded border border-gray-700">
+                          <input
+                            type="checkbox"
+                            id="enableArweave"
+                            className="form-checkbox h-4 w-4 text-yellow-500 rounded border-gray-400 focus:ring-yellow-500"
+                          />
+                          <div className="ml-2">
+                            <label htmlFor="enableArweave" className="block text-sm text-gray-300">Arweave Permanent Storage</label>
+                            <p className="text-xs text-gray-500">Pay once, store forever model</p>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    
+                    {/* Cross-Chain Atomic Swaps */}
+                    <div className="border border-gray-700 p-4 rounded-lg bg-[#1A1A1A]">
+                      <div className="flex items-start mb-3">
+                        <div className="bg-gradient-to-r from-blue-500 to-purple-500 p-1.5 rounded-full mr-3">
+                          <i className="ri-exchange-box-line text-white text-lg"></i>
+                        </div>
+                        <div>
+                          <h4 className="font-medium text-white mb-1">Cross-Chain Atomic Swaps</h4>
+                          <p className="text-xs text-gray-400">Enable seamless asset type conversions within your vault</p>
+                        </div>
+                      </div>
+                      
+                      <div className="space-y-3">
+                        <div className="flex items-center p-2 bg-gray-900 rounded border border-gray-700">
+                          <input
+                            type="checkbox"
+                            id="enableAtomicSwaps"
+                            className="form-checkbox h-4 w-4 text-blue-500 rounded border-gray-400 focus:ring-blue-500"
+                          />
+                          <div className="ml-2">
+                            <label htmlFor="enableAtomicSwaps" className="block text-sm text-gray-300">Enable Atomic Swaps</label>
+                            <p className="text-xs text-gray-500">Convert assets across chains automatically</p>
+                          </div>
+                        </div>
+                        
+                        <div className="grid grid-cols-2 gap-2">
+                          <div>
+                            <label className="block text-xs text-gray-400 mb-1">Swap Trigger</label>
+                            <select className="w-full bg-gray-900 border border-gray-700 rounded text-xs text-gray-300 p-1.5">
+                              <option value="manual">Manual Only</option>
+                              <option value="price">Price-triggered</option>
+                              <option value="time">Time-based</option>
+                              <option value="hybrid">Hybrid Conditions</option>
+                            </select>
+                          </div>
+                          
+                          <div>
+                            <label className="block text-xs text-gray-400 mb-1">Swap Strategy</label>
+                            <select className="w-full bg-gray-900 border border-gray-700 rounded text-xs text-gray-300 p-1.5">
+                              <option value="optimize">Yield Optimization</option>
+                              <option value="stability">Stability Focus</option>
+                              <option value="growth">Growth Focus</option>
+                            </select>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div className="p-4 bg-gradient-to-r from-[#6B00D7]/5 to-[#FF5AF7]/5 rounded-lg border border-purple-500/20 mb-6">
+                    <div className="flex items-start">
+                      <div className="bg-gradient-to-r from-[#6B00D7]/20 to-[#FF5AF7]/20 p-2 rounded-full mr-3 flex-shrink-0 mt-1">
+                        <i className="ri-lock-password-line text-white text-lg"></i>
+                      </div>
+                      <div>
+                        <h4 className="font-medium text-white mb-1">Zero-Knowledge Verification</h4>
+                        <p className="text-sm text-gray-300">
+                          Our revolutionary zero-knowledge proof system allows proving ownership or status without revealing actual assets or sensitive information.
+                        </p>
+                        <div className="mt-3 flex items-center">
+                          <input
+                            type="checkbox"
+                            id="enableZkProofs"
+                            className="form-checkbox h-4 w-4 text-purple-500 rounded border-gray-400 focus:ring-purple-500"
+                          />
+                          <label htmlFor="enableZkProofs" className="ml-2 text-sm text-gray-300">Enable Zero-Knowledge Proofs for Enhanced Privacy</label>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                
                 {!showAttachmentUpload && (
                   <div className="pt-4 border-t border-[#333333]">
                     <Button 
