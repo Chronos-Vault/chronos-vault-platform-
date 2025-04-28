@@ -3,14 +3,19 @@
  * 
  * This service aggregates security-related functionality from multiple services
  * to provide a comprehensive security dashboard and monitoring system.
+ * It implements the Triple-Chain Security system by validating data across
+ * Ethereum, Solana, and TON chains.
  */
 
-import { BlockchainType } from './interfaces';
+import { BlockchainType, SecurityRiskLevel } from './interfaces';
 import { getAnomalyDetectionService, AnomalyDetectionResult } from './AnomalyDetectionService';
 import { getIncidentResponseService, SecurityIncident } from './SecurityIncidentResponseService';
 import { getTransactionMonitoringService, MonitoringAlert } from './TransactionMonitoringService';
 import { getMultiSignatureService, SignatureRequest } from './MultiSignatureService';
 import { secureCrossChainService } from './secure-service';
+import { ethereumService } from '../ethereum/service';
+import { solanaService } from '../solana/service';
+import { tonService } from '../ton/service';
 
 /**
  * Security status for a blockchain network
@@ -41,7 +46,35 @@ export interface SecurityMetrics {
 }
 
 /**
- * Security Service Aggregator
+ * Cross-chain verification result
+ */
+export interface CrossChainVerificationResult {
+  vaultId: string;
+  verified: boolean;
+  ethereumStatus: {
+    verified: boolean;
+    blockNumber?: number;
+    timestamp?: number;
+    error?: string;
+  };
+  solanaStatus: {
+    verified: boolean;
+    slot?: number;
+    timestamp?: number;
+    error?: string;
+  };
+  tonStatus: {
+    verified: boolean;
+    blockId?: string;
+    timestamp?: number;
+    error?: string;
+  };
+  overallStatus: 'verified' | 'partial' | 'failed';
+  timestamp: number;
+}
+
+/**
+ * Security Service Aggregator - Implements Triple-Chain Security
  */
 class SecurityServiceAggregator {
   private incidentService = getIncidentResponseService();
