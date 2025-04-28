@@ -1,268 +1,284 @@
 /**
  * ProofVerificationCard Component
  * 
- * This component provides a user interface for generating and verifying
- * cryptographic proofs of vault integrity.
+ * A card component that allows users to generate and verify cryptographic
+ * proofs for their vaults, demonstrating that funds are safely locked without
+ * revealing sensitive data.
  */
 
 import { useState } from 'react';
-import { Check, AlertCircle, Shield, ShieldCheck, RefreshCw, BarChart4, Shield as ShieldIcon } from 'lucide-react';
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
+import { 
+  Card, 
+  CardContent, 
+  CardDescription, 
+  CardFooter, 
+  CardHeader, 
+  CardTitle 
+} from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-import { Skeleton } from '@/components/ui/skeleton';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { useProofVerification, ProofType, VerificationStatus, ChallengeType } from '@/hooks/use-proof-verification';
+import { Separator } from '@/components/ui/separator';
+import { 
+  Select, 
+  SelectContent, 
+  SelectItem, 
+  SelectTrigger, 
+  SelectValue
+} from '@/components/ui/select';
+import { Shield, CheckCircle2, AlertTriangle, Clock, FileText, RefreshCw } from 'lucide-react';
+import { useProofVerification, ProofType, VerificationStatus } from '@/hooks/use-proof-verification';
 
 interface ProofVerificationCardProps {
   vaultId: number;
-  userId: number;
-  blockchains?: string[];
+  className?: string;
 }
 
-export function ProofVerificationCard({ vaultId, userId, blockchains = ['TON'] }: ProofVerificationCardProps) {
-  const [activeTab, setActiveTab] = useState('merkle');
-  const [progress, setProgress] = useState(0);
+export function ProofVerificationCard({ vaultId, className = '' }: ProofVerificationCardProps) {
+  const [selectedProofType, setSelectedProofType] = useState<string>(ProofType.MERKLE);
+  const [verificationStep, setVerificationStep] = useState<number>(0);
   
   const {
-    generateProof,
-    verifyProof,
     proofRecord,
     isGenerating,
     isVerifying,
-    error
+    error,
+    generateProof,
+    verifyProof,
+    resetState
   } = useProofVerification();
-
-  // Handle proof generation
+  
   const handleGenerateProof = async () => {
-    // Start progress animation
-    setProgress(0);
-    const progressInterval = setInterval(() => {
-      setProgress(prev => {
-        if (prev >= 100) {
-          clearInterval(progressInterval);
-          return 100;
-        }
-        return prev + 5;
-      });
-    }, 300);
-    
-    // Generate the proof
-    const proofType = activeTab as 'merkle' | 'cross-chain';
-    await generateProof(vaultId, proofType, proofType === 'cross-chain' ? blockchains : undefined);
-    
-    // Complete progress animation
-    clearInterval(progressInterval);
-    setProgress(100);
+    setVerificationStep(1);
+    await generateProof(vaultId, selectedProofType);
+    setVerificationStep(2);
   };
-
-  // Handle proof verification
+  
   const handleVerifyProof = async () => {
     if (!proofRecord) return;
     
-    // Start progress animation
-    setProgress(0);
-    const progressInterval = setInterval(() => {
-      setProgress(prev => {
-        if (prev >= 100) {
-          clearInterval(progressInterval);
-          return 100;
-        }
-        return prev + 10;
-      });
-    }, 200);
-    
-    // Verify the proof
-    await verifyProof(proofRecord.id, userId);
-    
-    // Complete progress animation
-    clearInterval(progressInterval);
-    setProgress(100);
+    setVerificationStep(3);
+    const success = await verifyProof(proofRecord.id, vaultId);
+    if (success) {
+      setVerificationStep(4);
+    } else {
+      setVerificationStep(2);
+    }
   };
-
-  // Render status badge based on verification status
+  
+  const handleStartOver = () => {
+    resetState();
+    setVerificationStep(0);
+  };
+  
   const renderStatusBadge = () => {
     if (!proofRecord) return null;
     
     switch (proofRecord.status) {
       case VerificationStatus.VERIFIED:
-        return <Badge className="bg-green-500 hover:bg-green-600">Verified</Badge>;
-      case VerificationStatus.PENDING:
-        return <Badge className="bg-yellow-500 hover:bg-yellow-600">Pending</Badge>;
+        return (
+          <Badge className="bg-green-500 hover:bg-green-600">
+            <CheckCircle2 className="w-3 h-3 mr-1" />
+            Verified
+          </Badge>
+        );
       case VerificationStatus.FAILED:
-        return <Badge className="bg-red-500 hover:bg-red-600">Failed</Badge>;
+        return (
+          <Badge variant="destructive">
+            <AlertTriangle className="w-3 h-3 mr-1" />
+            Failed
+          </Badge>
+        );
       case VerificationStatus.EXPIRED:
-        return <Badge className="bg-gray-500 hover:bg-gray-600">Expired</Badge>;
+        return (
+          <Badge variant="outline" className="text-amber-500 border-amber-500">
+            <Clock className="w-3 h-3 mr-1" />
+            Expired
+          </Badge>
+        );
       default:
-        return null;
+        return (
+          <Badge variant="secondary">
+            <Clock className="w-3 h-3 mr-1" />
+            Pending
+          </Badge>
+        );
     }
   };
-
+  
   return (
-    <Card className="w-full max-w-lg shadow-lg border-primary/20">
-      <CardHeader className="bg-gradient-to-br from-purple-600/10 to-blue-600/5 border-b border-primary/10">
-        <div className="flex justify-between items-center">
-          <CardTitle className="text-lg font-semibold flex items-center gap-2">
-            <Shield className="w-5 h-5 text-purple-500" />
+    <Card className={`bg-[#1E1E1E] border-[#333333] ${className}`}>
+      <CardHeader>
+        <div className="flex items-center justify-between">
+          <CardTitle className="flex items-center gap-2 text-lg">
+            <Shield className="h-5 w-5 text-[#6B00D7]" />
             Proof of Reservation
           </CardTitle>
-          {renderStatusBadge()}
+          
+          {proofRecord && renderStatusBadge()}
         </div>
         <CardDescription>
-          Verify cryptographic proof that your vault assets have not been tampered with.
+          Verify that your assets are securely locked in the vault with cryptographic proof
         </CardDescription>
       </CardHeader>
       
-      <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-        <div className="px-6 py-3 border-b border-border/50">
-          <TabsList className="grid grid-cols-2 w-full">
-            <TabsTrigger value="merkle" className="text-sm">
-              Merkle Proof
-            </TabsTrigger>
-            <TabsTrigger value="cross-chain" className="text-sm">
-              Cross-Chain Proof
-            </TabsTrigger>
-          </TabsList>
-        </div>
-        
-        <CardContent className="pt-5">
-          <TabsContent value="merkle" className="mt-0">
-            <div className="space-y-4">
-              <div className="text-sm">
-                <p>
-                  Merkle proof verification uses cryptographic hashing to prove that your vault data 
-                  is intact and has not been modified since creation.
-                </p>
-              </div>
-              
-              {proofRecord && (
-                <div className="rounded-md bg-primary/5 p-3 border border-primary/10">
-                  <h4 className="font-medium text-sm mb-2 flex items-center gap-2">
-                    <ShieldCheck className="w-4 h-4 text-green-500" />
-                    Proof Details
-                  </h4>
-                  <div className="grid grid-cols-2 gap-2 text-xs">
-                    <div className="text-muted-foreground">Proof ID:</div>
-                    <div className="font-mono">{proofRecord.id.substring(0, 12)}...</div>
-                    <div className="text-muted-foreground">Created:</div>
-                    <div>{new Date(proofRecord.createdAt).toLocaleString()}</div>
-                    <div className="text-muted-foreground">Status:</div>
-                    <div className="capitalize">{proofRecord.status}</div>
-                  </div>
+      <CardContent className="space-y-4">
+        {verificationStep === 0 && (
+          <>
+            <div className="bg-[#121212] rounded-lg p-4 border border-[#333333]">
+              <div className="flex items-start space-x-3">
+                <div className="p-2 rounded-full bg-[#6B00D7]/10 h-10 w-10 flex items-center justify-center flex-shrink-0">
+                  <FileText className="h-5 w-5 text-[#6B00D7]" />
                 </div>
-              )}
-            </div>
-          </TabsContent>
-          
-          <TabsContent value="cross-chain" className="mt-0">
-            <div className="space-y-4">
-              <div className="text-sm">
-                <p>
-                  Cross-chain verification provides enhanced security by validating your vault 
-                  integrity across multiple blockchains simultaneously.
-                </p>
-              </div>
-              
-              {blockchains && blockchains.length > 0 && (
-                <div className="flex flex-wrap gap-2 mt-2">
-                  {blockchains.map(chain => (
-                    <Badge key={chain} variant="outline" className="flex items-center gap-1">
-                      <div className="w-2 h-2 rounded-full bg-green-500"></div> {chain}
-                    </Badge>
-                  ))}
+                <div>
+                  <h4 className="text-sm font-medium">Generate Cryptographic Proof</h4>
+                  <p className="text-sm text-gray-400 mt-1">
+                    Generate a cryptographic proof that confirms your assets are safely stored without revealing sensitive details.
+                  </p>
                 </div>
-              )}
-              
-              {proofRecord && proofRecord.proofType === ProofType.CROSS_CHAIN && (
-                <div className="rounded-md bg-primary/5 p-3 border border-primary/10">
-                  <h4 className="font-medium text-sm mb-2 flex items-center gap-2">
-                    <BarChart4 className="w-4 h-4 text-blue-500" />
-                    Cross-Chain Verification
-                  </h4>
-                  <div className="grid grid-cols-2 gap-2 text-xs">
-                    <div className="text-muted-foreground">Proof ID:</div>
-                    <div className="font-mono">{proofRecord.id.substring(0, 12)}...</div>
-                    <div className="text-muted-foreground">Chains:</div>
-                    <div>{blockchains.join(', ')}</div>
-                    <div className="text-muted-foreground">Status:</div>
-                    <div className="capitalize">{proofRecord.status}</div>
-                  </div>
-                </div>
-              )}
-            </div>
-          </TabsContent>
-          
-          {isGenerating || isVerifying ? (
-            <div className="mt-4 space-y-2">
-              <div className="flex justify-between text-xs">
-                <span>{isGenerating ? 'Generating proof...' : 'Verifying proof...'}</span>
-                <span>{progress}%</span>
               </div>
-              <Progress value={progress} className="h-2" />
             </div>
-          ) : null}
-          
-          {error && (
-            <Alert variant="destructive" className="mt-4">
-              <AlertCircle className="h-4 w-4" />
-              <AlertTitle>Error</AlertTitle>
-              <AlertDescription>{error}</AlertDescription>
-            </Alert>
-          )}
-        </CardContent>
-      </Tabs>
-      
-      <CardFooter className="flex justify-between border-t border-border/50 p-4 bg-muted/20">
-        {!proofRecord ? (
-          <Button
-            onClick={handleGenerateProof}
-            disabled={isGenerating}
-            className="w-full bg-purple-600 hover:bg-purple-700"
-          >
-            {isGenerating ? (
-              <>
-                <RefreshCw className="mr-2 h-4 w-4 animate-spin" />
-                Generating Proof
-              </>
-            ) : (
-              <>
-                <ShieldIcon className="mr-2 h-4 w-4" />
-                Generate Proof
-              </>
-            )}
-          </Button>
-        ) : (
-          <div className="flex gap-3 w-full">
-            <Button
-              variant="outline"
-              onClick={handleGenerateProof}
-              disabled={isGenerating || isVerifying}
-              className="flex-1"
-            >
-              <RefreshCw className="mr-2 h-4 w-4" />
-              New Proof
-            </Button>
             
-            <Button
-              onClick={handleVerifyProof}
-              disabled={isVerifying || proofRecord.status === VerificationStatus.VERIFIED}
-              className="flex-1 bg-purple-600 hover:bg-purple-700"
+            <div>
+              <label className="text-sm text-gray-400 mb-2 block">Proof Type</label>
+              <Select onValueChange={(value) => setSelectedProofType(value)} defaultValue={ProofType.MERKLE}>
+                <SelectTrigger className="bg-[#121212] border-[#333333]">
+                  <SelectValue placeholder="Select a proof type" />
+                </SelectTrigger>
+                <SelectContent className="bg-[#121212] border-[#333333]">
+                  <SelectItem value={ProofType.MERKLE}>Merkle Proof</SelectItem>
+                  <SelectItem value={ProofType.CROSS_CHAIN}>Cross-Chain Proof</SelectItem>
+                  <SelectItem value={ProofType.ZK}>Zero-Knowledge Proof</SelectItem>
+                </SelectContent>
+              </Select>
+              
+              <p className="text-xs text-gray-400 mt-1">
+                {selectedProofType === ProofType.MERKLE && "Merkle proofs verify the inclusion of your assets in the vault without revealing other vault contents."}
+                {selectedProofType === ProofType.CROSS_CHAIN && "Cross-chain proofs verify your assets across multiple blockchains for enhanced security."}
+                {selectedProofType === ProofType.ZK && "Zero-knowledge proofs verify your assets without revealing any information about them."}
+              </p>
+            </div>
+          </>
+        )}
+        
+        {verificationStep > 0 && (
+          <div className="space-y-6">
+            <div className="space-y-2">
+              <div className="flex justify-between text-sm mb-1">
+                <span>Verification Progress</span>
+                <span className="text-[#FF5AF7]">{verificationStep}/4</span>
+              </div>
+              <Progress value={verificationStep * 25} className="h-2 bg-[#333333]" />
+            </div>
+            
+            <div className="space-y-3">
+              <div className="flex items-center">
+                <div className={`rounded-full p-1 ${verificationStep >= 1 ? 'bg-[#6B00D7] text-white' : 'bg-[#333333] text-gray-400'}`}>
+                  <CheckCircle2 className="h-4 w-4" />
+                </div>
+                <div className="ml-3">
+                  <p className={`text-sm font-medium ${verificationStep >= 1 ? 'text-white' : 'text-gray-400'}`}>
+                    Generating {selectedProofType} proof
+                  </p>
+                  {isGenerating && <p className="text-xs text-gray-400 animate-pulse">Processing...</p>}
+                </div>
+              </div>
+              
+              <div className="flex items-center">
+                <div className={`rounded-full p-1 ${verificationStep >= 2 ? 'bg-[#6B00D7] text-white' : 'bg-[#333333] text-gray-400'}`}>
+                  <CheckCircle2 className="h-4 w-4" />
+                </div>
+                <div className="ml-3">
+                  <p className={`text-sm font-medium ${verificationStep >= 2 ? 'text-white' : 'text-gray-400'}`}>
+                    Proof generated
+                  </p>
+                  {proofRecord && verificationStep >= 2 && (
+                    <p className="text-xs text-gray-400">ID: {proofRecord.id.substring(0, 8)}...</p>
+                  )}
+                </div>
+              </div>
+              
+              <div className="flex items-center">
+                <div className={`rounded-full p-1 ${verificationStep >= 3 ? 'bg-[#6B00D7] text-white' : 'bg-[#333333] text-gray-400'}`}>
+                  <CheckCircle2 className="h-4 w-4" />
+                </div>
+                <div className="ml-3">
+                  <p className={`text-sm font-medium ${verificationStep >= 3 ? 'text-white' : 'text-gray-400'}`}>
+                    Verifying proof
+                  </p>
+                  {isVerifying && <p className="text-xs text-gray-400 animate-pulse">Processing...</p>}
+                </div>
+              </div>
+              
+              <div className="flex items-center">
+                <div className={`rounded-full p-1 ${verificationStep >= 4 ? 'bg-green-500 text-white' : 'bg-[#333333] text-gray-400'}`}>
+                  <CheckCircle2 className="h-4 w-4" />
+                </div>
+                <div className="ml-3">
+                  <p className={`text-sm font-medium ${verificationStep >= 4 ? 'text-white' : 'text-gray-400'}`}>
+                    Verification complete
+                  </p>
+                  {proofRecord && proofRecord.status === VerificationStatus.VERIFIED && (
+                    <p className="text-xs text-green-400">Verified on {new Date(proofRecord.verifiedAt || '').toLocaleDateString()}</p>
+                  )}
+                </div>
+              </div>
+            </div>
+            
+            {error && (
+              <div className="bg-red-500/10 border border-red-500/30 rounded-lg p-3 text-sm text-red-400">
+                <div className="flex items-center gap-2">
+                  <AlertTriangle className="h-4 w-4" />
+                  <span>Error: {error}</span>
+                </div>
+              </div>
+            )}
+            
+            {proofRecord && proofRecord.status === VerificationStatus.VERIFIED && (
+              <div className="bg-green-500/10 border border-green-500/30 rounded-lg p-3 text-sm text-green-400">
+                <div className="flex items-center gap-2">
+                  <CheckCircle2 className="h-4 w-4" />
+                  <span>Vault assets verified! Your assets are securely locked as expected.</span>
+                </div>
+              </div>
+            )}
+          </div>
+        )}
+      </CardContent>
+      
+      <CardFooter className="flex justify-between pt-2">
+        {verificationStep === 0 ? (
+          <Button 
+            onClick={handleGenerateProof} 
+            disabled={isGenerating}
+            className="bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] text-white w-full"
+          >
+            Generate Proof
+          </Button>
+        ) : verificationStep === 2 ? (
+          <div className="flex gap-2 w-full">
+            <Button variant="outline" onClick={handleStartOver} className="flex-1">
+              <RefreshCw className="h-4 w-4 mr-2" />
+              Start Over
+            </Button>
+            <Button 
+              onClick={handleVerifyProof} 
+              disabled={isVerifying || !proofRecord}
+              className="bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] text-white flex-1"
             >
-              {isVerifying ? (
-                <>
-                  <RefreshCw className="mr-2 h-4 w-4 animate-spin" />
-                  Verifying
-                </>
-              ) : (
-                <>
-                  <Check className="mr-2 h-4 w-4" />
-                  Verify
-                </>
-              )}
+              Verify Proof
             </Button>
           </div>
+        ) : verificationStep === 4 ? (
+          <Button variant="outline" onClick={handleStartOver} className="w-full">
+            <RefreshCw className="h-4 w-4 mr-2" />
+            Generate New Proof
+          </Button>
+        ) : (
+          <Button variant="outline" disabled className="w-full">
+            <Clock className="h-4 w-4 mr-2 animate-spin" />
+            Processing...
+          </Button>
         )}
       </CardFooter>
     </Card>

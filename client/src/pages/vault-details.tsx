@@ -24,6 +24,7 @@ import { formatDate, truncateAddress } from "@/lib/utils";
 import TimeLockProgress from "@/components/vault/time-lock-progress";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
+import { ProofVerificationCard, ProofVerificationSummary } from "@/components/Proof-of-Reservation";
 
 const VaultDetails = () => {
   const [location, params] = useLocation();
