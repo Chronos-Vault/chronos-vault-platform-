@@ -350,6 +350,10 @@ const VaultDetails = () => {
                   )}
                 </TabsContent>
                 
+                <TabsContent value="attachments" className="space-y-6 mt-4">
+                  <AttachmentList vaultId={vaultId} />
+                </TabsContent>
+                
                 <TabsContent value="security" className="space-y-6 mt-4">
                   <div className="grid grid-cols-1 gap-6">
                     {/* Proof of Reservation - Main Verification Card */}

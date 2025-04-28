@@ -110,13 +110,7 @@ export function FileUpload({ vaultId, onUploadComplete, className }: FileUploadP
       };
       
       // Create the attachment record in the database
-      const response = await apiRequest('/api/attachments', {
-        method: 'POST',
-        body: JSON.stringify(attachmentData),
-        headers: {
-          'Content-Type': 'application/json'
-        }
-      });
+      const response = await apiRequest("POST", '/api/attachments', attachmentData);
 
       clearInterval(progressInterval);
       setUploadProgress(100);

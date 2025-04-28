@@ -54,9 +54,7 @@ export function AttachmentList({ vaultId, className }: AttachmentListProps) {
     if (!confirm("Are you sure you want to delete this attachment?")) return;
     
     try {
-      await apiRequest(`/api/attachments/${id}`, {
-        method: 'DELETE'
-      });
+      await apiRequest("DELETE", `/api/attachments/${id}`);
       queryClient.invalidateQueries({ queryKey: ['/api/vaults', vaultId, 'attachments'] });
     } catch (err) {
       console.error("Failed to delete attachment:", err);
