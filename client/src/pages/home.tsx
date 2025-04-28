@@ -541,10 +541,15 @@ const Home = () => {
                   </div>
                 </div>
                 
-                <div className="flex justify-center">
+                <div className="flex justify-center gap-4">
                   <Link href="/cvt-token">
                     <Button className="bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] text-white px-6 py-3">
                       Explore CVT Tokenomics
+                    </Button>
+                  </Link>
+                  <Link href="/technical-specification">
+                    <Button variant="outline" className="border-[#6B00D7] text-white hover:bg-[#6B00D7]/10 hover:text-white px-6 py-3 transition-all">
+                      Read the full whitepaper
                     </Button>
                   </Link>
                 </div>
@@ -1102,8 +1107,9 @@ const Home = () => {
               <Button
                 variant="outline"
                 className="border-[#6B00D7] text-white hover:bg-[#6B00D7]/10 hover:text-white font-medium rounded-lg px-8 py-3 transition-all"
+                onClick={() => setLocation("/technical-specification")}
               >
-                Learn More
+                Read the full whitepaper
               </Button>
             </div>
           </div>
