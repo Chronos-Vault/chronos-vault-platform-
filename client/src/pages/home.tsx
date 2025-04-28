@@ -795,7 +795,7 @@ const Home = () => {
                     <Button
                       variant="outline"
                       className="border border-[#9242FC] bg-[#1A1A1A] text-[#9242FC] hover:bg-[#9242FC]/20 font-medium rounded-lg px-4 py-1.5 text-sm transition-all"
-                      onClick={() => setLocation("/advanced-vault-creation")}
+                      onClick={() => setLocation("/revolutionary-features")}
                     >
                       Learn More
                     </Button>
@@ -821,9 +821,9 @@ const Home = () => {
                     <Button
                       variant="outline"
                       className="border border-[#00D7C3] bg-[#1A1A1A] text-[#00D7C3] hover:bg-[#00D7C3]/20 font-medium rounded-lg px-4 py-1.5 text-sm transition-all"
-                      onClick={() => setLocation("/create-vault")}
+                      onClick={() => setLocation("/revolutionary-features")}
                     >
-                      Explore Vaults
+                      Learn More
                     </Button>
                   </div>
                 </div>

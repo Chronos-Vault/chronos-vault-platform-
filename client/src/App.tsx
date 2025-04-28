@@ -27,6 +27,7 @@ import TONIntegrationPage from "@/pages/ton-integration";
 import SolanaIntegrationPage from "@/pages/solana-integration";
 import EthereumIntegrationPage from "@/pages/ethereum-integration";
 import GiftCryptoPage from "@/pages/gift-crypto";
+import RevolutionaryFeaturesPage from "@/pages/revolutionary-features";
 import NotFound from "@/pages/not-found";
 
 function Router() {
@@ -52,6 +53,7 @@ function Router() {
           <Route path="/solana-integration" component={SolanaIntegrationPage} />
           <Route path="/ethereum-integration" component={EthereumIntegrationPage} />
           <Route path="/gift-crypto" component={GiftCryptoPage} />
+          <Route path="/revolutionary-features" component={RevolutionaryFeaturesPage} />
           <Route component={NotFound} />
         </Switch>
       </main>
