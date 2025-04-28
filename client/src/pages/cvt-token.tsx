@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Container } from '@/components/ui/container';
 import { PageHeader } from '@/components/page-header';
 import { CVTTokenCard } from '@/components/token/cvt-token-card';
@@ -8,8 +8,9 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Helmet } from 'react-helmet';
 import { useAuthContext } from '@/contexts/auth-context';
 import { Button } from '@/components/ui/button';
+import { useToast } from '@/hooks/use-toast';
 import { CVTTokenProvider, StakingTier, useCVTToken } from '@/contexts/cvt-token-context';
-import { Coins, Lock, TrendingUp, ArrowLeft, ArrowRight, ShieldCheck, Lightbulb, DollarSign } from 'lucide-react';
+import { Coins, Lock, TrendingUp, ArrowLeft, ArrowRight, ShieldCheck, Lightbulb, DollarSign, Loader2 } from 'lucide-react';
 
 const TierBenefitsCard: React.FC = () => {
   const { stakingRequirements } = useCVTToken();
@@ -179,7 +180,31 @@ const TokenInfoCard: React.FC = () => {
 };
 
 const CVTTokenPage: React.FC = () => {
-  const { isAuthenticated } = useAuthContext();
+  const { isAuthenticated, connectWallet, signIn, isAuthenticating } = useAuthContext();
+  const { toast } = useToast();
+  const [isConnecting, setIsConnecting] = useState(false);
+  
+  // Function to handle wallet connect
+  const handleConnectWallet = async () => {
+    try {
+      setIsConnecting(true);
+      await connectWallet();
+      await signIn();
+      toast({
+        title: "Connected successfully",
+        description: "Your wallet is now connected to Chronos Vault",
+      });
+    } catch (error) {
+      console.error("Failed to connect wallet:", error);
+      toast({
+        title: "Connection failed",
+        description: "Make sure you have a compatible wallet installed (MetaMask, TON Wallet, etc.)",
+        variant: "destructive"
+      });
+    } finally {
+      setIsConnecting(false);
+    }
+  };
   
   return (
     <>
@@ -222,6 +247,7 @@ const CVTTokenPage: React.FC = () => {
                 <Button 
                   variant="default" 
                   className="bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] hover:from-[#5900B3] hover:to-[#FF46E8] text-white px-6"
+                  onClick={handleConnectWallet}
                 >
                   Connect Wallet
                 </Button>
