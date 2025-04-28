@@ -20,7 +20,13 @@ const Home = () => {
     timeLockPeriod: 730, // 2 years
     createdAt: new Date(Date.now() - 90 * 24 * 60 * 60 * 1000), // 90 days ago
     unlockDate: new Date(Date.now() + 640 * 24 * 60 * 60 * 1000), // ~1.75 years from now
-    isLocked: true
+    isLocked: true,
+    metadata: {
+      securityLayers: ["ethereum", "solana", "ton"],
+      storageType: "ipfs",
+      atomicSwapsEnabled: true,
+      zkProofs: true
+    }
   };
 
   // Handle smooth scrolling for anchor links
@@ -48,33 +54,59 @@ const Home = () => {
   }, []);
 
   return (
-    <div className="min-h-screen bg-[#0A0A0A] text-white">
+    <div className="min-h-screen bg-gradient-to-b from-[#0A0A0A] to-[#131313] text-white">
       {/* Hero Section */}
       <section className="py-16 md:py-24 relative overflow-hidden">
+        {/* Decorative elements */}
+        <div className="absolute w-full h-full top-0 left-0 overflow-hidden pointer-events-none">
+          <div className="absolute top-40 left-20 w-64 h-64 rounded-full bg-gradient-to-r from-[#6B00D7]/30 to-[#FF5AF7]/10 blur-3xl opacity-50"></div>
+          <div className="absolute top-80 right-10 w-80 h-80 rounded-full bg-gradient-to-r from-[#FF5AF7]/20 to-[#6B00D7]/10 blur-3xl opacity-40"></div>
+          <div className="absolute -bottom-20 left-1/3 w-96 h-96 rounded-full bg-gradient-to-r from-blue-500/10 to-purple-500/10 blur-3xl opacity-30"></div>
+          
+          <div className="absolute top-1/4 right-1/4 h-40 w-px bg-gradient-to-b from-transparent via-[#6B00D7] to-transparent opacity-40"></div>
+          <div className="absolute top-1/3 left-1/5 h-60 w-px bg-gradient-to-b from-transparent via-[#FF5AF7] to-transparent opacity-30"></div>
+          
+          <div className="grid grid-cols-8 absolute w-full h-full top-0 left-0">
+            <div className="border-r border-white/5 h-full"></div>
+            <div className="border-r border-white/5 h-full"></div>
+            <div className="border-r border-white/5 h-full"></div>
+            <div className="border-r border-white/5 h-full"></div>
+            <div className="border-r border-white/5 h-full"></div>
+            <div className="border-r border-white/5 h-full"></div>
+            <div className="border-r border-white/5 h-full"></div>
+            <div className="border-r border-white/5 h-full"></div>
+          </div>
+        </div>
+        
         <div className="container mx-auto px-4 relative z-10">
           {/* Main Hero Content */}
           <div className="relative">
             {/* Headline and Primary Content */}
             <div className="text-center mb-12">
-              <h1 className="font-poppins font-bold text-4xl md:text-6xl leading-tight mb-6">
+              <div className="inline-block mb-4 px-4 py-1 rounded-full bg-gradient-to-r from-[#6B00D7]/20 to-[#FF5AF7]/20 border border-[#6B00D7]/40 backdrop-blur-sm">
+                <span className="text-sm font-medium text-[#FF5AF7]">Introducing Revolutionary Multi-Chain Security</span>
+              </div>
+            
+              <h1 className="font-poppins font-bold text-4xl md:text-7xl leading-tight mb-8">
                 <span className="animate-text-shine bg-gradient-to-r from-[#6B00D7] via-[#FF5AF7] to-[#6B00D7] bg-clip-text text-transparent bg-300% inline-block">Decentralized Digital</span>
                 <br />
-                <span className="text-white">Chronos Vault Network</span>
+                <span className="bg-gradient-to-r from-white via-gray-100 to-gray-200 bg-clip-text text-transparent">Chronos Vault Network</span>
               </h1>
               
-              <div className="flex justify-center gap-3 items-center my-4">
-                <span className="px-3 py-1 bg-[#6B00D7]/30 border border-[#6B00D7]/40 rounded-full text-[#FF5AF7] text-sm">TON</span>
-                <span className="px-3 py-1 bg-[#6B00D7]/30 border border-[#6B00D7]/40 rounded-full text-[#FF5AF7] text-sm">ETH</span>
-                <span className="px-3 py-1 bg-[#6B00D7]/30 border border-[#6B00D7]/40 rounded-full text-[#FF5AF7] text-sm">SOL</span>
-                <span className="px-3 py-1 bg-[#6B00D7]/30 border border-[#6B00D7]/40 rounded-full text-[#FF5AF7] text-sm">BTC</span>
-                <span className="px-3 py-1 bg-[#6B00D7]/30 border border-[#6B00D7]/40 rounded-full text-[#FF5AF7] text-sm">Military-Grade</span>
+              <div className="flex flex-wrap justify-center gap-3 items-center my-6">
+                <span className="px-4 py-1.5 bg-gradient-to-r from-[#6B00D7]/30 to-[#6B00D7]/20 border border-[#6B00D7]/40 rounded-full text-[#FF5AF7] text-sm font-medium backdrop-blur-sm">Triple-Chain Security</span>
+                <span className="px-4 py-1.5 bg-gradient-to-r from-[#6B00D7]/30 to-[#6B00D7]/20 border border-[#6B00D7]/40 rounded-full text-[#FF5AF7] text-sm font-medium backdrop-blur-sm">TON</span>
+                <span className="px-4 py-1.5 bg-gradient-to-r from-[#6B00D7]/30 to-[#6B00D7]/20 border border-[#6B00D7]/40 rounded-full text-[#FF5AF7] text-sm font-medium backdrop-blur-sm">ETH</span>
+                <span className="px-4 py-1.5 bg-gradient-to-r from-[#6B00D7]/30 to-[#6B00D7]/20 border border-[#6B00D7]/40 rounded-full text-[#FF5AF7] text-sm font-medium backdrop-blur-sm">SOL</span>
+                <span className="px-4 py-1.5 bg-gradient-to-r from-[#6B00D7]/30 to-[#6B00D7]/20 border border-[#6B00D7]/40 rounded-full text-[#FF5AF7] text-sm font-medium backdrop-blur-sm">BTC</span>
+                <span className="px-4 py-1.5 bg-gradient-to-r from-[#6B00D7]/30 to-[#6B00D7]/20 border border-[#6B00D7]/40 rounded-full text-[#FF5AF7] text-sm font-medium backdrop-blur-sm">Zero-Knowledge Proofs</span>
               </div>
               
-              <p className="text-xl md:text-2xl text-gray-200 max-w-4xl mx-auto mt-6">
-                Create tamper-proof digital and financial vaults with advanced unlock mechanisms, cross-chain redundancy, and secure multi-signature access protocols.
+              <p className="text-xl md:text-2xl text-gray-200 max-w-4xl mx-auto mt-8 leading-relaxed">
+                Create tamper-proof digital and financial vaults with revolutionary technologies: Triple-Chain Security, Cross-Chain Atomic Swaps, and IPFS/Arweave permanent storage integration.
               </p>
               <p className="text-xl md:text-2xl bg-gradient-to-r from-[#6B00D7] via-[#FF5AF7] to-[#6B00D7] inline-block text-transparent bg-clip-text font-bold mt-2 animate-text-shine bg-300%">
-                Because we believe in your power to protect what matters most.
+                The ultimate solution for protecting what matters most across time and chains.
               </p>
               
               <div className="flex flex-col items-center gap-6 mt-10">
@@ -603,6 +635,196 @@ const Home = () => {
                       <i className="ri-checkbox-circle-fill text-[#FF5AF7]"></i>
                     </div>
                     <p className="text-gray-200">Time-based multipliers for longer staking periods</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Revolutionary Features Section */}
+      <section className="py-20 bg-gradient-to-b from-[#0D0D0D] to-[#0A0A0A] relative overflow-hidden">
+        <div className="absolute w-full h-full top-0 left-0 overflow-hidden pointer-events-none">
+          <div className="absolute bottom-40 right-20 w-64 h-64 rounded-full bg-gradient-to-r from-[#6B00D7]/20 to-[#FF5AF7]/10 blur-3xl opacity-30"></div>
+          <div className="absolute top-20 left-1/4 w-80 h-80 rounded-full bg-gradient-to-r from-[#FF5AF7]/10 to-[#6B00D7]/20 blur-3xl opacity-20"></div>
+        </div>
+        
+        <div className="container mx-auto px-4 relative z-10">
+          <div className="text-center mb-16">
+            <div className="inline-block mb-3 px-4 py-1 rounded-full bg-gradient-to-r from-[#6B00D7]/20 to-[#FF5AF7]/20 border border-[#6B00D7]/40">
+              <span className="text-sm font-medium text-[#FF5AF7]">Groundbreaking Technology</span>
+            </div>
+            <h2 className="font-poppins font-bold text-4xl md:text-5xl mb-4">
+              <span className="bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent">Revolutionary </span>
+              <span className="animate-text-shine bg-gradient-to-r from-[#6B00D7] via-[#FF5AF7] to-[#6B00D7] bg-clip-text text-transparent bg-300% inline-block">Security Features</span>
+            </h2>
+            <p className="text-xl text-gray-300 max-w-3xl mx-auto">
+              Pioneering advanced security and privacy technologies across multiple blockchains, ensuring unparalleled protection for your digital assets.
+            </p>
+          </div>
+          
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            {/* Triple-Chain Security */}
+            <div className="bg-gradient-to-br from-[#1A1A1A] to-[#0F0F0F] rounded-xl overflow-hidden border border-[#333] p-6 hover:shadow-lg hover:shadow-[#6B00D7]/10 group transition-all hover:border-[#6B00D7]/50">
+              <div className="rounded-full w-16 h-16 bg-gradient-to-br from-[#6B00D7]/30 to-[#FF5AF7]/20 flex items-center justify-center mb-5">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-8 w-8 text-[#FF5AF7]">
+                  <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                </svg>
+              </div>
+              
+              <h3 className="text-2xl font-bold text-white mb-3 group-hover:text-[#FF5AF7] transition-all">Triple-Chain Security</h3>
+              <p className="text-gray-300 mb-4">Our exclusive multi-chain protection ensures your vault has unprecedented security by utilizing the strengths of multiple blockchains simultaneously.</p>
+              
+              <div className="space-y-3">
+                <div className="flex items-start gap-3">
+                  <div className="w-6 h-6 rounded-full bg-[#6B00D7]/20 flex items-center justify-center flex-shrink-0 mt-0.5">
+                    <i className="ri-checkbox-circle-fill text-[#FF5AF7]"></i>
+                  </div>
+                  <p className="text-gray-200">Ethereum Security Layer</p>
+                </div>
+                <div className="flex items-start gap-3">
+                  <div className="w-6 h-6 rounded-full bg-[#6B00D7]/20 flex items-center justify-center flex-shrink-0 mt-0.5">
+                    <i className="ri-checkbox-circle-fill text-[#FF5AF7]"></i>
+                  </div>
+                  <p className="text-gray-200">Solana Speed Layer</p>
+                </div>
+                <div className="flex items-start gap-3">
+                  <div className="w-6 h-6 rounded-full bg-[#6B00D7]/20 flex items-center justify-center flex-shrink-0 mt-0.5">
+                    <i className="ri-checkbox-circle-fill text-[#FF5AF7]"></i>
+                  </div>
+                  <p className="text-gray-200">TON Backup Layer</p>
+                </div>
+              </div>
+            </div>
+            
+            {/* Cross-Chain Atomic Swaps */}
+            <div className="bg-gradient-to-br from-[#1A1A1A] to-[#0F0F0F] rounded-xl overflow-hidden border border-[#333] p-6 hover:shadow-lg hover:shadow-[#FF5AF7]/10 group transition-all hover:border-[#FF5AF7]/50">
+              <div className="rounded-full w-16 h-16 bg-gradient-to-br from-[#FF5AF7]/30 to-[#6B00D7]/20 flex items-center justify-center mb-5">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-8 w-8 text-[#FF5AF7]">
+                  <path d="M8 3H5a2 2 0 0 0-2 2v3"></path>
+                  <path d="M21 8V5a2 2 0 0 0-2-2h-3"></path>
+                  <path d="M3 16v3a2 2 0 0 0 2 2h3"></path>
+                  <path d="M16 21h3a2 2 0 0 0 2-2v-3"></path>
+                  <path d="M16 16h6"></path>
+                  <path d="M2 16h6"></path>
+                  <path d="M12 2v8"></path>
+                  <path d="M12 14v8"></path>
+                </svg>
+              </div>
+              
+              <h3 className="text-2xl font-bold text-white mb-3 group-hover:text-[#FF5AF7] transition-all">Cross-Chain Atomic Swaps</h3>
+              <p className="text-gray-300 mb-4">Enable seamless asset type conversions within your vault with our revolutionary cross-chain atomic swap technology.</p>
+              
+              <div className="space-y-3">
+                <div className="flex items-start gap-3">
+                  <div className="w-6 h-6 rounded-full bg-[#6B00D7]/20 flex items-center justify-center flex-shrink-0 mt-0.5">
+                    <i className="ri-checkbox-circle-fill text-[#FF5AF7]"></i>
+                  </div>
+                  <p className="text-gray-200">Automatic cross-chain conversions</p>
+                </div>
+                <div className="flex items-start gap-3">
+                  <div className="w-6 h-6 rounded-full bg-[#6B00D7]/20 flex items-center justify-center flex-shrink-0 mt-0.5">
+                    <i className="ri-checkbox-circle-fill text-[#FF5AF7]"></i>
+                  </div>
+                  <p className="text-gray-200">Price-triggered auto-swaps</p>
+                </div>
+                <div className="flex items-start gap-3">
+                  <div className="w-6 h-6 rounded-full bg-[#6B00D7]/20 flex items-center justify-center flex-shrink-0 mt-0.5">
+                    <i className="ri-checkbox-circle-fill text-[#FF5AF7]"></i>
+                  </div>
+                  <p className="text-gray-200">Yield optimization strategies</p>
+                </div>
+              </div>
+            </div>
+            
+            {/* IPFS & Arweave Integration */}
+            <div className="bg-gradient-to-br from-[#1A1A1A] to-[#0F0F0F] rounded-xl overflow-hidden border border-[#333] p-6 hover:shadow-lg hover:shadow-[#00C9FF]/10 group transition-all hover:border-[#00C9FF]/50">
+              <div className="rounded-full w-16 h-16 bg-gradient-to-br from-[#00C9FF]/30 to-[#00C9FF]/10 flex items-center justify-center mb-5">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-8 w-8 text-[#00C9FF]">
+                  <path d="M4 22h14a2 2 0 0 0 2-2V7.5L14.5 2H6a2 2 0 0 0-2 2v4"></path>
+                  <path d="M14 2v6h6"></path>
+                  <path d="M2 15h10"></path>
+                  <path d="M9 18l3-3-3-3"></path>
+                </svg>
+              </div>
+              
+              <h3 className="text-2xl font-bold text-white mb-3 group-hover:text-[#00C9FF] transition-all">Permanent Storage</h3>
+              <p className="text-gray-300 mb-4">Store your vault data permanently with our integration of decentralized storage solutions like IPFS and Arweave.</p>
+              
+              <div className="space-y-3">
+                <div className="flex items-start gap-3">
+                  <div className="w-6 h-6 rounded-full bg-[#00C9FF]/20 flex items-center justify-center flex-shrink-0 mt-0.5">
+                    <i className="ri-checkbox-circle-fill text-[#00C9FF]"></i>
+                  </div>
+                  <p className="text-gray-200">IPFS content-addressed storage</p>
+                </div>
+                <div className="flex items-start gap-3">
+                  <div className="w-6 h-6 rounded-full bg-[#00C9FF]/20 flex items-center justify-center flex-shrink-0 mt-0.5">
+                    <i className="ri-checkbox-circle-fill text-[#00C9FF]"></i>
+                  </div>
+                  <p className="text-gray-200">Arweave's "pay once, store forever"</p>
+                </div>
+                <div className="flex items-start gap-3">
+                  <div className="w-6 h-6 rounded-full bg-[#00C9FF]/20 flex items-center justify-center flex-shrink-0 mt-0.5">
+                    <i className="ri-checkbox-circle-fill text-[#00C9FF]"></i>
+                  </div>
+                  <p className="text-gray-200">Censorship-resistant data storage</p>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          {/* Additional Revolutionary Features */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mt-8">
+            {/* Zero-Knowledge Proofs */}
+            <div className="bg-gradient-to-br from-[#1A1A1A] to-[#0F0F0F] rounded-xl overflow-hidden border border-[#333] p-6 hover:shadow-lg hover:shadow-[#9242FC]/10 group transition-all hover:border-[#9242FC]/50">
+              <div className="flex items-start gap-5">
+                <div className="rounded-full w-14 h-14 bg-gradient-to-br from-[#9242FC]/30 to-[#9242FC]/10 flex items-center justify-center flex-shrink-0">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-7 w-7 text-[#9242FC]">
+                    <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                    <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                  </svg>
+                </div>
+                
+                <div>
+                  <h3 className="text-xl font-bold text-white mb-2 group-hover:text-[#9242FC] transition-all">Zero-Knowledge Verification</h3>
+                  <p className="text-gray-300 mb-3">Prove ownership or status without revealing actual assets or sensitive information.</p>
+                  
+                  <div className="flex items-center mt-2">
+                    <Button
+                      variant="outline"
+                      className="border border-[#9242FC] bg-[#1A1A1A] text-[#9242FC] hover:bg-[#9242FC]/20 font-medium rounded-lg px-4 py-1.5 text-sm transition-all"
+                      onClick={() => setLocation("/advanced-vault-creation")}
+                    >
+                      Learn More
+                    </Button>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            {/* Multi-Chain Inheritance */}
+            <div className="bg-gradient-to-br from-[#1A1A1A] to-[#0F0F0F] rounded-xl overflow-hidden border border-[#333] p-6 hover:shadow-lg hover:shadow-[#00D7C3]/10 group transition-all hover:border-[#00D7C3]/50">
+              <div className="flex items-start gap-5">
+                <div className="rounded-full w-14 h-14 bg-gradient-to-br from-[#00D7C3]/30 to-[#00D7C3]/10 flex items-center justify-center flex-shrink-0">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-7 w-7 text-[#00D7C3]">
+                    <path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3Z"></path>
+                  </svg>
+                </div>
+                
+                <div>
+                  <h3 className="text-xl font-bold text-white mb-2 group-hover:text-[#00D7C3] transition-all">Multi-Chain Inheritance Protocol</h3>
+                  <p className="text-gray-300 mb-3">Distribute inheritance across multiple blockchains with smart failover mechanisms.</p>
+                  
+                  <div className="flex items-center mt-2">
+                    <Button
+                      variant="outline"
+                      className="border border-[#00D7C3] bg-[#1A1A1A] text-[#00D7C3] hover:bg-[#00D7C3]/20 font-medium rounded-lg px-4 py-1.5 text-sm transition-all"
+                      onClick={() => setLocation("/create-vault")}
+                    >
+                      Explore Vaults
+                    </Button>
                   </div>
                 </div>
               </div>
