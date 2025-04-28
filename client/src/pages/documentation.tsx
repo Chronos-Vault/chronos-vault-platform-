@@ -301,9 +301,326 @@ export default function Documentation() {
               </div>
             </section>
 
-            {/* More sections would follow for other core features */}
-            <div className="text-center py-8">
-              <p className="text-gray-400 mb-6">For more detailed information on other features, please see our Revolutionary Features page:</p>
+            {/* Cross-Chain Atomic Swaps */}
+            <section id="atomic-swaps" className="scroll-mt-24 mt-12">
+              <div className="bg-gradient-to-br from-[#1D1D1D] to-[#151515] rounded-xl border border-[#333] p-6">
+                <h2 className="text-2xl font-bold mb-4 flex items-center gap-2">
+                  <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-[#6B00D7]/30 to-[#FF5AF7]/20 flex items-center justify-center">
+                    <span className="text-xl">🔄</span>
+                  </div>
+                  Cross-Chain Atomic Swaps
+                </h2>
+                
+                <div className="space-y-4 text-gray-300">
+                  <p>
+                    Atomic swaps allow for trustless exchange of assets between different blockchains within your vault, maintaining security and eliminating counterparty risk during transactions.
+                  </p>
+                  
+                  <div className="bg-[#141414] rounded-lg border border-[#333] p-4">
+                    <h3 className="font-semibold text-white mb-2">How Atomic Swaps Work</h3>
+                    <ol className="list-decimal pl-5 space-y-2">
+                      <li>Assets from different chains are locked in specialized smart contracts</li>
+                      <li>Hash-timelocked contracts (HTLCs) ensure that either both parties receive their assets or the transaction completely reverts</li>
+                      <li>The process is intermediary-free and fully automated</li>
+                      <li>Complete transaction occurs atomically - it either happens completely or not at all</li>
+                    </ol>
+                  </div>
+                  
+                  <div className="flex items-center gap-4 overflow-x-auto py-3 px-2 no-scrollbar">
+                    <div className="bg-[#141414] rounded-lg border border-[#333] p-3 min-w-[180px]">
+                      <h4 className="font-semibold text-white mb-1 flex items-center gap-1">
+                        <span className="text-[#FF5AF7]">⚡</span> Lightning Fast
+                      </h4>
+                      <p className="text-xs text-gray-300">Cross-chain transactions settle in minutes rather than hours</p>
+                    </div>
+                    
+                    <div className="bg-[#141414] rounded-lg border border-[#333] p-3 min-w-[180px]">
+                      <h4 className="font-semibold text-white mb-1 flex items-center gap-1">
+                        <span className="text-[#FF5AF7]">🛡️</span> Trustless
+                      </h4>
+                      <p className="text-xs text-gray-300">No need to trust exchanges or intermediaries with your assets</p>
+                    </div>
+                    
+                    <div className="bg-[#141414] rounded-lg border border-[#333] p-3 min-w-[180px]">
+                      <h4 className="font-semibold text-white mb-1 flex items-center gap-1">
+                        <span className="text-[#FF5AF7]">📊</span> Liquid
+                      </h4>
+                      <p className="text-xs text-gray-300">Convert assets without withdrawing from your vault</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </section>
+            
+            {/* Permanent Storage */}
+            <section id="storage" className="scroll-mt-24 mt-12">
+              <div className="bg-gradient-to-br from-[#1D1D1D] to-[#151515] rounded-xl border border-[#333] p-6">
+                <h2 className="text-2xl font-bold mb-4 flex items-center gap-2">
+                  <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-[#6B00D7]/30 to-[#FF5AF7]/20 flex items-center justify-center">
+                    <span className="text-xl">🗄️</span>
+                  </div>
+                  Permanent Storage
+                </h2>
+                
+                <div className="space-y-4 text-gray-300">
+                  <p>
+                    Chronos Vault integrates with decentralized storage networks to provide permanent, tamper-proof storage for vault contents that endures far beyond the lifetime of traditional storage systems.
+                  </p>
+                  
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+                    <div className="p-4 bg-[#141414] rounded-lg border border-[#333]">
+                      <h4 className="font-semibold text-[#00C9FF] mb-2 flex items-center gap-2">
+                        <svg className="w-5 h-5" viewBox="0 0 55 55" fill="none" xmlns="http://www.w3.org/2000/svg">
+                          <path d="M27.5 55C42.6878 55 55 42.6878 55 27.5C55 12.3122 42.6878 0 27.5 0C12.3122 0 0 12.3122 0 27.5C0 42.6878 12.3122 55 27.5 55Z" fill="#00C9FF" fillOpacity="0.2"/>
+                          <path d="M49.9543 24.1173H43.0357C41.4938 14.7647 33.5279 7.51479 23.9279 7.51479C13.1573 7.51479 4.375 16.297 4.375 27.0677C4.375 37.8383 13.1573 46.6206 23.9279 46.6206H49.9543C52.3357 46.6206 54.2647 44.6916 54.2647 42.3103C54.2647 39.9289 52.3357 38 49.9543 38H49.0787C51.0993 36.0709 52.2103 33.3541 52.2103 30.3603C52.2103 27.3664 51.0993 24.5581 49.0787 22.7206H49.9543C52.3357 22.7206 54.2647 20.7916 54.2647 18.4103C54.2647 16.029 52.3357 14.1 49.9543 14.1C47.573 14.1 45.644 16.029 45.644 18.4103C45.644 20.7916 47.573 22.7206 49.9543 22.7206H49.0787M43.0357 30.3603C43.0357 35.0935 39.2583 38.8709 34.5252 38.8709C29.792 38.8709 26.0146 35.0935 26.0146 30.3603C26.0146 25.6272 29.792 21.8497 34.5252 21.8497C39.2583 21.8497 43.0357 25.6272 43.0357 30.3603Z" stroke="#00C9FF" strokeWidth="2.5"/>
+                        </svg>
+                        Arweave Storage
+                      </h4>
+                      <p className="text-sm">Permanent, immutable storage with a one-time payment model. Data is stored forever through an endowment mechanism, making it ideal for critical documents and legacy planning.</p>
+                    </div>
+                    
+                    <div className="p-4 bg-[#141414] rounded-lg border border-[#333]">
+                      <h4 className="font-semibold text-[#65D87E] mb-2 flex items-center gap-2">
+                        <svg className="w-5 h-5" viewBox="0 0 80 89" xmlns="http://www.w3.org/2000/svg">
+                          <path d="M40 0L0 22V66.5L40 89L80 66.5V22L40 0ZM12.4 61.79V31.65L40 16.57L67.6 31.65V61.79L40 76.85L12.4 61.79Z" fill="#65D87E" fillOpacity="0.5"/>
+                        </svg>
+                        IPFS Integration
+                      </h4>
+                      <p className="text-sm">Content-addressed distributed storage with high availability. Perfect for media files and content that needs to be accessed frequently. We ensure pinning through multiple reliable services.</p>
+                    </div>
+                  </div>
+                  
+                  <div className="p-4 mt-2 bg-[#6B00D7]/10 border border-[#6B00D7]/30 rounded-lg">
+                    <h4 className="font-semibold text-white mb-2 flex items-center gap-2">
+                      <span className="text-xl">🔒</span>
+                      End-to-End Encryption
+                    </h4>
+                    <p className="text-sm">All data is encrypted before leaving your device. Only you and your designated beneficiaries can decrypt and access your vault contents, providing privacy while leveraging public networks.</p>
+                  </div>
+                </div>
+              </div>
+            </section>
+            
+            {/* Blockchain Integrations */}
+            <section id="ethereum" className="scroll-mt-24 mt-12">
+              <div className="bg-gradient-to-br from-[#1D1D1D] to-[#151515] rounded-xl border border-[#333] p-6">
+                <h2 className="text-2xl font-bold mb-4 flex items-center gap-2">
+                  <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-[#6B00D7]/30 to-[#FF5AF7]/20 flex items-center justify-center">
+                    <span className="text-xl">Ξ</span>
+                  </div>
+                  Ethereum Integration
+                </h2>
+                
+                <div className="space-y-4 text-gray-300">
+                  <p>
+                    Ethereum integration provides robust security and programmability through ERC-4626 compliant tokenized vaults and advanced smart contracts that enable conditional unlocking and multi-signature control.
+                  </p>
+                  
+                  <div className="bg-[#141414] rounded-lg border border-[#333] p-4">
+                    <h3 className="font-semibold text-white mb-2">Ethereum Features</h3>
+                    <ul className="list-disc pl-5 space-y-1">
+                      <li>ERC-4626 compliant tokenized vaults for maximum interoperability</li>
+                      <li>Multi-signature vault control with customizable thresholds</li>
+                      <li>Integration with Ethereum Name Service (ENS) for user-friendly addressing</li>
+                      <li>Support for all ERC-20 tokens and ERC-721/ERC-1155 NFTs</li>
+                      <li>Layer 2 integration with Polygon, Arbitrum, and Optimism for lower fees</li>
+                    </ul>
+                  </div>
+                  
+                  <div className="flex justify-end mt-2">
+                    <Button
+                      variant="outline"
+                      className="border border-[#6B00D7] bg-[#1A1A1A] text-[#FF5AF7] hover:bg-[#6B00D7]/20 font-medium rounded-lg px-4 py-2 text-sm transition-all"
+                      onClick={() => setLocation("/ethereum-integration")}
+                    >
+                      Learn More About Ethereum Integration
+                    </Button>
+                  </div>
+                </div>
+              </div>
+            </section>
+            
+            {/* Solana Integration */}
+            <section id="solana" className="scroll-mt-24 mt-12">
+              <div className="bg-gradient-to-br from-[#1D1D1D] to-[#151515] rounded-xl border border-[#333] p-6">
+                <h2 className="text-2xl font-bold mb-4 flex items-center gap-2">
+                  <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-[#6B00D7]/30 to-[#FF5AF7]/20 flex items-center justify-center">
+                    <span className="text-xl">◎</span>
+                  </div>
+                  Solana Integration
+                </h2>
+                
+                <div className="space-y-4 text-gray-300">
+                  <p>
+                    Solana's high-speed, low-fee blockchain enables blazing-fast vault interactions and real-time monitoring capabilities with throughput that supports thousands of transactions per second.
+                  </p>
+                  
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+                    <div className="p-4 bg-[#141414] rounded-lg border border-[#333]">
+                      <h4 className="font-semibold text-white mb-2">Rapid Interactions</h4>
+                      <p className="text-sm">Transaction finality in less than a second enables immediate vault status updates and real-time monitoring.</p>
+                    </div>
+                    
+                    <div className="p-4 bg-[#141414] rounded-lg border border-[#333]">
+                      <h4 className="font-semibold text-white mb-2">Advanced Programmability</h4>
+                      <p className="text-sm">Solana's programming model enables complex vault logic without the constraints of Ethereum's gas model.</p>
+                    </div>
+                  </div>
+                  
+                  <div className="flex justify-end mt-2">
+                    <Button
+                      variant="outline"
+                      className="border border-[#6B00D7] bg-[#1A1A1A] text-[#FF5AF7] hover:bg-[#6B00D7]/20 font-medium rounded-lg px-4 py-2 text-sm transition-all"
+                      onClick={() => setLocation("/solana-integration")}
+                    >
+                      Learn More About Solana Integration
+                    </Button>
+                  </div>
+                </div>
+              </div>
+            </section>
+            
+            {/* TON Integration */}
+            <section id="ton" className="scroll-mt-24 mt-12">
+              <div className="bg-gradient-to-br from-[#1D1D1D] to-[#151515] rounded-xl border border-[#333] p-6">
+                <h2 className="text-2xl font-bold mb-4 flex items-center gap-2">
+                  <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-[#6B00D7]/30 to-[#FF5AF7]/20 flex items-center justify-center">
+                    <span className="text-xl">💎</span>
+                  </div>
+                  TON Integration
+                </h2>
+                
+                <div className="space-y-4 text-gray-300">
+                  <p>
+                    The Open Network (TON) provides our platform with resilient fallback mechanisms, enhanced user accessibility through Telegram integration, and sophisticated smart contract recovery options.
+                  </p>
+                  
+                  <div className="p-4 bg-[#141414] rounded-lg border border-[#333]">
+                    <h3 className="font-semibold text-white mb-2">TON Features</h3>
+                    <ul className="list-disc pl-5 space-y-1">
+                      <li>Seamless Telegram Mini App integration for billions of potential users</li>
+                      <li>FunC smart contracts providing recovery mechanisms for vault access</li>
+                      <li>Infinite sharding architecture supporting massive scalability</li>
+                      <li>Low transaction fees even during high network congestion</li>
+                    </ul>
+                  </div>
+                  
+                  <div className="flex justify-end mt-2">
+                    <Button
+                      variant="outline"
+                      className="border border-[#6B00D7] bg-[#1A1A1A] text-[#FF5AF7] hover:bg-[#6B00D7]/20 font-medium rounded-lg px-4 py-2 text-sm transition-all"
+                      onClick={() => setLocation("/ton-integration")}
+                    >
+                      Learn More About TON Integration
+                    </Button>
+                  </div>
+                </div>
+              </div>
+            </section>
+            
+            {/* CVT Token */}
+            <section id="cvt-token" className="scroll-mt-24 mt-12">
+              <div className="bg-gradient-to-br from-[#1D1D1D] to-[#151515] rounded-xl border border-[#333] p-6">
+                <h2 className="text-2xl font-bold mb-4 flex items-center gap-2">
+                  <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-[#6B00D7]/30 to-[#FF5AF7]/20 flex items-center justify-center">
+                    <span className="text-xl">🪙</span>
+                  </div>
+                  CVT Token
+                </h2>
+                
+                <div className="space-y-4 text-gray-300">
+                  <p>
+                    The Chronos Vault Token (CVT) powers the platform's ecosystem, providing governance rights, premium features, and enhanced vault capabilities to token holders.
+                  </p>
+                  
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
+                    <div className="p-4 bg-[#141414] rounded-lg border border-[#333]">
+                      <h4 className="font-semibold text-[#FF5AF7] mb-2">Staking Benefits</h4>
+                      <ul className="text-sm space-y-1 list-disc pl-4">
+                        <li>Higher storage limits</li>
+                        <li>Reduced platform fees</li>
+                        <li>Advanced security features</li>
+                        <li>Early access to new features</li>
+                      </ul>
+                    </div>
+                    
+                    <div className="p-4 bg-[#141414] rounded-lg border border-[#333]">
+                      <h4 className="font-semibold text-[#FF5AF7] mb-2">Governance</h4>
+                      <ul className="text-sm space-y-1 list-disc pl-4">
+                        <li>Voting on platform upgrades</li>
+                        <li>Fee structure proposals</li>
+                        <li>Integration selections</li>
+                        <li>Treasury management</li>
+                      </ul>
+                    </div>
+                    
+                    <div className="p-4 bg-[#141414] rounded-lg border border-[#333]">
+                      <h4 className="font-semibold text-[#FF5AF7] mb-2">Cross-Chain Utility</h4>
+                      <ul className="text-sm space-y-1 list-disc pl-4">
+                        <li>Multi-chain deployment</li>
+                        <li>Seamless bridge functionality</li>
+                        <li>Unified ecosystem currency</li>
+                        <li>Validator incentives</li>
+                      </ul>
+                    </div>
+                  </div>
+                  
+                  <div className="flex justify-end mt-2">
+                    <Button
+                      variant="outline"
+                      className="border border-[#6B00D7] bg-[#1A1A1A] text-[#FF5AF7] hover:bg-[#6B00D7]/20 font-medium rounded-lg px-4 py-2 text-sm transition-all"
+                      onClick={() => setLocation("/cvt-token")}
+                    >
+                      Learn More About CVT Token
+                    </Button>
+                  </div>
+                </div>
+              </div>
+            </section>
+            
+            {/* Multi-Chain Inheritance */}
+            <section id="inheritance" className="scroll-mt-24 mt-12">
+              <div className="bg-gradient-to-br from-[#1D1D1D] to-[#151515] rounded-xl border border-[#333] p-6">
+                <h2 className="text-2xl font-bold mb-4 flex items-center gap-2">
+                  <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-[#6B00D7]/30 to-[#FF5AF7]/20 flex items-center justify-center">
+                    <span className="text-xl">📜</span>
+                  </div>
+                  Multi-Chain Inheritance
+                </h2>
+                
+                <div className="space-y-4 text-gray-300">
+                  <p>
+                    Multi-Chain Inheritance allows you to securely pass on digital assets and information to your designated beneficiaries across multiple blockchains, with sophisticated controls and privacy safeguards.
+                  </p>
+                  
+                  <div className="p-4 bg-[#141414] rounded-lg border border-[#333]">
+                    <h3 className="font-semibold text-white mb-2">Inheritance Features</h3>
+                    <ul className="list-disc pl-5 space-y-2">
+                      <li>
+                        <span className="font-medium text-[#FF5AF7]">Beneficiary Management</span>
+                        <p className="text-sm mt-1">Designate multiple beneficiaries with different access levels and inheritance allocations.</p>
+                      </li>
+                      <li>
+                        <span className="font-medium text-[#FF5AF7]">Proof-of-Life System</span>
+                        <p className="text-sm mt-1">Configurable check-in requirements prevent premature vault access with customizable grace periods.</p>
+                      </li>
+                      <li>
+                        <span className="font-medium text-[#FF5AF7]">Staged Release</span>
+                        <p className="text-sm mt-1">Set up time-phased releases of assets or information based on dates or beneficiary actions.</p>
+                      </li>
+                      <li>
+                        <span className="font-medium text-[#FF5AF7]">Cross-Chain Consolidation</span>
+                        <p className="text-sm mt-1">Automatically converts and consolidates assets from multiple chains to the beneficiary's preferred blockchain.</p>
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+            </section>
+            
+            {/* Call to Action */}
+            <div className="text-center py-8 mt-12">
+              <p className="text-gray-400 mb-6">For more detailed information and interactive demonstrations, visit our Revolutionary Features page:</p>
               <Button
                 className="bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] hover:from-[#5500AB] hover:to-[#FF46E8] text-white font-bold rounded-lg px-6 py-3 shadow-glow hover:shadow-lg hover:shadow-[#FF5AF7]/40 transition-all"
                 onClick={() => setLocation("/revolutionary-features")}
