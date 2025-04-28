@@ -428,62 +428,354 @@ const CreateVaultForm = ({ initialVaultType = "legacy" }: CreateVaultFormProps) 
                 />
 
                 <TabsContent value="legacy" className="mt-0 space-y-6">
-                  <div className="bg-[#6B00D7]/10 p-4 rounded-lg">
-                    <h3 className="font-poppins font-semibold mb-2">Legacy Vault Features</h3>
+                  <div className="bg-[#6B00D7]/10 p-4 rounded-lg mb-4">
+                    <div className="flex items-center mb-3">
+                      <div className="bg-gradient-to-r from-[#6B00D7] to-[#9B4DFF] p-1.5 rounded-full mr-3">
+                        <i className="ri-lock-password-line text-white text-xl"></i>
+                      </div>
+                      <h3 className="font-poppins font-semibold text-[#6B00D7]">Advanced Legacy Vault Features</h3>
+                    </div>
+                    
+                    <p className="text-gray-300 mb-4 text-sm">
+                      The most sophisticated inheritance solution in blockchain with revolutionary security and distribution features.
+                    </p>
+                    
                     <ul className="space-y-2 text-sm text-gray-300">
                       <li className="flex items-start">
                         <i className="ri-checkbox-circle-line text-[#6B00D7] mt-0.5 mr-2"></i>
-                        <span>Perfect for inheritance planning</span>
+                        <span>Multi-chain inheritance protection with smart failover mechanisms</span>
                       </li>
                       <li className="flex items-start">
                         <i className="ri-checkbox-circle-line text-[#6B00D7] mt-0.5 mr-2"></i>
-                        <span>Add multiple beneficiaries</span>
+                        <span>Add multiple beneficiaries with dynamic allocation percentages</span>
                       </li>
                       <li className="flex items-start">
                         <i className="ri-checkbox-circle-line text-[#6B00D7] mt-0.5 mr-2"></i>
-                        <span>Flexible time lock periods (1-100 years)</span>
+                        <span>Proof-of-life integration with automated verification</span>
+                      </li>
+                      <li className="flex items-start">
+                        <i className="ri-checkbox-circle-line text-[#6B00D7] mt-0.5 mr-2"></i>
+                        <span>IPFS permanent storage for important family documents</span>
                       </li>
                     </ul>
+                  </div>
+                  
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                    <div className="border border-[#6B00D7]/30 rounded-lg p-3">
+                      <h4 className="font-medium text-[#6B00D7] mb-2 text-sm">Multi-Chain Protection</h4>
+                      <p className="text-xs text-gray-400">Distribute your assets across multiple blockchains for maximum protection against single-chain vulnerabilities.</p>
+                      
+                      <div className="mt-3 space-y-2">
+                        <div className="flex items-center">
+                          <input
+                            type="checkbox"
+                            id="enableEthereum"
+                            className="form-checkbox h-4 w-4 text-[#6B00D7] rounded border-gray-400 focus:ring-[#6B00D7]"
+                            defaultChecked
+                          />
+                          <label htmlFor="enableEthereum" className="ml-2 text-xs text-gray-300">Ethereum</label>
+                        </div>
+                        
+                        <div className="flex items-center">
+                          <input
+                            type="checkbox"
+                            id="enableSolana"
+                            className="form-checkbox h-4 w-4 text-[#6B00D7] rounded border-gray-400 focus:ring-[#6B00D7]"
+                          />
+                          <label htmlFor="enableSolana" className="ml-2 text-xs text-gray-300">Solana</label>
+                        </div>
+                        
+                        <div className="flex items-center">
+                          <input
+                            type="checkbox"
+                            id="enableTON"
+                            className="form-checkbox h-4 w-4 text-[#6B00D7] rounded border-gray-400 focus:ring-[#6B00D7]"
+                          />
+                          <label htmlFor="enableTON" className="ml-2 text-xs text-gray-300">TON</label>
+                        </div>
+                      </div>
+                    </div>
+                    
+                    <div className="border border-[#6B00D7]/30 rounded-lg p-3">
+                      <h4 className="font-medium text-[#6B00D7] mb-2 text-sm">Proof-of-Life Integration</h4>
+                      <p className="text-xs text-gray-400">Set up periodic verification to prove your status. If verification stops, the vault will be released to beneficiaries.</p>
+                      
+                      <div className="mt-3">
+                        <label className="block text-xs text-gray-300 mb-1">Check-In Period</label>
+                        <select className="w-full bg-[#1A1A1A] border border-[#6B00D7]/30 rounded text-xs text-gray-300 p-1.5">
+                          <option value="30">Monthly (30 days)</option>
+                          <option value="90">Quarterly (90 days)</option>
+                          <option value="180">Bi-Annually (180 days)</option>
+                          <option value="365">Annually (365 days)</option>
+                        </select>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div className="border border-[#6B00D7]/30 rounded-lg p-3 mb-2">
+                    <h4 className="font-medium text-[#6B00D7] mb-2 text-sm">IPFS Document Storage</h4>
+                    <p className="text-xs text-gray-400 mb-3">Important documents will be permanently stored using IPFS technology for decentralized and tamper-proof security.</p>
+                    
+                    <div className="flex items-center">
+                      <input
+                        type="checkbox"
+                        id="enableIPFS"
+                        className="form-checkbox h-4 w-4 text-[#6B00D7] rounded border-gray-400 focus:ring-[#6B00D7]"
+                      />
+                      <label htmlFor="enableIPFS" className="ml-2 text-xs text-gray-300">Enable IPFS Permanent Storage</label>
+                    </div>
                   </div>
                 </TabsContent>
 
                 <TabsContent value="investment" className="mt-0 space-y-6">
-                  <div className="bg-[#FF5AF7]/10 p-4 rounded-lg">
-                    <h3 className="font-poppins font-semibold mb-2">Investment Vault Features</h3>
+                  <div className="bg-[#FF5AF7]/10 p-4 rounded-lg mb-4">
+                    <div className="flex items-center mb-3">
+                      <div className="bg-gradient-to-r from-[#FF5AF7] to-[#FF00A8] p-1.5 rounded-full mr-3">
+                        <i className="ri-line-chart-line text-white text-xl"></i>
+                      </div>
+                      <h3 className="font-poppins font-semibold text-[#FF5AF7]">Advanced Investment Vault</h3>
+                    </div>
+                    
+                    <p className="text-gray-300 mb-4 text-sm">
+                      Revolutionary investment vault with AI-powered yield optimization and multi-chain security features.
+                    </p>
+                    
                     <ul className="space-y-2 text-sm text-gray-300">
                       <li className="flex items-start">
                         <i className="ri-checkbox-circle-line text-[#FF5AF7] mt-0.5 mr-2"></i>
-                        <span>Enforce long-term investment strategy</span>
+                        <span>Cross-chain yield optimization with automated asset movement</span>
                       </li>
                       <li className="flex items-start">
                         <i className="ri-checkbox-circle-line text-[#FF5AF7] mt-0.5 mr-2"></i>
-                        <span>Optional price-based unlock triggers</span>
+                        <span>AI-powered portfolio rebalancing for optimal returns</span>
                       </li>
                       <li className="flex items-start">
                         <i className="ri-checkbox-circle-line text-[#FF5AF7] mt-0.5 mr-2"></i>
-                        <span>Time lock periods from 1 month to 10 years</span>
+                        <span>Price-triggered actions with Chainlink oracle integration</span>
+                      </li>
+                      <li className="flex items-start">
+                        <i className="ri-checkbox-circle-line text-[#FF5AF7] mt-0.5 mr-2"></i>
+                        <span>Bitcoin halving event synchronization for strategic unlocking</span>
                       </li>
                     </ul>
+                  </div>
+                  
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                    <div className="border border-[#FF5AF7]/30 rounded-lg p-3">
+                      <h4 className="font-medium text-[#FF5AF7] mb-2 text-sm">Cross-Chain Yield Optimization</h4>
+                      <p className="text-xs text-gray-400">Automatically move assets across chains to maximize yield while maintaining security.</p>
+                      
+                      <div className="mt-3">
+                        <label className="block text-xs text-gray-300 mb-1">Optimization Strategy</label>
+                        <select className="w-full bg-[#1A1A1A] border border-[#FF5AF7]/30 rounded text-xs text-gray-300 p-1.5">
+                          <option value="balanced">Balanced (Recommended)</option>
+                          <option value="aggressive">Aggressive Yield</option>
+                          <option value="conservative">Conservative</option>
+                          <option value="custom">Custom Parameters</option>
+                        </select>
+                      </div>
+                      
+                      <div className="mt-3 space-y-2">
+                        <div className="flex items-center">
+                          <input
+                            type="checkbox"
+                            id="enableCrossChainYield"
+                            className="form-checkbox h-4 w-4 text-[#FF5AF7] rounded border-gray-400 focus:ring-[#FF5AF7]"
+                            defaultChecked
+                          />
+                          <label htmlFor="enableCrossChainYield" className="ml-2 text-xs text-gray-300">Enable Cross-Chain Yield</label>
+                        </div>
+                      </div>
+                    </div>
+                    
+                    <div className="border border-[#FF5AF7]/30 rounded-lg p-3">
+                      <h4 className="font-medium text-[#FF5AF7] mb-2 text-sm">Price-Triggered Actions</h4>
+                      <p className="text-xs text-gray-400">Set asset price thresholds that will trigger unlocking or other actions.</p>
+                      
+                      <div className="mt-3">
+                        <label className="block text-xs text-gray-300 mb-1">Trigger Price (Target)</label>
+                        <div className="flex items-center">
+                          <select className="w-1/3 bg-[#1A1A1A] border border-[#FF5AF7]/30 rounded-l text-xs text-gray-300 p-1.5">
+                            <option value="ETH">ETH</option>
+                            <option value="BTC">BTC</option>
+                            <option value="SOL">SOL</option>
+                          </select>
+                          <input 
+                            type="text" 
+                            placeholder="0.00" 
+                            className="w-2/3 bg-[#1A1A1A] border border-[#FF5AF7]/30 rounded-r text-xs text-gray-300 p-1.5"
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-2">
+                    <div className="border border-[#FF5AF7]/30 rounded-lg p-3">
+                      <h4 className="font-medium text-[#FF5AF7] mb-2 text-sm">Halving-Event Synchronization</h4>
+                      <p className="text-xs text-gray-400 mb-3">Time your vault unlock with the next Bitcoin halving event for strategic asset release.</p>
+                      
+                      <div className="flex items-center">
+                        <input
+                          type="checkbox"
+                          id="enableHalvingSync"
+                          className="form-checkbox h-4 w-4 text-[#FF5AF7] rounded border-gray-400 focus:ring-[#FF5AF7]"
+                        />
+                        <label htmlFor="enableHalvingSync" className="ml-2 text-xs text-gray-300">Sync with next Bitcoin halving</label>
+                      </div>
+                    </div>
+                    
+                    <div className="border border-[#FF5AF7]/30 rounded-lg p-3">
+                      <h4 className="font-medium text-[#FF5AF7] mb-2 text-sm">Risk-Adjusted Time Locks</h4>
+                      <p className="text-xs text-gray-400 mb-3">Longer lock periods receive proportionally higher yield compensation.</p>
+                      
+                      <div className="mt-1 text-xs text-[#FF5AF7]">
+                        <div className="flex justify-between">
+                          <span>Current Multiplier:</span>
+                          <span className="font-bold">1.75x</span>
+                        </div>
+                        <div className="h-1 w-full bg-[#1A1A1A] rounded-full mt-1 overflow-hidden">
+                          <div className="h-full bg-gradient-to-r from-[#FF5AF7] to-[#FF00A8] rounded-full" style={{ width: '75%' }}></div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div className="flex items-center p-3 border border-[#FF5AF7]/30 rounded-lg bg-[#FF5AF7]/5 my-2">
+                    <div className="flex-shrink-0 bg-[#FF5AF7]/10 p-2 rounded-full mr-3">
+                      <i className="ri-ai-generate text-[#FF5AF7] text-lg"></i>
+                    </div>
+                    <div className="text-sm text-gray-300">
+                      <span className="font-medium text-[#FF5AF7]">AI-Powered Rebalancing: </span>
+                      Our machine learning models automatically adjust your portfolio for maximum returns based on market conditions.
+                    </div>
                   </div>
                 </TabsContent>
 
                 <TabsContent value="project" className="mt-0 space-y-6">
-                  <div className="bg-gradient-to-r from-[#6B00D7]/10 to-[#FF5AF7]/10 p-4 rounded-lg">
-                    <h3 className="font-poppins font-semibold mb-2">Project Vault Features</h3>
+                  <div className="bg-gradient-to-r from-[#6B00D7]/10 to-[#FF5AF7]/10 p-4 rounded-lg mb-4">
+                    <div className="flex items-center mb-3">
+                      <div className="bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] p-1.5 rounded-full mr-3">
+                        <i className="ri-team-line text-white text-xl"></i>
+                      </div>
+                      <h3 className="font-poppins font-semibold text-white">Revolutionary Project Vault</h3>
+                    </div>
+                    
+                    <p className="text-gray-300 mb-4 text-sm">
+                      The ultimate collaborative vault solution for DAOs, teams, and projects with advanced governance and milestone features.
+                    </p>
+                    
                     <ul className="space-y-2 text-sm text-gray-300">
                       <li className="flex items-start">
                         <i className="ri-checkbox-circle-line text-white mt-0.5 mr-2"></i>
-                        <span>Ideal for DAOs and team projects</span>
+                        <span>DAO Governance integration with on-chain voting</span>
                       </li>
                       <li className="flex items-start">
                         <i className="ri-checkbox-circle-line text-white mt-0.5 mr-2"></i>
-                        <span>Multi-signature requirements</span>
+                        <span>Milestone achievement verification via Chainlink oracles</span>
                       </li>
                       <li className="flex items-start">
                         <i className="ri-checkbox-circle-line text-white mt-0.5 mr-2"></i>
-                        <span>Milestone-based unlocking</span>
+                        <span>Contribution-based access that adjusts dynamically</span>
+                      </li>
+                      <li className="flex items-start">
+                        <i className="ri-checkbox-circle-line text-white mt-0.5 mr-2"></i>
+                        <span>Multi-signature with threshold adjustments based on phase</span>
                       </li>
                     </ul>
+                  </div>
+                  
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                    <div className="border border-purple-500/30 rounded-lg p-3">
+                      <h4 className="font-medium text-white mb-2 text-sm">DAO Governance Integration</h4>
+                      <p className="text-xs text-gray-400">Implement on-chain governance for team-based decisions on vault management.</p>
+                      
+                      <div className="mt-3">
+                        <label className="block text-xs text-gray-300 mb-1">Governance Structure</label>
+                        <select className="w-full bg-[#1A1A1A] border border-purple-500/30 rounded text-xs text-gray-300 p-1.5">
+                          <option value="token">Token-weighted Voting</option>
+                          <option value="equal">Equal Voting Rights</option>
+                          <option value="quadratic">Quadratic Voting</option>
+                          <option value="custom">Custom Governance</option>
+                        </select>
+                      </div>
+                      
+                      <div className="mt-3 space-y-2">
+                        <div className="flex items-center">
+                          <input
+                            type="checkbox"
+                            id="enableDAOIntegration"
+                            className="form-checkbox h-4 w-4 text-purple-500 rounded border-gray-400 focus:ring-purple-500"
+                          />
+                          <label htmlFor="enableDAOIntegration" className="ml-2 text-xs text-gray-300">Enable DAO Integration</label>
+                        </div>
+                      </div>
+                    </div>
+                    
+                    <div className="border border-purple-500/30 rounded-lg p-3">
+                      <h4 className="font-medium text-white mb-2 text-sm">Milestone Verification</h4>
+                      <p className="text-xs text-gray-400">Use oracles to verify real-world project milestones for automated unlocking.</p>
+                      
+                      <div className="mt-3">
+                        <label className="block text-xs text-gray-300 mb-1">Milestone Type</label>
+                        <select className="w-full bg-[#1A1A1A] border border-purple-500/30 rounded text-xs text-gray-300 p-1.5">
+                          <option value="github">GitHub Releases/Commits</option>
+                          <option value="api">API Integration</option>
+                          <option value="manual">Manual Verification</option>
+                          <option value="chainlink">Chainlink Verified Feed</option>
+                        </select>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-2">
+                    <div className="border border-purple-500/30 rounded-lg p-3">
+                      <h4 className="font-medium text-white mb-2 text-sm">Multi-Signature Requirements</h4>
+                      <p className="text-xs text-gray-400 mb-3">Set dynamic approval thresholds that adapt based on project phase.</p>
+                      
+                      <div className="grid grid-cols-2 gap-2 mb-2">
+                        <div>
+                          <label className="block text-xs text-gray-300 mb-1">Initial Phase</label>
+                          <select className="w-full bg-[#1A1A1A] border border-purple-500/30 rounded text-xs text-gray-300 p-1.5">
+                            <option value="100">100% (All members)</option>
+                            <option value="75">75% (Majority)</option>
+                            <option value="50">50% (Half)</option>
+                          </select>
+                        </div>
+                        <div>
+                          <label className="block text-xs text-gray-300 mb-1">Final Phase</label>
+                          <select className="w-full bg-[#1A1A1A] border border-purple-500/30 rounded text-xs text-gray-300 p-1.5">
+                            <option value="75">75% (Majority)</option>
+                            <option value="50">50% (Half)</option>
+                            <option value="33">33% (One-third)</option>
+                          </select>
+                        </div>
+                      </div>
+                    </div>
+                    
+                    <div className="border border-purple-500/30 rounded-lg p-3">
+                      <h4 className="font-medium text-white mb-2 text-sm">Cross-Project Dependency</h4>
+                      <p className="text-xs text-gray-400 mb-3">Link this vault to other project vaults to create dependency relationships.</p>
+                      
+                      <div className="flex items-center">
+                        <input
+                          type="checkbox"
+                          id="enableCrossDependency"
+                          className="form-checkbox h-4 w-4 text-purple-500 rounded border-gray-400 focus:ring-purple-500"
+                        />
+                        <label htmlFor="enableCrossDependency" className="ml-2 text-xs text-gray-300">Enable Cross-Project Dependency</label>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div className="flex items-center p-3 border border-purple-500/30 rounded-lg bg-gradient-to-r from-[#6B00D7]/5 to-[#FF5AF7]/5 my-2">
+                    <div className="flex-shrink-0 bg-gradient-to-r from-[#6B00D7]/10 to-[#FF5AF7]/10 p-2 rounded-full mr-3">
+                      <i className="ri-scales-3-line text-white text-lg"></i>
+                    </div>
+                    <div className="text-sm text-gray-300">
+                      <span className="font-medium text-white">Contribution-Based Access: </span>
+                      Member access rights adjust dynamically based on their measured contributions to the project.
+                    </div>
                   </div>
                 </TabsContent>
                 
