@@ -470,5 +470,241 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Triple-Chain Security API Routes
+  
+  // In-memory storage for security incidents
+  const securityIncidents: Array<{
+    id: string;
+    vaultId: string;
+    type: string;
+    severity: 'low' | 'medium' | 'high' | 'critical';
+    timestamp: number;
+    status: 'active' | 'resolved' | 'investigating';
+    blockchainData: {
+      chain: 'ETH' | 'SOL' | 'TON';
+      txHash: string;
+      blockNumber: number;
+    };
+    details: any;
+  }> = [];
+
+  // Chain statuses
+  let chainStatuses = {
+    ETH: { status: 'online' as const, latestBlock: 15243789, lastUpdate: Date.now() },
+    SOL: { status: 'online' as const, latestBlock: 189764321, lastUpdate: Date.now() },
+    TON: { status: 'online' as const, latestBlock: 28974563, lastUpdate: Date.now() }
+  };
+
+  // Get all security incidents for a vault
+  app.get("/api/security/incidents/:vaultId", async (req: Request, res: Response) => {
+    try {
+      const { vaultId } = req.params;
+      
+      if (!vaultId) {
+        return res.status(400).json({ message: "Vault ID is required" });
+      }
+      
+      // Check if vault exists
+      const vault = await storage.getVault(parseInt(vaultId));
+      if (!vault) {
+        return res.status(404).json({ message: "Vault not found" });
+      }
+      
+      // Return incidents for this vault from our in-memory storage
+      const incidents = securityIncidents.filter(incident => incident.vaultId === vaultId);
+      res.json(incidents);
+    } catch (error) {
+      handleError(res, error);
+    }
+  });
+  
+  // Create a security incident
+  app.post("/api/security/incidents", async (req: Request, res: Response) => {
+    try {
+      const { vaultId, type, severity, chain, txHash, blockNumber, details } = req.body;
+      
+      if (!vaultId || !type || !severity || !chain) {
+        return res.status(400).json({ message: "Required fields are missing" });
+      }
+      
+      // Check if vault exists
+      const vault = await storage.getVault(parseInt(vaultId));
+      if (!vault) {
+        return res.status(404).json({ message: "Vault not found" });
+      }
+      
+      // Create new incident
+      const incident = {
+        id: `incident-${Date.now()}-${Math.floor(Math.random() * 10000)}`,
+        vaultId,
+        type,
+        severity,
+        timestamp: Date.now(),
+        status: 'active' as const,
+        blockchainData: {
+          chain,
+          txHash: txHash || `0x${Math.random().toString(16).substring(2, 42)}`,
+          blockNumber: blockNumber || Math.floor(Math.random() * 1000000)
+        },
+        details: details || {}
+      };
+      
+      securityIncidents.push(incident);
+      res.status(201).json(incident);
+    } catch (error) {
+      handleError(res, error);
+    }
+  });
+  
+  // Update a security incident
+  app.put("/api/security/incidents/:id", async (req: Request, res: Response) => {
+    try {
+      const { id } = req.params;
+      const { status, details } = req.body;
+      
+      const incidentIndex = securityIncidents.findIndex(i => i.id === id);
+      if (incidentIndex === -1) {
+        return res.status(404).json({ message: "Security incident not found" });
+      }
+      
+      // Update the incident
+      if (status) {
+        securityIncidents[incidentIndex].status = status;
+      }
+      
+      if (details) {
+        securityIncidents[incidentIndex].details = {
+          ...securityIncidents[incidentIndex].details,
+          ...details
+        };
+      }
+      
+      res.json(securityIncidents[incidentIndex]);
+    } catch (error) {
+      handleError(res, error);
+    }
+  });
+  
+  // Get chain statuses
+  app.get("/api/security/chain-status", (_req: Request, res: Response) => {
+    try {
+      // Update timestamps and randomize block numbers to simulate updates
+      const now = Date.now();
+      const timeSinceUpdate = now - chainStatuses.ETH.lastUpdate;
+      
+      // If it's been more than 30 seconds since last update, update block numbers
+      if (timeSinceUpdate > 30000) {
+        chainStatuses = {
+          ETH: { 
+            status: Math.random() > 0.1 ? 'online' : 'degraded', 
+            latestBlock: chainStatuses.ETH.latestBlock + Math.floor(Math.random() * 10) + 1,
+            lastUpdate: now
+          },
+          SOL: {
+            status: Math.random() > 0.1 ? 'online' : 'degraded',
+            latestBlock: chainStatuses.SOL.latestBlock + Math.floor(Math.random() * 1000) + 100,
+            lastUpdate: now
+          },
+          TON: {
+            status: Math.random() > 0.1 ? 'online' : 'degraded',
+            latestBlock: chainStatuses.TON.latestBlock + Math.floor(Math.random() * 100) + 10,
+            lastUpdate: now
+          }
+        };
+      }
+      
+      res.json(chainStatuses);
+    } catch (error) {
+      handleError(res, error);
+    }
+  });
+  
+  // Cross-chain vault verification
+  app.get("/api/security/verify-vault/:vaultId", async (req: Request, res: Response) => {
+    try {
+      const { vaultId } = req.params;
+      
+      if (!vaultId) {
+        return res.status(400).json({ message: "Vault ID is required" });
+      }
+      
+      // Check if vault exists
+      const vault = await storage.getVault(parseInt(vaultId));
+      if (!vault) {
+        return res.status(404).json({ message: "Vault not found" });
+      }
+      
+      // Simulate cross-chain verification with some random data
+      const verified = Math.random() > 0.1; // 90% success rate
+      const verificationResults = {
+        ETH: {
+          verified: Math.random() > 0.1,
+          blockHeight: chainStatuses.ETH.latestBlock,
+          timestamp: Date.now() - Math.floor(Math.random() * 60000)
+        },
+        SOL: {
+          verified: Math.random() > 0.1,
+          blockHeight: chainStatuses.SOL.latestBlock,
+          timestamp: Date.now() - Math.floor(Math.random() * 30000)
+        },
+        TON: {
+          verified: Math.random() > 0.1,
+          blockHeight: chainStatuses.TON.latestBlock,
+          timestamp: Date.now() - Math.floor(Math.random() * 45000)
+        }
+      };
+      
+      // Overall verification only succeeds if all chains verify
+      const allChainsVerified = Object.values(verificationResults).every(r => r.verified);
+      
+      res.json({
+        vaultId,
+        verified: allChainsVerified,
+        timestamp: Date.now(),
+        results: verificationResults,
+        consistencyScore: allChainsVerified ? 
+          Math.floor(Math.random() * 10) + 90 : // 90-100 for verified
+          Math.floor(Math.random() * 30) + 60   // 60-90 for not verified
+      });
+    } catch (error) {
+      handleError(res, error);
+    }
+  });
+  
+  // Security metrics
+  app.get("/api/security/metrics", (_req: Request, res: Response) => {
+    try {
+      const activeIncidentCount = securityIncidents.filter(i => i.status === 'active').length;
+      
+      // Generate security metrics
+      res.json({
+        timestamp: Date.now(),
+        incidentCount: securityIncidents.length,
+        activeIncidents: activeIncidentCount,
+        resolvedIncidents: securityIncidents.length - activeIncidentCount,
+        incidentsByType: {
+          unauthorized_access: Math.floor(Math.random() * 3),
+          suspected_fraud: Math.floor(Math.random() * 2),
+          abnormal_transfer: Math.floor(Math.random() * 4),
+          multi_sig_failure: Math.floor(Math.random() * 1),
+          protocol_vulnerability: Math.floor(Math.random() * 1),
+          data_inconsistency: Math.floor(Math.random() * 2),
+          cross_chain_attack: Math.floor(Math.random() * 1)
+        },
+        incidentsBySeverity: {
+          critical: Math.floor(Math.random() * 1),
+          high: Math.floor(Math.random() * 2),
+          medium: Math.floor(Math.random() * 4),
+          low: Math.floor(Math.random() * 5)
+        },
+        securityScore: Math.floor(Math.random() * 20) + 80, // 80-100
+        crossChainConsistency: Math.floor(Math.random() * 10) + 90, // 90-100
+        allChainsOnline: Object.values(chainStatuses).every(status => status.status === 'online')
+      });
+    } catch (error) {
+      handleError(res, error);
+    }
+  });
+
   return httpServer;
 }
