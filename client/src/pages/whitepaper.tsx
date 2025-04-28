@@ -667,25 +667,25 @@ export default function WhitepaperPage() {
           </p>
           
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
-            <div className="bg-[#121212] p-3 rounded border border-[#333] text-center">
+            <div className="bg-gradient-to-b from-[#200A33]/80 to-[#120020]/80 p-3 rounded border border-[#6B00D7]/20 text-center shadow-sm shadow-purple-900/10">
               <div className="text-lg font-bold text-[#6B00D7]">3 Months</div>
               <div className="text-2xl font-bold text-white my-2">1.0x</div>
               <div className="text-sm text-gray-400">Base multiplier</div>
             </div>
             
-            <div className="bg-[#121212] p-3 rounded border border-[#333] text-center">
+            <div className="bg-gradient-to-b from-[#220A38]/80 to-[#140022]/80 p-3 rounded border border-[#8F00FF]/20 text-center shadow-sm shadow-purple-900/10">
               <div className="text-lg font-bold text-[#8F00FF]">6 Months</div>
               <div className="text-2xl font-bold text-white my-2">1.25x</div>
               <div className="text-sm text-gray-400">Rewards multiplier</div>
             </div>
             
-            <div className="bg-[#121212] p-3 rounded border border-[#333] text-center">
+            <div className="bg-gradient-to-b from-[#240A3D]/80 to-[#160025]/80 p-3 rounded border border-[#A040FF]/20 text-center shadow-sm shadow-purple-900/10">
               <div className="text-lg font-bold text-[#A040FF]">1 Year</div>
               <div className="text-2xl font-bold text-white my-2">1.5x</div>
               <div className="text-sm text-gray-400">Rewards multiplier</div>
             </div>
             
-            <div className="bg-[#121212] p-3 rounded border border-[#333] text-center">
+            <div className="bg-gradient-to-b from-[#2A0A45]/80 to-[#1A0028]/80 p-3 rounded border border-[#FF5AF7]/20 text-center shadow-sm shadow-purple-900/10">
               <div className="text-lg font-bold text-[#FF5AF7]">2+ Years</div>
               <div className="text-2xl font-bold text-white my-2">2.0x</div>
               <div className="text-sm text-gray-400">Rewards multiplier</div>
@@ -699,7 +699,7 @@ export default function WhitepaperPage() {
             functionality, and data across multiple blockchains for unprecedented security and performance.
           </p>
           
-          <div className="bg-[#0A0A0A] border border-[#222] rounded-lg p-4 my-6">
+          <div className="bg-gradient-to-br from-[#1A0833]/95 to-[#100018]/95 border border-[#6B00D7]/20 rounded-lg p-4 my-6 shadow-md shadow-purple-900/10">
             <h3 className="text-lg font-bold text-white mb-3">Key Cross-Chain Components</h3>
             
             <ul className="space-y-3">
@@ -794,8 +794,8 @@ export default function WhitepaperPage() {
           </p>
           
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 my-6">
-            <div className="bg-gradient-to-br from-[#0A0A0A] to-[#121212] p-5 rounded-lg border border-[#333]">
-              <h3 className="text-xl font-bold text-white mb-3">Advanced Cross-Chain Management</h3>
+            <div className="bg-gradient-to-br from-[#200A33]/95 to-[#120020]/95 p-5 rounded-lg border border-[#6B00D7]/20 shadow-lg shadow-purple-900/10">
+              <h3 className="text-xl font-bold bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] bg-clip-text text-transparent mb-3">Advanced Cross-Chain Management</h3>
               <ul className="space-y-2">
                 <li className="flex items-start gap-2">
                   <span className="text-[#FF5AF7] mt-0.5">•</span>
@@ -812,8 +812,8 @@ export default function WhitepaperPage() {
               </ul>
             </div>
             
-            <div className="bg-gradient-to-br from-[#0A0A0A] to-[#121212] p-5 rounded-lg border border-[#333]">
-              <h3 className="text-xl font-bold text-white mb-3">Enhanced CVT Tokenomics</h3>
+            <div className="bg-gradient-to-br from-[#200A33]/95 to-[#120020]/95 p-5 rounded-lg border border-[#6B00D7]/20 shadow-lg shadow-purple-900/10">
+              <h3 className="text-xl font-bold bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] bg-clip-text text-transparent mb-3">Enhanced CVT Tokenomics</h3>
               <ul className="space-y-2">
                 <li className="flex items-start gap-2">
                   <span className="text-[#FF5AF7] mt-0.5">•</span>
@@ -832,8 +832,8 @@ export default function WhitepaperPage() {
           </div>
           
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 my-6">
-            <div className="bg-gradient-to-br from-[#0A0A0A] to-[#121212] p-5 rounded-lg border border-[#333]">
-              <h3 className="text-xl font-bold text-white mb-3">AI-Powered Vaults</h3>
+            <div className="bg-gradient-to-br from-[#210A38]/95 to-[#130022]/95 p-5 rounded-lg border border-[#8F00FF]/20 shadow-lg shadow-purple-900/10">
+              <h3 className="text-xl font-bold bg-gradient-to-r from-[#8F00FF] to-[#FF5AF7] bg-clip-text text-transparent mb-3">AI-Powered Vaults</h3>
               <ul className="space-y-2">
                 <li className="flex items-start gap-2">
                   <span className="text-[#FF5AF7] mt-0.5">•</span>
@@ -850,8 +850,8 @@ export default function WhitepaperPage() {
               </ul>
             </div>
             
-            <div className="bg-gradient-to-br from-[#0A0A0A] to-[#121212] p-5 rounded-lg border border-[#333]">
-              <h3 className="text-xl font-bold text-white mb-3">Hardware Integrations</h3>
+            <div className="bg-gradient-to-br from-[#220A3D]/95 to-[#140025]/95 p-5 rounded-lg border border-[#A040FF]/20 shadow-lg shadow-purple-900/10">
+              <h3 className="text-xl font-bold bg-gradient-to-r from-[#A040FF] to-[#FF5AF7] bg-clip-text text-transparent mb-3">Hardware Integrations</h3>
               <ul className="space-y-2">
                 <li className="flex items-start gap-2">
                   <span className="text-[#FF5AF7] mt-0.5">•</span>
@@ -870,8 +870,8 @@ export default function WhitepaperPage() {
           </div>
           
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 my-6">
-            <div className="bg-gradient-to-br from-[#0A0A0A] to-[#121212] p-5 rounded-lg border border-[#333]">
-              <h3 className="text-xl font-bold text-white mb-3">Enterprise Solutions</h3>
+            <div className="bg-gradient-to-br from-[#230A42]/95 to-[#150027]/95 p-5 rounded-lg border border-[#B060FF]/20 shadow-lg shadow-purple-900/10">
+              <h3 className="text-xl font-bold bg-gradient-to-r from-[#B060FF] to-[#FF5AF7] bg-clip-text text-transparent mb-3">Enterprise Solutions</h3>
               <ul className="space-y-2">
                 <li className="flex items-start gap-2">
                   <span className="text-[#FF5AF7] mt-0.5">•</span>
@@ -888,8 +888,8 @@ export default function WhitepaperPage() {
               </ul>
             </div>
             
-            <div className="bg-gradient-to-br from-[#0A0A0A] to-[#121212] p-5 rounded-lg border border-[#333]">
-              <h3 className="text-xl font-bold text-white mb-3">Developer Ecosystem</h3>
+            <div className="bg-gradient-to-br from-[#240A46]/95 to-[#160029]/95 p-5 rounded-lg border border-[#C070FF]/20 shadow-lg shadow-purple-900/10">
+              <h3 className="text-xl font-bold bg-gradient-to-r from-[#C070FF] to-[#FF5AF7] bg-clip-text text-transparent mb-3">Developer Ecosystem</h3>
               <ul className="space-y-2">
                 <li className="flex items-start gap-2">
                   <span className="text-[#FF5AF7] mt-0.5">•</span>
@@ -906,8 +906,8 @@ export default function WhitepaperPage() {
               </ul>
             </div>
             
-            <div className="bg-gradient-to-br from-[#0A0A0A] to-[#121212] p-5 rounded-lg border border-[#333]">
-              <h3 className="text-xl font-bold text-white mb-3">Innovative Vault Types</h3>
+            <div className="bg-gradient-to-br from-[#250A4A]/95 to-[#17002B]/95 p-5 rounded-lg border border-[#D080FF]/20 shadow-lg shadow-purple-900/10">
+              <h3 className="text-xl font-bold bg-gradient-to-r from-[#D080FF] to-[#FF5AF7] bg-clip-text text-transparent mb-3">Innovative Vault Types</h3>
               <ul className="space-y-2">
                 <li className="flex items-start gap-2">
                   <span className="text-[#FF5AF7] mt-0.5">•</span>
