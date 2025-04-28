@@ -346,46 +346,55 @@ const VaultDetails = () => {
                 </TabsContent>
                 
                 <TabsContent value="security" className="space-y-6 mt-4">
-                  <div>
-                    <h3 className="text-lg font-poppins font-semibold mb-4">Security Information</h3>
+                  <div className="grid grid-cols-1 gap-6">
+                    {/* Proof of Reservation - Main Verification Card */}
+                    <div>
+                      <h3 className="text-lg font-poppins font-semibold mb-4">Proof of Reservation</h3>
+                      <ProofVerificationCard vaultId={vaultId} />
+                    </div>
                     
-                    <div className="space-y-4">
-                      <div className="bg-[#121212] rounded-lg p-4 border border-[#333333] flex items-start">
-                        <div className="mr-3 p-2 bg-[#6B00D7]/10 rounded-full">
-                          <Shield className="h-5 w-5 text-[#6B00D7]" />
-                        </div>
-                        <div>
-                          <div className="font-medium">Smart Contract Security</div>
-                          <p className="text-sm text-gray-400 mt-1">
-                            Your assets are secured by audited smart contracts on the blockchain, ensuring 
-                            that only you can access them after the time lock expires.
-                          </p>
-                        </div>
-                      </div>
+                    {/* Security Information */}
+                    <div>
+                      <h3 className="text-lg font-poppins font-semibold mb-4">Security Information</h3>
                       
-                      <div className="bg-[#121212] rounded-lg p-4 border border-[#333333] flex items-start">
-                        <div className="mr-3 p-2 bg-[#FF5AF7]/10 rounded-full">
-                          <LockKeyhole className="h-5 w-5 text-[#FF5AF7]" />
+                      <div className="space-y-4">
+                        <div className="bg-[#121212] rounded-lg p-4 border border-[#333333] flex items-start">
+                          <div className="mr-3 p-2 bg-[#6B00D7]/10 rounded-full">
+                            <Shield className="h-5 w-5 text-[#6B00D7]" />
+                          </div>
+                          <div>
+                            <div className="font-medium">Smart Contract Security</div>
+                            <p className="text-sm text-gray-400 mt-1">
+                              Your assets are secured by audited smart contracts on the blockchain, ensuring 
+                              that only you can access them after the time lock expires.
+                            </p>
+                          </div>
                         </div>
-                        <div>
-                          <div className="font-medium">Time Lock Protection</div>
-                          <p className="text-sm text-gray-400 mt-1">
-                            The time lock mechanism is enforced at the protocol level, making it 
-                            impossible to access the assets before the specified unlock date.
-                          </p>
+                        
+                        <div className="bg-[#121212] rounded-lg p-4 border border-[#333333] flex items-start">
+                          <div className="mr-3 p-2 bg-[#FF5AF7]/10 rounded-full">
+                            <LockKeyhole className="h-5 w-5 text-[#FF5AF7]" />
+                          </div>
+                          <div>
+                            <div className="font-medium">Time Lock Protection</div>
+                            <p className="text-sm text-gray-400 mt-1">
+                              The time lock mechanism is enforced at the protocol level, making it 
+                              impossible to access the assets before the specified unlock date.
+                            </p>
+                          </div>
                         </div>
-                      </div>
-                      
-                      <div className="bg-[#121212] rounded-lg p-4 border border-[#333333] flex items-start">
-                        <div className="mr-3 p-2 bg-[#6B00D7]/10 rounded-full">
-                          <i className="ri-eye-line text-[#6B00D7] text-lg"></i>
-                        </div>
-                        <div>
-                          <div className="font-medium">Transparent & Verifiable</div>
-                          <p className="text-sm text-gray-400 mt-1">
-                            All vault parameters and conditions are publicly verifiable on the blockchain, 
-                            ensuring complete transparency and trustless operation.
-                          </p>
+                        
+                        <div className="bg-[#121212] rounded-lg p-4 border border-[#333333] flex items-start">
+                          <div className="mr-3 p-2 bg-[#6B00D7]/10 rounded-full">
+                            <i className="ri-eye-line text-[#6B00D7] text-lg"></i>
+                          </div>
+                          <div>
+                            <div className="font-medium">Transparent & Verifiable</div>
+                            <p className="text-sm text-gray-400 mt-1">
+                              All vault parameters and conditions are publicly verifiable on the blockchain, 
+                              ensuring complete transparency and trustless operation.
+                            </p>
+                          </div>
                         </div>
                       </div>
                     </div>
@@ -398,10 +407,21 @@ const VaultDetails = () => {
           <div>
             <Card className="bg-[#1E1E1E] border border-[#333333] mb-8">
               <CardHeader>
-                <CardTitle className="text-lg">Time Lock Status</CardTitle>
+                <CardTitle className="text-lg">Security Dashboard</CardTitle>
               </CardHeader>
-              <CardContent>
-                <TimeLockProgress 
+              <CardContent className="space-y-4">
+                <div>
+                  <h4 className="text-sm font-medium mb-2">Time Lock Status</h4>
+                  <TimeLockProgress 
+                    createdAt={vaultData.createdAt}
+                    unlockDate={vaultData.unlockDate}
+                    isLocked={vaultData.isLocked}
+                  />
+                </div>
+                
+                {/* Integrate the Security Dashboard */}
+                <ProofSecurityDashboard
+                  vaultId={vaultId}
                   createdAt={vaultData.createdAt}
                   unlockDate={vaultData.unlockDate}
                   isLocked={vaultData.isLocked}
