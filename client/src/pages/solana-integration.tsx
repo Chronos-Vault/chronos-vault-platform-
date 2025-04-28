@@ -190,7 +190,23 @@ export default function SolanaIntegrationPage() {
     description: ''
   });
   
-  const [lookupState, setLookupState] = useState({
+  interface VaultDetails {
+    exists: boolean;
+    balance?: string;
+    unlockTime?: number;
+    owner?: string;
+    beneficiary?: string;
+    isMultiSig?: boolean;
+    isGeoLocked?: boolean;
+    description?: string;
+    error?: string;
+  }
+  
+  const [lookupState, setLookupState] = useState<{
+    vaultAddress: string;
+    vaultDetails: VaultDetails | null;
+    loading: boolean;
+  }>({
     vaultAddress: '',
     vaultDetails: null,
     loading: false

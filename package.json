@@ -49,6 +49,7 @@
     "@tonconnect/ui": "^2.1.0",
     "@types/react-helmet": "^6.1.11",
     "@types/three": "^0.176.0",
+    "borsh": "^2.0.0",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "cmdk": "^1.1.1",
