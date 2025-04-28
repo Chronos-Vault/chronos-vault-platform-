@@ -24,6 +24,8 @@ const Header = () => {
     { name: "My Vaults", href: "/my-vaults", icon: "📊" },
     { name: "Gift Crypto", href: "/gift-crypto", icon: "🎁", highlight: true },
     { name: "CVT Token", href: "/cvt-token", icon: "🪙" },
+    { name: "CVT Tokenomics", href: "/cvt-tokenomics", icon: "📊" },
+    { name: "Technical Specs", href: "/technical-specification", icon: "🧪" },
     { name: "Roadmap", href: "/roadmap", icon: "🗺️" },
     { name: "About", href: "/about", icon: "ℹ️" },
   ];
@@ -68,6 +70,8 @@ const Header = () => {
       icon: "📚",
       items: [
         { name: "Documentation", href: "/documentation", icon: "📄" },
+        { name: "Technical Specification", href: "/technical-specification", icon: "🧪" },
+        { name: "CVT Tokenomics", href: "/cvt-tokenomics", icon: "📊" },
         { name: "How It Works", href: "/about#how-it-works", icon: "⚙️" },
         { name: "Revolutionary Features", href: "/revolutionary-features", icon: "🚀" },
         { name: "About", href: "/about", icon: "ℹ️" },

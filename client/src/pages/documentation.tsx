@@ -141,6 +141,27 @@ export default function Documentation() {
                       <li>Smart conditional unlocking based on market events or security parameters</li>
                     </ul>
                   </div>
+                  
+                  <div className="mt-5 grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <Link href="/technical-specification" className="block">
+                      <div className="bg-gradient-to-r from-[#6B00D7]/20 to-[#FF5AF7]/10 border border-[#6B00D7]/30 rounded-lg p-4 hover:from-[#6B00D7]/30 hover:to-[#FF5AF7]/20 transition-all">
+                        <h4 className="font-semibold text-white flex items-center gap-2">
+                          <span className="text-xl">🧪</span>
+                          Technical Specifications
+                        </h4>
+                        <p className="text-gray-300 mt-1">Explore the detailed technical architecture and specifications of the Chronos Vault platform.</p>
+                      </div>
+                    </Link>
+                    <Link href="/cvt-tokenomics" className="block">
+                      <div className="bg-gradient-to-r from-[#6B00D7]/20 to-[#FF5AF7]/10 border border-[#6B00D7]/30 rounded-lg p-4 hover:from-[#6B00D7]/30 hover:to-[#FF5AF7]/20 transition-all">
+                        <h4 className="font-semibold text-white flex items-center gap-2">
+                          <span className="text-xl">📊</span>
+                          CVT Tokenomics
+                        </h4>
+                        <p className="text-gray-300 mt-1">Learn about the ChronosVault Token (CVT), its deflationary model, and distribution schedule.</p>
+                      </div>
+                    </Link>
+                  </div>
                 </div>
               </div>
             </section>
