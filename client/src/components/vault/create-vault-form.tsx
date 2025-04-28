@@ -68,6 +68,10 @@ const CreateVaultForm = ({ initialVaultType = "legacy" }: CreateVaultFormProps) 
       confirmAmount: "",
       timeLockPeriod: 365, // Default to 1 year
       unlockDate: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toISOString(),
+      metadata: {
+        allowsAttachments: true,
+        attachmentsEncryption: "AES-256"
+      }
     },
   });
 
