@@ -8,7 +8,7 @@ export interface OlympicVault {
   id: number;
   name: string;
   type: 'summer' | 'winter';
-  capsuleType?: 'summer' | 'winter'; // Alias for backward compatibility
+  vaultType?: 'summer' | 'winter'; // Use 'vaultType' for consistency with digital time vault terminology
   location: string;
   hostCity?: string; // Alias for backward compatibility 
   year: number;
@@ -176,7 +176,7 @@ export class OlympicVaultService {
     // Add compatibility properties
     return vaults.map(vault => ({
       ...vault,
-      capsuleType: vault.type,
+      vaultType: vault.type,
       hostCity: vault.location,
       olympicYear: vault.year,
       description: `${vault.name} is a time-locked vault for the ${vault.year} Olympics in ${vault.location}. It contains ${vault.tokenAmount.toLocaleString()} CVT tokens with a ${vault.bonusPercentage}% bonus.`,

@@ -7,6 +7,7 @@ import { useMutation } from "@tanstack/react-query";
 import { apiRequest } from "@/lib/queryClient";
 import { insertVaultSchema } from "@shared/schema";
 import { useToast } from "@/hooks/use-toast";
+import { FileUpload } from "@/components/attachments/file-upload";
 
 import {
   Form,
@@ -49,6 +50,8 @@ const CreateVaultForm = ({ initialVaultType = "legacy" }: CreateVaultFormProps) 
   const [_, navigate] = useLocation();
   const { toast } = useToast();
   const [activeTab, setActiveTab] = useState(initialVaultType);
+  const [createdVaultId, setCreatedVaultId] = useState<number | null>(null);
+  const [showAttachmentUpload, setShowAttachmentUpload] = useState(false);
 
   // Mocked user ID for demo purposes
   const userId = 1;
@@ -73,12 +76,13 @@ const CreateVaultForm = ({ initialVaultType = "legacy" }: CreateVaultFormProps) 
       const response = await apiRequest("POST", "/api/vaults", data);
       return response.json();
     },
-    onSuccess: () => {
+    onSuccess: (data) => {
+      setCreatedVaultId(data.id);
+      setShowAttachmentUpload(true);
       toast({
         title: "Vault created successfully",
-        description: "Your vault has been created and assets have been locked.",
+        description: "Your vault has been created. You can now add media attachments.",
       });
-      navigate("/my-vaults");
     },
     onError: (error) => {
       toast({
@@ -88,6 +92,21 @@ const CreateVaultForm = ({ initialVaultType = "legacy" }: CreateVaultFormProps) 
       });
     },
   });
+  
+  const handleAttachmentComplete = (attachment: any) => {
+    toast({
+      title: "File uploaded successfully",
+      description: "Your attachment has been added to the vault.",
+    });
+  };
+  
+  const handleFinishCreation = () => {
+    toast({
+      title: "Vault creation complete",
+      description: "Your vault has been created with all assets and attachments.",
+    });
+    navigate("/my-vaults");
+  };
 
   const handleTabChange = (value: string) => {
     setActiveTab(value);
@@ -334,17 +353,45 @@ const CreateVaultForm = ({ initialVaultType = "legacy" }: CreateVaultFormProps) 
                   </div>
                 </TabsContent>
 
-                <div className="pt-4 border-t border-[#333333]">
-                  <Button 
-                    type="submit" 
-                    className="w-full bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] text-white cta-button"
-                    disabled={mutation.isPending}
-                  >
-                    {mutation.isPending ? "Creating Your Vault..." : "Create and Lock Assets"}
-                  </Button>
-                </div>
+                {!showAttachmentUpload && (
+                  <div className="pt-4 border-t border-[#333333]">
+                    <Button 
+                      type="submit" 
+                      className="w-full bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] text-white cta-button"
+                      disabled={mutation.isPending}
+                    >
+                      {mutation.isPending ? "Creating Your Vault..." : "Create and Lock Assets"}
+                    </Button>
+                  </div>
+                )}
               </form>
             </Form>
+            
+            {showAttachmentUpload && createdVaultId && (
+              <div className="mt-8 space-y-6">
+                <div className="bg-gradient-to-r from-[#6B00D7]/10 to-[#FF5AF7]/10 p-4 rounded-lg mb-4">
+                  <h3 className="font-semibold mb-2">Add Media to Your Vault</h3>
+                  <p className="text-sm text-gray-300">
+                    Add images, documents, videos, or audio files to your vault. These will be securely encrypted and time-locked.
+                  </p>
+                </div>
+                
+                <FileUpload 
+                  vaultId={createdVaultId} 
+                  onUploadComplete={handleAttachmentComplete} 
+                  className="mb-6"
+                />
+                
+                <div className="border-t border-[#333333] pt-4">
+                  <Button
+                    onClick={handleFinishCreation}
+                    className="w-full bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] text-white cta-button"
+                  >
+                    Complete Vault Creation
+                  </Button>
+                </div>
+              </div>
+            )}
           </CardContent>
         </Card>
       </Tabs>

@@ -40,12 +40,12 @@ function mapLegacyPropsToVaultProps(vaults: JourneyDigitalTimeVaultProps[]): Tok
 }
 
 // This is a thin wrapper around JourneyVaults for backward compatibility
-const JourneyCapsule: React.FC<{ capsules: JourneyDigitalTimeVaultProps[], totalSupply: number }> = ({ 
-  capsules, 
+const JourneyCapsule: React.FC<{ vaults: JourneyDigitalTimeVaultProps[], totalSupply: number }> = ({ 
+  vaults: legacyVaults, 
   totalSupply 
 }) => {
   // Map the legacy props to the new format
-  const vaults = mapLegacyPropsToVaultProps(capsules);
+  const vaults = mapLegacyPropsToVaultProps(legacyVaults);
   
   // Display a console warning about deprecation
   React.useEffect(() => {
