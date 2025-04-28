@@ -19,12 +19,13 @@ import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
-import { ArrowLeft, User, Clock, ChevronRight, AlertTriangle, Shield, LockKeyhole } from "lucide-react";
+import { ArrowLeft, User, Clock, ChevronRight, AlertTriangle, Shield, LockKeyhole, Files } from "lucide-react";
 import { formatDate, truncateAddress } from "@/lib/utils";
 import TimeLockProgress from "@/components/vault/time-lock-progress";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
 import { ProofVerificationCard, ProofVerificationSummary } from "@/components/Proof-of-Reservation";
+import { AttachmentList } from "@/components/attachments";
 
 const VaultDetails = () => {
   const [location, params] = useLocation();
@@ -198,6 +199,10 @@ const VaultDetails = () => {
                     {vaultData.beneficiaries && vaultData.beneficiaries.length > 0 && (
                       <TabsTrigger value="beneficiaries">Beneficiaries</TabsTrigger>
                     )}
+                    <TabsTrigger value="attachments">
+                      <Files className="h-4 w-4 mr-1" />
+                      Attachments
+                    </TabsTrigger>
                     <TabsTrigger value="security">Security</TabsTrigger>
                   </TabsList>
                 </Tabs>
