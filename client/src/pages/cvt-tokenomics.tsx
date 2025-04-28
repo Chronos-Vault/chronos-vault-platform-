@@ -959,9 +959,11 @@ export default function CVTTokenomics() {
             <p className="text-gray-300 mb-6">
               ChronosToken (CVT) represents a paradigm shift in tokenomics - a deflationary token that becomes more scarce and valuable over time.
             </p>
-            <button className="bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] text-white px-6 py-3 rounded-lg font-semibold hover:from-[#5500AB] hover:to-[#FF46E8] transition-all">
-              Read the Full Whitepaper
-            </button>
+            <a href="/whitepaper">
+              <button className="bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] text-white px-6 py-3 rounded-lg font-semibold hover:from-[#5500AB] hover:to-[#FF46E8] transition-all">
+                Read the Full Whitepaper
+              </button>
+            </a>
           </div>
         </div>
       </Container>

@@ -547,7 +547,7 @@ const Home = () => {
                       Explore CVT Tokenomics
                     </Button>
                   </Link>
-                  <Link href="/technical-specification">
+                  <Link href="/whitepaper">
                     <Button variant="outline" className="border-[#6B00D7] text-white hover:bg-[#6B00D7]/10 hover:text-white px-6 py-3 transition-all">
                       Read the full whitepaper
                     </Button>

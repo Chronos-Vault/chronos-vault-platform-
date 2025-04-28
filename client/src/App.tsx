@@ -31,6 +31,7 @@ import RevolutionaryFeaturesPage from "@/pages/revolutionary-features";
 import DocumentationPage from "@/pages/documentation";
 import TechnicalSpecificationPage from "@/pages/technical-specification";
 import CVTTokenomicsPage from "@/pages/cvt-tokenomics";
+import WhitepaperPage from "@/pages/whitepaper";
 import NotFound from "@/pages/not-found";
 
 function Router() {
@@ -60,6 +61,7 @@ function Router() {
           <Route path="/documentation" component={DocumentationPage} />
           <Route path="/technical-specification" component={TechnicalSpecificationPage} />
           <Route path="/cvt-tokenomics" component={CVTTokenomicsPage} />
+          <Route path="/whitepaper" component={WhitepaperPage} />
           <Route component={NotFound} />
         </Switch>
       </main>
