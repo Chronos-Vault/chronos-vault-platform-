@@ -59,6 +59,7 @@ const giftFormSchema = z.object({
   message: z.string().optional(),
   lockInVault: z.boolean().default(false),
   lockDuration: z.number().min(1).optional(),
+  includeAttachments: z.boolean().default(false),
 });
 
 type GiftFormValues = z.infer<typeof giftFormSchema>;
@@ -99,6 +100,7 @@ export function CryptoGiftSystem({ userId, onGiftSent, onAdvancedGift }: CryptoG
       message: "",
       lockInVault: false,
       lockDuration: 30, // Default lock duration of 30 days
+      includeAttachments: false,
     },
   });
   
