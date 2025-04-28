@@ -104,26 +104,98 @@ export class SolanaService {
   }
   
   /**
-   * Connect to a Solana wallet
-   * Attempts to connect to Phantom wallet if available
+   * Get available Solana wallets
+   * Detects wallets injected into the window object
    */
-  public async connect(): Promise<boolean> {
+  public getAvailableWallets(): { name: string, adapter: any }[] {
+    const wallets = [];
+    
+    // Check for Phantom
+    if ((window as any).phantom?.solana) {
+      wallets.push({ 
+        name: 'Phantom', 
+        adapter: (window as any).phantom.solana 
+      });
+    }
+    
+    // Check for Solflare
+    if ((window as any).solflare) {
+      wallets.push({ 
+        name: 'Solflare', 
+        adapter: (window as any).solflare 
+      });
+    }
+    
+    // Check for Slope
+    if ((window as any).slope) {
+      wallets.push({ 
+        name: 'Slope', 
+        adapter: (window as any).slope 
+      });
+    }
+    
+    // Check for Sollet
+    if ((window as any).sollet) {
+      wallets.push({ 
+        name: 'Sollet', 
+        adapter: (window as any).sollet 
+      });
+    }
+    
+    // Check for Coin98
+    if ((window as any).coin98?.sol) {
+      wallets.push({ 
+        name: 'Coin98', 
+        adapter: (window as any).coin98.sol 
+      });
+    }
+    
+    // Check for MathWallet
+    if ((window as any).solana?.isMathWallet) {
+      wallets.push({ 
+        name: 'MathWallet', 
+        adapter: (window as any).solana 
+      });
+    }
+    
+    return wallets;
+  }
+
+  /**
+   * Connect to any Solana wallet
+   * Supports multiple wallet providers with fallback for development
+   */
+  public async connect(walletName?: string): Promise<boolean> {
     try {
       this.connectionStatus = SolanaConnectionStatus.CONNECTING;
       
-      // Check if Phantom is installed
-      const phantom = (window as any).phantom?.solana;
+      // Get available wallets
+      const availableWallets = this.getAvailableWallets();
       
-      if (!phantom) {
-        console.error('Phantom wallet not found! Please install the Phantom extension.');
+      if (availableWallets.length === 0) {
+        console.error('No Solana wallets found! Please install a Solana wallet extension.');
         this.connectionStatus = SolanaConnectionStatus.DISCONNECTED;
         return false;
       }
       
+      // If wallet name is provided, find that specific wallet
+      let selectedWallet;
+      if (walletName) {
+        selectedWallet = availableWallets.find(w => w.name.toLowerCase() === walletName.toLowerCase());
+      }
+      
+      // If no wallet name provided or not found, use the first available wallet
+      if (!selectedWallet) {
+        selectedWallet = availableWallets[0];
+        console.log(`Using ${selectedWallet.name} wallet`);
+      }
+      
       try {
-        // Request connection to Phantom wallet
-        const response = await phantom.connect();
-        this.walletPublicKey = new PublicKey(response.publicKey.toString());
+        // Request connection to the wallet
+        const response = await selectedWallet.adapter.connect();
+        const publicKey = response.publicKey || response; // Different wallets return different formats
+        
+        this.walletPublicKey = new PublicKey(publicKey.toString());
         
         // Update wallet info
         await this.updateWalletInfo();
@@ -158,15 +230,18 @@ export class SolanaService {
    */
   public async disconnect(): Promise<boolean> {
     try {
-      // Try to disconnect from Phantom
-      const phantom = (window as any).phantom?.solana;
-      if (phantom) {
+      // Try to disconnect from all possible wallets
+      const availableWallets = this.getAvailableWallets();
+      
+      for (const wallet of availableWallets) {
         try {
-          await phantom.disconnect();
-          console.log('Phantom wallet disconnected');
+          if (wallet.adapter && wallet.adapter.disconnect) {
+            await wallet.adapter.disconnect();
+            console.log(`${wallet.name} wallet disconnected`);
+          }
         } catch (err) {
-          console.warn('Error while disconnecting from Phantom:', err);
-          // Continue execution even if Phantom disconnect fails
+          console.warn(`Error while disconnecting from ${wallet.name}:`, err);
+          // Continue execution even if disconnect fails
         }
       }
       
@@ -237,6 +312,23 @@ export class SolanaService {
   }
   
   /**
+   * Get the currently connected wallet adapter
+   */
+  private getConnectedWalletAdapter(): any {
+    // Find all available wallets
+    const availableWallets = this.getAvailableWallets();
+    
+    if (availableWallets.length === 0) {
+      console.error('No Solana wallets found');
+      return null;
+    }
+    
+    // For now, return the first available wallet adapter
+    // In a production environment, we would track which wallet the user connected with
+    return availableWallets[0].adapter;
+  }
+
+  /**
    * Send SOL to another address
    */
   public async sendSOL(
@@ -248,11 +340,10 @@ export class SolanaService {
         return { success: false, error: 'Wallet not connected' };
       }
       
-      // Check if Phantom is available
-      const phantom = (window as any).phantom?.solana;
-      if (!phantom) {
-        console.error('Phantom wallet not found');
-        return { success: false, error: 'Phantom wallet not available' };
+      // Get the connected wallet adapter
+      const walletAdapter = this.getConnectedWalletAdapter();
+      if (!walletAdapter) {
+        return { success: false, error: 'No wallet available' };
       }
       
       try {
@@ -273,8 +364,25 @@ export class SolanaService {
         transaction.recentBlockhash = blockhash;
         transaction.feePayer = this.walletPublicKey;
         
-        // Sign and send the transaction using Phantom
-        const { signature } = await phantom.signAndSendTransaction(transaction);
+        // Sign and send the transaction using the connected wallet
+        let signatureInfo;
+        if (walletAdapter.signAndSendTransaction) {
+          signatureInfo = await walletAdapter.signAndSendTransaction(transaction);
+        } else if (walletAdapter.sendTransaction) {
+          signatureInfo = await walletAdapter.sendTransaction(transaction, this.connection);
+        } else {
+          // For wallets with different API:
+          // 1. Get the signed transaction
+          const signed = await walletAdapter.signTransaction(transaction);
+          // 2. Send the signed transaction
+          const signature = await this.connection.sendRawTransaction(signed.serialize());
+          signatureInfo = { signature };
+        }
+        
+        const signature = typeof signatureInfo === 'string' 
+          ? signatureInfo 
+          : signatureInfo.signature || signatureInfo;
+          
         console.log('Transaction sent with signature:', signature);
         
         // Wait for confirmation
@@ -326,11 +434,10 @@ export class SolanaService {
         return { success: false, error: 'Wallet not connected' };
       }
       
-      // Check if Phantom is available
-      const phantom = (window as any).phantom?.solana;
-      if (!phantom) {
-        console.error('Phantom wallet not found');
-        return { success: false, error: 'Phantom wallet not available' };
+      // Get the connected wallet adapter
+      const walletAdapter = this.getConnectedWalletAdapter();
+      if (!walletAdapter) {
+        return { success: false, error: 'No wallet available' };
       }
       
       const { unlockTime, recipient, amount, comment } = params;
@@ -364,7 +471,7 @@ export class SolanaService {
           })
         );
         
-        // Add instruction to initialize the vault (this would be a custom instruction in production)
+        // Add instruction to initialize the vault (would be a custom instruction in production)
         // For now, we're just transferring SOL for the demo
         
         // Get recent blockhash and set fee payer
@@ -375,8 +482,25 @@ export class SolanaService {
         // Partial sign with the vault keypair (needed for createAccount)
         transaction.partialSign(vaultKeypair);
         
-        // Sign and send transaction with Phantom
-        const { signature } = await phantom.signAndSendTransaction(transaction);
+        // Sign and send the transaction using the connected wallet
+        let signatureInfo;
+        if (walletAdapter.signAndSendTransaction) {
+          signatureInfo = await walletAdapter.signAndSendTransaction(transaction);
+        } else if (walletAdapter.sendTransaction) {
+          signatureInfo = await walletAdapter.sendTransaction(transaction, this.connection);
+        } else {
+          // For wallets with different API:
+          // 1. Get the signed transaction
+          const signed = await walletAdapter.signTransaction(transaction);
+          // 2. Send the signed transaction
+          const signature = await this.connection.sendRawTransaction(signed.serialize());
+          signatureInfo = { signature };
+        }
+        
+        const signature = typeof signatureInfo === 'string' 
+          ? signatureInfo 
+          : signatureInfo.signature || signatureInfo;
+          
         console.log('Vault creation transaction sent with signature:', signature);
         
         // Wait for confirmation

@@ -1,12 +1,18 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { solanaService, SolanaConnectionStatus, SolanaWalletInfo, SolanaCluster } from '../lib/solana/solana-service';
 
+interface SolanaWallet {
+  name: string;
+  adapter: any;
+}
+
 interface SolanaContextType {
   isConnected: boolean;
   isConnecting: boolean;
   walletInfo: SolanaWalletInfo | null;
   connectionStatus: SolanaConnectionStatus;
-  connect: () => Promise<boolean>;
+  availableWallets: SolanaWallet[];
+  connect: (walletName?: string) => Promise<boolean>;
   disconnect: () => Promise<boolean>;
   sendSOL: (toAddress: string, amount: string) => Promise<{ success: boolean; transactionHash?: string; error?: string }>;
   createVault: (params: {
@@ -35,6 +41,23 @@ interface SolanaProviderProps {
 export const SolanaProvider: React.FC<SolanaProviderProps> = ({ children }) => {
   const [connectionStatus, setConnectionStatus] = useState<SolanaConnectionStatus>(SolanaConnectionStatus.DISCONNECTED);
   const [walletInfo, setWalletInfo] = useState<SolanaWalletInfo | null>(null);
+  const [availableWallets, setAvailableWallets] = useState<SolanaWallet[]>([]);
+  
+  // Initialize available wallets on component mount
+  useEffect(() => {
+    const wallets = solanaService.getAvailableWallets();
+    setAvailableWallets(wallets);
+    
+    // Check for wallet changes (like extension install/uninstall)
+    const walletCheckInterval = setInterval(() => {
+      const currentWallets = solanaService.getAvailableWallets();
+      if (currentWallets.length !== availableWallets.length) {
+        setAvailableWallets(currentWallets);
+      }
+    }, 30000); // Check every 30 seconds
+    
+    return () => clearInterval(walletCheckInterval);
+  }, []);
 
   // Poll for updates to wallet info
   useEffect(() => {
@@ -50,10 +73,10 @@ export const SolanaProvider: React.FC<SolanaProviderProps> = ({ children }) => {
     }
   }, [connectionStatus]);
 
-  const connect = async (): Promise<boolean> => {
+  const connect = async (walletName?: string): Promise<boolean> => {
     try {
       setConnectionStatus(SolanaConnectionStatus.CONNECTING);
-      const success = await solanaService.connect();
+      const success = await solanaService.connect(walletName);
       
       if (success) {
         setConnectionStatus(SolanaConnectionStatus.CONNECTED);
@@ -140,6 +163,7 @@ export const SolanaProvider: React.FC<SolanaProviderProps> = ({ children }) => {
     isConnecting: connectionStatus === SolanaConnectionStatus.CONNECTING,
     walletInfo,
     connectionStatus,
+    availableWallets,
     connect,
     disconnect,
     sendSOL,

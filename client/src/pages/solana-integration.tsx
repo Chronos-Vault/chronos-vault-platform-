@@ -403,15 +403,78 @@ export default function SolanaIntegrationPage() {
               </div>
             )}
           </CardContent>
-          <CardFooter className="flex justify-center">
+          <CardFooter className="flex flex-col gap-4">
             {!isConnected ? (
-              <Button 
-                onClick={handleConnectWallet} 
-                disabled={isConnecting}
-                className="w-full"
-              >
-                {isConnecting ? "Connecting..." : "Connect Solana Wallet"}
-              </Button>
+              <>
+                <Button 
+                  onClick={handleConnectWallet} 
+                  disabled={isConnecting}
+                  className="w-full"
+                >
+                  {isConnecting ? "Connecting..." : "Connect Any Solana Wallet"}
+                </Button>
+                
+                <div className="text-sm text-muted-foreground mt-2">
+                  Available wallets:
+                </div>
+                
+                <div className="grid grid-cols-2 gap-2 w-full">
+                  {useSolana().availableWallets.length > 0 ? (
+                    useSolana().availableWallets.map((wallet) => (
+                      <Button
+                        key={wallet.name}
+                        variant="outline"
+                        size="sm"
+                        className="justify-start gap-2"
+                        onClick={() => {
+                          // Connect to specific wallet
+                          setIsLoading(true);
+                          connect(wallet.name)
+                            .then((success) => {
+                              if (success) {
+                                toast({
+                                  title: "Wallet Connected",
+                                  description: `Successfully connected to ${wallet.name} wallet`,
+                                });
+                              } else {
+                                toast({
+                                  title: "Connection Failed",
+                                  description: `Failed to connect to ${wallet.name} wallet`,
+                                  variant: "destructive",
+                                });
+                              }
+                            })
+                            .catch((error) => {
+                              console.error(`Error connecting to ${wallet.name}:`, error);
+                              toast({
+                                title: "Connection Error",
+                                description: `An error occurred connecting to ${wallet.name}`,
+                                variant: "destructive",
+                              });
+                            })
+                            .finally(() => {
+                              setIsLoading(false);
+                            });
+                        }}
+                      >
+                        {/* You can add wallet icons here in the future */}
+                        {wallet.name}
+                      </Button>
+                    ))
+                  ) : (
+                    <div className="col-span-2 text-center text-xs text-muted-foreground">
+                      No Solana wallets detected. Please install a wallet extension like Phantom or Solflare.
+                    </div>
+                  )}
+                </div>
+                
+                {isConnecting && (
+                  <div className="flex items-center justify-center mt-1">
+                    <div className="animate-spin h-4 w-4 border-2 border-primary border-t-transparent rounded-full mr-2"></div>
+                    <span className="text-xs">Connecting...</span>
+                  </div>
+                )}
+              </>
             ) : (
               <Button 
                 onClick={handleDisconnectWallet} 
