@@ -35,6 +35,7 @@ import {
 // Extend the vault schema with additional validation
 const formSchema = insertVaultSchema.extend({
   confirmAmount: z.string().min(1, "Please confirm the amount"),
+  includeAttachments: z.boolean().optional().default(true),
 }).refine((data) => data.assetAmount === data.confirmAmount, {
   message: "Asset amounts do not match",
   path: ["confirmAmount"],
@@ -68,6 +69,7 @@ const CreateVaultForm = ({ initialVaultType = "legacy" }: CreateVaultFormProps) 
       confirmAmount: "",
       timeLockPeriod: 365, // Default to 1 year
       unlockDate: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toISOString(),
+      includeAttachments: true,
       metadata: {
         allowsAttachments: true,
         attachmentsEncryption: "AES-256"
@@ -293,6 +295,31 @@ const CreateVaultForm = ({ initialVaultType = "legacy" }: CreateVaultFormProps) 
                         Re-enter the amount to confirm
                       </FormDescription>
                       <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="includeAttachments"
+                  render={({ field }) => (
+                    <FormItem className="p-4 border border-[#6B00D7]/20 rounded-lg bg-gradient-to-r from-[#6B00D7]/5 to-[#FF5AF7]/5">
+                      <div className="flex items-center space-x-3">
+                        <FormControl>
+                          <input
+                            type="checkbox"
+                            checked={field.value}
+                            onChange={field.onChange}
+                            className="form-checkbox h-5 w-5 text-purple-600 rounded border-gray-400 focus:ring-purple-500"
+                          />
+                        </FormControl>
+                        <div>
+                          <FormLabel className="text-base font-medium">Include Media Attachments</FormLabel>
+                          <FormDescription className="text-sm text-gray-400">
+                            Add important documents, images, videos or other files to your vault
+                          </FormDescription>
+                        </div>
+                      </div>
                     </FormItem>
                   )}
                 />
