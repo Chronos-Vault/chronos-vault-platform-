@@ -324,30 +324,30 @@ const Home = () => {
                         </div>
                         
                         <div className="mt-4 grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
-                          <div className="bg-[#0A0A0A] rounded p-2">
-                            <div className="text-gray-400">Created</div>
+                          <div className="bg-[#121212] rounded p-2">
+                            <div className="text-gray-300 font-light">Created</div>
                             <div className="text-white">January 16, 2025</div>
                           </div>
-                          <div className="bg-[#0A0A0A] rounded p-2">
-                            <div className="text-gray-400">Unlocks</div>
+                          <div className="bg-[#121212] rounded p-2">
+                            <div className="text-gray-300 font-light">Unlocks</div>
                             <div className="text-white">January 16, 2050</div>
                           </div>
-                          <div className="bg-[#0A0A0A] rounded p-2">
-                            <div className="text-gray-400">Security</div>
+                          <div className="bg-[#121212] rounded p-2">
+                            <div className="text-gray-300 font-light">Security</div>
                             <div className="text-white">Military-Grade</div>
                           </div>
-                          <div className="bg-[#0A0A0A] rounded p-2">
-                            <div className="text-gray-400">Status</div>
+                          <div className="bg-[#121212] rounded p-2">
+                            <div className="text-gray-300 font-light">Status</div>
                             <div className="text-[#FF5AF7]">Active</div>
                           </div>
                         </div>
                         
                         <div className="mt-4">
-                          <div className="text-sm text-gray-400 mb-1 flex justify-between">
+                          <div className="text-sm text-gray-300 font-light mb-1 flex justify-between">
                             <span>Time Remaining</span>
                             <span>16% Complete</span>
                           </div>
-                          <div className="w-full h-2 bg-[#0A0A0A] rounded-full overflow-hidden">
+                          <div className="w-full h-2 bg-[#121212] rounded-full overflow-hidden">
                             <div className="h-full w-[16%] bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] rounded-full"></div>
                           </div>
                         </div>
@@ -402,7 +402,7 @@ const Home = () => {
             </div>
             <div className="grid grid-cols-2 md:grid-cols-6 gap-4">
               <div className="flex justify-center">
-                <div className="h-16 w-full bg-gradient-to-br from-[#0D0D0D] to-[#151515] rounded-lg flex items-center justify-center text-white border border-[#333333] hover:border-[#6B00D7]/50 transition-all group hover:bg-gradient-to-br hover:from-[#181818] hover:to-[#121212] hover:shadow-lg hover:shadow-[#6B00D7]/10">
+                <div className="h-16 w-full bg-gradient-to-br from-[#181818] to-[#222222] rounded-lg flex items-center justify-center text-white border border-[#333333] hover:border-[#6B00D7]/50 transition-all group hover:bg-gradient-to-br hover:from-[#1D1D1D] hover:to-[#252525] hover:shadow-lg hover:shadow-[#6B00D7]/10">
                   <div className="flex flex-col items-center">
                     <i className="ri-flashlight-line text-xl group-hover:text-[#FF5AF7] transition-colors"></i>
                     <span className="mt-1 font-medium">TON</span>
@@ -411,7 +411,7 @@ const Home = () => {
                 </div>
               </div>
               <div className="flex justify-center">
-                <div className="h-16 w-full bg-gradient-to-br from-[#0D0D0D] to-[#151515] rounded-lg flex items-center justify-center text-white border border-[#333333] hover:border-[#6B00D7]/50 transition-all group hover:bg-gradient-to-br hover:from-[#181818] hover:to-[#121212] hover:shadow-lg hover:shadow-[#6B00D7]/10">
+                <div className="h-16 w-full bg-gradient-to-br from-[#181818] to-[#222222] rounded-lg flex items-center justify-center text-white border border-[#333333] hover:border-[#6B00D7]/50 transition-all group hover:bg-gradient-to-br hover:from-[#1D1D1D] hover:to-[#252525] hover:shadow-lg hover:shadow-[#6B00D7]/10">
                   <div className="flex flex-col items-center">
                     <i className="ri-ethereum-line text-xl group-hover:text-[#FF5AF7] transition-colors"></i>
                     <span className="mt-1 font-medium">Ethereum</span>
@@ -467,7 +467,7 @@ const Home = () => {
       </section>
 
       {/* CVT Token Ecosystem Section */}
-      <section id="cvt-ecosystem" className="py-20 bg-gradient-to-b from-[#0A0A0A] to-[#0D0D0D]">
+      <section id="cvt-ecosystem" className="py-20 bg-gradient-to-b from-[#121212] to-[#1A1A1A]">
         <div className="container mx-auto px-4">
           <div className="text-center mb-12">
             <h2 className="font-poppins font-bold text-3xl">CVT <span className="text-[#FF5AF7]">Token</span> Ecosystem</h2>
@@ -477,7 +477,7 @@ const Home = () => {
           </div>
           
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-            <div className="rounded-xl overflow-hidden bg-gradient-to-br from-[#141414] to-[#0A0A0A] border border-[#333] p-6 relative">
+            <div className="rounded-xl overflow-hidden bg-gradient-to-br from-[#1A1A1A] to-[#121212] border border-[#333] p-6 relative">
               <div className="absolute top-0 right-0 w-40 h-40 bg-[#6B00D7] rounded-full blur-3xl opacity-10"></div>
               <div className="absolute bottom-0 left-0 w-40 h-40 bg-[#FF5AF7] rounded-full blur-3xl opacity-10"></div>
               
@@ -566,7 +566,7 @@ const Home = () => {
             </div>
             
             <div className="space-y-6">
-              <div className="rounded-xl overflow-hidden bg-gradient-to-br from-[#141414] to-[#0A0A0A] border border-[#333] p-6">
+              <div className="rounded-xl overflow-hidden bg-gradient-to-br from-[#1A1A1A] to-[#121212] border border-[#333] p-6">
                 <h3 className="text-xl font-bold text-white mb-4 flex items-center gap-2">
                   <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-[#FF5AF7]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
@@ -598,7 +598,7 @@ const Home = () => {
                 </div>
               </div>
               
-              <div className="rounded-xl overflow-hidden bg-gradient-to-br from-[#141414] to-[#0A0A0A] border border-[#333] p-6">
+              <div className="rounded-xl overflow-hidden bg-gradient-to-br from-[#1A1A1A] to-[#121212] border border-[#333] p-6">
                 <h3 className="text-xl font-bold text-white mb-4 flex items-center gap-2">
                   <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-[#FF5AF7]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 5v2m0 4v2m0 4v2M5 5a2 2 0 00-2 2v3a2 2 0 110 4v3a2 2 0 002 2h14a2 2 0 002-2v-3a2 2 0 110-4V7a2 2 0 00-2-2H5z" />
