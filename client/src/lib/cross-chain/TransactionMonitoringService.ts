@@ -47,6 +47,11 @@ const mockMonitoringStatus: Record<string, boolean> = {};
  * Transaction Monitoring Service
  */
 class TransactionMonitoringService {
+  // Storage for vault verification history
+  private vaultVerificationHistory: Map<string, {
+    timestamp: number;
+    result: any;
+  }> = new Map();
   /**
    * Create a new monitoring rule
    */
@@ -166,6 +171,47 @@ class TransactionMonitoringService {
    */
   isMonitoringActive(address: string): boolean {
     return mockMonitoringStatus[address] || false;
+  }
+  
+  /**
+   * Update the last verification timestamp and result for a vault
+   */
+  async updateLastVerification(
+    vaultId: string,
+    verificationResult: any
+  ): Promise<void> {
+    try {
+      // In a real implementation, this would store the verification data in a database
+      
+      // For now, we just store it in a mock storage
+      if (!this.vaultVerificationHistory) {
+        this.vaultVerificationHistory = new Map();
+      }
+      
+      // Store the verification timestamp and result
+      this.vaultVerificationHistory.set(vaultId, {
+        timestamp: Date.now(),
+        result: verificationResult
+      });
+      
+      console.log(`Updated verification record for vault ${vaultId}`);
+    } catch (error) {
+      console.error(`Failed to update verification for vault ${vaultId}:`, error);
+    }
+  }
+  
+  /**
+   * Get the latest verification result for a vault
+   */
+  async getLastVerification(vaultId: string): Promise<{
+    timestamp: number;
+    result: any;
+  } | null> {
+    if (!this.vaultVerificationHistory) {
+      return null;
+    }
+    
+    return this.vaultVerificationHistory.get(vaultId) || null;
   }
   
   /**

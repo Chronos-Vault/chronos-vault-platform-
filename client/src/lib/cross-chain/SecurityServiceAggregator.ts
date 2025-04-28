@@ -175,26 +175,59 @@ class SecurityServiceAggregator {
       timestamp: Date.now()
     };
     
-    // Run verifications in parallel
+    // Run verifications in parallel with timeouts and retries
+    const maxRetries = 2;
+    const timeout = 10000; // 10 seconds timeout for each verification attempt
+    
+    const verifyWithRetries = async (
+      verifier: (id: string) => Promise<any>,
+      chainName: string,
+      id: string
+    ) => {
+      let retries = 0;
+      while (retries <= maxRetries) {
+        try {
+          // Create a timeout promise
+          const timeoutPromise = new Promise((_, reject) => {
+            setTimeout(() => reject(new Error(`${chainName} verification timed out`)), timeout);
+          });
+          
+          // Race between verification and timeout
+          return await Promise.race([
+            verifier(id),
+            timeoutPromise
+          ]);
+        } catch (err: any) {
+          console.error(`${chainName} verification error (attempt ${retries + 1}/${maxRetries + 1}): ${err.message}`);
+          if (retries === maxRetries) {
+            return { verified: false, error: err.message };
+          }
+          retries++;
+          // Exponential backoff
+          await new Promise(resolve => setTimeout(resolve, 1000 * Math.pow(2, retries)));
+        }
+      }
+      return { verified: false, error: 'Maximum retries exceeded' };
+    };
+    
+    // Execute all chain verifications with retry logic
     const [ethereumVerification, solanaVerification, tonVerification] = await Promise.all([
-      this.verifyOnEthereum(vaultId).catch(err => {
-        console.error(`Ethereum verification error: ${err.message}`);
-        return { verified: false, error: err.message };
-      }),
-      this.verifyOnSolana(vaultId).catch(err => {
-        console.error(`Solana verification error: ${err.message}`);
-        return { verified: false, error: err.message };
-      }),
-      this.verifyOnTON(vaultId).catch(err => {
-        console.error(`TON verification error: ${err.message}`);
-        return { verified: false, error: err.message };
-      })
+      verifyWithRetries(this.verifyOnEthereum.bind(this), 'Ethereum', vaultId),
+      verifyWithRetries(this.verifyOnSolana.bind(this), 'Solana', vaultId),
+      verifyWithRetries(this.verifyOnTON.bind(this), 'TON', vaultId)
     ]);
     
     // Update result with verification outcomes
     result.ethereumStatus = { ...result.ethereumStatus, ...ethereumVerification };
     result.solanaStatus = { ...result.solanaStatus, ...solanaVerification };
     result.tonStatus = { ...result.tonStatus, ...tonVerification };
+    
+    // Cross-validate consistency of data between chains
+    const isDataConsistent = await this.validateCrossChainConsistency(
+      ethereumVerification, 
+      solanaVerification, 
+      tonVerification
+    );
     
     // Determine overall verification status
     const verifiedCount = [
@@ -203,15 +236,23 @@ class SecurityServiceAggregator {
       tonVerification.verified
     ].filter(Boolean).length;
     
-    if (verifiedCount === 3) {
+    if (verifiedCount === 3 && isDataConsistent) {
       result.overallStatus = 'verified';
       result.verified = true;
+      console.log(`Vault ${vaultId} successfully verified across all three chains`);
+      
+      // Record successful verification
+      await this.recordSuccessfulVerification(vaultId, result);
     } else if (verifiedCount >= 1) {
       result.overallStatus = 'partial';
       result.verified = false;
       
-      // Report security incident for partial verification
-      if (verifiedCount < 2) {
+      // Report security incident based on severity
+      if (!isDataConsistent) {
+        console.warn(`Cross-chain data inconsistency detected for vault ${vaultId}`);
+        await this.reportCrossChainDataInconsistency(vaultId, result);
+      } else if (verifiedCount < 2) {
+        console.warn(`Partial verification (${verifiedCount}/3) for vault ${vaultId}`);
         await this.reportCrossChainDiscrepancy(vaultId, result);
       }
     } else {
@@ -219,10 +260,149 @@ class SecurityServiceAggregator {
       result.verified = false;
       
       // Report critical security incident for complete verification failure
+      console.error(`Complete verification failure for vault ${vaultId}`);
       await this.reportCriticalVerificationFailure(vaultId, result);
     }
     
     return result;
+  }
+  
+  /**
+   * Validate consistency of data across chains
+   * Ensures that critical vault properties match across all three blockchains
+   */
+  private async validateCrossChainConsistency(
+    ethereumData: any,
+    solanaData: any,
+    tonData: any
+  ): Promise<boolean> {
+    // Only check consistency if we have verified data from at least two chains
+    if (!ethereumData.verified && !solanaData.verified && !tonData.verified) {
+      return false;
+    }
+    
+    try {
+      // Extract vault details from each chain
+      const ethereumDetails = ethereumData.details || {};
+      const solanaDetails = solanaData.details || {};
+      const tonDetails = tonData.vault || {};
+      
+      // Check timestamps are within acceptable range (5 minutes)
+      const timestamps = [
+        ethereumData.timestamp,
+        solanaData.timestamp, 
+        tonData.timestamp
+      ].filter(ts => typeof ts === 'number');
+      
+      if (timestamps.length >= 2) {
+        const maxTimeDiff = 5 * 60 * 1000; // 5 minutes
+        const maxTimestamp = Math.max(...timestamps);
+        const minTimestamp = Math.min(...timestamps);
+        
+        if (maxTimestamp - minTimestamp > maxTimeDiff) {
+          console.warn('Timestamp inconsistency detected across chains');
+          return false;
+        }
+      }
+      
+      // Verify critical vault properties match
+      // Build comparison sets based on available data
+      const comparisons = [];
+      
+      // Only add comparisons where both sides have verified data
+      if (ethereumData.verified && solanaData.verified) {
+        comparisons.push({
+          ethereumUnlockTime: ethereumDetails.unlockTime,
+          solanaUnlockTime: solanaDetails.unlockTime,
+          match: Math.abs(ethereumDetails.unlockTime - solanaDetails.unlockTime) < 60 // Within 1 minute
+        });
+      }
+      
+      if (ethereumData.verified && tonData.verified) {
+        comparisons.push({
+          ethereumUnlockTime: ethereumDetails.unlockTime,
+          tonUnlockTime: tonDetails.unlockTime,
+          match: Math.abs(ethereumDetails.unlockTime - tonDetails.unlockTime) < 60 // Within 1 minute
+        });
+      }
+      
+      if (solanaData.verified && tonData.verified) {
+        comparisons.push({
+          solanaUnlockTime: solanaDetails.unlockTime,
+          tonUnlockTime: tonDetails.unlockTime,
+          match: Math.abs(solanaDetails.unlockTime - tonDetails.unlockTime) < 60 // Within 1 minute
+        });
+      }
+      
+      // If we have comparisons, check if any failed
+      if (comparisons.length > 0) {
+        const allMatch = comparisons.every(comp => comp.match);
+        if (!allMatch) {
+          console.warn('Vault property inconsistency detected across chains');
+          return false;
+        }
+      }
+      
+      return true;
+    } catch (error) {
+      console.error('Error validating cross-chain consistency:', error);
+      return false;
+    }
+  }
+  
+  /**
+   * Record a successful verification
+   */
+  private async recordSuccessfulVerification(
+    vaultId: string,
+    verificationResult: CrossChainVerificationResult
+  ): Promise<void> {
+    try {
+      // In a production environment, this would store the verification
+      // result in a database, allowing for future auditing
+      console.log(`Recording successful verification for vault ${vaultId}`);
+      
+      // Update last verification timestamp in the monitoring service
+      await this.monitoringService.updateLastVerification(vaultId, verificationResult);
+    } catch (error) {
+      console.error('Error recording successful verification:', error);
+    }
+  }
+  
+  /**
+   * Report a cross-chain data inconsistency
+   */
+  private async reportCrossChainDataInconsistency(
+    vaultId: string,
+    verificationResult: CrossChainVerificationResult
+  ): Promise<void> {
+    // This is a more severe incident than a simple discrepancy
+    const blockchains: BlockchainType[] = [];
+    const errorMessages: string[] = [];
+    
+    // Determine which chains are inconsistent
+    if (verificationResult.ethereumStatus.verified) {
+      blockchains.push('ETH');
+    }
+    
+    if (verificationResult.solanaStatus.verified) {
+      blockchains.push('SOL');
+    }
+    
+    if (verificationResult.tonStatus.verified) {
+      blockchains.push('TON');
+    }
+    
+    // Report the data inconsistency for all affected chains
+    for (const blockchain of blockchains) {
+      await this.incidentService.reportIncident(
+        blockchain,
+        vaultId,
+        'data_inconsistency',
+        `Cross-chain data inconsistency detected for vault ${vaultId}`,
+        'critical'
+      );
+    }
   }
   
   /**
