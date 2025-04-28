@@ -33,6 +33,7 @@ import TechnicalSpecificationPage from "@/pages/technical-specification";
 import CVTTokenomicsPage from "@/pages/cvt-tokenomics";
 import WhitepaperPage from "@/pages/whitepaper";
 import PrivacyDashboardPage from "@/pages/privacy-dashboard";
+import SecurityTestingPage from "@/pages/security-testing";
 import NotFound from "@/pages/not-found";
 
 function Router() {
@@ -64,6 +65,7 @@ function Router() {
           <Route path="/cvt-tokenomics" component={CVTTokenomicsPage} />
           <Route path="/whitepaper" component={WhitepaperPage} />
           <Route path="/privacy-dashboard" component={PrivacyDashboardPage} />
+          <Route path="/security-testing" component={SecurityTestingPage} />
           <Route component={NotFound} />
         </Switch>
       </main>
