@@ -1,5 +1,6 @@
 import React from 'react';
-import { Gift, LucideGift, Sparkles } from 'lucide-react';
+import { useLocation } from 'wouter';
+import { Gift, LucideGift, Sparkles, Award, Zap } from 'lucide-react';
 import { CryptoGiftSystem } from '@/components/gift/crypto-gift-system';
 
 // Page components
@@ -15,6 +16,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useToast } from '@/hooks/use-toast';
 
 const GiftCryptoPage: React.FC = () => {
+  const [, setLocation] = useLocation();
   const { toast } = useToast();
   const [userId, setUserId] = React.useState<number>(1); // Default to user 1 for demo
   
@@ -27,17 +29,48 @@ const GiftCryptoPage: React.FC = () => {
     });
   };
   
+  // Navigate to the advanced vault creation page with gift parameters
+  const handleCreateAdvancedGift = (recipientAddress?: string) => {
+    const params = new URLSearchParams();
+    params.append('type', 'gift');
+    if (recipientAddress) {
+      params.append('recipient', recipientAddress);
+    }
+    setLocation(`/advanced-vault?${params.toString()}`);
+  };
+  
   return (
     <div className="container max-w-7xl py-10">
-      <PageHeader
-        heading="Cryptocurrency Gift System"
-        description="Send crypto gifts to friends and family with optional time-locking in vaults"
-        separator={true}
-      />
+      <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-6">
+        <PageHeader
+          heading="Cryptocurrency Gift System"
+          description="Send crypto gifts to friends and family with optional time-locking in vaults"
+          separator={false}
+          className="mb-0 pb-0"
+        />
+        
+        <div className="mt-4 md:mt-0">
+          <button
+            onClick={() => handleCreateAdvancedGift()}
+            className="relative group overflow-hidden rounded-lg px-4 py-2 bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] text-white font-medium shadow-md hover:shadow-lg transition-all duration-300 animate-pulse-subtle"
+          >
+            <div className="absolute inset-0 bg-white opacity-0 group-hover:opacity-10 transition-opacity duration-300"></div>
+            <div className="relative flex items-center gap-2">
+              <Award className="h-5 w-5" />
+              <span>Create Advanced Gift Vault</span>
+              <Zap className="h-4 w-4" />
+            </div>
+          </button>
+        </div>
+      </div>
       
-      <div className="mt-8 grid grid-cols-1 gap-8 lg:grid-cols-3">
+      <div className="mt-6 grid grid-cols-1 gap-8 lg:grid-cols-3">
         <div className="lg:col-span-2">
-          <CryptoGiftSystem userId={userId} onGiftSent={handleGiftSent} />
+          <CryptoGiftSystem 
+            userId={userId} 
+            onGiftSent={handleGiftSent}
+            onAdvancedGift={handleCreateAdvancedGift}
+          />
         </div>
         
         <div className="space-y-6">

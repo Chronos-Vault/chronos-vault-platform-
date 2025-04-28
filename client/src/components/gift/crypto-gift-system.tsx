@@ -74,9 +74,10 @@ const SUPPORTED_CRYPTOS = [
 export interface CryptoGiftSystemProps {
   userId: number;
   onGiftSent?: (giftDetails: any) => void;
+  onAdvancedGift?: (recipientAddress?: string) => void;
 }
 
-export function CryptoGiftSystem({ userId, onGiftSent }: CryptoGiftSystemProps) {
+export function CryptoGiftSystem({ userId, onGiftSent, onAdvancedGift }: CryptoGiftSystemProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [transactionHash, setTransactionHash] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
