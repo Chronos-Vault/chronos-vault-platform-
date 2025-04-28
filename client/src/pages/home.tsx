@@ -1107,7 +1107,7 @@ const Home = () => {
               <Button
                 variant="outline"
                 className="border-[#6B00D7] text-white hover:bg-[#6B00D7]/10 hover:text-white font-medium rounded-lg px-8 py-3 transition-all"
-                onClick={() => setLocation("/technical-specification")}
+                onClick={() => setLocation("/whitepaper")}
               >
                 Read the full whitepaper
               </Button>
