@@ -18,7 +18,7 @@ import { Badge } from "@/components/ui/badge";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Progress } from "@/components/ui/progress";
 import { Shield, ShieldAlert, ShieldCheck, AlertTriangle, Clock, Activity } from "lucide-react";
-import { useMultiChain, BlockchainIcon } from "@/contexts/multi-chain-context";
+import { useMultiChain, BlockchainIcon, BlockchainType as UIBlockchainType } from "@/contexts/multi-chain-context";
 import { BlockchainType, SecurityIncident, SecurityRiskLevel } from '@/lib/cross-chain/interfaces';
 import { bridgeService } from '@/lib/cross-chain/bridge';
 
@@ -128,7 +128,7 @@ interface SecurityDashboardProps {
 }
 
 const SecurityDashboard: React.FC<SecurityDashboardProps> = ({ address }) => {
-  const { currentChain } = useMultiChain();
+  const { activeChain } = useMultiChain();
   const [securityData, setSecurityData] = useState(mockSecurityData);
   
   // Get risk level badge color
@@ -183,83 +183,99 @@ const SecurityDashboard: React.FC<SecurityDashboardProps> = ({ address }) => {
       case 'TON': return 'TON';
       case 'SOL': return 'Solana';
       case 'ETH': return 'Ethereum';
-      case 'BTC': return 'Bitcoin';
       case 'MATIC': return 'Polygon';
       case 'BNB': return 'Binance';
       default: return blockchain;
     }
   };
   
+  // Convert API blockchain type to UI blockchain type
+  const convertToUIBlockchainType = (blockchain: BlockchainType): UIBlockchainType => {
+    switch(blockchain) {
+      case 'TON': return UIBlockchainType.TON;
+      case 'SOL': return UIBlockchainType.SOLANA;
+      case 'ETH': return UIBlockchainType.ETHEREUM;
+      default: return UIBlockchainType.TON; // Default fallback
+    }
+  };
+  
   return (
     <div className="space-y-6">
       {/* Overall Security Status */}
-      <Card className="border-purple-900/30 backdrop-blur-sm bg-black/40">
+      <Card className="border-purple-900/30 backdrop-blur-sm bg-black/40 max-w-3xl mx-auto">
         <CardHeader className="pb-2">
-          <CardTitle className="flex items-center text-2xl">
-            <Shield className="mr-2 h-6 w-6 text-purple-400" />
+          <CardTitle className="flex items-center text-xl sm:text-2xl justify-center">
+            <Shield className="mr-2 h-5 w-5 sm:h-6 sm:w-6 text-purple-400" />
             Security Dashboard
           </CardTitle>
-          <CardDescription>
-            Real-time security status across all supported chains
+          <CardDescription className="text-center">
+            Real-time security status across supported chains
           </CardDescription>
         </CardHeader>
         
-        <CardContent>
+        <CardContent className="px-3 sm:px-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {/* Left column - Alerts */}
-            <div className="space-y-4">
-              <div className="flex items-center">
-                <h3 className="text-lg font-medium">Overall Network Status:</h3>
+            {/* Overall Status - Visible on both mobile and desktop */}
+            <div className="md:col-span-2 flex flex-col sm:flex-row items-center justify-center sm:justify-between bg-gray-900/30 rounded-lg p-3 sm:p-4 border border-purple-900/30">
+              <div className="flex items-center mb-2 sm:mb-0">
+                <h3 className="text-base sm:text-lg font-medium">Overall Status:</h3>
                 <div className="ml-2">
                   {securityData.overallStatus === "healthy" && (
                     <Badge variant="outline" className="bg-green-600/20 text-green-400 border-green-600/30 flex items-center">
-                      <ShieldCheck className="mr-1 h-4 w-4" />
+                      <ShieldCheck className="mr-1 h-3 w-3 sm:h-4 sm:w-4" />
                       Secure
                     </Badge>
                   )}
                   {securityData.overallStatus === "warning" && (
                     <Badge variant="default" className="bg-amber-500 flex items-center">
-                      <AlertTriangle className="mr-1 h-4 w-4" />
+                      <AlertTriangle className="mr-1 h-3 w-3 sm:h-4 sm:w-4" />
                       Caution
                     </Badge>
                   )}
                   {securityData.overallStatus === "critical" && (
                     <Badge variant="destructive" className="bg-red-600 flex items-center">
-                      <ShieldAlert className="mr-1 h-4 w-4" />
+                      <ShieldAlert className="mr-1 h-3 w-3 sm:h-4 sm:w-4" />
                       Alert
                     </Badge>
                   )}
                 </div>
               </div>
-              
+              <p className="text-xs sm:text-sm text-gray-400 flex items-center">
+                <Clock className="h-3 w-3 sm:h-4 sm:w-4 mr-1 text-gray-500" />
+                Last updated: Just now
+              </p>
+            </div>
+            
+            {/* Left column - Alerts */}
+            <div className="space-y-3 sm:space-y-4">
               {/* Active incidents */}
               {securityData.networks.find(n => n.activeThreats > 0) && (
-                <Alert className="bg-amber-500/10 border-amber-500/30">
+                <Alert className="bg-amber-500/10 border-amber-500/30 py-2 px-3 sm:p-4">
                   <AlertTriangle className="h-4 w-4 text-amber-500" />
-                  <AlertTitle className="text-amber-500">Active Incidents Detected</AlertTitle>
-                  <AlertDescription>
-                    There are active security incidents on one or more networks. 
-                    Review the details below before making transfers.
+                  <AlertTitle className="text-amber-500 text-sm sm:text-base">Active Incidents Detected</AlertTitle>
+                  <AlertDescription className="text-xs sm:text-sm">
+                    There are active security incidents. 
+                    Review details before transfers.
                   </AlertDescription>
                 </Alert>
               )}
               
               {/* Recent incidents */}
-              <div className="mt-4">
-                <h3 className="text-lg font-medium mb-2">Recent Incidents</h3>
-                <div className="space-y-3 max-h-60 overflow-y-auto pr-2 custom-scrollbar">
+              <div>
+                <h3 className="text-sm sm:text-lg font-medium mb-2">Recent Incidents</h3>
+                <div className="space-y-2 sm:space-y-3 max-h-60 overflow-y-auto pr-2 custom-scrollbar">
                   {securityData.recentIncidents.map(incident => (
                     <div 
                       key={incident.id}
-                      className="p-3 rounded-lg border border-purple-900/30 bg-gray-900/30"
+                      className="p-2 sm:p-3 rounded-lg border border-purple-900/30 bg-gray-900/30"
                     >
                       <div className="flex justify-between items-start">
                         <div>
                           <div className="flex items-center gap-2">
-                            <BlockchainIcon chainId={incident.blockchain as BlockchainType} size="sm" />
-                            <span className="font-medium">{bridgeService.getChainDetails(incident.blockchain as BlockchainType).name}</span>
+                            <BlockchainIcon chainId={convertToUIBlockchainType(incident.blockchain as BlockchainType)} size="sm" />
+                            <span className="font-medium text-xs sm:text-sm">{getChainDisplayName(incident.blockchain as BlockchainType)}</span>
                           </div>
-                          <p className="text-sm text-gray-400 mt-1">{incident.description}</p>
+                          <p className="text-xs sm:text-sm text-gray-400 mt-1">{incident.description}</p>
                         </div>
                         <div className="flex flex-col items-end">
                           {getRiskLevelBadge(incident.severity)}
@@ -271,19 +287,19 @@ const SecurityDashboard: React.FC<SecurityDashboardProps> = ({ address }) => {
                       </div>
                       
                       {incident.status === 'active' && incident.mitigationSteps && (
-                        <div className="mt-2 text-sm">
+                        <div className="mt-2 text-xs sm:text-sm">
                           <div className="text-amber-400 font-medium">Mitigation in progress:</div>
                           <ul className="list-disc list-inside text-gray-400 mt-1">
                             {incident.mitigationSteps.map((step, i) => (
-                              <li key={i}>{step}</li>
+                              <li key={i} className="line-clamp-2">{step}</li>
                             ))}
                           </ul>
                         </div>
                       )}
                       
                       {incident.status === 'resolved' && (
-                        <div className="mt-2 flex items-center text-sm text-green-400">
-                          <ShieldCheck className="h-4 w-4 mr-1" />
+                        <div className="mt-2 flex items-center text-xs sm:text-sm text-green-400">
+                          <ShieldCheck className="h-3 w-3 sm:h-4 sm:w-4 mr-1" />
                           Resolved
                         </div>
                       )}
@@ -294,60 +310,58 @@ const SecurityDashboard: React.FC<SecurityDashboardProps> = ({ address }) => {
             </div>
             
             {/* Right column - Network Status */}
-            <div>
-              <h3 className="text-lg font-medium mb-2">Network Status</h3>
-              <Table>
-                <TableHeader>
-                  <TableRow className="hover:bg-transparent border-purple-900/30">
-                    <TableHead className="w-[100px]">Network</TableHead>
-                    <TableHead>Status</TableHead>
-                    <TableHead className="text-right">Health Score</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {securityData.networks.map(network => (
-                    <TableRow key={network.blockchain} className="hover:bg-gray-900/30 border-purple-900/30">
-                      <TableCell className="font-medium">
-                        <div className="flex items-center gap-2">
-                          <BlockchainIcon chainId={network.blockchain} size="sm" />
-                          <span>{bridgeService.getChainDetails(network.blockchain).name}</span>
-                        </div>
-                      </TableCell>
-                      <TableCell>
-                        <div className="flex flex-col gap-1">
-                          {getStatusBadge(network.status)}
-                          {network.activeThreats > 0 && (
-                            <span className="text-xs text-amber-400 flex items-center mt-1">
-                              <Activity className="h-3 w-3 mr-1" />
-                              {network.activeThreats} active {network.activeThreats === 1 ? 'issue' : 'issues'}
-                            </span>
-                          )}
-                        </div>
-                      </TableCell>
-                      <TableCell className="text-right">
-                        <div className="flex flex-col items-end gap-1">
-                          <span className="font-medium">{network.healthScore}/100</span>
-                          <Progress 
-                            value={network.healthScore} 
-                            max={100} 
-                            className={`h-2 w-24 ${getHealthScoreColor(network.healthScore)}`}
-                          />
-                        </div>
-                      </TableCell>
+            <div className="overflow-hidden">
+              <h3 className="text-sm sm:text-lg font-medium mb-2">Network Status</h3>
+              <div className="overflow-x-auto -mx-3 sm:mx-0 px-3 sm:px-0">
+                <Table className="w-full">
+                  <TableHeader>
+                    <TableRow className="hover:bg-transparent border-purple-900/30">
+                      <TableHead className="w-[100px] py-2 px-2 sm:px-4 text-xs sm:text-sm">Network</TableHead>
+                      <TableHead className="py-2 px-2 sm:px-4 text-xs sm:text-sm">Status</TableHead>
+                      <TableHead className="text-right py-2 px-2 sm:px-4 text-xs sm:text-sm">Health</TableHead>
                     </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-              
-              <div className="mt-4 text-sm text-gray-400">
-                <p className="flex items-center">
-                  <Clock className="h-4 w-4 mr-1 text-gray-500" />
-                  Last updated: Just now
-                </p>
-                {address && (
-                  <p className="mt-1">Monitoring enabled for address: {address.substring(0, 6)}...{address.substring(address.length - 4)}</p>
-                )}
+                  </TableHeader>
+                  <TableBody>
+                    {securityData.networks.map(network => (
+                      <TableRow key={network.blockchain} className="hover:bg-gray-900/30 border-purple-900/30">
+                        <TableCell className="font-medium py-2 px-2 sm:px-4">
+                          <div className="flex items-center gap-2">
+                            <BlockchainIcon chainId={convertToUIBlockchainType(network.blockchain)} size="sm" />
+                            <span className="text-xs sm:text-sm">{getChainDisplayName(network.blockchain)}</span>
+                          </div>
+                        </TableCell>
+                        <TableCell className="py-2 px-2 sm:px-4">
+                          <div className="flex flex-col gap-1">
+                            {getStatusBadge(network.status)}
+                            {network.activeThreats > 0 && (
+                              <span className="text-xs text-amber-400 flex items-center mt-1">
+                                <Activity className="h-3 w-3 mr-1" />
+                                {network.activeThreats} issue{network.activeThreats > 1 ? 's' : ''}
+                              </span>
+                            )}
+                          </div>
+                        </TableCell>
+                        <TableCell className="text-right py-2 px-2 sm:px-4">
+                          <div className="flex flex-col items-end gap-1">
+                            <span className="font-medium text-xs sm:text-sm">{network.healthScore}</span>
+                            <Progress 
+                              value={network.healthScore} 
+                              max={100} 
+                              className={`h-1.5 sm:h-2 w-16 sm:w-24 ${getHealthScoreColor(network.healthScore)}`}
+                            />
+                          </div>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
               </div>
+              
+              {address && (
+                <div className="mt-3 text-xs sm:text-sm text-gray-400">
+                  <p>Monitoring: {address.substring(0, 4)}...{address.substring(address.length - 4)}</p>
+                </div>
+              )}
             </div>
           </div>
         </CardContent>
