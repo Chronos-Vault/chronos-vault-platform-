@@ -59,6 +59,8 @@ function App() {
         <MultiChainProvider>
           <TonProvider>
             <SolanaProvider>
+              {/* We'll continue using the individual providers for now
+                  alongside our unified WalletProvider for backward compatibility */}
               <Router />
             </SolanaProvider>
           </TonProvider>
