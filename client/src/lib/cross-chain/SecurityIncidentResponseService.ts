@@ -15,7 +15,7 @@ export interface SecurityIncident {
   blockchain: BlockchainType;
   address: string;
   timestamp: number;
-  type: 'unauthorized_access' | 'suspected_fraud' | 'abnormal_transfer' | 'multi_sig_failure' | 'protocol_vulnerability' | 'other';
+  type: 'unauthorized_access' | 'suspected_fraud' | 'abnormal_transfer' | 'multi_sig_failure' | 'protocol_vulnerability' | 'data_inconsistency' | 'other';
   severity: 'critical' | 'high' | 'medium' | 'low';
   description: string;
   transactionHash?: string;

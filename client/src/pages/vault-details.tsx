@@ -26,6 +26,7 @@ import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
 import { ProofVerificationCard, ProofVerificationSummary } from "@/components/Proof-of-Reservation";
 import { AttachmentList } from "@/components/attachments";
+import CrossChainSecurityDashboard from "@/components/security/CrossChainSecurityDashboard";
 
 const VaultDetails = () => {
   const [location, params] = useLocation();
