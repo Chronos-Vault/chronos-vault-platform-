@@ -35,20 +35,16 @@ export default function WhitepaperPage() {
           
           <h2>Table of Contents</h2>
           
-          <ol>
-            <li><a href="#introduction">Introduction</a></li>
-            <li><a href="#token-economics">Token Economics</a></li>
-            <li><a href="#value-accrual">Value Accrual Mechanisms</a></li>
-            <li><a href="#utility-and-governance">Utility and Governance</a></li>
-            <li><a href="#cross-chain-architecture">Cross-Chain Architecture</a></li>
-            <li><a href="#security-model">Security Model</a></li>
-            <li><a href="#implementation-timeline">Implementation Timeline</a></li>
-            <li><a href="#technical-implementation">Technical Implementation</a></li>
-            <li><a href="#risk-assessment">Risk Assessment</a></li>
-            <li><a href="#team-and-advisors">Team and Advisors</a></li>
-            <li><a href="#legal-and-compliance">Legal and Compliance</a></li>
-            <li><a href="#references">References</a></li>
-          </ol>
+          <ul className="space-y-1">
+            <li><a href="#introduction" className="text-[#FF5AF7] hover:text-[#6B00D7] transition-colors">1. Introduction</a></li>
+            <li><a href="#token-economics" className="text-[#FF5AF7] hover:text-[#6B00D7] transition-colors">2. Token Economics</a></li>
+            <li><a href="#value-accrual" className="text-[#FF5AF7] hover:text-[#6B00D7] transition-colors">3. Value Accrual Mechanisms</a></li>
+            <li><a href="#utility-and-governance" className="text-[#FF5AF7] hover:text-[#6B00D7] transition-colors">4. Utility and Governance</a></li>
+            <li><a href="#premium-features" className="text-[#FF5AF7] hover:text-[#6B00D7] transition-colors">5. Premium Vault Features</a></li>
+            <li><a href="#staking-tiers" className="text-[#FF5AF7] hover:text-[#6B00D7] transition-colors">6. Staking Tiers & Benefits</a></li>
+            <li><a href="#cross-chain" className="text-[#FF5AF7] hover:text-[#6B00D7] transition-colors">7. Cross-Chain Architecture</a></li>
+            <li><a href="#security" className="text-[#FF5AF7] hover:text-[#6B00D7] transition-colors">8. Security Model</a></li>
+          </ul>
           
           <h2 id="introduction">1. Introduction</h2>
           
@@ -222,6 +218,417 @@ export default function WhitepaperPage() {
           <p>
             This model ensures that increased platform usage directly translates to increased token value through supply reduction.
           </p>
+          
+          <h2 id="utility-and-governance">4. Utility and Governance</h2>
+          
+          <h3>4.1 Token Utility Functions</h3>
+          
+          <p>CVT serves multiple core utility functions within the Chronos Vault ecosystem:</p>
+          
+          <ul className="space-y-2">
+            <li className="flex items-start gap-2">
+              <span className="text-[#FF5AF7] font-bold">•</span>
+              <div>
+                <p className="font-medium">Platform Fee Payment</p>
+                <p className="text-gray-400">CVT is the native token for all platform services, including vault creation, access, and management</p>
+              </div>
+            </li>
+            <li className="flex items-start gap-2">
+              <span className="text-[#FF5AF7] font-bold">•</span>
+              <div>
+                <p className="font-medium">Security Staking</p>
+                <p className="text-gray-400">Token stakes are required for high-value vaults, providing additional security against attacks</p>
+              </div>
+            </li>
+            <li className="flex items-start gap-2">
+              <span className="text-[#FF5AF7] font-bold">•</span>
+              <div>
+                <p className="font-medium">Governance Rights</p>
+                <p className="text-gray-400">Proportional voting weight in platform governance decisions based on token holdings</p>
+              </div>
+            </li>
+            <li className="flex items-start gap-2">
+              <span className="text-[#FF5AF7] font-bold">•</span>
+              <div>
+                <p className="font-medium">Validator Requirements</p>
+                <p className="text-gray-400">Security validation roles require token stakes to ensure protocol integrity</p>
+              </div>
+            </li>
+          </ul>
+          
+          <h3>4.2 Governance Structure</h3>
+          
+          <p>
+            CVT implements a progressive decentralization model for governance, gradually transitioning
+            from foundation-led to fully community-controlled:
+          </p>
+          
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 my-6">
+            <div className="bg-[#121212] p-4 rounded-lg border border-[#333]">
+              <h4 className="text-[#FF5AF7] font-semibold mb-2">Phase 1: Foundation Governance</h4>
+              <ul className="text-sm text-gray-300 space-y-1">
+                <li>• Core team decisions with community input</li>
+                <li>• Token holders submit proposals</li>
+                <li>• Transparent reporting mechanisms</li>
+                <li>• Years 1-2</li>
+              </ul>
+            </div>
+            
+            <div className="bg-[#121212] p-4 rounded-lg border border-[#333]">
+              <h4 className="text-[#FF5AF7] font-semibold mb-2">Phase 2: Limited DAO Governance</h4>
+              <ul className="text-sm text-gray-300 space-y-1">
+                <li>• Token holders vote on parameters</li>
+                <li>• Team maintains security veto</li>
+                <li>• Treasury decisions require approval</li>
+                <li>• Years 3-4</li>
+              </ul>
+            </div>
+            
+            <div className="bg-[#121212] p-4 rounded-lg border border-[#333]">
+              <h4 className="text-[#FF5AF7] font-semibold mb-2">Phase 3: Full DAO Governance</h4>
+              <ul className="text-sm text-gray-300 space-y-1">
+                <li>• Complete on-chain governance</li>
+                <li>• Multi-chain implementation</li>
+                <li>• Automated proposal execution</li>
+                <li>• Year 5+</li>
+              </ul>
+            </div>
+          </div>
+          
+          <h2 id="premium-features">5. Premium Vault Features</h2>
+          
+          <p>
+            CVT token holders gain access to premium vault features based on their token holdings
+            and staking tier. These features enhance security, functionality, and value of vaults:
+          </p>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 my-6">
+            <div className="bg-gradient-to-br from-[#0F0F0F] to-[#121212] p-5 rounded-lg border border-[#333]">
+              <h3 className="text-xl font-bold text-white mb-3">Advanced Security Features</h3>
+              
+              <ul className="space-y-3">
+                <li className="flex items-start gap-2">
+                  <span className="text-[#FF5AF7] mt-1 font-bold">•</span>
+                  <div>
+                    <p className="font-medium text-white">Multi-signature Authentication</p>
+                    <p className="text-gray-400">Require multiple authorized parties to approve vault access</p>
+                  </div>
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="text-[#FF5AF7] mt-1 font-bold">•</span>
+                  <div>
+                    <p className="font-medium text-white">Quantum-resistant Encryption</p>
+                    <p className="text-gray-400">Future-proof encryption algorithms secure against quantum computing attacks</p>
+                  </div>
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="text-[#FF5AF7] mt-1 font-bold">•</span>
+                  <div>
+                    <p className="font-medium text-white">AI Security Monitoring</p>
+                    <p className="text-gray-400">Advanced machine learning algorithms detect suspicious activity</p>
+                  </div>
+                </li>
+              </ul>
+            </div>
+            
+            <div className="bg-gradient-to-br from-[#0F0F0F] to-[#121212] p-5 rounded-lg border border-[#333]">
+              <h3 className="text-xl font-bold text-white mb-3">Premium Vault Types</h3>
+              
+              <ul className="space-y-3">
+                <li className="flex items-start gap-2">
+                  <span className="text-[#FF5AF7] mt-1 font-bold">•</span>
+                  <div>
+                    <p className="font-medium text-white">Geolocation Vaults</p>
+                    <p className="text-gray-400">Vaults that can only be accessed from specific geographic locations</p>
+                  </div>
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="text-[#FF5AF7] mt-1 font-bold">•</span>
+                  <div>
+                    <p className="font-medium text-white">Conditional Trigger Vaults</p>
+                    <p className="text-gray-400">Automated vault unlocking based on custom blockchain events</p>
+                  </div>
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="text-[#FF5AF7] mt-1 font-bold">•</span>
+                  <div>
+                    <p className="font-medium text-white">Multi-generational Transfer Vaults</p>
+                    <p className="text-gray-400">Structured inheritance vaults with customized access schedules</p>
+                  </div>
+                </li>
+              </ul>
+            </div>
+          </div>
+          
+          <div className="bg-[#0A0A0A] border border-[#333] rounded-lg p-5 mb-8">
+            <h3 className="text-lg font-bold text-white mb-3">Financial Premium Features</h3>
+            
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div className="bg-[#121212] p-3 rounded border border-[#222]">
+                <h4 className="text-[#FF5AF7] font-medium mb-2">Yield Optimization</h4>
+                <p className="text-sm text-gray-300">AI-driven yield strategies maximize returns for vaulted assets</p>
+              </div>
+              
+              <div className="bg-[#121212] p-3 rounded border border-[#222]">
+                <h4 className="text-[#FF5AF7] font-medium mb-2">Cross-Chain Rebalancing</h4>
+                <p className="text-sm text-gray-300">Automatic portfolio rebalancing across multiple blockchains</p>
+              </div>
+              
+              <div className="bg-[#121212] p-3 rounded border border-[#222]">
+                <h4 className="text-[#FF5AF7] font-medium mb-2">DeFi Integration</h4>
+                <p className="text-sm text-gray-300">Direct access to DeFi protocols from within vaults</p>
+              </div>
+            </div>
+          </div>
+          
+          <h2 id="staking-tiers">6. Staking Tiers & Benefits</h2>
+          
+          <p>
+            The CVT staking system implements three progressive tiers with increasing benefits.
+            Higher tiers require larger token stakes but provide substantially better platform
+            benefits and reduced fees:
+          </p>
+          
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 my-6">
+            <div className="bg-gradient-to-br from-[#0A0A0A] to-[#121212] p-5 rounded-lg border border-[#333] relative overflow-hidden">
+              <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-br from-[#6B00D7]/20 to-transparent rounded-bl-full"></div>
+              
+              <h3 className="text-xl font-bold text-white mb-2">Vault Guardian</h3>
+              <p className="text-[#FF5AF7] font-medium mb-4">1,000+ CVT</p>
+              
+              <ul className="space-y-2">
+                <li className="flex items-start gap-2">
+                  <span className="text-[#FF5AF7] mt-0.5">✓</span>
+                  <p className="text-gray-300">75% reduction in platform fees</p>
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="text-[#FF5AF7] mt-0.5">✓</span>
+                  <p className="text-gray-300">2x voting power in governance</p>
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="text-[#FF5AF7] mt-0.5">✓</span>
+                  <p className="text-gray-300">Access to premium investment strategies</p>
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="text-[#FF5AF7] mt-0.5">✓</span>
+                  <p className="text-gray-300">Beta feature access</p>
+                </li>
+              </ul>
+              
+              <div className="mt-4 text-sm text-gray-400">
+                Minimum stake duration: 6 months
+              </div>
+            </div>
+            
+            <div className="bg-gradient-to-br from-[#0A0A0A] to-[#121212] p-5 rounded-lg border border-[#333] relative overflow-hidden">
+              <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-br from-[#8F00FF]/20 to-transparent rounded-bl-full"></div>
+              
+              <h3 className="text-xl font-bold text-white mb-2">Vault Architect</h3>
+              <p className="text-[#8F00FF] font-medium mb-4">10,000+ CVT</p>
+              
+              <ul className="space-y-2">
+                <li className="flex items-start gap-2">
+                  <span className="text-[#8F00FF] mt-0.5">✓</span>
+                  <p className="text-gray-300">90% reduction in platform fees</p>
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="text-[#8F00FF] mt-0.5">✓</span>
+                  <p className="text-gray-300">5x voting power in governance</p>
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="text-[#8F00FF] mt-0.5">✓</span>
+                  <p className="text-gray-300">2% of platform fees distributed to stakers</p>
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="text-[#8F00FF] mt-0.5">✓</span>
+                  <p className="text-gray-300">Priority access to new features</p>
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="text-[#8F00FF] mt-0.5">✓</span>
+                  <p className="text-gray-300">Enhanced security verification</p>
+                </li>
+              </ul>
+              
+              <div className="mt-4 text-sm text-gray-400">
+                Minimum stake duration: 1 year
+              </div>
+            </div>
+            
+            <div className="bg-gradient-to-br from-[#0A0A0A] to-[#121212] p-5 rounded-lg border border-[#333] relative overflow-hidden">
+              <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-br from-[#FF5AF7]/20 to-transparent rounded-bl-full"></div>
+              
+              <h3 className="text-xl font-bold text-white mb-2">Vault Sovereign</h3>
+              <p className="text-[#FF5AF7] font-medium mb-4">100,000+ CVT</p>
+              
+              <ul className="space-y-2">
+                <li className="flex items-start gap-2">
+                  <span className="text-[#FF5AF7] mt-0.5">✓</span>
+                  <p className="text-gray-300">100% reduction in platform fees</p>
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="text-[#FF5AF7] mt-0.5">✓</span>
+                  <p className="text-gray-300">25x voting power in governance</p>
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="text-[#FF5AF7] mt-0.5">✓</span>
+                  <p className="text-gray-300">5% of platform fees distributed to stakers</p>
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="text-[#FF5AF7] mt-0.5">✓</span>
+                  <p className="text-gray-300">Direct treasury voting rights</p>
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="text-[#FF5AF7] mt-0.5">✓</span>
+                  <p className="text-gray-300">Custom API/integration options</p>
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="text-[#FF5AF7] mt-0.5">✓</span>
+                  <p className="text-gray-300">Military-grade security features</p>
+                </li>
+              </ul>
+              
+              <div className="mt-4 text-sm text-gray-400">
+                Minimum stake duration: 3 years
+              </div>
+            </div>
+          </div>
+          
+          <h3 className="mt-8 mb-4">Time-Based Multipliers</h3>
+          
+          <p className="mb-4">
+            Stake duration significantly increases staking rewards through time multipliers.
+            Longer commitments yield exponentially higher returns:
+          </p>
+          
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
+            <div className="bg-[#121212] p-3 rounded border border-[#333] text-center">
+              <div className="text-lg font-bold text-[#6B00D7]">3 Months</div>
+              <div className="text-2xl font-bold text-white my-2">1.0x</div>
+              <div className="text-sm text-gray-400">Base multiplier</div>
+            </div>
+            
+            <div className="bg-[#121212] p-3 rounded border border-[#333] text-center">
+              <div className="text-lg font-bold text-[#8F00FF]">6 Months</div>
+              <div className="text-2xl font-bold text-white my-2">1.25x</div>
+              <div className="text-sm text-gray-400">Rewards multiplier</div>
+            </div>
+            
+            <div className="bg-[#121212] p-3 rounded border border-[#333] text-center">
+              <div className="text-lg font-bold text-[#A040FF]">1 Year</div>
+              <div className="text-2xl font-bold text-white my-2">1.5x</div>
+              <div className="text-sm text-gray-400">Rewards multiplier</div>
+            </div>
+            
+            <div className="bg-[#121212] p-3 rounded border border-[#333] text-center">
+              <div className="text-lg font-bold text-[#FF5AF7]">2+ Years</div>
+              <div className="text-2xl font-bold text-white my-2">2.0x</div>
+              <div className="text-sm text-gray-400">Rewards multiplier</div>
+            </div>
+          </div>
+          
+          <h2 id="cross-chain">7. Cross-Chain Architecture</h2>
+          
+          <p>
+            Chronos Vault implements a revolutionary cross-chain architecture that distributes security,
+            functionality, and data across multiple blockchains for unprecedented security and performance.
+          </p>
+          
+          <div className="bg-[#0A0A0A] border border-[#222] rounded-lg p-4 my-6">
+            <h3 className="text-lg font-bold text-white mb-3">Key Cross-Chain Components</h3>
+            
+            <ul className="space-y-3">
+              <li className="flex items-start gap-3">
+                <div className="w-6 h-6 rounded-full bg-[#6B00D7]/20 flex items-center justify-center flex-shrink-0 mt-0.5">
+                  <span className="text-[#FF5AF7] text-sm">1</span>
+                </div>
+                <div>
+                  <p className="font-medium text-white">Triple-Chain Security Protocol</p>
+                  <p className="text-gray-400">Distributes security responsibilities across Ethereum (ownership), Solana (monitoring), and TON (recovery)</p>
+                </div>
+              </li>
+              <li className="flex items-start gap-3">
+                <div className="w-6 h-6 rounded-full bg-[#6B00D7]/20 flex items-center justify-center flex-shrink-0 mt-0.5">
+                  <span className="text-[#FF5AF7] text-sm">2</span>
+                </div>
+                <div>
+                  <p className="font-medium text-white">Validator Network</p>
+                  <p className="text-gray-400">Distributed network of validators facilitate cross-chain operations with threshold signatures</p>
+                </div>
+              </li>
+              <li className="flex items-start gap-3">
+                <div className="w-6 h-6 rounded-full bg-[#6B00D7]/20 flex items-center justify-center flex-shrink-0 mt-0.5">
+                  <span className="text-[#FF5AF7] text-sm">3</span>
+                </div>
+                <div>
+                  <p className="font-medium text-white">Bridge Architecture</p>
+                  <p className="text-gray-400">Secure bridging with lock-and-mint mechanism, economic security, and cross-chain verification</p>
+                </div>
+              </li>
+            </ul>
+          </div>
+          
+          <h2 id="security">8. Security Model</h2>
+          
+          <p>
+            Chronos Vault implements a comprehensive security model combining economic security,
+            technical safeguards, and advanced cryptography for unparalleled protection:
+          </p>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 my-6">
+            <div>
+              <h3 className="text-lg font-bold text-white mb-3">Economic Security</h3>
+              <ul className="space-y-2">
+                <li className="flex items-start gap-2">
+                  <span className="text-[#FF5AF7] mt-0.5">•</span>
+                  <p className="text-gray-300">Attack cost exceeds potential gain</p>
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="text-[#FF5AF7] mt-0.5">•</span>
+                  <p className="text-gray-300">Multi-chain proof-of-stake security</p>
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="text-[#FF5AF7] mt-0.5">•</span>
+                  <p className="text-gray-300">Time-lock mechanisms increase attack difficulty</p>
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="text-[#FF5AF7] mt-0.5">•</span>
+                  <p className="text-gray-300">Slashing penalties for malicious behavior</p>
+                </li>
+              </ul>
+            </div>
+            
+            <div>
+              <h3 className="text-lg font-bold text-white mb-3">Technical Security</h3>
+              <ul className="space-y-2">
+                <li className="flex items-start gap-2">
+                  <span className="text-[#FF5AF7] mt-0.5">•</span>
+                  <p className="text-gray-300">Formal verification of contracts</p>
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="text-[#FF5AF7] mt-0.5">•</span>
+                  <p className="text-gray-300">Multiple independent security audits</p>
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="text-[#FF5AF7] mt-0.5">•</span>
+                  <p className="text-gray-300">Defense-in-depth approach</p>
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="text-[#FF5AF7] mt-0.5">•</span>
+                  <p className="text-gray-300">Quantum-resistant cryptography</p>
+                </li>
+              </ul>
+            </div>
+          </div>
+          
+          <div className="bg-gradient-to-r from-[#6B00D7]/5 to-[#FF5AF7]/5 p-6 rounded-lg border border-[#6B00D7]/20 text-center mt-12">
+            <h3 className="text-xl font-bold bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] inline-block text-transparent bg-clip-text">Ready to Join the Future of Digital Vaults?</h3>
+            <p className="text-gray-300 mt-2 mb-6">
+              ChronosToken (CVT) represents a revolutionary approach to tokenomics with a genuinely deflationary model.
+            </p>
+            <a href="/create-vault" className="inline-block bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] text-white font-medium px-6 py-3 rounded-lg hover:from-[#5500AB] hover:to-[#FF46E8] transition-all">
+              Create Your First Vault
+            </a>
+          </div>
         </div>
       </Container>
     </>
