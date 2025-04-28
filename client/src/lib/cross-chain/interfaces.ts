@@ -37,6 +37,16 @@ export enum SecurityIncidentType {
 }
 
 /**
+ * Vault creation parameters
+ */
+export interface VaultCreationParams {
+  unlockTime: number;
+  amount: string;
+  recipient?: string;
+  comment?: string;
+}
+
+/**
  * Security status for a blockchain
  */
 export interface BlockchainSecurityStatus {

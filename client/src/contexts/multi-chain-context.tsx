@@ -1,8 +1,10 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { solanaService } from '../lib/solana/solana-service';
 import { tonService } from '../lib/ton/ton-service';
+import { ethereumService } from '../lib/ethereum/ethereum-service';
 import { useAuthContext } from './auth-context';
 import { SiTon, SiSolana, SiEthereum, SiBitcoin } from "react-icons/si";
+import { useEthereum } from './ethereum-context';
 
 // BlockchainIcon component props
 interface BlockchainIconProps {
@@ -129,6 +131,33 @@ export const MultiChainProvider: React.FC<MultiChainProviderProps> = ({ children
     
     // Setup interval for status checks
     const interval = setInterval(checkSolanaStatus, 10000);
+    
+    return () => clearInterval(interval);
+  }, []);
+  
+  // Monitor Ethereum connection status
+  useEffect(() => {
+    const checkEthereumStatus = () => {
+      const state = ethereumService.getConnectionState();
+      
+      setChainStatus(prev => ({
+        ...prev,
+        [BlockchainType.ETHEREUM]: {
+          ...prev[BlockchainType.ETHEREUM],
+          isConnected: state.isConnected,
+          isConnecting: false, // We handle this separately during connect
+          address: state.address,
+          balance: state.balance,
+          network: state.networkName
+        }
+      }));
+    };
+    
+    // Initial check
+    checkEthereumStatus();
+    
+    // Setup interval for status checks
+    const interval = setInterval(checkEthereumStatus, 10000);
     
     return () => clearInterval(interval);
   }, []);
