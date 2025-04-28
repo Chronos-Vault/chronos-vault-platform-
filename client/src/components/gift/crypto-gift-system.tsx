@@ -2,9 +2,11 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { Gift, Send, Check, AlertCircle, Sparkles } from "lucide-react";
+import { Gift, Send, Check, AlertCircle, Sparkles, FileText } from "lucide-react";
 import { useEthereum } from "@/contexts/ethereum-context";
 import { useQuery } from "@tanstack/react-query";
+import { motion, AnimatePresence } from "framer-motion";
+import { Vault } from "@shared/schema";
 
 import {
   Card,
@@ -42,6 +44,8 @@ import { Separator } from "@/components/ui/separator";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Switch } from "@/components/ui/switch";
 import { apiRequest } from "@/lib/queryClient";
+import { EnhancedMediaUploader } from "@/components/attachments/enhanced-media-uploader";
+import { useToast } from "@/hooks/use-toast";
 
 // Define the validation schema for the gift form
 const giftFormSchema = z.object({
@@ -82,6 +86,8 @@ export function CryptoGiftSystem({ userId, onGiftSent, onAdvancedGift }: CryptoG
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [transactionHash, setTransactionHash] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [attachments, setAttachments] = useState<any[]>([]);
+  const { toast } = useToast();
   const { walletInfo, isConnected, connect, sendETH } = useEthereum();
   
   // Fetch user's vaults for the lock-in-vault feature
@@ -162,8 +168,36 @@ export function CryptoGiftSystem({ userId, onGiftSent, onAdvancedGift }: CryptoG
             }
             
             // Create the gift vault
-            const vaultResponse = await apiRequest("POST", "/api/vaults", vaultData);
+            const vaultResponse = await apiRequest("POST", "/api/vaults", vaultData) as Vault;
             setTransactionHash(ethSendResult.transactionHash || "");
+            
+            // If there are attachments, upload them to the vault
+            if (values.includeAttachments && attachments.length > 0 && vaultResponse) {
+              // Attach files to the vault
+              for (const attachment of attachments) {
+                if (!attachment.id) { // Only handle attachments that aren't already saved
+                  const attachmentData = {
+                    vaultId: vaultResponse.id,
+                    fileName: attachment.fileName,
+                    fileType: attachment.fileType,
+                    fileSize: attachment.fileSize,
+                    filePath: attachment.filePath,
+                    description: `Gift attachment for ${values.recipientAddress}`,
+                    metadata: {
+                      addedAt: new Date().toISOString(),
+                      securityLevel: 'standard'
+                    }
+                  };
+                  
+                  try {
+                    await apiRequest("POST", "/api/attachments", attachmentData);
+                  } catch (err) {
+                    console.error("Failed to attach file to vault:", err);
+                    // Continue with other attachments
+                  }
+                }
+              }
+            }
             
             // Notify parent component
             if (onGiftSent) {
@@ -172,7 +206,8 @@ export function CryptoGiftSystem({ userId, onGiftSent, onAdvancedGift }: CryptoG
                 transactionHash: ethSendResult.transactionHash,
                 recipientAddress: values.recipientAddress,
                 amount: values.amount,
-                cryptoType: values.cryptoType
+                cryptoType: values.cryptoType,
+                attachments: values.includeAttachments ? attachments : []
               });
             }
           } else {
@@ -227,8 +262,19 @@ export function CryptoGiftSystem({ userId, onGiftSent, onAdvancedGift }: CryptoG
     }
   };
   
+  // Handle attachment uploads
+  const handleAttachmentUpload = (attachment: any) => {
+    setAttachments(prev => [...prev, attachment]);
+    
+    toast({
+      title: "Media attached",
+      description: "Your file has been attached to the gift",
+    });
+  };
+  
   const selectedCrypto = form.watch("cryptoType");
   const lockInVault = form.watch("lockInVault");
+  const includeAttachments = form.watch("includeAttachments");
   
   return (
     <Card className="w-full max-w-3xl mx-auto">
@@ -430,6 +476,74 @@ export function CryptoGiftSystem({ userId, onGiftSent, onAdvancedGift }: CryptoG
                   )}
                 />
               )}
+              
+              <FormField
+                control={form.control}
+                name="includeAttachments"
+                render={({ field }) => (
+                  <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
+                    <div className="space-y-0.5">
+                      <FormLabel className="text-base">Include Media Attachments</FormLabel>
+                      <FormDescription>
+                        Add images, videos, or documents to your gift
+                      </FormDescription>
+                    </div>
+                    <FormControl>
+                      <Switch
+                        checked={field.value}
+                        onCheckedChange={field.onChange}
+                      />
+                    </FormControl>
+                  </FormItem>
+                )}
+              />
+              
+              <AnimatePresence>
+                {includeAttachments && (
+                  <motion.div
+                    initial={{ opacity: 0, height: 0 }}
+                    animate={{ opacity: 1, height: "auto" }}
+                    exit={{ opacity: 0, height: 0 }}
+                    transition={{ duration: 0.3 }}
+                    className="overflow-hidden"
+                  >
+                    <div className="p-4 rounded-lg border mt-4">
+                      <div className="flex items-center gap-2 mb-4">
+                        <FileText className="h-5 w-5 text-purple-500" />
+                        <h3 className="font-medium">Gift Attachments</h3>
+                      </div>
+                      
+                      <EnhancedMediaUploader
+                        onUploadComplete={handleAttachmentUpload}
+                        onAttachmentsChange={setAttachments}
+                        maxUploads={5}
+                        allowedTypes={["images", "documents", "videos"]}
+                        initialAttachments={attachments}
+                        className="w-full"
+                      />
+                      
+                      {!lockInVault && (
+                        <Alert className="mt-4 bg-yellow-50 border-yellow-200">
+                          <AlertCircle className="h-4 w-4 text-yellow-600" />
+                          <AlertTitle className="text-yellow-800">Vault Required for Attachments</AlertTitle>
+                          <AlertDescription className="text-yellow-700">
+                            To include attachments with your gift, you must enable the Time-Lock Vault option above.
+                          </AlertDescription>
+                        </Alert>
+                      )}
+                      
+                      {attachments.length > 0 && (
+                        <div className="mt-4 p-3 rounded-md bg-purple-50 text-sm text-purple-800">
+                          <p className="flex items-center gap-1.5">
+                            <Check className="h-4 w-4" />
+                            {attachments.length} {attachments.length === 1 ? 'file' : 'files'} attached to gift
+                          </p>
+                        </div>
+                      )}
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
             </div>
           </form>
         </Form>
