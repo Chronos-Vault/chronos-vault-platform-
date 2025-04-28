@@ -171,7 +171,7 @@ class PrivacyLayerService {
       );
       
       // Generate the proof using the ZK service
-      const proof = await this.zkProofService.generateProof(proofParams, blockchain);
+      const proof = await this._zkProofService.generateProof(proofParams, blockchain);
       
       // Submit proof to blockchain (in production)
       const txHash = await this.blockchainAdapters[blockchain].submitProof(proof);
@@ -264,7 +264,7 @@ class PrivacyLayerService {
     console.log(`Verifying proof ${proofId} on ${blockchain}`);
     
     // First verify locally
-    const localResult = await this.zkProofService.verifyProof(proofId);
+    const localResult = await this._zkProofService.verifyProof(proofId);
     
     if (!localResult.isValid) {
       return localResult;
@@ -311,7 +311,7 @@ class PrivacyLayerService {
     blockchain: BlockchainType
   ): Promise<ZkProof> {
     console.log(`Creating selective disclosure for vault ${vaultId} on ${blockchain}`);
-    return this.zkProofService.generateSelectiveDisclosureProof(vaultId, disclosedFields, blockchain);
+    return this._zkProofService.generateSelectiveDisclosureProof(vaultId, disclosedFields, blockchain);
   }
   
   /**
@@ -325,7 +325,7 @@ class PrivacyLayerService {
     blockchain: BlockchainType
   ): Promise<ZkProof> {
     console.log(`Creating range proof for vault ${vaultId} on ${blockchain}`);
-    return this.zkProofService.generateRangeProof(vaultId, minValue, maxValue, blockchain);
+    return this._zkProofService.generateRangeProof(vaultId, minValue, maxValue, blockchain);
   }
   
   /**
