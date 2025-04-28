@@ -22,11 +22,11 @@ import { Label } from '@/components/ui/label';
 import { Separator } from '@/components/ui/separator';
 import { AlertCircle, Check, ChevronDown, ChevronRight, Clock, Lock, RefreshCw, Shield, Zap } from 'lucide-react';
 import { getTestEnvironment, TestResult } from '@/lib/cross-chain/TestEnvironment';
-import { SecurityIncidentType } from '@/lib/cross-chain/SecurityIncidentResponseService';
+import { SecurityIncidentType } from '@/lib/cross-chain/SecurityServiceExports';
 import { ZkProofType } from '@/lib/privacy';
 import { BlockchainType } from '@/lib/cross-chain/interfaces';
 
-export function TestDashboard() {
+function TestDashboard() {
   const [testVaults, setTestVaults] = useState<any[]>([]);
   const [selectedVaultId, setSelectedVaultId] = useState<string>('');
   const [selectedTest, setSelectedTest] = useState<string>('cross-chain');
@@ -408,3 +408,4 @@ export function TestDashboard() {
     </div>
   );
 }
+export default TestDashboard;

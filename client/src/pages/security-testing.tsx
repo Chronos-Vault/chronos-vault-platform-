@@ -1,6 +1,6 @@
 import React from 'react';
-import { TestDashboard } from '@/components/security/TestDashboard';
-import { CrossChainSecurityDashboard } from '@/components/security/CrossChainSecurityDashboard';
+import TestDashboard from '@/components/security/TestDashboard';
+import CrossChainSecurityDashboard from '@/components/security/CrossChainSecurityDashboard';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useLocation } from 'wouter';
 

@@ -1,132 +1,70 @@
 /**
  * Cross-Chain Interfaces
  * 
- * Defines common interfaces and types for cross-chain functionality
+ * This file contains interfaces and types for cross-chain functionality.
  */
 
-/**
- * Supported blockchain types
- */
-export type BlockchainType = 'ETH' | 'TON' | 'SOL' | 'MATIC' | 'BNB';
+// Supported blockchain types
+export type BlockchainType = 'ETH' | 'SOL' | 'TON' | 'MATIC' | 'BTC';
 
-/**
- * Transfer priority for optimizing routes
- */
-export type TransferPriority = 'speed' | 'cost' | 'security';
-
-/**
- * Security risk levels
- */
-export enum SecurityRiskLevel {
-  HIGH = 'high',
-  MEDIUM = 'medium',
-  LOW = 'low',
-  NONE = 'none'
-}
-
-/**
- * Security incident types
- */
-export enum SecurityIncidentType {
-  BRIDGE_EXPLOIT = 'bridge_exploit',
-  VALIDATOR_COMPROMISE = 'validator_compromise',
-  NETWORK_CONGESTION = 'network_congestion',
-  LIQUIDITY_SHORTAGE = 'liquidity_shortage',
-  EXCHANGE_HACK = 'exchange_hack',
-  SMART_CONTRACT_VULNERABILITY = 'smart_contract_vulnerability'
-}
-
-/**
- * Vault creation parameters
- */
-export interface VaultCreationParams {
-  unlockTime: number;
-  amount: string;
-  recipient?: string;
-  comment?: string;
-}
-
-/**
- * Security status for a blockchain
- */
-export interface BlockchainSecurityStatus {
-  blockchain: BlockchainType;
-  status: 'healthy' | 'warning' | 'critical';
-  riskLevel: SecurityRiskLevel;
-  lastIncident?: SecurityIncident;
-  activeThreats: number;
-  healthScore: number; // 0-100
+// Base transaction interface
+export interface TransactionData {
+  txHash: string;
+  from: string;
+  to: string;
+  value: string;
   timestamp: number;
+  blockNumber: number;
+  blockchain: BlockchainType;
 }
 
-/**
- * Security incident for monitoring
- */
+// Security incident types and severity - moved to SecurityServiceExports.ts
+
+// Security risk level enum
+export enum SecurityRiskLevel {
+  LOW = 'low',
+  MEDIUM = 'medium',
+  HIGH = 'high',
+  CRITICAL = 'critical'
+}
+
+// Security incident interface
 export interface SecurityIncident {
   id: string;
-  type: SecurityIncidentType;
-  blockchain: BlockchainType;
-  description: string;
+  timestamp: number;
+  vaultId: string;
   severity: SecurityRiskLevel;
-  timestamp: number;
-  status: 'active' | 'mitigated' | 'resolved';
-  affectedAssets?: string[];
-  mitigationSteps?: string[];
-}
-
-/**
- * Asset transfer request
- */
-export interface TransferRequest {
-  id: string;
-  sourceChain: BlockchainType;
-  destinationChain: BlockchainType;
-  sourceAsset: string;
-  destinationAsset: string;
-  amount: string;
-  sender: string;
-  recipient: string;
-  priority: TransferPriority;
-  timestamp: number;
-  status: 'pending' | 'processing' | 'completed' | 'failed';
-  estimatedCompletionTime?: number;
-  securityChecks?: {
-    passedChecks: number;
-    totalChecks: number;
-    status: 'pending' | 'passed' | 'failed';
+  type: string;
+  description: string;
+  blockchainData?: {
+    chain: BlockchainType;
+    txHash: string;
+    blockNumber: number;
   };
+  resolved?: boolean;
+  resolution?: string;
+  detectionMethod?: string;
 }
 
-/**
- * Network configuration for each blockchain
- */
-export interface NetworkConfig {
-  name: string;
-  icon: string;
-  color: string;
-  nativeToken: string;
-  blockTime: number; // In seconds
-  confirmations: number;
-  explorers: string[];
-  testnet: boolean;
-  supportedAssets: string[];
+// Chain status interface
+export interface ChainStatus {
+  chain: BlockchainType;
+  status: 'online' | 'offline' | 'degraded';
+  latestBlock: number;
+  lastSyncTime: number;
+  pendingValidations: number;
 }
 
-/**
- * Multi-signature operation
- */
-export interface MultiSigOperation {
-  id: string;
-  blockchain: BlockchainType;
-  type: 'transfer' | 'approval' | 'configuration';
-  requiredSignatures: number;
-  collectedSignatures: number;
-  signatories: string[];
-  timestamps: {
-    created: number;
-    expiration?: number;
-    executed?: number;
-  };
-  status: 'pending' | 'approved' | 'rejected' | 'executed' | 'expired';
-  metadata: Record<string, any>;
+// Cross-chain security metrics
+export interface SecurityMetrics {
+  incidentCount: number;
+  criticalIncidents: number;
+  highIncidents: number;
+  mediumIncidents: number;
+  lowIncidents: number;
+  resolvedIncidents: number;
+  activeAlerts: number;
+  securityScore: number;
+  crossChainConsistency: number;
+  lastUpdated: number;
 }

@@ -14,8 +14,13 @@
 import { ethers } from 'ethers';
 import { Connection, PublicKey } from '@solana/web3.js';
 import { BlockchainType } from './interfaces';
-import { SecurityIncidentType, SecurityIncidentSeverity } from './SecurityIncidentResponseService';
-import { getSecurityServiceAggregator } from './SecurityServiceAggregator';
+import { 
+  SecurityIncidentType, 
+  SecurityIncidentSeverity,
+  getSecurityServiceAggregator, 
+  getIncidentResponseService, 
+  getTransactionMonitoringService 
+} from './SecurityServiceExports';
 import { ethereumService } from '@/lib/ethereum/ethereum-service';
 import { solanaService } from '@/lib/solana/solana-service';
 import { tonContractService } from '@/lib/ton/ton-contract-service';

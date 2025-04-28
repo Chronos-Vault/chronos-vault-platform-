@@ -27,7 +27,7 @@ import {
   ShieldAlert, 
   Zap
 } from 'lucide-react';
-import { getSecurityServiceAggregator } from '@/lib/cross-chain/SecurityServiceAggregator';
+import { getSecurityServiceAggregator } from '@/lib/cross-chain/SecurityServiceExports';
 import { getTestEnvironment } from '@/lib/cross-chain/TestEnvironment';
 import { getPrivacyLayerService } from '@/lib/privacy';
 import { BlockchainType } from '@/lib/cross-chain/interfaces';
@@ -55,7 +55,7 @@ interface ChainStatus {
   incidents: number;
 }
 
-export function CrossChainSecurityDashboard({ vaultId }: { vaultId?: string }) {
+function CrossChainSecurityDashboard({ vaultId }: { vaultId?: string }) {
   const [metrics, setMetrics] = useState<SecurityMetrics>({
     incidentCount: 0,
     criticalIncidents: 0,
@@ -716,3 +716,5 @@ export function CrossChainSecurityDashboard({ vaultId }: { vaultId?: string }) {
     </div>
   );
 }
+
+export default CrossChainSecurityDashboard;
