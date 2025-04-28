@@ -177,6 +177,19 @@ const SecurityDashboard: React.FC<SecurityDashboardProps> = ({ address }) => {
     return '[&>div]:bg-red-500';
   };
   
+  // Function to get simplified chain name without redundancy
+  const getChainDisplayName = (blockchain: BlockchainType): string => {
+    switch(blockchain) {
+      case 'TON': return 'TON';
+      case 'SOL': return 'Solana';
+      case 'ETH': return 'Ethereum';
+      case 'BTC': return 'Bitcoin';
+      case 'MATIC': return 'Polygon';
+      case 'BNB': return 'Binance';
+      default: return blockchain;
+    }
+  };
+  
   return (
     <div className="space-y-6">
       {/* Overall Security Status */}

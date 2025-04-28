@@ -244,6 +244,17 @@ const CrossChainTransfer: React.FC = () => {
   );
   // Filter for unique values
   const supportedChainsForUI = Array.from(new Set(mappedChains));
+  
+  // Function to get simplified chain name without redundancy
+  const getChainDisplayName = (chainType: ChainType): string => {
+    switch(chainType) {
+      case 'TON': return 'TON';
+      case 'SOLANA': return 'Solana';
+      case 'ETHEREUM': return 'Ethereum';
+      case 'BITCOIN': return 'Bitcoin';
+      default: return chainType;
+    }
+  };
 
   return (
     <Card className="shadow-xl border-purple-900/30 backdrop-blur-sm bg-black/40 max-w-3xl mx-auto">
@@ -259,7 +270,7 @@ const CrossChainTransfer: React.FC = () => {
               <div className="flex items-center flex-1 max-w-sm sm:max-w-md">
                 <div className="flex flex-col items-center">
                   <BlockchainIcon chainId={sourceChain} size="lg" />
-                  <span className="text-sm mt-1">{bridgeService.getChainDetails(bridgeAdapter.toBridgeType(sourceChain)).name}</span>
+                  <span className="text-sm mt-1">{getChainDisplayName(sourceChain)}</span>
                 </div>
                 
                 <div className="flex-1 mx-2 sm:mx-4 flex justify-center">
@@ -268,7 +279,7 @@ const CrossChainTransfer: React.FC = () => {
                 
                 <div className="flex flex-col items-center">
                   <BlockchainIcon chainId={targetChain} size="lg" />
-                  <span className="text-sm mt-1">{bridgeService.getChainDetails(bridgeAdapter.toBridgeType(targetChain)).name}</span>
+                  <span className="text-sm mt-1">{getChainDisplayName(targetChain)}</span>
                 </div>
               </div>
             </div>
@@ -289,7 +300,7 @@ const CrossChainTransfer: React.FC = () => {
                       <SelectItem key={chain} value={chain}>
                         <div className="flex items-center gap-2">
                           <BlockchainIcon chainId={chain} size="sm" />
-                          <span>{bridgeService.getChainDetails(bridgeAdapter.toBridgeType(chain)).name}</span>
+                          <span>{getChainDisplayName(chain)}</span>
                         </div>
                       </SelectItem>
                     ))}
@@ -313,7 +324,7 @@ const CrossChainTransfer: React.FC = () => {
                         <SelectItem key={chain} value={chain}>
                           <div className="flex items-center gap-2">
                             <BlockchainIcon chainId={chain} size="sm" />
-                            <span>{bridgeService.getChainDetails(bridgeAdapter.toBridgeType(chain)).name}</span>
+                            <span>{getChainDisplayName(chain)}</span>
                           </div>
                         </SelectItem>
                       ))}
