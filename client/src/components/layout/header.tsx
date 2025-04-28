@@ -28,24 +28,51 @@ const Header = () => {
     { name: "About", href: "/about", icon: "ℹ️" },
   ];
   
-  // Mobile navigation links (comprehensive)
-  const mobileNavigationLinks = [
-    { name: "Home", href: "/", icon: "🏠" },
-    { name: "Features", href: "/#features", icon: "✨" },
-    { name: "Revolutionary Features", href: "/revolutionary-features", icon: "🚀" },
-    { name: "How It Works", href: "/about#how-it-works", icon: "⚙️" },
-    { name: "Bitcoin Halving", href: "/bitcoin-halving", icon: "₿" },
-    { name: "My Vaults", href: "/my-vaults", icon: "📊" },
-    { name: "Create Vault", href: "/create-vault", icon: "🔐" },
-    { name: "Gift Crypto", href: "/gift-crypto", icon: "🎁", highlight: true },
-    { name: "CVT Token", href: "/cvt-token", icon: "🪙" },
-    { name: "Token Vaults", href: "/token-vaults", icon: "⏳" },
-    { name: "Cross-Chain", href: "/cross-chain", icon: "🔄" },
-    { name: "TON Integration", href: "/ton-integration", icon: "💎" },
-    { name: "Solana Integration", href: "/solana-integration", icon: "◎" },
-    { name: "Ethereum Integration", href: "/ethereum-integration", icon: "Ξ" },
-    { name: "Roadmap", href: "/roadmap", icon: "🗺️" },
-    { name: "About", href: "/about", icon: "ℹ️" },
+  // Mobile navigation with categories for the most innovative menu ever
+  const mobileCategoryMenu = [
+    {
+      id: "main",
+      title: "Main Navigation",
+      icon: "🏠",
+      items: [
+        { name: "Home", href: "/", icon: "🏠" },
+        { name: "Create Vault", href: "/create-vault", icon: "🔐" },
+        { name: "My Vaults", href: "/my-vaults", icon: "📊" },
+        { name: "Gift Crypto", href: "/gift-crypto", icon: "🎁", highlight: true },
+      ]
+    },
+    {
+      id: "resources",
+      title: "Resources & Documentation",
+      icon: "📚",
+      items: [
+        { name: "How It Works", href: "/about#how-it-works", icon: "⚙️" },
+        { name: "Revolutionary Features", href: "/revolutionary-features", icon: "🚀" },
+        { name: "About", href: "/about", icon: "ℹ️" },
+        { name: "Roadmap", href: "/roadmap", icon: "🗺️" },
+      ]
+    },
+    {
+      id: "features",
+      title: "Advanced Features",
+      icon: "✨",
+      items: [
+        { name: "Bitcoin Halving", href: "/bitcoin-halving", icon: "₿" },
+        { name: "CVT Token", href: "/cvt-token", icon: "🪙" },
+        { name: "Token Vaults", href: "/token-vaults", icon: "⏳" },
+        { name: "Cross-Chain Features", href: "/cross-chain", icon: "🔄" },
+      ]
+    },
+    {
+      id: "blockchains",
+      title: "Blockchain Integrations",
+      icon: "⛓️",
+      items: [
+        { name: "TON Integration", href: "/ton-integration", icon: "💎" },
+        { name: "Solana Integration", href: "/solana-integration", icon: "◎" },
+        { name: "Ethereum Integration", href: "/ethereum-integration", icon: "Ξ" },
+      ]
+    }
   ];
 
   return (
@@ -137,24 +164,37 @@ const Header = () => {
                     </SheetClose>
                   </div>
                   
-                  {/* Scrollable navigation container */}
+                  {/* Innovative scrollable navigation with categories */}
                   <div className="flex-1 overflow-y-auto py-4 pr-2 -mr-2 mobile-menu-scrollbar">
-                    <div className="flex flex-col gap-5">
-                      {mobileNavigationLinks.map((link) => (
-                        <SheetClose key={link.name} asChild>
-                          <Link 
-                            href={link.href}
-                            className={`flex items-center gap-3 ${location === link.href 
-                              ? 'font-poppins font-semibold text-white bg-gradient-to-r from-[#6B00D7]/20 to-transparent pl-4 py-2 border-l-2 border-[#6B00D7]' 
-                              : 'text-gray-300 hover:text-white font-poppins font-medium transition-all hover:translate-x-1'
-                            } ${link.highlight ? 'relative rounded-lg bg-gradient-to-r from-[#6B00D7]/20 to-[#FF5AF7]/20 border border-[#FF5AF7]/30 text-[#FF5AF7]' : ''}`}
-                          >
-                            <div className="flex items-center justify-center w-10 h-10 rounded-lg bg-gradient-to-br from-[#6B00D7]/30 to-[#FF5AF7]/20 shadow-inner shadow-[#6B00D7]/10 border border-[#6B00D7]/20">
-                              <span className="text-xl text-[#FF5AF7]">{link.icon}</span>
+                    <div className="flex flex-col gap-8">
+                      {mobileCategoryMenu.map((category) => (
+                        <div key={category.id} className="space-y-4">
+                          <div className="flex items-center gap-2 px-2 border-b border-[#6B00D7]/20 pb-2">
+                            <div className="flex items-center justify-center w-7 h-7 rounded-lg bg-gradient-to-br from-[#6B00D7]/50 to-[#FF5AF7]/30 shadow-inner shadow-[#6B00D7]/20">
+                              <span className="text-lg">{category.icon}</span>
                             </div>
-                            <span className="text-lg">{link.name}</span>
-                          </Link>
-                        </SheetClose>
+                            <h3 className="text-[#FF5AF7] font-medium tracking-wide">{category.title}</h3>
+                          </div>
+                          
+                          <div className="flex flex-col gap-4 pl-2">
+                            {category.items.map((link) => (
+                              <SheetClose key={link.name} asChild>
+                                <Link 
+                                  href={link.href}
+                                  className={`flex items-center gap-3 ${location === link.href 
+                                    ? 'font-poppins font-semibold text-white bg-gradient-to-r from-[#6B00D7]/20 to-transparent pl-4 py-2 border-l-2 border-[#6B00D7]' 
+                                    : 'text-gray-300 hover:text-white font-poppins font-medium transition-all hover:translate-x-1'
+                                  } ${link.highlight ? 'relative rounded-lg bg-gradient-to-r from-[#6B00D7]/20 to-[#FF5AF7]/20 border border-[#FF5AF7]/30 text-[#FF5AF7]' : ''}`}
+                                >
+                                  <div className="flex items-center justify-center w-9 h-9 rounded-lg bg-gradient-to-br from-[#6B00D7]/30 to-[#FF5AF7]/20 shadow-inner shadow-[#6B00D7]/10 border border-[#6B00D7]/20">
+                                    <span className="text-xl text-[#FF5AF7]">{link.icon}</span>
+                                  </div>
+                                  <span className="text-base">{link.name}</span>
+                                </Link>
+                              </SheetClose>
+                            ))}
+                          </div>
+                        </div>
                       ))}
                     </div>
                   </div>
