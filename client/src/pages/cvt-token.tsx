@@ -244,13 +244,26 @@ const CVTTokenPage: React.FC = () => {
                   To manage your ChronosVault Tokens, stake for rewards, and access tier benefits, you need to connect your wallet first. 
                   This allows us to securely access your token balance.
                 </p>
-                <Button 
-                  variant="default" 
-                  className="bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] hover:from-[#5900B3] hover:to-[#FF46E8] text-white px-6"
-                  onClick={handleConnectWallet}
-                >
-                  Connect Wallet
-                </Button>
+                <div className="flex flex-col items-center gap-4">
+                  <Button 
+                    variant="default" 
+                    className="bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] hover:from-[#5900B3] hover:to-[#FF46E8] text-white px-6"
+                    onClick={handleConnectWallet}
+                    disabled={isConnecting}
+                  >
+                    {isConnecting ? (
+                      <>
+                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                        Connecting...
+                      </>
+                    ) : (
+                      "Connect Wallet"
+                    )}
+                  </Button>
+                  <p className="text-xs text-gray-500 max-w-sm">
+                    Note: To test without a wallet extension, you can visit the <a href="/ton-integration" className="text-[#6B00D7] underline">TON Integration</a> page which has a testing mode.
+                  </p>
+                </div>
               </CardContent>
             </Card>
           </div>
