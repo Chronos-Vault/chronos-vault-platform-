@@ -1,17 +1,70 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { useMultiChain, BlockchainType } from '@/contexts/multi-chain-context';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { InfoIcon, WalletIcon, PlusIcon, PowerIcon } from 'lucide-react';
+import { InfoIcon, WalletIcon, PlusIcon, PowerIcon, ExternalLinkIcon, Download } from 'lucide-react';
 import { SiEthereum, SiSolana, SiTelegram } from 'react-icons/si';
 import { useToast } from '@/hooks/use-toast';
+import { useEthereum } from '@/contexts/ethereum-context';
+import { useSolana } from '@/contexts/solana-context';
+import { useTon } from '@/contexts/ton-context';
 
 export function UnifiedWalletConnector() {
   const { chainStatus, currentChain, setCurrentChain, connectChain, disconnectChain } = useMultiChain();
+  const ethereum = useEthereum();
+  const solana = useSolana();
+  const ton = useTon();
   const [connecting, setConnecting] = useState(false);
+  const [walletStatus, setWalletStatus] = useState({
+    ethereum: {
+      available: false,
+      walletName: 'MetaMask'
+    },
+    solana: {
+      available: false,
+      walletName: 'Phantom'
+    },
+    ton: {
+      available: false,
+      walletName: 'TON Wallet'
+    }
+  });
   const { toast } = useToast();
+  
+  // Check for wallet availability
+  useEffect(() => {
+    // Check for Ethereum wallets
+    const hasEthereum = typeof window !== 'undefined' && (window as any).ethereum;
+    
+    // Check for Solana wallets
+    const hasSolana = typeof window !== 'undefined' && (
+      (window as any).phantom?.solana || 
+      (window as any).solflare || 
+      (window as any).slope
+    );
+    
+    // Check for TON wallets (simplified)
+    const hasTON = typeof window !== 'undefined' && (window as any).ton;
+    
+    setWalletStatus({
+      ethereum: {
+        available: hasEthereum,
+        walletName: hasEthereum ? 'MetaMask/Browser Wallet' : 'MetaMask'
+      },
+      solana: {
+        available: hasSolana,
+        walletName: hasSolana ? 
+          ((window as any).phantom?.solana ? 'Phantom' : 
+           (window as any).solflare ? 'Solflare' : 'Slope') : 'Phantom'
+      },
+      ton: {
+        available: hasTON,
+        walletName: hasTON ? 'TON Wallet' : 'TON Wallet'
+      }
+    });
+  }, []);
 
   const handleConnect = async (chain: BlockchainType) => {
     setConnecting(true);
