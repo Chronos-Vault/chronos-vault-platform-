@@ -307,7 +307,7 @@ const About = () => {
       </section>
       
       {/* How It Works Section */}
-      <section className="py-20 bg-[#0F0F0F] relative overflow-hidden">
+      <section id="how-it-works" className="py-20 bg-[#0F0F0F] relative overflow-hidden">
         <div className="absolute -bottom-20 -left-20 w-80 h-80 rounded-full bg-[#6B00D7]/5 blur-3xl"></div>
         <div className="container mx-auto px-4 relative z-10">
           <div className="text-center mb-16">

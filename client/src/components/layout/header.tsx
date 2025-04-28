@@ -17,18 +17,30 @@ const Header = () => {
   const [location] = useLocation();
   const { isAuthenticated } = useAuthContext();
 
-  const navigationLinks = [
+  // Desktop navigation links (limited set for better UX)
+  const desktopNavigationLinks = [
     { name: "Features", href: "/#features", icon: "✨" },
     { name: "Revolutionary Features", href: "/revolutionary-features", icon: "🚀" },
-    { name: "Bitcoin Halving", href: "/bitcoin-halving", icon: "₿" },
-    { name: "How It Works", href: "/#how-it-works", icon: "⚙️" },
-    { name: "Vaults", href: "/#vaults", icon: "🔐" },
     { name: "My Vaults", href: "/my-vaults", icon: "📊" },
+    { name: "Gift Crypto", href: "/gift-crypto", icon: "🎁", highlight: true },
+    { name: "CVT Token", href: "/cvt-token", icon: "🪙" },
+    { name: "Roadmap", href: "/roadmap", icon: "🗺️" },
+    { name: "About", href: "/about", icon: "ℹ️" },
+  ];
+  
+  // Mobile navigation links (comprehensive)
+  const mobileNavigationLinks = [
+    { name: "Home", href: "/", icon: "🏠" },
+    { name: "Features", href: "/#features", icon: "✨" },
+    { name: "Revolutionary Features", href: "/revolutionary-features", icon: "🚀" },
+    { name: "How It Works", href: "/about#how-it-works", icon: "⚙️" },
+    { name: "Bitcoin Halving", href: "/bitcoin-halving", icon: "₿" },
+    { name: "My Vaults", href: "/my-vaults", icon: "📊" },
+    { name: "Create Vault", href: "/create-vault", icon: "🔐" },
     { name: "Gift Crypto", href: "/gift-crypto", icon: "🎁", highlight: true },
     { name: "CVT Token", href: "/cvt-token", icon: "🪙" },
     { name: "Token Vaults", href: "/token-vaults", icon: "⏳" },
     { name: "Cross-Chain", href: "/cross-chain", icon: "🔄" },
-    { name: "Cross-Chain Vault", href: "/cross-chain-vault", icon: "🔗" },
     { name: "TON Integration", href: "/ton-integration", icon: "💎" },
     { name: "Solana Integration", href: "/solana-integration", icon: "◎" },
     { name: "Ethereum Integration", href: "/ethereum-integration", icon: "Ξ" },
@@ -59,7 +71,7 @@ const Header = () => {
           </Link>
           
           <div className="hidden md:flex items-center gap-8">
-            {navigationLinks.map((link) => (
+            {desktopNavigationLinks.map((link) => (
               <Link 
                 key={link.name} 
                 href={link.href}
@@ -128,7 +140,7 @@ const Header = () => {
                   {/* Scrollable navigation container */}
                   <div className="flex-1 overflow-y-auto py-4 pr-2 -mr-2 mobile-menu-scrollbar">
                     <div className="flex flex-col gap-5">
-                      {navigationLinks.map((link) => (
+                      {mobileNavigationLinks.map((link) => (
                         <SheetClose key={link.name} asChild>
                           <Link 
                             href={link.href}
