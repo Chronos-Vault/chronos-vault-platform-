@@ -402,6 +402,64 @@ class EthereumService {
   }
   
   /**
+   * Check if connected to Ethereum
+   */
+  public isConnected(): boolean {
+    return this._connectionState.isConnected;
+  }
+  
+  /**
+   * Get current block number
+   */
+  public async getBlockNumber(): Promise<number> {
+    try {
+      if (this._connectionState.provider) {
+        const blockNumber = await this._connectionState.provider.getBlockNumber();
+        return Number(blockNumber);
+      }
+      
+      // If no provider, return a placeholder
+      return 0;
+    } catch (error) {
+      console.error('Error getting block number:', error);
+      return 0;
+    }
+  }
+  
+  /**
+   * Get block details
+   */
+  public async getBlock(blockNumber: number): Promise<any> {
+    try {
+      if (this._connectionState.provider) {
+        return await this._connectionState.provider.getBlock(blockNumber);
+      }
+      return null;
+    } catch (error) {
+      console.error('Error getting block:', error);
+      return null;
+    }
+  }
+  
+  /**
+   * Check if a vault exists
+   */
+  public async checkVaultExists(vaultId: string): Promise<boolean> {
+    try {
+      if (!this._connectionState.isConnected || !this._connectionState.provider) {
+        return false;
+      }
+      
+      // Check if the address has code (is a contract)
+      const code = await this._connectionState.provider.getCode(vaultId);
+      return code !== '0x'; // If there's code, it's a contract
+    } catch (error) {
+      console.error('Error checking if vault exists:', error);
+      return false;
+    }
+  }
+  
+  /**
    * Get vault details
    */
   public async getVaultDetails(vaultAddress: string): Promise<{ 

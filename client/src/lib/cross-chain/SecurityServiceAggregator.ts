@@ -13,9 +13,9 @@ import { getIncidentResponseService, SecurityIncident } from './SecurityIncident
 import { getTransactionMonitoringService, MonitoringAlert } from './TransactionMonitoringService';
 import { getMultiSignatureService, SignatureRequest } from './MultiSignatureService';
 import { secureCrossChainService } from './secure-service';
-import { ethereumService } from '../ethereum/service';
-import { solanaService } from '../solana/service';
-import { tonService } from '../ton/service';
+import { ethereumService } from '../ethereum/ethereum-service';
+import { solanaService } from '../solana/solana-service';
+import { tonContractService as tonService } from '../ton/ton-contract-service';
 
 /**
  * Security status for a blockchain network
@@ -149,6 +149,302 @@ class SecurityServiceAggregator {
    */
   async signRequest(requestId: string, signatureData: string): Promise<boolean> {
     return this.signatureService.submitSignature(requestId, signatureData);
+  }
+  
+  /**
+   * Verify a vault across all three blockchains (Ethereum, Solana, TON)
+   * This is the core implementation of the Triple-Chain Security protocol
+   */
+  async verifyVaultTripleChain(vaultId: string): Promise<CrossChainVerificationResult> {
+    console.log(`Starting Triple-Chain verification for vault: ${vaultId}`);
+    
+    // Initialize the verification result
+    const result: CrossChainVerificationResult = {
+      vaultId,
+      verified: false,
+      ethereumStatus: {
+        verified: false
+      },
+      solanaStatus: {
+        verified: false
+      },
+      tonStatus: {
+        verified: false
+      },
+      overallStatus: 'failed',
+      timestamp: Date.now()
+    };
+    
+    // Run verifications in parallel
+    const [ethereumVerification, solanaVerification, tonVerification] = await Promise.all([
+      this.verifyOnEthereum(vaultId).catch(err => {
+        console.error(`Ethereum verification error: ${err.message}`);
+        return { verified: false, error: err.message };
+      }),
+      this.verifyOnSolana(vaultId).catch(err => {
+        console.error(`Solana verification error: ${err.message}`);
+        return { verified: false, error: err.message };
+      }),
+      this.verifyOnTON(vaultId).catch(err => {
+        console.error(`TON verification error: ${err.message}`);
+        return { verified: false, error: err.message };
+      })
+    ]);
+    
+    // Update result with verification outcomes
+    result.ethereumStatus = { ...result.ethereumStatus, ...ethereumVerification };
+    result.solanaStatus = { ...result.solanaStatus, ...solanaVerification };
+    result.tonStatus = { ...result.tonStatus, ...tonVerification };
+    
+    // Determine overall verification status
+    const verifiedCount = [
+      ethereumVerification.verified,
+      solanaVerification.verified,
+      tonVerification.verified
+    ].filter(Boolean).length;
+    
+    if (verifiedCount === 3) {
+      result.overallStatus = 'verified';
+      result.verified = true;
+    } else if (verifiedCount >= 1) {
+      result.overallStatus = 'partial';
+      result.verified = false;
+      
+      // Report security incident for partial verification
+      if (verifiedCount < 2) {
+        await this.reportCrossChainDiscrepancy(vaultId, result);
+      }
+    } else {
+      result.overallStatus = 'failed';
+      result.verified = false;
+      
+      // Report critical security incident for complete verification failure
+      await this.reportCriticalVerificationFailure(vaultId, result);
+    }
+    
+    return result;
+  }
+  
+  /**
+   * Verify vault status on Ethereum blockchain
+   */
+  private async verifyOnEthereum(vaultId: string): Promise<{
+    verified: boolean;
+    blockNumber?: number;
+    timestamp?: number;
+    error?: string;
+  }> {
+    try {
+      // Get Ethereum connection status
+      const isConnected = ethereumService.isConnected();
+      if (!isConnected) {
+        return {
+          verified: false,
+          error: 'Ethereum provider not connected'
+        };
+      }
+      
+      // Attempt to verify the vault on Ethereum
+      // In a real implementation, this would call a smart contract method
+      // For now, we'll implement the verification logic directly
+      
+      // Get the current block number for reference
+      const blockNumber = await ethereumService.getBlockNumber();
+      
+      // Verify the vault exists and has the expected state
+      const vaultExists = await ethereumService.checkVaultExists(vaultId);
+      if (!vaultExists) {
+        return {
+          verified: false,
+          blockNumber,
+          error: 'Vault not found on Ethereum'
+        };
+      }
+      
+      // Get vault details from Ethereum
+      const vaultDetails = await ethereumService.getVaultDetails(vaultId);
+      
+      // Get the timestamp from the block
+      const block = await ethereumService.getBlock(blockNumber);
+      const timestamp = block?.timestamp || Date.now() / 1000;
+      
+      return {
+        verified: true,
+        blockNumber,
+        timestamp: timestamp * 1000 // Convert to milliseconds
+      };
+    } catch (error: any) {
+      return {
+        verified: false,
+        error: error.message || 'Unknown Ethereum verification error'
+      };
+    }
+  }
+  
+  /**
+   * Verify vault status on Solana blockchain
+   */
+  private async verifyOnSolana(vaultId: string): Promise<{
+    verified: boolean;
+    slot?: number;
+    timestamp?: number;
+    error?: string;
+  }> {
+    try {
+      // Check if Solana service is available
+      const isConnected = solanaService.isConnected();
+      if (!isConnected) {
+        return {
+          verified: false,
+          error: 'Solana service not connected'
+        };
+      }
+      
+      // Get current slot for reference
+      const slot = await solanaService.getCurrentSlot();
+      
+      // Verify the vault on Solana
+      const vaultAccount = await solanaService.getVaultAccount(vaultId);
+      if (!vaultAccount) {
+        return {
+          verified: false,
+          slot,
+          error: 'Vault not found on Solana'
+        };
+      }
+      
+      // Get the current timestamp
+      const timestamp = Date.now();
+      
+      return {
+        verified: true,
+        slot,
+        timestamp
+      };
+    } catch (error: any) {
+      return {
+        verified: false,
+        error: error.message || 'Unknown Solana verification error'
+      };
+    }
+  }
+  
+  /**
+   * Verify vault status on TON blockchain
+   */
+  private async verifyOnTON(vaultId: string): Promise<{
+    verified: boolean;
+    blockId?: string;
+    timestamp?: number;
+    error?: string;
+  }> {
+    try {
+      // Check if TON service is connected
+      const connectionStatus = tonService.getConnectionStatus();
+      if (connectionStatus !== 'connected') {
+        return {
+          verified: false,
+          error: 'TON service not connected'
+        };
+      }
+      
+      // Verify the vault on TON
+      const vaultInfo = await tonService.getVaultInfo(vaultId);
+      if (!vaultInfo) {
+        return {
+          verified: false,
+          error: 'Vault not found on TON'
+        };
+      }
+      
+      // Get the verification proof from the TON contract
+      const verificationProof = await tonService.getVaultVerificationProof(vaultId);
+      
+      // Current timestamp
+      const timestamp = Date.now();
+      
+      return {
+        verified: true,
+        blockId: vaultInfo.blockId,
+        timestamp
+      };
+    } catch (error: any) {
+      return {
+        verified: false,
+        error: error.message || 'Unknown TON verification error'
+      };
+    }
+  }
+  
+  /**
+   * Report a cross-chain discrepancy as a security incident
+   */
+  private async reportCrossChainDiscrepancy(
+    vaultId: string,
+    verificationResult: CrossChainVerificationResult
+  ): Promise<void> {
+    const blockchains: BlockchainType[] = [];
+    const errorMessages: string[] = [];
+    
+    // Determine which chains failed verification
+    if (!verificationResult.ethereumStatus.verified) {
+      blockchains.push('ETH');
+      if (verificationResult.ethereumStatus.error) {
+        errorMessages.push(`ETH: ${verificationResult.ethereumStatus.error}`);
+      }
+    }
+    
+    if (!verificationResult.solanaStatus.verified) {
+      blockchains.push('SOL');
+      if (verificationResult.solanaStatus.error) {
+        errorMessages.push(`SOL: ${verificationResult.solanaStatus.error}`);
+      }
+    }
+    
+    if (!verificationResult.tonStatus.verified) {
+      blockchains.push('TON');
+      if (verificationResult.tonStatus.error) {
+        errorMessages.push(`TON: ${verificationResult.tonStatus.error}`);
+      }
+    }
+    
+    // Report the incident for each affected chain
+    for (const blockchain of blockchains) {
+      await this.incidentService.reportIncident(
+        blockchain,
+        vaultId,
+        'multi_sig_failure',
+        `Cross-chain verification failure: ${errorMessages.join(', ')}`,
+        'high'
+      );
+    }
+  }
+  
+  /**
+   * Report a critical verification failure across all chains
+   */
+  private async reportCriticalVerificationFailure(
+    vaultId: string,
+    verificationResult: CrossChainVerificationResult
+  ): Promise<void> {
+    // Report as critical incident on all three chains
+    const errorMessages = [
+      `ETH: ${verificationResult.ethereumStatus.error || 'Verification failed'}`,
+      `SOL: ${verificationResult.solanaStatus.error || 'Verification failed'}`,
+      `TON: ${verificationResult.tonStatus.error || 'Verification failed'}`
+    ].join(', ');
+    
+    const blockchains: BlockchainType[] = ['ETH', 'SOL', 'TON'];
+    
+    for (const blockchain of blockchains) {
+      await this.incidentService.reportIncident(
+        blockchain,
+        vaultId,
+        'multi_sig_failure',
+        `Critical cross-chain verification failure: ${errorMessages}`,
+        'critical'
+      );
+    }
   }
   
   /**

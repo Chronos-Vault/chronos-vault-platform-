@@ -556,4 +556,6 @@ export class SolanaService {
   }
 }
 
+// Class methods below
+
 export const solanaService = SolanaService.getInstance();
