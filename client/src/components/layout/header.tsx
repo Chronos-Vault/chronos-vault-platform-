@@ -67,7 +67,7 @@ const Header = () => {
       title: "Resources & Documentation",
       icon: "📚",
       items: [
-        { name: "Documentation", href: "/revolutionary-features", icon: "📄" },
+        { name: "Documentation", href: "/documentation", icon: "📄" },
         { name: "How It Works", href: "/about#how-it-works", icon: "⚙️" },
         { name: "Revolutionary Features", href: "/revolutionary-features", icon: "🚀" },
         { name: "About", href: "/about", icon: "ℹ️" },
