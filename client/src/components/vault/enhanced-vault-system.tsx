@@ -447,9 +447,15 @@ export function EnhancedVaultSystem({
   // Handle attachment upload
   const handleAttachmentUpload = (attachment: any) => {
     setAttachments(prev => [...prev, attachment]);
+    
+    // Update security score when attachments are added
+    if (form.getValues("securityLevel") === "enhanced" || form.getValues("securityLevel") === "maximum") {
+      setSecurityScore(prev => Math.min(prev + 3, 100));
+    }
+    
     toast({
-      title: "File uploaded",
-      description: "Your file has been uploaded successfully.",
+      title: "Media attached",
+      description: "Your file has been attached to the vault",
     });
   };
   
@@ -528,7 +534,7 @@ export function EnhancedVaultSystem({
       };
       
       // Create the vault
-      const vault = await apiRequest("POST", "/api/vaults", vaultData);
+      const vault: any = await apiRequest("POST", "/api/vaults", vaultData);
       
       // If this is a gift that should be sent immediately, send it
       if (values.isGift && values.sendImmediately) {
