@@ -5,6 +5,12 @@
  * to provide a comprehensive security dashboard and monitoring system.
  * It implements the Triple-Chain Security system by validating data across
  * Ethereum, Solana, and TON chains.
+ * 
+ * The enhanced version includes:
+ * 1. Cross-chain incident correlation and monitoring
+ * 2. Automated security level escalation for correlated incidents
+ * 3. Real-time blockchain network status monitoring
+ * 4. Suspicious multi-chain activity detection
  */
 
 import { BlockchainType, SecurityRiskLevel } from './interfaces';
