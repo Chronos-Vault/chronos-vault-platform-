@@ -189,6 +189,8 @@ const CreateVaultForm = ({ initialVaultType = "legacy" }: CreateVaultFormProps) 
         return "border-[#FF5AF7]/30 hover:border-[#FF5AF7]";
       case "project":
         return "border-gradient-to-r from-[#6B00D7]/30 to-[#FF5AF7]/30 hover:from-[#6B00D7] hover:to-[#FF5AF7]";
+      case "gift":
+        return "border-[#00D7C3]/30 hover:border-[#00D7C3]";
       default:
         return "border-[#6B00D7]/30 hover:border-[#6B00D7]";
     }
@@ -197,10 +199,11 @@ const CreateVaultForm = ({ initialVaultType = "legacy" }: CreateVaultFormProps) 
   return (
     <div>
       <Tabs defaultValue={initialVaultType} onValueChange={handleTabChange}>
-        <TabsList className="grid w-full grid-cols-3 mb-8">
+        <TabsList className="grid w-full grid-cols-4 mb-8">
           <TabsTrigger value="legacy">Legacy Vault</TabsTrigger>
           <TabsTrigger value="investment">Investment Vault</TabsTrigger>
           <TabsTrigger value="project">Project Vault</TabsTrigger>
+          <TabsTrigger value="gift">Gift Vault</TabsTrigger>
         </TabsList>
 
         <Card className={`bg-[#1E1E1E] border ${getCardStyle()} transition-all`}>
@@ -283,6 +286,24 @@ const CreateVaultForm = ({ initialVaultType = "legacy" }: CreateVaultFormProps) 
                     </FormItem>
                   )}
                 />
+                
+                {/* Enhanced Media Uploader - shown when includeAttachments is checked */}
+                {form.watch("includeAttachments") && !showAttachmentUpload && (
+                  <div className="border border-[#FF5AF7]/20 rounded-lg p-4 bg-[#1A1A1A] mt-4 mb-4">
+                    <h3 className="text-lg font-semibold mb-2 text-[#FF5AF7]">Media Attachments</h3>
+                    <p className="text-gray-400 text-sm mb-4">
+                      Add multimedia files to your vault. These files will be encrypted and only 
+                      accessible after the time-lock period expires.
+                    </p>
+                    
+                    <EnhancedMediaUploader
+                      onAttachmentsChange={handleAttachmentsChange}
+                      maxUploads={5}
+                      allowedTypes={["image/*", "application/pdf", "video/*", "audio/*"]}
+                      initialAttachments={attachments}
+                    />
+                  </div>
+                )}
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <FormField
@@ -435,24 +456,26 @@ const CreateVaultForm = ({ initialVaultType = "legacy" }: CreateVaultFormProps) 
                     </ul>
                   </div>
                 </TabsContent>
-
-                {/* Enhanced Media Uploader - shown when includeAttachments is checked */}
-                {form.watch("includeAttachments") && !showAttachmentUpload && (
-                  <div className="border border-[#FF5AF7]/20 rounded-lg p-4 bg-[#1A1A1A] mt-4 mb-4">
-                    <h3 className="text-lg font-semibold mb-2 text-[#FF5AF7]">Media Attachments</h3>
-                    <p className="text-gray-400 text-sm mb-4">
-                      Add multimedia files to your vault. These files will be encrypted and only 
-                      accessible after the time-lock period expires.
-                    </p>
-                    
-                    <EnhancedMediaUploader
-                      onAttachmentsChange={handleAttachmentsChange}
-                      maxUploads={5}
-                      allowedTypes={["image/*", "application/pdf", "video/*", "audio/*"]}
-                      initialAttachments={attachments}
-                    />
+                
+                <TabsContent value="gift" className="mt-0 space-y-6">
+                  <div className="bg-[#00D7C3]/10 p-4 rounded-lg">
+                    <h3 className="font-poppins font-semibold mb-2">Gift Vault Features</h3>
+                    <ul className="space-y-2 text-sm text-gray-300">
+                      <li className="flex items-start">
+                        <i className="ri-checkbox-circle-line text-[#00D7C3] mt-0.5 mr-2"></i>
+                        <span>Perfect for birthdays, anniversaries, and special occasions</span>
+                      </li>
+                      <li className="flex items-start">
+                        <i className="ri-checkbox-circle-line text-[#00D7C3] mt-0.5 mr-2"></i>
+                        <span>Add personalized messages and media attachments</span>
+                      </li>
+                      <li className="flex items-start">
+                        <i className="ri-checkbox-circle-line text-[#00D7C3] mt-0.5 mr-2"></i>
+                        <span>Send email notification to recipient on unlock date</span>
+                      </li>
+                    </ul>
                   </div>
-                )}
+                </TabsContent>
 
                 {!showAttachmentUpload && (
                   <div className="pt-4 border-t border-[#333333]">
