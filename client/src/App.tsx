@@ -21,6 +21,7 @@ import RoadmapPage from "@/pages/roadmap";
 import CVTTokenPage from "@/pages/cvt-token";
 import TokenVaultsPage from "@/pages/token-vaults";
 import CrossChainPage from "@/pages/cross-chain";
+import CrossChainVaultPage from "@/pages/cross-chain-vault";
 import TONIntegrationPage from "@/pages/ton-integration";
 import SolanaIntegrationPage from "@/pages/solana-integration";
 import EthereumIntegrationPage from "@/pages/ethereum-integration";
@@ -43,6 +44,7 @@ function Router() {
           <Route path="/cvt-token" component={CVTTokenPage} />
           <Route path="/token-vaults" component={TokenVaultsPage} />
           <Route path="/cross-chain" component={CrossChainPage} />
+          <Route path="/cross-chain-vault" component={CrossChainVaultPage} />
           <Route path="/ton-integration" component={TONIntegrationPage} />
           <Route path="/solana-integration" component={SolanaIntegrationPage} />
           <Route path="/ethereum-integration" component={EthereumIntegrationPage} />

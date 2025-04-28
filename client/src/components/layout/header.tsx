@@ -26,6 +26,7 @@ const Header = () => {
     { name: "CVT Token", href: "/cvt-token", icon: "🪙" },
     { name: "Token Vaults", href: "/token-vaults", icon: "⏳" },
     { name: "Cross-Chain", href: "/cross-chain", icon: "🔄" },
+    { name: "Cross-Chain Vault", href: "/cross-chain-vault", icon: "🔗" },
     { name: "TON Integration", href: "/ton-integration", icon: "💎" },
     { name: "Solana Integration", href: "/solana-integration", icon: "◎" },
     { name: "Ethereum Integration", href: "/ethereum-integration", icon: "Ξ" },
