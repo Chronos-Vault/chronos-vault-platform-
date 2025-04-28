@@ -1,7 +1,8 @@
 import { 
   users, type User, type InsertUser,
   vaults, type Vault, type InsertVault,
-  beneficiaries, type Beneficiary, type InsertBeneficiary
+  beneficiaries, type Beneficiary, type InsertBeneficiary,
+  attachments, type Attachment, type InsertAttachment
 } from "@shared/schema";
 
 export interface IStorage {
@@ -23,23 +24,34 @@ export interface IStorage {
   createBeneficiary(beneficiary: InsertBeneficiary): Promise<Beneficiary>;
   updateBeneficiary(id: number, beneficiary: Partial<Beneficiary>): Promise<Beneficiary | undefined>;
   deleteBeneficiary(id: number): Promise<boolean>;
+  
+  // Attachment methods
+  getAttachment(id: number): Promise<Attachment | undefined>;
+  getAttachmentsByVault(vaultId: number): Promise<Attachment[]>;
+  createAttachment(attachment: InsertAttachment): Promise<Attachment>;
+  updateAttachment(id: number, attachment: Partial<Attachment>): Promise<Attachment | undefined>;
+  deleteAttachment(id: number): Promise<boolean>;
 }
 
 export class MemStorage implements IStorage {
   private users: Map<number, User>;
   private vaults: Map<number, Vault>;
   private beneficiaries: Map<number, Beneficiary>;
+  private attachments: Map<number, Attachment>;
   private currentUserId: number;
   private currentVaultId: number;
   private currentBeneficiaryId: number;
+  private currentAttachmentId: number;
 
   constructor() {
     this.users = new Map();
     this.vaults = new Map();
     this.beneficiaries = new Map();
+    this.attachments = new Map();
     this.currentUserId = 1;
     this.currentVaultId = 1;
     this.currentBeneficiaryId = 1;
+    this.currentAttachmentId = 1;
     
     // Add a demo user for testing
     this.createUser({
@@ -135,6 +147,41 @@ export class MemStorage implements IStorage {
   async deleteBeneficiary(id: number): Promise<boolean> {
     return this.beneficiaries.delete(id);
   }
+  
+  // Attachment methods
+  async getAttachment(id: number): Promise<Attachment | undefined> {
+    return this.attachments.get(id);
+  }
+  
+  async getAttachmentsByVault(vaultId: number): Promise<Attachment[]> {
+    return Array.from(this.attachments.values()).filter(
+      (attachment) => attachment.vaultId === vaultId
+    );
+  }
+  
+  async createAttachment(insertAttachment: InsertAttachment): Promise<Attachment> {
+    const id = this.currentAttachmentId++;
+    const attachment: Attachment = { 
+      ...insertAttachment, 
+      id, 
+      uploadedAt: new Date() 
+    };
+    this.attachments.set(id, attachment);
+    return attachment;
+  }
+  
+  async updateAttachment(id: number, updateData: Partial<Attachment>): Promise<Attachment | undefined> {
+    const attachment = this.attachments.get(id);
+    if (!attachment) return undefined;
+    
+    const updatedAttachment = { ...attachment, ...updateData };
+    this.attachments.set(id, updatedAttachment);
+    return updatedAttachment;
+  }
+  
+  async deleteAttachment(id: number): Promise<boolean> {
+    return this.attachments.delete(id);
+  }
 }
 
 import { db } from "./db";
@@ -228,6 +275,44 @@ export class DatabaseStorage implements IStorage {
       .delete(beneficiaries)
       .where(eq(beneficiaries.id, id))
       .returning({ id: beneficiaries.id });
+    return result.length > 0;
+  }
+  
+  // Attachment methods
+  async getAttachment(id: number): Promise<Attachment | undefined> {
+    const [attachment] = await db.select().from(attachments).where(eq(attachments.id, id));
+    return attachment || undefined;
+  }
+  
+  async getAttachmentsByVault(vaultId: number): Promise<Attachment[]> {
+    return await db
+      .select()
+      .from(attachments)
+      .where(eq(attachments.vaultId, vaultId));
+  }
+  
+  async createAttachment(insertAttachment: InsertAttachment): Promise<Attachment> {
+    const [attachment] = await db
+      .insert(attachments)
+      .values(insertAttachment)
+      .returning();
+    return attachment;
+  }
+  
+  async updateAttachment(id: number, updateData: Partial<Attachment>): Promise<Attachment | undefined> {
+    const [updatedAttachment] = await db
+      .update(attachments)
+      .set(updateData)
+      .where(eq(attachments.id, id))
+      .returning();
+    return updatedAttachment || undefined;
+  }
+  
+  async deleteAttachment(id: number): Promise<boolean> {
+    const result = await db
+      .delete(attachments)
+      .where(eq(attachments.id, id))
+      .returning({ id: attachments.id });
     return result.length > 0;
   }
 }
