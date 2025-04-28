@@ -116,9 +116,9 @@ export default function TechnicalSpecification() {
                             <h4 className="text-sm font-semibold mb-2">Smart Contracts</h4>
                             <div className="bg-[#0F0F0F] rounded p-3 text-xs text-gray-400 font-mono overflow-x-auto">
                               <p>// ChronosVault.sol (simplified)</p>
-                              <p>contract ChronosVault is ERC4626, Ownable {"{"}</p>
-                              <p>&nbsp;&nbsp;mapping(uint256 => VaultData) public vaults;</p>
-                              <p>&nbsp;&nbsp;struct VaultData {"{"}</p>
+                              <p>contract ChronosVault is ERC4626, Ownable {`{`}</p>
+                              <p>&nbsp;&nbsp;mapping(uint256 =&gt; VaultData) public vaults;</p>
+                              <p>&nbsp;&nbsp;struct VaultData {`{`}</p>
                               <p>&nbsp;&nbsp;&nbsp;&nbsp;address owner;</p>
                               <p>&nbsp;&nbsp;&nbsp;&nbsp;uint256 unlockTime;</p>
                               <p>&nbsp;&nbsp;&nbsp;&nbsp;bytes32 securityHash;</p>
@@ -146,15 +146,15 @@ export default function TechnicalSpecification() {
                             <h4 className="text-sm font-semibold mb-2">Smart Contracts</h4>
                             <div className="bg-[#0F0F0F] rounded p-3 text-xs text-gray-400 font-mono overflow-x-auto">
                               <p>// TON FunC contract (simplified)</p>
-                              <p>() recv_internal(int msg_value, cell in_msg, slice in_msg_body) {"{"}</p>
+                              <p>() recv_internal(int msg_value, cell in_msg, slice in_msg_body) {`{`}</p>
                               <p>&nbsp;&nbsp;slice cs = in_msg_body;</p>
                               <p>&nbsp;&nbsp;int op = cs~load_uint(32);</p>
-                              <p>&nbsp;&nbsp;if (op == op::authenticate) {"{"}</p>
+                              <p>&nbsp;&nbsp;if (op == op::authenticate) {`{`}</p>
                               <p>&nbsp;&nbsp;&nbsp;&nbsp;int vault_id = cs~load_uint(64);</p>
                               <p>&nbsp;&nbsp;&nbsp;&nbsp;slice signature = cs~load_bits(512);</p>
                               <p>&nbsp;&nbsp;&nbsp;&nbsp;// Verify signature and emit event</p>
-                              <p>&nbsp;&nbsp;{"}"}</p>
-                              <p>{"}"}</p>
+                              <p>&nbsp;&nbsp;{`}`}</p>
+                              <p>{`}`}</p>
                             </div>
                           </div>
                         </div>
@@ -176,16 +176,16 @@ export default function TechnicalSpecification() {
                             <div className="bg-[#0F0F0F] rounded p-3 text-xs text-gray-400 font-mono overflow-x-auto">
                               <p>// Rust program (simplified)</p>
                               <p>pub fn process_instruction(</p>
-                              <p>&nbsp;&nbsp;program_id: &Pubkey,</p>
-                              <p>&nbsp;&nbsp;accounts: &[AccountInfo],</p>
-                              <p>&nbsp;&nbsp;instruction_data: &[u8],</p>
-                              <p>) -> ProgramResult {"{"}</p>
-                              <p>&nbsp;&nbsp;match instruction_data[0] {"{"}</p>
-                              <p>&nbsp;&nbsp;&nbsp;&nbsp;0 => monitor_vault_status(accounts),</p>
-                              <p>&nbsp;&nbsp;&nbsp;&nbsp;1 => verify_cross_chain_tx(accounts, &instruction_data[1..]),</p>
-                              <p>&nbsp;&nbsp;&nbsp;&nbsp;_ => Err(ProgramError::InvalidInstructionData),</p>
-                              <p>&nbsp;&nbsp;{"}"}</p>
-                              <p>{"}"}</p>
+                              <p>&nbsp;&nbsp;program_id: &amp;Pubkey,</p>
+                              <p>&nbsp;&nbsp;accounts: &amp;[AccountInfo],</p>
+                              <p>&nbsp;&nbsp;instruction_data: &amp;[u8],</p>
+                              <p>) -&gt; ProgramResult {`{`}</p>
+                              <p>&nbsp;&nbsp;match instruction_data[0] {`{`}</p>
+                              <p>&nbsp;&nbsp;&nbsp;&nbsp;0 =&gt; monitor_vault_status(accounts),</p>
+                              <p>&nbsp;&nbsp;&nbsp;&nbsp;1 =&gt; verify_cross_chain_tx(accounts, &amp;instruction_data[1..]),</p>
+                              <p>&nbsp;&nbsp;&nbsp;&nbsp;_ =&gt; Err(ProgramError::InvalidInstructionData),</p>
+                              <p>&nbsp;&nbsp;{`}`}</p>
+                              <p>{`}`}</p>
                             </div>
                           </div>
                         </div>

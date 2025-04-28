@@ -29,6 +29,8 @@ import EthereumIntegrationPage from "@/pages/ethereum-integration";
 import GiftCryptoPage from "@/pages/gift-crypto";
 import RevolutionaryFeaturesPage from "@/pages/revolutionary-features";
 import DocumentationPage from "@/pages/documentation";
+import TechnicalSpecificationPage from "@/pages/technical-specification";
+import CVTTokenomicsPage from "@/pages/cvt-tokenomics";
 import NotFound from "@/pages/not-found";
 
 function Router() {
@@ -56,6 +58,8 @@ function Router() {
           <Route path="/gift-crypto" component={GiftCryptoPage} />
           <Route path="/revolutionary-features" component={RevolutionaryFeaturesPage} />
           <Route path="/documentation" component={DocumentationPage} />
+          <Route path="/technical-specification" component={TechnicalSpecificationPage} />
+          <Route path="/cvt-tokenomics" component={CVTTokenomicsPage} />
           <Route component={NotFound} />
         </Switch>
       </main>
