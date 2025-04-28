@@ -299,7 +299,7 @@ function getBlockchainHandlers(blockchain: BlockchainType): BlockchainResponseHa
         }
       };
       
-    case 'ton':
+    case TON:
       return {
         async freezeAssets(address: string, reason: string): Promise<ResponseAction> {
           console.log(`[TON] Freezing assets for ${address}. Reason: ${reason}`);
@@ -483,8 +483,57 @@ class SecurityIncidentResponseService {
     address: string,
     options: IncidentResponseOptions
   ): Promise<boolean> {
-    // In a real implementation, this would update options in a database
-    return true;
+    try {
+      // Store options in mock storage
+      mockResponseOptions[address] = {
+        ...defaultResponseOptions,
+        ...options
+      };
+      
+      console.log(`Response options updated for ${address}`);
+      console.log(`Automation level: ${mockResponseOptions[address].automationLevel}`);
+      console.log(`Freeze assets: ${mockResponseOptions[address].freezeAssets}`);
+      
+      return true;
+    } catch (error: any) {
+      console.error(`Failed to set response options for ${address}:`, error);
+      return false;
+    }
+  }
+  
+  /**
+   * Add a custom response rule for an address
+   */
+  async addCustomRule(
+    address: string,
+    rule: ResponseRule
+  ): Promise<boolean> {
+    try {
+      // Get current options
+      const currentOptions = this.getResponseOptions(address);
+      
+      // Add rule to custom rules
+      const customRules = [...(currentOptions.customRules || [])];
+      
+      // Check if rule with this ID already exists
+      const existingRuleIndex = customRules.findIndex(r => r.id === rule.id);
+      if (existingRuleIndex >= 0) {
+        // Update existing rule
+        customRules[existingRuleIndex] = rule;
+      } else {
+        // Add new rule
+        customRules.push(rule);
+      }
+      
+      // Update options
+      return this.setResponseOptions(address, {
+        ...currentOptions,
+        customRules
+      });
+    } catch (error: any) {
+      console.error(`Failed to add custom rule for ${address}:`, error);
+      return false;
+    }
   }
   
   /**
