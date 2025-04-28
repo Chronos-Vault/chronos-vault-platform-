@@ -8,6 +8,7 @@ import { apiRequest } from "@/lib/queryClient";
 import { insertVaultSchema } from "@shared/schema";
 import { useToast } from "@/hooks/use-toast";
 import { FileUpload } from "@/components/attachments/file-upload";
+import { EnhancedMediaUploader } from "@/components/attachments/enhanced-media-uploader";
 
 import {
   Form,
