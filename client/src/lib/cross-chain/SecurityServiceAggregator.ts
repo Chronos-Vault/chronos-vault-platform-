@@ -340,9 +340,9 @@ class SecurityServiceAggregator {
   
   /**
    * Verify a vault across all three blockchains (Ethereum, Solana, TON)
-   * This is the core implementation of the Triple-Chain Security protocol
+   * This is the core implementation of the Triple-Chain Security protocol with enhanced proof verification
    */
-  async verifyVaultTripleChain(vaultId: string): Promise<CrossChainVerificationResult> {
+  async verifyVaultTripleChain(vaultId: string, useEnhancedVerification: boolean = true): Promise<CrossChainVerificationResult> {
     console.log(`Starting Triple-Chain verification for vault: ${vaultId}`);
     
     // Initialize the verification result
@@ -593,13 +593,16 @@ class SecurityServiceAggregator {
   }
   
   /**
-   * Verify vault status on Ethereum blockchain
+   * Verify vault status on Ethereum blockchain with enhanced Merkle proof verification
    */
-  private async verifyOnEthereum(vaultId: string): Promise<{
+  private async verifyOnEthereum(vaultId: string, useEnhancedVerification: boolean = true): Promise<{
     verified: boolean;
     blockNumber?: number;
     timestamp?: number;
+    proofVerified?: boolean;
+    merkleRoot?: string;
     error?: string;
+    details?: any;
   }> {
     try {
       // Get Ethereum connection status
@@ -610,10 +613,6 @@ class SecurityServiceAggregator {
           error: 'Ethereum provider not connected'
         };
       }
-      
-      // Attempt to verify the vault on Ethereum
-      // In a real implementation, this would call a smart contract method
-      // For now, we'll implement the verification logic directly
       
       // Get the current block number for reference
       const blockNumber = await ethereumService.getBlockNumber();
@@ -635,10 +634,64 @@ class SecurityServiceAggregator {
       const block = await ethereumService.getBlock(blockNumber);
       const timestamp = block?.timestamp || Date.now() / 1000;
       
+      let proofVerified = false;
+      let merkleRoot = undefined;
+      
+      // Enhanced verification with Merkle proofs (only if enhanced verification is enabled)
+      if (useEnhancedVerification) {
+        console.log('Using enhanced Merkle proof verification for Ethereum vault');
+        
+        try {
+          // Get the latest Merkle root from the Ethereum contract
+          merkleRoot = await ethereumService.getVaultMerkleRoot();
+          
+          if (!merkleRoot) {
+            console.warn('Merkle root not available for Ethereum vault verification');
+          } else {
+            // Get the Merkle proof for this specific vault
+            const merkleProof = await ethereumService.getVaultMerkleProof(vaultId);
+            
+            if (!merkleProof) {
+              console.warn('Merkle proof not available for Ethereum vault verification');
+            } else {
+              // Verify the Merkle proof against the root
+              proofVerified = await ethereumService.verifyMerkleProof(
+                vaultId,
+                merkleProof,
+                merkleRoot
+              );
+              
+              if (!proofVerified) {
+                console.error('Merkle proof verification failed for Ethereum vault');
+                
+                // If enhanced verification is required but fails, this is a serious security concern
+                return {
+                  verified: false,
+                  blockNumber,
+                  timestamp: timestamp * 1000,
+                  proofVerified: false,
+                  merkleRoot,
+                  error: 'Merkle proof verification failed',
+                  details: vaultDetails
+                };
+              }
+              
+              console.log('Merkle proof verification succeeded for Ethereum vault');
+            }
+          }
+        } catch (proofError: any) {
+          console.error('Error during Ethereum Merkle proof verification:', proofError);
+          // Continue with basic verification even if enhanced verification fails
+        }
+      }
+      
       return {
         verified: true,
         blockNumber,
-        timestamp: timestamp * 1000 // Convert to milliseconds
+        timestamp: timestamp * 1000, // Convert to milliseconds
+        proofVerified,
+        merkleRoot,
+        details: vaultDetails
       };
     } catch (error: any) {
       return {
@@ -649,13 +702,16 @@ class SecurityServiceAggregator {
   }
   
   /**
-   * Verify vault status on Solana blockchain
+   * Verify vault status on Solana blockchain with enhanced Merkle proof verification
    */
-  private async verifyOnSolana(vaultId: string): Promise<{
+  private async verifyOnSolana(vaultId: string, useEnhancedVerification: boolean = true): Promise<{
     verified: boolean;
     slot?: number;
     timestamp?: number;
+    merkleProof?: any;
+    proofVerified?: boolean;
     error?: string;
+    details?: any;
   }> {
     try {
       // Check if Solana service is available
@@ -683,10 +739,61 @@ class SecurityServiceAggregator {
       // Get the current timestamp
       const timestamp = Date.now();
       
+      let proofVerified = false;
+      let merkleProof = undefined;
+      
+      // Enhanced verification with Solana Merkle proofs
+      if (useEnhancedVerification) {
+        console.log('Using enhanced Merkle proof verification for Solana vault');
+        
+        try {
+          // Solana verification uses account verification with Merkle Patricia proofs
+          // This is a powerful feature of Solana that allows for cryptographic proof of an account's state
+          
+          // Get the Merkle proof from Solana for this account
+          const { proof, accountInfo } = await solanaService.getAccountProof(vaultId);
+          merkleProof = proof;
+          
+          if (!merkleProof) {
+            console.warn('Merkle proof not available for Solana vault verification');
+          } else {
+            // Verify the Merkle proof
+            proofVerified = await solanaService.verifyAccountProof(
+              vaultId,
+              proof,
+              accountInfo
+            );
+            
+            if (!proofVerified) {
+              console.error('Merkle proof verification failed for Solana vault');
+              
+              // If enhanced verification is required but fails, this is a security concern
+              return {
+                verified: false,
+                slot,
+                timestamp,
+                merkleProof,
+                proofVerified: false,
+                error: 'Solana account proof verification failed',
+                details: vaultAccount
+              };
+            }
+            
+            console.log('Merkle proof verification succeeded for Solana vault');
+          }
+        } catch (proofError: any) {
+          console.error('Error during Solana Merkle proof verification:', proofError);
+          // Continue with basic verification even if enhanced verification fails
+        }
+      }
+      
       return {
         verified: true,
         slot,
-        timestamp
+        timestamp,
+        merkleProof,
+        proofVerified,
+        details: vaultAccount
       };
     } catch (error: any) {
       return {
