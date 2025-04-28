@@ -357,6 +357,12 @@ const VaultDetails = () => {
                 
                 <TabsContent value="security" className="space-y-6 mt-4">
                   <div className="grid grid-cols-1 gap-6">
+                    {/* Triple-Chain Security Dashboard */}
+                    <div>
+                      <h3 className="text-lg font-poppins font-semibold mb-4">Triple-Chain Security Status</h3>
+                      <CrossChainSecurityDashboard vaultId={vaultId.toString()} />
+                    </div>
+                    
                     {/* Proof of Reservation - Main Verification Card */}
                     <div>
                       <h3 className="text-lg font-poppins font-semibold mb-4">Proof of Reservation</h3>

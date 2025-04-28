@@ -124,6 +124,13 @@ class SecurityServiceAggregator {
   }
   
   /**
+   * Deactivate enhanced security monitoring
+   */
+  async deactivateEnhancedMonitoring(address: string): Promise<boolean> {
+    return this.monitoringService.deactivateMonitoring(address);
+  }
+  
+  /**
    * Trigger a security scan
    */
   async triggerSecurityScan(address: string): Promise<{
