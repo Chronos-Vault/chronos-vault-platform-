@@ -644,7 +644,7 @@ const Home = () => {
       </section>
 
       {/* Revolutionary Features Section */}
-      <section className="py-20 bg-gradient-to-b from-[#0D0D0D] to-[#0A0A0A] relative overflow-hidden">
+      <section className="py-20 bg-gradient-to-b from-[#121212] to-[#1A1A1A] relative overflow-hidden">
         <div className="absolute w-full h-full top-0 left-0 overflow-hidden pointer-events-none">
           <div className="absolute bottom-40 right-20 w-64 h-64 rounded-full bg-gradient-to-r from-[#6B00D7]/20 to-[#FF5AF7]/10 blur-3xl opacity-30"></div>
           <div className="absolute top-20 left-1/4 w-80 h-80 rounded-full bg-gradient-to-r from-[#FF5AF7]/10 to-[#6B00D7]/20 blur-3xl opacity-20"></div>
@@ -666,7 +666,7 @@ const Home = () => {
           
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {/* Triple-Chain Security */}
-            <div className="bg-gradient-to-br from-[#1A1A1A] to-[#0F0F0F] rounded-xl overflow-hidden border border-[#333] p-6 hover:shadow-lg hover:shadow-[#6B00D7]/10 group transition-all hover:border-[#6B00D7]/50">
+            <div className="bg-gradient-to-br from-[#1D1D1D] to-[#151515] rounded-xl overflow-hidden border border-[#333] p-6 hover:shadow-lg hover:shadow-[#6B00D7]/10 group transition-all hover:border-[#6B00D7]/50">
               <div className="rounded-full w-16 h-16 bg-gradient-to-br from-[#6B00D7]/30 to-[#FF5AF7]/20 flex items-center justify-center mb-5">
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-8 w-8 text-[#FF5AF7]">
                   <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
@@ -699,7 +699,7 @@ const Home = () => {
             </div>
             
             {/* Cross-Chain Atomic Swaps */}
-            <div className="bg-gradient-to-br from-[#1A1A1A] to-[#0F0F0F] rounded-xl overflow-hidden border border-[#333] p-6 hover:shadow-lg hover:shadow-[#FF5AF7]/10 group transition-all hover:border-[#FF5AF7]/50">
+            <div className="bg-gradient-to-br from-[#1D1D1D] to-[#151515] rounded-xl overflow-hidden border border-[#333] p-6 hover:shadow-lg hover:shadow-[#FF5AF7]/10 group transition-all hover:border-[#FF5AF7]/50">
               <div className="rounded-full w-16 h-16 bg-gradient-to-br from-[#FF5AF7]/30 to-[#6B00D7]/20 flex items-center justify-center mb-5">
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-8 w-8 text-[#FF5AF7]">
                   <path d="M8 3H5a2 2 0 0 0-2 2v3"></path>
@@ -739,7 +739,7 @@ const Home = () => {
             </div>
             
             {/* IPFS & Arweave Integration */}
-            <div className="bg-gradient-to-br from-[#1A1A1A] to-[#0F0F0F] rounded-xl overflow-hidden border border-[#333] p-6 hover:shadow-lg hover:shadow-[#00C9FF]/10 group transition-all hover:border-[#00C9FF]/50">
+            <div className="bg-gradient-to-br from-[#1D1D1D] to-[#151515] rounded-xl overflow-hidden border border-[#333] p-6 hover:shadow-lg hover:shadow-[#00C9FF]/10 group transition-all hover:border-[#00C9FF]/50">
               <div className="rounded-full w-16 h-16 bg-gradient-to-br from-[#00C9FF]/30 to-[#00C9FF]/10 flex items-center justify-center mb-5">
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-8 w-8 text-[#00C9FF]">
                   <path d="M4 22h14a2 2 0 0 0 2-2V7.5L14.5 2H6a2 2 0 0 0-2 2v4"></path>
@@ -778,7 +778,7 @@ const Home = () => {
           {/* Additional Revolutionary Features */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mt-8">
             {/* Zero-Knowledge Proofs */}
-            <div className="bg-gradient-to-br from-[#1A1A1A] to-[#0F0F0F] rounded-xl overflow-hidden border border-[#333] p-6 hover:shadow-lg hover:shadow-[#9242FC]/10 group transition-all hover:border-[#9242FC]/50">
+            <div className="bg-gradient-to-br from-[#1D1D1D] to-[#151515] rounded-xl overflow-hidden border border-[#333] p-6 hover:shadow-lg hover:shadow-[#9242FC]/10 group transition-all hover:border-[#9242FC]/50">
               <div className="flex items-start gap-5">
                 <div className="rounded-full w-14 h-14 bg-gradient-to-br from-[#9242FC]/30 to-[#9242FC]/10 flex items-center justify-center flex-shrink-0">
                   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-7 w-7 text-[#9242FC]">
@@ -805,7 +805,7 @@ const Home = () => {
             </div>
             
             {/* Multi-Chain Inheritance */}
-            <div className="bg-gradient-to-br from-[#1A1A1A] to-[#0F0F0F] rounded-xl overflow-hidden border border-[#333] p-6 hover:shadow-lg hover:shadow-[#00D7C3]/10 group transition-all hover:border-[#00D7C3]/50">
+            <div className="bg-gradient-to-br from-[#1D1D1D] to-[#151515] rounded-xl overflow-hidden border border-[#333] p-6 hover:shadow-lg hover:shadow-[#00D7C3]/10 group transition-all hover:border-[#00D7C3]/50">
               <div className="flex items-start gap-5">
                 <div className="rounded-full w-14 h-14 bg-gradient-to-br from-[#00D7C3]/30 to-[#00D7C3]/10 flex items-center justify-center flex-shrink-0">
                   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-7 w-7 text-[#00D7C3]">
@@ -834,7 +834,7 @@ const Home = () => {
       </section>
       
       {/* Special Vault Section */}
-      <section id="bitcoin-halving" className="py-16 bg-[#0D0D0D]">
+      <section id="bitcoin-halving" className="py-16 bg-[#151515]">
         <div className="container mx-auto px-4">
           <div className="text-center mb-12">
             <h2 className="font-poppins font-bold text-3xl">Bitcoin <span className="text-[#FF5AF7]">Halving</span> Vault</h2>
