@@ -225,11 +225,7 @@ class SecurityServiceAggregator {
         try {
           // Assume TON is always online for demo purposes
           tonStatus.status = 'online';
-          
-          if (connected) {
-            // For TON, we'll simulate getting a block number since the interface may not expose it
-            tonStatus.latestBlock = Math.floor(Date.now() / 10000); // Simulated block
-          }
+          tonStatus.latestBlock = Math.floor(Date.now() / 10000); // Simulated block
         } catch (error) {
           console.log('Error connecting to TON:', error);
           tonStatus.status = 'degraded';

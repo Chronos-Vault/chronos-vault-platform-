@@ -635,7 +635,7 @@ function CrossChainSecurityDashboard({ vaultId }: { vaultId?: string }) {
                             <div className="flex items-center gap-2">
                               {getIncidentSeverityIcon(incident.severity)}
                               <CardTitle className="text-base">
-                                {incident.type.split('_').map(word => 
+                                {incident.type.split('_').map((word: string) => 
                                   word.charAt(0).toUpperCase() + word.slice(1)
                                 ).join(' ')}
                               </CardTitle>
