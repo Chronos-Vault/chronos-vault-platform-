@@ -54,7 +54,7 @@ const Home = () => {
   }, []);
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-[#0A0A0A] to-[#131313] text-white">
+    <div className="min-h-screen bg-gradient-to-b from-[#121212] to-[#1A1A1A] text-white font-poppins">
       {/* Hero Section */}
       <section className="py-16 md:py-24 relative overflow-hidden">
         {/* Decorative elements */}
@@ -160,7 +160,7 @@ const Home = () => {
             {/* Showcase Grid */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-12">
               {/* Security Feature Block */}
-              <div className="bg-gradient-to-br from-[#151515] to-[#0A0A0A] rounded-xl overflow-hidden border border-[#333] hover:border-[#6B00D7]/50 transition-all group p-6 hover:shadow-lg hover:shadow-[#6B00D7]/10">
+              <div className="bg-gradient-to-br from-[#1A1A1A] to-[#121212] rounded-xl overflow-hidden border border-[#333] hover:border-[#6B00D7]/50 transition-all group p-6 hover:shadow-lg hover:shadow-[#6B00D7]/10">
                 <div className="rounded-full w-14 h-14 bg-gradient-to-br from-[#6B00D7]/20 to-[#FF5AF7]/10 flex items-center justify-center mb-4">
                   <svg xmlns="http://www.w3.org/2000/svg" className="h-7 w-7 text-[#FF5AF7]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                     <path strokeLinecap="round" strokeLinejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
@@ -177,7 +177,7 @@ const Home = () => {
               </div>
               
               {/* Time Vault Block */}
-              <div className="bg-gradient-to-br from-[#151515] to-[#0A0A0A] rounded-xl overflow-hidden border border-[#333] hover:border-[#6B00D7]/50 transition-all group p-6 hover:shadow-lg hover:shadow-[#6B00D7]/10 md:translate-y-6">
+              <div className="bg-gradient-to-br from-[#1A1A1A] to-[#121212] rounded-xl overflow-hidden border border-[#333] hover:border-[#6B00D7]/50 transition-all group p-6 hover:shadow-lg hover:shadow-[#6B00D7]/10 md:translate-y-6">
                 <div className="rounded-full w-14 h-14 bg-gradient-to-br from-[#6B00D7]/20 to-[#FF5AF7]/10 flex items-center justify-center mb-4">
                   <svg xmlns="http://www.w3.org/2000/svg" className="h-7 w-7 text-[#FF5AF7]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                     <path strokeLinecap="round" strokeLinejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -194,7 +194,7 @@ const Home = () => {
               </div>
               
               {/* Multi-Chain Block */}
-              <div className="bg-gradient-to-br from-[#151515] to-[#0A0A0A] rounded-xl overflow-hidden border border-[#333] hover:border-[#6B00D7]/50 transition-all group p-6 hover:shadow-lg hover:shadow-[#6B00D7]/10">
+              <div className="bg-gradient-to-br from-[#1A1A1A] to-[#121212] rounded-xl overflow-hidden border border-[#333] hover:border-[#6B00D7]/50 transition-all group p-6 hover:shadow-lg hover:shadow-[#6B00D7]/10">
                 <div className="rounded-full w-14 h-14 bg-gradient-to-br from-[#6B00D7]/20 to-[#FF5AF7]/10 flex items-center justify-center mb-4">
                   <svg xmlns="http://www.w3.org/2000/svg" className="h-7 w-7 text-[#FF5AF7]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                     <path strokeLinecap="round" strokeLinejoin="round" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9" />
@@ -299,7 +299,7 @@ const Home = () => {
                 
                 {/* Active Vault Showcase */}
                 <div className="p-6 border-t border-[#333]">
-                  <div className="rounded-lg bg-gradient-to-br from-[#0A0A0A] to-[#121212] border border-[#333] p-5 relative overflow-hidden">
+                  <div className="rounded-lg bg-gradient-to-br from-[#151515] to-[#1A1A1A] border border-[#333] p-5 relative overflow-hidden">
                     {/* Security scan animation */}
                     <div className="absolute inset-0 pointer-events-none">
                       <div className="absolute top-0 left-0 w-full h-1 bg-[#FF5AF7]/10 animate-scan"></div>
