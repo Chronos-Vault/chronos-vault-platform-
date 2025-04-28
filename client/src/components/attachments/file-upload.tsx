@@ -88,29 +88,23 @@ export function FileUpload({ vaultId, onUploadComplete, className }: FileUploadP
       // Create a FormData object to handle the file upload
       const formData = new FormData();
       formData.append('file', file);
+      formData.append('vaultId', vaultId.toString());
+      formData.append('name', file.name);
+      formData.append('description', description || '');
+      formData.append('type', file.type);
+      formData.append('isEncrypted', isEncrypted.toString());
       
-      // We're using a mock storage key for now
-      // In a real implementation, this would come from the upload response
-      const storageKey = `vault-${vaultId}/${Date.now()}-${file.name}`;
-      
-      // Prepare attachment data
-      const attachmentData = {
-        vaultId,
-        fileName: file.name,
-        fileType: file.type,
-        fileSize: file.size,
-        description: description || null,
-        storageKey,
-        thumbnailUrl: file.type.startsWith('image/') ? storageKey : null,
-        isEncrypted,
-        metadata: {
-          originalName: file.name,
-          lastModified: file.lastModified
+      // Send the file and related data to the server
+      const response = await fetch('/api/attachments', {
+        method: 'POST',
+        body: formData,
+        // Don't set Content-Type header - browser will set it with boundary for FormData
+      }).then(res => {
+        if (!res.ok) {
+          throw new Error(`Upload failed: ${res.status} ${res.statusText}`);
         }
-      };
-      
-      // Create the attachment record in the database
-      const response = await apiRequest("POST", '/api/attachments', attachmentData);
+        return res.json();
+      });
 
       clearInterval(progressInterval);
       setUploadProgress(100);

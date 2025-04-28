@@ -56,6 +56,21 @@ const upload = multer({
 });
 
 export async function registerRoutes(app: Express): Promise<Server> {
+  // Serve uploaded files from the uploads directory
+  app.use('/uploads', (req, res, next) => {
+    // Set cache control headers
+    res.setHeader('Cache-Control', 'public, max-age=86400'); // 24 hours
+    next();
+  }, (req, res, next) => {
+    const filePath = path.join(process.cwd(), 'uploads', req.path);
+    
+    // Check if the file exists
+    if (fs.existsSync(filePath)) {
+      res.sendFile(filePath);
+    } else {
+      next();
+    }
+  });
   // Special route to serve TON Connect manifest with proper headers
   app.get("/tonconnect-manifest.json", (_req: Request, res: Response) => {
     res.setHeader("Content-Type", "application/json");
@@ -383,20 +398,22 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Create metadata object for the file
       const metadata = {
         originalName: originalname,
-        fileSize: size,
         mimeType: mimetype,
+        uploadPath: filePath,
         fileUrl: fileUrl
       };
       
-      // Create the attachment record
+      // Create the attachment record that matches our schema
       const attachmentData = {
         vaultId: parseInt(vaultId),
-        name: name || originalname,
+        fileName: name || originalname,
+        fileType: mimetype,
+        fileSize: size,
         description: description || "",
-        type: type || "file",
-        fileUrl: fileUrl,
+        storageKey: fileUrl,
+        thumbnailUrl: mimetype.startsWith('image/') ? fileUrl : null,
         isEncrypted: isEncrypted === "true",
-        metadata: JSON.stringify(metadata)
+        metadata: metadata
       };
       
       const attachment = await storage.createAttachment(attachmentData);
