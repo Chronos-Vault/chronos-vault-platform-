@@ -6,7 +6,7 @@ export default function RevolutionaryFeatures() {
   const [_, setLocation] = useLocation();
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-[#0A0A0A] to-[#131313] text-white pb-20">
+    <div className="min-h-screen bg-gradient-to-b from-[#121212] to-[#1A1A1A] text-white pb-20">
       <div className="container mx-auto px-4 py-12">
         <PageHeader
           heading="Revolutionary Vault Technologies"
@@ -71,8 +71,8 @@ export default function RevolutionaryFeatures() {
             
             <div className="relative mt-8 md:mt-0">
               <div className="absolute -inset-0.5 bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] rounded-lg blur-sm opacity-75"></div>
-              <div className="relative bg-[#1A1A1A] p-4 sm:p-6 rounded-lg border border-[#333] z-10">
-                <div className="rounded-lg bg-[#0A0A0A] p-4 sm:p-6 border border-[#333]">
+              <div className="relative bg-[#1D1D1D] p-4 sm:p-6 rounded-lg border border-[#333] z-10">
+                <div className="rounded-lg bg-[#121212] p-4 sm:p-6 border border-[#333]">
                   <h3 className="text-lg sm:text-xl font-semibold mb-4 text-white">How Triple-Chain Security Works</h3>
                   
                   <div className="space-y-4 sm:space-y-6">
@@ -107,8 +107,8 @@ export default function RevolutionaryFeatures() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12 items-center">
             <div className="order-2 md:order-1 relative mt-8 md:mt-0">
               <div className="absolute -inset-0.5 bg-gradient-to-r from-[#FF5AF7] to-blue-500 rounded-lg blur-sm opacity-75"></div>
-              <div className="relative bg-[#1A1A1A] p-4 sm:p-6 rounded-lg border border-[#333] z-10">
-                <div className="rounded-lg bg-[#0A0A0A] p-4 sm:p-6 border border-[#333]">
+              <div className="relative bg-[#1D1D1D] p-4 sm:p-6 rounded-lg border border-[#333] z-10">
+                <div className="rounded-lg bg-[#121212] p-4 sm:p-6 border border-[#333]">
                   <h3 className="text-lg sm:text-xl font-semibold mb-4 text-white">Technical Implementation</h3>
                   
                   <div className="space-y-4 sm:space-y-6">
@@ -248,8 +248,8 @@ export default function RevolutionaryFeatures() {
               </Button>
             </div>
             
-            <div className="bg-gradient-to-br from-[#1A1A1A]/95 to-[#131313]/95 p-4 sm:p-6 rounded-lg border border-[#333] space-y-4 sm:space-y-6 mt-8 md:mt-0">
-              <div className="bg-gradient-to-br from-[#1A1A1A] to-[#0F0F0F] p-3 sm:p-5 rounded-lg border border-[#333] relative overflow-hidden">
+            <div className="bg-gradient-to-br from-[#1D1D1D]/95 to-[#151515]/95 p-4 sm:p-6 rounded-lg border border-[#333] space-y-4 sm:space-y-6 mt-8 md:mt-0">
+              <div className="bg-gradient-to-br from-[#1D1D1D] to-[#151515] p-3 sm:p-5 rounded-lg border border-[#333] relative overflow-hidden">
                 <div className="absolute top-0 right-0 w-16 sm:w-20 h-16 sm:h-20 bg-gradient-to-b from-[#00C9FF]/20 to-transparent rounded-bl-3xl -mr-5 -mt-5 z-0"></div>
                 <div className="relative z-10">
                   <div className="flex items-center mb-3 sm:mb-4">
