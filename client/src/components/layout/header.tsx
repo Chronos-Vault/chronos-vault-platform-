@@ -23,6 +23,7 @@ const Header = () => {
     { name: "How It Works", href: "/#how-it-works", icon: "⚙️" },
     { name: "Vaults", href: "/#vaults", icon: "🔐" },
     { name: "My Vaults", href: "/my-vaults", icon: "📊" },
+    { name: "Gift Crypto", href: "/gift-crypto", icon: "🎁", highlight: true },
     { name: "CVT Token", href: "/cvt-token", icon: "🪙" },
     { name: "Token Vaults", href: "/token-vaults", icon: "⏳" },
     { name: "Cross-Chain", href: "/cross-chain", icon: "🔄" },
@@ -65,7 +66,7 @@ const Header = () => {
                   location === link.href 
                   ? 'text-white relative after:absolute after:bottom-[-8px] after:left-0 after:w-full after:h-[3px] after:bg-gradient-to-r after:from-[#6B00D7] after:to-[#FF5AF7] after:rounded-full' 
                   : ''
-                }`}
+                } ${link.highlight ? 'relative px-2 py-1 rounded-lg bg-gradient-to-r from-[#6B00D7]/20 to-[#FF5AF7]/20 border border-[#FF5AF7]/30 text-[#FF5AF7] animate-pulse-subtle' : ''}`}
               >
                 <span className="text-base">{link.icon}</span>
                 {link.name}
@@ -133,7 +134,7 @@ const Header = () => {
                             className={`flex items-center gap-3 ${location === link.href 
                               ? 'font-poppins font-semibold text-white bg-gradient-to-r from-[#6B00D7]/20 to-transparent pl-4 py-2 border-l-2 border-[#6B00D7]' 
                               : 'text-gray-300 hover:text-white font-poppins font-medium transition-all hover:translate-x-1'
-                            }`}
+                            } ${link.highlight ? 'relative rounded-lg bg-gradient-to-r from-[#6B00D7]/20 to-[#FF5AF7]/20 border border-[#FF5AF7]/30 text-[#FF5AF7]' : ''}`}
                           >
                             <div className="flex items-center justify-center w-10 h-10 rounded-lg bg-gradient-to-br from-[#6B00D7]/30 to-[#FF5AF7]/20 shadow-inner shadow-[#6B00D7]/10 border border-[#6B00D7]/20">
                               <span className="text-xl text-[#FF5AF7]">{link.icon}</span>
