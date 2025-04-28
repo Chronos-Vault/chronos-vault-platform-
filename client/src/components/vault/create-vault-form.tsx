@@ -36,6 +36,7 @@ import {
 const formSchema = insertVaultSchema.extend({
   confirmAmount: z.string().min(1, "Please confirm the amount"),
   includeAttachments: z.boolean().optional().default(true),
+  unlockDate: z.string(), // Modified to handle string for date ISO
 }).refine((data) => data.assetAmount === data.confirmAmount, {
   message: "Asset amounts do not match",
   path: ["confirmAmount"],
@@ -383,6 +384,31 @@ const CreateVaultForm = ({ initialVaultType = "legacy" }: CreateVaultFormProps) 
                     </ul>
                   </div>
                 </TabsContent>
+
+                {/* Media Attachment Preview - shown when includeAttachments is checked */}
+                {form.watch("includeAttachments") && !showAttachmentUpload && (
+                  <div className="border border-[#FF5AF7]/20 rounded-lg p-4 bg-[#1A1A1A] mt-4 mb-4">
+                    <h3 className="text-lg font-semibold mb-2 text-[#FF5AF7]">Media Attachments</h3>
+                    <p className="text-gray-400 text-sm mb-4">
+                      After creating your vault, you'll be able to upload files to include in your time vault.
+                      These files will be encrypted and only accessible after the time-lock period expires.
+                    </p>
+                    <ul className="space-y-2 text-sm text-gray-300">
+                      <li className="flex items-center">
+                        <span className="text-[#FF5AF7] mr-2">•</span>
+                        <span>Images, documents, videos, or audio (up to 10MB per file)</span>
+                      </li>
+                      <li className="flex items-center">
+                        <span className="text-[#FF5AF7] mr-2">•</span>
+                        <span>End-to-end encryption for maximum security</span>
+                      </li>
+                      <li className="flex items-center">
+                        <span className="text-[#FF5AF7] mr-2">•</span>
+                        <span>Blockchain-verified integrity and authenticity</span>
+                      </li>
+                    </ul>
+                  </div>
+                )}
 
                 {!showAttachmentUpload && (
                   <div className="pt-4 border-t border-[#333333]">
