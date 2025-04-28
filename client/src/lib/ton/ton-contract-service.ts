@@ -10,6 +10,14 @@ export interface VaultData {
   currentTime: number;
   isUnlocked: boolean;
   crossChainLocations: string[];
+  isRecoveryEnabled?: boolean;
+  lastBackupTimestamp?: number;
+  backupHeight?: number;
+  recoveryStatus?: {
+    isInRecoveryMode: boolean;
+    recoveryReason?: number;
+    recoveryTimestamp?: number;
+  };
 }
 
 /**
@@ -145,6 +153,10 @@ class TONContractService {
         return null; // Invalid TON address
       }
       
+      // Get recovery status for the vault - in production this would be from actual contract call
+      const recoveryInfo = await this.getRecoveryStatus(vaultId);
+      const backupInfo = await this.getLastBackupInfo(vaultId);
+      
       return {
         blockId: `${Date.now().toString(16)}-${Math.random().toString(16).substring(2, 10)}`,
         vault: {
@@ -153,7 +165,15 @@ class TONContractService {
           securityLevel: 2,
           currentTime: now,
           isUnlocked: false,
-          crossChainLocations: ['Ethereum', 'Solana']
+          crossChainLocations: ['Ethereum', 'Solana'],
+          isRecoveryEnabled: true,
+          lastBackupTimestamp: backupInfo.lastBackupTimestamp,
+          backupHeight: backupInfo.backupHeight,
+          recoveryStatus: {
+            isInRecoveryMode: recoveryInfo.isInRecoveryMode,
+            recoveryReason: recoveryInfo.recoveryReason,
+            recoveryTimestamp: recoveryInfo.recoveryTimestamp
+          }
         }
       };
     } catch (error) {
@@ -370,6 +390,247 @@ class TONContractService {
     } catch (error: any) {
       console.error('Failed to unstake CVT:', error);
       return { success: false, error: error.message || 'Unknown error occurred' };
+    }
+  }
+  
+  /**
+   * Create a backup of the vault state on TON blockchain
+   * This serves as part of the triple-chain security mechanism
+   */
+  async backupVaultState(vaultAddress: string): Promise<{ 
+    success: boolean; 
+    backupHeight?: number;
+    timestamp?: number;
+    transactionHash?: string;
+    error?: string 
+  }> {
+    try {
+      // Get wallet info
+      const walletInfo = tonService.getWalletInfo();
+      if (!walletInfo) {
+        throw new Error('Wallet not connected');
+      }
+      
+      // Prepare transaction for the backup operation
+      const transaction = {
+        validUntil: Math.floor(Date.now() / 1000) + 300, // 5 minutes
+        messages: [
+          {
+            address: vaultAddress,
+            amount: '100000000', // 0.1 TON for gas
+            payload: Buffer.from(JSON.stringify({
+              op: 2, // Backup state operation
+              walletAddress: walletInfo.address
+            })).toString('base64')
+          }
+        ]
+      };
+      
+      // Send transaction using TON Connect
+      const result = await tonService.sendTransaction(transaction);
+      
+      if (!result.success) {
+        throw new Error(result.error || 'Backup transaction failed');
+      }
+      
+      // In production, this would retrieve actual backup data from transaction receipt
+      // For development, simulate successful backup
+      const now = Math.floor(Date.now() / 1000);
+      const simulatedBackupHeight = Math.floor(Math.random() * 10000000) + 35000000;
+      
+      return {
+        success: true,
+        backupHeight: simulatedBackupHeight,
+        timestamp: now,
+        transactionHash: result.transactionHash
+      };
+    } catch (error: any) {
+      console.error('Failed to backup vault state:', error);
+      return { success: false, error: error.message || 'Unknown error occurred' };
+    }
+  }
+
+  /**
+   * Initiate recovery mode for a vault with cross-chain issues
+   */
+  async initiateRecoveryMode(
+    vaultAddress: string, 
+    recoveryReason: number
+  ): Promise<{ 
+    success: boolean; 
+    transactionHash?: string;
+    error?: string 
+  }> {
+    try {
+      // Get wallet info
+      const walletInfo = tonService.getWalletInfo();
+      if (!walletInfo) {
+        throw new Error('Wallet not connected');
+      }
+      
+      // Prepare transaction for initiating recovery
+      const transaction = {
+        validUntil: Math.floor(Date.now() / 1000) + 300, // 5 minutes
+        messages: [
+          {
+            address: vaultAddress,
+            amount: '100000000', // 0.1 TON for gas
+            payload: Buffer.from(JSON.stringify({
+              op: 3, // Initiate recovery operation
+              reason: recoveryReason,
+              walletAddress: walletInfo.address
+            })).toString('base64')
+          }
+        ]
+      };
+      
+      // Send transaction using TON Connect
+      const result = await tonService.sendTransaction(transaction);
+      
+      if (!result.success) {
+        throw new Error(result.error || 'Recovery initiation failed');
+      }
+      
+      return {
+        success: true,
+        transactionHash: result.transactionHash
+      };
+    } catch (error: any) {
+      console.error('Failed to initiate recovery mode:', error);
+      return { success: false, error: error.message || 'Unknown error occurred' };
+    }
+  }
+  
+  /**
+   * Emergency recovery with cross-chain proofs
+   * Uses proofs from Ethereum and Solana to recover a vault
+   */
+  async emergencyRecovery(
+    vaultAddress: string,
+    ethereumProof: string,
+    solanaProof: string
+  ): Promise<{ 
+    success: boolean; 
+    error?: string 
+  }> {
+    try {
+      // Get wallet info
+      const walletInfo = tonService.getWalletInfo();
+      if (!walletInfo) {
+        throw new Error('Wallet not connected');
+      }
+      
+      // Encode proofs as base64 for the transaction payload
+      const encodedEthProof = Buffer.from(ethereumProof).toString('base64');
+      const encodedSolProof = Buffer.from(solanaProof).toString('base64');
+      
+      // Prepare transaction for emergency recovery
+      const transaction = {
+        validUntil: Math.floor(Date.now() / 1000) + 300, // 5 minutes
+        messages: [
+          {
+            address: vaultAddress,
+            amount: '100000000', // 0.1 TON for gas
+            payload: Buffer.from(JSON.stringify({
+              op: 4, // Emergency recovery operation
+              ethProof: encodedEthProof,
+              solProof: encodedSolProof,
+              walletAddress: walletInfo.address
+            })).toString('base64')
+          }
+        ]
+      };
+      
+      // Send transaction using TON Connect
+      const result = await tonService.sendTransaction(transaction);
+      
+      if (!result.success) {
+        throw new Error(result.error || 'Emergency recovery failed');
+      }
+      
+      return {
+        success: true,
+        transactionHash: result.transactionHash
+      };
+    } catch (error: any) {
+      console.error('Failed to perform emergency recovery:', error);
+      return { success: false, error: error.message || 'Unknown error occurred' };
+    }
+  }
+  
+  /**
+   * Get recovery status for a vault
+   */
+  async getRecoveryStatus(vaultAddress: string): Promise<{ 
+    isInRecoveryMode: boolean;
+    recoveryReason?: number;
+    recoveryTimestamp?: number;
+    error?: string 
+  }> {
+    try {
+      // Get wallet info
+      const walletInfo = tonService.getWalletInfo();
+      if (!walletInfo) {
+        throw new Error('Wallet not connected');
+      }
+      
+      // In production, this would call the get_recovery_status method on the contract
+      // For development, simulate a response
+      
+      // Randomly decide if vault is in recovery mode (for demo purposes)
+      const isInRecoveryMode = Math.random() > 0.7;
+      const now = Math.floor(Date.now() / 1000);
+      
+      if (isInRecoveryMode) {
+        return {
+          isInRecoveryMode: true,
+          recoveryReason: Math.floor(Math.random() * 3) + 1, // 1, 2, or 3
+          recoveryTimestamp: now - Math.floor(Math.random() * 86400) // Within the last day
+        };
+      } else {
+        return {
+          isInRecoveryMode: false
+        };
+      }
+    } catch (error: any) {
+      console.error('Failed to get recovery status:', error);
+      return { 
+        isInRecoveryMode: false,
+        error: error.message || 'Unknown error occurred' 
+      };
+    }
+  }
+  
+  /**
+   * Get the last backup timestamp for a vault
+   */
+  async getLastBackupInfo(vaultAddress: string): Promise<{ 
+    lastBackupTimestamp: number;
+    backupHeight: number;
+    error?: string 
+  }> {
+    try {
+      // Get wallet info
+      const walletInfo = tonService.getWalletInfo();
+      if (!walletInfo) {
+        throw new Error('Wallet not connected');
+      }
+      
+      // In production, this would call the get_last_backup_time method on the contract
+      // For development, simulate a response
+      const now = Math.floor(Date.now() / 1000);
+      
+      return {
+        lastBackupTimestamp: now - Math.floor(Math.random() * 86400 * 7), // Within the last week
+        backupHeight: Math.floor(Math.random() * 10000000) + 35000000 // Random block height
+      };
+    } catch (error: any) {
+      console.error('Failed to get last backup info:', error);
+      return { 
+        lastBackupTimestamp: 0,
+        backupHeight: 0,
+        error: error.message || 'Unknown error occurred' 
+      };
     }
   }
 }

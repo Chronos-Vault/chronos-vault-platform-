@@ -82,6 +82,11 @@ class SecurityServiceAggregator {
   private anomalyService = getAnomalyDetectionService();
   private signatureService = getMultiSignatureService();
   
+  // Real-time monitoring intervals
+  private monitoringIntervals: Map<string, NodeJS.Timeout> = new Map();
+  private securityLevels: Map<string, number> = new Map();
+  private readonly MONITORING_INTERVAL = 30000; // 30 seconds
+  
   /**
    * Get security metrics for an address
    */
@@ -120,14 +125,136 @@ class SecurityServiceAggregator {
    * Activate enhanced security monitoring
    */
   async activateEnhancedMonitoring(address: string): Promise<boolean> {
-    return this.monitoringService.activateMonitoring(address);
+    const success = await this.monitoringService.activateMonitoring(address);
+    
+    if (success) {
+      // Start real-time monitoring
+      this.startRealTimeMonitoring(address);
+    }
+    
+    return success;
   }
   
   /**
    * Deactivate enhanced security monitoring
    */
   async deactivateEnhancedMonitoring(address: string): Promise<boolean> {
-    return this.monitoringService.deactivateMonitoring(address);
+    const success = await this.monitoringService.deactivateMonitoring(address);
+    
+    if (success) {
+      // Stop real-time monitoring
+      this.stopRealTimeMonitoring(address);
+    }
+    
+    return success;
+  }
+  
+  /**
+   * Set security level for an address (1-5)
+   * Higher levels have more frequent checks and stricter validation
+   */
+  async setSecurityLevel(address: string, level: number): Promise<boolean> {
+    if (level < 1 || level > 5) {
+      throw new Error('Security level must be between 1 and 5');
+    }
+    
+    this.securityLevels.set(address, level);
+    
+    // If monitoring is active, restart it with the new security level
+    if (this.monitoringService.isMonitoringActive(address)) {
+      this.stopRealTimeMonitoring(address);
+      this.startRealTimeMonitoring(address);
+    }
+    
+    return true;
+  }
+  
+  /**
+   * Get the current security level for an address
+   */
+  getSecurityLevel(address: string): number {
+    return this.securityLevels.get(address) || 3; // Default to level 3
+  }
+  
+  /**
+   * Start real-time monitoring for an address
+   */
+  private startRealTimeMonitoring(address: string): void {
+    // Stop existing monitoring if any
+    this.stopRealTimeMonitoring(address);
+    
+    // Determine monitoring frequency based on security level
+    const securityLevel = this.getSecurityLevel(address);
+    const interval = Math.max(5000, this.MONITORING_INTERVAL / securityLevel);
+    
+    console.log(`Starting real-time monitoring for ${address} at level ${securityLevel} (interval: ${interval}ms)`);
+    
+    // Start interval check
+    const monitoringInterval = setInterval(async () => {
+      try {
+        console.log(`Running scheduled security check for ${address}`);
+        
+        // Run anomaly detection
+        const anomalies = await this.anomalyService.scanForAnomalies(address, {
+          sensitivityLevel: securityLevel,
+          lookbackDays: 1,
+          includeHistory: false
+        });
+        
+        // If anomalies detected, create alerts
+        if (anomalies.length > 0) {
+          console.warn(`Detected ${anomalies.length} anomalies for ${address}`);
+          
+          // Create alerts for high confidence anomalies
+          for (const anomaly of anomalies) {
+            if (anomaly.confidenceScore > 0.7) {
+              await this.monitoringService.createAlert(
+                anomaly.blockchain,
+                address,
+                'unusual_pattern',
+                anomaly.confidenceScore > 0.9 ? 'high' : 'medium',
+                `Detected ${anomaly.anomalyType} anomaly with ${Math.round(anomaly.confidenceScore * 100)}% confidence`
+              );
+            }
+          }
+        }
+        
+        // For high security levels (4-5), verify associated vaults every monitoring cycle
+        if (securityLevel >= 4) {
+          // Query for vaults associated with this address and verify them
+          // In a real implementation, this would fetch vaults from the database
+          // For now, we'll use a mock implementation
+          const mockVaultIds = [`vault-${address.substring(0, 8)}`];
+          
+          for (const vaultId of mockVaultIds) {
+            const result = await this.verifyVaultTripleChain(vaultId);
+            
+            if (!result.verified) {
+              console.warn(`Real-time monitoring detected verification issues with vault ${vaultId}`);
+            }
+          }
+        }
+        
+      } catch (error) {
+        console.error(`Error in real-time monitoring for ${address}:`, error);
+      }
+    }, interval);
+    
+    // Store the interval reference
+    this.monitoringIntervals.set(address, monitoringInterval);
+  }
+  
+  /**
+   * Stop real-time monitoring for an address
+   */
+  private stopRealTimeMonitoring(address: string): void {
+    const existingInterval = this.monitoringIntervals.get(address);
+    
+    if (existingInterval) {
+      clearInterval(existingInterval);
+      this.monitoringIntervals.delete(address);
+      console.log(`Stopped real-time monitoring for ${address}`);
+    }
   }
   
   /**

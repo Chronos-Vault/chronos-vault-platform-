@@ -1,167 +1,300 @@
-/**
- * ChronosVault.fc - TON Smart Contract for ChronosVault Platform
- * 
- * This contract implements a time-locked vault for digital assets
- * with advanced security features and cross-chain integration.
- */
+;; ChronosVault.fc
+;; TON Smart Contract for Chronos Vault - Implements backup and recovery functionality
 
 #include "imports/stdlib.fc";
 
-;; Storage structure
-;; storage#_ owner:MsgAddress
-;;           unlock_time:uint64
-;;           content:^Cell  
-;;           access_key:uint256
-;;           security_level:uint8
-;;           chain_data:^Cell
-;;           = Storage;
+;; Storage variables
+global int vault_id;          ;; Unique vault identifier
+global int unlock_time;       ;; Unix timestamp when vault unlocks
+global int is_locked;         ;; 1 if locked, 0 if unlocked
+global int recovery_mode;     ;; 1 if recovery mode enabled, 0 otherwise
+global int backup_height;     ;; Last backup height for cross-chain verification
+global slice owner_address;   ;; Address of the vault owner
+global slice backup_data;     ;; Serialized backup data
+global cell beneficiaries;    ;; Dictionary of beneficiary addresses and shares
 
-(slice, int, cell, int, int, cell) load_data() inline {
-  var ds = get_data().begin_parse();
-  return (
-    ds~load_msg_addr(),    ;; owner address
-    ds~load_uint(64),      ;; unlock_time
-    ds~load_ref(),         ;; content
-    ds~load_uint(256),     ;; access key (for advanced auth)
-    ds~load_uint(8),       ;; security level
-    ds~load_ref()          ;; chain_data (cross-chain information)
-  );
+;; Error codes
+const int ERROR_NOT_OWNER = 101;
+const int ERROR_VAULT_LOCKED = 102;
+const int ERROR_RECOVERY_DISABLED = 103;
+const int ERROR_INVALID_SIGNATURE = 104;
+const int ERROR_INVALID_TIME = 105;
+const int ERROR_INVALID_PROOF = 106;
+const int ERROR_VAULT_UNLOCKED = 107;
+const int ERROR_COOLDOWN_PERIOD = 108;
+
+;; Load storage function
+() load_data() impure {
+    var ds = get_data().begin_parse();
+    vault_id = ds~load_uint(64);
+    unlock_time = ds~load_uint(64);
+    is_locked = ds~load_uint(1);
+    recovery_mode = ds~load_uint(1);
+    backup_height = ds~load_uint(64);
+    owner_address = ds~load_msg_addr();
+    backup_data = ds~load_ref().begin_parse();
+    beneficiaries = ds~load_dict();
+    ds.end_parse();
 }
 
-() save_data(slice owner, int unlock_time, cell content, int access_key, int security_level, cell chain_data) impure inline {
-  set_data(begin_cell()
-    .store_slice(owner)
-    .store_uint(unlock_time, 64)
-    .store_ref(content)
-    .store_uint(access_key, 256)
-    .store_uint(security_level, 8)
-    .store_ref(chain_data)
-    .end_cell());
+;; Save storage function
+() save_data() impure {
+    set_data(begin_cell()
+        .store_uint(vault_id, 64)
+        .store_uint(unlock_time, 64)
+        .store_uint(is_locked, 1)
+        .store_uint(recovery_mode, 1)
+        .store_uint(backup_height, 64)
+        .store_slice(owner_address)
+        .store_ref(begin_cell().store_slice(backup_data).end_cell())
+        .store_dict(beneficiaries)
+        .end_cell());
 }
 
+;; Verify Ethereum signature for cross-chain verification
+int verify_ethereum_signature(slice signature, slice message_hash, slice public_key) method_id {
+    ;; In real implementation, this would use ECDSA verification
+    ;; For the prototype, we'll simulate a successful verification
+    return 1; ;; 1 means valid
+}
+
+;; Verify Solana signature for cross-chain verification
+int verify_solana_signature(slice signature, slice message_hash, slice public_key) method_id {
+    ;; In real implementation, this would use ED25519 verification
+    ;; For the prototype, we'll simulate a successful verification
+    return 1; ;; 1 means valid
+}
+
+;; Check if vault is unlocked based on time
+int is_unlocked_by_time() method_id {
+    return now() >= unlock_time;
+}
+
+;; Verify cross-chain proof from Ethereum
+int verify_ethereum_proof(slice proof_data) method_id {
+    var ds = proof_data.begin_parse();
+    var eth_block_hash = ds~load_uint(256);
+    var eth_tx_hash = ds~load_uint(256);
+    var eth_vault_id = ds~load_uint(64);
+    var eth_unlock_time = ds~load_uint(64);
+    
+    ;; Check if the vault data matches
+    if (eth_vault_id != vault_id) {
+        return 0;
+    }
+    
+    if (eth_unlock_time != unlock_time) {
+        return 0;
+    }
+    
+    ;; In a real implementation, we would verify the Ethereum block and transaction
+    ;; For the prototype, we'll simulate verification success
+    return 1;
+}
+
+;; Verify cross-chain proof from Solana
+int verify_solana_proof(slice proof_data) method_id {
+    var ds = proof_data.begin_parse();
+    var sol_slot = ds~load_uint(64);
+    var sol_tx_id = ds~load_uint(256);
+    var sol_vault_id = ds~load_uint(64);
+    var sol_unlock_time = ds~load_uint(64);
+    
+    ;; Check if the vault data matches
+    if (sol_vault_id != vault_id) {
+        return 0;
+    }
+    
+    if (sol_unlock_time != unlock_time) {
+        return 0;
+    }
+    
+    ;; In a real implementation, we would verify the Solana slot and transaction
+    ;; For the prototype, we'll simulate verification success
+    return 1;
+}
+
+;; Create a backup of the vault state
+() backup_vault_state() impure {
+    ;; Record current blockchain height
+    backup_height = block.height;
+    
+    ;; Serialize vault state
+    backup_data = begin_cell()
+        .store_uint(vault_id, 64)
+        .store_uint(unlock_time, 64)
+        .store_uint(is_locked, 1)
+        .store_uint(now(), 64)  ;; Backup timestamp
+        .store_slice(owner_address)
+        .store_dict(beneficiaries)
+    .end_cell().begin_parse();
+    
+    save_data();
+}
+
+;; Initiate recovery mode when cross-chain issues are detected
+() initiate_recovery(int recovery_reason) impure {
+    recovery_mode = 1;
+    
+    ;; Add recovery reason to backup data
+    backup_data = begin_cell()
+        .store_slice(backup_data)
+        .store_uint(recovery_reason, 8)
+        .store_uint(now(), 64)  ;; Recovery initiation timestamp
+    .end_cell().begin_parse();
+    
+    save_data();
+}
+
+;; Unlock the vault using triple-chain verification
+() unlock_vault() impure {
+    ;; Check if already unlocked
+    if (~ is_locked) {
+        throw(ERROR_VAULT_UNLOCKED);
+    }
+    
+    ;; Check if natural unlock time has passed
+    if (is_unlocked_by_time()) {
+        is_locked = 0;
+        save_data();
+        return ();
+    }
+    
+    ;; Otherwise, only owner can initiate emergency unlock
+    throw(ERROR_VAULT_LOCKED);
+}
+
+;; Emergency recovery - requires proofs from Ethereum and Solana
+() emergency_recovery(slice eth_proof, slice sol_proof) impure {
+    ;; Check if recovery mode is enabled
+    if (~ recovery_mode) {
+        throw(ERROR_RECOVERY_DISABLED);
+    }
+    
+    ;; Verify proofs from other chains
+    if (~ verify_ethereum_proof(eth_proof)) {
+        throw(ERROR_INVALID_PROOF);
+    }
+    
+    if (~ verify_solana_proof(sol_proof)) {
+        throw(ERROR_INVALID_PROOF);
+    }
+    
+    ;; If both proofs are valid, allow emergency unlock
+    is_locked = 0;
+    
+    ;; Reset recovery mode after successful recovery
+    recovery_mode = 0;
+    
+    save_data();
+}
+
+;; Verify the vault exists and is valid on TON
+int verify_vault_existence(int check_vault_id) method_id {
+    load_data();
+    return vault_id == check_vault_id;
+}
+
+;; Public getter for vault details
+(int, int, int, int, int, slice) get_vault_details() method_id {
+    load_data();
+    return (vault_id, unlock_time, is_locked, recovery_mode, backup_height, owner_address);
+}
+
+;; Public getter for beneficiaries
+cell get_beneficiaries() method_id {
+    load_data();
+    return beneficiaries;
+}
+
+;; Contract entry point for receiving internal messages
 () recv_internal(int msg_value, cell in_msg_cell, slice in_msg) impure {
-  slice cs = in_msg_cell.begin_parse();
-  int flags = cs~load_uint(4); ;; int_msg_info$0 flags
-  if (flags & 1) { ;; ignore all bounced messages
-    return ();
-  }
-
-  slice sender = cs~load_msg_addr();
-  (slice owner, int unlock_time, cell content, int access_key, int security_level, cell chain_data) = load_data();
-  
-  ;; Get operation code
-  int op = in_msg~load_uint(32);
-  
-  ;; Op code handling
-  if (op == 0x1) { ;; get vault data
-    if (equal_slices(sender, owner)) {
-      send_raw_message(begin_cell()
-        .store_uint(0x18, 6)
-        .store_slice(sender)
-        .store_coins(0)
-        .store_uint(0, 1 + 4 + 4 + 64 + 32 + 1 + 1)
-        .store_ref(content)
-        .end_cell(), 64);
+    ;; Check if this is a bounced message
+    slice cs = in_msg_cell.begin_parse();
+    int flags = cs~load_uint(4);
+    if (flags & 1) { ;; Ignore bounced messages
+        return ();
     }
-    return ();
-  }
-  
-  if (op == 0x2) { ;; update unlock time (only owner can do this)
-    throw_unless(401, equal_slices(sender, owner));
-    int new_unlock_time = in_msg~load_uint(64);
-    save_data(owner, new_unlock_time, content, access_key, security_level, chain_data);
-    return ();
-  }
-  
-  if (op == 0x3) { ;; update security level (only owner can do this)
-    throw_unless(401, equal_slices(sender, owner));
-    int new_security_level = in_msg~load_uint(8);
-    save_data(owner, unlock_time, content, access_key, new_security_level, chain_data);
-    return ();
-  }
-  
-  if (op == 0x4) { ;; update cross-chain data (only owner can do this)
-    throw_unless(401, equal_slices(sender, owner));
-    cell new_chain_data = in_msg~load_ref();
-    save_data(owner, unlock_time, content, access_key, security_level, new_chain_data);
-    return ();
-  }
-  
-  if (op == 0x5) { ;; attempt to retrieve content
-    int current_time = now();
-    if (current_time >= unlock_time) {
-      ;; Check if correct access key is provided for high security levels
-      if (security_level > 1) {
-        int provided_key = in_msg~load_uint(256);
-        throw_unless(402, provided_key == access_key);
-      }
-      
-      ;; Send the content to the requester
-      send_raw_message(begin_cell()
-        .store_uint(0x18, 6)
-        .store_slice(sender)
-        .store_coins(0)
-        .store_uint(0, 1 + 4 + 4 + 64 + 32 + 1 + 1)
-        .store_ref(content)
-        .end_cell(), 64);
-    } else {
-      ;; Not yet unlocked
-      throw(403);
+    
+    load_data();
+    
+    ;; Parse the message op code
+    int op = in_msg~load_uint(32);
+    
+    ;; Sender address
+    slice sender_address = in_msg~load_msg_addr();
+    
+    ;; Handle operations
+    if (op == 1) { ;; Unlock request
+        if (equal_slices(sender_address, owner_address)) {
+            unlock_vault();
+        } else {
+            throw(ERROR_NOT_OWNER);
+        }
     }
-    return ();
-  }
-  
-  throw(399); ;; Unknown operation
+    
+    if (op == 2) { ;; Backup state request
+        if (equal_slices(sender_address, owner_address)) {
+            backup_vault_state();
+        } else {
+            throw(ERROR_NOT_OWNER);
+        }
+    }
+    
+    if (op == 3) { ;; Initiate recovery
+        if (equal_slices(sender_address, owner_address)) {
+            int reason = in_msg~load_uint(8);
+            initiate_recovery(reason);
+        } else {
+            throw(ERROR_NOT_OWNER);
+        }
+    }
+    
+    if (op == 4) { ;; Emergency recovery
+        if (equal_slices(sender_address, owner_address)) {
+            slice eth_proof = in_msg~load_ref().begin_parse();
+            slice sol_proof = in_msg~load_ref().begin_parse();
+            emergency_recovery(eth_proof, sol_proof);
+        } else {
+            throw(ERROR_NOT_OWNER);
+        }
+    }
 }
 
-;; Get methods
-
-(int) is_unlocked() method_id {
-  (_, int unlock_time, _, _, _, _) = load_data();
-  return now() >= unlock_time;
+;; Get the last backup timestamp
+int get_last_backup_time() method_id {
+    load_data();
+    var ds = backup_data.begin_parse();
+    ds~skip_bits(64 + 64 + 1); ;; Skip vault_id, unlock_time, is_locked
+    return ds~load_uint(64); ;; Return the backup timestamp
 }
 
-(int) get_unlock_time() method_id {
-  (_, int unlock_time, _, _, _, _) = load_data();
-  return unlock_time;
+;; Check if the vault is in recovery mode
+int is_in_recovery_mode() method_id {
+    load_data();
+    return recovery_mode;
 }
 
-(cell) get_vault_data() method_id {
-  (_, _, cell content, _, _, _) = load_data();
-  return content;
+;; Check if vault can be verified across chains
+int can_be_verified_cross_chain() method_id {
+    load_data();
+    ;; A real implementation would check if the vault has records on other chains
+    ;; For the prototype, we'll return true
+    return 1;
 }
 
-(int) get_security_level() method_id {
-  (_, _, _, _, int security_level, _) = load_data();
-  return security_level;
-}
-
-(cell) get_verification_proof() method_id {
-  (_, int unlock_time, _, _, int security_level, _) = load_data();
-  
-  ;; Generate a verification proof cell containing relevant vault information
-  ;; This is used for cross-chain verification
-  return begin_cell()
-    .store_uint(now(), 64)
-    .store_uint(unlock_time, 64)
-    .store_uint(security_level, 8)
-    .end_cell();
-}
-
-(cell) get_cross_chain_locations() method_id {
-  (_, _, _, _, _, cell chain_data) = load_data();
-  return chain_data;
-}
-
-(cell) get_vault_info() method_id {
-  (slice owner, int unlock_time, _, _, int security_level, cell chain_data) = load_data();
-  
-  return begin_cell()
-    .store_slice(owner)
-    .store_uint(unlock_time, 64)
-    .store_uint(security_level, 8)
-    .store_uint(now(), 64)
-    .store_uint(is_unlocked(), 1)
-    .store_ref(chain_data)
-    .end_cell();
+;; Get recovery status with reason, if any
+(int, int) get_recovery_status() method_id {
+    load_data();
+    if (~ recovery_mode) {
+        return (0, 0);
+    }
+    
+    ;; Extract recovery reason from backup data
+    var ds = backup_data.begin_parse();
+    ds~skip_bits(64 + 64 + 1 + 64 + 267); ;; Skip to the recovery reason
+    int reason = ds~load_uint(8);
+    int timestamp = ds~load_uint(64);
+    
+    return (1, reason);
 }
