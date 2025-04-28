@@ -298,66 +298,96 @@ export default function WhitepaperPage() {
           
           <h2 id="premium-features">5. Premium Vault Features</h2>
           
-          <p>
-            CVT token holders gain access to premium vault features based on their token holdings
-            and staking tier. These features enhance security, functionality, and value of vaults:
-          </p>
-          
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 my-6">
-            <div className="bg-gradient-to-br from-[#0F0F0F] to-[#121212] p-5 rounded-lg border border-[#333]">
-              <h3 className="text-xl font-bold text-white mb-3">Advanced Security Features</h3>
-              
-              <ul className="space-y-3">
-                <li className="flex items-start gap-2">
-                  <span className="text-[#FF5AF7] mt-1 font-bold">•</span>
-                  <div>
-                    <p className="font-medium text-white">Multi-signature Authentication</p>
-                    <p className="text-gray-400">Require multiple authorized parties to approve vault access</p>
-                  </div>
-                </li>
-                <li className="flex items-start gap-2">
-                  <span className="text-[#FF5AF7] mt-1 font-bold">•</span>
-                  <div>
-                    <p className="font-medium text-white">Quantum-resistant Encryption</p>
-                    <p className="text-gray-400">Future-proof encryption algorithms secure against quantum computing attacks</p>
-                  </div>
-                </li>
-                <li className="flex items-start gap-2">
-                  <span className="text-[#FF5AF7] mt-1 font-bold">•</span>
-                  <div>
-                    <p className="font-medium text-white">AI Security Monitoring</p>
-                    <p className="text-gray-400">Advanced machine learning algorithms detect suspicious activity</p>
-                  </div>
-                </li>
-              </ul>
+          <div className="bg-gradient-to-br from-[#1D1D1D]/95 to-[#151515]/95 p-6 rounded-lg border border-[#333] backdrop-blur-md mb-10">
+            <div className="flex items-center gap-3 mb-6">
+              <div className="flex items-center justify-center h-12 w-12 rounded-full bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7]">
+                <svg className="h-6 w-6 text-white" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M22 11V9C22 4 20 2 15 2H9C4 2 2 4 2 9V15C2 20 4 22 9 22H10" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                  <path d="M18.8799 19.07C18.5999 19.07 18.3699 18.85 18.3699 18.56C18.3699 18.28 18.5899 18.05 18.8799 18.05C19.1699 18.05 19.3899 18.27 19.3899 18.56C19.3899 18.85 19.1699 19.07 18.8799 19.07Z" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                  <path d="M15.8799 16.93C15.5999 16.93 15.3799 16.71 15.3799 16.42C15.3799 16.14 15.5999 15.91 15.8799 15.91C16.1699 15.91 16.3899 16.13 16.3899 16.42C16.3899 16.71 16.1699 16.93 15.8799 16.93Z" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                  <path d="M21.8799 16.93C21.5999 16.93 21.3799 16.71 21.3799 16.42C21.3799 16.14 21.5999 15.91 21.8799 15.91C22.1699 15.91 22.3899 16.13 22.3899 16.42C22.3899 16.71 22.1699 16.93 21.8799 16.93Z" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                  <path d="M13.5 16.4L17.59 19.95C17.89 20.21 18.34 20.21 18.64 19.95L22 16.97" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
+              </div>
+              <h3 className="text-xl font-bold bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] bg-clip-text text-transparent">
+                Premium Vault Features
+              </h3>
             </div>
             
-            <div className="bg-gradient-to-br from-[#0F0F0F] to-[#121212] p-5 rounded-lg border border-[#333]">
-              <h3 className="text-xl font-bold text-white mb-3">Premium Vault Types</h3>
+            <p className="text-gray-300 mb-6">
+              CVT token holders gain access to premium vault features based on their token holdings
+              and staking tier. These features enhance security, functionality, and value of vaults
+              while offering unparalleled control over digital assets.
+            </p>
+          </div>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 my-8">
+            <div className="bg-gradient-to-br from-[#1D1D1D]/95 to-[#151515]/95 p-6 rounded-lg border border-[#333] backdrop-blur-md relative overflow-hidden">
+              <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-[#6B00D7]/20 to-transparent rounded-bl-full pointer-events-none"></div>
               
-              <ul className="space-y-3">
-                <li className="flex items-start gap-2">
-                  <span className="text-[#FF5AF7] mt-1 font-bold">•</span>
-                  <div>
-                    <p className="font-medium text-white">Geolocation Vaults</p>
-                    <p className="text-gray-400">Vaults that can only be accessed from specific geographic locations</p>
-                  </div>
-                </li>
-                <li className="flex items-start gap-2">
-                  <span className="text-[#FF5AF7] mt-1 font-bold">•</span>
-                  <div>
-                    <p className="font-medium text-white">Conditional Trigger Vaults</p>
-                    <p className="text-gray-400">Automated vault unlocking based on custom blockchain events</p>
-                  </div>
-                </li>
-                <li className="flex items-start gap-2">
-                  <span className="text-[#FF5AF7] mt-1 font-bold">•</span>
-                  <div>
-                    <p className="font-medium text-white">Multi-generational Transfer Vaults</p>
-                    <p className="text-gray-400">Structured inheritance vaults with customized access schedules</p>
-                  </div>
-                </li>
-              </ul>
+              <div className="flex items-center gap-3 mb-4">
+                <div className="flex items-center justify-center h-12 w-12 rounded-full bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7]">
+                  <svg className="h-6 w-6 text-white" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M12 22C17.5 22 22 17.5 22 12C22 6.5 17.5 2 12 2C6.5 2 2 6.5 2 12C2 17.5 6.5 22 12 22Z" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                    <path d="M12 16V10" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                    <path d="M12 8V7.8" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                  </svg>
+                </div>
+                <h3 className="text-xl font-bold bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] bg-clip-text text-transparent">
+                  Advanced Security Features
+                </h3>
+              </div>
+              
+              <div className="space-y-4 mt-2 relative z-10">
+                <div className="bg-[#191919] p-4 rounded-lg border border-[#333] hover:border-[#6B00D7]/50 transition-colors">
+                  <h4 className="font-medium text-white mb-1">Multi-signature Authentication</h4>
+                  <p className="text-gray-400 text-sm">Require multiple authorized parties to approve vault access, ensuring distributed security and preventing single points of failure</p>
+                </div>
+                
+                <div className="bg-[#191919] p-4 rounded-lg border border-[#333] hover:border-[#8F00FF]/50 transition-colors">
+                  <h4 className="font-medium text-white mb-1">Quantum-resistant Encryption</h4>
+                  <p className="text-gray-400 text-sm">Future-proof encryption algorithms secure against quantum computing attacks, designed to withstand decades of cryptographic advancement</p>
+                </div>
+                
+                <div className="bg-[#191919] p-4 rounded-lg border border-[#333] hover:border-[#FF5AF7]/50 transition-colors">
+                  <h4 className="font-medium text-white mb-1">AI Security Monitoring</h4>
+                  <p className="text-gray-400 text-sm">Advanced machine learning algorithms detect suspicious activity in real-time, with behavior analysis and anomaly detection capabilities</p>
+                </div>
+              </div>
+            </div>
+            
+            <div className="bg-gradient-to-br from-[#1D1D1D]/95 to-[#151515]/95 p-6 rounded-lg border border-[#333] backdrop-blur-md relative overflow-hidden">
+              <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-[#FF5AF7]/20 to-transparent rounded-bl-full pointer-events-none"></div>
+              
+              <div className="flex items-center gap-3 mb-4">
+                <div className="flex items-center justify-center h-12 w-12 rounded-full bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7]">
+                  <svg className="h-6 w-6 text-white" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M9 22H15C20 22 22 20 22 15V9C22 4 20 2 15 2H9C4 2 2 4 2 9V15C2 20 4 22 9 22Z" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                    <path d="M12 15.5C13.933 15.5 15.5 13.933 15.5 12C15.5 10.067 13.933 8.5 12 8.5C10.067 8.5 8.5 10.067 8.5 12C8.5 13.933 10.067 15.5 12 15.5Z" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                    <path d="M18.5 7.5H18.51" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                  </svg>
+                </div>
+                <h3 className="text-xl font-bold bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] bg-clip-text text-transparent">
+                  Premium Vault Types
+                </h3>
+              </div>
+              
+              <div className="space-y-4 mt-2 relative z-10">
+                <div className="bg-[#191919] p-4 rounded-lg border border-[#333] hover:border-[#6B00D7]/50 transition-colors">
+                  <h4 className="font-medium text-white mb-1">Geolocation Vaults</h4>
+                  <p className="text-gray-400 text-sm">Vaults that can only be accessed from specific geographic locations, adding a physical security layer to digital assets</p>
+                </div>
+                
+                <div className="bg-[#191919] p-4 rounded-lg border border-[#333] hover:border-[#8F00FF]/50 transition-colors">
+                  <h4 className="font-medium text-white mb-1">Conditional Trigger Vaults</h4>
+                  <p className="text-gray-400 text-sm">Automated vault unlocking based on custom blockchain events, price thresholds, or smart contract conditions</p>
+                </div>
+                
+                <div className="bg-[#191919] p-4 rounded-lg border border-[#333] hover:border-[#FF5AF7]/50 transition-colors">
+                  <h4 className="font-medium text-white mb-1">Multi-generational Transfer Vaults</h4>
+                  <p className="text-gray-400 text-sm">Structured inheritance vaults with customized access schedules, ideal for family wealth preservation across generations</p>
+                </div>
+              </div>
             </div>
           </div>
           
@@ -384,112 +414,246 @@ export default function WhitepaperPage() {
           
           <h2 id="staking-tiers">6. Staking Tiers & Benefits</h2>
           
-          <p>
-            The CVT staking system implements three progressive tiers with increasing benefits.
-            Higher tiers require larger token stakes but provide substantially better platform
-            benefits and reduced fees:
-          </p>
+          <div className="bg-gradient-to-br from-[#1D1D1D]/95 to-[#151515]/95 p-6 rounded-lg border border-[#333] backdrop-blur-md mb-10">
+            <div className="flex items-center gap-3 mb-6">
+              <div className="flex items-center justify-center h-12 w-12 rounded-full bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7]">
+                <svg className="h-6 w-6 text-white" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M19.3 7.9L17.2 9.4C17.9 11.1 17.9 13 17.2 14.6L19.3 16.1C20.5 13.8 20.5 10.3 19.3 7.9Z" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                  <path d="M15.5 12C15.5 13.3807 14.3807 14.5 13 14.5C11.6193 14.5 10.5 13.3807 10.5 12C10.5 10.6193 11.6193 9.5 13 9.5C14.3807 9.5 15.5 10.6193 15.5 12Z" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                  <path d="M15.5 4.30001V5.50001C15.5 6.10001 15.1 7.30001 14.5 8.00001L13 7.20001C14 6.60001 15 5.40001 15.5 4.30001Z" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                  <path d="M13 16.8L14.5 16C15.1 16.7 15.5 17.9 15.5 18.5V19.7" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                  <path d="M10.5 4.30001V5.50001C10.5 6.10001 10.9 7.30001 11.5 8.00001L13 7.20001C12 6.60001 11 5.40001 10.5 4.30001Z" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                  <path d="M13 16.8L11.5 16C10.9 16.7 10.5 17.9 10.5 18.5V19.7" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                  <path d="M8.8 7.9L6.7 9.4C7.4 11.1 7.4 13 6.7 14.6L8.8 16.1C10 13.8 10 10.3 8.8 7.9Z" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
+              </div>
+              <h3 className="text-xl font-bold bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] bg-clip-text text-transparent">
+                Staking Tiers & Benefits
+              </h3>
+            </div>
+            
+            <p className="text-gray-300 mb-6">
+              The CVT staking system implements three progressive tiers with increasing benefits.
+              Higher tiers require larger token stakes but provide substantially better platform
+              benefits and reduced fees. Staking is the cornerstone of the Chronos Vault ecosystem,
+              aligning user incentives with platform growth.
+            </p>
+          </div>
           
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 my-6">
-            <div className="bg-gradient-to-br from-[#0A0A0A] to-[#121212] p-5 rounded-lg border border-[#333] relative overflow-hidden">
-              <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-br from-[#6B00D7]/20 to-transparent rounded-bl-full"></div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 my-8">
+            <div className="bg-gradient-to-br from-[#1D1D1D]/95 to-[#151515]/95 p-6 rounded-lg border border-[#333] backdrop-blur-md relative overflow-hidden group hover:border-[#6B00D7]/50 transition-colors">
+              <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-[#6B00D7]/20 to-transparent rounded-bl-full pointer-events-none"></div>
+              <div className="absolute inset-0 bg-gradient-to-b from-[#6B00D7]/0 via-transparent to-[#6B00D7]/5 opacity-0 group-hover:opacity-100 transition-opacity"></div>
               
-              <h3 className="text-xl font-bold text-white mb-2">Vault Guardian</h3>
-              <p className="text-[#FF5AF7] font-medium mb-4">1,000+ CVT</p>
+              <div className="flex items-center gap-3 mb-4 relative z-10">
+                <div className="flex items-center justify-center h-12 w-12 rounded-full bg-gradient-to-br from-[#6B00D7] to-[#8F00FF]">
+                  <svg className="h-6 w-6 text-white" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M9 22H15C20 22 22 20 22 15V9C22 4 20 2 15 2H9C4 2 2 4 2 9V15C2 20 4 22 9 22Z" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                    <path d="M9 10C10.1046 10 11 9.10457 11 8C11 6.89543 10.1046 6 9 6C7.89543 6 7 6.89543 7 8C7 9.10457 7.89543 10 9 10Z" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                    <path d="M2.67999 18.95L7.59999 15.64C8.38999 15.11 9.52999 15.17 10.24 15.78L10.57 16.07C11.35 16.74 12.61 16.74 13.39 16.07L17.55 12.5C18.33 11.83 19.59 11.83 20.37 12.5L22 13.9" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                  </svg>
+                </div>
+                <h3 className="text-xl font-bold bg-gradient-to-r from-[#6B00D7] to-[#8F00FF] bg-clip-text text-transparent">
+                  Vault Guardian
+                </h3>
+              </div>
               
-              <ul className="space-y-2">
-                <li className="flex items-start gap-2">
-                  <span className="text-[#FF5AF7] mt-0.5">✓</span>
-                  <p className="text-gray-300">75% reduction in platform fees</p>
-                </li>
-                <li className="flex items-start gap-2">
-                  <span className="text-[#FF5AF7] mt-0.5">✓</span>
-                  <p className="text-gray-300">2x voting power in governance</p>
-                </li>
-                <li className="flex items-start gap-2">
-                  <span className="text-[#FF5AF7] mt-0.5">✓</span>
-                  <p className="text-gray-300">Access to premium investment strategies</p>
-                </li>
-                <li className="flex items-start gap-2">
-                  <span className="text-[#FF5AF7] mt-0.5">✓</span>
-                  <p className="text-gray-300">Beta feature access</p>
-                </li>
-              </ul>
+              <div className="inline-block bg-[#6B00D7]/10 px-4 py-2 rounded-full border border-[#6B00D7]/30 mb-5 relative z-10">
+                <p className="font-semibold text-white">1,000+ CVT</p>
+              </div>
               
-              <div className="mt-4 text-sm text-gray-400">
-                Minimum stake duration: 6 months
+              <div className="space-y-3 relative z-10">
+                <div className="flex items-center gap-2 text-white">
+                  <div className="flex-shrink-0 w-6 h-6 rounded-full bg-[#6B00D7]/20 flex items-center justify-center">
+                    <svg className="h-4 w-4 text-[#FF5AF7]" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M5 12L9 16L19 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                    </svg>
+                  </div>
+                  <span>75% reduction in platform fees</span>
+                </div>
+                
+                <div className="flex items-center gap-2 text-white">
+                  <div className="flex-shrink-0 w-6 h-6 rounded-full bg-[#6B00D7]/20 flex items-center justify-center">
+                    <svg className="h-4 w-4 text-[#FF5AF7]" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M5 12L9 16L19 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                    </svg>
+                  </div>
+                  <span>2x voting power in governance</span>
+                </div>
+                
+                <div className="flex items-center gap-2 text-white">
+                  <div className="flex-shrink-0 w-6 h-6 rounded-full bg-[#6B00D7]/20 flex items-center justify-center">
+                    <svg className="h-4 w-4 text-[#FF5AF7]" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M5 12L9 16L19 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                    </svg>
+                  </div>
+                  <span>Premium investment strategies</span>
+                </div>
+                
+                <div className="flex items-center gap-2 text-white">
+                  <div className="flex-shrink-0 w-6 h-6 rounded-full bg-[#6B00D7]/20 flex items-center justify-center">
+                    <svg className="h-4 w-4 text-[#FF5AF7]" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M5 12L9 16L19 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                    </svg>
+                  </div>
+                  <span>Beta feature access</span>
+                </div>
+              </div>
+              
+              <div className="mt-6 pt-4 border-t border-[#333] text-center">
+                <span className="text-sm font-medium bg-gradient-to-r from-[#6B00D7] to-[#8F00FF] bg-clip-text text-transparent">
+                  Minimum stake duration: 6 months
+                </span>
               </div>
             </div>
             
-            <div className="bg-gradient-to-br from-[#0A0A0A] to-[#121212] p-5 rounded-lg border border-[#333] relative overflow-hidden">
-              <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-br from-[#8F00FF]/20 to-transparent rounded-bl-full"></div>
+            <div className="bg-gradient-to-br from-[#1D1D1D]/95 to-[#151515]/95 p-6 rounded-lg border border-[#333] backdrop-blur-md relative overflow-hidden group hover:border-[#8F00FF]/50 transition-colors">
+              <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-[#8F00FF]/20 to-transparent rounded-bl-full pointer-events-none"></div>
+              <div className="absolute inset-0 bg-gradient-to-b from-[#8F00FF]/0 via-transparent to-[#8F00FF]/5 opacity-0 group-hover:opacity-100 transition-opacity"></div>
               
-              <h3 className="text-xl font-bold text-white mb-2">Vault Architect</h3>
-              <p className="text-[#8F00FF] font-medium mb-4">10,000+ CVT</p>
+              <div className="flex items-center gap-3 mb-4 relative z-10">
+                <div className="flex items-center justify-center h-12 w-12 rounded-full bg-gradient-to-br from-[#8F00FF] to-[#A040FF]">
+                  <svg className="h-6 w-6 text-white" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M9 22H15C20 22 22 20 22 15V9C22 4 20 2 15 2H9C4 2 2 4 2 9V15C2 20 4 22 9 22Z" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                    <path d="M9 10C10.1046 10 11 9.10457 11 8C11 6.89543 10.1046 6 9 6C7.89543 6 7 6.89543 7 8C7 9.10457 7.89543 10 9 10Z" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                    <path d="M2.67999 18.95L7.59999 15.64C8.38999 15.11 9.52999 15.17 10.24 15.78L10.57 16.07C11.35 16.74 12.61 16.74 13.39 16.07L17.55 12.5C18.33 11.83 19.59 11.83 20.37 12.5L22 13.9" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                  </svg>
+                </div>
+                <h3 className="text-xl font-bold bg-gradient-to-r from-[#8F00FF] to-[#A040FF] bg-clip-text text-transparent">
+                  Vault Architect
+                </h3>
+              </div>
               
-              <ul className="space-y-2">
-                <li className="flex items-start gap-2">
-                  <span className="text-[#8F00FF] mt-0.5">✓</span>
-                  <p className="text-gray-300">90% reduction in platform fees</p>
-                </li>
-                <li className="flex items-start gap-2">
-                  <span className="text-[#8F00FF] mt-0.5">✓</span>
-                  <p className="text-gray-300">5x voting power in governance</p>
-                </li>
-                <li className="flex items-start gap-2">
-                  <span className="text-[#8F00FF] mt-0.5">✓</span>
-                  <p className="text-gray-300">2% of platform fees distributed to stakers</p>
-                </li>
-                <li className="flex items-start gap-2">
-                  <span className="text-[#8F00FF] mt-0.5">✓</span>
-                  <p className="text-gray-300">Priority access to new features</p>
-                </li>
-                <li className="flex items-start gap-2">
-                  <span className="text-[#8F00FF] mt-0.5">✓</span>
-                  <p className="text-gray-300">Enhanced security verification</p>
-                </li>
-              </ul>
+              <div className="inline-block bg-[#8F00FF]/10 px-4 py-2 rounded-full border border-[#8F00FF]/30 mb-5 relative z-10">
+                <p className="font-semibold text-white">10,000+ CVT</p>
+              </div>
               
-              <div className="mt-4 text-sm text-gray-400">
-                Minimum stake duration: 1 year
+              <div className="space-y-3 relative z-10">
+                <div className="flex items-center gap-2 text-white">
+                  <div className="flex-shrink-0 w-6 h-6 rounded-full bg-[#8F00FF]/20 flex items-center justify-center">
+                    <svg className="h-4 w-4 text-[#A040FF]" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M5 12L9 16L19 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                    </svg>
+                  </div>
+                  <span>90% reduction in platform fees</span>
+                </div>
+                
+                <div className="flex items-center gap-2 text-white">
+                  <div className="flex-shrink-0 w-6 h-6 rounded-full bg-[#8F00FF]/20 flex items-center justify-center">
+                    <svg className="h-4 w-4 text-[#A040FF]" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M5 12L9 16L19 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                    </svg>
+                  </div>
+                  <span>5x voting power in governance</span>
+                </div>
+                
+                <div className="flex items-center gap-2 text-white">
+                  <div className="flex-shrink-0 w-6 h-6 rounded-full bg-[#8F00FF]/20 flex items-center justify-center">
+                    <svg className="h-4 w-4 text-[#A040FF]" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M5 12L9 16L19 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                    </svg>
+                  </div>
+                  <span>2% of platform fees distributed</span>
+                </div>
+                
+                <div className="flex items-center gap-2 text-white">
+                  <div className="flex-shrink-0 w-6 h-6 rounded-full bg-[#8F00FF]/20 flex items-center justify-center">
+                    <svg className="h-4 w-4 text-[#A040FF]" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M5 12L9 16L19 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                    </svg>
+                  </div>
+                  <span>Priority access to new features</span>
+                </div>
+                
+                <div className="flex items-center gap-2 text-white">
+                  <div className="flex-shrink-0 w-6 h-6 rounded-full bg-[#8F00FF]/20 flex items-center justify-center">
+                    <svg className="h-4 w-4 text-[#A040FF]" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M5 12L9 16L19 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                    </svg>
+                  </div>
+                  <span>Enhanced security verification</span>
+                </div>
+              </div>
+              
+              <div className="mt-6 pt-4 border-t border-[#333] text-center">
+                <span className="text-sm font-medium bg-gradient-to-r from-[#8F00FF] to-[#A040FF] bg-clip-text text-transparent">
+                  Minimum stake duration: 1 year
+                </span>
               </div>
             </div>
             
-            <div className="bg-gradient-to-br from-[#0A0A0A] to-[#121212] p-5 rounded-lg border border-[#333] relative overflow-hidden">
-              <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-br from-[#FF5AF7]/20 to-transparent rounded-bl-full"></div>
+            <div className="bg-gradient-to-br from-[#1D1D1D]/95 to-[#151515]/95 p-6 rounded-lg border border-[#333] backdrop-blur-md relative overflow-hidden group hover:border-[#FF5AF7]/50 transition-colors">
+              <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-[#FF5AF7]/20 to-transparent rounded-bl-full pointer-events-none"></div>
+              <div className="absolute inset-0 bg-gradient-to-b from-[#FF5AF7]/0 via-transparent to-[#FF5AF7]/5 opacity-0 group-hover:opacity-100 transition-opacity"></div>
               
-              <h3 className="text-xl font-bold text-white mb-2">Vault Sovereign</h3>
-              <p className="text-[#FF5AF7] font-medium mb-4">100,000+ CVT</p>
+              <div className="flex items-center gap-3 mb-4 relative z-10">
+                <div className="flex items-center justify-center h-12 w-12 rounded-full bg-gradient-to-br from-[#B060FF] to-[#FF5AF7]">
+                  <svg className="h-6 w-6 text-white" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M9 22H15C20 22 22 20 22 15V9C22 4 20 2 15 2H9C4 2 2 4 2 9V15C2 20 4 22 9 22Z" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                    <path d="M9 10C10.1046 10 11 9.10457 11 8C11 6.89543 10.1046 6 9 6C7.89543 6 7 6.89543 7 8C7 9.10457 7.89543 10 9 10Z" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                    <path d="M2.67999 18.95L7.59999 15.64C8.38999 15.11 9.52999 15.17 10.24 15.78L10.57 16.07C11.35 16.74 12.61 16.74 13.39 16.07L17.55 12.5C18.33 11.83 19.59 11.83 20.37 12.5L22 13.9" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                  </svg>
+                </div>
+                <h3 className="text-xl font-bold bg-gradient-to-r from-[#B060FF] to-[#FF5AF7] bg-clip-text text-transparent">
+                  Vault Sovereign
+                </h3>
+              </div>
               
-              <ul className="space-y-2">
-                <li className="flex items-start gap-2">
-                  <span className="text-[#FF5AF7] mt-0.5">✓</span>
-                  <p className="text-gray-300">100% reduction in platform fees</p>
-                </li>
-                <li className="flex items-start gap-2">
-                  <span className="text-[#FF5AF7] mt-0.5">✓</span>
-                  <p className="text-gray-300">25x voting power in governance</p>
-                </li>
-                <li className="flex items-start gap-2">
-                  <span className="text-[#FF5AF7] mt-0.5">✓</span>
-                  <p className="text-gray-300">5% of platform fees distributed to stakers</p>
-                </li>
-                <li className="flex items-start gap-2">
-                  <span className="text-[#FF5AF7] mt-0.5">✓</span>
-                  <p className="text-gray-300">Direct treasury voting rights</p>
-                </li>
-                <li className="flex items-start gap-2">
-                  <span className="text-[#FF5AF7] mt-0.5">✓</span>
-                  <p className="text-gray-300">Custom API/integration options</p>
-                </li>
-                <li className="flex items-start gap-2">
-                  <span className="text-[#FF5AF7] mt-0.5">✓</span>
-                  <p className="text-gray-300">Military-grade security features</p>
-                </li>
-              </ul>
+              <div className="inline-block bg-[#FF5AF7]/10 px-4 py-2 rounded-full border border-[#FF5AF7]/30 mb-5 relative z-10">
+                <p className="font-semibold text-white">100,000+ CVT</p>
+              </div>
               
-              <div className="mt-4 text-sm text-gray-400">
-                Minimum stake duration: 3 years
+              <div className="space-y-3 relative z-10">
+                <div className="flex items-center gap-2 text-white">
+                  <div className="flex-shrink-0 w-6 h-6 rounded-full bg-[#FF5AF7]/20 flex items-center justify-center">
+                    <svg className="h-4 w-4 text-[#FF5AF7]" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M5 12L9 16L19 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                    </svg>
+                  </div>
+                  <span>100% reduction in platform fees</span>
+                </div>
+                
+                <div className="flex items-center gap-2 text-white">
+                  <div className="flex-shrink-0 w-6 h-6 rounded-full bg-[#FF5AF7]/20 flex items-center justify-center">
+                    <svg className="h-4 w-4 text-[#FF5AF7]" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M5 12L9 16L19 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                    </svg>
+                  </div>
+                  <span>25x voting power in governance</span>
+                </div>
+                
+                <div className="flex items-center gap-2 text-white">
+                  <div className="flex-shrink-0 w-6 h-6 rounded-full bg-[#FF5AF7]/20 flex items-center justify-center">
+                    <svg className="h-4 w-4 text-[#FF5AF7]" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M5 12L9 16L19 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                    </svg>
+                  </div>
+                  <span>5% of platform fees distributed</span>
+                </div>
+                
+                <div className="flex items-center gap-2 text-white">
+                  <div className="flex-shrink-0 w-6 h-6 rounded-full bg-[#FF5AF7]/20 flex items-center justify-center">
+                    <svg className="h-4 w-4 text-[#FF5AF7]" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M5 12L9 16L19 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                    </svg>
+                  </div>
+                  <span>Direct treasury voting rights</span>
+                </div>
+                
+                <div className="flex items-center gap-2 text-white">
+                  <div className="flex-shrink-0 w-6 h-6 rounded-full bg-[#FF5AF7]/20 flex items-center justify-center">
+                    <svg className="h-4 w-4 text-[#FF5AF7]" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M5 12L9 16L19 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                    </svg>
+                  </div>
+                  <span>Custom API/integration options</span>
+                </div>
+              </div>
+              
+              <div className="mt-6 pt-4 border-t border-[#333] text-center">
+                <span className="text-sm font-medium bg-gradient-to-r from-[#B060FF] to-[#FF5AF7] bg-clip-text text-transparent">
+                  Minimum stake duration: 3 years
+                </span>
               </div>
             </div>
           </div>
