@@ -19,22 +19,90 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { ArrowRight, AlertCircle, CheckCircle, Loader2 } from "lucide-react";
-import { useMultiChain, BlockchainIcon } from "@/contexts/multi-chain-context";
+import { useMultiChain } from "@/contexts/multi-chain-context";
+import { SiTon, SiSolana, SiEthereum, SiBitcoin } from "react-icons/si";
 import { bridgeService } from "@/lib/cross-chain/bridge";
 import { liquidityOptimizer } from "@/lib/cross-chain/LiquidityOptimizer";
-import { BlockchainType, TransferPriority } from '@/lib/cross-chain/interfaces';
+import { TransferPriority, BlockchainType as BridgeChainType } from '@/lib/cross-chain/interfaces';
+
+// Bridge adapter to convert between our ChainType and the bridge's BlockchainType
+const bridgeAdapter = {
+  toChainType(bridgeType: BridgeChainType): ChainType {
+    switch(bridgeType) {
+      case 'TON': return 'TON';
+      case 'SOL': return 'SOLANA';
+      case 'ETH': return 'ETHEREUM';
+      case 'BNB': return 'BITCOIN'; // For now mapping to Bitcoin
+      case 'MATIC': return 'BITCOIN'; // For now mapping to Bitcoin
+      default: return 'TON';
+    }
+  },
+  
+  toBridgeType(chainType: ChainType): BridgeChainType {
+    switch(chainType) {
+      case 'TON': return 'TON';
+      case 'SOLANA': return 'SOL';
+      case 'ETHEREUM': return 'ETH';
+      case 'BITCOIN': return 'BNB'; // For now mapping to BNB
+      default: return 'TON';
+    }
+  }
+};
 import { useAuthContext } from '@/contexts/auth-context';
 import { useToast } from '@/hooks/use-toast';
 
+// Define our chain types locally to avoid conflicts
+type ChainType = 'TON' | 'SOLANA' | 'ETHEREUM' | 'BITCOIN';
+
+// Local BlockchainIcon component
+const BlockchainIcon: React.FC<{ chainId: ChainType, size?: 'sm' | 'md' | 'lg', className?: string }> = ({ 
+  chainId, 
+  size = 'md',
+  className = ''
+}) => {
+  const sizeMap = {
+    sm: 'h-4 w-4',
+    md: 'h-6 w-6',
+    lg: 'h-8 w-8'
+  };
+  
+  const sizeClass = sizeMap[size];
+  const colorClass = 
+    chainId === 'TON' ? 'text-teal-500' : 
+    chainId === 'SOLANA' ? 'text-purple-500' :
+    chainId === 'ETHEREUM' ? 'text-blue-500' :
+    chainId === 'BITCOIN' ? 'text-orange-500' : '';
+                    
+  switch (chainId) {
+    case 'TON':
+      return <SiTon className={`${sizeClass} ${colorClass} ${className}`} />;
+    case 'SOLANA':
+      return <SiSolana className={`${sizeClass} ${colorClass} ${className}`} />;
+    case 'ETHEREUM':
+      return <SiEthereum className={`${sizeClass} ${colorClass} ${className}`} />;
+    case 'BITCOIN':
+      return <SiBitcoin className={`${sizeClass} ${colorClass} ${className}`} />;
+    default:
+      return <div className={`${sizeClass} ${className}`}>{chainId}</div>;
+  }
+};
+
 // Cross-Chain Transfer Form and Execution Component
 const CrossChainTransfer: React.FC = () => {
-  const { currentChain, switchChain } = useMultiChain();
+  const { activeChain, setActiveChain, connectChain } = useMultiChain();
   const { isAuthenticated } = useAuthContext();
   const { toast } = useToast();
   
+  // Convert activeChain to ChainType
+  const currentChain: ChainType = 
+    activeChain === 'ton' ? 'TON' :
+    activeChain === 'solana' ? 'SOLANA' :
+    activeChain === 'ethereum' ? 'ETHEREUM' :
+    activeChain === 'bitcoin' ? 'BITCOIN' : 'TON';
+  
   // Form state
-  const [sourceChain, setSourceChain] = useState<BlockchainType>(currentChain);
-  const [targetChain, setTargetChain] = useState<BlockchainType>('SOL');
+  const [sourceChain, setSourceChain] = useState<ChainType>('TON');
+  const [targetChain, setTargetChain] = useState<ChainType>('SOLANA');
   const [asset, setAsset] = useState('CVT');
   const [amount, setAmount] = useState('');
   const [recipient, setRecipient] = useState('');
@@ -48,9 +116,17 @@ const CrossChainTransfer: React.FC = () => {
     const loadRoutes = async () => {
       if (sourceChain && targetChain && asset && amount && !isNaN(parseFloat(amount))) {
         try {
+          // Convert ChainType to interface BlockchainType format
+          const sourceBlockchain = sourceChain === 'TON' ? 'TON' : 
+                                sourceChain === 'SOLANA' ? 'SOL' :
+                                sourceChain === 'ETHEREUM' ? 'ETH' : 'BTC';
+          const targetBlockchain = targetChain === 'TON' ? 'TON' : 
+                                targetChain === 'SOLANA' ? 'SOL' :
+                                targetChain === 'ETHEREUM' ? 'ETH' : 'BTC';
+          
           const routes = await liquidityOptimizer.findOptimalRoutes(
-            sourceChain,
-            targetChain,
+            sourceBlockchain as any,
+            targetBlockchain as any,
             asset,
             asset, // Destination asset same as source for now
             parseFloat(amount),
@@ -71,16 +147,26 @@ const CrossChainTransfer: React.FC = () => {
   }, [sourceChain, targetChain, asset, amount, priority]);
   
   // Handle chain switching
-  const handleSourceChainChange = async (newChain: BlockchainType) => {
+  const handleSourceChainChange = async (newChain: ChainType) => {
     setSourceChain(newChain);
-    await switchChain(newChain);
+    
+    // Convert ChainType to internal blockchain type
+    let internalChain = 
+      newChain === 'TON' ? 'ton' : 
+      newChain === 'SOLANA' ? 'solana' :
+      newChain === 'ETHEREUM' ? 'ethereum' :
+      newChain === 'BITCOIN' ? 'bitcoin' : 'ton';
+      
+    // Set the active chain in the MultiChainContext
+    setActiveChain(internalChain as any);
+    await connectChain(internalChain as any);
     
     // If target chain is same as source, choose a different target
     if (newChain === targetChain) {
       const chains = bridgeService.getSupportedChains();
       const otherChain = chains.find(chain => chain !== newChain);
       if (otherChain) {
-        setTargetChain(otherChain);
+        setTargetChain(otherChain as ChainType);
       }
     }
   };
@@ -170,7 +256,7 @@ const CrossChainTransfer: React.FC = () => {
                 <Label htmlFor="sourceChain">Source Chain</Label>
                 <Select 
                   value={sourceChain} 
-                  onValueChange={(value) => handleSourceChainChange(value as BlockchainType)}
+                  onValueChange={(value) => handleSourceChainChange(value as ChainType)}
                 >
                   <SelectTrigger id="sourceChain" className="bg-gray-900/50 border-purple-900/30">
                     <SelectValue placeholder="Select source blockchain" />
@@ -192,7 +278,7 @@ const CrossChainTransfer: React.FC = () => {
                 <Label htmlFor="targetChain">Target Chain</Label>
                 <Select 
                   value={targetChain} 
-                  onValueChange={(value) => setTargetChain(value as BlockchainType)}
+                  onValueChange={(value) => setTargetChain(value as ChainType)}
                 >
                   <SelectTrigger id="targetChain" className="bg-gray-900/50 border-purple-900/30">
                     <SelectValue placeholder="Select target blockchain" />
