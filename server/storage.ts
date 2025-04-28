@@ -80,7 +80,11 @@ export class MemStorage implements IStorage {
 
   async createUser(insertUser: InsertUser): Promise<User> {
     const id = this.currentUserId++;
-    const user: User = { ...insertUser, id };
+    const user: User = { 
+      ...insertUser, 
+      id,
+      walletAddress: insertUser.walletAddress || null
+    };
     this.users.set(id, user);
     return user;
   }
@@ -102,7 +106,10 @@ export class MemStorage implements IStorage {
       ...insertVault, 
       id, 
       createdAt: new Date(),
-      isLocked: true
+      isLocked: true,
+      userId: insertVault.userId ?? null,
+      description: insertVault.description ?? null,
+      metadata: insertVault.metadata ?? {}
     };
     this.vaults.set(id, vault);
     return vault;
@@ -164,6 +171,10 @@ export class MemStorage implements IStorage {
     const attachment: Attachment = { 
       ...insertAttachment, 
       id, 
+      description: insertAttachment.description ?? null,
+      thumbnailUrl: insertAttachment.thumbnailUrl ?? null,
+      isEncrypted: insertAttachment.isEncrypted ?? true,
+      metadata: insertAttachment.metadata ?? {},
       uploadedAt: new Date() 
     };
     this.attachments.set(id, attachment);

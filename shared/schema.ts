@@ -63,6 +63,7 @@ export const insertVaultSchema = createInsertSchema(vaults).pick({
   assetAmount: true,
   timeLockPeriod: true,
   unlockDate: true,
+  metadata: true,
 });
 
 export const insertBeneficiarySchema = createInsertSchema(beneficiaries).pick({

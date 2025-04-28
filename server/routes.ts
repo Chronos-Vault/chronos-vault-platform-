@@ -4,7 +4,8 @@ import { storage } from "./storage";
 import { 
   insertUserSchema, 
   insertVaultSchema, 
-  insertBeneficiarySchema
+  insertBeneficiarySchema,
+  insertAttachmentSchema
 } from "@shared/schema";
 import { ZodError } from "zod";
 
@@ -260,6 +261,104 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(404).json({ message: "Beneficiary not found" });
       }
 
+      res.status(204).send();
+    } catch (error) {
+      handleError(res, error);
+    }
+  });
+
+  // Attachment routes
+  
+  // Get all attachments for a vault
+  app.get("/api/vaults/:vaultId/attachments", async (req: Request, res: Response) => {
+    try {
+      const vaultId = parseInt(req.params.vaultId);
+      if (isNaN(vaultId)) {
+        return res.status(400).json({ message: "Invalid vault ID" });
+      }
+
+      const vault = await storage.getVault(vaultId);
+      if (!vault) {
+        return res.status(404).json({ message: "Vault not found" });
+      }
+
+      const attachments = await storage.getAttachmentsByVault(vaultId);
+      res.json(attachments);
+    } catch (error) {
+      handleError(res, error);
+    }
+  });
+  
+  // Get a specific attachment
+  app.get("/api/attachments/:id", async (req: Request, res: Response) => {
+    try {
+      const id = parseInt(req.params.id);
+      if (isNaN(id)) {
+        return res.status(400).json({ message: "Invalid attachment ID" });
+      }
+
+      const attachment = await storage.getAttachment(id);
+      if (!attachment) {
+        return res.status(404).json({ message: "Attachment not found" });
+      }
+      
+      res.json(attachment);
+    } catch (error) {
+      handleError(res, error);
+    }
+  });
+  
+  // Create a new attachment
+  app.post("/api/attachments", async (req: Request, res: Response) => {
+    try {
+      const attachmentData = insertAttachmentSchema.parse(req.body);
+      
+      // Verify that vault exists
+      const vault = await storage.getVault(attachmentData.vaultId);
+      if (!vault) {
+        return res.status(404).json({ message: "Vault not found" });
+      }
+      
+      const attachment = await storage.createAttachment(attachmentData);
+      res.status(201).json(attachment);
+    } catch (error) {
+      handleError(res, error);
+    }
+  });
+  
+  // Update an attachment
+  app.put("/api/attachments/:id", async (req: Request, res: Response) => {
+    try {
+      const id = parseInt(req.params.id);
+      if (isNaN(id)) {
+        return res.status(400).json({ message: "Invalid attachment ID" });
+      }
+      
+      const attachment = await storage.getAttachment(id);
+      if (!attachment) {
+        return res.status(404).json({ message: "Attachment not found" });
+      }
+      
+      const updatedAttachment = await storage.updateAttachment(id, req.body);
+      res.json(updatedAttachment);
+    } catch (error) {
+      handleError(res, error);
+    }
+  });
+  
+  // Delete an attachment
+  app.delete("/api/attachments/:id", async (req: Request, res: Response) => {
+    try {
+      const id = parseInt(req.params.id);
+      if (isNaN(id)) {
+        return res.status(400).json({ message: "Invalid attachment ID" });
+      }
+      
+      const success = await storage.deleteAttachment(id);
+      if (!success) {
+        return res.status(404).json({ message: "Attachment not found" });
+      }
+      
       res.status(204).send();
     } catch (error) {
       handleError(res, error);
