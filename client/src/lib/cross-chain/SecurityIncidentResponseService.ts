@@ -4,6 +4,8 @@
  * This service handles security incidents across different blockchains,
  * providing incident tracking, notification, and resolution functions.
  * Implements automated response actions based on incident severity and type.
+ * Enhanced with automated backup trigger system that responds to security incidents
+ * and cross-chain correlations with proactive data protection.
  */
 
 import { BlockchainType } from './interfaces';
@@ -577,10 +579,13 @@ class SecurityIncidentResponseService {
     
     // If any custom rules matched, use those. Otherwise, apply default logic based on severity
     if (actions.length === 0) {
-      // Default actions based on automation level and severity
+      // Enhanced automated backup trigger system based on security severity and cross-chain correlation
       switch (incident.severity) {
         case 'critical':
           actions.push('notify_validators');
+          
+          // Always trigger backup for critical incidents (this is new - ensuring we always backup for critical issues)
+          actions.push('trigger_backup');
           
           if (options.automationLevel === 'moderate' || options.automationLevel === 'aggressive') {
             actions.push('escalate_to_multi_sig');
@@ -590,7 +595,11 @@ class SecurityIncidentResponseService {
             if (options.freezeAssets) {
               actions.push('freeze_assets');
             }
-            actions.push('trigger_backup');
+            
+            // For critical incidents on data_inconsistency, trigger cross-chain backup as well
+            if (incident.type === 'data_inconsistency' || incident.type === 'multi_sig_failure') {
+              actions.push('trigger_cross_chain_backup');
+            }
           }
           break;
           
@@ -599,24 +608,89 @@ class SecurityIncidentResponseService {
             actions.push('notify_validators');
           }
           
+          // For high severity, trigger backup in both moderate and aggressive modes (more proactive)
+          if (options.automationLevel === 'moderate' || options.automationLevel === 'aggressive') {
+            actions.push('trigger_backup');
+          }
+          
           if (options.automationLevel === 'aggressive') {
             actions.push('escalate_to_multi_sig');
-            actions.push('trigger_backup');
+            
+            // For high severity incidents involving suspected fraud, backup on all chains for extra protection
+            if (incident.type === 'suspected_fraud' || incident.type === 'unauthorized_access') {
+              actions.push('trigger_cross_chain_backup');
+            }
           }
           break;
           
         case 'medium':
           if (options.automationLevel === 'aggressive') {
             actions.push('notify_validators');
+            
+            // Medium severity incidents involving certain types should always trigger backups
+            if (incident.type === 'suspected_fraud' || 
+                incident.type === 'unauthorized_access' || 
+                incident.type === 'protocol_vulnerability') {
+              actions.push('trigger_backup');
+            }
+          } else if (options.automationLevel === 'moderate' && 
+                    (incident.type === 'suspected_fraud' || incident.type === 'unauthorized_access')) {
+            // Even in moderate mode, suspicious activities should trigger backups (more proactive)
             actions.push('trigger_backup');
           }
           break;
           
         case 'low':
+          // For low severity, we now take some action even in moderate mode
+          if (options.automationLevel === 'moderate' && 
+              (incident.type === 'suspected_fraud' || incident.type === 'unauthorized_access')) {
+            // Monitor but don't act yet
+            actions.push('monitor_closely');
+          }
+          
           if (options.automationLevel === 'aggressive') {
-            actions.push('trigger_backup');
+            if (incident.type === 'suspected_fraud' || incident.type === 'unauthorized_access') {
+              actions.push('notify_validators');
+              actions.push('trigger_backup'); // Added backup for aggressive mode on suspicious low-severity incidents
+            }
           }
           break;
+      }
+      
+      // Check for related incidents (cross-chain correlation data)
+      // This implements the enhanced backup trigger that responds to correlated incidents
+      if (incident.relatedIncidents && incident.relatedIncidents.length > 0) {
+        // If this incident is part of a cross-chain correlation, increase the response level
+        console.log(`Incident ${incident.id} is part of a cross-chain correlation with ${incident.relatedIncidents.length} related incidents`);
+        
+        // For correlated incidents, we escalate our response regardless of automation level
+        // This is a key enhancement for the automated backup trigger system
+        if (!actions.includes('trigger_backup')) {
+          actions.push('trigger_backup');
+        }
+        
+        // If there are 2+ related incidents, this could be a coordinated attack - escalate response
+        if (incident.relatedIncidents.length >= 2) {
+          console.log(`Possible coordinated attack detected across ${incident.relatedIncidents.length + 1} incidents`);
+          
+          if (!actions.includes('notify_validators')) {
+            actions.push('notify_validators');
+          }
+          
+          // For potential coordinated attacks, backup across all chains for maximum safety
+          actions.push('trigger_cross_chain_backup');
+          
+          // For 3+ related incidents in a correlation, consider freezing assets regardless of setting
+          if (incident.relatedIncidents.length >= 3 && !actions.includes('freeze_assets')) {
+            console.log('Multiple correlated incidents detected - recommending asset freeze');
+            
+            if (options.automationLevel === 'aggressive' || 
+               (options.automationLevel === 'moderate' && 
+                (incident.severity === 'critical' || incident.severity === 'high'))) {
+              actions.push('freeze_assets');
+            }
+          }
+        }
       }
     }
     
@@ -651,6 +725,38 @@ class SecurityIncidentResponseService {
             );
             break;
             
+          case 'trigger_cross_chain_backup':
+            // For cross-chain backup, we trigger backups on all supported chains
+            // This is a new enhanced feature that implements the automated backup trigger system
+            console.log(`Triggering cross-chain backup for ${incident.vaultId || incident.address} due to severity: ${incident.severity}`);
+            
+            // Get handlers for each blockchain
+            const ethHandlers = getBlockchainHandlers('ETH');
+            const solHandlers = getBlockchainHandlers('SOL');
+            const tonHandlers = getBlockchainHandlers('TON');
+            
+            // Trigger backups on all chains
+            const backupPromises = [
+              ethHandlers.triggerBackup(incident.vaultId || incident.address),
+              solHandlers.triggerBackup(incident.vaultId || incident.address),
+              tonHandlers.triggerBackup(incident.vaultId || incident.address)
+            ];
+            
+            // Wait for all backups to complete
+            const backupResults = await Promise.all(backupPromises);
+            
+            // If any backup failed, mark this action as failed
+            const backupSuccess = backupResults.every(result => result.status === 'success');
+            
+            responseAction = {
+              timestamp: Date.now(),
+              action: 'trigger_cross_chain_backup',
+              status: backupSuccess ? 'success' : 'failed',
+              details: `Cross-chain backup triggered on ETH, SOL, and TON chains. ` +
+                       `${backupSuccess ? 'All backups successful' : 'Some backups failed'}`
+            };
+            break;
+            
           case 'escalate_to_multi_sig':
             responseAction = await blockchainHandlers.escalateToMultiSig(
               incident.id,
@@ -663,6 +769,16 @@ class SecurityIncidentResponseService {
               incident.id,
               incident.description
             );
+            break;
+            
+          case 'monitor_closely':
+            // This is a passive action that just logs but doesn't trigger any blockchain operations
+            responseAction = {
+              timestamp: Date.now(),
+              action: 'monitor_closely',
+              status: 'success',
+              details: `Enhanced monitoring activated for ${incident.address} due to suspicious activity`
+            };
             break;
             
           default:
