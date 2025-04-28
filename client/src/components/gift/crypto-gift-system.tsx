@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { Gift, Send, Check, AlertCircle } from "lucide-react";
+import { Gift, Send, Check, AlertCircle, Sparkles } from "lucide-react";
 import { useEthereum } from "@/contexts/ethereum-context";
 import { useQuery } from "@tanstack/react-query";
 
@@ -432,23 +432,49 @@ export function CryptoGiftSystem({ userId, onGiftSent, onAdvancedGift }: CryptoG
           </form>
         </Form>
       </CardContent>
-      <CardFooter className="flex justify-between">
-        <TooltipProvider>
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <div>
-                <Button 
-                  variant="outline" 
-                  onClick={() => form.reset()}
-                  disabled={isSubmitting}
-                >
-                  Cancel
-                </Button>
-              </div>
-            </TooltipTrigger>
-            <TooltipContent>Clear all fields</TooltipContent>
-          </Tooltip>
-        </TooltipProvider>
+      <CardFooter className="flex flex-col sm:flex-row gap-4 sm:items-center sm:justify-between">
+        <div className="flex items-center gap-2">
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <div>
+                  <Button 
+                    variant="outline" 
+                    onClick={() => form.reset()}
+                    disabled={isSubmitting}
+                  >
+                    Cancel
+                  </Button>
+                </div>
+              </TooltipTrigger>
+              <TooltipContent>Clear all fields</TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+          
+          {onAdvancedGift && (
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <div>
+                    <Button 
+                      variant="outline" 
+                      className="border-[#6B00D7] text-[#6B00D7] hover:bg-[#6B00D7]/10 animate-pulse-subtle"
+                      onClick={() => onAdvancedGift(form.getValues("recipientAddress"))}
+                    >
+                      <span className="flex items-center gap-1">
+                        <Sparkles className="h-4 w-4" />
+                        Create Luxury Gift Vault
+                      </span>
+                    </Button>
+                  </div>
+                </TooltipTrigger>
+                <TooltipContent>
+                  Create advanced gift vault with more options
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+          )}
+        </div>
         
         <Button
           type="submit"

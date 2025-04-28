@@ -41,26 +41,45 @@ const GiftCryptoPage: React.FC = () => {
   
   return (
     <div className="container max-w-7xl py-10">
-      <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-6">
-        <PageHeader
-          heading="Cryptocurrency Gift System"
-          description="Send crypto gifts to friends and family with optional time-locking in vaults"
-          separator={false}
-          className="mb-0 pb-0"
-        />
-        
-        <div className="mt-4 md:mt-0">
-          <button
-            onClick={() => handleCreateAdvancedGift()}
-            className="relative group overflow-hidden rounded-lg px-4 py-2 bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] text-white font-medium shadow-md hover:shadow-lg transition-all duration-300 animate-pulse-subtle"
-          >
-            <div className="absolute inset-0 bg-white opacity-0 group-hover:opacity-10 transition-opacity duration-300"></div>
-            <div className="relative flex items-center gap-2">
-              <Award className="h-5 w-5" />
-              <span>Create Advanced Gift Vault</span>
-              <Zap className="h-4 w-4" />
+      <div className="relative">
+        <div className="absolute inset-0 bg-gradient-to-r from-[#6B00D7]/10 to-[#FF5AF7]/10 transform rotate-1 rounded-xl"></div>
+        <div className="relative bg-black/50 backdrop-blur-sm rounded-xl p-6 mb-8 border border-[#6B00D7]/30">
+          <div className="grid md:grid-cols-2 gap-6 items-center">
+            <div>
+              <h1 className="text-3xl font-bold mb-2 bg-clip-text text-transparent bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7]">
+                Luxury Crypto Gifting
+              </h1>
+              <p className="text-gray-300 mb-4">
+                The world's most sophisticated crypto gift platform with time-locked vaults and multi-chain support. Delight your loved ones with the gift of digital assets in a luxurious presentation.
+              </p>
+              <div className="flex flex-wrap gap-2">
+                <span className="inline-flex items-center rounded-full bg-[#6B00D7]/10 px-2 py-1 text-xs font-medium text-[#6B00D7]">
+                  Multi-Chain
+                </span>
+                <span className="inline-flex items-center rounded-full bg-[#FF5AF7]/10 px-2 py-1 text-xs font-medium text-[#FF5AF7]">
+                  Time-Locked
+                </span>
+                <span className="inline-flex items-center rounded-full bg-[#6B00D7]/10 px-2 py-1 text-xs font-medium text-[#6B00D7]">
+                  Military-Grade Security
+                </span>
+              </div>
             </div>
-          </button>
+            
+            <div className="flex justify-center md:justify-end">
+              <button
+                onClick={() => handleCreateAdvancedGift()}
+                className="relative group overflow-hidden rounded-lg px-6 py-3 bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] text-white font-medium shadow-xl hover:shadow-[#FF5AF7]/20 transition-all duration-300 transform hover:scale-105"
+              >
+                <div className="absolute inset-0 bg-white opacity-0 group-hover:opacity-10 transition-opacity duration-300"></div>
+                <div className="absolute inset-0 opacity-20 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPjxkZWZzPjxwYXR0ZXJuIGlkPSJncmlkIiB3aWR0aD0iMjAiIGhlaWdodD0iMjAiIHBhdHRlcm5Vbml0cz0idXNlclNwYWNlT25Vc2UiPjxwYXRoIGQ9Ik0gMjAgMCBMIDAgMCAwIDIwIiBmaWxsPSJub25lIiBzdHJva2U9IndoaXRlIiBzdHJva2Utd2lkdGg9IjEiLz48L3BhdHRlcm4+PC9kZWZzPjxyZWN0IHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9InVybCgjZ3JpZCkiLz48L3N2Zz4=')]"></div>
+                <div className="relative flex items-center gap-2">
+                  <Award className="h-5 w-5" />
+                  <span className="text-lg">Design Premium Vault Gift</span>
+                  <Zap className="h-4 w-4" />
+                </div>
+              </button>
+            </div>
+          </div>
         </div>
       </div>
       
