@@ -14,10 +14,11 @@ export default function WhitepaperPage() {
         />
       </Helmet>
       
-      <Container className="py-12 md:py-16">
-        <PageHeader 
-          heading="ChronosToken (CVT) Whitepaper" 
-          description="Version 1.0 - April 15, 2025"
+      <div className="bg-gradient-to-b from-[#0F0018] to-[#1A0A2E] min-h-screen">
+        <Container className="py-12 md:py-16">
+          <PageHeader 
+            heading="ChronosToken (CVT) Whitepaper" 
+            description="Version 1.0 - April 15, 2025"
           separator
         />
         
@@ -941,6 +942,7 @@ export default function WhitepaperPage() {
           </div>
         </div>
       </Container>
+      </div>
     </>
   );
 }
