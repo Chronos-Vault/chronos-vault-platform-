@@ -42,17 +42,6 @@ const Header = () => {
       ]
     },
     {
-      id: "resources",
-      title: "Resources & Documentation",
-      icon: "📚",
-      items: [
-        { name: "How It Works", href: "/about#how-it-works", icon: "⚙️" },
-        { name: "Revolutionary Features", href: "/revolutionary-features", icon: "🚀" },
-        { name: "About", href: "/about", icon: "ℹ️" },
-        { name: "Roadmap", href: "/roadmap", icon: "🗺️" },
-      ]
-    },
-    {
       id: "features",
       title: "Advanced Features",
       icon: "✨",
@@ -71,6 +60,18 @@ const Header = () => {
         { name: "TON Integration", href: "/ton-integration", icon: "💎" },
         { name: "Solana Integration", href: "/solana-integration", icon: "◎" },
         { name: "Ethereum Integration", href: "/ethereum-integration", icon: "Ξ" },
+      ]
+    },
+    {
+      id: "resources",
+      title: "Resources & Documentation",
+      icon: "📚",
+      items: [
+        { name: "Documentation", href: "/revolutionary-features", icon: "📄" },
+        { name: "How It Works", href: "/about#how-it-works", icon: "⚙️" },
+        { name: "Revolutionary Features", href: "/revolutionary-features", icon: "🚀" },
+        { name: "About", href: "/about", icon: "ℹ️" },
+        { name: "Roadmap", href: "/roadmap", icon: "🗺️" },
       ]
     }
   ];
