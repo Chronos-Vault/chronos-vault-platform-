@@ -77,25 +77,51 @@ const Home = () => {
                 Because we believe in your power to protect what matters most.
               </p>
               
-              <div className="flex justify-center gap-6 mt-10">
-                <Button 
-                  className="bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] hover:from-[#5500AB] hover:to-[#FF46E8] text-white font-bold rounded-lg px-8 py-4 text-lg shadow-glow hover:shadow-lg hover:shadow-[#FF5AF7]/40 transition-all"
-                  onClick={() => setLocation("/create-vault")}
-                >
-                  Create Your Vault
-                </Button>
-                <Button
-                  variant="outline"
-                  className="border-2 border-[#6B00D7] text-white hover:bg-[#6B00D7]/10 hover:text-white font-bold rounded-lg px-8 py-4 text-lg transition-all"
-                  onClick={() => {
-                    const featuresSection = document.querySelector('#features');
-                    if (featuresSection) {
-                      featuresSection.scrollIntoView({ behavior: 'smooth' });
-                    }
-                  }}
-                >
-                  Explore Features
-                </Button>
+              <div className="flex flex-col items-center gap-6 mt-10">
+                <div className="flex justify-center gap-6">
+                  <Button 
+                    className="bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] hover:from-[#5500AB] hover:to-[#FF46E8] text-white font-bold rounded-lg px-8 py-4 text-lg shadow-glow hover:shadow-lg hover:shadow-[#FF5AF7]/40 transition-all"
+                    onClick={() => setLocation("/create-vault")}
+                  >
+                    Create Your Vault
+                  </Button>
+                  <Button
+                    variant="outline"
+                    className="border-2 border-[#6B00D7] text-white hover:bg-[#6B00D7]/10 hover:text-white font-bold rounded-lg px-8 py-4 text-lg transition-all"
+                    onClick={() => {
+                      const featuresSection = document.querySelector('#features');
+                      if (featuresSection) {
+                        featuresSection.scrollIntoView({ behavior: 'smooth' });
+                      }
+                    }}
+                  >
+                    Explore Features
+                  </Button>
+                </div>
+                
+                <div className="flex flex-wrap justify-center gap-4 mt-4">
+                  <Button
+                    variant="outline"
+                    className="border border-[#FF5AF7] bg-[#1A1A1A] text-[#FF5AF7] hover:bg-[#6B00D7]/20 font-medium rounded-lg px-5 py-2 text-md flex items-center gap-2 transition-all"
+                    onClick={() => setLocation("/solana-integration")}
+                  >
+                    <span className="text-lg">◎</span> Solana Integration
+                  </Button>
+                  <Button
+                    variant="outline"
+                    className="border border-[#FF5AF7] bg-[#1A1A1A] text-[#FF5AF7] hover:bg-[#6B00D7]/20 font-medium rounded-lg px-5 py-2 text-md flex items-center gap-2 transition-all"
+                    onClick={() => setLocation("/ton-integration")}
+                  >
+                    <span className="text-lg">💎</span> TON Integration
+                  </Button>
+                  <Button
+                    variant="outline"
+                    className="border border-[#FF5AF7] bg-[#1A1A1A] text-[#FF5AF7] hover:bg-[#6B00D7]/20 font-medium rounded-lg px-5 py-2 text-md flex items-center gap-2 transition-all"
+                    onClick={() => setLocation("/cross-chain")}
+                  >
+                    <span className="text-lg">🔄</span> Cross-Chain Features
+                  </Button>
+                </div>
               </div>
             </div>
             
