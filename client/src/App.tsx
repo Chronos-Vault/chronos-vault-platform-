@@ -23,6 +23,7 @@ import TokenVaultsPage from "@/pages/token-vaults";
 import CrossChainPage from "@/pages/cross-chain";
 import TONIntegrationPage from "@/pages/ton-integration";
 import SolanaIntegrationPage from "@/pages/solana-integration";
+import EthereumIntegrationPage from "@/pages/ethereum-integration";
 import NotFound from "@/pages/not-found";
 
 function Router() {
@@ -44,6 +45,7 @@ function Router() {
           <Route path="/cross-chain" component={CrossChainPage} />
           <Route path="/ton-integration" component={TONIntegrationPage} />
           <Route path="/solana-integration" component={SolanaIntegrationPage} />
+          <Route path="/ethereum-integration" component={EthereumIntegrationPage} />
           <Route component={NotFound} />
         </Switch>
       </main>

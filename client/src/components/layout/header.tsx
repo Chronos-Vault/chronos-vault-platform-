@@ -28,6 +28,7 @@ const Header = () => {
     { name: "Cross-Chain", href: "/cross-chain", icon: "🔄" },
     { name: "TON Integration", href: "/ton-integration", icon: "💎" },
     { name: "Solana Integration", href: "/solana-integration", icon: "◎" },
+    { name: "Ethereum Integration", href: "/ethereum-integration", icon: "Ξ" },
     { name: "Roadmap", href: "/roadmap", icon: "🗺️" },
     { name: "About", href: "/about", icon: "ℹ️" },
   ];
