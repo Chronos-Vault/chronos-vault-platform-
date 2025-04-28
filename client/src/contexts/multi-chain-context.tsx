@@ -184,6 +184,8 @@ export const MultiChainProvider: React.FC<MultiChainProviderProps> = ({ children
         success = await signIn();
       } else if (chain === BlockchainType.SOLANA) {
         success = await solanaService.connect();
+      } else if (chain === BlockchainType.ETHEREUM) {
+        success = await ethereumService.connect();
       }
       
       // Update status
@@ -225,6 +227,8 @@ export const MultiChainProvider: React.FC<MultiChainProviderProps> = ({ children
         success = true;
       } else if (chain === BlockchainType.SOLANA) {
         success = await solanaService.disconnect();
+      } else if (chain === BlockchainType.ETHEREUM) {
+        success = ethereumService.disconnect();
       }
       
       // Update status
@@ -254,7 +258,8 @@ export const MultiChainProvider: React.FC<MultiChainProviderProps> = ({ children
   const disconnectAllChains = async (): Promise<void> => {
     await Promise.all([
       disconnectChain(BlockchainType.TON),
-      disconnectChain(BlockchainType.SOLANA)
+      disconnectChain(BlockchainType.SOLANA),
+      disconnectChain(BlockchainType.ETHEREUM)
     ]);
   };
 
@@ -267,6 +272,9 @@ export const MultiChainProvider: React.FC<MultiChainProviderProps> = ({ children
       }));
     } else if (chain === BlockchainType.TON) {
       return [{ name: 'TON Connect', type: 'ton' }];
+    } else if (chain === BlockchainType.ETHEREUM) {
+      // For Ethereum, typically just MetaMask or browser wallets
+      return [{ name: 'MetaMask / Browser Wallet', type: 'ethereum' }];
     }
     
     return [];

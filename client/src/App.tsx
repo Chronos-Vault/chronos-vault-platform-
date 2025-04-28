@@ -6,6 +6,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { MultiChainProvider } from "@/contexts/multi-chain-context";
 import { TonProvider } from "@/contexts/ton-context";
 import { SolanaProvider } from "@/contexts/solana-context";
+import { EthereumProvider } from "@/contexts/ethereum-context";
 
 import Header from "@/components/layout/header";
 import Footer from "@/components/layout/footer";
@@ -59,9 +60,11 @@ function App() {
         <MultiChainProvider>
           <TonProvider>
             <SolanaProvider>
-              {/* We'll continue using the individual providers for now
-                  alongside our unified WalletProvider for backward compatibility */}
-              <Router />
+              <EthereumProvider>
+                {/* We'll continue using the individual providers for now
+                    alongside our unified MultiChainProvider for backward compatibility */}
+                <Router />
+              </EthereumProvider>
             </SolanaProvider>
           </TonProvider>
         </MultiChainProvider>
