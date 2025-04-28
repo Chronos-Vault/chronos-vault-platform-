@@ -34,7 +34,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { FileUpload } from "@/components/attachments/file-upload";
+import { EnhancedMediaUploader } from "@/components/attachments/enhanced-media-uploader";
 import { 
   Form, 
   FormControl, 
@@ -1153,27 +1153,15 @@ export function EnhancedVaultSystem({
                         transition={{ duration: 0.3 }}
                         className="space-y-4"
                       >
-                        <h3 className="text-lg font-semibold">Media Attachments</h3>
-                        <FileUpload
+                        <EnhancedMediaUploader
                           vaultId={-1}  // Temporary ID, will be updated after vault creation
                           onUploadComplete={handleAttachmentUpload}
+                          onAttachmentsChange={setAttachments}
+                          initialAttachments={attachments}
+                          maxUploads={10}
+                          className="mt-4"
+                          allowedTypes={['.jpg', '.jpeg', '.png', '.gif', '.pdf', '.doc', '.mp4', '.mp3']}
                         />
-                        
-                        {attachments.length > 0 && (
-                          <div className="mt-4">
-                            <h4 className="text-sm font-medium mb-2">Uploaded Files ({attachments.length})</h4>
-                            <ul className="space-y-2">
-                              {attachments.map((attachment, index) => (
-                                <li key={index} className="text-sm flex items-center gap-2">
-                                  <div className="w-6 h-6 flex items-center justify-center bg-[#6B00D7]/20 rounded-full">
-                                    <span className="text-xs">{index + 1}</span>
-                                  </div>
-                                  <span>{attachment.fileName || 'File'}</span>
-                                </li>
-                              ))}
-                            </ul>
-                          </div>
-                        )}
                       </motion.div>
                     )}
                     
