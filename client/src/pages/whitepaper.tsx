@@ -14,7 +14,7 @@ export default function WhitepaperPage() {
         />
       </Helmet>
       
-      <div className="bg-gradient-to-b from-[#0F0018] to-[#1A0A2E] min-h-screen">
+      <div className="bg-gradient-to-b from-[#1A0833] to-[#0F0018] min-h-screen">
         <Container className="py-12 md:py-16">
           <PageHeader 
             heading="ChronosToken (CVT) Whitepaper" 
@@ -299,7 +299,7 @@ export default function WhitepaperPage() {
           
           <h2 id="premium-features">5. Premium Vault Features</h2>
           
-          <div className="bg-gradient-to-br from-[#1D1D1D]/95 to-[#151515]/95 p-6 rounded-lg border border-[#333] backdrop-blur-md mb-10">
+          <div className="bg-gradient-to-br from-[#200A33]/95 to-[#120020]/95 p-6 rounded-lg border border-[#6B00D7]/30 backdrop-blur-md mb-10 shadow-lg shadow-purple-900/20">
             <div className="flex items-center gap-3 mb-6">
               <div className="flex items-center justify-center h-12 w-12 rounded-full bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7]">
                 <svg className="h-6 w-6 text-white" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -415,7 +415,7 @@ export default function WhitepaperPage() {
           
           <h2 id="staking-tiers">6. Staking Tiers & Benefits</h2>
           
-          <div className="bg-gradient-to-br from-[#1D1D1D]/95 to-[#151515]/95 p-6 rounded-lg border border-[#333] backdrop-blur-md mb-10">
+          <div className="bg-gradient-to-br from-[#200A33]/95 to-[#120020]/95 p-6 rounded-lg border border-[#6B00D7]/30 backdrop-blur-md mb-10 shadow-lg shadow-purple-900/20">
             <div className="flex items-center gap-3 mb-6">
               <div className="flex items-center justify-center h-12 w-12 rounded-full bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7]">
                 <svg className="h-6 w-6 text-white" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -442,7 +442,7 @@ export default function WhitepaperPage() {
           </div>
           
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 my-8">
-            <div className="bg-gradient-to-br from-[#1D1D1D]/95 to-[#151515]/95 p-6 rounded-lg border border-[#333] backdrop-blur-md relative overflow-hidden group hover:border-[#6B00D7]/50 transition-colors">
+            <div className="bg-gradient-to-br from-[#200A33]/95 to-[#120020]/95 p-6 rounded-lg border border-[#6B00D7]/30 backdrop-blur-md relative overflow-hidden group hover:border-[#6B00D7]/50 transition-colors shadow-lg shadow-purple-900/10">
               <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-[#6B00D7]/20 to-transparent rounded-bl-full pointer-events-none"></div>
               <div className="absolute inset-0 bg-gradient-to-b from-[#6B00D7]/0 via-transparent to-[#6B00D7]/5 opacity-0 group-hover:opacity-100 transition-opacity"></div>
               
@@ -508,7 +508,7 @@ export default function WhitepaperPage() {
               </div>
             </div>
             
-            <div className="bg-gradient-to-br from-[#1D1D1D]/95 to-[#151515]/95 p-6 rounded-lg border border-[#333] backdrop-blur-md relative overflow-hidden group hover:border-[#8F00FF]/50 transition-colors">
+            <div className="bg-gradient-to-br from-[#210A3A]/95 to-[#150025]/95 p-6 rounded-lg border border-[#8F00FF]/30 backdrop-blur-md relative overflow-hidden group hover:border-[#8F00FF]/50 transition-colors shadow-lg shadow-purple-900/10">
               <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-[#8F00FF]/20 to-transparent rounded-bl-full pointer-events-none"></div>
               <div className="absolute inset-0 bg-gradient-to-b from-[#8F00FF]/0 via-transparent to-[#8F00FF]/5 opacity-0 group-hover:opacity-100 transition-opacity"></div>
               
@@ -583,7 +583,7 @@ export default function WhitepaperPage() {
               </div>
             </div>
             
-            <div className="bg-gradient-to-br from-[#1D1D1D]/95 to-[#151515]/95 p-6 rounded-lg border border-[#333] backdrop-blur-md relative overflow-hidden group hover:border-[#FF5AF7]/50 transition-colors">
+            <div className="bg-gradient-to-br from-[#260A40]/95 to-[#180030]/95 p-6 rounded-lg border border-[#FF5AF7]/30 backdrop-blur-md relative overflow-hidden group hover:border-[#FF5AF7]/50 transition-colors shadow-lg shadow-purple-900/10">
               <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-[#FF5AF7]/20 to-transparent rounded-bl-full pointer-events-none"></div>
               <div className="absolute inset-0 bg-gradient-to-b from-[#FF5AF7]/0 via-transparent to-[#FF5AF7]/5 opacity-0 group-hover:opacity-100 transition-opacity"></div>
               
