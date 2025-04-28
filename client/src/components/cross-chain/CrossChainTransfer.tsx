@@ -206,8 +206,8 @@ const CrossChainTransfer: React.FC = () => {
     
     try {
       const transferRequest = await bridgeService.initiateTransfer(
-        sourceChain,
-        targetChain,
+        bridgeAdapter.toBridgeType(sourceChain),
+        bridgeAdapter.toBridgeType(targetChain),
         asset,
         amount,
         recipient,
@@ -236,7 +236,12 @@ const CrossChainTransfer: React.FC = () => {
   };
   
   // Get supported assets for the selected source chain
-  const supportedAssets = bridgeService.getSupportedAssets(sourceChain);
+  const supportedAssets = bridgeService.getSupportedAssets(bridgeAdapter.toBridgeType(sourceChain));
+
+  // Prepare chains for UI display with proper conversion
+  const supportedChainsForUI = bridgeService.getSupportedChains().map(bridgeChain => 
+    bridgeAdapter.toChainType(bridgeChain)
+  );
 
   return (
     <Card className="shadow-xl border-purple-900/30 backdrop-blur-sm bg-black/40">
@@ -262,11 +267,11 @@ const CrossChainTransfer: React.FC = () => {
                     <SelectValue placeholder="Select source blockchain" />
                   </SelectTrigger>
                   <SelectContent className="bg-gray-900 border-purple-900/30">
-                    {bridgeService.getSupportedChains().map((chain) => (
+                    {supportedChainsForUI.map((chain) => (
                       <SelectItem key={chain} value={chain} className="flex items-center">
                         <div className="flex items-center gap-2">
                           <BlockchainIcon chainId={chain} size="sm" />
-                          <span>{bridgeService.getChainDetails(chain).name}</span>
+                          <span>{bridgeService.getChainDetails(bridgeAdapter.toBridgeType(chain)).name}</span>
                         </div>
                       </SelectItem>
                     ))}
@@ -284,13 +289,13 @@ const CrossChainTransfer: React.FC = () => {
                     <SelectValue placeholder="Select target blockchain" />
                   </SelectTrigger>
                   <SelectContent className="bg-gray-900 border-purple-900/30">
-                    {bridgeService.getSupportedChains()
+                    {supportedChainsForUI
                       .filter(chain => chain !== sourceChain)
                       .map((chain) => (
                         <SelectItem key={chain} value={chain}>
                           <div className="flex items-center gap-2">
                             <BlockchainIcon chainId={chain} size="sm" />
-                            <span>{bridgeService.getChainDetails(chain).name}</span>
+                            <span>{bridgeService.getChainDetails(bridgeAdapter.toBridgeType(chain)).name}</span>
                           </div>
                         </SelectItem>
                       ))}
