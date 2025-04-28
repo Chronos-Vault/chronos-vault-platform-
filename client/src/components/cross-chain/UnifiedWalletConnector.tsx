@@ -222,7 +222,65 @@ export function UnifiedWalletConnector() {
                 <Alert className="bg-violet-950/20 border border-violet-500/20">
                   <InfoIcon className="h-4 w-4 text-violet-400" />
                   <AlertDescription className="text-violet-200">
-                    Connect your {chain.toUpperCase()} wallet to create and manage vaults.
+                    {!walletStatus[chain.toLowerCase() as keyof typeof walletStatus].available ? (
+                      <div className="flex flex-col space-y-4">
+                        <p>No {chain.toUpperCase()} wallet detected in your browser.</p>
+                        <div className="flex flex-col space-y-2">
+                          <p className="text-sm font-medium">Get a wallet:</p>
+                          {chain === BlockchainType.ETHEREUM && (
+                            <a 
+                              href="https://metamask.io/download/" 
+                              target="_blank" 
+                              rel="noopener noreferrer"
+                              className="flex items-center text-blue-400 hover:text-blue-300 transition-colors"
+                            >
+                              <ExternalLinkIcon className="h-3 w-3 mr-1" />
+                              <span>Install MetaMask</span>
+                            </a>
+                          )}
+                          {chain === BlockchainType.SOLANA && (
+                            <a 
+                              href="https://phantom.app/download" 
+                              target="_blank" 
+                              rel="noopener noreferrer"
+                              className="flex items-center text-purple-400 hover:text-purple-300 transition-colors"
+                            >
+                              <ExternalLinkIcon className="h-3 w-3 mr-1" />
+                              <span>Install Phantom</span>
+                            </a>
+                          )}
+                          {chain === BlockchainType.TON && (
+                            <a 
+                              href="https://chrome.google.com/webstore/detail/ton-wallet/nphplpgoakhhjchkkhmiggakijnkhfnd" 
+                              target="_blank" 
+                              rel="noopener noreferrer"
+                              className="flex items-center text-cyan-400 hover:text-cyan-300 transition-colors"
+                            >
+                              <ExternalLinkIcon className="h-3 w-3 mr-1" />
+                              <span>Install TON Wallet</span>
+                            </a>
+                          )}
+                        </div>
+                        <Button 
+                          variant="outline" 
+                          className="border-violet-500/20 hover:bg-violet-950/20 mt-2"
+                          onClick={() => {
+                            toast({
+                              title: 'Demo Mode',
+                              description: 'For testing purposes, Chronos Vault can run with a simulated wallet.',
+                            });
+                            handleConnect(chain as BlockchainType);
+                          }}
+                        >
+                          <WalletIcon className="h-4 w-4 mr-2" />
+                          Use Demo Wallet
+                        </Button>
+                      </div>
+                    ) : (
+                      <div>
+                        Connect your {chain.toUpperCase()} wallet to create and manage vaults using {walletStatus[chain.toLowerCase() as keyof typeof walletStatus].walletName}.
+                      </div>
+                    )}
                   </AlertDescription>
                 </Alert>
               )}
