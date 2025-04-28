@@ -33,11 +33,22 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 
+// Define a more specific metadata type
+const metadataSchema = z.object({
+  allowsAttachments: z.boolean().default(true),
+  attachmentsEncryption: z.string().default("AES-256"),
+  attachments: z.array(z.any()).optional()
+});
+
 // Extend the vault schema with additional validation
 const formSchema = insertVaultSchema.extend({
   confirmAmount: z.string().min(1, "Please confirm the amount"),
   includeAttachments: z.boolean().optional().default(true),
   unlockDate: z.string(), // Modified to handle string for date ISO
+  metadata: metadataSchema.optional().default({
+    allowsAttachments: true,
+    attachmentsEncryption: "AES-256"
+  })
 }).refine((data) => data.assetAmount === data.confirmAmount, {
   message: "Asset amounts do not match",
   path: ["confirmAmount"],
@@ -55,6 +66,7 @@ const CreateVaultForm = ({ initialVaultType = "legacy" }: CreateVaultFormProps) 
   const [activeTab, setActiveTab] = useState(initialVaultType);
   const [createdVaultId, setCreatedVaultId] = useState<number | null>(null);
   const [showAttachmentUpload, setShowAttachmentUpload] = useState(false);
+  const [attachments, setAttachments] = useState<any[]>([]);
 
   // Mocked user ID for demo purposes
   const userId = 1;
@@ -86,11 +98,30 @@ const CreateVaultForm = ({ initialVaultType = "legacy" }: CreateVaultFormProps) 
     },
     onSuccess: (data) => {
       setCreatedVaultId(data.id);
-      setShowAttachmentUpload(true);
-      toast({
-        title: "Vault created successfully",
-        description: "Your vault has been created. You can now add media attachments.",
-      });
+      
+      // If attachments were already uploaded with the enhanced uploader
+      if (attachments.length > 0) {
+        toast({
+          title: "Vault created successfully",
+          description: "Your vault has been created with all your media attachments.",
+        });
+        // Navigate directly to the vault details
+        navigate(`/vault-details?id=${data.id}`);
+      } else if (form.watch("includeAttachments")) {
+        // Show the attachment upload step only if includeAttachments is checked
+        setShowAttachmentUpload(true);
+        toast({
+          title: "Vault created successfully",
+          description: "Your vault has been created. You can now add media attachments.",
+        });
+      } else {
+        // No attachments needed, go directly to vault details
+        toast({
+          title: "Vault created successfully",
+          description: "Your vault has been created successfully.",
+        });
+        navigate(`/vault-details?id=${data.id}`);
+      }
     },
     onError: (error) => {
       toast({
@@ -102,10 +133,15 @@ const CreateVaultForm = ({ initialVaultType = "legacy" }: CreateVaultFormProps) 
   });
   
   const handleAttachmentComplete = (attachment: any) => {
+    setAttachments(prevAttachments => [...prevAttachments, attachment]);
     toast({
       title: "File uploaded successfully",
       description: "Your attachment has been added to the vault.",
     });
+  };
+  
+  const handleAttachmentsChange = (newAttachments: any[]) => {
+    setAttachments(newAttachments);
   };
   
   const handleFinishCreation = () => {
@@ -132,7 +168,17 @@ const CreateVaultForm = ({ initialVaultType = "legacy" }: CreateVaultFormProps) 
   };
 
   function onSubmit(data: FormValues) {
-    mutation.mutate(data);
+    // Include attachment information in the vault data if any attachments have been uploaded
+    const vaultData = {
+      ...data,
+      metadata: {
+        allowsAttachments: data.metadata?.allowsAttachments ?? true,
+        attachmentsEncryption: data.metadata?.attachmentsEncryption ?? "AES-256",
+        attachments: attachments.length > 0 ? attachments : undefined
+      }
+    };
+    
+    mutation.mutate(vaultData as FormValues);
   }
 
   const getCardStyle = () => {
@@ -223,7 +269,11 @@ const CreateVaultForm = ({ initialVaultType = "legacy" }: CreateVaultFormProps) 
                         <Textarea 
                           placeholder="Describe the purpose of this vault"
                           className="resize-none"
-                          {...field} 
+                          value={field.value || ""}
+                          onChange={field.onChange}
+                          onBlur={field.onBlur}
+                          name={field.name}
+                          ref={field.ref}
                         />
                       </FormControl>
                       <FormDescription>
@@ -386,28 +436,21 @@ const CreateVaultForm = ({ initialVaultType = "legacy" }: CreateVaultFormProps) 
                   </div>
                 </TabsContent>
 
-                {/* Media Attachment Preview - shown when includeAttachments is checked */}
+                {/* Enhanced Media Uploader - shown when includeAttachments is checked */}
                 {form.watch("includeAttachments") && !showAttachmentUpload && (
                   <div className="border border-[#FF5AF7]/20 rounded-lg p-4 bg-[#1A1A1A] mt-4 mb-4">
                     <h3 className="text-lg font-semibold mb-2 text-[#FF5AF7]">Media Attachments</h3>
                     <p className="text-gray-400 text-sm mb-4">
-                      After creating your vault, you'll be able to upload files to include in your time vault.
-                      These files will be encrypted and only accessible after the time-lock period expires.
+                      Add multimedia files to your vault. These files will be encrypted and only 
+                      accessible after the time-lock period expires.
                     </p>
-                    <ul className="space-y-2 text-sm text-gray-300">
-                      <li className="flex items-center">
-                        <span className="text-[#FF5AF7] mr-2">•</span>
-                        <span>Images, documents, videos, or audio (up to 10MB per file)</span>
-                      </li>
-                      <li className="flex items-center">
-                        <span className="text-[#FF5AF7] mr-2">•</span>
-                        <span>End-to-end encryption for maximum security</span>
-                      </li>
-                      <li className="flex items-center">
-                        <span className="text-[#FF5AF7] mr-2">•</span>
-                        <span>Blockchain-verified integrity and authenticity</span>
-                      </li>
-                    </ul>
+                    
+                    <EnhancedMediaUploader
+                      onAttachmentsChange={handleAttachmentsChange}
+                      maxUploads={5}
+                      allowedTypes={["image/*", "application/pdf", "video/*", "audio/*"]}
+                      initialAttachments={attachments}
+                    />
                   </div>
                 )}
 
