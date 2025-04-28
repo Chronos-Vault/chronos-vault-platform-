@@ -666,7 +666,7 @@ export default function CVTTokenomics() {
                             <tr key={i} className="border-b border-[#333] hover:bg-[#1D1D1D]">
                               <td className="p-3 font-medium">{data.year}</td>
                               <td className="p-3">{data.projectedSupply}M CVT</td>
-                              <td className="p-3">{data.notes.includes('burned') ? data.notes.match(/~([\d.]+[KM])/)[1] + ' CVT' : '-'}</td>
+                              <td className="p-3">{data.notes.includes('burned') ? data.notes.split('~')[1]?.split(' ')[0] + ' CVT' : '-'}</td>
                               <td className="p-3 text-gray-400">{data.notes}</td>
                             </tr>
                           ))}
