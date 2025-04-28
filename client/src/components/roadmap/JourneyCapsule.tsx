@@ -2,7 +2,7 @@
  * @deprecated This file is maintained for backward compatibility only.
  * Please import JourneyVaults from './JourneyVaults' instead.
  * 
- * The terminology has been standardized to use "vault" instead of "capsule"
+ * The terminology has been standardized to use "digital time vault" consistently
  * throughout the application to maintain a professional blockchain focus.
  */
 
@@ -10,7 +10,7 @@ import React from 'react';
 import JourneyVaults, { TokenReleasePhase } from './JourneyVaults';
 
 // Legacy interface for backward compatibility
-export interface JourneyCapsuleProps {
+export interface JourneyDigitalTimeVaultProps {
   name: string;
   description: string;
   unlockYear: number;
@@ -19,39 +19,39 @@ export interface JourneyCapsuleProps {
   isUnlocked: boolean;
   hasMinted: boolean;
   signatureCount: number;
-  capsuleIndex: number;
+  vaultIndex: number;
   totalSupply: number;
   blockchainAddress: string;
 }
 
 // Convert legacy vault props to the new TokenReleasePhase format
-function mapCapsulePropsToVaultProps(capsules: JourneyCapsuleProps[]): TokenReleasePhase[] {
-  return capsules.map((capsule, index) => ({
+function mapLegacyPropsToVaultProps(vaults: JourneyDigitalTimeVaultProps[]): TokenReleasePhase[] {
+  return vaults.map((vault, index) => ({
     id: index + 1,
-    year: capsule.unlockYear,
-    releaseDate: capsule.unlockDate,
-    percentage: capsule.tokenPercentage,
-    tokens: capsule.totalSupply * (capsule.tokenPercentage / 100),
-    releaseDescription: capsule.description,
-    status: capsule.isUnlocked ? 'released' : 'upcoming',
+    year: vault.unlockYear,
+    releaseDate: vault.unlockDate,
+    percentage: vault.tokenPercentage,
+    tokens: vault.totalSupply * (vault.tokenPercentage / 100),
+    releaseDescription: vault.description,
+    status: vault.isUnlocked ? 'released' : 'upcoming',
     vaultTheme: index === 0 ? 'genesis' : ['quantum', 'cosmic', 'nebula', 'aurora', 'infinity'][index % 5],
     vaultImageUrl: undefined
   }));
 }
 
 // This is a thin wrapper around JourneyVaults for backward compatibility
-const JourneyCapsule: React.FC<{ capsules: JourneyCapsuleProps[], totalSupply: number }> = ({ 
+const JourneyCapsule: React.FC<{ capsules: JourneyDigitalTimeVaultProps[], totalSupply: number }> = ({ 
   capsules, 
   totalSupply 
 }) => {
   // Map the legacy props to the new format
-  const vaults = mapCapsulePropsToVaultProps(capsules);
+  const vaults = mapLegacyPropsToVaultProps(capsules);
   
   // Display a console warning about deprecation
   React.useEffect(() => {
     console.warn(
       'JourneyCapsule component is deprecated. Please use JourneyVaults instead. ' +
-      'The terminology has been standardized to use "vault" instead of "capsule" ' +
+      'The terminology has been standardized to use "digital time vault" consistently ' +
       'throughout the application to maintain a professional blockchain focus.'
     );
   }, []);
