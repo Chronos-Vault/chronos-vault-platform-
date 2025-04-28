@@ -44,6 +44,7 @@ export default function WhitepaperPage() {
             <li><a href="#staking-tiers" className="text-[#FF5AF7] hover:text-[#6B00D7] transition-colors">6. Staking Tiers & Benefits</a></li>
             <li><a href="#cross-chain" className="text-[#FF5AF7] hover:text-[#6B00D7] transition-colors">7. Cross-Chain Architecture</a></li>
             <li><a href="#security" className="text-[#FF5AF7] hover:text-[#6B00D7] transition-colors">8. Security Model</a></li>
+            <li><a href="#future-vision" className="text-[#FF5AF7] hover:text-[#6B00D7] transition-colors">9. Future Vision - Chronos Vault 2.0</a></li>
           </ul>
           
           <h2 id="introduction">1. Introduction</h2>
@@ -619,6 +620,151 @@ export default function WhitepaperPage() {
               </ul>
             </div>
           </div>
+          
+          <h2 id="future-vision">9. Future Vision - Chronos Vault 2.0</h2>
+          
+          <p className="mb-4">
+            The Chronos Vault platform has an ambitious roadmap for future development that will further
+            revolutionize digital asset security and time-locked value storage across the blockchain ecosystem.
+          </p>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 my-6">
+            <div className="bg-gradient-to-br from-[#0A0A0A] to-[#121212] p-5 rounded-lg border border-[#333]">
+              <h3 className="text-xl font-bold text-white mb-3">Advanced Cross-Chain Management</h3>
+              <ul className="space-y-2">
+                <li className="flex items-start gap-2">
+                  <span className="text-[#FF5AF7] mt-0.5">•</span>
+                  <p className="text-gray-300">Support for emerging Layer 2 networks (Optimism, Arbitrum, zkSync)</p>
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="text-[#FF5AF7] mt-0.5">•</span>
+                  <p className="text-gray-300">Auto-balancing assets across chains based on fees, security, and yield</p>
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="text-[#FF5AF7] mt-0.5">•</span>
+                  <p className="text-gray-300">Transaction batching for institutional users</p>
+                </li>
+              </ul>
+            </div>
+            
+            <div className="bg-gradient-to-br from-[#0A0A0A] to-[#121212] p-5 rounded-lg border border-[#333]">
+              <h3 className="text-xl font-bold text-white mb-3">Enhanced CVT Tokenomics</h3>
+              <ul className="space-y-2">
+                <li className="flex items-start gap-2">
+                  <span className="text-[#FF5AF7] mt-0.5">•</span>
+                  <p className="text-gray-300">CVT Boost program for temporary premium feature access</p>
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="text-[#FF5AF7] mt-0.5">•</span>
+                  <p className="text-gray-300">Expanded revenue sharing for top-tier stakers</p>
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="text-[#FF5AF7] mt-0.5">•</span>
+                  <p className="text-gray-300">Dynamic staking rewards based on total staked supply</p>
+                </li>
+              </ul>
+            </div>
+          </div>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 my-6">
+            <div className="bg-gradient-to-br from-[#0A0A0A] to-[#121212] p-5 rounded-lg border border-[#333]">
+              <h3 className="text-xl font-bold text-white mb-3">AI-Powered Vaults</h3>
+              <ul className="space-y-2">
+                <li className="flex items-start gap-2">
+                  <span className="text-[#FF5AF7] mt-0.5">•</span>
+                  <p className="text-gray-300">On-chain data analysis for vault strategy optimization</p>
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="text-[#FF5AF7] mt-0.5">•</span>
+                  <p className="text-gray-300">Personalized recommendations based on risk profile</p>
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="text-[#FF5AF7] mt-0.5">•</span>
+                  <p className="text-gray-300">Predictive security modeling for exploit prevention</p>
+                </li>
+              </ul>
+            </div>
+            
+            <div className="bg-gradient-to-br from-[#0A0A0A] to-[#121212] p-5 rounded-lg border border-[#333]">
+              <h3 className="text-xl font-bold text-white mb-3">Hardware Integrations</h3>
+              <ul className="space-y-2">
+                <li className="flex items-start gap-2">
+                  <span className="text-[#FF5AF7] mt-0.5">•</span>
+                  <p className="text-gray-300">Hardware security module for major wallet providers</p>
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="text-[#FF5AF7] mt-0.5">•</span>
+                  <p className="text-gray-300">Biometric authentication via mobile devices</p>
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="text-[#FF5AF7] mt-0.5">•</span>
+                  <p className="text-gray-300">Physical backup with encrypted QR codes</p>
+                </li>
+              </ul>
+            </div>
+          </div>
+          
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 my-6">
+            <div className="bg-gradient-to-br from-[#0A0A0A] to-[#121212] p-5 rounded-lg border border-[#333]">
+              <h3 className="text-xl font-bold text-white mb-3">Enterprise Solutions</h3>
+              <ul className="space-y-2">
+                <li className="flex items-start gap-2">
+                  <span className="text-[#FF5AF7] mt-0.5">•</span>
+                  <p className="text-gray-300">Corporate governance vaults</p>
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="text-[#FF5AF7] mt-0.5">•</span>
+                  <p className="text-gray-300">Regulatory compliance frameworks</p>
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="text-[#FF5AF7] mt-0.5">•</span>
+                  <p className="text-gray-300">Advanced audit trails and reporting</p>
+                </li>
+              </ul>
+            </div>
+            
+            <div className="bg-gradient-to-br from-[#0A0A0A] to-[#121212] p-5 rounded-lg border border-[#333]">
+              <h3 className="text-xl font-bold text-white mb-3">Developer Ecosystem</h3>
+              <ul className="space-y-2">
+                <li className="flex items-start gap-2">
+                  <span className="text-[#FF5AF7] mt-0.5">•</span>
+                  <p className="text-gray-300">Open API for third-party developers</p>
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="text-[#FF5AF7] mt-0.5">•</span>
+                  <p className="text-gray-300">Developer incentives using CVT</p>
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="text-[#FF5AF7] mt-0.5">•</span>
+                  <p className="text-gray-300">SDK for mobile and web applications</p>
+                </li>
+              </ul>
+            </div>
+            
+            <div className="bg-gradient-to-br from-[#0A0A0A] to-[#121212] p-5 rounded-lg border border-[#333]">
+              <h3 className="text-xl font-bold text-white mb-3">Innovative Vault Types</h3>
+              <ul className="space-y-2">
+                <li className="flex items-start gap-2">
+                  <span className="text-[#FF5AF7] mt-0.5">•</span>
+                  <p className="text-gray-300">Multisig with social recovery</p>
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="text-[#FF5AF7] mt-0.5">•</span>
+                  <p className="text-gray-300">Community vaults for DAOs</p>
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="text-[#FF5AF7] mt-0.5">•</span>
+                  <p className="text-gray-300">NFT-powered dynamic vaults</p>
+                </li>
+              </ul>
+            </div>
+          </div>
+          
+          <p className="my-6">
+            These planned enhancements to the Chronos Vault ecosystem will cement its position as the
+            premier platform for secure, cross-chain digital asset management with unparalleled functionality
+            for both individual and institutional users.
+          </p>
           
           <div className="bg-gradient-to-r from-[#6B00D7]/5 to-[#FF5AF7]/5 p-6 rounded-lg border border-[#6B00D7]/20 text-center mt-12">
             <h3 className="text-xl font-bold bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] inline-block text-transparent bg-clip-text">Ready to Join the Future of Digital Vaults?</h3>
