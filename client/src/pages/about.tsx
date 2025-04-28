@@ -306,6 +306,145 @@ const About = () => {
         </div>
       </section>
       
+      {/* How It Works Section */}
+      <section className="py-20 bg-[#0F0F0F] relative overflow-hidden">
+        <div className="absolute -bottom-20 -left-20 w-80 h-80 rounded-full bg-[#6B00D7]/5 blur-3xl"></div>
+        <div className="container mx-auto px-4 relative z-10">
+          <div className="text-center mb-16">
+            <h2 className="font-poppins font-bold text-3xl">How <span className="text-[#6B00D7]">Chronos Vault</span> Works</h2>
+            <p className="text-gray-400 mt-3 max-w-2xl mx-auto">
+              Understanding the revolutionary blockchain architecture that powers our secure time-locked vaults.
+            </p>
+          </div>
+          
+          <div className="max-w-4xl mx-auto">
+            <div className="mb-16 bg-[#1A1A1A] border border-[#333] p-6 rounded-xl relative">
+              <div className="absolute -inset-0.5 bg-gradient-to-r from-[#6B00D7]/50 to-[#FF5AF7]/50 rounded-xl blur opacity-30"></div>
+              <div className="relative">
+                <h3 className="text-2xl font-bold mb-4 text-white">Triple-Chain Security System</h3>
+                <p className="text-gray-300 mb-6">
+                  At the heart of Chronos Vault is our revolutionary Triple-Chain Security system that distributes critical vault data across Ethereum, Solana, and TON blockchain networks simultaneously. This architecture provides unprecedented protection against blockchain-specific vulnerabilities.
+                </p>
+                
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+                  <div className="bg-[#151515] p-4 rounded-lg border border-[#333] hover:border-[#6B00D7]/30 transition-all">
+                    <div className="flex items-center mb-3">
+                      <div className="w-8 h-8 rounded-full bg-[#6B00D7]/10 flex items-center justify-center mr-3">
+                        <i className="ri-ethereum-line text-[#6B00D7]"></i>
+                      </div>
+                      <h4 className="font-medium text-white">Ethereum Layer</h4>
+                    </div>
+                    <p className="text-sm text-gray-400">
+                      Primary security layer that handles vault verification and manages smart contract security governance.
+                    </p>
+                  </div>
+                  
+                  <div className="bg-[#151515] p-4 rounded-lg border border-[#333] hover:border-[#FF5AF7]/30 transition-all">
+                    <div className="flex items-center mb-3">
+                      <div className="w-8 h-8 rounded-full bg-[#FF5AF7]/10 flex items-center justify-center mr-3">
+                        <i className="ri-speed-line text-[#FF5AF7]"></i>
+                      </div>
+                      <h4 className="font-medium text-white">Solana Layer</h4>
+                    </div>
+                    <p className="text-sm text-gray-400">
+                      High-speed transaction layer that manages real-time operations and time calculations with microsecond precision.
+                    </p>
+                  </div>
+                  
+                  <div className="bg-[#151515] p-4 rounded-lg border border-[#333] hover:border-[#00C9FF]/30 transition-all">
+                    <div className="flex items-center mb-3">
+                      <div className="w-8 h-8 rounded-full bg-[#00C9FF]/10 flex items-center justify-center mr-3">
+                        <i className="ri-database-2-line text-[#00C9FF]"></i>
+                      </div>
+                      <h4 className="font-medium text-white">TON Layer</h4>
+                    </div>
+                    <p className="text-sm text-gray-400">
+                      Fault-tolerant backup layer that provides additional data redundancy and recovery capabilities in case of emergency.
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            <div className="space-y-12">
+              <div className="relative">
+                <div className="absolute left-10 top-0 ml-0.5 h-full w-0.5 bg-gradient-to-b from-[#6B00D7] via-[#FF5AF7] to-[#00C9FF]"></div>
+                  
+                <div className="relative flex">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-br from-[#6B00D7] to-[#FF5AF7] text-white z-10">1</div>
+                  <div className="ml-6">
+                    <h3 className="font-semibold text-xl text-white mb-3">Vault Creation & Asset Deposit</h3>
+                    <p className="text-gray-300 mb-4">
+                      When you create a vault, Chronos Vault initializes parallel vault instances on Ethereum, Solana, and TON. Your assets are secured using threshold signature schemes that require consensus from multiple blockchain networks to access.
+                    </p>
+                    <div className="bg-[#151515] p-4 rounded-lg border border-[#333]">
+                      <div className="font-medium text-[#FF5AF7] mb-2">Secure Key Management</div>
+                      <p className="text-sm text-gray-400">
+                        Your vault keys are cryptographically split using Shamir's Secret Sharing algorithm, with fragments distributed across all three blockchains. This ensures no single blockchain compromise can affect your assets.
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              
+              <div className="relative">
+                <div className="relative flex">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-br from-[#6B00D7] to-[#FF5AF7] text-white z-10">2</div>
+                  <div className="ml-6">
+                    <h3 className="font-semibold text-xl text-white mb-3">Time-Lock Enforcement</h3>
+                    <p className="text-gray-300 mb-4">
+                      Time-locks are enforced through a consensus mechanism where multiple blockchain oracles must agree on the current time. This prevents any single blockchain's time manipulation from affecting your vault's lock period.
+                    </p>
+                    <div className="bg-[#151515] p-4 rounded-lg border border-[#333]">
+                      <div className="font-medium text-[#FF5AF7] mb-2">Multi-Chain Verification</div>
+                      <p className="text-sm text-gray-400">
+                        At least two of the three chains must confirm the time-lock expiration before assets can be accessed, providing protection against blockchain-specific vulnerabilities.
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              
+              <div className="relative">
+                <div className="relative flex">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-br from-[#6B00D7] to-[#FF5AF7] text-white z-10">3</div>
+                  <div className="ml-6">
+                    <h3 className="font-semibold text-xl text-white mb-3">Continuous Synchronization</h3>
+                    <p className="text-gray-300 mb-4">
+                      Our Cross-Chain Validator Network continuously monitors all three blockchains, ensuring data consistency and integrity. This network of decentralized validators manages checkpoint synchronization across chains.
+                    </p>
+                    <div className="bg-[#151515] p-4 rounded-lg border border-[#333]">
+                      <div className="font-medium text-[#FF5AF7] mb-2">Automatic Failover</div>
+                      <p className="text-sm text-gray-400">
+                        If any blockchain becomes unavailable or compromised, the system automatically falls back to the remaining chains without any user intervention required.
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              
+              <div className="relative">
+                <div className="relative flex">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-br from-[#6B00D7] to-[#FF5AF7] text-white z-10">4</div>
+                  <div className="ml-6">
+                    <h3 className="font-semibold text-xl text-white mb-3">Vault Unlocking & Asset Withdrawal</h3>
+                    <p className="text-gray-300 mb-4">
+                      When your time-lock expires, the multi-chain consensus mechanism verifies the unlock conditions across all active chains. Upon verification, your assets are released back to your control with the same security guarantees.
+                    </p>
+                    <div className="bg-[#151515] p-4 rounded-lg border border-[#333]">
+                      <div className="font-medium text-[#FF5AF7] mb-2">User Experience</div>
+                      <p className="text-sm text-gray-400">
+                        While the underlying technology is complex, our user interface abstracts away this complexity. You interact with a single, unified vault experience while benefiting from multi-chain security behind the scenes.
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+      
       {/* Team Section */}
       <section className="py-20 bg-[#1A1A1A]">
         <div className="container mx-auto px-4">
