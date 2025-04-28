@@ -238,37 +238,55 @@ const CrossChainTransfer: React.FC = () => {
   // Get supported assets for the selected source chain
   const supportedAssets = bridgeService.getSupportedAssets(bridgeAdapter.toBridgeType(sourceChain));
 
-  // Prepare chains for UI display with proper conversion
-  const supportedChainsForUI = bridgeService.getSupportedChains().map(bridgeChain => 
+  // Prepare chains for UI display with proper conversion - with filtering for unique chains
+  const mappedChains = bridgeService.getSupportedChains().map(bridgeChain => 
     bridgeAdapter.toChainType(bridgeChain)
   );
+  // Filter for unique values
+  const supportedChainsForUI = Array.from(new Set(mappedChains));
 
   return (
-    <Card className="shadow-xl border-purple-900/30 backdrop-blur-sm bg-black/40">
-      <CardHeader className="pb-4">
-        <CardTitle className="text-2xl font-bold">Cross-Chain Transfer</CardTitle>
-        <CardDescription>
-          Securely transfer assets between different blockchains with optimal routing
-        </CardDescription>
+    <Card className="shadow-xl border-purple-900/30 backdrop-blur-sm bg-black/40 max-w-3xl mx-auto">
+      <CardHeader className="pb-2 sm:pb-4">
+        <CardTitle className="text-xl sm:text-2xl font-bold text-center">Cross-Chain Transfer</CardTitle>
       </CardHeader>
       
       <CardContent>
-        <form onSubmit={handleSubmit}>
-          <div className="space-y-6">
-            {/* Source and Target Chain Selection */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="space-y-2">
-                <Label htmlFor="sourceChain">Source Chain</Label>
+        <form onSubmit={handleSubmit} className="px-0 sm:px-2">
+          <div className="space-y-4 sm:space-y-6">
+            {/* Chain Transfer Visualization */}
+            <div className="flex items-center justify-center my-4 px-2 sm:px-6">
+              <div className="flex items-center flex-1 max-w-sm sm:max-w-md">
+                <div className="flex flex-col items-center">
+                  <BlockchainIcon chainId={sourceChain} size="lg" />
+                  <span className="text-sm mt-1">{bridgeService.getChainDetails(bridgeAdapter.toBridgeType(sourceChain)).name}</span>
+                </div>
+                
+                <div className="flex-1 mx-2 sm:mx-4 flex justify-center">
+                  <ArrowRight className="h-6 w-6 text-purple-400" />
+                </div>
+                
+                <div className="flex flex-col items-center">
+                  <BlockchainIcon chainId={targetChain} size="lg" />
+                  <span className="text-sm mt-1">{bridgeService.getChainDetails(bridgeAdapter.toBridgeType(targetChain)).name}</span>
+                </div>
+              </div>
+            </div>
+            
+            {/* Chain Selection */}
+            <div className="grid grid-cols-2 gap-3 sm:gap-6">
+              <div className="space-y-1 sm:space-y-2">
+                <Label htmlFor="sourceChain" className="text-xs sm:text-sm">From</Label>
                 <Select 
                   value={sourceChain} 
                   onValueChange={(value) => handleSourceChainChange(value as ChainType)}
                 >
-                  <SelectTrigger id="sourceChain" className="bg-gray-900/50 border-purple-900/30">
-                    <SelectValue placeholder="Select source blockchain" />
+                  <SelectTrigger id="sourceChain" className="bg-gray-900/50 border-purple-900/30 h-9 sm:h-10 text-xs sm:text-sm">
+                    <SelectValue placeholder="Source" />
                   </SelectTrigger>
                   <SelectContent className="bg-gray-900 border-purple-900/30">
                     {supportedChainsForUI.map((chain) => (
-                      <SelectItem key={chain} value={chain} className="flex items-center">
+                      <SelectItem key={chain} value={chain}>
                         <div className="flex items-center gap-2">
                           <BlockchainIcon chainId={chain} size="sm" />
                           <span>{bridgeService.getChainDetails(bridgeAdapter.toBridgeType(chain)).name}</span>
@@ -279,14 +297,14 @@ const CrossChainTransfer: React.FC = () => {
                 </Select>
               </div>
               
-              <div className="space-y-2">
-                <Label htmlFor="targetChain">Target Chain</Label>
+              <div className="space-y-1 sm:space-y-2">
+                <Label htmlFor="targetChain" className="text-xs sm:text-sm">To</Label>
                 <Select 
                   value={targetChain} 
                   onValueChange={(value) => setTargetChain(value as ChainType)}
                 >
-                  <SelectTrigger id="targetChain" className="bg-gray-900/50 border-purple-900/30">
-                    <SelectValue placeholder="Select target blockchain" />
+                  <SelectTrigger id="targetChain" className="bg-gray-900/50 border-purple-900/30 h-9 sm:h-10 text-xs sm:text-sm">
+                    <SelectValue placeholder="Target" />
                   </SelectTrigger>
                   <SelectContent className="bg-gray-900 border-purple-900/30">
                     {supportedChainsForUI
@@ -305,15 +323,15 @@ const CrossChainTransfer: React.FC = () => {
             </div>
             
             {/* Asset Selection and Amount */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="space-y-2">
-                <Label htmlFor="asset">Asset</Label>
+            <div className="grid grid-cols-2 gap-3 sm:gap-6">
+              <div className="space-y-1 sm:space-y-2">
+                <Label htmlFor="asset" className="text-xs sm:text-sm">Asset</Label>
                 <Select 
                   value={asset} 
                   onValueChange={setAsset}
                 >
-                  <SelectTrigger id="asset" className="bg-gray-900/50 border-purple-900/30">
-                    <SelectValue placeholder="Select asset" />
+                  <SelectTrigger id="asset" className="bg-gray-900/50 border-purple-900/30 h-9 sm:h-10 text-xs sm:text-sm">
+                    <SelectValue placeholder="Asset" />
                   </SelectTrigger>
                   <SelectContent className="bg-gray-900 border-purple-900/30">
                     {supportedAssets.map((token) => (
@@ -325,15 +343,15 @@ const CrossChainTransfer: React.FC = () => {
                 </Select>
               </div>
               
-              <div className="space-y-2">
-                <Label htmlFor="amount">Amount</Label>
+              <div className="space-y-1 sm:space-y-2">
+                <Label htmlFor="amount" className="text-xs sm:text-sm">Amount</Label>
                 <Input
                   id="amount"
                   type="number"
                   placeholder="0.00"
                   value={amount}
                   onChange={(e) => setAmount(e.target.value)}
-                  className="bg-gray-900/50 border-purple-900/30"
+                  className="bg-gray-900/50 border-purple-900/30 h-9 sm:h-10 text-xs sm:text-sm"
                   min="0"
                   step="0.001"
                 />
@@ -341,26 +359,26 @@ const CrossChainTransfer: React.FC = () => {
             </div>
             
             {/* Recipient Address */}
-            <div className="space-y-2">
-              <Label htmlFor="recipient">Recipient Address</Label>
+            <div className="space-y-1 sm:space-y-2">
+              <Label htmlFor="recipient" className="text-xs sm:text-sm">Recipient Address</Label>
               <Input
                 id="recipient"
                 placeholder="Enter recipient address"
                 value={recipient}
                 onChange={(e) => setRecipient(e.target.value)}
-                className="bg-gray-900/50 border-purple-900/30"
+                className="bg-gray-900/50 border-purple-900/30 h-9 sm:h-10 text-xs sm:text-sm"
               />
             </div>
             
             {/* Transfer Priority */}
-            <div className="space-y-2">
-              <Label htmlFor="priority">Transfer Priority</Label>
+            <div className="space-y-1 sm:space-y-2">
+              <Label htmlFor="priority" className="text-xs sm:text-sm">Priority</Label>
               <Select 
                 value={priority} 
                 onValueChange={(value) => setPriority(value as TransferPriority)}
               >
-                <SelectTrigger id="priority" className="bg-gray-900/50 border-purple-900/30">
-                  <SelectValue placeholder="Select priority" />
+                <SelectTrigger id="priority" className="bg-gray-900/50 border-purple-900/30 h-9 sm:h-10 text-xs sm:text-sm">
+                  <SelectValue placeholder="Priority" />
                 </SelectTrigger>
                 <SelectContent className="bg-gray-900 border-purple-900/30">
                   <SelectItem value="speed">Speed (Fastest)</SelectItem>
@@ -370,37 +388,36 @@ const CrossChainTransfer: React.FC = () => {
               </Select>
             </div>
             
-            {/* Route Selection */}
+            {/* Route Selection - Only shown when needed */}
             {routes.length > 0 && (
-              <div className="mt-6 space-y-4">
+              <div className="mt-4 sm:mt-6 space-y-3 sm:space-y-4">
                 <Separator className="border-purple-900/20" />
-                <Label>Available Routes</Label>
+                <Label className="text-xs sm:text-sm">Available Routes</Label>
                 
-                <div className="space-y-3">
+                <div className="space-y-2 sm:space-y-3">
                   {routes.map(route => (
                     <div 
                       key={route.id}
-                      className={`p-3 rounded-lg border border-purple-900/30 transition-all cursor-pointer
+                      className={`p-2 sm:p-3 rounded-lg border border-purple-900/30 transition-all cursor-pointer
                                 ${selectedRouteId === route.id 
                                   ? 'bg-purple-900/20 border-purple-500/50' 
                                   : 'bg-gray-900/30 hover:bg-gray-900/40'}`}
                       onClick={() => setSelectedRouteId(route.id)}
                     >
                       <div className="flex justify-between items-center">
-                        <div className="font-medium">{route.name}</div>
+                        <div className="font-medium text-xs sm:text-sm">{route.name}</div>
                         {route.recommendedFor === priority && (
-                          <div className="text-sm text-purple-400 flex items-center">
-                            <CheckCircle className="h-4 w-4 mr-1" />
-                            Recommended
+                          <div className="text-xs text-purple-400 flex items-center">
+                            <CheckCircle className="h-3 w-3 sm:h-4 sm:w-4 mr-1" />
+                            <span className="hidden sm:inline">Recommended</span>
                           </div>
                         )}
                       </div>
-                      <div className="text-sm text-gray-400 mt-1">{route.description}</div>
                       
-                      <div className="grid grid-cols-3 gap-2 mt-3 text-sm">
+                      <div className="grid grid-cols-3 gap-2 mt-2 text-xs sm:text-sm">
                         <div>
                           <div className="text-gray-500">Fee</div>
-                          <div className="font-medium">{(route.totalFee).toFixed(4)} {asset}</div>
+                          <div className="font-medium">{(route.totalFee).toFixed(4)}</div>
                         </div>
                         <div>
                           <div className="text-gray-500">Time</div>
@@ -420,21 +437,21 @@ const CrossChainTransfer: React.FC = () => {
         </form>
       </CardContent>
       
-      <CardFooter>
+      <CardFooter className="px-4 sm:px-6 pb-4 sm:pb-6">
         <Button 
           type="submit" 
-          className="w-full bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] hover:from-[#8500FF] hover:to-[#FF70FA]"
+          className="w-full bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] hover:from-[#8500FF] hover:to-[#FF70FA] h-10 sm:h-11"
           onClick={handleSubmit}
           disabled={isSubmitting}
         >
           {isSubmitting ? (
             <>
               <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-              Initiating Transfer...
+              Processing...
             </>
           ) : (
             <>
-              Transfer {asset} <ArrowRight className="ml-2 h-4 w-4" />
+              Transfer {amount ? `${amount} ${asset}` : asset} <ArrowRight className="ml-2 h-4 w-4" />
             </>
           )}
         </Button>
