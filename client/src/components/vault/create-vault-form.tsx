@@ -37,7 +37,15 @@ import {
 const metadataSchema = z.object({
   allowsAttachments: z.boolean().default(true),
   attachmentsEncryption: z.string().default("AES-256"),
-  attachments: z.array(z.any()).optional()
+  attachments: z.array(z.any()).optional(),
+  // Gift-specific metadata
+  giftExperience: z.object({
+    experienceType: z.string().optional(),
+    unlockStages: z.array(z.string()).optional(),
+    augmentedMedia: z.boolean().optional(),
+    appreciationRate: z.number().optional(),
+    challenges: z.array(z.string()).optional()
+  }).optional()
 });
 
 // Extend the vault schema with additional validation
@@ -48,7 +56,11 @@ const formSchema = insertVaultSchema.extend({
   metadata: metadataSchema.optional().default({
     allowsAttachments: true,
     attachmentsEncryption: "AES-256"
-  })
+  }),
+  // Gift-specific fields
+  giftType: z.string().optional(),
+  giftRecipient: z.string().optional(),
+  giftMessage: z.string().optional()
 }).refine((data) => data.assetAmount === data.confirmAmount, {
   message: "Asset amounts do not match",
   path: ["confirmAmount"],
@@ -87,7 +99,11 @@ const CreateVaultForm = ({ initialVaultType = "legacy" }: CreateVaultFormProps) 
       metadata: {
         allowsAttachments: true,
         attachmentsEncryption: "AES-256"
-      }
+      },
+      // Add default values for gift fields
+      giftType: "surprise",
+      giftRecipient: "",
+      giftMessage: ""
     },
   });
 
@@ -168,13 +184,27 @@ const CreateVaultForm = ({ initialVaultType = "legacy" }: CreateVaultFormProps) 
   };
 
   function onSubmit(data: FormValues) {
-    // Include attachment information in the vault data if any attachments have been uploaded
+    // Create gift experience metadata if vault type is "gift"
+    let giftExperience;
+    if (data.vaultType === "gift") {
+      giftExperience = {
+        experienceType: data.giftType || "surprise",
+        recipientAddress: data.giftRecipient || "",
+        message: data.giftMessage || "",
+        unlockStages: [],
+        augmentedMedia: true,
+        appreciationRate: 1.05
+      };
+    }
+    
+    // Include attachment information and gift data in the vault metadata
     const vaultData = {
       ...data,
       metadata: {
         allowsAttachments: data.metadata?.allowsAttachments ?? true,
         attachmentsEncryption: data.metadata?.attachmentsEncryption ?? "AES-256",
-        attachments: attachments.length > 0 ? attachments : undefined
+        attachments: attachments.length > 0 ? attachments : undefined,
+        ...(giftExperience && { giftExperience })
       }
     };
     
@@ -458,22 +488,135 @@ const CreateVaultForm = ({ initialVaultType = "legacy" }: CreateVaultFormProps) 
                 </TabsContent>
                 
                 <TabsContent value="gift" className="mt-0 space-y-6">
-                  <div className="bg-[#00D7C3]/10 p-4 rounded-lg">
-                    <h3 className="font-poppins font-semibold mb-2">Gift Vault Features</h3>
-                    <ul className="space-y-2 text-sm text-gray-300">
+                  <div className="bg-[#00D7C3]/10 p-4 rounded-lg mb-4">
+                    <div className="flex items-center mb-3">
+                      <div className="bg-gradient-to-r from-[#00D7C3] to-[#00A3FF] p-1.5 rounded-full mr-3">
+                        <i className="ri-gift-2-fill text-black text-xl"></i>
+                      </div>
+                      <h3 className="font-poppins font-semibold text-[#00D7C3]">Revolutionary Gift Vault</h3>
+                    </div>
+                    
+                    <p className="text-gray-300 mb-4 text-sm">
+                      Create a unique time-locked gift experience that combines digital assets with real-world moments 
+                      in ways never seen before in the crypto space.
+                    </p>
+                    
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-2">
+                      <div className="border border-[#00D7C3]/30 rounded-lg p-3">
+                        <h4 className="font-medium text-[#00D7C3] mb-2 text-sm">Memory Augmentation</h4>
+                        <p className="text-xs text-gray-400">Upload AR-compatible media that can be revealed at specific physical locations, creating a scavenger hunt for their crypto gift.</p>
+                      </div>
+                      
+                      <div className="border border-[#00D7C3]/30 rounded-lg p-3">
+                        <h4 className="font-medium text-[#00D7C3] mb-2 text-sm">Achievement Unlocking</h4>
+                        <p className="text-xs text-gray-400">Set specific challenges or tasks that the recipient must complete to gradually unlock portions of the gift.</p>
+                      </div>
+                    </div>
+                    
+                    <ul className="space-y-2 text-sm text-gray-300 mt-4">
                       <li className="flex items-start">
                         <i className="ri-checkbox-circle-line text-[#00D7C3] mt-0.5 mr-2"></i>
-                        <span>Perfect for birthdays, anniversaries, and special occasions</span>
+                        <span>Multi-stage revelation with sequential unlocking moments</span>
                       </li>
                       <li className="flex items-start">
                         <i className="ri-checkbox-circle-line text-[#00D7C3] mt-0.5 mr-2"></i>
-                        <span>Add personalized messages and media attachments</span>
+                        <span>Add personalized interactive experiences and puzzles</span>
                       </li>
                       <li className="flex items-start">
                         <i className="ri-checkbox-circle-line text-[#00D7C3] mt-0.5 mr-2"></i>
-                        <span>Send email notification to recipient on unlock date</span>
+                        <span>Trigger unlocks based on real-world events or achievements</span>
+                      </li>
+                      <li className="flex items-start">
+                        <i className="ri-checkbox-circle-line text-[#00D7C3] mt-0.5 mr-2"></i>
+                        <span>Include appreciation multipliers that increase gift value over time</span>
                       </li>
                     </ul>
+                  </div>
+                  
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <FormField
+                      control={form.control}
+                      name="giftType"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel className="text-[#00D7C3]">Gift Experience Type</FormLabel>
+                          <Select 
+                            onValueChange={field.onChange}
+                            defaultValue="surprise"
+                          >
+                            <FormControl>
+                              <SelectTrigger className="border-[#00D7C3]/30 focus:ring-[#00D7C3]">
+                                <SelectValue placeholder="Select gift experience type" />
+                              </SelectTrigger>
+                            </FormControl>
+                            <SelectContent>
+                              <SelectItem value="surprise">Surprise Moment</SelectItem>
+                              <SelectItem value="journey">Discovery Journey</SelectItem>
+                              <SelectItem value="milestone">Achievement Milestone</SelectItem>
+                              <SelectItem value="adventure">Geo-Located Adventure</SelectItem>
+                              <SelectItem value="appreciation">Value Appreciation</SelectItem>
+                            </SelectContent>
+                          </Select>
+                          <FormDescription className="text-xs">
+                            How would you like the gift to be revealed?
+                          </FormDescription>
+                        </FormItem>
+                      )}
+                    />
+                    
+                    <FormField
+                      control={form.control}
+                      name="giftRecipient"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel className="text-[#00D7C3]">Recipient's Address</FormLabel>
+                          <FormControl>
+                            <Input 
+                              placeholder="0x..." 
+                              className="border-[#00D7C3]/30 focus:ring-[#00D7C3]"
+                              {...field}
+                            />
+                          </FormControl>
+                          <FormDescription className="text-xs">
+                            Who will receive this special gift?
+                          </FormDescription>
+                        </FormItem>
+                      )}
+                    />
+                  </div>
+                  
+                  <FormField
+                    control={form.control}
+                    name="giftMessage"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel className="text-[#00D7C3]">Personal Message</FormLabel>
+                        <FormControl>
+                          <Textarea 
+                            placeholder="Write a personal message that will be revealed when this gift is unlocked..."
+                            className="resize-none border-[#00D7C3]/30 focus:ring-[#00D7C3]"
+                            value={field.value || ""}
+                            onChange={field.onChange}
+                            onBlur={field.onBlur}
+                            name={field.name}
+                            ref={field.ref}
+                          />
+                        </FormControl>
+                        <FormDescription className="text-xs">
+                          Add a heartfelt message to accompany your gift
+                        </FormDescription>
+                      </FormItem>
+                    )}
+                  />
+                  
+                  <div className="flex items-center p-3 border border-[#00D7C3]/30 rounded-lg bg-[#00D7C3]/5 my-2">
+                    <div className="flex-shrink-0 bg-[#00D7C3]/10 p-2 rounded-full mr-3">
+                      <i className="ri-magic-line text-[#00D7C3] text-lg"></i>
+                    </div>
+                    <div className="text-sm text-gray-300">
+                      <span className="font-medium text-[#00D7C3]">Revolutionary Feature: </span>
+                      This gift vault will increase in value by 5% each year until it's claimed by the recipient.
+                    </div>
                   </div>
                 </TabsContent>
 
