@@ -117,6 +117,85 @@ class TONContractService {
   }
   
   /**
+   * Get connection status
+   */
+  getConnectionStatus(): string {
+    return tonService.getConnectionStatus();
+  }
+  
+  /**
+   * Get information about a specific vault
+   */
+  async getVaultInfo(vaultId: string): Promise<{
+    blockId: string;
+    vault: VaultData;
+  } | null> {
+    try {
+      // Get wallet info
+      const walletInfo = tonService.getWalletInfo();
+      if (!walletInfo) {
+        throw new Error('Wallet not connected');
+      }
+      
+      // In production, this would be a real TON contract call
+      const now = Math.floor(Date.now() / 1000);
+      
+      // For development, simulate a vault lookup by ID
+      if (!vaultId || !vaultId.startsWith('EQ')) {
+        return null; // Invalid TON address
+      }
+      
+      return {
+        blockId: `${Date.now().toString(16)}-${Math.random().toString(16).substring(2, 10)}`,
+        vault: {
+          owner: walletInfo.address,
+          unlockTime: now + 86400, // 1 day in future
+          securityLevel: 2,
+          currentTime: now,
+          isUnlocked: false,
+          crossChainLocations: ['Ethereum', 'Solana']
+        }
+      };
+    } catch (error) {
+      console.error('Error getting vault info:', error);
+      return null;
+    }
+  }
+  
+  /**
+   * Get verification proof for a vault from the TON blockchain
+   */
+  async getVaultVerificationProof(vaultId: string): Promise<{
+    verified: boolean;
+    proof: string;
+    timestamp: number;
+  }> {
+    try {
+      // Get wallet info
+      const walletInfo = tonService.getWalletInfo();
+      if (!walletInfo) {
+        throw new Error('Wallet not connected');
+      }
+      
+      // In production, this would generate a cryptographic proof from the TON blockchain
+      // For development, we simulate a successful verification
+      
+      return {
+        verified: true,
+        proof: `ton-proof-${Math.random().toString(16).substring(2, 34)}`,
+        timestamp: Date.now()
+      };
+    } catch (error) {
+      console.error('Error getting vault verification proof:', error);
+      return {
+        verified: false,
+        proof: '',
+        timestamp: Date.now()
+      };
+    }
+  }
+  
+  /**
    * Get a list of vaults owned by the wallet
    */
   async getOwnedVaults(): Promise<VaultData[]> {

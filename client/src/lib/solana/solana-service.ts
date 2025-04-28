@@ -434,6 +434,61 @@ export class SolanaService {
   }
   
   /**
+   * Check if the service is connected to Solana
+   */
+  public isConnected(): boolean {
+    return this.connectionStatus === SolanaConnectionStatus.CONNECTED;
+  }
+
+  /**
+   * Get the current slot number
+   */
+  public async getCurrentSlot(): Promise<number> {
+    try {
+      if (!this.connection) {
+        return 0;
+      }
+      
+      return await this.connection.getSlot();
+    } catch (error) {
+      console.error('Error getting current slot:', error);
+      return 0;
+    }
+  }
+
+  /**
+   * Get vault account information
+   */
+  public async getVaultAccount(vaultId: string): Promise<any> {
+    try {
+      if (!this.connection) {
+        return null;
+      }
+      
+      // Parse the vault ID to a public key
+      const vaultPublicKey = new PublicKey(vaultId);
+      
+      // Get the account info
+      const accountInfo = await this.connection.getAccountInfo(vaultPublicKey);
+      
+      if (!accountInfo) {
+        return null;
+      }
+      
+      return {
+        publicKey: vaultPublicKey.toString(),
+        lamports: accountInfo.lamports,
+        data: accountInfo.data,
+        owner: accountInfo.owner.toString(),
+        executable: accountInfo.executable
+      };
+    } catch (error) {
+      console.error('Error getting vault account:', error);
+      return null;
+    }
+  }
+  
+  /**
    * Create a time-locked vault on Solana
    */
   public async createVault(params: {
