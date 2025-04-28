@@ -11,6 +11,7 @@ import {
 } from "@/components/ui/sheet";
 import { Menu, X } from "lucide-react";
 import { ConnectWalletButton } from "@/components/auth/connect-wallet-button";
+import BlockchainSelector from "@/components/auth/blockchain-selector";
 import { useAuthContext } from "@/contexts/auth-context";
 
 const Header = () => {
@@ -72,7 +73,8 @@ const Header = () => {
           </div>
           
           <div className="flex items-center gap-4">
-            <div className="hidden md:block">
+            <div className="hidden md:flex items-center gap-2">
+              <BlockchainSelector className="mr-2" />
               <ConnectWalletButton />
             </div>
 
@@ -143,10 +145,9 @@ const Header = () => {
                     </div>
                   </div>
                   
-                  <div className="pt-4 mt-4 border-t border-[#6B00D7]/30">
-                    <div className="w-full py-3 rounded-xl bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] text-white font-poppins font-medium text-lg transition-all">
-                      <ConnectWalletButton />
-                    </div>
+                  <div className="pt-4 mt-4 border-t border-[#6B00D7]/30 space-y-3">
+                    <BlockchainSelector className="w-full" />
+                    <ConnectWalletButton className="w-full" />
                   </div>
                 </div>
               </SheetContent>

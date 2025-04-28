@@ -3,8 +3,13 @@ import { Button } from '@/components/ui/button';
 import { useAuthContext } from '@/contexts/auth-context';
 import { Loader2, Wallet } from 'lucide-react';
 import { truncateAddress } from '@/lib/utils';
+import { cn } from '@/lib/utils';
 
-export function ConnectWalletButton() {
+type ConnectWalletButtonProps = {
+  className?: string;
+}
+
+export function ConnectWalletButton({ className }: ConnectWalletButtonProps) {
   const { address, isConnected, isAuthenticated, signIn, signOut, isAuthenticating } = useAuthContext();
   const [isLoading, setIsLoading] = useState(false);
 
@@ -35,7 +40,12 @@ export function ConnectWalletButton() {
   // Loading/authenticating state
   if (isLoading || isAuthenticating) {
     return (
-      <Button disabled variant="outline" size="sm">
+      <Button 
+        disabled 
+        variant="outline" 
+        size="sm"
+        className={cn(className)}
+      >
         <Loader2 className="mr-2 h-4 w-4 animate-spin" />
         Connecting...
       </Button>
@@ -49,7 +59,7 @@ export function ConnectWalletButton() {
         onClick={handleSignOut} 
         variant="ghost" 
         size="sm"
-        className="text-violet-400 hover:text-violet-300 hover:bg-violet-900/30"
+        className={cn("text-violet-400 hover:text-violet-300 hover:bg-violet-900/30", className)}
       >
         <Wallet className="mr-2 h-4 w-4" />
         {truncateAddress(address || '')}
@@ -63,7 +73,7 @@ export function ConnectWalletButton() {
       onClick={handleConnect} 
       variant="outline" 
       size="sm"
-      className="border-violet-500 text-violet-400 hover:text-violet-300 hover:bg-violet-900/30"
+      className={cn("border-violet-500 text-violet-400 hover:text-violet-300 hover:bg-violet-900/30", className)}
     >
       <Wallet className="mr-2 h-4 w-4" />
       Connect Wallet
