@@ -62,20 +62,6 @@ const Home = () => {
           <div className="absolute top-40 left-20 w-64 h-64 rounded-full bg-gradient-to-r from-[#6B00D7]/30 to-[#FF5AF7]/10 blur-3xl opacity-50"></div>
           <div className="absolute top-80 right-10 w-80 h-80 rounded-full bg-gradient-to-r from-[#FF5AF7]/20 to-[#6B00D7]/10 blur-3xl opacity-40"></div>
           <div className="absolute -bottom-20 left-1/3 w-96 h-96 rounded-full bg-gradient-to-r from-blue-500/10 to-purple-500/10 blur-3xl opacity-30"></div>
-          
-          <div className="absolute top-1/4 right-1/4 h-40 w-px bg-gradient-to-b from-transparent via-[#6B00D7] to-transparent opacity-40"></div>
-          <div className="absolute top-1/3 left-1/5 h-60 w-px bg-gradient-to-b from-transparent via-[#FF5AF7] to-transparent opacity-30"></div>
-          
-          <div className="grid grid-cols-8 absolute w-full h-full top-0 left-0">
-            <div className="border-r border-white/5 h-full"></div>
-            <div className="border-r border-white/5 h-full"></div>
-            <div className="border-r border-white/5 h-full"></div>
-            <div className="border-r border-white/5 h-full"></div>
-            <div className="border-r border-white/5 h-full"></div>
-            <div className="border-r border-white/5 h-full"></div>
-            <div className="border-r border-white/5 h-full"></div>
-            <div className="border-r border-white/5 h-full"></div>
-          </div>
         </div>
         
         <div className="container mx-auto px-4 relative z-10">
