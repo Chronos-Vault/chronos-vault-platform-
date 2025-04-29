@@ -306,10 +306,11 @@ export class MemStorage implements IStorage {
       ...insertTransaction, 
       id,
       createdAt: new Date(),
-      targetTxHash: insertTransaction.targetTxHash || null,
+      targetTxHash: insertTransaction.targetTxHash ?? null,
+      amount: insertTransaction.amount ?? null,
       completedAt: null,
-      errorDetails: insertTransaction.errorDetails || null,
-      metadata: insertTransaction.metadata || {}
+      errorDetails: insertTransaction.errorDetails ?? null,
+      metadata: insertTransaction.metadata ?? {}
     };
     this.crossChainTransactions.set(id, transaction);
     return transaction;
@@ -348,12 +349,12 @@ export class MemStorage implements IStorage {
       id,
       detectedAt: new Date(),
       resolvedAt: null,
-      vaultId: insertIncident.vaultId || null,
-      blockchain: insertIncident.blockchain || null,
-      aiConfidence: insertIncident.aiConfidence || null,
-      transactionHash: insertIncident.transactionHash || null,
-      resolutionDetails: insertIncident.resolutionDetails || null,
-      metadata: insertIncident.metadata || {}
+      vaultId: insertIncident.vaultId ?? null,
+      blockchain: insertIncident.blockchain ?? null,
+      aiConfidence: insertIncident.aiConfidence ?? null,
+      transactionHash: insertIncident.transactionHash ?? null,
+      resolutionDetails: insertIncident.resolutionDetails ?? null,
+      metadata: insertIncident.metadata ?? {}
     };
     this.securityIncidents.set(id, incident);
     return incident;
