@@ -2,7 +2,10 @@ import {
   users, type User, type InsertUser,
   vaults, type Vault, type InsertVault,
   beneficiaries, type Beneficiary, type InsertBeneficiary,
-  attachments, type Attachment, type InsertAttachment
+  attachments, type Attachment, type InsertAttachment,
+  chainContracts, type ChainContract, type InsertChainContract,
+  crossChainTransactions, type CrossChainTransaction, type InsertCrossChainTransaction,
+  securityIncidents, type SecurityIncident, type InsertSecurityIncident
 } from "@shared/schema";
 
 export interface IStorage {
@@ -31,6 +34,29 @@ export interface IStorage {
   createAttachment(attachment: InsertAttachment): Promise<Attachment>;
   updateAttachment(id: number, attachment: Partial<Attachment>): Promise<Attachment | undefined>;
   deleteAttachment(id: number): Promise<boolean>;
+  
+  // Chain contract methods
+  getChainContract(id: number): Promise<ChainContract | undefined>;
+  getChainContractsByType(contractType: string): Promise<ChainContract[]>;
+  getChainContractsByBlockchain(blockchain: string): Promise<ChainContract[]>;
+  createChainContract(contract: InsertChainContract): Promise<ChainContract>;
+  updateChainContract(id: number, contract: Partial<ChainContract>): Promise<ChainContract | undefined>;
+  deleteChainContract(id: number): Promise<boolean>;
+  
+  // Cross-chain transaction methods
+  getCrossChainTransaction(id: number): Promise<CrossChainTransaction | undefined>;
+  getCrossChainTransactionsByVault(vaultId: number): Promise<CrossChainTransaction[]>;
+  getCrossChainTransactionsByStatus(status: string): Promise<CrossChainTransaction[]>;
+  createCrossChainTransaction(transaction: InsertCrossChainTransaction): Promise<CrossChainTransaction>;
+  updateCrossChainTransaction(id: number, transaction: Partial<CrossChainTransaction>): Promise<CrossChainTransaction | undefined>;
+  
+  // Security incident methods
+  getSecurityIncident(id: number): Promise<SecurityIncident | undefined>;
+  getSecurityIncidentsByVault(vaultId: number): Promise<SecurityIncident[]>;
+  getSecurityIncidentsBySeverity(severity: string): Promise<SecurityIncident[]>;
+  createSecurityIncident(incident: InsertSecurityIncident): Promise<SecurityIncident>;
+  updateSecurityIncident(id: number, incident: Partial<SecurityIncident>): Promise<SecurityIncident | undefined>;
+  resolveSecurityIncident(id: number, resolutionDetails: string): Promise<SecurityIncident | undefined>;
 }
 
 export class MemStorage implements IStorage {
