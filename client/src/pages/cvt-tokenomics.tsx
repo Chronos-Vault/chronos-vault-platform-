@@ -22,6 +22,13 @@ import {
   Landmark
 } from "lucide-react";
 
+// Import our new token visualization components
+import { CVTDeflationaryChart } from '@/components/token/cvt-deflationary-chart';
+import { CVTReleaseSchedule } from '@/components/token/cvt-release-schedule';
+import { CVTDistributionChart } from '@/components/token/cvt-distribution-chart';
+import { CVTTokenCard } from '@/components/token/cvt-token-card';
+import { CVTStakingForm } from '@/components/token/cvt-staking-form';
+
 // Token supply distribution data
 const initialDistributionData = [
   { name: 'Private Sale', value: 5, color: '#6B00D7' },
@@ -217,6 +224,8 @@ export default function CVTTokenomics() {
             {/* TOKEN DISTRIBUTION TAB */}
             <TabsContent value="distribution" className="mt-0">
               <div className="space-y-8">
+                {/* Add our new CVT Distribution Chart component */}
+                <CVTDistributionChart className="mb-8" />
                 <div className="bg-gradient-to-br from-[#1D1D1D]/95 to-[#151515]/95 p-6 rounded-lg border border-[#333]">
                   <h3 className="text-xl font-bold mb-6 flex items-center gap-2">
                     <PieChart className="h-5 w-5 text-[#FF5AF7]" />
@@ -368,6 +377,17 @@ export default function CVTTokenomics() {
             {/* UTILITY & STAKING TAB */}
             <TabsContent value="utility" className="mt-0">
               <div className="space-y-8">
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                  {/* Add our new CVT Token Card component */}
+                  <div>
+                    <CVTTokenCard />
+                  </div>
+                  
+                  {/* Add our new CVT Staking Form component */}
+                  <div>
+                    <CVTStakingForm />
+                  </div>
+                </div>
                 <div className="bg-gradient-to-br from-[#1D1D1D]/95 to-[#151515]/95 p-6 rounded-lg border border-[#333]">
                   <h3 className="text-xl font-bold mb-6 flex items-center gap-2">
                     <Coins className="h-5 w-5 text-[#FF5AF7]" />
@@ -514,6 +534,11 @@ export default function CVTTokenomics() {
             {/* SUPPLY ECONOMICS TAB */}
             <TabsContent value="economics" className="mt-0">
               <div className="space-y-8">
+                {/* Add our new CVT Deflationary Chart component */}
+                <CVTDeflationaryChart className="mb-8" />
+                
+                {/* Add our new CVT Release Schedule component */}
+                <CVTReleaseSchedule className="mb-8" />
                 <div className="bg-gradient-to-br from-[#1D1D1D]/95 to-[#151515]/95 p-6 rounded-lg border border-[#333]">
                   <h3 className="text-xl font-bold mb-6 flex items-center gap-2">
                     <TrendingDown className="h-5 w-5 text-[#FF5AF7]" />
