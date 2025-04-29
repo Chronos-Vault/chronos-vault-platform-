@@ -95,10 +95,18 @@ export const TripleChainSecurityRoadmap: React.FC = () => {
         </div>
         
         <div className="flex flex-col space-y-3">
-          <Button variant="outline" className="border-purple-300 dark:border-purple-700 text-purple-700 dark:text-purple-400 hover:bg-purple-100 dark:hover:bg-purple-900/20 w-full">
+          <Button 
+            variant="outline" 
+            className="border-purple-300 dark:border-purple-700 text-purple-700 dark:text-purple-400 hover:bg-purple-100 dark:hover:bg-purple-900/20 w-full"
+            onClick={() => window.location.href = "/security-testing"}
+          >
             Join security beta program
           </Button>
-          <Button variant="outline" className="border-purple-300 dark:border-purple-700 text-purple-700 dark:text-purple-400 hover:bg-purple-100 dark:hover:bg-purple-900/20 w-full">
+          <Button 
+            variant="outline" 
+            className="border-purple-300 dark:border-purple-700 text-purple-700 dark:text-purple-400 hover:bg-purple-100 dark:hover:bg-purple-900/20 w-full"
+            onClick={() => window.location.href = "/security-testing"}
+          >
             Learn more about Triple-Chain Security
           </Button>
         </div>

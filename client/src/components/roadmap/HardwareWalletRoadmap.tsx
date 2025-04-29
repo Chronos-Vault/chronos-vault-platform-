@@ -94,10 +94,18 @@ export const HardwareWalletRoadmap: React.FC = () => {
         </div>
         
         <div className="flex flex-col space-y-3">
-          <Button variant="outline" className="border-blue-300 dark:border-blue-700 text-blue-700 dark:text-blue-400 hover:bg-blue-100 dark:hover:bg-blue-900/20 w-full">
+          <Button 
+            variant="outline" 
+            className="border-blue-300 dark:border-blue-700 text-blue-700 dark:text-blue-400 hover:bg-blue-100 dark:hover:bg-blue-900/20 w-full"
+            onClick={() => window.location.href = "/create-vault"}
+          >
             Join hardware wallet waitlist
           </Button>
-          <Button variant="outline" className="border-blue-300 dark:border-blue-700 text-blue-700 dark:text-blue-400 hover:bg-blue-100 dark:hover:bg-blue-900/20 w-full">
+          <Button 
+            variant="outline" 
+            className="border-blue-300 dark:border-blue-700 text-blue-700 dark:text-blue-400 hover:bg-blue-100 dark:hover:bg-blue-900/20 w-full"
+            onClick={() => window.location.href = "/advanced-vault-creation"}
+          >
             Learn more about ChronosKey
           </Button>
         </div>

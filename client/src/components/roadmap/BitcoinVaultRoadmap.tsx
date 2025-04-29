@@ -95,10 +95,18 @@ export const BitcoinVaultFeature: React.FC = () => {
         </div>
         
         <div className="flex flex-col space-y-3">
-          <Button variant="outline" className="border-orange-300 dark:border-orange-700 text-orange-700 dark:text-orange-400 hover:bg-orange-100 dark:hover:bg-orange-900/20 w-full">
+          <Button 
+            variant="outline" 
+            className="border-orange-300 dark:border-orange-700 text-orange-700 dark:text-orange-400 hover:bg-orange-100 dark:hover:bg-orange-900/20 w-full"
+            onClick={() => window.location.href = "/bitcoin-halving"}
+          >
             Join waitlist for early access
           </Button>
-          <Button variant="outline" className="border-orange-300 dark:border-orange-700 text-orange-700 dark:text-orange-400 hover:bg-orange-100 dark:hover:bg-orange-900/20 w-full">
+          <Button 
+            variant="outline" 
+            className="border-orange-300 dark:border-orange-700 text-orange-700 dark:text-orange-400 hover:bg-orange-100 dark:hover:bg-orange-900/20 w-full"
+            onClick={() => window.location.href = "/bitcoin-halving-vault"}
+          >
             Learn more about Bitcoin Vaults
           </Button>
         </div>
