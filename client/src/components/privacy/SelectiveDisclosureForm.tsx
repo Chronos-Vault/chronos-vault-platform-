@@ -82,7 +82,7 @@ export function SelectiveDisclosureForm({
       const proof = await privacyService.createSelectiveDisclosureProof(
         values.vaultId,
         values.disclosedFields,
-        values.blockchain as BlockchainType
+        values.blockchain as 'ETH' | 'SOL' | 'TON'
       );
       
       setGeneratedProof(proof);

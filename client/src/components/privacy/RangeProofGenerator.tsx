@@ -78,7 +78,7 @@ export function RangeProofGenerator({
         values.vaultId,
         values.minValue,
         values.maxValue,
-        values.blockchain as BlockchainType
+        values.blockchain as 'ETH' | 'SOL' | 'TON'
       );
       
       setGeneratedProof(proof);
@@ -181,7 +181,7 @@ export function RangeProofGenerator({
           <div className="space-y-2">
             <Label htmlFor="blockchain">Blockchain</Label>
             <Select
-              onValueChange={(value) => form.setValue('blockchain', value as BlockchainType)}
+              onValueChange={(value) => form.setValue('blockchain', value as 'ETH' | 'SOL' | 'TON')}
               defaultValue={form.getValues('blockchain')}
             >
               <SelectTrigger>
