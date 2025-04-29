@@ -1,6 +1,7 @@
 import React from 'react';
 import TestDashboard from '@/components/security/TestDashboard';
 import CrossChainSecurityDashboard from '@/components/security/CrossChainSecurityDashboard';
+import { AISecurityDashboard } from '@/components/security/AISecurityDashboard';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useLocation } from 'wouter';
 import { Layout } from '@/components/layout';
@@ -24,12 +25,16 @@ export default function SecurityTestingPage() {
         
         <div className="mt-8">
           <Tabs defaultValue="dashboard" className="w-full">
-            <TabsList className="w-full max-w-md mx-auto mb-6 grid grid-cols-2">
+            <TabsList className="w-full max-w-3xl mx-auto mb-6 grid grid-cols-3">
               <TabsTrigger value="dashboard">Security Dashboard</TabsTrigger>
+              <TabsTrigger value="ai-security">AI Enhanced Security</TabsTrigger>
               <TabsTrigger value="testing">Test Environment</TabsTrigger>
             </TabsList>
             <TabsContent value="dashboard">
               <CrossChainSecurityDashboard vaultId={vaultId} />
+            </TabsContent>
+            <TabsContent value="ai-security">
+              <AISecurityDashboard vaultId={vaultId} />
             </TabsContent>
             <TabsContent value="testing">
               <TestDashboard />
