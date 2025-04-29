@@ -4,8 +4,6 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import VaultCard from "@/components/vault/vault-card";
 import { BitcoinHalvingVault } from "@/components/bitcoin/BitcoinHalvingVault";
-import Header from "@/components/layout/header";
-import Footer from "@/components/layout/footer";
 import { Layout } from "@/components/layout";
 
 const Home = () => {
@@ -96,6 +94,47 @@ const Home = () => {
                 <span className="px-4 py-1.5 bg-gradient-to-r from-[#6B00D7]/30 to-[#6B00D7]/20 border border-[#6B00D7]/40 rounded-full text-[#FF5AF7] text-sm font-medium backdrop-blur-sm">BTC</span>
                 <span className="px-4 py-1.5 bg-gradient-to-r from-[#6B00D7]/30 to-[#6B00D7]/20 border border-[#6B00D7]/40 rounded-full text-[#FF5AF7] text-sm font-medium backdrop-blur-sm">Zero-Knowledge Proofs</span>
               </div>
+              
+              <p className="text-xl md:text-2xl text-gray-200 max-w-4xl mx-auto mt-8 leading-relaxed">
+                Create tamper-proof digital and financial vaults with revolutionary technologies: Triple-Chain Security, Cross-Chain Atomic Swaps, and IPFS/Arweave permanent storage integration.
+              </p>
+              <p className="text-xl md:text-2xl bg-gradient-to-r from-[#6B00D7] via-[#FF5AF7] to-[#6B00D7] inline-block text-transparent bg-clip-text font-bold mt-2 animate-text-shine bg-300%">
+                The ultimate solution for protecting what matters most across time and chains.
+              </p>
+              
+              <div className="flex flex-col items-center gap-6 mt-10">
+                <div className="flex justify-center gap-6">
+                  <Button 
+                    className="bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] hover:from-[#5500AB] hover:to-[#FF46E8] text-white font-bold rounded-lg px-8 py-4 text-lg shadow-glow hover:shadow-lg hover:shadow-[#FF5AF7]/40 transition-all"
+                    onClick={() => setLocation("/create-vault")}
+                  >
+                    Create Your Vault
+                  </Button>
+                  <Button
+                    variant="outline"
+                    className="border-2 border-[#6B00D7] text-white hover:bg-[#6B00D7]/10 hover:text-white font-bold rounded-lg px-8 py-4 text-lg transition-all"
+                    onClick={() => {
+                      const featuresSection = document.querySelector('#features');
+                      if (featuresSection) {
+                        featuresSection.scrollIntoView({ behavior: 'smooth' });
+                      }
+                    }}
+                  >
+                    Explore Features
+                  </Button>
+                </div>
+                
+                {/* Large security testing button */}
+                <div className="flex flex-wrap justify-center gap-4 mt-4 mb-6">
+                  <Button
+                    variant="default"
+                    className="bg-[#FF5AF7] hover:bg-[#6B00D7] text-white font-bold rounded-lg px-8 py-4 text-lg shadow-glow hover:shadow-lg hover:shadow-[#FF5AF7]/40 transition-all animate-pulse-subtle w-full max-w-md"
+                    onClick={() => setLocation("/security-testing")}
+                  >
+                    <span className="text-xl mr-2">🔒</span> View Security Testing Dashboard
+                  </Button>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -126,124 +165,6 @@ const Home = () => {
                 </Button>
               </CardContent>
             </Card>
-            
-            {/* Feature 2 */}
-            <Card className="bg-[#1A1A1A]/50 border border-[#6B00D7]/20 shadow-lg hover:shadow-[#6B00D7]/10 transition-all group hover:border-[#6B00D7]/40 md:translate-y-4">
-              <CardContent className="p-6">
-                <div className="rounded-full w-14 h-14 bg-gradient-to-br from-[#6B00D7]/20 to-[#FF5AF7]/10 flex items-center justify-center mb-5">
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-7 w-7 text-[#FF5AF7]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-                  </svg>
-                </div>
-                <h3 className="text-xl font-bold text-white mb-3">Zero-Knowledge Privacy</h3>
-                <p className="text-gray-300 mb-4">Create vaults with zero-knowledge proofs for maximum privacy, allowing verification without revealing contents.</p>
-                <Button variant="link" className="text-[#FF5AF7] p-0 hover:text-white" onClick={() => setLocation("/privacy-dashboard")}>
-                  Learn more →
-                </Button>
-              </CardContent>
-            </Card>
-            
-            {/* Feature 3 */}
-            <Card className="bg-[#1A1A1A]/50 border border-[#6B00D7]/20 shadow-lg hover:shadow-[#6B00D7]/10 transition-all group hover:border-[#6B00D7]/40">
-              <CardContent className="p-6">
-                <div className="rounded-full w-14 h-14 bg-gradient-to-br from-[#6B00D7]/20 to-[#FF5AF7]/10 flex items-center justify-center mb-5">
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-7 w-7 text-[#FF5AF7]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2zM9 9h6v6H9V9z" />
-                  </svg>
-                </div>
-                <h3 className="text-xl font-bold text-white mb-3">AI-Enhanced Security</h3>
-                <p className="text-gray-300 mb-4">Advanced machine learning models continuously monitor vault activity for anomaly detection and predictive security.</p>
-                <Button variant="link" className="text-[#FF5AF7] p-0 hover:text-white" onClick={() => setLocation("/security-testing")}>
-                  Learn more →
-                </Button>
-              </CardContent>
-            </Card>
-          </div>
-
-          {/* Call to action */}
-          <div className="text-center mt-16">
-            <Button
-              className="bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] hover:from-[#5500AB] hover:to-[#FF46E8] text-white font-bold rounded-lg px-8 py-4 text-lg shadow-glow hover:shadow-lg hover:shadow-[#FF5AF7]/40 transition-all"
-              onClick={() => setLocation("/create-vault")}
-            >
-              Create Your First Vault
-            </Button>
-          </div>
-        </div>
-      </section>
-
-      {/* Sample vault section */}
-      <section className="py-16 md:py-20 bg-[#121212]">
-        <div className="container mx-auto px-4">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-5xl font-bold mb-6 bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] inline-block text-transparent bg-clip-text">Explore Sample Vaults</h2>
-            <p className="text-lg text-gray-300 max-w-3xl mx-auto">Discover how Chronos Vault can secure your assets across time with our sample vault templates</p>
-          </div>
-          
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <VaultCard vault={sampleVault} onViewDetails={() => setLocation("/vault/1")} />
-            
-            <BitcoinHalvingVault onClick={() => setLocation("/bitcoin-halving-vault")} />
-            
-            <Card className="bg-gradient-to-br from-[#1A1A1A] to-[#121212] overflow-hidden border border-[#6B00D7]/30 hover:border-[#FF5AF7]/50 transition-all rounded-xl shadow-xl hover:shadow-[#6B00D7]/20 group">
-              <CardContent className="p-6 relative">
-                <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-[#6B00D7]/20 to-[#FF5AF7]/10 blur-2xl rounded-full opacity-60 pointer-events-none"></div>
-                
-                <div className="flex justify-between items-start mb-6">
-                  <div className="rounded-lg bg-gradient-to-br from-[#6B00D7]/30 to-[#FF5AF7]/20 p-3">
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2z" />
-                    </svg>
-                  </div>
-                  <div className="px-3 py-1 rounded-full bg-[#FF5AF7]/20 border border-[#FF5AF7]/30 text-[#FF5AF7] text-xs font-medium">
-                    Cross-Chain
-                  </div>
-                </div>
-                
-                <h3 className="text-xl font-bold text-white mb-3 group-hover:text-[#FF5AF7] transition-colors">Cross-Chain Gift Vault</h3>
-                
-                <div className="flex items-center mb-4">
-                  <div className="flex -space-x-2 mr-3">
-                    <div className="w-7 h-7 rounded-full bg-[#6B00D7]/30 flex items-center justify-center text-xs">Ξ</div>
-                    <div className="w-7 h-7 rounded-full bg-[#6B00D7]/30 flex items-center justify-center text-xs">◎</div>
-                    <div className="w-7 h-7 rounded-full bg-[#6B00D7]/30 flex items-center justify-center text-xs">₿</div>
-                  </div>
-                  <span className="text-sm text-gray-400">Multiple assets</span>
-                </div>
-                
-                <div className="space-y-3 mb-6">
-                  <div className="flex justify-between text-sm">
-                    <span className="text-gray-400">Lock Period:</span>
-                    <span className="text-white font-medium">Custom Trigger</span>
-                  </div>
-                  <div className="flex justify-between text-sm">
-                    <span className="text-gray-400">Security Level:</span>
-                    <div className="flex">
-                      <span className="h-4 w-4 rounded-full bg-[#FF5AF7]"></span>
-                      <span className="h-4 w-4 rounded-full bg-[#FF5AF7]"></span>
-                      <span className="h-4 w-4 rounded-full bg-[#FF5AF7]"></span>
-                      <span className="h-4 w-4 rounded-full bg-[#FF5AF7]"></span>
-                      <span className="h-4 w-4 rounded-full bg-gray-600"></span>
-                    </div>
-                  </div>
-                </div>
-                
-                <Button 
-                  className="w-full bg-gradient-to-r from-[#6B00D7]/80 to-[#FF5AF7]/80 hover:from-[#6B00D7] hover:to-[#FF5AF7] text-white font-medium rounded transition-all border-none"
-                  onClick={() => setLocation("/gift-crypto")}
-                >
-                  Explore Gift Vaults
-                </Button>
-              </CardContent>
-            </Card>
-          </div>
-          
-          <div className="text-center mt-12">
-            <Link href="/create-vault">
-              <Button variant="outline" className="border border-[#6B00D7] hover:bg-[#6B00D7]/10 text-white">
-                View All Vault Templates
-              </Button>
-            </Link>
           </div>
         </div>
       </section>
