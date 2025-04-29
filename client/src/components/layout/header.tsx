@@ -23,6 +23,7 @@ const Header = () => {
     { name: "Revolutionary Features", href: "/revolutionary-features", icon: "🚀" },
     { name: "My Vaults", href: "/my-vaults", icon: "📊" },
     { name: "Gift Crypto", href: "/gift-crypto", icon: "🎁", highlight: true },
+    { name: "Security Testing", href: "/security-testing", icon: "🔒" },
     { name: "CVT Token", href: "/cvt-token", icon: "🪙" },
     { name: "CVT Tokenomics", href: "/cvt-tokenomics", icon: "📊" },
     { name: "Technical Specs", href: "/technical-specification", icon: "🧪" },
@@ -52,6 +53,7 @@ const Header = () => {
         { name: "CVT Token", href: "/cvt-token", icon: "🪙" },
         { name: "Token Vaults", href: "/token-vaults", icon: "⏳" },
         { name: "Cross-Chain Features", href: "/cross-chain", icon: "🔄" },
+        { name: "Security Testing", href: "/security-testing", icon: "🔒" },
       ]
     },
     {
