@@ -117,6 +117,17 @@ const Home = () => {
                   </Button>
                 </div>
                 
+                {/* Large security testing button */}
+                <div className="flex flex-wrap justify-center gap-4 mt-4 mb-6">
+                  <Button
+                    variant="default"
+                    className="bg-[#FF5AF7] hover:bg-[#6B00D7] text-white font-bold rounded-lg px-8 py-4 text-lg shadow-glow hover:shadow-lg hover:shadow-[#FF5AF7]/40 transition-all animate-pulse-subtle w-full max-w-md"
+                    onClick={() => setLocation("/security-testing")}
+                  >
+                    <span className="text-xl mr-2">🔒</span> View Security Testing Dashboard
+                  </Button>
+                </div>
+                
                 <div className="flex flex-wrap justify-center gap-4 mt-4">
                   <Button
                     variant="outline"
