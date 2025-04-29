@@ -1,5 +1,5 @@
 import React from 'react';
-import { BlockchainType } from '@/lib/cross-chain/types';
+import { BlockchainType } from '@/lib/cross-chain/interfaces';
 import {
   Card,
   CardContent,
