@@ -2,6 +2,13 @@ import React, { createContext, useContext, useState, useEffect, ReactNode } from
 import { useAuthContext } from '@/contexts/auth-context';
 import { useMultiChain } from '@/contexts/multi-chain-context';
 import { ChainId } from '@/lib/contract-interfaces';
+import { 
+  cvtTokenService,
+  calculateStakingRewards,
+  calculateTransactionBurn,
+  TOTAL_SUPPLY,
+  ANNUAL_BURN_RATE
+} from '@/lib/cvt/token-service';
 
 // Define staking tier levels
 export enum StakingTier {
@@ -150,39 +157,69 @@ export function CVTTokenProvider({ children }: CVTTokenProviderProps) {
     try {
       setIsLoading(true);
       
-      // This would be an actual contract call in production
-      console.log(`Staking ${amount} CVT for ${TIME_MULTIPLIERS[duration].label}`);
+      // Get the current chain
+      const chainId = currentChain;
+      const chainType = chainId.toUpperCase() === 'ETHEREUM' ? 'ETH' : 
+                      chainId.toUpperCase() === 'SOLANA' ? 'SOL' : 'TON';
       
-      // Create a new date based on the selected duration
+      // Calculate duration in months
+      let durationMonths = 3;
       const endDate = new Date();
       
       switch (duration) {
         case TimeMultiplier.MONTH_3:
+          durationMonths = 3;
           endDate.setMonth(endDate.getMonth() + 3);
           break;
         case TimeMultiplier.MONTH_6:
+          durationMonths = 6;
           endDate.setMonth(endDate.getMonth() + 6);
           break;
         case TimeMultiplier.YEAR_1:
+          durationMonths = 12;
           endDate.setFullYear(endDate.getFullYear() + 1);
           break;
         case TimeMultiplier.YEAR_2:
+          durationMonths = 24;
           endDate.setFullYear(endDate.getFullYear() + 2);
           break;
         case TimeMultiplier.YEAR_4:
+          durationMonths = 48;
           endDate.setFullYear(endDate.getFullYear() + 4);
           break;
       }
       
-      // Update staking end time
-      setStakingEndTime(endDate);
-      
-      // Update balances (simplified for development)
+      // Use our token service to stake with burn mechanism
+      console.log(`Staking ${amount} CVT for ${durationMonths} months on ${chainType}`);
       const amountNum = parseFloat(amount);
-      setTokenBalance((parseFloat(tokenBalance) - amountNum).toString());
-      setStakedBalance((parseFloat(stakedBalance) + amountNum).toString());
       
-      return true;
+      // Calculate the burn amount for this transaction (deflationary mechanism)
+      const burnAmount = calculateTransactionBurn(amountNum);
+      const actualStakedAmount = amountNum - burnAmount;
+      
+      // Call the token service to stake
+      const result = await cvtTokenService.stakeTokens(
+        actualStakedAmount,
+        durationMonths,
+        chainType as any
+      );
+      
+      if (result) {
+        // Also burn tokens
+        await cvtTokenService.burnTokens(burnAmount, chainType as any);
+        
+        // Update staking end time
+        setStakingEndTime(endDate);
+        
+        // Update balances
+        setTokenBalance((parseFloat(tokenBalance) - amountNum).toString());
+        setStakedBalance((parseFloat(stakedBalance) + actualStakedAmount).toString());
+        
+        console.log(`Successfully staked ${actualStakedAmount} CVT with ${burnAmount} CVT burned`);
+        return true;
+      }
+      
+      return false;
     } catch (error) {
       console.error('Failed to stake tokens:', error);
       return false;
@@ -196,11 +233,30 @@ export function CVTTokenProvider({ children }: CVTTokenProviderProps) {
     try {
       setIsLoading(true);
       
-      // This would be an actual contract call in production
-      console.log('Unstaking all CVT tokens');
+      // Get the current chain
+      const chainId = currentChain;
+      const chainType = chainId.toUpperCase() === 'ETHEREUM' ? 'ETH' : 
+                      chainId.toUpperCase() === 'SOLANA' ? 'SOL' : 'TON';
       
-      // Update balances (simplified for development)
-      setTokenBalance((parseFloat(tokenBalance) + parseFloat(stakedBalance)).toString());
+      // This would be an actual contract call in production
+      console.log(`Unstaking ${stakedBalance} CVT tokens from ${chainType}`);
+      
+      // In a complete implementation, this would involve calling the token service
+      // to unstake tokens on the actual chain
+      
+      // Calculate transaction burn for deflationary mechanism
+      const stakedAmount = parseFloat(stakedBalance);
+      const burnAmount = calculateTransactionBurn(stakedAmount);
+      const actualReturnedAmount = stakedAmount - burnAmount;
+      
+      // Burn a portion due to deflationary mechanism
+      if (burnAmount > 0) {
+        await cvtTokenService.burnTokens(burnAmount, chainType as any);
+        console.log(`Burned ${burnAmount} CVT during unstaking (deflationary mechanism)`);
+      }
+      
+      // Update balances
+      setTokenBalance((parseFloat(tokenBalance) + actualReturnedAmount).toString());
       setStakedBalance('0');
       setStakingEndTime(null);
       
@@ -215,10 +271,38 @@ export function CVTTokenProvider({ children }: CVTTokenProviderProps) {
   
   // Calculate rewards based on amount and duration
   const calculateRewards = (lockAmount: string, lockDuration: TimeMultiplier): string => {
-    const baseReward = parseFloat(lockAmount) * 0.1; // 10% base APY
-    const multiplier = TIME_MULTIPLIERS[lockDuration].factor;
+    // Convert duration to months
+    let durationMonths = 3; // Default for 3 months
     
-    return (baseReward * multiplier).toFixed(2);
+    switch (lockDuration) {
+      case TimeMultiplier.MONTH_6:
+        durationMonths = 6;
+        break;
+      case TimeMultiplier.YEAR_1:
+        durationMonths = 12;
+        break;
+      case TimeMultiplier.YEAR_2:
+        durationMonths = 24;
+        break;
+      case TimeMultiplier.YEAR_4:
+        durationMonths = 48;
+        break;
+    }
+    
+    // Use our token service to calculate rewards with proper deflationary model
+    const tierMultiplier = currentStakingTier === StakingTier.SOVEREIGN 
+      ? 1.5 
+      : currentStakingTier === StakingTier.ARCHITECT 
+      ? 1.25 
+      : 1.0;
+    
+    const rewards = calculateStakingRewards(
+      parseFloat(lockAmount), 
+      durationMonths, 
+      tierMultiplier
+    );
+    
+    return rewards.toFixed(2);
   };
   
   // Estimate rewards for Bitcoin halving
