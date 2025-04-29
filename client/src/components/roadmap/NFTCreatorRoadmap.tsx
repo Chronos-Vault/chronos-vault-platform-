@@ -94,10 +94,18 @@ export const NFTCreatorRoadmap: React.FC = () => {
         </div>
         
         <div className="flex flex-col space-y-3">
-          <Button variant="outline" className="border-pink-300 dark:border-pink-700 text-pink-700 dark:text-pink-400 hover:bg-pink-100 dark:hover:bg-pink-900/20 w-full">
+          <Button 
+            variant="outline" 
+            className="border-pink-300 dark:border-pink-700 text-pink-700 dark:text-pink-400 hover:bg-pink-100 dark:hover:bg-pink-900/20 w-full"
+            onClick={() => window.location.href = "/gift-crypto"}
+          >
             Join creator waitlist
           </Button>
-          <Button variant="outline" className="border-pink-300 dark:border-pink-700 text-pink-700 dark:text-pink-400 hover:bg-pink-100 dark:hover:bg-pink-900/20 w-full">
+          <Button 
+            variant="outline" 
+            className="border-pink-300 dark:border-pink-700 text-pink-700 dark:text-pink-400 hover:bg-pink-100 dark:hover:bg-pink-900/20 w-full"
+            onClick={() => window.location.href = "/token-vaults"}
+          >
             Learn more about NFT platform
           </Button>
         </div>

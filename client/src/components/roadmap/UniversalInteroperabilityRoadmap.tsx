@@ -94,10 +94,18 @@ export const UniversalInteroperabilityRoadmap: React.FC = () => {
         </div>
         
         <div className="flex flex-col space-y-3">
-          <Button variant="outline" className="border-amber-300 dark:border-amber-700 text-amber-700 dark:text-amber-400 hover:bg-amber-100 dark:hover:bg-amber-900/20 w-full">
+          <Button 
+            variant="outline" 
+            className="border-amber-300 dark:border-amber-700 text-amber-700 dark:text-amber-400 hover:bg-amber-100 dark:hover:bg-amber-900/20 w-full"
+            onClick={() => window.location.href = "/cross-chain"}
+          >
             Join interoperability beta program
           </Button>
-          <Button variant="outline" className="border-amber-300 dark:border-amber-700 text-amber-700 dark:text-amber-400 hover:bg-amber-100 dark:hover:bg-amber-900/20 w-full">
+          <Button 
+            variant="outline" 
+            className="border-amber-300 dark:border-amber-700 text-amber-700 dark:text-amber-400 hover:bg-amber-100 dark:hover:bg-amber-900/20 w-full"
+            onClick={() => window.location.href = "/cross-chain-vault"}
+          >
             Learn more about Universal Chain protocol
           </Button>
         </div>

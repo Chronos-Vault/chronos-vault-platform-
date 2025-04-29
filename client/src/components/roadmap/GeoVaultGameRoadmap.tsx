@@ -94,10 +94,18 @@ export const GeoVaultGameRoadmap: React.FC = () => {
         </div>
         
         <div className="flex flex-col space-y-3">
-          <Button variant="outline" className="border-green-300 dark:border-green-700 text-green-700 dark:text-green-400 hover:bg-green-100 dark:hover:bg-green-900/20 w-full">
+          <Button 
+            variant="outline" 
+            className="border-green-300 dark:border-green-700 text-green-700 dark:text-green-400 hover:bg-green-100 dark:hover:bg-green-900/20 w-full"
+            onClick={() => window.location.href = "/create-vault"}
+          >
             Join beta tester program
           </Button>
-          <Button variant="outline" className="border-green-300 dark:border-green-700 text-green-700 dark:text-green-400 hover:bg-green-100 dark:hover:bg-green-900/20 w-full">
+          <Button 
+            variant="outline" 
+            className="border-green-300 dark:border-green-700 text-green-700 dark:text-green-400 hover:bg-green-100 dark:hover:bg-green-900/20 w-full"
+            onClick={() => window.location.href = "/gift-crypto"}
+          >
             Learn more about GeoVault
           </Button>
         </div>
