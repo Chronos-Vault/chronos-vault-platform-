@@ -6,3 +6,7 @@
 
 export * from './ZeroKnowledgeProofForm';
 export * from './PrivacyDashboard';
+export * from './CrossChainProofVerification';
+export * from './SelectiveDisclosureForm';
+export * from './RangeProofGenerator';
+export * from './ProofHistoryDisplay';
