@@ -706,5 +706,169 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Smart contract deployment endpoints for testnet
+  
+  // Get all contracts
+  app.get("/api/contracts", async (_req: Request, res: Response) => {
+    try {
+      // Get all contracts across blockchains
+      const contracts = await Promise.all([
+        storage.getChainContractsByBlockchain("ethereum"),
+        storage.getChainContractsByBlockchain("solana"),
+        storage.getChainContractsByBlockchain("ton")
+      ]).then(results => results.flat());
+      
+      res.json(contracts);
+    } catch (error) {
+      handleError(res, error);
+    }
+  });
+  
+  // Get contracts by blockchain
+  app.get("/api/contracts/:blockchain", async (req: Request, res: Response) => {
+    try {
+      const { blockchain } = req.params;
+      if (!blockchain || !['ethereum', 'solana', 'ton'].includes(blockchain)) {
+        return res.status(400).json({ error: "Invalid blockchain specified. Must be 'ethereum', 'solana', or 'ton'." });
+      }
+      
+      const contracts = await storage.getChainContractsByBlockchain(blockchain);
+      res.json(contracts);
+    } catch (error) {
+      handleError(res, error);
+    }
+  });
+  
+  // Get contracts by type
+  app.get("/api/contracts/type/:contractType", async (req: Request, res: Response) => {
+    try {
+      const { contractType } = req.params;
+      if (!contractType || !['vault', 'bridge', 'factory'].includes(contractType)) {
+        return res.status(400).json({ error: "Invalid contract type. Must be 'vault', 'bridge', or 'factory'." });
+      }
+      
+      const contracts = await storage.getChainContractsByType(contractType);
+      res.json(contracts);
+    } catch (error) {
+      handleError(res, error);
+    }
+  });
+  
+  // Register a new contract deployment
+  app.post("/api/contracts", async (req: Request, res: Response) => {
+    try {
+      const contractData = req.body;
+      
+      // Basic validation
+      if (!contractData.blockchain || !contractData.contractType || !contractData.contractName || !contractData.contractAddress || !contractData.network) {
+        return res.status(400).json({ error: "Missing required contract fields" });
+      }
+      
+      const newContract = await storage.createChainContract(contractData);
+      res.status(201).json(newContract);
+    } catch (error) {
+      handleError(res, error);
+    }
+  });
+  
+  // Update contract status
+  app.put("/api/contracts/:id", async (req: Request, res: Response) => {
+    try {
+      const id = parseInt(req.params.id);
+      const updateData = req.body;
+      
+      const updatedContract = await storage.updateChainContract(id, updateData);
+      
+      if (!updatedContract) {
+        return res.status(404).json({ error: "Contract not found" });
+      }
+      
+      res.json(updatedContract);
+    } catch (error) {
+      handleError(res, error);
+    }
+  });
+  
+  // Delete contract (admin only)
+  app.delete("/api/contracts/:id", async (req: Request, res: Response) => {
+    try {
+      const id = parseInt(req.params.id);
+      
+      // Check if contract exists first
+      const contract = await storage.getChainContract(id);
+      if (!contract) {
+        return res.status(404).json({ error: "Contract not found" });
+      }
+      
+      const result = await storage.deleteChainContract(id);
+      
+      if (result) {
+        res.json({ success: true, message: "Contract deleted successfully" });
+      } else {
+        res.status(500).json({ error: "Failed to delete contract" });
+      }
+    } catch (error) {
+      handleError(res, error);
+    }
+  });
+  
+  // Cross-chain transaction endpoints
+  
+  // Get cross-chain transactions for a vault
+  app.get("/api/vaults/:vaultId/cross-chain-txs", async (req: Request, res: Response) => {
+    try {
+      const vaultId = parseInt(req.params.vaultId);
+      if (isNaN(vaultId)) {
+        return res.status(400).json({ error: "Invalid vault ID" });
+      }
+      
+      // Check if vault exists
+      const vault = await storage.getVault(vaultId);
+      if (!vault) {
+        return res.status(404).json({ error: "Vault not found" });
+      }
+      
+      const transactions = await storage.getCrossChainTransactionsByVault(vaultId);
+      res.json(transactions);
+    } catch (error) {
+      handleError(res, error);
+    }
+  });
+  
+  // Create a new cross-chain transaction
+  app.post("/api/cross-chain-txs", async (req: Request, res: Response) => {
+    try {
+      const txData = req.body;
+      
+      // Basic validation
+      if (!txData.vaultId || !txData.sourceChain || !txData.targetChain || !txData.sourceTxHash || !txData.status) {
+        return res.status(400).json({ error: "Missing required cross-chain transaction fields" });
+      }
+      
+      const newTransaction = await storage.createCrossChainTransaction(txData);
+      res.status(201).json(newTransaction);
+    } catch (error) {
+      handleError(res, error);
+    }
+  });
+  
+  // Update a cross-chain transaction
+  app.put("/api/cross-chain-txs/:id", async (req: Request, res: Response) => {
+    try {
+      const id = parseInt(req.params.id);
+      const updateData = req.body;
+      
+      const updatedTransaction = await storage.updateCrossChainTransaction(id, updateData);
+      
+      if (!updatedTransaction) {
+        return res.status(404).json({ error: "Transaction not found" });
+      }
+      
+      res.json(updatedTransaction);
+    } catch (error) {
+      handleError(res, error);
+    }
+  });
+
   return httpServer;
 }
