@@ -10,3 +10,4 @@ export * from './CrossChainProofVerification';
 export * from './SelectiveDisclosureForm';
 export * from './RangeProofGenerator';
 export * from './ProofHistoryDisplay';
+export * from './SecurePrivacyPanel';
