@@ -14,17 +14,17 @@ const NETWORKS = {
   mainnet: {
     name: 'Ethereum Mainnet',
     chainId: 1,
-    rpcUrl: 'https://eth-mainnet.public.blastapi.io'
+    rpcUrl: import.meta.env.VITE_ETHEREUM_RPC_URL || 'https://eth-mainnet.public.blastapi.io'
   },
   goerli: {
     name: 'Goerli Testnet',
     chainId: 5,
-    rpcUrl: 'https://eth-goerli.public.blastapi.io'
+    rpcUrl: import.meta.env.VITE_ETHEREUM_RPC_URL || 'https://eth-goerli.public.blastapi.io'
   },
   sepolia: {
     name: 'Sepolia Testnet',
     chainId: 11155111,
-    rpcUrl: 'https://eth-sepolia.public.blastapi.io'
+    rpcUrl: import.meta.env.VITE_ETHEREUM_RPC_URL || 'https://eth-sepolia.public.blastapi.io'
   }
 };
 
@@ -125,7 +125,25 @@ class EthereumService {
         
         console.log(`Initialized on ${this._connectionState.networkName}`);
       } else {
-        console.log('No Ethereum provider detected (MetaMask not installed)');
+        // Create provider using the configured RPC URL
+        console.log('No Ethereum provider detected (MetaMask not installed). Using RPC URL.');
+        const network = this._currentNetwork;
+        const rpcUrl = NETWORKS[network as keyof typeof NETWORKS]?.rpcUrl;
+        
+        if (rpcUrl) {
+          // Create a JSON RPC provider with the configured URL
+          const provider = new ethers.JsonRpcProvider(rpcUrl);
+          this._connectionState.provider = provider;
+          
+          // Get network info
+          const networkInfo = await provider.getNetwork();
+          this._connectionState.chainId = Number(networkInfo.chainId);
+          this._connectionState.networkName = this.getNetworkName(Number(networkInfo.chainId));
+          
+          console.log(`Initialized on ${this._connectionState.networkName} with RPC provider`);
+        } else {
+          console.error('No valid RPC URL configured for network:', network);
+        }
       }
     } catch (error) {
       console.error('Error initializing Ethereum provider:', error);

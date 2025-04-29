@@ -89,6 +89,14 @@ export class SolanaService {
    * Get the cluster endpoint URL
    */
   private getClusterEndpoint(cluster: SolanaCluster): string {
+    // Use custom RPC URL from environment if available
+    const customRpcUrl = import.meta.env.VITE_SOLANA_RPC_URL;
+    if (customRpcUrl) {
+      console.log('Using custom Solana RPC URL from environment');
+      return customRpcUrl as string;
+    }
+    
+    // Fall back to default endpoints
     switch (cluster) {
       case SolanaCluster.MAINNET:
         return 'https://api.mainnet-beta.solana.com';
@@ -219,7 +227,7 @@ export class SolanaService {
         console.error('User rejected the connection request or another error occurred:', err);
         
         // Fallback to a simulated connection for testing if needed
-        if (process.env.NODE_ENV === 'development') {
+        if (import.meta.env.DEV) {
           console.log('Falling back to simulated wallet for development');
           const keypair = Keypair.generate();
           this.walletPublicKey = keypair.publicKey;
@@ -412,7 +420,7 @@ export class SolanaService {
         console.error('Error during transaction:', err);
         
         // If in development mode, simulate success
-        if (process.env.NODE_ENV === 'development') {
+        if (import.meta.env.DEV) {
           console.log(`Simulating sending ${amount} SOL to ${toAddress}`);
           await new Promise(resolve => setTimeout(resolve, 2000));
           await this.updateWalletInfo();
@@ -585,7 +593,7 @@ export class SolanaService {
         console.error('Error creating vault:', err);
         
         // If in development mode, simulate success
-        if (process.env.NODE_ENV === 'development') {
+        if (import.meta.env.DEV) {
           console.log(`Simulating Solana vault creation with ${amount} SOL to be unlocked at ${new Date(unlockTime * 1000).toLocaleString()}`);
           console.log(`Recipient: ${vaultRecipient}`);
           if (comment) console.log(`Comment: ${comment}`);

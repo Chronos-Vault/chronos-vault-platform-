@@ -123,7 +123,7 @@ class TestEnvironment {
     // Generate Ethereum transactions
     for (let i = 0; i < 10; i++) {
       this.mockTransactions.push({
-        hash: ethers.utils.id(`eth-tx-${i}`),
+        hash: ethers.id(`eth-tx-${i}`),
         from: i % 2 === 0 ? '0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266' : '0x70997970C51812dc3A010C7d01b50e0d17dc79C8',
         to: '0xDC64a140Aa3E981100a9becA4E685f962f0cF6C9',
         value: (1000000000000000 * (i + 1)).toString(), // 0.001 ETH * (i+1)
@@ -136,7 +136,7 @@ class TestEnvironment {
     // Generate Solana transactions
     for (let i = 0; i < 10; i++) {
       this.mockTransactions.push({
-        hash: ethers.utils.id(`sol-tx-${i}`),
+        hash: ethers.id(`sol-tx-${i}`),
         from: i % 2 === 0 ? '9xQeWvG816bUx9EPjHmaT23yvVM2ZWbrrpZb9PusVFin' : '2q7pyhPwAwZ3QMfZrnAbDhnh9mDUqycszcpf86VgQxhF',
         to: 'CHnhA4zTvkFLkKQMo5HHw3pR12GP6hhZxXCBDHwhUt8n',
         value: (100000000 * (i + 1)).toString(), // 0.1 SOL * (i+1)
@@ -149,7 +149,7 @@ class TestEnvironment {
     // Generate TON transactions
     for (let i = 0; i < 10; i++) {
       this.mockTransactions.push({
-        hash: ethers.utils.id(`ton-tx-${i}`),
+        hash: ethers.id(`ton-tx-${i}`),
         from: i % 2 === 0 ? 'UQC3wXvHrMdW1Xc3IJg5qpgBZF6uimUvN3oUFq6mDS0wlhTQ' : 'UQBUwcNLV7m2DJrXcRB7eDpkMJ6AANEXw-GXLX2jNZhTScr6',
         to: 'UQC1sJaQoVW7YoSGGpAApiBgM27WVuKyT6UyS0JaJpGuWEVQ',
         value: (1000000000 * (i + 1)).toString(), // 1 TON * (i+1)
@@ -316,7 +316,7 @@ class TestEnvironment {
         timestamp: Date.now(),
         blockchainData: {
           chain: vault.ethereumAddress ? 'ETH' : (vault.solanaAddress ? 'SOL' : 'TON'),
-          txHash: ethers.utils.id(`test-tx-${Date.now()}`),
+          txHash: ethers.id(`test-tx-${Date.now()}`),
           blockNumber: 12345678
         },
         details: {

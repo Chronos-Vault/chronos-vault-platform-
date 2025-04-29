@@ -133,19 +133,34 @@ class TONService {
   }
 
   /**
-   * Fetch TON balance from network (simplified)
+   * Fetch TON balance from network using TON API
    */
   private async fetchTONBalance(address: string): Promise<string> {
     try {
-      // TODO: Implement actual balance fetching from TON blockchain
-      // For now returning a placeholder value
+      // Use TON API to fetch actual balance
+      const apiKey = import.meta.env.VITE_TON_API_KEY;
+      if (!apiKey) {
+        console.warn('No TON API key provided, using simulated balance');
+        return "0.1"; // Placeholder balance if no API key
+      }
       
-      // In a real implementation, this would use TonClient to fetch the balance:
-      // const client = new TonClient({ endpoint: 'https://toncenter.com/api/v2/jsonRPC' });
-      // const balance = await client.getBalance(address);
-      // return balance;
+      // Make API request to TON Center
+      const endpoint = 'https://toncenter.com/api/v2/getAddressBalance';
+      const response = await fetch(`${endpoint}?api_key=${apiKey}&address=${address}`);
       
-      return "0.1"; // Placeholder balance
+      if (!response.ok) {
+        throw new Error(`TON API request failed: ${response.statusText}`);
+      }
+      
+      const data = await response.json();
+      if (data.ok && data.result) {
+        // Convert nanograms to TON (1 TON = 10^9 nanograms)
+        const balanceInTON = parseInt(data.result) / 1e9;
+        return balanceInTON.toString();
+      } else {
+        console.warn('Invalid response from TON API:', data);
+        return "0";
+      }
     } catch (error) {
       console.error('Failed to fetch TON balance:', error);
       return "0";

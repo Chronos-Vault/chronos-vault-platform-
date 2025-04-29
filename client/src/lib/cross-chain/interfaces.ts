@@ -68,3 +68,12 @@ export interface SecurityMetrics {
   crossChainConsistency: number;
   lastUpdated: number;
 }
+
+// Vault creation parameters
+export interface VaultCreationParams {
+  unlockTime: number;
+  amount: string;
+  recipient?: string;
+  comment?: string;
+  securityLevel?: number;
+}
