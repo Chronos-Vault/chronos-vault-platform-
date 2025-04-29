@@ -377,15 +377,36 @@ export default function CVTTokenomics() {
             {/* UTILITY & STAKING TAB */}
             <TabsContent value="utility" className="mt-0">
               <div className="space-y-8">
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                  {/* Add our new CVT Token Card component */}
-                  <div>
-                    <CVTTokenCard />
+                <div className="bg-gradient-to-br from-[#1D1D1D]/95 to-[#151515]/95 p-6 rounded-lg border border-[#333] mb-8">
+                  <h3 className="text-xl font-bold mb-6 flex items-center gap-2">
+                    <Lock className="h-5 w-5 text-[#FF5AF7]" />
+                    <span>Staking & Benefits Summary</span>
+                  </h3>
+                  
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    {stakingTiers.map((tier, index) => (
+                      <div key={index} className="bg-[#191919] p-4 rounded-lg border border-[#333]">
+                        <div className="flex items-center gap-2 mb-3">
+                          <Trophy className="h-5 w-5" style={{ color: tier.color }} />
+                          <h4 className="text-lg font-semibold text-white">{tier.name}</h4>
+                        </div>
+                        <div className="mb-3 inline-block px-2 py-1 rounded-full bg-[#222] text-sm">
+                          {tier.minimum}
+                        </div>
+                        <ul className="space-y-2 text-gray-300">
+                          {tier.benefits.map((benefit, i) => (
+                            <li key={i} className="flex items-start gap-2 text-sm">
+                              <span style={{ color: tier.color }}>•</span>
+                              <span>{benefit}</span>
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    ))}
                   </div>
                   
-                  {/* Add our new CVT Staking Form component */}
-                  <div>
-                    <CVTStakingForm />
+                  <div className="mt-6 text-center text-gray-400 text-sm">
+                    <p>To stake your tokens and access these benefits, please visit the <a href="/cvt-token" className="text-[#FF5AF7] hover:underline">CVT Token</a> page</p>
                   </div>
                 </div>
                 <div className="bg-gradient-to-br from-[#1D1D1D]/95 to-[#151515]/95 p-6 rounded-lg border border-[#333]">
