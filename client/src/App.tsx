@@ -7,6 +7,7 @@ import { MultiChainProvider } from "@/contexts/multi-chain-context";
 import { TonProvider } from "@/contexts/ton-context";
 import { SolanaProvider } from "@/contexts/solana-context";
 import { EthereumProvider } from "@/contexts/ethereum-context";
+import { CVTTokenProvider } from "@/contexts/cvt-token-context";
 
 import Header from "@/components/layout/header";
 import Footer from "@/components/layout/footer";
@@ -83,9 +84,11 @@ function App() {
           <TonProvider>
             <SolanaProvider>
               <EthereumProvider>
-                {/* We'll continue using the individual providers for now
-                    alongside our unified MultiChainProvider for backward compatibility */}
-                <Router />
+                <CVTTokenProvider>
+                  {/* We'll continue using the individual providers for now
+                      alongside our unified MultiChainProvider for backward compatibility */}
+                  <Router />
+                </CVTTokenProvider>
               </EthereumProvider>
             </SolanaProvider>
           </TonProvider>

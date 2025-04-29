@@ -12,7 +12,11 @@ type DistributionItem = {
   description: string;
 };
 
-export const CVTDistributionChart: React.FC = () => {
+export interface CVTDistributionChartProps {
+  className?: string;
+}
+
+export const CVTDistributionChart: React.FC<CVTDistributionChartProps> = ({ className }) => {
   const { totalSupply } = useCVTToken();
   
   const distribution: DistributionItem[] = [
@@ -70,7 +74,7 @@ export const CVTDistributionChart: React.FC = () => {
   };
   
   return (
-    <Card className="w-full border border-[#6B00D7]/20 dark:border-[#6B00D7]/30 overflow-hidden">
+    <Card className={`w-full border border-[#6B00D7]/20 dark:border-[#6B00D7]/30 overflow-hidden ${className || ''}`}>
       <CardHeader className="bg-gradient-to-r from-[#6B00D7]/10 to-[#FF5AF7]/10">
         <div className="flex items-center gap-2">
           <PieChart className="h-5 w-5 text-[#6B00D7]" />
