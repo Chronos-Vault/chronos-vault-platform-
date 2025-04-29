@@ -709,7 +709,19 @@ class SecurityServiceAggregator {
             });
           } catch (error) {
             console.error('Error verifying Ethereum transaction:', error);
+            
+            chainResults.push({
+              chain: 'ETH',
+              status: 'error',
+              message: `Ethereum verification failed: ${error instanceof Error ? error.message : String(error)}`
+            });
           }
+        } else {
+          chainResults.push({
+            chain: 'ETH',
+            status: 'error',
+            message: 'Ethereum service unavailable'
+          });
         }
       } else if (primaryChain === 'SOL' && solanaService) {
         // For Solana, fetch transaction details
@@ -731,9 +743,32 @@ class SecurityServiceAggregator {
             primaryVerified = true;
             txTimestamp = Date.now() - (20 * 0.5 * 1000); // Assuming 20 slots at ~0.5 sec per slot
             verificationChains.push('SOL');
+            
+            chainResults.push({
+              chain: 'SOL',
+              status: 'success',
+              message: 'Transaction verified on Solana',
+              confirmations: primaryChainConfirmations,
+              data: {
+                slot: currentSlot,
+                timestamp: txTimestamp
+              }
+            });
           } catch (error) {
             console.error('Error verifying Solana transaction:', error);
+            
+            chainResults.push({
+              chain: 'SOL',
+              status: 'error',
+              message: `Solana verification failed: ${error instanceof Error ? error.message : String(error)}`
+            });
           }
+        } else {
+          chainResults.push({
+            chain: 'SOL',
+            status: 'error',
+            message: 'Solana service unavailable'
+          });
         }
       } else if (primaryChain === 'TON') {
         // TON verification - simulated for now
@@ -741,9 +776,25 @@ class SecurityServiceAggregator {
         primaryVerified = true;
         txTimestamp = Date.now() - (5 * 5 * 1000); // Assuming 5 blocks at ~5 sec per block
         verificationChains.push('TON');
+        
+        chainResults.push({
+          chain: 'TON',
+          status: 'success',
+          message: 'Transaction verified on TON',
+          confirmations: primaryChainConfirmations,
+          data: {
+            block: Date.now() / 10000, // Simulated block number
+            timestamp: txTimestamp
+          }
+        });
       }
     } catch (error) {
       console.error(`Error verifying transaction on ${primaryChain}:`, error);
+      chainResults.push({
+        chain: primaryChain,
+        status: 'error',
+        message: `Verification failed: ${error instanceof Error ? error.message : String(error)}`
+      });
     }
     
     // If primary chain verification failed, we can't proceed
@@ -774,12 +825,38 @@ class SecurityServiceAggregator {
           // In production, would check Ethereum's bridge contract for the transaction hash
           // For now, simulate successful verification
           verificationChains.push('ETH');
+          chainResults.push({
+            chain: 'ETH',
+            status: 'success',
+            message: 'Cross-chain verification successful on Ethereum',
+            confirmations: 8, // Simulated confirmations for demo
+            data: {
+              verificationContract: '0x...',
+              timestamp: Date.now()
+            }
+          });
         } else if (chain === 'SOL' && solanaService && solanaService.isConnected()) {
           // Solana as secondary chain
           // In production, would check Solana's bridge program for the transaction hash
           // For now, simulate successful verification with 80% chance
           if (Math.random() > 0.2) {
             verificationChains.push('SOL');
+            chainResults.push({
+              chain: 'SOL',
+              status: 'success',
+              message: 'Cross-chain verification successful on Solana',
+              confirmations: 15, // Simulated confirmations for demo
+              data: {
+                bridgeProgramId: 'Bridge...',
+                timestamp: Date.now()
+              }
+            });
+          } else {
+            chainResults.push({
+              chain: 'SOL',
+              status: 'warning',
+              message: 'Cross-chain verification pending on Solana'
+            });
           }
         } else if (chain === 'TON') {
           // TON as secondary chain
@@ -787,10 +864,38 @@ class SecurityServiceAggregator {
           // For now, simulate successful verification with 70% chance
           if (Math.random() > 0.3) {
             verificationChains.push('TON');
+            chainResults.push({
+              chain: 'TON',
+              status: 'success',
+              message: 'Cross-chain verification successful on TON',
+              confirmations: 3, // Simulated confirmations for demo
+              data: {
+                bridgeContract: 'EQ...',
+                timestamp: Date.now()
+              }
+            });
+          } else {
+            chainResults.push({
+              chain: 'TON',
+              status: 'warning',
+              message: 'Cross-chain verification pending on TON'
+            });
           }
+        } else {
+          // Chain not available
+          chainResults.push({
+            chain,
+            status: 'error',
+            message: `${chain} service unavailable for cross-chain verification`
+          });
         }
       } catch (error) {
         console.error(`Error cross-verifying on ${chain}:`, error);
+        chainResults.push({
+          chain,
+          status: 'error',
+          message: `Cross-chain verification failed: ${error instanceof Error ? error.message : String(error)}`
+        });
       }
     }
     

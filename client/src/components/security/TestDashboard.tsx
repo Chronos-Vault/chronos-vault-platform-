@@ -25,6 +25,7 @@ import { getTestEnvironment, TestResult } from '@/lib/cross-chain/TestEnvironmen
 import { SecurityIncidentType } from '@/lib/cross-chain/SecurityServiceExports';
 import { ZkProofType } from '@/lib/privacy';
 import { BlockchainType } from '@/lib/cross-chain/interfaces';
+import { CrossChainVerificationResults } from '@/components/security/CrossChainVerificationResults';
 
 function TestDashboard() {
   const [testVaults, setTestVaults] = useState<any[]>([]);
