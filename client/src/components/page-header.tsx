@@ -1,5 +1,4 @@
 import React from 'react';
-import { cn } from '@/lib/utils';
 
 interface PageHeaderProps {
   heading: string;
@@ -12,23 +11,19 @@ export const PageHeader = ({
   heading,
   description,
   separator = false,
-  className,
+  className = '',
 }: PageHeaderProps) => {
   return (
-    <div className={cn("mb-6", className)}>
-      <h1 className="text-3xl font-bold tracking-tight sm:text-4xl bg-clip-text text-transparent bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] mb-2">
+    <div className={`flex flex-col gap-2 ${className}`}>
+      <h1 className="text-3xl font-bold leading-tight tracking-tight md:text-4xl font-poppins bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] text-transparent bg-clip-text">
         {heading}
       </h1>
-      
       {description && (
-        <p className="text-lg text-foreground/70 max-w-prose">
+        <p className="text-lg text-muted-foreground max-w-3xl font-poppins font-light">
           {description}
         </p>
       )}
-      
-      {separator && (
-        <div className="mt-4 mb-2 border-b border-border" />
-      )}
+      {separator && <div className="h-[1px] w-full mt-4 bg-gradient-to-r from-[#6B00D7]/50 to-[#FF5AF7]/50"></div>}
     </div>
   );
 };

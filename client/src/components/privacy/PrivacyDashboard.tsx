@@ -21,12 +21,13 @@ import { Fingerprint, Lock, ShieldCheck, Eye, EyeOff, FileText, CheckSquare } fr
 
 interface PrivacyDashboardProps {
   vaultId?: string;
+  activeTab?: string;
 }
 
-export function PrivacyDashboard({ vaultId }: PrivacyDashboardProps) {
+export function PrivacyDashboard({ vaultId, activeTab = 'generate' }: PrivacyDashboardProps) {
   const [proofs, setProofs] = useState<ZkProof[]>([]);
   const [loading, setLoading] = useState(true);
-  const [selectedTab, setSelectedTab] = useState('generate');
+  const [selectedTab, setSelectedTab] = useState(activeTab);
   
   useEffect(() => {
     if (vaultId) {
@@ -35,6 +36,13 @@ export function PrivacyDashboard({ vaultId }: PrivacyDashboardProps) {
       setLoading(false);
     }
   }, [vaultId]);
+  
+  // Update the selected tab when activeTab prop changes
+  useEffect(() => {
+    if (activeTab) {
+      setSelectedTab(activeTab);
+    }
+  }, [activeTab]);
   
   const loadProofs = async (id: string) => {
     setLoading(true);
