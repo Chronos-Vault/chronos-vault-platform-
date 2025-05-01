@@ -77,7 +77,7 @@ const Footer = () => {
               <li><Link href="/about" className="text-gray-300 hover:text-[#FF5AF7] transition-all font-poppins font-light hover:translate-x-1 inline-flex">About Us</Link></li>
               <li><a href="#" className="text-gray-300 hover:text-[#FF5AF7] transition-all font-poppins font-light hover:translate-x-1 inline-flex">Careers</a></li>
               <li><a href="#" className="text-gray-300 hover:text-[#FF5AF7] transition-all font-poppins font-light hover:translate-x-1 inline-flex">Partners</a></li>
-              <li><a href="#" className="text-gray-300 hover:text-[#FF5AF7] transition-all font-poppins font-light hover:translate-x-1 inline-flex">Contact</a></li>
+              <li><a href="mailto:chronosvault@chronosvault.org" className="text-gray-300 hover:text-[#FF5AF7] transition-all font-poppins font-light hover:translate-x-1 inline-flex">Contact</a></li>
               <li><a href="#" className="text-gray-300 hover:text-[#FF5AF7] transition-all font-poppins font-light hover:translate-x-1 inline-flex">Press Kit</a></li>
             </ul>
           </div>

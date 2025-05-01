@@ -108,4 +108,4 @@ For wallet connection problems:
 
 ## Support
 
-For additional support, please contact our development team at support@chronosvault.com (placeholder email).
+For additional support, please contact our development team at chronosvault@chronosvault.org.

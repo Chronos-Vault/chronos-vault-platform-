@@ -101,3 +101,7 @@ For more detailed information, please refer to:
 ## License
 
 © 2025 Chronos Vault. All rights reserved.
+
+## Contact
+
+For inquiries about the Chronos Vault platform, please contact us at chronosvault@chronosvault.org.

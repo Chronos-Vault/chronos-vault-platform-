@@ -131,3 +131,7 @@ npm run start       # Start production server
 - Bug bounty program with substantial rewards is maintained
 - Quantum-resistant cryptographic methods for long-term security
 - Defense-in-depth approach to protocol operations
+
+## Support and Contact
+
+For technical inquiries and development support, please contact the Chronos Vault development team at chronosvault@chronosvault.org.
