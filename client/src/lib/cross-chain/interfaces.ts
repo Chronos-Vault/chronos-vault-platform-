@@ -42,6 +42,9 @@ export interface SecurityIncident {
     blockNumber: number;
   };
   resolved?: boolean;
+  resolution?: string;
+  detectionMethod?: string;
+}
 
 export interface CrossChainValidationResult {
   verified: boolean;
@@ -55,10 +58,6 @@ export interface TripleChainValidator {
   role: 'primary-security' | 'speed-verification' | 'backup-recovery';
   requiredConfirmations: number;
   validateTransaction: (txHash: string) => Promise<boolean>;
-}
-
-  resolution?: string;
-  detectionMethod?: string;
 }
 
 // Chain status interface

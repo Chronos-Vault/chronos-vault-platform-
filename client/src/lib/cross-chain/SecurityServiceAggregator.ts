@@ -116,25 +116,6 @@ class SecurityServiceAggregator {
         }
       };
 
-      // Verify cross-chain operations with Triple-Chain security
-      const validateCrossChainTx = async (txHash: string, sourceChain: BlockchainType) => {
-        // Primary validation on source chain
-        const primaryValidation = await this.validateOnChain(txHash, sourceChain);
-        
-        // Secondary validations with remaining chains
-        const secondaryValidations = await Promise.all(
-          Object.entries(crossChainValidation)
-            .filter(([chain]) => chain !== sourceChain.toLowerCase())
-            .map(([_, validator]) => validator.validateTransaction(txHash))
-        );
-
-        // Apply Triple-Chain consensus rules
-        return {
-          verified: primaryValidation && secondaryValidations.filter(v => v).length >= 1,
-          confirmations: secondaryValidations.filter(v => v).length + 1
-        };
-      };
-      
       // Skip analysis if any chain is offline
       if (!ethStatus || !solStatus || !tonStatus ||
           ethStatus.status === 'offline' ||
@@ -142,6 +123,10 @@ class SecurityServiceAggregator {
           tonStatus.status === 'offline') {
         return;
       }
+      
+      // Perform a simulated cross-chain validation for demonstration
+      const mockTxHash = 'simulated_cross_chain_tx_' + Date.now();
+      const mockVerification = await this.validateCrossChainTransaction(mockTxHash, 'ETH');
       
       // 1. Verify consistent cross-chain signatures
       // 2. Validate vault state consistency across chains
@@ -155,6 +140,113 @@ class SecurityServiceAggregator {
       // In a production system, this would analyze real blockchain data
     } catch (error) {
       console.error('Error performing real-time security analysis:', error);
+    }
+  }
+  
+  /**
+   * Validate a transaction on a specific blockchain
+   * @param txHash The transaction hash to validate
+   * @param chain The blockchain to validate on
+   * @returns True if the transaction is valid, false otherwise
+   */
+  private async validateOnChain(txHash: string, chain: BlockchainType): Promise<boolean> {
+    try {
+      switch(chain) {
+        case 'ETH':
+          return await ethereumService.isTransactionValid(txHash);
+        case 'SOL':
+          return await solanaService.isTransactionValid(txHash);
+        case 'TON':
+          return await tonContractService.isTransactionValid(txHash);
+        default:
+          console.error(`Unsupported chain: ${chain}`);
+          return false;
+      }
+    } catch (error) {
+      console.error(`Error validating transaction ${txHash} on ${chain}:`, error);
+      return false;
+    }
+  }
+  
+  /**
+   * Validate a cross-chain transaction using the Triple-Chain security architecture
+   * @param txHash The transaction hash to validate
+   * @param sourceChain The source blockchain of the transaction
+   * @returns A validation result object with verification status and details
+   */
+  public async validateCrossChainTransaction(
+    txHash: string, 
+    sourceChain: BlockchainType
+  ): Promise<CrossChainValidationResult> {
+    try {
+      // Define the chain validators with their specific security roles
+      const chainValidators: Record<string, TripleChainValidator> = {
+        ETH: {
+          role: 'primary-security',
+          requiredConfirmations: 12,
+          validateTransaction: (tx: string) => this.validateOnChain(tx, 'ETH')
+        },
+        SOL: {
+          role: 'speed-verification',
+          requiredConfirmations: 32,
+          validateTransaction: (tx: string) => this.validateOnChain(tx, 'SOL')
+        },
+        TON: {
+          role: 'backup-recovery',
+          requiredConfirmations: 16,
+          validateTransaction: (tx: string) => this.validateOnChain(tx, 'TON')
+        }
+      };
+      
+      // Primary validation on source chain
+      const primaryValidation = await this.validateOnChain(txHash, sourceChain);
+      
+      // Secondary validations with remaining chains
+      const secondaryChains: BlockchainType[] = ['ETH', 'SOL', 'TON'].filter(
+        chain => chain !== sourceChain
+      ) as BlockchainType[];
+      
+      const secondaryValidationResults = await Promise.all(
+        secondaryChains.map(chain => {
+          return this.validateOnChain(txHash, chain)
+            .then(isValid => ({ chain, isValid }));
+        })
+      );
+      
+      // Filter valid secondary validations
+      const validSecondaryValidations = secondaryValidationResults
+        .filter(result => result.isValid)
+        .map(result => result.chain);
+      
+      // All chains that validated the transaction
+      const validationChains = primaryValidation 
+        ? [sourceChain, ...validSecondaryValidations] 
+        : validSecondaryValidations;
+      
+      // Calculate confirmations based on validator roles
+      let confirmationCount = 0;
+      if (primaryValidation) confirmationCount++;
+      confirmationCount += validSecondaryValidations.length;
+      
+      // Triple-Chain consensus requires at least 2 chains to validate (including source)
+      const tripleChainConsensus = validationChains.length >= 2;
+      
+      return {
+        verified: primaryValidation && tripleChainConsensus,
+        sourceChain: sourceChain,
+        confirmations: confirmationCount,
+        tripleChainConsensus: tripleChainConsensus,
+        validationChains: validationChains
+      };
+    } catch (error) {
+      console.error(`Error validating cross-chain transaction ${txHash}:`, error);
+      return {
+        verified: false,
+        sourceChain: sourceChain,
+        confirmations: 0,
+        tripleChainConsensus: false,
+        validationChains: []
+      };
     }
   }
   
