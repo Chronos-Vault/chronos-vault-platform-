@@ -1,4 +1,4 @@
-import { tonService } from './ton-service';
+import { tonService, TonConnectionStatus } from './ton-service';
 import { TON_VAULT_FACTORY_ABI, TON_CHRONOS_VAULT_ABI, TON_CVT_TOKEN_ABI, TONCreateVaultParams, formatTONVaultParams } from '@/lib/contract-interfaces';
 
 /**
@@ -59,7 +59,7 @@ class TONContractService {
       console.log('Deploying TON contract with params:', initialParams);
       
       // Validate wallet connection
-      if (!tonService.isConnected()) {
+      if (!tonService.getWalletInfo()) {
         return { success: false, error: 'Wallet not connected' };
       }
       
@@ -294,7 +294,7 @@ class TONContractService {
   /**
    * Get connection status
    */
-  getConnectionStatus(): string {
+  getConnectionStatus(): TonConnectionStatus {
     return tonService.getConnectionStatus();
   }
   
