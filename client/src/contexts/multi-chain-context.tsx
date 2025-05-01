@@ -99,15 +99,15 @@ export const MultiChainProvider: React.FC<{children: React.ReactNode}> = ({ chil
       isConnected: ethereum.isConnected,
     },
     solana: {
-      address: solana.walletAddress || '',
-      balance: solana.balance || '0',
-      network: solana.network || '',
+      address: solana.walletInfo?.address || '',
+      balance: solana.walletInfo?.balance || '0',
+      network: solana.walletInfo?.network || '',
       isConnected: solana.isConnected,
     },
     ton: {
-      address: ton.walletAddress || '',
-      balance: ton.balance || '0',
-      network: ton.network || '',
+      address: ton.walletInfo?.address || '',
+      balance: ton.walletInfo?.balance || '0',
+      network: ton.walletInfo?.network || '',
       isConnected: ton.isConnected,
     }
   };

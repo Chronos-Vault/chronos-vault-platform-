@@ -148,25 +148,38 @@ class EthereumService {
   public async connect(): Promise<boolean> {
     try {
       if (!window.ethereum) {
-        console.warn('No Ethereum wallet found. Using demo mode for development.');
+        console.warn('No Ethereum wallet found. Connecting to Sepolia testnet via RPC URL.');
         
-        // Create a simulated wallet for development
-        const demoAddress = "0x742d35Cc6634C0532925a3b844Bc454e4438f44e"; // Example address
-        const demoBalance = "15.7254"; // Example ETH amount
+        // Connect using RPC URL instead of simulating
+        const network = NETWORKS['sepolia'];
+        const provider = new ethers.JsonRpcProvider(network.rpcUrl);
         
-        // Update connection state with simulated data
+        // Use a test wallet created specifically for testnets
+        // In production, this should NEVER be done - only used for testing
+        const testPrivateKey = "0x1234567890123456789012345678901234567890123456789012345678901234"; // REPLACE WITH ACTUAL TEST KEY
+        const testWallet = new ethers.Wallet(testPrivateKey, provider);
+        const address = await testWallet.getAddress();
+        
+        // Get balance
+        const balance = await provider.getBalance(address);
+        const formattedBalance = ethers.formatEther(balance);
+        
         this._connectionState = {
           isConnected: true,
-          address: demoAddress,
-          balance: demoBalance,
-          networkName: "Goerli Testnet",
-          chainId: 5, // Goerli Chain ID
-          provider: null,
-          signer: null,
+          address: address,
+          balance: formattedBalance,
+          networkName: network.name,
+          chainId: network.chainId,
+          provider: null, // Can't use BrowserProvider with JsonRpcProvider
+          signer: null, // Can't use JsonRpcSigner with Wallet
           error: null
         };
         
-        console.log('Connected to simulated Ethereum wallet with address:', demoAddress);
+        console.log(`Connected to Ethereum ${network.name} with address: ${address}`);
+        
+        // Initialize contract
+        this.initializeContract();
+        
         return true;
       }
       
@@ -240,18 +253,35 @@ class EthereumService {
    */
   private initializeContract() {
     try {
-      if (!this._connectionState.signer) {
+      // Get the factory address for the current network
+      const factoryAddress = this.getFactoryAddressForNetwork();
+      
+      if (window.ethereum && this._connectionState.signer) {
+        // Browser environment with MetaMask
+        this._vaultContract = new ethers.Contract(
+          factoryAddress,
+          VAULT_FACTORY_ABI,
+          this._connectionState.signer
+        );
+      } else if (this._connectionState.isConnected && this._connectionState.address) {
+        // Connected via JsonRpcProvider (non-browser environment)
+        const network = NETWORKS[this._currentNetwork as keyof typeof NETWORKS];
+        const provider = new ethers.JsonRpcProvider(network.rpcUrl);
+        
+        // Use a test wallet created specifically for testnets
+        // In production, this should NEVER be done - only used for testing
+        const testPrivateKey = "0x1234567890123456789012345678901234567890123456789012345678901234"; // REPLACE WITH ACTUAL TEST KEY
+        const signer = new ethers.Wallet(testPrivateKey, provider);
+        
+        this._vaultContract = new ethers.Contract(
+          factoryAddress,
+          VAULT_FACTORY_ABI,
+          signer
+        );
+      } else {
         console.error('Cannot initialize contract: No signer available');
         return;
       }
-      
-      const factoryAddress = this.getFactoryAddressForNetwork();
-      
-      this._vaultContract = new ethers.Contract(
-        factoryAddress,
-        VAULT_FACTORY_ABI,
-        this._connectionState.signer
-      );
       
       console.log(`Vault factory contract initialized at ${factoryAddress}`);
     } catch (error) {
