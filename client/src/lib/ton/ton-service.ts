@@ -441,7 +441,11 @@ class TONService {
         console.log('Transaction sent successfully:', result);
         
         // Extract the transaction boc (bag of cells) which contains the transaction details
-        const txHash = result?.boc ? Buffer.from(result.boc, 'base64').toString('hex') : undefined;
+        // Use browser-compatible base64 decoding instead of Buffer
+        const txHash = result?.boc ? atob(result.boc) 
+          .split('')
+          .map(c => c.charCodeAt(0).toString(16).padStart(2, '0'))
+          .join('') : undefined;
         
         if (txHash) {
           console.log('Transaction hash:', txHash);

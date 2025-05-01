@@ -387,12 +387,12 @@ class TONContractService {
           {
             address: this.cvtMasterAddress,
             amount: '100000000', // 0.1 TON for gas
-            payload: Buffer.from(JSON.stringify({
+            payload: btoa(JSON.stringify({
               operation: 'transfer',
               from: walletInfo.address,
               to: toAddress,
               amount
-            })).toString('base64')
+            }))
           }
         ]
       };
@@ -435,12 +435,12 @@ class TONContractService {
           {
             address: this.stakingContractAddress,
             amount: '100000000', // 0.1 TON for gas
-            payload: Buffer.from(JSON.stringify({
+            payload: btoa(JSON.stringify({
               operation: 'stake',
               walletAddress: walletInfo.address,
               amount,
               duration
-            })).toString('base64')
+            }))
           }
         ]
       };
@@ -480,10 +480,10 @@ class TONContractService {
           {
             address: this.stakingContractAddress,
             amount: '100000000', // 0.1 TON for gas
-            payload: Buffer.from(JSON.stringify({
+            payload: btoa(JSON.stringify({
               operation: 'unstake',
               walletAddress: walletInfo.address
-            })).toString('base64')
+            }))
           }
         ]
       };
@@ -530,10 +530,10 @@ class TONContractService {
           {
             address: vaultAddress,
             amount: '100000000', // 0.1 TON for gas
-            payload: Buffer.from(JSON.stringify({
+            payload: btoa(JSON.stringify({
               op: 2, // Backup state operation
               walletAddress: walletInfo.address
-            })).toString('base64')
+            }))
           }
         ]
       };
