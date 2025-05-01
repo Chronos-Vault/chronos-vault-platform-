@@ -587,11 +587,11 @@ class TONContractService {
           {
             address: vaultAddress,
             amount: '100000000', // 0.1 TON for gas
-            payload: Buffer.from(JSON.stringify({
+            payload: btoa(JSON.stringify({
               op: 3, // Initiate recovery operation
               reason: recoveryReason,
               walletAddress: walletInfo.address
-            })).toString('base64')
+            }))
           }
         ]
       };
@@ -634,8 +634,9 @@ class TONContractService {
       }
       
       // Encode proofs as base64 for the transaction payload
-      const encodedEthProof = Buffer.from(ethereumProof).toString('base64');
-      const encodedSolProof = Buffer.from(solanaProof).toString('base64');
+      // Use native btoa for browser compatibility
+      const encodedEthProof = btoa(ethereumProof);
+      const encodedSolProof = btoa(solanaProof);
       
       // Prepare transaction for emergency recovery
       const transaction = {
@@ -644,12 +645,12 @@ class TONContractService {
           {
             address: vaultAddress,
             amount: '100000000', // 0.1 TON for gas
-            payload: Buffer.from(JSON.stringify({
+            payload: btoa(JSON.stringify({
               op: 4, // Emergency recovery operation
               ethProof: encodedEthProof,
               solProof: encodedSolProof,
               walletAddress: walletInfo.address
-            })).toString('base64')
+            }))
           }
         ]
       };
