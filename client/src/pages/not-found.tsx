@@ -1,12 +1,10 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { AlertCircle } from "lucide-react";
-import { Layout } from "@/components/layout";
 import { Button } from "@/components/ui/button";
 import { Link } from "wouter";
 
 export default function NotFound() {
   return (
-    <Layout>
       <div className="flex-1 w-full flex items-center justify-center py-20">
         <Card className="w-full max-w-md mx-4 bg-[#1A1A1A] border border-[#6B00D7]/20 shadow-xl shadow-[#6B00D7]/5">
           <CardContent className="pt-12 pb-10 px-8 flex flex-col items-center">
@@ -30,6 +28,5 @@ export default function NotFound() {
           </CardContent>
         </Card>
       </div>
-    </Layout>
   );
 }
