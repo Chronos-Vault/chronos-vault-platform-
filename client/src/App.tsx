@@ -38,6 +38,7 @@ import WhitepaperPage from "@/pages/whitepaper";
 import PrivacyDashboardPage from "@/pages/privacy-dashboard";
 import SecurityTestingPage from "@/pages/security-testing";
 import NotFound from "@/pages/not-found";
+import TestContractPage from "@/pages/test-contract";
 
 function Router() {
   return (
@@ -71,6 +72,7 @@ function Router() {
         <Route path="/whitepaper" component={WhitepaperPage} />
         <Route path="/privacy-dashboard" component={PrivacyDashboardPage} />
         <Route path="/security-testing" component={SecurityTestingPage} />
+        <Route path="/test-contract" component={TestContractPage} />
         <Route component={NotFound} />
       </Switch>
       <Toaster />

@@ -50,6 +50,7 @@ const Navbar = () => {
         { name: "Token Vaults", href: "/token-vaults", icon: "⏳" },
         { name: "Cross-Chain Features", href: "/cross-chain", icon: "🔄" },
         { name: "Security Testing", href: "/security-testing", icon: "🔒" },
+        { name: "Contract Testing", href: "/test-contract", icon: "🧪" },
       ]
     },
     {
@@ -156,6 +157,11 @@ const Navbar = () => {
                 <Link href="/cross-chain-security">
                   <DropdownMenuItem className="cursor-pointer">
                     Security Dashboard
+                  </DropdownMenuItem>
+                </Link>
+                <Link href="/test-contract">
+                  <DropdownMenuItem className="cursor-pointer">
+                    Contract Testing
                   </DropdownMenuItem>
                 </Link>
               </DropdownMenuContent>
