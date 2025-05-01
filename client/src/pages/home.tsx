@@ -209,10 +209,224 @@ const Home = () => {
                   </Button>
                 </CardContent>
               </Card>
+              
+              {/* Feature 3 */}
+              <Card className="bg-[#1A1A1A]/50 border border-[#6B00D7]/20 shadow-lg hover:shadow-[#6B00D7]/10 transition-all group hover:border-[#6B00D7]/40">
+                <CardContent className="p-6">
+                  <div className="rounded-full w-14 h-14 bg-gradient-to-br from-[#6B00D7]/20 to-[#FF5AF7]/10 flex items-center justify-center mb-5">
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-7 w-7 text-[#FF5AF7]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+                    </svg>
+                  </div>
+                  <h3 className="text-xl font-bold text-white mb-3">Cross-Chain Architecture</h3>
+                  <p className="text-gray-300 mb-4">Unified architecture across TON, Ethereum, Solana, and more with secure bridge mechanics for seamless operation.</p>
+                  <Button variant="link" className="text-[#FF5AF7] p-0 hover:text-white" onClick={() => setLocation("/cross-chain")}>
+                    Learn more →
+                  </Button>
+                </CardContent>
+              </Card>
             </div>
           </div>
         </section>
 
+        {/* CVT Token Section */}
+        <section className="py-16 md:py-20 bg-gradient-to-b from-[#121212] to-[#18121E]">
+          <div className="container mx-auto px-4">
+            <div className="text-center mb-12">
+              <h2 className="text-3xl md:text-5xl font-bold mb-6 bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] inline-block text-transparent bg-clip-text">ChronosToken (CVT)</h2>
+              <p className="text-lg text-gray-300 max-w-3xl mx-auto">A revolutionary deflationary token model optimized for long-term value preservation</p>
+            </div>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mt-12">
+              <div className="bg-[#1A1A1A]/70 border border-[#6B00D7]/20 shadow-lg rounded-lg p-8">
+                <h3 className="text-2xl font-bold text-white mb-6">Token Economics</h3>
+                
+                <div className="space-y-6">
+                  <div className="flex justify-between items-center border-b border-[#6B00D7]/10 pb-3">
+                    <span className="text-lg text-gray-300">Total Supply</span>
+                    <span className="text-xl font-bold text-white">21,000,000 CVT</span>
+                  </div>
+                  
+                  <div className="flex justify-between items-center border-b border-[#6B00D7]/10 pb-3">
+                    <span className="text-lg text-gray-300">Distribution Period</span>
+                    <span className="text-xl font-bold text-white">21 Years</span>
+                  </div>
+                  
+                  <div className="flex justify-between items-center border-b border-[#6B00D7]/10 pb-3">
+                    <span className="text-lg text-gray-300">Mechanism</span>
+                    <span className="text-xl font-bold text-white">Deflationary Burning</span>
+                  </div>
+                  
+                  <div className="flex justify-between items-center">
+                    <span className="text-lg text-gray-300">Primary Blockchain</span>
+                    <span className="text-xl font-bold text-white">TON Network</span>
+                  </div>
+                </div>
+                
+                <div className="mt-8">
+                  <Button 
+                    className="w-full bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] hover:from-[#5500AB] hover:to-[#FF46E8] text-white font-bold py-3 rounded-lg shadow-glow"
+                    onClick={() => setLocation("/cvt-tokenomics")}
+                  >
+                    View Full Tokenomics
+                  </Button>
+                </div>
+              </div>
+              
+              <div className="bg-[#1A1A1A]/70 border border-[#6B00D7]/20 shadow-lg rounded-lg p-8">
+                <h3 className="text-2xl font-bold text-white mb-6">Token Utility</h3>
+                
+                <ul className="space-y-4 mb-8">
+                  <li className="flex items-start gap-3">
+                    <div className="h-6 w-6 rounded-full bg-[#6B00D7]/30 flex items-center justify-center flex-shrink-0 mt-0.5">
+                      <span className="text-[#FF5AF7] text-sm">1</span>
+                    </div>
+                    <div>
+                      <h4 className="font-semibold text-white text-lg">Platform Fee Payment</h4>
+                      <p className="text-gray-300">Native token for all platform services with fee reductions for holders</p>
+                    </div>
+                  </li>
+                  
+                  <li className="flex items-start gap-3">
+                    <div className="h-6 w-6 rounded-full bg-[#6B00D7]/30 flex items-center justify-center flex-shrink-0 mt-0.5">
+                      <span className="text-[#FF5AF7] text-sm">2</span>
+                    </div>
+                    <div>
+                      <h4 className="font-semibold text-white text-lg">Security Staking</h4>
+                      <p className="text-gray-300">Stake required for high-value vault access and enhanced security features</p>
+                    </div>
+                  </li>
+                  
+                  <li className="flex items-start gap-3">
+                    <div className="h-6 w-6 rounded-full bg-[#6B00D7]/30 flex items-center justify-center flex-shrink-0 mt-0.5">
+                      <span className="text-[#FF5AF7] text-sm">3</span>
+                    </div>
+                    <div>
+                      <h4 className="font-semibold text-white text-lg">Governance Rights</h4>
+                      <p className="text-gray-300">Proportional voting weight in platform governance decisions</p>
+                    </div>
+                  </li>
+                </ul>
+                
+                <div className="mt-8">
+                  <Button 
+                    variant="outline"
+                    className="w-full border-2 border-[#6B00D7] text-white hover:bg-[#6B00D7]/10 hover:text-white font-bold py-3 rounded-lg"
+                    onClick={() => setLocation("/whitepaper")}
+                  >
+                    Read Whitepaper
+                  </Button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+        
+        {/* Security Model Section */}
+        <section className="py-16 md:py-20 bg-gradient-to-b from-[#18121E] to-[#1A0833]">
+          <div className="container mx-auto px-4">
+            <div className="text-center mb-12">
+              <h2 className="text-3xl md:text-5xl font-bold mb-6 bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] inline-block text-transparent bg-clip-text">Security Architecture</h2>
+              <p className="text-lg text-gray-300 max-w-3xl mx-auto">Military-grade protection for your digital assets with multi-layered security</p>
+            </div>
+            
+            <div className="bg-[#1A1A1A]/80 border border-[#6B00D7]/30 rounded-xl shadow-2xl p-6 md:p-10 max-w-4xl mx-auto">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div>
+                  <h3 className="text-2xl font-bold text-white mb-6 flex items-center gap-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-[#FF5AF7]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                    </svg>
+                    Economic Security
+                  </h3>
+                  
+                  <ul className="space-y-4">
+                    <li className="flex gap-3">
+                      <div className="h-6 w-6 rounded-full bg-[#6B00D7]/30 flex items-center justify-center flex-shrink-0 mt-0.5">
+                        <span className="text-[#FF5AF7] text-sm">1</span>
+                      </div>
+                      <div>
+                        <h4 className="font-semibold text-white">Attack Cost Analysis</h4>
+                        <p className="text-gray-300 text-sm">Economic cost to attack exceeds potential gain with multi-chain validation</p>
+                      </div>
+                    </li>
+                    
+                    <li className="flex gap-3">
+                      <div className="h-6 w-6 rounded-full bg-[#6B00D7]/30 flex items-center justify-center flex-shrink-0 mt-0.5">
+                        <span className="text-[#FF5AF7] text-sm">2</span>
+                      </div>
+                      <div>
+                        <h4 className="font-semibold text-white">Penalty System</h4>
+                        <p className="text-gray-300 text-sm">Slashing of staked tokens for malicious behavior with reputation scoring</p>
+                      </div>
+                    </li>
+                    
+                    <li className="flex gap-3">
+                      <div className="h-6 w-6 rounded-full bg-[#6B00D7]/30 flex items-center justify-center flex-shrink-0 mt-0.5">
+                        <span className="text-[#FF5AF7] text-sm">3</span>
+                      </div>
+                      <div>
+                        <h4 className="font-semibold text-white">Treasury Security</h4>
+                        <p className="text-gray-300 text-sm">Multi-signature requirements with time-delayed execution of fund movements</p>
+                      </div>
+                    </li>
+                  </ul>
+                </div>
+                
+                <div>
+                  <h3 className="text-2xl font-bold text-white mb-6 flex items-center gap-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-[#FF5AF7]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 11c0 3.517-1.009 6.799-2.753 9.571m-3.44-2.04l.054-.09A13.916 13.916 0 008 11a4 4 0 118 0c0 1.017-.07 2.019-.203 3m-2.118 6.844A21.88 21.88 0 0015.171 17m3.839 1.132c.645-2.266.99-4.659.99-7.132A8 8 0 008 4.07M3 15.364c.64-1.319 1-2.8 1-4.364 0-1.457.39-2.823 1.07-4" />
+                    </svg>
+                    Technical Security
+                  </h3>
+                  
+                  <ul className="space-y-4">
+                    <li className="flex gap-3">
+                      <div className="h-6 w-6 rounded-full bg-[#6B00D7]/30 flex items-center justify-center flex-shrink-0 mt-0.5">
+                        <span className="text-[#FF5AF7] text-sm">1</span>
+                      </div>
+                      <div>
+                        <h4 className="font-semibold text-white">Implementation Security</h4>
+                        <p className="text-gray-300 text-sm">Formal verification of smart contracts with independent security audits</p>
+                      </div>
+                    </li>
+                    
+                    <li className="flex gap-3">
+                      <div className="h-6 w-6 rounded-full bg-[#6B00D7]/30 flex items-center justify-center flex-shrink-0 mt-0.5">
+                        <span className="text-[#FF5AF7] text-sm">2</span>
+                      </div>
+                      <div>
+                        <h4 className="font-semibold text-white">Operational Security</h4>
+                        <p className="text-gray-300 text-sm">Defense-in-depth approach with tiered access controls for admin functions</p>
+                      </div>
+                    </li>
+                    
+                    <li className="flex gap-3">
+                      <div className="h-6 w-6 rounded-full bg-[#6B00D7]/30 flex items-center justify-center flex-shrink-0 mt-0.5">
+                        <span className="text-[#FF5AF7] text-sm">3</span>
+                      </div>
+                      <div>
+                        <h4 className="font-semibold text-white">Long-term Security</h4>
+                        <p className="text-gray-300 text-sm">Quantum-resistant cryptographic methods with cross-chain redundancy</p>
+                      </div>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+              
+              <div className="mt-10 text-center">
+                <Button 
+                  className="bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] hover:from-[#5500AB] hover:to-[#FF46E8] text-white font-bold py-3 px-8 rounded-lg shadow-glow"
+                  onClick={() => setLocation("/security-testing")}
+                >
+                  Explore Security Dashboard
+                </Button>
+              </div>
+            </div>
+          </div>
+        </section>
+        
         {/* Sample vault section */}
         <section className="py-16 md:py-20 bg-[#121212]">
           <div className="container mx-auto px-4">
