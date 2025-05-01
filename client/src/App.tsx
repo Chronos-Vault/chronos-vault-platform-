@@ -1,6 +1,4 @@
 import { Switch, Route } from "wouter";
-import { queryClient } from "./lib/queryClient";
-import { QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { MultiChainProvider } from "@/contexts/multi-chain-context";
@@ -8,8 +6,9 @@ import { TonProvider } from "@/contexts/ton-context";
 import { SolanaProvider } from "@/contexts/solana-context";
 import { EthereumProvider } from "@/contexts/ethereum-context";
 import { CVTTokenProvider } from "@/contexts/cvt-token-context";
+import Layout from "@/components/layout/Layout";
 
-// Header and Footer now imported via the Layout component on each page
+// Pages
 import Home from "@/pages/home";
 import CreateVault from "@/pages/create-vault";
 import CreateVaultEnhancedPage from "@/pages/create-vault-enhanced";
@@ -42,48 +41,57 @@ import NotFound from "@/pages/not-found";
 
 function Router() {
   return (
-    <Switch>
-      <Route path="/" component={Home} />
-      <Route path="/create-vault" component={CreateVault} />
-      <Route path="/create-vault-enhanced" component={CreateVaultEnhancedPage} />
-      <Route path="/vault-types" component={VaultTypesSelector} />
-      <Route path="/advanced-vault" component={AdvancedVaultCreationPage} />
-      <Route path="/advanced-vault-new" component={AdvancedVaultCreationNewPage} />
-      <Route path="/my-vaults" component={MyVaults} />
-      <Route path="/vault/:id" component={VaultDetails} />
-      <Route path="/about" component={About} />
-      <Route path="/bitcoin-halving" component={BitcoinHalvingPage} />
-      <Route path="/bitcoin-halving-vault" component={BitcoinHalvingVaultPage} />
-      <Route path="/roadmap" component={RoadmapPage} />
-      <Route path="/cvt-token" component={CVTTokenPage} />
-      <Route path="/token-vaults" component={TokenVaultsPage} />
-      <Route path="/cross-chain" component={CrossChainPage} />
-      <Route path="/cross-chain-vault" component={CrossChainVaultPage} />
-      <Route path="/cross-chain-security" component={CrossChainSecurityPage} />
-      <Route path="/ton-integration" component={TONIntegrationPage} />
-      <Route path="/solana-integration" component={SolanaIntegrationPage} />
-      <Route path="/ethereum-integration" component={EthereumIntegrationPage} />
-      <Route path="/gift-crypto" component={GiftCryptoPage} />
-      <Route path="/revolutionary-features" component={RevolutionaryFeaturesPage} />
-      <Route path="/documentation" component={DocumentationPage} />
-      <Route path="/technical-specification" component={TechnicalSpecificationPage} />
-      <Route path="/cvt-tokenomics" component={CVTTokenomicsPage} />
-      <Route path="/whitepaper" component={WhitepaperPage} />
-      <Route path="/privacy-dashboard" component={PrivacyDashboardPage} />
-      <Route path="/security-testing" component={SecurityTestingPage} />
-      <Route component={NotFound} />
-    </Switch>
+    <Layout>
+      <Switch>
+        <Route path="/" component={Home} />
+        <Route path="/create-vault" component={CreateVault} />
+        <Route path="/create-vault-enhanced" component={CreateVaultEnhancedPage} />
+        <Route path="/vault-types" component={VaultTypesSelector} />
+        <Route path="/advanced-vault" component={AdvancedVaultCreationPage} />
+        <Route path="/advanced-vault-new" component={AdvancedVaultCreationNewPage} />
+        <Route path="/my-vaults" component={MyVaults} />
+        <Route path="/vault/:id" component={VaultDetails} />
+        <Route path="/about" component={About} />
+        <Route path="/bitcoin-halving" component={BitcoinHalvingPage} />
+        <Route path="/bitcoin-halving-vault" component={BitcoinHalvingVaultPage} />
+        <Route path="/roadmap" component={RoadmapPage} />
+        <Route path="/cvt-token" component={CVTTokenPage} />
+        <Route path="/token-vaults" component={TokenVaultsPage} />
+        <Route path="/cross-chain" component={CrossChainPage} />
+        <Route path="/cross-chain-vault" component={CrossChainVaultPage} />
+        <Route path="/cross-chain-security" component={CrossChainSecurityPage} />
+        <Route path="/ton-integration" component={TONIntegrationPage} />
+        <Route path="/solana-integration" component={SolanaIntegrationPage} />
+        <Route path="/ethereum-integration" component={EthereumIntegrationPage} />
+        <Route path="/gift-crypto" component={GiftCryptoPage} />
+        <Route path="/revolutionary-features" component={RevolutionaryFeaturesPage} />
+        <Route path="/documentation" component={DocumentationPage} />
+        <Route path="/technical-specification" component={TechnicalSpecificationPage} />
+        <Route path="/cvt-tokenomics" component={CVTTokenomicsPage} />
+        <Route path="/whitepaper" component={WhitepaperPage} />
+        <Route path="/privacy-dashboard" component={PrivacyDashboardPage} />
+        <Route path="/security-testing" component={SecurityTestingPage} />
+        <Route component={NotFound} />
+      </Switch>
+      <Toaster />
+    </Layout>
   );
 }
 
 function App() {
   return (
     <TooltipProvider>
-      <MultiChainProvider>
-        <CVTTokenProvider>
-          <Router />
-        </CVTTokenProvider>
-      </MultiChainProvider>
+      <EthereumProvider>
+        <SolanaProvider>
+          <TonProvider>
+            <MultiChainProvider>
+              <CVTTokenProvider>
+                <Router />
+              </CVTTokenProvider>
+            </MultiChainProvider>
+          </TonProvider>
+        </SolanaProvider>
+      </EthereumProvider>
     </TooltipProvider>
   );
 }
