@@ -149,39 +149,81 @@ class TONService {
         return this.getTestnetBalance(address); // Provide a more realistic testnet balance
       }
       
-      console.log('Using TON API key for real testnet interaction');
+      console.log('Fetching real TON balance from testnet for address:', address);
       
+      // Enhanced API request with proper error handling and retries
       // Make API request to TON Center (Testnet endpoint for development)
       const endpoint = 'https://testnet.toncenter.com/api/v2/getAddressBalance';
+      const maxRetries = 3;
+      let retryCount = 0;
+      let lastError: Error | null = null;
       
-      try {
-        const response = await fetch(`${endpoint}?api_key=${apiKey}&address=${address}`, {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json',
-            'X-API-Key': apiKey
+      while (retryCount < maxRetries) {
+        try {
+          // Build the fetch parameters
+          const fetchParams = new URLSearchParams({
+            address: address,
+          });
+          
+          const response = await fetch(`${endpoint}?${fetchParams.toString()}`, {
+            method: 'GET',
+            headers: {
+              'Content-Type': 'application/json',
+              'X-API-Key': apiKey
+            },
+            // Adding a reasonable timeout to avoid hanging requests
+            signal: AbortSignal.timeout(8000) // 8-second timeout
+          });
+          
+          if (!response.ok) {
+            const errorText = await response.text();
+            throw new Error(`TON API request failed (${response.status}): ${errorText}`);
           }
-        });
-        
-        if (!response.ok) {
-          throw new Error(`TON API request failed: ${response.statusText}`);
-        }
-        
-        const data = await response.json();
-        if (data.ok && data.result) {
+          
+          // Parse and validate the response
+          let data;
+          try {
+            data = await response.json();
+          } catch (jsonError: any) {
+            throw new Error(`Invalid JSON response: ${jsonError.message}`);
+          }
+          
+          if (!data.ok || !data.result) {
+            throw new Error(`Invalid response data: ${JSON.stringify(data)}`);
+          }
+          
           // Convert nanograms to TON (1 TON = 10^9 nanograms)
           const balanceInTON = parseInt(data.result) / 1e9;
-          return balanceInTON.toString();
-        } else {
-          console.warn('Invalid response from TON API:', data);
-          return this.getTestnetBalance(address);
+          console.log(`Successful balance fetch: ${balanceInTON} TON`);
+          return balanceInTON.toFixed(4).toString();
+          
+        } catch (apiError: any) {
+          lastError = apiError;
+          console.warn(`TON API error (attempt ${retryCount + 1}/${maxRetries}):`, apiError.message);
+          retryCount++;
+          
+          if (retryCount < maxRetries) {
+            // Exponential backoff for retries
+            const backoffMs = Math.min(1000 * Math.pow(2, retryCount), 8000);
+            console.log(`Retrying in ${backoffMs}ms...`);
+            await new Promise(resolve => setTimeout(resolve, backoffMs));
+          }
         }
-      } catch (apiError) {
-        console.error('TON API error:', apiError);
-        return this.getTestnetBalance(address); // Fallback to test balance
       }
+      
+      // If we get here, all retries failed
+      console.error('All TON API balance fetch attempts failed:', lastError);
+      
+      // Check if we're in development mode to use fallback
+      if (import.meta.env.DEV) {
+        console.warn('Using deterministic balance generator for development');
+        return this.getTestnetBalance(address);
+      }
+      
+      // In production, return a safer zero balance
+      return '0';
     } catch (error) {
-      console.error('Failed to fetch TON balance:', error);
+      console.error('Unexpected error in fetchTONBalance:', error);
       return this.getTestnetBalance(address);
     }
   }

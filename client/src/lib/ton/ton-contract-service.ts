@@ -49,82 +49,122 @@ class TONContractService {
    * @returns True if the transaction is valid and confirmed, false otherwise
    */
   public async isTransactionValid(txHash: string): Promise<boolean> {
+    // Ensure we have a valid transaction hash
+    if (!txHash || txHash.length < 10) {
+      console.error('Invalid transaction hash format');
+      return false;
+    }
+
     try {
       // Use TON API to check transaction status
       const apiKey = import.meta.env.VITE_TON_API_KEY || import.meta.env.TON_API_KEY || '5216ae7e1e4328d7c3e07bc4d32d2694db47f2c5dd20e56872b766b2fdb7fb02';
       
       if (!apiKey) {
-        console.warn('No TON API key provided, transaction validation will be simulated');
-        // For testing/simulation purposes
-        return txHash.length > 10 && !txHash.includes('invalid');
+        throw new Error('No TON API key provided for transaction validation');
+      }
+      
+      // Determine the correct address to use for the API request
+      let queryAddress = txHash;
+      if (!txHash.startsWith('EQ') && !txHash.startsWith('Ug')) {
+        // If the txHash isn't a valid TON address format, use the master contract address
+        queryAddress = this.cvtMasterAddress;
+        console.log('Using master contract address for transaction lookup');
       }
       
       // Make API request to TON Center (Testnet endpoint for development)
       const endpoint = 'https://testnet.toncenter.com/api/v2/getTransactions';
       const params = new URLSearchParams({
-        address: txHash.includes(':') ? txHash : this.cvtMasterAddress, // Use master address if not a full address
-        limit: '10'
+        address: queryAddress,
+        limit: '20' // Increase limit to catch more transactions
       });
       
-      const response = await fetch(`${endpoint}?${params.toString()}`, {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-          'X-API-Key': apiKey
-        }
-      });
+      console.log(`Validating TON transaction: ${txHash}`);
+      console.log(`Querying transactions for address: ${queryAddress}`);
       
-      if (!response.ok) {
-        throw new Error(`TON API request failed: ${response.statusText}`);
+      // Make the API request with proper error handling
+      let response: Response;
+      try {
+        response = await fetch(`${endpoint}?${params.toString()}`, {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            'X-API-Key': apiKey
+          }
+        });
+      } catch (fetchError: any) {
+        console.error('Network error during TON API request:', fetchError);
+        throw new Error(`Network error: Could not connect to TON API. ${fetchError.message || 'Unknown error'}`);
       }
       
-      const data = await response.json();
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error(`TON API request failed (${response.status}): ${errorText}`);
+        throw new Error(`TON API request failed: ${response.statusText} (${response.status})`);
+      }
+      
+      let data: any;
+      try {
+        data = await response.json();
+      } catch (jsonError: any) {
+        console.error('Error parsing TON API response:', jsonError);
+        throw new Error(`Invalid JSON response from TON API: ${jsonError.message || 'Unknown parsing error'}`);
+      }
+      
       if (!data.ok) {
+        console.error('TON API error:', data.error);
         throw new Error(`TON API error: ${data.error}`);
       }
       
       // Check if the transaction hash matches any in the returned list
-      const transactions = data.result;
-      const foundTx = transactions.find((tx: any) => 
-        tx.transaction_id.hash === txHash || 
-        tx.transaction_id.lt.toString() === txHash
-      );
+      const transactions = data.result || [];
       
-      return !!foundTx;
-    } catch (error) {
-      console.error('Error validating TON transaction:', error);
-      // Fallback for testing when API is unavailable
-      return txHash.length > 10 && !txHash.includes('invalid');
-    }
-  
-    try {
-      // Get wallet info to check connection status
-      const walletInfo = tonService.getWalletInfo();
-      
-      // For testing/demo environments or when wallet is not connected:
-      if (!walletInfo) {
-        // Simple validation based on TON transaction hash format and randomness for demo
-        const hasValidFormat = txHash.length > 20 || txHash.startsWith('simulated');
-        return hasValidFormat;
+      if (transactions.length === 0) {
+        console.warn('No transactions found for the given address');
+        return false;
       }
       
-      // In a production environment with TON Connect:
-      // This would use TON SDK to check transaction status, for example:
-      // const transaction = await tonClient.transactions.query({
-      //   filter: { id: { eq: txHash } }
-      // });
+      console.log(`Found ${transactions.length} transactions for address ${queryAddress}`);
       
-      // For now, we'll consider all well-formed transaction IDs as valid for demonstration
-      const isWellFormed = txHash.length >= 44 || txHash.startsWith('simulated');
+      // Look for our transaction hash in the returned results
+      const foundTx = transactions.find((tx: any) => {
+        // Match against hash or logical time
+        if (tx.transaction_id?.hash === txHash) {
+          console.log('Found exact transaction hash match');
+          return true;
+        }
+        
+        if (tx.transaction_id?.lt?.toString() === txHash) {
+          console.log('Found logical time match');
+          return true;
+        }
+        
+        // Check for partial matches in the data
+        if (JSON.stringify(tx).includes(txHash)) {
+          console.log('Found transaction with matching data');
+          return true;
+        }
+        
+        return false;
+      });
       
-      // TON transactions start with specific prefixes
-      const hasValidPrefix = txHash.startsWith('EQ') || 
-                          txHash.startsWith('Ug') || 
-                          txHash.startsWith('simulated');
+      if (foundTx) {
+        console.log('Transaction validation successful');
+        return true;
+      }
       
-      return isWellFormed && hasValidPrefix;
+      console.warn('Transaction not found in recent transactions');
+      return false;
     } catch (error) {
-      console.error(`Error validating TON transaction ${txHash}:`, error);
+      console.error('Error validating TON transaction:', error);
+      
+      // Only use fallback in development environment
+      if (import.meta.env.DEV) {
+        console.warn('Using fallback validation mechanism in development environment');
+        // Check for well-formed transaction format as a fallback
+        const isWellFormed = txHash.length >= 44 || txHash.startsWith('EQ') || 
+                           txHash.startsWith('Ug');
+        return isWellFormed;
+      }
       return false;
     }
   }
