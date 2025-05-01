@@ -95,6 +95,7 @@ class EthereumService {
   private _connectionState: EthereumConnectionState;
   private _vaultContract: ethers.Contract | null = null;
   private _currentNetwork: string = 'sepolia'; // Default to Sepolia testnet for development
+  private _jsonRpcProvider: ethers.JsonRpcProvider | null = null; // For non-browser environments
   
   constructor() {
     this._connectionState = { ...defaultConnectionState };

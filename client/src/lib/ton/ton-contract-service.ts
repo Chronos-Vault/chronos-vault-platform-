@@ -50,7 +50,7 @@ class TONContractService {
   public async isTransactionValid(txHash: string): Promise<boolean> {
     try {
       // Use TON API to check transaction status
-      const apiKey = import.meta.env.VITE_TON_API_KEY || import.meta.env.TON_API_KEY;
+      const apiKey = import.meta.env.VITE_TON_API_KEY || import.meta.env.TON_API_KEY || '5216ae7e1e4328d7c3e07bc4d32d2694db47f2c5dd20e56872b766b2fdb7fb02';
       
       if (!apiKey) {
         console.warn('No TON API key provided, transaction validation will be simulated');
