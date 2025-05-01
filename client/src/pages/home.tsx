@@ -428,11 +428,215 @@ const Home = () => {
         </section>
         
         {/* Sample vault section */}
-        <section className="py-16 md:py-20 bg-[#121212]">
-          <div className="container mx-auto px-4">
+        <section className="py-16 md:py-20 bg-[#121212] relative overflow-hidden">
+          {/* Decorative elements */}
+          <div className="absolute top-20 -right-40 w-80 h-80 rounded-full bg-[#6B00D7]/10 blur-[100px]"></div>
+          <div className="absolute bottom-40 -left-20 w-60 h-60 rounded-full bg-[#FF5AF7]/10 blur-[100px]"></div>
+          
+          <div className="container mx-auto px-4 relative z-10">
             <div className="text-center mb-12">
               <h2 className="text-3xl md:text-5xl font-bold mb-6 bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] inline-block text-transparent bg-clip-text">Explore Sample Vaults</h2>
-              <p className="text-lg text-gray-300 max-w-3xl mx-auto">Discover how Chronos Vault can secure your assets across time with our sample vault templates</p>
+              <p className="text-lg text-gray-300 max-w-3xl mx-auto">Discover how Chronos Vault can secure your digital wealth across time with our revolutionary vault templates</p>
+            </div>
+            
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mt-12">
+              {/* Legacy Vault */}
+              <Card className="bg-gradient-to-br from-[#1A1A1A] to-[#121212] border border-[#6B00D7]/20 shadow-xl hover:shadow-[#6B00D7]/30 transition-all hover:translate-y-[-5px] overflow-hidden group">
+                <div className="h-2 w-full bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7]"></div>
+                <CardContent className="p-6">
+                  <div className="rounded-full w-16 h-16 bg-gradient-to-br from-[#6B00D7]/20 to-[#FF5AF7]/10 flex items-center justify-center mb-5 group-hover:scale-110 transition-all border border-[#6B00D7]/30">
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-[#FF5AF7]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+                    </svg>
+                  </div>
+                  <h3 className="text-2xl font-bold text-white mb-3 group-hover:text-[#FF5AF7] transition-all">Legacy Vault</h3>
+                  <p className="text-gray-300 mb-5">Create a secure container for your digital assets with customizable time locks, beneficiaries, and multi-signature security.</p>
+                  
+                  <div className="space-y-3 mb-6">
+                    <div className="flex items-center space-x-2">
+                      <div className="h-5 w-5 rounded-full bg-[#6B00D7]/20 flex items-center justify-center">
+                        <span className="text-[#FF5AF7] text-xs">✓</span>
+                      </div>
+                      <span className="text-gray-300">Customizable inheritance conditions</span>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <div className="h-5 w-5 rounded-full bg-[#6B00D7]/20 flex items-center justify-center">
+                        <span className="text-[#FF5AF7] text-xs">✓</span>
+                      </div>
+                      <span className="text-gray-300">Multi-chain security verification</span>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <div className="h-5 w-5 rounded-full bg-[#6B00D7]/20 flex items-center justify-center">
+                        <span className="text-[#FF5AF7] text-xs">✓</span>
+                      </div>
+                      <span className="text-gray-300">Encrypted document storage</span>
+                    </div>
+                  </div>
+                  
+                  <Button 
+                    className="w-full bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] hover:from-[#5500AB] hover:to-[#FF46E8] text-white font-bold rounded-lg py-2 shadow-glow transition-all"
+                    onClick={() => setLocation("/create-vault")}
+                  >
+                    Create Legacy Vault
+                  </Button>
+                </CardContent>
+              </Card>
+              
+              {/* Investment Vault */}
+              <Card className="bg-gradient-to-br from-[#1A1A1A] to-[#121212] border border-[#6B00D7]/20 shadow-xl hover:shadow-[#6B00D7]/30 transition-all overflow-hidden group">
+                <div className="h-2 w-full bg-gradient-to-r from-[#FF5AF7] to-[#6B00D7]"></div>
+                <CardContent className="p-6">
+                  <div className="rounded-full w-16 h-16 bg-gradient-to-br from-[#6B00D7]/20 to-[#FF5AF7]/10 flex items-center justify-center mb-5 group-hover:scale-110 transition-all border border-[#6B00D7]/30">
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-[#FF5AF7]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                  </div>
+                  <h3 className="text-2xl font-bold text-white mb-3 group-hover:text-[#FF5AF7] transition-all">Investment Vault</h3>
+                  <p className="text-gray-300 mb-5">Lock your crypto assets for specific time periods with automated DeFi strategies to maximize returns while secured.</p>
+                  
+                  <div className="space-y-3 mb-6">
+                    <div className="flex items-center space-x-2">
+                      <div className="h-5 w-5 rounded-full bg-[#6B00D7]/20 flex items-center justify-center">
+                        <span className="text-[#FF5AF7] text-xs">✓</span>
+                      </div>
+                      <span className="text-gray-300">Auto-compounding interest</span>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <div className="h-5 w-5 rounded-full bg-[#6B00D7]/20 flex items-center justify-center">
+                        <span className="text-[#FF5AF7] text-xs">✓</span>
+                      </div>
+                      <span className="text-gray-300">Customizable time-lock periods</span>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <div className="h-5 w-5 rounded-full bg-[#6B00D7]/20 flex items-center justify-center">
+                        <span className="text-[#FF5AF7] text-xs">✓</span>
+                      </div>
+                      <span className="text-gray-300">Cross-chain asset diversification</span>
+                    </div>
+                  </div>
+                  
+                  <Button 
+                    className="w-full bg-gradient-to-r from-[#FF5AF7] to-[#6B00D7] hover:from-[#FF46E8] hover:to-[#5500AB] text-white font-bold rounded-lg py-2 shadow-glow transition-all"
+                    onClick={() => setLocation("/create-vault")}
+                  >
+                    Create Investment Vault
+                  </Button>
+                </CardContent>
+              </Card>
+              
+              {/* Bitcoin Halving Vault */}
+              <Card className="bg-gradient-to-br from-[#1A1A1A] to-[#121212] border border-[#6B00D7]/20 shadow-xl hover:shadow-[#6B00D7]/30 transition-all hover:translate-y-[-5px] overflow-hidden group">
+                <div className="h-2 w-full bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7]"></div>
+                <CardContent className="p-6">
+                  <div className="rounded-full w-16 h-16 bg-gradient-to-br from-[#6B00D7]/20 to-[#FF5AF7]/10 flex items-center justify-center mb-5 group-hover:scale-110 transition-all border border-[#6B00D7]/30">
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-[#FF5AF7]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                  </div>
+                  <h3 className="text-2xl font-bold text-white mb-3 group-hover:text-[#FF5AF7] transition-all">Bitcoin Halving Vault</h3>
+                  <p className="text-gray-300 mb-5">Synchronize your asset unlocks with Bitcoin halving events for strategic long-term crypto investment planning.</p>
+                  
+                  <div className="space-y-3 mb-6">
+                    <div className="flex items-center space-x-2">
+                      <div className="h-5 w-5 rounded-full bg-[#6B00D7]/20 flex items-center justify-center">
+                        <span className="text-[#FF5AF7] text-xs">✓</span>
+                      </div>
+                      <span className="text-gray-300">Bitcoin halving cycle alignment</span>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <div className="h-5 w-5 rounded-full bg-[#6B00D7]/20 flex items-center justify-center">
+                        <span className="text-[#FF5AF7] text-xs">✓</span>
+                      </div>
+                      <span className="text-gray-300">On-chain verification of halving events</span>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <div className="h-5 w-5 rounded-full bg-[#6B00D7]/20 flex items-center justify-center">
+                        <span className="text-[#FF5AF7] text-xs">✓</span>
+                      </div>
+                      <span className="text-gray-300">Auto-rebalancing portfolio options</span>
+                    </div>
+                  </div>
+                  
+                  <Button 
+                    className="w-full bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] hover:from-[#5500AB] hover:to-[#FF46E8] text-white font-bold rounded-lg py-2 shadow-glow transition-all"
+                    onClick={() => setLocation("/bitcoin-halving-vault")}
+                  >
+                    Create BTC Halving Vault
+                  </Button>
+                </CardContent>
+              </Card>
+            </div>
+            
+            <div className="flex justify-center mt-12">
+              <Button 
+                className="bg-gradient-to-r from-[#6B00D7]/20 to-[#FF5AF7]/20 border border-[#6B00D7]/40 hover:border-[#FF5AF7]/60 text-white font-bold rounded-lg px-8 py-3 text-lg shadow-glow hover:shadow-lg hover:shadow-[#FF5AF7]/10 transition-all"
+                onClick={() => setLocation("/advanced-vault-creation")}
+              >
+                Explore Advanced Vault Options
+              </Button>
+            </div>
+          </div>
+        </section>
+        
+        {/* Testimonials section */}
+        <section className="py-16 md:py-20 bg-gradient-to-b from-[#121212] to-[#1A1A1A]">
+          <div className="container mx-auto px-4">
+            <div className="text-center mb-12">
+              <h2 className="text-3xl md:text-5xl font-bold mb-6 bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] inline-block text-transparent bg-clip-text">What Our Users Say</h2>
+              <p className="text-lg text-gray-300 max-w-3xl mx-auto">Join thousands of users who trust Chronos Vault for their digital asset security</p>
+            </div>
+            
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mt-12">
+              {/* Testimonial 1 */}
+              <Card className="bg-[#1A1A1A]/60 border border-[#6B00D7]/20 shadow-lg hover:shadow-[#6B00D7]/10 transition-all p-2">
+                <CardContent className="p-6">
+                  <div className="flex items-center gap-1 text-[#FF5AF7] mb-4">
+                    <span>★</span><span>★</span><span>★</span><span>★</span><span>★</span>
+                  </div>
+                  <p className="text-gray-300 mb-6 italic">"Chronos Vault has revolutionized how I think about my crypto legacy planning. The Triple-Chain security gives me peace of mind that my assets are truly protected."</p>
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-full bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7]"></div>
+                    <div>
+                      <p className="font-medium text-white">Alex T.</p>
+                      <p className="text-sm text-gray-400">Crypto Investor</p>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+              
+              {/* Testimonial 2 */}
+              <Card className="bg-[#1A1A1A]/60 border border-[#6B00D7]/20 shadow-lg hover:shadow-[#6B00D7]/10 transition-all p-2 md:translate-y-4">
+                <CardContent className="p-6">
+                  <div className="flex items-center gap-1 text-[#FF5AF7] mb-4">
+                    <span>★</span><span>★</span><span>★</span><span>★</span><span>★</span>
+                  </div>
+                  <p className="text-gray-300 mb-6 italic">"The Bitcoin Halving Vault is ingenious. It's allowed me to create a strategic investment plan that aligns perfectly with Bitcoin's cycle, maximizing potential returns."</p>
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-full bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7]"></div>
+                    <div>
+                      <p className="font-medium text-white">Sarah M.</p>
+                      <p className="text-sm text-gray-400">Blockchain Developer</p>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+              
+              {/* Testimonial 3 */}
+              <Card className="bg-[#1A1A1A]/60 border border-[#6B00D7]/20 shadow-lg hover:shadow-[#6B00D7]/10 transition-all p-2">
+                <CardContent className="p-6">
+                  <div className="flex items-center gap-1 text-[#FF5AF7] mb-4">
+                    <span>★</span><span>★</span><span>★</span><span>★</span><span>★</span>
+                  </div>
+                  <p className="text-gray-300 mb-6 italic">"The cross-chain capabilities are impressive. I can secure assets across multiple blockchains with a single interface and know they're all equally protected."</p>
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-full bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7]"></div>
+                    <div>
+                      <p className="font-medium text-white">Michael K.</p>
+                      <p className="text-sm text-gray-400">DeFi Enthusiast</p>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
             </div>
           </div>
         </section>
