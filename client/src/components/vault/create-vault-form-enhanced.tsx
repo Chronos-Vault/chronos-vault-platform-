@@ -87,7 +87,8 @@ const vaultFormSchema = z.object({
     'standard',
     'timelock',
     'multisig',
-    'inheritance',
+    'geolocation',
+    'biometric',
     'cross-chain',
     'advanced',
   ]),
@@ -172,27 +173,50 @@ export function CreateVaultFormEnhanced({
   
   // Update default values based on vault type
   useEffect(() => {
-    if (vaultType === 'multisig' && !form.getValues('enableMultisig')) {
-      form.setValue('enableMultisig', true);
-    }
+    // Reset previous settings first
+    form.setValue('enableMultisig', false);
+    form.setValue('enableGeolocation', false);
+    form.setValue('enableBiometrics', false);
+    form.setValue('enableCVTStaking', false);
     
-    if (vaultType === 'multisig' && form.getValues('unlockType') !== 'multisig') {
-      form.setValue('unlockType', 'multisig');
-    }
-    
-    if (vaultType === 'timelock') {
-      // Set a longer default timelock for timelock vaults
-      const currentDate = new Date(form.getValues('unlockDate'));
-      const oneYearFromNow = new Date();
-      oneYearFromNow.setFullYear(oneYearFromNow.getFullYear() + 1);
-      
-      if (currentDate < oneYearFromNow) {
-        form.setValue('unlockDate', oneYearFromNow);
-      }
-    }
-    
-    if (vaultType === 'cross-chain') {
-      form.setValue('securityLevel', 'maximum');
+    // Apply settings based on vault type
+    switch(vaultType) {
+      case 'multisig':
+        form.setValue('enableMultisig', true);
+        form.setValue('unlockType', 'multisig');
+        form.setValue('securityLevel', 'enhanced');
+        break;
+        
+      case 'geolocation':
+        form.setValue('enableGeolocation', true);
+        form.setValue('securityLevel', 'enhanced');
+        break;
+        
+      case 'biometric':
+        form.setValue('enableBiometrics', true);
+        form.setValue('securityLevel', 'maximum');
+        break;
+        
+      case 'timelock':
+        // Set a longer default timelock for timelock vaults
+        const currentDate = new Date(form.getValues('unlockDate'));
+        const oneYearFromNow = new Date();
+        oneYearFromNow.setFullYear(oneYearFromNow.getFullYear() + 1);
+        
+        if (currentDate < oneYearFromNow) {
+          form.setValue('unlockDate', oneYearFromNow);
+        }
+        break;
+        
+      case 'cross-chain':
+        form.setValue('securityLevel', 'maximum');
+        form.setValue('enableCVTStaking', true);
+        break;
+        
+      case 'standard':
+      default:
+        // Default values already set
+        break;
     }
   }, [vaultType, form]);
   
@@ -456,8 +480,8 @@ export function CreateVaultFormEnhanced({
                               </SelectItem>
                               <SelectItem value="timelock">
                                 <div className="flex items-center gap-2">
-                                  <Clock className="h-4 w-4" />
-                                  <span>Deep Timelock Vault</span>
+                                  <Calendar className="h-4 w-4" />
+                                  <span>Time-Lock Vault</span>
                                 </div>
                               </SelectItem>
                               <SelectItem value="multisig">
@@ -466,15 +490,21 @@ export function CreateVaultFormEnhanced({
                                   <span>Multi-Signature Vault</span>
                                 </div>
                               </SelectItem>
-                              <SelectItem value="inheritance">
+                              <SelectItem value="geolocation">
                                 <div className="flex items-center gap-2">
-                                  <Unlock className="h-4 w-4" />
-                                  <span>Inheritance Vault</span>
+                                  <Globe className="h-4 w-4" />
+                                  <span>Geolocation Vault</span>
+                                </div>
+                              </SelectItem>
+                              <SelectItem value="biometric">
+                                <div className="flex items-center gap-2">
+                                  <Fingerprint className="h-4 w-4" />
+                                  <span>Biometric Vault</span>
                                 </div>
                               </SelectItem>
                               <SelectItem value="cross-chain">
                                 <div className="flex items-center gap-2">
-                                  <Globe className="h-4 w-4" />
+                                  <Shield className="h-4 w-4" />
                                   <span>Cross-Chain Vault</span>
                                 </div>
                               </SelectItem>
