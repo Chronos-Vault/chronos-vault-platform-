@@ -44,6 +44,61 @@ class TONContractService {
   private stakingContractAddress: string = 'EQDi_PSI1WbigxBKCj7vEz2pAvUQfw0IFZz9Sz2aGHUFNpSw'; // Testnet address
   
   /**
+   * Deploy a new contract to TON blockchain
+   * @param contractCode The FunC code for the contract
+   * @param initialParams Initial parameters for the contract
+   * @returns Deployment result with contract address if successful
+   */
+  async deployContract(contractCode: string, initialParams: {
+    unlockTime?: number;
+    beneficiary?: string;
+    message?: string;
+    amount?: string;
+  }): Promise<{ success: boolean; contractAddress?: string; transactionHash?: string; error?: string }> {
+    try {
+      console.log('Deploying TON contract with params:', initialParams);
+      
+      // Validate wallet connection
+      if (!tonService.isConnected()) {
+        return { success: false, error: 'Wallet not connected' };
+      }
+      
+      // In a real implementation, we would compile the contract here or send to a compilation service
+      // For this implementation, we'll use the Vault Factory contract to create a new vault instance
+      
+      // Set default values if not provided
+      const params = {
+        unlockTime: initialParams.unlockTime || Math.floor(Date.now() / 1000) + 3600, // Default: 1 hour from now
+        beneficiary: initialParams.beneficiary || tonService.getWalletInfo()?.address || '',
+        message: initialParams.message || 'Chronos Vault - Time-locked asset',
+        amount: initialParams.amount || '0.1' // Default amount in TON
+      };
+      
+      // Create the vault using the ton-service
+      const result = await tonService.createVault({
+        unlockTime: params.unlockTime,
+        recipient: params.beneficiary,
+        amount: params.amount,
+        comment: params.message
+      });
+      
+      if (!result.success) {
+        throw new Error(result.error || 'Contract deployment failed');
+      }
+      
+      return {
+        success: true,
+        contractAddress: result.vaultAddress,
+        transactionHash: result.transactionHash
+      };
+      
+    } catch (error: any) {
+      console.error('Failed to deploy contract:', error);
+      return { success: false, error: error.message || 'Unknown error occurred during deployment' };
+    }
+  }
+  
+  /**
    * Validate if a transaction exists and is confirmed on the TON blockchain
    * @param txHash The transaction hash/ID to validate
    * @returns True if the transaction is valid and confirmed, false otherwise

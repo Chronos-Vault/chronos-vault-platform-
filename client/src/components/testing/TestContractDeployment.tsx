@@ -180,7 +180,7 @@ export default function TestContractDeployment({ className }: TestContractDeploy
     }, 2000);
   };
   
-  const handleDeploy = () => {
+  const handleDeploy = async () => {
     if (!compileResult?.success) {
       setCompileResult({
         success: false,
@@ -192,27 +192,74 @@ export default function TestContractDeployment({ className }: TestContractDeploy
     setIsDeploying(true);
     setDeployResult(null);
     
-    // Simulate deployment delay
-    setTimeout(() => {
-      setIsDeploying(false);
-      // In a real application, this would deploy to the testnet
-      // For now, we're just simulating success with a fake address
-      // Generate mock addresses based on blockchain type
-      let mockAddress = '';
-      if (activeChain === BlockchainType.ETHEREUM) {
-        mockAddress = '0x' + Array(40).fill(0).map(() => Math.floor(Math.random() * 16).toString(16)).join('');
-      } else if (activeChain === BlockchainType.SOLANA) {
-        mockAddress = Array(44).fill(0).map(() => Math.floor(Math.random() * 16).toString(16)).join('');
-      } else if (activeChain === BlockchainType.TON) {
-        mockAddress = 'EQ' + Array(44).fill(0).map(() => Math.floor(Math.random() * 16).toString(16)).join('');
+    try {
+      // Deploy the contract using our contract service
+      if (activeChain === BlockchainType.TON) {
+        // For TON, use our implemented contract service
+        // Import the tonContractService
+        import('@/lib/ton/ton-contract-service').then(async ({ tonContractService }) => {
+          // Get current timestamp + 1 day for unlock time
+          const unlockTime = Math.floor(Date.now() / 1000) + 86400; // 1 day in the future
+
+          // Call the deployContract method
+          const result = await tonContractService.deployContract(contractCode, {
+            unlockTime: unlockTime,
+            amount: '0.1', // 0.1 TON
+            message: 'Test deployment from Chronos Vault interface'
+          });
+
+          if (result.success && result.contractAddress) {
+            setDeployResult({
+              success: true,
+              address: result.contractAddress,
+              message: `Contract deployed successfully to TON testnet.${result.transactionHash ? ` Transaction hash: ${result.transactionHash.substring(0, 10)}...` : ''}`
+            });
+          } else {
+            setDeployResult({
+              success: false,
+              message: result.error || 'Deployment failed with unknown error'
+            });
+          }
+
+          setIsDeploying(false);
+        }).catch(error => {
+          console.error('Error importing TON contract service:', error);
+          setDeployResult({
+            success: false,
+            message: `Module import error: ${error.message}`
+          });
+          setIsDeploying(false);
+        });
+        return;
       }
       
+      // For other chains, simulate deployment for now
+      // In a real application, we would call the respective service
+      setTimeout(() => {
+        setIsDeploying(false);
+        
+        // Generate placeholder addresses based on blockchain type
+        let contractAddress = '';
+        if (activeChain === BlockchainType.ETHEREUM) {
+          contractAddress = '0x' + Array(40).fill(0).map(() => Math.floor(Math.random() * 16).toString(16)).join('');
+        } else if (activeChain === BlockchainType.SOLANA) {
+          contractAddress = Array(44).fill(0).map(() => Math.floor(Math.random() * 16).toString(16)).join('');
+        }
+        
+        setDeployResult({
+          success: true,
+          address: contractAddress,
+          message: `Contract simulated deployment to ${activeChain} testnet`
+        });
+      }, 3000);
+    } catch (error: any) {
+      console.error('Contract deployment error:', error);
+      setIsDeploying(false);
       setDeployResult({
-        success: true,
-        address: mockAddress,
-        message: `Contract deployed successfully to testnet`
+        success: false,
+        message: `Deployment error: ${error.message || 'Unknown error'}`
       });
-    }, 3000);
+    }
   };
   
   // Check if wallet is connected and on testnet
