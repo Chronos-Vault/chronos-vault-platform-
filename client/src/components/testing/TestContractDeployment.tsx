@@ -128,13 +128,18 @@ const getSampleCode = (chain: BlockchainType): string => {
 
 export default function TestContractDeployment({ className }: TestContractDeploymentProps) {
   const multiChain = useMultiChain();
-  const { chainStatus, isTestnet } = multiChain;
+  const { chainStatus } = multiChain;
   const [activeChain, setActiveChain] = useState<BlockchainType>(BlockchainType.ETHEREUM);
   const [contractCode, setContractCode] = useState<string>(getSampleCode(BlockchainType.ETHEREUM));
   const [isCompiling, setIsCompiling] = useState<boolean>(false);
   const [isDeploying, setIsDeploying] = useState<boolean>(false);
   const [compileResult, setCompileResult] = useState<{success: boolean; message: string} | null>(null);
   const [deployResult, setDeployResult] = useState<{success: boolean; address?: string; message: string} | null>(null);
+  
+  // Check if a chain is on testnet
+  const checkIsTestnet = (chain: BlockchainType): boolean => {
+    return chainStatus[chain]?.isTestnet !== false;
+  };
   
   const handleCodeChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     setContractCode(e.target.value);
@@ -264,7 +269,7 @@ export default function TestContractDeployment({ className }: TestContractDeploy
   };
   
   // Check if wallet is connected and on testnet
-  const isWalletReady = chainStatus[activeChain].isConnected && isTestnet(activeChain);
+  const isWalletReady = chainStatus[activeChain]?.isConnected && checkIsTestnet(activeChain);
   
   return (
     <Card className={`${className} border border-[#6B00D7]/30 bg-gradient-to-br from-[#121212]/80 to-[#1A1A1A]/80 backdrop-blur-sm`}>
@@ -293,7 +298,7 @@ export default function TestContractDeployment({ className }: TestContractDeploy
           </TabsList>
           
           <div className="space-y-4">
-            {!chainStatus[activeChain].isConnected ? (
+            {!chainStatus[activeChain]?.isConnected ? (
               <div className="space-y-4">
                 <Alert variant="destructive" className="mb-4 bg-red-950/30 border-red-700/50">
                   <AlertCircle className="h-4 w-4" />
@@ -313,7 +318,7 @@ export default function TestContractDeployment({ className }: TestContractDeploy
                   </Button>
                 </div>
               </div>
-            ) : !isTestnet(activeChain) ? (
+            ) : !checkIsTestnet(activeChain) ? (
               <Alert variant="destructive" className="mb-4 bg-orange-950/30 border-orange-700/50">
                 <AlertCircle className="h-4 w-4" />
                 <AlertTitle>Mainnet Detected</AlertTitle>
