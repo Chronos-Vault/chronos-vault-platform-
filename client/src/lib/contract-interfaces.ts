@@ -285,3 +285,266 @@ export function formatBridgeParams(params: BridgeParams) {
     parseEther(params.amount)
   ];
 }
+
+/**
+ * TON ChronosVault contract interfaces
+ */
+
+/**
+ * TON Vault Factory Contract interface
+ */
+export const TON_VAULT_FACTORY_ABI = {
+  name: 'ChronosVaultFactory',
+  functions: [
+    {
+      name: 'createVault',
+      inputs: [
+        { name: 'recipient', type: 'address' },
+        { name: 'unlockTime', type: 'uint64' },
+        { name: 'securityLevel', type: 'uint8' },
+        { name: 'comment', type: 'string' }
+      ],
+      outputs: [
+        { name: 'vaultAddress', type: 'address' }
+      ]
+    },
+    {
+      name: 'getVaultsByOwner',
+      inputs: [
+        { name: 'owner', type: 'address' }
+      ],
+      outputs: [
+        { name: 'vaults', type: 'address[]' }
+      ]
+    },
+    {
+      name: 'getVaultCount',
+      inputs: [],
+      outputs: [
+        { name: 'count', type: 'uint64' }
+      ]
+    }
+  ],
+  events: [
+    {
+      name: 'VaultCreated',
+      inputs: [
+        { name: 'creator', type: 'address' },
+        { name: 'vaultAddress', type: 'address' },
+        { name: 'unlockTime', type: 'uint64' },
+        { name: 'securityLevel', type: 'uint8' }
+      ]
+    }
+  ]
+};
+
+/**
+ * TON ChronosVault Contract interface
+ */
+export const TON_CHRONOS_VAULT_ABI = {
+  name: 'ChronosVault',
+  functions: [
+    {
+      name: 'unlock_vault',
+      inputs: [],
+      outputs: []
+    },
+    {
+      name: 'emergency_recovery',
+      inputs: [
+        { name: 'eth_proof', type: 'cell' },
+        { name: 'sol_proof', type: 'cell' }
+      ],
+      outputs: []
+    },
+    {
+      name: 'backup_vault_state',
+      inputs: [],
+      outputs: []
+    },
+    {
+      name: 'get_vault_details',
+      inputs: [],
+      outputs: [
+        { name: 'vault_id', type: 'uint64' },
+        { name: 'unlock_time', type: 'uint64' },
+        { name: 'is_locked', type: 'bool' },
+        { name: 'recovery_mode', type: 'bool' },
+        { name: 'backup_height', type: 'uint64' },
+        { name: 'owner_address', type: 'address' }
+      ]
+    },
+    {
+      name: 'get_recovery_status',
+      inputs: [],
+      outputs: [
+        { name: 'in_recovery', type: 'bool' },
+        { name: 'reason', type: 'uint8' }
+      ]
+    },
+    {
+      name: 'is_unlocked_by_time',
+      inputs: [],
+      outputs: [
+        { name: 'unlocked', type: 'bool' }
+      ]
+    },
+    {
+      name: 'verify_ethereum_proof',
+      inputs: [
+        { name: 'proof_data', type: 'cell' }
+      ],
+      outputs: [
+        { name: 'is_valid', type: 'bool' }
+      ]
+    },
+    {
+      name: 'verify_solana_proof',
+      inputs: [
+        { name: 'proof_data', type: 'cell' }
+      ],
+      outputs: [
+        { name: 'is_valid', type: 'bool' }
+      ]
+    }
+  ],
+  events: [
+    {
+      name: 'VaultUnlocked',
+      inputs: [
+        { name: 'unlocked_by', type: 'address' },
+        { name: 'unlock_time', type: 'uint64' }
+      ]
+    },
+    {
+      name: 'RecoveryInitiated',
+      inputs: [
+        { name: 'initiator', type: 'address' },
+        { name: 'reason', type: 'uint8' },
+        { name: 'timestamp', type: 'uint64' }
+      ]
+    },
+    {
+      name: 'BackupCreated',
+      inputs: [
+        { name: 'owner', type: 'address' },
+        { name: 'backup_height', type: 'uint64' },
+        { name: 'timestamp', type: 'uint64' }
+      ]
+    }
+  ]
+};
+
+/**
+ * TON CVT Token Contract interface
+ */
+export const TON_CVT_TOKEN_ABI = {
+  name: 'ChronosToken',
+  functions: [
+    {
+      name: 'name',
+      inputs: [],
+      outputs: [
+        { name: 'name', type: 'string' }
+      ]
+    },
+    {
+      name: 'symbol',
+      inputs: [],
+      outputs: [
+        { name: 'symbol', type: 'string' }
+      ]
+    },
+    {
+      name: 'decimals',
+      inputs: [],
+      outputs: [
+        { name: 'decimals', type: 'uint8' }
+      ]
+    },
+    {
+      name: 'total_supply',
+      inputs: [],
+      outputs: [
+        { name: 'supply', type: 'uint128' }
+      ]
+    },
+    {
+      name: 'balance_of',
+      inputs: [
+        { name: 'owner', type: 'address' }
+      ],
+      outputs: [
+        { name: 'balance', type: 'uint128' }
+      ]
+    },
+    {
+      name: 'transfer',
+      inputs: [
+        { name: 'to', type: 'address' },
+        { name: 'amount', type: 'uint128' }
+      ],
+      outputs: [
+        { name: 'success', type: 'bool' }
+      ]
+    },
+    {
+      name: 'bridge_mint',
+      inputs: [
+        { name: 'to', type: 'address' },
+        { name: 'amount', type: 'uint128' }
+      ],
+      outputs: []
+    },
+    {
+      name: 'bridge_burn',
+      inputs: [
+        { name: 'from', type: 'address' },
+        { name: 'amount', type: 'uint128' }
+      ],
+      outputs: []
+    }
+  ],
+  events: [
+    {
+      name: 'Transfer',
+      inputs: [
+        { name: 'from', type: 'address' },
+        { name: 'to', type: 'address' },
+        { name: 'amount', type: 'uint128' }
+      ]
+    },
+    {
+      name: 'BridgeOperation',
+      inputs: [
+        { name: 'operation', type: 'string' },
+        { name: 'address', type: 'address' },
+        { name: 'amount', type: 'uint128' },
+        { name: 'timestamp', type: 'uint64' }
+      ]
+    }
+  ]
+};
+
+/**
+ * Structure for creating a TON vault
+ */
+export interface TONCreateVaultParams {
+  recipient: string;       // Address of the recipient/owner
+  unlockTime: number;      // Unix timestamp for unlock
+  securityLevel: number;   // Security level (1-5)
+  comment?: string;        // Optional comment for the vault
+  amount: string;          // Amount of TON to send with transaction
+}
+
+/**
+ * Format TON-specific vault parameters for the contract
+ */
+export function formatTONVaultParams(params: TONCreateVaultParams) {
+  return {
+    recipient: params.recipient,
+    unlockTime: params.unlockTime.toString(),
+    securityLevel: params.securityLevel.toString(),
+    comment: params.comment || ''
+  };
+}

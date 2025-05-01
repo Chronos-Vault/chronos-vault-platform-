@@ -303,9 +303,6 @@ class TONService {
   }
 
   /**
-   * Create TON vault (time-locked contract)
-   */
-  /**
    * Send transaction to TON blockchain
    */
   async sendTransaction(transaction: any): Promise<{ success: boolean; transactionHash?: string; error?: string }> {
@@ -334,12 +331,15 @@ class TONService {
     }
   }
   
+  /**
+   * Create a new vault using the Chronos Vault Factory
+   */
   async createVault(params: {
     unlockTime: number;
     recipient?: string;
     amount: string;
     comment?: string;
-  }): Promise<{ success: boolean; vaultAddress?: string; error?: string }> {
+  }): Promise<{ success: boolean; vaultAddress?: string; transactionHash?: string; error?: string }> {
     try {
       if (!this.tonConnectUI || !this.tonConnectUI.connected) {
         return { success: false, error: 'Wallet not connected' };
@@ -383,71 +383,76 @@ class TONService {
         ]
       };
       
-      // Send transaction to create vault
-      const result = await this.tonConnectUI.sendTransaction(transaction);
-        
-      // Now we need to track this transaction on the blockchain
-      console.log('Transaction sent successfully:', result);
-      
-      // Extract the transaction boc (bag of cells) which contains the transaction details
-      const txHash = result?.boc ? Buffer.from(result.boc, 'base64').toString('hex') : undefined;
-      
-      if (txHash) {
-        console.log('Transaction hash:', txHash);
-        
-        // Query the transaction status using the TON API
-        const apiKey = import.meta.env.VITE_TON_API_KEY || import.meta.env.TON_API_KEY || '5216ae7e1e4328d7c3e07bc4d32d2694db47f2c5dd20e56872b766b2fdb7fb02';
-        
-        try {
-          // Make API request to check transaction status
-          const endpoint = 'https://testnet.toncenter.com/api/v2/getTransactions';
-          const params = new URLSearchParams({
-            address: vaultFactoryAddress,
-            limit: '5'
-          });
+      try {
+        // Send transaction to create vault
+        const result = await this.tonConnectUI.sendTransaction(transaction);
           
-          const response = await fetch(`${endpoint}?${params.toString()}`, {
-            method: 'GET',
-            headers: {
-              'Content-Type': 'application/json',
-              'X-API-Key': apiKey
+        // Now we need to track this transaction on the blockchain
+        console.log('Transaction sent successfully:', result);
+        
+        // Extract the transaction boc (bag of cells) which contains the transaction details
+        const txHash = result?.boc ? Buffer.from(result.boc, 'base64').toString('hex') : undefined;
+        
+        if (txHash) {
+          console.log('Transaction hash:', txHash);
+          
+          // Query the transaction status using the TON API
+          const apiKey = import.meta.env.VITE_TON_API_KEY || import.meta.env.TON_API_KEY || '5216ae7e1e4328d7c3e07bc4d32d2694db47f2c5dd20e56872b766b2fdb7fb02';
+          
+          try {
+            // Make API request to check transaction status
+            const endpoint = 'https://testnet.toncenter.com/api/v2/getTransactions';
+            const params = new URLSearchParams({
+              address: vaultFactoryAddress,
+              limit: '5'
+            });
+            
+            const response = await fetch(`${endpoint}?${params.toString()}`, {
+              method: 'GET',
+              headers: {
+                'Content-Type': 'application/json',
+                'X-API-Key': apiKey
+              }
+            });
+            
+            if (response.ok) {
+              const data = await response.json();
+              console.log('Transaction data from API:', data);
+              
+              // In a production app, we'd parse this to extract the vault address
+              // For now, let's use the factory address with a deterministic suffix based on the transaction
+              const vaultAddressHash = txHash.substring(0, 8);
+              const vaultAddress = `EQ${vaultAddressHash}${vaultFactoryAddress.substring(10)}`;
+              
+              // Update wallet info after vault creation
+              await this.updateWalletInfo();
+              
+              return { 
+                success: true,
+                vaultAddress,
+                transactionHash: txHash
+              };
             }
-          });
-          
-          if (response.ok) {
-            const data = await response.json();
-            console.log('Transaction data from API:', data);
-            
-            // In a production app, we'd parse this to extract the vault address
-            // For now, let's use the factory address with a deterministic suffix based on the transaction
-            const vaultAddressHash = txHash.substring(0, 8);
-            const vaultAddress = `EQ${vaultAddressHash}${vaultFactoryAddress.substring(10)}`;
-            
-            // Update wallet info after vault creation
-            await this.updateWalletInfo();
-            
-            return { 
-              success: true,
-              vaultAddress,
-              transactionHash: txHash
-            };
+          } catch (apiError) {
+            console.error('Error checking transaction status:', apiError);
+            // Continue with the fallback approach
           }
-        } catch (apiError) {
-          console.error('Error checking transaction status:', apiError);
-          // Continue with the fallback approach
         }
+        
+        // Fallback if we couldn't get a proper transaction tracking
+        // Update wallet info after vault creation
+        await this.updateWalletInfo();
+        
+        return { 
+          success: true,
+          // This is a fallback when we can't extract the real address
+          vaultAddress: `EQ${vaultFactoryAddress.substring(2, 10)}${Date.now().toString(16).substring(0, 8)}`,
+          transactionHash: txHash || 'unknown'
+        };
+      } catch (txError: any) {
+        console.error('Transaction error:', txError);
+        return { success: false, error: txError.message || 'Transaction failed' };
       }
-      
-      // Fallback if we couldn't get a proper transaction tracking
-      // Update wallet info after vault creation
-      await this.updateWalletInfo();
-      
-      return { 
-        success: true,
-        // This is a fallback when we can't extract the real address
-        vaultAddress: `EQ${vaultFactoryAddress.substring(2, 10)}${Date.now().toString(16).substring(0, 8)}`,
-        transactionHash: txHash || 'unknown'
-      };
     } catch (error: any) {
       console.error('Failed to create vault:', error);
       return { success: false, error: error.message || 'Unknown error occurred' };
