@@ -301,16 +301,44 @@ class TONService {
     try {
       if (!this.tonConnectUI) return false;
       
-      // Disconnect wallet
-      await this.tonConnectUI.disconnect();
+      // First check if we're actually connected
+      if (!this.tonConnectUI.connected) {
+        console.log('TON wallet already disconnected');
+        this.connectionStatus = TonConnectionStatus.DISCONNECTED;
+        this.walletInfo = null;
+        return true;
+      }
       
+      console.log('Attempting to disconnect TON wallet...');
+      
+      // Disconnect wallet with robust error handling
+      try {
+        await this.tonConnectUI.disconnect();
+        console.log('TON wallet disconnected successfully');
+      } catch (disconnectError) {
+        console.error('Error during TON disconnect call:', disconnectError);
+        // Continue with cleanup even if disconnect fails
+      }
+      
+      // Force reset the connection status and wallet info
       this.connectionStatus = TonConnectionStatus.DISCONNECTED;
       this.walletInfo = null;
+      
+      // Clear any stored wallet data from localStorage
+      try {
+        localStorage.removeItem('ton_wallet_info');
+        localStorage.removeItem('ton_wallet_session');
+      } catch (storageError) {
+        console.warn('Failed to clear TON wallet storage:', storageError);
+      }
       
       return true;
     } catch (error) {
       console.error('Failed to disconnect TON wallet:', error);
-      return false;
+      // Force reset connection status and wallet info even on error
+      this.connectionStatus = TonConnectionStatus.DISCONNECTED;
+      this.walletInfo = null;
+      return true; // Return true anyway to clear UI state
     }
   }
 
