@@ -7,7 +7,7 @@ import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Textarea } from '@/components/ui/textarea';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Loader2, Check, AlertCircle, Upload, Code, Wallet } from 'lucide-react';
+import { Loader2, Check, AlertCircle, Upload, Code, Wallet, Power } from 'lucide-react';
 import TestnetBadge from '@/components/blockchain/TestnetBadge';
 
 interface TestContractDeploymentProps {
