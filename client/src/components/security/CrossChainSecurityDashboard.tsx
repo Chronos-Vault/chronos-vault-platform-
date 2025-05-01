@@ -284,8 +284,7 @@ export default function CrossChainSecurityDashboard() {
                       </div>
                       <Progress 
                         value={securityMetrics.totalVaults > 0 ? (securityMetrics.lowRiskVaults / securityMetrics.totalVaults) * 100 : 0} 
-                        className="h-2 bg-gray-200"
-                        indicatorClassName="bg-green-500"
+                        className="h-2 bg-gray-200 [&>div]:bg-green-500"
                       />
                     </div>
                   </div>

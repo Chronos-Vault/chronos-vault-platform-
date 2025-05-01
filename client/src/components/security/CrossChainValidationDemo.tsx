@@ -20,7 +20,7 @@ interface ValidationResult {
   timestamp?: number;
 }
 
-export function CrossChainValidationDemo() {
+export default function CrossChainValidationDemo() {
   const [txHash, setTxHash] = useState<string>('simulated_cross_chain_tx_' + Date.now());
   const [sourceChain, setSourceChain] = useState<BlockchainType>('ETH');
   const [isValidating, setIsValidating] = useState(false);
