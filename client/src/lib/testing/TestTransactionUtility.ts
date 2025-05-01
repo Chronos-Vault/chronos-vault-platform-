@@ -1,5 +1,5 @@
 import { BlockchainType } from '@/contexts/multi-chain-context';
-import { ethers } from 'ethers';
+import * as ethers from 'ethers';
 import { Connection, Transaction, SystemProgram, Keypair, PublicKey } from '@solana/web3.js';
 import { tonService } from '@/lib/ton/ton-service';
 import { ethereumService } from '@/lib/ethereum/ethereum-service';
@@ -80,19 +80,19 @@ export class TestTransactionUtility {
       // Handle different transaction types
       if (type === 'transfer') {
         // Use default amount and recipient if not provided
-        const transferAmount = amount || ethers.utils.parseEther(this.ETH_TEST_AMOUNT).toString();
+        // For ethers v6, parseEther is directly available
+        const transferAmount = amount || ethers.parseEther(this.ETH_TEST_AMOUNT).toString();
         const transferRecipient = recipient || this.RANDOM_ETH_RECIPIENT;
         
         // Execute transfer
-        const result = await ethereumService.sendTransaction({
-          to: transferRecipient,
-          value: transferAmount,
-          data: '0x',
-        });
+        const result = await ethereumService.sendETH(
+          transferRecipient,
+          transferAmount
+        );
 
         return {
-          success: !!result.hash,
-          hash: result.hash,
+          success: !!result.transactionHash,
+          hash: result.transactionHash,
           error: result.error,
           details: { type: 'transfer', recipient: transferRecipient, amount: transferAmount }
         };
@@ -127,10 +127,11 @@ export class TestTransactionUtility {
         const transferAmount = amount || (parseFloat(this.SOL_TEST_AMOUNT) * 1000000000).toString(); // Convert SOL to lamports
         
         // Execute transfer using solanaService
-        const result = await solanaService.sendTransaction({
-          recipient: transferRecipient,
-          amount: transferAmount,
-        });
+        // Using send method which should be available
+        const result = await solanaService.send(
+          transferRecipient, 
+          parseFloat(transferAmount)
+        );
 
         return {
           success: !!result.signature,
@@ -169,11 +170,11 @@ export class TestTransactionUtility {
         const transferAmount = amount || this.TON_TEST_AMOUNT;
         
         // Execute transfer using tonService
-        const result = await tonService.sendTON({
-          to: transferRecipient,
-          amount: transferAmount,
-          comment: 'Test transaction from Chronos Vault'
-        });
+        const result = await tonService.sendTON(
+          transferRecipient,
+          transferAmount,
+          'Test transaction from Chronos Vault'
+        );
 
         return {
           success: result.success,
@@ -207,7 +208,7 @@ export class TestTransactionUtility {
       chain,
       type: 'transfer',
       // Use minimal test amounts
-      amount: chain === BlockchainType.ETHEREUM ? ethers.utils.parseEther('0.001').toString() :
+      amount: chain === BlockchainType.ETHEREUM ? '1000000000000000' : // 0.001 ETH in wei
               chain === BlockchainType.SOLANA ? '10000000' : // 0.01 SOL in lamports
               '10000000', // 0.01 TON in nanoTON
       recipient: chain === BlockchainType.ETHEREUM ? this.RANDOM_ETH_RECIPIENT :
