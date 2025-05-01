@@ -94,7 +94,7 @@ const defaultConnectionState: EthereumConnectionState = {
 class EthereumService {
   private _connectionState: EthereumConnectionState;
   private _vaultContract: ethers.Contract | null = null;
-  private _currentNetwork: string = 'goerli'; // Default to testnet
+  private _currentNetwork: string = 'sepolia'; // Default to Sepolia testnet for development
   
   constructor() {
     this._connectionState = { ...defaultConnectionState };
