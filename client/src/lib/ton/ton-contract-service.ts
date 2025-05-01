@@ -1,4 +1,5 @@
 import { tonService } from './ton-service';
+import { TON_VAULT_FACTORY_ABI, TON_CHRONOS_VAULT_ABI, TON_CVT_TOKEN_ABI, TONCreateVaultParams, formatTONVaultParams } from '@/lib/contract-interfaces';
 
 /**
  * Interface for ChronosVault smart contract data
@@ -155,7 +156,7 @@ class TONContractService {
   }
   
   /**
-   * Create a new time-locked vault on TON blockchain
+   * Create a new time-locked vault on TON blockchain using real contract interface
    */
   async createTimeLockedVault(params: {
     amount: string;
@@ -163,46 +164,31 @@ class TONContractService {
     recipient?: string;
     securityLevel?: number;
     comment?: string;
-  }): Promise<{ success: boolean; vaultAddress?: string; error?: string }> {
+  }): Promise<{ success: boolean; vaultAddress?: string; transactionHash?: string; error?: string }> {
     try {
-      const { amount, unlockTime, recipient, securityLevel = 1, comment } = params;
+      const { amount, unlockTime, recipient, securityLevel = 2, comment } = params;
       
-      // Get wallet info
-      const walletInfo = tonService.getWalletInfo();
-      if (!walletInfo) {
-        throw new Error('Wallet not connected');
-      }
-      
-      // Prepare transaction (simplified)
-      const transaction = {
-        validUntil: Math.floor(Date.now() / 1000) + 300, // 5 minutes
-        messages: [
-          {
-            address: this.vaultFactoryAddress,
-            amount: (parseFloat(amount) * 1e9).toString(), // Convert to nanoTON
-            payload: Buffer.from(JSON.stringify({
-              recipient: recipient || walletInfo.address,
-              unlockTime,
-              securityLevel,
-              comment: comment || ''
-            })).toString('base64')
-          }
-        ]
+      // Convert our params to the TONCreateVaultParams format
+      const tonParams: TONCreateVaultParams = {
+        recipient: recipient || '',
+        unlockTime: unlockTime,
+        securityLevel: securityLevel,
+        comment: comment,
+        amount: amount
       };
       
-      // Send transaction using TON Connect
-      const result = await tonService.sendTransaction(transaction);
+      // Use the tonService directly since it handles all the TON Connect interactions
+      const result = await tonService.createVault(tonParams);
       
       if (!result.success) {
         throw new Error(result.error || 'Transaction failed');
       }
       
-      // Generate a vault address (in production, this would come from the transaction result)
-      const vaultAddress = `EQCv${Math.random().toString(36).substring(2, 15)}${Math.random().toString(36).substring(2, 15)}`;
-      
+      // Get the real vault address from the transaction result
       return {
         success: true,
-        vaultAddress
+        vaultAddress: result.vaultAddress,
+        transactionHash: result.transactionHash
       };
     } catch (error: any) {
       console.error('Failed to create vault:', error);

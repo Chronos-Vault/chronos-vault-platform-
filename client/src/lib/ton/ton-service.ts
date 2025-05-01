@@ -1,4 +1,5 @@
 import { TonConnectUI } from '@tonconnect/ui';
+import { TON_VAULT_FACTORY_ABI, formatTONVaultParams } from '@/lib/contract-interfaces';
 
 /**
  * Enum representing the status of TON wallet connection
@@ -362,23 +363,30 @@ class TONService {
       console.log(`Recipient: ${vaultRecipient}`);
       if (comment) console.log(`Comment: ${comment}`);
       
-      // Create transaction to factory contract with actual ChronosVault ABI
+      // Create transaction to factory contract with properly encoded payload
+      // TonConnect requires payload to be a string
+      const formattedParams = formatTONVaultParams({
+        recipient: vaultRecipient,
+        unlockTime: unlockTime,
+        securityLevel: 2, // Enhanced security with cross-chain validation
+        comment: comment,
+        amount: amount
+      });
+      
+      // Need to serialize the payload for TonConnect
+      const payloadString = JSON.stringify({
+        abi: 'Chronos', // Simple identifier recognized by our factory contract
+        method: 'createVault',
+        params: formattedParams
+      });
+
       const transaction = {
         validUntil: Math.floor(Date.now() / 1000) + 300, // 5 minutes from now
         messages: [
           {
             address: vaultFactoryAddress,
             amount: amountInNanoTON,
-            payload: JSON.stringify({
-              abi: "chronos_vault", // The factory will recognize this as our specific contract
-              method: 'createVault',
-              params: {
-                recipient: vaultRecipient, 
-                unlockTime: unlockTime.toString(),
-                securityLevel: '2', // Enhanced security with cross-chain validation
-                comment: comment || ''
-              }
-            })
+            payload: payloadString
           }
         ]
       };
