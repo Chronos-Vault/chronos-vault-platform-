@@ -334,144 +334,175 @@ export default function CrossChainSecurityDashboard({ vaultId }: CrossChainSecur
             <TabsContent value="vaults" className="pt-6">
               <div className="grid gap-6 md:grid-cols-2">
                 {/* Risk Distribution */}
-                <div className="bg-gray-100 rounded-lg p-5 border border-gray-300 shadow-sm">
-                  <h3 className="text-lg font-semibold mb-4 text-gray-900">Vault Risk Distribution</h3>
+                <Card className="bg-gradient-to-br from-[#121212] to-[#1A1A1A] border-[#6B00D7]/20 shadow-lg overflow-hidden hover:shadow-[#6B00D7]/20 transition-all group">
+                  <div className="h-1 w-full bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] opacity-80"></div>
+                  <CardContent className="p-5">
+                    <h3 className="text-lg font-semibold text-white mb-4 flex items-center gap-2 group-hover:text-[#FF5AF7] transition-colors">
+                      <div className="rounded-full w-8 h-8 bg-gradient-to-br from-[#6B00D7]/20 to-[#FF5AF7]/10 flex items-center justify-center border border-[#6B00D7]/30">
+                        <AlertTriangle className="h-4 w-4 text-[#FF5AF7]" />
+                      </div>
+                      Vault Risk Distribution
+                    </h3>
                   
-                  <div className="space-y-4">
-                    <div>
-                      <div className="flex justify-between mb-1">
-                        <span className="text-sm font-medium">High Risk Vaults</span>
-                        <span className="text-sm font-medium">
-                          {securityMetrics.highRiskVaults}/{securityMetrics.totalVaults}
-                        </span>
+                    <div className="space-y-6 mt-2">
+                      <div>
+                        <div className="flex justify-between mb-2">
+                          <span className="text-sm font-medium text-red-400 flex items-center gap-1.5">
+                            <div className="w-2 h-2 rounded-full bg-red-500"></div>
+                            High Risk Vaults
+                          </span>
+                          <span className="text-sm font-medium text-white">
+                            {securityMetrics.highRiskVaults}/{securityMetrics.totalVaults}
+                          </span>
+                        </div>
+                        <Progress 
+                          value={securityMetrics.totalVaults > 0 ? (securityMetrics.highRiskVaults / securityMetrics.totalVaults) * 100 : 0} 
+                          className="h-2.5 bg-gray-800 [&>div]:bg-gradient-to-r [&>div]:from-red-700 [&>div]:to-red-500 mb-1"
+                        />
+                        <p className="text-xs text-gray-400 mt-1">
+                          Vaults with critical security vulnerabilities requiring immediate attention
+                        </p>
                       </div>
-                      <Progress 
-                        value={securityMetrics.totalVaults > 0 ? (securityMetrics.highRiskVaults / securityMetrics.totalVaults) * 100 : 0} 
-                        className="h-2.5 bg-gray-200 [&>div]:bg-red-500"
-                      />
-                      <p className="text-xs text-gray-500 mt-1">
-                        Vaults with critical security vulnerabilities requiring immediate attention
-                      </p>
-                    </div>
-                    
-                    <div>
-                      <div className="flex justify-between mb-1">
-                        <span className="text-sm font-medium">Medium Risk Vaults</span>
-                        <span className="text-sm font-medium">
-                          {securityMetrics.mediumRiskVaults}/{securityMetrics.totalVaults}
-                        </span>
+                      
+                      <div>
+                        <div className="flex justify-between mb-2">
+                          <span className="text-sm font-medium text-amber-400 flex items-center gap-1.5">
+                            <div className="w-2 h-2 rounded-full bg-amber-500"></div>
+                            Medium Risk Vaults
+                          </span>
+                          <span className="text-sm font-medium text-white">
+                            {securityMetrics.mediumRiskVaults}/{securityMetrics.totalVaults}
+                          </span>
+                        </div>
+                        <Progress 
+                          value={securityMetrics.totalVaults > 0 ? (securityMetrics.mediumRiskVaults / securityMetrics.totalVaults) * 100 : 0} 
+                          className="h-2.5 bg-gray-800 [&>div]:bg-gradient-to-r [&>div]:from-amber-700 [&>div]:to-amber-500 mb-1"
+                        />
+                        <p className="text-xs text-gray-400 mt-1">
+                          Vaults with security concerns that should be addressed soon
+                        </p>
                       </div>
-                      <Progress 
-                        value={securityMetrics.totalVaults > 0 ? (securityMetrics.mediumRiskVaults / securityMetrics.totalVaults) * 100 : 0} 
-                        className="h-2.5 bg-gray-200 [&>div]:bg-amber-500"
-                      />
-                      <p className="text-xs text-gray-500 mt-1">
-                        Vaults with security concerns that should be addressed soon
-                      </p>
-                    </div>
-                    
-                    <div>
-                      <div className="flex justify-between mb-1">
-                        <span className="text-sm font-medium">Low Risk Vaults</span>
-                        <span className="text-sm font-medium">
-                          {securityMetrics.lowRiskVaults}/{securityMetrics.totalVaults}
-                        </span>
+                      
+                      <div>
+                        <div className="flex justify-between mb-2">
+                          <span className="text-sm font-medium text-green-400 flex items-center gap-1.5">
+                            <div className="w-2 h-2 rounded-full bg-green-500"></div>
+                            Low Risk Vaults
+                          </span>
+                          <span className="text-sm font-medium text-white">
+                            {securityMetrics.lowRiskVaults}/{securityMetrics.totalVaults}
+                          </span>
+                        </div>
+                        <Progress 
+                          value={securityMetrics.totalVaults > 0 ? (securityMetrics.lowRiskVaults / securityMetrics.totalVaults) * 100 : 0} 
+                          className="h-2.5 bg-gray-800 [&>div]:bg-gradient-to-r [&>div]:from-green-700 [&>div]:to-green-500 mb-1"
+                        />
+                        <p className="text-xs text-gray-400 mt-1">
+                          Vaults with minor security issues or concerns
+                        </p>
                       </div>
-                      <Progress 
-                        value={securityMetrics.totalVaults > 0 ? (securityMetrics.lowRiskVaults / securityMetrics.totalVaults) * 100 : 0} 
-                        className="h-2.5 bg-gray-200 [&>div]:bg-green-500"
-                      />
-                      <p className="text-xs text-gray-500 mt-1">
-                        Vaults with minor security issues or concerns
-                      </p>
                     </div>
-                  </div>
-                </div>
+                  </CardContent>
+                </Card>
                 
                 {/* Security Architecture */}
-                <div className="bg-gradient-to-br from-purple-50 to-pink-50 rounded-lg p-5 border border-purple-100 shadow-sm">
-                  <h3 className="text-lg font-semibold mb-4 text-purple-800">Triple-Chain Security Architecture</h3>
+                <Card className="bg-gradient-to-br from-[#121212] to-[#1A1A1A] border-[#6B00D7]/20 shadow-lg overflow-hidden hover:shadow-[#6B00D7]/20 transition-all group">
+                  <div className="h-1 w-full bg-gradient-to-r from-[#FF5AF7] to-[#6B00D7] opacity-80"></div>
+                  <CardContent className="p-5">
+                    <h3 className="text-lg font-semibold text-white mb-4 flex items-center gap-2 group-hover:text-[#FF5AF7] transition-colors">
+                      <div className="rounded-full w-8 h-8 bg-gradient-to-br from-[#6B00D7]/20 to-[#FF5AF7]/10 flex items-center justify-center border border-[#6B00D7]/30">
+                        <Shield className="h-4 w-4 text-[#FF5AF7]" />
+                      </div>
+                      Triple-Chain Security Architecture
+                    </h3>
                   
-                  <div className="space-y-4">
-                    <div className="flex gap-3 items-center">
-                      <div className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center flex-shrink-0">
-                        <Shield className="h-5 w-5 text-blue-600" />
-                      </div>
-                      <div>
-                        <h4 className="font-medium text-blue-800">Ethereum Security Layer</h4>
-                        <p className="text-sm text-blue-600">Primary ownership verification and access control</p>
-                      </div>
-                    </div>
-                    
-                    <div className="flex gap-3 items-center">
-                      <div className="w-10 h-10 rounded-full bg-orange-100 flex items-center justify-center flex-shrink-0">
-                        <Activity className="h-5 w-5 text-orange-600" />
-                      </div>
-                      <div>
-                        <h4 className="font-medium text-orange-800">Solana Speed Layer</h4>
-                        <p className="text-sm text-orange-600">High-frequency monitoring and rapid validation</p>
-                      </div>
-                    </div>
-                    
-                    <div className="flex gap-3 items-center">
-                      <div className="w-10 h-10 rounded-full bg-green-100 flex items-center justify-center flex-shrink-0">
-                        <Lock className="h-5 w-5 text-green-600" />
-                      </div>
-                      <div>
-                        <h4 className="font-medium text-green-800">TON Recovery Layer</h4>
-                        <p className="text-sm text-green-600">Backup security and emergency recovery operations</p>
-                      </div>
-                    </div>
-                    
-                    <div className="mt-4 pt-4 border-t border-purple-100">
-                      <div className="flex gap-3 items-center">
-                        <div className="w-10 h-10 rounded-full bg-purple-100 flex items-center justify-center flex-shrink-0">
-                          <Network className="h-5 w-5 text-purple-600" />
+                    <div className="space-y-5">
+                      <div className="flex gap-3 items-center bg-[#1E1E1E] p-3 rounded-lg border border-blue-600/20 group/item hover:border-blue-600/40 transition-all">
+                        <div className="w-10 h-10 rounded-full bg-blue-600/10 flex items-center justify-center flex-shrink-0 border border-blue-600/30">
+                          <Shield className="h-5 w-5 text-blue-400" />
                         </div>
                         <div>
-                          <h4 className="font-medium text-purple-800">Cross-Chain Consensus</h4>
-                          <p className="text-sm text-purple-600">Requires validation from multiple chains for enhanced security</p>
+                          <h4 className="font-medium text-blue-400 group-hover/item:text-blue-300 transition-colors">Ethereum Security Layer</h4>
+                          <p className="text-sm text-gray-400">Primary ownership verification and access control</p>
+                        </div>
+                      </div>
+                      
+                      <div className="flex gap-3 items-center bg-[#1E1E1E] p-3 rounded-lg border border-orange-600/20 group/item hover:border-orange-600/40 transition-all">
+                        <div className="w-10 h-10 rounded-full bg-orange-600/10 flex items-center justify-center flex-shrink-0 border border-orange-600/30">
+                          <Activity className="h-5 w-5 text-orange-400" />
+                        </div>
+                        <div>
+                          <h4 className="font-medium text-orange-400 group-hover/item:text-orange-300 transition-colors">Solana Speed Layer</h4>
+                          <p className="text-sm text-gray-400">High-frequency monitoring and rapid validation</p>
+                        </div>
+                      </div>
+                      
+                      <div className="flex gap-3 items-center bg-[#1E1E1E] p-3 rounded-lg border border-green-600/20 group/item hover:border-green-600/40 transition-all">
+                        <div className="w-10 h-10 rounded-full bg-green-600/10 flex items-center justify-center flex-shrink-0 border border-green-600/30">
+                          <Lock className="h-5 w-5 text-green-400" />
+                        </div>
+                        <div>
+                          <h4 className="font-medium text-green-400 group-hover/item:text-green-300 transition-colors">TON Recovery Layer</h4>
+                          <p className="text-sm text-gray-400">Backup security and emergency recovery operations</p>
+                        </div>
+                      </div>
+                      
+                      <div className="flex gap-3 items-center bg-[#1E1E1E] p-3 rounded-lg border border-[#6B00D7]/20 group/item hover:border-[#6B00D7]/40 transition-all">
+                        <div className="w-10 h-10 rounded-full bg-[#6B00D7]/10 flex items-center justify-center flex-shrink-0 border border-[#6B00D7]/30">
+                          <Network className="h-5 w-5 text-[#FF5AF7]" />
+                        </div>
+                        <div>
+                          <h4 className="font-medium text-[#FF5AF7] group-hover/item:text-[#FF5AF7]/90 transition-colors">Cross-Chain Consensus</h4>
+                          <p className="text-sm text-gray-400">Requires validation from multiple chains for enhanced security</p>
                         </div>
                       </div>
                     </div>
-                  </div>
-                </div>
+                  </CardContent>
+                </Card>
               </div>
               
               {/* Recent Security Incidents */}
               {securityMetrics.securityIncidents.length > 0 && (
-                <div className="mt-6 bg-gray-100 rounded-lg p-5 border border-gray-300 shadow-sm">
-                  <h3 className="text-lg font-semibold mb-4 text-gray-900">Recent Security Incidents</h3>
-                  
-                  <div className="space-y-3">
-                    {securityMetrics.securityIncidents.slice(0, 5).map((incident, index) => (
-                      <div key={index} className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg border">
-                        <Badge 
-                          variant="outline" 
-                          className={`
-                            ${incident.severity === 'high' ? 'bg-red-100 text-red-800 border-red-200' : ''}
-                            ${incident.severity === 'medium' ? 'bg-amber-100 text-amber-800 border-amber-200' : ''}
-                            ${incident.severity === 'low' ? 'bg-blue-100 text-blue-800 border-blue-200' : ''}
-                          `}
-                        >
-                          {incident.severity}
-                        </Badge>
-                        <div>
-                          <div className="font-medium">{incident.type}</div>
-                          <div className="text-sm text-gray-500">
-                            {incident.timestamp ? new Date(incident.timestamp).toLocaleString() : 'Time unknown'}
-                          </div>
-                        </div>
-                        <Badge 
-                          variant="outline" 
-                          className={incident.resolved ? 'bg-green-50 text-green-700' : 'bg-gray-100 text-gray-700'}
-                        >
-                          {incident.resolved ? 'Resolved' : 'Active'}
-                        </Badge>
+                <Card className="mt-6 bg-gradient-to-br from-[#121212] to-[#1A1A1A] border-[#6B00D7]/20 shadow-lg overflow-hidden hover:shadow-[#6B00D7]/20 transition-all group">
+                  <div className="h-1 w-full bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] opacity-80"></div>
+                  <CardContent className="p-5">
+                    <h3 className="text-lg font-semibold text-white mb-4 flex items-center gap-2 group-hover:text-[#FF5AF7] transition-colors">
+                      <div className="rounded-full w-8 h-8 bg-gradient-to-br from-[#6B00D7]/20 to-[#FF5AF7]/10 flex items-center justify-center border border-[#6B00D7]/30">
+                        <AlertCircle className="h-4 w-4 text-[#FF5AF7]" />
                       </div>
-                    ))}
-                  </div>
-                </div>
+                      Recent Security Incidents
+                    </h3>
+                    
+                    <div className="space-y-3">
+                      {securityMetrics.securityIncidents.slice(0, 5).map((incident, index) => (
+                        <div key={index} className="flex items-center gap-3 p-3 bg-[#1E1E1E] rounded-lg border border-[#6B00D7]/20 hover:border-[#6B00D7]/40 transition-all">
+                          <Badge 
+                            variant="outline" 
+                            className={`
+                              ${incident.severity === 'high' ? 'bg-red-600/20 text-red-400 border-red-600/30' : ''}
+                              ${incident.severity === 'medium' ? 'bg-amber-600/20 text-amber-400 border-amber-600/30' : ''}
+                              ${incident.severity === 'low' ? 'bg-blue-600/20 text-blue-400 border-blue-600/30' : ''}
+                            `}
+                          >
+                            {incident.severity}
+                          </Badge>
+                          <div className="flex-grow">
+                            <div className="font-medium text-white">{incident.type}</div>
+                            <div className="text-sm text-gray-400">
+                              {incident.timestamp ? new Date(incident.timestamp).toLocaleString() : 'Time unknown'}
+                            </div>
+                          </div>
+                          <Badge 
+                            variant="outline" 
+                            className={incident.resolved ? 'bg-green-600/20 text-green-400 border-green-600/30' : 'bg-gray-600/20 text-gray-400 border-gray-600/30'}
+                          >
+                            {incident.resolved ? 'Resolved' : 'Active'}
+                          </Badge>
+                        </div>
+                      ))}
+                    </div>
+                  </CardContent>
+                </Card>
               )}
             </TabsContent>
           </Tabs>
