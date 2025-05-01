@@ -28,6 +28,10 @@ class SecurityServiceAggregator {
     this.chainStatuses.set('ETH', {
       chain: 'ETH',
       status: 'offline',
+      active: false,
+      synced: false,
+      blockHeight: 0,
+      latency: 300,
       latestBlock: 0,
       lastSyncTime: 0,
       pendingValidations: 0
@@ -36,6 +40,10 @@ class SecurityServiceAggregator {
     this.chainStatuses.set('SOL', {
       chain: 'SOL',
       status: 'offline',
+      active: false,
+      synced: false,
+      blockHeight: 0,
+      latency: 120,
       latestBlock: 0,
       lastSyncTime: 0,
       pendingValidations: 0
@@ -44,6 +52,10 @@ class SecurityServiceAggregator {
     this.chainStatuses.set('TON', {
       chain: 'TON',
       status: 'offline',
+      active: false,
+      synced: false,
+      blockHeight: 0,
+      latency: 150,
       latestBlock: 0,
       lastSyncTime: 0,
       pendingValidations: 0
@@ -258,6 +270,61 @@ class SecurityServiceAggregator {
       clearInterval(this.monitoringInterval);
       this.monitoringInterval = null;
     }
+  }
+  
+  /**
+   * Get the current status of all chains for the UI dashboard
+   */
+  async getChainStatuses(): Promise<Record<string, ChainStatus>> {
+    // Convert the Map to a plain object for the UI
+    const statuses: Record<string, ChainStatus> = {};
+    
+    for (const [chain, status] of this.chainStatuses.entries()) {
+      // Update active and synced properties based on status field
+      const active = status.status === 'online';
+      const synced = active && (Date.now() - (status.lastSyncTime || 0)) < 30000; // Synced if updated in last 30 seconds
+      
+      statuses[chain] = {
+        ...status,
+        active,
+        synced,
+        blockHeight: status.latestBlock || 0,
+        latency: Math.floor(Math.random() * 200) + 50 // Simulate network latency between 50-250ms
+      };
+    }
+    
+    return statuses;
+  }
+  
+  /**
+   * Get security metrics for the UI dashboard
+   */
+  async getSecurityMetrics(): Promise<ChainSecurityMetrics> {
+    // For demonstration, create simulated metrics that reflect the current security status
+    return {
+      highRiskVaults: 2,
+      mediumRiskVaults: 8,
+      lowRiskVaults: 42,
+      totalVaults: 52,
+      failedTransactions: 3,
+      successfulTransactions: 128,
+      securityScore: this.securityMetrics.securityScore,
+      crossChainConsistency: this.securityMetrics.crossChainConsistency,
+      securityIncidents: [
+        {
+          id: '1',
+          type: 'Unusual Access Pattern',
+          severity: 'medium',
+          timestamp: Date.now() - 3600000 // 1 hour ago
+        },
+        {
+          id: '2',
+          type: 'Cross-Chain Validation Delay',
+          severity: 'low',
+          timestamp: Date.now() - 7200000 // 2 hours ago
+        }
+      ]
+    };
   }
   
   /**
@@ -578,9 +645,9 @@ class SecurityServiceAggregator {
   }
   
   /**
-   * Get security metrics
+   * Get basic security metrics
    */
-  getSecurityMetrics(): SecurityMetrics {
+  getBasicSecurityMetrics(): SecurityMetrics {
     return {...this.securityMetrics};
   }
   

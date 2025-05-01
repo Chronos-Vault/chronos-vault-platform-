@@ -62,11 +62,15 @@ export interface TripleChainValidator {
 
 // Chain status interface
 export interface ChainStatus {
-  chain: BlockchainType;
-  status: 'online' | 'offline' | 'degraded';
-  latestBlock: number;
-  lastSyncTime: number;
-  pendingValidations: number;
+  chain?: BlockchainType;
+  status?: 'online' | 'offline' | 'degraded';
+  active: boolean;
+  synced: boolean;
+  blockHeight: number;
+  latency: number;
+  latestBlock?: number;
+  lastSyncTime?: number;
+  pendingValidations?: number;
 }
 
 // Cross-chain security metrics
@@ -81,6 +85,26 @@ export interface SecurityMetrics {
   securityScore: number;
   crossChainConsistency: number;
   lastUpdated: number;
+}
+
+// Extended security metrics for the UI dashboard
+export interface ChainSecurityMetrics {
+  highRiskVaults: number;
+  mediumRiskVaults: number;
+  lowRiskVaults: number;
+  totalVaults: number;
+  failedTransactions: number;
+  successfulTransactions: number;
+  securityScore: number;
+  crossChainConsistency: number;
+  securityIncidents: Array<{
+    id?: string;
+    type: string;
+    severity: string;
+    timestamp?: number;
+    description?: string;
+    resolved?: boolean;
+  }>;
 }
 
 // Vault creation parameters
