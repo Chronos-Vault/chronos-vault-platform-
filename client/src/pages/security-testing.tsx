@@ -5,10 +5,13 @@ import { StaticAISecurityDashboard } from '@/components/security/StaticAISecurit
 import ContractDeploymentPanel from '@/components/security/ContractDeploymentPanel';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useLocation } from 'wouter';
+import { BlockchainType } from '@/contexts/multi-chain-context';
 import { Layout } from '@/components/layout';
 import { PageHeader } from '@/components/page-header';
 import Header from '@/components/layout/header';
 import Footer from '@/components/layout/footer';
+import TestnetBadge from '@/components/blockchain/TestnetBadge';
+import NetworkSelector from '@/components/blockchain/NetworkSelector';
 
 export default function SecurityTestingPage() {
   const [location] = useLocation();
@@ -38,6 +41,19 @@ export default function SecurityTestingPage() {
               <span className="px-4 py-1.5 bg-gradient-to-r from-[#6B00D7]/30 to-[#6B00D7]/20 border border-[#6B00D7]/40 rounded-full text-[#FF5AF7] text-sm font-medium backdrop-blur-sm">Triple-Chain Security</span>
               <span className="px-4 py-1.5 bg-gradient-to-r from-[#6B00D7]/30 to-[#6B00D7]/20 border border-[#6B00D7]/40 rounded-full text-[#FF5AF7] text-sm font-medium backdrop-blur-sm">Real-time Monitoring</span>
               <span className="px-4 py-1.5 bg-gradient-to-r from-[#6B00D7]/30 to-[#6B00D7]/20 border border-[#6B00D7]/40 rounded-full text-[#FF5AF7] text-sm font-medium backdrop-blur-sm">Cross-Chain Verification</span>
+            </div>
+            
+            {/* Testnet Network Information */}
+            <div className="flex flex-wrap justify-center gap-4 mt-4 mb-2 relative z-10">
+              <div className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-[#6B00D7]/10 to-[#6B00D7]/5 border border-[#6B00D7]/20 rounded-lg backdrop-blur-sm">
+                <TestnetBadge chain={BlockchainType.ETHEREUM} showName={true} />
+              </div>
+              <div className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-[#6B00D7]/10 to-[#6B00D7]/5 border border-[#6B00D7]/20 rounded-lg backdrop-blur-sm">
+                <TestnetBadge chain={BlockchainType.SOLANA} showName={true} />
+              </div>
+              <div className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-[#6B00D7]/10 to-[#6B00D7]/5 border border-[#6B00D7]/20 rounded-lg backdrop-blur-sm">
+                <TestnetBadge chain={BlockchainType.TON} showName={true} />
+              </div>
             </div>
           </div>
           
@@ -82,6 +98,31 @@ export default function SecurityTestingPage() {
                 <TestDashboard />
               </TabsContent>
               <TabsContent value="contracts">
+                <div className="mb-4 bg-gradient-to-r from-[#6B00D7]/10 to-[#6B00D7]/5 border border-[#6B00D7]/20 rounded-lg p-4 backdrop-blur-sm">
+                  <h3 className="text-lg font-semibold mb-2 text-white">Testnet Development Environment</h3>
+                  <p className="text-sm text-gray-300 mb-3">
+                    All contract deployments and transactions will execute on the selected testnet network.
+                    Switch networks using the selector below if needed.
+                  </p>
+                  <div className="flex items-center gap-4">
+                    <div className="flex flex-col space-y-2">
+                      <span className="text-sm font-medium text-white">Ethereum Network:</span>
+                      <NetworkSelector chain={BlockchainType.ETHEREUM} />
+                    </div>
+                    <div className="flex flex-col space-y-2">
+                      <span className="text-sm font-medium text-white">Solana Network:</span>
+                      <div className="text-yellow-300 bg-yellow-900/30 text-xs px-2 py-1 rounded">
+                        Connected to Devnet (fixed for testing)
+                      </div>
+                    </div>
+                    <div className="flex flex-col space-y-2">
+                      <span className="text-sm font-medium text-white">TON Network:</span>
+                      <div className="text-yellow-300 bg-yellow-900/30 text-xs px-2 py-1 rounded">
+                        Connected to Testnet (fixed for testing)
+                      </div>
+                    </div>
+                  </div>
+                </div>
                 <ContractDeploymentPanel />
               </TabsContent>
             </Tabs>
