@@ -14,6 +14,7 @@ import TestnetBadge from '@/components/blockchain/TestnetBadge';
 import NetworkSelector from '@/components/blockchain/NetworkSelector';
 import TestTransactionPanel from '@/components/testing/TestTransactionPanel';
 import TestContractDeployment from '@/components/testing/TestContractDeployment';
+import ContractVerification from '@/components/testing/ContractVerification';
 
 export default function SecurityTestingPage() {
   const [location] = useLocation();
@@ -129,7 +130,10 @@ export default function SecurityTestingPage() {
                     </div>
                   </div>
                 </div>
-                <ContractDeploymentPanel />
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+                  <ContractDeploymentPanel className="h-full" />
+                  <ContractVerification className="h-full" />
+                </div>
               </TabsContent>
             </Tabs>
           </div>
