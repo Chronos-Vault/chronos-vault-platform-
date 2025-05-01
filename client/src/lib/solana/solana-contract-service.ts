@@ -75,17 +75,26 @@ export class SolanaContractService {
     isPublic: boolean,
     name: string,
     description: string
-  ): Buffer {
-    const buffer = Buffer.alloc(1000); // Allocate more than enough space
+  ): Uint8Array {
+    // Use Uint8Array instead of Buffer for browser compatibility
+    const buffer = new Uint8Array(1000); // Allocate more than enough space
     
     // Write instruction type
-    buffer.writeUInt8(this.CREATE_VAULT_INSTRUCTION, 0);
+    buffer[0] = this.CREATE_VAULT_INSTRUCTION;
     
-    // Write unlock time (64-bit LE)
-    buffer.writeBigUInt64LE(BigInt(unlockTime), 1);
+    // Write unlock time (64-bit LE) - manually write bytes for browser compatibility
+    const unlockTimeBigInt = BigInt(unlockTime);
+    buffer[1] = Number(unlockTimeBigInt & BigInt(0xFF));
+    buffer[2] = Number((unlockTimeBigInt >> BigInt(8)) & BigInt(0xFF));
+    buffer[3] = Number((unlockTimeBigInt >> BigInt(16)) & BigInt(0xFF));
+    buffer[4] = Number((unlockTimeBigInt >> BigInt(24)) & BigInt(0xFF));
+    buffer[5] = Number((unlockTimeBigInt >> BigInt(32)) & BigInt(0xFF));
+    buffer[6] = Number((unlockTimeBigInt >> BigInt(40)) & BigInt(0xFF));
+    buffer[7] = Number((unlockTimeBigInt >> BigInt(48)) & BigInt(0xFF));
+    buffer[8] = Number((unlockTimeBigInt >> BigInt(56)) & BigInt(0xFF));
     
     // Write security level
-    buffer.writeUInt8(securityLevel, 9);
+    buffer[9] = securityLevel;
     
     // Write access key hash (32 bytes)
     // Copy the bytes manually
@@ -94,25 +103,43 @@ export class SolanaContractService {
     }
     
     // Write isPublic flag
-    buffer.writeUInt8(isPublic ? 1 : 0, 42);
+    buffer[42] = isPublic ? 1 : 0;
     
     // Write name string
-    const nameBuffer = Buffer.from(name);
-    // Write string length first
-    buffer.writeUInt32LE(nameBuffer.length, 43);
+    const nameEncoder = new TextEncoder();
+    const nameBytes = nameEncoder.encode(name);
+    
+    // Write string length first (32-bit LE)
+    const nameLength = nameBytes.length;
+    buffer[43] = nameLength & 0xFF;
+    buffer[44] = (nameLength >> 8) & 0xFF;
+    buffer[45] = (nameLength >> 16) & 0xFF;
+    buffer[46] = (nameLength >> 24) & 0xFF;
+    
     // Then write string content
-    nameBuffer.copy(buffer, 47);
+    for (let i = 0; i < nameBytes.length; i++) {
+      buffer[47 + i] = nameBytes[i];
+    }
     
     // Write description string at the next position
-    const descStartPos = 47 + nameBuffer.length;
-    const descBuffer = Buffer.from(description);
-    // Write string length first
-    buffer.writeUInt32LE(descBuffer.length, descStartPos);
+    const descStartPos = 47 + nameBytes.length;
+    const descEncoder = new TextEncoder();
+    const descBytes = descEncoder.encode(description);
+    
+    // Write string length first (32-bit LE)
+    const descLength = descBytes.length;
+    buffer[descStartPos] = descLength & 0xFF;
+    buffer[descStartPos + 1] = (descLength >> 8) & 0xFF;
+    buffer[descStartPos + 2] = (descLength >> 16) & 0xFF;
+    buffer[descStartPos + 3] = (descLength >> 24) & 0xFF;
+    
     // Then write string content
-    descBuffer.copy(buffer, descStartPos + 4);
+    for (let i = 0; i < descBytes.length; i++) {
+      buffer[descStartPos + 4 + i] = descBytes[i];
+    }
     
     // Calculate the actual size used and trim the buffer
-    const actualSize = descStartPos + 4 + descBuffer.length;
+    const actualSize = descStartPos + 4 + descBytes.length;
     return buffer.slice(0, actualSize);
   }
   
@@ -122,24 +149,42 @@ export class SolanaContractService {
   private serializeWithdrawInstruction(
     amount: number,
     accessKey: string
-  ): Buffer {
-    const buffer = Buffer.alloc(1000); // Allocate more than enough space
+  ): Uint8Array {
+    // Use Uint8Array instead of Buffer for browser compatibility
+    const buffer = new Uint8Array(1000); // Allocate more than enough space
     
     // Write instruction type
-    buffer.writeUInt8(this.WITHDRAW_INSTRUCTION, 0);
+    buffer[0] = this.WITHDRAW_INSTRUCTION;
     
-    // Write amount (64-bit LE)
-    buffer.writeBigUInt64LE(BigInt(amount), 1);
+    // Write amount (64-bit LE) - manually write bytes for browser compatibility
+    const amountBigInt = BigInt(amount);
+    buffer[1] = Number(amountBigInt & BigInt(0xFF));
+    buffer[2] = Number((amountBigInt >> BigInt(8)) & BigInt(0xFF));
+    buffer[3] = Number((amountBigInt >> BigInt(16)) & BigInt(0xFF));
+    buffer[4] = Number((amountBigInt >> BigInt(24)) & BigInt(0xFF));
+    buffer[5] = Number((amountBigInt >> BigInt(32)) & BigInt(0xFF));
+    buffer[6] = Number((amountBigInt >> BigInt(40)) & BigInt(0xFF));
+    buffer[7] = Number((amountBigInt >> BigInt(48)) & BigInt(0xFF));
+    buffer[8] = Number((amountBigInt >> BigInt(56)) & BigInt(0xFF));
     
     // Write access key string
-    const keyBuffer = Buffer.from(accessKey);
-    // Write string length first
-    buffer.writeUInt32LE(keyBuffer.length, 9);
+    const keyEncoder = new TextEncoder();
+    const keyBytes = keyEncoder.encode(accessKey);
+    
+    // Write string length first (32-bit LE)
+    const keyLength = keyBytes.length;
+    buffer[9] = keyLength & 0xFF;
+    buffer[10] = (keyLength >> 8) & 0xFF;
+    buffer[11] = (keyLength >> 16) & 0xFF;
+    buffer[12] = (keyLength >> 24) & 0xFF;
+    
     // Then write string content
-    keyBuffer.copy(buffer, 13);
+    for (let i = 0; i < keyBytes.length; i++) {
+      buffer[13 + i] = keyBytes[i];
+    }
     
     // Calculate the actual size used and trim the buffer
-    const actualSize = 13 + keyBuffer.length;
+    const actualSize = 13 + keyBytes.length;
     return buffer.slice(0, actualSize);
   }
   
@@ -207,7 +252,7 @@ export class SolanaContractService {
             // For a real implementation, we would need more accounts like token accounts if using SPL tokens
           ],
           programId: new PublicKey(this.VAULT_PROGRAM_ID),
-          data: data
+          data: Buffer.from(data) // Convert Uint8Array to Buffer for TransactionInstruction compatibility
         });
         
         // Create transaction
