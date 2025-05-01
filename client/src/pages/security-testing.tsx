@@ -12,6 +12,8 @@ import Header from '@/components/layout/header';
 import Footer from '@/components/layout/footer';
 import TestnetBadge from '@/components/blockchain/TestnetBadge';
 import NetworkSelector from '@/components/blockchain/NetworkSelector';
+import TestTransactionPanel from '@/components/testing/TestTransactionPanel';
+import TestContractDeployment from '@/components/testing/TestContractDeployment';
 
 export default function SecurityTestingPage() {
   const [location] = useLocation();
@@ -95,6 +97,10 @@ export default function SecurityTestingPage() {
                 <StaticAISecurityDashboard vaultId={vaultId} />
               </TabsContent>
               <TabsContent value="testing">
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+                  <TestTransactionPanel className="h-full" />
+                  <TestContractDeployment className="h-full" />
+                </div>
                 <TestDashboard />
               </TabsContent>
               <TabsContent value="contracts">
