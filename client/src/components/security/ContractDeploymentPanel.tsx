@@ -41,7 +41,11 @@ interface ContractForm {
   deploymentTx?: string;
 }
 
-export function ContractDeploymentPanel() {
+interface ContractDeploymentPanelProps {
+  className?: string;
+}
+
+export function ContractDeploymentPanel({ className }: ContractDeploymentPanelProps) {
   const [contracts, setContracts] = useState<ChainContract[]>([]);
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState<ContractForm>({
@@ -233,7 +237,7 @@ export function ContractDeploymentPanel() {
   };
 
   return (
-    <div className="space-y-6">
+    <div className={`space-y-6 ${className || ''}`}>
       <Card className="bg-background border-border shadow-md">
         <CardHeader className="bg-gradient-to-r from-[#6B00D7]/10 to-[#FF5AF7]/10 rounded-t-lg">
           <CardTitle className="text-xl text-foreground">Contract Deployment Management</CardTitle>

@@ -28,7 +28,8 @@ const knownContracts = {
   [BlockchainType.TON]: [
     { name: 'CVT Master', address: 'EQAvDfYmkVV2zFXzC0Hs2e2RGWJyMXHpnMTXH4jnI2W3AwLb' },
     { name: 'Vault Factory', address: 'EQB0gCDoGJNTfoPUSCgBxLuZ_O-7aYUccU0P1Vj_QdO6rQTf' },
-    { name: 'Staking Contract', address: 'EQDi_PSI1WbigxBKCj7vEz2pAvUQfw0IFZz9Sz2aGHUFNpSw' }
+    { name: 'Staking Contract', address: 'EQDi_PSI1WbigxBKCj7vEz2pAvUQfw0IFZz9Sz2aGHUFNpSw' },
+    { name: 'Newly Deployed Contract', address: 'UQAkIXbCToQ6LowMrDNG2K3ERmMH8m4XB2owWgL0BAB14Jtl' }
   ]
 };
 
