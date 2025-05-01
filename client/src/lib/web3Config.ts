@@ -2,6 +2,14 @@ import { createConfig, http } from 'wagmi';
 import { mainnet, sepolia, goerli } from 'wagmi/chains';
 import { injected } from 'wagmi/connectors';
 
+// Blockchain types supported by the platform
+export enum BlockchainType {
+  ETHEREUM = "ethereum",
+  SOLANA = "solana",
+  TON = "ton",
+  BITCOIN = "bitcoin"
+}
+
 // Define available chains with testnet focus for development
 export const chains = [sepolia, goerli, mainnet];
 

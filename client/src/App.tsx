@@ -13,6 +13,7 @@ import { CVTTokenProvider } from "@/contexts/cvt-token-context";
 import Home from "@/pages/home";
 import CreateVault from "@/pages/create-vault";
 import AdvancedVaultCreationPage from "@/pages/advanced-vault-creation";
+import AdvancedVaultCreationNewPage from "@/pages/advanced-vault-creation-new";
 import MyVaults from "@/pages/my-vaults";
 import VaultDetails from "@/pages/vault-details";
 import About from "@/pages/about";
@@ -43,6 +44,7 @@ function Router() {
       <Route path="/" component={Home} />
       <Route path="/create-vault" component={CreateVault} />
       <Route path="/advanced-vault" component={AdvancedVaultCreationPage} />
+      <Route path="/advanced-vault-new" component={AdvancedVaultCreationNewPage} />
       <Route path="/my-vaults" component={MyVaults} />
       <Route path="/vault/:id" component={VaultDetails} />
       <Route path="/about" component={About} />

@@ -870,5 +870,430 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Multi-Signature Vault Routes
+  
+  // Get all signers for a vault
+  app.get("/api/vaults/:vaultId/signers", async (req: Request, res: Response) => {
+    try {
+      const vaultId = parseInt(req.params.vaultId);
+      if (isNaN(vaultId)) {
+        return res.status(400).json({ message: "Invalid vault ID" });
+      }
+
+      const vault = await storage.getVault(vaultId);
+      if (!vault) {
+        return res.status(404).json({ message: "Vault not found" });
+      }
+
+      // Parse the vault metadata to get the signers
+      const metadata = vault.metadata ? JSON.parse(vault.metadata) : {};
+      const multiSigConfig = metadata.multiSigConfig || { signers: [] };
+      
+      res.json(multiSigConfig.signers || []);
+    } catch (error) {
+      handleError(res, error);
+    }
+  });
+
+  // Update multi-signature configuration
+  app.put("/api/vaults/:vaultId/multisig", async (req: Request, res: Response) => {
+    try {
+      const vaultId = parseInt(req.params.vaultId);
+      if (isNaN(vaultId)) {
+        return res.status(400).json({ message: "Invalid vault ID" });
+      }
+
+      const vault = await storage.getVault(vaultId);
+      if (!vault) {
+        return res.status(404).json({ message: "Vault not found" });
+      }
+
+      // Update the metadata with the new multisig configuration
+      const metadata = vault.metadata ? JSON.parse(vault.metadata) : {};
+      metadata.multiSigConfig = req.body;
+      
+      const updatedVault = await storage.updateVault(vaultId, { 
+        metadata: JSON.stringify(metadata) 
+      });
+      
+      res.json({ success: true, multiSigConfig: req.body });
+    } catch (error) {
+      handleError(res, error);
+    }
+  });
+
+  // Create a new signature request for a vault
+  app.post("/api/vaults/:vaultId/signature-requests", async (req: Request, res: Response) => {
+    try {
+      const vaultId = parseInt(req.params.vaultId);
+      if (isNaN(vaultId)) {
+        return res.status(400).json({ message: "Invalid vault ID" });
+      }
+
+      const vault = await storage.getVault(vaultId);
+      if (!vault) {
+        return res.status(404).json({ message: "Vault not found" });
+      }
+
+      const { requestType, requester, expiresAt, description } = req.body;
+      
+      if (!requestType || !requester) {
+        return res.status(400).json({ message: "Request type and requester are required" });
+      }
+
+      // For now we'll just return a mock signature request
+      // In production, this would be stored in the database
+      const signatureRequest = {
+        id: Math.floor(Math.random() * 10000),
+        vaultId,
+        requestType,
+        requester,
+        description: description || "",
+        expiresAt: expiresAt || new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(),
+        status: "pending",
+        signatures: [],
+        createdAt: new Date().toISOString()
+      };
+      
+      res.status(201).json(signatureRequest);
+    } catch (error) {
+      handleError(res, error);
+    }
+  });
+
+  // Sign a signature request
+  app.post("/api/signature-requests/:requestId/sign", async (req: Request, res: Response) => {
+    try {
+      const requestId = parseInt(req.params.requestId);
+      if (isNaN(requestId)) {
+        return res.status(400).json({ message: "Invalid request ID" });
+      }
+
+      const { signerAddress, signature, message } = req.body;
+      
+      if (!signerAddress || !signature) {
+        return res.status(400).json({ message: "Signer address and signature are required" });
+      }
+
+      // In production, this would validate the signature and update the database
+      // For now, we'll just return a success response
+      res.json({
+        success: true,
+        message: "Signature added successfully",
+        requestId,
+        signer: signerAddress,
+        timestamp: new Date().toISOString()
+      });
+    } catch (error) {
+      handleError(res, error);
+    }
+  });
+
+  // Geolocation Verification Routes
+  
+  // Get geolocation settings for a vault
+  app.get("/api/vaults/:vaultId/geolocation", async (req: Request, res: Response) => {
+    try {
+      const vaultId = parseInt(req.params.vaultId);
+      if (isNaN(vaultId)) {
+        return res.status(400).json({ message: "Invalid vault ID" });
+      }
+
+      const vault = await storage.getVault(vaultId);
+      if (!vault) {
+        return res.status(404).json({ message: "Vault not found" });
+      }
+
+      // Parse the vault metadata to get the geolocation settings
+      const metadata = vault.metadata ? JSON.parse(vault.metadata) : {};
+      const geoConfig = metadata.geoConfig || { safeZones: [] };
+      
+      // Don't return exact coordinates in the response for security
+      const sanitizedConfig = {
+        ...geoConfig,
+        safeZones: geoConfig.safeZones?.map((zone: any) => ({
+          id: zone.id || Math.random().toString(36).substring(2, 15),
+          name: zone.name,
+          // Don't return exact coordinates, only approximate
+          approximate: `${zone.latitude.toFixed(1)}, ${zone.longitude.toFixed(1)}`,
+          radius: zone.radius
+        }))
+      };
+      
+      res.json(sanitizedConfig);
+    } catch (error) {
+      handleError(res, error);
+    }
+  });
+
+  // Update geolocation settings for a vault
+  app.put("/api/vaults/:vaultId/geolocation", async (req: Request, res: Response) => {
+    try {
+      const vaultId = parseInt(req.params.vaultId);
+      if (isNaN(vaultId)) {
+        return res.status(400).json({ message: "Invalid vault ID" });
+      }
+
+      const vault = await storage.getVault(vaultId);
+      if (!vault) {
+        return res.status(404).json({ message: "Vault not found" });
+      }
+
+      // Update the metadata with the new geolocation configuration
+      const metadata = vault.metadata ? JSON.parse(vault.metadata) : {};
+      metadata.geoConfig = req.body;
+      
+      const updatedVault = await storage.updateVault(vaultId, { 
+        metadata: JSON.stringify(metadata) 
+      });
+      
+      res.json({ success: true, geoConfig: req.body });
+    } catch (error) {
+      handleError(res, error);
+    }
+  });
+
+  // Verify geolocation for a vault action
+  app.post("/api/vaults/:vaultId/verify-location", async (req: Request, res: Response) => {
+    try {
+      const vaultId = parseInt(req.params.vaultId);
+      if (isNaN(vaultId)) {
+        return res.status(400).json({ message: "Invalid vault ID" });
+      }
+
+      const vault = await storage.getVault(vaultId);
+      if (!vault) {
+        return res.status(404).json({ message: "Vault not found" });
+      }
+
+      const { latitude, longitude, walletAddress } = req.body;
+      
+      if (!latitude || !longitude || !walletAddress) {
+        return res.status(400).json({ message: "Latitude, longitude, and wallet address are required" });
+      }
+
+      // Parse the vault metadata to get the geolocation settings
+      const metadata = vault.metadata ? JSON.parse(vault.metadata) : {};
+      const geoConfig = metadata.geoConfig || { safeZones: [] };
+      
+      if (!geoConfig.safeZones || geoConfig.safeZones.length === 0) {
+        return res.status(400).json({ message: "No safe zones configured for this vault" });
+      }
+
+      // Check if the provided location is within any safe zone
+      const isInSafeZone = geoConfig.safeZones.some((zone: any) => {
+        // Calculate distance using Haversine formula
+        const lat1 = zone.latitude;
+        const lon1 = zone.longitude;
+        const lat2 = parseFloat(latitude);
+        const lon2 = parseFloat(longitude);
+        
+        const R = 6371; // Earth's radius in km
+        const dLat = (lat2 - lat1) * Math.PI / 180;
+        const dLon = (lon2 - lon1) * Math.PI / 180;
+        const a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+          Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * 
+          Math.sin(dLon/2) * Math.sin(dLon/2);
+        const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+        const distance = R * c;
+        
+        return distance <= zone.radius;
+      });
+
+      if (!isInSafeZone) {
+        return res.status(403).json({ 
+          success: false, 
+          message: "Location verification failed. You are not in a safe zone."
+        });
+      }
+
+      // Location verified successfully
+      res.json({
+        success: true,
+        message: "Location verified successfully",
+        verificationToken: `geo-${Date.now()}-${Math.random().toString(36).substring(2, 15)}`,
+        timestamp: new Date().toISOString()
+      });
+    } catch (error) {
+      handleError(res, error);
+    }
+  });
+
+  // CVT Token Integration Routes
+  
+  // Get CVT token balances for a user
+  app.get("/api/token/cvt/balances/:walletAddress", async (req: Request, res: Response) => {
+    try {
+      const { walletAddress } = req.params;
+      
+      if (!walletAddress) {
+        return res.status(400).json({ message: "Wallet address is required" });
+      }
+
+      // In production, this would query the blockchain
+      // For now, we'll just return mock balances
+      const balances = [
+        {
+          chain: "ethereum",
+          balance: 1000 + Math.floor(Math.random() * 500),
+          marketValue: 1250 + Math.floor(Math.random() * 625),
+          address: walletAddress
+        },
+        {
+          chain: "solana",
+          balance: 500 + Math.floor(Math.random() * 250),
+          marketValue: 625 + Math.floor(Math.random() * 312),
+          address: `SOL${walletAddress.substring(3)}`
+        },
+        {
+          chain: "ton",
+          balance: 750 + Math.floor(Math.random() * 375),
+          marketValue: 937.5 + Math.floor(Math.random() * 469),
+          address: `TON${walletAddress.substring(3)}`
+        }
+      ];
+      
+      res.json(balances);
+    } catch (error) {
+      handleError(res, error);
+    }
+  });
+
+  // Get CVT token economics data
+  app.get("/api/token/cvt/economics", async (_req: Request, res: Response) => {
+    try {
+      // In production, this would query from a database or blockchain
+      const economics = {
+        totalSupply: 100000000,
+        circulatingSupply: 35000000,
+        marketCap: 43750000,
+        currentPrice: 1.25,
+        allTimeHigh: 1.75,
+        stakingApr: 12.5,
+        burnRate: 2.5,
+        stakingRatio: 42.5,
+      };
+      
+      res.json(economics);
+    } catch (error) {
+      handleError(res, error);
+    }
+  });
+
+  // Get CVT staking positions for a user
+  app.get("/api/token/cvt/staking", async (req: Request, res: Response) => {
+    try {
+      const { walletAddress, vaultId } = req.query;
+      
+      if (!walletAddress) {
+        return res.status(400).json({ message: "Wallet address is required" });
+      }
+
+      // In production, this would query the blockchain or database
+      // For now, we'll just return mock staking positions
+      const stakingPositions = [
+        {
+          id: 1,
+          amount: 500,
+          startDate: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString(),
+          endDate: new Date(Date.now() + 60 * 24 * 60 * 60 * 1000).toISOString(),
+          apr: 12.5,
+          chain: "ethereum",
+          status: "active",
+          securityBoost: 15,
+          vaultId: vaultId ? parseInt(vaultId as string) : null
+        },
+        {
+          id: 2,
+          amount: 250,
+          startDate: new Date(Date.now() - 15 * 24 * 60 * 60 * 1000).toISOString(),
+          endDate: new Date(Date.now() + 15 * 24 * 60 * 60 * 1000).toISOString(),
+          apr: 10,
+          chain: "ton",
+          status: "active",
+          securityBoost: 7.5,
+          vaultId: vaultId ? parseInt(vaultId as string) : null
+        }
+      ];
+      
+      res.json(stakingPositions);
+    } catch (error) {
+      handleError(res, error);
+    }
+  });
+
+  // Stake CVT tokens
+  app.post("/api/token/cvt/stake", async (req: Request, res: Response) => {
+    try {
+      const { amount, chain, duration, vaultId, walletAddress } = req.body;
+      
+      if (!amount || !chain || !duration || !walletAddress) {
+        return res.status(400).json({ 
+          message: "Amount, chain, duration, and wallet address are required" 
+        });
+      }
+
+      // In production, this would initiate a blockchain transaction
+      // For now, we'll just return a mock staking position
+      
+      // Calculate security boost based on amount and duration
+      let securityBoost = 5; // Base boost
+      
+      // Add boost based on amount
+      if (amount >= 1000) securityBoost += 10;
+      else if (amount >= 500) securityBoost += 7.5;
+      else if (amount >= 100) securityBoost += 5;
+      else securityBoost += 2.5;
+      
+      // Add boost based on duration
+      if (duration >= 365) securityBoost += 15; // 1 year+
+      else if (duration >= 180) securityBoost += 10; // 6 months+
+      else if (duration >= 90) securityBoost += 7.5; // 3 months+
+      else if (duration >= 30) securityBoost += 5; // 1 month+
+      
+      const stakingPosition = {
+        id: Math.floor(Math.random() * 1000) + 1,
+        amount: parseFloat(amount),
+        startDate: new Date().toISOString(),
+        endDate: new Date(Date.now() + duration * 24 * 60 * 60 * 1000).toISOString(),
+        apr: parseFloat(amount) > 500 ? 15 : 10,
+        chain,
+        status: "active",
+        securityBoost,
+        walletAddress,
+        vaultId: vaultId ? parseInt(vaultId) : null,
+        txHash: `0x${Array.from({length: 64}, () => Math.floor(Math.random() * 16).toString(16)).join('')}`
+      };
+      
+      // If this is connected to a vault, update the vault's security boost
+      if (vaultId) {
+        const vault = await storage.getVault(parseInt(vaultId));
+        if (vault) {
+          const metadata = vault.metadata ? JSON.parse(vault.metadata) : {};
+          
+          if (!metadata.cvtStaking) {
+            metadata.cvtStaking = {
+              totalStaked: parseFloat(amount),
+              securityBoost,
+              positions: [stakingPosition.id]
+            };
+          } else {
+            metadata.cvtStaking.totalStaked += parseFloat(amount);
+            metadata.cvtStaking.securityBoost += securityBoost;
+            metadata.cvtStaking.positions = [...(metadata.cvtStaking.positions || []), stakingPosition.id];
+          }
+          
+          await storage.updateVault(parseInt(vaultId), { 
+            metadata: JSON.stringify(metadata) 
+          });
+        }
+      }
+      
+      res.status(201).json(stakingPosition);
+    } catch (error) {
+      handleError(res, error);
+    }
+  });
+
   return httpServer;
 }
