@@ -298,7 +298,7 @@ export default function TestContractDeployment({ className }: TestContractDeploy
           </TabsList>
           
           <div className="space-y-4">
-            {!chainStatus[activeChain]?.isConnected ? (
+            {!chainStatus[activeChain]?.isConnected && (
               <div className="space-y-4">
                 <Alert variant="destructive" className="mb-4 bg-red-950/30 border-red-700/50">
                   <AlertCircle className="h-4 w-4" />
@@ -310,7 +310,13 @@ export default function TestContractDeployment({ className }: TestContractDeploy
                 
                 <div className="flex justify-center">
                   <Button 
-                    onClick={() => multiChain.connectChain(activeChain)}
+                    onClick={() => {
+                      try {
+                        multiChain.connectChain(activeChain);
+                      } catch (error) {
+                        console.error(`Error connecting to ${activeChain}:`, error);
+                      }
+                    }}
                     className="bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] hover:from-[#7B10E7] hover:to-[#FF6AF7] text-white"
                   >
                     <Wallet className="h-4 w-4 mr-2" />
@@ -318,7 +324,9 @@ export default function TestContractDeployment({ className }: TestContractDeploy
                   </Button>
                 </div>
               </div>
-            ) : !checkIsTestnet(activeChain) ? (
+            )}
+            
+            {chainStatus[activeChain]?.isConnected && !checkIsTestnet(activeChain) && (
               <Alert variant="destructive" className="mb-4 bg-orange-950/30 border-orange-700/50">
                 <AlertCircle className="h-4 w-4" />
                 <AlertTitle>Mainnet Detected</AlertTitle>
@@ -326,7 +334,7 @@ export default function TestContractDeployment({ className }: TestContractDeploy
                   Test deployments can only be executed on testnets. Please switch to a testnet network.
                 </AlertDescription>
               </Alert>
-            ) : null}
+            )}
             
             <div>
               <Label className="text-sm font-medium text-white">Contract Code</Label>
