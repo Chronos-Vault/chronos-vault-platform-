@@ -4,6 +4,7 @@ import {
   TonConnectionStatus, 
   TONWalletInfo 
 } from '@/lib/ton/ton-service';
+import { tonContractService } from '@/lib/ton/ton-contract-service';
 
 interface TonContextType {
   isConnected: boolean;
