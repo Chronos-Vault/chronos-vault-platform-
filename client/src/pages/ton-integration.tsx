@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Helmet } from 'react-helmet';
+import Header from "@/components/layout/header";
+import Footer from "@/components/layout/footer";
 import { 
   Card, 
   CardContent, 
@@ -435,13 +437,15 @@ const TONIntegrationPage: React.FC = () => {
   };
   
   return (
-    <>
-      <Helmet>
-        <title>TON Integration | Chronos Vault</title>
-        <meta name="description" content="Chronos Vault TON blockchain integration" />
-      </Helmet>
-      
-      <div className="container mx-auto px-4 py-12">
+    <div className="min-h-screen flex flex-col bg-gradient-to-b from-[#121212] to-[#1A1A1A] text-white">
+      <Header />
+      <main className="flex-1 pb-20">
+        <Helmet>
+          <title>TON Integration | Chronos Vault</title>
+          <meta name="description" content="Chronos Vault TON blockchain integration" />
+        </Helmet>
+        
+        <div className="container mx-auto px-4 py-12">
         <div className="max-w-5xl mx-auto">
           <div className="text-center mb-8">
             <h1 className="text-4xl font-bold mb-2 bg-clip-text text-transparent bg-gradient-to-r from-[#0088CC] to-[#33AAFF]">
@@ -1109,8 +1113,9 @@ const TONIntegrationPage: React.FC = () => {
             </Card>
           </div>
         </div>
-      </div>
-    </>
+      </main>
+      <Footer />
+    </div>
   );
 };
 
