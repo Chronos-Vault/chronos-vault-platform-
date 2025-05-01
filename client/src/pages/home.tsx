@@ -4,8 +4,6 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import VaultCard from "@/components/vault/vault-card";
 import { BitcoinHalvingVault } from "@/components/bitcoin/BitcoinHalvingVault";
-import Header from "@/components/layout/header";
-import Footer from "@/components/layout/footer";
 
 const Home = () => {
   const [_, setLocation] = useLocation();
@@ -63,8 +61,7 @@ const Home = () => {
   }, []);
 
   return (
-    <div className="min-h-screen flex flex-col bg-gradient-to-b from-[#121212] to-[#1A1A1A] text-white font-poppins">
-      <Header />
+    <div className="flex flex-col bg-gradient-to-b from-[#121212] to-[#1A1A1A] text-white font-poppins">
       <main className="flex-1">
         {/* Hero Section */}
         <section className="py-16 md:py-24 relative overflow-hidden">
@@ -641,7 +638,7 @@ const Home = () => {
           </div>
         </section>
       </main>
-      <Footer />
+      {/* Footer now managed by Layout component */}
     </div>
   );
 };
