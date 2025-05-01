@@ -298,23 +298,26 @@ export function CreateVaultFormEnhanced({
       
       return await apiRequest('POST', '/api/vaults', vaultData);
     },
-    onSuccess: (data) => {
-      toast({
-        title: "Vault Created Successfully",
-        description: `Your ${vaultType} vault has been created and is now active.`,
+    onSuccess: (response) => {
+      // Parse the response to get data
+      response.json().then(data => {
+        toast({
+          title: "Vault Created Successfully",
+          description: `Your ${vaultType} vault has been created and is now active.`,
+        });
+        
+        // Invalidate vaults query to reflect new vault
+        queryClient.invalidateQueries({ queryKey: ['vaults'] });
+        queryClient.invalidateQueries({ queryKey: ['vaults', userId] });
+        
+        // Notify parent component
+        onVaultCreated?.(data);
+        
+        // Redirect to vault details after a short delay
+        setTimeout(() => {
+          setLocation(`/vault/${data.id}`);
+        }, 1500);
       });
-      
-      // Invalidate vaults query to reflect new vault
-      queryClient.invalidateQueries({ queryKey: ['vaults'] });
-      queryClient.invalidateQueries({ queryKey: ['vaults', userId] });
-      
-      // Notify parent component
-      onVaultCreated?.(data);
-      
-      // Redirect to vault details after a short delay
-      setTimeout(() => {
-        setLocation(`/vault/${data.id}`);
-      }, 1500);
     },
     onError: (error: any) => {
       toast({
@@ -518,10 +521,11 @@ export function CreateVaultFormEnhanced({
                           </Select>
                           <FormDescription>
                             {vaultType === 'standard' && "Basic time-locked vault for secure asset storage"}
-                            {vaultType === 'timelock' && "Long-term storage with enhanced security for deep time locking"}
-                            {vaultType === 'multisig' && "Requires multiple signatures to unlock or modify"}
-                            {vaultType === 'inheritance' && "Designed for inheritance planning with beneficiary management"}
-                            {vaultType === 'cross-chain' && "Security across multiple blockchains for ultimate protection"}
+                            {vaultType === 'timelock' && "Advanced time-based vault with precise unlocking schedules and extended security"}
+                            {vaultType === 'multisig' && "Enhanced security vault requiring multiple authorized signers to approve operations"}
+                            {vaultType === 'geolocation' && "Location-secured vault requiring physical presence in designated safe zones"}
+                            {vaultType === 'biometric' && "Highest level of personal authentication using biometric verification for access"}
+                            {vaultType === 'cross-chain' && "Advanced vault with security distributed across multiple blockchains for ultimate protection"}
                             {vaultType === 'advanced' && "Fully customizable vault with all security features enabled"}
                           </FormDescription>
                           <FormMessage />
