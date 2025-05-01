@@ -1,7 +1,7 @@
 import { useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
 import { PageHeader } from "@/components/page-header";
-import Header from "@/components/layout/header";
+// Header is now provided by the Layout component
 import Footer from "@/components/layout/footer";
 
 export default function RevolutionaryFeatures() {
@@ -9,7 +9,7 @@ export default function RevolutionaryFeatures() {
 
   return (
     <div className="min-h-screen flex flex-col bg-gradient-to-b from-[#121212] to-[#1A1A1A] text-white">
-      <Header />
+      {/* Header is now provided by the Layout component */}
       <main className="flex-1 pb-20">
         <div className="container mx-auto px-4 py-12">
           <PageHeader

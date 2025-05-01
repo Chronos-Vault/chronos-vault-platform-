@@ -5,7 +5,7 @@ import SecurityDashboard from '@/components/cross-chain/SecurityDashboard';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { ArrowLeftRight, Shield, Users, Database } from 'lucide-react';
 import { useAuthContext } from '@/contexts/auth-context';
-import Header from "@/components/layout/header";
+// Header is now provided by the Layout component
 import Footer from "@/components/layout/footer";
 
 const CrossChainPage: React.FC = () => {
@@ -14,7 +14,7 @@ const CrossChainPage: React.FC = () => {
 
   return (
     <div className="min-h-screen flex flex-col bg-gradient-to-b from-[#121212] to-[#1A1A1A] text-white">
-      <Header />
+      {/* Header is now provided by the Layout component */}
       <main className="flex-1 pb-20">
         <Helmet>
           <title>Cross-Chain Operations | Chronos Vault</title>

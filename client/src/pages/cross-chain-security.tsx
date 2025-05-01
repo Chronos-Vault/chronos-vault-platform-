@@ -1,5 +1,5 @@
 import React from 'react';
-import Header from '@/components/layout/header';
+// Header is now provided by the Layout component
 import Footer from '@/components/layout/footer';
 import CrossChainValidationDemo from '@/components/security/CrossChainValidationDemo';
 import CrossChainSecurityDashboard from '@/components/security/NewSecurityDashboard';
@@ -11,7 +11,7 @@ import { ShieldCheck, Server, Network, Lock } from 'lucide-react';
 export default function CrossChainSecurityPage() {
   return (
     <div className="min-h-screen flex flex-col bg-gradient-to-b from-gray-50 via-purple-50 to-gray-100">
-      <Header />
+      {/* Header is now provided by the Layout component */}
       
       <main className="flex-grow container mx-auto px-4 py-6 max-w-7xl">
         <div className="space-y-8">

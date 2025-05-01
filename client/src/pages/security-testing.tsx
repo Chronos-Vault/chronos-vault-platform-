@@ -8,7 +8,7 @@ import { useLocation } from 'wouter';
 import { BlockchainType } from '@/contexts/multi-chain-context';
 import { Layout } from '@/components/layout';
 import { PageHeader } from '@/components/page-header';
-import Header from '@/components/layout/header';
+// Header is now provided by the Layout component
 import Footer from '@/components/layout/footer';
 import TestnetBadge from '@/components/blockchain/TestnetBadge';
 import NetworkSelector from '@/components/blockchain/NetworkSelector';
@@ -25,7 +25,7 @@ export default function SecurityTestingPage() {
   
   return (
     <div className="min-h-screen flex flex-col bg-gradient-to-b from-[#121212] to-[#1A1A1A] text-white">
-      <Header />
+      {/* Header is now provided by the Layout component */}
       <main className="flex-1">
         <div className="container mx-auto py-10 px-4">
           <div className="text-center my-8 space-y-3 relative">

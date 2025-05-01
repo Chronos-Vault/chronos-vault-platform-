@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Helmet } from 'react-helmet';
-import Header from "@/components/layout/header";
+// Header is now provided by the Layout component
 import Footer from "@/components/layout/footer";
 import { 
   Card, 
@@ -438,7 +438,7 @@ const TONIntegrationPage: React.FC = () => {
   
   return (
     <div className="min-h-screen flex flex-col bg-gradient-to-b from-[#121212] to-[#1A1A1A] text-white">
-      <Header />
+      {/* Header is now provided by the Layout component */}
       <main className="flex-1 pb-20">
         <Helmet>
           <title>TON Integration | Chronos Vault</title>
