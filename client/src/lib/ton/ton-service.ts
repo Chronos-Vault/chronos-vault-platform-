@@ -46,7 +46,7 @@ class TONService {
         console.log("Created TON connect button container in DOM");
       }
       
-      // To avoid duplicate initialization errors, check if there's already a TonConnectUI instance
+      // Check for an existing TonConnectUI instance to avoid errors with custom elements
       if (!this.tonConnectUI) {
         try {
           // Get the current URL for manifest resolution
@@ -55,21 +55,42 @@ class TONService {
           
           console.log('Initializing TonConnectUI with manifest URL:', manifestUrl);
           
-          this.tonConnectUI = new TonConnectUI({
-            manifestUrl: manifestUrl,
-            buttonRootId: 'ton-connect-button'
-          });
+          // Check if the custom element is already defined to avoid the error
+          const customElementExists = !!customElements.get('tc-root');
           
-          // Add connection status change listener
-          this.tonConnectUI.onStatusChange(this.handleConnectionStatusChange);
-          
-          // If already connected, update wallet info
-          if (this.tonConnectUI.connected) {
-            await this.updateWalletInfo();
+          if (!customElementExists) {
+            this.tonConnectUI = new TonConnectUI({
+              manifestUrl: manifestUrl,
+              buttonRootId: 'ton-connect-button'
+            });
+          } else {
+            console.log('TON Connect UI elements already defined, attempting to reuse');
+            // We can still create a new instance, but log for debugging
+            try {
+              this.tonConnectUI = new TonConnectUI({
+                manifestUrl: manifestUrl,
+                buttonRootId: 'ton-connect-button'
+              });
+            } catch (elementError) {
+              console.warn('Could not create new TonConnectUI due to custom element registry:', elementError);
+              // This is a fallback approach - the component might not function correctly
+              // but we'll continue to avoid breaking the UI
+            }
           }
           
-          this.isInitialized = true;
-          console.log("TON service successfully initialized");
+          // Only add event listeners if we have a valid instance
+          if (this.tonConnectUI) {
+            // Add connection status change listener
+            this.tonConnectUI.onStatusChange(this.handleConnectionStatusChange);
+            
+            // If already connected, update wallet info
+            if (this.tonConnectUI.connected) {
+              await this.updateWalletInfo();
+            }
+            
+            this.isInitialized = true;
+            console.log("TON service successfully initialized");
+          }
         } catch (initError) {
           console.error("Error initializing TonConnectUI:", initError);
           return false;
@@ -252,6 +273,12 @@ class TONService {
       
       if (!this.tonConnectUI) {
         return false;
+      }
+      
+      // Check if already connected to avoid WalletAlreadyConnectedError
+      if (this.tonConnectUI.connected) {
+        console.log('TON wallet already connected, not opening modal');
+        return true;
       }
       
       this.connectionStatus = TonConnectionStatus.CONNECTING;
