@@ -46,6 +46,7 @@ interface MultiChainContextType {
   
   // Chain info
   availableWallets: (chain: BlockchainType) => { name: string; type: string }[];
+  isTestnet: (chain: BlockchainType) => boolean; // Check if chain is on testnet
   
   // Utilities
   formatAddress: (address: string | null, chain: BlockchainType) => string;
@@ -333,6 +334,15 @@ export const MultiChainProvider: React.FC<MultiChainProviderProps> = ({ children
         return '#888888';
     }
   };
+  
+  // Check if a blockchain is connected to a testnet
+  const isTestnet = (chain: BlockchainType): boolean => {
+    const status = chainStatus[chain];
+    if (!status.isConnected || !status.network) return true; // Default to assume testnet
+    
+    const network = status.network.toLowerCase();
+    return network.includes('test') || network.includes('dev') || network.includes('sepolia') || network.includes('goerli');
+  };
 
   // Context value
   const contextValue: MultiChainContextType = {
@@ -345,6 +355,7 @@ export const MultiChainProvider: React.FC<MultiChainProviderProps> = ({ children
     disconnectChain,
     disconnectAllChains,
     availableWallets,
+    isTestnet,
     formatAddress,
     getChainIcon,
     getChainColor

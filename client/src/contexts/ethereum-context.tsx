@@ -64,7 +64,7 @@ export const EthereumProvider: React.FC<EthereumProviderProps> = ({ children }) 
   const [connectionState, setConnectionState] = useState<EthereumConnectionState>(
     ethereumService.getConnectionState()
   );
-  const [currentNetwork, setCurrentNetwork] = useState<EthereumNetwork>('goerli');
+  const [currentNetwork, setCurrentNetwork] = useState<EthereumNetwork>('sepolia'); // Default to Sepolia testnet for development
   const [availableNetworks, setAvailableNetworks] = useState<{ id: string; name: string; chainId: number }[]>([]);
   const [error, setError] = useState<string | null>(null);
   

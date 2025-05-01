@@ -51,15 +51,16 @@ export class SolanaService {
   private connectionStatus: SolanaConnectionStatus = SolanaConnectionStatus.DISCONNECTED;
   private walletInfo: SolanaWalletInfo | null = null;
   
-  // Cluster configuration
+  // Cluster configuration (default to devnet for development/testing)
   private cluster: SolanaCluster = SolanaCluster.DEVNET;
   
   /**
    * Private constructor for singleton pattern
    */
   private constructor() {
-    // Initialize the connection to Solana
+    // Initialize the connection to Solana using Devnet for testnet development
     this.setCluster(SolanaCluster.DEVNET);
+    console.log('Solana service initialized with Devnet for testnet development');
   }
   
   /**

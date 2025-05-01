@@ -114,7 +114,9 @@ class TONService {
       const address = account.address;
       // Use any type for chain value since the TonConnect types may change
       const chain = account.chain as any;
+      // Default to testnet for development, only use mainnet if explicitly specified
       const network = chain && typeof chain === 'string' && chain.includes('mainnet') ? 'mainnet' : 'testnet';
+      console.log(`TON wallet connected to ${network}`);
       const publicKey = account.publicKey || undefined;
       
       // Fetch balance
