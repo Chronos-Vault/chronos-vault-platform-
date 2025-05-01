@@ -74,8 +74,8 @@ export default function CrossChainSecurityDashboard() {
   return (
     <div className="space-y-6">
       {/* Chain Statuses */}
-      <Card className="bg-white/80 backdrop-blur-sm shadow-lg">
-        <CardHeader className="pb-3">
+      <Card className="bg-white/80 backdrop-blur-sm shadow-lg border-purple-200">
+        <CardHeader className="pb-3 bg-gradient-to-r from-purple-800/5 to-pink-600/5 rounded-t-lg">
           <CardTitle className="flex items-center gap-2">
             <Shield className="h-5 w-5 text-purple-700" />
             Cross-Chain Status
@@ -162,8 +162,8 @@ export default function CrossChainSecurityDashboard() {
       </Card>
       
       {/* Security Metrics */}
-      <Card className="bg-white/80 backdrop-blur-sm shadow-lg">
-        <CardHeader className="pb-3">
+      <Card className="bg-white/80 backdrop-blur-sm shadow-lg border-purple-200">
+        <CardHeader className="pb-3 bg-gradient-to-r from-purple-800/5 to-pink-600/5 rounded-t-lg">
           <CardTitle className="flex items-center gap-2">
             <Activity className="h-5 w-5 text-purple-700" />
             Security Metrics
@@ -176,8 +176,8 @@ export default function CrossChainSecurityDashboard() {
         <CardContent>
           <Tabs defaultValue="transactions">
             <TabsList className="grid w-full grid-cols-2">
-              <TabsTrigger value="transactions">Transactions</TabsTrigger>
-              <TabsTrigger value="vaults">Vault Security</TabsTrigger>
+              <TabsTrigger value="transactions" className="px-2 py-1.5 md:px-3 md:py-2 text-sm md:text-base">Transactions</TabsTrigger>
+              <TabsTrigger value="vaults" className="px-2 py-1.5 md:px-3 md:py-2 text-sm md:text-base">Vault Security</TabsTrigger>
             </TabsList>
             
             <TabsContent value="transactions" className="py-4">
