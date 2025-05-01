@@ -2,7 +2,7 @@ import React from 'react';
 import Header from '@/components/layout/header';
 import Footer from '@/components/layout/footer';
 import CrossChainValidationDemo from '@/components/security/CrossChainValidationDemo';
-import CrossChainSecurityDashboard from '@/components/security/CrossChainSecurityDashboard';
+import CrossChainSecurityDashboard from '@/components/security/NewSecurityDashboard';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
