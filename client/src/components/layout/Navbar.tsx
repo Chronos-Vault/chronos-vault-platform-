@@ -1,13 +1,23 @@
 import { Link, useLocation } from 'wouter';
 import { useMultiChain, BlockchainType } from '@/contexts/multi-chain-context';
 import { Button } from '@/components/ui/button';
-import { ChevronDown } from 'lucide-react';
+import { ChevronDown, Menu, X } from 'lucide-react';
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import {
+  Sheet,
+  SheetContent,
+  SheetTrigger,
+  SheetClose,
+  SheetHeader,
+  SheetTitle,
+  SheetDescription
+} from "@/components/ui/sheet";
+import CrossChainWalletSelector from "@/components/auth/cross-chain-wallet-selector";
 
 const Navbar = () => {
   const [location] = useLocation();
@@ -16,16 +26,76 @@ const Navbar = () => {
   const isActive = (path: string) => {
     return location === path ? 'bg-primary/10 text-primary' : 'text-foreground/70 hover:text-primary';
   };
+  
+  // Mobile navigation with categories for a comprehensive mobile menu
+  const mobileCategoryMenu = [
+    {
+      id: "main",
+      title: "Main Navigation",
+      icon: "🏠",
+      items: [
+        { name: "Home", href: "/", icon: "🏠" },
+        { name: "Create Vault", href: "/vault-types", icon: "🔐" },
+        { name: "My Vaults", href: "/my-vaults", icon: "📊" },
+        { name: "Gift Crypto", href: "/gift-crypto", icon: "🎁", highlight: true },
+      ]
+    },
+    {
+      id: "features",
+      title: "Advanced Features",
+      icon: "✨",
+      items: [
+        { name: "Bitcoin Halving", href: "/bitcoin-halving", icon: "₿" },
+        { name: "CVT Token", href: "/cvt-token", icon: "🪙" },
+        { name: "Token Vaults", href: "/token-vaults", icon: "⏳" },
+        { name: "Cross-Chain Features", href: "/cross-chain", icon: "🔄" },
+        { name: "Security Testing", href: "/security-testing", icon: "🔒" },
+      ]
+    },
+    {
+      id: "blockchains",
+      title: "Blockchain Integrations",
+      icon: "⛓️",
+      items: [
+        { name: "TON Integration", href: "/ton-integration", icon: "💎" },
+        { name: "Solana Integration", href: "/solana-integration", icon: "◎" },
+        { name: "Ethereum Integration", href: "/ethereum-integration", icon: "Ξ" },
+      ]
+    },
+    {
+      id: "resources",
+      title: "Resources & Documentation",
+      icon: "📚",
+      items: [
+        { name: "Documentation", href: "/documentation", icon: "📄" },
+        { name: "Technical Specification", href: "/technical-specification", icon: "🧪" },
+        { name: "CVT Tokenomics", href: "/cvt-tokenomics", icon: "📊" },
+        { name: "Revolutionary Features", href: "/revolutionary-features", icon: "🚀" },
+        { name: "About", href: "/about", icon: "ℹ️" },
+        { name: "Roadmap", href: "/roadmap", icon: "🗺️" },
+      ]
+    }
+  ];
 
   return (
     <nav className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="container flex h-16 items-center justify-between">
         <div className="flex items-center gap-6">
-          <Link href="/">
-            <div className="flex items-center gap-2 cursor-pointer">
-              <span className="text-xl font-bold bg-gradient-to-r from-purple-600 to-pink-500 bg-clip-text text-transparent">
-                Chronos Vault
-              </span>
+          <Link href="/" className="flex items-center gap-3 group">
+            <div className="h-10 w-10 rounded-full bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] flex items-center justify-center shadow-xl shadow-[#FF5AF7]/40 group-hover:shadow-[#FF5AF7]/50 transition-all p-2.5 border-2 border-white/40 animate-logo-glow">
+              <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="text-white">
+                <path d="M19 7H5C3.89543 7 3 7.89543 3 9V18C3 19.1046 3.89543 20 5 20H19C20.1046 20 21 19.1046 21 18V9C21 7.89543 20.1046 7 19 7Z" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
+                <path d="M12 14C13.1046 14 14 13.1046 14 12C14 10.8954 13.1046 10 12 10C10.8954 10 10 10.8954 10 12C10 13.1046 10.8954 14 12 14Z" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
+                <path d="M3 7V5C3 4.46957 3.21071 3.96086 3.58579 3.58579C3.96086 3.21071 4.46957 3 5 3H19C19.5304 3 20.0391 3.21071 20.4142 3.58579C20.7893 3.96086 21 4.46957 21 5V7" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
+                <path d="M12 14V17" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
+            </div>
+            <div className="relative">
+              <h1 className="text-xl md:text-2xl font-poppins font-bold text-white">
+                <span className="bg-clip-text text-transparent bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] group-hover:from-[#FF5AF7] group-hover:to-[#6B00D7] transition-all">Chronos</span> 
+                <span className="text-white">Vault</span>
+              </h1>
+              <div className="absolute -top-3 -right-3 bg-[#FF5AF7] text-white text-[8px] px-1.5 py-0.5 rounded-full font-bold tracking-wider shadow-md shadow-[#FF5AF7]/30 animate-pulse">BETA</div>
             </div>
           </Link>
 
@@ -106,36 +176,96 @@ const Navbar = () => {
         </div>
 
         <div className="flex items-center gap-4">
-          {isConnected ? (
-            <div className="hidden md:flex items-center gap-2">
-              <div className="text-xs">
-                {walletInfo.ethereum.isConnected && (
-                  <span className="px-2 py-1 bg-purple-600/10 text-purple-600 rounded-full mr-2">
-                    ETH Connected
-                  </span>
-                )}
-                {walletInfo.solana.isConnected && (
-                  <span className="px-2 py-1 bg-green-600/10 text-green-600 rounded-full mr-2">
-                    SOL Connected
-                  </span>
-                )}
-                {walletInfo.ton.isConnected && (
-                  <span className="px-2 py-1 bg-blue-600/10 text-blue-600 rounded-full">
-                    TON Connected
-                  </span>
-                )}
+          <div className="hidden md:flex items-center gap-2">
+            <CrossChainWalletSelector />
+          </div>
+
+          {/* Mobile Menu */}
+          <Sheet>
+            <SheetTrigger asChild>
+              <Button 
+                variant="outline" 
+                size="icon" 
+                className="md:hidden p-2 rounded-xl bg-[#1A1A1A]/80 backdrop-blur-sm border border-[#333333] hover:border-[#6B00D7] transition-all"
+              >
+                <Menu className="h-6 w-6 text-white" />
+              </Button>
+            </SheetTrigger>
+            <SheetContent 
+              side="right" 
+              className="bg-gradient-to-b from-[#242424] to-[#1E1E1E] border-l border-[#6B00D7]/30 shadow-xl"
+            >
+              <SheetHeader className="sr-only">
+                <SheetTitle>Mobile Navigation Menu</SheetTitle>
+                <SheetDescription>Navigation links and wallet connection</SheetDescription>
+              </SheetHeader>
+              <div className="flex flex-col h-full">
+                <div className="flex justify-between items-center mb-6">
+                  <div className="flex items-center gap-3">
+                    <div className="h-10 w-10 rounded-full bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] flex items-center justify-center shadow-xl shadow-[#FF5AF7]/40 p-2 border-2 border-white/40 animate-logo-glow">
+                      <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="text-white">
+                        <path d="M19 7H5C3.89543 7 3 7.89543 3 9V18C3 19.1046 3.89543 20 5 20H19C20.1046 20 21 19.1046 21 18V9C21 7.89543 20.1046 7 19 7Z" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
+                        <path d="M12 14C13.1046 14 14 13.1046 14 12C14 10.8954 13.1046 10 12 10C10.8954 10 10 10.8954 10 12C10 13.1046 10.8954 14 12 14Z" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
+                        <path d="M3 7V5C3 4.46957 3.21071 3.96086 3.58579 3.58579C3.96086 3.21071 4.46957 3 5 3H19C19.5304 3 20.0391 3.21071 20.4142 3.58579C20.7893 3.96086 21 4.46957 21 5V7" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
+                        <path d="M12 14V17" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
+                      </svg>
+                    </div>
+                    <div className="relative">
+                      <h1 className="text-lg font-poppins font-bold text-white">
+                        <span className="bg-clip-text text-transparent bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7]">Chronos</span> 
+                        <span className="text-white">Vault</span>
+                      </h1>
+                      <div className="absolute -top-3 -right-3 bg-[#FF5AF7] text-white text-[8px] px-1.5 py-0.5 rounded-full font-bold tracking-wider shadow-md shadow-[#FF5AF7]/30 animate-pulse">BETA</div>
+                    </div>
+                  </div>
+                  <SheetClose asChild>
+                    <Button variant="ghost" size="icon" className="rounded-full hover:bg-white/10">
+                      <X className="h-5 w-5 text-white" />
+                    </Button>
+                  </SheetClose>
+                </div>
+                
+                {/* Innovative scrollable navigation with categories */}
+                <div className="flex-1 overflow-y-auto py-4 pr-2 -mr-2 mobile-menu-scrollbar">
+                  <div className="flex flex-col gap-8">
+                    {mobileCategoryMenu.map((category) => (
+                      <div key={category.id} className="space-y-4">
+                        <div className="flex items-center gap-2 px-2 border-b border-[#6B00D7]/20 pb-2">
+                          <div className="flex items-center justify-center w-7 h-7 rounded-lg bg-gradient-to-br from-[#6B00D7]/50 to-[#FF5AF7]/30 shadow-inner shadow-[#6B00D7]/20">
+                            <span className="text-lg">{category.icon}</span>
+                          </div>
+                          <h3 className="text-[#FF5AF7] font-medium tracking-wide">{category.title}</h3>
+                        </div>
+                        
+                        <div className="flex flex-col gap-4 pl-2">
+                          {category.items.map((link) => (
+                            <SheetClose key={link.name} asChild>
+                              <Link 
+                                href={link.href}
+                                className={`flex items-center gap-3 ${location === link.href 
+                                  ? 'font-poppins font-semibold text-white bg-gradient-to-r from-[#6B00D7]/20 to-transparent pl-4 py-2 border-l-2 border-[#6B00D7]' 
+                                  : 'text-gray-300 hover:text-white font-poppins font-medium transition-all hover:translate-x-1'
+                                } ${link.highlight ? 'relative rounded-lg bg-gradient-to-r from-[#6B00D7]/20 to-[#FF5AF7]/20 border border-[#FF5AF7]/30 text-[#FF5AF7]' : ''}`}
+                              >
+                                <div className="flex items-center justify-center w-9 h-9 rounded-lg bg-gradient-to-br from-[#6B00D7]/30 to-[#FF5AF7]/20 shadow-inner shadow-[#6B00D7]/10 border border-[#6B00D7]/20">
+                                  <span className="text-xl text-[#FF5AF7]">{link.icon}</span>
+                                </div>
+                                <span className="text-base">{link.name}</span>
+                              </Link>
+                            </SheetClose>
+                          ))}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+                
+                <div className="pt-4 mt-4 border-t border-[#6B00D7]/30 space-y-3">
+                  <CrossChainWalletSelector className="w-full" />
+                </div>
               </div>
-              <Button variant="outline" size="sm" onClick={() => disconnectChain(walletInfo.ethereum.isConnected ? BlockchainType.ETHEREUM : walletInfo.solana.isConnected ? BlockchainType.SOLANA : BlockchainType.TON)}>
-                Disconnect
-              </Button>
-            </div>
-          ) : (
-            <div className="hidden md:flex items-center gap-2">
-              <Button variant="default" size="sm" onClick={() => connectChain(BlockchainType.ETHEREUM)}>
-                Connect Wallet
-              </Button>
-            </div>
-          )}
+            </SheetContent>
+          </Sheet>
         </div>
       </div>
     </nav>
