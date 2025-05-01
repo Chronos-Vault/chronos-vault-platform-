@@ -81,9 +81,9 @@ export default function CrossChainSecurityPage() {
             </p>
             
             <Tabs defaultValue="demo" className="w-full">
-              <TabsList className="grid w-full max-w-md mx-auto grid-cols-2">
-                <TabsTrigger value="demo">Validation Demo</TabsTrigger>
-                <TabsTrigger value="dashboard">Security Dashboard</TabsTrigger>
+              <TabsList className="grid w-full max-w-full sm:max-w-md mx-auto grid-cols-2">
+                <TabsTrigger value="demo" className="px-2 py-1.5 md:px-3 md:py-2 text-sm md:text-base">Validation Demo</TabsTrigger>
+                <TabsTrigger value="dashboard" className="px-2 py-1.5 md:px-3 md:py-2 text-sm md:text-base">Security Dashboard</TabsTrigger>
               </TabsList>
               
               <TabsContent value="demo" className="py-4">
