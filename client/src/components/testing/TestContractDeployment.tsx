@@ -7,7 +7,7 @@ import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Textarea } from '@/components/ui/textarea';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Loader2, Check, AlertCircle, Upload, Code } from 'lucide-react';
+import { Loader2, Check, AlertCircle, Upload, Code, Wallet } from 'lucide-react';
 import TestnetBadge from '@/components/blockchain/TestnetBadge';
 
 interface TestContractDeploymentProps {
@@ -127,7 +127,8 @@ const getSampleCode = (chain: BlockchainType): string => {
 };
 
 export default function TestContractDeployment({ className }: TestContractDeploymentProps) {
-  const { chainStatus, isTestnet } = useMultiChain();
+  const multiChain = useMultiChain();
+  const { chainStatus, isTestnet } = multiChain;
   const [activeChain, setActiveChain] = useState<BlockchainType>(BlockchainType.ETHEREUM);
   const [contractCode, setContractCode] = useState<string>(getSampleCode(BlockchainType.ETHEREUM));
   const [isCompiling, setIsCompiling] = useState<boolean>(false);
@@ -293,13 +294,25 @@ export default function TestContractDeployment({ className }: TestContractDeploy
           
           <div className="space-y-4">
             {!chainStatus[activeChain].isConnected ? (
-              <Alert variant="destructive" className="mb-4 bg-red-950/30 border-red-700/50">
-                <AlertCircle className="h-4 w-4" />
-                <AlertTitle>Wallet Not Connected</AlertTitle>
-                <AlertDescription>
-                  You need to connect your {activeChain} wallet to compile and deploy contracts.
-                </AlertDescription>
-              </Alert>
+              <div className="space-y-4">
+                <Alert variant="destructive" className="mb-4 bg-red-950/30 border-red-700/50">
+                  <AlertCircle className="h-4 w-4" />
+                  <AlertTitle>Wallet Not Connected</AlertTitle>
+                  <AlertDescription>
+                    You need to connect your {activeChain} wallet to compile and deploy contracts.
+                  </AlertDescription>
+                </Alert>
+                
+                <div className="flex justify-center">
+                  <Button 
+                    onClick={() => multiChain.connectChain(activeChain)}
+                    className="bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] hover:from-[#7B10E7] hover:to-[#FF6AF7] text-white"
+                  >
+                    <Wallet className="h-4 w-4 mr-2" />
+                    Connect {activeChain} Wallet
+                  </Button>
+                </div>
+              </div>
             ) : !isTestnet(activeChain) ? (
               <Alert variant="destructive" className="mb-4 bg-orange-950/30 border-orange-700/50">
                 <AlertCircle className="h-4 w-4" />
