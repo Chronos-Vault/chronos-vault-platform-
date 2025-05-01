@@ -101,9 +101,9 @@ export default function CrossChainSecurityDashboard({ vaultId }: CrossChainSecur
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         {Object.entries(chainStatuses).map(([chain, status]) => {
           const isActive = status.active && status.synced;
-          const chainColor = chain === 'ETH' ? 'bg-blue-500' : chain === 'SOL' ? 'bg-orange-500' : 'bg-green-500';
-          const chainBg = chain === 'ETH' ? 'bg-blue-100' : chain === 'SOL' ? 'bg-orange-100' : 'bg-green-100';
-          const chainBorder = chain === 'ETH' ? 'border-blue-300' : chain === 'SOL' ? 'border-orange-300' : 'border-green-300';
+          const chainColor = chain === 'ETH' ? 'bg-blue-600' : chain === 'SOL' ? 'bg-orange-600' : 'bg-green-600';
+          const chainBg = chain === 'ETH' ? 'bg-blue-200' : chain === 'SOL' ? 'bg-orange-200' : 'bg-green-200';
+          const chainBorder = chain === 'ETH' ? 'border-blue-400' : chain === 'SOL' ? 'border-orange-400' : 'border-green-400';
           const chainText = chain === 'ETH' ? 'text-blue-900' : chain === 'SOL' ? 'text-orange-900' : 'text-green-900';
           
           return (
@@ -121,7 +121,7 @@ export default function CrossChainSecurityDashboard({ vaultId }: CrossChainSecur
                     {status.active ? (status.synced ? 'Operational' : 'Syncing') : 'Offline'}
                   </Badge>
                 </div>
-                <CardDescription className="mt-1">
+                <CardDescription className="mt-1 text-black font-medium">
                   {chain === 'ETH' && 'Primary Security Layer'}
                   {chain === 'SOL' && 'Speed Verification Layer'}
                   {chain === 'TON' && 'Backup & Recovery Layer'}
@@ -130,12 +130,12 @@ export default function CrossChainSecurityDashboard({ vaultId }: CrossChainSecur
               <CardContent>
                 <div className="space-y-3">
                   <div className="flex justify-between items-center">
-                    <span className="text-sm">Block Height</span>
-                    <span className="font-medium">{status.blockHeight.toLocaleString()}</span>
+                    <span className="text-sm font-semibold text-gray-800">Block Height</span>
+                    <span className="font-bold">{status.blockHeight.toLocaleString()}</span>
                   </div>
                   <div className="flex justify-between items-center">
-                    <span className="text-sm">Latency</span>
-                    <span className="font-medium">{status.active ? formatLatency(status.latency) : 'N/A'}</span>
+                    <span className="text-sm font-semibold text-gray-800">Latency</span>
+                    <span className="font-bold">{status.active ? formatLatency(status.latency) : 'N/A'}</span>
                   </div>
                   <div className="pt-2">
                     <div className="w-full bg-gray-200 rounded-full h-2.5">
@@ -160,7 +160,7 @@ export default function CrossChainSecurityDashboard({ vaultId }: CrossChainSecur
             <ShieldIcon className="h-5 w-5" />
             Security Metrics
           </CardTitle>
-          <CardDescription>
+          <CardDescription className="text-gray-700 font-medium">
             Real-time security analysis and cross-chain validation statistics
           </CardDescription>
         </CardHeader>
