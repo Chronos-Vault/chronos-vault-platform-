@@ -9,7 +9,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { DatePicker } from '@/components/ui/date-picker';
-import { BlockchainIcon } from '@/contexts/multi-chain-context';
+import { BlockchainIcon } from '@/components/blockchain/BlockchainIcon';
 import { Badge } from '@/components/ui/badge';
 import { CalendarIcon, KeyIcon, LockIcon, UnlockIcon, UsersIcon, TimerIcon, SendIcon, PlusIcon } from 'lucide-react';
 import { Separator } from '@/components/ui/separator';
@@ -299,7 +299,7 @@ export function VaultManagement() {
                       <CardHeader className="pb-2 pt-4">
                         <div className="flex items-center justify-between">
                           <div className="flex items-center gap-2">
-                            <BlockchainIcon chainId={vault.chain} size="sm" />
+                            <BlockchainIcon blockchain={vault.chain} size={16} />
                             <CardTitle className="text-base font-medium">{vault.name}</CardTitle>
                           </div>
                           <Badge variant={isUnlocked(vault.unlockTime) ? 'success' : 'outline'}>

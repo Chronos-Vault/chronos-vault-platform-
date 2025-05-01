@@ -18,7 +18,8 @@ import { Badge } from "@/components/ui/badge";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Progress } from "@/components/ui/progress";
 import { Shield, ShieldAlert, ShieldCheck, AlertTriangle, Clock, Activity } from "lucide-react";
-import { useMultiChain, BlockchainIcon, BlockchainType as UIBlockchainType } from "@/contexts/multi-chain-context";
+import { useMultiChain, BlockchainType as UIBlockchainType } from "@/contexts/multi-chain-context";
+import { BlockchainIcon } from "@/components/blockchain/BlockchainIcon";
 import { BlockchainType, SecurityIncident, SecurityRiskLevel } from '@/lib/cross-chain/interfaces';
 import { bridgeService } from '@/lib/cross-chain/bridge';
 
@@ -272,7 +273,7 @@ const SecurityDashboard: React.FC<SecurityDashboardProps> = ({ address }) => {
                       <div className="flex justify-between items-start">
                         <div>
                           <div className="flex items-center gap-2">
-                            <BlockchainIcon chainId={convertToUIBlockchainType(incident.blockchain as BlockchainType)} size="sm" />
+                            <BlockchainIcon blockchain={convertToUIBlockchainType(incident.blockchain as BlockchainType)} size={16} />
                             <span className="font-medium text-xs sm:text-sm">{getChainDisplayName(incident.blockchain as BlockchainType)}</span>
                           </div>
                           <p className="text-xs sm:text-sm text-gray-400 mt-1">{incident.description}</p>
@@ -326,7 +327,7 @@ const SecurityDashboard: React.FC<SecurityDashboardProps> = ({ address }) => {
                       <TableRow key={network.blockchain} className="hover:bg-gray-900/30 border-purple-900/30">
                         <TableCell className="font-medium py-2 px-2 sm:px-4">
                           <div className="flex items-center gap-2">
-                            <BlockchainIcon chainId={convertToUIBlockchainType(network.blockchain)} size="sm" />
+                            <BlockchainIcon blockchain={convertToUIBlockchainType(network.blockchain)} size={16} />
                             <span className="text-xs sm:text-sm">{getChainDisplayName(network.blockchain)}</span>
                           </div>
                         </TableCell>

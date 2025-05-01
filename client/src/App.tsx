@@ -12,6 +12,7 @@ import { CVTTokenProvider } from "@/contexts/cvt-token-context";
 // Header and Footer now imported via the Layout component on each page
 import Home from "@/pages/home";
 import CreateVault from "@/pages/create-vault";
+import CreateVaultEnhancedPage from "@/pages/create-vault-enhanced";
 import AdvancedVaultCreationPage from "@/pages/advanced-vault-creation";
 import AdvancedVaultCreationNewPage from "@/pages/advanced-vault-creation-new";
 import MyVaults from "@/pages/my-vaults";
@@ -43,6 +44,7 @@ function Router() {
     <Switch>
       <Route path="/" component={Home} />
       <Route path="/create-vault" component={CreateVault} />
+      <Route path="/create-vault-enhanced" component={CreateVaultEnhancedPage} />
       <Route path="/advanced-vault" component={AdvancedVaultCreationPage} />
       <Route path="/advanced-vault-new" component={AdvancedVaultCreationNewPage} />
       <Route path="/my-vaults" component={MyVaults} />
@@ -74,24 +76,13 @@ function Router() {
 
 function App() {
   return (
-    <QueryClientProvider client={queryClient}>
-      <TooltipProvider>
-        <Toaster />
-        <MultiChainProvider>
-          <TonProvider>
-            <SolanaProvider>
-              <EthereumProvider>
-                <CVTTokenProvider>
-                  {/* We'll continue using the individual providers for now
-                      alongside our unified MultiChainProvider for backward compatibility */}
-                  <Router />
-                </CVTTokenProvider>
-              </EthereumProvider>
-            </SolanaProvider>
-          </TonProvider>
-        </MultiChainProvider>
-      </TooltipProvider>
-    </QueryClientProvider>
+    <TooltipProvider>
+      <MultiChainProvider>
+        <CVTTokenProvider>
+          <Router />
+        </CVTTokenProvider>
+      </MultiChainProvider>
+    </TooltipProvider>
   );
 }
 
