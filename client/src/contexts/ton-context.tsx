@@ -170,6 +170,15 @@ export const TonProvider: React.FC<TonProviderProps> = ({ children }) => {
   useEffect(() => {
     if (walletInfo?.address && connectionStatus === TonConnectionStatus.CONNECTED) {
       refreshTransactionHistory();
+      
+      // Set up an interval to periodically refresh transaction history
+      const historyRefreshInterval = setInterval(() => {
+        refreshTransactionHistory();
+      }, 30000); // Refresh every 30 seconds
+      
+      return () => {
+        clearInterval(historyRefreshInterval);
+      };
     }
   }, [walletInfo?.address, connectionStatus]);
 
@@ -208,11 +217,24 @@ export const TonProvider: React.FC<TonProviderProps> = ({ children }) => {
   // Disconnect from TON wallet
   const disconnect = async (): Promise<boolean> => {
     try {
+      // Attempt to disconnect from TON service
       const disconnected = await tonService.disconnect();
+      
+      // Update connection status
       setConnectionStatus(TonConnectionStatus.DISCONNECTED);
-      setWalletInfo(null);
+      
+      // Clear session from storage
+      await clearSession();
+      
       return disconnected;
     } catch (error) {
+      console.error('Error disconnecting from TON wallet:', error);
+      // Ensure we still clear the session even if the service disconnect fails
+      try {
+        await clearSession();
+      } catch (clearError) {
+        console.error('Error clearing TON session after disconnect failure:', clearError);
+      }
       return false;
     }
   };
@@ -346,6 +368,43 @@ export const TonProvider: React.FC<TonProviderProps> = ({ children }) => {
     }
   };
 
+  // Save transaction history to localStorage
+  const saveTransactionHistory = async (): Promise<boolean> => {
+    try {
+      if (transactionHistory.length > 0) {
+        localStorage.setItem('ton_transaction_history', JSON.stringify(transactionHistory));
+        return true;
+      }
+      return false;
+    } catch (error) {
+      console.error('Failed to save transaction history:', error);
+      return false;
+    }
+  };
+
+  // Restore transaction history from localStorage
+  const restoreTransactionHistory = async (): Promise<boolean> => {
+    try {
+      const savedHistory = localStorage.getItem('ton_transaction_history');
+      if (savedHistory) {
+        const parsedHistory = JSON.parse(savedHistory);
+        setTransactionHistory(parsedHistory);
+        return true;
+      }
+      return false;
+    } catch (error) {
+      console.error('Failed to restore transaction history:', error);
+      return false;
+    }
+  };
+
+  // Effect to save transaction history when it changes
+  useEffect(() => {
+    if (transactionHistory.length > 0) {
+      saveTransactionHistory();
+    }
+  }, [transactionHistory]);
+
   // Session management methods
   const saveSession = async (): Promise<boolean> => {
     try {
@@ -356,6 +415,9 @@ export const TonProvider: React.FC<TonProviderProps> = ({ children }) => {
       localStorage.setItem('ton_metadata', JSON.stringify(metadata || { 
         lastConnected: Date.now() 
       }));
+      
+      // Also save current transaction history
+      await saveTransactionHistory();
       
       return true;
     } catch (error) {
@@ -380,6 +442,9 @@ export const TonProvider: React.FC<TonProviderProps> = ({ children }) => {
         setMetadata(parsedMetadata);
       }
       
+      // Also restore transaction history
+      await restoreTransactionHistory();
+      
       return !!savedWalletInfo;
     } catch (error) {
       console.error('Failed to restore session:', error);
@@ -391,6 +456,7 @@ export const TonProvider: React.FC<TonProviderProps> = ({ children }) => {
     try {
       localStorage.removeItem('ton_wallet_info');
       localStorage.removeItem('ton_metadata');
+      localStorage.removeItem('ton_transaction_history');
       setWalletInfo(null);
       setMetadata(null);
       setTransactionHistory([]);
