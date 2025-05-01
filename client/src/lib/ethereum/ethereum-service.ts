@@ -128,17 +128,27 @@ class EthereumService {
         // Create provider using the configured RPC URL
         console.log('No Ethereum provider detected (MetaMask not installed). Using RPC URL.');
         
-        // For testing environments, use mock values instead of making network calls
-        // This prevents the runtime errors we're experiencing
-        console.warn('Using mock values for testing environment');
-        this._connectionState.chainId = 1; // Default to mainnet for testing
-        this._connectionState.networkName = 'mainnet';
+        // Create a fallback provider using Sepolia testnet for development
+        const rpcUrl = import.meta.env.VITE_ETHEREUM_RPC_URL || NETWORKS.sepolia.rpcUrl;
+        this._jsonRpcProvider = new ethers.JsonRpcProvider(rpcUrl);
+        // We don't assign to this._connectionState.provider here as it's expecting a BrowserProvider
+        
+        // Use Sepolia testnet for development
+        this._connectionState.chainId = NETWORKS.sepolia.chainId;
+        this._connectionState.networkName = NETWORKS.sepolia.name;
+        
+        console.log(`Initialized with fallback provider on ${this._connectionState.networkName}`);
       }
     } catch (error) {
       console.error('Error initializing Ethereum provider:', error);
-      // Even if there's an error, set up default values so the UI doesn't break
-      this._connectionState.chainId = 1; 
-      this._connectionState.networkName = 'mainnet';
+      // Even if there's an error, set up Sepolia testnet values so the UI doesn't break
+      this._connectionState.chainId = NETWORKS.sepolia.chainId;
+      this._connectionState.networkName = NETWORKS.sepolia.name;
+      
+      // Create a fallback provider
+      const rpcUrl = import.meta.env.VITE_ETHEREUM_RPC_URL || NETWORKS.sepolia.rpcUrl;
+      this._jsonRpcProvider = new ethers.JsonRpcProvider(rpcUrl);
+      // We don't assign to this._connectionState.provider here as it's expecting a BrowserProvider
     }
   }
   
