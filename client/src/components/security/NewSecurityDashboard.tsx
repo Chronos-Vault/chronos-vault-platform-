@@ -102,12 +102,12 @@ export default function CrossChainSecurityDashboard({ vaultId }: CrossChainSecur
         {Object.entries(chainStatuses).map(([chain, status]) => {
           const isActive = status.active && status.synced;
           const chainColor = chain === 'ETH' ? 'bg-blue-500' : chain === 'SOL' ? 'bg-orange-500' : 'bg-green-500';
-          const chainBg = chain === 'ETH' ? 'bg-blue-50' : chain === 'SOL' ? 'bg-orange-50' : 'bg-green-50';
-          const chainBorder = chain === 'ETH' ? 'border-blue-200' : chain === 'SOL' ? 'border-orange-200' : 'border-green-200';
-          const chainText = chain === 'ETH' ? 'text-blue-800' : chain === 'SOL' ? 'text-orange-800' : 'text-green-800';
+          const chainBg = chain === 'ETH' ? 'bg-blue-100' : chain === 'SOL' ? 'bg-orange-100' : 'bg-green-100';
+          const chainBorder = chain === 'ETH' ? 'border-blue-300' : chain === 'SOL' ? 'border-orange-300' : 'border-green-300';
+          const chainText = chain === 'ETH' ? 'text-blue-900' : chain === 'SOL' ? 'text-orange-900' : 'text-green-900';
           
           return (
-            <Card key={chain} className={`border ${chainBorder} ${chainBg} overflow-hidden`}>
+            <Card key={chain} className={`border ${chainBorder} ${chainBg} overflow-hidden bg-opacity-90 shadow-md`}>
               <div className={`h-2 w-full ${isActive ? chainColor : 'bg-gray-300'}`}></div>
               <CardHeader className="pb-2">
                 <div className="flex justify-between items-center">
@@ -276,8 +276,8 @@ export default function CrossChainSecurityDashboard({ vaultId }: CrossChainSecur
             <TabsContent value="vaults" className="pt-6">
               <div className="grid gap-6 md:grid-cols-2">
                 {/* Risk Distribution */}
-                <div className="bg-white rounded-lg p-5 border shadow-sm">
-                  <h3 className="text-lg font-semibold mb-4">Vault Risk Distribution</h3>
+                <div className="bg-gray-100 rounded-lg p-5 border border-gray-300 shadow-sm">
+                  <h3 className="text-lg font-semibold mb-4 text-gray-900">Vault Risk Distribution</h3>
                   
                   <div className="space-y-4">
                     <div>
@@ -382,8 +382,8 @@ export default function CrossChainSecurityDashboard({ vaultId }: CrossChainSecur
               
               {/* Recent Security Incidents */}
               {securityMetrics.securityIncidents.length > 0 && (
-                <div className="mt-6 bg-white rounded-lg p-5 border shadow-sm">
-                  <h3 className="text-lg font-semibold mb-4">Recent Security Incidents</h3>
+                <div className="mt-6 bg-gray-100 rounded-lg p-5 border border-gray-300 shadow-sm">
+                  <h3 className="text-lg font-semibold mb-4 text-gray-900">Recent Security Incidents</h3>
                   
                   <div className="space-y-3">
                     {securityMetrics.securityIncidents.slice(0, 5).map((incident, index) => (

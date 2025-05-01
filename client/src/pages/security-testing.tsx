@@ -18,15 +18,18 @@ export default function SecurityTestingPage() {
   const vaultId = params.get('vaultId') || undefined;
   
   return (
-    <div className="min-h-screen flex flex-col bg-[#121212] text-white">
+    <div className="min-h-screen flex flex-col bg-gradient-to-b from-gray-50 via-purple-50 to-gray-100">
       <Header />
       <main className="flex-1">
         <div className="container mx-auto py-10 px-4">
-          <PageHeader 
-            heading="Chronos Vault Security Testing Environment" 
-            description="Monitor and verify real-time security status across multiple blockchains"
-            separator
-          />
+          <div className="text-center my-8 space-y-3">
+            <h1 className="text-3xl md:text-4xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-purple-700 to-pink-600 mb-2">
+              Chronos Vault Security Hub
+            </h1>
+            <p className="text-lg text-gray-600 max-w-3xl mx-auto">
+              Monitor and verify real-time security status across multiple blockchains
+            </p>
+          </div>
           
           <div className="mt-8">
             <Tabs defaultValue="dashboard" className="w-full">
