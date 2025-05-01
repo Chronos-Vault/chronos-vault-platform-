@@ -42,6 +42,21 @@ export interface SecurityIncident {
     blockNumber: number;
   };
   resolved?: boolean;
+
+export interface CrossChainValidationResult {
+  verified: boolean;
+  sourceChain: BlockchainType;
+  confirmations: number;
+  tripleChainConsensus: boolean;
+  validationChains: BlockchainType[];
+}
+
+export interface TripleChainValidator {
+  role: 'primary-security' | 'speed-verification' | 'backup-recovery';
+  requiredConfirmations: number;
+  validateTransaction: (txHash: string) => Promise<boolean>;
+}
+
   resolution?: string;
   detectionMethod?: string;
 }

@@ -96,6 +96,44 @@ class SecurityServiceAggregator {
       const ethStatus = this.chainStatuses.get('ETH');
       const solStatus = this.chainStatuses.get('SOL');
       const tonStatus = this.chainStatuses.get('TON');
+
+      // Enhanced cross-chain validation with Triple-Chain security
+      const crossChainValidation = {
+        eth: {
+          validator: ethereumService,
+          role: 'primary-security',
+          requiredConfirmations: 12
+        },
+        sol: {
+          validator: solanaService,
+          role: 'speed-verification',
+          requiredConfirmations: 32
+        },
+        ton: {
+          validator: tonContractService,
+          role: 'backup-recovery',
+          requiredConfirmations: 16
+        }
+      };
+
+      // Verify cross-chain operations with Triple-Chain security
+      const validateCrossChainTx = async (txHash: string, sourceChain: BlockchainType) => {
+        // Primary validation on source chain
+        const primaryValidation = await this.validateOnChain(txHash, sourceChain);
+        
+        // Secondary validations with remaining chains
+        const secondaryValidations = await Promise.all(
+          Object.entries(crossChainValidation)
+            .filter(([chain]) => chain !== sourceChain.toLowerCase())
+            .map(([_, validator]) => validator.validateTransaction(txHash))
+        );
+
+        // Apply Triple-Chain consensus rules
+        return {
+          verified: primaryValidation && secondaryValidations.filter(v => v).length >= 1,
+          confirmations: secondaryValidations.filter(v => v).length + 1
+        };
+      };
       
       // Skip analysis if any chain is offline
       if (!ethStatus || !solStatus || !tonStatus ||
