@@ -89,32 +89,32 @@ const CreateVault = () => {
   };
   
   return (
-    <section className="py-16 min-h-screen">
-      <div className="container mx-auto px-4">
+    <section className="py-6 sm:py-12 md:py-16 min-h-screen">
+      <div className="container mx-auto px-3 sm:px-4">
         <Button
           variant="ghost" 
-          className="mb-8 text-gray-400 hover:text-white"
+          className="mb-4 sm:mb-8 text-gray-400 hover:text-white"
           onClick={() => window.history.back()}
         >
           <ArrowLeft className="mr-2 h-4 w-4" />
           Back
         </Button>
         
-        <div className="max-w-4xl mx-auto">
-          <div className="text-center mb-8">
-            <h1 className="font-poppins font-bold text-3xl mb-2">Create Your Time-Locked Vault</h1>
-            <p className="text-gray-400 max-w-2xl mx-auto mb-4">Design a secure vault to protect your assets with blockchain technology. Set the time lock period, add beneficiaries, and establish conditions for access.</p>
+        <div className="w-full max-w-4xl mx-auto">
+          <div className="text-center mb-6 sm:mb-8">
+            <h1 className="font-poppins font-bold text-2xl sm:text-3xl mb-2">Create Your Time-Locked Vault</h1>
+            <p className="text-gray-400 max-w-2xl mx-auto mb-4 text-sm sm:text-base">Design a secure vault to protect your assets with blockchain technology. Set the time lock period, add beneficiaries, and establish conditions for access.</p>
             
-            <div className="w-full bg-gradient-to-r from-[#6B00D7]/10 to-[#FF5AF7]/10 border border-[#6B00D7]/30 rounded-lg p-4 mb-6 animate-pulse-slow">
-              <div className="flex items-center">
-                <div className="flex-shrink-0 bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] p-2 rounded-full mr-4">
-                  <svg className="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <div className="w-full bg-gradient-to-r from-[#6B00D7]/10 to-[#FF5AF7]/10 border border-[#6B00D7]/30 rounded-lg p-3 sm:p-4 mb-6 animate-pulse-slow">
+              <div className="flex flex-col sm:flex-row items-center sm:items-start text-center sm:text-left">
+                <div className="flex-shrink-0 bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] p-2 rounded-full mb-2 sm:mb-0 sm:mr-4">
+                  <svg className="h-5 w-5 sm:h-6 sm:w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
                   </svg>
                 </div>
                 <div>
-                  <h3 className="text-lg font-medium text-white">Triple-Chain Security Architecture</h3>
-                  <p className="text-sm text-gray-300">Enable our state-of-the-art security system that distributes your vault's security across multiple blockchains for unmatched protection.</p>
+                  <h3 className="text-base sm:text-lg font-medium text-white mb-1">Triple-Chain Security Architecture</h3>
+                  <p className="text-xs sm:text-sm text-gray-300">Enable our state-of-the-art security system that distributes your vault's security across multiple blockchains for unmatched protection.</p>
                 </div>
               </div>
             </div>
@@ -122,8 +122,8 @@ const CreateVault = () => {
           
           {/* Vault Type Selection */}
           <Card className="mb-8 border-[#6B00D7]/30 bg-gradient-to-r from-[#15121C] to-[#1E1A24]">
-            <CardContent className="p-6">
-              <h3 className="text-xl text-white font-semibold mb-4 text-center">Choose Your Vault Type</h3>
+            <CardContent className="p-4 sm:p-6">
+              <h3 className="text-xl text-white font-semibold mb-6 text-center">Choose Your Vault Type</h3>
               <VaultTypeSelector
                 selectedType={vaultType}
                 onChange={(type) => setVaultType(type)}
