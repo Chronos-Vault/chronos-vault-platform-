@@ -151,6 +151,31 @@ const CreateVault = () => {
             </Card>
           </div>
           
+          {/* Triple-Chain Security Banner */}
+          <div className="mb-8">
+            <Card className="bg-gradient-to-r from-[#6B00D7]/10 to-[#FF5AF7]/10 border-2 border-dashed border-[#6B00D7]/30 hover:border-[#FF5AF7]/50 transition-all">
+              <CardContent className="p-6">
+                <div className="flex items-center mb-3">
+                  <div className="bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] p-2 rounded-full mr-3">
+                    <Shield className="h-5 w-5 text-white" />
+                  </div>
+                  <h3 className="font-poppins font-semibold text-xl bg-clip-text text-transparent bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7]">
+                    NEW: Triple-Chain Security Architecture
+                  </h3>
+                  <span className="ml-3 px-2 py-1 text-xs font-semibold uppercase tracking-wide bg-gradient-to-r from-[#6B00D7]/20 to-[#FF5AF7]/20 text-white rounded">
+                    Premium
+                  </span>
+                </div>
+                <p className="text-gray-300 mb-4">
+                  Secure your assets with our revolutionary Triple-Chain Security architecture. This enterprise-grade protection distributes your vault's security across Ethereum, Solana, and TON blockchains for maximum protection against single-chain vulnerabilities.
+                </p>
+                <p className="text-sm text-gray-400 italic">
+                  Enable the Triple-Chain Security option in the vault creation form below to utilize this feature.
+                </p>
+              </CardContent>
+            </Card>
+          </div>
+
           {/* Blockchain Selection */}
           <div className="mb-8">
             <Card className="bg-[#1A1A1A] border-[#6B00D7]/20">

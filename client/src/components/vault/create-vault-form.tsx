@@ -25,6 +25,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Card, CardContent } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Checkbox } from "@/components/ui/checkbox";
 import {
   Select,
   SelectContent,
@@ -229,6 +230,9 @@ const CreateVaultForm = ({
     let blockchainAddress = null;
     let deploymentMetadata = null;
     
+    // Determine if we should use Triple-Chain Security
+    const useTripleChainSecurity = data.tripleChainSecurity;
+    
     if (isWalletConnected && selectedBlockchain) {
       try {
         setIsBlockchainDeploying(true);
@@ -247,7 +251,7 @@ const CreateVaultForm = ({
             const deployParams = {
               recipient: ton.wallet?.address || '', // Will be the owner
               unlockTime: unlockTime,
-              securityLevel: 3, // Medium security by default
+              securityLevel: useTripleChainSecurity ? 5 : 3, // Higher security level when Triple-Chain is enabled
               comment: data.description || 'ChronosVault',
               amount: nanotons,
             };
@@ -308,9 +312,20 @@ const CreateVaultForm = ({
       metadata: {
         allowsAttachments: data.metadata?.allowsAttachments ?? true,
         attachmentsEncryption: data.metadata?.attachmentsEncryption ?? "AES-256",
+        tripleChainSecurity: useTripleChainSecurity, // Add our Triple-Chain Security flag
+        securityLevel: useTripleChainSecurity ? 5 : 3, // Increase security level if Triple-Chain is enabled
         attachments: attachments.length > 0 ? attachments : undefined,
         ...(giftExperience && { giftExperience }),
         ...(deploymentMetadata && { blockchain: deploymentMetadata }),
+        ...(useTripleChainSecurity && { 
+          securityArchitecture: {
+            type: "triple-chain",
+            chains: ["TON", "Ethereum", "Solana"],
+            crossValidation: true,
+            redundancy: "Progressive",
+            securityLevel: "Enterprise"
+          }
+        }),
       }
     };
     
@@ -527,6 +542,31 @@ const CreateVaultForm = ({
                           <FormLabel className="text-base font-medium">Include Media Attachments</FormLabel>
                           <FormDescription className="text-sm text-gray-400">
                             Add important documents, images, videos or other files to your vault
+                          </FormDescription>
+                        </div>
+                      </div>
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="tripleChainSecurity"
+                  render={({ field }) => (
+                    <FormItem className="p-4 border border-[#6B00D7]/20 rounded-lg bg-gradient-to-r from-[#6B00D7]/5 to-[#FF5AF7]/5">
+                      <div className="flex items-center space-x-3">
+                        <FormControl>
+                          <input
+                            type="checkbox"
+                            checked={field.value}
+                            onChange={field.onChange}
+                            className="form-checkbox h-5 w-5 text-purple-600 rounded border-gray-400 focus:ring-purple-500"
+                          />
+                        </FormControl>
+                        <div>
+                          <FormLabel className="text-base font-medium">Enable Triple-Chain Security</FormLabel>
+                          <FormDescription className="text-sm text-gray-400">
+                            Secure your vault with our revolutionary Triple-Chain Security architecture, distributing security across Ethereum, Solana, and TON blockchains for maximum protection
                           </FormDescription>
                         </div>
                       </div>
