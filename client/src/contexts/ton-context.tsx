@@ -91,13 +91,16 @@ interface TonContextType {
 const TonContext = createContext<TonContextType | null>(null);
 
 // Define hook for using TON context
-export function useTon(): TonContextType {
+function useTonContext(): TonContextType {
   const context = useContext(TonContext);
   if (!context) {
     throw new Error('useTon must be used within a TonProvider');
   }
   return context;
 }
+
+// Export the hook
+export const useTon = useTonContext;
 
 interface TonProviderProps {
   children: ReactNode;

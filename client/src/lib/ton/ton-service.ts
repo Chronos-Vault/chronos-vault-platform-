@@ -268,24 +268,32 @@ class TONService {
   async connect(): Promise<boolean> {
     try {
       if (!this.tonConnectUI) {
+        console.log('Initializing TON service before connecting');
         await this.initialize();
       }
       
       if (!this.tonConnectUI) {
+        console.error('Failed to initialize TON Connect UI');
         return false;
       }
       
       // Check if already connected to avoid WalletAlreadyConnectedError
       if (this.tonConnectUI.connected) {
-        console.log('TON wallet already connected, not opening modal');
+        console.log('TON wallet already connected, updating state');
+        this.connectionStatus = TonConnectionStatus.CONNECTED;
+        await this.updateWalletInfo();
         return true;
       }
       
+      // If not connected, attempt connection
+      console.log('Starting TON wallet connection process...');
       this.connectionStatus = TonConnectionStatus.CONNECTING;
       
       // Open the modal to connect wallet
       await this.tonConnectUI.openModal();
       
+      // The actual connection state will be handled by the status change event
+      // so we return true to indicate the process started successfully
       return true;
     } catch (error) {
       console.error('Failed to connect TON wallet:', error);
