@@ -105,7 +105,7 @@ interface TonProviderProps {
 
 export const TonProvider: React.FC<TonProviderProps> = ({ children }) => {
   // Connection state
-  const [connectionStatus, setConnectionStatus] = useState<TonConnectionStatus>(TonConnectionStatus.DISCONNECTED);
+  const [connectionStatus, setConnectionStatus] = useState<typeof TonConnectionStatus[keyof typeof TonConnectionStatus]>(TonConnectionStatus.DISCONNECTED);
   const [walletInfo, setWalletInfo] = useState<TONWalletInfo | null>(null);
   const [isInitializing, setIsInitializing] = useState(true);
   
