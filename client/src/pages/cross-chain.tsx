@@ -7,6 +7,7 @@ import { ArrowLeftRight, Shield, Users, Database } from 'lucide-react';
 import { useAuthContext } from '@/contexts/auth-context';
 // Header is now provided by the Layout component
 import Footer from "@/components/layout/footer";
+import TonWalletStateIndicator from '@/components/ton/TonWalletStateIndicator';
 
 const CrossChainPage: React.FC = () => {
   const { isAuthenticated } = useAuthContext();
@@ -30,6 +31,11 @@ const CrossChainPage: React.FC = () => {
               <p className="text-xl text-gray-300 max-w-3xl mx-auto">
                 Securely transfer assets across multiple blockchains with industry-leading security and efficiency
               </p>
+              
+              {/* TON Wallet Status Indicator - to test connection persistence */}
+              <div className="max-w-md mx-auto mt-6">
+                <TonWalletStateIndicator />
+              </div>
             </div>
             
             <Tabs

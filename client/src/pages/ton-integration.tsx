@@ -59,6 +59,7 @@ import SimpleTonButton from '@/components/ton/SimpleTonButton';
 import { useTon } from '@/contexts/ton-context';
 import { tonContractService, VaultData, CVTTokenData } from '@/lib/ton/ton-contract-service';
 import { tonService } from '@/lib/ton/ton-service';
+import TonWalletStateIndicator from '@/components/ton/TonWalletStateIndicator';
 
 const TONIntegrationPage: React.FC = () => {
   const { toast } = useToast();
@@ -454,6 +455,11 @@ const TONIntegrationPage: React.FC = () => {
               <p className="text-xl text-gray-300">
                 Securely manage your TON assets with Chronos Vault's time-locked vaults
               </p>
+              
+              {/* TON Wallet Status Indicator - to test connection persistence */}
+              <div className="max-w-md mx-auto mt-6">
+                <TonWalletStateIndicator />
+              </div>
             </div>
             
             {/* Wallet Connection Card */}
