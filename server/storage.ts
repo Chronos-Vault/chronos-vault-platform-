@@ -14,6 +14,7 @@ export interface IStorage {
   getUserByUsername(username: string): Promise<User | undefined>;
   getUserByWalletAddress(walletAddress: string): Promise<User | undefined>;
   createUser(user: InsertUser): Promise<User>;
+  updateUser(id: number, user: Partial<User>): Promise<User | undefined>;
   
   // Vault methods
   getVault(id: number): Promise<Vault | undefined>;
@@ -121,10 +122,24 @@ export class MemStorage implements IStorage {
     const user: User = { 
       ...insertUser, 
       id,
-      walletAddress: insertUser.walletAddress || null
+      walletAddress: insertUser.walletAddress || null,
+      email: insertUser.email || null,
+      stripeCustomerId: insertUser.stripeCustomerId || null,
+      stripeSubscriptionId: insertUser.stripeSubscriptionId || null,
+      subscriptionStatus: insertUser.subscriptionStatus || null,
+      metadata: insertUser.metadata || null
     };
     this.users.set(id, user);
     return user;
+  }
+  
+  async updateUser(id: number, updateData: Partial<User>): Promise<User | undefined> {
+    const user = this.users.get(id);
+    if (!user) return undefined;
+    
+    const updatedUser = { ...user, ...updateData };
+    this.users.set(id, updatedUser);
+    return updatedUser;
   }
 
   // Vault methods

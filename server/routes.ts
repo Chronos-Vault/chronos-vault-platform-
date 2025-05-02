@@ -18,7 +18,7 @@ if (!process.env.STRIPE_SECRET_KEY) {
 }
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
-  apiVersion: "2023-10-16",
+  apiVersion: "2025-03-31.basil",
 });
 
 // Configure multer for file uploads
@@ -1302,6 +1302,185 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       handleError(res, error);
     }
+  });
+
+  // Stripe Payment Integration Routes
+  // One-time payment route
+  app.post("/api/payments/create-payment-intent", async (req: Request, res: Response) => {
+    try {
+      const { amount, currency = "usd", vaultId, description } = req.body;
+      
+      if (!amount || isNaN(parseFloat(amount)) || parseFloat(amount) <= 0) {
+        return res.status(400).json({
+          error: "Invalid payment parameters. A positive amount is required."
+        });
+      }
+
+      // Create a payment intent with Stripe
+      const paymentIntent = await stripe.paymentIntents.create({
+        amount: Math.round(parseFloat(amount) * 100), // Convert to cents
+        currency: currency,
+        description: description || `Payment for vault ${vaultId}`,
+        metadata: {
+          vaultId: vaultId?.toString() || "",
+          type: "premium_vault_features"
+        }
+      });
+
+      // Return the client secret to the client
+      res.json({
+        clientSecret: paymentIntent.client_secret
+      });
+    } catch (error) {
+      console.error("Error creating payment intent:", error);
+      res.status(500).json({
+        error: "Failed to create payment intent",
+        message: error.message
+      });
+    }
+  });
+
+  // Subscription plan route
+  app.post("/api/payments/create-subscription", async (req: Request, res: Response) => {
+    try {
+      const { userId, priceId, customerEmail, customerName } = req.body;
+      
+      if (!userId || !priceId) {
+        return res.status(400).json({
+          error: "Invalid subscription parameters. userId and priceId are required."
+        });
+      }
+
+      // Check if we already have a customer for this user
+      let customerId;
+      const user = await storage.getUser(parseInt(userId));
+      
+      if (!user) {
+        return res.status(404).json({ error: "User not found" });
+      }
+
+      // Create a customer if we don't have one
+      if (!user.stripeCustomerId) {
+        const customer = await stripe.customers.create({
+          email: customerEmail || user.email,
+          name: customerName || user.username,
+          metadata: {
+            userId: userId.toString()
+          }
+        });
+        
+        customerId = customer.id;
+        
+        // Update user with new Stripe customer ID
+        // This would require adding stripeCustomerId to your user schema
+        if (user.metadata) {
+          const metadata = JSON.parse(user.metadata);
+          metadata.stripeCustomerId = customerId;
+          await storage.updateUser(user.id, { metadata: JSON.stringify(metadata) });
+        } else {
+          const metadata = { stripeCustomerId: customerId };
+          await storage.updateUser(user.id, { metadata: JSON.stringify(metadata) });
+        }
+      } else {
+        // Use existing customer ID from user record
+        customerId = user.stripeCustomerId;
+      }
+
+      // Create the subscription
+      const subscription = await stripe.subscriptions.create({
+        customer: customerId,
+        items: [
+          { price: priceId }
+        ],
+        payment_behavior: 'default_incomplete',
+        expand: ['latest_invoice.payment_intent'],
+        metadata: {
+          userId: userId.toString()
+        }
+      });
+
+      // Return the client secret
+      res.json({
+        subscriptionId: subscription.id,
+        clientSecret: subscription.latest_invoice.payment_intent.client_secret
+      });
+    } catch (error) {
+      console.error("Error creating subscription:", error);
+      res.status(500).json({
+        error: "Failed to create subscription",
+        message: error.message
+      });
+    }
+  });
+
+  // Webhook for Stripe events (payment success, failure, etc.)
+  app.post("/api/payments/webhook", async (req: Request, res: Response) => {
+    const sig = req.headers['stripe-signature'];
+    const endpointSecret = process.env.STRIPE_WEBHOOK_SECRET;
+    
+    let event;
+    
+    if (endpointSecret && sig) {
+      try {
+        event = stripe.webhooks.constructEvent(req.body, sig, endpointSecret);
+      } catch (err) {
+        return res.status(400).json({ error: `Webhook Error: ${err.message}` });
+      }
+    } else {
+      // For testing without signature verification
+      event = req.body;
+    }
+
+    // Handle the event
+    switch (event.type) {
+      case 'payment_intent.succeeded':
+        const paymentIntent = event.data.object;
+        
+        // Process successful payment
+        console.log(`PaymentIntent succeeded: ${paymentIntent.id}`);
+        
+        // If this payment is for a vault, update the vault's premium status
+        if (paymentIntent.metadata && paymentIntent.metadata.vaultId) {
+          try {
+            const vaultId = parseInt(paymentIntent.metadata.vaultId);
+            const vault = await storage.getVault(vaultId);
+            
+            if (vault) {
+              // Update vault with premium features
+              const metadata = vault.metadata ? JSON.parse(vault.metadata) : {};
+              metadata.premium = {
+                active: true,
+                activatedAt: new Date().toISOString(),
+                paymentId: paymentIntent.id
+              };
+              
+              await storage.updateVault(vaultId, {
+                metadata: JSON.stringify(metadata)
+              });
+            }
+          } catch (error) {
+            console.error("Error updating vault premium status:", error);
+          }
+        }
+        break;
+        
+      case 'subscription_schedule.created':
+      case 'customer.subscription.created':
+        const subscription = event.data.object;
+        console.log(`Subscription created: ${subscription.id}`);
+        break;
+        
+      case 'subscription_schedule.canceled':
+      case 'customer.subscription.deleted':
+        const canceledSubscription = event.data.object;
+        console.log(`Subscription canceled: ${canceledSubscription.id}`);
+        break;
+        
+      default:
+        console.log(`Unhandled event type: ${event.type}`);
+    }
+
+    res.json({ received: true });
   });
 
   return httpServer;

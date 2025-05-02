@@ -7,6 +7,11 @@ export const users = pgTable("users", {
   username: text("username").notNull().unique(),
   password: text("password").notNull(),
   walletAddress: text("wallet_address"),
+  email: text("email"),
+  stripeCustomerId: text("stripe_customer_id"),
+  stripeSubscriptionId: text("stripe_subscription_id"),
+  subscriptionStatus: text("subscription_status"),
+  metadata: jsonb("metadata"),
 });
 
 export const vaults = pgTable("vaults", {
@@ -107,6 +112,11 @@ export const insertUserSchema = createInsertSchema(users).pick({
   username: true,
   password: true,
   walletAddress: true,
+  email: true,
+  stripeCustomerId: true,
+  stripeSubscriptionId: true,
+  subscriptionStatus: true,
+  metadata: true,
 });
 
 export const insertVaultSchema = createInsertSchema(vaults).pick({
