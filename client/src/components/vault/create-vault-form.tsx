@@ -208,6 +208,350 @@ const CreateVaultForm = ({
   const [deploymentStatus, setDeploymentStatus] = useState<string | null>(null);
   const [contractAddress, setContractAddress] = useState<string | null>(null);
   
+  // Function to render specialized vault specific fields based on the vault type
+  const renderSpecializedFields = () => {
+    const currentVaultType = form.watch("vaultType");
+    
+    switch(currentVaultType) {
+      case 'multi-signature':
+        return (
+          <div className="space-y-4 border border-[#FF5AF7]/20 rounded-lg p-4 bg-gradient-to-r from-[#1A1A1A] to-[#231A2A]">
+            <h3 className="text-lg text-[#FF5AF7] font-medium">Multi-Signature Vault Settings</h3>
+            <p className="text-sm text-gray-300">Configure required approvals for this multi-signature vault</p>
+            
+            <FormField
+              control={form.control}
+              name="requiredSignatures"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Required Signatures</FormLabel>
+                  <Select
+                    onValueChange={field.onChange}
+                    defaultValue={field.value?.toString() || "2"}
+                  >
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select required signatures" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      <SelectItem value="2">2 signatures</SelectItem>
+                      <SelectItem value="3">3 signatures</SelectItem>
+                      <SelectItem value="4">4 signatures</SelectItem>
+                      <SelectItem value="5">5 signatures</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  <FormDescription>
+                    Number of signatures required to unlock this vault
+                  </FormDescription>
+                </FormItem>
+              )}
+            />
+          </div>
+        );
+      
+      case 'biometric':
+        return (
+          <div className="space-y-4 border border-[#00D7C3]/20 rounded-lg p-4 bg-gradient-to-r from-[#1A1A1A] to-[#1A2A29]">
+            <h3 className="text-lg text-[#00D7C3] font-medium">Biometric Vault Settings</h3>
+            <p className="text-sm text-gray-300">Configure biometric access settings for this vault</p>
+            
+            <FormField
+              control={form.control}
+              name="biometricType"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Biometric Type</FormLabel>
+                  <Select
+                    onValueChange={field.onChange}
+                    defaultValue={field.value || "fingerprint"}
+                  >
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select biometric type" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      <SelectItem value="fingerprint">Fingerprint</SelectItem>
+                      <SelectItem value="face">Facial Recognition</SelectItem>
+                      <SelectItem value="voice">Voice Recognition</SelectItem>
+                      <SelectItem value="multi">Multi-factor Biometric</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  <FormDescription>
+                    Type of biometric verification required
+                  </FormDescription>
+                </FormItem>
+              )}
+            />
+          </div>
+        );
+        
+      case 'time-lock':
+        return (
+          <div className="space-y-4 border border-[#D76B00]/20 rounded-lg p-4 bg-gradient-to-r from-[#1A1A1A] to-[#2A211A]">
+            <h3 className="text-lg text-[#D76B00] font-medium">Time-Lock Vault Settings</h3>
+            <p className="text-sm text-gray-300">Configure advanced time-lock settings for this vault</p>
+            
+            <FormField
+              control={form.control}
+              name="scheduleType"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Schedule Type</FormLabel>
+                  <Select
+                    onValueChange={field.onChange}
+                    defaultValue={field.value || "fixed"}
+                  >
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select schedule type" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      <SelectItem value="fixed">Fixed Date</SelectItem>
+                      <SelectItem value="recurring">Recurring Schedule</SelectItem>
+                      <SelectItem value="conditional">Conditional Release</SelectItem>
+                      <SelectItem value="phased">Phased Release</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  <FormDescription>
+                    Type of time-lock schedule for this vault
+                  </FormDescription>
+                </FormItem>
+              )}
+            />
+          </div>
+        );
+        
+      case 'geolocation':
+        return (
+          <div className="space-y-4 border border-[#00D74B]/20 rounded-lg p-4 bg-gradient-to-r from-[#1A1A1A] to-[#1A2A1F]">
+            <h3 className="text-lg text-[#00D74B] font-medium">Geolocation Vault Settings</h3>
+            <p className="text-sm text-gray-300">Configure geolocation access settings for this vault</p>
+            
+            <FormField
+              control={form.control}
+              name="geoRadius"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Safe Zone Radius (meters)</FormLabel>
+                  <FormControl>
+                    <Input type="number" placeholder="100" {...field} />
+                  </FormControl>
+                  <FormDescription>
+                    Radius in meters around the specified location
+                  </FormDescription>
+                </FormItem>
+              )}
+            />
+            
+            <FormField
+              control={form.control}
+              name="geoLocation"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Location (Latitude, Longitude)</FormLabel>
+                  <FormControl>
+                    <Input placeholder="40.7128, -74.0060" {...field} />
+                  </FormControl>
+                  <FormDescription>
+                    Specify the center point coordinates of the safe zone
+                  </FormDescription>
+                </FormItem>
+              )}
+            />
+          </div>
+        );
+        
+      case 'cross-chain':
+        return (
+          <div className="space-y-4 border border-[#8B00D7]/20 rounded-lg p-4 bg-gradient-to-r from-[#1A1A1A] to-[#231A2A]">
+            <h3 className="text-lg text-[#8B00D7] font-medium">Cross-Chain Vault Settings</h3>
+            <p className="text-sm text-gray-300">Configure cross-chain security settings for this vault</p>
+            
+            <FormField
+              control={form.control}
+              name="additionalChains"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Additional Blockchains</FormLabel>
+                  <div className="space-y-2">
+                    <div className="flex items-center space-x-2">
+                      <Checkbox id="chain-ethereum" />
+                      <label htmlFor="chain-ethereum" className="text-sm">Ethereum</label>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <Checkbox id="chain-solana" />
+                      <label htmlFor="chain-solana" className="text-sm">Solana</label>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <Checkbox id="chain-bsc" />
+                      <label htmlFor="chain-bsc" className="text-sm">Binance Smart Chain</label>
+                    </div>
+                  </div>
+                  <FormDescription>
+                    Select additional blockchains to use for cross-chain security
+                  </FormDescription>
+                </FormItem>
+              )}
+            />
+          </div>
+        );
+        
+      case 'smart-contract':
+        return (
+          <div className="space-y-4 border border-[#5271FF]/20 rounded-lg p-4 bg-gradient-to-r from-[#1A1A1A] to-[#1A1E2A]">
+            <h3 className="text-lg text-[#5271FF] font-medium">Smart Contract Vault Settings</h3>
+            <p className="text-sm text-gray-300">Configure automation rules for this smart contract vault</p>
+            
+            <FormField
+              control={form.control}
+              name="contractCondition"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Contract Condition Type</FormLabel>
+                  <Select
+                    onValueChange={field.onChange}
+                    defaultValue={field.value || "time"}
+                  >
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select condition type" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      <SelectItem value="time">Time-based</SelectItem>
+                      <SelectItem value="oracle">Oracle</SelectItem>
+                      <SelectItem value="price">Price Trigger</SelectItem>
+                      <SelectItem value="event">Event Trigger</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  <FormDescription>
+                    Type of condition that will trigger this smart contract
+                  </FormDescription>
+                </FormItem>
+              )}
+            />
+          </div>
+        );
+        
+      case 'dynamic':
+        return (
+          <div className="space-y-4 border border-[#FF5151]/20 rounded-lg p-4 bg-gradient-to-r from-[#1A1A1A] to-[#2A1A1A]">
+            <h3 className="text-lg text-[#FF5151] font-medium">Dynamic Vault Settings</h3>
+            <p className="text-sm text-gray-300">Configure dynamic behavior rules for this vault</p>
+            
+            <FormField
+              control={form.control}
+              name="dynamicRules"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Dynamic Rule Set</FormLabel>
+                  <Select
+                    onValueChange={field.onChange}
+                    defaultValue={field.value || "market"}
+                  >
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select rule set" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      <SelectItem value="market">Market Conditions</SelectItem>
+                      <SelectItem value="user">User Behavior</SelectItem>
+                      <SelectItem value="network">Network Activity</SelectItem>
+                      <SelectItem value="custom">Custom Rules</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  <FormDescription>
+                    Set of rules that determines how this vault behaves dynamically
+                  </FormDescription>
+                </FormItem>
+              )}
+            />
+          </div>
+        );
+        
+      case 'nft-powered':
+        return (
+          <div className="space-y-4 border border-[#CE19FF]/20 rounded-lg p-4 bg-gradient-to-r from-[#1A1A1A] to-[#261A2A]">
+            <h3 className="text-lg text-[#CE19FF] font-medium">NFT-Powered Vault Settings</h3>
+            <p className="text-sm text-gray-300">Configure NFT requirements for this vault</p>
+            
+            <FormField
+              control={form.control}
+              name="nftType"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>NFT Requirement Type</FormLabel>
+                  <Select
+                    onValueChange={field.onChange}
+                    defaultValue={field.value || "ownership"}
+                  >
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select NFT requirement" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      <SelectItem value="ownership">Ownership Proof</SelectItem>
+                      <SelectItem value="fractional">Fractional Ownership</SelectItem>
+                      <SelectItem value="collection">Collection Membership</SelectItem>
+                      <SelectItem value="dao">DAO Membership</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  <FormDescription>
+                    Type of NFT requirement for accessing this vault
+                  </FormDescription>
+                </FormItem>
+              )}
+            />
+          </div>
+        );
+        
+      case 'unique':
+        return (
+          <div className="space-y-4 border border-[#fca103]/20 rounded-lg p-4 bg-gradient-to-r from-[#1A1A1A] to-[#2A231A]">
+            <h3 className="text-lg text-[#fca103] font-medium">Unique Security Vault Settings</h3>
+            <p className="text-sm text-gray-300">Configure unique security protocols for this vault</p>
+            
+            <FormField
+              control={form.control}
+              name="securityLevel"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Security Level</FormLabel>
+                  <Select
+                    onValueChange={field.onChange}
+                    defaultValue={field.value || "enterprise"}
+                  >
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select security level" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      <SelectItem value="enhanced">Enhanced</SelectItem>
+                      <SelectItem value="advanced">Advanced</SelectItem>
+                      <SelectItem value="premium">Premium</SelectItem>
+                      <SelectItem value="enterprise">Enterprise</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  <FormDescription>
+                    Level of security protocols for this vault
+                  </FormDescription>
+                </FormItem>
+              )}
+            />
+          </div>
+        );
+      
+      default:
+        return null;
+    }
+  };
+
   async function onSubmit(data: FormValues) {
     // Create gift experience metadata if vault type is "gift"
     let giftExperience;
