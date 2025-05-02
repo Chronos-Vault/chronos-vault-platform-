@@ -1,23 +1,65 @@
 import { useEffect, useState } from "react";
 import { useLocation } from "wouter";
+import { useMultiChain, BlockchainType } from "@/contexts/multi-chain-context";
+import { useTon } from "@/contexts/ton-context";
 import CreateVaultForm from "@/components/vault/create-vault-form";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, Shield, Clock, File } from "lucide-react";
+import { ArrowLeft, Shield, Clock, File, Wallet } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
 
 const CreateVault = () => {
-  const [_, params] = useLocation();
+  const [_, navigate] = useLocation();
+  const { toast } = useToast();
+  const { isAnyWalletConnected, connectChain, walletInfo, chainStatus } = useMultiChain();
+  const ton = useTon();
+  
   const [vaultType, setVaultType] = useState("legacy");
+  const [selectedBlockchain, setSelectedBlockchain] = useState(BlockchainType.TON);
+  const [isConnectingWallet, setIsConnectingWallet] = useState(false);
   
   useEffect(() => {
     // Parse query params
     const urlParams = new URLSearchParams(window.location.search);
     const typeParam = urlParams.get("type");
+    const blockchainParam = urlParams.get("blockchain");
     
-    if (typeParam && ["legacy", "investment", "project"].includes(typeParam)) {
+    if (typeParam && ["legacy", "investment", "project", "gift"].includes(typeParam)) {
       setVaultType(typeParam);
     }
+    
+    if (blockchainParam) {
+      const blockchain = blockchainParam as BlockchainType;
+      if (Object.values(BlockchainType).includes(blockchain)) {
+        setSelectedBlockchain(blockchain);
+      }
+    }
   }, []);
+  
+  // Check if wallet is connected for the selected blockchain
+  const isWalletConnected = (blockchain: BlockchainType): boolean => {
+    return chainStatus[blockchain]?.isConnected || false;
+  };
+  
+  // Handle wallet connection
+  const handleConnectWallet = async () => {
+    setIsConnectingWallet(true);
+    try {
+      await connectChain(selectedBlockchain);
+      toast({
+        title: "Wallet Connected",
+        description: `Successfully connected to ${selectedBlockchain} wallet`,
+      });
+    } catch (error: any) {
+      toast({
+        title: "Connection Failed",
+        description: error.message || `Failed to connect to ${selectedBlockchain} wallet`,
+        variant: "destructive",
+      });
+    } finally {
+      setIsConnectingWallet(false);
+    }
+  };
   
   return (
     <section className="py-16 min-h-screen">
@@ -75,7 +117,111 @@ const CreateVault = () => {
             </Card>
           </div>
           
-          <CreateVaultForm initialVaultType={vaultType} />
+          {/* Blockchain Selection */}
+          <div className="mb-8">
+            <Card className="bg-[#1A1A1A] border-[#6B00D7]/20">
+              <CardContent className="p-6">
+                <h3 className="font-poppins font-medium text-xl mb-4">Select Blockchain</h3>
+                <p className="text-gray-400 mb-4">Choose which blockchain network to create your vault on:</p>
+                
+                <div className="grid grid-cols-3 gap-4 mb-6">
+                  <Button 
+                    variant={selectedBlockchain === BlockchainType.TON ? "default" : "outline"}
+                    className={selectedBlockchain === BlockchainType.TON ? 
+                      "bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] hover:from-[#7B10E7] hover:to-[#FF6AF7] border-none" : 
+                      "border-[#6B00D7]/30 hover:border-[#6B00D7]/60 text-gray-300"}
+                    onClick={() => setSelectedBlockchain(BlockchainType.TON)}
+                  >
+                    <div className="h-4 w-4 mr-2 rounded-full bg-gradient-to-r from-[#6B00D7]/20 to-[#FF5AF7]/10 flex items-center justify-center">
+                      💎
+                    </div>
+                    TON Network
+                  </Button>
+                  
+                  <Button 
+                    variant={selectedBlockchain === BlockchainType.ETHEREUM ? "default" : "outline"}
+                    className={selectedBlockchain === BlockchainType.ETHEREUM ? 
+                      "bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] hover:from-[#7B10E7] hover:to-[#FF6AF7] border-none" : 
+                      "border-[#6B00D7]/30 hover:border-[#6B00D7]/60 text-gray-300"}
+                    onClick={() => setSelectedBlockchain(BlockchainType.ETHEREUM)}
+                  >
+                    <div className="h-4 w-4 mr-2 rounded-full bg-gradient-to-r from-[#6B00D7]/20 to-[#FF5AF7]/10 flex items-center justify-center">
+                      Ξ
+                    </div>
+                    Ethereum
+                  </Button>
+                  
+                  <Button 
+                    variant={selectedBlockchain === BlockchainType.SOLANA ? "default" : "outline"}
+                    className={selectedBlockchain === BlockchainType.SOLANA ? 
+                      "bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] hover:from-[#7B10E7] hover:to-[#FF6AF7] border-none" : 
+                      "border-[#6B00D7]/30 hover:border-[#6B00D7]/60 text-gray-300"}
+                    onClick={() => setSelectedBlockchain(BlockchainType.SOLANA)}
+                  >
+                    <div className="h-4 w-4 mr-2 rounded-full bg-gradient-to-r from-[#6B00D7]/20 to-[#FF5AF7]/10 flex items-center justify-center">
+                      ◎
+                    </div>
+                    Solana
+                  </Button>
+                </div>
+                
+                {/* Wallet Connection Status */}
+                {!isWalletConnected(selectedBlockchain) ? (
+                  <div className="p-4 border border-[#FF5AF7]/30 rounded-lg bg-[#1F1F1F] mb-4">
+                    <div className="flex items-center space-x-2 mb-2">
+                      <Wallet className="h-5 w-5 text-[#FF5AF7]" />
+                      <h3 className="font-medium text-white">Connect Your Wallet</h3>
+                    </div>
+                    <p className="text-gray-400 text-sm mb-4">
+                      Connect your {selectedBlockchain} wallet to create a vault. This ensures your assets 
+                      are properly secured and accessible to you when the time lock expires.
+                    </p>
+                    <Button 
+                      onClick={handleConnectWallet}
+                      disabled={isConnectingWallet}
+                      className="bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] hover:from-[#7B10E7] hover:to-[#FF6AF7] text-white w-full sm:w-auto"
+                    >
+                      {isConnectingWallet ? (
+                        <>
+                          <div className="animate-spin h-4 w-4 mr-2 border-2 border-white border-t-transparent rounded-full" />
+                          Connecting...
+                        </>
+                      ) : (
+                        <>
+                          <Wallet className="h-4 w-4 mr-2" />
+                          Connect {selectedBlockchain} Wallet
+                        </>
+                      )}
+                    </Button>
+                  </div>
+                ) : (
+                  <div className="p-4 border border-[#6B00D7]/30 rounded-lg bg-[#1F1F1F] mb-4">
+                    <div className="flex items-center space-x-2">
+                      <div className="h-5 w-5 rounded-full bg-green-500/20 flex items-center justify-center">
+                        <div className="h-3 w-3 rounded-full bg-green-500"></div>
+                      </div>
+                      <div>
+                        <h3 className="font-medium text-white">{selectedBlockchain} Wallet Connected</h3>
+                        <p className="text-gray-400 text-sm">
+                          {walletInfo[selectedBlockchain]?.address ? 
+                            `${walletInfo[selectedBlockchain]?.address.substring(0, 6)}...${walletInfo[selectedBlockchain]?.address.substring(walletInfo[selectedBlockchain]?.address.length - 4)}` : 
+                            "Connected"}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          </div>
+          
+          <CreateVaultForm 
+            initialVaultType={vaultType} 
+            selectedBlockchain={selectedBlockchain}
+            isWalletConnected={isWalletConnected(selectedBlockchain)}
+            walletInfo={walletInfo}
+            ton={ton}
+          />
         </div>
       </div>
     </section>
