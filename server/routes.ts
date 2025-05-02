@@ -3,6 +3,7 @@ import { createServer, type Server } from "http";
 import fs from "fs";
 import path from "path";
 import multer from "multer";
+import Stripe from "stripe";
 import { storage } from "./storage";
 import { 
   insertUserSchema, 
@@ -11,6 +12,14 @@ import {
   insertAttachmentSchema
 } from "@shared/schema";
 import { ZodError } from "zod";
+
+if (!process.env.STRIPE_SECRET_KEY) {
+  throw new Error('Missing required Stripe secret: STRIPE_SECRET_KEY');
+}
+
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
+  apiVersion: "2023-10-16",
+});
 
 // Configure multer for file uploads
 const fileStorage = multer.diskStorage({
