@@ -14,7 +14,7 @@ import { useSolana } from '@/contexts/solana-context';
 import { useToast } from '@/hooks/use-toast';
 import { apiRequest } from '@/lib/queryClient';
 
-const SpecializedVaultCreation: React.FC = () => {
+function SpecializedVaultCreation() {
   const [_, navigate] = useLocation();
   const { toast } = useToast();
   const ton = useTon();
@@ -406,6 +406,7 @@ const SpecializedVaultCreation: React.FC = () => {
             <VaultTypeSelector 
               selectedType={selectedVaultType} 
               onChange={setSelectedVaultType} 
+              onComplete={() => setStep(2)}
             />
           </div>
         );

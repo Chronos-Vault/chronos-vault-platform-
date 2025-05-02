@@ -120,9 +120,10 @@ const vaultTypeOptions: VaultTypeOption[] = [
 interface VaultTypeSelectorProps {
   selectedType: SpecializedVaultType;
   onChange: (type: SpecializedVaultType) => void;
+  onComplete?: () => void; // Optional callback when a selection is complete
 }
 
-const VaultTypeSelector: React.FC<VaultTypeSelectorProps> = ({ selectedType, onChange }) => {
+const VaultTypeSelector: React.FC<VaultTypeSelectorProps> = ({ selectedType, onChange, onComplete }) => {
   return (
     <div className="space-y-6">
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -132,6 +133,12 @@ const VaultTypeSelector: React.FC<VaultTypeSelectorProps> = ({ selectedType, onC
             className={`cursor-pointer transition-all hover:shadow-md hover:border-${option.color.replace('#', '')} ${selectedType === option.type ? `border-2 border-${option.color.replace('#', '')} shadow-lg` : 'border border-gray-700'}`}
             onClick={() => {
               onChange(option.type);
+              // Call onComplete with a slight delay to allow animation to finish
+              if (onComplete && option.type !== SpecializedVaultType.STANDARD) {
+                setTimeout(() => {
+                  onComplete();
+                }, 300);
+              }
             }}
           >
             <CardContent className="p-4">
