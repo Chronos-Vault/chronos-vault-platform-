@@ -1,194 +1,184 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useLocation } from "wouter";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Lock, Shield, Clock, FileKey, Sparkles, Zap, Wallet, CheckCircle2, ArrowRight, Users, Globe, Key, KeyRound } from "lucide-react";
 import { useCVTToken } from "@/contexts/cvt-token-context";
+import { ArrowRight, Clock, Lock, Shield, Sparkles, Zap, CreditCard, FileKey, CheckCircle2, KeyRound, Globe, Fingerprint } from "lucide-react";
 
-const CVTUtility = () => {
+const CVTUtilityPage = () => {
   const [_, setLocation] = useLocation();
+  const [selectedTab, setSelectedTab] = useState("ethereum");
   const { tokenBalance } = useCVTToken();
-  const [selectedTab, setSelectedTab] = useState<string>("ethereum");
   
-  // Parse the URL for initial tab selection
-  useEffect(() => {
-    const params = new URLSearchParams(window.location.search);
-    const chain = params.get("chain");
-    if (chain && ["ethereum", "solana", "ton"].includes(chain)) {
-      setSelectedTab(chain);
-    }
-  }, []);
-  
-  // Chain-specific pricing and features
+  // Chain-specific pricing and feature information aligned with CVT mathematical model
   const chainPricing = {
     ethereum: {
-      name: "Ethereum",
-      symbol: "Ξ",
       color: "#6B73FF",
+      symbol: "Ξ",
       features: [
-        "Smart contract automation",
-        "Multi-signature capabilities",
-        "Decentralized governance",
-        "ERC-20 & NFT compatibility",
-        "Cross-chain asset bridging",
-        "Integration with DeFi protocols",
-        "Advanced transaction scheduling",
-        "Gas optimization technology"
+        "Advanced smart contract functionality",
+        "Ethereum DeFi ecosystem integration", 
+        "ERC-20 and ERC-721 token support",
+        "Layer-2 compatibility for gas optimization",
+        "Programmable unlocking conditions",
+        "Multi-signature security"
       ],
       vaultTypes: [
         {
           id: "basic",
-          name: "Basic ETH Vault",
-          description: "Standard Ethereum vault for secure asset storage",
-          price: 50,
-          icon: <Wallet className="h-6 w-6 text-[#FF5AF7]" />,
-          features: ["Smart contract time-locking", "ERC-20 token support", "Transaction history", "Basic unlock conditions"]
+          name: "Basic Ethereum Vault",
+          description: "Simple time-locking with ETH and ERC-20 support",
+          price: 10, // More accessible entry price
+          icon: <KeyRound className="h-6 w-6 text-[#FF5AF7]" />,
+          features: ["ETH and ERC-20 support", "Simple time-locking", "Basic recovery options", "Email notifications"]
         },
         {
-          id: "multi-sig",
-          name: "Multi-Signature Vault",
-          description: "Enhanced security with multiple required signers",
-          price: 120,
-          icon: <Users className="h-6 w-6 text-[#FF5AF7]" />,
-          features: ["Required multiple approvers", "Customizable quorum settings", "Integrated governance", "Security audit trail"]
+          id: "enhanced",
+          name: "Enhanced Ethereum Vault",
+          description: "Advanced features for ETH, ERC-20, and NFT storage",
+          price: 50, // Aligned with Vault Guardian tier
+          icon: <Shield className="h-6 w-6 text-[#FF5AF7]" />,
+          features: ["Multi-signature security", "NFT support (ERC-721/1155)", "Advanced recovery options", "Conditional logic"]
         },
         {
           id: "premium",
-          name: "Premium Smart Vault",
-          description: "Enterprise-grade Ethereum vault with advanced features",
-          price: 250,
-          icon: <Shield className="h-6 w-6 text-[#FF5AF7]" />,
-          features: ["Custom smart contract logic", "Cross-chain asset bridging", "DeFi protocol integration", "Advanced security features"]
+          name: "Premium Ethereum Vault",
+          description: "Enterprise-grade security with custom features",
+          price: 100, // Aligned with Vault Architect tier
+          icon: <CreditCard className="h-6 w-6 text-[#FF5AF7]" />,
+          features: ["Custom smart contract logic", "Layer-2 optimization", "Cross-chain bridging", "Private transactions"]
         }
       ]
     },
     solana: {
-      name: "Solana",
-      symbol: "◎",
       color: "#14F195",
+      symbol: "◎",
       features: [
-        "Ultra-fast transaction speeds",
-        "Low transaction fees",
-        "SPL token compatibility",
-        "Solana NFT integration",
-        "Parallel transaction processing",
-        "Web3 program integration",
-        "Proof-of-history consensus",
-        "High-performance architecture"
+        "High-speed and low-cost transactions",
+        "SPL token support for all Solana tokens",
+        "Advanced program functionality",
+        "Solana NFT compatibility",
+        "Multi-wallet security",
+        "Fast block confirmation"
       ],
       vaultTypes: [
         {
           id: "basic",
-          name: "Basic SOL Vault",
-          description: "High-performance Solana vault for digital assets",
-          price: 40,
-          icon: <Wallet className="h-6 w-6 text-[#FF5AF7]" />,
-          features: ["Fast transaction processing", "SPL token support", "Low fee structure", "Rapid unlocking"]
+          name: "Basic Solana Vault",
+          description: "High-speed vault for SOL and SPL tokens",
+          price: 8, // More accessible entry price
+          icon: <KeyRound className="h-6 w-6 text-[#FF5AF7]" />,
+          features: ["SOL and SPL token support", "High-speed processing", "Basic automation", "Email notifications"]
         },
         {
-          id: "advanced",
-          name: "Enhanced SOL Vault",
-          description: "Advanced capabilities with Solana's speed benefits",
-          price: 80,
-          icon: <Key className="h-6 w-6 text-[#FF5AF7]" />,
-          features: ["Solana NFT compatibility", "Low-latency transaction locks", "Program-based automation", "Enhanced security"]
+          id: "enhanced",
+          name: "Enhanced Solana Vault",
+          description: "Advanced features with higher security",
+          price: 40, // Aligned with Vault Guardian tier
+          icon: <Shield className="h-6 w-6 text-[#FF5AF7]" />,
+          features: ["Solana NFT compatibility", "Low-latency transactions", "Program integration", "Advanced security"]
         },
         {
-          id: "defi",
-          name: "DeFi Integration Vault",
-          description: "Connect your vault to Solana's DeFi ecosystem",
-          price: 200,
-          icon: <Sparkles className="h-6 w-6 text-[#FF5AF7]" />,
-          features: ["Advanced Solana program logic", "DeFi protocol integration", "Yield strategy automation", "Real-time analytics"]
+          id: "premium",
+          name: "Premium Solana Vault",
+          description: "Enterprise-grade features for institutions",
+          price: 90, // Aligned with Vault Architect tier
+          icon: <CreditCard className="h-6 w-6 text-[#FF5AF7]" />,
+          features: ["Enterprise-grade security", "Custom program logic", "DeFi protocol integration", "Solana governance voting"]
         }
       ]
     },
     ton: {
-      name: "TON",
-      symbol: "💎",
       color: "#0098EA",
+      symbol: "💎",
       features: [
-        "Lightning-fast finality",
-        "Ultra-scalable architecture",
-        "TON smart contract support",
-        "Minimal transaction fees",
-        "Telegram integration capabilities",
-        "Auto-scaling sharding",
-        "Cross-chain asset bridge",
-        "Advanced TON contract functionality"
+        "Lightning-fast transaction processing",
+        "Advanced smart contract functionality",
+        "TON asset management and security",
+        "Scalable vault infrastructure",
+        "Future-proof architecture",
+        "Native Telegram integration"
       ],
       vaultTypes: [
         {
           id: "basic",
           name: "Basic TON Vault",
-          description: "Fast and secure TON Network vault storage",
-          price: 30,
-          icon: <Wallet className="h-6 w-6 text-[#FF5AF7]" />,
-          features: ["TON asset management", "Fast transaction finality", "Telegram notifications", "Low-cost operations"]
+          description: "Fast and secure TON asset management",
+          price: 5, // More accessible entry price
+          icon: <KeyRound className="h-6 w-6 text-[#FF5AF7]" />,
+          features: ["TON asset storage", "Fast transaction finality", "Basic automation", "Email notifications"]
         },
         {
           id: "enhanced",
           name: "Enhanced TON Vault",
-          description: "Advanced TON vault with smart features",
-          price: 60,
-          icon: <KeyRound className="h-6 w-6 text-[#FF5AF7]" />,
-          features: ["Advanced TON functionality", "Smart contract automation", "Multi-wallet support", "Enhanced security"]
+          description: "Advanced TON features and automation",
+          price: 25, // Aligned with lower entry barrier
+          icon: <Shield className="h-6 w-6 text-[#FF5AF7]" />,
+          features: ["Advanced TON functionality", "Smart contract automation", "Telegram bot integration", "Enhanced security"]
         },
         {
           id: "premium",
           name: "Premium TON Vault",
-          description: "Enterprise-grade TON vault with custom capabilities",
-          price: 150,
-          icon: <Globe className="h-6 w-6 text-[#FF5AF7]" />,
-          features: ["Custom TON contract integration", "Enterprise-grade security", "Global access controls", "Advanced automation"]
+          description: "Enterprise-grade TON solutions",
+          price: 75, // Aligned with Vault Architect tier
+          icon: <CreditCard className="h-6 w-6 text-[#FF5AF7]" />,
+          features: ["Custom TON contract integration", "Enterprise security", "Advanced recovery", "Priority support"]
         }
       ]
     }
   };
-  
-  // Specialized vault types
+
+  // Specialized vault types that require CVT tokens - aligned with CVT tokenomics tiers
   const specializedVaults = [
-    {
-      id: "multi-signature",
-      name: "Multi-Signature Vault",
-      description: "Require multiple approvers for enhanced security",
-      price: 150,
-      icon: <Users className="h-6 w-6 text-[#FF5AF7]" />,
-      features: ["Customizable approval threshold", "Role-based permissions", "Transaction audit trail", "Anti-phishing protection"]
-    },
     {
       id: "time-lock",
       name: "Advanced Time-Lock Vault",
       description: "Lock assets with precision time-based controls and conditions",
-      price: 40,
+      price: 15, // Entry-level specialized vault
       icon: <Clock className="h-6 w-6 text-[#FF5AF7]" />,
       features: ["Programmable time schedules", "Calendar-based unlocking", "Recurring time windows", "Long-term cold storage"]
+    },
+    {
+      id: "multi-sig",
+      name: "Multi-Signature Vault",
+      description: "Require multiple keys for enhanced security",
+      price: 30, // Accessible security enhancement
+      icon: <Shield className="h-6 w-6 text-[#FF5AF7]" />,
+      features: ["Multiple signature requirements", "Customizable quorum", "Governance capabilities", "Team access management"]
+    },
+    {
+      id: "biometric",
+      name: "Biometric Vault",
+      description: "Advanced security using biometric authentication",
+      price: 40, // Aligned with Vault Guardian benefits
+      icon: <Fingerprint className="h-6 w-6 text-[#FF5AF7]" />,
+      features: ["Fingerprint verification", "Facial recognition", "Multi-factor authentication", "Enhanced privacy"]
     },
     {
       id: "smart-contract",
       name: "Smart Contract Vault",
       description: "Create conditional logic for automated vault operations",
-      price: 85,
+      price: 55, // Mid-tier specialized functionality
       icon: <FileKey className="h-6 w-6 text-[#FF5AF7]" />,
       features: ["Programmable conditions", "Event-triggered actions", "Cross-chain automation", "DeFi integration"]
-    },
-    {
-      id: "enhanced-security",
-      name: "Ultra-Secure Vault",
-      description: "Military-grade encryption with our highest security protocol",
-      price: 120,
-      icon: <Shield className="h-6 w-6 text-[#FF5AF7]" />,
-      features: ["Triple-chain security", "Zero-knowledge proofs", "Multiple backup systems", "Advanced recovery options"]
     },
     {
       id: "dynamic",
       name: "Dynamic Security Vault",
       description: "Adaptive security that evolves based on threat detection",
-      price: 100,
+      price: 70, // Approaching Vault Architect tier
       icon: <Sparkles className="h-6 w-6 text-[#FF5AF7]" />,
       features: ["AI-powered security protocols", "Behavioral analysis", "Auto-adjusting protection levels", "Threat monitoring"]
+    },
+    {
+      id: "enhanced-security",
+      name: "Ultra-Secure Vault",
+      description: "Military-grade encryption with our highest security protocol",
+      price: 90, // Aligned with Vault Architect tier
+      icon: <Shield className="h-6 w-6 text-[#FF5AF7]" />,
+      features: ["Triple-chain security", "Zero-knowledge proofs", "Multiple backup systems", "Advanced recovery options"]
     }
   ];
 
@@ -218,73 +208,46 @@ const CVTUtility = () => {
                 </span>
               </h1>
               
-              <p className="text-xl md:text-2xl text-gray-300 max-w-4xl mx-auto mt-4 leading-relaxed">
-                Unlock premium features and enhanced security with Chronos Vault Tokens (CVT)
+              <p className="text-lg text-gray-300 max-w-3xl mx-auto">
+                The Chronos Vault Token (CVT) is the essential utility token required for creating specialized vaults and accessing premium features across multiple blockchains.
               </p>
             </div>
-            
-            <div className="mb-16 bg-black/30 border border-[#6B00D7]/20 rounded-xl p-6 md:p-8 shadow-xl">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
-                <div>
-                  <h2 className="text-3xl font-bold mb-4 bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] inline-block text-transparent bg-clip-text">
-                    Your Vault Power
-                  </h2>
-                  <p className="text-gray-300 mb-6">
-                    Chronos Vault Tokens (CVT) are the native utility currency that powers advanced vault features and unlocks premium functionality across multiple blockchains.
-                  </p>
-                  <div className="flex items-center gap-4 mb-6">
-                    <div className="h-14 w-14 rounded-full bg-gradient-to-r from-[#6B00D7] via-[#FF5AF7] to-[#6B00D7] p-[2px] animate-text-shine bg-300%">
-                      <div className="h-full w-full rounded-full bg-black flex items-center justify-center">
-                        <Wallet className="h-6 w-6 text-[#FF5AF7]" />
-                      </div>
-                    </div>
-                    <div>
-                      <div className="text-white text-3xl font-bold flex items-center gap-2">
-                        {tokenBalance || "0"} <span className="text-[#FF5AF7] text-xl">CVT</span>
-                      </div>
-                      <div className="text-gray-400 text-sm">Your Current Balance</div>
-                    </div>
+
+            <div className="bg-black border-2 border-[#6B00D7]/40 rounded-2xl p-6 md:p-8 mb-16 relative overflow-hidden">
+              <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-to-bl from-[#6B00D7]/20 to-transparent rounded-bl-full opacity-50"></div>
+              <div className="relative z-10">
+                <div className="flex flex-col md:flex-row items-start md:items-center justify-between mb-8 gap-6">
+                  <div>
+                    <h2 className="text-2xl md:text-3xl font-bold text-white">Your CVT Balance</h2>
+                    <p className="text-gray-400 mt-1">Use your tokens to unlock premium vault capabilities</p>
                   </div>
-                  <Button 
-                    className="bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] text-white hover:opacity-90 relative overflow-hidden group"
-                    onClick={() => setLocation("/cvt-payment")}
-                  >
-                    <span className="absolute inset-0 bg-white/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></span>
-                    <span className="relative z-10">Get More CVT Tokens</span>
-                  </Button>
-                </div>
-                
-                <div className="bg-[#1A1A1A] p-6 rounded-xl border border-[#6B00D7]/30">
-                  <h3 className="font-bold text-xl mb-4 flex items-center gap-2">
-                    <Shield className="h-5 w-5 text-[#FF5AF7]" />
-                    Token Benefits
-                  </h3>
-                  <ul className="space-y-3">
-                    <li className="flex items-start gap-3">
-                      <div className="h-5 w-5 rounded-full bg-[#6B00D7]/20 flex items-center justify-center flex-shrink-0 mt-1">
-                        <CheckCircle2 className="h-3.5 w-3.5 text-[#FF5AF7]" />
+                  
+                  <div className="flex items-center gap-4">
+                    <div className="relative">
+                      <div className="absolute inset-0 bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] rounded-xl blur-sm opacity-70"></div>
+                      <div className="relative bg-black border border-[#6B00D7]/50 rounded-xl px-6 py-4">
+                        <div className="flex items-center gap-3">
+                          <div className="w-12 h-12 rounded-full bg-gradient-to-br from-[#6B00D7] to-[#FF5AF7] flex items-center justify-center shadow-lg">
+                            <span className="text-white font-bold text-xl">CVT</span>
+                          </div>
+                          <div>
+                            <div className="text-3xl font-bold text-white">{tokenBalance || '0'}</div>
+                            <div className="text-xs text-gray-400">Available Balance</div>
+                          </div>
+                        </div>
                       </div>
-                      <span className="text-gray-200">Access to premium vault types across all supported blockchains</span>
-                    </li>
-                    <li className="flex items-start gap-3">
-                      <div className="h-5 w-5 rounded-full bg-[#6B00D7]/20 flex items-center justify-center flex-shrink-0 mt-1">
-                        <CheckCircle2 className="h-3.5 w-3.5 text-[#FF5AF7]" />
-                      </div>
-                      <span className="text-gray-200">Enhanced security features including multi-signature and time-lock capabilities</span>
-                    </li>
-                    <li className="flex items-start gap-3">
-                      <div className="h-5 w-5 rounded-full bg-[#6B00D7]/20 flex items-center justify-center flex-shrink-0 mt-1">
-                        <CheckCircle2 className="h-3.5 w-3.5 text-[#FF5AF7]" />
-                      </div>
-                      <span className="text-gray-200">Lower transaction fees and exclusive governance participation rights</span>
-                    </li>
-                    <li className="flex items-start gap-3">
-                      <div className="h-5 w-5 rounded-full bg-[#6B00D7]/20 flex items-center justify-center flex-shrink-0 mt-1">
-                        <CheckCircle2 className="h-3.5 w-3.5 text-[#FF5AF7]" />
-                      </div>
-                      <span className="text-gray-200">Cross-chain functionality unlocking asset movement between blockchains</span>
-                    </li>
-                  </ul>
+                    </div>
+                    
+                    <Button 
+                      className="bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] hover:opacity-90 text-white font-medium px-6 py-6 rounded-xl shadow-md hover:shadow-lg hover:shadow-[#6B00D7]/20 transition-all relative overflow-hidden group h-full"
+                      onClick={() => setLocation("/cvt-token")}
+                    >
+                      <span className="absolute inset-0 bg-white/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></span>
+                      <span className="relative z-10 flex items-center justify-center font-bold">
+                        Get More CVT
+                      </span>
+                    </Button>
+                  </div>
                 </div>
               </div>
             </div>
@@ -468,66 +431,61 @@ const CVTUtility = () => {
                 {specializedVaults.map((vault) => {
                   const canAfford = tokenPower >= vault.price;
                   return (
-                    <div
-                      key={vault.id}
-                      className={`relative ${canAfford ? 'cursor-pointer' : 'cursor-not-allowed'} group h-full`}
+                    <div 
+                      key={vault.id} 
+                      className={`relative ${canAfford ? 'cursor-pointer' : 'cursor-not-allowed'} group`}
                       onClick={() => canAfford && setLocation(`/create-vault?type=${vault.id}`)}
                     >
-                      {/* Glowing border effect */}
-                      <div className={`absolute -inset-0.5 bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] rounded-xl ${canAfford ? 'opacity-50' : 'opacity-20'} blur-sm group-hover:opacity-80 transition-all duration-300`}></div>
+                      <div className={`absolute -inset-0.5 bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] rounded-xl ${canAfford ? 'opacity-70' : 'opacity-20'} blur-sm group-hover:opacity-100 transition-all duration-300`}></div>
                       
-                      {/* Card Content */}
-                      <div className="relative bg-black border border-[#6B00D7]/30 rounded-xl overflow-hidden h-full flex flex-col">
-                        {/* Top Gradient Line */}
-                        <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] opacity-90"></div>
-                        
-                        <div className="p-6">
-                          <div className="flex justify-between items-start mb-4">
-                            <div className={`h-14 w-14 rounded-full bg-gradient-to-br from-[#1E1E1E] to-black border ${canAfford ? 'border-[#FF5AF7]' : 'border-gray-700'} flex items-center justify-center group-hover:scale-105 transition-transform`}>
-                              <div className={canAfford ? 'text-[#FF5AF7]' : 'text-gray-500'}>
-                                {vault.icon}
-                              </div>
+                      <div className="relative bg-black border border-[#6B00D7]/30 rounded-xl overflow-hidden h-full p-6">
+                        <div className="flex justify-between items-start mb-4">
+                          <div className={`h-14 w-14 rounded-full bg-gradient-to-br from-[#1E1E1E] to-black border-2 ${canAfford ? 'border-[#FF5AF7]' : 'border-gray-700'} flex items-center justify-center mb-4 group-hover:scale-105 transition-transform`}>
+                            <div className={canAfford ? 'text-[#FF5AF7]' : 'text-gray-500'}>
+                              {vault.icon}
                             </div>
-                            <Badge variant={canAfford ? 'outline' : 'secondary'} className={canAfford ? 'border-[#FF5AF7]/40 bg-[#FF5AF7]/10 text-[#FF5AF7]' : 'bg-gray-900 text-gray-600 border-gray-800'}>
-                              {vault.price} CVT
-                            </Badge>
                           </div>
-                          
-                          <h3 className={`text-xl font-bold mb-2 ${canAfford ? 'text-white' : 'text-gray-500'}`}>{vault.name}</h3>
-                          <p className={`mb-6 ${canAfford ? 'text-gray-400' : 'text-gray-600'}`}>{vault.description}</p>
-                          
-                          <div className="mb-6">
-                            <ul className="space-y-3">
-                              {vault.features.map((feature, idx) => (
-                                <li key={idx} className="flex items-start gap-2">
-                                  <div className={`h-5 w-5 rounded-full ${canAfford ? 'bg-[#6B00D7]/20' : 'bg-gray-900'} flex items-center justify-center flex-shrink-0 mt-0.5`}>
-                                    <CheckCircle2 className={`h-3 w-3 ${canAfford ? 'text-[#FF5AF7]' : 'text-gray-600'}`} />
-                                  </div>
-                                  <span className={canAfford ? 'text-white' : 'text-gray-600'}>{feature}</span>
-                                </li>
-                              ))}
-                            </ul>
-                          </div>
+                          <Badge variant={canAfford ? 'outline' : 'secondary'} className={canAfford ? 'border-[#FF5AF7]/40 bg-[#6B00D7]/10 text-[#FF5AF7]' : 'bg-gray-900 text-gray-500'}>
+                            {vault.price} CVT
+                          </Badge>
                         </div>
                         
-                        <div className="mt-auto p-6 pt-0">
-                          {canAfford ? (
-                            <Button 
-                              className="w-full bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] hover:opacity-90 relative overflow-hidden group"
-                            >
-                              <span className="absolute inset-0 bg-white/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></span>
-                              <span className="relative z-10 flex items-center">
-                                Create Vault
-                                <ArrowRight className="h-4 w-4 ml-2 group-hover:translate-x-1 transition-transform" />
+                        <h3 className={`text-xl font-bold mb-2 ${canAfford ? 'text-white group-hover:text-[#FF5AF7]' : 'text-gray-500'} transition-colors`}>
+                          {vault.name}
+                        </h3>
+                        <p className={`mb-6 ${canAfford ? 'text-gray-400' : 'text-gray-600'}`}>
+                          {vault.description}
+                        </p>
+                        
+                        <ul className="space-y-3 mb-6">
+                          {vault.features.map((feature, idx) => (
+                            <li key={idx} className="flex items-start gap-2">
+                              <div className={`h-5 w-5 rounded-full ${canAfford ? 'bg-[#6B00D7]/20' : 'bg-gray-900'} flex items-center justify-center flex-shrink-0 mt-0.5`}>
+                                <CheckCircle2 className={`h-3 w-3 ${canAfford ? 'text-[#FF5AF7]' : 'text-gray-600'}`} />
+                              </div>
+                              <span className={canAfford ? 'text-white' : 'text-gray-600'}>
+                                {feature}
                               </span>
-                            </Button>
-                          ) : (
-                            <Button variant="outline" className="w-full border-gray-800 text-gray-500" disabled>
-                              <Lock className="h-4 w-4 mr-2" />
-                              Need {vault.price - tokenPower} more CVT
-                            </Button>
-                          )}
-                        </div>
+                            </li>
+                          ))}
+                        </ul>
+                        
+                        {canAfford ? (
+                          <Button 
+                            className="w-full bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] hover:opacity-90 text-white font-medium py-3 rounded-xl shadow-md hover:shadow-lg hover:shadow-[#6B00D7]/20 transition-all relative overflow-hidden group"
+                          >
+                            <span className="absolute inset-0 bg-white/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></span>
+                            <span className="relative z-10 flex items-center justify-center">
+                              Create {vault.name.split(' ')[0]}
+                              <ArrowRight className="h-4 w-4 ml-2 group-hover:translate-x-1 transition-transform" />
+                            </span>
+                          </Button>
+                        ) : (
+                          <div className="flex items-center justify-center gap-2 p-3 mt-auto bg-gray-900 rounded-xl border border-gray-800">
+                            <Lock className="h-4 w-4 text-gray-600" />
+                            <span className="text-sm text-gray-500">Need {vault.price - tokenPower} more CVT</span>
+                          </div>
+                        )}
                       </div>
                     </div>
                   );
@@ -535,17 +493,169 @@ const CVTUtility = () => {
               </div>
             </div>
 
-            <div className="flex justify-center">
-              <Button 
-                onClick={() => setLocation("/cvt-payment")} 
-                className="bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] hover:opacity-90 text-white font-medium px-6 py-6 rounded-xl shadow-lg hover:shadow-xl hover:shadow-[#6B00D7]/20 transition-all relative overflow-hidden group"
-              >
-                <span className="absolute inset-0 bg-white/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></span>
-                <span className="relative z-10 flex items-center text-lg">
-                  Get More CVT Tokens
-                  <ArrowRight className="h-5 w-5 ml-2 group-hover:translate-x-1 transition-transform" />
+            <div className="mb-16">
+              <div className="text-center mb-12">
+                <h2 className="font-poppins font-bold text-3xl mb-6">
+                  <span className="bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] inline-block text-transparent bg-clip-text">
+                    CVT Staking Tiers
+                  </span>
+                </h2>
+                <p className="text-lg text-gray-300 max-w-3xl mx-auto">
+                  Stake your CVT tokens to unlock advanced platform benefits and reduced fees
+                </p>
+              </div>
+              
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                {/* Vault Guardian */}
+                <div className="relative group">
+                  <div className="absolute -inset-0.5 bg-gradient-to-br from-[#6B00D7]/70 to-[#FF5AF7]/50 rounded-2xl blur-sm opacity-70 group-hover:opacity-100 transition-all duration-300"></div>
+                  <div className="relative bg-black border border-[#6B00D7]/40 rounded-2xl p-6 h-full">
+                    <div className="flex items-center justify-between mb-4">
+                      <h3 className="text-xl font-bold text-white">Vault Guardian</h3>
+                      <Badge className="bg-[#6B00D7]/20 text-[#FF5AF7] border-[#6B00D7]/40">
+                        1,000+ CVT
+                      </Badge>
+                    </div>
+                    
+                    <ul className="space-y-3 mb-6">
+                      <li className="flex items-start gap-2">
+                        <div className="h-5 w-5 rounded-full bg-[#6B00D7]/20 flex items-center justify-center flex-shrink-0 mt-0.5">
+                          <CheckCircle2 className="h-3 w-3 text-[#FF5AF7]" />
+                        </div>
+                        <span className="text-white">15% reduction on platform fees</span>
+                      </li>
+                      <li className="flex items-start gap-2">
+                        <div className="h-5 w-5 rounded-full bg-[#6B00D7]/20 flex items-center justify-center flex-shrink-0 mt-0.5">
+                          <CheckCircle2 className="h-3 w-3 text-[#FF5AF7]" />
+                        </div>
+                        <span className="text-white">Basic portfolio analytics</span>
+                      </li>
+                      <li className="flex items-start gap-2">
+                        <div className="h-5 w-5 rounded-full bg-[#6B00D7]/20 flex items-center justify-center flex-shrink-0 mt-0.5">
+                          <CheckCircle2 className="h-3 w-3 text-[#FF5AF7]" />
+                        </div>
+                        <span className="text-white">Up to 10 time capsules</span>
+                      </li>
+                      <li className="flex items-start gap-2">
+                        <div className="h-5 w-5 rounded-full bg-[#6B00D7]/20 flex items-center justify-center flex-shrink-0 mt-0.5">
+                          <CheckCircle2 className="h-3 w-3 text-[#FF5AF7]" />
+                        </div>
+                        <span className="text-white">1x base voting weight</span>
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+                
+                {/* Vault Architect */}
+                <div className="relative group">
+                  <div className="absolute -inset-0.5 bg-gradient-to-br from-[#6B00D7]/80 to-[#FF5AF7]/60 rounded-2xl blur-sm opacity-70 group-hover:opacity-100 transition-all duration-300"></div>
+                  <div className="relative bg-black border border-[#6B00D7]/40 rounded-2xl p-6 h-full">
+                    <div className="flex items-center justify-between mb-4">
+                      <h3 className="text-xl font-bold text-white">Vault Architect</h3>
+                      <Badge className="bg-[#6B00D7]/30 text-[#FF5AF7] border-[#6B00D7]/40">
+                        10,000+ CVT
+                      </Badge>
+                    </div>
+                    
+                    <ul className="space-y-3 mb-6">
+                      <li className="flex items-start gap-2">
+                        <div className="h-5 w-5 rounded-full bg-[#6B00D7]/20 flex items-center justify-center flex-shrink-0 mt-0.5">
+                          <CheckCircle2 className="h-3 w-3 text-[#FF5AF7]" />
+                        </div>
+                        <span className="text-white">30% reduction on platform fees</span>
+                      </li>
+                      <li className="flex items-start gap-2">
+                        <div className="h-5 w-5 rounded-full bg-[#6B00D7]/20 flex items-center justify-center flex-shrink-0 mt-0.5">
+                          <CheckCircle2 className="h-3 w-3 text-[#FF5AF7]" />
+                        </div>
+                        <span className="text-white">Advanced analytics & AI insights</span>
+                      </li>
+                      <li className="flex items-start gap-2">
+                        <div className="h-5 w-5 rounded-full bg-[#6B00D7]/20 flex items-center justify-center flex-shrink-0 mt-0.5">
+                          <CheckCircle2 className="h-3 w-3 text-[#FF5AF7]" />
+                        </div>
+                        <span className="text-white">Up to 50 time capsules</span>
+                      </li>
+                      <li className="flex items-start gap-2">
+                        <div className="h-5 w-5 rounded-full bg-[#6B00D7]/20 flex items-center justify-center flex-shrink-0 mt-0.5">
+                          <CheckCircle2 className="h-3 w-3 text-[#FF5AF7]" />
+                        </div>
+                        <span className="text-white">3x base voting weight</span>
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+                
+                {/* Vault Sovereign */}
+                <div className="relative group">
+                  <div className="absolute -inset-0.5 bg-gradient-to-br from-[#6B00D7]/90 to-[#FF5AF7]/70 rounded-2xl blur-sm opacity-70 group-hover:opacity-100 transition-all duration-300"></div>
+                  <div className="relative bg-black border border-[#6B00D7]/40 rounded-2xl p-6 h-full">
+                    <div className="flex items-center justify-between mb-4">
+                      <h3 className="text-xl font-bold text-white">Vault Sovereign</h3>
+                      <Badge className="bg-[#6B00D7]/40 text-[#FF5AF7] border-[#6B00D7]/40">
+                        100,000+ CVT
+                      </Badge>
+                    </div>
+                    
+                    <ul className="space-y-3 mb-6">
+                      <li className="flex items-start gap-2">
+                        <div className="h-5 w-5 rounded-full bg-[#6B00D7]/20 flex items-center justify-center flex-shrink-0 mt-0.5">
+                          <CheckCircle2 className="h-3 w-3 text-[#FF5AF7]" />
+                        </div>
+                        <span className="text-white">50% reduction on platform fees</span>
+                      </li>
+                      <li className="flex items-start gap-2">
+                        <div className="h-5 w-5 rounded-full bg-[#6B00D7]/20 flex items-center justify-center flex-shrink-0 mt-0.5">
+                          <CheckCircle2 className="h-3 w-3 text-[#FF5AF7]" />
+                        </div>
+                        <span className="text-white">Premium AI optimization</span>
+                      </li>
+                      <li className="flex items-start gap-2">
+                        <div className="h-5 w-5 rounded-full bg-[#6B00D7]/20 flex items-center justify-center flex-shrink-0 mt-0.5">
+                          <CheckCircle2 className="h-3 w-3 text-[#FF5AF7]" />
+                        </div>
+                        <span className="text-white">Unlimited capsules & concierge service</span>
+                      </li>
+                      <li className="flex items-start gap-2">
+                        <div className="h-5 w-5 rounded-full bg-[#6B00D7]/20 flex items-center justify-center flex-shrink-0 mt-0.5">
+                          <CheckCircle2 className="h-3 w-3 text-[#FF5AF7]" />
+                        </div>
+                        <span className="text-white">10x base voting weight</span>
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div className="text-center mt-16">
+              <h2 className="font-poppins font-bold text-3xl mb-6">
+                <span className="bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] inline-block text-transparent bg-clip-text">
+                  Get Started with CVT Tokens
                 </span>
-              </Button>
+              </h2>
+              <p className="text-lg text-gray-300 max-w-3xl mx-auto mb-8">
+                Unlock the full potential of Chronos Vault with our utility token
+              </p>
+              
+              <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                <Button 
+                  className="bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] hover:opacity-90 text-white font-semibold py-6 px-8 rounded-xl shadow-md hover:shadow-lg hover:shadow-[#6B00D7]/20 transition-all"
+                  onClick={() => setLocation("/cvt-token")}
+                >
+                  <Zap className="mr-2 h-5 w-5" />
+                  Get CVT Tokens
+                </Button>
+                
+                <Button 
+                  variant="outline" 
+                  className="border-[#6B00D7] text-[#FF5AF7] hover:bg-[#6B00D7]/10 font-semibold py-6 px-8 rounded-xl transition-all"
+                  onClick={() => setLocation("/cvt-tokenomics")}
+                >
+                  <Globe className="mr-2 h-5 w-5" />
+                  CVT Tokenomics
+                </Button>
+              </div>
             </div>
           </div>
         </section>
@@ -554,4 +664,4 @@ const CVTUtility = () => {
   );
 };
 
-export default CVTUtility;
+export default CVTUtilityPage;
