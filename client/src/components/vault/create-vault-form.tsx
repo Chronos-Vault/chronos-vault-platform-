@@ -98,6 +98,7 @@ const CreateVaultForm = ({
   const [createdVaultId, setCreatedVaultId] = useState<number | null>(null);
   const [showAttachmentUpload, setShowAttachmentUpload] = useState(false);
   const [attachments, setAttachments] = useState<any[]>([]);
+  const [useTripleChainSecurity, setUseTripleChainSecurity] = useState<boolean>(false);
 
   // Mocked user ID for demo purposes
   const userId = 1;
@@ -230,8 +231,8 @@ const CreateVaultForm = ({
     let blockchainAddress = null;
     let deploymentMetadata = null;
     
-    // Determine if we should use Triple-Chain Security
-    const useTripleChainSecurity = data.tripleChainSecurity;
+    // Get the Triple-Chain Security setting from our state
+    // This is already synced with the form through the checkbox onChange handler
     
     if (isWalletConnected && selectedBlockchain) {
       try {
@@ -549,30 +550,54 @@ const CreateVaultForm = ({
                   )}
                 />
 
-                <FormField
-                  control={form.control}
-                  name="tripleChainSecurity"
-                  render={({ field }) => (
-                    <FormItem className="p-4 border border-[#6B00D7]/20 rounded-lg bg-gradient-to-r from-[#6B00D7]/5 to-[#FF5AF7]/5">
-                      <div className="flex items-center space-x-3">
-                        <FormControl>
-                          <input
-                            type="checkbox"
-                            checked={field.value}
-                            onChange={field.onChange}
-                            className="form-checkbox h-5 w-5 text-purple-600 rounded border-gray-400 focus:ring-purple-500"
-                          />
-                        </FormControl>
-                        <div>
-                          <FormLabel className="text-base font-medium">Enable Triple-Chain Security</FormLabel>
-                          <FormDescription className="text-sm text-gray-400">
-                            Secure your vault with our revolutionary Triple-Chain Security architecture, distributing security across Ethereum, Solana, and TON blockchains for maximum protection
-                          </FormDescription>
-                        </div>
+                {/* Triple-Chain Security Section - Made more prominent */}
+                <div className="mb-6 mt-8">
+                  <div className="p-5 border-2 border-[#6B00D7]/40 rounded-lg bg-gradient-to-r from-[#6B00D7]/10 to-[#FF5AF7]/10 animate-pulse-slow">
+                    <div className="flex items-center mb-3">
+                      <div className="bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] p-2 rounded-full mr-3">
+                        <svg className="h-5 w-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                        </svg>
                       </div>
-                    </FormItem>
-                  )}
-                />
+                      <h3 className="font-poppins font-semibold text-white text-lg">Triple-Chain Security Architecture</h3>
+                    </div>
+                    
+                    <p className="text-gray-300 mb-4 ml-12">
+                      Our revolutionary security system distributes your vault's security across multiple blockchains (TON, Ethereum, and Solana)
+                      for unmatched protection against single-chain vulnerabilities.
+                    </p>
+                    
+                    <FormField
+                      control={form.control}
+                      name="tripleChainSecurity"
+                      render={({ field }) => (
+                        <FormItem className="p-4 border border-[#6B00D7]/40 rounded-lg bg-[#1A1A1A]/50 ml-12">
+                          <div className="flex items-center space-x-3">
+                            <FormControl>
+                              <input
+                                type="checkbox"
+                                checked={field.value}
+                                onChange={(e) => {
+                                  field.onChange(e);
+                                  setUseTripleChainSecurity(e.target.checked);
+                                }}
+                                className="form-checkbox h-6 w-6 text-[#6B00D7] rounded border-gray-400 focus:ring-[#6B00D7]"
+                              />
+                            </FormControl>
+                            <div>
+                              <FormLabel className="text-lg font-medium bg-clip-text text-transparent bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7]">
+                                Enable Triple-Chain Security
+                              </FormLabel>
+                              <FormDescription className="text-sm text-gray-300">
+                                Increase your vault's security rating from Level 3 to Level 5 (Enterprise Grade)
+                              </FormDescription>
+                            </div>
+                          </div>
+                        </FormItem>
+                      )}
+                    />
+                  </div>
+                </div>
 
                 <TabsContent value="legacy" className="mt-0 space-y-6">
                   <div className="bg-[#6B00D7]/10 p-4 rounded-lg mb-4">

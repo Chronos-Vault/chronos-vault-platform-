@@ -127,7 +127,7 @@ const Navbar = () => {
                     Create Standard Vault
                   </DropdownMenuItem>
                 </Link>
-                <Link href="/specialized-vault">
+                <Link href="/specialized-vault-creation">
                   <DropdownMenuItem className="cursor-pointer">
                     Create Specialized Vault
                   </DropdownMenuItem>
