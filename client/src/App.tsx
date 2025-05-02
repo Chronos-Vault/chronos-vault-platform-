@@ -1,4 +1,4 @@
-import { Switch, Route } from "wouter";
+import { Switch, Route, useLocation } from "wouter";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { MultiChainProvider } from "@/contexts/multi-chain-context";
@@ -42,17 +42,26 @@ import NotFound from "@/pages/not-found";
 import TestContractPage from "@/pages/test-contract";
 import WalletManagerPage from "@/pages/wallet-manager";
 
+// Redirect component for wouter
+function Redirect({ to }: { to: string }) {
+  const [_, navigate] = useLocation();
+  React.useEffect(() => {
+    navigate(to);
+  }, [navigate, to]);
+  return null;
+}
+
 function Router() {
   return (
     <Layout>
       <Switch>
         <Route path="/" component={Home} />
         <Route path="/create-vault" component={CreateVault} />
-        <Route path="/create-vault-enhanced" component={CreateVaultEnhancedPage} />
-        <Route path="/vault-types" component={VaultTypesSelector} />
-        <Route path="/advanced-vault" component={AdvancedVaultCreationPage} />
-        <Route path="/advanced-vault-new" component={AdvancedVaultCreationNewPage} />
-        <Route path="/specialized-vault-creation" component={SpecializedVaultCreationPage} />
+        <Route path="/create-vault-enhanced" component={() => <Redirect to="/create-vault" />} />
+        <Route path="/vault-types" component={() => <Redirect to="/create-vault" />} />
+        <Route path="/advanced-vault" component={() => <Redirect to="/create-vault" />} />
+        <Route path="/advanced-vault-new" component={() => <Redirect to="/create-vault" />} />
+        <Route path="/specialized-vault-creation" component={() => <Redirect to="/create-vault" />} />
         <Route path="/my-vaults" component={MyVaults} />
         <Route path="/vault/:id" component={VaultDetails} />
         <Route path="/about" component={About} />
