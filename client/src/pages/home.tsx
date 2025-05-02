@@ -2,11 +2,15 @@ import { useEffect } from "react";
 import { Link, useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import { Separator } from "@/components/ui/separator";
 import VaultCard from "@/components/vault/vault-card";
 import { BitcoinHalvingVault } from "@/components/bitcoin/BitcoinHalvingVault";
+import { Zap, Coins, Sparkles, ArrowRight } from "lucide-react";
+import { useCVTToken } from "@/contexts/cvt-token-context";
 
 const Home = () => {
   const [_, setLocation] = useLocation();
+  const { tokenBalance } = useCVTToken();
 
   // Sample vault data for display purposes
   const sampleVault = {

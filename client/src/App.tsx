@@ -45,6 +45,7 @@ import WalletManagerPage from "@/pages/wallet-manager";
 import PremiumPaymentPage from "@/pages/premium-payment";
 import SubscriptionPage from "@/pages/subscription";
 import CVTPaymentPage from "@/pages/cvt-payment";
+import CVTUtilityPage from "@/pages/cvt-utility";
 
 // Redirect component for wouter
 function Redirect({ to }: { to: string }) {
@@ -74,6 +75,7 @@ function Router() {
         <Route path="/bitcoin-halving-vault" component={BitcoinHalvingVaultPage} />
         <Route path="/roadmap" component={RoadmapPage} />
         <Route path="/cvt-token" component={CVTTokenPage} />
+        <Route path="/cvt-utility" component={CVTUtilityPage} />
         <Route path="/token-vaults" component={TokenVaultsPage} />
         <Route path="/cross-chain" component={CrossChainPage} />
         <Route path="/cross-chain-vault" component={CrossChainVaultPage} />
