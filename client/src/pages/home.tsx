@@ -20,7 +20,17 @@ const Home = () => {
     timeLockPeriod: 730, // 2 years
     createdAt: new Date(Date.now() - 90 * 24 * 60 * 60 * 1000), // 90 days ago
     unlockDate: new Date(Date.now() + 640 * 24 * 60 * 60 * 1000), // ~1.75 years from now
-    isLocked: true
+    isLocked: true,
+    metadata: {},
+    ethereumContractAddress: "0x1234...",
+    solanaContractAddress: "5678...",
+    tonContractAddress: "EQAbc...",
+    bitCoinAddress: "bc1q...",
+    multisigEnabled: false,
+    geolocationEnabled: false,
+    privacyEnabled: false,
+    securityLevel: "high",
+    crossChainEnabled: false
   };
 
   // Handle smooth scrolling for anchor links
@@ -65,7 +75,7 @@ const Home = () => {
               <div>
                 <h2 className="font-poppins font-bold text-3xl md:text-4xl lg:text-5xl leading-tight">
                   <span className="bg-clip-text text-transparent bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7]">
-                    The Swiss Bank of Web3
+                    Chronos Vault
                   </span>
                 </h2>
                 <p className="text-2xl md:text-3xl font-light mt-2 text-gray-200">
@@ -78,12 +88,31 @@ const Home = () => {
                 Secure, user-friendly, and unstoppable — the future of blockchain vaults.
               </p>
               
+              <div className="mt-4 mb-6 rounded-xl bg-[#1A1A1A]/50 border border-[#6B00D7]/20 p-3 inline-flex items-center">
+                <span className="text-[#FF5AF7] mr-2">💰</span>
+                <span className="text-white font-medium">Now with multi-chain payments! Pay with</span>
+                <div className="ml-2 flex items-center space-x-2">
+                  <span className="px-2 py-1 bg-[#6B00D7]/20 rounded-md text-white font-semibold">ETH</span>
+                  <span className="px-2 py-1 bg-[#6B00D7]/20 rounded-md text-white font-semibold">SOL</span>
+                  <span className="px-2 py-1 bg-[#6B00D7]/20 rounded-md text-white font-semibold">TON</span>
+                  <span className="px-2 py-1 bg-[#6B00D7]/20 rounded-md text-white font-semibold">BTC</span>
+                </div>
+              </div>
+              
               <div className="flex flex-col sm:flex-row gap-4">
                 <Button
                   onClick={handleCreateVault}
                   className="cta-button prismatic-border bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] px-8 py-4 rounded-lg font-poppins font-medium text-white shadow-lg hover:shadow-xl hover:shadow-[#6B00D7]/20 transition-all"
                 >
-                  Create Your Vault
+                  <div className="flex items-center">
+                    <span>Create Your Vault</span>
+                    <div className="flex -space-x-1 ml-2">
+                      <div className="w-5 h-5 rounded-full bg-blue-500 flex items-center justify-center text-[8px] font-bold">ETH</div>
+                      <div className="w-5 h-5 rounded-full bg-purple-500 flex items-center justify-center text-[8px] font-bold">SOL</div>
+                      <div className="w-5 h-5 rounded-full bg-cyan-500 flex items-center justify-center text-[8px] font-bold">TON</div>
+                      <div className="w-5 h-5 rounded-full bg-orange-500 flex items-center justify-center text-[8px] font-bold">BTC</div>
+                    </div>
+                  </div>
                 </Button>
                 <Button
                   variant="outline"
