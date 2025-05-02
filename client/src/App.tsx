@@ -10,7 +10,7 @@ import Layout from "@/components/layout/Layout";
 
 // Pages
 import Home from "@/pages/home";
-import CreateVaultNew from "@/pages/create-vault-new";
+import CreateVault from "@/pages/create-vault";
 import CreateVaultEnhancedPage from "@/pages/create-vault-enhanced";
 import AdvancedVaultCreationPage from "@/pages/advanced-vault-creation";
 import AdvancedVaultCreationNewPage from "@/pages/advanced-vault-creation-new";
@@ -47,7 +47,7 @@ function Router() {
     <Layout>
       <Switch>
         <Route path="/" component={Home} />
-        <Route path="/create-vault" component={CreateVaultNew} />
+        <Route path="/create-vault" component={CreateVault} />
         <Route path="/create-vault-enhanced" component={CreateVaultEnhancedPage} />
         <Route path="/vault-types" component={VaultTypesSelector} />
         <Route path="/advanced-vault" component={AdvancedVaultCreationPage} />
