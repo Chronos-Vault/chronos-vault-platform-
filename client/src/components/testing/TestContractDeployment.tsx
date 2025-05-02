@@ -271,7 +271,7 @@ export default function TestContractDeployment({ className }: TestContractDeploy
   const [isCompiling, setIsCompiling] = useState<boolean>(false);
   const [isDeploying, setIsDeploying] = useState<boolean>(false);
   const [compileResult, setCompileResult] = useState<{success: boolean; message: string; compiledCode?: string} | null>(null);
-  const [deployResult, setDeployResult] = useState<{success: boolean; address?: string; message: string} | null>(null);
+  const [deployResult, setDeployResult] = useState<{success: boolean; address?: string; message: string; simulated?: boolean} | null>(null);
   
   // Check if a chain is on testnet
   const checkIsTestnet = (chain: BlockchainType): boolean => {
@@ -451,7 +451,8 @@ export default function TestContractDeployment({ className }: TestContractDeploy
             setDeployResult({
               success: true,
               address: result.contractAddress,
-              message: `Contract deployed successfully to TON testnet.${result.transactionHash ? ` Transaction hash: ${result.transactionHash.substring(0, 10)}...` : ''}`
+              simulated: result.simulated,
+              message: `Contract ${result.simulated ? 'simulated' : 'deployed successfully'} to TON testnet.${result.transactionHash ? ` Transaction hash: ${result.transactionHash.substring(0, 10)}...` : ''}`
             });
           } else {
             setDeployResult({
@@ -564,7 +565,9 @@ export default function TestContractDeployment({ className }: TestContractDeploy
                   <div className="h-3 w-3 rounded-full bg-green-500 animate-pulse"></div>
                   <span className="text-sm text-green-300">
                     {activeChain === BlockchainType.TON 
-                      ? 'TON Deployment Ready (Using API)' 
+                      ? (chainStatus[BlockchainType.TON]?.isConnected
+                          ? 'TON Wallet Connected (Real Deployment)'
+                          : 'TON Deployment Ready (Simulation Mode)')
                       : `${activeChain.charAt(0).toUpperCase() + activeChain.slice(1)} Wallet Connected`}
                   </span>
                 </div>
@@ -710,7 +713,9 @@ export default function TestContractDeployment({ className }: TestContractDeploy
                     <AlertCircle className="h-5 w-5 text-red-500 mr-2" />
                   )}
                   <span className="text-sm font-medium text-white">
-                    {deployResult.success ? 'Deployment Successful' : 'Deployment Failed'}
+                    {deployResult.success ? 
+                      (deployResult.simulated ? 'Simulated Deployment (No Wallet)' : 'Deployment Successful (Real)') 
+                      : 'Deployment Failed'}
                   </span>
                 </div>
                 {deployResult.address && (

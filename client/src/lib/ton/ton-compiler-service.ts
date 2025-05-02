@@ -97,7 +97,7 @@ class TonCompilerService {
       message?: string;
       amount?: string;
     }
-  ): Promise<{ success: boolean; contractAddress?: string; transactionHash?: string; error?: string }> {
+  ): Promise<{ success: boolean; contractAddress?: string; transactionHash?: string; simulated?: boolean; error?: string }> {
     try {
       console.log('Deploying contract with params:', initialData);
       
@@ -155,24 +155,28 @@ class TonCompilerService {
       
       // Send the deployment transaction
       console.log('Sending deployment transaction...');
-      
-      // For development/demo, we'll simulate deployment since we may not have a connected wallet
-      // or may be using a test address
       let result;
-      if (process.env.NODE_ENV === 'development' || !tonService.getWalletInfo()) {
-        console.warn('Simulating transaction in development mode');
-        // Simulate a successful transaction
-        result = {
-          success: true,
-          transactionHash: `t${Date.now().toString(16)}${Math.random().toString(16).substring(2, 10)}`
-        };
-      } else {
-        // Real transaction in production with connected wallet
+      
+      // Check if wallet is connected
+      const walletInfo = tonService.getWalletInfo();
+      const isWalletConnected = !!walletInfo && !!walletInfo.address;
+      
+      if (isWalletConnected) {
+        console.log('Using connected wallet for real deployment');
+        // Real transaction with connected wallet
         result = await tonService.sendTransaction(contractDeployTransaction);
         
         if (!result.success) {
           throw new Error(result.error || 'Contract deployment transaction failed');
         }
+      } else {
+        console.warn('Wallet not connected - using simulation mode');
+        // Simulate a successful transaction when wallet not connected
+        result = {
+          success: true,
+          transactionHash: `t${Date.now().toString(16)}${Math.random().toString(16).substring(2, 10)}`,
+          simulated: true
+        };
       }
       
       // Calculate the contract address based on deployment parameters
@@ -186,7 +190,8 @@ class TonCompilerService {
       return {
         success: true,
         contractAddress: contractAddress,
-        transactionHash: result.transactionHash
+        transactionHash: result.transactionHash,
+        simulated: result.simulated || false
       };
       
     } catch (error: any) {
