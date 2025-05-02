@@ -10,7 +10,7 @@ import { useToast } from "@/hooks/use-toast";
 import { FileUpload } from "@/components/attachments/file-upload";
 import { EnhancedMediaUploader } from "@/components/attachments/enhanced-media-uploader";
 import VaultTypeSelector, { SpecializedVaultType } from "@/components/vault/vault-type-selector";
-import { useCVTToken } from "@/contexts/cvt-token-context";
+import { useCVTToken, StakingTier } from "@/contexts/cvt-token-context";
 import { Coins, Wallet } from "lucide-react";
 
 import {
@@ -138,7 +138,7 @@ const CreateVaultForm = ({
   const [useTripleChainSecurity, setUseTripleChainSecurity] = useState<boolean>(false);
   
   // Get CVT token context for balance and pricing
-  const { cvtBalance, stakingTier } = useCVTToken();
+  const { tokenBalance, currentStakingTier } = useCVTToken();
   
   // Function to get vault creation cost based on vault type
   const getCreationCost = () => {
@@ -173,10 +173,10 @@ const CreateVaultForm = ({
     if (paymentType === 'cvt') {
       // Apply staking tier discount
       let discount = 0;
-      switch(stakingTier) {
-        case 'Guardian': discount = 0.75; break; // 75% discount
-        case 'Architect': discount = 0.9; break; // 90% discount
-        case 'Sovereign': discount = 1.0; break; // 100% discount
+      switch(currentStakingTier) {
+        case StakingTier.GUARDIAN: discount = 0.75; break; // 75% discount
+        case StakingTier.ARCHITECT: discount = 0.9; break; // 90% discount
+        case StakingTier.SOVEREIGN: discount = 1.0; break; // 100% discount
         default: discount = 0; // No discount
       }
       
@@ -1080,7 +1080,11 @@ const CreateVaultForm = ({
                       render={({ field }) => (
                         <FormItem className="ml-12 space-y-4">
                           <RadioGroup
-                            onValueChange={field.onChange}
+                            onValueChange={(value) => {
+                              field.onChange(value);
+                              // Force a re-render to update pricing
+                              form.trigger();
+                            }}
                             defaultValue={field.value}
                             className="flex flex-col space-y-3"
                           >
@@ -1129,6 +1133,64 @@ const CreateVaultForm = ({
                               </div>
                             </FormItem>
                           </RadioGroup>
+                          
+                          {/* Payment pricing details */}
+                          {form?.formState.isValid && (
+                            <div className="mt-4 p-4 border border-[#6B00D7]/20 rounded-lg bg-[#15121C]/80">
+                              <div className="flex justify-between items-center">
+                                <div>
+                                  <h4 className="text-sm font-medium text-gray-300">Estimated Cost:</h4>
+                                  <div className="flex items-center space-x-2 mt-1">
+                                    <span className="text-lg font-bold text-white">
+                                      {getCreationCost().amount} {getCreationCost().currency}
+                                    </span>
+                                    {getCreationCost().discount && (
+                                      <span className="text-xs py-0.5 px-2 bg-[#6B00D7]/20 text-[#FF5AF7] rounded-full">
+                                        {getCreationCost().discount} discount applied
+                                      </span>
+                                    )}
+                                  </div>
+                                </div>
+                                
+                                {form.watch('paymentType') === 'cvt' && (
+                                  <div className="text-right">
+                                    <span className="text-xs text-gray-400">Your CVT Balance</span>
+                                    <p className="text-sm font-medium text-white">{tokenBalance || '0'} CVT</p>
+                                  </div>
+                                )}
+                              </div>
+                              
+                              {/* Show CVT benefits if using CVT payment */}
+                              {form.watch('paymentType') === 'cvt' && (
+                                <div className="mt-3 pt-3 border-t border-[#6B00D7]/20">
+                                  <span className="text-xs text-[#FF5AF7]">CVT Payment Benefits:</span>
+                                  <ul className="mt-1 space-y-1 text-xs text-gray-400">
+                                    <li className="flex items-start">
+                                      <span className="text-[#FF5AF7] mr-1">•</span> Premium vault features unlocked
+                                    </li>
+                                    <li className="flex items-start">
+                                      <span className="text-[#FF5AF7] mr-1">•</span> Voting rights for platform governance
+                                    </li>
+                                    <li className="flex items-start">
+                                      <span className="text-[#FF5AF7] mr-1">•</span> Staking benefits and fee reductions
+                                    </li>
+                                  </ul>
+                                </div>
+                              )}
+                              
+                              {/* Staking Tier Information */}
+                              {currentStakingTier !== StakingTier.NONE && form.watch('paymentType') === 'cvt' && (
+                                <div className="mt-3 pt-3 border-t border-[#6B00D7]/20">
+                                  <span className="text-xs text-[#FF5AF7]">
+                                    {currentStakingTier} Tier Active
+                                  </span>
+                                  <p className="mt-1 text-xs text-gray-400">
+                                    Your staking tier provides you with {getCreationCost().discount} discount on all vault creations.
+                                  </p>
+                                </div>
+                              )}
+                            </div>
+                          )}
                         </FormItem>
                       )}
                     />
