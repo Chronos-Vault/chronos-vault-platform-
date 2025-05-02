@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
@@ -14,9 +14,34 @@ interface WalletStatus {
 }
 
 export default function TonWalletPanel() {
-  const { isConnected, walletInfo, connectionStatus, connect, disconnect } = useTon();
+  const { isConnected, isConnecting, walletInfo, connectionStatus, connect, disconnect, restoreSession } = useTon();
   const [isProcessing, setIsProcessing] = useState(false);
   const [lastError, setLastError] = useState<string | null>(null);
+  
+  // Auto-restore session when component mounts
+  useEffect(() => {
+    console.log('TonWalletPanel mounted, checking connection status...');
+    
+    const attemptSessionRestoration = async () => {
+      // Only attempt to restore if we're not already connected or connecting
+      if (connectionStatus === TonConnectionStatus.DISCONNECTED && !isConnecting) {
+        console.log('Not connected, attempting to restore wallet session');
+        try {
+          setIsProcessing(true);
+          const restored = await restoreSession();
+          console.log('Session restoration attempt result:', restored);
+        } catch (error) {
+          console.error('Error during automatic session restoration:', error);
+        } finally {
+          setIsProcessing(false);
+        }
+      } else {
+        console.log('Already connected or connecting, skipping session restoration');
+      }
+    };
+    
+    attemptSessionRestoration();
+  }, [connectionStatus, isConnecting, restoreSession]);
   
   // Handle wallet connection
   const handleConnect = async () => {

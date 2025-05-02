@@ -35,6 +35,28 @@ const TonWalletController: React.FC = () => {
   const [showSessionDetails, setShowSessionDetails] = useState(false);
   const [showDebugInfo, setShowDebugInfo] = useState(false);
 
+  // Auto-restore session when component mounts
+  useEffect(() => {
+    console.log('TonWalletController mounted, checking connection status...');
+    
+    const attemptSessionRestoration = async () => {
+      // Only attempt to restore if we're not already connected or connecting
+      if (connectionStatus === TonConnectionStatus.DISCONNECTED && !isConnecting) {
+        console.log('Not connected, attempting to restore wallet session');
+        try {
+          const restored = await restoreSession();
+          console.log('Session restoration attempt result:', restored);
+        } catch (error) {
+          console.error('Error during automatic session restoration:', error);
+        }
+      } else {
+        console.log('Already connected or connecting, skipping session restoration');
+      }
+    };
+    
+    attemptSessionRestoration();
+  }, [connectionStatus, isConnecting, restoreSession]);
+
   // Clean previously saved states
   const handleClearSession = async () => {
     setIsProcessing(true);
