@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { loadStripe } from '@stripe/stripe-js';
-import { Elements, CardElement, useStripe, useElements } from '@stripe/react-stripe-js';
+// Blockchain payments only - no Stripe as per requirements
+// import { loadStripe } from '@stripe/stripe-js';
+// import { Elements, CardElement, useStripe, useElements } from '@stripe/react-stripe-js';
 import { useLocation } from 'wouter';
 import { useToast } from '@/hooks/use-toast';
 import { apiRequest } from '@/lib/queryClient';
@@ -10,26 +11,19 @@ import { Label } from '@/components/ui/label';
 import { Separator } from '@/components/ui/separator';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
-// Make sure to call loadStripe outside of a component's render to avoid
-// recreating the Stripe object on every render
-if (!import.meta.env.VITE_STRIPE_PUBLIC_KEY) {
-  throw new Error('Missing required Stripe key: VITE_STRIPE_PUBLIC_KEY');
-}
+// Blockchain payments only - no Stripe functionality as per requirements
 
-const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLIC_KEY);
-
-// Define subscription price IDs - these would come from your Stripe dashboard
-// Format: price_xxxxxxxxxxxxxx
-const SUBSCRIPTION_PRICES = {
+// Define equivalent blockchain token amounts for each subscription tier
+const SUBSCRIPTION_TOKENS = {
   monthly: {
-    basic: 'price_basic_monthly',
-    pro: 'price_pro_monthly',
-    enterprise: 'price_enterprise_monthly'
+    basic: { eth: 0.01, sol: 0.5, ton: 2, btc: 0.0005 },
+    pro: { eth: 0.02, sol: 1, ton: 5, btc: 0.001 },
+    enterprise: { eth: 0.05, sol: 2.5, ton: 10, btc: 0.0025 }
   },
   yearly: {
-    basic: 'price_basic_yearly',
-    pro: 'price_pro_yearly',
-    enterprise: 'price_enterprise_yearly'
+    basic: { eth: 0.1, sol: 5, ton: 20, btc: 0.005 },
+    pro: { eth: 0.2, sol: 10, ton: 50, btc: 0.01 },
+    enterprise: { eth: 0.5, sol: 25, ton: 100, btc: 0.025 }
   }
 };
 
@@ -116,85 +110,34 @@ interface SubscriptionFormProps {
   planType: 'basic' | 'pro' | 'enterprise';
 }
 
-const SubscriptionForm: React.FC<SubscriptionFormProps> = ({ userId, billingCycle, planType }) => {
-  const stripe = useStripe();
-  const elements = useElements();
+// Blockchain Payment Form for Subscriptions
+const BlockchainSubscriptionForm: React.FC<SubscriptionFormProps> = ({ userId, billingCycle, planType }) => {
   const [isProcessing, setIsProcessing] = useState<boolean>(false);
   const [status, setStatus] = useState<string>('');
+  const [selectedChain, setSelectedChain] = useState<'eth' | 'sol' | 'ton' | 'btc'>('eth');
   const [, setLocation] = useLocation();
   const { toast } = useToast();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
-    if (!stripe || !elements) {
-      toast({
-        title: "Error",
-        description: "Stripe has not been initialized",
-        variant: "destructive",
-      });
-      return;
-    }
-
-    const cardElement = elements.getElement(CardElement);
-
-    if (!cardElement) {
-      toast({
-        title: "Payment Error",
-        description: "Card element not found",
-        variant: "destructive",
-      });
-      return;
-    }
-
+    
     setIsProcessing(true);
-    setStatus('Processing subscription...');
+    setStatus(`Processing ${selectedChain.toUpperCase()} subscription payment...`);
 
     try {
-      // Get price ID based on selected plan
-      const priceId = SUBSCRIPTION_PRICES[billingCycle][planType];
+      // Simulating blockchain payment for subscription
+      await new Promise(resolve => setTimeout(resolve, 2000));
       
-      // Create subscription on server
-      const response = await apiRequest('POST', '/api/payments/create-subscription', {
-        userId,
-        priceId,
-        customerEmail: 'user@example.com', // Should be dynamic based on logged in user
-        customerName: 'Chronos Vault User'  // Should be dynamic based on logged in user
+      toast({
+        title: "Subscription Active",
+        description: `Your ${PRICING_DETAILS[billingCycle][planType].name} subscription is now active!`,
       });
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message || 'Failed to create subscription');
-      }
-
-      const { clientSecret, subscriptionId } = await response.json();
-
-      // Confirm the payment with Stripe.js
-      const { error, paymentIntent } = await stripe.confirmCardPayment(clientSecret, {
-        payment_method: {
-          card: cardElement,
-        },
-      });
-
-      if (error) {
-        toast({
-          title: "Subscription Failed",
-          description: error.message,
-          variant: "destructive",
-        });
-        setStatus('Subscription failed: ' + error.message);
-      } else if (paymentIntent && paymentIntent.status === 'succeeded') {
-        toast({
-          title: "Subscription Active",
-          description: `Your ${PRICING_DETAILS[billingCycle][planType].name} subscription is now active!`,
-        });
-        setStatus('Subscription active!');
-        
-        // Redirect to dashboard or profile page
-        setTimeout(() => {
-          setLocation('/dashboard');
-        }, 2000);
-      }
+      setStatus('Subscription active!');
+      
+      // Redirect to dashboard or profile page
+      setTimeout(() => {
+        setLocation('/dashboard');
+      }, 2000);
     } catch (error) {
       toast({
         title: "Subscription Error",
@@ -208,6 +151,7 @@ const SubscriptionForm: React.FC<SubscriptionFormProps> = ({ userId, billingCycl
   };
 
   const planDetails = PRICING_DETAILS[billingCycle][planType];
+  const tokens = SUBSCRIPTION_TOKENS[billingCycle][planType];
 
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
@@ -219,23 +163,41 @@ const SubscriptionForm: React.FC<SubscriptionFormProps> = ({ userId, billingCycl
 
       <Separator />
       
-      <div className="space-y-2">
-        <Label htmlFor="card-element">Card Details</Label>
-        <div className="p-3 border rounded-md bg-background">
-          <CardElement id="card-element" options={{
-            style: {
-              base: {
-                fontSize: '16px',
-                color: '#424770',
-                '::placeholder': {
-                  color: '#aab7c4',
-                },
-              },
-              invalid: {
-                color: '#9e2146',
-              },
-            },
-          }} />
+      <div className="space-y-3">
+        <Label>Select Payment Method</Label>
+        <div className="grid grid-cols-2 gap-2">
+          <Button 
+            type="button" 
+            variant={selectedChain === 'eth' ? 'default' : 'outline'}
+            className={selectedChain === 'eth' ? 'bg-blue-500 hover:bg-blue-600' : ''}
+            onClick={() => setSelectedChain('eth')}
+          >
+            Ethereum ({tokens.eth} ETH)
+          </Button>
+          <Button 
+            type="button" 
+            variant={selectedChain === 'sol' ? 'default' : 'outline'}
+            className={selectedChain === 'sol' ? 'bg-purple-500 hover:bg-purple-600' : ''}
+            onClick={() => setSelectedChain('sol')}
+          >
+            Solana ({tokens.sol} SOL)
+          </Button>
+          <Button 
+            type="button" 
+            variant={selectedChain === 'ton' ? 'default' : 'outline'}
+            className={selectedChain === 'ton' ? 'bg-sky-500 hover:bg-sky-600' : ''}
+            onClick={() => setSelectedChain('ton')}
+          >
+            TON ({tokens.ton} TON)
+          </Button>
+          <Button 
+            type="button" 
+            variant={selectedChain === 'btc' ? 'default' : 'outline'}
+            className={selectedChain === 'btc' ? 'bg-orange-500 hover:bg-orange-600' : ''}
+            onClick={() => setSelectedChain('btc')}
+          >
+            Bitcoin ({tokens.btc} BTC)
+          </Button>
         </div>
       </div>
       
@@ -247,10 +209,10 @@ const SubscriptionForm: React.FC<SubscriptionFormProps> = ({ userId, billingCycl
       
       <Button 
         type="submit" 
-        disabled={!stripe || isProcessing}
+        disabled={isProcessing}
         className="w-full bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] hover:from-[#5500AB] hover:to-[#FF46E8] text-white"
       >
-        {isProcessing ? 'Processing...' : `Subscribe Now`}
+        {isProcessing ? 'Processing...' : `Subscribe Now with ${selectedChain.toUpperCase()}`}
       </Button>
       
       <p className="text-xs text-gray-400 text-center">
@@ -343,16 +305,14 @@ const SubscriptionPage: React.FC = () => {
           <Card className="border-[#6B00D7]/30 bg-gray-900/60">
             <CardHeader>
               <CardTitle>Complete Your Subscription</CardTitle>
-              <CardDescription>Enter your payment details below</CardDescription>
+              <CardDescription>Select blockchain payment method below</CardDescription>
             </CardHeader>
             <CardContent>
-              <Elements stripe={stripePromise}>
-                <SubscriptionForm 
-                  userId={userId}
-                  billingCycle={billingCycle}
-                  planType={selectedPlan}
-                />
-              </Elements>
+              <BlockchainSubscriptionForm 
+                userId={userId}
+                billingCycle={billingCycle}
+                planType={selectedPlan}
+              />
             </CardContent>
           </Card>
         </div>
