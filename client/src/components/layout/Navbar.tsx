@@ -35,9 +35,7 @@ const Navbar = () => {
       icon: "🏠",
       items: [
         { name: "Home", href: "/", icon: "🏠" },
-        { name: "Create Vault (All Types)", href: "/vault-types", icon: "🔐" },
-        { name: "Create Standard Vault", href: "/create-vault", icon: "🔒" },
-        { name: "Create Specialized Vault", href: "/specialized-vault", icon: "⚡" },
+        { name: "Create Vault", href: "/create-vault", icon: "🔒" },
         { name: "My Vaults", href: "/my-vaults", icon: "📊" },
         { name: "Gift Crypto", href: "/gift-crypto", icon: "🎁", highlight: true },
       ]
@@ -125,11 +123,6 @@ const Navbar = () => {
                 <Link href="/my-vaults">
                   <DropdownMenuItem className="cursor-pointer">
                     My Vaults
-                  </DropdownMenuItem>
-                </Link>
-                <Link href="/advanced-vault-new">
-                  <DropdownMenuItem className="cursor-pointer">
-                    Advanced Options
                   </DropdownMenuItem>
                 </Link>
               </DropdownMenuContent>
