@@ -45,11 +45,11 @@ const SpecializedVaultCreation: React.FC = () => {
   const isWalletConnected = (blockchain: BlockchainType): boolean => {
     switch(blockchain) {
       case BlockchainType.TON:
-        return Boolean(ton.wallet?.address);
+        return Boolean(ton.isConnected && ton.walletInfo?.address);
       case BlockchainType.ETHEREUM:
-        return Boolean(ethereum.wallet?.address);
+        return Boolean(ethereum.isConnected);
       case BlockchainType.SOLANA:
-        return Boolean(solana.wallet?.address);
+        return Boolean(solana.isConnected);
       default:
         return false;
     };
@@ -58,11 +58,11 @@ const SpecializedVaultCreation: React.FC = () => {
   const getWalletAddress = (blockchain: BlockchainType): string => {
     switch(blockchain) {
       case BlockchainType.TON:
-        return ton.wallet?.address || 'Not connected';
+        return ton.walletInfo?.address || 'Not connected';
       case BlockchainType.ETHEREUM:
-        return ethereum.wallet?.address || 'Not connected';
+        return ethereum.isConnected ? 'Connected' : 'Not connected';
       case BlockchainType.SOLANA:
-        return solana.wallet?.address || 'Not connected';
+        return solana.isConnected ? 'Connected' : 'Not connected';
       default:
         return 'Not connected';
     };
@@ -600,7 +600,7 @@ const SpecializedVaultCreation: React.FC = () => {
                 {i}
               </div>
               {i < 4 && (
-                <div className={`h-1 w-10 ${step > i ? 'bg-[#FF5AF7]' : 'bg-gray-700'}`}></div>
+                <div key={`separator-${i}`} className={`h-1 w-10 ${step > i ? 'bg-[#FF5AF7]' : 'bg-gray-700'}`}></div>
               )}
             </React.Fragment>
           ))}
