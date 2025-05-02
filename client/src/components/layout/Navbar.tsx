@@ -117,19 +117,9 @@ const Navbar = () => {
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent className="w-56">
-                <Link href="/vault-types">
-                  <DropdownMenuItem className="cursor-pointer">
-                    Create Vault (All Types)
-                  </DropdownMenuItem>
-                </Link>
                 <Link href="/create-vault">
                   <DropdownMenuItem className="cursor-pointer">
-                    Create Standard Vault
-                  </DropdownMenuItem>
-                </Link>
-                <Link href="/specialized-vault-creation">
-                  <DropdownMenuItem className="cursor-pointer">
-                    Create Specialized Vault
+                    Create Vault
                   </DropdownMenuItem>
                 </Link>
                 <Link href="/my-vaults">
