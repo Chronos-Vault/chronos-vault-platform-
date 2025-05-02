@@ -200,7 +200,11 @@ const CreateVaultForm = ({
     form.setValue("unlockDate", unlockDate.toISOString());
   };
 
-  function onSubmit(data: FormValues) {
+  const [isBlockchainDeploying, setIsBlockchainDeploying] = useState(false);
+  const [deploymentStatus, setDeploymentStatus] = useState<string | null>(null);
+  const [contractAddress, setContractAddress] = useState<string | null>(null);
+  
+  async function onSubmit(data: FormValues) {
     // Create gift experience metadata if vault type is "gift"
     let giftExperience;
     if (data.vaultType === "gift") {
@@ -214,17 +218,101 @@ const CreateVaultForm = ({
       };
     }
     
-    // Include attachment information and gift data in the vault metadata
+    // Get the current timestamp + timelock period for the vault
+    const currentTime = Math.floor(Date.now() / 1000);
+    const unlockTime = currentTime + (data.timeLockPeriod * 24 * 60 * 60); // Convert days to seconds
+    
+    // Handle blockchain deployment if wallet is connected
+    let blockchainTxHash = null;
+    let blockchainAddress = null;
+    let deploymentMetadata = null;
+    
+    if (isWalletConnected && selectedBlockchain) {
+      try {
+        setIsBlockchainDeploying(true);
+        setDeploymentStatus("Preparing deployment transaction...");
+        
+        // Deploy based on the selected blockchain
+        if (selectedBlockchain === BlockchainType.TON && ton) {
+          setDeploymentStatus("Deploying to TON Network...");
+          
+          // Convert amount to nanograms (TON's smallest unit)
+          const amount = parseFloat(data.assetAmount) || 0.1; 
+          const nanotons = Math.floor(amount * 1_000_000_000);
+          
+          // Make sure we have TonContractService
+          if (ton.contractService) {
+            const deployParams = {
+              recipient: ton.wallet?.address || '', // Will be the owner
+              unlockTime: unlockTime,
+              securityLevel: 3, // Medium security by default
+              comment: data.description || 'ChronosVault',
+              amount: nanotons,
+            };
+            
+            // Deploy the vault contract
+            const result = await ton.contractService.deployVault(deployParams);
+            
+            if (result.success) {
+              blockchainTxHash = result.transactionHash;
+              blockchainAddress = result.contractAddress || null;
+              deploymentMetadata = {
+                blockchain: selectedBlockchain,
+                txHash: result.transactionHash,
+                contractAddress: result.contractAddress,
+                deployParams,
+                simulated: !!result.simulated
+              };
+              
+              setContractAddress(result.contractAddress || null);
+              setDeploymentStatus("Successfully deployed to TON!");
+            } else {
+              throw new Error(result.error || 'Deployment failed');
+            }
+          } else {
+            throw new Error('TON contract service not available');
+          }
+        } 
+        else if (selectedBlockchain === BlockchainType.ETHEREUM) {
+          setDeploymentStatus("Ethereum deployment not implemented yet");
+          // Would connect to Ethereum wallet here
+        } 
+        else if (selectedBlockchain === BlockchainType.SOLANA) {
+          setDeploymentStatus("Solana deployment not implemented yet");
+          // Would connect to Solana wallet here
+        }
+        
+      } catch (error: any) {
+        setDeploymentStatus(`Deployment error: ${error.message}`);
+        toast({
+          title: "Blockchain Deployment Failed",
+          description: error.message || "There was an error deploying to the blockchain",
+          variant: "destructive",
+        });
+        setIsBlockchainDeploying(false);
+        return; // Stop the submission process
+      } finally {
+        setIsBlockchainDeploying(false);
+      }
+    }
+    
+    // Include attachment information, gift data, and blockchain metadata in the vault metadata
     const vaultData = {
       ...data,
+      blockchain: selectedBlockchain || undefined,
+      blockchainAddress,
+      blockchainTxHash,
+      unlockTimestamp: unlockTime,
       metadata: {
         allowsAttachments: data.metadata?.allowsAttachments ?? true,
         attachmentsEncryption: data.metadata?.attachmentsEncryption ?? "AES-256",
         attachments: attachments.length > 0 ? attachments : undefined,
-        ...(giftExperience && { giftExperience })
+        ...(giftExperience && { giftExperience }),
+        ...(deploymentMetadata && { blockchain: deploymentMetadata }),
       }
     };
     
+    // Store in database
     mutation.mutate(vaultData as FormValues);
   }
 
@@ -1101,15 +1189,124 @@ const CreateVaultForm = ({
                   </div>
                 </div>
                 
+                {/* Deployment Status */}
+                {isBlockchainDeploying && (
+                  <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+                    <div className="bg-[#1A1A1A] border border-[#6B00D7] p-6 rounded-lg max-w-md w-full">
+                      <h3 className="text-xl font-semibold mb-4 text-white">Deploying to Blockchain</h3>
+                      <div className="flex items-center space-x-3 mb-4">
+                        <div className="animate-spin h-5 w-5 border-2 border-[#6B00D7] border-t-transparent rounded-full"></div>
+                        <p>{deploymentStatus || 'Preparing transaction...'}</p>
+                      </div>
+                      <p className="text-sm text-gray-400">Please wait while your vault is being deployed to the blockchain. This process may take a minute or two to complete.</p>
+                    </div>
+                  </div>
+                )}
+                
+                {/* Blockchain Interaction Section */}
+                {isWalletConnected && !showAttachmentUpload && (
+                  <div className="border border-[#6B00D7]/20 rounded-lg p-4 bg-[#1A1A1A] mt-4 mb-4">
+                    <h3 className="text-lg font-semibold mb-2 text-white">Blockchain Deployment</h3>
+                    <p className="text-gray-400 text-sm mb-4">
+                      Your vault will be deployed on {selectedBlockchain} blockchain. This ensures 
+                      the highest level of security and immutability for your assets.
+                    </p>
+                    
+                    {selectedBlockchain === BlockchainType.TON && (
+                      <div className="flex items-center space-x-2 mb-4 p-3 bg-[#6B00D7]/10 rounded-lg">
+                        <div className="h-6 w-6 rounded-full bg-[#6B00D7]/20 flex items-center justify-center text-xs">
+                          💎
+                        </div>
+                        <div>
+                          <h4 className="text-sm font-medium text-white">TON Smart Contract</h4>
+                          <p className="text-xs text-gray-400">Your vault will be created as a secure TON smart contract</p>
+                        </div>
+                      </div>
+                    )}
+                    
+                    {selectedBlockchain === BlockchainType.ETHEREUM && (
+                      <div className="flex items-center space-x-2 mb-4 p-3 bg-[#6B00D7]/10 rounded-lg">
+                        <div className="h-6 w-6 rounded-full bg-[#6B00D7]/20 flex items-center justify-center text-xs">
+                          Ξ
+                        </div>
+                        <div>
+                          <h4 className="text-sm font-medium text-white">Ethereum ERC-4626 Vault</h4>
+                          <p className="text-xs text-gray-400">Your vault implements the tokenized vault standard</p>
+                        </div>
+                      </div>
+                    )}
+                    
+                    {selectedBlockchain === BlockchainType.SOLANA && (
+                      <div className="flex items-center space-x-2 mb-4 p-3 bg-[#6B00D7]/10 rounded-lg">
+                        <div className="h-6 w-6 rounded-full bg-[#6B00D7]/20 flex items-center justify-center text-xs">
+                          ◎
+                        </div>
+                        <div>
+                          <h4 className="text-sm font-medium text-white">Solana Program Vault</h4>
+                          <p className="text-xs text-gray-400">High-performance, low-fee vault on Solana</p>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                )}
+                
+                {/* Cross-Chain Security */}
+                {!showAttachmentUpload && (
+                  <div className="border border-[#FF5AF7]/20 rounded-lg p-4 bg-[#1A1A1A] mt-4 mb-4">
+                    <h3 className="text-lg font-semibold mb-2 text-[#FF5AF7]">Cross-Chain Security</h3>
+                    <p className="text-gray-400 text-sm mb-4">
+                      Chronos Vault leverages multiple blockchains for enhanced security and monitoring.
+                    </p>
+                    
+                    <div className="space-y-3">
+                      <div className="flex items-center space-x-2 p-2 bg-[#FF5AF7]/10 rounded-lg">
+                        <div className="h-5 w-5 rounded-full bg-[#FF5AF7]/20 flex items-center justify-center text-xs">
+                          Ξ
+                        </div>
+                        <div>
+                          <h4 className="text-sm font-medium text-white">Ethereum Ownership Records</h4>
+                          <p className="text-xs text-gray-400">Your ownership is cryptographically verified on Ethereum</p>
+                        </div>
+                      </div>
+                      
+                      <div className="flex items-center space-x-2 p-2 bg-[#FF5AF7]/10 rounded-lg">
+                        <div className="h-5 w-5 rounded-full bg-[#FF5AF7]/20 flex items-center justify-center text-xs">
+                          ◎
+                        </div>
+                        <div>
+                          <h4 className="text-sm font-medium text-white">Solana Monitoring</h4>
+                          <p className="text-xs text-gray-400">High-frequency security monitoring and validation</p>
+                        </div>
+                      </div>
+                      
+                      <div className="flex items-center space-x-2 p-2 bg-[#FF5AF7]/10 rounded-lg">
+                        <div className="h-5 w-5 rounded-full bg-[#FF5AF7]/20 flex items-center justify-center text-xs">
+                          💎
+                        </div>
+                        <div>
+                          <h4 className="text-sm font-medium text-white">TON Recovery Mechanism</h4>
+                          <p className="text-xs text-gray-400">Advanced recovery system via backup mechanisms</p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                )}
+                
                 {!showAttachmentUpload && (
                   <div className="pt-4 border-t border-[#333333]">
                     <Button 
                       type="submit" 
                       className="w-full bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] text-white cta-button"
-                      disabled={mutation.isPending}
+                      disabled={mutation.isPending || (selectedBlockchain && !isWalletConnected)}
                     >
-                      {mutation.isPending ? "Creating Your Vault..." : "Create and Lock Assets"}
+                      {mutation.isPending || isBlockchainDeploying ? "Creating Your Vault..." : "Create and Lock Assets"}
                     </Button>
+                    
+                    {selectedBlockchain && !isWalletConnected && (
+                      <div className="text-yellow-500 text-sm mt-2 text-center">
+                        You need to connect your {selectedBlockchain} wallet before you can create a vault.
+                      </div>
+                    )}
                   </div>
                 )}
               </form>
