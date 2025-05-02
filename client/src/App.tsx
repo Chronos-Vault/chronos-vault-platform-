@@ -15,7 +15,7 @@ import CreateVaultEnhancedPage from "@/pages/create-vault-enhanced";
 import AdvancedVaultCreationPage from "@/pages/advanced-vault-creation";
 import AdvancedVaultCreationNewPage from "@/pages/advanced-vault-creation-new";
 import VaultTypesSelector from "@/pages/vault-types-selector";
-import SpecializedVaultCreation from "@/pages/specialized-vault-creation";
+import SpecializedVaultCreationPage from "@/pages/specialized-vault-creation";
 import MyVaults from "@/pages/my-vaults";
 import VaultDetails from "@/pages/vault-details";
 import About from "@/pages/about";
@@ -52,7 +52,7 @@ function Router() {
         <Route path="/vault-types" component={VaultTypesSelector} />
         <Route path="/advanced-vault" component={AdvancedVaultCreationPage} />
         <Route path="/advanced-vault-new" component={AdvancedVaultCreationNewPage} />
-        <Route path="/specialized-vault" component={SpecializedVaultCreation} />
+        <Route path="/specialized-vault-creation" component={SpecializedVaultCreationPage} />
         <Route path="/my-vaults" component={MyVaults} />
         <Route path="/vault/:id" component={VaultDetails} />
         <Route path="/about" component={About} />
