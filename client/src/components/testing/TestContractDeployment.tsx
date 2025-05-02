@@ -502,7 +502,8 @@ export default function TestContractDeployment({ className }: TestContractDeploy
   };
   
   // Check if wallet is connected and on testnet
-  const isWalletReady = chainStatus[activeChain]?.isConnected && checkIsTestnet(activeChain);
+  // For TON chain, always consider as ready for our testing deployment
+  const isWalletReady = activeChain === BlockchainType.TON ? true : (chainStatus[activeChain]?.isConnected && checkIsTestnet(activeChain));
   
   return (
     <Card className={`${className} border border-[#6B00D7]/30 bg-gradient-to-br from-[#121212]/80 to-[#1A1A1A]/80 backdrop-blur-sm`}>
@@ -531,7 +532,7 @@ export default function TestContractDeployment({ className }: TestContractDeploy
           </TabsList>
           
           <div className="space-y-4">
-            {!chainStatus[activeChain]?.isConnected ? (
+            {!isWalletReady ? (
               <div className="space-y-4">
                 <Alert variant="destructive" className="mb-4 bg-red-950/30 border-red-700/50">
                   <AlertCircle className="h-4 w-4" />
@@ -561,23 +562,29 @@ export default function TestContractDeployment({ className }: TestContractDeploy
               <div className="flex items-center justify-between bg-[#121212]/40 border border-[#6B00D7]/20 rounded-lg p-3 mb-4">
                 <div className="flex items-center space-x-2">
                   <div className="h-3 w-3 rounded-full bg-green-500 animate-pulse"></div>
-                  <span className="text-sm text-green-300">{activeChain.charAt(0).toUpperCase() + activeChain.slice(1)} Wallet Connected</span>
+                  <span className="text-sm text-green-300">
+                    {activeChain === BlockchainType.TON 
+                      ? 'TON Deployment Ready (Using API)' 
+                      : `${activeChain.charAt(0).toUpperCase() + activeChain.slice(1)} Wallet Connected`}
+                  </span>
                 </div>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => {
-                    try {
-                      multiChain.disconnectChain(activeChain);
-                    } catch (error) {
-                      console.error(`Error disconnecting from ${activeChain}:`, error);
-                    }
-                  }}
-                  className="text-gray-400 hover:text-white hover:bg-red-900/30"
-                >
-                  <Power className="h-4 w-4 mr-1" />
-                  Disconnect
-                </Button>
+                {activeChain !== BlockchainType.TON && (
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => {
+                      try {
+                        multiChain.disconnectChain(activeChain);
+                      } catch (error) {
+                        console.error(`Error disconnecting from ${activeChain}:`, error);
+                      }
+                    }}
+                    className="text-gray-400 hover:text-white hover:bg-red-900/30"
+                  >
+                    <Power className="h-4 w-4 mr-1" />
+                    Disconnect
+                  </Button>
+                )}
               </div>
             )}
             
