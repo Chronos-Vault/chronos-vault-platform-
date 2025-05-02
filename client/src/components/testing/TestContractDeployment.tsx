@@ -133,7 +133,7 @@ export default function TestContractDeployment({ className }: TestContractDeploy
   const [contractCode, setContractCode] = useState<string>(getSampleCode(BlockchainType.ETHEREUM));
   const [isCompiling, setIsCompiling] = useState<boolean>(false);
   const [isDeploying, setIsDeploying] = useState<boolean>(false);
-  const [compileResult, setCompileResult] = useState<{success: boolean; message: string} | null>(null);
+  const [compileResult, setCompileResult] = useState<{success: boolean; message: string; compiledCode?: string} | null>(null);
   const [deployResult, setDeployResult] = useState<{success: boolean; address?: string; message: string} | null>(null);
   
   // Check if a chain is on testnet
@@ -170,20 +170,50 @@ export default function TestContractDeployment({ className }: TestContractDeploy
     setDeployResult(null);
   };
   
-  const handleCompile = () => {
+  const handleCompile = async () => {
     setIsCompiling(true);
     setCompileResult(null);
     
-    // Simulate compilation delay
-    setTimeout(() => {
-      setIsCompiling(false);
-      // In a real application, this would make an API call to a compile service
-      // For now, we're just simulating success
+    try {
+      if (activeChain === BlockchainType.TON) {
+        // For TON, use our implemented compiler service
+        const { tonCompilerService } = await import('@/lib/ton/ton-compiler-service');
+        
+        // Call the compileFunC method
+        const result = await tonCompilerService.compileFunC(contractCode);
+        
+        if (result.success) {
+          setCompileResult({
+            success: true,
+            message: 'Contract compiled successfully. Ready for deployment on TON testnet.',
+            compiledCode: result.boc
+          });
+        } else {
+          setCompileResult({
+            success: false,
+            message: result.error || 'Compilation failed with unknown error'
+          });
+        }
+      } else {
+        // For other chains, still simulate compilation for now
+        // In a real application, we would call the respective service
+        setTimeout(() => {
+          // Simulate success
+          setCompileResult({
+            success: true,
+            message: `Contract compiled successfully on ${activeChain} testnet (simulated)`
+          });
+        }, 2000);
+      }
+    } catch (error: any) {
+      console.error('Compilation error:', error);
       setCompileResult({
-        success: true,
-        message: 'Contract compiled successfully on testnet'
+        success: false,
+        message: `Compilation error: ${error.message || 'Unknown error'}`
       });
-    }, 2000);
+    } finally {
+      setIsCompiling(false);
+    }
   };
   
   const handleDeploy = async () => {
@@ -207,8 +237,22 @@ export default function TestContractDeployment({ className }: TestContractDeploy
           // Get current timestamp + 1 day for unlock time
           const unlockTime = Math.floor(Date.now() / 1000) + 86400; // 1 day in the future
 
-          // Call the deployContract method
-          const result = await tonContractService.deployContract(contractCode, {
+          // Call our new compiler service first, then deploy
+          const { tonCompilerService } = await import('@/lib/ton/ton-compiler-service');
+          
+          // Use the result from compilation (or recompile if needed)
+          const compiledCode = compileResult?.compiledCode;
+          
+          // Deploy using the compiler service
+          let finalCompiledCode: string = compiledCode || '';
+          if (!finalCompiledCode) {
+            // If we don't have compiled code, compile it now
+            const compileResult = await tonCompilerService.compileFunC(contractCode);
+            finalCompiledCode = compileResult.success ? compileResult.boc || '' : '';
+          }
+          
+          const result = await tonCompilerService.deployContract(finalCompiledCode,
+            {
             unlockTime: unlockTime,
             amount: '0.1', // 0.1 TON
             message: 'Test deployment from Chronos Vault interface'
