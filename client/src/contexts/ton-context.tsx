@@ -1,9 +1,12 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { 
   tonService, 
-  TonConnectionStatus, 
+  TonConnectionStatus as TonConnectionStatusEnum, 
   TONWalletInfo 
 } from '@/lib/ton/ton-service';
+
+// Re-export the TonConnectionStatus enum for use in components
+export const TonConnectionStatus = TonConnectionStatusEnum;
 import { tonContractService } from '@/lib/ton/ton-contract-service';
 
 /**
@@ -38,7 +41,7 @@ interface TonContextType {
   isConnected: boolean;
   isConnecting: boolean;
   walletInfo: TONWalletInfo | null;
-  connectionStatus: TonConnectionStatus;
+  connectionStatus: typeof TonConnectionStatus[keyof typeof TonConnectionStatus];
   metadata: TONWalletMetadata | null;
   
   // Transaction history

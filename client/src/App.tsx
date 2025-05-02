@@ -39,6 +39,7 @@ import PrivacyDashboardPage from "@/pages/privacy-dashboard";
 import SecurityTestingPage from "@/pages/security-testing";
 import NotFound from "@/pages/not-found";
 import TestContractPage from "@/pages/test-contract";
+import WalletManagerPage from "@/pages/wallet-manager";
 
 function Router() {
   return (
@@ -73,6 +74,7 @@ function Router() {
         <Route path="/privacy-dashboard" component={PrivacyDashboardPage} />
         <Route path="/security-testing" component={SecurityTestingPage} />
         <Route path="/test-contract" component={TestContractPage} />
+        <Route path="/wallet-manager" component={WalletManagerPage} />
         <Route component={NotFound} />
       </Switch>
       <Toaster />
