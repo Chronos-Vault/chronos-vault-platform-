@@ -31,7 +31,7 @@ const Footer = () => {
               </div>
             </Link>
             
-            <p className="text-gray-300 mb-8 text-lg font-poppins font-light">The Swiss Bank of Web3 — decentralized, unstoppable, and built with beauty and trust at the core.</p>
+            <p className="text-gray-300 mb-8 text-lg font-poppins font-light">Revolutionary digital asset vault platform — decentralized, unstoppable, and built with security and elegance at the core.</p>
             
             <div className="flex space-x-4">
               <a href="#" className="w-12 h-12 rounded-full bg-[#6B00D7]/10 flex items-center justify-center text-[#FF5AF7] hover:text-white border border-[#6B00D7]/30 hover:border-[#FF5AF7] hover:shadow-lg hover:shadow-[#FF5AF7]/20 transition-all">

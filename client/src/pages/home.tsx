@@ -117,18 +117,7 @@ const Home = () => {
                     >
                       <span className="mr-2">✨</span>Advanced Vaults
                     </Button>
-                    <Button
-                      variant="outline"
-                      className="border-2 border-[#6B00D7] text-white hover:bg-[#6B00D7]/10 hover:text-white font-bold rounded-lg px-4 sm:px-8 py-3 sm:py-4 text-base sm:text-lg transition-all w-full sm:w-auto"
-                      onClick={() => {
-                        const featuresSection = document.querySelector('#features');
-                        if (featuresSection) {
-                          featuresSection.scrollIntoView({ behavior: 'smooth' });
-                        }
-                      }}
-                    >
-                      Explore Features
-                    </Button>
+
                   </div>
                   
                   {/* Large security testing button */}
