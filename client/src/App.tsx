@@ -42,6 +42,8 @@ import SecurityTestingPage from "@/pages/security-testing";
 import NotFound from "@/pages/not-found";
 import TestContractPage from "@/pages/test-contract";
 import WalletManagerPage from "@/pages/wallet-manager";
+import PremiumPaymentPage from "@/pages/premium-payment";
+import SubscriptionPage from "@/pages/subscription";
 
 // Redirect component for wouter
 function Redirect({ to }: { to: string }) {
@@ -88,6 +90,8 @@ function Router() {
         <Route path="/security-testing" component={SecurityTestingPage} />
         <Route path="/test-contract" component={TestContractPage} />
         <Route path="/wallet-manager" component={WalletManagerPage} />
+        <Route path="/premium-payment/:vaultId?" component={PremiumPaymentPage} />
+        <Route path="/subscription" component={SubscriptionPage} />
         <Route component={NotFound} />
       </Switch>
       <Toaster />
