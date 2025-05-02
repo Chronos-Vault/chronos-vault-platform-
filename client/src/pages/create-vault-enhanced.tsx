@@ -230,10 +230,11 @@ const CreateVaultEnhanced = () => {
             
             <CardContent>
               <Tabs defaultValue={BlockchainType.TON} onValueChange={handleBlockchainChange}>
-                <TabsList className="grid w-full grid-cols-3 mb-8">
+                <TabsList className="grid w-full grid-cols-4 mb-8">
                   <TabsTrigger value={BlockchainType.TON}>TON</TabsTrigger>
                   <TabsTrigger value={BlockchainType.ETHEREUM}>Ethereum</TabsTrigger>
                   <TabsTrigger value={BlockchainType.SOLANA}>Solana</TabsTrigger>
+                  <TabsTrigger value={BlockchainType.BITCOIN}>Bitcoin</TabsTrigger>
                 </TabsList>
                 
                 <div className="mb-6">
@@ -362,13 +363,15 @@ const CreateVaultEnhanced = () => {
                               <div className="py-2 px-3 rounded bg-[#1F1F1F] text-white font-medium text-sm">
                                 {activeBlockchain === BlockchainType.TON ? 'TON' : 
                                  activeBlockchain === BlockchainType.ETHEREUM ? 'ETH' : 
-                                 activeBlockchain === BlockchainType.SOLANA ? 'SOL' : '???'}
+                                 activeBlockchain === BlockchainType.SOLANA ? 'SOL' :
+                                 activeBlockchain === BlockchainType.BITCOIN ? 'BTC' : '???'}
                               </div>
                             </div>
                             <FormDescription>
                               The amount of {activeBlockchain === BlockchainType.TON ? 'TON' : 
                                             activeBlockchain === BlockchainType.ETHEREUM ? 'ETH' : 
-                                            activeBlockchain === BlockchainType.SOLANA ? 'SOL' : 'tokens'} to lock
+                                            activeBlockchain === BlockchainType.SOLANA ? 'SOL' :
+                                            activeBlockchain === BlockchainType.BITCOIN ? 'BTC' : 'tokens'} to lock
                             </FormDescription>
                             <FormMessage />
                           </FormItem>
