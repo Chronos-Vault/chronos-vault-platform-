@@ -6,7 +6,7 @@ import { Separator } from "@/components/ui/separator";
 import { Badge } from "@/components/ui/badge";
 import VaultCard from "@/components/vault/vault-card";
 import { BitcoinHalvingVault } from "@/components/bitcoin/BitcoinHalvingVault";
-import { Zap, Coins, Sparkles, ArrowRight, Users, Shield, Clock, Lock, Key, Fingerprint, Globe, FileText, ChevronRight, RefreshCw, Layers } from "lucide-react";
+import { Zap, Coins, Sparkles, ArrowRight, Users, Shield, Clock, Lock, Key, Fingerprint, Globe, FileText, ChevronRight, RefreshCw, Layers, UserPlus } from "lucide-react";
 import { useCVTToken } from "@/contexts/cvt-token-context";
 import { apiRequest } from "@/lib/queryClient";
 import { useQuery } from "@tanstack/react-query";
@@ -302,21 +302,199 @@ const Home = () => {
           </div>
         </section>
         
-        {/* Luxury Trusted By Section */}
-        <section className="bg-[#080808] border-y border-white/5 py-8">
-          <div className="container mx-auto px-4">
-            <div className="flex flex-col md:flex-row items-center justify-between gap-6">
-              <div className="flex items-center gap-3">
-                <div className="h-px w-12 bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7]"></div>
-                <p className="text-sm text-gray-400 uppercase tracking-widest font-medium">Trusted By Leading Blockchain Projects</p>
+        {/* Premium 3D Trusted By Section */}
+        <section className="bg-gradient-to-b from-black to-[#050505] border-y border-white/5 py-12 relative overflow-hidden">
+          {/* Background Decorative Elements */}
+          <div className="absolute inset-0 overflow-hidden">
+            <div className="absolute w-full h-full bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxwYXRoIGZpbGw9IiMxQTFBMUEiIGQ9Ik0wIDBoNjB2NjBIMHoiLz48cGF0aCBkPSJNNjAgMEgwdjYwaDYwVjB6TTIgMmg1NnY1NkgyVjJ6IiBmaWxsPSIjMDAwIi8+PC9nPjwvc3ZnPg==')] opacity-5"></div>
+            <div className="absolute inset-0 bg-gradient-to-r from-[#6B00D7]/5 via-transparent to-[#FF5AF7]/5"></div>
+          </div>
+          
+          <div className="container mx-auto px-4 relative z-10">
+            <div className="flex flex-col items-center justify-center gap-8">
+              <div className="text-center">
+                <h3 className="inline-flex items-center text-sm text-[#FF5AF7] mb-2">
+                  <div className="mr-2 w-6 h-px bg-[#FF5AF7]"></div>
+                  TRUSTED ACROSS BLOCKCHAINS
+                  <div className="ml-2 w-6 h-px bg-[#FF5AF7]"></div>
+                </h3>
+                <h2 className="text-2xl md:text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-white via-gray-200 to-white">Secured By Industry Leaders</h2>
               </div>
-              <div className="flex flex-wrap justify-center md:justify-end gap-8 opacity-70">
-                <i className="ri-ethereum-line text-3xl"></i>
-                <i className="ri-bit-coin-line text-3xl"></i>
-                <i className="ri-currency-line text-3xl"></i>
-                <i className="ri-coin-line text-3xl"></i>
-                <i className="ri-copper-coin-line text-3xl"></i>
+              
+              {/* 3D Rotating Partner Logos */}
+              <div className="w-full perspective-1000 py-6">
+                <div className="flex items-center justify-center gap-12 md:gap-20 transform-style-3d animate-float">
+                  <div className="relative group">
+                    <div className="absolute inset-0 bg-gradient-to-r from-[#6B00D7]/20 to-[#FF5AF7]/20 rounded-full blur-xl opacity-0 group-hover:opacity-70 transition-opacity duration-500"></div>
+                    <div className="relative bg-[#0A0A0A] p-5 rounded-full border border-[#6B00D7]/30 shadow-xl transform transition-transform duration-500 group-hover:scale-110 group-hover:border-[#6B00D7]/50">
+                      <i className="ri-ethereum-line text-4xl md:text-5xl text-[#6B00D7] animate-pulse-slow"></i>
+                    </div>
+                  </div>
+                  
+                  <div className="relative group">
+                    <div className="absolute inset-0 bg-gradient-to-r from-[#FF5AF7]/20 to-[#6B00D7]/20 rounded-full blur-xl opacity-0 group-hover:opacity-70 transition-opacity duration-500"></div>
+                    <div className="relative bg-[#0A0A0A] p-5 rounded-full border border-[#FF5AF7]/30 shadow-xl transform transition-transform duration-500 group-hover:scale-110 group-hover:border-[#FF5AF7]/50">
+                      <i className="ri-bit-coin-line text-4xl md:text-5xl text-[#FF5AF7] animate-pulse-slow animation-delay-1000"></i>
+                    </div>
+                  </div>
+                  
+                  <div className="relative group">
+                    <div className="absolute inset-0 bg-gradient-to-r from-[#6B00D7]/20 to-[#FF5AF7]/20 rounded-full blur-xl opacity-0 group-hover:opacity-70 transition-opacity duration-500"></div>
+                    <div className="relative bg-[#0A0A0A] p-5 rounded-full border border-[#6B00D7]/30 shadow-xl transform transition-transform duration-500 group-hover:scale-110 group-hover:border-[#6B00D7]/50">
+                      <i className="ri-currency-line text-4xl md:text-5xl text-[#6B00D7] animate-pulse-slow animation-delay-2000"></i>
+                    </div>
+                  </div>
+                  
+                  <div className="relative group">
+                    <div className="absolute inset-0 bg-gradient-to-r from-[#FF5AF7]/20 to-[#6B00D7]/20 rounded-full blur-xl opacity-0 group-hover:opacity-70 transition-opacity duration-500"></div>
+                    <div className="relative bg-[#0A0A0A] p-5 rounded-full border border-[#FF5AF7]/30 shadow-xl transform transition-transform duration-500 group-hover:scale-110 group-hover:border-[#FF5AF7]/50">
+                      <i className="ri-copper-coin-line text-4xl md:text-5xl text-[#FF5AF7] animate-pulse-slow animation-delay-3000"></i>
+                    </div>
+                  </div>
+                </div>
               </div>
+              
+              {/* Trust Verification */}
+              <div className="mt-4 px-6 py-2 bg-[#0A0A0A]/50 backdrop-blur-md rounded-full border border-white/10 inline-flex items-center gap-2">
+                <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+                <p className="text-sm text-gray-300">All integrations verified and secured</p>
+              </div>
+            </div>
+          </div>
+        </section>
+        
+        {/* Premium 3D 'How It Works' Section */}
+        <section className="py-24 bg-gradient-to-b from-[#050505] to-[#0A0A0A] relative overflow-hidden">
+          {/* Background decorative elements */}
+          <div className="absolute inset-0 pointer-events-none overflow-hidden">
+            <div className="absolute left-0 right-0 top-0 h-px bg-gradient-to-r from-transparent via-[#6B00D7]/30 to-transparent"></div>
+            <div className="absolute -top-40 -right-40 w-80 h-80 bg-[#6B00D7]/10 rounded-full blur-3xl"></div>
+            <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-[#FF5AF7]/10 rounded-full blur-3xl"></div>
+            <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxwYXRoIGZpbGw9IiMxQTFBMUEiIGQ9Ik0wIDBoNjB2NjBIMHoiLz48cGF0aCBkPSJNNjAgMEgwdjYwaDYwVjB6TTIgMmg1NnY1NkgyVjJ6IiBmaWxsPSIjMDAwIi8+PC9nPjwvc3ZnPg==')] opacity-5"></div>
+            <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-b from-transparent via-black/10 to-transparent"></div>
+          </div>
+          
+          <div className="container mx-auto px-4 relative z-10">
+            <div className="text-center mb-16">
+              <h3 className="inline-flex items-center text-sm text-[#FF5AF7] mb-2 justify-center">
+                <div className="mr-2 w-6 h-px bg-[#FF5AF7]"></div>
+                HOW CHRONOS VAULT WORKS
+                <div className="ml-2 w-6 h-px bg-[#FF5AF7]"></div>
+              </h3>
+              <h2 className="text-3xl md:text-4xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-white via-gray-200 to-white mb-4">Secure Your Digital Legacy</h2>
+              <p className="text-gray-300 max-w-2xl mx-auto">Cutting-edge blockchain technology meets intuitive design to create the most secure vault system in existence</p>
+            </div>
+            
+            {/* 3D Animated Steps */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-10 max-w-5xl mx-auto">
+              {/* Step 1 */}
+              <div className="relative group">
+                <div className="absolute -inset-0.5 bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] rounded-2xl blur opacity-0 group-hover:opacity-30 transition duration-1000"></div>
+                <div className="relative bg-black/80 backdrop-blur-sm border border-white/5 rounded-2xl p-8 h-full transform transition-all duration-500 group-hover:translate-y-[-5px] overflow-hidden">
+                  {/* Animated top highlight */}
+                  <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-[#6B00D7] to-transparent"></div>
+                  
+                  {/* Step number - 3D effect */}
+                  <div className="absolute -top-2 -right-2 w-12 h-12 bg-gradient-to-br from-[#6B00D7] to-[#FF5AF7] rounded-full flex items-center justify-center font-bold text-xl transform rotate-12 shadow-lg shadow-[#6B00D7]/30">
+                    <div className="transform -rotate-12">1</div>
+                  </div>
+                  
+                  {/* Icon with 3D effect */}
+                  <div className="perspective-1000 mb-6">
+                    <div className="relative transform-style-3d hover:rotateY-15 transition-transform duration-700 w-16 h-16">
+                      <div className="absolute inset-0 bg-gradient-to-r from-[#6B00D7]/20 to-[#FF5AF7]/20 rounded-xl transform translate-z-[-30px]"></div>
+                      <div className="relative w-full h-full flex items-center justify-center bg-black rounded-xl border border-[#6B00D7]/30 shadow-xl">
+                        <UserPlus className="h-8 w-8 text-[#FF5AF7]" />
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <h3 className="text-xl font-semibold mb-3 relative group-hover:text-white transition-colors">Create Your Account</h3>
+                  <p className="text-gray-400 group-hover:text-gray-300 transition-colors z-10 relative">Connect your wallet to our secure platform and set up your personal profile with advanced security options.</p>
+                  
+                  {/* Animated scan line effect */}
+                  <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-700 overflow-hidden">
+                    <div className="absolute top-0 left-0 w-full h-full animate-scan"></div>
+                  </div>
+                </div>
+              </div>
+              
+              {/* Step 2 */}
+              <div className="relative group">
+                <div className="absolute -inset-0.5 bg-gradient-to-r from-[#FF5AF7] to-[#6B00D7] rounded-2xl blur opacity-0 group-hover:opacity-30 transition duration-1000"></div>
+                <div className="relative bg-black/80 backdrop-blur-sm border border-white/5 rounded-2xl p-8 h-full transform transition-all duration-500 group-hover:translate-y-[-5px] overflow-hidden">
+                  {/* Animated top highlight */}
+                  <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-[#FF5AF7] to-transparent"></div>
+                  
+                  {/* Step number - 3D effect */}
+                  <div className="absolute -top-2 -right-2 w-12 h-12 bg-gradient-to-br from-[#FF5AF7] to-[#6B00D7] rounded-full flex items-center justify-center font-bold text-xl transform rotate-12 shadow-lg shadow-[#FF5AF7]/30">
+                    <div className="transform -rotate-12">2</div>
+                  </div>
+                  
+                  {/* Icon with 3D effect */}
+                  <div className="perspective-1000 mb-6">
+                    <div className="relative transform-style-3d hover:rotateY-15 transition-transform duration-700 w-16 h-16">
+                      <div className="absolute inset-0 bg-gradient-to-r from-[#FF5AF7]/20 to-[#6B00D7]/20 rounded-xl transform translate-z-[-30px]"></div>
+                      <div className="relative w-full h-full flex items-center justify-center bg-black rounded-xl border border-[#FF5AF7]/30 shadow-xl">
+                        <Shield className="h-8 w-8 text-[#6B00D7]" />
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <h3 className="text-xl font-semibold mb-3 relative group-hover:text-white transition-colors">Design Your Vault</h3>
+                  <p className="text-gray-400 group-hover:text-gray-300 transition-colors z-10 relative">Choose specialized vault types with custom security features, time-locks, multi-signature requirements, and cross-chain protection.</p>
+                  
+                  {/* Animated scan line effect */}
+                  <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-700 overflow-hidden">
+                    <div className="absolute top-0 left-0 w-full h-full animate-scan"></div>
+                  </div>
+                </div>
+              </div>
+              
+              {/* Step 3 */}
+              <div className="relative group">
+                <div className="absolute -inset-0.5 bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] rounded-2xl blur opacity-0 group-hover:opacity-30 transition duration-1000"></div>
+                <div className="relative bg-black/80 backdrop-blur-sm border border-white/5 rounded-2xl p-8 h-full transform transition-all duration-500 group-hover:translate-y-[-5px] overflow-hidden">
+                  {/* Animated top highlight */}
+                  <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-[#6B00D7] to-transparent"></div>
+                  
+                  {/* Step number - 3D effect */}
+                  <div className="absolute -top-2 -right-2 w-12 h-12 bg-gradient-to-br from-[#6B00D7] to-[#FF5AF7] rounded-full flex items-center justify-center font-bold text-xl transform rotate-12 shadow-lg shadow-[#6B00D7]/30">
+                    <div className="transform -rotate-12">3</div>
+                  </div>
+                  
+                  {/* Icon with 3D effect */}
+                  <div className="perspective-1000 mb-6">
+                    <div className="relative transform-style-3d hover:rotateY-15 transition-transform duration-700 w-16 h-16">
+                      <div className="absolute inset-0 bg-gradient-to-r from-[#6B00D7]/20 to-[#FF5AF7]/20 rounded-xl transform translate-z-[-30px]"></div>
+                      <div className="relative w-full h-full flex items-center justify-center bg-black rounded-xl border border-[#6B00D7]/30 shadow-xl">
+                        <Lock className="h-8 w-8 text-[#FF5AF7]" />
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <h3 className="text-xl font-semibold mb-3 relative group-hover:text-white transition-colors">Secure Your Assets</h3>
+                  <p className="text-gray-400 group-hover:text-gray-300 transition-colors z-10 relative">Deposit digital assets into your vault with military-grade encryption and triple-chain security across Ethereum, Solana, and TON.</p>
+                  
+                  {/* Animated scan line effect */}
+                  <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-700 overflow-hidden">
+                    <div className="absolute top-0 left-0 w-full h-full animate-scan"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            {/* Call to Action */}
+            <div className="flex justify-center mt-16">
+              <Link 
+                to="/create-vault" 
+                className="group relative overflow-hidden px-8 py-4 bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] hover:from-[#5500AB] hover:to-[#FF46E8] text-white font-semibold rounded-xl flex items-center gap-3 transition-all duration-300 shadow-lg shadow-[#6B00D7]/20 hover:shadow-xl hover:shadow-[#FF5AF7]/30"
+              >
+                <span className="relative z-10 flex items-center">
+                  <i className="ri-rocket-line mr-2 text-xl group-hover:animate-pulse"></i> Start Your Journey
+                </span>
+                <span className="absolute inset-0 w-full h-full bg-white opacity-0 group-hover:opacity-10 transition-opacity duration-300"></span>
+              </Link>
             </div>
           </div>
         </section>
@@ -536,110 +714,295 @@ const Home = () => {
           </div>
         </section>
         
-        {/* Upgraded Security Features Section */}
-        <section className="py-20 bg-gradient-to-b from-[#080808] to-[#0A0A0A]">
-          <div className="container mx-auto px-4">
-            <div className="text-center max-w-3xl mx-auto mb-16">
+        {/* Ultra-Premium 3D Security Features */}
+        <section className="py-24 bg-[#030303] relative overflow-hidden">
+          {/* Animated Background Effects */}
+          <div className="absolute inset-0 pointer-events-none overflow-hidden">
+            {/* Particle grid pattern */}
+            <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxwYXRoIGZpbGw9IiMxQTFBMUEiIGQ9Ik0wIDBoNjB2NjBIMHoiLz48cGF0aCBkPSJNNjAgMEgwdjYwaDYwVjB6TTIgMmg1NnY1NkgyVjJ6IiBmaWxsPSIjMDAwIi8+PC9nPjwvc3ZnPg==')] opacity-5"></div>
+            
+            {/* Premium glow effects */}
+            <div className="absolute top-1/3 left-1/4 w-[50vw] h-[50vw] rounded-full bg-gradient-to-r from-[#6B00D7]/5 to-[#FF5AF7]/5 blur-[150px] opacity-30"></div>
+            <div className="absolute bottom-1/4 right-1/3 w-[30vw] h-[30vw] rounded-full bg-gradient-to-r from-[#FF5AF7]/5 to-[#6B00D7]/5 blur-[120px] opacity-20"></div>
+            
+            {/* Digital security circuit pattern */}
+            <div className="absolute inset-0 opacity-5">
+              <div className="absolute top-[10%] left-[20%] w-[60%] h-px bg-gradient-to-r from-transparent via-[#6B00D7] to-transparent"></div>
+              <div className="absolute top-[30%] left-[5%] w-[40%] h-px bg-gradient-to-r from-transparent via-[#FF5AF7] to-transparent"></div>
+              <div className="absolute top-[50%] left-[15%] w-[70%] h-px bg-gradient-to-r from-transparent via-[#6B00D7] to-transparent"></div>
+              <div className="absolute top-[70%] left-[10%] w-[60%] h-px bg-gradient-to-r from-transparent via-[#FF5AF7] to-transparent"></div>
+              <div className="absolute top-[90%] left-[25%] w-[50%] h-px bg-gradient-to-r from-transparent via-[#6B00D7] to-transparent"></div>
+              
+              <div className="absolute left-[20%] top-[10%] h-[80%] w-px bg-gradient-to-b from-transparent via-[#6B00D7] to-transparent"></div>
+              <div className="absolute left-[40%] top-[5%] h-[90%] w-px bg-gradient-to-b from-transparent via-[#FF5AF7] to-transparent"></div>
+              <div className="absolute left-[60%] top-[15%] h-[70%] w-px bg-gradient-to-b from-transparent via-[#6B00D7] to-transparent"></div>
+              <div className="absolute left-[80%] top-[10%] h-[85%] w-px bg-gradient-to-b from-transparent via-[#FF5AF7] to-transparent"></div>
+            </div>
+          </div>
+          
+          <div className="container mx-auto px-4 relative z-10">
+            <div className="text-center max-w-3xl mx-auto mb-20">
+              <div className="w-16 h-16 mx-auto mb-6 relative animate-float">
+                <div className="absolute inset-0 bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] rounded-full blur-xl opacity-50"></div>
+                <div className="absolute inset-1 bg-black rounded-full"></div>
+                <div className="relative h-full w-full flex items-center justify-center">
+                  <Shield className="h-8 w-8 text-[#FF5AF7]" />
+                </div>
+              </div>
+            
               <h3 className="inline-flex items-center text-sm text-[#FF5AF7] mb-4 justify-center">
                 <div className="mr-2 w-6 h-px bg-[#FF5AF7]"></div>
-                REVOLUTIONARY TECHNOLOGY
+                MILITARY-GRADE PROTECTION
                 <div className="ml-2 w-6 h-px bg-[#FF5AF7]"></div>
               </h3>
               
-              <h2 className="text-3xl md:text-4xl font-bold mb-6 bg-clip-text text-transparent bg-gradient-to-r from-gray-100 to-white">Military-Grade Security Features</h2>
-              <p className="text-gray-300">Chronos Vault employs cutting-edge blockchain and cryptographic technologies to ensure your digital assets remain secure against all threats.</p>
+              <h2 className="title-3d text-3xl md:text-5xl font-bold mb-6">Revolutionary Security</h2>
+              <p className="text-xl text-gray-300 max-w-3xl mx-auto leading-relaxed">Chronos Vault combines quantum-resistant encryption with cutting-edge blockchain technology to create an impenetrable shield for your digital assets.</p>
             </div>
             
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {/* 3D Hexagonal Security Features Grid */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 lg:gap-10 max-w-6xl mx-auto perspective-1000">
               {/* Triple-Chain Security */}
-              <div className="group p-8 rounded-2xl bg-gradient-to-br from-[#0D0D0D] to-[#0F0F0F] border border-[#1A1A1A] hover:border-[#6B00D7]/30 transition-all relative overflow-hidden">
-                <div className="absolute inset-0 bg-gradient-to-br from-[#6B00D7]/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-                
-                <div className="relative z-10">
-                  <div className="inline-flex items-center justify-center w-16 h-16 rounded-xl bg-gradient-to-br from-[#0F0F0F] to-[#151515] border border-[#1A1A1A] group-hover:from-[#6B00D7]/5 group-hover:to-[#6B00D7]/20 transition-colors mb-6">
-                    <Shield className="h-8 w-8 text-[#6B00D7]" />
+              <div className="group transform-style-3d hover:translate-z-[30px] transition-transform duration-500">
+                <div className="relative bg-gradient-to-br from-[#0A0A0A] to-black p-8 rounded-2xl border border-[#1A1A1A] group-hover:border-[#6B00D7]/40 shadow-xl transition-all duration-500 h-full overflow-hidden">
+                  {/* Background glow effect */}
+                  <div className="absolute inset-0 bg-gradient-to-br from-[#6B00D7]/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700"></div>
+                  
+                  {/* Decorative border highlight */}
+                  <div className="absolute inset-0 overflow-hidden">
+                    <div className="absolute top-0 right-0 left-0 h-px bg-gradient-to-r from-transparent via-[#6B00D7] to-transparent transform scale-x-0 group-hover:scale-x-100 transition-transform duration-700 origin-left"></div>
+                    <div className="absolute bottom-0 right-0 left-0 h-px bg-gradient-to-r from-transparent via-[#6B00D7] to-transparent transform scale-x-0 group-hover:scale-x-100 transition-transform duration-700 origin-right"></div>
+                    <div className="absolute left-0 top-0 bottom-0 w-px bg-gradient-to-b from-transparent via-[#6B00D7] to-transparent transform scale-y-0 group-hover:scale-y-100 transition-transform duration-700 origin-top"></div>
+                    <div className="absolute right-0 top-0 bottom-0 w-px bg-gradient-to-b from-transparent via-[#6B00D7] to-transparent transform scale-y-0 group-hover:scale-y-100 transition-transform duration-700 origin-bottom"></div>
                   </div>
                   
-                  <h3 className="text-xl font-semibold mb-4 group-hover:text-white transition-colors">Triple-Chain Security</h3>
-                  <p className="text-gray-400 group-hover:text-gray-300 transition-colors">Assets secured simultaneously across Ethereum, Solana, and TON blockchains for redundant protection against platform-specific exploits.</p>
+                  {/* 3D Floating Icon */}
+                  <div className="perspective-1000 mb-8">
+                    <div className="relative w-16 h-16 transform-style-3d group-hover:rotateY-15 transition-all duration-700">
+                      <div className="absolute inset-0 bg-gradient-to-br from-[#6B00D7]/20 to-[#6B00D7]/5 rounded-xl transform translate-z-[-20px] group-hover:translate-z-[-30px] transition-transform duration-700 blur-sm"></div>
+                      <div className="relative h-full w-full rounded-xl bg-black backdrop-blur-xl border border-[#6B00D7]/30 shadow-xl flex items-center justify-center transform transition-transform duration-700 group-hover:scale-110">
+                        <Shield className="h-8 w-8 text-[#6B00D7] animate-pulse-slow" />
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <h3 className="text-xl font-semibold mb-4 group-hover:text-white transition-colors relative">
+                    <span className="bg-clip-text text-transparent bg-gradient-to-r from-[#6B00D7] via-white to-[#6B00D7] group-hover:opacity-100 transition-opacity duration-700">Triple-Chain Security</span>
+                  </h3>
+                  
+                  <p className="text-gray-400 group-hover:text-gray-300 transition-colors relative z-10">
+                    Assets secured with immutable cross-verification across Ethereum, Solana, and TON blockchains, providing redundant protection against platform-specific vulnerabilities or exploits.
+                  </p>
+                  
+                  {/* Animated scan effect */}
+                  <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-700 overflow-hidden">
+                    <div className="absolute top-0 left-0 w-full h-full animate-scan"></div>
+                  </div>
                 </div>
               </div>
               
               {/* Multi-Signature Access */}
-              <div className="group p-8 rounded-2xl bg-gradient-to-br from-[#0D0D0D] to-[#0F0F0F] border border-[#1A1A1A] hover:border-[#FF5AF7]/30 transition-all relative overflow-hidden">
-                <div className="absolute inset-0 bg-gradient-to-br from-[#FF5AF7]/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-                
-                <div className="relative z-10">
-                  <div className="inline-flex items-center justify-center w-16 h-16 rounded-xl bg-gradient-to-br from-[#0F0F0F] to-[#151515] border border-[#1A1A1A] group-hover:from-[#FF5AF7]/5 group-hover:to-[#FF5AF7]/20 transition-colors mb-6">
-                    <Users className="h-8 w-8 text-[#FF5AF7]" />
+              <div className="group transform-style-3d hover:translate-z-[30px] transition-transform duration-500">
+                <div className="relative bg-gradient-to-br from-[#0A0A0A] to-black p-8 rounded-2xl border border-[#1A1A1A] group-hover:border-[#FF5AF7]/40 shadow-xl transition-all duration-500 h-full overflow-hidden">
+                  {/* Background glow effect */}
+                  <div className="absolute inset-0 bg-gradient-to-br from-[#FF5AF7]/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700"></div>
+                  
+                  {/* Decorative border highlight */}
+                  <div className="absolute inset-0 overflow-hidden">
+                    <div className="absolute top-0 right-0 left-0 h-px bg-gradient-to-r from-transparent via-[#FF5AF7] to-transparent transform scale-x-0 group-hover:scale-x-100 transition-transform duration-700 origin-left"></div>
+                    <div className="absolute bottom-0 right-0 left-0 h-px bg-gradient-to-r from-transparent via-[#FF5AF7] to-transparent transform scale-x-0 group-hover:scale-x-100 transition-transform duration-700 origin-right"></div>
+                    <div className="absolute left-0 top-0 bottom-0 w-px bg-gradient-to-b from-transparent via-[#FF5AF7] to-transparent transform scale-y-0 group-hover:scale-y-100 transition-transform duration-700 origin-top"></div>
+                    <div className="absolute right-0 top-0 bottom-0 w-px bg-gradient-to-b from-transparent via-[#FF5AF7] to-transparent transform scale-y-0 group-hover:scale-y-100 transition-transform duration-700 origin-bottom"></div>
                   </div>
                   
-                  <h3 className="text-xl font-semibold mb-4 group-hover:text-white transition-colors">Multi-Signature Access</h3>
-                  <p className="text-gray-400 group-hover:text-gray-300 transition-colors">Require approval from multiple trusted parties to access or modify vault assets with customizable signature thresholds and weights.</p>
+                  {/* 3D Floating Icon */}
+                  <div className="perspective-1000 mb-8">
+                    <div className="relative w-16 h-16 transform-style-3d group-hover:rotateY-15 transition-all duration-700">
+                      <div className="absolute inset-0 bg-gradient-to-br from-[#FF5AF7]/20 to-[#FF5AF7]/5 rounded-xl transform translate-z-[-20px] group-hover:translate-z-[-30px] transition-transform duration-700 blur-sm"></div>
+                      <div className="relative h-full w-full rounded-xl bg-black backdrop-blur-xl border border-[#FF5AF7]/30 shadow-xl flex items-center justify-center transform transition-transform duration-700 group-hover:scale-110">
+                        <Users className="h-8 w-8 text-[#FF5AF7] animate-pulse-slow animation-delay-1000" />
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <h3 className="text-xl font-semibold mb-4 group-hover:text-white transition-colors relative">
+                    <span className="bg-clip-text text-transparent bg-gradient-to-r from-[#FF5AF7] via-white to-[#FF5AF7] group-hover:opacity-100 transition-opacity duration-700">Multi-Signature Access</span>
+                  </h3>
+                  
+                  <p className="text-gray-400 group-hover:text-gray-300 transition-colors relative z-10">
+                    Configure ultra-secure vaults requiring approval from 2-15 trusted parties with customizable signature thresholds, time limits, and weighted authorization levels.
+                  </p>
+                  
+                  {/* Animated scan effect */}
+                  <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-700 overflow-hidden">
+                    <div className="absolute top-0 left-0 w-full h-full animate-scan"></div>
+                  </div>
                 </div>
               </div>
               
               {/* Zero-Knowledge Privacy */}
-              <div className="group p-8 rounded-2xl bg-gradient-to-br from-[#0D0D0D] to-[#0F0F0F] border border-[#1A1A1A] hover:border-gradient-to-r hover:from-[#6B00D7]/30 hover:to-[#FF5AF7]/30 transition-all relative overflow-hidden">
-                <div className="absolute inset-0 bg-gradient-to-br from-[#6B00D7]/10 via-transparent to-[#FF5AF7]/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-                
-                <div className="relative z-10">
-                  <div className="inline-flex items-center justify-center w-16 h-16 rounded-xl bg-gradient-to-br from-[#0F0F0F] to-[#151515] border border-[#1A1A1A] group-hover:from-[#6B00D7]/5 group-hover:to-[#FF5AF7]/10 transition-colors mb-6">
-                    <Fingerprint className="h-8 w-8 text-white" />
+              <div className="group transform-style-3d hover:translate-z-[30px] transition-transform duration-500">
+                <div className="relative bg-gradient-to-br from-[#0A0A0A] to-black p-8 rounded-2xl border border-[#1A1A1A] group-hover:border-[#6B00D7]/40 shadow-xl transition-all duration-500 h-full overflow-hidden">
+                  {/* Background glow effect */}
+                  <div className="absolute inset-0 bg-gradient-to-br from-[#6B00D7]/10 via-transparent to-[#FF5AF7]/10 opacity-0 group-hover:opacity-100 transition-opacity duration-700"></div>
+                  
+                  {/* Decorative border highlight */}
+                  <div className="absolute inset-0 overflow-hidden">
+                    <div className="absolute top-0 right-0 left-0 h-px bg-gradient-to-r from-[#6B00D7] via-[#FF5AF7] to-[#6B00D7] transform scale-x-0 group-hover:scale-x-100 transition-transform duration-700 origin-center"></div>
+                    <div className="absolute bottom-0 right-0 left-0 h-px bg-gradient-to-r from-[#FF5AF7] via-[#6B00D7] to-[#FF5AF7] transform scale-x-0 group-hover:scale-x-100 transition-transform duration-700 origin-center"></div>
+                    <div className="absolute left-0 top-0 bottom-0 w-px bg-gradient-to-b from-[#6B00D7] via-[#FF5AF7] to-[#6B00D7] transform scale-y-0 group-hover:scale-y-100 transition-transform duration-700 origin-center"></div>
+                    <div className="absolute right-0 top-0 bottom-0 w-px bg-gradient-to-b from-[#FF5AF7] via-[#6B00D7] to-[#FF5AF7] transform scale-y-0 group-hover:scale-y-100 transition-transform duration-700 origin-center"></div>
                   </div>
                   
-                  <h3 className="text-xl font-semibold mb-4 group-hover:text-white transition-colors">Zero-Knowledge Privacy</h3>
-                  <p className="text-gray-400 group-hover:text-gray-300 transition-colors">Selectively disclose vault information without revealing sensitive asset data through advanced zero-knowledge proof cryptography.</p>
+                  {/* 3D Floating Icon */}
+                  <div className="perspective-1000 mb-8">
+                    <div className="relative w-16 h-16 transform-style-3d group-hover:rotateY-15 transition-all duration-700">
+                      <div className="absolute inset-0 bg-gradient-to-br from-[#6B00D7]/20 to-[#FF5AF7]/20 rounded-xl transform translate-z-[-20px] group-hover:translate-z-[-30px] transition-transform duration-700 blur-sm"></div>
+                      <div className="relative h-full w-full rounded-xl bg-black backdrop-blur-xl border border-white/20 shadow-xl flex items-center justify-center transform transition-transform duration-700 group-hover:scale-110">
+                        <Fingerprint className="h-8 w-8 text-white animate-pulse-slow animation-delay-2000" />
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <h3 className="text-xl font-semibold mb-4 group-hover:text-white transition-colors relative">
+                    <span className="bg-clip-text text-transparent bg-gradient-to-r from-[#6B00D7] via-[#FF5AF7] to-[#6B00D7] group-hover:opacity-100 transition-opacity duration-700">Zero-Knowledge Privacy</span>
+                  </h3>
+                  
+                  <p className="text-gray-400 group-hover:text-gray-300 transition-colors relative z-10">
+                    Cryptographically prove ownership or asset values without revealing sensitive data through advanced zk-SNARKs and selective disclosure protocols.
+                  </p>
+                  
+                  {/* Animated scan effect */}
+                  <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-700 overflow-hidden">
+                    <div className="absolute top-0 left-0 w-full h-full animate-scan"></div>
+                  </div>
                 </div>
               </div>
               
               {/* Geolocation Verification */}
-              <div className="group p-8 rounded-2xl bg-gradient-to-br from-[#0D0D0D] to-[#0F0F0F] border border-[#1A1A1A] hover:border-[#FF5AF7]/30 transition-all relative overflow-hidden">
-                <div className="absolute inset-0 bg-gradient-to-br from-[#FF5AF7]/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-                
-                <div className="relative z-10">
-                  <div className="inline-flex items-center justify-center w-16 h-16 rounded-xl bg-gradient-to-br from-[#0F0F0F] to-[#151515] border border-[#1A1A1A] group-hover:from-[#FF5AF7]/5 group-hover:to-[#FF5AF7]/20 transition-colors mb-6">
-                    <Globe className="h-8 w-8 text-[#FF5AF7]" />
+              <div className="group transform-style-3d hover:translate-z-[30px] transition-transform duration-500">
+                <div className="relative bg-gradient-to-br from-[#0A0A0A] to-black p-8 rounded-2xl border border-[#1A1A1A] group-hover:border-[#FF5AF7]/40 shadow-xl transition-all duration-500 h-full overflow-hidden">
+                  {/* Background glow effect */}
+                  <div className="absolute inset-0 bg-gradient-to-br from-[#FF5AF7]/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700"></div>
+                  
+                  {/* Decorative border highlight */}
+                  <div className="absolute inset-0 overflow-hidden">
+                    <div className="absolute top-0 right-0 left-0 h-px bg-gradient-to-r from-transparent via-[#FF5AF7] to-transparent transform scale-x-0 group-hover:scale-x-100 transition-transform duration-700 origin-left"></div>
+                    <div className="absolute bottom-0 right-0 left-0 h-px bg-gradient-to-r from-transparent via-[#FF5AF7] to-transparent transform scale-x-0 group-hover:scale-x-100 transition-transform duration-700 origin-right"></div>
+                    <div className="absolute left-0 top-0 bottom-0 w-px bg-gradient-to-b from-transparent via-[#FF5AF7] to-transparent transform scale-y-0 group-hover:scale-y-100 transition-transform duration-700 origin-top"></div>
+                    <div className="absolute right-0 top-0 bottom-0 w-px bg-gradient-to-b from-transparent via-[#FF5AF7] to-transparent transform scale-y-0 group-hover:scale-y-100 transition-transform duration-700 origin-bottom"></div>
                   </div>
                   
-                  <h3 className="text-xl font-semibold mb-4 group-hover:text-white transition-colors">Geolocation Verification</h3>
-                  <p className="text-gray-400 group-hover:text-gray-300 transition-colors">Add physical location requirements to vault access, ensuring assets can only be accessed from designated safe locations.</p>
+                  {/* 3D Floating Icon */}
+                  <div className="perspective-1000 mb-8">
+                    <div className="relative w-16 h-16 transform-style-3d group-hover:rotateY-15 transition-all duration-700">
+                      <div className="absolute inset-0 bg-gradient-to-br from-[#FF5AF7]/20 to-[#FF5AF7]/5 rounded-xl transform translate-z-[-20px] group-hover:translate-z-[-30px] transition-transform duration-700 blur-sm"></div>
+                      <div className="relative h-full w-full rounded-xl bg-black backdrop-blur-xl border border-[#FF5AF7]/30 shadow-xl flex items-center justify-center transform transition-transform duration-700 group-hover:scale-110">
+                        <Globe className="h-8 w-8 text-[#FF5AF7] animate-pulse-slow animation-delay-3000" />
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <h3 className="text-xl font-semibold mb-4 group-hover:text-white transition-colors relative">
+                    <span className="bg-clip-text text-transparent bg-gradient-to-r from-[#FF5AF7] via-white to-[#FF5AF7] group-hover:opacity-100 transition-opacity duration-700">Geolocation Verification</span>
+                  </h3>
+                  
+                  <p className="text-gray-400 group-hover:text-gray-300 transition-colors relative z-10">
+                    Create geofenced security zones requiring physical presence within defined safe locations for transaction authorization or vault access.
+                  </p>
+                  
+                  {/* Animated scan effect */}
+                  <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-700 overflow-hidden">
+                    <div className="absolute top-0 left-0 w-full h-full animate-scan"></div>
+                  </div>
                 </div>
               </div>
               
               {/* Permanent Storage */}
-              <div className="group p-8 rounded-2xl bg-gradient-to-br from-[#0D0D0D] to-[#0F0F0F] border border-[#1A1A1A] hover:border-[#6B00D7]/30 transition-all relative overflow-hidden">
-                <div className="absolute inset-0 bg-gradient-to-br from-[#6B00D7]/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-                
-                <div className="relative z-10">
-                  <div className="inline-flex items-center justify-center w-16 h-16 rounded-xl bg-gradient-to-br from-[#0F0F0F] to-[#151515] border border-[#1A1A1A] group-hover:from-[#6B00D7]/5 group-hover:to-[#6B00D7]/20 transition-colors mb-6">
-                    <FileText className="h-8 w-8 text-[#6B00D7]" />
+              <div className="group transform-style-3d hover:translate-z-[30px] transition-transform duration-500">
+                <div className="relative bg-gradient-to-br from-[#0A0A0A] to-black p-8 rounded-2xl border border-[#1A1A1A] group-hover:border-[#6B00D7]/40 shadow-xl transition-all duration-500 h-full overflow-hidden">
+                  {/* Background glow effect */}
+                  <div className="absolute inset-0 bg-gradient-to-br from-[#6B00D7]/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700"></div>
+                  
+                  {/* Decorative border highlight */}
+                  <div className="absolute inset-0 overflow-hidden">
+                    <div className="absolute top-0 right-0 left-0 h-px bg-gradient-to-r from-transparent via-[#6B00D7] to-transparent transform scale-x-0 group-hover:scale-x-100 transition-transform duration-700 origin-left"></div>
+                    <div className="absolute bottom-0 right-0 left-0 h-px bg-gradient-to-r from-transparent via-[#6B00D7] to-transparent transform scale-x-0 group-hover:scale-x-100 transition-transform duration-700 origin-right"></div>
+                    <div className="absolute left-0 top-0 bottom-0 w-px bg-gradient-to-b from-transparent via-[#6B00D7] to-transparent transform scale-y-0 group-hover:scale-y-100 transition-transform duration-700 origin-top"></div>
+                    <div className="absolute right-0 top-0 bottom-0 w-px bg-gradient-to-b from-transparent via-[#6B00D7] to-transparent transform scale-y-0 group-hover:scale-y-100 transition-transform duration-700 origin-bottom"></div>
                   </div>
                   
-                  <h3 className="text-xl font-semibold mb-4 group-hover:text-white transition-colors">Permanent Storage</h3>
-                  <p className="text-gray-400 group-hover:text-gray-300 transition-colors">Vault data stored immutably across IPFS and Arweave networks, ensuring permanent accessibility independent of individual blockchain health.</p>
+                  {/* 3D Floating Icon */}
+                  <div className="perspective-1000 mb-8">
+                    <div className="relative w-16 h-16 transform-style-3d group-hover:rotateY-15 transition-all duration-700">
+                      <div className="absolute inset-0 bg-gradient-to-br from-[#6B00D7]/20 to-[#6B00D7]/5 rounded-xl transform translate-z-[-20px] group-hover:translate-z-[-30px] transition-transform duration-700 blur-sm"></div>
+                      <div className="relative h-full w-full rounded-xl bg-black backdrop-blur-xl border border-[#6B00D7]/30 shadow-xl flex items-center justify-center transform transition-transform duration-700 group-hover:scale-110">
+                        <FileText className="h-8 w-8 text-[#6B00D7] animate-pulse-slow animation-delay-1000" />
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <h3 className="text-xl font-semibold mb-4 group-hover:text-white transition-colors relative">
+                    <span className="bg-clip-text text-transparent bg-gradient-to-r from-[#6B00D7] via-white to-[#6B00D7] group-hover:opacity-100 transition-opacity duration-700">Permanent Storage</span>
+                  </h3>
+                  
+                  <p className="text-gray-400 group-hover:text-gray-300 transition-colors relative z-10">
+                    Distributed immutable storage across IPFS and Arweave networks ensures permanent record accessibility regardless of individual blockchain conditions.
+                  </p>
+                  
+                  {/* Animated scan effect */}
+                  <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-700 overflow-hidden">
+                    <div className="absolute top-0 left-0 w-full h-full animate-scan"></div>
+                  </div>
                 </div>
               </div>
               
               {/* Real-Time Monitoring */}
-              <div className="group p-8 rounded-2xl bg-gradient-to-br from-[#0D0D0D] to-[#0F0F0F] border border-[#1A1A1A] hover:border-gradient-to-r hover:from-[#6B00D7]/30 hover:to-[#FF5AF7]/30 transition-all relative overflow-hidden">
-                <div className="absolute inset-0 bg-gradient-to-br from-[#6B00D7]/10 via-transparent to-[#FF5AF7]/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-                
-                <div className="relative z-10">
-                  <div className="inline-flex items-center justify-center w-16 h-16 rounded-xl bg-gradient-to-br from-[#0F0F0F] to-[#151515] border border-[#1A1A1A] group-hover:from-[#6B00D7]/5 group-hover:to-[#FF5AF7]/10 transition-colors mb-6">
-                    <RefreshCw className="h-8 w-8 text-white" />
+              <div className="group transform-style-3d hover:translate-z-[30px] transition-transform duration-500">
+                <div className="relative bg-gradient-to-br from-[#0A0A0A] to-black p-8 rounded-2xl border border-[#1A1A1A] group-hover:border-[#FF5AF7]/40 shadow-xl transition-all duration-500 h-full overflow-hidden">
+                  {/* Background glow effect */}
+                  <div className="absolute inset-0 bg-gradient-to-br from-[#FF5AF7]/10 via-transparent to-[#6B00D7]/10 opacity-0 group-hover:opacity-100 transition-opacity duration-700"></div>
+                  
+                  {/* Decorative border highlight */}
+                  <div className="absolute inset-0 overflow-hidden">
+                    <div className="absolute top-0 right-0 left-0 h-px bg-gradient-to-r from-[#FF5AF7] via-[#6B00D7] to-[#FF5AF7] transform scale-x-0 group-hover:scale-x-100 transition-transform duration-700 origin-center"></div>
+                    <div className="absolute bottom-0 right-0 left-0 h-px bg-gradient-to-r from-[#6B00D7] via-[#FF5AF7] to-[#6B00D7] transform scale-x-0 group-hover:scale-x-100 transition-transform duration-700 origin-center"></div>
+                    <div className="absolute left-0 top-0 bottom-0 w-px bg-gradient-to-b from-[#FF5AF7] via-[#6B00D7] to-[#FF5AF7] transform scale-y-0 group-hover:scale-y-100 transition-transform duration-700 origin-center"></div>
+                    <div className="absolute right-0 top-0 bottom-0 w-px bg-gradient-to-b from-[#6B00D7] via-[#FF5AF7] to-[#6B00D7] transform scale-y-0 group-hover:scale-y-100 transition-transform duration-700 origin-center"></div>
                   </div>
                   
-                  <h3 className="text-xl font-semibold mb-4 group-hover:text-white transition-colors">Real-Time Monitoring</h3>
-                  <p className="text-gray-400 group-hover:text-gray-300 transition-colors">AI-powered security incident detection constantly analyzes all vault activity to identify and prevent unauthorized access attempts.</p>
+                  {/* 3D Floating Icon */}
+                  <div className="perspective-1000 mb-8">
+                    <div className="relative w-16 h-16 transform-style-3d group-hover:rotateY-15 transition-all duration-700">
+                      <div className="absolute inset-0 bg-gradient-to-br from-[#FF5AF7]/20 to-[#6B00D7]/20 rounded-xl transform translate-z-[-20px] group-hover:translate-z-[-30px] transition-transform duration-700 blur-sm"></div>
+                      <div className="relative h-full w-full rounded-xl bg-black backdrop-blur-xl border border-white/20 shadow-xl flex items-center justify-center transform transition-transform duration-700 group-hover:scale-110">
+                        <RefreshCw className="h-8 w-8 text-white animate-pulse-slow animation-delay-2000" />
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <h3 className="text-xl font-semibold mb-4 group-hover:text-white transition-colors relative">
+                    <span className="bg-clip-text text-transparent bg-gradient-to-r from-[#FF5AF7] via-[#6B00D7] to-[#FF5AF7] group-hover:opacity-100 transition-opacity duration-700">Real-Time Monitoring</span>
+                  </h3>
+                  
+                  <p className="text-gray-400 group-hover:text-gray-300 transition-colors relative z-10">
+                    AI-powered security scanning continuously analyzes transaction patterns and access requests to detect and prevent suspicious activity before breaches occur.
+                  </p>
+                  
+                  {/* Animated scan effect */}
+                  <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-700 overflow-hidden">
+                    <div className="absolute top-0 left-0 w-full h-full animate-scan"></div>
+                  </div>
                 </div>
               </div>
             </div>
             
-            <div className="text-center mt-12">
+            {/* Premium Call to Action */}
+            <div className="flex justify-center mt-20">
               <Link to="/revolutionary-features">
-                <Button variant="outline" className="border-[#6B00D7] text-[#6B00D7] hover:bg-[#6B00D7]/10 hover:text-[#8719FF]">
-                  Explore All Security Features <ArrowRight className="ml-2 h-4 w-4" />
+                <Button variant="outline" className="border-[#6B00D7] text-[#6B00D7] hover:bg-[#6B00D7]/10 hover:text-[#8719FF] text-lg py-6 px-8 rounded-xl group relative overflow-hidden">
+                  <div className="absolute inset-0 w-full h-full bg-gradient-to-r from-[#6B00D7]/0 via-[#6B00D7]/10 to-[#6B00D7]/0 transform translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000"></div>
+                  <span className="relative flex items-center gap-2">Explore All Security Features <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" /></span>
                 </Button>
               </Link>
             </div>
