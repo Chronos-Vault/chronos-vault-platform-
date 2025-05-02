@@ -8,6 +8,7 @@ import { useAuthContext } from '@/contexts/auth-context';
 // Header is now provided by the Layout component
 import Footer from "@/components/layout/footer";
 import TonWalletStateIndicator from '@/components/ton/TonWalletStateIndicator';
+import NavigationTestMenu from '@/components/layout/NavigationTestMenu';
 
 const CrossChainPage: React.FC = () => {
   const { isAuthenticated } = useAuthContext();
@@ -35,6 +36,9 @@ const CrossChainPage: React.FC = () => {
               {/* TON Wallet Status Indicator - to test connection persistence */}
               <div className="max-w-md mx-auto mt-6">
                 <TonWalletStateIndicator />
+                <div className="mt-3">
+                  <NavigationTestMenu />
+                </div>
               </div>
             </div>
             
