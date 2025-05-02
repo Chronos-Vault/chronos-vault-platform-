@@ -250,61 +250,92 @@ const CVTUtilityPage = () => {
                       {pricing.vaultTypes.map((vault, index) => {
                         const canAfford = tokenPower >= vault.price;
                         return (
-                          <Card 
+                          <div 
                             key={index} 
-                            className={`bg-[#1A1A1A]/90 ${canAfford ? 'border-[#6B00D7]/50' : 'border-gray-800'} overflow-hidden relative p-6 transition-all duration-300 cursor-pointer group hover:border-[#6B00D7] h-full`}
+                            className={`bg-black border-[3px] ${canAfford ? 'border-[#6B00D7]' : 'border-gray-800'} rounded-2xl overflow-hidden relative group hover:shadow-xl hover:shadow-[#6B00D7]/30 transition-all duration-300 ${canAfford ? 'cursor-pointer' : 'cursor-not-allowed'}`}
                             onClick={() => canAfford && setLocation('/create-vault')}
                           >
-                            <div className={`absolute top-0 left-0 w-full h-1 ${canAfford ? 'bg-gradient-to-r from-[#6B00D7]/80 to-[#FF5AF7]/50' : 'bg-gray-800'}`}></div>
-                            <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-[#6B00D7]/20 to-transparent rounded-bl-full opacity-30 group-hover:opacity-50 transition-opacity"></div>
+                            {/* Glow effect behind the card */}
+                            {canAfford && (
+                              <div className="absolute -inset-1 bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] opacity-30 blur-md group-hover:opacity-40 transition-opacity duration-300"></div>
+                            )}
                             
-                            <div className={`h-16 w-16 rounded-full ${canAfford ? 'bg-[#1E1E1E] border border-[#6B00D7]/40' : 'bg-gray-900 border border-gray-800'} flex items-center justify-center mb-6 group-hover:scale-110 transition-transform`}>
-                              <div className={canAfford ? 'text-[#FF5AF7]' : 'text-gray-500'}>
-                                {vault.icon}
+                            <div className="relative z-10 bg-black h-full flex flex-col">
+                              {/* Header */}
+                              <div className={canAfford ? 'bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7]' : 'bg-gray-900'} >
+                                <div className="p-5 flex items-center justify-between">
+                                  <div className="flex items-center gap-3">
+                                    <div className="w-12 h-12 rounded-full bg-black/80 flex items-center justify-center">
+                                      <div className={canAfford ? 'text-white' : 'text-gray-500 opacity-50'}>
+                                        {vault.icon}
+                                      </div>
+                                    </div>
+                                    <div>
+                                      <h3 className="text-xl font-bold text-white">{vault.name}</h3>
+                                      <div className="flex items-center mt-1">
+                                        <div className={`w-2 h-2 rounded-full ${canAfford ? 'bg-green-400' : 'bg-gray-600'} mr-2`}></div>
+                                        <span className="text-xs text-white/80">
+                                          {chain === 'ethereum' ? 'Smart Contract Powered' : 
+                                           chain === 'solana' ? 'High Performance' : 'Lightning Fast'}
+                                        </span>
+                                      </div>
+                                    </div>
+                                  </div>
+                                  <div className="bg-black/40 backdrop-blur-sm px-3 py-1 rounded-full">
+                                    <span className={`text-white ${!canAfford && 'opacity-50'} text-sm`}>{vault.price} CVT</span>
+                                  </div>
+                                </div>
                               </div>
-                            </div>
-                            
-                            <div className="flex justify-between items-center mb-3">
-                              <h3 className={`text-xl font-semibold ${canAfford ? 'group-hover:text-[#FF5AF7]' : 'text-gray-400'} transition-colors`}>{vault.name}</h3>
-                              {canAfford && (
-                                <Badge variant="outline" className="border-[#6B00D7]/40 bg-[#6B00D7]/10 text-[#FF5AF7]">
-                                  Available
-                                </Badge>
-                              )}
-                            </div>
-                            
-                            <div className="flex items-center mb-6">
-                              <div className={`text-xl font-bold ${canAfford ? 'text-[#FF5AF7]' : 'text-gray-500'}`}>{vault.price}</div>
-                              <div className={`text-sm ml-2 ${canAfford ? 'text-white' : 'text-gray-500'}`}>CVT</div>
-                            </div>
-                            
-                            <ul className="space-y-2 mb-6">
-                              {vault.features.map((feature, idx) => (
-                                <li key={idx} className="flex items-start gap-2">
-                                  <CheckCircle2 className={`h-4 w-4 mt-1 ${canAfford ? 'text-[#FF5AF7]' : 'text-gray-600'}`} />
-                                  <span className={canAfford ? 'text-gray-300' : 'text-gray-600'}>{feature}</span>
-                                </li>
-                              ))}
-                            </ul>
-                            
-                            <div className="mt-auto pt-4">
-                              {canAfford ? (
-                                <div className="flex justify-between items-center">
-                                  <div className="text-sm text-gray-400">
+                              
+                              {/* Content */}
+                              <div className="p-6 flex flex-col h-full">
+                                <div className="mb-6">
+                                  <div className={`border ${canAfford ? 'border-[#6B00D7]/40' : 'border-gray-800'} rounded-xl overflow-hidden mb-4`}>
+                                    <div className={`p-4 ${canAfford ? 'bg-gradient-to-r from-[#6B00D7]/10 to-[#6B00D7]/5' : 'bg-gray-900/30'}`}>
+                                      <h4 className={`font-bold text-lg ${canAfford ? 'text-white' : 'text-gray-500'}`}>Features</h4>
+                                    </div>
+                                    <div className="p-4 bg-black">
+                                      <ul className="space-y-3">
+                                        {vault.features.map((feature, idx) => (
+                                          <li key={idx} className="flex items-start gap-3">
+                                            <div className={`h-5 w-5 rounded-full ${canAfford ? 'bg-[#6B00D7]/20' : 'bg-gray-900'} flex items-center justify-center flex-shrink-0 mt-0.5`}>
+                                              <CheckCircle2 className={`h-3.5 w-3.5 ${canAfford ? 'text-[#FF5AF7]' : 'text-gray-600'}`} />
+                                            </div>
+                                            <span className={canAfford ? 'text-gray-200' : 'text-gray-600'}>{feature}</span>
+                                          </li>
+                                        ))}
+                                      </ul>
+                                    </div>
+                                  </div>
+                                  
+                                  <div className={`${canAfford ? 'text-gray-300' : 'text-gray-600'} text-sm mb-4`}>
                                     {chain === 'ethereum' ? chainPricing.ethereum.features[index % chainPricing.ethereum.features.length] :
                                      chain === 'solana' ? chainPricing.solana.features[index % chainPricing.solana.features.length] :
                                      chainPricing.ton.features[index % chainPricing.ton.features.length]}
                                   </div>
-                                  <ArrowRight className="h-5 w-5 text-[#FF5AF7] group-hover:translate-x-1 transition-transform" />
                                 </div>
-                              ) : (
-                                <div className="flex items-center justify-center gap-2 p-2 rounded-md bg-gray-800/50 border border-gray-700">
-                                  <Lock className="h-4 w-4 text-gray-500" />
-                                  <span className="text-sm text-gray-500">Need {vault.price - tokenPower} more CVT</span>
+                                
+                                <div className="mt-auto">
+                                  {canAfford ? (
+                                    <Button 
+                                      className="w-full bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] hover:opacity-90 text-white font-medium py-3 rounded-xl shadow-md hover:shadow-lg hover:shadow-[#6B00D7]/20 transition-all relative overflow-hidden group"
+                                    >
+                                      <span className="absolute inset-0 bg-white/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></span>
+                                      <span className="relative z-10 flex items-center justify-center">
+                                        Create Vault
+                                        <ArrowRight className="h-4 w-4 ml-2 group-hover:translate-x-1 transition-transform" />
+                                      </span>
+                                    </Button>
+                                  ) : (
+                                    <div className="flex items-center justify-center gap-2 p-4 rounded-xl bg-gray-900/50 border border-gray-800">
+                                      <Lock className="h-4 w-4 text-gray-500" />
+                                      <span className="text-sm text-gray-500">Need {vault.price - tokenPower} more CVT</span>
+                                    </div>
+                                  )}
                                 </div>
-                              )}
+                              </div>
                             </div>
-                          </Card>
+                          </div>
                         );
                       })}
                     </div>

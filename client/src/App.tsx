@@ -10,7 +10,7 @@ import { CVTTokenProvider } from "@/contexts/cvt-token-context";
 import Layout from "@/components/layout/Layout";
 
 // Pages
-import Home from "@/pages/home";
+import Home from "@/pages/home-new";
 import CreateVault from "@/pages/create-vault";
 import CreateVaultEnhancedPage from "@/pages/create-vault-enhanced";
 import AdvancedVaultCreationPage from "@/pages/advanced-vault-creation";
@@ -45,7 +45,7 @@ import WalletManagerPage from "@/pages/wallet-manager";
 import PremiumPaymentPage from "@/pages/premium-payment";
 import SubscriptionPage from "@/pages/subscription";
 import CVTPaymentPage from "@/pages/cvt-payment";
-import CVTUtilityPage from "@/pages/cvt-utility";
+import CVTUtilityPage from "@/pages/cvt-utility-new";
 
 // Redirect component for wouter
 function Redirect({ to }: { to: string }) {
