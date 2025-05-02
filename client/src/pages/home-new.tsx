@@ -3,12 +3,14 @@ import { Link, useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
+import { Badge } from "@/components/ui/badge";
 import VaultCard from "@/components/vault/vault-card";
 import { BitcoinHalvingVault } from "@/components/bitcoin/BitcoinHalvingVault";
-import { Zap, Coins, Sparkles, ArrowRight, Users, Shield } from "lucide-react";
+import { Zap, Coins, Sparkles, ArrowRight, Users, Shield, Clock, Lock, Key, Fingerprint, Globe, FileText, ChevronRight, RefreshCw, Layers } from "lucide-react";
 import { useCVTToken } from "@/contexts/cvt-token-context";
 import { apiRequest } from "@/lib/queryClient";
 import { useQuery } from "@tanstack/react-query";
+import { formatNumber } from "@/lib/utils";
 
 const Home = () => {
   const [_, setLocation] = useLocation();
@@ -84,164 +86,471 @@ const Home = () => {
   }, []);
 
   return (
-    <div className="flex flex-col bg-gradient-to-b from-[#121212] to-[#1A1A1A] text-white font-poppins">
+    <div className="flex flex-col text-white font-poppins bg-black">
       <main className="flex-1">
-        {/* Hero Section */}
-        <section className="py-16 md:py-24 relative overflow-hidden">
-          {/* Decorative elements */}
-          <div className="absolute w-full h-full top-0 left-0 overflow-hidden pointer-events-none">
-            <div className="absolute top-40 left-20 w-64 h-64 rounded-full bg-gradient-to-r from-[#6B00D7]/30 to-[#FF5AF7]/10 blur-3xl opacity-50"></div>
-            <div className="absolute top-80 right-10 w-80 h-80 rounded-full bg-gradient-to-r from-[#FF5AF7]/20 to-[#6B00D7]/10 blur-3xl opacity-40"></div>
-            <div className="absolute -bottom-20 left-1/3 w-96 h-96 rounded-full bg-gradient-to-r from-blue-500/10 to-purple-500/10 blur-3xl opacity-30"></div>
+        {/* Hero Section - Luxury Redesign */}
+        <section className="min-h-[90vh] relative overflow-hidden flex items-center">
+          {/* Background Effects */}
+          <div className="absolute inset-0 bg-[#080808] overflow-hidden">
+            {/* Animated gradient circles */}
+            <div className="absolute top-1/4 left-1/4 w-[40vw] h-[40vw] rounded-full bg-gradient-to-r from-[#6B00D7]/30 to-[#FF5AF7]/20 blur-[100px] opacity-40 animate-pulse-slow"></div>
+            <div className="absolute bottom-1/3 right-1/3 w-[35vw] h-[35vw] rounded-full bg-gradient-to-r from-[#FF5AF7]/20 to-[#6B00D7]/30 blur-[120px] opacity-30 animate-pulse-slow animation-delay-1000"></div>
+            
+            {/* Luxury grid pattern overlay */}
+            <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxwYXRoIGZpbGw9IiMzMzMiIGQ9Ik0wIDBoNjB2NjBIMHoiLz48cGF0aCBkPSJNNjAgMEgwdjYwaDYwVjB6TTIgMmg1NnY1NkgyVjJ6IiBmaWxsPSIjMDAwIi8+PC9nPjwvc3ZnPg==')] opacity-10"></div>
+            
+            {/* Premium diagonal line decoration */}
+            <div className="absolute top-0 left-0 right-0 h-20 overflow-hidden">
+              <div className="absolute top-0 left-0 right-0 h-[200px] bg-gradient-to-r from-[#6B00D7]/20 via-[#FF5AF7]/10 to-[#6B00D7]/30 transform rotate-1 translate-y-[-150px]"></div>
+            </div>
+            
+            <div className="absolute bottom-0 left-0 right-0 h-20 overflow-hidden">
+              <div className="absolute bottom-0 left-0 right-0 h-[200px] bg-gradient-to-r from-[#FF5AF7]/20 via-[#6B00D7]/10 to-[#FF5AF7]/30 transform -rotate-1 translate-y-[150px]"></div>
+            </div>
+          </div>
+          
+          <div className="container mx-auto px-4 z-10 py-16">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+              {/* Left Hero Content */}
+              <div className="space-y-8">
+                <div>
+                  <div className="inline-flex items-center px-4 py-1.5 rounded-full bg-gradient-to-r from-[#6B00D7]/20 to-[#FF5AF7]/20 border border-[#6B00D7]/40 backdrop-blur-sm mb-6">
+                    <span className="flex items-center text-xs md:text-sm font-medium text-[#FF5AF7]">Premium Blockchain Security <div className="mx-2 w-1 h-1 rounded-full bg-[#FF5AF7]"></div> Multi-Chain Support</span>
+                  </div>
+                  
+                  <h1 className="font-poppins font-bold text-4xl md:text-5xl lg:text-6xl xl:text-7xl leading-none tracking-tight">
+                    <span className="block animate-text-shine bg-gradient-to-r from-[#6B00D7] via-[#FF5AF7] to-[#6B00D7] bg-clip-text text-transparent bg-300%">Digital Asset</span>
+                    <span className="block bg-gradient-to-r from-white via-gray-100 to-white bg-clip-text text-transparent">Security Redefined</span>
+                  </h1>
+                  
+                  <p className="mt-8 text-lg md:text-xl text-gray-300 max-w-xl leading-relaxed">
+                    Chronos Vault combines Triple-Chain Security, Zero-Knowledge Privacy, and Decentralized Storage to create the most sophisticated digital vault system in blockchain.
+                  </p>
+                </div>
+                
+                <div className="pt-6 flex flex-wrap gap-4">
+                  <Link 
+                    to="/create-vault" 
+                    className="px-7 py-4 bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] hover:from-[#5500AB] hover:to-[#FF46E8] text-white font-semibold rounded-xl shadow-lg shadow-[#6B00D7]/20 hover:shadow-xl hover:shadow-[#FF5AF7]/30 flex items-center gap-3 transition-all duration-300 relative overflow-hidden group"
+                  >
+                    <span className="absolute inset-0 w-full h-full bg-white opacity-0 group-hover:opacity-10 transition-opacity duration-300"></span>
+                    <i className="ri-shield-keyhole-line text-xl"></i> 
+                    <span>Create New Vault</span>
+                  </Link>
+                  
+                  <Link 
+                    to="/multi-signature-vault" 
+                    className="px-7 py-4 bg-transparent border border-[#6B00D7] hover:border-[#FF5AF7] text-white font-semibold rounded-xl flex items-center gap-3 transition-all duration-300 hover:bg-[#FF5AF7]/5"
+                  >
+                    <i className="ri-user-shared-line text-xl"></i>
+                    <span>Multi-Signature</span>
+                  </Link>
+                </div>
+                
+                {/* Stats Row */}
+                <div className="grid grid-cols-3 gap-6 pt-8 border-t border-gray-800">
+                  <div>
+                    <div className="text-2xl md:text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-[#FF5AF7] to-[#6B00D7]">
+                      {formatNumber(10467)}
+                    </div>
+                    <p className="text-xs text-gray-400 mt-1">Active Vaults</p>
+                  </div>
+                  <div>
+                    <div className="text-2xl md:text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-[#FF5AF7] to-[#6B00D7]">
+                      {formatNumber(3)}+
+                    </div>
+                    <p className="text-xs text-gray-400 mt-1">Blockchains</p>
+                  </div>
+                  <div>
+                    <div className="text-2xl md:text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-[#FF5AF7] to-[#6B00D7]">
+                      100%
+                    </div>
+                    <p className="text-xs text-gray-400 mt-1">Security Rating</p>
+                  </div>
+                </div>
+              </div>
+            
+              {/* Right Hero Visualization */}
+              <div className="relative hidden lg:block">
+                <div className="aspect-square max-w-lg mx-auto relative">
+                  {/* Diamond-shaped visual element */}
+                  <div className="absolute inset-0 bg-gradient-to-br from-[#6B00D7]/20 to-[#FF5AF7]/10 backdrop-blur-md rounded-2xl transform rotate-45 border border-white/5 shadow-2xl">
+                    {/* Inner diamond decoration */}
+                    <div className="absolute inset-4 border border-white/10 rounded-xl"></div>
+                    <div className="absolute inset-8 border border-white/10 rounded-lg"></div>
+                    <div className="absolute inset-0 bg-grid-pattern opacity-10"></div>
+                  </div>
+                  
+                  {/* Floating vault icons */}
+                  <div className="absolute top-1/4 left-1/4 transform -translate-x-1/2 -translate-y-1/2 p-4 bg-[#151515]/80 backdrop-blur-md rounded-xl border border-[#6B00D7]/30 shadow-lg shadow-[#6B00D7]/20 animate-float">
+                    <Lock className="h-8 w-8 text-[#6B00D7]" />
+                  </div>
+                  
+                  <div className="absolute top-3/4 right-1/4 transform translate-x-1/2 -translate-y-1/2 p-4 bg-[#151515]/80 backdrop-blur-md rounded-xl border border-[#FF5AF7]/30 shadow-lg shadow-[#FF5AF7]/20 animate-float animation-delay-1000">
+                    <Key className="h-8 w-8 text-[#FF5AF7]" />
+                  </div>
+                  
+                  <div className="absolute top-1/2 right-1/6 transform translate-x-1/2 -translate-y-1/2 p-4 bg-[#151515]/80 backdrop-blur-md rounded-xl border border-[#6B00D7]/30 shadow-lg shadow-[#6B00D7]/20 animate-float animation-delay-2000">
+                    <Shield className="h-8 w-8 text-[#6B00D7]" />
+                  </div>
+                  
+                  <div className="absolute bottom-1/6 left-1/3 transform -translate-x-1/2 translate-y-1/2 p-4 bg-[#151515]/80 backdrop-blur-md rounded-xl border border-[#FF5AF7]/30 shadow-lg shadow-[#FF5AF7]/20 animate-float animation-delay-3000">
+                    <Layers className="h-8 w-8 text-[#FF5AF7]" />
+                  </div>
+                  
+                  {/* Center vault logo */}
+                  <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 p-6 bg-[#0A0A0A]/90 backdrop-blur-xl rounded-full border border-white/10 shadow-2xl shadow-[#6B00D7]/30">
+                    <div className="relative">
+                      <div className="absolute inset-0 bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] rounded-full blur-md opacity-60 animate-pulse"></div>
+                      <div className="relative p-4 rounded-full bg-[#151515] border border-white/10">
+                        <i className="ri-safe-2-line text-5xl text-white"></i>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+        
+        {/* Luxury Trusted By Section */}
+        <section className="bg-[#080808] border-y border-white/5 py-8">
+          <div className="container mx-auto px-4">
+            <div className="flex flex-col md:flex-row items-center justify-between gap-6">
+              <div className="flex items-center gap-3">
+                <div className="h-px w-12 bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7]"></div>
+                <p className="text-sm text-gray-400 uppercase tracking-widest font-medium">Trusted By Leading Blockchain Projects</p>
+              </div>
+              <div className="flex flex-wrap justify-center md:justify-end gap-8 opacity-70">
+                <i className="ri-ethereum-line text-3xl"></i>
+                <i className="ri-bit-coin-line text-3xl"></i>
+                <i className="ri-currency-line text-3xl"></i>
+                <i className="ri-coin-line text-3xl"></i>
+                <i className="ri-copper-coin-line text-3xl"></i>
+              </div>
+            </div>
+          </div>
+        </section>
+        
+        {/* Premium Vault Showcase */}
+        <section className="py-20 bg-gradient-to-b from-[#0A0A0A] to-[#080808] relative overflow-hidden">
+          {/* Background decorative elements */}
+          <div className="absolute inset-0 pointer-events-none overflow-hidden">
+            <div className="absolute left-0 right-0 top-0 h-px bg-gradient-to-r from-transparent via-[#6B00D7]/30 to-transparent"></div>
+            <div className="absolute -top-40 -right-40 w-80 h-80 bg-[#6B00D7]/10 rounded-full blur-3xl"></div>
+            <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-[#FF5AF7]/10 rounded-full blur-3xl"></div>
           </div>
           
           <div className="container mx-auto px-4 relative z-10">
-            {/* Main Hero Content */}
-            <div className="relative">
-              {/* Headline and Primary Content */}
-              <div className="text-center mb-12">
-                <div className="inline-block mb-4 px-4 py-1 rounded-full bg-gradient-to-r from-[#6B00D7]/20 to-[#FF5AF7]/20 border border-[#6B00D7]/40 backdrop-blur-sm">
-                  <span className="text-sm font-medium text-[#FF5AF7]">Introducing Revolutionary Multi-Chain Security</span>
-                </div>
-              
-                <h1 className="font-poppins font-bold text-4xl md:text-7xl leading-tight mb-8">
-                  <span className="animate-text-shine bg-gradient-to-r from-[#6B00D7] via-[#FF5AF7] to-[#6B00D7] bg-clip-text text-transparent bg-300% inline-block">Next-Generation</span>
-                  <br />
-                  <span className="bg-gradient-to-r from-white via-gray-100 to-gray-200 bg-clip-text text-transparent">Digital Asset Security</span>
-                </h1>
-                
-                <p className="text-xl md:text-2xl text-gray-200 max-w-4xl mx-auto mt-8 leading-relaxed">
-                  Create tamper-proof digital and financial vaults with revolutionary technologies: Triple-Chain Security, Cross-Chain Atomic Swaps, and IPFS/Arweave permanent storage integration.
-                </p>
-                <p className="text-xl md:text-2xl bg-gradient-to-r from-[#6B00D7] via-[#FF5AF7] to-[#6B00D7] inline-block text-transparent bg-clip-text font-bold mt-2 animate-text-shine bg-300%">
-                  The ultimate solution for protecting what matters most across time and chains.
-                </p>
+            <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 mb-12">
+              <div>
+                <h3 className="inline-flex items-center text-sm text-[#FF5AF7] mb-4">
+                  <div className="mr-2 w-6 h-px bg-[#FF5AF7]"></div>
+                  SPECIALIZED VAULTS
+                </h3>
+                <h2 className="text-3xl md:text-4xl font-bold leading-tight">
+                  <span className="bg-clip-text text-transparent bg-gradient-to-r from-gray-100 to-white">Premium Vault Solutions</span>
+                </h2>
+                <p className="text-gray-400 max-w-lg mt-4">Choose from specialized vault templates, each designed for unique security needs and blockchain interactions.</p>
               </div>
               
-              <div className="mt-16 flex justify-center">
-                <Link 
-                  to="/create-vault" 
-                  className="px-10 py-5 bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] hover:from-[#5500AB] hover:to-[#FF46E8] text-white text-xl font-semibold rounded-2xl shadow-xl shadow-[#6B00D7]/20 hover:shadow-2xl hover:shadow-[#FF5AF7]/30 flex items-center gap-3 transition-all duration-300 relative overflow-hidden group"
-                >
-                  <span className="absolute inset-0 w-full h-full bg-white opacity-0 group-hover:opacity-10 transition-opacity duration-300"></span>
-                  <i className="ri-add-circle-line text-2xl"></i> 
-                  <span>Create Your Vault Now</span>
-                </Link>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        {/* My Vaults Section */}
-        <section className="py-16 bg-gradient-to-r from-[#0E0E0E] to-[#151515]">
-          <div className="container mx-auto px-4">
-            <div className="flex justify-between items-center mb-8">
-              <h2 className="text-2xl md:text-3xl font-bold">My Vaults</h2>
-              <Link to="/my-vaults">
-                <Button variant="ghost" className="text-[#FF5AF7] hover:text-[#FF7AF7] hover:bg-[#FF5AF7]/10">
-                  View All <ArrowRight className="ml-2 h-4 w-4" />
-                </Button>
+              <Link to="/create-vault" className="group flex items-center text-white hover:text-[#FF5AF7] transition-colors">
+                <span>View All Vault Types</span>
+                <ChevronRight className="ml-1 h-5 w-5 group-hover:translate-x-1 transition-transform" />
               </Link>
             </div>
             
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mb-8">
-              {/* Sample Vault Card */}
-              <VaultCard vault={sampleVault} />
-
-              {/* API-Fetched Vault Cards */}
-              {vaults && vaults.length > 0 && vaults.map((vault: any) => (
-                <VaultCard key={vault.id} vault={vault} />
-              ))}
-
-              {/* Multi-Signature Vault Promo Card */}
-              <Card className="h-full bg-gradient-to-br from-[#151515] to-[#1A1A1A] border-[#FF5AF7]/30 hover:border-[#FF5AF7]/60 hover:shadow-md hover:shadow-[#FF5AF7]/10 transition-all cursor-pointer group">
+            {/* Premium Vault Cards */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+              {/* Multi-Signature Vault Card - Premium Design */}
+              <Card className="bg-[#0D0D0D] border-none overflow-hidden group relative">
+                <div className="absolute inset-0 bg-gradient-to-br from-[#6B00D7]/20 via-transparent to-[#FF5AF7]/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                <div className="absolute inset-x-0 bottom-0 h-1 bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] transform scale-x-0 group-hover:scale-x-100 transition-transform duration-500 origin-left"></div>
+                
                 <Link to="/multi-signature-vault">
-                  <CardContent className="p-6 h-full flex flex-col justify-between">
-                    <div>
-                      <div className="bg-gradient-to-r from-[#FF5AF7]/20 to-[#6B00D7]/20 p-3 rounded-full w-14 h-14 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
-                        <Users className="h-7 w-7 text-[#FF5AF7]" />
-                      </div>
-                      <h3 className="text-xl font-semibold mb-2">Create Multi-Signature Vault</h3>
-                      <p className="text-gray-400">Enhanced security with multiple signers required for every transaction.</p>
+                  <CardContent className="p-8 relative z-10">
+                    <div className="bg-gradient-to-br from-[#151515] to-black rounded-2xl p-3 w-12 h-12 flex items-center justify-center mb-6 group-hover:bg-gradient-to-br group-hover:from-[#6B00D7]/20 group-hover:to-[#FF5AF7]/10 transition-colors duration-500">
+                      <Users className="h-6 w-6 text-[#FF5AF7]" />
                     </div>
-                    <Button className="mt-6 bg-gradient-to-r from-[#FF5AF7] to-[#6B00D7] hover:from-[#FF6AF7] hover:to-[#7B10E7] text-white w-full">
-                      Get Started
-                    </Button>
+                    
+                    <Badge className="bg-[#FF5AF7]/10 text-[#FF5AF7] hover:bg-[#FF5AF7]/20 border-none mb-4">Enhanced Security</Badge>
+                    
+                    <h3 className="text-xl font-semibold mb-3">Multi-Signature Vault</h3>
+                    <p className="text-gray-400 mb-6 line-clamp-2">Requires multiple authorized signatures to access or modify vault contents, ideal for team treasuries and joint assets.</p>
+                    
+                    <div className="flex justify-between items-center">
+                      <div className="text-sm text-gray-400">
+                        <span className="font-medium text-white">2-15</span> Signers
+                      </div>
+                      <Button variant="ghost" size="sm" className="text-[#FF5AF7] hover:text-[#FF7AF7] hover:bg-[#FF5AF7]/10 p-0 group-hover:translate-x-1 transition-transform">
+                        Create <ChevronRight className="ml-1 h-4 w-4" />
+                      </Button>
+                    </div>
                   </CardContent>
                 </Link>
               </Card>
 
-              {/* Bitcoin Halving Vault Promo Card */}
-              <Card className="h-full bg-gradient-to-br from-[#151515] to-[#1A1A1A] border-[#6B00D7]/30 hover:border-[#6B00D7]/60 hover:shadow-md hover:shadow-[#6B00D7]/10 transition-all cursor-pointer group">
+              {/* Time-Lock Vault Card - Premium Design */}
+              <Card className="bg-[#0D0D0D] border-none overflow-hidden group relative">
+                <div className="absolute inset-0 bg-gradient-to-br from-[#6B00D7]/20 via-transparent to-[#FF5AF7]/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                <div className="absolute inset-x-0 bottom-0 h-1 bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] transform scale-x-0 group-hover:scale-x-100 transition-transform duration-500 origin-left"></div>
+                
+                <Link to="/create-vault?type=timelock">
+                  <CardContent className="p-8 relative z-10">
+                    <div className="bg-gradient-to-br from-[#151515] to-black rounded-2xl p-3 w-12 h-12 flex items-center justify-center mb-6 group-hover:bg-gradient-to-br group-hover:from-[#6B00D7]/20 group-hover:to-[#FF5AF7]/10 transition-colors duration-500">
+                      <Clock className="h-6 w-6 text-[#6B00D7]" />
+                    </div>
+                    
+                    <Badge className="bg-[#6B00D7]/10 text-[#6B00D7] hover:bg-[#6B00D7]/20 border-none mb-4">Popular</Badge>
+                    
+                    <h3 className="text-xl font-semibold mb-3">Time-Lock Vault</h3>
+                    <p className="text-gray-400 mb-6 line-clamp-2">Lock assets until a specified future date. Perfect for long-term holdings, trust funds, and future planning.</p>
+                    
+                    <div className="flex justify-between items-center">
+                      <div className="text-sm text-gray-400">
+                        <span className="font-medium text-white">1-30</span> Year Options
+                      </div>
+                      <Button variant="ghost" size="sm" className="text-[#6B00D7] hover:text-[#8719FF] hover:bg-[#6B00D7]/10 p-0 group-hover:translate-x-1 transition-transform">
+                        Create <ChevronRight className="ml-1 h-4 w-4" />
+                      </Button>
+                    </div>
+                  </CardContent>
+                </Link>
+              </Card>
+
+              {/* Bitcoin Halving Vault Card - Premium Design */}
+              <Card className="bg-[#0D0D0D] border-none overflow-hidden group relative">
+                <div className="absolute inset-0 bg-gradient-to-br from-[#6B00D7]/20 via-transparent to-[#FF5AF7]/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                <div className="absolute inset-x-0 bottom-0 h-1 bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] transform scale-x-0 group-hover:scale-x-100 transition-transform duration-500 origin-left"></div>
+                
                 <Link to="/bitcoin-halving-vault">
-                  <CardContent className="p-6 h-full flex flex-col justify-between">
-                    <div>
-                      <div className="bg-gradient-to-r from-[#6B00D7]/20 to-[#FF5AF7]/20 p-3 rounded-full w-14 h-14 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
-                        <Coins className="h-7 w-7 text-[#6B00D7]" />
-                      </div>
-                      <h3 className="text-xl font-semibold mb-2">Bitcoin Halving Vault</h3>
-                      <p className="text-gray-400">Special time-locked vault that unlocks after the 2024 Bitcoin halving.</p>
+                  <CardContent className="p-8 relative z-10">
+                    <div className="bg-gradient-to-br from-[#151515] to-black rounded-2xl p-3 w-12 h-12 flex items-center justify-center mb-6 group-hover:bg-gradient-to-br group-hover:from-[#6B00D7]/20 group-hover:to-[#FF5AF7]/10 transition-colors duration-500">
+                      <Coins className="h-6 w-6 text-[#FF5AF7]" />
                     </div>
-                    <Button className="mt-6 bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] hover:from-[#7B10E7] hover:to-[#FF6AF7] text-white w-full">
-                      Create Vault
-                    </Button>
+                    
+                    <Badge className="bg-gradient-to-r from-[#6B00D7]/10 to-[#FF5AF7]/10 text-white hover:from-[#6B00D7]/20 hover:to-[#FF5AF7]/20 border-none mb-4">Limited Edition</Badge>
+                    
+                    <h3 className="text-xl font-semibold mb-3">Bitcoin Halving Vault</h3>
+                    <p className="text-gray-400 mb-6 line-clamp-2">Special vault that unlocks after the next Bitcoin halving event. Perfect for strategic crypto investments.</p>
+                    
+                    <div className="flex justify-between items-center">
+                      <div className="text-sm text-gray-400">
+                        <span className="font-medium text-white">2025</span> Halving
+                      </div>
+                      <Button variant="ghost" size="sm" className="text-[#FF5AF7] hover:text-[#FF7AF7] hover:bg-[#FF5AF7]/10 p-0 group-hover:translate-x-1 transition-transform">
+                        Create <ChevronRight className="ml-1 h-4 w-4" />
+                      </Button>
+                    </div>
                   </CardContent>
                 </Link>
               </Card>
-            </div>
-          </div>
-        </section>
-
-        {/* Features Section */}
-        <section className="py-16 bg-[#0A0A0A]">
-          <div className="container mx-auto px-4">
-            <div className="text-center mb-12">
-              <h2 className="text-3xl md:text-4xl font-bold mb-4">Advanced Security Features</h2>
-              <p className="text-xl text-gray-300 max-w-3xl mx-auto">Chronos Vault offers cutting-edge security features to protect your digital assets.</p>
             </div>
             
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-              <Card className="bg-gradient-to-br from-[#111] to-[#1A1A1A] border-[#6B00D7]/20 hover:border-[#6B00D7]/40 transition-all">
-                <CardContent className="p-6">
-                  <div className="flex flex-col items-center text-center">
-                    <div className="p-3 rounded-full bg-[#6B00D7]/10 mb-4">
-                      <Shield className="h-8 w-8 text-[#6B00D7]" />
-                    </div>
-                    <h3 className="font-medium text-xl mb-3">Triple-Chain Security</h3>
-                    <p className="text-gray-400">Your assets secured across multiple blockchains for redundant protection against exploits.</p>
+            {/* My Vaults Section - Premium Design */}
+            {(vaults && vaults.length > 0) || true ? (
+              <div className="mt-20 bg-[#0A0A0A] rounded-2xl p-8 border border-white/5">
+                <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8">
+                  <div>
+                    <h3 className="text-2xl font-bold">My Vaults</h3>
+                    <p className="text-gray-400 mt-1">Manage your existing secure digital vaults</p>
                   </div>
-                </CardContent>
-              </Card>
+                  
+                  <Link to="/my-vaults">
+                    <Button variant="outline" className="mt-4 md:mt-0 border-[#6B00D7] text-[#6B00D7] hover:bg-[#6B00D7]/10 hover:text-[#8719FF]">
+                      View All Vaults <ArrowRight className="ml-2 h-4 w-4" />
+                    </Button>
+                  </Link>
+                </div>
+                
+                <div className="space-y-4">
+                  {/* Vault Item Row - Sample */}
+                  <div className="p-4 rounded-xl bg-[#111111] hover:bg-[#151515] transition-colors border border-white/5 hover:border-[#6B00D7]/20 group">
+                    <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                      <div className="flex items-center gap-4">
+                        <div className="p-3 rounded-lg bg-[#1A1A1A] text-[#FF5AF7] group-hover:bg-[#FF5AF7]/10 transition-colors">
+                          <i className="ri-safe-2-line text-xl"></i>
+                        </div>
+                        
+                        <div>
+                          <h4 className="font-medium">{sampleVault.name}</h4>
+                          <p className="text-sm text-gray-400">{sampleVault.assetType} · {sampleVault.assetAmount}</p>
+                        </div>
+                      </div>
+                      
+                      <div className="flex items-center gap-4 w-full md:w-auto">
+                        <div className="hidden md:block border-r border-gray-800 h-10 mx-2"></div>
+                        
+                        <div className="text-right md:text-left">
+                          <p className="text-sm text-gray-400">Unlocks</p>
+                          <p className="text-sm">{new Date(sampleVault.unlockDate).toLocaleDateString()}</p>
+                        </div>
+                        
+                        <div className="md:ml-8">
+                          <Badge variant={sampleVault.isLocked ? "outline" : "secondary"} className="rounded-full px-3">
+                            {sampleVault.isLocked ? "Locked" : "Unlocked"}
+                          </Badge>
+                        </div>
+                        
+                        <Link to={`/vault/${sampleVault.id}`} className="ml-auto">
+                          <Button variant="ghost" size="sm" className="text-[#6B00D7] hover:text-[#8719FF] hover:bg-[#6B00D7]/10 group-hover:translate-x-1 transition-transform">
+                            <span className="sr-only">View Details</span>
+                            <ChevronRight className="h-5 w-5" />
+                          </Button>
+                        </Link>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  {/* API-Fetched Vault Items */}
+                  {vaults && vaults.length > 0 && vaults.map((vault: any) => (
+                    <div key={vault.id} className="p-4 rounded-xl bg-[#111111] hover:bg-[#151515] transition-colors border border-white/5 hover:border-[#6B00D7]/20 group">
+                      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                        <div className="flex items-center gap-4">
+                          <div className="p-3 rounded-lg bg-[#1A1A1A] text-[#FF5AF7] group-hover:bg-[#FF5AF7]/10 transition-colors">
+                            <i className="ri-safe-2-line text-xl"></i>
+                          </div>
+                          
+                          <div>
+                            <h4 className="font-medium">{vault.name}</h4>
+                            <p className="text-sm text-gray-400">{vault.assetType} · {vault.assetAmount}</p>
+                          </div>
+                        </div>
+                        
+                        <div className="flex items-center gap-4 w-full md:w-auto">
+                          <div className="hidden md:block border-r border-gray-800 h-10 mx-2"></div>
+                          
+                          <div className="text-right md:text-left">
+                            <p className="text-sm text-gray-400">Unlocks</p>
+                            <p className="text-sm">{new Date(vault.unlockDate).toLocaleDateString()}</p>
+                          </div>
+                          
+                          <div className="md:ml-8">
+                            <Badge variant={vault.isLocked ? "outline" : "secondary"} className="rounded-full px-3">
+                              {vault.isLocked ? "Locked" : "Unlocked"}
+                            </Badge>
+                          </div>
+                          
+                          <Link to={`/vault/${vault.id}`} className="ml-auto">
+                            <Button variant="ghost" size="sm" className="text-[#6B00D7] hover:text-[#8719FF] hover:bg-[#6B00D7]/10 group-hover:translate-x-1 transition-transform">
+                              <span className="sr-only">View Details</span>
+                              <ChevronRight className="h-5 w-5" />
+                            </Button>
+                          </Link>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            ) : null}
+          </div>
+        </section>
+        
+        {/* Upgraded Security Features Section */}
+        <section className="py-20 bg-gradient-to-b from-[#080808] to-[#0A0A0A]">
+          <div className="container mx-auto px-4">
+            <div className="text-center max-w-3xl mx-auto mb-16">
+              <h3 className="inline-flex items-center text-sm text-[#FF5AF7] mb-4 justify-center">
+                <div className="mr-2 w-6 h-px bg-[#FF5AF7]"></div>
+                REVOLUTIONARY TECHNOLOGY
+                <div className="ml-2 w-6 h-px bg-[#FF5AF7]"></div>
+              </h3>
               
-              <Card className="bg-gradient-to-br from-[#111] to-[#1A1A1A] border-[#FF5AF7]/20 hover:border-[#FF5AF7]/40 transition-all">
-                <CardContent className="p-6">
-                  <div className="flex flex-col items-center text-center">
-                    <div className="p-3 rounded-full bg-[#FF5AF7]/10 mb-4">
-                      <Users className="h-8 w-8 text-[#FF5AF7]" />
-                    </div>
-                    <h3 className="font-medium text-xl mb-3">Multi-Signature Access</h3>
-                    <p className="text-gray-400">Require approval from multiple trusted parties to access or modify vault assets.</p>
+              <h2 className="text-3xl md:text-4xl font-bold mb-6 bg-clip-text text-transparent bg-gradient-to-r from-gray-100 to-white">Military-Grade Security Features</h2>
+              <p className="text-gray-300">Chronos Vault employs cutting-edge blockchain and cryptographic technologies to ensure your digital assets remain secure against all threats.</p>
+            </div>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+              {/* Triple-Chain Security */}
+              <div className="group p-8 rounded-2xl bg-gradient-to-br from-[#0D0D0D] to-[#0F0F0F] border border-[#1A1A1A] hover:border-[#6B00D7]/30 transition-all relative overflow-hidden">
+                <div className="absolute inset-0 bg-gradient-to-br from-[#6B00D7]/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                
+                <div className="relative z-10">
+                  <div className="inline-flex items-center justify-center w-16 h-16 rounded-xl bg-gradient-to-br from-[#0F0F0F] to-[#151515] border border-[#1A1A1A] group-hover:from-[#6B00D7]/5 group-hover:to-[#6B00D7]/20 transition-colors mb-6">
+                    <Shield className="h-8 w-8 text-[#6B00D7]" />
                   </div>
-                </CardContent>
-              </Card>
+                  
+                  <h3 className="text-xl font-semibold mb-4 group-hover:text-white transition-colors">Triple-Chain Security</h3>
+                  <p className="text-gray-400 group-hover:text-gray-300 transition-colors">Assets secured simultaneously across Ethereum, Solana, and TON blockchains for redundant protection against platform-specific exploits.</p>
+                </div>
+              </div>
               
-              <Card className="bg-gradient-to-br from-[#111] to-[#1A1A1A] border-gradient-to-r from-[#6B00D7]/20 to-[#FF5AF7]/20 hover:from-[#6B00D7]/40 hover:to-[#FF5AF7]/40 transition-all">
-                <CardContent className="p-6">
-                  <div className="flex flex-col items-center text-center">
-                    <div className="p-3 rounded-full bg-gradient-to-r from-[#6B00D7]/10 to-[#FF5AF7]/10 mb-4">
-                      <Sparkles className="h-8 w-8 text-white" />
-                    </div>
-                    <h3 className="font-medium text-xl mb-3">Zero-Knowledge Privacy</h3>
-                    <p className="text-gray-400">Selectively disclose vault information without revealing sensitive data or assets.</p>
+              {/* Multi-Signature Access */}
+              <div className="group p-8 rounded-2xl bg-gradient-to-br from-[#0D0D0D] to-[#0F0F0F] border border-[#1A1A1A] hover:border-[#FF5AF7]/30 transition-all relative overflow-hidden">
+                <div className="absolute inset-0 bg-gradient-to-br from-[#FF5AF7]/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                
+                <div className="relative z-10">
+                  <div className="inline-flex items-center justify-center w-16 h-16 rounded-xl bg-gradient-to-br from-[#0F0F0F] to-[#151515] border border-[#1A1A1A] group-hover:from-[#FF5AF7]/5 group-hover:to-[#FF5AF7]/20 transition-colors mb-6">
+                    <Users className="h-8 w-8 text-[#FF5AF7]" />
                   </div>
-                </CardContent>
-              </Card>
+                  
+                  <h3 className="text-xl font-semibold mb-4 group-hover:text-white transition-colors">Multi-Signature Access</h3>
+                  <p className="text-gray-400 group-hover:text-gray-300 transition-colors">Require approval from multiple trusted parties to access or modify vault assets with customizable signature thresholds and weights.</p>
+                </div>
+              </div>
+              
+              {/* Zero-Knowledge Privacy */}
+              <div className="group p-8 rounded-2xl bg-gradient-to-br from-[#0D0D0D] to-[#0F0F0F] border border-[#1A1A1A] hover:border-gradient-to-r hover:from-[#6B00D7]/30 hover:to-[#FF5AF7]/30 transition-all relative overflow-hidden">
+                <div className="absolute inset-0 bg-gradient-to-br from-[#6B00D7]/10 via-transparent to-[#FF5AF7]/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                
+                <div className="relative z-10">
+                  <div className="inline-flex items-center justify-center w-16 h-16 rounded-xl bg-gradient-to-br from-[#0F0F0F] to-[#151515] border border-[#1A1A1A] group-hover:from-[#6B00D7]/5 group-hover:to-[#FF5AF7]/10 transition-colors mb-6">
+                    <Fingerprint className="h-8 w-8 text-white" />
+                  </div>
+                  
+                  <h3 className="text-xl font-semibold mb-4 group-hover:text-white transition-colors">Zero-Knowledge Privacy</h3>
+                  <p className="text-gray-400 group-hover:text-gray-300 transition-colors">Selectively disclose vault information without revealing sensitive asset data through advanced zero-knowledge proof cryptography.</p>
+                </div>
+              </div>
+              
+              {/* Geolocation Verification */}
+              <div className="group p-8 rounded-2xl bg-gradient-to-br from-[#0D0D0D] to-[#0F0F0F] border border-[#1A1A1A] hover:border-[#FF5AF7]/30 transition-all relative overflow-hidden">
+                <div className="absolute inset-0 bg-gradient-to-br from-[#FF5AF7]/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                
+                <div className="relative z-10">
+                  <div className="inline-flex items-center justify-center w-16 h-16 rounded-xl bg-gradient-to-br from-[#0F0F0F] to-[#151515] border border-[#1A1A1A] group-hover:from-[#FF5AF7]/5 group-hover:to-[#FF5AF7]/20 transition-colors mb-6">
+                    <Globe className="h-8 w-8 text-[#FF5AF7]" />
+                  </div>
+                  
+                  <h3 className="text-xl font-semibold mb-4 group-hover:text-white transition-colors">Geolocation Verification</h3>
+                  <p className="text-gray-400 group-hover:text-gray-300 transition-colors">Add physical location requirements to vault access, ensuring assets can only be accessed from designated safe locations.</p>
+                </div>
+              </div>
+              
+              {/* Permanent Storage */}
+              <div className="group p-8 rounded-2xl bg-gradient-to-br from-[#0D0D0D] to-[#0F0F0F] border border-[#1A1A1A] hover:border-[#6B00D7]/30 transition-all relative overflow-hidden">
+                <div className="absolute inset-0 bg-gradient-to-br from-[#6B00D7]/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                
+                <div className="relative z-10">
+                  <div className="inline-flex items-center justify-center w-16 h-16 rounded-xl bg-gradient-to-br from-[#0F0F0F] to-[#151515] border border-[#1A1A1A] group-hover:from-[#6B00D7]/5 group-hover:to-[#6B00D7]/20 transition-colors mb-6">
+                    <FileText className="h-8 w-8 text-[#6B00D7]" />
+                  </div>
+                  
+                  <h3 className="text-xl font-semibold mb-4 group-hover:text-white transition-colors">Permanent Storage</h3>
+                  <p className="text-gray-400 group-hover:text-gray-300 transition-colors">Vault data stored immutably across IPFS and Arweave networks, ensuring permanent accessibility independent of individual blockchain health.</p>
+                </div>
+              </div>
+              
+              {/* Real-Time Monitoring */}
+              <div className="group p-8 rounded-2xl bg-gradient-to-br from-[#0D0D0D] to-[#0F0F0F] border border-[#1A1A1A] hover:border-gradient-to-r hover:from-[#6B00D7]/30 hover:to-[#FF5AF7]/30 transition-all relative overflow-hidden">
+                <div className="absolute inset-0 bg-gradient-to-br from-[#6B00D7]/10 via-transparent to-[#FF5AF7]/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                
+                <div className="relative z-10">
+                  <div className="inline-flex items-center justify-center w-16 h-16 rounded-xl bg-gradient-to-br from-[#0F0F0F] to-[#151515] border border-[#1A1A1A] group-hover:from-[#6B00D7]/5 group-hover:to-[#FF5AF7]/10 transition-colors mb-6">
+                    <RefreshCw className="h-8 w-8 text-white" />
+                  </div>
+                  
+                  <h3 className="text-xl font-semibold mb-4 group-hover:text-white transition-colors">Real-Time Monitoring</h3>
+                  <p className="text-gray-400 group-hover:text-gray-300 transition-colors">AI-powered security incident detection constantly analyzes all vault activity to identify and prevent unauthorized access attempts.</p>
+                </div>
+              </div>
             </div>
             
             <div className="text-center mt-12">
               <Link to="/revolutionary-features">
-                <Button variant="outline" className="border-[#FF5AF7]/50 text-[#FF5AF7] hover:bg-[#FF5AF7]/10">
-                  Explore All Features <ArrowRight className="ml-2 h-4 w-4" />
+                <Button variant="outline" className="border-[#6B00D7] text-[#6B00D7] hover:bg-[#6B00D7]/10 hover:text-[#8719FF]">
+                  Explore All Security Features <ArrowRight className="ml-2 h-4 w-4" />
                 </Button>
               </Link>
             </div>

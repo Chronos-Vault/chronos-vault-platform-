@@ -73,3 +73,8 @@ export function truncateAddress(address: string, startLength = 6, endLength = 4)
 export function isValidEthereumAddress(address: string): boolean {
   return /^0x[a-fA-F0-9]{40}$/.test(address);
 }
+
+// Format a number with commas for readability
+export function formatNumber(num: number): string {
+  return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+}
