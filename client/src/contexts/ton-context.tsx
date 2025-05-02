@@ -431,10 +431,13 @@ export const TonProvider: React.FC<TonProviderProps> = ({ children }) => {
 
   const restoreSession = async (): Promise<boolean> => {
     try {
+      console.log('Attempting to restore TON wallet session...');
+      
       // Retrieve wallet info and metadata from localStorage
       const savedWalletInfo = localStorage.getItem('ton_wallet_info');
       const savedMetadata = localStorage.getItem('ton_metadata');
       
+      // First restore the localStorage data
       if (savedWalletInfo) {
         const parsedWalletInfo = JSON.parse(savedWalletInfo);
         setWalletInfo(parsedWalletInfo);
@@ -448,7 +451,36 @@ export const TonProvider: React.FC<TonProviderProps> = ({ children }) => {
       // Also restore transaction history
       await restoreTransactionHistory();
       
-      return !!savedWalletInfo;
+      // Important: Now attempt to reconnect to the wallet using the TON service
+      // This ensures the wallet connection is actually active, not just our local state
+      if (savedWalletInfo) {
+        try {
+          // If TON service is already connected, we don't need to reconnect
+          if (tonService.getConnectionStatus() === TonConnectionStatus.CONNECTED) {
+            console.log('TON wallet already connected, no need to reconnect');
+            setConnectionStatus(TonConnectionStatus.CONNECTED);
+            return true;
+          }
+          
+          // Otherwise try to reconnect
+          console.log('Attempting to reconnect to TON wallet');
+          const connected = await tonService.connect();
+          
+          if (connected) {
+            console.log('Successfully reconnected to TON wallet');
+            setConnectionStatus(TonConnectionStatus.CONNECTED);
+            return true;
+          } else {
+            console.log('Failed to reconnect to TON wallet');
+            return false;
+          }
+        } catch (reconnectError) {
+          console.error('Error reconnecting to TON wallet:', reconnectError);
+          return false;
+        }
+      }
+      
+      return false;
     } catch (error) {
       console.error('Failed to restore session:', error);
       return false;
