@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from "react";
 import { useLocation, useParams } from "wouter";
 import { useMultiChain, BlockchainType } from "@/contexts/multi-chain-context";
+import { useCVTToken } from "@/contexts/cvt-token-context";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { ArrowLeft, Clock, Shield, Lock, Unlock, User, FileText, AlertTriangle, Loader2, ExternalLink } from "lucide-react";
+import { ArrowLeft, Clock, Shield, Lock, Unlock, User, FileText, AlertTriangle, Loader2, ExternalLink, Sparkles, Zap } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
 // Vault interface
