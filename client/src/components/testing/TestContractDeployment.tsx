@@ -7,7 +7,9 @@ import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Textarea } from '@/components/ui/textarea';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Loader2, Check, AlertCircle, Upload, Code, Wallet, Power } from 'lucide-react';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { toast } from '@/hooks/use-toast';
+import { AlertCircle, Check, Code, Loader2, Power, Shield, Upload, Wallet } from 'lucide-react';
 import TestnetBadge from '@/components/blockchain/TestnetBadge';
 
 interface TestContractDeploymentProps {
@@ -274,6 +276,58 @@ export default function TestContractDeployment({ className }: TestContractDeploy
   // Check if a chain is on testnet
   const checkIsTestnet = (chain: BlockchainType): boolean => {
     return chainStatus[chain]?.isTestnet !== false;
+  };
+  
+  const handleVerify = async () => {
+    if (!deployResult?.success || !deployResult.address) {
+      toast({
+        title: "Verification Error",
+        description: "No successful deployment to verify",
+        variant: "destructive"
+      });
+      return;
+    }
+    
+    try {
+      if (activeChain === BlockchainType.TON) {
+        const { tonCompilerService } = await import('@/lib/ton/ton-compiler-service');
+        const verificationResult = await tonCompilerService.verifyContract(deployResult.address);
+        
+        if (verificationResult.success) {
+          toast({
+            title: "Verification Successful",
+            description: `Contract verified! Status: ${verificationResult.status}, Balance: ${verificationResult.balance} TON`,
+            variant: "default"
+          });
+          
+          // Add verification details to deployment result
+          setDeployResult(prev => ({
+            ...prev!,
+            message: `${prev!.message}\nVerified: ${verificationResult.status}, Balance: ${verificationResult.balance} TON`
+          }));
+        } else {
+          toast({
+            title: "Verification Failed",
+            description: verificationResult.error || "Unknown error",
+            variant: "destructive"
+          });
+        }
+      } else {
+        // For other chains
+        toast({
+          title: "Feature Unavailable",
+          description: "Contract verification for this chain is not fully implemented yet.",
+          variant: "default"
+        });
+      }
+    } catch (error: any) {
+      console.error('Verification error:', error);
+      toast({
+        title: "Verification Error",
+        description: error.message || "Unknown error",
+        variant: "destructive"
+      });
+    }
   };
   
   const handleCodeChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
