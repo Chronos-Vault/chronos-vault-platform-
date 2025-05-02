@@ -159,6 +159,102 @@ const Home = () => {
             </div>
           </div>
         </section>
+
+        {/* Multi-Chain Architecture Section - Moved up as requested */}
+        <section className="py-16 md:py-20 bg-[#121212] overflow-hidden relative border-t border-[#6B00D7]/20">
+          <div className="absolute top-0 left-0 w-full h-full">
+            <div className="absolute top-[10%] left-[5%] w-20 h-20 rounded-full bg-[#6B00D7]/10 blur-3xl"></div>
+            <div className="absolute bottom-[20%] right-[10%] w-32 h-32 rounded-full bg-[#FF5AF7]/10 blur-3xl"></div>
+          </div>
+          <div className="container mx-auto px-4 relative z-10">
+            <div className="flex flex-col lg:flex-row gap-8 lg:gap-16 items-center">
+              <div className="lg:w-1/2 order-2 lg:order-1">
+                <h2 className="text-3xl md:text-4xl font-bold mb-6 bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] inline-block text-transparent bg-clip-text">Multi-Blockchain Architecture</h2>
+                <p className="text-gray-300 mb-8 text-lg">Chronos Vault leverages the unique capabilities of multiple blockchains to provide enhanced security, performance, and functionality.</p>
+                
+                <div className="space-y-6">
+                  <div className="flex gap-4">
+                    <div className="h-12 w-12 flex-shrink-0 rounded-lg bg-gradient-to-br from-[#6B00D7]/20 to-[#FF5AF7]/10 flex items-center justify-center">
+                      <i className="ri-shield-check-line text-xl text-[#FF5AF7]"></i>
+                    </div>
+                    <div>
+                      <h3 className="text-xl font-semibold text-white mb-2">Triple-Chain Security</h3>
+                      <p className="text-gray-400">Your assets are secured across multiple blockchains, creating redundancy and enhanced protection that no single-chain solution can match.</p>
+                    </div>
+                  </div>
+                  
+                  <div className="flex gap-4">
+                    <div className="h-12 w-12 flex-shrink-0 rounded-lg bg-gradient-to-br from-[#6B00D7]/20 to-[#FF5AF7]/10 flex items-center justify-center">
+                      <i className="ri-link-m text-xl text-[#FF5AF7]"></i>
+                    </div>
+                    <div>
+                      <h3 className="text-xl font-semibold text-white mb-2">Cross-Chain Interoperability</h3>
+                      <p className="text-gray-400">Seamlessly manage assets across TON, Ethereum, Solana, and other blockchains with our unified interface and cross-chain bridge technology.</p>
+                    </div>
+                  </div>
+                  
+                  <div className="flex gap-4">
+                    <div className="h-12 w-12 flex-shrink-0 rounded-lg bg-gradient-to-br from-[#6B00D7]/20 to-[#FF5AF7]/10 flex items-center justify-center">
+                      <i className="ri-pie-chart-line text-xl text-[#FF5AF7]"></i>
+                    </div>
+                    <div>
+                      <h3 className="text-xl font-semibold text-white mb-2">Optimized Performance</h3>
+                      <p className="text-gray-400">We select the ideal blockchain for each operation - TON for speed, Ethereum for smart contracts, Arweave for storage - giving you the best of each network.</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              
+              <div className="lg:w-1/2 order-1 lg:order-2 relative">
+                <div className="relative max-w-lg mx-auto">
+                  {/* Main hexagon */}
+                  <div className="relative h-72 md:h-96 border-2 border-[#6B00D7]/30 bg-gradient-to-br from-[#121212] to-[#1A1A1A] rounded-3xl flex items-center justify-center shadow-2xl shadow-[#6B00D7]/10">
+                    <div className="h-24 w-24 rounded-full bg-gradient-to-r from-[#6B00D7]/20 to-[#FF5AF7]/10 flex items-center justify-center">
+                      <div className="h-16 w-16 rounded-full bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] flex items-center justify-center">
+                        <span className="text-white font-bold text-2xl">CVT</span>
+                      </div>
+                    </div>
+                    
+                    {/* Blockchain connections */}
+                    <div className="absolute inset-0 flex items-center justify-center">
+                      {/* TON */}
+                      <div className="absolute top-10 left-10 md:top-14 md:left-20 flex items-center">
+                        <div className="h-10 w-10 rounded-lg bg-gradient-to-r from-[#6B00D7]/30 to-[#FF5AF7]/20 flex items-center justify-center shadow-lg">
+                          <span className="text-white font-semibold">TON</span>
+                        </div>
+                        <div className="w-16 md:w-24 h-0.5 bg-gradient-to-r from-[#6B00D7] to-transparent transform rotate-45 origin-left"></div>
+                      </div>
+                      
+                      {/* Ethereum */}
+                      <div className="absolute top-10 right-10 md:top-14 md:right-20 flex items-center">
+                        <div className="w-16 md:w-24 h-0.5 bg-gradient-to-l from-[#6B00D7] to-transparent transform -rotate-45 origin-right"></div>
+                        <div className="h-10 w-10 rounded-lg bg-gradient-to-r from-[#6B00D7]/30 to-[#FF5AF7]/20 flex items-center justify-center shadow-lg">
+                          <span className="text-white font-semibold">ETH</span>
+                        </div>
+                      </div>
+                      
+                      {/* Solana */}
+                      <div className="absolute bottom-10 left-10 md:bottom-14 md:left-20 flex items-center">
+                        <div className="h-10 w-10 rounded-lg bg-gradient-to-r from-[#6B00D7]/30 to-[#FF5AF7]/20 flex items-center justify-center shadow-lg">
+                          <span className="text-white font-semibold">SOL</span>
+                        </div>
+                        <div className="w-16 md:w-24 h-0.5 bg-gradient-to-r from-[#6B00D7] to-transparent transform -rotate-45 origin-left"></div>
+                      </div>
+                      
+                      {/* Arweave */}
+                      <div className="absolute bottom-10 right-10 md:bottom-14 md:right-20 flex items-center">
+                        <div className="w-16 md:w-24 h-0.5 bg-gradient-to-l from-[#6B00D7] to-transparent transform rotate-45 origin-right"></div>
+                        <div className="h-10 w-10 rounded-lg bg-gradient-to-r from-[#6B00D7]/30 to-[#FF5AF7]/20 flex items-center justify-center shadow-lg">
+                          <span className="text-white font-semibold text-xs">AR</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
             
         {/* Features Section */}
         <section id="features" className="py-16 md:py-24 bg-gradient-to-b from-[#121212] to-[#1A1A1A]">
@@ -730,102 +826,6 @@ const Home = () => {
               <Link to="/cross-chain-security" className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] text-white font-medium rounded-lg hover:opacity-90 transition-opacity shadow-lg shadow-[#6B00D7]/20">
                 Explore Our Security Documentation <i className="ri-arrow-right-line"></i>
               </Link>
-            </div>
-          </div>
-        </section>
-        
-        {/* Multi-Chain Architecture Section */}
-        <section className="py-16 md:py-20 bg-[#121212] overflow-hidden relative">
-          <div className="absolute top-0 left-0 w-full h-full">
-            <div className="absolute top-[10%] left-[5%] w-20 h-20 rounded-full bg-[#6B00D7]/10 blur-3xl"></div>
-            <div className="absolute bottom-[20%] right-[10%] w-32 h-32 rounded-full bg-[#FF5AF7]/10 blur-3xl"></div>
-          </div>
-          <div className="container mx-auto px-4 relative z-10">
-            <div className="flex flex-col lg:flex-row gap-8 lg:gap-16 items-center">
-              <div className="lg:w-1/2 order-2 lg:order-1">
-                <h2 className="text-3xl md:text-4xl font-bold mb-6 bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] inline-block text-transparent bg-clip-text">Multi-Blockchain Architecture</h2>
-                <p className="text-gray-300 mb-8 text-lg">Chronos Vault leverages the unique capabilities of multiple blockchains to provide enhanced security, performance, and functionality.</p>
-                
-                <div className="space-y-6">
-                  <div className="flex gap-4">
-                    <div className="h-12 w-12 flex-shrink-0 rounded-lg bg-gradient-to-br from-[#6B00D7]/20 to-[#FF5AF7]/10 flex items-center justify-center">
-                      <i className="ri-shield-check-line text-xl text-[#FF5AF7]"></i>
-                    </div>
-                    <div>
-                      <h3 className="text-xl font-semibold text-white mb-2">Triple-Chain Security</h3>
-                      <p className="text-gray-400">Your assets are secured across multiple blockchains, creating redundancy and enhanced protection that no single-chain solution can match.</p>
-                    </div>
-                  </div>
-                  
-                  <div className="flex gap-4">
-                    <div className="h-12 w-12 flex-shrink-0 rounded-lg bg-gradient-to-br from-[#6B00D7]/20 to-[#FF5AF7]/10 flex items-center justify-center">
-                      <i className="ri-link-m text-xl text-[#FF5AF7]"></i>
-                    </div>
-                    <div>
-                      <h3 className="text-xl font-semibold text-white mb-2">Cross-Chain Interoperability</h3>
-                      <p className="text-gray-400">Seamlessly manage assets across TON, Ethereum, Solana, and other blockchains with our unified interface and cross-chain bridge technology.</p>
-                    </div>
-                  </div>
-                  
-                  <div className="flex gap-4">
-                    <div className="h-12 w-12 flex-shrink-0 rounded-lg bg-gradient-to-br from-[#6B00D7]/20 to-[#FF5AF7]/10 flex items-center justify-center">
-                      <i className="ri-pie-chart-line text-xl text-[#FF5AF7]"></i>
-                    </div>
-                    <div>
-                      <h3 className="text-xl font-semibold text-white mb-2">Optimized Performance</h3>
-                      <p className="text-gray-400">We select the ideal blockchain for each operation - TON for speed, Ethereum for smart contracts, Arweave for storage - giving you the best of each network.</p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              
-              <div className="lg:w-1/2 order-1 lg:order-2 relative">
-                <div className="relative max-w-lg mx-auto">
-                  {/* Main hexagon */}
-                  <div className="relative h-72 md:h-96 border-2 border-[#6B00D7]/30 bg-gradient-to-br from-[#121212] to-[#1A1A1A] rounded-3xl flex items-center justify-center shadow-2xl shadow-[#6B00D7]/10">
-                    <div className="h-24 w-24 rounded-full bg-gradient-to-r from-[#6B00D7]/20 to-[#FF5AF7]/10 flex items-center justify-center">
-                      <div className="h-16 w-16 rounded-full bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] flex items-center justify-center">
-                        <span className="text-white font-bold text-2xl">CVT</span>
-                      </div>
-                    </div>
-                    
-                    {/* Blockchain connections */}
-                    <div className="absolute inset-0 flex items-center justify-center">
-                      {/* TON */}
-                      <div className="absolute top-10 left-10 md:top-14 md:left-20 flex items-center">
-                        <div className="h-10 w-10 rounded-lg bg-gradient-to-r from-[#6B00D7]/30 to-[#FF5AF7]/20 flex items-center justify-center shadow-lg">
-                          <span className="text-white font-semibold">TON</span>
-                        </div>
-                        <div className="w-16 md:w-24 h-0.5 bg-gradient-to-r from-[#6B00D7] to-transparent transform rotate-45 origin-left"></div>
-                      </div>
-                      
-                      {/* Ethereum */}
-                      <div className="absolute top-10 right-10 md:top-14 md:right-20 flex items-center">
-                        <div className="w-16 md:w-24 h-0.5 bg-gradient-to-l from-[#6B00D7] to-transparent transform -rotate-45 origin-right"></div>
-                        <div className="h-10 w-10 rounded-lg bg-gradient-to-r from-[#6B00D7]/30 to-[#FF5AF7]/20 flex items-center justify-center shadow-lg">
-                          <span className="text-white font-semibold">ETH</span>
-                        </div>
-                      </div>
-                      
-                      {/* Solana */}
-                      <div className="absolute bottom-10 left-10 md:bottom-14 md:left-20 flex items-center">
-                        <div className="h-10 w-10 rounded-lg bg-gradient-to-r from-[#6B00D7]/30 to-[#FF5AF7]/20 flex items-center justify-center shadow-lg">
-                          <span className="text-white font-semibold">SOL</span>
-                        </div>
-                        <div className="w-16 md:w-24 h-0.5 bg-gradient-to-r from-[#6B00D7] to-transparent transform -rotate-45 origin-left"></div>
-                      </div>
-                      
-                      {/* Arweave */}
-                      <div className="absolute bottom-10 right-10 md:bottom-14 md:right-20 flex items-center">
-                        <div className="w-16 md:w-24 h-0.5 bg-gradient-to-l from-[#6B00D7] to-transparent transform rotate-45 origin-right"></div>
-                        <div className="h-10 w-10 rounded-lg bg-gradient-to-r from-[#6B00D7]/30 to-[#FF5AF7]/20 flex items-center justify-center shadow-lg">
-                          <span className="text-white font-semibold text-xs">AR</span>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
             </div>
           </div>
         </section>
