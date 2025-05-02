@@ -234,6 +234,10 @@ const CreateVaultForm = ({
     setActiveTab(value);
     form.setValue("vaultType", value);
   };
+  
+  const handleVaultTypeChange = (type: SpecializedVaultType) => {
+    form.setValue("vaultType", type);
+  };
 
   const handleTimeLockChange = (value: string) => {
     const days = parseInt(value, 10);
@@ -248,6 +252,33 @@ const CreateVaultForm = ({
   const [isBlockchainDeploying, setIsBlockchainDeploying] = useState(false);
   const [deploymentStatus, setDeploymentStatus] = useState<string | null>(null);
   const [contractAddress, setContractAddress] = useState<string | null>(null);
+  
+  // Function to get styling for the card based on vault type
+  const getVaultTypeStyle = () => {
+    const vaultType = form.watch('vaultType');
+    switch(vaultType) {
+      case 'multi-signature':
+        return 'border-[#FF5AF7]/30';
+      case 'biometric':
+        return 'border-[#00D7C3]/30';
+      case 'time-lock':
+        return 'border-[#D76B00]/30';
+      case 'geolocation':
+        return 'border-[#00D74B]/30';
+      case 'cross-chain':
+        return 'border-[#8B00D7]/30';
+      case 'smart-contract':
+        return 'border-[#5271FF]/30';
+      case 'dynamic':
+        return 'border-[#FF5151]/30';
+      case 'nft-powered':
+        return 'border-[#CE19FF]/30';
+      case 'unique':
+        return 'border-[#fca103]/30';
+      default:
+        return 'border-[#6B00D7]/20';
+    }
+  };
   
   // Function to render specialized vault specific fields based on the vault type
   const renderSpecializedFields = () => {
@@ -719,7 +750,7 @@ const CreateVaultForm = ({
     mutation.mutate(vaultData as FormValues);
   }
 
-  const getCardStyle = () => {
+  const getTabStyle = () => {
     switch (activeTab) {
       case "legacy":
         return "border-[#6B00D7]/30 hover:border-[#6B00D7]";
@@ -744,10 +775,22 @@ const CreateVaultForm = ({
           <TabsTrigger value="gift">Gift Vault</TabsTrigger>
         </TabsList>
 
-        <Card className={`bg-[#1E1E1E] border ${getCardStyle()} transition-all`}>
+        <Card className={`bg-[#1E1E1E] border ${getVaultTypeStyle()} transition-all`}>
           <CardContent className="p-6">
             <Form {...form}>
               <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+                <div className="mb-8">
+                  <h3 className="text-xl font-semibold mb-3 bg-clip-text text-transparent bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7]">
+                    Choose Vault Type
+                  </h3>
+                  <p className="text-gray-400 mb-4">Select a specialized vault type based on your security needs</p>
+                  
+                  <VaultTypeSelector 
+                    selectedType={form.watch('vaultType') as SpecializedVaultType}
+                    onChange={handleVaultTypeChange}
+                  />
+                </div>
+                
                 {/* Render specialized vault fields if vault type is specialized */}
                 {['multi-signature', 'biometric', 'time-lock', 'geolocation', 'cross-chain', 'smart-contract', 'dynamic', 'nft-powered', 'unique'].includes(form.watch('vaultType')) && (
                   <div className="mb-6">
