@@ -410,93 +410,130 @@ const Home = () => {
           </div>
         </section>
         
-        {/* Security Model Section */}
-        <section className="py-16 md:py-20 bg-gradient-to-b from-[#18121E] to-[#1A0833]">
-          <div className="container mx-auto px-4">
+        {/* Enhanced Security Architecture Section - Consolidated */}
+        <section className="py-16 md:py-20 bg-gradient-to-b from-[#18121E] to-[#1A0833] relative overflow-hidden">
+          <div className="absolute top-0 left-0 w-full h-full opacity-25">
+            <div className="absolute top-[30%] left-[20%] w-64 h-64 rounded-full bg-[#6B00D7]/5 blur-3xl"></div>
+            <div className="absolute bottom-[20%] right-[30%] w-80 h-80 rounded-full bg-[#FF5AF7]/5 blur-3xl"></div>
+          </div>
+          <div className="container mx-auto px-4 relative z-10">
             <div className="text-center mb-12">
-              <h2 className="text-3xl md:text-5xl font-bold mb-6 bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] inline-block text-transparent bg-clip-text">Security Architecture</h2>
-              <p className="text-lg text-gray-300 max-w-3xl mx-auto">Military-grade protection for your digital assets with multi-layered security</p>
+              <h2 className="text-3xl md:text-5xl font-bold mb-6 bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] inline-block text-transparent bg-clip-text">Advanced Security Architecture</h2>
+              <p className="text-lg text-gray-300 max-w-3xl mx-auto">Military-grade protection through triple-chain security, advanced cryptography, and cross-chain verification</p>
             </div>
             
-            <div className="bg-[#1A1A1A]/80 border border-[#6B00D7]/30 rounded-xl shadow-2xl p-6 md:p-10 max-w-4xl mx-auto">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            {/* Security Architecture Overview */}
+            <div className="bg-[#1A1A1A]/80 border border-[#6B00D7]/30 rounded-xl shadow-2xl p-6 md:p-10 max-w-5xl mx-auto mb-16">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                 <div>
-                  <h3 className="text-2xl font-bold text-white mb-6 flex items-center gap-2">
+                  <h3 className="text-xl font-bold text-white mb-6 flex items-center gap-2">
                     <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-[#FF5AF7]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
                     </svg>
-                    Economic Security
+                    Multi-Signature Security
                   </h3>
                   
                   <ul className="space-y-4">
                     <li className="flex gap-3">
                       <div className="h-6 w-6 rounded-full bg-[#6B00D7]/30 flex items-center justify-center flex-shrink-0 mt-0.5">
-                        <span className="text-[#FF5AF7] text-sm">1</span>
+                        <span className="text-[#FF5AF7] text-sm">✓</span>
                       </div>
                       <div>
-                        <h4 className="font-semibold text-white">Attack Cost Analysis</h4>
-                        <p className="text-gray-300 text-sm">Economic cost to attack exceeds potential gain with multi-chain validation</p>
+                        <p className="text-gray-300 text-sm">Customizable threshold signatures requiring multiple approvers for enhanced security</p>
                       </div>
                     </li>
                     
                     <li className="flex gap-3">
                       <div className="h-6 w-6 rounded-full bg-[#6B00D7]/30 flex items-center justify-center flex-shrink-0 mt-0.5">
-                        <span className="text-[#FF5AF7] text-sm">2</span>
+                        <span className="text-[#FF5AF7] text-sm">✓</span>
                       </div>
                       <div>
-                        <h4 className="font-semibold text-white">Penalty System</h4>
-                        <p className="text-gray-300 text-sm">Slashing of staked tokens for malicious behavior with reputation scoring</p>
+                        <p className="text-gray-300 text-sm">Time-delayed execution with optional emergency cancellation</p>
                       </div>
                     </li>
                     
                     <li className="flex gap-3">
                       <div className="h-6 w-6 rounded-full bg-[#6B00D7]/30 flex items-center justify-center flex-shrink-0 mt-0.5">
-                        <span className="text-[#FF5AF7] text-sm">3</span>
+                        <span className="text-[#FF5AF7] text-sm">✓</span>
                       </div>
                       <div>
-                        <h4 className="font-semibold text-white">Treasury Security</h4>
-                        <p className="text-gray-300 text-sm">Multi-signature requirements with time-delayed execution of fund movements</p>
+                        <p className="text-gray-300 text-sm">Hierarchical role-based access for organizational control</p>
                       </div>
                     </li>
                   </ul>
                 </div>
                 
                 <div>
-                  <h3 className="text-2xl font-bold text-white mb-6 flex items-center gap-2">
+                  <h3 className="text-xl font-bold text-white mb-6 flex items-center gap-2">
                     <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-[#FF5AF7]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 11c0 3.517-1.009 6.799-2.753 9.571m-3.44-2.04l.054-.09A13.916 13.916 0 008 11a4 4 0 118 0c0 1.017-.07 2.019-.203 3m-2.118 6.844A21.88 21.88 0 0015.171 17m3.839 1.132c.645-2.266.99-4.659.99-7.132A8 8 0 008 4.07M3 15.364c.64-1.319 1-2.8 1-4.364 0-1.457.39-2.823 1.07-4" />
                     </svg>
-                    Technical Security
+                    Cryptographic Protection
                   </h3>
                   
                   <ul className="space-y-4">
                     <li className="flex gap-3">
                       <div className="h-6 w-6 rounded-full bg-[#6B00D7]/30 flex items-center justify-center flex-shrink-0 mt-0.5">
-                        <span className="text-[#FF5AF7] text-sm">1</span>
+                        <span className="text-[#FF5AF7] text-sm">✓</span>
                       </div>
                       <div>
-                        <h4 className="font-semibold text-white">Implementation Security</h4>
-                        <p className="text-gray-300 text-sm">Formal verification of smart contracts with independent security audits</p>
+                        <p className="text-gray-300 text-sm">Zero-knowledge verification for privacy with state-of-the-art encryption</p>
                       </div>
                     </li>
                     
                     <li className="flex gap-3">
                       <div className="h-6 w-6 rounded-full bg-[#6B00D7]/30 flex items-center justify-center flex-shrink-0 mt-0.5">
-                        <span className="text-[#FF5AF7] text-sm">2</span>
+                        <span className="text-[#FF5AF7] text-sm">✓</span>
                       </div>
                       <div>
-                        <h4 className="font-semibold text-white">Operational Security</h4>
-                        <p className="text-gray-300 text-sm">Defense-in-depth approach with tiered access controls for admin functions</p>
+                        <p className="text-gray-300 text-sm">Quantum-resistant cryptographic algorithms for future-proof security</p>
                       </div>
                     </li>
                     
                     <li className="flex gap-3">
                       <div className="h-6 w-6 rounded-full bg-[#6B00D7]/30 flex items-center justify-center flex-shrink-0 mt-0.5">
-                        <span className="text-[#FF5AF7] text-sm">3</span>
+                        <span className="text-[#FF5AF7] text-sm">✓</span>
                       </div>
                       <div>
-                        <h4 className="font-semibold text-white">Long-term Security</h4>
-                        <p className="text-gray-300 text-sm">Quantum-resistant cryptographic methods with cross-chain redundancy</p>
+                        <p className="text-gray-300 text-sm">Homomorphic encryption allowing computations on encrypted data</p>
+                      </div>
+                    </li>
+                  </ul>
+                </div>
+                
+                <div>
+                  <h3 className="text-xl font-bold text-white mb-6 flex items-center gap-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-[#FF5AF7]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                    </svg>
+                    Triple-Chain Security
+                  </h3>
+                  
+                  <ul className="space-y-4">
+                    <li className="flex gap-3">
+                      <div className="h-6 w-6 rounded-full bg-[#6B00D7]/30 flex items-center justify-center flex-shrink-0 mt-0.5">
+                        <span className="text-[#FF5AF7] text-sm">✓</span>
+                      </div>
+                      <div>
+                        <p className="text-gray-300 text-sm">Cross-chain validation requiring multiple blockchains to verify access</p>
+                      </div>
+                    </li>
+                    
+                    <li className="flex gap-3">
+                      <div className="h-6 w-6 rounded-full bg-[#6B00D7]/30 flex items-center justify-center flex-shrink-0 mt-0.5">
+                        <span className="text-[#FF5AF7] text-sm">✓</span>
+                      </div>
+                      <div>
+                        <p className="text-gray-300 text-sm">Redundant storage across multiple chains with atomic verification</p>
+                      </div>
+                    </li>
+                    
+                    <li className="flex gap-3">
+                      <div className="h-6 w-6 rounded-full bg-[#6B00D7]/30 flex items-center justify-center flex-shrink-0 mt-0.5">
+                        <span className="text-[#FF5AF7] text-sm">✓</span>
+                      </div>
+                      <div>
+                        <p className="text-gray-300 text-sm">Recovery mechanisms using secondary chain consensus if primary is compromised</p>
                       </div>
                     </li>
                   </ul>
