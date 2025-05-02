@@ -269,12 +269,12 @@ const VaultDetails = () => {
                 <Badge className={vault.isLocked ? 'bg-[#6B00D7]/20 text-[#FF5AF7] hover:bg-[#6B00D7]/30' : 'bg-[#4CAF50]/20 text-[#4CAF50] hover:bg-[#4CAF50]/30'}>
                   {vault.isLocked ? (
                     <>
-                      <LockClosed className="h-3 w-3 mr-1" />
+                      <Lock className="h-3 w-3 mr-1" />
                       Locked
                     </>
                   ) : (
                     <>
-                      <LockOpen className="h-3 w-3 mr-1" />
+                      <Unlock className="h-3 w-3 mr-1" />
                       Unlocked
                     </>
                   )}
@@ -357,7 +357,7 @@ const VaultDetails = () => {
                             </div>
                           ) : (
                             <div className="text-[#4CAF50]">
-                              <LockOpen className="h-4 w-4 inline-block mr-1" />
+                              <Unlock className="h-4 w-4 inline-block mr-1" />
                               Unlocked and available for withdrawal
                             </div>
                           )}
@@ -463,7 +463,7 @@ const VaultDetails = () => {
                     className="bg-gradient-to-r from-[#4CAF50] to-[#45a049] hover:from-[#45a049] hover:to-[#409945] text-white"
                     onClick={handleWithdraw}
                   >
-                    <LockOpen className="h-4 w-4 mr-2" />
+                    <Unlock className="h-4 w-4 mr-2" />
                     Withdraw Funds
                   </Button>
                 )}
