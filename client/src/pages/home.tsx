@@ -87,13 +87,13 @@ const Home = () => {
                   <span className="bg-gradient-to-r from-white via-gray-100 to-gray-200 bg-clip-text text-transparent">Chronos Vault Network</span>
                 </h1>
                 
-                <div className="flex flex-wrap justify-center gap-3 items-center my-6">
-                  <span className="px-4 py-1.5 bg-gradient-to-r from-[#6B00D7]/30 to-[#6B00D7]/20 border border-[#6B00D7]/40 rounded-full text-[#FF5AF7] text-sm font-medium backdrop-blur-sm">Triple-Chain Security</span>
-                  <span className="px-4 py-1.5 bg-gradient-to-r from-[#6B00D7]/30 to-[#6B00D7]/20 border border-[#6B00D7]/40 rounded-full text-[#FF5AF7] text-sm font-medium backdrop-blur-sm">TON</span>
-                  <span className="px-4 py-1.5 bg-gradient-to-r from-[#6B00D7]/30 to-[#6B00D7]/20 border border-[#6B00D7]/40 rounded-full text-[#FF5AF7] text-sm font-medium backdrop-blur-sm">ETH</span>
-                  <span className="px-4 py-1.5 bg-gradient-to-r from-[#6B00D7]/30 to-[#6B00D7]/20 border border-[#6B00D7]/40 rounded-full text-[#FF5AF7] text-sm font-medium backdrop-blur-sm">SOL</span>
-                  <span className="px-4 py-1.5 bg-gradient-to-r from-[#6B00D7]/30 to-[#6B00D7]/20 border border-[#6B00D7]/40 rounded-full text-[#FF5AF7] text-sm font-medium backdrop-blur-sm">BTC</span>
-                  <span className="px-4 py-1.5 bg-gradient-to-r from-[#6B00D7]/30 to-[#6B00D7]/20 border border-[#6B00D7]/40 rounded-full text-[#FF5AF7] text-sm font-medium backdrop-blur-sm">Zero-Knowledge Proofs</span>
+                <div className="flex flex-wrap justify-center gap-2 items-center my-6 max-w-md mx-auto">
+                  <span className="px-3 sm:px-4 py-1.5 bg-gradient-to-r from-[#6B00D7]/30 to-[#6B00D7]/20 border border-[#6B00D7]/40 rounded-full text-[#FF5AF7] text-xs sm:text-sm font-medium backdrop-blur-sm">Triple-Chain Security</span>
+                  <span className="px-3 sm:px-4 py-1.5 bg-gradient-to-r from-[#6B00D7]/30 to-[#6B00D7]/20 border border-[#6B00D7]/40 rounded-full text-[#FF5AF7] text-xs sm:text-sm font-medium backdrop-blur-sm">TON</span>
+                  <span className="px-3 sm:px-4 py-1.5 bg-gradient-to-r from-[#6B00D7]/30 to-[#6B00D7]/20 border border-[#6B00D7]/40 rounded-full text-[#FF5AF7] text-xs sm:text-sm font-medium backdrop-blur-sm">ETH</span>
+                  <span className="px-3 sm:px-4 py-1.5 bg-gradient-to-r from-[#6B00D7]/30 to-[#6B00D7]/20 border border-[#6B00D7]/40 rounded-full text-[#FF5AF7] text-xs sm:text-sm font-medium backdrop-blur-sm">SOL</span>
+                  <span className="px-3 sm:px-4 py-1.5 bg-gradient-to-r from-[#6B00D7]/30 to-[#6B00D7]/20 border border-[#6B00D7]/40 rounded-full text-[#FF5AF7] text-xs sm:text-sm font-medium backdrop-blur-sm">BTC</span>
+                  <span className="px-3 sm:px-4 py-1.5 bg-gradient-to-r from-[#6B00D7]/30 to-[#6B00D7]/20 border border-[#6B00D7]/40 rounded-full text-[#FF5AF7] text-xs sm:text-sm font-medium backdrop-blur-sm">Zero-Knowledge</span>
                 </div>
                 
                 <p className="text-xl md:text-2xl text-gray-200 max-w-4xl mx-auto mt-8 leading-relaxed">
@@ -104,22 +104,22 @@ const Home = () => {
                 </p>
                 
                 <div className="flex flex-col items-center gap-6 mt-10">
-                  <div className="flex justify-center gap-6">
+                  <div className="flex flex-col sm:flex-row gap-4 sm:gap-6 w-full justify-center max-w-md sm:max-w-none mx-auto">
                     <Button 
-                      className="bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] hover:from-[#5500AB] hover:to-[#FF46E8] text-white font-bold rounded-lg px-8 py-4 text-lg shadow-glow hover:shadow-lg hover:shadow-[#FF5AF7]/40 transition-all"
+                      className="bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] hover:from-[#5500AB] hover:to-[#FF46E8] text-white font-bold rounded-lg px-4 sm:px-8 py-3 sm:py-4 text-base sm:text-lg shadow-glow hover:shadow-lg hover:shadow-[#FF5AF7]/40 transition-all w-full sm:w-auto"
                       onClick={() => setLocation("/create-vault-enhanced")}
                     >
                       Create Your Vault
                     </Button>
                     <Button 
-                      className="bg-gradient-to-r from-[#00D7C3] to-[#6B00D7] hover:from-[#00C7B3] hover:to-[#5500AB] text-white font-bold rounded-lg px-8 py-4 text-lg shadow-glow hover:shadow-lg hover:shadow-[#00D7C3]/40 transition-all"
+                      className="bg-gradient-to-r from-[#00D7C3] to-[#6B00D7] hover:from-[#00C7B3] hover:to-[#5500AB] text-white font-bold rounded-lg px-4 sm:px-8 py-3 sm:py-4 text-base sm:text-lg shadow-glow hover:shadow-lg hover:shadow-[#00D7C3]/40 transition-all w-full sm:w-auto"
                       onClick={() => setLocation("/specialized-vault")}
                     >
                       <span className="mr-2">✨</span>Advanced Vaults
                     </Button>
                     <Button
                       variant="outline"
-                      className="border-2 border-[#6B00D7] text-white hover:bg-[#6B00D7]/10 hover:text-white font-bold rounded-lg px-8 py-4 text-lg transition-all"
+                      className="border-2 border-[#6B00D7] text-white hover:bg-[#6B00D7]/10 hover:text-white font-bold rounded-lg px-4 sm:px-8 py-3 sm:py-4 text-base sm:text-lg transition-all w-full sm:w-auto"
                       onClick={() => {
                         const featuresSection = document.querySelector('#features');
                         if (featuresSection) {
@@ -132,37 +132,37 @@ const Home = () => {
                   </div>
                   
                   {/* Large security testing button */}
-                  <div className="flex flex-wrap justify-center gap-4 mt-4 mb-6">
+                  <div className="flex justify-center gap-4 mt-4 mb-6 w-full max-w-md mx-auto">
                     <Button
                       variant="default"
-                      className="bg-[#FF5AF7] hover:bg-[#6B00D7] text-white font-bold rounded-lg px-8 py-4 text-lg shadow-glow hover:shadow-lg hover:shadow-[#FF5AF7]/40 transition-all animate-pulse-subtle w-full max-w-md"
+                      className="bg-[#FF5AF7] hover:bg-[#6B00D7] text-white font-bold rounded-lg px-4 sm:px-8 py-3 sm:py-4 text-base sm:text-lg shadow-glow hover:shadow-lg hover:shadow-[#FF5AF7]/40 transition-all animate-pulse-subtle w-full"
                       onClick={() => setLocation("/security-testing")}
                     >
-                      <span className="text-xl mr-2">🔒</span> View Security Testing Dashboard
+                      <span className="text-base sm:text-xl mr-2">🔒</span> Security Dashboard
                     </Button>
                   </div>
                   
-                  <div className="flex flex-wrap justify-center gap-4 mt-4">
+                  <div className="flex flex-wrap justify-center gap-2 sm:gap-4 mt-4 max-w-md sm:max-w-none mx-auto">
                     <Button
                       variant="outline"
-                      className="border border-[#FF5AF7] bg-[#1A1A1A] text-[#FF5AF7] hover:bg-[#6B00D7]/20 font-medium rounded-lg px-5 py-2 text-md flex items-center gap-2 transition-all"
+                      className="border border-[#FF5AF7] bg-[#1A1A1A] text-[#FF5AF7] hover:bg-[#6B00D7]/20 font-medium rounded-lg px-3 sm:px-5 py-2 text-xs sm:text-md flex items-center gap-1 sm:gap-2 transition-all w-[45%] sm:w-auto justify-center"
                       onClick={() => setLocation("/solana-integration")}
                     >
-                      <span className="text-lg">◎</span> Solana Integration
+                      <span className="text-sm sm:text-lg">◎</span> <span>Solana</span>
                     </Button>
                     <Button
                       variant="outline"
-                      className="border border-[#FF5AF7] bg-[#1A1A1A] text-[#FF5AF7] hover:bg-[#6B00D7]/20 font-medium rounded-lg px-5 py-2 text-md flex items-center gap-2 transition-all"
+                      className="border border-[#FF5AF7] bg-[#1A1A1A] text-[#FF5AF7] hover:bg-[#6B00D7]/20 font-medium rounded-lg px-3 sm:px-5 py-2 text-xs sm:text-md flex items-center gap-1 sm:gap-2 transition-all w-[45%] sm:w-auto justify-center"
                       onClick={() => setLocation("/ton-integration")}
                     >
-                      <span className="text-lg">💎</span> TON Integration
+                      <span className="text-sm sm:text-lg">💎</span> <span>TON</span>
                     </Button>
                     <Button
                       variant="outline"
-                      className="border border-[#FF5AF7] bg-[#1A1A1A] text-[#FF5AF7] hover:bg-[#6B00D7]/20 font-medium rounded-lg px-5 py-2 text-md flex items-center gap-2 transition-all"
+                      className="border border-[#FF5AF7] bg-[#1A1A1A] text-[#FF5AF7] hover:bg-[#6B00D7]/20 font-medium rounded-lg px-3 sm:px-5 py-2 text-xs sm:text-md flex items-center gap-1 sm:gap-2 transition-all w-[92%] sm:w-auto justify-center"
                       onClick={() => setLocation("/cross-chain")}
                     >
-                      <span className="text-lg">🔄</span> Cross-Chain Features
+                      <span className="text-sm sm:text-lg">🔄</span> <span>Cross-Chain Features</span>
                     </Button>
                   </div>
                 </div>
@@ -180,7 +180,7 @@ const Home = () => {
             </div>
               
             {/* Grid of features */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mt-12">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8 mt-8 sm:mt-12 max-w-7xl mx-auto">
               {/* Feature 1 */}
               <Card className="bg-[#1A1A1A]/50 border border-[#6B00D7]/20 shadow-lg hover:shadow-[#6B00D7]/10 transition-all group hover:border-[#6B00D7]/40">
                 <CardContent className="p-6">
