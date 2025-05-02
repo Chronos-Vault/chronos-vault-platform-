@@ -1011,47 +1011,47 @@ const Home = () => {
               
               <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                 {/* Ethereum Vaults */}
-                <div className="bg-gradient-to-br from-[#141414] to-[#1D1D1D] border border-[#6B00D7]/30 rounded-xl p-0 relative overflow-hidden group hover:shadow-xl hover:shadow-[#6B00D7]/20 transition-all hover:scale-[1.02]">
-                  <div className="absolute top-0 left-0 w-full h-1.5 bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7]"></div>
-                  <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-[#6B00D7]/10 to-transparent rounded-bl-full"></div>
-                  <div className="absolute bottom-0 left-0 w-40 h-40 bg-gradient-to-tr from-[#6B00D7]/5 to-transparent rounded-tr-full"></div>
+                <div className="bg-gradient-to-br from-[#1A1A1A] to-[#242424] border-2 border-[#6B00D7]/40 rounded-xl p-0 relative overflow-hidden group hover:shadow-xl hover:shadow-[#6B00D7]/20 transition-all hover:scale-[1.02]">
+                  <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7]"></div>
+                  <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-[#6B00D7]/20 to-transparent rounded-bl-full"></div>
+                  <div className="absolute bottom-0 left-0 w-40 h-40 bg-gradient-to-tr from-[#6B00D7]/10 to-transparent rounded-tr-full"></div>
                   
                   <div className="p-6">
-                    <div className="h-16 w-16 rounded-full bg-gradient-to-br from-[#2A2A2A] to-[#1A1A1A] border border-[#6B00D7]/60 flex items-center justify-center mb-5 group-hover:scale-110 transition-transform shadow-lg shadow-[#6B00D7]/10">
-                      <span className="text-2xl font-bold bg-gradient-to-br from-[#FF5AF7] to-[#6B00D7] text-transparent bg-clip-text">Ξ</span>
+                    <div className="h-16 w-16 rounded-full bg-gradient-to-br from-[#320065] to-[#6B00D7] border-2 border-[#FF5AF7]/60 flex items-center justify-center mb-5 group-hover:scale-110 transition-transform shadow-lg shadow-[#6B00D7]/20">
+                      <span className="text-2xl font-bold text-white">Ξ</span>
                     </div>
                     
                     <h3 className="text-xl font-semibold text-white mb-3 group-hover:text-[#FF5AF7] transition-colors">Ethereum Vaults</h3>
-                    <p className="text-gray-300 mb-5">Create advanced Ethereum-based vaults with multi-signature capabilities and smart contract automation</p>
+                    <p className="text-gray-200 mb-5">Create advanced Ethereum-based vaults with multi-signature capabilities and smart contract automation</p>
                     
                     <div className="space-y-3 mb-6">
-                      <div className="flex items-start gap-3 p-2 rounded-lg bg-[#1A1A1A]/80 border border-[#6B00D7]/10 group-hover:border-[#6B00D7]/30 transition-colors">
-                        <div className="h-5 w-5 rounded-full bg-[#6B00D7]/20 flex items-center justify-center flex-shrink-0 mt-0.5">
-                          <i className="ri-checkbox-circle-fill text-xs text-[#FF5AF7]"></i>
+                      <div className="flex items-start gap-3 p-3 rounded-lg bg-gradient-to-r from-[#222222] to-[#2A2A2A] border border-[#6B00D7]/20 group-hover:border-[#6B00D7]/40 transition-colors">
+                        <div className="h-6 w-6 rounded-full bg-[#6B00D7]/30 flex items-center justify-center flex-shrink-0 mt-0.5">
+                          <i className="ri-checkbox-circle-fill text-sm text-[#FF5AF7]"></i>
                         </div>
                         <div>
                           <span className="text-[#FF5AF7] font-medium">Basic Vault</span>
-                          <p className="text-xs text-gray-400">50 CVT - Standard features</p>
+                          <p className="text-sm text-gray-300">50 CVT - Standard features</p>
                         </div>
                       </div>
                       
-                      <div className="flex items-start gap-3 p-2 rounded-lg bg-[#1A1A1A]/80 border border-[#6B00D7]/10 group-hover:border-[#6B00D7]/30 transition-colors">
-                        <div className="h-5 w-5 rounded-full bg-[#6B00D7]/20 flex items-center justify-center flex-shrink-0 mt-0.5">
-                          <i className="ri-checkbox-circle-fill text-xs text-[#FF5AF7]"></i>
+                      <div className="flex items-start gap-3 p-3 rounded-lg bg-gradient-to-r from-[#222222] to-[#2A2A2A] border border-[#6B00D7]/20 group-hover:border-[#6B00D7]/40 transition-colors">
+                        <div className="h-6 w-6 rounded-full bg-[#6B00D7]/30 flex items-center justify-center flex-shrink-0 mt-0.5">
+                          <i className="ri-checkbox-circle-fill text-sm text-[#FF5AF7]"></i>
                         </div>
                         <div>
                           <span className="text-[#FF5AF7] font-medium">Enhanced Vault</span>
-                          <p className="text-xs text-gray-400">100 CVT - Advanced security</p>
+                          <p className="text-sm text-gray-300">100 CVT - Advanced security</p>
                         </div>
                       </div>
                       
-                      <div className="flex items-start gap-3 p-2 rounded-lg bg-[#1A1A1A]/80 border border-[#6B00D7]/10 group-hover:border-[#6B00D7]/30 transition-colors">
-                        <div className="h-5 w-5 rounded-full bg-[#6B00D7]/20 flex items-center justify-center flex-shrink-0 mt-0.5">
-                          <i className="ri-checkbox-circle-fill text-xs text-[#FF5AF7]"></i>
+                      <div className="flex items-start gap-3 p-3 rounded-lg bg-gradient-to-r from-[#222222] to-[#2A2A2A] border border-[#6B00D7]/20 group-hover:border-[#6B00D7]/40 transition-colors">
+                        <div className="h-6 w-6 rounded-full bg-[#6B00D7]/30 flex items-center justify-center flex-shrink-0 mt-0.5">
+                          <i className="ri-checkbox-circle-fill text-sm text-[#FF5AF7]"></i>
                         </div>
                         <div>
                           <span className="text-[#FF5AF7] font-medium">Premium Vault</span>
-                          <p className="text-xs text-gray-400">250 CVT - Enterprise grade</p>
+                          <p className="text-sm text-gray-300">250 CVT - Enterprise grade</p>
                         </div>
                       </div>
                     </div>
@@ -1067,47 +1067,47 @@ const Home = () => {
                 </div>
                 
                 {/* Solana Vaults */}
-                <div className="bg-gradient-to-br from-[#141414] to-[#1D1D1D] border border-[#6B00D7]/30 rounded-xl p-0 relative overflow-hidden group hover:shadow-xl hover:shadow-[#6B00D7]/20 transition-all hover:scale-[1.02]">
-                  <div className="absolute top-0 left-0 w-full h-1.5 bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7]"></div>
-                  <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-[#6B00D7]/10 to-transparent rounded-bl-full"></div>
-                  <div className="absolute bottom-0 left-0 w-40 h-40 bg-gradient-to-tr from-[#6B00D7]/5 to-transparent rounded-tr-full"></div>
+                <div className="bg-gradient-to-br from-[#1A1A1A] to-[#242424] border-2 border-[#6B00D7]/40 rounded-xl p-0 relative overflow-hidden group hover:shadow-xl hover:shadow-[#6B00D7]/20 transition-all hover:scale-[1.02]">
+                  <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7]"></div>
+                  <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-[#6B00D7]/20 to-transparent rounded-bl-full"></div>
+                  <div className="absolute bottom-0 left-0 w-40 h-40 bg-gradient-to-tr from-[#6B00D7]/10 to-transparent rounded-tr-full"></div>
                   
                   <div className="p-6">
-                    <div className="h-16 w-16 rounded-full bg-gradient-to-br from-[#2A2A2A] to-[#1A1A1A] border border-[#6B00D7]/60 flex items-center justify-center mb-5 group-hover:scale-110 transition-transform shadow-lg shadow-[#6B00D7]/10">
-                      <span className="text-2xl font-bold bg-gradient-to-br from-[#FF5AF7] to-[#6B00D7] text-transparent bg-clip-text">◎</span>
+                    <div className="h-16 w-16 rounded-full bg-gradient-to-br from-[#320065] to-[#6B00D7] border-2 border-[#FF5AF7]/60 flex items-center justify-center mb-5 group-hover:scale-110 transition-transform shadow-lg shadow-[#6B00D7]/20">
+                      <span className="text-2xl font-bold text-white">◎</span>
                     </div>
                     
                     <h3 className="text-xl font-semibold text-white mb-3 group-hover:text-[#FF5AF7] transition-colors">Solana Vaults</h3>
-                    <p className="text-gray-300 mb-5">Create high-performance Solana-based vaults with ultra-fast transaction speeds and lower fees</p>
+                    <p className="text-gray-200 mb-5">Create high-performance Solana-based vaults with ultra-fast transaction speeds and lower fees</p>
                     
                     <div className="space-y-3 mb-6">
-                      <div className="flex items-start gap-3 p-2 rounded-lg bg-[#1A1A1A]/80 border border-[#6B00D7]/10 group-hover:border-[#6B00D7]/30 transition-colors">
-                        <div className="h-5 w-5 rounded-full bg-[#6B00D7]/20 flex items-center justify-center flex-shrink-0 mt-0.5">
-                          <i className="ri-checkbox-circle-fill text-xs text-[#FF5AF7]"></i>
+                      <div className="flex items-start gap-3 p-3 rounded-lg bg-gradient-to-r from-[#222222] to-[#2A2A2A] border border-[#6B00D7]/20 group-hover:border-[#6B00D7]/40 transition-colors">
+                        <div className="h-6 w-6 rounded-full bg-[#6B00D7]/30 flex items-center justify-center flex-shrink-0 mt-0.5">
+                          <i className="ri-checkbox-circle-fill text-sm text-[#FF5AF7]"></i>
                         </div>
                         <div>
                           <span className="text-[#FF5AF7] font-medium">Basic Vault</span>
-                          <p className="text-xs text-gray-400">40 CVT - Standard features</p>
+                          <p className="text-sm text-gray-300">40 CVT - Standard features</p>
                         </div>
                       </div>
                       
-                      <div className="flex items-start gap-3 p-2 rounded-lg bg-[#1A1A1A]/80 border border-[#6B00D7]/10 group-hover:border-[#6B00D7]/30 transition-colors">
-                        <div className="h-5 w-5 rounded-full bg-[#6B00D7]/20 flex items-center justify-center flex-shrink-0 mt-0.5">
-                          <i className="ri-checkbox-circle-fill text-xs text-[#FF5AF7]"></i>
+                      <div className="flex items-start gap-3 p-3 rounded-lg bg-gradient-to-r from-[#222222] to-[#2A2A2A] border border-[#6B00D7]/20 group-hover:border-[#6B00D7]/40 transition-colors">
+                        <div className="h-6 w-6 rounded-full bg-[#6B00D7]/30 flex items-center justify-center flex-shrink-0 mt-0.5">
+                          <i className="ri-checkbox-circle-fill text-sm text-[#FF5AF7]"></i>
                         </div>
                         <div>
                           <span className="text-[#FF5AF7] font-medium">Enhanced Vault</span>
-                          <p className="text-xs text-gray-400">80 CVT - Advanced security</p>
+                          <p className="text-sm text-gray-300">80 CVT - Advanced security</p>
                         </div>
                       </div>
                       
-                      <div className="flex items-start gap-3 p-2 rounded-lg bg-[#1A1A1A]/80 border border-[#6B00D7]/10 group-hover:border-[#6B00D7]/30 transition-colors">
-                        <div className="h-5 w-5 rounded-full bg-[#6B00D7]/20 flex items-center justify-center flex-shrink-0 mt-0.5">
-                          <i className="ri-checkbox-circle-fill text-xs text-[#FF5AF7]"></i>
+                      <div className="flex items-start gap-3 p-3 rounded-lg bg-gradient-to-r from-[#222222] to-[#2A2A2A] border border-[#6B00D7]/20 group-hover:border-[#6B00D7]/40 transition-colors">
+                        <div className="h-6 w-6 rounded-full bg-[#6B00D7]/30 flex items-center justify-center flex-shrink-0 mt-0.5">
+                          <i className="ri-checkbox-circle-fill text-sm text-[#FF5AF7]"></i>
                         </div>
                         <div>
                           <span className="text-[#FF5AF7] font-medium">Premium Vault</span>
-                          <p className="text-xs text-gray-400">200 CVT - Enterprise grade</p>
+                          <p className="text-sm text-gray-300">200 CVT - Enterprise grade</p>
                         </div>
                       </div>
                     </div>
@@ -1123,47 +1123,47 @@ const Home = () => {
                 </div>
                 
                 {/* TON Vaults */}
-                <div className="bg-gradient-to-br from-[#141414] to-[#1D1D1D] border border-[#6B00D7]/30 rounded-xl p-0 relative overflow-hidden group hover:shadow-xl hover:shadow-[#6B00D7]/20 transition-all hover:scale-[1.02]">
-                  <div className="absolute top-0 left-0 w-full h-1.5 bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7]"></div>
-                  <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-[#6B00D7]/10 to-transparent rounded-bl-full"></div>
-                  <div className="absolute bottom-0 left-0 w-40 h-40 bg-gradient-to-tr from-[#6B00D7]/5 to-transparent rounded-tr-full"></div>
+                <div className="bg-gradient-to-br from-[#1A1A1A] to-[#242424] border-2 border-[#6B00D7]/40 rounded-xl p-0 relative overflow-hidden group hover:shadow-xl hover:shadow-[#6B00D7]/20 transition-all hover:scale-[1.02]">
+                  <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7]"></div>
+                  <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-[#6B00D7]/20 to-transparent rounded-bl-full"></div>
+                  <div className="absolute bottom-0 left-0 w-40 h-40 bg-gradient-to-tr from-[#6B00D7]/10 to-transparent rounded-tr-full"></div>
                   
                   <div className="p-6">
-                    <div className="h-16 w-16 rounded-full bg-gradient-to-br from-[#2A2A2A] to-[#1A1A1A] border border-[#6B00D7]/60 flex items-center justify-center mb-5 group-hover:scale-110 transition-transform shadow-lg shadow-[#6B00D7]/10">
-                      <span className="text-2xl font-bold bg-gradient-to-br from-[#FF5AF7] to-[#6B00D7] text-transparent bg-clip-text">💎</span>
+                    <div className="h-16 w-16 rounded-full bg-gradient-to-br from-[#320065] to-[#6B00D7] border-2 border-[#FF5AF7]/60 flex items-center justify-center mb-5 group-hover:scale-110 transition-transform shadow-lg shadow-[#6B00D7]/20">
+                      <span className="text-2xl font-bold text-white">💎</span>
                     </div>
                     
                     <h3 className="text-xl font-semibold text-white mb-3 group-hover:text-[#FF5AF7] transition-colors">TON Vaults</h3>
-                    <p className="text-gray-300 mb-5">Create TON-based vaults with ultra-secure storage and lightning-fast transaction processing</p>
+                    <p className="text-gray-200 mb-5">Create TON-based vaults with ultra-secure storage and lightning-fast transaction processing</p>
                     
                     <div className="space-y-3 mb-6">
-                      <div className="flex items-start gap-3 p-2 rounded-lg bg-[#1A1A1A]/80 border border-[#6B00D7]/10 group-hover:border-[#6B00D7]/30 transition-colors">
-                        <div className="h-5 w-5 rounded-full bg-[#6B00D7]/20 flex items-center justify-center flex-shrink-0 mt-0.5">
-                          <i className="ri-checkbox-circle-fill text-xs text-[#FF5AF7]"></i>
+                      <div className="flex items-start gap-3 p-3 rounded-lg bg-gradient-to-r from-[#222222] to-[#2A2A2A] border border-[#6B00D7]/20 group-hover:border-[#6B00D7]/40 transition-colors">
+                        <div className="h-6 w-6 rounded-full bg-[#6B00D7]/30 flex items-center justify-center flex-shrink-0 mt-0.5">
+                          <i className="ri-checkbox-circle-fill text-sm text-[#FF5AF7]"></i>
                         </div>
                         <div>
                           <span className="text-[#FF5AF7] font-medium">Basic Vault</span>
-                          <p className="text-xs text-gray-400">30 CVT - Standard features</p>
+                          <p className="text-sm text-gray-300">30 CVT - Standard features</p>
                         </div>
                       </div>
                       
-                      <div className="flex items-start gap-3 p-2 rounded-lg bg-[#1A1A1A]/80 border border-[#6B00D7]/10 group-hover:border-[#6B00D7]/30 transition-colors">
-                        <div className="h-5 w-5 rounded-full bg-[#6B00D7]/20 flex items-center justify-center flex-shrink-0 mt-0.5">
-                          <i className="ri-checkbox-circle-fill text-xs text-[#FF5AF7]"></i>
+                      <div className="flex items-start gap-3 p-3 rounded-lg bg-gradient-to-r from-[#222222] to-[#2A2A2A] border border-[#6B00D7]/20 group-hover:border-[#6B00D7]/40 transition-colors">
+                        <div className="h-6 w-6 rounded-full bg-[#6B00D7]/30 flex items-center justify-center flex-shrink-0 mt-0.5">
+                          <i className="ri-checkbox-circle-fill text-sm text-[#FF5AF7]"></i>
                         </div>
                         <div>
                           <span className="text-[#FF5AF7] font-medium">Enhanced Vault</span>
-                          <p className="text-xs text-gray-400">60 CVT - Advanced security</p>
+                          <p className="text-sm text-gray-300">60 CVT - Advanced security</p>
                         </div>
                       </div>
                       
-                      <div className="flex items-start gap-3 p-2 rounded-lg bg-[#1A1A1A]/80 border border-[#6B00D7]/10 group-hover:border-[#6B00D7]/30 transition-colors">
-                        <div className="h-5 w-5 rounded-full bg-[#6B00D7]/20 flex items-center justify-center flex-shrink-0 mt-0.5">
-                          <i className="ri-checkbox-circle-fill text-xs text-[#FF5AF7]"></i>
+                      <div className="flex items-start gap-3 p-3 rounded-lg bg-gradient-to-r from-[#222222] to-[#2A2A2A] border border-[#6B00D7]/20 group-hover:border-[#6B00D7]/40 transition-colors">
+                        <div className="h-6 w-6 rounded-full bg-[#6B00D7]/30 flex items-center justify-center flex-shrink-0 mt-0.5">
+                          <i className="ri-checkbox-circle-fill text-sm text-[#FF5AF7]"></i>
                         </div>
                         <div>
                           <span className="text-[#FF5AF7] font-medium">Premium Vault</span>
-                          <p className="text-xs text-gray-400">150 CVT - Enterprise grade</p>
+                          <p className="text-sm text-gray-300">150 CVT - Enterprise grade</p>
                         </div>
                       </div>
                     </div>
