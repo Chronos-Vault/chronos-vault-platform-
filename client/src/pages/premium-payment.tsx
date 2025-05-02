@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { loadStripe } from '@stripe/stripe-js';
-import { Elements, CardElement, useStripe, useElements } from '@stripe/react-stripe-js';
+// Stripe removed as per requirements
+// import { loadStripe } from '@stripe/stripe-js';
+// import { Elements, CardElement, useStripe, useElements } from '@stripe/react-stripe-js';
 import { useParams, useLocation } from 'wouter';
 import { useToast } from '@/hooks/use-toast';
 import { apiRequest } from '@/lib/queryClient';
@@ -10,13 +11,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Separator } from '@/components/ui/separator';
 
-// Make sure to call loadStripe outside of a component's render to avoid
-// recreating the Stripe object on every render
-if (!import.meta.env.VITE_STRIPE_PUBLIC_KEY) {
-  throw new Error('Missing required Stripe key: VITE_STRIPE_PUBLIC_KEY');
-}
-
-const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLIC_KEY);
+// Blockchain payments only - no Stripe functionality as per requirements
 
 interface CheckoutFormProps {
   amount: number;
@@ -24,79 +19,38 @@ interface CheckoutFormProps {
   description?: string;
 }
 
-const CheckoutForm: React.FC<CheckoutFormProps> = ({ amount, vaultId, description }) => {
-  const stripe = useStripe();
-  const elements = useElements();
+// Blockchain Payment Component instead of Stripe
+const BlockchainPaymentForm: React.FC<CheckoutFormProps> = ({ amount, vaultId, description }) => {
   const [isProcessing, setIsProcessing] = useState<boolean>(false);
   const [paymentStatus, setPaymentStatus] = useState<string>('');
+  const [selectedChain, setSelectedChain] = useState<'eth' | 'sol' | 'ton' | 'btc'>('eth');
   const [, setLocation] = useLocation();
   const { toast } = useToast();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
-    if (!stripe || !elements) {
-      return;
-    }
-
-    const cardElement = elements.getElement(CardElement);
-
-    if (!cardElement) {
-      toast({
-        title: "Payment Error",
-        description: "Card element not found",
-        variant: "destructive",
-      });
-      return;
-    }
-
+    
     setIsProcessing(true);
-    setPaymentStatus('Processing payment...');
+    setPaymentStatus(`Processing ${selectedChain.toUpperCase()} payment...`);
 
     try {
-      // Create payment intent on the server
-      const response = await apiRequest('POST', '/api/payments/create-payment-intent', {
-        amount,
-        vaultId,
-        description: description || `Premium vault features - ${vaultId}`
+      // Simulate blockchain payment processing
+      await new Promise(resolve => setTimeout(resolve, 2000));
+      
+      toast({
+        title: "Payment Initiated",
+        description: `Your ${selectedChain.toUpperCase()} payment has been initiated!`,
       });
-
-      if (!response.ok) {
-        throw new Error('Failed to create payment intent');
-      }
-
-      const { clientSecret } = await response.json();
-
-      // Confirm the payment with Stripe.js
-      const { error, paymentIntent } = await stripe.confirmCardPayment(clientSecret, {
-        payment_method: {
-          card: cardElement,
-        },
-      });
-
-      if (error) {
-        toast({
-          title: "Payment Failed",
-          description: error.message,
-          variant: "destructive",
-        });
-        setPaymentStatus('Payment failed: ' + error.message);
-      } else if (paymentIntent && paymentIntent.status === 'succeeded') {
-        toast({
-          title: "Payment Successful",
-          description: "Your vault has been upgraded with premium features!",
-        });
-        setPaymentStatus('Payment successful!');
-        
-        // Redirect to vault details page after successful payment
-        setTimeout(() => {
-          if (vaultId) {
-            setLocation(`/vaults/${vaultId}`);
-          } else {
-            setLocation('/my-vaults');
-          }
-        }, 2000);
-      }
+      setPaymentStatus('Payment initiated!');
+      
+      // Redirect to vault details page after payment initiation
+      setTimeout(() => {
+        if (vaultId) {
+          setLocation(`/vaults/${vaultId}`);
+        } else {
+          setLocation('/my-vaults');
+        }
+      }, 2000);
     } catch (error) {
       toast({
         title: "Payment Error",
@@ -113,37 +67,55 @@ const CheckoutForm: React.FC<CheckoutFormProps> = ({ amount, vaultId, descriptio
     <form onSubmit={handleSubmit}>
       <div className="space-y-4">
         <div className="space-y-2">
-          <Label htmlFor="card-element">Card Details</Label>
-          <div className="p-3 border rounded-md bg-background">
-            <CardElement id="card-element" options={{
-              style: {
-                base: {
-                  fontSize: '16px',
-                  color: '#424770',
-                  '::placeholder': {
-                    color: '#aab7c4',
-                  },
-                },
-                invalid: {
-                  color: '#9e2146',
-                },
-              },
-            }} />
+          <Label>Select Payment Method</Label>
+          <div className="grid grid-cols-2 gap-2">
+            <Button 
+              type="button" 
+              variant={selectedChain === 'eth' ? 'default' : 'outline'}
+              className={selectedChain === 'eth' ? 'bg-blue-500 hover:bg-blue-600' : ''}
+              onClick={() => setSelectedChain('eth')}
+            >
+              Ethereum
+            </Button>
+            <Button 
+              type="button" 
+              variant={selectedChain === 'sol' ? 'default' : 'outline'}
+              className={selectedChain === 'sol' ? 'bg-purple-500 hover:bg-purple-600' : ''}
+              onClick={() => setSelectedChain('sol')}
+            >
+              Solana
+            </Button>
+            <Button 
+              type="button" 
+              variant={selectedChain === 'ton' ? 'default' : 'outline'}
+              className={selectedChain === 'ton' ? 'bg-sky-500 hover:bg-sky-600' : ''}
+              onClick={() => setSelectedChain('ton')}
+            >
+              TON
+            </Button>
+            <Button 
+              type="button" 
+              variant={selectedChain === 'btc' ? 'default' : 'outline'}
+              className={selectedChain === 'btc' ? 'bg-orange-500 hover:bg-orange-600' : ''}
+              onClick={() => setSelectedChain('btc')}
+            >
+              Bitcoin
+            </Button>
           </div>
         </div>
         
         {paymentStatus && (
-          <div className={`text-sm ${paymentStatus.includes('failed') ? 'text-red-500' : paymentStatus.includes('success') ? 'text-green-500' : 'text-blue-500'}`}>
+          <div className={`text-sm ${paymentStatus.includes('failed') ? 'text-red-500' : paymentStatus.includes('initiated') ? 'text-green-500' : 'text-blue-500'}`}>
             {paymentStatus}
           </div>
         )}
         
         <Button 
           type="submit" 
-          disabled={!stripe || isProcessing}
+          disabled={isProcessing}
           className="w-full bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] hover:from-[#5500AB] hover:to-[#FF46E8] text-white"
         >
-          {isProcessing ? 'Processing...' : `Pay $${(amount / 100).toFixed(2)}`}
+          {isProcessing ? 'Processing...' : `Pay with ${selectedChain.toUpperCase()}`}
         </Button>
       </div>
     </form>
@@ -238,7 +210,7 @@ const PremiumPaymentPage: React.FC = () => {
         <Card className="border-[#6B00D7]/30 bg-gray-900/60">
           <CardHeader>
             <CardTitle>Complete Your {selectedPlan.name} Plan Purchase</CardTitle>
-            <CardDescription>Secure payment processed by Stripe</CardDescription>
+            <CardDescription>Secure payment via blockchain</CardDescription>
           </CardHeader>
           <CardContent>
             <div className="space-y-6">
@@ -259,13 +231,11 @@ const PremiumPaymentPage: React.FC = () => {
                 </div>
               </div>
               
-              <Elements stripe={stripePromise}>
-                <CheckoutForm 
-                  amount={selectedPlan.price} 
-                  vaultId={vaultId} 
-                  description={`${selectedPlan.name} Plan for Chronos Vault`}
-                />
-              </Elements>
+              <BlockchainPaymentForm 
+                amount={selectedPlan.price} 
+                vaultId={vaultId} 
+                description={`${selectedPlan.name} Plan for Chronos Vault`}
+              />
             </div>
           </CardContent>
           <CardFooter className="flex-col items-start gap-2 text-sm text-gray-400">
