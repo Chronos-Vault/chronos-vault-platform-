@@ -1212,24 +1212,59 @@ const Home = () => {
                   
                   {/* 3D Pie Chart */}
                   <div className="flex justify-center items-center h-64 perspective-1000 mb-6">
-                    <div className="relative w-48 h-48 transform-style-3d animate-float">
-                      {/* Pie Chart Segments - Animated with different float speeds */}
-                      <div className="absolute inset-0 bg-[#6B00D7] rounded-full transform translate-z-[5px] scale-[0.85] chart-bar-1">
-                        <div className="absolute top-0 left-0 w-full h-full bg-[#0A0A0A] rounded-full transform translate-y-[40%]"></div>
-                      </div>
-                      <div className="absolute inset-0 bg-[#8719FF] rounded-full transform translate-z-[10px] scale-[0.7] chart-bar-2">
-                        <div className="absolute top-0 left-0 w-full h-full bg-[#0A0A0A] rounded-full transform translate-y-[55%]"></div>
-                      </div>
-                      <div className="absolute inset-0 bg-[#B160FF] rounded-full transform translate-z-[15px] scale-[0.55] chart-bar-3">
-                        <div className="absolute top-0 left-0 w-full h-full bg-[#0A0A0A] rounded-full transform translate-y-[65%]"></div>
-                      </div>
-                      <div className="absolute inset-0 bg-[#D896FF] rounded-full transform translate-z-[20px] scale-[0.4] chart-bar-4">
-                        <div className="absolute top-0 left-0 w-full h-full bg-[#0A0A0A] rounded-full transform translate-y-[70%]"></div>
-                      </div>
-                      <div className="absolute inset-0 bg-[#FF5AF7] rounded-full transform translate-z-[25px] scale-[0.25] chart-bar-5"></div>
+                    <div className="relative w-48 h-48 transform-style-3d group hover:rotateY-15 transition-transform duration-700">
+                      {/* Pie Chart Segments - With advanced 3D floating effect */}
+                      <div className="absolute inset-0 rounded-full bg-gradient-to-r from-[#6B00D7]/10 to-[#FF5AF7]/10 blur-xl opacity-50 transform translate-z-[-5px]"></div>
                       
-                      {/* Holographic Glow */}
-                      <div className="absolute inset-0 rounded-full bg-gradient-to-b from-white/20 to-transparent opacity-40 pulse-chart"></div>
+                      {/* Base circle */}
+                      <div className="absolute inset-0 bg-black rounded-full border border-[#6B00D7]/20 shadow-[0_0_25px_rgba(107,0,215,0.3)] transform translate-z-[-2px]"></div>
+                      
+                      {/* Segments with clip paths */}
+                      <div className="absolute inset-0 rounded-full overflow-hidden transform translate-z-[2px]">
+                        {/* Community - 40% */}
+                        <div className="absolute inset-0 bg-[#6B00D7] chart-bar-1" style={{clipPath: 'polygon(50% 50%, 50% 0, 100% 0, 100% 70%, 50% 50%)'}}>
+                          <div className="absolute inset-0 bg-grid-pattern opacity-10"></div>
+                          <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent"></div>
+                        </div>
+                        
+                        {/* Ecosystem - 25% */}
+                        <div className="absolute inset-0 bg-[#8719FF] chart-bar-2" style={{clipPath: 'polygon(50% 50%, 100% 70%, 100% 100%, 60% 100%, 50% 50%)'}}>
+                          <div className="absolute inset-0 bg-grid-pattern opacity-10"></div>
+                          <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent"></div>
+                        </div>
+                        
+                        {/* Team - 15% */}
+                        <div className="absolute inset-0 bg-[#B160FF] chart-bar-3" style={{clipPath: 'polygon(50% 50%, 60% 100%, 30% 100%, 50% 50%)'}}>
+                          <div className="absolute inset-0 bg-grid-pattern opacity-10"></div>
+                          <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent"></div>
+                        </div>
+                        
+                        {/* Reserve - 10% */}
+                        <div className="absolute inset-0 bg-[#D896FF] chart-bar-4" style={{clipPath: 'polygon(50% 50%, 30% 100%, 0 100%, 0 85%, 50% 50%)'}}>
+                          <div className="absolute inset-0 bg-grid-pattern opacity-10"></div>
+                          <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent"></div>
+                        </div>
+                        
+                        {/* Marketing - 10% */}
+                        <div className="absolute inset-0 bg-[#FF5AF7] chart-bar-5" style={{clipPath: 'polygon(50% 50%, 0 85%, 0 0, 15% 0, 50% 50%)'}}>
+                          <div className="absolute inset-0 bg-grid-pattern opacity-10"></div>
+                          <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent"></div>
+                        </div>
+                      </div>
+                      
+                      {/* Center circle decoration */}
+                      <div className="absolute inset-[30%] rounded-full bg-black border border-white/10 transform translate-z-[3px] flex items-center justify-center overflow-hidden shadow-inner">
+                        <div className="absolute inset-0 bg-gradient-to-br from-[#6B00D7]/5 to-[#FF5AF7]/5"></div>
+                        <Coins className="h-5 w-5 text-[#FF5AF7] animate-pulse-slow" />
+                      </div>
+                      
+                      {/* Holographic Glow Edge */}
+                      <div className="absolute inset-0 rounded-full border-2 border-[#6B00D7]/20 group-hover:border-[#FF5AF7]/30 transform translate-z-[4px] transition-colors duration-700 animate-spin-slow"></div>
+                      
+                      {/* Floating glint effect */}
+                      <div className="absolute inset-0 rounded-full overflow-hidden">
+                        <div className="absolute w-full h-1/2 bg-gradient-to-b from-white/20 to-transparent rotate-45 transform -translate-x-full animate-shimmer opacity-50"></div>
+                      </div>
                     </div>
                   </div>
                   
