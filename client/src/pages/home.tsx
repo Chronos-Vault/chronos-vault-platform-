@@ -111,6 +111,12 @@ const Home = () => {
                     >
                       Create Your Vault
                     </Button>
+                    <Button 
+                      className="bg-gradient-to-r from-[#00D7C3] to-[#6B00D7] hover:from-[#00C7B3] hover:to-[#5500AB] text-white font-bold rounded-lg px-8 py-4 text-lg shadow-glow hover:shadow-lg hover:shadow-[#00D7C3]/40 transition-all"
+                      onClick={() => setLocation("/specialized-vault")}
+                    >
+                      <span className="mr-2">✨</span>Advanced Vaults
+                    </Button>
                     <Button
                       variant="outline"
                       className="border-2 border-[#6B00D7] text-white hover:bg-[#6B00D7]/10 hover:text-white font-bold rounded-lg px-8 py-4 text-lg transition-all"

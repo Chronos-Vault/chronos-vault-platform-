@@ -1,0 +1,661 @@
+import React, { useState } from 'react';
+import { useLocation } from 'wouter';
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
+import { Card, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Separator } from "@/components/ui/separator";
+import VaultTypeSelector, { SpecializedVaultType } from '@/components/vault/vault-type-selector';
+import { BlockchainType } from '@/contexts/multi-chain-context';
+import { useTon } from '@/contexts/ton-context';
+import { useEthereum } from '@/contexts/ethereum-context';
+import { useSolana } from '@/contexts/solana-context';
+import { useToast } from '@/hooks/use-toast';
+
+const SpecializedVaultCreation: React.FC = () => {
+  const [_, navigate] = useLocation();
+  const { toast } = useToast();
+  const ton = useTon();
+  const ethereum = useEthereum();
+  const solana = useSolana();
+  
+  const [selectedVaultType, setSelectedVaultType] = useState<SpecializedVaultType>(SpecializedVaultType.STANDARD);
+  const [selectedBlockchain, setSelectedBlockchain] = useState<BlockchainType>(BlockchainType.TON);
+  const [step, setStep] = useState<number>(1);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  
+  // Form state
+  const [vaultName, setVaultName] = useState<string>('');
+  const [vaultDescription, setVaultDescription] = useState<string>('');
+  const [assetAmount, setAssetAmount] = useState<string>('');
+  const [unlockDate, setUnlockDate] = useState<string>('');
+  
+  // Configuration state specific to vault types
+  const [multiSigApprovers, setMultiSigApprovers] = useState<string[]>(['']);
+  const [multiSigThreshold, setMultiSigThreshold] = useState<number>(2);
+  const [geolocations, setGeolocations] = useState<string[]>(['']);
+  const [scheduleType, setScheduleType] = useState<string>('fixed'); // fixed, periodic, conditional
+  
+  // Handlers
+  const handleBlockchainSelect = (blockchain: BlockchainType) => {
+    setSelectedBlockchain(blockchain);
+  };
+  
+  const isWalletConnected = (blockchain: BlockchainType): boolean => {
+    switch(blockchain) {
+      case BlockchainType.TON:
+        return Boolean(ton.wallet?.address);
+      case BlockchainType.ETHEREUM:
+        return Boolean(ethereum.wallet?.address);
+      case BlockchainType.SOLANA:
+        return Boolean(solana.wallet?.address);
+      default:
+        return false;
+    };
+  };
+  
+  const getWalletAddress = (blockchain: BlockchainType): string => {
+    switch(blockchain) {
+      case BlockchainType.TON:
+        return ton.wallet?.address || 'Not connected';
+      case BlockchainType.ETHEREUM:
+        return ethereum.wallet?.address || 'Not connected';
+      case BlockchainType.SOLANA:
+        return solana.wallet?.address || 'Not connected';
+      default:
+        return 'Not connected';
+    };
+  };
+  
+  const handleMultiSigAddApprover = () => {
+    setMultiSigApprovers([...multiSigApprovers, '']);
+  };
+  
+  const handleMultiSigApproverChange = (index: number, value: string) => {
+    const newApprovers = [...multiSigApprovers];
+    newApprovers[index] = value;
+    setMultiSigApprovers(newApprovers);
+  };
+  
+  const handleAddGeolocation = () => {
+    setGeolocations([...geolocations, '']);
+  };
+  
+  const handleGeolocationChange = (index: number, value: string) => {
+    const newGeolocations = [...geolocations];
+    newGeolocations[index] = value;
+    setGeolocations(newGeolocations);
+  };
+  
+  const handleNextStep = () => {
+    // Validate current step
+    if (step === 1) {
+      if (!selectedVaultType) {
+        toast({
+          title: "Vault Type Required",
+          description: "Please select a vault type to continue",
+          variant: "destructive",
+        });
+        return;
+      }
+    } else if (step === 2) {
+      if (!vaultName) {
+        toast({
+          title: "Vault Name Required",
+          description: "Please provide a name for your vault",
+          variant: "destructive",
+        });
+        return;
+      }
+    } else if (step === 3) {
+      if (!selectedBlockchain) {
+        toast({
+          title: "Blockchain Required",
+          description: "Please select a blockchain for deployment",
+          variant: "destructive",
+        });
+        return;
+      }
+      if (!isWalletConnected(selectedBlockchain)) {
+        toast({
+          title: "Wallet Connection Required",
+          description: `Please connect your ${selectedBlockchain} wallet first`,
+          variant: "destructive",
+        });
+        return;
+      }
+    }
+    
+    setStep(step + 1);
+  };
+  
+  const handlePreviousStep = () => {
+    setStep(Math.max(1, step - 1));
+  };
+  
+  const handleCreateVault = async () => {
+    setIsLoading(true);
+    
+    try {
+      // Here we would normally create the vault, for now we'll simulate it
+      await new Promise(resolve => setTimeout(resolve, 2000));
+      
+      toast({
+        title: "Vault Created Successfully",
+        description: `Your ${selectedVaultType} vault has been created on ${selectedBlockchain}`,
+      });
+      
+      navigate('/my-vaults');
+    } catch (error: any) {
+      toast({
+        title: "Error Creating Vault",
+        description: error.message || "There was an error creating your vault",
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+  
+  // Specialized config for different vault types
+  const renderSpecializedConfig = () => {
+    switch (selectedVaultType) {
+      case SpecializedVaultType.MULTI_SIGNATURE:
+        return (
+          <div className="space-y-4 mt-6 p-4 border border-[#FF5AF7]/30 rounded-lg bg-gray-900/50">
+            <h3 className="text-[#FF5AF7] font-medium">Multi-Signature Configuration</h3>
+            <div className="space-y-4">
+              <div>
+                <label className="text-sm text-gray-300 mb-1 block">Required Approvals</label>
+                <Input 
+                  type="number" 
+                  min="1" 
+                  max={multiSigApprovers.length} 
+                  value={multiSigThreshold} 
+                  onChange={(e) => setMultiSigThreshold(parseInt(e.target.value))}
+                  className="bg-gray-800 border-gray-700"
+                />
+                <p className="text-xs text-gray-500 mt-1">Number of approvals required to execute transactions</p>
+              </div>
+              
+              <div>
+                <label className="text-sm text-gray-300 mb-1 block">Approvers</label>
+                {multiSigApprovers.map((approver, index) => (
+                  <div key={index} className="flex mb-2">
+                    <Input
+                      value={approver}
+                      onChange={(e) => handleMultiSigApproverChange(index, e.target.value)}
+                      placeholder="Wallet address"
+                      className="bg-gray-800 border-gray-700 mr-2"
+                    />
+                  </div>
+                ))}
+                <Button 
+                  type="button" 
+                  variant="outline" 
+                  onClick={handleMultiSigAddApprover}
+                  className="w-full mt-2 border-[#FF5AF7]/30 hover:bg-[#FF5AF7]/10 text-[#FF5AF7]"
+                >
+                  Add Approver
+                </Button>
+              </div>
+            </div>
+          </div>
+        );
+        
+      case SpecializedVaultType.GEOLOCATION:
+        return (
+          <div className="space-y-4 mt-6 p-4 border border-[#00D74B]/30 rounded-lg bg-gray-900/50">
+            <h3 className="text-[#00D74B] font-medium">Geolocation Configuration</h3>
+            <div className="space-y-4">
+              <div>
+                <label className="text-sm text-gray-300 mb-1 block">Safe Zones (Coordinates)</label>
+                {geolocations.map((location, index) => (
+                  <div key={index} className="flex mb-2">
+                    <Input
+                      value={location}
+                      onChange={(e) => handleGeolocationChange(index, e.target.value)}
+                      placeholder="Latitude, Longitude"
+                      className="bg-gray-800 border-gray-700 mr-2"
+                    />
+                  </div>
+                ))}
+                <Button 
+                  type="button" 
+                  variant="outline" 
+                  onClick={handleAddGeolocation}
+                  className="w-full mt-2 border-[#00D74B]/30 hover:bg-[#00D74B]/10 text-[#00D74B]"
+                >
+                  Add Location
+                </Button>
+              </div>
+            </div>
+          </div>
+        );
+        
+      case SpecializedVaultType.TIME_LOCK:
+        return (
+          <div className="space-y-4 mt-6 p-4 border border-[#D76B00]/30 rounded-lg bg-gray-900/50">
+            <h3 className="text-[#D76B00] font-medium">Advanced Time-Lock Configuration</h3>
+            <div className="space-y-4">
+              <div>
+                <label className="text-sm text-gray-300 mb-1 block">Schedule Type</label>
+                <select 
+                  value={scheduleType} 
+                  onChange={(e) => setScheduleType(e.target.value)}
+                  className="w-full p-2 rounded-md bg-gray-800 border border-gray-700 text-white"
+                >
+                  <option value="fixed">Fixed Date</option>
+                  <option value="periodic">Periodic Release</option>
+                  <option value="conditional">Conditional Release</option>
+                </select>
+              </div>
+              
+              {scheduleType === 'fixed' && (
+                <div>
+                  <label className="text-sm text-gray-300 mb-1 block">Unlock Date</label>
+                  <Input 
+                    type="date" 
+                    value={unlockDate} 
+                    onChange={(e) => setUnlockDate(e.target.value)}
+                    className="bg-gray-800 border-gray-700"
+                  />
+                </div>
+              )}
+              
+              {scheduleType === 'periodic' && (
+                <div className="grid grid-cols-2 gap-2">
+                  <div>
+                    <label className="text-sm text-gray-300 mb-1 block">Interval</label>
+                    <Input 
+                      type="number" 
+                      placeholder="Interval"
+                      className="bg-gray-800 border-gray-700"
+                    />
+                  </div>
+                  <div>
+                    <label className="text-sm text-gray-300 mb-1 block">Unit</label>
+                    <select className="w-full p-2 rounded-md bg-gray-800 border border-gray-700 text-white">
+                      <option value="days">Days</option>
+                      <option value="weeks">Weeks</option>
+                      <option value="months">Months</option>
+                    </select>
+                  </div>
+                </div>
+              )}
+              
+              {scheduleType === 'conditional' && (
+                <div>
+                  <label className="text-sm text-gray-300 mb-1 block">Release Condition</label>
+                  <select className="w-full p-2 rounded-md bg-gray-800 border border-gray-700 text-white">
+                    <option value="price">Price Threshold</option>
+                    <option value="event">Blockchain Event</option>
+                    <option value="voting">Community Voting</option>
+                  </select>
+                </div>
+              )}
+            </div>
+          </div>
+        );
+        
+      case SpecializedVaultType.BIOMETRIC:
+        return (
+          <div className="space-y-4 mt-6 p-4 border border-[#00D7C3]/30 rounded-lg bg-gray-900/50">
+            <h3 className="text-[#00D7C3] font-medium">Biometric Verification Configuration</h3>
+            <div className="space-y-4">
+              <div className="bg-black/20 p-4 rounded-lg">
+                <div className="flex items-center">
+                  <div className="bg-[#00D7C3]/20 p-3 rounded-full mr-3">
+                    <i className="ri-fingerprint-line text-[#00D7C3] text-xl"></i>
+                  </div>
+                  <div>
+                    <h4 className="text-white font-medium">Biometric Setup Required</h4>
+                    <p className="text-xs text-gray-400">Biometric verification will be configured during the final setup stage</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        );
+        
+      // Add more specialized configurations as needed
+        
+      default:
+        return null;
+    }
+  };
+  
+  const renderStepContent = () => {
+    switch (step) {
+      case 1: // Vault Type Selection
+        return (
+          <div className="space-y-6">
+            <div>
+              <h2 className="text-2xl font-semibold mb-4">Select Vault Type</h2>
+              <p className="text-gray-400 mb-6">Choose the specialized vault type that best suits your needs and security requirements.</p>
+            </div>
+            
+            <VaultTypeSelector 
+              selectedType={selectedVaultType} 
+              onChange={setSelectedVaultType} 
+            />
+          </div>
+        );
+        
+      case 2: // Basic Vault Information
+        return (
+          <div className="space-y-6">
+            <div>
+              <h2 className="text-2xl font-semibold mb-4">Basic Vault Information</h2>
+              <p className="text-gray-400 mb-6">Provide essential details for your {selectedVaultType.replace('-', ' ')} vault.</p>
+            </div>
+            
+            <div className="space-y-4">
+              <div>
+                <label className="text-sm text-gray-300 mb-1 block">Vault Name</label>
+                <Input 
+                  value={vaultName} 
+                  onChange={(e) => setVaultName(e.target.value)}
+                  placeholder="My Secure Vault"
+                  className="bg-gray-800 border-gray-700"
+                />
+              </div>
+              
+              <div>
+                <label className="text-sm text-gray-300 mb-1 block">Description</label>
+                <Textarea 
+                  value={vaultDescription} 
+                  onChange={(e) => setVaultDescription(e.target.value)}
+                  placeholder="Describe the purpose of this vault"
+                  className="bg-gray-800 border-gray-700 resize-none h-24"
+                />
+              </div>
+              
+              <div>
+                <label className="text-sm text-gray-300 mb-1 block">Asset Amount</label>
+                <Input 
+                  type="text" 
+                  value={assetAmount} 
+                  onChange={(e) => setAssetAmount(e.target.value)}
+                  placeholder="0.00"
+                  className="bg-gray-800 border-gray-700"
+                />
+              </div>
+              
+              {renderSpecializedConfig()}
+            </div>
+          </div>
+        );
+        
+      case 3: // Blockchain Selection
+        return (
+          <div className="space-y-6">
+            <div>
+              <h2 className="text-2xl font-semibold mb-4">Blockchain Selection</h2>
+              <p className="text-gray-400 mb-6">Select the blockchain network where your vault will be deployed.</p>
+            </div>
+            
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <Card 
+                className={`cursor-pointer transition-all hover:shadow-md ${selectedBlockchain === BlockchainType.TON ? 'border-2 border-[#0088CC] shadow-lg' : 'border border-gray-700'}`}
+                onClick={() => handleBlockchainSelect(BlockchainType.TON)}
+              >
+                <CardContent className="p-4">
+                  <div className="flex flex-col items-center text-center p-4">
+                    <div className="text-[#0088CC] text-4xl mb-3">💎</div>
+                    <h3 className="font-medium text-white mb-1">TON Blockchain</h3>
+                    <p className="text-xs text-gray-400 mb-3">Fast, secure blockchain with high throughput</p>
+                    
+                    <div className={`mt-3 px-3 py-1 rounded-full text-xs ${isWalletConnected(BlockchainType.TON) ? 'bg-green-900/30 text-green-400' : 'bg-yellow-900/30 text-yellow-400'}`}>
+                      {isWalletConnected(BlockchainType.TON) ? 'Connected' : 'Not Connected'}
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+              
+              <Card 
+                className={`cursor-pointer transition-all hover:shadow-md ${selectedBlockchain === BlockchainType.ETHEREUM ? 'border-2 border-[#627EEA] shadow-lg' : 'border border-gray-700'}`}
+                onClick={() => handleBlockchainSelect(BlockchainType.ETHEREUM)}
+              >
+                <CardContent className="p-4">
+                  <div className="flex flex-col items-center text-center p-4">
+                    <div className="text-[#627EEA] text-4xl mb-3">Ξ</div>
+                    <h3 className="font-medium text-white mb-1">Ethereum</h3>
+                    <p className="text-xs text-gray-400 mb-3">Established blockchain with smart contracts</p>
+                    
+                    <div className={`mt-3 px-3 py-1 rounded-full text-xs ${isWalletConnected(BlockchainType.ETHEREUM) ? 'bg-green-900/30 text-green-400' : 'bg-yellow-900/30 text-yellow-400'}`}>
+                      {isWalletConnected(BlockchainType.ETHEREUM) ? 'Connected' : 'Not Connected'}
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+              
+              <Card 
+                className={`cursor-pointer transition-all hover:shadow-md ${selectedBlockchain === BlockchainType.SOLANA ? 'border-2 border-[#9945FF] shadow-lg' : 'border border-gray-700'}`}
+                onClick={() => handleBlockchainSelect(BlockchainType.SOLANA)}
+              >
+                <CardContent className="p-4">
+                  <div className="flex flex-col items-center text-center p-4">
+                    <div className="text-[#9945FF] text-4xl mb-3">◎</div>
+                    <h3 className="font-medium text-white mb-1">Solana</h3>
+                    <p className="text-xs text-gray-400 mb-3">High-performance blockchain with low fees</p>
+                    
+                    <div className={`mt-3 px-3 py-1 rounded-full text-xs ${isWalletConnected(BlockchainType.SOLANA) ? 'bg-green-900/30 text-green-400' : 'bg-yellow-900/30 text-yellow-400'}`}>
+                      {isWalletConnected(BlockchainType.SOLANA) ? 'Connected' : 'Not Connected'}
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+            
+            {selectedBlockchain && (
+              <div className="mt-6 p-4 bg-gray-900/50 border border-gray-700 rounded-lg">
+                <h3 className="font-medium text-white mb-3">Connected Wallet</h3>
+                <div className="bg-black/20 p-2 rounded font-mono text-xs break-all">
+                  {getWalletAddress(selectedBlockchain)}
+                </div>
+                {!isWalletConnected(selectedBlockchain) && (
+                  <div className="mt-3">
+                    <Button 
+                      variant="outline"
+                      onClick={() => toast({
+                        title: "Connect Wallet",
+                        description: `Please connect your ${selectedBlockchain} wallet using the Connect button in the top navbar`,
+                      })}
+                    >
+                      Connect Wallet
+                    </Button>
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
+        );
+        
+      case 4: // Review & Create
+        return (
+          <div className="space-y-6">
+            <div>
+              <h2 className="text-2xl font-semibold mb-4">Review & Create Vault</h2>
+              <p className="text-gray-400 mb-6">Review your vault details before finalizing creation.</p>
+            </div>
+            
+            <div className="bg-gray-900/50 border border-gray-700 rounded-lg p-6 space-y-4">
+              <div className="flex items-center space-x-3">
+                <div className="bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] p-3 rounded-full">
+                  <i className="ri-safe-2-line text-white text-xl"></i>
+                </div>
+                <div>
+                  <h3 className="text-xl font-semibold text-white">{vaultName || 'Unnamed Vault'}</h3>
+                  <p className="text-sm text-gray-400">{selectedVaultType.replace('-', ' ')} on {selectedBlockchain}</p>
+                </div>
+              </div>
+              
+              <Separator className="my-4 bg-gray-700" />
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                  <h4 className="text-sm font-medium text-gray-400 mb-2">Vault Details</h4>
+                  <div className="space-y-3">
+                    <div>
+                      <div className="text-xs text-gray-500">Vault Type</div>
+                      <div className="text-white">{selectedVaultType.replace('-', ' ')}</div>
+                    </div>
+                    <div>
+                      <div className="text-xs text-gray-500">Description</div>
+                      <div className="text-white text-sm">{vaultDescription || 'No description provided'}</div>
+                    </div>
+                    <div>
+                      <div className="text-xs text-gray-500">Asset Amount</div>
+                      <div className="text-white">{assetAmount || '0.00'}</div>
+                    </div>
+                  </div>
+                </div>
+                
+                <div>
+                  <h4 className="text-sm font-medium text-gray-400 mb-2">Deployment Details</h4>
+                  <div className="space-y-3">
+                    <div>
+                      <div className="text-xs text-gray-500">Blockchain</div>
+                      <div className="text-white">{selectedBlockchain}</div>
+                    </div>
+                    <div>
+                      <div className="text-xs text-gray-500">Wallet Address</div>
+                      <div className="text-white text-xs font-mono truncate">{getWalletAddress(selectedBlockchain)}</div>
+                    </div>
+                    <div>
+                      <div className="text-xs text-gray-500">Security Level</div>
+                      <div className="text-white">Maximum</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              
+              {selectedVaultType === SpecializedVaultType.MULTI_SIGNATURE && (
+                <div>
+                  <h4 className="text-sm font-medium text-gray-400 mb-2">Multi-Signature Configuration</h4>
+                  <div className="bg-black/20 p-3 rounded">
+                    <div className="text-white text-sm mb-1">Required Approvals: {multiSigThreshold}</div>
+                    <div className="text-xs text-gray-500 mb-2">Approvers:</div>
+                    <ul className="space-y-1">
+                      {multiSigApprovers.map((approver, index) => (
+                        <li key={index} className="text-gray-400 text-xs font-mono">{approver || `Approver ${index + 1}`}</li>
+                      ))}
+                    </ul>
+                  </div>
+                </div>
+              )}
+              
+              {selectedVaultType === SpecializedVaultType.GEOLOCATION && (
+                <div>
+                  <h4 className="text-sm font-medium text-gray-400 mb-2">Geolocation Configuration</h4>
+                  <div className="bg-black/20 p-3 rounded">
+                    <div className="text-xs text-gray-500 mb-2">Safe Zones:</div>
+                    <ul className="space-y-1">
+                      {geolocations.map((location, index) => (
+                        <li key={index} className="text-gray-400 text-xs">{location || `Location ${index + 1}`}</li>
+                      ))}
+                    </ul>
+                  </div>
+                </div>
+              )}
+              
+              {selectedVaultType === SpecializedVaultType.TIME_LOCK && (
+                <div>
+                  <h4 className="text-sm font-medium text-gray-400 mb-2">Time-Lock Configuration</h4>
+                  <div className="bg-black/20 p-3 rounded">
+                    <div className="text-white text-sm mb-1">Schedule Type: {scheduleType}</div>
+                    {scheduleType === 'fixed' && (
+                      <div className="text-gray-400 text-xs">Unlock Date: {unlockDate || 'Not specified'}</div>
+                    )}
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+        );
+        
+      default:
+        return null;
+    }
+  };
+  
+  return (
+    <div className="container mx-auto py-10 px-4">
+      <div className="mb-8">
+        <h1 className="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7]">
+          Create Specialized Vault
+        </h1>
+        <p className="text-gray-400 mt-2">
+          Create advanced vaults with specialized features for enhanced security and functionality.
+        </p>
+      </div>
+      
+      <div className="bg-[#121212] rounded-lg border border-gray-800 p-6">
+        <div className="flex items-center space-x-2 mb-6">
+          {[1, 2, 3, 4].map((i) => (
+            <React.Fragment key={i}>
+              <div className={`h-8 w-8 rounded-full flex items-center justify-center ${step >= i ? 'bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] text-white' : 'bg-gray-800 text-gray-400'}`}>
+                {i}
+              </div>
+              {i < 4 && (
+                <div className={`h-1 w-10 ${step > i ? 'bg-[#FF5AF7]' : 'bg-gray-700'}`}></div>
+              )}
+            </React.Fragment>
+          ))}
+        </div>
+        
+        <div className="min-h-[500px]">
+          {renderStepContent()}
+        </div>
+        
+        <div className="flex justify-between mt-8 pt-4 border-t border-gray-800">
+          {step > 1 ? (
+            <Button 
+              variant="outline" 
+              onClick={handlePreviousStep}
+              className="border-gray-700 hover:bg-gray-800"
+            >
+              Previous
+            </Button>
+          ) : (
+            <Button 
+              variant="outline" 
+              onClick={() => navigate('/')}
+              className="border-gray-700 hover:bg-gray-800"
+            >
+              Cancel
+            </Button>
+          )}
+          
+          {step < 4 ? (
+            <Button 
+              onClick={handleNextStep}
+              className="bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] hover:from-[#7B10E7] hover:to-[#FF6AF7] text-white"
+            >
+              Next
+            </Button>
+          ) : (
+            <Button 
+              onClick={handleCreateVault}
+              disabled={isLoading}
+              className="bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] hover:from-[#7B10E7] hover:to-[#FF6AF7] text-white min-w-[120px]"
+            >
+              {isLoading ? (
+                <>
+                  <div className="animate-spin h-4 w-4 mr-2 border-2 border-white border-t-transparent rounded-full" />
+                  Creating...
+                </>
+              ) : (
+                'Create Vault'
+              )}
+            </Button>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default SpecializedVaultCreation;
