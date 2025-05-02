@@ -70,8 +70,13 @@ const MultiSignatureVaultPage = () => {
   };
 
   // Handle multi-signature configuration change
-  const handleMultiSigConfigChange = (config: MultiSigConfig) => {
-    setMultiSigConfig(config);
+  const handleMultiSigConfigChange = (config: any) => {
+    // Ensure timeLimit is always a number
+    const updatedConfig = {
+      ...config,
+      timeLimit: config.timeLimit || 24 // Default to 24 hours if not provided
+    };
+    setMultiSigConfig(updatedConfig as MultiSigConfig);
   };
 
   // Create multi-signature vault
@@ -106,7 +111,21 @@ const MultiSignatureVaultPage = () => {
     setIsCreating(true);
     try {
       // Get current wallet address
-      const ownerAddress = walletInfo[activeBlockchain]?.address;
+      let ownerAddress = '';
+      
+      // Handle different blockchain types properly
+      if (activeBlockchain === BlockchainType.ETHEREUM) {
+        ownerAddress = walletInfo.ethereum.address;
+      } else if (activeBlockchain === BlockchainType.SOLANA) {
+        ownerAddress = walletInfo.solana.address;
+      } else if (activeBlockchain === BlockchainType.TON) {
+        ownerAddress = walletInfo.ton.address;
+      } else if (activeBlockchain === BlockchainType.BITCOIN) {
+        // Note: When Bitcoin wallet info is available, update this
+        // Currently using a placeholder since Bitcoin isn't fully implemented
+        ownerAddress = '1BitcoinPlaceholderAddress';
+      }
+      
       if (!ownerAddress) {
         throw new Error("Could not determine owner address");
       }
@@ -269,7 +288,10 @@ const MultiSignatureVaultPage = () => {
                         <div>
                           <h3 className="font-medium text-white">{activeBlockchain} Wallet Connected</h3>
                           <p className="text-gray-400 text-sm">
-                            {formatAddress(walletInfo[activeBlockchain]?.address || "")}
+                            {activeBlockchain === BlockchainType.ETHEREUM && formatAddress(walletInfo.ethereum.address || "")}
+                            {activeBlockchain === BlockchainType.SOLANA && formatAddress(walletInfo.solana.address || "")}
+                            {activeBlockchain === BlockchainType.TON && formatAddress(walletInfo.ton.address || "")}
+                            {activeBlockchain === BlockchainType.BITCOIN && formatAddress('1BitcoinPlaceholderAddress')}
                           </p>
                         </div>
                       </div>

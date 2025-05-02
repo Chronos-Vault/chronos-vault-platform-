@@ -6,7 +6,7 @@ import CreateVaultForm from "@/components/vault/create-vault-form";
 import VaultTypeSelector, { SpecializedVaultType } from "@/components/vault/vault-type-selector";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, Shield, Clock, File, Wallet } from "lucide-react";
+import { ArrowLeft, Shield, Clock, File, Wallet, Users } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
 const CreateVault = () => {
@@ -225,6 +225,37 @@ const CreateVault = () => {
                 <p className="text-sm text-gray-400 italic text-center sm:text-left">
                   Enable the Triple-Chain Security option in the vault creation form below to utilize this feature.
                 </p>
+              </CardContent>
+            </Card>
+          </div>
+          
+          {/* Multi-Signature Vault Banner */}
+          <div className="mb-8">
+            <Card className="bg-gradient-to-r from-[#FF5AF7]/10 to-[#6B00D7]/10 border-2 border-[#FF5AF7]/30 hover:border-[#FF5AF7]/50 transition-all transform hover:scale-[1.01]">
+              <CardContent className="p-6">
+                <div className="flex flex-col sm:flex-row items-center mb-3">
+                  <div className="bg-gradient-to-r from-[#FF5AF7] to-[#6B00D7] p-2 rounded-full mb-2 sm:mb-0 sm:mr-3">
+                    <Users className="h-5 w-5 text-white" />
+                  </div>
+                  <h3 className="font-poppins font-semibold text-xl text-center sm:text-left bg-clip-text text-transparent bg-gradient-to-r from-[#FF5AF7] to-[#6B00D7]">
+                    NEW: Advanced Multi-Signature Vault
+                  </h3>
+                  <span className="mt-2 sm:mt-0 sm:ml-3 px-2 py-1 text-xs font-semibold uppercase tracking-wide bg-gradient-to-r from-[#FF5AF7]/20 to-[#6B00D7]/20 text-white rounded">
+                    Enhanced Security
+                  </span>
+                </div>
+                <p className="text-gray-300 mb-4 text-center sm:text-left">
+                  Take your security to the next level with our Multi-Signature Vault solution. Require multiple authorized parties to approve any operation, protecting your assets from single points of failure or compromise.
+                </p>
+                <div className="flex justify-center sm:justify-start">
+                  <Button 
+                    onClick={() => navigate('/multi-signature-vault')}
+                    className="bg-gradient-to-r from-[#FF5AF7] to-[#6B00D7] hover:from-[#FF6AF7] hover:to-[#7B10E7] shadow-lg shadow-[#FF5AF7]/20"
+                  >
+                    <Users className="h-4 w-4 mr-2" />
+                    Create Multi-Signature Vault
+                  </Button>
+                </div>
               </CardContent>
             </Card>
           </div>

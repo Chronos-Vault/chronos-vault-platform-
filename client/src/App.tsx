@@ -17,6 +17,7 @@ import AdvancedVaultCreationPage from "@/pages/advanced-vault-creation";
 import AdvancedVaultCreationNewPage from "@/pages/advanced-vault-creation-new";
 import VaultTypesSelector from "@/pages/vault-types-selector";
 import SpecializedVaultCreationPage from "@/pages/specialized-vault-creation";
+import MultiSignatureVaultPage from "@/pages/multi-signature-vault";
 import MyVaults from "@/pages/my-vaults";
 import VaultDetails from "@/pages/vault-details";
 import About from "@/pages/about";
@@ -77,6 +78,7 @@ function Router() {
         <Route path="/cvt-token" component={CVTTokenPage} />
         <Route path="/cvt-utility" component={CVTUtilityPage} />
         <Route path="/token-vaults" component={TokenVaultsPage} />
+        <Route path="/multi-signature-vault" component={MultiSignatureVaultPage} />
         <Route path="/cross-chain" component={CrossChainPage} />
         <Route path="/cross-chain-vault" component={CrossChainVaultPage} />
         <Route path="/cross-chain-security" component={CrossChainSecurityPage} />
