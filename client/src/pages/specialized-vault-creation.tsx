@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useLocation } from 'wouter';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Card, CardContent } from "@/components/ui/card";
@@ -21,10 +21,21 @@ const SpecializedVaultCreation: React.FC = () => {
   const ethereum = useEthereum();
   const solana = useSolana();
   
+  const [step, setStep] = useState<number>(1);
   const [selectedVaultType, setSelectedVaultType] = useState<SpecializedVaultType>(SpecializedVaultType.STANDARD);
   const [selectedBlockchain, setSelectedBlockchain] = useState<BlockchainType>(BlockchainType.TON);
-  const [step, setStep] = useState<number>(1);
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  
+  // Effect to automatically proceed to next step when a vault type is selected
+  useEffect(() => {
+    if (selectedVaultType !== SpecializedVaultType.STANDARD && step === 1) {
+      // Add a small delay to allow the animation to complete
+      const timer = setTimeout(() => {
+        setStep(2);
+      }, 300);
+      return () => clearTimeout(timer);
+    }
+  }, [selectedVaultType, step]);
   
   // Form state
   const [vaultName, setVaultName] = useState<string>('');
@@ -714,4 +725,10 @@ const SpecializedVaultCreation: React.FC = () => {
   );
 };
 
-export default SpecializedVaultCreation;
+export default function SpecializedVaultCreationPage() {
+  return (
+    <div>
+      <SpecializedVaultCreation />
+    </div>
+  );
+}

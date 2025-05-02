@@ -130,7 +130,9 @@ const VaultTypeSelector: React.FC<VaultTypeSelectorProps> = ({ selectedType, onC
           <Card 
             key={option.type}
             className={`cursor-pointer transition-all hover:shadow-md hover:border-${option.color.replace('#', '')} ${selectedType === option.type ? `border-2 border-${option.color.replace('#', '')} shadow-lg` : 'border border-gray-700'}`}
-            onClick={() => onChange(option.type)}
+            onClick={() => {
+              onChange(option.type);
+            }}
           >
             <CardContent className="p-4">
               <div className="flex items-start space-x-3">
