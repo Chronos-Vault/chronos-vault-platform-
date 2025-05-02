@@ -82,9 +82,9 @@ const Home = () => {
                 </div>
               
                 <h1 className="font-poppins font-bold text-4xl md:text-7xl leading-tight mb-8">
-                  <span className="animate-text-shine bg-gradient-to-r from-[#6B00D7] via-[#FF5AF7] to-[#6B00D7] bg-clip-text text-transparent bg-300% inline-block">Decentralized Digital</span>
+                  <span className="animate-text-shine bg-gradient-to-r from-[#6B00D7] via-[#FF5AF7] to-[#6B00D7] bg-clip-text text-transparent bg-300% inline-block">Next-Generation</span>
                   <br />
-                  <span className="bg-gradient-to-r from-white via-gray-100 to-gray-200 bg-clip-text text-transparent">Chronos Vault Network</span>
+                  <span className="bg-gradient-to-r from-white via-gray-100 to-gray-200 bg-clip-text text-transparent">Digital Asset Security</span>
                 </h1>
                 
                 <div className="flex flex-wrap justify-center gap-2 items-center my-6 max-w-md mx-auto">

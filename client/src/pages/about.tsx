@@ -23,7 +23,7 @@ const About = () => {
         <div className="container mx-auto px-4 relative z-10">
           <div className="text-center max-w-3xl mx-auto">
             <h1 className="font-poppins font-bold text-4xl md:text-5xl mb-6">
-              The <span className="text-[#6B00D7]">Swiss Bank</span> of Web3
+              <span className="text-[#6B00D7]">Redefining</span> Digital Asset Security
             </h1>
             <p className="text-gray-300 text-lg mb-10">
               Chronos Vault redefines time-locked assets for the decentralized world, combining 
