@@ -19,7 +19,7 @@ interface VaultTypeProps {
 
 const VaultTypeSelector: React.FC<VaultTypeProps> = ({ selectedType, onChange }) => {
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
+    <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
       <VaultTypeCard 
         type="standard"
         title="Standard Vault"
@@ -144,26 +144,31 @@ const VaultTypeCard: React.FC<VaultTypeCardProps> = ({
   return (
     <div 
       className={`
-        p-4 rounded-lg cursor-pointer transition-all duration-200 
-        ${isSelected ? `border-2 border-[${color}] bg-[${color}]/10` : 'border border-gray-700 bg-black/20 hover:bg-black/40'}
+        p-3 sm:p-4 rounded-lg cursor-pointer transition-all duration-200 h-full
+        ${isSelected ? 'bg-gradient-to-r from-black/40 to-black/20 shadow-lg' : 'border border-gray-700 bg-black/20 hover:bg-black/40'}
       `}
+      style={{
+        borderColor: isSelected ? color : undefined,
+        borderWidth: isSelected ? '2px' : '1px',
+        boxShadow: isSelected ? `0 0 15px ${color}40` : undefined
+      }}
       onClick={onClick}
     >
-      <div className="flex items-center mb-2">
+      <div className="flex items-center mb-2 flex-col sm:flex-row text-center sm:text-left">
         <div 
-          className={`w-8 h-8 rounded-full flex items-center justify-center mr-2 text-lg`}
+          className={`w-9 h-9 rounded-full flex items-center justify-center mb-1 sm:mb-0 sm:mr-2 text-lg`}
           style={{ backgroundColor: `${color}40` }}
         >
           {icon}
         </div>
         <h3 
-          className="font-medium text-base"
+          className="font-medium text-sm sm:text-base"
           style={{ color: isSelected ? color : 'white' }}
         >
           {title}
         </h3>
       </div>
-      <p className="text-xs text-gray-400">{description}</p>
+      <p className="text-xs text-gray-400 text-center sm:text-left mt-1">{description}</p>
     </div>
   );
 };

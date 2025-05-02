@@ -121,15 +121,15 @@ const CreateVault = () => {
           </div>
           
           {/* Vault Type Selection */}
-          <div className="mb-8">
-            <h3 className="text-xl text-white font-semibold mb-4">Choose Your Vault Type</h3>
-            <div className="border border-[#6B00D7]/20 rounded-lg p-6 bg-gradient-to-r from-[#15121C] to-[#1E1A24]">
+          <Card className="mb-8 border-[#6B00D7]/30 bg-gradient-to-r from-[#15121C] to-[#1E1A24]">
+            <CardContent className="p-6">
+              <h3 className="text-xl text-white font-semibold mb-4 text-center">Choose Your Vault Type</h3>
               <VaultTypeSelector
                 selectedType={vaultType}
                 onChange={(type) => setVaultType(type)}
               />
-            </div>
-          </div>
+            </CardContent>
+          </Card>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
             <Card className="bg-gradient-to-r from-[#6B00D7]/5 to-[#6B00D7]/10 border-[#6B00D7]/20 hover:border-[#6B00D7]/40 transition-all">
@@ -173,21 +173,21 @@ const CreateVault = () => {
           <div className="mb-8">
             <Card className="bg-gradient-to-r from-[#6B00D7]/10 to-[#FF5AF7]/10 border-2 border-dashed border-[#6B00D7]/30 hover:border-[#FF5AF7]/50 transition-all">
               <CardContent className="p-6">
-                <div className="flex items-center mb-3">
-                  <div className="bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] p-2 rounded-full mr-3">
+                <div className="flex flex-col sm:flex-row items-center mb-3">
+                  <div className="bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] p-2 rounded-full mb-2 sm:mb-0 sm:mr-3">
                     <Shield className="h-5 w-5 text-white" />
                   </div>
-                  <h3 className="font-poppins font-semibold text-xl bg-clip-text text-transparent bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7]">
+                  <h3 className="font-poppins font-semibold text-xl text-center sm:text-left bg-clip-text text-transparent bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7]">
                     NEW: Triple-Chain Security Architecture
                   </h3>
-                  <span className="ml-3 px-2 py-1 text-xs font-semibold uppercase tracking-wide bg-gradient-to-r from-[#6B00D7]/20 to-[#FF5AF7]/20 text-white rounded">
+                  <span className="mt-2 sm:mt-0 sm:ml-3 px-2 py-1 text-xs font-semibold uppercase tracking-wide bg-gradient-to-r from-[#6B00D7]/20 to-[#FF5AF7]/20 text-white rounded">
                     Premium
                   </span>
                 </div>
-                <p className="text-gray-300 mb-4">
+                <p className="text-gray-300 mb-4 text-center sm:text-left">
                   Secure your assets with our revolutionary Triple-Chain Security architecture. This enterprise-grade protection distributes your vault's security across Ethereum, Solana, and TON blockchains for maximum protection against single-chain vulnerabilities.
                 </p>
-                <p className="text-sm text-gray-400 italic">
+                <p className="text-sm text-gray-400 italic text-center sm:text-left">
                   Enable the Triple-Chain Security option in the vault creation form below to utilize this feature.
                 </p>
               </CardContent>
@@ -201,7 +201,7 @@ const CreateVault = () => {
                 <h3 className="font-poppins font-medium text-xl mb-4">Select Blockchain</h3>
                 <p className="text-gray-400 mb-4">Choose which blockchain network to create your vault on:</p>
                 
-                <div className="grid grid-cols-3 gap-4 mb-6">
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
                   <Button 
                     variant={selectedBlockchain === BlockchainType.TON ? "default" : "outline"}
                     className={selectedBlockchain === BlockchainType.TON ? 
