@@ -47,6 +47,7 @@ const Navbar = () => {
       items: [
         { name: "Bitcoin Halving", href: "/bitcoin-halving", icon: "₿" },
         { name: "CVT Token", href: "/cvt-token", icon: "🪙" },
+        { name: "CVT Utility", href: "/cvt-utility", icon: "⚡" },
         { name: "Token Vaults", href: "/token-vaults", icon: "⏳" },
         { name: "Cross-Chain Features", href: "/cross-chain", icon: "🔄" },
         { name: "Security Testing", href: "/security-testing", icon: "🔒" },
@@ -168,11 +169,30 @@ const Navbar = () => {
               </DropdownMenuContent>
             </DropdownMenu>
 
-            <Link href="/cvt-token">
-              <div className={`px-3 py-2 rounded-md text-sm font-medium ${isActive('/cvt-token')} cursor-pointer`}>
-                CVT Token
-              </div>
-            </Link>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" className="flex items-center gap-1">
+                  CVT Token <ChevronDown className="h-4 w-4" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent>
+                <Link href="/cvt-token">
+                  <DropdownMenuItem className="cursor-pointer">
+                    Token Overview
+                  </DropdownMenuItem>
+                </Link>
+                <Link href="/cvt-utility">
+                  <DropdownMenuItem className="cursor-pointer">
+                    <span className="flex items-center gap-1"><span>⚡</span> CVT Utility</span>
+                  </DropdownMenuItem>
+                </Link>
+                <Link href="/cvt-tokenomics">
+                  <DropdownMenuItem className="cursor-pointer">
+                    Tokenomics
+                  </DropdownMenuItem>
+                </Link>
+              </DropdownMenuContent>
+            </DropdownMenu>
             
             <Link href="/about">
               <div className={`px-3 py-2 rounded-md text-sm font-medium ${isActive('/about')} cursor-pointer`}>
