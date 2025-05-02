@@ -6,11 +6,11 @@ import { Power, RefreshCw, Wallet, AlertTriangle, Info, CheckCircle, RotateCw } 
 import { useTon } from '@/contexts/ton-context';
 import { TonConnectionStatus } from '@/lib/ton/ton-service';
 
-const StateIndicator = ({ state, title }: { state: string; title: string }) => {
+const StateIndicator = ({ state, title, error = false, warning = false }: { state: string; title: string; error?: boolean; warning?: boolean }) => {
   return (
-    <div className="flex items-center gap-2 p-2 rounded-lg bg-[#1A1A1A] border border-[#333333]">
+    <div className={`flex items-center gap-2 p-2 rounded-lg bg-[#1A1A1A] border ${error ? 'border-red-500/30' : warning ? 'border-amber-500/30' : 'border-[#333333]'}`}>
       <div className="text-xs font-medium text-gray-400">{title}:</div>
-      <div className="text-xs font-mono bg-[#121212] px-2 py-1 rounded text-gray-200">{state}</div>
+      <div className={`text-xs font-mono px-2 py-1 rounded ${error ? 'bg-red-950/40 text-red-200' : warning ? 'bg-amber-950/40 text-amber-200' : 'bg-[#121212] text-gray-200'}`}>{state}</div>
     </div>
   );
 };
@@ -50,9 +50,37 @@ const TonWalletController: React.FC = () => {
     }
   };
 
-  // Force page reload
+  // Force page reload to reset all TON Connect state
   const handleForceReload = () => {
-    window.location.reload();
+    // First clear any localStorage items that might prevent clean reconnection
+    try {
+      const tonKeys = Object.keys(localStorage).filter(key => 
+        key.toLowerCase().includes('ton') || 
+        key.toLowerCase().includes('connect') ||
+        key.toLowerCase().includes('wallet')
+      );
+      
+      if (tonKeys.length > 0) {
+        console.log(`Clearing ${tonKeys.length} TON-related localStorage items before reload`);
+        tonKeys.forEach(key => localStorage.removeItem(key));
+        setOperationResult({ 
+          success: true, 
+          message: `Cleared ${tonKeys.length} TON wallet items. Reloading page...`
+        });
+      } else {
+        setOperationResult({ 
+          success: true, 
+          message: 'No TON wallet data found. Reloading page anyway...'
+        });
+      }
+    } catch (e) {
+      console.error('Error clearing localStorage before reload:', e);
+    }
+    
+    // Delay reload slightly to show feedback message
+    setTimeout(() => {
+      window.location.reload();
+    }, 1000);
   };
 
   // Connect to wallet
@@ -192,57 +220,131 @@ const TonWalletController: React.FC = () => {
     }
 
     const localStorageKeys = Object.keys(localStorage).filter(key => 
-      key.startsWith('ton') || key.includes('connect')
+      key.toLowerCase().includes('ton') || 
+      key.toLowerCase().includes('connect') ||
+      key.toLowerCase().includes('wallet')
     );
+
+    // Format localStorage key data for better readability
+    const formatLocalStorageData = (key: string) => {
+      try {
+        const value = localStorage.getItem(key);
+        if (!value) return 'null';
+        
+        try {
+          // Try to parse and pretty print JSON
+          const parsed = JSON.parse(value);
+          return JSON.stringify(parsed, null, 2);
+        } catch {
+          // If not JSON, return as is
+          return value;
+        }
+      } catch (e) {
+        return 'Error reading value';
+      }
+    };
 
     return (
       <div className="space-y-2 mt-4 p-3 border border-amber-700/20 rounded-md bg-amber-950/20">
-        <h4 className="text-sm font-medium text-amber-200 mb-2">Debug Information</h4>
+        <div className="flex justify-between items-center">
+          <h4 className="text-sm font-medium text-amber-200">Wallet Debug Information</h4>
+          <Button 
+            variant="ghost" 
+            size="sm" 
+            className="h-6 text-[10px] text-amber-300 hover:text-amber-200 hover:bg-amber-950/30"
+            onClick={() => {
+              try {
+                localStorageKeys.forEach(key => localStorage.removeItem(key));
+                setOperationResult({ 
+                  success: true, 
+                  message: `Cleared all ${localStorageKeys.length} TON-related items` 
+                });
+                // Force refresh the view
+                setShowDebugInfo(false);
+                setTimeout(() => setShowDebugInfo(true), 100);
+              } catch (e: any) {
+                setOperationResult({ 
+                  success: false, 
+                  message: `Failed to clear keys: ${e.message}` 
+                });
+              }
+            }}
+          >
+            Clear All
+          </Button>
+        </div>
         
-        <div className="space-y-1 text-xs">
-          {localStorageKeys.map(key => (
-            <div key={key} className="flex flex-col gap-1">
-              <div className="flex justify-between items-center">
-                <span className="text-amber-400 font-mono">{key}:</span>
-                <Button 
-                  variant="ghost" 
-                  size="sm" 
-                  className="h-6 text-[10px] text-amber-300 hover:text-amber-200 hover:bg-amber-950/30"
-                  onClick={() => {
-                    try {
-                      localStorage.removeItem(key);
-                      setOperationResult({ 
-                        success: true, 
-                        message: `LocalStorage key '${key}' removed` 
-                      });
-                    } catch (e: any) {
-                      setOperationResult({ 
-                        success: false, 
-                        message: `Failed to remove key: ${e.message}` 
-                      });
-                    }
-                  }}
-                >
-                  Remove
-                </Button>
-              </div>
-              <div className="bg-[#121212] p-1 rounded-sm overflow-x-auto max-h-16 whitespace-pre-wrap">
-                <code className="text-[10px] text-amber-100">
-                  {(() => {
-                    try {
-                      const value = localStorage.getItem(key);
-                      if (!value) return 'null';
-                      const parsed = JSON.parse(value);
-                      return JSON.stringify(parsed, null, 2);
-                    } catch (e) {
-                      return localStorage.getItem(key) || 'null';
-                    }
-                  })()}
-                </code>
+        {localStorageKeys.length === 0 ? (
+          <div className="text-amber-300 text-xs italic p-2 bg-amber-950/30 rounded-md">
+            No TON wallet data found in localStorage
+          </div>
+        ) : (
+          <div className="space-y-2 text-xs mt-2">
+            {/* Display current wallet state first */}
+            <div className="p-2 bg-amber-950/30 rounded-md">
+              <h5 className="font-medium text-amber-200 mb-1">Current Wallet State:</h5>
+              <div className="grid grid-cols-2 gap-x-4 gap-y-1">
+                <span className="text-amber-300">Connection Status:</span>
+                <span className="text-amber-100 font-mono">{getConnectionStatusDisplay()}</span>
+                
+                <span className="text-amber-300">Is Connected:</span>
+                <span className="text-amber-100 font-mono">{isConnected ? 'true' : 'false'}</span>
+                
+                <span className="text-amber-300">Is Connecting:</span>
+                <span className="text-amber-100 font-mono">{isConnecting ? 'true' : 'false'}</span>
+                
+                <span className="text-amber-300">Wallet Address:</span>
+                <span className="text-amber-100 font-mono break-all">
+                  {walletInfo?.address || 'none'}
+                </span>
+                
+                <span className="text-amber-300">Network:</span>
+                <span className="text-amber-100 font-mono">{walletInfo?.network || 'unknown'}</span>
               </div>
             </div>
-          ))}
-        </div>
+            
+            {/* Then show localStorage items */}
+            <h5 className="font-medium text-amber-200 mt-2">LocalStorage Data:</h5>
+            <div className="space-y-2">
+              {localStorageKeys.map(key => (
+                <div key={key} className="flex flex-col gap-1 p-2 bg-amber-950/20 rounded border border-amber-900/30">
+                  <div className="flex justify-between items-center">
+                    <span className="text-amber-400 font-mono">{key}</span>
+                    <Button 
+                      variant="ghost" 
+                      size="sm" 
+                      className="h-6 text-[10px] text-amber-300 hover:text-amber-200 hover:bg-amber-950/30"
+                      onClick={() => {
+                        try {
+                          localStorage.removeItem(key);
+                          setOperationResult({ 
+                            success: true, 
+                            message: `LocalStorage key '${key}' removed` 
+                          });
+                          // Force refresh the view
+                          setShowDebugInfo(false);
+                          setTimeout(() => setShowDebugInfo(true), 100);
+                        } catch (e: any) {
+                          setOperationResult({ 
+                            success: false, 
+                            message: `Failed to remove key: ${e.message}` 
+                          });
+                        }
+                      }}
+                    >
+                      Remove
+                    </Button>
+                  </div>
+                  <div className="bg-[#121212] p-2 rounded-sm overflow-x-auto max-h-32 whitespace-pre-wrap">
+                    <code className="text-[10px] text-amber-100">
+                      {formatLocalStorageData(key)}
+                    </code>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
       </div>
     );
   };
@@ -268,10 +370,27 @@ const TonWalletController: React.FC = () => {
       <CardContent className="space-y-6">
         {/* Connection Status */}
         <div className="grid grid-cols-2 gap-2">
-          <StateIndicator state={getConnectionStatusDisplay()} title="Status" />
-          <StateIndicator state={isConnected ? 'TRUE' : 'FALSE'} title="Connected" />
-          <StateIndicator state={isConnecting ? 'TRUE' : 'FALSE'} title="Connecting" />
-          <StateIndicator state={walletInfo ? formatAddress(walletInfo.address) : 'NONE'} title="Address" />
+          <StateIndicator 
+            state={getConnectionStatusDisplay()} 
+            title="Status" 
+            warning={connectionStatus === TonConnectionStatus.CONNECTING}
+            error={connectionStatus !== TonConnectionStatus.CONNECTED && !isConnecting} 
+          />
+          <StateIndicator 
+            state={isConnected ? 'TRUE' : 'FALSE'} 
+            title="Connected" 
+            error={!isConnected} 
+          />
+          <StateIndicator 
+            state={isConnecting ? 'TRUE' : 'FALSE'} 
+            title="Connecting" 
+            warning={isConnecting} 
+          />
+          <StateIndicator 
+            state={walletInfo ? formatAddress(walletInfo.address) : 'NONE'} 
+            title="Address" 
+            error={!walletInfo} 
+          />
         </div>
 
         {/* Connection Buttons */}

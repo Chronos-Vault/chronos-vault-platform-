@@ -299,46 +299,87 @@ class TONService {
    */
   async disconnect(): Promise<boolean> {
     try {
-      if (!this.tonConnectUI) return false;
+      if (!this.tonConnectUI) {
+        console.log('TON Connect UI not available, nothing to disconnect');
+        this.resetConnectionState();
+        return false;
+      }
       
       // First check if we're actually connected
       if (!this.tonConnectUI.connected) {
         console.log('TON wallet already disconnected');
-        this.connectionStatus = TonConnectionStatus.DISCONNECTED;
-        this.walletInfo = null;
+        this.resetConnectionState();
         return true;
       }
       
-      console.log('Attempting to disconnect TON wallet...');
+      console.log('Attempting to disconnect TON wallet from UI...');
       
       // Disconnect wallet with robust error handling
       try {
         await this.tonConnectUI.disconnect();
         console.log('TON wallet disconnected successfully');
+        console.log('Disconnect result:', true);
       } catch (disconnectError) {
         console.error('Error during TON disconnect call:', disconnectError);
-        // Continue with cleanup even if disconnect fails
+        console.log('Continuing with cleanup despite disconnect error');
       }
       
-      // Force reset the connection status and wallet info
-      this.connectionStatus = TonConnectionStatus.DISCONNECTED;
-      this.walletInfo = null;
+      // Reset connection state regardless of disconnect result
+      this.resetConnectionState();
       
-      // Clear any stored wallet data from localStorage
-      try {
-        localStorage.removeItem('ton_wallet_info');
-        localStorage.removeItem('ton_wallet_session');
-      } catch (storageError) {
-        console.warn('Failed to clear TON wallet storage:', storageError);
-      }
+      // Special handling - suggest page reload 
+      console.log('Reloading page to fully reset TON Connect state...');
+      // The controller will handle actual page reload if needed
       
       return true;
     } catch (error) {
-      console.error('Failed to disconnect TON wallet:', error);
-      // Force reset connection status and wallet info even on error
-      this.connectionStatus = TonConnectionStatus.DISCONNECTED;
-      this.walletInfo = null;
-      return true; // Return true anyway to clear UI state
+      console.error('Critical error disconnecting TON wallet:', error);
+      // Always reset connection state even on error
+      this.resetConnectionState();
+      return true; // Return true to let UI know cleanup was performed
+    }
+  }
+
+  /**
+   * Reset connection state and clear storage
+   * @private
+   */
+  private resetConnectionState(): void {
+    // Reset internal state
+    this.connectionStatus = TonConnectionStatus.DISCONNECTED;
+    this.walletInfo = null;
+    
+    // Clear all TON-related items from localStorage
+    this.clearAllTONStorageData();
+  }
+
+  /**
+   * Clear all TON-related data from localStorage
+   * @private
+   */
+  private clearAllTONStorageData(): void {
+    try {
+      // Find all TON and wallet-related keys
+      const keysToRemove = Object.keys(localStorage).filter(key => 
+        key.toLowerCase().includes('ton') || 
+        key.toLowerCase().includes('connect') ||
+        key.toLowerCase().includes('wallet')
+      );
+      
+      if (keysToRemove.length > 0) {
+        console.log(`Clearing ${keysToRemove.length} TON-related localStorage items:`, keysToRemove);
+        for (const key of keysToRemove) {
+          try {
+            localStorage.removeItem(key);
+          } catch (e) {
+            console.warn(`Failed to clear localStorage key: ${key}`, e);
+          }
+        }
+      } else {
+        console.log('No TON-related localStorage items found to clear');
+      }
+    } catch (storageError) {
+      console.error('Failed to clear TON storage data:', storageError);
     }
   }
 
