@@ -35,7 +35,9 @@ const Navbar = () => {
       icon: "🏠",
       items: [
         { name: "Home", href: "/", icon: "🏠" },
-        { name: "Create Vault", href: "/vault-types", icon: "🔐" },
+        { name: "Create Vault (All Types)", href: "/vault-types", icon: "🔐" },
+        { name: "Create Standard Vault", href: "/create-vault", icon: "🔒" },
+        { name: "Create Specialized Vault", href: "/specialized-vault", icon: "⚡" },
         { name: "My Vaults", href: "/my-vaults", icon: "📊" },
         { name: "Gift Crypto", href: "/gift-crypto", icon: "🎁", highlight: true },
       ]
@@ -114,10 +116,20 @@ const Navbar = () => {
                   Vaults <ChevronDown className="h-4 w-4" />
                 </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent>
+              <DropdownMenuContent className="w-56">
                 <Link href="/vault-types">
                   <DropdownMenuItem className="cursor-pointer">
-                    Create Vault
+                    Create Vault (All Types)
+                  </DropdownMenuItem>
+                </Link>
+                <Link href="/create-vault">
+                  <DropdownMenuItem className="cursor-pointer">
+                    Create Standard Vault
+                  </DropdownMenuItem>
+                </Link>
+                <Link href="/specialized-vault">
+                  <DropdownMenuItem className="cursor-pointer">
+                    Create Specialized Vault
                   </DropdownMenuItem>
                 </Link>
                 <Link href="/my-vaults">
