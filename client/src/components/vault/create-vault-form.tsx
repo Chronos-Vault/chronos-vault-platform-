@@ -1203,6 +1203,24 @@ const CreateVaultForm = ({
                   </div>
                 )}
                 
+                {/* Contract Deployment Success */}
+                {!isBlockchainDeploying && contractAddress && !showAttachmentUpload && (
+                  <div className="border border-green-500/20 rounded-lg p-4 bg-[#1A1A1A] mt-4 mb-4">
+                    <div className="flex items-center space-x-2 mb-2">
+                      <div className="bg-green-500 rounded-full p-1">
+                        <i className="ri-check-line text-black"></i>
+                      </div>
+                      <h3 className="text-lg font-semibold text-white">Contract Deployed Successfully</h3>
+                    </div>
+                    <p className="text-gray-400 text-sm mb-2">
+                      Your vault has been successfully deployed to the blockchain and is now secured with immutable smart contract technology.
+                    </p>
+                    <div className="bg-black/30 p-2 rounded-md text-xs font-mono text-green-400 break-all">
+                      {contractAddress}
+                    </div>
+                  </div>
+                )}
+                
                 {/* Blockchain Interaction Section */}
                 {isWalletConnected && !showAttachmentUpload && (
                   <div className="border border-[#6B00D7]/20 rounded-lg p-4 bg-[#1A1A1A] mt-4 mb-4">
