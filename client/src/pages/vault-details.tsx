@@ -29,6 +29,7 @@ const VaultDetails = () => {
   const [_, navigate] = useLocation();
   const { toast } = useToast();
   const { isAnyWalletConnected, walletInfo, chainStatus } = useMultiChain();
+  const { tokenBalance } = useCVTToken();
   
   const [isLoading, setIsLoading] = useState(true);
   const [vault, setVault] = useState<Vault | null>(null);
@@ -202,6 +203,18 @@ const VaultDetails = () => {
     });
   };
 
+  // Handle upgrade vault with CVT tokens
+  const handleUpgradeWithCVT = () => {
+    if (!vault) return;
+    navigate(`/cvt-payment/${vault.id}`);
+  };
+  
+  // Handle premium payment with card
+  const handleUpgradeWithCard = () => {
+    if (!vault) return;
+    navigate(`/premium-payment/${vault.id}`);
+  };
+
   if (isLoading) {
     return (
       <section className="py-16 min-h-screen bg-gradient-to-b from-[#0A0A0A] to-[#121212]">
@@ -367,6 +380,80 @@ const VaultDetails = () => {
                     </CardContent>
                   </Card>
                 </div>
+                
+                {/* Premium Features Card */}
+                <Card className="bg-[#161616] border-[#6B00D7]/30 relative overflow-hidden">
+                  <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-br from-[#6B00D7] to-transparent opacity-20 rounded-bl-full"></div>
+                  <CardHeader className="pb-2">
+                    <h3 className="text-lg font-medium text-white flex items-center">
+                      <Sparkles className="h-5 w-5 mr-2 text-[#FF5AF7]" />
+                      Premium Vault Features
+                    </h3>
+                    <CardDescription>
+                      Enhance your vault with premium features
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="space-y-4">
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div className="flex items-start space-x-2">
+                          <div className="h-5 w-5 rounded-full bg-[#6B00D7]/20 flex items-center justify-center flex-shrink-0 mt-0.5">
+                            <span className="text-[#FF5AF7] text-xs">✓</span>
+                          </div>
+                          <div>
+                            <span className="text-sm font-medium">Cross-Chain Security</span>
+                            <p className="text-xs text-gray-400">Secure your assets across multiple blockchains</p>
+                          </div>
+                        </div>
+                        <div className="flex items-start space-x-2">
+                          <div className="h-5 w-5 rounded-full bg-[#6B00D7]/20 flex items-center justify-center flex-shrink-0 mt-0.5">
+                            <span className="text-[#FF5AF7] text-xs">✓</span>
+                          </div>
+                          <div>
+                            <span className="text-sm font-medium">Multi-Signature Protection</span>
+                            <p className="text-xs text-gray-400">Require multiple approvals to access</p>
+                          </div>
+                        </div>
+                        <div className="flex items-start space-x-2">
+                          <div className="h-5 w-5 rounded-full bg-[#6B00D7]/20 flex items-center justify-center flex-shrink-0 mt-0.5">
+                            <span className="text-[#FF5AF7] text-xs">✓</span>
+                          </div>
+                          <div>
+                            <span className="text-sm font-medium">Zero-Knowledge Privacy</span>
+                            <p className="text-xs text-gray-400">Advanced encryption for maximum privacy</p>
+                          </div>
+                        </div>
+                        <div className="flex items-start space-x-2">
+                          <div className="h-5 w-5 rounded-full bg-[#6B00D7]/20 flex items-center justify-center flex-shrink-0 mt-0.5">
+                            <span className="text-[#FF5AF7] text-xs">✓</span>
+                          </div>
+                          <div>
+                            <span className="text-sm font-medium">AI Security Monitoring</span>
+                            <p className="text-xs text-gray-400">Real-time threat detection and prevention</p>
+                          </div>
+                        </div>
+                      </div>
+                      
+                      <div className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-2 mt-4">
+                        <Button
+                          className="bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] hover:from-[#5800B3] hover:to-[#FF46E8] text-white"
+                          onClick={handleUpgradeWithCVT}
+                        >
+                          <Zap className="h-4 w-4 mr-2" />
+                          Upgrade with 50 CVT Tokens
+                        </Button>
+                        <Button
+                          variant="outline"
+                          className="border-[#6B00D7]/40 text-[#FF5AF7] hover:bg-[#6B00D7]/10"
+                          onClick={handleUpgradeWithCard}
+                        >
+                          <ExternalLink className="h-4 w-4 mr-2" />
+                          Upgrade with Card
+                        </Button>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
                 
                 {/* Blockchain Details */}
                 <Card className="bg-[#161616] border-[#6B00D7]/10">
