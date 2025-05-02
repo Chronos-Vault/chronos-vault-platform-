@@ -28,6 +28,13 @@ const VaultTypeSelector: React.FC<VaultTypeProps> = ({ selectedType, onChange })
         color="#6B00D7"
         isSelected={selectedType === 'standard'}
         onClick={() => onChange('standard')}
+        securityLevel={3}
+        complexityLevel={1}
+        features={[
+          "Time-based unlocking",
+          "Basic encryption",
+          "Owner & beneficiary access"
+        ]}
       />
       
       <VaultTypeCard 
@@ -38,6 +45,14 @@ const VaultTypeSelector: React.FC<VaultTypeProps> = ({ selectedType, onChange })
         color="#FF5AF7"
         isSelected={selectedType === 'multi-signature'}
         onClick={() => onChange('multi-signature')}
+        securityLevel={5}
+        complexityLevel={3}
+        features={[
+          "Multiple approvers required",
+          "Customizable signature threshold",
+          "Team member management",
+          "Enhanced security protocol"
+        ]}
       />
       
       <VaultTypeCard 
@@ -48,6 +63,14 @@ const VaultTypeSelector: React.FC<VaultTypeProps> = ({ selectedType, onChange })
         color="#00D7C3"
         isSelected={selectedType === 'biometric'}
         onClick={() => onChange('biometric')}
+        securityLevel={4}
+        complexityLevel={2}
+        features={[
+          "Fingerprint verification",
+          "Facial recognition options",
+          "Multi-factor authentication",
+          "Tamper-proof security"
+        ]}
       />
       
       <VaultTypeCard 
@@ -58,6 +81,14 @@ const VaultTypeSelector: React.FC<VaultTypeProps> = ({ selectedType, onChange })
         color="#D76B00"
         isSelected={selectedType === 'time-lock'}
         onClick={() => onChange('time-lock')}
+        securityLevel={4}
+        complexityLevel={3}
+        features={[
+          "Scheduled unlocking periods", 
+          "Multiple time conditions",
+          "Calendar-based scheduling",
+          "Emergency override options" 
+        ]}
       />
       
       <VaultTypeCard 
@@ -68,6 +99,14 @@ const VaultTypeSelector: React.FC<VaultTypeProps> = ({ selectedType, onChange })
         color="#00D74B"
         isSelected={selectedType === 'geolocation'}
         onClick={() => onChange('geolocation')}
+        securityLevel={4}
+        complexityLevel={3}
+        features={[
+          "Location-based access", 
+          "Multiple safe zones",
+          "GPS verification",
+          "Travel permissions" 
+        ]}
       />
       
       <VaultTypeCard 
@@ -78,6 +117,14 @@ const VaultTypeSelector: React.FC<VaultTypeProps> = ({ selectedType, onChange })
         color="#8B00D7"
         isSelected={selectedType === 'cross-chain'}
         onClick={() => onChange('cross-chain')}
+        securityLevel={5}
+        complexityLevel={4}
+        features={[
+          "Triple-Chain Security", 
+          "Cross-chain transactions",
+          "Multi-network support",
+          "Unified asset management" 
+        ]}
       />
       
       <VaultTypeCard 
@@ -88,6 +135,14 @@ const VaultTypeSelector: React.FC<VaultTypeProps> = ({ selectedType, onChange })
         color="#5271FF"
         isSelected={selectedType === 'smart-contract'}
         onClick={() => onChange('smart-contract')}
+        securityLevel={4}
+        complexityLevel={5}
+        features={[
+          "Conditional access rules", 
+          "Automated actions",
+          "Event-based triggers",
+          "Custom logic implementation" 
+        ]}
       />
       
       <VaultTypeCard 
@@ -98,6 +153,14 @@ const VaultTypeSelector: React.FC<VaultTypeProps> = ({ selectedType, onChange })
         color="#FF5151"
         isSelected={selectedType === 'dynamic'}
         onClick={() => onChange('dynamic')}
+        securityLevel={4}
+        complexityLevel={5}
+        features={[
+          "Behavioral adaptability", 
+          "Market response strategies",
+          "Self-adjusting security",
+          "Custom security settings" 
+        ]}
       />
       
       <VaultTypeCard 
@@ -108,6 +171,14 @@ const VaultTypeSelector: React.FC<VaultTypeProps> = ({ selectedType, onChange })
         color="#CE19FF"
         isSelected={selectedType === 'nft-powered'}
         onClick={() => onChange('nft-powered')}
+        securityLevel={4}
+        complexityLevel={3}
+        features={[
+          "NFT access verification", 
+          "Transferable vault access",
+          "Digital collectible integration",
+          "NFT-based permissions" 
+        ]}
       />
       
       <VaultTypeCard 
@@ -118,6 +189,14 @@ const VaultTypeSelector: React.FC<VaultTypeProps> = ({ selectedType, onChange })
         color="#fca103"
         isSelected={selectedType === 'unique'}
         onClick={() => onChange('unique')}
+        securityLevel={5}
+        complexityLevel={4}
+        features={[
+          "Zero-Knowledge Privacy Layer", 
+          "Military-grade encryption",
+          "Quantum-resistant protocols",
+          "Custom security combinations" 
+        ]}
       />
     </div>
   );
@@ -131,6 +210,9 @@ interface VaultTypeCardProps {
   color: string;
   isSelected: boolean;
   onClick: () => void;
+  securityLevel?: number;
+  complexityLevel?: number;
+  features?: string[];
 }
 
 const VaultTypeCard: React.FC<VaultTypeCardProps> = ({ 
@@ -139,7 +221,10 @@ const VaultTypeCard: React.FC<VaultTypeCardProps> = ({
   icon, 
   color, 
   isSelected, 
-  onClick 
+  onClick,
+  securityLevel = 3,
+  complexityLevel = 2,
+  features = []
 }) => {
   return (
     <div 
@@ -169,6 +254,48 @@ const VaultTypeCard: React.FC<VaultTypeCardProps> = ({
         </h3>
       </div>
       <p className="text-xs text-gray-400 text-center sm:text-left mt-1">{description}</p>
+      
+      {/* Security Level Indicator */}
+      <div className="flex justify-between items-center mt-3 mb-1">
+        <div className="flex items-center">
+          <span className="text-xs text-gray-500 mr-2">Security:</span>
+          <div className="flex">
+            {Array.from({ length: 5 }).map((_, i) => (
+              <div 
+                key={`security-${i}`}
+                className={`w-1.5 h-3 mx-0.5 rounded-sm ${i < securityLevel ? `bg-[${color}]` : 'bg-gray-700'}`}
+                style={{ backgroundColor: i < securityLevel ? color : undefined }}
+              />
+            ))}
+          </div>
+        </div>
+        <div className="flex items-center">
+          <span className="text-xs text-gray-500 mr-2">Complexity:</span>
+          <div className="flex">
+            {Array.from({ length: 5 }).map((_, i) => (
+              <div 
+                key={`complexity-${i}`}
+                className={`w-1.5 h-3 mx-0.5 rounded-sm ${i < complexityLevel ? 'bg-gray-400' : 'bg-gray-700'}`}
+              />
+            ))}
+          </div>
+        </div>
+      </div>
+      
+      {/* Features (visible when selected) */}
+      {isSelected && features.length > 0 && (
+        <div className="mt-3 pt-3 border-t border-gray-700">
+          <p className="text-xs font-medium text-gray-300 mb-1">Key Features:</p>
+          <ul className="text-xs text-gray-400">
+            {features.map((feature, index) => (
+              <li key={index} className="flex items-start mb-1">
+                <span style={{ color: color }} className="mr-1 mt-0.5">•</span>
+                <span>{feature}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
     </div>
   );
 };
