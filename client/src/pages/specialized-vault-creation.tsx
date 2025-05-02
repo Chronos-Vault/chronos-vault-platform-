@@ -138,12 +138,79 @@ const SpecializedVaultCreation: React.FC = () => {
     setIsLoading(true);
     
     try {
-      // Here we would normally create the vault, for now we'll simulate it
-      await new Promise(resolve => setTimeout(resolve, 2000));
+      // Calculate the unlock date based on the current time lock period
+      const currentDate = new Date();
+      const unlockDateObj = new Date(unlockDate || currentDate);
+      if (!unlockDate) {
+        // Default to 30 days if no date selected
+        unlockDateObj.setDate(currentDate.getDate() + 30);
+      }
+      
+      // Create specialized configuration based on vault type
+      const specializedConfig: Record<string, any> = {};
+      
+      if (selectedVaultType === SpecializedVaultType.MULTI_SIGNATURE) {
+        specializedConfig.approvers = multiSigApprovers.filter(approver => approver.trim() !== '');
+        specializedConfig.threshold = multiSigThreshold;
+      } else if (selectedVaultType === SpecializedVaultType.GEOLOCATION) {
+        specializedConfig.safeZones = geolocations.filter(location => location.trim() !== '');
+      } else if (selectedVaultType === SpecializedVaultType.TIME_LOCK) {
+        specializedConfig.scheduleType = scheduleType;
+        specializedConfig.unlockDate = unlockDateObj.toISOString();
+      } else if (selectedVaultType === SpecializedVaultType.BIOMETRIC) {
+        specializedConfig.biometricRequired = true;
+      }
+      
+      // Create blockchain-specific configuration
+      const blockchainConfig: Record<string, string> = {};
+      if (selectedBlockchain === BlockchainType.TON) {
+        blockchainConfig.tonContractAddress = ton.walletInfo?.address || '';
+      } else if (selectedBlockchain === BlockchainType.ETHEREUM) {
+        blockchainConfig.ethereumContractAddress = ethereum.isConnected ? 'pending-deployment' : '';
+      } else if (selectedBlockchain === BlockchainType.SOLANA) {
+        blockchainConfig.solanaContractAddress = solana.isConnected ? 'pending-deployment' : '';
+      }
+      
+      // Create vault data for API call
+      const vaultData = {
+        userId: 1, // This should be the actual user ID from auth
+        name: vaultName,
+        description: vaultDescription,
+        vaultType: selectedVaultType,
+        assetType: selectedBlockchain,
+        assetAmount: assetAmount || '0',
+        timeLockPeriod: 30, // Default to 30 days
+        unlockDate: unlockDateObj.toISOString(),
+        metadata: JSON.stringify({
+          specializedType: selectedVaultType,
+          configuration: specializedConfig,
+          blockchain: selectedBlockchain
+        }),
+        ...blockchainConfig,
+        securityLevel: 5, // Highest security for specialized vaults
+        crossChainEnabled: selectedVaultType === SpecializedVaultType.CROSS_CHAIN,
+        privacyEnabled: true
+      };
+      
+      // Make the API call to create the vault
+      const response = await fetch('/api/vaults', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(vaultData)
+      });
+      
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Failed to create vault');
+      }
+      
+      const createdVault = await response.json();
       
       toast({
         title: "Vault Created Successfully",
-        description: `Your ${selectedVaultType} vault has been created on ${selectedBlockchain}`,
+        description: `Your ${selectedVaultType.replace('-', ' ')} vault has been created on ${selectedBlockchain}`,
       });
       
       navigate('/my-vaults');
