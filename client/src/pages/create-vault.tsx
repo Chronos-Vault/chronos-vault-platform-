@@ -41,6 +41,20 @@ const CreateVault = () => {
     return chainStatus[blockchain]?.isConnected || false;
   };
   
+  // Get wallet address for the selected blockchain
+  const getWalletAddress = (blockchain: BlockchainType): string => {
+    switch(blockchain) {
+      case BlockchainType.TON:
+        return walletInfo.ton?.address || '';
+      case BlockchainType.ETHEREUM:
+        return walletInfo.ethereum?.address || '';
+      case BlockchainType.SOLANA:
+        return walletInfo.solana?.address || '';
+      default:
+        return '';
+    }
+  };
+  
   // Handle wallet connection
   const handleConnectWallet = async () => {
     setIsConnectingWallet(true);
@@ -203,8 +217,8 @@ const CreateVault = () => {
                       <div>
                         <h3 className="font-medium text-white">{selectedBlockchain} Wallet Connected</h3>
                         <p className="text-gray-400 text-sm">
-                          {walletInfo[selectedBlockchain]?.address ? 
-                            `${walletInfo[selectedBlockchain]?.address.substring(0, 6)}...${walletInfo[selectedBlockchain]?.address.substring(walletInfo[selectedBlockchain]?.address.length - 4)}` : 
+                          {getWalletAddress(selectedBlockchain) ? 
+                            `${getWalletAddress(selectedBlockchain).substring(0, 6)}...${getWalletAddress(selectedBlockchain).substring(getWalletAddress(selectedBlockchain).length - 4)}` : 
                             "Connected"}
                         </p>
                       </div>

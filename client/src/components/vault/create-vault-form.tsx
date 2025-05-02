@@ -68,11 +68,28 @@ const formSchema = insertVaultSchema.extend({
 
 type FormValues = z.infer<typeof formSchema>;
 
+import { useTon } from "@/contexts/ton-context";
+import { BlockchainType } from "@/contexts/multi-chain-context";
+
 interface CreateVaultFormProps {
   initialVaultType?: string;
+  selectedBlockchain?: BlockchainType;
+  isWalletConnected?: boolean;
+  walletInfo?: {
+    ethereum: any;
+    solana: any;
+    ton: any;
+  };
+  ton?: any; // Using any for now to fix the build
 }
 
-const CreateVaultForm = ({ initialVaultType = "legacy" }: CreateVaultFormProps) => {
+const CreateVaultForm = ({ 
+  initialVaultType = "legacy",
+  selectedBlockchain = BlockchainType.TON,
+  isWalletConnected = false,
+  walletInfo,
+  ton
+}: CreateVaultFormProps) => {
   const [_, navigate] = useLocation();
   const { toast } = useToast();
   const [activeTab, setActiveTab] = useState(initialVaultType);
