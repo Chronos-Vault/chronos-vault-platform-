@@ -722,59 +722,101 @@ const CreateVaultForm = ({
     // Get the Triple-Chain Security setting from our state
     // This is already synced with the form through the checkbox onChange handler
     
+    // Get payment details based on the selected payment type and vault type
+    const creationCost = getCreationCost();
+    let paymentSuccess = false;
+    
     if (isWalletConnected && selectedBlockchain) {
       try {
         setIsBlockchainDeploying(true);
-        setDeploymentStatus("Preparing deployment transaction...");
         
-        // Deploy based on the selected blockchain
-        if (selectedBlockchain === BlockchainType.TON && ton) {
-          setDeploymentStatus("Deploying to TON Network...");
+        // Process payment based on payment type
+        if (data.paymentType === 'cvt') {
+          setDeploymentStatus("Processing CVT payment...");
+          // Check if user has enough CVT tokens
+          const userBalance = parseFloat(tokenBalance || '0');
+          if (userBalance < creationCost.amount) {
+            throw new Error(`Insufficient CVT balance. Need ${creationCost.amount} CVT but you have ${userBalance} CVT.`);
+          }
           
-          // Convert amount to nanograms (TON's smallest unit)
-          const amount = parseFloat(data.assetAmount) || 0.1; 
-          const nanotons = Math.floor(amount * 1_000_000_000);
+          // In a real implementation, we would call the CVT token contract to transfer tokens
+          await new Promise(resolve => setTimeout(resolve, 1500)); // Simulate token transfer
+          setDeploymentStatus("CVT payment confirmed!");
+          paymentSuccess = true;
+        } else {
+          // Native token payment
+          setDeploymentStatus(`Processing ${creationCost.currency} payment...`);
+          // Would check native token balance here
+          await new Promise(resolve => setTimeout(resolve, 1500)); // Simulate token transfer
+          setDeploymentStatus(`${creationCost.currency} payment confirmed!`);
+          paymentSuccess = true;
+        }
+        
+        // Only continue with deployment if payment was successful
+        if (paymentSuccess) {
+          setDeploymentStatus("Preparing deployment transaction...");
           
-          // Make sure we have TonContractService
-          if (ton.contractService) {
-            const deployParams = {
-              recipient: ton.wallet?.address || '', // Will be the owner
-              unlockTime: unlockTime,
-              securityLevel: useTripleChainSecurity ? 5 : 3, // Higher security level when Triple-Chain is enabled
-              comment: data.description || 'ChronosVault',
-              amount: nanotons,
-            };
+          // Deploy based on the selected blockchain
+          if (selectedBlockchain === BlockchainType.TON && ton) {
+            setDeploymentStatus("Deploying to TON Network...");
             
-            // Deploy the vault contract
-            const result = await ton.contractService.deployVault(deployParams);
+            // Convert amount to nanograms (TON's smallest unit)
+            const amount = parseFloat(data.assetAmount) || 0.1; 
+            const nanotons = Math.floor(amount * 1_000_000_000);
             
-            if (result.success) {
-              blockchainTxHash = result.transactionHash;
-              blockchainAddress = result.contractAddress || null;
-              deploymentMetadata = {
-                blockchain: selectedBlockchain,
-                txHash: result.transactionHash,
-                contractAddress: result.contractAddress,
-                deployParams,
-                simulated: !!result.simulated
+            // Make sure we have TonContractService
+            if (ton.contractService) {
+              const deployParams = {
+                recipient: ton.wallet?.address || '', // Will be the owner
+                unlockTime: unlockTime,
+                securityLevel: useTripleChainSecurity ? 5 : 3, // Higher security level when Triple-Chain is enabled
+                comment: data.description || 'ChronosVault',
+                amount: nanotons,
+                // Add payment information
+                paymentType: data.paymentType,
+                paymentAmount: creationCost.amount,
+                paymentCurrency: creationCost.currency
               };
               
-              setContractAddress(result.contractAddress || null);
-              setDeploymentStatus("Successfully deployed to TON!");
+              // Deploy the vault contract
+              const result = await ton.contractService.deployVault(deployParams);
+              
+              if (result.success) {
+                blockchainTxHash = result.transactionHash;
+                blockchainAddress = result.contractAddress || null;
+                deploymentMetadata = {
+                  blockchain: selectedBlockchain,
+                  txHash: result.transactionHash,
+                  contractAddress: result.contractAddress,
+                  deployParams,
+                  simulated: !!result.simulated,
+                  payment: {
+                    type: data.paymentType,
+                    amount: creationCost.amount,
+                    currency: creationCost.currency,
+                    discount: creationCost.discount || null
+                  }
+                };
+                
+                setContractAddress(result.contractAddress || null);
+                setDeploymentStatus("Successfully deployed to TON!");
+              } else {
+                throw new Error(result.error || 'Deployment failed');
+              }
             } else {
-              throw new Error(result.error || 'Deployment failed');
+              throw new Error('TON contract service not available');
             }
-          } else {
-            throw new Error('TON contract service not available');
+          } 
+          else if (selectedBlockchain === BlockchainType.ETHEREUM) {
+            setDeploymentStatus("Ethereum deployment not implemented yet");
+            // Would connect to Ethereum wallet here
+          } 
+          else if (selectedBlockchain === BlockchainType.SOLANA) {
+            setDeploymentStatus("Solana deployment not implemented yet");
+            // Would connect to Solana wallet here
           }
-        } 
-        else if (selectedBlockchain === BlockchainType.ETHEREUM) {
-          setDeploymentStatus("Ethereum deployment not implemented yet");
-          // Would connect to Ethereum wallet here
-        } 
-        else if (selectedBlockchain === BlockchainType.SOLANA) {
-          setDeploymentStatus("Solana deployment not implemented yet");
-          // Would connect to Solana wallet here
+        } else {
+          throw new Error('Payment processing failed');
         }
         
       } catch (error: any) {
@@ -798,6 +840,13 @@ const CreateVaultForm = ({
       blockchainAddress,
       blockchainTxHash,
       unlockTimestamp: unlockTime,
+      // Include payment details
+      payment: {
+        type: data.paymentType,
+        amount: creationCost.amount,
+        currency: creationCost.currency,
+        discount: creationCost.discount || null
+      },
       metadata: {
         allowsAttachments: data.metadata?.allowsAttachments ?? true,
         attachmentsEncryption: data.metadata?.attachmentsEncryption ?? "AES-256",
