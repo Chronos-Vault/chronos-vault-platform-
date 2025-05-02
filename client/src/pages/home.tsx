@@ -106,6 +106,18 @@ const Home = () => {
                 <p className="text-xl md:text-2xl bg-gradient-to-r from-[#6B00D7] via-[#FF5AF7] to-[#6B00D7] inline-block text-transparent bg-clip-text font-bold mt-2 animate-text-shine bg-300%">
                   The ultimate solution for protecting what matters most across time and chains.
                 </p>
+                <div className="flex items-center justify-center mt-4 mb-2">
+                  <div className="px-6 py-3 bg-[#1A1A1A]/80 border border-[#6B00D7]/30 rounded-xl inline-flex items-center">
+                    <span className="text-[#FF5AF7] mr-2">💰</span>
+                    <span className="text-white font-medium">Now with multi-chain payments! Create vaults using</span>
+                    <div className="ml-2 flex items-center space-x-2">
+                      <span className="px-2 py-1 bg-[#6B00D7]/20 rounded-md text-white font-semibold">ETH</span>
+                      <span className="px-2 py-1 bg-[#6B00D7]/20 rounded-md text-white font-semibold">SOL</span>
+                      <span className="px-2 py-1 bg-[#6B00D7]/20 rounded-md text-white font-semibold">TON</span>
+                      <span className="px-2 py-1 bg-[#6B00D7]/20 rounded-md text-white font-semibold">BTC</span>
+                    </div>
+                  </div>
+                </div>
                 
                 <div className="flex flex-col items-center gap-6 mt-10">
                   <div className="flex flex-col sm:flex-row gap-4 sm:gap-6 w-full justify-center max-w-md sm:max-w-none mx-auto">
@@ -113,7 +125,15 @@ const Home = () => {
                       className="bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] hover:from-[#5500AB] hover:to-[#FF46E8] text-white font-bold rounded-lg px-4 sm:px-8 py-3 sm:py-4 text-base sm:text-lg shadow-glow hover:shadow-lg hover:shadow-[#FF5AF7]/40 transition-all w-full sm:w-auto"
                       onClick={() => setLocation("/create-vault-enhanced")}
                     >
-                      Create Your Vault
+                      <div className="flex items-center">
+                        <span>Create Your Vault</span>
+                        <div className="flex -space-x-1 ml-2">
+                          <div className="w-5 h-5 rounded-full bg-blue-500 flex items-center justify-center text-[8px] font-bold">ETH</div>
+                          <div className="w-5 h-5 rounded-full bg-purple-500 flex items-center justify-center text-[8px] font-bold">SOL</div>
+                          <div className="w-5 h-5 rounded-full bg-cyan-500 flex items-center justify-center text-[8px] font-bold">TON</div>
+                          <div className="w-5 h-5 rounded-full bg-orange-500 flex items-center justify-center text-[8px] font-bold">BTC</div>
+                        </div>
+                      </div>
                     </Button>
                     <Button 
                       className="bg-gradient-to-r from-[#00D7C3] to-[#6B00D7] hover:from-[#00C7B3] hover:to-[#5500AB] text-white font-bold rounded-lg px-4 sm:px-8 py-3 sm:py-4 text-base sm:text-lg shadow-glow hover:shadow-lg hover:shadow-[#00D7C3]/40 transition-all w-full sm:w-auto"
