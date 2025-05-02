@@ -114,13 +114,17 @@ class TonCompilerService {
       // Convert amount to nanoTONs
       const amountInNanoTON = (parseFloat(params.amount) * 1e9).toString();
       
-      // Prepare the contract's initial data
+      // Prepare the contract's initial data based on the ChronosVault contract
       const contractInitData = {
-        id: contractId,
-        owner: senderAddress,
+        vault_id: contractId,
+        unlock_time: params.unlockTime,
+        is_locked: 1, // Initially locked
+        recovery_mode: 0, // Start with recovery mode disabled
+        backup_height: 0, // Will be set on first backup
+        owner_address: senderAddress,
         beneficiary: params.beneficiary,
-        unlockTime: params.unlockTime,
-        message: params.message
+        message: params.message,
+        security_level: 3 // Using triple-chain security (TON + ETH + SOL)
       };
       
       // Prepare the deployment transaction

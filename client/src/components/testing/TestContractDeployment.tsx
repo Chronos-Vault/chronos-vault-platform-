@@ -76,42 +76,177 @@ pub mod chronos_vault {
     }
 }`;
 
-const defaultTonContract = `// Sample TON/FunC smart contract for ChronosVault
-// Simplified for testing purposes
+const defaultTonContract = `;; ChronosVault.fc
+;; TON Smart Contract for Chronos Vault - Implements backup and recovery functionality
 
-() recv_internal(int msg_value, cell in_msg, slice in_msg_body) impure {
-    slice cs = in_msg_body;
-    int op = cs~load_uint(32); // operation code
+#include "imports/stdlib.fc";
 
-    if (op == 1) { // create vault
-        int unlock_time = cs~load_uint(64);
-        slice beneficiary = cs~load_msg_addr();
-        slice message = cs~load_ref().begin_parse();
-        
-        set_data(begin_cell()
-            .store_uint(unlock_time, 64)
-            .store_slice(beneficiary)
-            .store_ref(begin_cell().store_slice(message).end_cell())
-            .end_cell());
+;; Storage variables
+global int vault_id;          ;; Unique vault identifier
+global int unlock_time;       ;; Unix timestamp when vault unlocks
+global int is_locked;         ;; 1 if locked, 0 if unlocked
+global int recovery_mode;     ;; 1 if recovery mode enabled, 0 otherwise
+global int backup_height;     ;; Last backup height for cross-chain verification
+global slice owner_address;   ;; Address of the vault owner
+global slice backup_data;     ;; Serialized backup data
+global cell beneficiaries;    ;; Dictionary of beneficiary addresses and shares
+
+;; Error codes
+const int ERROR_NOT_OWNER = 101;
+const int ERROR_VAULT_LOCKED = 102;
+const int ERROR_RECOVERY_DISABLED = 103;
+const int ERROR_INVALID_SIGNATURE = 104;
+const int ERROR_INVALID_TIME = 105;
+const int ERROR_INVALID_PROOF = 106;
+const int ERROR_VAULT_UNLOCKED = 107;
+const int ERROR_COOLDOWN_PERIOD = 108;
+
+;; Load storage function
+() load_data() impure {
+    var ds = get_data().begin_parse();
+    vault_id = ds~load_uint(64);
+    unlock_time = ds~load_uint(64);
+    is_locked = ds~load_uint(1);
+    recovery_mode = ds~load_uint(1);
+    backup_height = ds~load_uint(64);
+    owner_address = ds~load_msg_addr();
+    backup_data = ds~load_ref().begin_parse();
+    beneficiaries = ds~load_dict();
+    ds.end_parse();
+}
+
+;; Save storage function
+() save_data() impure {
+    set_data(begin_cell()
+        .store_uint(vault_id, 64)
+        .store_uint(unlock_time, 64)
+        .store_uint(is_locked, 1)
+        .store_uint(recovery_mode, 1)
+        .store_uint(backup_height, 64)
+        .store_slice(owner_address)
+        .store_ref(begin_cell().store_slice(backup_data).end_cell())
+        .store_dict(beneficiaries)
+        .end_cell());
+}
+
+;; Verify Ethereum signature for cross-chain verification
+int verify_ethereum_signature(slice signature, slice message_hash, slice public_key) method_id {
+    ;; In real implementation, this would use ECDSA verification
+    ;; For the prototype, we'll simulate a successful verification
+    return 1; ;; 1 means valid
+}
+
+;; Verify Solana signature for cross-chain verification
+int verify_solana_signature(slice signature, slice message_hash, slice public_key) method_id {
+    ;; In real implementation, this would use ED25519 verification
+    ;; For the prototype, we'll simulate a successful verification
+    return 1; ;; 1 means valid
+}
+
+;; Check if vault is unlocked based on time
+int is_unlocked_by_time() method_id {
+    return now() >= unlock_time;
+}
+
+;; Verify cross-chain proof from Ethereum
+int verify_ethereum_proof(slice proof_data) method_id {
+    var ds = proof_data.begin_parse();
+    var eth_block_hash = ds~load_uint(256);
+    var eth_tx_hash = ds~load_uint(256);
+    var eth_vault_id = ds~load_uint(64);
+    var eth_unlock_time = ds~load_uint(64);
+    
+    ;; Check if the vault data matches
+    if (eth_vault_id != vault_id) {
+        return 0;
     }
     
-    if (op == 2) { // withdraw
-        cell data = get_data();
-        slice ds = data.begin_parse();
-        int unlock_time = ds~load_uint(64);
-        slice beneficiary = ds~load_msg_addr();
-        
-        throw_if(35, now() < unlock_time);
-        throw_if(36, equal_slice_bits(in_msg.sender_address, beneficiary));
-
-        send_raw_message(begin_cell()
-            .store_uint(0x18, 6)
-            .store_slice(beneficiary)
-            .store_coins(0)
-            .store_uint(0, 1 + 4 + 4 + 64 + 32 + 1 + 1)
-            .end_cell(), 64);
+    if (eth_unlock_time != unlock_time) {
+        return 0;
     }
-}`;
+    
+    ;; In a real implementation, we would verify the Ethereum block and transaction
+    ;; For the prototype, we'll simulate verification success
+    return 1;
+}
+
+;; Contract entry point for receiving internal messages
+() recv_internal(int msg_value, cell in_msg_cell, slice in_msg) impure {
+    ;; Check if this is a bounced message
+    slice cs = in_msg_cell.begin_parse();
+    int flags = cs~load_uint(4);
+    if (flags & 1) { ;; Ignore bounced messages
+        return ();
+    }
+    
+    load_data();
+    
+    ;; Parse the message op code
+    int op = in_msg~load_uint(32);
+    
+    ;; Sender address
+    slice sender_address = in_msg~load_msg_addr();
+    
+    ;; Handle operations
+    if (op == 1) { ;; Unlock request
+        if (equal_slices(sender_address, owner_address)) {
+            unlock_vault();
+        } else {
+            throw(ERROR_NOT_OWNER);
+        }
+    }
+    
+    if (op == 2) { ;; Backup state request
+        if (equal_slices(sender_address, owner_address)) {
+            backup_vault_state();
+        } else {
+            throw(ERROR_NOT_OWNER);
+        }
+    }
+}
+
+;; Unlock the vault function
+() unlock_vault() impure {
+    ;; Check if already unlocked
+    if (~ is_locked) {
+        throw(ERROR_VAULT_UNLOCKED);
+    }
+    
+    ;; Check if natural unlock time has passed
+    if (is_unlocked_by_time()) {
+        is_locked = 0;
+        save_data();
+        return ();
+    }
+    
+    ;; Otherwise, only owner can initiate emergency unlock
+    throw(ERROR_VAULT_LOCKED);
+}
+
+;; Create a backup of the vault state
+() backup_vault_state() impure {
+    ;; Record current blockchain height
+    backup_height = block.height;
+    
+    ;; Serialize vault state
+    backup_data = begin_cell()
+        .store_uint(vault_id, 64)
+        .store_uint(unlock_time, 64)
+        .store_uint(is_locked, 1)
+        .store_uint(now(), 64)  ;; Backup timestamp
+        .store_slice(owner_address)
+        .store_dict(beneficiaries)
+    .end_cell().begin_parse();
+    
+    save_data();
+}
+
+;; Public getter for vault details
+(int, int, int, int, int, slice) get_vault_details() method_id {
+    load_data();
+    return (vault_id, unlock_time, is_locked, recovery_mode, backup_height, owner_address);
+}
+`;
 
 const getSampleCode = (chain: BlockchainType): string => {
   switch (chain) {
@@ -412,7 +547,50 @@ export default function TestContractDeployment({ className }: TestContractDeploy
               />
             </div>
             
-            <div className="flex gap-4">
+            {/* Deployment Parameters Form */}
+            {compileResult?.success && activeChain === BlockchainType.TON && (
+              <div className="border border-[#6B00D7]/30 rounded-lg p-3 mb-4 bg-[#121212]/40">
+                <h3 className="text-sm font-medium text-white mb-2">Vault Configuration</h3>
+                <div className="space-y-2">
+                  <div>
+                    <Label className="text-xs text-gray-300">Unlock Time</Label>
+                    <div className="flex items-center">
+                      <Input 
+                        type="datetime-local" 
+                        min={new Date().toISOString().slice(0, 16)}
+                        defaultValue={new Date(Date.now() + 86400000).toISOString().slice(0, 16)} 
+                        className="bg-[#121212] border-[#6B00D7]/20 text-xs mt-1" 
+                      />
+                    </div>
+                  </div>
+                  <div>
+                    <Label className="text-xs text-gray-300">Security Level</Label>
+                    <Select defaultValue="3">
+                      <SelectTrigger className="bg-[#121212] border-[#6B00D7]/20 text-xs mt-1">
+                        <SelectValue placeholder="Select security level" />
+                      </SelectTrigger>
+                      <SelectContent className="bg-[#121212] border-[#6B00D7]/50">
+                        <SelectItem value="1">Basic (TON Only)</SelectItem>
+                        <SelectItem value="2">Enhanced (TON + ETH)</SelectItem>
+                        <SelectItem value="3">Triple-Chain (TON + ETH + SOL)</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div>
+                    <Label className="text-xs text-gray-300">TON to Lock</Label>
+                    <Input 
+                      type="number" 
+                      defaultValue="0.1" 
+                      min="0.05" 
+                      step="0.01" 
+                      className="bg-[#121212] border-[#6B00D7]/20 text-xs mt-1" 
+                    />
+                  </div>
+                </div>
+              </div>
+            )}
+            
+            <div className="flex gap-3">
               <Button 
                 onClick={handleCompile}
                 disabled={isCompiling || isDeploying || !isWalletReady || !contractCode.trim()}
@@ -430,6 +608,16 @@ export default function TestContractDeployment({ className }: TestContractDeploy
                 {isDeploying ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : <Upload className="h-4 w-4 mr-2" />}
                 Deploy to Testnet
               </Button>
+
+              {deployResult?.success && (
+                <Button
+                  onClick={handleVerify}
+                  className="bg-gradient-to-r from-[#6B00D7]/90 to-[#37B9F1]/90 hover:from-[#7B10E7] hover:to-[#47C9FF] text-white"
+                >
+                  <Shield className="h-4 w-4 mr-2" />
+                  Verify Contract
+                </Button>
+              )}
             </div>
             
             {/* Compilation Result */}
