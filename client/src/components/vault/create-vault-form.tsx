@@ -59,6 +59,35 @@ const formSchema = insertVaultSchema.extend({
     allowsAttachments: true,
     attachmentsEncryption: "AES-256"
   }),
+  // Specialized vault type fields
+  // Multi-signature vault fields
+  requiredSignatures: z.string().optional(),
+  
+  // Biometric vault fields
+  biometricType: z.string().optional(),
+  
+  // Time-lock vault fields
+  scheduleType: z.string().optional(),
+  
+  // Geolocation vault fields
+  geoRadius: z.string().optional(),
+  geoLocation: z.string().optional(),
+  
+  // Cross-chain vault fields
+  additionalChains: z.array(z.string()).optional().default([]),
+  
+  // Smart contract vault fields
+  contractCondition: z.string().optional(),
+  
+  // Dynamic vault fields
+  dynamicRules: z.string().optional(),
+  
+  // NFT-powered vault fields
+  nftType: z.string().optional(),
+  
+  // Unique security vault fields
+  securityLevel: z.string().optional(),
+  
   // Gift-specific fields
   giftType: z.string().optional(),
   giftRecipient: z.string().optional(),
@@ -121,6 +150,17 @@ const CreateVaultForm = ({
         allowsAttachments: true,
         attachmentsEncryption: "AES-256"
       },
+      // Add default values for specialized vault types
+      requiredSignatures: "2",
+      biometricType: "fingerprint",
+      scheduleType: "fixed",
+      geoRadius: "100",
+      geoLocation: "40.7128, -74.0060",
+      additionalChains: [],
+      contractCondition: "time",
+      dynamicRules: "market",
+      nftType: "ownership",
+      securityLevel: "enhanced",
       // Add default values for gift fields
       giftType: "surprise",
       giftRecipient: "",
@@ -707,6 +747,16 @@ const CreateVaultForm = ({
           <CardContent className="p-6">
             <Form {...form}>
               <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+                {/* Render specialized vault fields if vault type is specialized */}
+                {['multi-signature', 'biometric', 'time-lock', 'geolocation', 'cross-chain', 'smart-contract', 'dynamic', 'nft-powered', 'unique'].includes(form.watch('vaultType')) && (
+                  <div className="mb-6">
+                    <h3 className="text-xl font-semibold mb-3 bg-clip-text text-transparent bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7]">
+                      Specialized Vault Configuration
+                    </h3>
+                    {renderSpecializedFields()}
+                  </div>
+                )}
+                
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <FormField
                     control={form.control}
