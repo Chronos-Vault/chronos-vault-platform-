@@ -12,6 +12,7 @@ import { useTon } from '@/contexts/ton-context';
 import { useEthereum } from '@/contexts/ethereum-context';
 import { useSolana } from '@/contexts/solana-context';
 import { useToast } from '@/hooks/use-toast';
+import { apiRequest } from '@/lib/queryClient';
 
 const SpecializedVaultCreation: React.FC = () => {
   const [_, navigate] = useLocation();
@@ -193,19 +194,7 @@ const SpecializedVaultCreation: React.FC = () => {
       };
       
       // Make the API call to create the vault
-      const response = await fetch('/api/vaults', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(vaultData)
-      });
-      
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message || 'Failed to create vault');
-      }
-      
+      const response = await apiRequest('POST', '/api/vaults', vaultData);
       const createdVault = await response.json();
       
       toast({
