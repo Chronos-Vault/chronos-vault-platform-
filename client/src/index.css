@@ -534,6 +534,33 @@
   border: 1px solid rgba(107, 0, 215, 0.1);
 }
 
+/* Token Economics Chart Animations */
+@keyframes float-chart-bar {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
+}
+
+.chart-bar-1 { animation: float-chart-bar 4s ease-in-out infinite; }
+.chart-bar-2 { animation: float-chart-bar 4s ease-in-out infinite 0.5s; }
+.chart-bar-3 { animation: float-chart-bar 4s ease-in-out infinite 1s; }
+.chart-bar-4 { animation: float-chart-bar 4s ease-in-out infinite 1.5s; }
+.chart-bar-5 { animation: float-chart-bar 4s ease-in-out infinite 2s; }
+
+@keyframes pulse-chart {
+  0%, 100% { opacity: 0.6; }
+  50% { opacity: 1; }
+}
+
+.pulse-chart { animation: pulse-chart 3s ease-in-out infinite; }
+
+@keyframes rotate-3d {
+  0% { transform: rotateY(0deg) rotateX(0deg); }
+  50% { transform: rotateY(10deg) rotateX(5deg); }
+  100% { transform: rotateY(0deg) rotateX(0deg); }
+}
+
+.rotate-3d { animation: rotate-3d 10s ease-in-out infinite; }
+
 .prismatic-border {
   position: relative;
 }

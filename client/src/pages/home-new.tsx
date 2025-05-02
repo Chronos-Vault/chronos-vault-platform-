@@ -1162,6 +1162,210 @@ const Home = () => {
             </div>
           </div>
         </section>
+        
+        {/* Immersive 3D Token Economics Visualization */}
+        <section className="py-24 bg-[#030303] relative overflow-hidden">
+          {/* Luxury Background Effects */}
+          <div className="absolute inset-0 pointer-events-none overflow-hidden">
+            {/* Premium grid pattern */}
+            <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxwYXRoIGZpbGw9IiMxQTFBMUEiIGQ9Ik0wIDBoNjB2NjBIMHoiLz48cGF0aCBkPSJNNjAgMEgwdjYwaDYwVjB6TTIgMmg1NnY1NkgyVjJ6IiBmaWxsPSIjMDAwIi8+PC9nPjwvc3ZnPg==')] opacity-5"></div>
+            
+            {/* Subtle gradient overlays */}
+            <div className="absolute inset-0 bg-gradient-to-b from-black via-transparent to-black opacity-30"></div>
+            <div className="absolute -top-40 -right-40 w-96 h-96 bg-[#6B00D7]/10 rounded-full blur-3xl opacity-30"></div>
+            <div className="absolute -bottom-40 -left-40 w-96 h-96 bg-[#FF5AF7]/10 rounded-full blur-3xl opacity-30"></div>
+            
+            {/* Digital circuit pattern */}
+            <div className="absolute inset-0 opacity-10">
+              <div className="absolute top-[10%] left-[20%] w-[60%] h-px bg-gradient-to-r from-transparent via-[#6B00D7] to-transparent"></div>
+              <div className="absolute top-[30%] left-[5%] w-[40%] h-px bg-gradient-to-r from-transparent via-[#FF5AF7] to-transparent"></div>
+              <div className="absolute top-[50%] left-[15%] w-[70%] h-px bg-gradient-to-r from-transparent via-[#6B00D7] to-transparent"></div>
+              <div className="absolute top-[70%] left-[10%] w-[60%] h-px bg-gradient-to-r from-transparent via-[#FF5AF7] to-transparent"></div>
+              <div className="absolute top-[90%] left-[25%] w-[50%] h-px bg-gradient-to-r from-transparent via-[#6B00D7] to-transparent"></div>
+              
+              <div className="absolute left-[20%] top-[10%] h-[80%] w-px bg-gradient-to-b from-transparent via-[#6B00D7] to-transparent"></div>
+              <div className="absolute left-[40%] top-[5%] h-[90%] w-px bg-gradient-to-b from-transparent via-[#FF5AF7] to-transparent"></div>
+              <div className="absolute left-[60%] top-[15%] h-[70%] w-px bg-gradient-to-b from-transparent via-[#6B00D7] to-transparent"></div>
+              <div className="absolute left-[80%] top-[10%] h-[85%] w-px bg-gradient-to-b from-transparent via-[#FF5AF7] to-transparent"></div>
+            </div>
+          </div>
+          
+          <div className="container mx-auto px-4 relative z-10">
+            <div className="text-center mb-16">
+              <div className="inline-flex items-center px-4 py-1.5 rounded-full bg-gradient-to-r from-[#6B00D7]/10 to-[#FF5AF7]/10 border border-[#6B00D7]/30 backdrop-blur-sm mb-6 mx-auto">
+                <span className="flex items-center text-xs md:text-sm font-medium text-[#FF5AF7]">
+                  <i className="ri-coin-line mr-2"></i>
+                  Deflationary Token Model <div className="mx-2 w-1 h-1 rounded-full bg-[#FF5AF7]"></div> Utility-First Design
+                </span>
+              </div>
+              
+              <h2 className="text-3xl md:text-4xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-white via-gray-200 to-white mb-6">CVT Token Economics</h2>
+              <p className="text-gray-300 max-w-2xl mx-auto">The ChronosVault Token (CVT) lies at the core of our ecosystem, powering transactions, reducing fees, and enabling premium features</p>
+            </div>
+            
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center mb-16">
+              {/* 3D Token Distribution Chart */}
+              <div className="perspective-1000">
+                <div className="relative transform-style-3d rotate-3d bg-[#0A0A0A] rounded-2xl border border-[#1A1A1A] p-6 md:p-8 h-full overflow-hidden">
+                  {/* Chart Title */}
+                  <h3 className="text-xl font-semibold mb-6 bg-clip-text text-transparent bg-gradient-to-r from-white to-gray-300">Token Distribution</h3>
+                  
+                  {/* 3D Pie Chart */}
+                  <div className="flex justify-center items-center h-64 perspective-1000 mb-6">
+                    <div className="relative w-48 h-48 transform-style-3d animate-float">
+                      {/* Pie Chart Segments - Animated with different float speeds */}
+                      <div className="absolute inset-0 bg-[#6B00D7] rounded-full transform translate-z-[5px] scale-[0.85] chart-bar-1">
+                        <div className="absolute top-0 left-0 w-full h-full bg-[#0A0A0A] rounded-full transform translate-y-[40%]"></div>
+                      </div>
+                      <div className="absolute inset-0 bg-[#8719FF] rounded-full transform translate-z-[10px] scale-[0.7] chart-bar-2">
+                        <div className="absolute top-0 left-0 w-full h-full bg-[#0A0A0A] rounded-full transform translate-y-[55%]"></div>
+                      </div>
+                      <div className="absolute inset-0 bg-[#B160FF] rounded-full transform translate-z-[15px] scale-[0.55] chart-bar-3">
+                        <div className="absolute top-0 left-0 w-full h-full bg-[#0A0A0A] rounded-full transform translate-y-[65%]"></div>
+                      </div>
+                      <div className="absolute inset-0 bg-[#D896FF] rounded-full transform translate-z-[20px] scale-[0.4] chart-bar-4">
+                        <div className="absolute top-0 left-0 w-full h-full bg-[#0A0A0A] rounded-full transform translate-y-[70%]"></div>
+                      </div>
+                      <div className="absolute inset-0 bg-[#FF5AF7] rounded-full transform translate-z-[25px] scale-[0.25] chart-bar-5"></div>
+                      
+                      {/* Holographic Glow */}
+                      <div className="absolute inset-0 rounded-full bg-gradient-to-b from-white/20 to-transparent opacity-40 pulse-chart"></div>
+                    </div>
+                  </div>
+                  
+                  {/* Distribution Legend */}
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="flex items-center gap-2">
+                      <div className="w-3 h-3 rounded-full bg-[#6B00D7]"></div>
+                      <span className="text-sm text-gray-300">Community (40%)</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <div className="w-3 h-3 rounded-full bg-[#8719FF]"></div>
+                      <span className="text-sm text-gray-300">Ecosystem (25%)</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <div className="w-3 h-3 rounded-full bg-[#B160FF]"></div>
+                      <span className="text-sm text-gray-300">Team (15%)</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <div className="w-3 h-3 rounded-full bg-[#D896FF]"></div>
+                      <span className="text-sm text-gray-300">Reserve (10%)</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <div className="w-3 h-3 rounded-full bg-[#FF5AF7]"></div>
+                      <span className="text-sm text-gray-300">Marketing (10%)</span>
+                    </div>
+                  </div>
+                  
+                  {/* Scan Effect */}
+                  <div className="absolute inset-0 opacity-0 group-hover:opacity-20 transition-opacity duration-700 overflow-hidden rounded-2xl">
+                    <div className="absolute top-0 left-0 w-full h-full animate-scan"></div>
+                  </div>
+                </div>
+              </div>
+              
+              {/* 3D Staking Tiers */}
+              <div className="perspective-1000">
+                <div className="relative transform-style-3d rotate-3d bg-[#0A0A0A] rounded-2xl border border-[#1A1A1A] p-6 md:p-8 h-full overflow-hidden">
+                  {/* Chart Title */}
+                  <h3 className="text-xl font-semibold mb-6 bg-clip-text text-transparent bg-gradient-to-r from-white to-gray-300">Staking Tiers & Benefits</h3>
+                  
+                  {/* 3D Bar Chart */}
+                  <div className="flex items-end justify-between h-64 gap-4 mb-6 px-2">
+                    {/* Bar 1 */}
+                    <div className="relative flex flex-col items-center w-1/3">
+                      <div className="h-24 w-full bg-gradient-to-t from-[#6B00D7] to-[#8719FF] rounded-t-lg chart-bar-1 relative overflow-hidden">
+                        <div className="absolute inset-0 bg-grid-pattern opacity-20"></div>
+                        <div className="absolute inset-0 bg-gradient-to-t from-transparent to-white/20"></div>
+                      </div>
+                      <div className="mt-3 text-sm text-center">
+                        <p className="font-semibold text-white">Guardian</p>
+                        <p className="text-xs text-[#6B00D7]">1,000+ CVT</p>
+                      </div>
+                    </div>
+                    
+                    {/* Bar 2 */}
+                    <div className="relative flex flex-col items-center w-1/3">
+                      <div className="h-40 w-full bg-gradient-to-t from-[#8719FF] to-[#B160FF] rounded-t-lg chart-bar-3 relative overflow-hidden">
+                        <div className="absolute inset-0 bg-grid-pattern opacity-20"></div>
+                        <div className="absolute inset-0 bg-gradient-to-t from-transparent to-white/20"></div>
+                      </div>
+                      <div className="mt-3 text-sm text-center">
+                        <p className="font-semibold text-white">Architect</p>
+                        <p className="text-xs text-[#8719FF]">10,000+ CVT</p>
+                      </div>
+                    </div>
+                    
+                    {/* Bar 3 */}
+                    <div className="relative flex flex-col items-center w-1/3">
+                      <div className="h-56 w-full bg-gradient-to-t from-[#D896FF] to-[#FF5AF7] rounded-t-lg chart-bar-5 relative overflow-hidden">
+                        <div className="absolute inset-0 bg-grid-pattern opacity-20"></div>
+                        <div className="absolute inset-0 bg-gradient-to-t from-transparent to-white/20"></div>
+                      </div>
+                      <div className="mt-3 text-sm text-center">
+                        <p className="font-semibold text-white">Sovereign</p>
+                        <p className="text-xs text-[#FF5AF7]">100,000+ CVT</p>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  {/* Benefits */}
+                  <div className="space-y-2">
+                    <div className="flex items-center justify-between text-sm">
+                      <span className="text-gray-300">Fee Reduction</span>
+                      <div className="space-x-2">
+                        <span className="text-[#6B00D7]">75%</span>
+                        <span className="text-[#8719FF]">90%</span>
+                        <span className="text-[#FF5AF7]">100%</span>
+                      </div>
+                    </div>
+                    <div className="flex items-center justify-between text-sm">
+                      <span className="text-gray-300">Premium Features</span>
+                      <div className="space-x-2">
+                        <span className="text-[#6B00D7]">Basic</span>
+                        <span className="text-[#8719FF]">Advanced</span>
+                        <span className="text-[#FF5AF7]">All</span>
+                      </div>
+                    </div>
+                    <div className="flex items-center justify-between text-sm">
+                      <span className="text-gray-300">Governance Votes</span>
+                      <div className="space-x-2">
+                        <span className="text-[#6B00D7]">1×</span>
+                        <span className="text-[#8719FF]">5×</span>
+                        <span className="text-[#FF5AF7]">10×</span>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  {/* Scan Effect */}
+                  <div className="absolute inset-0 opacity-0 group-hover:opacity-20 transition-opacity duration-700 overflow-hidden rounded-2xl">
+                    <div className="absolute top-0 left-0 w-full h-full animate-scan"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            {/* Premium Call-to-Action */}
+            <div className="flex flex-col md:flex-row gap-8 justify-center items-center">
+              <Link to="/cvt-token">
+                <Button className="bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] hover:from-[#5500AB] hover:to-[#FF46E8] text-white px-8 py-6 rounded-xl text-lg font-medium group relative overflow-hidden">
+                  <span className="relative z-10 flex items-center">
+                    <Coins className="mr-2 h-5 w-5" /> Explore CVT Token
+                  </span>
+                  <span className="absolute inset-0 w-full h-full bg-white opacity-0 group-hover:opacity-10 transition-opacity duration-300"></span>
+                </Button>
+              </Link>
+              
+              <Link to="/create-vault">
+                <Button variant="outline" className="border-[#FF5AF7] text-[#FF5AF7] hover:bg-[#FF5AF7]/10 px-8 py-6 rounded-xl text-lg font-medium group">
+                  <span className="flex items-center">
+                    Create Your First Vault <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
+                  </span>
+                </Button>
+              </Link>
+            </div>
+          </div>
+        </section>
       </main>
     </div>
   );
