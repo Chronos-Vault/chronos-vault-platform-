@@ -650,6 +650,236 @@ const Home = () => {
             </div>
           </div>
         </section>
+        
+        {/* Multi-Chain Architecture Section */}
+        <section className="py-16 md:py-20 bg-[#121212] overflow-hidden relative">
+          <div className="absolute top-0 left-0 w-full h-full">
+            <div className="absolute top-[10%] left-[5%] w-20 h-20 rounded-full bg-[#6B00D7]/10 blur-3xl"></div>
+            <div className="absolute bottom-[20%] right-[10%] w-32 h-32 rounded-full bg-[#FF5AF7]/10 blur-3xl"></div>
+          </div>
+          <div className="container mx-auto px-4 relative z-10">
+            <div className="flex flex-col lg:flex-row gap-8 lg:gap-16 items-center">
+              <div className="lg:w-1/2 order-2 lg:order-1">
+                <h2 className="text-3xl md:text-4xl font-bold mb-6 bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] inline-block text-transparent bg-clip-text">Multi-Blockchain Architecture</h2>
+                <p className="text-gray-300 mb-8 text-lg">Chronos Vault leverages the unique capabilities of multiple blockchains to provide enhanced security, performance, and functionality.</p>
+                
+                <div className="space-y-6">
+                  <div className="flex gap-4">
+                    <div className="h-12 w-12 flex-shrink-0 rounded-lg bg-gradient-to-br from-[#6B00D7]/20 to-[#FF5AF7]/10 flex items-center justify-center">
+                      <i className="ri-shield-check-line text-xl text-[#FF5AF7]"></i>
+                    </div>
+                    <div>
+                      <h3 className="text-xl font-semibold text-white mb-2">Triple-Chain Security</h3>
+                      <p className="text-gray-400">Your assets are secured across multiple blockchains, creating redundancy and enhanced protection that no single-chain solution can match.</p>
+                    </div>
+                  </div>
+                  
+                  <div className="flex gap-4">
+                    <div className="h-12 w-12 flex-shrink-0 rounded-lg bg-gradient-to-br from-[#6B00D7]/20 to-[#FF5AF7]/10 flex items-center justify-center">
+                      <i className="ri-link-m text-xl text-[#FF5AF7]"></i>
+                    </div>
+                    <div>
+                      <h3 className="text-xl font-semibold text-white mb-2">Cross-Chain Interoperability</h3>
+                      <p className="text-gray-400">Seamlessly manage assets across TON, Ethereum, Solana, and other blockchains with our unified interface and cross-chain bridge technology.</p>
+                    </div>
+                  </div>
+                  
+                  <div className="flex gap-4">
+                    <div className="h-12 w-12 flex-shrink-0 rounded-lg bg-gradient-to-br from-[#6B00D7]/20 to-[#FF5AF7]/10 flex items-center justify-center">
+                      <i className="ri-pie-chart-line text-xl text-[#FF5AF7]"></i>
+                    </div>
+                    <div>
+                      <h3 className="text-xl font-semibold text-white mb-2">Optimized Performance</h3>
+                      <p className="text-gray-400">We select the ideal blockchain for each operation - TON for speed, Ethereum for smart contracts, Arweave for storage - giving you the best of each network.</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              
+              <div className="lg:w-1/2 order-1 lg:order-2 relative">
+                <div className="relative max-w-lg mx-auto">
+                  {/* Main hexagon */}
+                  <div className="relative h-72 md:h-96 border-2 border-[#6B00D7]/30 bg-gradient-to-br from-[#121212] to-[#1A1A1A] rounded-3xl flex items-center justify-center shadow-2xl shadow-[#6B00D7]/10">
+                    <div className="h-24 w-24 rounded-full bg-gradient-to-r from-[#6B00D7]/20 to-[#FF5AF7]/10 flex items-center justify-center">
+                      <div className="h-16 w-16 rounded-full bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] flex items-center justify-center">
+                        <span className="text-white font-bold text-2xl">CVT</span>
+                      </div>
+                    </div>
+                    
+                    {/* Blockchain connections */}
+                    <div className="absolute inset-0 flex items-center justify-center">
+                      {/* TON */}
+                      <div className="absolute top-10 left-10 md:top-14 md:left-20 flex items-center">
+                        <div className="h-10 w-10 rounded-lg bg-gradient-to-r from-[#6B00D7]/30 to-[#FF5AF7]/20 flex items-center justify-center shadow-lg">
+                          <span className="text-white font-semibold">TON</span>
+                        </div>
+                        <div className="w-16 md:w-24 h-0.5 bg-gradient-to-r from-[#6B00D7] to-transparent transform rotate-45 origin-left"></div>
+                      </div>
+                      
+                      {/* Ethereum */}
+                      <div className="absolute top-10 right-10 md:top-14 md:right-20 flex items-center">
+                        <div className="w-16 md:w-24 h-0.5 bg-gradient-to-l from-[#6B00D7] to-transparent transform -rotate-45 origin-right"></div>
+                        <div className="h-10 w-10 rounded-lg bg-gradient-to-r from-[#6B00D7]/30 to-[#FF5AF7]/20 flex items-center justify-center shadow-lg">
+                          <span className="text-white font-semibold">ETH</span>
+                        </div>
+                      </div>
+                      
+                      {/* Solana */}
+                      <div className="absolute bottom-10 left-10 md:bottom-14 md:left-20 flex items-center">
+                        <div className="h-10 w-10 rounded-lg bg-gradient-to-r from-[#6B00D7]/30 to-[#FF5AF7]/20 flex items-center justify-center shadow-lg">
+                          <span className="text-white font-semibold">SOL</span>
+                        </div>
+                        <div className="w-16 md:w-24 h-0.5 bg-gradient-to-r from-[#6B00D7] to-transparent transform -rotate-45 origin-left"></div>
+                      </div>
+                      
+                      {/* Arweave */}
+                      <div className="absolute bottom-10 right-10 md:bottom-14 md:right-20 flex items-center">
+                        <div className="w-16 md:w-24 h-0.5 bg-gradient-to-l from-[#6B00D7] to-transparent transform rotate-45 origin-right"></div>
+                        <div className="h-10 w-10 rounded-lg bg-gradient-to-r from-[#6B00D7]/30 to-[#FF5AF7]/20 flex items-center justify-center shadow-lg">
+                          <span className="text-white font-semibold text-xs">AR</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+        
+        {/* Specialized Vault Types Section */}
+        <section className="py-16 md:py-20 bg-[#0D0D0D]">
+          <div className="container mx-auto px-4">
+            <div className="text-center mb-12">
+              <h2 className="text-3xl md:text-5xl font-bold mb-6 bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] inline-block text-transparent bg-clip-text">Specialized Vault Types</h2>
+              <p className="text-lg text-gray-300 max-w-3xl mx-auto">Tailor your digital vault experience to your specific needs with our specialized vault solutions</p>
+            </div>
+            
+            {/* Vault Types Grid */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
+              {/* Standard Time Vault */}
+              <div className="p-1 rounded-xl bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] hover:scale-[1.02] transition-transform">
+                <div className="bg-[#121212] h-full rounded-xl p-6 flex flex-col">
+                  <div className="flex items-center mb-4">
+                    <div className="h-10 w-10 bg-gradient-to-br from-[#6B00D7]/20 to-[#FF5AF7]/20 rounded-lg flex items-center justify-center mr-3">
+                      <i className="ri-time-line text-xl text-[#FF5AF7]"></i>
+                    </div>
+                    <h3 className="text-xl font-bold text-white">Standard Time Vault</h3>
+                  </div>
+                  <p className="text-gray-400 mb-4 flex-grow">Store messages, media, and documents that unlock at a specific future date.</p>
+                  <div className="flex flex-wrap gap-2 mb-5">
+                    <span className="text-xs px-2 py-1 bg-[#6B00D7]/20 text-[#FF5AF7] rounded-full">Time-based unlocking</span>
+                    <span className="text-xs px-2 py-1 bg-[#6B00D7]/20 text-[#FF5AF7] rounded-full">Media support</span>
+                    <span className="text-xs px-2 py-1 bg-[#6B00D7]/20 text-[#FF5AF7] rounded-full">TON & Arweave</span>
+                  </div>
+                  <p className="text-sm text-gray-500 italic">Best for: Personal memories, future messages, historical preservation.</p>
+                </div>
+              </div>
+
+              {/* Financial Vault */}
+              <div className="p-1 rounded-xl bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] hover:scale-[1.02] transition-transform">
+                <div className="bg-[#121212] h-full rounded-xl p-6 flex flex-col">
+                  <div className="flex items-center mb-4">
+                    <div className="h-10 w-10 bg-gradient-to-br from-[#6B00D7]/20 to-[#FF5AF7]/20 rounded-lg flex items-center justify-center mr-3">
+                      <i className="ri-coins-line text-xl text-[#FF5AF7]"></i>
+                    </div>
+                    <h3 className="text-xl font-bold text-white">Financial Vault</h3>
+                  </div>
+                  <p className="text-gray-400 mb-4 flex-grow">Create time-locked financial investments with cross-chain asset diversification and yield strategies.</p>
+                  <div className="flex flex-wrap gap-2 mb-5">
+                    <span className="text-xs px-2 py-1 bg-[#6B00D7]/20 text-[#FF5AF7] rounded-full">Cross-chain assets</span>
+                    <span className="text-xs px-2 py-1 bg-[#6B00D7]/20 text-[#FF5AF7] rounded-full">Yield strategies</span>
+                    <span className="text-xs px-2 py-1 bg-[#6B00D7]/20 text-[#FF5AF7] rounded-full">Portfolio tracking</span>
+                  </div>
+                  <p className="text-sm text-gray-500 italic">Best for: Long-term savings, education funds, retirement planning.</p>
+                </div>
+              </div>
+
+              {/* Multi-Signature Vault */}
+              <div className="p-1 rounded-xl bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] hover:scale-[1.02] transition-transform">
+                <div className="bg-[#121212] h-full rounded-xl p-6 flex flex-col">
+                  <div className="flex items-center mb-4">
+                    <div className="h-10 w-10 bg-gradient-to-br from-[#6B00D7]/20 to-[#FF5AF7]/20 rounded-lg flex items-center justify-center mr-3">
+                      <i className="ri-group-line text-xl text-[#FF5AF7]"></i>
+                    </div>
+                    <h3 className="text-xl font-bold text-white">Multi-Signature Vault</h3>
+                  </div>
+                  <p className="text-gray-400 mb-4 flex-grow">Require multiple authorizations to unlock content with customizable signature thresholds.</p>
+                  <div className="flex flex-wrap gap-2 mb-5">
+                    <span className="text-xs px-2 py-1 bg-[#6B00D7]/20 text-[#FF5AF7] rounded-full">Multiple approvals</span>
+                    <span className="text-xs px-2 py-1 bg-[#6B00D7]/20 text-[#FF5AF7] rounded-full">Role-based permissions</span>
+                    <span className="text-xs px-2 py-1 bg-[#6B00D7]/20 text-[#FF5AF7] rounded-full">Ethereum-based</span>
+                  </div>
+                  <p className="text-sm text-gray-500 italic">Best for: Family trusts, business partnerships, organizational governance.</p>
+                </div>
+              </div>
+
+              {/* Bitcoin Halving Vault */}
+              <div className="p-1 rounded-xl bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] hover:scale-[1.02] transition-transform">
+                <div className="bg-[#121212] h-full rounded-xl p-6 flex flex-col">
+                  <div className="flex items-center mb-4">
+                    <div className="h-10 w-10 bg-gradient-to-br from-[#6B00D7]/20 to-[#FF5AF7]/20 rounded-lg flex items-center justify-center mr-3">
+                      <i className="ri-bit-coin-line text-xl text-[#FF5AF7]"></i>
+                    </div>
+                    <h3 className="text-xl font-bold text-white">Bitcoin Halving Vault</h3>
+                  </div>
+                  <p className="text-gray-400 mb-4 flex-grow">Specialized vaults synchronized with Bitcoin halving events with lower fees for BTC maximalists.</p>
+                  <div className="flex flex-wrap gap-2 mb-5">
+                    <span className="text-xs px-2 py-1 bg-[#6B00D7]/20 text-[#FF5AF7] rounded-full">Halving synchronization</span>
+                    <span className="text-xs px-2 py-1 bg-[#6B00D7]/20 text-[#FF5AF7] rounded-full">Reduced fees (0.5%)</span>
+                    <span className="text-xs px-2 py-1 bg-[#6B00D7]/20 text-[#FF5AF7] rounded-full">Block height tracking</span>
+                  </div>
+                  <p className="text-sm text-gray-500 italic">Best for: Bitcoin maximalists, cycle-based investment strategies.</p>
+                </div>
+              </div>
+
+              {/* Geographic Vault */}
+              <div className="p-1 rounded-xl bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] hover:scale-[1.02] transition-transform">
+                <div className="bg-[#121212] h-full rounded-xl p-6 flex flex-col">
+                  <div className="flex items-center mb-4">
+                    <div className="h-10 w-10 bg-gradient-to-br from-[#6B00D7]/20 to-[#FF5AF7]/20 rounded-lg flex items-center justify-center mr-3">
+                      <i className="ri-map-pin-line text-xl text-[#FF5AF7]"></i>
+                    </div>
+                    <h3 className="text-xl font-bold text-white">Geographic Vault</h3>
+                  </div>
+                  <p className="text-gray-400 mb-4 flex-grow">Unlock content when physically present at specific locations using GPS verification and zero-knowledge proofs.</p>
+                  <div className="flex flex-wrap gap-2 mb-5">
+                    <span className="text-xs px-2 py-1 bg-[#6B00D7]/20 text-[#FF5AF7] rounded-full">Location-based</span>
+                    <span className="text-xs px-2 py-1 bg-[#6B00D7]/20 text-[#FF5AF7] rounded-full">Progressive revelation</span>
+                    <span className="text-xs px-2 py-1 bg-[#6B00D7]/20 text-[#FF5AF7] rounded-full">Zero-knowledge proofs</span>
+                  </div>
+                  <p className="text-sm text-gray-500 italic">Best for: Location-based experiences, treasure hunts, historical sites.</p>
+                </div>
+              </div>
+
+              {/* Conditional Vault */}
+              <div className="p-1 rounded-xl bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] hover:scale-[1.02] transition-transform">
+                <div className="bg-[#121212] h-full rounded-xl p-6 flex flex-col">
+                  <div className="flex items-center mb-4">
+                    <div className="h-10 w-10 bg-gradient-to-br from-[#6B00D7]/20 to-[#FF5AF7]/20 rounded-lg flex items-center justify-center mr-3">
+                      <i className="ri-file-list-3-line text-xl text-[#FF5AF7]"></i>
+                    </div>
+                    <h3 className="text-xl font-bold text-white">Conditional Vault</h3>
+                  </div>
+                  <p className="text-gray-400 mb-4 flex-grow">Unlock based on specified blockchain events or real-world triggers using oracle integration.</p>
+                  <div className="flex flex-wrap gap-2 mb-5">
+                    <span className="text-xs px-2 py-1 bg-[#6B00D7]/20 text-[#FF5AF7] rounded-full">Oracle integration</span>
+                    <span className="text-xs px-2 py-1 bg-[#6B00D7]/20 text-[#FF5AF7] rounded-full">Event monitoring</span>
+                    <span className="text-xs px-2 py-1 bg-[#6B00D7]/20 text-[#FF5AF7] rounded-full">Complex conditions</span>
+                  </div>
+                  <p className="text-sm text-gray-500 italic">Best for: Smart contract-based agreements, milestone-based unlocking.</p>
+                </div>
+              </div>
+            </div>
+
+            {/* CTA Button */}
+            <div className="mt-12 flex justify-center">
+              <Link to="/create-vault" className="px-8 py-4 bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] text-white font-semibold rounded-lg hover:opacity-90 transition-opacity shadow-lg shadow-[#6B00D7]/20 flex items-center gap-2">
+                <i className="ri-add-circle-line"></i> Create Your Vault Now
+              </Link>
+            </div>
+          </div>
+        </section>
       </main>
       {/* Footer now managed by Layout component */}
     </div>
