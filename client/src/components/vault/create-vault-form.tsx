@@ -10,6 +10,8 @@ import { useToast } from "@/hooks/use-toast";
 import { FileUpload } from "@/components/attachments/file-upload";
 import { EnhancedMediaUploader } from "@/components/attachments/enhanced-media-uploader";
 import VaultTypeSelector, { SpecializedVaultType } from "@/components/vault/vault-type-selector";
+import { useCVTToken } from "@/contexts/cvt-token-context";
+import { Coins, Wallet } from "lucide-react";
 
 import {
   Form,
@@ -56,6 +58,11 @@ const formSchema = insertVaultSchema.extend({
   includeAttachments: z.boolean().optional().default(true),
   unlockDate: z.string(), // Modified to handle string for date ISO
   tripleChainSecurity: z.boolean().optional().default(false),
+  
+  // Payment options for dual token system
+  paymentType: z.enum(["native", "cvt"]).default("cvt"),
+  applyStakingDiscount: z.boolean().optional().default(false),
+  
   metadata: metadataSchema.optional().default({
     allowsAttachments: true,
     attachmentsEncryption: "AES-256"
@@ -129,6 +136,66 @@ const CreateVaultForm = ({
   const [showAttachmentUpload, setShowAttachmentUpload] = useState(false);
   const [attachments, setAttachments] = useState<any[]>([]);
   const [useTripleChainSecurity, setUseTripleChainSecurity] = useState<boolean>(false);
+  
+  // Get CVT token context for balance and pricing
+  const { cvtBalance, stakingTier } = useCVTToken();
+  
+  // Function to get vault creation cost based on vault type
+  const getCreationCost = () => {
+    const vaultType = form?.watch('vaultType') || initialVaultType;
+    
+    // Base costs in CVT tokens
+    const costs = {
+      'legacy': 20,
+      'investment': 25,
+      'gift': 15,
+      'multi-signature': 30,
+      'biometric': 35,
+      'time-lock': 25,
+      'geolocation': 30,
+      'cross-chain': 40,
+      'smart-contract': 45,
+      'dynamic': 50,
+      'nft-powered': 35,
+      'unique': 60
+    };
+    
+    // Native token approximate costs (in USD equivalent)
+    const nativeCosts = {
+      'TON': costs[vaultType as keyof typeof costs] * 0.5, // TON price in USD
+      'ETH': costs[vaultType as keyof typeof costs] * 0.0002, // ETH approximation
+      'SOL': costs[vaultType as keyof typeof costs] * 0.02 // SOL approximation
+    };
+    
+    // Apply staking discount if eligible
+    const paymentType = form?.watch('paymentType') || 'cvt';
+    
+    if (paymentType === 'cvt') {
+      // Apply staking tier discount
+      let discount = 0;
+      switch(stakingTier) {
+        case 'Guardian': discount = 0.75; break; // 75% discount
+        case 'Architect': discount = 0.9; break; // 90% discount
+        case 'Sovereign': discount = 1.0; break; // 100% discount
+        default: discount = 0; // No discount
+      }
+      
+      return {
+        amount: Math.max(5, Math.round(costs[vaultType as keyof typeof costs] * (1 - discount))),
+        currency: 'CVT',
+        discount: discount > 0 ? `${discount * 100}%` : null
+      };
+    } else {
+      // Native token payment
+      const nativeToken = selectedBlockchain === BlockchainType.TON ? 'TON' : 
+                          selectedBlockchain === BlockchainType.ETHEREUM ? 'ETH' : 'SOL';
+      return {
+        amount: nativeCosts[nativeToken as keyof typeof nativeCosts],
+        currency: nativeToken,
+        discount: null
+      };
+    }
+  };
 
   // Mocked user ID for demo purposes
   const userId = 1;
@@ -147,6 +214,11 @@ const CreateVaultForm = ({
       unlockDate: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toISOString(),
       includeAttachments: true,
       tripleChainSecurity: false, // Our new Triple-Chain Security feature
+      
+      // Payment options for dual token system
+      paymentType: "cvt", // Default to CVT token payment
+      applyStakingDiscount: false,
+      
       metadata: {
         allowsAttachments: true,
         attachmentsEncryption: "AES-256"
@@ -987,6 +1059,81 @@ const CreateVaultForm = ({
                     </FormItem>
                   )}
                 />
+
+                {/* Payment Options Section - New Dual Token System */}
+                <div className="mb-6 mt-8">
+                  <div className="p-5 border-2 border-[#6B00D7]/40 rounded-lg bg-gradient-to-r from-[#15121C] to-[#1E1A24]">
+                    <div className="flex items-center mb-3">
+                      <div className="bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] p-2 rounded-full mr-3">
+                        <Coins className="h-5 w-5 text-white" />
+                      </div>
+                      <h3 className="font-poppins font-semibold text-white text-lg">Payment Method</h3>
+                    </div>
+                    
+                    <p className="text-gray-300 mb-4 ml-12">
+                      Choose how you'd like to pay for your vault creation.
+                    </p>
+                    
+                    <FormField
+                      control={form.control}
+                      name="paymentType"
+                      render={({ field }) => (
+                        <FormItem className="ml-12 space-y-4">
+                          <RadioGroup
+                            onValueChange={field.onChange}
+                            defaultValue={field.value}
+                            className="flex flex-col space-y-3"
+                          >
+                            <FormItem className="p-4 border border-[#6B00D7]/40 rounded-lg bg-[#1A1A1A]/50 space-y-0">
+                              <div className="flex items-center space-x-3">
+                                <FormControl>
+                                  <RadioGroupItem value="cvt" id="cvt-payment" className="text-[#FF5AF7]" />
+                                </FormControl>
+                                <div className="flex-1">
+                                  <FormLabel htmlFor="cvt-payment" className="text-lg font-medium bg-clip-text text-transparent bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7]">
+                                    Pay with CVT Token
+                                    <span className="ml-2 text-xs py-1 px-2 bg-gradient-to-r from-[#6B00D7]/20 to-[#FF5AF7]/20 text-[#FF5AF7] rounded-full">
+                                      RECOMMENDED
+                                    </span>
+                                  </FormLabel>
+                                  <FormDescription className="text-sm text-gray-300">
+                                    Use Chronos Vault Tokens for benefits: Premium features, fee discounts, & governance rights
+                                  </FormDescription>
+                                </div>
+                                <div className="flex items-center space-x-1">
+                                  <Wallet className="h-4 w-4 text-[#FF5AF7]" />
+                                  <span className="text-[#FF5AF7] font-medium">CVT</span>
+                                </div>
+                              </div>
+                            </FormItem>
+                            
+                            <FormItem className="p-4 border border-gray-700/40 rounded-lg bg-[#1A1A1A]/50 space-y-0">
+                              <div className="flex items-center space-x-3">
+                                <FormControl>
+                                  <RadioGroupItem value="native" id="native-payment" />
+                                </FormControl>
+                                <div className="flex-1">
+                                  <FormLabel htmlFor="native-payment" className="text-lg font-medium text-white">
+                                    Pay with Native Token
+                                  </FormLabel>
+                                  <FormDescription className="text-sm text-gray-300">
+                                    Use {selectedBlockchain === BlockchainType.TON ? 'TON' : selectedBlockchain === BlockchainType.ETHEREUM ? 'ETH' : 'SOL'} tokens for standard vault creation
+                                  </FormDescription>
+                                </div>
+                                <div className="flex items-center space-x-1">
+                                  <span className="text-gray-300">
+                                    {selectedBlockchain === BlockchainType.TON ? '💎' : 
+                                     selectedBlockchain === BlockchainType.ETHEREUM ? 'Ξ' : '◎'}
+                                  </span>
+                                </div>
+                              </div>
+                            </FormItem>
+                          </RadioGroup>
+                        </FormItem>
+                      )}
+                    />
+                  </div>
+                </div>
 
                 {/* Triple-Chain Security Section - Made more prominent */}
                 <div className="mb-6 mt-8">
