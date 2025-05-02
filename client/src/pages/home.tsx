@@ -570,14 +570,90 @@ const Home = () => {
           </div>
         </section>
         
-        {/* Advanced Security Measures Section */}
-        <section className="py-16 md:py-20 bg-gradient-to-b from-[#121212] to-[#1A1A1A]">
-          <div className="container mx-auto px-4">
+        {/* Comprehensive Security Architecture Section */}
+        <section className="py-16 md:py-20 bg-gradient-to-b from-[#121212] to-[#1A1A1A] relative overflow-hidden">
+          <div className="absolute top-0 left-0 w-full h-full opacity-25">
+            <div className="absolute top-[30%] left-[20%] w-64 h-64 rounded-full bg-[#6B00D7]/5 blur-3xl"></div>
+            <div className="absolute bottom-[20%] right-[30%] w-80 h-80 rounded-full bg-[#FF5AF7]/5 blur-3xl"></div>
+          </div>
+          <div className="container mx-auto px-4 relative z-10">
             <div className="text-center mb-12">
-              <h2 className="text-3xl md:text-5xl font-bold mb-6 bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] inline-block text-transparent bg-clip-text">Advanced Security Measures</h2>
-              <p className="text-lg text-gray-300 max-w-3xl mx-auto">Industry-leading security features that ensure your digital assets remain protected</p>
+              <h2 className="text-3xl md:text-5xl font-bold mb-6 bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] inline-block text-transparent bg-clip-text">Comprehensive Security Architecture</h2>
+              <p className="text-lg text-gray-300 max-w-3xl mx-auto">Military-grade protection through advanced cryptographic techniques, multi-layered defenses, and cutting-edge blockchain technology</p>
             </div>
             
+            {/* Security Architecture Diagram */}
+            <div className="mb-14 md:mb-20 relative mx-auto max-w-4xl px-4">
+              <div className="bg-[#1A1A1A]/80 border border-[#6B00D7]/30 rounded-xl p-4 md:p-8 shadow-lg shadow-[#6B00D7]/10">
+                <div className="grid grid-cols-1 md:grid-cols-4 gap-4 md:gap-6">
+                  <div className="col-span-1 md:col-span-4 mb-4">
+                    <div className="flex items-center justify-center py-3 px-4 rounded-lg bg-gradient-to-r from-[#6B00D7]/20 to-[#FF5AF7]/20 border border-[#6B00D7]/30">
+                      <h3 className="text-white font-semibold text-center">User Interface Layer <span className="text-[#FF5AF7]">→</span> Authentication <span className="text-[#FF5AF7]">→</span> Cryptographic Verification</h3>
+                    </div>
+                  </div>
+                  
+                  <div className="col-span-1 md:col-span-4">
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                      <div className="py-3 px-4 rounded-lg bg-gradient-to-r from-[#6B00D7]/20 to-[#FF5AF7]/10 border border-[#6B00D7]/30 flex flex-col items-center justify-center">
+                        <div className="h-10 w-10 rounded-full bg-[#6B00D7]/20 flex items-center justify-center mb-2">
+                          <i className="ri-shield-line text-lg text-[#FF5AF7]"></i>
+                        </div>
+                        <h4 className="text-white text-sm font-medium text-center">Multi-Signature Validation</h4>
+                      </div>
+                      <div className="py-3 px-4 rounded-lg bg-gradient-to-r from-[#6B00D7]/20 to-[#FF5AF7]/10 border border-[#6B00D7]/30 flex flex-col items-center justify-center">
+                        <div className="h-10 w-10 rounded-full bg-[#6B00D7]/20 flex items-center justify-center mb-2">
+                          <i className="ri-lock-password-line text-lg text-[#FF5AF7]"></i>
+                        </div>
+                        <h4 className="text-white text-sm font-medium text-center">Zero-Knowledge Proofs</h4>
+                      </div>
+                      <div className="py-3 px-4 rounded-lg bg-gradient-to-r from-[#6B00D7]/20 to-[#FF5AF7]/10 border border-[#6B00D7]/30 flex flex-col items-center justify-center">
+                        <div className="h-10 w-10 rounded-full bg-[#6B00D7]/20 flex items-center justify-center mb-2">
+                          <i className="ri-fingerprint-2-line text-lg text-[#FF5AF7]"></i>
+                        </div>
+                        <h4 className="text-white text-sm font-medium text-center">Biometric Authentication</h4>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div className="col-span-1 md:col-span-4 flex justify-center my-2">
+                    <div className="w-0.5 h-8 bg-gradient-to-b from-[#6B00D7] to-[#FF5AF7]"></div>
+                  </div>
+                  
+                  <div className="col-span-1 md:col-span-4 mb-2">
+                    <div className="flex items-center justify-center py-3 px-4 rounded-lg bg-gradient-to-r from-[#6B00D7]/40 to-[#FF5AF7]/20 border border-[#6B00D7]/40">
+                      <h3 className="text-white font-semibold text-center">Military-Grade Security Layer</h3>
+                    </div>
+                  </div>
+                  
+                  <div className="col-span-1 md:col-span-4 flex justify-center my-2">
+                    <div className="w-0.5 h-8 bg-gradient-to-b from-[#FF5AF7] to-[#6B00D7]"></div>
+                  </div>
+                  
+                  <div className="col-span-1 md:col-span-4">
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                      <div className="py-3 px-2 rounded-lg bg-[#1A1A1A] border border-[#6B00D7]/30 flex flex-col items-center justify-center">
+                        <span className="text-xs text-[#FF5AF7] font-medium mb-1">TON</span>
+                        <span className="text-xs text-gray-400">Ultra Fast</span>
+                      </div>
+                      <div className="py-3 px-2 rounded-lg bg-[#1A1A1A] border border-[#6B00D7]/30 flex flex-col items-center justify-center">
+                        <span className="text-xs text-[#FF5AF7] font-medium mb-1">Ethereum</span>
+                        <span className="text-xs text-gray-400">Smart Contracts</span>
+                      </div>
+                      <div className="py-3 px-2 rounded-lg bg-[#1A1A1A] border border-[#6B00D7]/30 flex flex-col items-center justify-center">
+                        <span className="text-xs text-[#FF5AF7] font-medium mb-1">Solana</span>
+                        <span className="text-xs text-gray-400">High Performance</span>
+                      </div>
+                      <div className="py-3 px-2 rounded-lg bg-[#1A1A1A] border border-[#6B00D7]/30 flex flex-col items-center justify-center">
+                        <span className="text-xs text-[#FF5AF7] font-medium mb-1">Arweave</span>
+                        <span className="text-xs text-gray-400">Permanent Storage</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            {/* Security Features Cards */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mt-12">
               {/* Security Feature 1 */}
               <Card className="bg-[#1A1A1A]/60 border border-[#6B00D7]/20 shadow-lg hover:shadow-[#6B00D7]/10 transition-all p-2 hover:translate-y-[-4px]">
@@ -647,6 +723,13 @@ const Home = () => {
                   </div>
                 </CardContent>
               </Card>
+            </div>
+            
+            {/* CTA Button */}
+            <div className="text-center mt-14">
+              <Link to="/cross-chain-security" className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] text-white font-medium rounded-lg hover:opacity-90 transition-opacity shadow-lg shadow-[#6B00D7]/20">
+                Explore Our Security Documentation <i className="ri-arrow-right-line"></i>
+              </Link>
             </div>
           </div>
         </section>
