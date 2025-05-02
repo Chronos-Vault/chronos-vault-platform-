@@ -146,8 +146,6 @@ const TonWalletController: React.FC = () => {
         return 'CONNECTING';
       case TonConnectionStatus.DISCONNECTED:
         return 'DISCONNECTED';
-      case TonConnectionStatus.ERROR:
-        return 'ERROR';
       default:
         return 'UNKNOWN';
     }
