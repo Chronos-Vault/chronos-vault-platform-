@@ -90,7 +90,27 @@ const CreateVault = () => {
         <div className="max-w-4xl mx-auto">
           <div className="text-center mb-8">
             <h1 className="font-poppins font-bold text-3xl mb-2">Create Your Time-Locked Vault</h1>
-            <p className="text-gray-400 max-w-2xl mx-auto">Design a secure vault to protect your assets with blockchain technology. Set the time lock period, add beneficiaries, and establish conditions for access.</p>
+            <p className="text-gray-400 max-w-2xl mx-auto mb-4">Design a secure vault to protect your assets with blockchain technology. Set the time lock period, add beneficiaries, and establish conditions for access.</p>
+            
+            <div className="flex justify-center mt-4">
+              <div className="inline-flex rounded-md shadow-sm" role="group">
+                <button
+                  type="button"
+                  className="px-4 py-2 text-sm font-medium bg-[#1A1A1A] text-white border border-gray-700 rounded-l-lg hover:bg-gray-800 focus:z-10 focus:ring-2 focus:ring-[#6B00D7] disabled:opacity-70"
+                  disabled
+                >
+                  <span className="mr-1">⚡</span> Standard Vaults
+                </button>
+                <button
+                  type="button"
+                  className="px-4 py-2 text-sm font-medium bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] text-white border border-[#6B00D7] rounded-r-lg hover:bg-gradient-to-r hover:from-[#7B10E7] hover:to-[#FF6AF7] focus:z-10 focus:ring-2 focus:ring-[#FF5AF7] flex items-center"
+                  onClick={() => navigate('/specialized-vault-creation')}
+                >
+                  <span className="mr-1">🔐</span> Specialized Vaults
+                  <span className="inline-flex items-center justify-center ml-2 w-4 h-4 text-xs font-semibold text-white bg-white/20 rounded-full">+</span>
+                </button>
+              </div>
+            </div>
           </div>
           
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">

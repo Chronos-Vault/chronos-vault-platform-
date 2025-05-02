@@ -53,6 +53,7 @@ const formSchema = insertVaultSchema.extend({
   confirmAmount: z.string().min(1, "Please confirm the amount"),
   includeAttachments: z.boolean().optional().default(true),
   unlockDate: z.string(), // Modified to handle string for date ISO
+  tripleChainSecurity: z.boolean().optional().default(false),
   metadata: metadataSchema.optional().default({
     allowsAttachments: true,
     attachmentsEncryption: "AES-256"
@@ -113,6 +114,7 @@ const CreateVaultForm = ({
       timeLockPeriod: 365, // Default to 1 year
       unlockDate: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toISOString(),
       includeAttachments: true,
+      tripleChainSecurity: false, // Our new Triple-Chain Security feature
       metadata: {
         allowsAttachments: true,
         attachmentsEncryption: "AES-256"
