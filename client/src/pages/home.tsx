@@ -107,7 +107,7 @@ const Home = () => {
                   <div className="flex justify-center gap-6">
                     <Button 
                       className="bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] hover:from-[#5500AB] hover:to-[#FF46E8] text-white font-bold rounded-lg px-8 py-4 text-lg shadow-glow hover:shadow-lg hover:shadow-[#FF5AF7]/40 transition-all"
-                      onClick={() => setLocation("/vault-types")}
+                      onClick={() => setLocation("/create-vault-enhanced")}
                     >
                       Create Your Vault
                     </Button>

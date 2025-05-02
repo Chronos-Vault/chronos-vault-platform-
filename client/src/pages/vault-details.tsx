@@ -1,482 +1,473 @@
-import { useState } from "react";
-import { useQuery } from "@tanstack/react-query";
-import { useLocation, Link } from "wouter";
-import { 
-  Card, 
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-  CardFooter
-} from "@/components/ui/card";
-import { 
-  Tabs, 
-  TabsContent, 
-  TabsList, 
-  TabsTrigger 
-} from "@/components/ui/tabs";
+import React, { useState, useEffect } from "react";
+import { useLocation, useParams } from "wouter";
+import { useMultiChain, BlockchainType } from "@/contexts/multi-chain-context";
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Skeleton } from "@/components/ui/skeleton";
 import { Badge } from "@/components/ui/badge";
-import { Separator } from "@/components/ui/separator";
-import { ArrowLeft, User, Clock, ChevronRight, AlertTriangle, Shield, LockKeyhole, Files } from "lucide-react";
-import { formatDate, truncateAddress } from "@/lib/utils";
-import TimeLockProgress from "@/components/vault/time-lock-progress";
+import { ArrowLeft, Clock, Shield, Lock, Unlock, User, FileText, AlertTriangle, Loader2, ExternalLink } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
-import { apiRequest } from "@/lib/queryClient";
-import { ProofVerificationCard, ProofVerificationSummary } from "@/components/Proof-of-Reservation";
-import { AttachmentList } from "@/components/attachments";
-import CrossChainSecurityDashboard from "@/components/security/CrossChainSecurityDashboard";
+
+// Vault interface
+interface Vault {
+  id: string;
+  name: string;
+  description?: string;
+  blockchain: BlockchainType;
+  unlockTime: number;
+  amount: string;
+  recipient: string;
+  isLocked: boolean;
+  securityLevel: string;
+  createdAt: number;
+  contractAddress?: string;
+  txHash?: string;
+}
 
 const VaultDetails = () => {
-  const [location, params] = useLocation();
+  const params = useParams();
+  const [_, navigate] = useLocation();
   const { toast } = useToast();
-  const vaultId = parseInt(params.id as string);
-  const [tab, setTab] = useState("overview");
+  const { isAnyWalletConnected, walletInfo, chainStatus } = useMultiChain();
+  
+  const [isLoading, setIsLoading] = useState(true);
+  const [vault, setVault] = useState<Vault | null>(null);
 
-  const { data: vaultData, isLoading, error } = useQuery({
-    queryKey: [`/api/vaults/${vaultId}`],
-  });
+  // Sample vault data for demonstration
+  const sampleVaults: Record<string, Vault> = {
+    "1": {
+      id: "1",
+      name: "Savings Vault",
+      description: "Long-term savings for future planning with advanced security measures applied. This vault uses triple-chain validation.",
+      blockchain: BlockchainType.TON,
+      unlockTime: Date.now() + 180 * 24 * 60 * 60 * 1000, // 180 days from now
+      amount: "15.75",
+      recipient: walletInfo.ton?.address || "EQAbc123...",
+      isLocked: true,
+      securityLevel: "enhanced",
+      createdAt: Date.now() - 30 * 24 * 60 * 60 * 1000, // 30 days ago
+      contractAddress: "EQD5xS7dQNM5mZu5hn_qDsHjUeJRVGbQYSCsB6MsJMP2zKqL",
+      txHash: "97c17cd1afd8a5663c04fc93192b351dab6a88afd7c7ac847e9e457fc5fd034c"
+    },
+    "2": {
+      id: "2",
+      name: "Education Fund",
+      description: "College savings for my children that will unlock in 3 years. This vault is protected by enhanced security measures.",
+      blockchain: BlockchainType.TON,
+      unlockTime: Date.now() + 365 * 3 * 24 * 60 * 60 * 1000, // 3 years from now
+      amount: "50.0",
+      recipient: walletInfo.ton?.address || "EQAbc123...",
+      isLocked: true,
+      securityLevel: "maximum",
+      createdAt: Date.now() - 60 * 24 * 60 * 60 * 1000, // 60 days ago
+      contractAddress: "EQCT239WSjM_w4pcwSZmp9VvZ-fDnLNMnYpKwZIYhQHVBvuR",
+      txHash: "ae8c5e37e9bf2c28e19f8f9adeabd1e01f3d7d49322bd9d5a6128e081622845c"
+    },
+    "3": {
+      id: "3",
+      name: "Retirement Test",
+      description: "Small test vault for retirement planning. This vault has already been unlocked and funds can be withdrawn.",
+      blockchain: BlockchainType.ETHEREUM,
+      unlockTime: Date.now() - 5 * 24 * 60 * 60 * 1000, // 5 days ago (unlocked)
+      amount: "0.05",
+      recipient: walletInfo.ethereum?.address || "0x1234...",
+      isLocked: false,
+      securityLevel: "standard",
+      createdAt: Date.now() - 35 * 24 * 60 * 60 * 1000, // 35 days ago
+      contractAddress: "0x742d35Cc6634C0532925a3b844Bc454e4438f44e",
+      txHash: "0xe6c5378a4e1a0c7fd5219fa70a0903db8ed1d4a67be5f6d83fb2fb11a5214943"
+    }
+  };
+
+  // Load vault when component mounts
+  useEffect(() => {
+    const loadVault = async () => {
+      setIsLoading(true);
+      try {
+        // Simulate API call delay
+        await new Promise(resolve => setTimeout(resolve, 1000));
+        
+        const vaultId = params.id;
+        
+        if (vaultId && sampleVaults[vaultId]) {
+          setVault(sampleVaults[vaultId]);
+        } else {
+          toast({
+            title: "Vault not found",
+            description: "The requested vault could not be found.",
+            variant: "destructive",
+          });
+          navigate("/my-vaults");
+        }
+      } catch (error) {
+        console.error("Error loading vault:", error);
+        toast({
+          title: "Failed to load vault",
+          description: "There was an error loading the vault details. Please try again later.",
+          variant: "destructive",
+        });
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    loadVault();
+  }, [params.id]);
+
+  // Format blockchain name
+  const formatBlockchainName = (blockchain: BlockchainType): string => {
+    switch (blockchain) {
+      case BlockchainType.TON:
+        return "TON";
+      case BlockchainType.ETHEREUM:
+        return "Ethereum";
+      case BlockchainType.SOLANA:
+        return "Solana";
+      case BlockchainType.BITCOIN:
+        return "Bitcoin";
+      default:
+        return blockchain;
+    }
+  };
+
+  // Format date for display
+  const formatDate = (timestamp: number): string => {
+    return new Date(timestamp).toLocaleDateString(undefined, {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit'
+    });
+  };
+
+  // Format address for display
+  const formatAddress = (address: string): string => {
+    if (!address) return "";
+    if (address.length <= 10) return address;
+    return `${address.substring(0, 10)}...${address.substring(address.length - 4)}`;
+  };
+
+  // Get blockchain explorer URL
+  const getExplorerUrl = (blockchain: BlockchainType, type: 'address' | 'tx', hash: string): string => {
+    switch (blockchain) {
+      case BlockchainType.TON:
+        return `https://testnet.tonscan.org/${type === 'address' ? 'address' : 'tx'}/${hash}`;
+      case BlockchainType.ETHEREUM:
+        return `https://sepolia.etherscan.io/${type === 'address' ? 'address' : 'tx'}/${hash}`;
+      case BlockchainType.SOLANA:
+        return `https://explorer.solana.com/${type === 'address' ? 'address' : 'tx'}/${hash}?cluster=devnet`;
+      default:
+        return '#';
+    }
+  };
+
+  // Get security level label
+  const getSecurityLevelInfo = (level: string) => {
+    switch (level) {
+      case 'standard':
+        return {
+          label: 'Standard Security',
+          description: 'Basic security with single-chain protection',
+          color: 'bg-[#6B00D7]/20 text-[#FF5AF7]'
+        };
+      case 'enhanced':
+        return {
+          label: 'Enhanced Security',
+          description: 'Multi-chain protection with dual verification',
+          color: 'bg-[#6B00D7]/30 text-[#FF5AF7]'
+        };
+      case 'maximum':
+        return {
+          label: 'Maximum Security',
+          description: 'Triple-chain protection with zero-knowledge privacy',
+          color: 'bg-[#6B00D7]/40 text-[#FF5AF7]'
+        };
+      default:
+        return {
+          label: 'Unknown Security Level',
+          description: 'Security information unavailable',
+          color: 'bg-gray-500/20 text-gray-400'
+        };
+    }
+  };
+
+  // Handle withdraw funds (if unlocked)
+  const handleWithdraw = () => {
+    if (!vault || vault.isLocked) return;
+    
+    toast({
+      title: "Withdrawal Initiated",
+      description: "This functionality will be available in the next release.",
+    });
+  };
 
   if (isLoading) {
     return (
-      <section className="py-16 min-h-screen">
+      <section className="py-16 min-h-screen bg-gradient-to-b from-[#0A0A0A] to-[#121212]">
         <div className="container mx-auto px-4">
-          <Button
-            variant="ghost" 
-            className="mb-8 text-gray-400 hover:text-white"
-            onClick={() => window.history.back()}
-          >
-            <ArrowLeft className="mr-2 h-4 w-4" />
-            Back
-          </Button>
-          
-          <Skeleton className="h-10 w-64 mb-2" />
-          <Skeleton className="h-6 w-full max-w-lg mb-8" />
-          
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <div className="md:col-span-2">
-              <Card>
-                <CardHeader>
-                  <Skeleton className="h-8 w-40 mb-2" />
-                </CardHeader>
-                <CardContent>
-                  <Skeleton className="h-28 w-full mb-4" />
-                  <Skeleton className="h-40 w-full" />
-                </CardContent>
-              </Card>
-            </div>
-            
-            <div>
-              <Card className="mb-8">
-                <CardHeader>
-                  <Skeleton className="h-6 w-32 mb-2" />
-                </CardHeader>
-                <CardContent>
-                  <Skeleton className="h-6 w-full mb-3" />
-                  <Skeleton className="h-6 w-full mb-3" />
-                  <Skeleton className="h-6 w-full mb-3" />
-                  <Skeleton className="h-6 w-full" />
-                </CardContent>
-              </Card>
-              
-              <Skeleton className="h-40 w-full rounded-lg" />
-            </div>
+          <div className="max-w-4xl mx-auto flex justify-center items-center h-64">
+            <Loader2 className="h-12 w-12 animate-spin text-[#6B00D7]" />
           </div>
         </div>
       </section>
     );
   }
 
-  if (error || !vaultData) {
+  if (!vault) {
     return (
-      <section className="py-16 min-h-screen">
+      <section className="py-16 min-h-screen bg-gradient-to-b from-[#0A0A0A] to-[#121212]">
         <div className="container mx-auto px-4">
-          <Button
-            variant="ghost" 
-            className="mb-8 text-gray-400 hover:text-white"
-            onClick={() => window.history.back()}
-          >
-            <ArrowLeft className="mr-2 h-4 w-4" />
-            Back
-          </Button>
-          
-          <Card className="bg-red-500/10 border-red-500/30">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <AlertTriangle className="h-5 w-5 text-red-500" />
-                Error Loading Vault
-              </CardTitle>
-              <CardDescription>
-                We encountered an issue while loading your vault details. Please try again.
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <Button variant="outline" onClick={() => window.location.reload()}>
-                Retry
-              </Button>
-            </CardContent>
-          </Card>
+          <div className="max-w-4xl mx-auto">
+            <Button
+              variant="ghost" 
+              className="mb-8 text-gray-400 hover:text-white"
+              onClick={() => navigate("/my-vaults")}
+            >
+              <ArrowLeft className="mr-2 h-4 w-4" />
+              Back to My Vaults
+            </Button>
+            
+            <Card className="bg-[#1A1A1A] border-[#FF5AF7]/30 mb-8">
+              <CardContent className="p-10 text-center">
+                <AlertTriangle className="h-16 w-16 mx-auto mb-4 text-[#FF5AF7]" />
+                <h3 className="text-2xl font-semibold text-white mb-2">Vault Not Found</h3>
+                <p className="text-gray-400 mb-6">The vault you're looking for doesn't exist or you don't have access to it.</p>
+                <Button 
+                  className="bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7]"
+                  onClick={() => navigate("/my-vaults")}
+                >
+                  Return to My Vaults
+                </Button>
+              </CardContent>
+            </Card>
+          </div>
         </div>
       </section>
     );
   }
 
-  const handleWithdrawAssets = async () => {
-    try {
-      await apiRequest("PUT", `/api/vaults/${vaultId}`, { isLocked: false });
-      toast({
-        title: "Assets Withdrawn",
-        description: "Your assets have been successfully withdrawn from the vault.",
-      });
-      window.location.reload();
-    } catch (error) {
-      toast({
-        title: "Withdrawal Failed",
-        description: "There was an error processing your withdrawal. Please try again.",
-        variant: "destructive",
-      });
-    }
-  };
-
-  const getVaultIcon = (type: string) => {
-    switch (type) {
-      case "legacy":
-        return <i className="ri-user-heart-line text-[#6B00D7] text-xl mr-2"></i>;
-      case "investment":
-        return <i className="ri-line-chart-line text-[#FF5AF7] text-xl mr-2"></i>;
-      case "project":
-        return <i className="ri-team-line text-white text-xl mr-2"></i>;
-      default:
-        return <i className="ri-shield-keyhole-line text-[#6B00D7] text-xl mr-2"></i>;
-    }
-  };
+  const securityInfo = getSecurityLevelInfo(vault.securityLevel);
 
   return (
-    <section className="py-16 min-h-screen">
+    <section className="py-16 min-h-screen bg-gradient-to-b from-[#0A0A0A] to-[#121212]">
       <div className="container mx-auto px-4">
-        <Button
-          variant="ghost" 
-          className="mb-8 text-gray-400 hover:text-white"
-          onClick={() => window.history.back()}
-        >
-          <ArrowLeft className="mr-2 h-4 w-4" />
-          Back
-        </Button>
-        
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8">
-          <div>
-            <div className="flex items-center gap-2">
-              {getVaultIcon(vaultData.vaultType)}
-              <h1 className="font-poppins font-bold text-3xl">{vaultData.name}</h1>
-              <Badge variant={vaultData.isLocked ? "default" : "secondary"} className="ml-3">
-                {vaultData.isLocked ? "Locked" : "Unlocked"}
-              </Badge>
-            </div>
-            <p className="text-gray-400 mt-2">{vaultData.description}</p>
-          </div>
+        <div className="max-w-4xl mx-auto">
+          <Button
+            variant="ghost" 
+            className="mb-8 text-gray-400 hover:text-white"
+            onClick={() => navigate("/my-vaults")}
+          >
+            <ArrowLeft className="mr-2 h-4 w-4" />
+            Back to My Vaults
+          </Button>
           
-          {!vaultData.isLocked && (
-            <div className="mt-4 md:mt-0">
-              <Button
-                className="bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] text-white"
-                onClick={handleWithdrawAssets}
-              >
-                <i className="ri-wallet-3-line mr-2"></i>
-                Withdraw Assets
-              </Button>
-            </div>
-          )}
-        </div>
-        
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          <div className="md:col-span-2">
-            <Card className="bg-[#1E1E1E] border border-[#333333]">
-              <CardHeader className="pb-2">
-                <Tabs defaultValue="overview" onValueChange={setTab}>
-                  <TabsList>
-                    <TabsTrigger value="overview">Overview</TabsTrigger>
-                    <TabsTrigger value="details">Details</TabsTrigger>
-                    {vaultData.beneficiaries && vaultData.beneficiaries.length > 0 && (
-                      <TabsTrigger value="beneficiaries">Beneficiaries</TabsTrigger>
-                    )}
-                    <TabsTrigger value="attachments">
-                      <Files className="h-4 w-4 mr-1" />
-                      Attachments
-                    </TabsTrigger>
-                    <TabsTrigger value="security">Security</TabsTrigger>
-                  </TabsList>
-                </Tabs>
-              </CardHeader>
-              
-              <CardContent>
-                <TabsContent value="overview" className="space-y-4 mt-4">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div>
-                      <h3 className="text-lg font-poppins font-semibold mb-4">Vault Information</h3>
-                      
-                      <div className="space-y-4">
-                        <div>
-                          <div className="text-sm text-gray-400">Vault Type</div>
-                          <div className="font-medium capitalize flex items-center mt-1">
-                            {getVaultIcon(vaultData.vaultType)}
-                            {vaultData.vaultType} Vault
-                          </div>
-                        </div>
-                        
-                        <div>
-                          <div className="text-sm text-gray-400">Created On</div>
-                          <div className="font-medium flex items-center gap-2 mt-1">
-                            <Clock className="h-4 w-4 text-[#6B00D7]" />
-                            {formatDate(vaultData.createdAt)}
-                          </div>
-                        </div>
-                        
-                        <div>
-                          <div className="text-sm text-gray-400">Unlock Date</div>
-                          <div className="font-medium flex items-center gap-2 mt-1">
-                            <LockKeyhole className="h-4 w-4 text-[#FF5AF7]" />
-                            {formatDate(vaultData.unlockDate)}
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                    
-                    <div>
-                      <h3 className="text-lg font-poppins font-semibold mb-4">Asset Information</h3>
-                      
-                      <div className="space-y-4">
-                        <div>
-                          <div className="text-sm text-gray-400">Asset Type</div>
-                          <div className="font-medium mt-1">{vaultData.assetType}</div>
-                        </div>
-                        
-                        <div>
-                          <div className="text-sm text-gray-400">Asset Amount</div>
-                          <div className="font-medium text-xl mt-1">{vaultData.assetAmount} {vaultData.assetType}</div>
-                        </div>
-                        
-                        <div>
-                          <div className="text-sm text-gray-400">Status</div>
-                          <div className="font-medium mt-1">
-                            {vaultData.isLocked ? (
-                              <span className="text-[#6B00D7]">Time-Locked</span>
-                            ) : (
-                              <span className="text-[#FF5AF7]">Available for Withdrawal</span>
-                            )}
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </TabsContent>
-                
-                <TabsContent value="details" className="space-y-6 mt-4">
-                  <div>
-                    <h3 className="text-lg font-poppins font-semibold mb-4">Time Lock Details</h3>
-                    
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                      <div>
-                        <div className="text-sm text-gray-400 mb-1">Lock Period</div>
-                        <div className="font-medium">{vaultData.timeLockPeriod} days</div>
-                      </div>
-                      
-                      <div>
-                        <div className="text-sm text-gray-400 mb-1">Early Withdrawal</div>
-                        <div className="font-medium text-red-400">Not Available</div>
-                      </div>
-                      
-                      <div>
-                        <div className="text-sm text-gray-400 mb-1">Start Date</div>
-                        <div className="font-medium">{formatDate(vaultData.createdAt)}</div>
-                      </div>
-                      
-                      <div>
-                        <div className="text-sm text-gray-400 mb-1">Unlock Date</div>
-                        <div className="font-medium">{formatDate(vaultData.unlockDate)}</div>
-                      </div>
-                    </div>
-                  </div>
-                  
-                  <Separator />
-                  
-                  <div>
-                    <h3 className="text-lg font-poppins font-semibold mb-4">Transaction History</h3>
-                    
-                    <div className="bg-[#121212] rounded-lg p-4 border border-[#333333]">
-                      <div className="flex items-center justify-center h-24 text-gray-400 text-sm">
-                        <div className="text-center">
-                          <i className="ri-history-line text-2xl mb-2 block"></i>
-                          <span>No transaction history available yet</span>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </TabsContent>
-                
-                <TabsContent value="beneficiaries" className="space-y-4 mt-4">
-                  {vaultData.beneficiaries && vaultData.beneficiaries.length > 0 ? (
+          <div className="relative">
+            <div className={`absolute top-0 left-0 w-full h-1 ${vault.isLocked ? 'bg-[#6B00D7]' : 'bg-[#4CAF50]'}`}></div>
+            
+            <Card className="bg-[#1A1A1A]/90 border-[#6B00D7]/30 shadow-xl overflow-hidden relative pt-4">
+              <div className="absolute top-4 right-4">
+                <Badge className={vault.isLocked ? 'bg-[#6B00D7]/20 text-[#FF5AF7] hover:bg-[#6B00D7]/30' : 'bg-[#4CAF50]/20 text-[#4CAF50] hover:bg-[#4CAF50]/30'}>
+                  {vault.isLocked ? (
                     <>
-                      <h3 className="text-lg font-poppins font-semibold mb-4">Beneficiary Information</h3>
-                      
-                      <div className="space-y-4">
-                        {vaultData.beneficiaries.map((beneficiary: any) => (
-                          <div key={beneficiary.id} className="bg-[#121212] rounded-lg p-4 border border-[#333333]">
-                            <div className="flex justify-between items-start">
-                              <div>
-                                <div className="flex items-center">
-                                  <User className="h-5 w-5 mr-2 text-[#6B00D7]" />
-                                  <div className="font-medium">{beneficiary.name}</div>
-                                </div>
-                                <div className="text-sm text-gray-400 mt-1">
-                                  {truncateAddress(beneficiary.walletAddress)}
-                                </div>
-                              </div>
-                              <Badge>{beneficiary.share}%</Badge>
-                            </div>
-                          </div>
-                        ))}
-                      </div>
+                      <LockClosed className="h-3 w-3 mr-1" />
+                      Locked
                     </>
                   ) : (
-                    <div className="py-8 text-center">
-                      <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-[#6B00D7]/10 mb-4">
-                        <User className="h-8 w-8 text-[#6B00D7]" />
-                      </div>
-                      <h3 className="text-lg font-poppins font-medium mb-2">No Beneficiaries Added</h3>
-                      <p className="text-gray-400 text-sm max-w-md mx-auto">
-                        You haven't added any beneficiaries to this vault yet. Beneficiaries can access vault assets after unlocking conditions are met.
-                      </p>
-                    </div>
+                    <>
+                      <LockOpen className="h-3 w-3 mr-1" />
+                      Unlocked
+                    </>
                   )}
-                </TabsContent>
-                
-                <TabsContent value="attachments" className="space-y-6 mt-4">
-                  <AttachmentList vaultId={vaultId} />
-                </TabsContent>
-                
-                <TabsContent value="security" className="space-y-6 mt-4">
-                  <div className="grid grid-cols-1 gap-6">
-                    {/* Triple-Chain Security Dashboard */}
-                    <div>
-                      <h3 className="text-lg font-poppins font-semibold mb-4">Triple-Chain Security Status</h3>
-                      <CrossChainSecurityDashboard vaultId={vaultId.toString()} />
-                    </div>
-                    
-                    {/* Proof of Reservation - Main Verification Card */}
-                    <div>
-                      <h3 className="text-lg font-poppins font-semibold mb-4">Proof of Reservation</h3>
-                      <ProofVerificationCard vaultId={vaultId} />
-                    </div>
-                    
-                    {/* Security Information */}
-                    <div>
-                      <h3 className="text-lg font-poppins font-semibold mb-4">Security Information</h3>
+                </Badge>
+              </div>
+              
+              <CardHeader>
+                <CardTitle className="text-3xl font-poppins">{vault.name}</CardTitle>
+                {vault.description && (
+                  <CardDescription className="text-gray-400 mt-2">
+                    {vault.description}
+                  </CardDescription>
+                )}
+              </CardHeader>
+              
+              <CardContent className="space-y-8">
+                {/* Key Details */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <Card className="bg-[#161616] border-[#6B00D7]/10">
+                    <CardHeader className="pb-2">
+                      <h3 className="text-lg font-medium text-white">Vault Information</h3>
+                    </CardHeader>
+                    <CardContent className="space-y-4">
+                      <div className="space-y-1">
+                        <div className="text-sm text-gray-400">Blockchain</div>
+                        <div className="flex items-center">
+                          <div className="h-5 w-5 mr-2 rounded-full bg-gradient-to-r from-[#6B00D7]/20 to-[#FF5AF7]/10 flex items-center justify-center">
+                            {vault.blockchain === BlockchainType.TON ? '💎' : 
+                             vault.blockchain === BlockchainType.ETHEREUM ? 'Ξ' : 
+                             vault.blockchain === BlockchainType.SOLANA ? '◎' : '₿'}
+                          </div>
+                          <span className="font-medium">{formatBlockchainName(vault.blockchain)}</span>
+                        </div>
+                      </div>
                       
-                      <div className="space-y-4">
-                        <div className="bg-[#121212] rounded-lg p-4 border border-[#333333] flex items-start">
-                          <div className="mr-3 p-2 bg-[#6B00D7]/10 rounded-full">
-                            <Shield className="h-5 w-5 text-[#6B00D7]" />
-                          </div>
-                          <div>
-                            <div className="font-medium">Smart Contract Security</div>
-                            <p className="text-sm text-gray-400 mt-1">
-                              Your assets are secured by audited smart contracts on the blockchain, ensuring 
-                              that only you can access them after the time lock expires.
-                            </p>
-                          </div>
-                        </div>
-                        
-                        <div className="bg-[#121212] rounded-lg p-4 border border-[#333333] flex items-start">
-                          <div className="mr-3 p-2 bg-[#FF5AF7]/10 rounded-full">
-                            <LockKeyhole className="h-5 w-5 text-[#FF5AF7]" />
-                          </div>
-                          <div>
-                            <div className="font-medium">Time Lock Protection</div>
-                            <p className="text-sm text-gray-400 mt-1">
-                              The time lock mechanism is enforced at the protocol level, making it 
-                              impossible to access the assets before the specified unlock date.
-                            </p>
-                          </div>
-                        </div>
-                        
-                        <div className="bg-[#121212] rounded-lg p-4 border border-[#333333] flex items-start">
-                          <div className="mr-3 p-2 bg-[#6B00D7]/10 rounded-full">
-                            <i className="ri-eye-line text-[#6B00D7] text-lg"></i>
-                          </div>
-                          <div>
-                            <div className="font-medium">Transparent & Verifiable</div>
-                            <p className="text-sm text-gray-400 mt-1">
-                              All vault parameters and conditions are publicly verifiable on the blockchain, 
-                              ensuring complete transparency and trustless operation.
-                            </p>
-                          </div>
+                      <div className="space-y-1">
+                        <div className="text-sm text-gray-400">Amount</div>
+                        <div className="font-medium text-white">
+                          {vault.amount} {vault.blockchain === BlockchainType.TON ? 'TON' : 
+                                        vault.blockchain === BlockchainType.ETHEREUM ? 'ETH' : 
+                                        vault.blockchain === BlockchainType.SOLANA ? 'SOL' : 'BTC'}
                         </div>
                       </div>
-                    </div>
-                  </div>
-                </TabsContent>
-              </CardContent>
-            </Card>
-          </div>
-          
-          <div>
-            <Card className="bg-[#1E1E1E] border border-[#333333] mb-8">
-              <CardHeader>
-                <CardTitle className="text-lg">Security Dashboard</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div>
-                  <h4 className="text-sm font-medium mb-2">Time Lock Status</h4>
-                  <TimeLockProgress 
-                    createdAt={vaultData.createdAt}
-                    unlockDate={vaultData.unlockDate}
-                    isLocked={vaultData.isLocked}
-                  />
+                      
+                      <div className="space-y-1">
+                        <div className="text-sm text-gray-400">Security Level</div>
+                        <div>
+                          <Badge className={securityInfo.color}>
+                            <Shield className="h-3 w-3 mr-1" />
+                            {securityInfo.label}
+                          </Badge>
+                          <div className="text-xs text-gray-400 mt-1">{securityInfo.description}</div>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                  
+                  <Card className="bg-[#161616] border-[#6B00D7]/10">
+                    <CardHeader className="pb-2">
+                      <h3 className="text-lg font-medium text-white">Time Information</h3>
+                    </CardHeader>
+                    <CardContent className="space-y-4">
+                      <div className="space-y-1">
+                        <div className="text-sm text-gray-400">Created On</div>
+                        <div className="font-medium text-white">{formatDate(vault.createdAt)}</div>
+                      </div>
+                      
+                      <div className="space-y-1">
+                        <div className="text-sm text-gray-400">Unlocks On</div>
+                        <div className="font-medium text-white">{formatDate(vault.unlockTime)}</div>
+                      </div>
+                      
+                      <div className="space-y-1">
+                        <div className="text-sm text-gray-400">Status</div>
+                        <div className="font-medium">
+                          {vault.isLocked ? (
+                            <div className="text-[#FF5AF7]">
+                              <Clock className="h-4 w-4 inline-block mr-1" />
+                              Time-locked until {formatDate(vault.unlockTime)}
+                            </div>
+                          ) : (
+                            <div className="text-[#4CAF50]">
+                              <LockOpen className="h-4 w-4 inline-block mr-1" />
+                              Unlocked and available for withdrawal
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
                 </div>
                 
-                {/* Integrate the Security Dashboard */}
-                <ProofSecurityDashboard
-                  vaultId={vaultId}
-                  createdAt={vaultData.createdAt}
-                  unlockDate={vaultData.unlockDate}
-                  isLocked={vaultData.isLocked}
-                />
-              </CardContent>
-              {vaultData.isLocked && (
-                <CardFooter className="pt-0">
-                  <p className="text-xs text-gray-400">
-                    This vault is time-locked and the assets cannot be withdrawn until the unlock date.
-                  </p>
-                </CardFooter>
-              )}
-            </Card>
-            
-            <Card className="bg-gradient-to-br from-[#6B00D7]/10 to-[#FF5AF7]/10 border border-[#333333]">
-              <CardHeader>
-                <CardTitle className="text-lg">Need Help?</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-4">
-                  <Link href="/about">
-                    <Button variant="outline" className="w-full justify-between border-[#6B00D7]/30 hover:border-[#6B00D7] hover:bg-[#6B00D7]/5 transition-all">
-                      <div className="flex items-center">
-                        <i className="ri-question-line mr-2 text-[#6B00D7]"></i>
-                        Learn about Vaults
+                {/* Blockchain Details */}
+                <Card className="bg-[#161616] border-[#6B00D7]/10">
+                  <CardHeader className="pb-2">
+                    <h3 className="text-lg font-medium text-white">Blockchain Details</h3>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                      <div className="space-y-1">
+                        <div className="text-sm text-gray-400">Recipient Address</div>
+                        <div className="font-medium text-white flex items-center">
+                          <User className="h-4 w-4 mr-1 text-gray-400" />
+                          {formatAddress(vault.recipient)}
+                          {vault.recipient && (
+                            <a 
+                              href={getExplorerUrl(vault.blockchain, 'address', vault.recipient)}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="ml-2 text-[#FF5AF7] hover:text-[#6B00D7] transition-colors"
+                            >
+                              <ExternalLink className="h-3 w-3" />
+                            </a>
+                          )}
+                        </div>
                       </div>
-                      <ChevronRight className="h-4 w-4" />
-                    </Button>
-                  </Link>
-                  
-                  <Button variant="outline" className="w-full justify-between border-[#FF5AF7]/30 hover:border-[#FF5AF7] hover:bg-[#FF5AF7]/5 transition-all">
-                    <div className="flex items-center">
-                      <i className="ri-customer-service-2-line mr-2 text-[#FF5AF7]"></i>
-                      Contact Support
+                      
+                      <div className="space-y-1">
+                        <div className="text-sm text-gray-400">Contract Address</div>
+                        <div className="font-medium text-white flex items-center">
+                          <FileText className="h-4 w-4 mr-1 text-gray-400" />
+                          {vault.contractAddress ? formatAddress(vault.contractAddress) : 'N/A'}
+                          {vault.contractAddress && (
+                            <a 
+                              href={getExplorerUrl(vault.blockchain, 'address', vault.contractAddress)}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="ml-2 text-[#FF5AF7] hover:text-[#6B00D7] transition-colors"
+                            >
+                              <ExternalLink className="h-3 w-3" />
+                            </a>
+                          )}
+                        </div>
+                      </div>
+                      
+                      <div className="space-y-1">
+                        <div className="text-sm text-gray-400">Transaction Hash</div>
+                        <div className="font-medium text-white flex items-center">
+                          <FileText className="h-4 w-4 mr-1 text-gray-400" />
+                          {vault.txHash ? formatAddress(vault.txHash) : 'N/A'}
+                          {vault.txHash && (
+                            <a 
+                              href={getExplorerUrl(vault.blockchain, 'tx', vault.txHash)}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="ml-2 text-[#FF5AF7] hover:text-[#6B00D7] transition-colors"
+                            >
+                              <ExternalLink className="h-3 w-3" />
+                            </a>
+                          )}
+                        </div>
+                      </div>
+                      
+                      <div className="space-y-1">
+                        <div className="text-sm text-gray-400">Explorer</div>
+                        <div className="font-medium text-white">
+                          <a 
+                            href={getExplorerUrl(vault.blockchain, 'address', vault.contractAddress || vault.recipient)}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-[#FF5AF7] hover:text-[#6B00D7] transition-colors flex items-center"
+                          >
+                            View on {vault.blockchain === BlockchainType.TON ? 'TONScan' : 
+                                    vault.blockchain === BlockchainType.ETHEREUM ? 'Etherscan' : 
+                                    vault.blockchain === BlockchainType.SOLANA ? 'Solana Explorer' : 'Explorer'}
+                            <ExternalLink className="h-3 w-3 ml-1" />
+                          </a>
+                        </div>
+                      </div>
                     </div>
-                    <ChevronRight className="h-4 w-4" />
-                  </Button>
-                </div>
+                  </CardContent>
+                </Card>
               </CardContent>
+              
+              <CardFooter className="flex justify-end space-x-4 pt-4 border-t border-[#6B00D7]/10">
+                <Button
+                  variant="outline"
+                  className="border-[#6B00D7]/40 text-[#FF5AF7] hover:bg-[#6B00D7]/10"
+                  onClick={() => navigate("/my-vaults")}
+                >
+                  Back to My Vaults
+                </Button>
+                
+                {!vault.isLocked && (
+                  <Button
+                    className="bg-gradient-to-r from-[#4CAF50] to-[#45a049] hover:from-[#45a049] hover:to-[#409945] text-white"
+                    onClick={handleWithdraw}
+                  >
+                    <LockOpen className="h-4 w-4 mr-2" />
+                    Withdraw Funds
+                  </Button>
+                )}
+              </CardFooter>
             </Card>
           </div>
         </div>
