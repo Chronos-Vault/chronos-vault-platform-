@@ -499,6 +499,160 @@ const Home = () => {
           </div>
         </section>
         
+        {/* Ultra-Premium Testimonials & Partners Section */}
+        <section className="py-24 bg-[#030303] relative overflow-hidden">
+          {/* Luxury Background Effects */}
+          <div className="absolute inset-0 pointer-events-none overflow-hidden">
+            {/* Premium grid pattern */}
+            <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxwYXRoIGZpbGw9IiMxQTFBMUEiIGQ9Ik0wIDBoNjB2NjBIMHoiLz48cGF0aCBkPSJNNjAgMEgwdjYwaDYwVjB6TTIgMmg1NnY1NkgyVjJ6IiBmaWxsPSIjMDAwIi8+PC9nPjwvc3ZnPg==')] opacity-5"></div>
+            
+            {/* Subtle gradient overlays */}
+            <div className="absolute inset-0 bg-gradient-to-b from-black via-transparent to-black opacity-40"></div>
+            <div className="absolute -top-40 -right-40 w-96 h-96 bg-[#6B00D7]/10 rounded-full blur-3xl"></div>
+            <div className="absolute -bottom-40 -left-40 w-96 h-96 bg-[#FF5AF7]/10 rounded-full blur-3xl"></div>
+            
+            {/* Premium diagonal accents */}
+            <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-[#6B00D7]/30 to-transparent"></div>
+            <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-[#FF5AF7]/30 to-transparent"></div>
+          </div>
+          
+          <div className="container mx-auto px-4 relative z-10">
+            <div className="text-center mb-16">
+              <h3 className="inline-flex items-center text-sm text-[#FF5AF7] mb-2 justify-center">
+                <div className="mr-2 w-6 h-px bg-[#FF5AF7]"></div>
+                TRUSTED BY INDUSTRY LEADERS
+                <div className="ml-2 w-6 h-px bg-[#FF5AF7]"></div>
+              </h3>
+              <h2 className="text-3xl md:text-4xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-white via-gray-200 to-white mb-6">Testimonials & Partners</h2>
+              <p className="text-gray-300 max-w-2xl mx-auto">Join the finest organizations and individuals who trust Chronos Vault for unparalleled digital asset security</p>
+            </div>
+
+            {/* 3D Testimonials Carousel */}
+            <div className="max-w-6xl mx-auto mb-20 perspective-1000">
+              <div className="transform-style-3d">
+                {/* Featured Testimonial */}
+                <div className="relative transform hover:translate-z-[30px] transition-transform duration-500 group">
+                  <div className="absolute -inset-0.5 bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] rounded-2xl blur opacity-0 group-hover:opacity-30 transition duration-700"></div>
+                  <div className="relative bg-gradient-to-b from-[#0A0A0A] to-black p-8 md:p-10 rounded-2xl border border-[#1A1A1A] group-hover:border-white/20 transition-all duration-500">
+                    {/* Testimonial content */}
+                    <div className="flex flex-col md:flex-row gap-8 items-center">
+                      {/* 3D Rotating Avatar */}
+                      <div className="flex-shrink-0">
+                        <div className="relative w-24 h-24 md:w-28 md:h-28 perspective-1000">
+                          <div className="relative w-full h-full rounded-full transform-style-3d group-hover:rotateY-15 transition-transform duration-700">
+                            {/* Avatar shadow */}
+                            <div className="absolute inset-0 bg-gradient-to-br from-[#6B00D7]/40 to-[#FF5AF7]/40 rounded-full transform translate-z-[-10px] blur-md opacity-60 group-hover:opacity-80 transition-opacity duration-700"></div>
+                            {/* Avatar image */}
+                            <div className="absolute inset-1 bg-gradient-to-br from-[#0D0D0D] to-black rounded-full border border-[#6B00D7]/30 group-hover:border-[#FF5AF7]/50 transition-colors duration-700 overflow-hidden">
+                              <div className="absolute inset-2 rounded-full bg-[#151515] flex items-center justify-center">
+                                <Users className="h-10 w-10 text-[#FF5AF7]" />
+                              </div>
+                            </div>
+                            {/* Decorative ring */}
+                            <div className="absolute inset-[-2px] border-2 border-[#6B00D7]/20 rounded-full animate-spin-slow"></div>
+                          </div>
+                        </div>
+                      </div>
+                      
+                      {/* Testimonial Text */}
+                      <div className="flex-1">
+                        <div className="mb-4">
+                          <i className="ri-double-quotes-l text-4xl text-[#6B00D7]/40 group-hover:text-[#FF5AF7]/40 transition-colors duration-700"></i>
+                        </div>
+                        
+                        <p className="text-gray-300 italic text-lg md:text-xl mb-6 font-light leading-relaxed">
+                          Chronos Vault represents the pinnacle of blockchain security technology. Their triple-chain architecture and multi-signature capabilities have revolutionized how we protect our organization's digital assets.
+                        </p>
+                        
+                        <div className="flex items-center">
+                          <div>
+                            <h4 className="font-semibold text-white">Alexander Quantum</h4>
+                            <p className="text-[#FF5AF7] text-sm">Chief Security Officer, Nexus Blockchain</p>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    
+                    {/* Animated scan effect */}
+                    <div className="absolute inset-0 opacity-0 group-hover:opacity-20 transition-opacity duration-700 overflow-hidden rounded-2xl">
+                      <div className="absolute top-0 left-0 w-full h-full animate-scan"></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            {/* 3D Rotating Partner Logos */}
+            <h3 className="text-center text-xl font-semibold mb-12 bg-clip-text text-transparent bg-gradient-to-r from-gray-200 to-white">Our Premium Partners</h3>
+            
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-10 md:gap-16 max-w-4xl mx-auto perspective-1000">
+              {/* Partner 1 */}
+              <div className="group">
+                <div className="relative perspective-1000 flex items-center justify-center h-24">
+                  <div className="absolute inset-0 bg-gradient-to-r from-[#6B00D7]/0 to-[#FF5AF7]/0 group-hover:from-[#6B00D7]/5 group-hover:to-[#FF5AF7]/5 rounded-xl transform-style-3d group-hover:rotateY-15 transition-all duration-700"></div>
+                  <div className="relative w-20 h-20 transform transition-transform duration-500 group-hover:scale-110">
+                    <div className="absolute inset-0 bg-gradient-to-br from-[#6B00D7]/20 to-[#FF5AF7]/20 rounded-full opacity-0 group-hover:opacity-100 blur-xl transition-opacity duration-700"></div>
+                    <div className="relative h-full w-full flex items-center justify-center">
+                      <div className="p-4 bg-[#0A0A0A] rounded-full border border-[#1A1A1A] group-hover:border-[#6B00D7]/30 transition-colors duration-500 shadow-lg">
+                        <i className="ri-ethereum-line text-4xl text-white group-hover:text-[#6B00D7] transition-colors duration-500 animate-pulse-slow"></i>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <p className="text-center text-gray-400 group-hover:text-white transition-colors duration-500 mt-4 text-sm">Ethereum Foundation</p>
+              </div>
+              
+              {/* Partner 2 */}
+              <div className="group">
+                <div className="relative perspective-1000 flex items-center justify-center h-24">
+                  <div className="absolute inset-0 bg-gradient-to-r from-[#FF5AF7]/0 to-[#6B00D7]/0 group-hover:from-[#FF5AF7]/5 group-hover:to-[#6B00D7]/5 rounded-xl transform-style-3d group-hover:rotateY-15 transition-all duration-700"></div>
+                  <div className="relative w-20 h-20 transform transition-transform duration-500 group-hover:scale-110">
+                    <div className="absolute inset-0 bg-gradient-to-br from-[#FF5AF7]/20 to-[#6B00D7]/20 rounded-full opacity-0 group-hover:opacity-100 blur-xl transition-opacity duration-700"></div>
+                    <div className="relative h-full w-full flex items-center justify-center">
+                      <div className="p-4 bg-[#0A0A0A] rounded-full border border-[#1A1A1A] group-hover:border-[#FF5AF7]/30 transition-colors duration-500 shadow-lg">
+                        <i className="ri-bit-coin-line text-4xl text-white group-hover:text-[#FF5AF7] transition-colors duration-500 animate-pulse-slow animation-delay-1000"></i>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <p className="text-center text-gray-400 group-hover:text-white transition-colors duration-500 mt-4 text-sm">Bitcoin Alliance</p>
+              </div>
+              
+              {/* Partner 3 */}
+              <div className="group">
+                <div className="relative perspective-1000 flex items-center justify-center h-24">
+                  <div className="absolute inset-0 bg-gradient-to-r from-[#6B00D7]/0 to-[#FF5AF7]/0 group-hover:from-[#6B00D7]/5 group-hover:to-[#FF5AF7]/5 rounded-xl transform-style-3d group-hover:rotateY-15 transition-all duration-700"></div>
+                  <div className="relative w-20 h-20 transform transition-transform duration-500 group-hover:scale-110">
+                    <div className="absolute inset-0 bg-gradient-to-br from-[#6B00D7]/20 to-[#FF5AF7]/20 rounded-full opacity-0 group-hover:opacity-100 blur-xl transition-opacity duration-700"></div>
+                    <div className="relative h-full w-full flex items-center justify-center">
+                      <div className="p-4 bg-[#0A0A0A] rounded-full border border-[#1A1A1A] group-hover:border-[#6B00D7]/30 transition-colors duration-500 shadow-lg">
+                        <i className="ri-currency-line text-4xl text-white group-hover:text-[#6B00D7] transition-colors duration-500 animate-pulse-slow animation-delay-2000"></i>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <p className="text-center text-gray-400 group-hover:text-white transition-colors duration-500 mt-4 text-sm">TON Ecosystem</p>
+              </div>
+              
+              {/* Partner 4 */}
+              <div className="group">
+                <div className="relative perspective-1000 flex items-center justify-center h-24">
+                  <div className="absolute inset-0 bg-gradient-to-r from-[#FF5AF7]/0 to-[#6B00D7]/0 group-hover:from-[#FF5AF7]/5 group-hover:to-[#6B00D7]/5 rounded-xl transform-style-3d group-hover:rotateY-15 transition-all duration-700"></div>
+                  <div className="relative w-20 h-20 transform transition-transform duration-500 group-hover:scale-110">
+                    <div className="absolute inset-0 bg-gradient-to-br from-[#FF5AF7]/20 to-[#6B00D7]/20 rounded-full opacity-0 group-hover:opacity-100 blur-xl transition-opacity duration-700"></div>
+                    <div className="relative h-full w-full flex items-center justify-center">
+                      <div className="p-4 bg-[#0A0A0A] rounded-full border border-[#1A1A1A] group-hover:border-[#FF5AF7]/30 transition-colors duration-500 shadow-lg">
+                        <i className="ri-copper-coin-line text-4xl text-white group-hover:text-[#FF5AF7] transition-colors duration-500 animate-pulse-slow animation-delay-3000"></i>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <p className="text-center text-gray-400 group-hover:text-white transition-colors duration-500 mt-4 text-sm">Solana Foundation</p>
+              </div>
+            </div>
+          </div>
+        </section>
+        
         {/* Premium Vault Showcase */}
         <section className="py-20 bg-gradient-to-b from-[#0A0A0A] to-[#080808] relative overflow-hidden">
           {/* Background decorative elements */}
