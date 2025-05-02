@@ -726,10 +726,13 @@ function SpecializedVaultCreation() {
   );
 };
 
-export default function SpecializedVaultCreationPage() {
+// This is a wrapper component to handle any Replit metadata props
+function SpecializedVaultCreationPage() {
   return (
-    <div>
+    <div className="specialized-vault-creation-wrapper">
       <SpecializedVaultCreation />
     </div>
   );
 }
+
+export default SpecializedVaultCreationPage;
