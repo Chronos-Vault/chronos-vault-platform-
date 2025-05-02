@@ -10,7 +10,8 @@ export enum SpecializedVaultType {
   CROSS_CHAIN = "cross-chain",
   SMART_CONTRACT = "smart-contract",
   DYNAMIC = "dynamic",
-  NFT_POWERED = "nft-powered"
+  NFT_POWERED = "nft-powered",
+  UNIQUE = "unique"
 }
 
 interface VaultTypeOption {
@@ -25,6 +26,16 @@ interface VaultTypeOption {
 }
 
 const vaultTypeOptions: VaultTypeOption[] = [
+  {
+    type: SpecializedVaultType.UNIQUE,
+    title: "Unique Security Vault",
+    description: "Employs advanced algorithms and biometric safeguards",
+    icon: "ri-shield-lock-line",
+    color: "#fca103",
+    security: 5,
+    complexity: 5,
+    features: ["Multi-Layered Security", "Adaptive Access Controls", "User-Controlled Privacy"]
+  },
   {
     type: SpecializedVaultType.STANDARD,
     title: "Standard Vault",

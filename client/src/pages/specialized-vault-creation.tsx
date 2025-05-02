@@ -171,6 +171,10 @@ function SpecializedVaultCreation() {
         specializedConfig.unlockDate = unlockDateObj.toISOString();
       } else if (selectedVaultType === SpecializedVaultType.BIOMETRIC) {
         specializedConfig.biometricRequired = true;
+      } else if (selectedVaultType === SpecializedVaultType.UNIQUE) {
+        specializedConfig.multiLayeredSecurity = true;
+        specializedConfig.adaptiveAccessControls = true;
+        specializedConfig.userControlledPrivacy = true;
       }
       
       // Create blockchain-specific configuration
@@ -380,6 +384,46 @@ function SpecializedVaultCreation() {
                     <h4 className="text-white font-medium">Biometric Setup Required</h4>
                     <p className="text-xs text-gray-400">Biometric verification will be configured during the final setup stage</p>
                   </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        );
+        
+      case SpecializedVaultType.UNIQUE:
+        return (
+          <div className="space-y-4 mt-6 p-4 border border-[#fca103]/30 rounded-lg bg-gray-900/50">
+            <h3 className="text-[#fca103] font-medium">Unique Security Configuration</h3>
+            <div className="space-y-4">
+              <div className="bg-black/20 p-4 rounded-lg">
+                <div className="flex items-center">
+                  <div className="bg-[#fca103]/20 p-3 rounded-full mr-3">
+                    <i className="ri-shield-lock-line text-[#fca103] text-xl"></i>
+                  </div>
+                  <div>
+                    <h4 className="text-white font-medium">Advanced Security Features</h4>
+                    <p className="text-xs text-gray-400">This vault utilizes multiple layers of security protection</p>
+                  </div>
+                </div>
+              </div>
+              <div className="space-y-2">
+                <div className="flex items-center p-2 bg-black/20 rounded-md">
+                  <div className="h-4 w-4 bg-[#fca103]/20 flex items-center justify-center rounded mr-2">
+                    <i className="ri-check-line text-[#fca103] text-xs"></i>
+                  </div>
+                  <span className="text-sm text-gray-300">Multi-Layered Security</span>
+                </div>
+                <div className="flex items-center p-2 bg-black/20 rounded-md">
+                  <div className="h-4 w-4 bg-[#fca103]/20 flex items-center justify-center rounded mr-2">
+                    <i className="ri-check-line text-[#fca103] text-xs"></i>
+                  </div>
+                  <span className="text-sm text-gray-300">Adaptive Access Controls</span>
+                </div>
+                <div className="flex items-center p-2 bg-black/20 rounded-md">
+                  <div className="h-4 w-4 bg-[#fca103]/20 flex items-center justify-center rounded mr-2">
+                    <i className="ri-check-line text-[#fca103] text-xs"></i>
+                  </div>
+                  <span className="text-sm text-gray-300">User-Controlled Privacy</span>
                 </div>
               </div>
             </div>
