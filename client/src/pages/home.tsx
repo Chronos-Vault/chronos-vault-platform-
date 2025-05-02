@@ -1011,129 +1011,197 @@ const Home = () => {
               
               <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                 {/* Ethereum Vaults */}
-                <div className="bg-[#1A1A1A] border border-[#6B00D7]/20 rounded-xl p-6 relative overflow-hidden group hover:border-[#6B00D7]/40 transition-all">
-                  <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] opacity-70"></div>
-                  <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-br from-[#6B00D7]/20 to-transparent rounded-bl-full opacity-30"></div>
+                <div className="bg-gradient-to-br from-[#141414] to-[#1D1D1D] border border-[#6B00D7]/30 rounded-xl p-0 relative overflow-hidden group hover:shadow-xl hover:shadow-[#6B00D7]/20 transition-all hover:scale-[1.02]">
+                  <div className="absolute top-0 left-0 w-full h-1.5 bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7]"></div>
+                  <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-[#6B00D7]/10 to-transparent rounded-bl-full"></div>
+                  <div className="absolute bottom-0 left-0 w-40 h-40 bg-gradient-to-tr from-[#6B00D7]/5 to-transparent rounded-tr-full"></div>
                   
-                  <div className="h-14 w-14 rounded-full bg-[#242424] border border-[#6B00D7]/30 flex items-center justify-center mb-5 group-hover:scale-105 transition-transform">
-                    <span className="text-2xl text-[#FF5AF7]">Ξ</span>
+                  <div className="p-6">
+                    <div className="h-16 w-16 rounded-full bg-gradient-to-br from-[#2A2A2A] to-[#1A1A1A] border border-[#6B00D7]/60 flex items-center justify-center mb-5 group-hover:scale-110 transition-transform shadow-lg shadow-[#6B00D7]/10">
+                      <span className="text-2xl font-bold bg-gradient-to-br from-[#FF5AF7] to-[#6B00D7] text-transparent bg-clip-text">Ξ</span>
+                    </div>
+                    
+                    <h3 className="text-xl font-semibold text-white mb-3 group-hover:text-[#FF5AF7] transition-colors">Ethereum Vaults</h3>
+                    <p className="text-gray-300 mb-5">Create advanced Ethereum-based vaults with multi-signature capabilities and smart contract automation</p>
+                    
+                    <div className="space-y-3 mb-6">
+                      <div className="flex items-start gap-3 p-2 rounded-lg bg-[#1A1A1A]/80 border border-[#6B00D7]/10 group-hover:border-[#6B00D7]/30 transition-colors">
+                        <div className="h-5 w-5 rounded-full bg-[#6B00D7]/20 flex items-center justify-center flex-shrink-0 mt-0.5">
+                          <i className="ri-checkbox-circle-fill text-xs text-[#FF5AF7]"></i>
+                        </div>
+                        <div>
+                          <span className="text-[#FF5AF7] font-medium">Basic Vault</span>
+                          <p className="text-xs text-gray-400">50 CVT - Standard features</p>
+                        </div>
+                      </div>
+                      
+                      <div className="flex items-start gap-3 p-2 rounded-lg bg-[#1A1A1A]/80 border border-[#6B00D7]/10 group-hover:border-[#6B00D7]/30 transition-colors">
+                        <div className="h-5 w-5 rounded-full bg-[#6B00D7]/20 flex items-center justify-center flex-shrink-0 mt-0.5">
+                          <i className="ri-checkbox-circle-fill text-xs text-[#FF5AF7]"></i>
+                        </div>
+                        <div>
+                          <span className="text-[#FF5AF7] font-medium">Enhanced Vault</span>
+                          <p className="text-xs text-gray-400">100 CVT - Advanced security</p>
+                        </div>
+                      </div>
+                      
+                      <div className="flex items-start gap-3 p-2 rounded-lg bg-[#1A1A1A]/80 border border-[#6B00D7]/10 group-hover:border-[#6B00D7]/30 transition-colors">
+                        <div className="h-5 w-5 rounded-full bg-[#6B00D7]/20 flex items-center justify-center flex-shrink-0 mt-0.5">
+                          <i className="ri-checkbox-circle-fill text-xs text-[#FF5AF7]"></i>
+                        </div>
+                        <div>
+                          <span className="text-[#FF5AF7] font-medium">Premium Vault</span>
+                          <p className="text-xs text-gray-400">250 CVT - Enterprise grade</p>
+                        </div>
+                      </div>
+                    </div>
+                    
+                    <Button 
+                      className="w-full bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] hover:opacity-90 text-white font-medium shadow-md hover:shadow-lg hover:shadow-[#6B00D7]/20 transition-all"
+                      onClick={() => setLocation("/cvt-utility?chain=ethereum")}
+                    >
+                      Explore Ethereum Features
+                      <i className="ri-arrow-right-line ml-2"></i>
+                    </Button>
                   </div>
-                  
-                  <h3 className="text-xl font-semibold text-white mb-3 group-hover:text-[#FF5AF7] transition-colors">Ethereum Vaults</h3>
-                  <p className="text-gray-300 mb-5">Create advanced Ethereum-based vaults with multi-signature capabilities and smart contract automation</p>
-                  
-                  <ul className="space-y-2 mb-6">
-                    <li className="flex items-start gap-2">
-                      <i className="ri-checkbox-circle-line text-[#FF5AF7] mt-1"></i>
-                      <span className="text-gray-300">50 CVT - Basic Ethereum vaults</span>
-                    </li>
-                    <li className="flex items-start gap-2">
-                      <i className="ri-checkbox-circle-line text-[#FF5AF7] mt-1"></i>
-                      <span className="text-gray-300">100 CVT - Advanced features</span>
-                    </li>
-                    <li className="flex items-start gap-2">
-                      <i className="ri-checkbox-circle-line text-[#FF5AF7] mt-1"></i>
-                      <span className="text-gray-300">250 CVT - Premium integration</span>
-                    </li>
-                  </ul>
-                  
-                  <Button 
-                    className="w-full bg-[#242424] hover:bg-[#2a2a2a] text-white border border-[#6B00D7]/30"
-                    onClick={() => setLocation("/cvt-utility?chain=ethereum")}
-                  >
-                    Explore Ethereum Features
-                    <i className="ri-arrow-right-line ml-2"></i>
-                  </Button>
                 </div>
                 
                 {/* Solana Vaults */}
-                <div className="bg-[#1A1A1A] border border-[#6B00D7]/20 rounded-xl p-6 relative overflow-hidden group hover:border-[#6B00D7]/40 transition-all">
-                  <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] opacity-70"></div>
-                  <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-br from-[#6B00D7]/20 to-transparent rounded-bl-full opacity-30"></div>
+                <div className="bg-gradient-to-br from-[#141414] to-[#1D1D1D] border border-[#6B00D7]/30 rounded-xl p-0 relative overflow-hidden group hover:shadow-xl hover:shadow-[#6B00D7]/20 transition-all hover:scale-[1.02]">
+                  <div className="absolute top-0 left-0 w-full h-1.5 bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7]"></div>
+                  <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-[#6B00D7]/10 to-transparent rounded-bl-full"></div>
+                  <div className="absolute bottom-0 left-0 w-40 h-40 bg-gradient-to-tr from-[#6B00D7]/5 to-transparent rounded-tr-full"></div>
                   
-                  <div className="h-14 w-14 rounded-full bg-[#242424] border border-[#6B00D7]/30 flex items-center justify-center mb-5 group-hover:scale-105 transition-transform">
-                    <span className="text-2xl text-[#FF5AF7]">◎</span>
+                  <div className="p-6">
+                    <div className="h-16 w-16 rounded-full bg-gradient-to-br from-[#2A2A2A] to-[#1A1A1A] border border-[#6B00D7]/60 flex items-center justify-center mb-5 group-hover:scale-110 transition-transform shadow-lg shadow-[#6B00D7]/10">
+                      <span className="text-2xl font-bold bg-gradient-to-br from-[#FF5AF7] to-[#6B00D7] text-transparent bg-clip-text">◎</span>
+                    </div>
+                    
+                    <h3 className="text-xl font-semibold text-white mb-3 group-hover:text-[#FF5AF7] transition-colors">Solana Vaults</h3>
+                    <p className="text-gray-300 mb-5">Create high-performance Solana-based vaults with ultra-fast transaction speeds and lower fees</p>
+                    
+                    <div className="space-y-3 mb-6">
+                      <div className="flex items-start gap-3 p-2 rounded-lg bg-[#1A1A1A]/80 border border-[#6B00D7]/10 group-hover:border-[#6B00D7]/30 transition-colors">
+                        <div className="h-5 w-5 rounded-full bg-[#6B00D7]/20 flex items-center justify-center flex-shrink-0 mt-0.5">
+                          <i className="ri-checkbox-circle-fill text-xs text-[#FF5AF7]"></i>
+                        </div>
+                        <div>
+                          <span className="text-[#FF5AF7] font-medium">Basic Vault</span>
+                          <p className="text-xs text-gray-400">40 CVT - Standard features</p>
+                        </div>
+                      </div>
+                      
+                      <div className="flex items-start gap-3 p-2 rounded-lg bg-[#1A1A1A]/80 border border-[#6B00D7]/10 group-hover:border-[#6B00D7]/30 transition-colors">
+                        <div className="h-5 w-5 rounded-full bg-[#6B00D7]/20 flex items-center justify-center flex-shrink-0 mt-0.5">
+                          <i className="ri-checkbox-circle-fill text-xs text-[#FF5AF7]"></i>
+                        </div>
+                        <div>
+                          <span className="text-[#FF5AF7] font-medium">Enhanced Vault</span>
+                          <p className="text-xs text-gray-400">80 CVT - Advanced security</p>
+                        </div>
+                      </div>
+                      
+                      <div className="flex items-start gap-3 p-2 rounded-lg bg-[#1A1A1A]/80 border border-[#6B00D7]/10 group-hover:border-[#6B00D7]/30 transition-colors">
+                        <div className="h-5 w-5 rounded-full bg-[#6B00D7]/20 flex items-center justify-center flex-shrink-0 mt-0.5">
+                          <i className="ri-checkbox-circle-fill text-xs text-[#FF5AF7]"></i>
+                        </div>
+                        <div>
+                          <span className="text-[#FF5AF7] font-medium">Premium Vault</span>
+                          <p className="text-xs text-gray-400">200 CVT - Enterprise grade</p>
+                        </div>
+                      </div>
+                    </div>
+                    
+                    <Button 
+                      className="w-full bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] hover:opacity-90 text-white font-medium shadow-md hover:shadow-lg hover:shadow-[#6B00D7]/20 transition-all"
+                      onClick={() => setLocation("/cvt-utility?chain=solana")}
+                    >
+                      Explore Solana Features
+                      <i className="ri-arrow-right-line ml-2"></i>
+                    </Button>
                   </div>
-                  
-                  <h3 className="text-xl font-semibold text-white mb-3 group-hover:text-[#FF5AF7] transition-colors">Solana Vaults</h3>
-                  <p className="text-gray-300 mb-5">Create high-performance Solana-based vaults with ultra-fast transaction speeds and lower fees</p>
-                  
-                  <ul className="space-y-2 mb-6">
-                    <li className="flex items-start gap-2">
-                      <i className="ri-checkbox-circle-line text-[#FF5AF7] mt-1"></i>
-                      <span className="text-gray-300">40 CVT - Basic Solana vaults</span>
-                    </li>
-                    <li className="flex items-start gap-2">
-                      <i className="ri-checkbox-circle-line text-[#FF5AF7] mt-1"></i>
-                      <span className="text-gray-300">80 CVT - Advanced features</span>
-                    </li>
-                    <li className="flex items-start gap-2">
-                      <i className="ri-checkbox-circle-line text-[#FF5AF7] mt-1"></i>
-                      <span className="text-gray-300">200 CVT - Premium integration</span>
-                    </li>
-                  </ul>
-                  
-                  <Button 
-                    className="w-full bg-[#242424] hover:bg-[#2a2a2a] text-white border border-[#6B00D7]/30"
-                    onClick={() => setLocation("/cvt-utility?chain=solana")}
-                  >
-                    Explore Solana Features
-                    <i className="ri-arrow-right-line ml-2"></i>
-                  </Button>
                 </div>
                 
                 {/* TON Vaults */}
-                <div className="bg-[#1A1A1A] border border-[#6B00D7]/20 rounded-xl p-6 relative overflow-hidden group hover:border-[#6B00D7]/40 transition-all">
-                  <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] opacity-70"></div>
-                  <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-br from-[#6B00D7]/20 to-transparent rounded-bl-full opacity-30"></div>
+                <div className="bg-gradient-to-br from-[#141414] to-[#1D1D1D] border border-[#6B00D7]/30 rounded-xl p-0 relative overflow-hidden group hover:shadow-xl hover:shadow-[#6B00D7]/20 transition-all hover:scale-[1.02]">
+                  <div className="absolute top-0 left-0 w-full h-1.5 bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7]"></div>
+                  <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-[#6B00D7]/10 to-transparent rounded-bl-full"></div>
+                  <div className="absolute bottom-0 left-0 w-40 h-40 bg-gradient-to-tr from-[#6B00D7]/5 to-transparent rounded-tr-full"></div>
                   
-                  <div className="h-14 w-14 rounded-full bg-[#242424] border border-[#6B00D7]/30 flex items-center justify-center mb-5 group-hover:scale-105 transition-transform">
-                    <span className="text-2xl text-[#FF5AF7]">💎</span>
+                  <div className="p-6">
+                    <div className="h-16 w-16 rounded-full bg-gradient-to-br from-[#2A2A2A] to-[#1A1A1A] border border-[#6B00D7]/60 flex items-center justify-center mb-5 group-hover:scale-110 transition-transform shadow-lg shadow-[#6B00D7]/10">
+                      <span className="text-2xl font-bold bg-gradient-to-br from-[#FF5AF7] to-[#6B00D7] text-transparent bg-clip-text">💎</span>
+                    </div>
+                    
+                    <h3 className="text-xl font-semibold text-white mb-3 group-hover:text-[#FF5AF7] transition-colors">TON Vaults</h3>
+                    <p className="text-gray-300 mb-5">Create TON-based vaults with ultra-secure storage and lightning-fast transaction processing</p>
+                    
+                    <div className="space-y-3 mb-6">
+                      <div className="flex items-start gap-3 p-2 rounded-lg bg-[#1A1A1A]/80 border border-[#6B00D7]/10 group-hover:border-[#6B00D7]/30 transition-colors">
+                        <div className="h-5 w-5 rounded-full bg-[#6B00D7]/20 flex items-center justify-center flex-shrink-0 mt-0.5">
+                          <i className="ri-checkbox-circle-fill text-xs text-[#FF5AF7]"></i>
+                        </div>
+                        <div>
+                          <span className="text-[#FF5AF7] font-medium">Basic Vault</span>
+                          <p className="text-xs text-gray-400">30 CVT - Standard features</p>
+                        </div>
+                      </div>
+                      
+                      <div className="flex items-start gap-3 p-2 rounded-lg bg-[#1A1A1A]/80 border border-[#6B00D7]/10 group-hover:border-[#6B00D7]/30 transition-colors">
+                        <div className="h-5 w-5 rounded-full bg-[#6B00D7]/20 flex items-center justify-center flex-shrink-0 mt-0.5">
+                          <i className="ri-checkbox-circle-fill text-xs text-[#FF5AF7]"></i>
+                        </div>
+                        <div>
+                          <span className="text-[#FF5AF7] font-medium">Enhanced Vault</span>
+                          <p className="text-xs text-gray-400">60 CVT - Advanced security</p>
+                        </div>
+                      </div>
+                      
+                      <div className="flex items-start gap-3 p-2 rounded-lg bg-[#1A1A1A]/80 border border-[#6B00D7]/10 group-hover:border-[#6B00D7]/30 transition-colors">
+                        <div className="h-5 w-5 rounded-full bg-[#6B00D7]/20 flex items-center justify-center flex-shrink-0 mt-0.5">
+                          <i className="ri-checkbox-circle-fill text-xs text-[#FF5AF7]"></i>
+                        </div>
+                        <div>
+                          <span className="text-[#FF5AF7] font-medium">Premium Vault</span>
+                          <p className="text-xs text-gray-400">150 CVT - Enterprise grade</p>
+                        </div>
+                      </div>
+                    </div>
+                    
+                    <Button 
+                      className="w-full bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] hover:opacity-90 text-white font-medium shadow-md hover:shadow-lg hover:shadow-[#6B00D7]/20 transition-all"
+                      onClick={() => setLocation("/cvt-utility?chain=ton")}
+                    >
+                      Explore TON Features
+                      <i className="ri-arrow-right-line ml-2"></i>
+                    </Button>
                   </div>
-                  
-                  <h3 className="text-xl font-semibold text-white mb-3 group-hover:text-[#FF5AF7] transition-colors">TON Vaults</h3>
-                  <p className="text-gray-300 mb-5">Create TON-based vaults with ultra-secure storage and lightning-fast transaction processing</p>
-                  
-                  <ul className="space-y-2 mb-6">
-                    <li className="flex items-start gap-2">
-                      <i className="ri-checkbox-circle-line text-[#FF5AF7] mt-1"></i>
-                      <span className="text-gray-300">30 CVT - Basic TON vaults</span>
-                    </li>
-                    <li className="flex items-start gap-2">
-                      <i className="ri-checkbox-circle-line text-[#FF5AF7] mt-1"></i>
-                      <span className="text-gray-300">60 CVT - Advanced features</span>
-                    </li>
-                    <li className="flex items-start gap-2">
-                      <i className="ri-checkbox-circle-line text-[#FF5AF7] mt-1"></i>
-                      <span className="text-gray-300">150 CVT - Premium integration</span>
-                    </li>
-                  </ul>
-                  
-                  <Button 
-                    className="w-full bg-[#242424] hover:bg-[#2a2a2a] text-white border border-[#6B00D7]/30"
-                    onClick={() => setLocation("/cvt-utility?chain=ton")}
-                  >
-                    Explore TON Features
-                    <i className="ri-arrow-right-line ml-2"></i>
-                  </Button>
                 </div>
               </div>
               
               <div className="mt-10 text-center">
                 <Link 
                   to="/cvt-utility"
-                  className="inline-flex items-center justify-center px-6 py-3 bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] text-white font-semibold rounded-lg hover:shadow-lg hover:shadow-[#6B00D7]/30 transition-all gap-2"
+                  className="inline-flex items-center justify-center px-8 py-4 bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] text-white font-semibold rounded-xl hover:shadow-lg hover:shadow-[#6B00D7]/30 transition-all gap-2 relative overflow-hidden group"
                 >
-                  <i className="ri-wallet-3-line"></i>
-                  View Complete CVT Utility
+                  <span className="absolute inset-0 w-full h-full bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] opacity-0 group-hover:opacity-100 transition-opacity duration-300 blur-xl"></span>
+                  <span className="relative z-10 flex items-center">
+                    <i className="ri-wallet-3-line mr-2 text-lg"></i>
+                    View Complete CVT Utility
+                  </span>
                 </Link>
               </div>
             </div>
             
             {/* CTA Button */}
-            <div className="mt-12 flex justify-center">
-              <Link to="/create-vault" className="px-8 py-4 bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] text-white font-semibold rounded-lg hover:opacity-90 transition-opacity shadow-lg shadow-[#6B00D7]/20 flex items-center gap-2">
-                <i className="ri-add-circle-line"></i> Create Your Vault Now
+            <div className="mt-16 flex justify-center">
+              <Link 
+                to="/create-vault" 
+                className="px-10 py-5 bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] hover:from-[#5500AB] hover:to-[#FF46E8] text-white text-xl font-semibold rounded-2xl shadow-xl shadow-[#6B00D7]/20 hover:shadow-2xl hover:shadow-[#FF5AF7]/30 flex items-center gap-3 transition-all duration-300 relative overflow-hidden group"
+              >
+                <span className="absolute inset-0 w-full h-full bg-white opacity-0 group-hover:opacity-10 transition-opacity duration-300"></span>
+                <i className="ri-add-circle-line text-2xl"></i> 
+                <span>Create Your Vault Now</span>
               </Link>
             </div>
           </div>
