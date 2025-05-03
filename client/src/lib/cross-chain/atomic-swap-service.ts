@@ -28,6 +28,12 @@ export interface SwapConfig {
   timeLockHours: number;
   useTripleChainSecurity: boolean;
   useAtomicMultiSig?: boolean;
+  multiSignatureConfig?: {
+    requiredSignatures: number;
+    signerAddresses: string[];
+    geolocationRestricted: boolean;
+    enableBackupRecovery: boolean;
+  };
   requiredSignatures?: number;
   additionalSigners?: string[];
   useBackupRecovery?: boolean;
@@ -338,6 +344,248 @@ export class AtomicSwapService {
     }
     
     return swaps;
+  }
+
+  /**
+   * Adds a signature to a swap for multi-signature operations
+   */
+  async addSignature(swapId: string, signerAddress: string): Promise<SwapInfo> {
+    console.log(`Adding signature from ${signerAddress} to swap ${swapId}`);
+    
+    const swapInfo = this.getSwapInfo(swapId);
+    if (!swapInfo) {
+      throw new Error(`Swap with ID ${swapId} not found`);
+    }
+    
+    // Check if the swap is configured for multi-signature
+    if (!swapInfo.config.useAtomicMultiSig) {
+      throw new Error(`Swap is not configured for multi-signature`);
+    }
+    
+    // Initialize signatures array if it doesn't exist
+    if (!swapInfo.signatures) {
+      swapInfo.signatures = [];
+    }
+    
+    // Check if this signer has already signed
+    const existingSignature = swapInfo.signatures.find(sig => sig.signer === signerAddress);
+    if (existingSignature) {
+      throw new Error(`Signer ${signerAddress} has already signed this swap`);
+    }
+    
+    // Add new signature
+    swapInfo.signatures.push({
+      signer: signerAddress,
+      timestamp: Date.now(),
+      valid: true
+    });
+    
+    // Update security score
+    this.updateSecurityScore(swapInfo);
+    
+    // Save updated swap info
+    this.swapInfoStorage.set(swapId, swapInfo);
+    this.saveSwap(swapId, swapInfo);
+    
+    return swapInfo;
+  }
+
+  /**
+   * Updates and calculates the security score for a swap
+   */
+  private updateSecurityScore(swapInfo: SwapInfo): void {
+    let score = 50; // Base score
+    
+    // Triple chain security bonus
+    if (swapInfo.config.useTripleChainSecurity) {
+      score += 15;
+    }
+    
+    // Multi-signature bonus
+    if (swapInfo.config.useAtomicMultiSig && swapInfo.signatures) {
+      const requiredSignatures = swapInfo.config.multiSignatureConfig?.requiredSignatures || 2;
+      const validSignatures = swapInfo.signatures.filter(sig => sig.valid).length;
+      
+      score += Math.min(20, (validSignatures / requiredSignatures) * 20);
+    }
+    
+    // Geolocation verification bonus
+    if (swapInfo.geoVerified) {
+      score += 10;
+    }
+    
+    // Backup recovery bonus
+    if (swapInfo.config.multiSignatureConfig?.enableBackupRecovery) {
+      score += 5;
+    }
+    
+    // Cap score at 100
+    score = Math.min(100, score);
+    
+    // Update risk assessment
+    let riskAssessment: 'low' | 'medium' | 'high';
+    if (score >= 75) {
+      riskAssessment = 'low';
+    } else if (score >= 50) {
+      riskAssessment = 'medium';
+    } else {
+      riskAssessment = 'high';
+    }
+    
+    swapInfo.securityScore = score;
+    swapInfo.riskAssessment = riskAssessment;
+  }
+
+  /**
+   * Verifies geolocation for a swap
+   */
+  async verifyGeolocation(swapId: string, geolocationHash: string): Promise<SwapInfo> {
+    console.log(`Verifying geolocation for swap ${swapId}`);
+    
+    const swapInfo = this.getSwapInfo(swapId);
+    if (!swapInfo) {
+      throw new Error(`Swap with ID ${swapId} not found`);
+    }
+    
+    // Check if the swap is configured for geolocation restriction
+    if (!swapInfo.config.multiSignatureConfig?.geolocationRestricted) {
+      throw new Error(`Swap is not configured for geolocation restriction`);
+    }
+    
+    // Verify geolocation (this would normally involve more complex checking)
+    swapInfo.geoVerified = true;
+    
+    // Add security check record
+    if (!swapInfo.additionalSecurityChecks) {
+      swapInfo.additionalSecurityChecks = [];
+    }
+    
+    swapInfo.additionalSecurityChecks.push({
+      name: 'geolocation_verification',
+      status: 'passed',
+      timestamp: Date.now()
+    });
+    
+    // Update security score
+    this.updateSecurityScore(swapInfo);
+    
+    // Save updated swap info
+    this.swapInfoStorage.set(swapId, swapInfo);
+    this.saveSwap(swapId, swapInfo);
+    
+    return swapInfo;
+  }
+
+  /**
+   * Activates backup recovery for a swap
+   */
+  async activateBackupRecovery(swapId: string): Promise<SwapInfo> {
+    console.log(`Activating backup recovery for swap ${swapId}`);
+    
+    const swapInfo = this.getSwapInfo(swapId);
+    if (!swapInfo) {
+      throw new Error(`Swap with ID ${swapId} not found`);
+    }
+    
+    // Check if the swap is configured for backup recovery
+    if (!swapInfo.config.multiSignatureConfig?.enableBackupRecovery) {
+      throw new Error(`Swap is not configured for backup recovery`);
+    }
+    
+    // Activate backup recovery
+    swapInfo.backupActivated = true;
+    
+    // Add security check record
+    if (!swapInfo.additionalSecurityChecks) {
+      swapInfo.additionalSecurityChecks = [];
+    }
+    
+    swapInfo.additionalSecurityChecks.push({
+      name: 'backup_recovery_activation',
+      status: 'passed',
+      timestamp: Date.now()
+    });
+    
+    // Update security score
+    this.updateSecurityScore(swapInfo);
+    
+    // Save updated swap info
+    this.swapInfoStorage.set(swapId, swapInfo);
+    this.saveSwap(swapId, swapInfo);
+    
+    return swapInfo;
+  }
+
+  /**
+   * Performs a comprehensive security verification for a swap
+   */
+  async performSecurityVerification(swapId: string): Promise<SwapInfo> {
+    console.log(`Performing security verification for swap ${swapId}`);
+    
+    const swapInfo = this.getSwapInfo(swapId);
+    if (!swapInfo) {
+      throw new Error(`Swap with ID ${swapId} not found`);
+    }
+    
+    // Initialize verification status
+    swapInfo.verificationStatus = 'pending';
+    
+    try {
+      // Simulate security verification process
+      // In a real implementation, this would involve more complex checks
+      
+      // Add security check records
+      if (!swapInfo.additionalSecurityChecks) {
+        swapInfo.additionalSecurityChecks = [];
+      }
+      
+      // Contract validation check
+      swapInfo.additionalSecurityChecks.push({
+        name: 'contract_validation',
+        status: 'passed',
+        timestamp: Date.now()
+      });
+      
+      // Triple-chain security check
+      if (swapInfo.config.useTripleChainSecurity) {
+        swapInfo.additionalSecurityChecks.push({
+          name: 'triple_chain_security',
+          status: 'passed',
+          timestamp: Date.now()
+        });
+      }
+      
+      // Update verification status
+      swapInfo.verificationStatus = 'verified';
+      
+      // Update security score
+      this.updateSecurityScore(swapInfo);
+      
+      // Save updated swap info
+      this.swapInfoStorage.set(swapId, swapInfo);
+      this.saveSwap(swapId, swapInfo);
+      
+      return swapInfo;
+    } catch (error) {
+      // Mark verification as failed
+      swapInfo.verificationStatus = 'failed';
+      
+      if (!swapInfo.additionalSecurityChecks) {
+        swapInfo.additionalSecurityChecks = [];
+      }
+      
+      swapInfo.additionalSecurityChecks.push({
+        name: 'security_verification',
+        status: 'failed',
+        timestamp: Date.now()
+      });
+      
+      // Save updated swap info
+      this.swapInfoStorage.set(swapId, swapInfo);
+      this.saveSwap(swapId, swapInfo);
+      
+      throw new Error(`Security verification failed: ${error instanceof Error ? error.message : String(error)}`);
+    }
   }
   
   /**

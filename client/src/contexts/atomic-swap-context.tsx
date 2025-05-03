@@ -11,6 +11,8 @@ import { useEthereum } from "./ethereum-context";
 import { useSolana } from "./solana-context";
 import { useTon } from "./ton-context";
 import { useToast } from "@/hooks/use-toast";
+import { multiSignatureHandler, MultiSigRequest } from "@/lib/cross-chain/multi-signature-handler";
+import { geoVerificationService, GeoVerificationRecord } from "@/lib/cross-chain/geo-verification-service";
 
 interface AtomicSwapContextType {
   atomicSwapService: AtomicSwapService | null;
@@ -24,6 +26,22 @@ interface AtomicSwapContextType {
   completeSwap: (swapId: string) => Promise<SwapInfo>;
   refundSwap: (swapId: string, contractType: 'source' | 'destination') => Promise<SwapInfo>;
   refreshUserSwaps: () => void;
+  // Security features
+  addSignature: (swapId: string, signerAddress: string) => Promise<SwapInfo>;
+  verifyGeolocation: (swapId: string, geolocationHash: string) => Promise<SwapInfo>;
+  activateBackupRecovery: (swapId: string) => Promise<SwapInfo>;
+  updateSecurityScore: (swapId: string) => Promise<SwapInfo>;
+  performSecurityVerification: (swapId: string) => Promise<SwapInfo>;
+  // MultiSig features
+  createSignatureRequest: (swapId: string, requiredSignatures: number, signerAddresses: string[], sourceChain: BlockchainType, destinationChain: BlockchainType, actionType: 'initiate' | 'participate' | 'claim' | 'refund', initiatorAddress: string) => MultiSigRequest;
+  getSignatureRequests: (swapId: string) => MultiSigRequest[];
+  getPendingSignatureRequests: (signerAddress: string) => MultiSigRequest[];
+  approveSignatureRequest: (requestId: string, signerAddress: string) => MultiSigRequest | null;
+  rejectSignatureRequest: (requestId: string, signerAddress: string) => boolean;
+  // Geolocation features
+  requestGeoVerification: (swapId: string) => Promise<GeoVerificationRecord | null>;
+  verifyGeoLocation: (swapId: string, allowedHashes: string[]) => Promise<boolean>;
+  getGeoVerificationStatus: (swapId: string) => { verified: boolean; record: GeoVerificationRecord | null; };
 }
 
 const AtomicSwapContext = createContext<AtomicSwapContextType | null>(null);
@@ -206,6 +224,146 @@ export const AtomicSwapProvider = ({ children }: { children: ReactNode }) => {
     }
   };
   
+  // Security features implementation
+  const addSignature = async (swapId: string, signerAddress: string): Promise<SwapInfo> => {
+    if (!atomicSwapService) {
+      throw new Error("Atomic swap service not initialized");
+    }
+    
+    try {
+      const swap = await atomicSwapService.addSignature(swapId, signerAddress);
+      refreshUserSwaps();
+      return swap;
+    } catch (error) {
+      console.error("Failed to add signature:", error);
+      toast({
+        title: "Signature Addition Failed",
+        description: error instanceof Error ? error.message : "Unknown error occurred",
+        variant: "destructive",
+      });
+      throw error;
+    }
+  };
+  
+  const verifyGeolocation = async (swapId: string, geolocationHash: string): Promise<SwapInfo> => {
+    if (!atomicSwapService) {
+      throw new Error("Atomic swap service not initialized");
+    }
+    
+    try {
+      const swap = await atomicSwapService.verifyGeolocation(swapId, geolocationHash);
+      refreshUserSwaps();
+      return swap;
+    } catch (error) {
+      console.error("Failed to verify geolocation:", error);
+      toast({
+        title: "Geolocation Verification Failed",
+        description: error instanceof Error ? error.message : "Unknown error occurred",
+        variant: "destructive",
+      });
+      throw error;
+    }
+  };
+  
+  const activateBackupRecovery = async (swapId: string): Promise<SwapInfo> => {
+    if (!atomicSwapService) {
+      throw new Error("Atomic swap service not initialized");
+    }
+    
+    try {
+      const swap = await atomicSwapService.activateBackupRecovery(swapId);
+      refreshUserSwaps();
+      return swap;
+    } catch (error) {
+      console.error("Failed to activate backup recovery:", error);
+      toast({
+        title: "Backup Recovery Activation Failed",
+        description: error instanceof Error ? error.message : "Unknown error occurred",
+        variant: "destructive",
+      });
+      throw error;
+    }
+  };
+  
+  const updateSecurityScore = async (swapId: string): Promise<SwapInfo> => {
+    if (!atomicSwapService) {
+      throw new Error("Atomic swap service not initialized");
+    }
+    
+    const swap = atomicSwapService.getSwapInfo(swapId);
+    if (!swap) {
+      throw new Error("Swap not found");
+    }
+    
+    refreshUserSwaps();
+    return swap;
+  };
+  
+  const performSecurityVerification = async (swapId: string): Promise<SwapInfo> => {
+    if (!atomicSwapService) {
+      throw new Error("Atomic swap service not initialized");
+    }
+    
+    try {
+      const swap = await atomicSwapService.performSecurityVerification(swapId);
+      refreshUserSwaps();
+      return swap;
+    } catch (error) {
+      console.error("Failed to perform security verification:", error);
+      toast({
+        title: "Security Verification Failed",
+        description: error instanceof Error ? error.message : "Unknown error occurred",
+        variant: "destructive",
+      });
+      throw error;
+    }
+  };
+  
+  // MultiSig features implementation
+  const createSignatureRequest = (swapId: string, requiredSignatures: number, signerAddresses: string[], sourceChain: BlockchainType, destinationChain: BlockchainType, actionType: 'initiate' | 'participate' | 'claim' | 'refund', initiatorAddress: string): MultiSigRequest => {
+    return multiSignatureHandler.createSignatureRequest(
+      swapId,
+      requiredSignatures,
+      signerAddresses,
+      sourceChain,
+      destinationChain,
+      actionType,
+      initiatorAddress
+    );
+  };
+  
+  const getSignatureRequests = (swapId: string): MultiSigRequest[] => {
+    return multiSignatureHandler.getRequestsBySwap(swapId);
+  };
+  
+  const getPendingSignatureRequests = (signerAddress: string): MultiSigRequest[] => {
+    return multiSignatureHandler.getPendingRequestsForSigner(signerAddress);
+  };
+  
+  const approveSignatureRequest = (requestId: string, signerAddress: string): MultiSigRequest | null => {
+    return multiSignatureHandler.addSignature(requestId, signerAddress);
+  };
+  
+  const rejectSignatureRequest = (requestId: string, signerAddress: string): boolean => {
+    return multiSignatureHandler.rejectRequest(requestId, signerAddress);
+  };
+  
+  // Geolocation features implementation
+  const requestGeoVerification = async (swapId: string): Promise<GeoVerificationRecord | null> => {
+    return await geoVerificationService.requestVerification(swapId);
+  };
+  
+  const verifyGeoLocation = async (swapId: string, allowedHashes: string[]): Promise<boolean> => {
+    return await geoVerificationService.verifyLocation(swapId, allowedHashes);
+  };
+  
+  const getGeoVerificationStatus = (swapId: string): { verified: boolean; record: GeoVerificationRecord | null; } => {
+    const verified = geoVerificationService.hasValidVerification(swapId);
+    const record = geoVerificationService.getLatestVerification(swapId);
+    
+    return { verified, record };
+  };
+  
   return (
     <AtomicSwapContext.Provider
       value={{
@@ -220,6 +378,22 @@ export const AtomicSwapProvider = ({ children }: { children: ReactNode }) => {
         completeSwap,
         refundSwap,
         refreshUserSwaps,
+        // Security features
+        addSignature,
+        verifyGeolocation,
+        activateBackupRecovery,
+        updateSecurityScore,
+        performSecurityVerification,
+        // MultiSig features
+        createSignatureRequest,
+        getSignatureRequests,
+        getPendingSignatureRequests,
+        approveSignatureRequest,
+        rejectSignatureRequest,
+        // Geolocation features
+        requestGeoVerification,
+        verifyGeoLocation,
+        getGeoVerificationStatus,
       }}
     >
       {children}
