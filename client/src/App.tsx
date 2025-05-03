@@ -95,6 +95,7 @@ function Router() {
         <Route path="/project-whitepaper" component={ProjectWhitepaperPage} />
         <Route path="/privacy-dashboard" component={PrivacyDashboardPage} />
         <Route path="/security-testing" component={SecurityTestingPage} />
+        {/* Development routes hidden from navigation */}
         <Route path="/test-contract" component={TestContractPage} />
         <Route path="/wallet-manager" component={WalletManagerPage} />
         <Route path="/premium-payment/:vaultId?" component={PremiumPaymentPage} />

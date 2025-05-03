@@ -19,19 +19,17 @@ const Header = () => {
 
   // Desktop navigation links (limited set for better UX)
   const desktopNavigationLinks = [
-    { name: "Features", href: "/#features", icon: "✨" },
-    { name: "Revolutionary Features", href: "/revolutionary-features", icon: "🚀" },
+    { name: "Create Vault", href: "/create-vault", icon: "🔐" },
     { name: "My Vaults", href: "/my-vaults", icon: "📊" },
     { name: "Gift Crypto", href: "/gift-crypto", icon: "🎁", highlight: true },
-    { name: "Security Testing", href: "/security-testing", icon: "🔒" },
     { name: "CVT Token", href: "/cvt-token", icon: "🪙" },
-    { name: "CVT Tokenomics", href: "/cvt-tokenomics", icon: "📊" },
-    { name: "Technical Specs", href: "/technical-specification", icon: "🧪" },
+    { name: "Documentation", href: "/documentation", icon: "📄" },
+    { name: "Whitepaper", href: "/project-whitepaper", icon: "📑" },
     { name: "Roadmap", href: "/roadmap", icon: "🗺️" },
     { name: "About", href: "/about", icon: "ℹ️" },
   ];
   
-  // Mobile navigation with categories for the most innovative menu ever
+  // Mobile navigation with categories for user-friendly navigation
   const mobileCategoryMenu = [
     {
       id: "main",
@@ -46,14 +44,14 @@ const Header = () => {
     },
     {
       id: "features",
-      title: "Advanced Features",
+      title: "Platform Features",
       icon: "✨",
       items: [
         { name: "Bitcoin Halving", href: "/bitcoin-halving", icon: "₿" },
         { name: "CVT Token", href: "/cvt-token", icon: "🪙" },
         { name: "Token Vaults", href: "/token-vaults", icon: "⏳" },
         { name: "Cross-Chain Features", href: "/cross-chain", icon: "🔄" },
-        { name: "Security Testing", href: "/security-testing", icon: "🔒" },
+        { name: "Multi-Signature Vault", href: "/multi-signature-vault", icon: "👥" },
       ]
     },
     {
@@ -73,9 +71,9 @@ const Header = () => {
       items: [
         { name: "Documentation", href: "/documentation", icon: "📄" },
         { name: "Technical Specification", href: "/technical-specification", icon: "🧪" },
+        { name: "Project Whitepaper", href: "/project-whitepaper", icon: "📖" },
+        { name: "CVT Whitepaper", href: "/whitepaper", icon: "📔" },
         { name: "CVT Tokenomics", href: "/cvt-tokenomics", icon: "📊" },
-        { name: "How It Works", href: "/about#how-it-works", icon: "⚙️" },
-        { name: "Revolutionary Features", href: "/revolutionary-features", icon: "🚀" },
         { name: "About", href: "/about", icon: "ℹ️" },
         { name: "Roadmap", href: "/roadmap", icon: "🗺️" },
       ]
