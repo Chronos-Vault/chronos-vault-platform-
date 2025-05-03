@@ -38,6 +38,7 @@ import DocumentationPage from "@/pages/documentation";
 import TechnicalSpecificationPage from "@/pages/technical-specification";
 import CVTTokenomicsPage from "@/pages/cvt-tokenomics";
 import WhitepaperPage from "@/pages/whitepaper";
+import ProjectWhitepaperPage from "@/pages/project-whitepaper";
 import PrivacyDashboardPage from "@/pages/privacy-dashboard";
 import SecurityTestingPage from "@/pages/security-testing";
 import NotFound from "@/pages/not-found";
