@@ -884,7 +884,11 @@ export function CreateVaultForm({
                         <Textarea
                           placeholder="Enter a description for your vault"
                           className="resize-none"
-                          {...field}
+                          value={field.value || ''}
+                          onChange={field.onChange}
+                          onBlur={field.onBlur}
+                          name={field.name}
+                          ref={field.ref}
                         />
                       </FormControl>
                       <FormDescription>
@@ -1032,9 +1036,13 @@ export function CreateVaultForm({
                     <h3 className="text-lg font-medium">Add Attachments to Your Vault</h3>
                     <FileUpload
                       vaultId={createdVaultId}
-                      onComplete={handleAttachmentComplete}
-                      onFinish={handleFinishCreation}
+                      onUploadComplete={handleAttachmentComplete}
                     />
+                    <Button 
+                      onClick={handleFinishCreation}
+                      className="mt-4 bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] text-white">
+                      Finish
+                    </Button>
                   </div>
                 ) : (
                   <div className="flex justify-end space-x-4 pt-4">
