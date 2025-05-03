@@ -33,6 +33,16 @@ const CrossChainPage: React.FC = () => {
                 Securely transfer assets across multiple blockchains with industry-leading security and efficiency
               </p>
               
+              <div className="mt-4">
+                <button 
+                  onClick={() => window.location.href = '/cross-chain-vs-atomic-swap'}
+                  className="px-4 py-2 bg-[#8B00D7]/20 hover:bg-[#8B00D7]/30 text-[#FF5AF7] rounded-lg transition-colors text-sm inline-flex items-center"
+                >
+                  <ArrowLeftRight className="mr-2 h-4 w-4" />
+                  Learn the difference between Cross-Chain features and Atomic Swaps
+                </button>
+              </div>
+              
               {/* TON Wallet Status Indicator - to test connection persistence */}
               <div className="max-w-md mx-auto mt-6">
                 <TonWalletStateIndicator />

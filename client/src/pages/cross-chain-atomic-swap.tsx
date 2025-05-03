@@ -434,6 +434,19 @@ const AtomicSwapPage = () => {
                       </p>
                     </div>
                   </div>
+                  
+                  <div className="mt-6 pt-6 border-t border-[#8B00D7]/20">
+                    <p className="text-sm text-gray-400 mb-3">
+                      Want to understand how atomic swaps relate to cross-chain features?
+                    </p>
+                    <Button 
+                      variant="outline" 
+                      className="w-full text-[#8B00D7] border-[#8B00D7] hover:bg-[#8B00D7]/10"
+                      onClick={() => navigate('/cross-chain-vs-atomic-swap')}
+                    >
+                      Learn About Cross-Chain vs Atomic Swaps
+                    </Button>
+                  </div>
                 </CardContent>
               </Card>
               
