@@ -123,7 +123,7 @@ interface CreateVaultFormProps {
 }
 
 const CreateVaultForm = ({ 
-  initialVaultType = "legacy",
+  initialVaultType = "standard",
   selectedBlockchain = BlockchainType.TON,
   isWalletConnected = false,
   walletInfo,
@@ -149,6 +149,7 @@ const CreateVaultForm = ({
       'legacy': 20,
       'investment': 25,
       'gift': 15,
+      'standard': 20,
       'multi-signature': 30,
       'biometric': 35,
       'time-lock': 25,
@@ -900,7 +901,17 @@ const CreateVaultForm = ({
           <CardContent className="p-6">
             <Form {...form}>
               <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-                {/* Vault Type selector has been moved to the main page */}
+                <div className="mb-8" style={{display: 'none'}}>
+                  <h3 className="text-xl font-semibold mb-3 bg-clip-text text-transparent bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7]">
+                    Choose Vault Type
+                  </h3>
+                  <p className="text-gray-400 mb-4">Select a specialized vault type based on your security needs</p>
+                  
+                  <VaultTypeSelector 
+                    selectedType={form.watch('vaultType') as SpecializedVaultType}
+                    onChange={handleVaultTypeChange}
+                  />
+                </div>
                 
                 {/* Render specialized vault fields if vault type is specialized */}
                 {['multi-signature', 'biometric', 'time-lock', 'geolocation', 'cross-chain', 'smart-contract', 'dynamic', 'nft-powered', 'unique'].includes(form.watch('vaultType')) && (
@@ -1157,11 +1168,17 @@ const CreateVaultForm = ({
                                 </FormControl>
                                 <div className="flex-1">
                                   <FormLabel htmlFor="native-payment" className="text-lg font-medium text-white">
-                                    Pay with Native Token
+                                    Pay with Multi-Chain Tokens
                                   </FormLabel>
                                   <FormDescription className="text-sm text-gray-300">
-                                    Use {selectedBlockchain === BlockchainType.TON ? 'TON' : selectedBlockchain === BlockchainType.ETHEREUM ? 'ETH' : 'SOL'} tokens for standard vault creation
+                                    Pay with any major cryptocurrency for vault creation
                                   </FormDescription>
+                                  <div className="flex flex-wrap gap-2 mt-2">
+                                    <span className="px-2 py-1 text-xs bg-[#6B00D7]/20 text-white rounded-full border border-[#6B00D7]/30">TON</span>
+                                    <span className="px-2 py-1 text-xs bg-[#6B00D7]/20 text-white rounded-full border border-[#6B00D7]/30">ETH</span>
+                                    <span className="px-2 py-1 text-xs bg-[#6B00D7]/20 text-white rounded-full border border-[#6B00D7]/30">SOL</span>
+                                    <span className="px-2 py-1 text-xs bg-[#6B00D7]/20 text-white rounded-full border border-[#6B00D7]/30">BTC</span>
+                                  </div>
                                 </div>
                                 <div className="flex items-center space-x-1">
                                   <span className="text-gray-300">
