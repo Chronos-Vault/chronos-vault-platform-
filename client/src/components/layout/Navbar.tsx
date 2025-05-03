@@ -50,6 +50,7 @@ const Navbar = () => {
         { name: "CVT Utility", href: "/cvt-utility", icon: "⚡" },
         { name: "Token Vaults", href: "/token-vaults", icon: "⏳" },
         { name: "Cross-Chain Features", href: "/cross-chain", icon: "🔄" },
+        { name: "Atomic Swaps", href: "/cross-chain-atomic-swap", icon: "⚛️", highlight: true },
         { name: "Security Testing", href: "/security-testing", icon: "🔒" },
 
       ]
@@ -153,6 +154,11 @@ const Navbar = () => {
                 <Link href="/cross-chain-security">
                   <DropdownMenuItem className="cursor-pointer">
                     Security Dashboard
+                  </DropdownMenuItem>
+                </Link>
+                <Link href="/cross-chain-atomic-swap">
+                  <DropdownMenuItem className="cursor-pointer">
+                    <span className="flex items-center gap-1"><span>⚛️</span> Atomic Swaps</span>
                   </DropdownMenuItem>
                 </Link>
 
