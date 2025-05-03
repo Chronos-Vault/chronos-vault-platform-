@@ -38,6 +38,7 @@ const CreateVault = () => {
       "nft-powered", 
       "unique"
     ].includes(typeParam as SpecializedVaultType)) {
+      console.log("Setting initial vault type from URL param:", typeParam);
       setVaultType(typeParam as SpecializedVaultType);
     }
     
@@ -149,16 +150,7 @@ const CreateVault = () => {
             </div>
           </div>
           
-          {/* Vault Type Selection */}
-          <Card className="mb-8 border-[#6B00D7]/30 bg-gradient-to-r from-[#15121C] to-[#1E1A24]">
-            <CardContent className="p-4 sm:p-6">
-              <h3 className="text-xl text-white font-semibold mb-6 text-center">Choose Your Vault Type</h3>
-              <VaultTypeSelector
-                selectedType={vaultType}
-                onChange={(type) => setVaultType(type)}
-              />
-            </CardContent>
-          </Card>
+          {/* Top level Vault Type Selection is removed since we have it in the form */}
 
           <div className="flex flex-row flex-wrap md:flex-nowrap gap-4 mb-8">
             <Card className="flex-1 min-w-[240px] bg-gradient-to-r from-[#6B00D7]/5 to-[#6B00D7]/10 border-[#6B00D7]/20 hover:border-[#6B00D7]/40 transition-all transform hover:scale-[1.02] hover:shadow-lg">
@@ -373,6 +365,10 @@ const CreateVault = () => {
             isWalletConnected={isWalletConnected(selectedBlockchain)}
             walletInfo={walletInfo}
             ton={ton}
+            onVaultTypeChange={(type) => {
+              console.log("Parent receiving vault type change:", type);
+              setVaultType(type);
+            }}
           />
         </div>
       </div>

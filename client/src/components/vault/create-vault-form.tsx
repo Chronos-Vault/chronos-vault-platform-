@@ -120,6 +120,7 @@ interface CreateVaultFormProps {
     ton: any;
   };
   ton?: any; // Using any for now to fix the build
+  onVaultTypeChange?: (type: SpecializedVaultType) => void;
 }
 
 const CreateVaultForm = ({ 
@@ -127,7 +128,8 @@ const CreateVaultForm = ({
   selectedBlockchain = BlockchainType.TON,
   isWalletConnected = false,
   walletInfo,
-  ton
+  ton,
+  onVaultTypeChange
 }: CreateVaultFormProps) => {
   const [_, navigate] = useLocation();
   const { toast } = useToast();
@@ -311,6 +313,11 @@ const CreateVaultForm = ({
   const handleVaultTypeChange = (type: SpecializedVaultType) => {
     console.log("Changing vault type to:", type);
     form.setValue("vaultType", type);
+    
+    // Notify parent component of the change
+    if (onVaultTypeChange) {
+      onVaultTypeChange(type);
+    }
   };
 
   const handleTimeLockChange = (value: string) => {
