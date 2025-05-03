@@ -15,6 +15,7 @@ import { useTon } from "@/contexts/ton-context";
 import CrossChainSwapConfig from "@/components/vault/CrossChainSwapConfig";
 import MultiSignatureSwapConfig from "@/components/vault/MultiSignatureSwapConfig";
 import HTLCVerificationPanel from "@/components/cross-chain/HTLCVerificationPanel";
+import SecurityFeaturePanel from "@/components/cross-chain/SecurityFeaturePanel";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
@@ -28,6 +29,22 @@ import { SwapConfig, SwapInfo, SwapStatus } from "@/lib/cross-chain/atomic-swap-
 import { ArrowLeftRight, ArrowRight, Clock, RefreshCcw, Loader2, Shield, LockKeyhole, CheckCircle2 } from "lucide-react";
 import { Label } from "@/components/ui/label";
 
+// Define the type for MultiSignatureConfig
+interface MultiSignatureConfig {
+  requiredSignatures: number;
+  signers: Array<{id: string; name: string; address: string}>;
+  timeoutPeriod: number;
+  timeoutUnit: string;
+  enableSecurityDelay: boolean;
+  securityDelayPeriod: number;
+  useAtomicMultiSig: boolean;
+  useBackupRecovery: boolean;
+  recoveryAddress?: string;
+  geolocationRestricted: boolean;
+  allowedGeolocationHashes?: string[];
+  securityLevel: 'standard' | 'enhanced' | 'max';
+}
+
 // Schema for form validation
 const swapFormSchema = z.object({
   crossChainSource: z.string().min(1, "Source chain is required"),
@@ -36,6 +53,7 @@ const swapFormSchema = z.object({
   crossChainDestAmount: z.string().min(1, "Destination amount is required"),
   htlcTimeout: z.string().min(1, "Timeout is required"),
   additionalChains: z.array(z.string()).optional(),
+  multiSignatureConfig: z.any().optional(), // Using any for now as the full schema would be complex
 });
 
 type FormValues = z.infer<typeof swapFormSchema>;
@@ -85,6 +103,20 @@ const AtomicSwapPage = () => {
       crossChainDestAmount: "",
       htlcTimeout: "24",
       additionalChains: [],
+      multiSignatureConfig: {
+        requiredSignatures: 2,
+        signers: [],
+        timeoutPeriod: 48,
+        timeoutUnit: "hours",
+        enableSecurityDelay: false,
+        securityDelayPeriod: 12,
+        useAtomicMultiSig: false,
+        useBackupRecovery: false,
+        recoveryAddress: "",
+        geolocationRestricted: false,
+        allowedGeolocationHashes: [],
+        securityLevel: "standard" as const,
+      }
     },
   });
 
@@ -113,6 +145,9 @@ const AtomicSwapPage = () => {
         throw new Error(`No wallet address found for ${data.crossChainDestination}`);
       }
       
+      // Get security settings from the multi-signature form
+      const multiSigConfig = form.watch("multiSignatureConfig");
+      
       // Create the swap configuration
       const swapConfig: SwapConfig = {
         sourceChain: data.crossChainSource as BlockchainType,
@@ -123,6 +158,15 @@ const AtomicSwapPage = () => {
         receiverAddress: destAddress,
         timeLockHours: parseInt(data.htlcTimeout, 10),
         useTripleChainSecurity: data.additionalChains?.length === 3 || false,
+        // Include new security features
+        useAtomicMultiSig: multiSigConfig?.useAtomicMultiSig || false,
+        requiredSignatures: multiSigConfig?.requiredSignatures || 0,
+        additionalSigners: multiSigConfig?.signers?.map(s => s.address) || [],
+        useBackupRecovery: multiSigConfig?.useBackupRecovery || false,
+        recoveryAddress: multiSigConfig?.recoveryAddress || undefined,
+        geolocationRestricted: multiSigConfig?.geolocationRestricted || false,
+        allowedGeolocationHashes: ["current-location-hash"], // In a real implementation, we would get actual geo hashes
+        securityLevel: multiSigConfig?.securityLevel || "standard"
       };
       
       // Create the swap
@@ -596,18 +640,42 @@ const AtomicSwapPage = () => {
                           {renderSwapActions(swap)}
                         </div>
 
-                        {/* HTLC Verification Panel - only show for non-pending swaps */}
+                        {/* Verification Panels - only show for non-pending swaps */}
                         {swap.status !== SwapStatus.PENDING && (
                           <div className="mt-4">
-                            <HTLCVerificationPanel
-                              swapId={swap.id}
-                              sourceChain={swap.config.sourceChain}
-                              destinationChain={swap.config.destChain}
-                              sourceContractId={swap.sourceContractId}
-                              destinationContractId={swap.destContractId}
-                              swapStatus={swap.status}
-                              onVerify={refreshUserSwaps}
-                            />
+                            <Tabs defaultValue="contracts">
+                              <TabsList className="w-full">
+                                <TabsTrigger value="contracts">Contract Verification</TabsTrigger>
+                                <TabsTrigger value="security">Security Assessment</TabsTrigger>
+                              </TabsList>
+                              <TabsContent value="contracts" className="mt-2">
+                                <HTLCVerificationPanel
+                                  swapId={swap.id}
+                                  sourceChain={swap.config.sourceChain}
+                                  destinationChain={swap.config.destChain}
+                                  sourceContractId={swap.sourceContractId}
+                                  destinationContractId={swap.destContractId}
+                                  swapStatus={swap.status}
+                                  onVerify={refreshUserSwaps}
+                                />
+                              </TabsContent>
+                              <TabsContent value="security" className="mt-2">
+                                <SecurityFeaturePanel
+                                  securityScore={swap.securityScore ?? 50}
+                                  riskAssessment={swap.riskAssessment ?? 'medium'}
+                                  securityLevel={swap.config.securityLevel ?? 'standard'}
+                                  useMultiSig={swap.config.useAtomicMultiSig ?? false}
+                                  requiredSignatures={swap.config.requiredSignatures ?? 0}
+                                  signaturesCollected={swap.signatures?.filter(sig => sig.valid).length ?? 0}
+                                  useTripleChainSecurity={swap.config.useTripleChainSecurity ?? false}
+                                  useBackupRecovery={swap.config.useBackupRecovery ?? false}
+                                  geolocationRestricted={swap.config.geolocationRestricted ?? false}
+                                  geoVerified={swap.geoVerified ?? false}
+                                  verificationStatus={swap.verificationStatus ?? 'pending'}
+                                  additionalSecurityChecks={swap.additionalSecurityChecks ?? []}
+                                />
+                              </TabsContent>
+                            </Tabs>
                           </div>
                         )}
                       </CardContent>
