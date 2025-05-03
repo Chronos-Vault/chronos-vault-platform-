@@ -34,16 +34,13 @@ const Footer = () => {
             <p className="text-gray-300 mb-8 text-lg font-poppins font-light">Revolutionary digital asset vault platform — decentralized, unstoppable, and built with security and elegance at the core.</p>
             
             <div className="flex space-x-4">
-              <a href="#" className="w-12 h-12 rounded-full bg-[#6B00D7]/10 flex items-center justify-center text-[#FF5AF7] hover:text-white border border-[#6B00D7]/30 hover:border-[#FF5AF7] hover:shadow-lg hover:shadow-[#FF5AF7]/20 transition-all">
+              <a href="https://x.com/chronosvaultx?s=21" target="_blank" rel="noopener noreferrer" className="w-12 h-12 rounded-full bg-[#6B00D7]/10 flex items-center justify-center text-[#FF5AF7] hover:text-white border border-[#6B00D7]/30 hover:border-[#FF5AF7] hover:shadow-lg hover:shadow-[#FF5AF7]/20 transition-all">
                 <i className="ri-twitter-x-line text-xl"></i>
               </a>
-              <a href="#" className="w-12 h-12 rounded-full bg-[#6B00D7]/10 flex items-center justify-center text-[#FF5AF7] hover:text-white border border-[#6B00D7]/30 hover:border-[#FF5AF7] hover:shadow-lg hover:shadow-[#FF5AF7]/20 transition-all">
-                <i className="ri-discord-line text-xl"></i>
-              </a>
-              <a href="#" className="w-12 h-12 rounded-full bg-[#6B00D7]/10 flex items-center justify-center text-[#FF5AF7] hover:text-white border border-[#6B00D7]/30 hover:border-[#FF5AF7] hover:shadow-lg hover:shadow-[#FF5AF7]/20 transition-all">
+              <a href="https://github.com/Chronos-Vault" target="_blank" rel="noopener noreferrer" className="w-12 h-12 rounded-full bg-[#6B00D7]/10 flex items-center justify-center text-[#FF5AF7] hover:text-white border border-[#6B00D7]/30 hover:border-[#FF5AF7] hover:shadow-lg hover:shadow-[#FF5AF7]/20 transition-all">
                 <i className="ri-github-fill text-xl"></i>
               </a>
-              <a href="#" className="w-12 h-12 rounded-full bg-[#6B00D7]/10 flex items-center justify-center text-[#FF5AF7] hover:text-white border border-[#6B00D7]/30 hover:border-[#FF5AF7] hover:shadow-lg hover:shadow-[#FF5AF7]/20 transition-all">
+              <a href="https://t.me/chronosvaultnetwork" target="_blank" rel="noopener noreferrer" className="w-12 h-12 rounded-full bg-[#6B00D7]/10 flex items-center justify-center text-[#FF5AF7] hover:text-white border border-[#6B00D7]/30 hover:border-[#FF5AF7] hover:shadow-lg hover:shadow-[#FF5AF7]/20 transition-all">
                 <i className="ri-telegram-line text-xl"></i>
               </a>
             </div>
@@ -65,9 +62,10 @@ const Footer = () => {
             <ul className="space-y-4">
               <li><a href="#" className="text-gray-300 hover:text-[#FF5AF7] transition-all font-poppins font-light hover:translate-x-1 inline-flex">Documentation</a></li>
               <li><a href="#" className="text-gray-300 hover:text-[#FF5AF7] transition-all font-poppins font-light hover:translate-x-1 inline-flex">API Reference</a></li>
+              <li><a href="https://github.com/Chronos-Vault" target="_blank" rel="noopener noreferrer" className="text-gray-300 hover:text-[#FF5AF7] transition-all font-poppins font-light hover:translate-x-1 inline-flex">GitHub</a></li>
+              <li><a href="https://t.me/chronosvaultnetwork" target="_blank" rel="noopener noreferrer" className="text-gray-300 hover:text-[#FF5AF7] transition-all font-poppins font-light hover:translate-x-1 inline-flex">Telegram</a></li>
               <li><a href="#" className="text-gray-300 hover:text-[#FF5AF7] transition-all font-poppins font-light hover:translate-x-1 inline-flex">Security Audits</a></li>
               <li><a href="#" className="text-gray-300 hover:text-[#FF5AF7] transition-all font-poppins font-light hover:translate-x-1 inline-flex">Blog</a></li>
-              <li><a href="#" className="text-gray-300 hover:text-[#FF5AF7] transition-all font-poppins font-light hover:translate-x-1 inline-flex">Help Center</a></li>
             </ul>
           </div>
           
@@ -75,10 +73,10 @@ const Footer = () => {
             <h3 className="font-poppins font-semibold text-xl mb-5 text-white">Company</h3>
             <ul className="space-y-4">
               <li><Link href="/about" className="text-gray-300 hover:text-[#FF5AF7] transition-all font-poppins font-light hover:translate-x-1 inline-flex">About Us</Link></li>
+              <li><a href="https://x.com/chronosvaultx?s=21" target="_blank" rel="noopener noreferrer" className="text-gray-300 hover:text-[#FF5AF7] transition-all font-poppins font-light hover:translate-x-1 inline-flex">Twitter (X)</a></li>
               <li><a href="#" className="text-gray-300 hover:text-[#FF5AF7] transition-all font-poppins font-light hover:translate-x-1 inline-flex">Careers</a></li>
               <li><a href="#" className="text-gray-300 hover:text-[#FF5AF7] transition-all font-poppins font-light hover:translate-x-1 inline-flex">Partners</a></li>
               <li><a href="mailto:chronosvault@chronosvault.org" className="text-gray-300 hover:text-[#FF5AF7] transition-all font-poppins font-light hover:translate-x-1 inline-flex">Contact</a></li>
-              <li><a href="#" className="text-gray-300 hover:text-[#FF5AF7] transition-all font-poppins font-light hover:translate-x-1 inline-flex">Press Kit</a></li>
             </ul>
           </div>
         </div>
