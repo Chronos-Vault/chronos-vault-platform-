@@ -50,6 +50,7 @@ import PremiumPaymentPage from "@/pages/premium-payment";
 import SubscriptionPage from "@/pages/subscription";
 import CVTPaymentPage from "@/pages/cvt-payment";
 import CVTUtilityPage from "@/pages/cvt-utility-new";
+import LogoReviewPage from "@/pages/logo-review";
 
 // Redirect component for wouter
 function Redirect({ to }: { to: string }) {
@@ -105,6 +106,7 @@ function Router() {
         <Route path="/premium-payment/:vaultId?" component={PremiumPaymentPage} />
         <Route path="/cvt-payment/:vaultId?" component={CVTPaymentPage} />
         <Route path="/subscription" component={SubscriptionPage} />
+        <Route path="/logo-review" component={LogoReviewPage} />
         <Route component={NotFound} />
       </Switch>
       <Toaster />

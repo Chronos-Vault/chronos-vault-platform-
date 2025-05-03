@@ -1,10 +1,10 @@
 import { Link } from "wouter";
 
-const Footer = () => {
+const Footer = ({ className = '' }: { className?: string }) => {
   const currentYear = new Date().getFullYear();
 
   return (
-    <footer className="bg-gradient-to-b from-[#1A1A1A] to-[#121212] pt-20 pb-10 border-t border-[#6B00D7]/20 relative overflow-hidden">
+    <footer className={`bg-gradient-to-b from-[#1A1A1A] to-[#121212] pt-20 pb-10 border-t border-[#6B00D7]/20 relative overflow-hidden ${className}`}>
       {/* Decorative elements */}
       <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7]"></div>
       <div className="absolute top-1/3 -left-40 w-80 h-80 rounded-full bg-[#6B00D7]/10 blur-[100px]"></div>
