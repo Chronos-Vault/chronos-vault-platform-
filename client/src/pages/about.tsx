@@ -445,67 +445,185 @@ const About = () => {
         </div>
       </section>
       
-      {/* Team Section */}
-      <section className="py-20 bg-[#1A1A1A]">
-        <div className="container mx-auto px-4">
+      {/* Ecosystem Partners Section */}
+      <section className="py-20 bg-[#1A1A1A] relative overflow-hidden">
+        <div className="absolute top-20 -left-40 w-80 h-80 rounded-full bg-[#6B00D7]/10 blur-[100px]"></div>
+        <div className="absolute bottom-20 -right-40 w-80 h-80 rounded-full bg-[#FF5AF7]/10 blur-[100px]"></div>
+        
+        <div className="container mx-auto px-4 relative z-10">
           <div className="text-center mb-16">
-            <h2 className="font-poppins font-bold text-3xl">Our <span className="text-[#6B00D7]">Team</span></h2>
+            <h2 className="font-poppins font-bold text-3xl">Blockchain <span className="text-[#6B00D7]">Ecosystem</span></h2>
             <p className="text-gray-400 mt-3 max-w-2xl mx-auto">
-              A collective of blockchain specialists, security experts, and visionary designers.
+              Chronos Vault integrates with leading blockchain networks to provide secure, cross-chain vault functionality.
             </p>
           </div>
           
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-4xl mx-auto">
-            <Card className="bg-[#1E1E1E] border border-[#333333] overflow-hidden">
-              <div className="h-48 bg-gradient-to-br from-[#6B00D7]/20 to-[#6B00D7]/5 flex items-center justify-center">
-                <div className="w-24 h-24 rounded-full bg-[#1E1E1E] flex items-center justify-center text-3xl font-bold text-[#6B00D7]">
-                  A
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10 max-w-5xl mx-auto">
+            <div className="group relative">
+              <div className="absolute inset-0 bg-gradient-to-r from-[#6B00D7]/20 to-[#FF5AF7]/20 rounded-xl blur-md opacity-50 group-hover:opacity-70 transition-opacity"></div>
+              <Card className="bg-[#1E1E1E]/80 backdrop-blur-sm border border-[#333333] overflow-hidden relative z-10 h-full transition-all group-hover:border-[#6B00D7]/50">
+                <CardHeader className="pb-2">
+                  <div className="flex items-center gap-4">
+                    <div className="p-3 rounded-full bg-[#1E1E1E] flex items-center justify-center">
+                      <i className="ri-ethereum-line text-2xl text-[#627EEA]"></i>
+                    </div>
+                    <div>
+                      <CardTitle>Ethereum Network</CardTitle>
+                      <CardDescription>Industry Standard</CardDescription>
+                    </div>
+                  </div>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-gray-400 mb-4">
+                    Our primary network, enabling secure time-locked vaults with precise execution on the most established smart contract platform.
+                  </p>
+                  <div className="flex items-center text-sm text-[#FF5AF7]">
+                    <span className="inline-block w-2 h-2 rounded-full bg-[#FF5AF7] mr-2"></span>
+                    <span>Sepolia Testnet Integration Complete</span>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+            
+            <div className="group relative">
+              <div className="absolute inset-0 bg-gradient-to-r from-[#6B00D7]/20 to-[#FF5AF7]/20 rounded-xl blur-md opacity-50 group-hover:opacity-70 transition-opacity"></div>
+              <Card className="bg-[#1E1E1E]/80 backdrop-blur-sm border border-[#333333] overflow-hidden relative z-10 h-full transition-all group-hover:border-[#6B00D7]/50">
+                <CardHeader className="pb-2">
+                  <div className="flex items-center gap-4">
+                    <div className="p-3 rounded-full bg-[#1E1E1E] flex items-center justify-center">
+                      <i className="ri-circle-line text-2xl text-[#9945FF]"></i>
+                    </div>
+                    <div>
+                      <CardTitle>Solana Network</CardTitle>
+                      <CardDescription>High Performance</CardDescription>
+                    </div>
+                  </div>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-gray-400 mb-4">
+                    Ultra-fast transaction processing with minimal fees, ideal for high-frequency vault operations and specialized use cases.
+                  </p>
+                  <div className="flex items-center text-sm text-[#FF5AF7]">
+                    <span className="inline-block w-2 h-2 rounded-full bg-[#FF5AF7] mr-2"></span>
+                    <span>Devnet Integration Complete</span>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+            
+            <div className="group relative">
+              <div className="absolute inset-0 bg-gradient-to-r from-[#6B00D7]/20 to-[#FF5AF7]/20 rounded-xl blur-md opacity-50 group-hover:opacity-70 transition-opacity"></div>
+              <Card className="bg-[#1E1E1E]/80 backdrop-blur-sm border border-[#333333] overflow-hidden relative z-10 h-full transition-all group-hover:border-[#6B00D7]/50">
+                <CardHeader className="pb-2">
+                  <div className="flex items-center gap-4">
+                    <div className="p-3 rounded-full bg-[#1E1E1E] flex items-center justify-center">
+                      <i className="ri-bring-forward text-2xl text-[#0098EA]"></i>
+                    </div>
+                    <div>
+                      <CardTitle>TON Network</CardTitle>
+                      <CardDescription>Mass Adoption</CardDescription>
+                    </div>
+                  </div>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-gray-400 mb-4">
+                    Reach hundreds of millions of users through the Telegram-integrated blockchain, enabling user-friendly vault solutions.
+                  </p>
+                  <div className="flex items-center text-sm text-[#FF5AF7]">
+                    <span className="inline-block w-2 h-2 rounded-full bg-[#FF5AF7] mr-2"></span>
+                    <span>Testnet Implementation Live</span>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+          </div>
+          
+          <div className="mt-16 text-center">
+            <Link href="/cross-chain-security">
+              <Button variant="outline" className="border-[#6B00D7]/50 text-white hover:bg-[#6B00D7]/10 transition-colors">
+                Explore Cross-Chain Security
+                <ArrowRight className="ml-2 h-4 w-4" />
+              </Button>
+            </Link>
+          </div>
+        </div>
+      </section>
+      
+      {/* Testimonials Section */}
+      <section className="py-20 bg-[#121212] relative overflow-hidden">
+        <div className="absolute top-20 -right-40 w-80 h-80 rounded-full bg-[#6B00D7]/10 blur-[100px]"></div>
+        <div className="absolute bottom-20 -left-40 w-80 h-80 rounded-full bg-[#FF5AF7]/10 blur-[100px]"></div>
+        
+        <div className="container mx-auto px-4 relative z-10">
+          <div className="text-center mb-12">
+            <h2 className="font-poppins font-bold text-3xl">What Users <span className="text-[#6B00D7]">Say</span></h2>
+            <p className="text-gray-400 mt-3 max-w-2xl mx-auto">
+              Hear from pioneers who are already using Chronos Vault to secure their digital assets.
+            </p>
+          </div>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-5xl mx-auto">
+            <Card className="bg-[#1A1A1A] border border-[#333333] overflow-hidden relative">
+              <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7]"></div>
+              <CardContent className="p-8">
+                <div className="flex justify-between items-start mb-6">
+                  <div className="flex items-center gap-4">
+                    <div className="w-14 h-14 rounded-full bg-[#6B00D7]/20 flex items-center justify-center text-xl font-bold text-[#FF5AF7]">
+                      E
+                    </div>
+                    <div>
+                      <h4 className="font-poppins font-semibold text-lg">Ethan Chen</h4>
+                      <p className="text-[#FF5AF7] text-sm">DeFi Portfolio Manager</p>
+                    </div>
+                  </div>
+                  <div>
+                    <i className="ri-double-quotes-l text-4xl text-[#6B00D7]/40"></i>
+                  </div>
                 </div>
-              </div>
-              <CardContent className="p-6 text-center">
-                <h3 className="font-poppins font-semibold text-xl mb-1">Alexandra Reed</h3>
-                <p className="text-[#FF5AF7] text-sm mb-3">Founder & CEO</p>
-                <p className="text-gray-400 text-sm">
-                  Blockchain security specialist with 8+ years experience in cryptographic systems and smart contract development.
+                <p className="text-gray-300 italic mb-6">
+                  "The multi-signature vault feature has transformed how our DAO manages treasury assets. The cross-chain compatibility gives us unmatched flexibility while maintaining military-grade security."
                 </p>
+                <div className="flex gap-1">
+                  {Array(5).fill(0).map((_, i) => (
+                    <i key={i} className="ri-star-fill text-[#FF5AF7]"></i>
+                  ))}
+                </div>
               </CardContent>
             </Card>
             
-            <Card className="bg-[#1E1E1E] border border-[#333333] overflow-hidden">
-              <div className="h-48 bg-gradient-to-br from-[#6B00D7]/20 to-[#6B00D7]/5 flex items-center justify-center">
-                <div className="w-24 h-24 rounded-full bg-[#1E1E1E] flex items-center justify-center text-3xl font-bold text-[#6B00D7]">
-                  M
+            <Card className="bg-[#1A1A1A] border border-[#333333] overflow-hidden relative">
+              <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7]"></div>
+              <CardContent className="p-8">
+                <div className="flex justify-between items-start mb-6">
+                  <div className="flex items-center gap-4">
+                    <div className="w-14 h-14 rounded-full bg-[#6B00D7]/20 flex items-center justify-center text-xl font-bold text-[#FF5AF7]">
+                      S
+                    </div>
+                    <div>
+                      <h4 className="font-poppins font-semibold text-lg">Sophia Rodriguez</h4>
+                      <p className="text-[#FF5AF7] text-sm">Family Office Director</p>
+                    </div>
+                  </div>
+                  <div>
+                    <i className="ri-double-quotes-l text-4xl text-[#6B00D7]/40"></i>
+                  </div>
                 </div>
-              </div>
-              <CardContent className="p-6 text-center">
-                <h3 className="font-poppins font-semibold text-xl mb-1">Marcus Chen</h3>
-                <p className="text-[#FF5AF7] text-sm mb-3">CTO</p>
-                <p className="text-gray-400 text-sm">
-                  Former lead developer at a major cryptocurrency exchange, specialized in secure wallet systems and blockchain architecture.
+                <p className="text-gray-300 italic mb-6">
+                  "Setting up long-term inheritance plans for our clients was always complicated until we discovered Chronos Vault. The time-lock functionality with advanced security protocols is exactly what we needed."
                 </p>
-              </CardContent>
-            </Card>
-            
-            <Card className="bg-[#1E1E1E] border border-[#333333] overflow-hidden">
-              <div className="h-48 bg-gradient-to-br from-[#6B00D7]/20 to-[#6B00D7]/5 flex items-center justify-center">
-                <div className="w-24 h-24 rounded-full bg-[#1E1E1E] flex items-center justify-center text-3xl font-bold text-[#6B00D7]">
-                  K
+                <div className="flex gap-1">
+                  {Array(5).fill(0).map((_, i) => (
+                    <i key={i} className="ri-star-fill text-[#FF5AF7]"></i>
+                  ))}
                 </div>
-              </div>
-              <CardContent className="p-6 text-center">
-                <h3 className="font-poppins font-semibold text-xl mb-1">Kira Nakamura</h3>
-                <p className="text-[#FF5AF7] text-sm mb-3">Lead Designer</p>
-                <p className="text-gray-400 text-sm">
-                  Award-winning UI/UX designer focused on creating elegant, accessible interfaces for complex blockchain applications.
-                </p>
               </CardContent>
             </Card>
           </div>
         </div>
       </section>
-      
+
       {/* CTA Section */}
-      <section className="py-20 bg-[#121212] relative overflow-hidden">
+      <section className="py-20 bg-[#0F0F0F] relative overflow-hidden">
         <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7]"></div>
         <div className="absolute top-1/4 -left-10 w-60 h-60 rounded-full bg-[#6B00D7]/10 blur-3xl"></div>
         <div className="absolute bottom-1/4 -right-20 w-80 h-80 rounded-full bg-[#FF5AF7]/5 blur-3xl"></div>
