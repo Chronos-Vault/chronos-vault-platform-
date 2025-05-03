@@ -55,7 +55,21 @@ const AtomicSwapPage = () => {
   const [_, navigate] = useLocation();
   const [activeTab, setActiveTab] = useState<"create" | "history">("create");
   const [isCreating, setIsCreating] = useState(false);
-  const { isChainConnected, blockchainStatuses } = useMultiChain();
+  const { walletInfo, chainStatus } = useMultiChain();
+  
+  // Helper function to check if a specific chain is connected
+  const isChainConnected = (chain: BlockchainType): boolean => {
+    switch (chain) {
+      case BlockchainType.ETHEREUM:
+        return walletInfo.ethereum.isConnected;
+      case BlockchainType.SOLANA:
+        return walletInfo.solana.isConnected;
+      case BlockchainType.TON:
+        return walletInfo.ton.isConnected;
+      default:
+        return false;
+    }
+  };
   const { isPreparing, userSwaps, createSwap, participateInSwap, claimSwap, completeSwap, refundSwap, refreshUserSwaps } = useAtomicSwap();
   const { account: ethAccount } = useEthereum();
   const { wallet: solanaWallet } = useSolana();
@@ -434,7 +448,7 @@ const AtomicSwapPage = () => {
                   <div className="space-y-3">
                     <div className="flex justify-between items-center">
                       <Label>TON:</Label>
-                      {blockchainStatuses.TON.connected ? (
+                      {walletInfo.ton.isConnected ? (
                         <Badge variant="outline" className="bg-green-500/10 text-green-500 border-green-500/50">
                           <CheckCircle2 className="mr-1 h-3 w-3" /> Connected
                         </Badge>
@@ -447,7 +461,7 @@ const AtomicSwapPage = () => {
                     
                     <div className="flex justify-between items-center">
                       <Label>Ethereum:</Label>
-                      {blockchainStatuses.Ethereum.connected ? (
+                      {walletInfo.ethereum.isConnected ? (
                         <Badge variant="outline" className="bg-green-500/10 text-green-500 border-green-500/50">
                           <CheckCircle2 className="mr-1 h-3 w-3" /> Connected
                         </Badge>
@@ -460,7 +474,7 @@ const AtomicSwapPage = () => {
                     
                     <div className="flex justify-between items-center">
                       <Label>Solana:</Label>
-                      {blockchainStatuses.Solana.connected ? (
+                      {walletInfo.solana.isConnected ? (
                         <Badge variant="outline" className="bg-green-500/10 text-green-500 border-green-500/50">
                           <CheckCircle2 className="mr-1 h-3 w-3" /> Connected
                         </Badge>
