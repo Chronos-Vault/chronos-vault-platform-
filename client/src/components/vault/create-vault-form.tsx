@@ -900,17 +900,7 @@ const CreateVaultForm = ({
           <CardContent className="p-6">
             <Form {...form}>
               <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-                <div className="mb-8">
-                  <h3 className="text-xl font-semibold mb-3 bg-clip-text text-transparent bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7]">
-                    Choose Vault Type
-                  </h3>
-                  <p className="text-gray-400 mb-4">Select a specialized vault type based on your security needs</p>
-                  
-                  <VaultTypeSelector 
-                    selectedType={form.watch('vaultType') as SpecializedVaultType}
-                    onChange={handleVaultTypeChange}
-                  />
-                </div>
+                {/* Vault Type selector has been moved to the main page */}
                 
                 {/* Render specialized vault fields if vault type is specialized */}
                 {['multi-signature', 'biometric', 'time-lock', 'geolocation', 'cross-chain', 'smart-contract', 'dynamic', 'nft-powered', 'unique'].includes(form.watch('vaultType')) && (
