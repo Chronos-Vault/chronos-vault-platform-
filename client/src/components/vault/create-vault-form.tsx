@@ -11,7 +11,7 @@ import { FileUpload } from "@/components/attachments/file-upload";
 import { EnhancedMediaUploader } from "@/components/attachments/enhanced-media-uploader";
 import VaultTypeSelector, { SpecializedVaultType } from "@/components/vault/vault-type-selector";
 import { useCVTToken, StakingTier } from "@/contexts/cvt-token-context";
-import { Coins, Wallet } from "lucide-react";
+import { Coins, Wallet, ArrowLeftRight, ArrowRightCircle } from "lucide-react";
 
 import {
   Form,
@@ -522,6 +522,30 @@ const CreateVaultForm = ({
           <div className="space-y-4 border border-[#8B00D7]/20 rounded-lg p-4 bg-gradient-to-r from-[#1A1A1A] to-[#231A2A]">
             <h3 className="text-lg text-[#8B00D7] font-medium">Cross-Chain Vault Settings</h3>
             <p className="text-sm text-gray-300">Configure cross-chain security settings for this vault</p>
+            
+            <div className="mb-4 p-4 bg-[#8B00D7]/10 rounded-lg border border-[#8B00D7]/30">
+              <div className="flex items-start">
+                <div className="flex-shrink-0 pt-1">
+                  <ArrowLeftRight className="h-5 w-5 text-[#8B00D7]" />
+                </div>
+                <div className="ml-3">
+                  <h4 className="text-sm font-medium text-white">Cross-Chain Atomic Swaps Available</h4>
+                  <p className="mt-1 text-xs text-gray-400">
+                    For advanced cross-chain asset transfers, try our new Atomic Swap feature that allows trustless exchanges between TON, Ethereum, and Solana.
+                  </p>
+                  <div className="mt-2">
+                    <Button 
+                      variant="outline" 
+                      size="sm"
+                      className="text-[#8B00D7] border-[#8B00D7]/50 hover:bg-[#8B00D7]/10"
+                      onClick={() => navigate("/cross-chain-atomic-swap")}
+                    >
+                      <ArrowRightCircle className="mr-1 h-4 w-4" /> Explore Atomic Swaps
+                    </Button>
+                  </div>
+                </div>
+              </div>
+            </div>
             
             <FormField
               control={form.control}
