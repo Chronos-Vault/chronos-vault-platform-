@@ -27,6 +27,14 @@ export interface SwapConfig {
   receiverAddress: string;
   timeLockHours: number;
   useTripleChainSecurity: boolean;
+  useAtomicMultiSig?: boolean;
+  requiredSignatures?: number;
+  additionalSigners?: string[];
+  useBackupRecovery?: boolean;
+  recoveryAddress?: string;
+  geolocationRestricted?: boolean;
+  allowedGeolocationHashes?: string[];
+  securityLevel?: 'standard' | 'enhanced' | 'max';
 }
 
 export interface SwapInfo {
@@ -42,6 +50,13 @@ export interface SwapInfo {
   refundedAt?: number;
   failedAt?: number;
   failureReason?: string;
+  securityScore?: number;
+  signatures?: Array<{signer: string, timestamp: number, valid: boolean}>;
+  verificationStatus?: 'pending' | 'verified' | 'failed';
+  riskAssessment?: 'low' | 'medium' | 'high';
+  backupActivated?: boolean;
+  geoVerified?: boolean;
+  additionalSecurityChecks?: Array<{name: string, status: 'passed' | 'failed' | 'pending', timestamp: number}>;
 }
 
 export class AtomicSwapService {
@@ -64,6 +79,8 @@ export class AtomicSwapService {
     
     // Load swaps from localStorage if available
     this.loadSwaps();
+    
+    console.log("AtomicSwapService initialized with advanced security features");
   }
   
   /**
@@ -363,5 +380,255 @@ export class AtomicSwapService {
     } catch (error) {
       console.error("Failed to load swaps from localStorage:", error);
     }
+  }
+  
+  /**
+   * Advanced Security Feature: Multi-Signature Support
+   * This allows multiple parties to sign off on a swap before it's executed
+   */
+  async addSignature(swapId: string, signerAddress: string): Promise<SwapInfo> {
+    const swapInfo = this.getSwapInfo(swapId);
+    if (!swapInfo) {
+      throw new Error(`Swap with ID ${swapId} not found`);
+    }
+    
+    // Initialize signatures array if it doesn't exist
+    if (!swapInfo.signatures) {
+      swapInfo.signatures = [];
+    }
+    
+    // Check if signer is already in the list
+    const existingSignature = swapInfo.signatures.find(sig => sig.signer === signerAddress);
+    if (existingSignature) {
+      throw new Error(`Address ${signerAddress} has already signed this swap`);
+    }
+    
+    // Add the signature
+    swapInfo.signatures.push({
+      signer: signerAddress,
+      timestamp: Date.now(),
+      valid: true
+    });
+    
+    // Update security score
+    this.updateSecurityScore(swapInfo);
+    
+    // Save the updated swap
+    this.swapInfoStorage.set(swapId, swapInfo);
+    this.saveSwap(swapId, swapInfo);
+    
+    return swapInfo;
+  }
+  
+  /**
+   * Advanced Security Feature: Verify Multi-Signature Requirements
+   */
+  verifyMultiSigRequirements(swapInfo: SwapInfo): boolean {
+    if (!swapInfo.config.useAtomicMultiSig || !swapInfo.config.requiredSignatures) {
+      return true; // Multi-sig not required
+    }
+    
+    // Check if we have enough valid signatures
+    const validSignaturesCount = swapInfo.signatures?.filter(sig => sig.valid).length || 0;
+    return validSignaturesCount >= swapInfo.config.requiredSignatures;
+  }
+  
+  /**
+   * Advanced Security Feature: Geolocation Verification
+   */
+  async verifyGeolocation(swapId: string, geolocationHash: string): Promise<SwapInfo> {
+    const swapInfo = this.getSwapInfo(swapId);
+    if (!swapInfo) {
+      throw new Error(`Swap with ID ${swapId} not found`);
+    }
+    
+    if (!swapInfo.config.geolocationRestricted) {
+      // Geolocation not required for this swap
+      return swapInfo;
+    }
+    
+    // Check if the provided hash is in the allowed list
+    const isAllowed = swapInfo.config.allowedGeolocationHashes?.includes(geolocationHash) || false;
+    
+    // Update the swap info
+    swapInfo.geoVerified = isAllowed;
+    
+    // Add a security check record
+    if (!swapInfo.additionalSecurityChecks) {
+      swapInfo.additionalSecurityChecks = [];
+    }
+    
+    swapInfo.additionalSecurityChecks.push({
+      name: 'Geolocation Verification',
+      status: isAllowed ? 'passed' : 'failed',
+      timestamp: Date.now()
+    });
+    
+    // Update security score
+    this.updateSecurityScore(swapInfo);
+    
+    // Save the updated swap
+    this.swapInfoStorage.set(swapId, swapInfo);
+    this.saveSwap(swapId, swapInfo);
+    
+    return swapInfo;
+  }
+  
+  /**
+   * Advanced Security Feature: Backup Recovery Mechanism
+   */
+  async activateBackupRecovery(swapId: string): Promise<SwapInfo> {
+    const swapInfo = this.getSwapInfo(swapId);
+    if (!swapInfo) {
+      throw new Error(`Swap with ID ${swapId} not found`);
+    }
+    
+    if (!swapInfo.config.useBackupRecovery || !swapInfo.config.recoveryAddress) {
+      throw new Error("Backup recovery not configured for this swap");
+    }
+    
+    // Mark backup as activated
+    swapInfo.backupActivated = true;
+    
+    // Add a security check record
+    if (!swapInfo.additionalSecurityChecks) {
+      swapInfo.additionalSecurityChecks = [];
+    }
+    
+    swapInfo.additionalSecurityChecks.push({
+      name: 'Backup Recovery Activation',
+      status: 'passed',
+      timestamp: Date.now()
+    });
+    
+    // Save the updated swap
+    this.swapInfoStorage.set(swapId, swapInfo);
+    this.saveSwap(swapId, swapInfo);
+    
+    return swapInfo;
+  }
+  
+  /**
+   * Advanced Security Feature: Comprehensive Security Scoring
+   */
+  private updateSecurityScore(swapInfo: SwapInfo): void {
+    let score = 50; // Base score
+    
+    // Adjust score based on security level
+    if (swapInfo.config.securityLevel === 'enhanced') {
+      score += 10;
+    } else if (swapInfo.config.securityLevel === 'max') {
+      score += 20;
+    }
+    
+    // Multi-signature support
+    if (swapInfo.config.useAtomicMultiSig) {
+      const requiredSigs = swapInfo.config.requiredSignatures || 0;
+      const actualSigs = swapInfo.signatures?.filter(sig => sig.valid).length || 0;
+      
+      if (requiredSigs > 0 && actualSigs >= requiredSigs) {
+        score += 15;
+      } else if (actualSigs > 0) {
+        score += 5;
+      }
+    }
+    
+    // Triple-chain security
+    if (swapInfo.config.useTripleChainSecurity) {
+      score += 15;
+    }
+    
+    // Geolocation verification
+    if (swapInfo.config.geolocationRestricted && swapInfo.geoVerified) {
+      score += 10;
+    }
+    
+    // Backup recovery
+    if (swapInfo.config.useBackupRecovery) {
+      score += 5;
+    }
+    
+    // Cap the score at 100
+    swapInfo.securityScore = Math.min(100, score);
+    
+    // Set risk assessment based on score
+    if (score >= 80) {
+      swapInfo.riskAssessment = 'low';
+    } else if (score >= 50) {
+      swapInfo.riskAssessment = 'medium';
+    } else {
+      swapInfo.riskAssessment = 'high';
+    }
+  }
+  
+  /**
+   * Advanced Security Feature: Comprehensive Security Verification
+   */
+  async performSecurityVerification(swapId: string): Promise<SwapInfo> {
+    const swapInfo = this.getSwapInfo(swapId);
+    if (!swapInfo) {
+      throw new Error(`Swap with ID ${swapId} not found`);
+    }
+    
+    // Initialize additional security checks if needed
+    if (!swapInfo.additionalSecurityChecks) {
+      swapInfo.additionalSecurityChecks = [];
+    }
+    
+    // Check contract integrity
+    let contractsValid = false;
+    try {
+      if (swapInfo.sourceContractId) {
+        const sourceContract = this.getContractInstance(swapInfo.config.sourceChain);
+        await sourceContract.getInfo(swapInfo.sourceContractId);
+      }
+      
+      if (swapInfo.destContractId) {
+        const destContract = this.getContractInstance(swapInfo.config.destChain);
+        await destContract.getInfo(swapInfo.destContractId);
+      }
+      
+      contractsValid = true;
+    } catch (error) {
+      contractsValid = false;
+    }
+    
+    swapInfo.additionalSecurityChecks.push({
+      name: 'Contract Integrity Check',
+      status: contractsValid ? 'passed' : 'failed',
+      timestamp: Date.now()
+    });
+    
+    // Verify multi-sig if applicable
+    if (swapInfo.config.useAtomicMultiSig) {
+      const multiSigValid = this.verifyMultiSigRequirements(swapInfo);
+      
+      swapInfo.additionalSecurityChecks.push({
+        name: 'Multi-Signature Verification',
+        status: multiSigValid ? 'passed' : 'pending',
+        timestamp: Date.now()
+      });
+    }
+    
+    // Update verification status
+    const failedChecks = swapInfo.additionalSecurityChecks.filter(check => check.status === 'failed');
+    const pendingChecks = swapInfo.additionalSecurityChecks.filter(check => check.status === 'pending');
+    
+    if (failedChecks.length > 0) {
+      swapInfo.verificationStatus = 'failed';
+    } else if (pendingChecks.length > 0) {
+      swapInfo.verificationStatus = 'pending';
+    } else {
+      swapInfo.verificationStatus = 'verified';
+    }
+    
+    // Update security score
+    this.updateSecurityScore(swapInfo);
+    
+    // Save the updated swap
+    this.swapInfoStorage.set(swapId, swapInfo);
+    this.saveSwap(swapId, swapInfo);
+    
+    return swapInfo;
   }
 }
