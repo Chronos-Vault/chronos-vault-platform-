@@ -13,6 +13,8 @@ import { useEthereum } from "@/contexts/ethereum-context";
 import { useSolana } from "@/contexts/solana-context";
 import { useTon } from "@/contexts/ton-context";
 import CrossChainSwapConfig from "@/components/vault/CrossChainSwapConfig";
+import MultiSignatureSwapConfig from "@/components/vault/MultiSignatureSwapConfig";
+import HTLCVerificationPanel from "@/components/cross-chain/HTLCVerificationPanel";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
@@ -321,6 +323,18 @@ const AtomicSwapPage = () => {
                   <Form {...form}>
                     <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
                       <CrossChainSwapConfig form={form} />
+                      
+                      <Separator className="my-6" />
+                      
+                      <div className="space-y-4">
+                        <div className="flex items-center space-x-2">
+                          <Shield className="h-5 w-5 text-[#FF5AF7]" />
+                          <Label className="text-lg font-medium">Enhanced Security Options</Label>
+                        </div>
+                        <p className="text-sm text-gray-400">Configure additional security options for your atomic swap</p>
+                      </div>
+                      
+                      <MultiSignatureSwapConfig form={form} />
                       
                       <div className="flex justify-end mt-6">
                         <Button 

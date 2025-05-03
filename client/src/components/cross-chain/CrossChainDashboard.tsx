@@ -1,5 +1,7 @@
 import React from 'react';
+import { useLocation } from 'wouter';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
 import { useEthereum } from '@/contexts/ethereum-context';
 import { useSolana } from '@/contexts/solana-context';
 import { useTon } from '@/contexts/ton-context';
@@ -7,9 +9,10 @@ import { BlockchainType } from '@/contexts/multi-chain-context';
 import { SiEthereum, SiSolana, SiTon } from 'react-icons/si';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
-import { LockIcon, TrendingUpIcon, ClockIcon } from 'lucide-react';
+import { LockIcon, TrendingUpIcon, ClockIcon, ArrowLeftRight } from 'lucide-react';
 
 export function CrossChainDashboard() {
+  const [_, navigate] = useLocation();
   const { isConnected: isEthConnected, walletInfo: ethInfo } = useEthereum();
   const { isConnected: isSolConnected, walletInfo: solInfo } = useSolana();
   const { isConnected: isTonConnected, walletInfo: tonInfo } = useTon();
@@ -123,11 +126,22 @@ export function CrossChainDashboard() {
       </div>
 
       <Card className="bg-white/5 backdrop-blur-sm border-purple-500/10">
-        <CardHeader>
-          <CardTitle>Cross-Chain Overview</CardTitle>
-          <CardDescription>
-            Your assets distribution across blockchains
-          </CardDescription>
+        <CardHeader className="flex flex-row items-center justify-between pb-2">
+          <div>
+            <CardTitle>Cross-Chain Overview</CardTitle>
+            <CardDescription>
+              Your assets distribution across blockchains
+            </CardDescription>
+          </div>
+          <Button
+            variant="outline" 
+            size="sm"
+            className="bg-[#8B00D7]/10 text-[#8B00D7] border-[#8B00D7]/30 hover:bg-[#8B00D7]/20"
+            onClick={() => navigate('/cross-chain-atomic-swap')}
+          >
+            <ArrowLeftRight className="mr-2 h-4 w-4" />
+            Atomic Swaps
+          </Button>
         </CardHeader>
         <CardContent>
           <div className="space-y-4">
