@@ -179,16 +179,26 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Vault routes
   app.post("/api/vaults", async (req: Request, res: Response) => {
     try {
+      console.log("Received vault creation request:", JSON.stringify(req.body));
       const vaultData = insertVaultSchema.parse(req.body);
+      console.log("Parsed vault data:", JSON.stringify(vaultData));
       
       const user = await storage.getUser(vaultData.userId);
       if (!user) {
+        console.log("User not found for ID:", vaultData.userId);
         return res.status(404).json({ message: "User not found" });
       }
 
-      const vault = await storage.createVault(vaultData);
-      res.status(201).json(vault);
+      try {
+        const vault = await storage.createVault(vaultData);
+        console.log("Vault created successfully:", JSON.stringify(vault));
+        res.status(201).json(vault);
+      } catch (dbError) {
+        console.error("Error creating vault in database:", dbError);
+        throw dbError;
+      }
     } catch (error) {
+      console.error("Error in vault creation:", error);
       handleError(res, error);
     }
   });
