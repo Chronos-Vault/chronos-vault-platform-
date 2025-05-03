@@ -108,7 +108,7 @@ const AtomicSwapPage = () => {
         senderAddress: sourceAddress,
         receiverAddress: destAddress,
         timeLockHours: parseInt(data.htlcTimeout, 10),
-        useTripleChainSecurity: data.additionalChains?.length === 3 ?? false,
+        useTripleChainSecurity: data.additionalChains?.length === 3 || false,
       };
       
       // Create the swap
@@ -568,6 +568,21 @@ const AtomicSwapPage = () => {
                           </div>
                           {renderSwapActions(swap)}
                         </div>
+
+                        {/* HTLC Verification Panel - only show for non-pending swaps */}
+                        {swap.status !== SwapStatus.PENDING && (
+                          <div className="mt-4">
+                            <HTLCVerificationPanel
+                              swapId={swap.id}
+                              sourceChain={swap.config.sourceChain}
+                              destinationChain={swap.config.destChain}
+                              sourceContractId={swap.sourceContractId}
+                              destinationContractId={swap.destContractId}
+                              swapStatus={swap.status}
+                              onVerify={refreshUserSwaps}
+                            />
+                          </div>
+                        )}
                       </CardContent>
                     </Card>
                   ))}
