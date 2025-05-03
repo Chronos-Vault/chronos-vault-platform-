@@ -161,6 +161,24 @@ export default function Documentation() {
                         <p className="text-gray-300 mt-1">Learn about the ChronosVault Token (CVT), its deflationary model, and distribution schedule.</p>
                       </div>
                     </Link>
+                    <Link href="/project-whitepaper" className="block">
+                      <div className="bg-gradient-to-r from-[#6B00D7]/20 to-[#FF5AF7]/10 border border-[#6B00D7]/30 rounded-lg p-4 hover:from-[#6B00D7]/30 hover:to-[#FF5AF7]/20 transition-all">
+                        <h4 className="font-semibold text-white flex items-center gap-2">
+                          <span className="text-xl">📑</span>
+                          Project Whitepaper
+                        </h4>
+                        <p className="text-gray-300 mt-1">Read the comprehensive overview of the Chronos Vault platform, architecture, and vision.</p>
+                      </div>
+                    </Link>
+                    <Link href="/whitepaper" className="block">
+                      <div className="bg-gradient-to-r from-[#6B00D7]/20 to-[#FF5AF7]/10 border border-[#6B00D7]/30 rounded-lg p-4 hover:from-[#6B00D7]/30 hover:to-[#FF5AF7]/20 transition-all">
+                        <h4 className="font-semibold text-white flex items-center gap-2">
+                          <span className="text-xl">💎</span>
+                          CVT Whitepaper
+                        </h4>
+                        <p className="text-gray-300 mt-1">Dive into the detailed tokenomics of the ChronosVault Token (CVT) and its utility within the ecosystem.</p>
+                      </div>
+                    </Link>
                   </div>
                 </div>
               </div>

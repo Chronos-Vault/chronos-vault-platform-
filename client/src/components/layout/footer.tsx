@@ -65,6 +65,8 @@ const Footer = () => {
             <ul className="space-y-4">
               <li><Link href="/documentation" className="text-gray-300 hover:text-[#FF5AF7] transition-all font-poppins font-light hover:translate-x-1 inline-flex">Documentation</Link></li>
               <li><Link href="/technical-specification" className="text-gray-300 hover:text-[#FF5AF7] transition-all font-poppins font-light hover:translate-x-1 inline-flex">Technical Specs</Link></li>
+              <li><Link href="/project-whitepaper" className="text-gray-300 hover:text-[#FF5AF7] transition-all font-poppins font-light hover:translate-x-1 inline-flex">Project Whitepaper</Link></li>
+              <li><Link href="/whitepaper" className="text-gray-300 hover:text-[#FF5AF7] transition-all font-poppins font-light hover:translate-x-1 inline-flex">CVT Whitepaper</Link></li>
               <li><a href="https://github.com/Chronos-Vault" target="_blank" rel="noopener noreferrer" className="text-gray-300 hover:text-[#FF5AF7] transition-all font-poppins font-light hover:translate-x-1 inline-flex">GitHub</a></li>
               <li><a href="https://t.me/chronosvaultnetwork" target="_blank" rel="noopener noreferrer" className="text-gray-300 hover:text-[#FF5AF7] transition-all font-poppins font-light hover:translate-x-1 inline-flex">Telegram</a></li>
               <li><a href="https://discord.gg/z7uhRcAw" target="_blank" rel="noopener noreferrer" className="text-gray-300 hover:text-[#FF5AF7] transition-all font-poppins font-light hover:translate-x-1 inline-flex">Discord</a></li>
