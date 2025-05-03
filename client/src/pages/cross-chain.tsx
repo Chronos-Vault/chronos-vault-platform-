@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Helmet } from 'react-helmet';
 import CrossChainTransfer from '@/components/cross-chain/CrossChainTransfer';
-import SecurityDashboard from '@/components/cross-chain/SecurityDashboard';
+import { SecurityDashboard } from '@/components/cross-chain/SecurityDashboard';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { ArrowLeftRight, Shield, Users, Database } from 'lucide-react';
 import { useAuthContext } from '@/contexts/auth-context';

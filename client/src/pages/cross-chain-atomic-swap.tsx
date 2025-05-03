@@ -16,6 +16,7 @@ import CrossChainSwapConfig from "@/components/vault/CrossChainSwapConfig";
 import MultiSignatureSwapConfig from "@/components/vault/MultiSignatureSwapConfig";
 import HTLCVerificationPanel from "@/components/cross-chain/HTLCVerificationPanel";
 import SecurityFeaturePanel from "@/components/cross-chain/SecurityFeaturePanel";
+import { SecurityDashboard } from "@/components/cross-chain/SecurityDashboard";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
@@ -660,20 +661,26 @@ const AtomicSwapPage = () => {
                                 />
                               </TabsContent>
                               <TabsContent value="security" className="mt-2">
-                                <SecurityFeaturePanel
-                                  securityScore={swap.securityScore ?? 50}
-                                  riskAssessment={swap.riskAssessment ?? 'medium'}
-                                  securityLevel={swap.config.securityLevel ?? 'standard'}
-                                  useMultiSig={swap.config.useAtomicMultiSig ?? false}
-                                  requiredSignatures={swap.config.requiredSignatures ?? 0}
-                                  signaturesCollected={swap.signatures?.filter(sig => sig.valid).length ?? 0}
-                                  useTripleChainSecurity={swap.config.useTripleChainSecurity ?? false}
-                                  useBackupRecovery={swap.config.useBackupRecovery ?? false}
-                                  geolocationRestricted={swap.config.geolocationRestricted ?? false}
-                                  geoVerified={swap.geoVerified ?? false}
-                                  verificationStatus={swap.verificationStatus ?? 'pending'}
-                                  additionalSecurityChecks={swap.additionalSecurityChecks ?? []}
-                                />
+                                <div className="space-y-4">
+                                  {/* New comprehensive security dashboard */}
+                                  <SecurityDashboard swapId={swap.id} />
+                                  
+                                  {/* Legacy security panel kept for compatibility */}
+                                  <SecurityFeaturePanel
+                                    securityScore={swap.securityScore ?? 50}
+                                    riskAssessment={swap.riskAssessment ?? 'medium'}
+                                    securityLevel={swap.config.securityLevel ?? 'standard'}
+                                    useMultiSig={swap.config.useAtomicMultiSig ?? false}
+                                    requiredSignatures={swap.config.requiredSignatures ?? 0}
+                                    signaturesCollected={swap.signatures?.filter(sig => sig.valid).length ?? 0}
+                                    useTripleChainSecurity={swap.config.useTripleChainSecurity ?? false}
+                                    useBackupRecovery={swap.config.useBackupRecovery ?? false}
+                                    geolocationRestricted={swap.config.geolocationRestricted ?? false}
+                                    geoVerified={swap.geoVerified ?? false}
+                                    verificationStatus={swap.verificationStatus ?? 'pending'}
+                                    additionalSecurityChecks={swap.additionalSecurityChecks ?? []}
+                                  />
+                                </div>
                               </TabsContent>
                             </Tabs>
                           </div>

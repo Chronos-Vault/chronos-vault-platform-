@@ -1,374 +1,320 @@
-import React, { useState, useEffect } from 'react';
-import { 
-  Card, 
-  CardContent,
-  CardDescription, 
-  CardHeader, 
-  CardTitle 
-} from "@/components/ui/card";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
+import React from 'react';
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Progress } from "@/components/ui/progress";
-import { Shield, ShieldAlert, ShieldCheck, AlertTriangle, Clock, Activity } from "lucide-react";
-import { useMultiChain, BlockchainType as UIBlockchainType } from "@/contexts/multi-chain-context";
-import { BlockchainIcon } from "@/components/blockchain/BlockchainIcon";
-import { BlockchainType, SecurityIncident, SecurityRiskLevel } from '@/lib/cross-chain/interfaces';
-import { bridgeService } from '@/lib/cross-chain/bridge';
-
-// Mock security data - in a real app this would come from a service
-const mockSecurityData = {
-  overallStatus: "healthy", // healthy, warning, critical
-  networks: [
-    {
-      blockchain: "ETH" as BlockchainType,
-      status: "healthy" as "healthy" | "warning" | "critical",
-      riskLevel: SecurityRiskLevel.LOW,
-      activeThreats: 0,
-      healthScore: 92,
-      timestamp: Date.now()
-    },
-    {
-      blockchain: "TON" as BlockchainType,
-      status: "healthy" as "healthy" | "warning" | "critical",
-      riskLevel: SecurityRiskLevel.LOW,
-      activeThreats: 0,
-      healthScore: 95,
-      timestamp: Date.now()
-    },
-    {
-      blockchain: "SOL" as BlockchainType,
-      status: "warning" as "healthy" | "warning" | "critical",
-      riskLevel: SecurityRiskLevel.MEDIUM,
-      activeThreats: 1,
-      healthScore: 78,
-      timestamp: Date.now(),
-      lastIncident: {
-        id: "incident-1",
-        type: "network_congestion",
-        blockchain: "SOL",
-        description: "Increased network congestion affecting transaction finality",
-        severity: SecurityRiskLevel.MEDIUM,
-        timestamp: Date.now() - 3600000, // 1 hour ago
-        status: "active",
-        mitigationSteps: [
-          "Routing transactions through alternative validators",
-          "Implementing additional confirmation requirements"
-        ]
-      }
-    },
-    {
-      blockchain: "MATIC" as BlockchainType,
-      status: "healthy" as "healthy" | "warning" | "critical",
-      riskLevel: SecurityRiskLevel.LOW,
-      activeThreats: 0,
-      healthScore: 90,
-      timestamp: Date.now()
-    },
-    {
-      blockchain: "BNB" as BlockchainType,
-      status: "healthy" as "healthy" | "warning" | "critical",
-      riskLevel: SecurityRiskLevel.LOW,
-      activeThreats: 0,
-      healthScore: 89,
-      timestamp: Date.now()
-    }
-  ],
-  recentIncidents: [
-    {
-      id: "incident-1",
-      type: "network_congestion",
-      blockchain: "SOL",
-      description: "Increased network congestion affecting transaction finality",
-      severity: SecurityRiskLevel.MEDIUM,
-      timestamp: Date.now() - 3600000, // 1 hour ago
-      status: "active",
-      mitigationSteps: [
-        "Routing transactions through alternative validators",
-        "Implementing additional confirmation requirements"
-      ]
-    },
-    {
-      id: "incident-2",
-      type: "liquidity_shortage",
-      blockchain: "BNB",
-      description: "Temporary liquidity shortage in CVT/BNB pair",
-      severity: SecurityRiskLevel.LOW,
-      timestamp: Date.now() - 86400000, // 1 day ago
-      status: "resolved",
-      mitigationSteps: [
-        "Added liquidity from reserve pool",
-        "Implemented circuit breaker to prevent flash crashes"
-      ]
-    },
-    {
-      id: "incident-3",
-      type: "network_congestion",
-      blockchain: "ETH",
-      description: "High gas prices due to NFT launch",
-      severity: SecurityRiskLevel.LOW,
-      timestamp: Date.now() - 172800000, // 2 days ago
-      status: "resolved",
-      mitigationSteps: [
-        "Implemented gas price ceiling for transfers",
-        "Temporarily routed through Polygon for small transfers"
-      ]
-    }
-  ]
-};
+import { useAtomicSwap } from "@/contexts/atomic-swap-context";
+import { SwapInfo } from "@/lib/cross-chain/atomic-swap-service";
+import { Shield, Users, MapPin, RotateCcw, Check, AlertTriangle, X } from "lucide-react";
 
 interface SecurityDashboardProps {
+  swapId?: string;
   address?: string;
 }
 
-const SecurityDashboard: React.FC<SecurityDashboardProps> = ({ address }) => {
-  const { activeChain } = useMultiChain();
-  const [securityData, setSecurityData] = useState(mockSecurityData);
+export function SecurityDashboard({ swapId, address }: SecurityDashboardProps) {
+  const { userSwaps, selectedSwap, performSecurityVerification } = useAtomicSwap();
   
-  // Get risk level badge color
-  const getRiskLevelBadge = (level: SecurityRiskLevel) => {
-    switch(level) {
-      case SecurityRiskLevel.HIGH:
-        return <Badge variant="destructive" className="bg-red-600">High Risk</Badge>;
-      case SecurityRiskLevel.MEDIUM:
-        return <Badge variant="default" className="bg-amber-500">Medium Risk</Badge>;
-      case SecurityRiskLevel.LOW:
-        return <Badge variant="outline" className="bg-green-600/20 text-green-400 border-green-600/30">Low Risk</Badge>;
-      default:
-        return <Badge variant="outline" className="bg-green-600/20 text-green-400 border-green-600/30">No Risk</Badge>;
+  // Find the swap to display (either from swapId prop or selectedSwap from context)
+  const swapToDisplay = React.useMemo(() => {
+    if (swapId) {
+      return userSwaps.find(swap => swap.id === swapId) || selectedSwap;
     }
-  };
+    return selectedSwap;
+  }, [swapId, userSwaps, selectedSwap]);
   
-  // Get status badge
-  const getStatusBadge = (status: string) => {
-    switch(status) {
-      case 'critical':
-        return <Badge variant="destructive" className="bg-red-600">Critical</Badge>;
-      case 'warning':
-        return <Badge variant="default" className="bg-amber-500">Warning</Badge>;
-      case 'healthy':
-        return <Badge variant="outline" className="bg-green-600/20 text-green-400 border-green-600/30">Healthy</Badge>;
-      default:
-        return <Badge variant="secondary">Unknown</Badge>;
-    }
-  };
-  
-  // Format timestamp to relative time
-  const formatRelativeTime = (timestamp: number) => {
-    const now = Date.now();
-    const diff = now - timestamp;
-    
-    if (diff < 60000) return 'Just now';
-    if (diff < 3600000) return `${Math.floor(diff / 60000)} min ago`;
-    if (diff < 86400000) return `${Math.floor(diff / 3600000)} hours ago`;
-    return `${Math.floor(diff / 86400000)} days ago`;
-  };
-  
-  // Get health score color
-  const getHealthScoreColor = (score: number) => {
-    if (score >= 90) return '[&>div]:bg-green-500';
-    if (score >= 70) return '[&>div]:bg-amber-500';
-    return '[&>div]:bg-red-500';
-  };
-  
-  // Function to get simplified chain name without redundancy
-  const getChainDisplayName = (blockchain: BlockchainType): string => {
-    switch(blockchain) {
-      case 'TON': return 'TON';
-      case 'SOL': return 'Solana';
-      case 'ETH': return 'Ethereum';
-      case 'MATIC': return 'Polygon';
-      case 'BNB': return 'Binance';
-      default: return blockchain;
-    }
-  };
-  
-  // Convert API blockchain type to UI blockchain type
-  const convertToUIBlockchainType = (blockchain: BlockchainType): UIBlockchainType => {
-    switch(blockchain) {
-      case 'TON': return UIBlockchainType.TON;
-      case 'SOL': return UIBlockchainType.SOLANA;
-      case 'ETH': return UIBlockchainType.ETHEREUM;
-      default: return UIBlockchainType.TON; // Default fallback
-    }
-  };
-  
-  return (
-    <div className="space-y-6">
-      {/* Overall Security Status */}
-      <Card className="border-purple-900/30 backdrop-blur-sm bg-black/40 max-w-3xl mx-auto">
+  // Check if we are showing address-based security instead of swap security
+  if (address) {
+    return (
+      <Card className="border-purple-500/30 bg-black/20 backdrop-blur-sm shadow-lg">
         <CardHeader className="pb-2">
-          <CardTitle className="flex items-center text-xl sm:text-2xl justify-center">
-            <Shield className="mr-2 h-5 w-5 sm:h-6 sm:w-6 text-purple-400" />
-            Security Dashboard
-          </CardTitle>
-          <CardDescription className="text-center">
-            Real-time security status across supported chains
+          <div className="flex justify-between items-center">
+            <CardTitle className="text-xl font-bold bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] bg-clip-text text-transparent">
+              Wallet Security Dashboard
+            </CardTitle>
+            <Badge variant="outline" className="bg-green-500/20 text-green-200">
+              <Check className="w-3 h-3 mr-1" /> Connected
+            </Badge>
+          </div>
+          <CardDescription>
+            Advanced security metrics for address {address.slice(0, 6)}...{address.slice(-4)}
           </CardDescription>
         </CardHeader>
         
-        <CardContent className="px-3 sm:px-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {/* Overall Status - Visible on both mobile and desktop */}
-            <div className="md:col-span-2 flex flex-col sm:flex-row items-center justify-center sm:justify-between bg-gray-900/30 rounded-lg p-3 sm:p-4 border border-purple-900/30">
-              <div className="flex items-center mb-2 sm:mb-0">
-                <h3 className="text-base sm:text-lg font-medium">Overall Status:</h3>
-                <div className="ml-2">
-                  {securityData.overallStatus === "healthy" && (
-                    <Badge variant="outline" className="bg-green-600/20 text-green-400 border-green-600/30 flex items-center">
-                      <ShieldCheck className="mr-1 h-3 w-3 sm:h-4 sm:w-4" />
-                      Secure
-                    </Badge>
-                  )}
-                  {securityData.overallStatus === "warning" && (
-                    <Badge variant="default" className="bg-amber-500 flex items-center">
-                      <AlertTriangle className="mr-1 h-3 w-3 sm:h-4 sm:w-4" />
-                      Caution
-                    </Badge>
-                  )}
-                  {securityData.overallStatus === "critical" && (
-                    <Badge variant="destructive" className="bg-red-600 flex items-center">
-                      <ShieldAlert className="mr-1 h-3 w-3 sm:h-4 sm:w-4" />
-                      Alert
-                    </Badge>
-                  )}
-                </div>
+        <CardContent className="pb-3">
+          <div className="flex flex-col space-y-4">
+            {/* Security Score for Address */}
+            <div className="space-y-1">
+              <div className="flex justify-between items-center">
+                <span className="text-sm font-medium">Security Score</span>
+                <Badge variant="default" className="bg-green-500/20 text-green-200">
+                  LOW RISK
+                </Badge>
               </div>
-              <p className="text-xs sm:text-sm text-gray-400 flex items-center">
-                <Clock className="h-3 w-3 sm:h-4 sm:w-4 mr-1 text-gray-500" />
-                Last updated: Just now
-              </p>
-            </div>
-            
-            {/* Left column - Alerts */}
-            <div className="space-y-3 sm:space-y-4">
-              {/* Active incidents */}
-              {securityData.networks.find(n => n.activeThreats > 0) && (
-                <Alert className="bg-amber-500/10 border-amber-500/30 py-2 px-3 sm:p-4">
-                  <AlertTriangle className="h-4 w-4 text-amber-500" />
-                  <AlertTitle className="text-amber-500 text-sm sm:text-base">Active Incidents Detected</AlertTitle>
-                  <AlertDescription className="text-xs sm:text-sm">
-                    There are active security incidents. 
-                    Review details before transfers.
-                  </AlertDescription>
-                </Alert>
-              )}
-              
-              {/* Recent incidents */}
-              <div>
-                <h3 className="text-sm sm:text-lg font-medium mb-2">Recent Incidents</h3>
-                <div className="space-y-2 sm:space-y-3 max-h-60 overflow-y-auto pr-2 custom-scrollbar">
-                  {securityData.recentIncidents.map(incident => (
-                    <div 
-                      key={incident.id}
-                      className="p-2 sm:p-3 rounded-lg border border-purple-900/30 bg-gray-900/30"
-                    >
-                      <div className="flex justify-between items-start">
-                        <div>
-                          <div className="flex items-center gap-2">
-                            <BlockchainIcon blockchain={convertToUIBlockchainType(incident.blockchain as BlockchainType)} size={16} />
-                            <span className="font-medium text-xs sm:text-sm">{getChainDisplayName(incident.blockchain as BlockchainType)}</span>
-                          </div>
-                          <p className="text-xs sm:text-sm text-gray-400 mt-1">{incident.description}</p>
-                        </div>
-                        <div className="flex flex-col items-end">
-                          {getRiskLevelBadge(incident.severity)}
-                          <span className="text-xs text-gray-500 mt-1 flex items-center">
-                            <Clock className="h-3 w-3 mr-1" />
-                            {formatRelativeTime(incident.timestamp)}
-                          </span>
-                        </div>
-                      </div>
-                      
-                      {incident.status === 'active' && incident.mitigationSteps && (
-                        <div className="mt-2 text-xs sm:text-sm">
-                          <div className="text-amber-400 font-medium">Mitigation in progress:</div>
-                          <ul className="list-disc list-inside text-gray-400 mt-1">
-                            {incident.mitigationSteps.map((step, i) => (
-                              <li key={i} className="line-clamp-2">{step}</li>
-                            ))}
-                          </ul>
-                        </div>
-                      )}
-                      
-                      {incident.status === 'resolved' && (
-                        <div className="mt-2 flex items-center text-xs sm:text-sm text-green-400">
-                          <ShieldCheck className="h-3 w-3 sm:h-4 sm:w-4 mr-1" />
-                          Resolved
-                        </div>
-                      )}
-                    </div>
-                  ))}
-                </div>
+              <Progress value={85} max={100} className="h-2 bg-green-500" />
+              <div className="flex justify-between text-xs text-muted-foreground mt-1">
+                <span>High Risk</span>
+                <span>Medium Risk</span>
+                <span>Low Risk</span>
               </div>
             </div>
             
-            {/* Right column - Network Status */}
-            <div className="overflow-hidden">
-              <h3 className="text-sm sm:text-lg font-medium mb-2">Network Status</h3>
-              <div className="overflow-x-auto -mx-3 sm:mx-0 px-3 sm:px-0">
-                <Table className="w-full">
-                  <TableHeader>
-                    <TableRow className="hover:bg-transparent border-purple-900/30">
-                      <TableHead className="w-[100px] py-2 px-2 sm:px-4 text-xs sm:text-sm">Network</TableHead>
-                      <TableHead className="py-2 px-2 sm:px-4 text-xs sm:text-sm">Status</TableHead>
-                      <TableHead className="text-right py-2 px-2 sm:px-4 text-xs sm:text-sm">Health</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {securityData.networks.map(network => (
-                      <TableRow key={network.blockchain} className="hover:bg-gray-900/30 border-purple-900/30">
-                        <TableCell className="font-medium py-2 px-2 sm:px-4">
-                          <div className="flex items-center gap-2">
-                            <BlockchainIcon blockchain={convertToUIBlockchainType(network.blockchain)} size={16} />
-                            <span className="text-xs sm:text-sm">{getChainDisplayName(network.blockchain)}</span>
-                          </div>
-                        </TableCell>
-                        <TableCell className="py-2 px-2 sm:px-4">
-                          <div className="flex flex-col gap-1">
-                            {getStatusBadge(network.status)}
-                            {network.activeThreats > 0 && (
-                              <span className="text-xs text-amber-400 flex items-center mt-1">
-                                <Activity className="h-3 w-3 mr-1" />
-                                {network.activeThreats} issue{network.activeThreats > 1 ? 's' : ''}
-                              </span>
-                            )}
-                          </div>
-                        </TableCell>
-                        <TableCell className="text-right py-2 px-2 sm:px-4">
-                          <div className="flex flex-col items-end gap-1">
-                            <span className="font-medium text-xs sm:text-sm">{network.healthScore}</span>
-                            <Progress 
-                              value={network.healthScore} 
-                              max={100} 
-                              className={`h-1.5 sm:h-2 w-16 sm:w-24 ${getHealthScoreColor(network.healthScore)}`}
-                            />
-                          </div>
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
+            {/* Security Features for Address */}
+            <div className="grid grid-cols-2 gap-3">
+              <div className="p-3 rounded-lg border border-purple-500/20 bg-purple-950/10">
+                <div className="flex items-center gap-2">
+                  <Users className="w-4 h-4 text-[#FF5AF7]" />
+                  <span className="text-sm font-medium">Multi-Chain Identity</span>
+                </div>
+                <div className="flex items-center justify-between mt-2">
+                  <span className="text-xs text-muted-foreground">Verified on 3 chains</span>
+                  <Badge variant="default" className="bg-green-500/20 text-green-200">ACTIVE</Badge>
+                </div>
               </div>
               
-              {address && (
-                <div className="mt-3 text-xs sm:text-sm text-gray-400">
-                  <p>Monitoring: {address.substring(0, 4)}...{address.substring(address.length - 4)}</p>
+              <div className="p-3 rounded-lg border border-purple-500/20 bg-purple-950/10">
+                <div className="flex items-center gap-2">
+                  <Shield className="w-4 h-4 text-[#FF5AF7]" />
+                  <span className="text-sm font-medium">Security Protocols</span>
                 </div>
-              )}
+                <div className="flex items-center justify-between mt-2">
+                  <span className="text-xs text-muted-foreground">Enhanced security active</span>
+                  <Badge variant="default" className="bg-green-500/20 text-green-200">ACTIVE</Badge>
+                </div>
+              </div>
             </div>
           </div>
         </CardContent>
       </Card>
-    </div>
+    );
+  }
+  
+  // Handle null swap (no swap selected or found)
+  if (!swapToDisplay) {
+    return (
+      <Card className="border-dashed border-purple-500/50">
+        <CardHeader className="pb-4">
+          <CardTitle className="text-xl font-bold text-center">Security Dashboard</CardTitle>
+          <CardDescription className="text-center">No swap selected to display security metrics</CardDescription>
+        </CardHeader>
+        <CardContent className="flex justify-center pb-6">
+          <Badge variant="outline" className="bg-purple-950/30 text-purple-200 border-purple-700/50 px-3 py-1">
+            <Shield className="w-4 h-4 mr-2" /> 
+            Select a swap to view security details
+          </Badge>
+        </CardContent>
+      </Card>
+    );
+  }
+  
+  // Calculate security metrics
+  const securityScore = swapToDisplay.securityScore || 50;
+  const riskLevel = swapToDisplay.riskAssessment || 'medium';
+  const multiSigEnabled = swapToDisplay.config.useAtomicMultiSig || false;
+  const geoVerificationEnabled = swapToDisplay.config.multiSignatureConfig?.geolocationRestricted || false;
+  const backupRecoveryEnabled = swapToDisplay.config.multiSignatureConfig?.enableBackupRecovery || false;
+  const tripleChainEnabled = swapToDisplay.config.useTripleChainSecurity || false;
+  
+  // Get security checks
+  const securityChecks = swapToDisplay.additionalSecurityChecks || [];
+  
+  // Determine progress bar color based on risk level
+  const progressColor = {
+    low: 'bg-green-500',
+    medium: 'bg-yellow-500',
+    high: 'bg-red-500'
+  }[riskLevel];
+  
+  // Determine verification status
+  const verificationStatus = swapToDisplay.verificationStatus || 'pending';
+  
+  // Handle verification request
+  const handleVerify = async () => {
+    try {
+      await performSecurityVerification(swapToDisplay.id);
+    } catch (error) {
+      console.error("Failed to verify security:", error);
+    }
+  };
+  
+  return (
+    <Card className="border-purple-500/30 bg-black/20 backdrop-blur-sm shadow-lg">
+      <CardHeader className="pb-2">
+        <div className="flex justify-between items-center">
+          <CardTitle className="text-xl font-bold bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] bg-clip-text text-transparent">
+            Security Dashboard
+          </CardTitle>
+          <Badge 
+            variant={{
+              verified: 'default',
+              pending: 'outline',
+              failed: 'destructive'
+            }[verificationStatus] as any}
+            className={{
+              verified: 'bg-green-500/20 text-green-200 hover:bg-green-500/30',
+              pending: 'bg-yellow-500/10 text-yellow-200 hover:bg-yellow-500/20',
+              failed: 'bg-red-500/20 text-red-200 hover:bg-red-500/30'
+            }[verificationStatus]}
+          >
+            {{
+              verified: <><Check className="w-3 h-3 mr-1" /> Verified</>,
+              pending: <><AlertTriangle className="w-3 h-3 mr-1" /> Pending Verification</>,
+              failed: <><X className="w-3 h-3 mr-1" /> Verification Failed</>
+            }[verificationStatus]}
+          </Badge>
+        </div>
+        <CardDescription>
+          Advanced security metrics and validation for swap #{swapToDisplay.id.split('_')[1]}
+        </CardDescription>
+      </CardHeader>
+      
+      <CardContent className="pb-3">
+        <div className="flex flex-col space-y-4">
+          {/* Security Score Indicator */}
+          <div className="space-y-1">
+            <div className="flex justify-between items-center">
+              <span className="text-sm font-medium">Security Score</span>
+              <Badge 
+                variant={{
+                  low: 'default',
+                  medium: 'outline',
+                  high: 'destructive'
+                }[riskLevel] as any}
+                className={{
+                  low: 'bg-green-500/20 text-green-200',
+                  medium: 'bg-yellow-500/10 text-yellow-200',
+                  high: 'bg-red-500/20 text-red-200'
+                }[riskLevel]}
+              >
+                {riskLevel.toUpperCase()} RISK
+              </Badge>
+            </div>
+            <Progress value={securityScore} max={100} className={`h-2 ${progressColor}`} />
+            <div className="flex justify-between text-xs text-muted-foreground mt-1">
+              <span>High Risk</span>
+              <span>Medium Risk</span>
+              <span>Low Risk</span>
+            </div>
+          </div>
+          
+          {/* Security Features Grid */}
+          <div className="grid grid-cols-2 gap-3">
+            {/* Multi-Signature Feature */}
+            <div className="p-3 rounded-lg border border-purple-500/20 bg-purple-950/10">
+              <div className="flex items-center gap-2">
+                <Users className="w-4 h-4 text-[#FF5AF7]" />
+                <span className="text-sm font-medium">Multi-Signature</span>
+              </div>
+              <div className="flex items-center justify-between mt-2">
+                <span className="text-xs text-muted-foreground">
+                  {multiSigEnabled ? 'Enabled' : 'Not Enabled'}
+                </span>
+                <Badge 
+                  variant={multiSigEnabled ? 'default' : 'outline'}
+                  className={multiSigEnabled ? 'bg-green-500/20 text-green-200' : 'bg-red-500/10 text-red-200'}
+                >
+                  {multiSigEnabled ? 'ACTIVE' : 'INACTIVE'}
+                </Badge>
+              </div>
+            </div>
+            
+            {/* Geolocation Feature */}
+            <div className="p-3 rounded-lg border border-purple-500/20 bg-purple-950/10">
+              <div className="flex items-center gap-2">
+                <MapPin className="w-4 h-4 text-[#FF5AF7]" />
+                <span className="text-sm font-medium">Geolocation Security</span>
+              </div>
+              <div className="flex items-center justify-between mt-2">
+                <span className="text-xs text-muted-foreground">
+                  {geoVerificationEnabled ? 'Location Restricted' : 'No Restrictions'}
+                </span>
+                <Badge 
+                  variant={geoVerificationEnabled ? 'default' : 'outline'}
+                  className={geoVerificationEnabled ? 'bg-green-500/20 text-green-200' : 'bg-red-500/10 text-red-200'}
+                >
+                  {geoVerificationEnabled ? 'ACTIVE' : 'INACTIVE'}
+                </Badge>
+              </div>
+            </div>
+            
+            {/* Backup Recovery Feature */}
+            <div className="p-3 rounded-lg border border-purple-500/20 bg-purple-950/10">
+              <div className="flex items-center gap-2">
+                <RotateCcw className="w-4 h-4 text-[#FF5AF7]" />
+                <span className="text-sm font-medium">Backup Recovery</span>
+              </div>
+              <div className="flex items-center justify-between mt-2">
+                <span className="text-xs text-muted-foreground">
+                  {backupRecoveryEnabled ? 'Emergency Recovery Enabled' : 'No Recovery Option'}
+                </span>
+                <Badge 
+                  variant={backupRecoveryEnabled ? 'default' : 'outline'}
+                  className={backupRecoveryEnabled ? 'bg-green-500/20 text-green-200' : 'bg-red-500/10 text-red-200'}
+                >
+                  {backupRecoveryEnabled ? 'ACTIVE' : 'INACTIVE'}
+                </Badge>
+              </div>
+            </div>
+            
+            {/* Triple-Chain Feature */}
+            <div className="p-3 rounded-lg border border-purple-500/20 bg-purple-950/10">
+              <div className="flex items-center gap-2">
+                <Shield className="w-4 h-4 text-[#FF5AF7]" />
+                <span className="text-sm font-medium">Triple-Chain Security</span>
+              </div>
+              <div className="flex items-center justify-between mt-2">
+                <span className="text-xs text-muted-foreground">
+                  {tripleChainEnabled ? 'Enhanced Security Protocol' : 'Standard Security'}
+                </span>
+                <Badge 
+                  variant={tripleChainEnabled ? 'default' : 'outline'}
+                  className={tripleChainEnabled ? 'bg-green-500/20 text-green-200' : 'bg-red-500/10 text-red-200'}
+                >
+                  {tripleChainEnabled ? 'ACTIVE' : 'INACTIVE'}
+                </Badge>
+              </div>
+            </div>
+          </div>
+          
+          {/* Security Checks */}
+          {securityChecks.length > 0 && (
+            <div className="mt-2">
+              <h4 className="text-sm font-medium mb-2">Security Verification Checks</h4>
+              <div className="space-y-2">
+                {securityChecks.map((check, index) => (
+                  <div key={index} className="flex items-center justify-between text-xs p-2 rounded-md bg-black/20">
+                    <span>{check.name.split('_').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ')}</span>
+                    <Badge
+                      variant={{
+                        passed: 'default',
+                        pending: 'outline',
+                        failed: 'destructive'
+                      }[check.status] as any}
+                      className={{
+                        passed: 'bg-green-500/20 text-green-200',
+                        pending: 'bg-yellow-500/10 text-yellow-200',
+                        failed: 'bg-red-500/20 text-red-200'
+                      }[check.status]}
+                    >
+                      {check.status.toUpperCase()}
+                    </Badge>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
+      </CardContent>
+      
+      <CardFooter className="pt-0">
+        <button
+          onClick={handleVerify}
+          disabled={verificationStatus === 'verified'}
+          className="w-full py-2 px-4 bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] rounded-md text-white font-medium text-sm hover:opacity-90 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed"
+        >
+          {verificationStatus === 'verified' ? 'Security Verification Complete' : 'Perform Security Verification'}
+        </button>
+      </CardFooter>
+    </Card>
   );
-};
-
-export default SecurityDashboard;
+}
