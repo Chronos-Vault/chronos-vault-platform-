@@ -291,6 +291,53 @@ export class CVTTokenService {
   }
   
   /**
+   * Pay for vault creation using CVT tokens
+   */
+  async payForVaultCreation(
+    amount: number,
+    vaultType: string,
+    chain: BlockchainType
+  ): Promise<{
+    success: boolean;
+    transactionId?: string;
+    receipt?: any;
+  }> {
+    try {
+      if (!this.initializedChains.has(chain)) {
+        await this.initializeForChain(chain);
+      }
+      
+      // We should check if user has sufficient balance here
+      // For now, we'll simulate the check and payment
+      
+      console.log(`Paying ${amount} CVT tokens for vault creation of type ${vaultType} on ${chain}`);
+      
+      // In production, this would call a specific payment function in the contract
+      // with a reference to the vault being created
+      
+      // Simulate blockchain delay
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      
+      const txId = `cvt_payment_${Date.now()}_${Math.floor(Math.random() * 1000)}`;
+      
+      return {
+        success: true,
+        transactionId: txId,
+        receipt: {
+          blockHash: `0x${Math.random().toString(16).substring(2, 10)}`,
+          timestamp: Date.now(),
+          amount,
+          vaultType,
+          chain
+        }
+      };
+    } catch (error) {
+      console.error(`Failed to pay for vault creation on ${chain}:`, error);
+      return { success: false };
+    }
+  }
+  
+  /**
    * Checks if a special burn event is in progress
    */
   async checkSpecialBurnEvent(): Promise<{

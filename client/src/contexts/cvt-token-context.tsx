@@ -65,6 +65,7 @@ interface CVTTokenContextType {
   calculateRewards: (lockAmount: string, lockDuration: TimeMultiplier) => string;
   estimateHalvingRewards: (amount: string, periods: number) => string;
   getTierBenefits: (tier: StakingTier) => string[];
+  payForVaultCreation: (amount: number, vaultType: string, blockchain: string) => Promise<VaultPaymentResult>;
   
   // State
   isLoading: boolean;
@@ -77,6 +78,15 @@ const CVTTokenContext = createContext<CVTTokenContextType | undefined>(undefined
 // Provider component
 interface CVTTokenProviderProps {
   children: ReactNode;
+}
+
+// Interface for vault payment result
+export interface VaultPaymentResult {
+  success: boolean;
+  transactionHash?: string;
+  errorMessage?: string;
+  burnAmount?: number;
+  amountPaid?: number;
 }
 
 export function CVTTokenProvider({ children }: CVTTokenProviderProps) {

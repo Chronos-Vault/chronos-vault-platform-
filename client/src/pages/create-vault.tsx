@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useLocation } from "wouter";
 import { useMultiChain, BlockchainType } from "@/contexts/multi-chain-context";
 import { useTon } from "@/contexts/ton-context";
-import CreateVaultForm from "@/components/vault/create-vault-form";
+import { CreateVaultForm } from "@/components/vault/create-vault-form";
 import VaultTypeSelector, { SpecializedVaultType } from "@/components/vault/vault-type-selector";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
