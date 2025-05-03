@@ -391,6 +391,19 @@ export class AtomicSwapService {
   }
 
   /**
+   * Advanced Security Feature: Verify Multi-Signature Requirements
+   */
+  verifyMultiSigRequirements(swapInfo: SwapInfo): boolean {
+    if (!swapInfo.config.useAtomicMultiSig || !swapInfo.config.requiredSignatures) {
+      return true; // Multi-sig not required
+    }
+    
+    // Check if we have enough valid signatures
+    const validSignaturesCount = swapInfo.signatures?.filter(sig => sig.valid).length || 0;
+    return validSignaturesCount >= swapInfo.config.requiredSignatures;
+  }
+
+  /**
    * Updates and calculates the security score for a swap
    */
   private updateSecurityScore(swapInfo: SwapInfo): void {
@@ -629,21 +642,4 @@ export class AtomicSwapService {
       console.error("Failed to load swaps from localStorage:", error);
     }
   }
-  
-
-  
-  /**
-   * Advanced Security Feature: Verify Multi-Signature Requirements
-   */
-  verifyMultiSigRequirements(swapInfo: SwapInfo): boolean {
-    if (!swapInfo.config.useAtomicMultiSig || !swapInfo.config.requiredSignatures) {
-      return true; // Multi-sig not required
-    }
-    
-    // Check if we have enough valid signatures
-    const validSignaturesCount = swapInfo.signatures?.filter(sig => sig.valid).length || 0;
-    return validSignaturesCount >= swapInfo.config.requiredSignatures;
-  }
-  
-
 }
