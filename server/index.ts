@@ -1,16 +1,17 @@
 import express, { type Request, Response, NextFunction } from "express";
 import session from "express-session";
-import memorystore from "memorystore";
 import { registerRoutes } from "./routes";
 import { setupVite, serveStatic, log } from "./vite";
 import { initializeAuth } from "./auth";
+import connectPg from "connect-pg-simple";
+import { pool } from "./db";
 
 const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
 // Configure session store
-const MemoryStore = memorystore(session);
+const PostgresSessionStore = connectPg(session);
 
 // Set up session middleware
 app.use(
@@ -23,8 +24,10 @@ app.use(
     secret: process.env.SESSION_SECRET || "chronos-vault-secret-key", // Use env variable in production
     resave: false,
     saveUninitialized: false,
-    store: new MemoryStore({
-      checkPeriod: 86400000, // Prune expired entries every 24h
+    store: new PostgresSessionStore({
+      pool,
+      createTableIfMissing: true, // Auto-create the session table if it doesn't exist
+      tableName: 'session' // Default is 'session' but being explicit
     }),
   })
 );
