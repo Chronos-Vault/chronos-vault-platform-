@@ -339,6 +339,70 @@ export function CVTTokenProvider({ children }: CVTTokenProviderProps) {
       ? ['No benefits (not staking)'] 
       : STAKING_REQUIREMENTS[tier].benefits;
   };
+  
+  // Pay for vault creation with CVT tokens
+  const payForVaultCreation = async (amount: number, vaultType: string, blockchain: string): Promise<VaultPaymentResult> => {
+    try {
+      setIsLoading(true);
+      console.log(`Processing CVT payment for vault creation: ${amount} CVT for ${vaultType} vault on ${blockchain}`);
+      
+      // Check if user has enough balance
+      const userBalance = parseFloat(tokenBalance);
+      if (userBalance < amount) {
+        return {
+          success: false,
+          errorMessage: `Insufficient CVT balance. Required: ${amount} CVT, Available: ${userBalance} CVT`
+        };
+      }
+      
+      // Calculate burn amount based on deflationary mechanism
+      const burnAmount = calculateTransactionBurn(amount);
+      const actualPaymentAmount = amount - burnAmount;
+      
+      // Get chain type in format expected by token service
+      const chainType = blockchain.toUpperCase() === 'ETHEREUM' ? 'ETH' : 
+                      blockchain.toUpperCase() === 'SOLANA' ? 'SOL' : 'TON';
+      
+      // Use token service to process payment
+      const result = await cvtTokenService.payForVaultCreation(
+        actualPaymentAmount, 
+        vaultType,
+        chainType as any
+      );
+      
+      if (result.success) {
+        // Apply burn mechanism
+        if (burnAmount > 0) {
+          await cvtTokenService.burnTokens(burnAmount, chainType as any);
+        }
+        
+        // Update balance
+        setTokenBalance((userBalance - amount).toString());
+        
+        console.log(`Payment successful: ${actualPaymentAmount} CVT paid, ${burnAmount} CVT burned`);
+        
+        return {
+          success: true,
+          transactionHash: result.transactionHash || 'simulated-tx-' + Date.now(),
+          burnAmount,
+          amountPaid: actualPaymentAmount
+        };
+      }
+      
+      return {
+        success: false,
+        errorMessage: result.errorMessage || 'Payment failed for unknown reason'
+      };
+    } catch (error: any) {
+      console.error('Failed to process CVT payment for vault creation:', error);
+      return {
+        success: false,
+        errorMessage: error.message || 'An unexpected error occurred during payment processing'
+      };
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   const contextValue: CVTTokenContextType = {
     tokenBalance,
@@ -354,6 +418,7 @@ export function CVTTokenProvider({ children }: CVTTokenProviderProps) {
     calculateRewards,
     estimateHalvingRewards,
     getTierBenefits,
+    payForVaultCreation,
     isLoading,
     refreshBalances,
   };

@@ -140,7 +140,7 @@ export function CreateVaultForm({
   const [useTripleChainSecurity, setUseTripleChainSecurity] = useState<boolean>(false);
   
   // Get CVT token context for balance and pricing
-  const { tokenBalance, currentStakingTier } = useCVTToken();
+  const { tokenBalance, currentStakingTier, payForVaultCreation } = useCVTToken();
   
   // Function to get vault creation cost based on vault type
   const getCreationCost = () => {
@@ -540,18 +540,36 @@ export function CreateVaultForm({
             throw new Error(`Insufficient CVT balance. Need ${creationCost.amount} CVT but you have ${userBalance} CVT.`);
           }
           
-          // In a real implementation, we would call the CVT token contract to transfer tokens
+          // Use our CVT token context to process the payment
           try {
-            console.log("Initiating CVT token transfer", { amount: creationCost.amount });
-            await new Promise(resolve => setTimeout(resolve, 1500)); // Simulate token transfer
-            console.log("CVT payment confirmed");
-            setDeploymentStatus("CVT payment confirmed!");
-            paymentSuccess = true;
+            console.log("Initiating CVT token payment", { amount: creationCost.amount, type: data.vaultType });
+            // Get blockchain type as string for the token service
+            const blockchainString = selectedBlockchain.toString();
+            
+            // Process the payment through our CVT token service
+            const paymentResult = await payForVaultCreation(
+              creationCost.amount,
+              data.vaultType,
+              blockchainString
+            );
+            
+            if (paymentResult.success) {
+              console.log("CVT payment confirmed", paymentResult);
+              setDeploymentStatus(
+                `CVT payment confirmed! ${paymentResult.burnAmount ? `(${paymentResult.burnAmount.toFixed(2)} CVT burned)` : ""}`
+              );
+              paymentSuccess = true;
+              
+              // Save the transaction hash for blockchain reference
+              blockchainTxHash = paymentResult.transactionHash || null;
+            } else {
+              throw new Error(paymentResult.errorMessage || "Payment failed");
+            }
           } catch (paymentError: any) {
             console.error("CVT payment failed", paymentError);
             toast({
               title: "Payment Failed",
-              description: "There was an error processing your CVT payment.",
+              description: paymentError.message || "There was an error processing your CVT payment.",
               variant: "destructive"
             });
             throw new Error(`Payment failed: ${paymentError.message}`);

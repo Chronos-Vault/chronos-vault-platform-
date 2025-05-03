@@ -299,7 +299,8 @@ export class CVTTokenService {
     chain: BlockchainType
   ): Promise<{
     success: boolean;
-    transactionId?: string;
+    transactionHash?: string;
+    errorMessage?: string;
     receipt?: any;
   }> {
     try {
@@ -318,11 +319,11 @@ export class CVTTokenService {
       // Simulate blockchain delay
       await new Promise(resolve => setTimeout(resolve, 1000));
       
-      const txId = `cvt_payment_${Date.now()}_${Math.floor(Math.random() * 1000)}`;
+      const txHash = `cvt_payment_${Date.now()}_${Math.floor(Math.random() * 1000)}`;
       
       return {
         success: true,
-        transactionId: txId,
+        transactionHash: txHash,
         receipt: {
           blockHash: `0x${Math.random().toString(16).substring(2, 10)}`,
           timestamp: Date.now(),
@@ -331,9 +332,12 @@ export class CVTTokenService {
           chain
         }
       };
-    } catch (error) {
+    } catch (error: any) {
       console.error(`Failed to pay for vault creation on ${chain}:`, error);
-      return { success: false };
+      return { 
+        success: false,
+        errorMessage: error.message || 'Transaction failed for unknown reason' 
+      };
     }
   }
   
