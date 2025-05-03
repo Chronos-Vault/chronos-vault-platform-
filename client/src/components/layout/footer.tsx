@@ -1,4 +1,5 @@
 import { Link } from "wouter";
+import logoPath from '@assets/IMG_3726.jpeg';
 
 const Footer = ({ className = '' }: { className?: string }) => {
   const currentYear = new Date().getFullYear();
@@ -14,13 +15,8 @@ const Footer = ({ className = '' }: { className?: string }) => {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-10 mb-16">
           <div>
             <Link href="/" className="flex items-center gap-3 mb-8 group">
-              <div className="h-14 w-14 rounded-full bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] flex items-center justify-center shadow-lg shadow-[#6B00D7]/20 group-hover:shadow-[#FF5AF7]/30 transition-all p-3.5">
-                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="text-white">
-                  <path d="M19 7H5C3.89543 7 3 7.89543 3 9V18C3 19.1046 3.89543 20 5 20H19C20.1046 20 21 19.1046 21 18V9C21 7.89543 20.1046 7 19 7Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                  <path d="M12 14C13.1046 14 14 13.1046 14 12C14 10.8954 13.1046 10 12 10C10.8954 10 10 10.8954 10 12C10 13.1046 10.8954 14 12 14Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                  <path d="M3 7V5C3 4.46957 3.21071 3.96086 3.58579 3.58579C3.96086 3.21071 4.46957 3 5 3H19C19.5304 3 20.0391 3.21071 20.4142 3.58579C20.7893 3.96086 21 4.46957 21 5V7" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                  <path d="M12 14V17" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                </svg>
+              <div className="h-14 w-14 rounded-full flex items-center justify-center shadow-lg shadow-[#6B00D7]/20 group-hover:shadow-[#FF5AF7]/30 transition-all overflow-hidden border-2 border-white/20">
+                <img src={logoPath} alt="Chronos Vault Logo" className="w-full h-full object-cover" />
               </div>
               <div className="relative">
                 <h1 className="text-3xl font-poppins font-bold text-white">
@@ -90,13 +86,8 @@ const Footer = ({ className = '' }: { className?: string }) => {
         
         <div className="border-t border-[#6B00D7]/20 pt-10 pb-4 flex flex-col md:flex-row justify-between items-center">
           <div className="flex items-center">
-            <div className="h-8 w-8 rounded-lg bg-gradient-to-r from-[#6B00D7]/30 to-[#FF5AF7]/20 flex items-center justify-center mr-3 p-2 shadow-inner shadow-[#6B00D7]/10">
-              <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="text-white">
-                <path d="M19 7H5C3.89543 7 3 7.89543 3 9V18C3 19.1046 3.89543 20 5 20H19C20.1046 20 21 19.1046 21 18V9C21 7.89543 20.1046 7 19 7Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                <path d="M12 14C13.1046 14 14 13.1046 14 12C14 10.8954 13.1046 10 12 10C10.8954 10 10 10.8954 10 12C10 13.1046 10.8954 14 12 14Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                <path d="M3 7V5C3 4.46957 3.21071 3.96086 3.58579 3.58579C3.96086 3.21071 4.46957 3 5 3H19C19.5304 3 20.0391 3.21071 20.4142 3.58579C20.7893 3.96086 21 4.46957 21 5V7" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                <path d="M12 14V17" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-              </svg>
+            <div className="h-8 w-8 rounded-lg flex items-center justify-center mr-3 overflow-hidden shadow-inner shadow-[#6B00D7]/10 border border-white/10">
+              <img src={logoPath} alt="Chronos Vault Logo" className="w-full h-full object-cover" />
             </div>
             <p className="text-gray-300 font-poppins font-light">© {currentYear} <span className="text-white font-medium">Chronos Vault</span>. All rights reserved.</p>
           </div>
