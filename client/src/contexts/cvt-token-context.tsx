@@ -91,7 +91,7 @@ export interface VaultPaymentResult {
 
 export function CVTTokenProvider({ children }: CVTTokenProviderProps) {
   const { isAuthenticated } = useAuthContext();
-  const { currentChain } = useMultiChain();
+  const { activeChain } = useMultiChain();
   
   // State for balances
   const [tokenBalance, setTokenBalance] = useState<string>('0');
@@ -120,7 +120,7 @@ export function CVTTokenProvider({ children }: CVTTokenProviderProps) {
       setCurrentStakingTier(StakingTier.NONE);
       setStakingEndTime(null);
     }
-  }, [isAuthenticated, currentChain]);
+  }, [isAuthenticated, activeChain]);
   
   // Determine staking tier based on staked amount
   useEffect(() => {
@@ -168,9 +168,9 @@ export function CVTTokenProvider({ children }: CVTTokenProviderProps) {
       setIsLoading(true);
       
       // Get the current chain
-      const chainId = currentChain;
-      const chainType = chainId.toUpperCase() === 'ETHEREUM' ? 'ETH' : 
-                      chainId.toUpperCase() === 'SOLANA' ? 'SOL' : 'TON';
+      const chainId = activeChain;
+      const chainType = chainId?.toUpperCase() === 'ETHEREUM' ? 'ETH' : 
+                      chainId?.toUpperCase() === 'SOLANA' ? 'SOL' : 'TON';
       
       // Calculate duration in months
       let durationMonths = 3;
@@ -244,9 +244,9 @@ export function CVTTokenProvider({ children }: CVTTokenProviderProps) {
       setIsLoading(true);
       
       // Get the current chain
-      const chainId = currentChain;
-      const chainType = chainId.toUpperCase() === 'ETHEREUM' ? 'ETH' : 
-                      chainId.toUpperCase() === 'SOLANA' ? 'SOL' : 'TON';
+      const chainId = activeChain;
+      const chainType = chainId?.toUpperCase() === 'ETHEREUM' ? 'ETH' : 
+                      chainId?.toUpperCase() === 'SOLANA' ? 'SOL' : 'TON';
       
       // This would be an actual contract call in production
       console.log(`Unstaking ${stakedBalance} CVT tokens from ${chainType}`);
