@@ -15,7 +15,7 @@ import { Slider } from "@/components/ui/slider";
 import { Switch } from "@/components/ui/switch";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Users, ShieldCheck, Lock, Plus, Trash2, AlertCircle, Info } from "lucide-react";
+import { Users, ShieldCheck, Lock, Plus, Trash2, AlertCircle, Info, Map, Shield, Globe, Key } from "lucide-react";
 
 interface MultiSignatureSwapConfigProps {
   form: any; // Using any for form type to keep it flexible
@@ -30,6 +30,10 @@ export function MultiSignatureSwapConfig({ form }: MultiSignatureSwapConfigProps
   const [newSignerName, setNewSignerName] = useState("");
   const [newSignerAddress, setNewSignerAddress] = useState("");
   const [showAdvanced, setShowAdvanced] = useState(false);
+  const [showGeolocation, setShowGeolocation] = useState(false);
+  const [useBackupRecovery, setUseBackupRecovery] = useState(false);
+  const [recoveryAddress, setRecoveryAddress] = useState("");
+  const [securityLevel, setSecurityLevel] = useState<'standard' | 'enhanced' | 'max'>('standard');
   
   const handleAddSigner = () => {
     if (newSignerName && newSignerAddress) {
@@ -87,10 +91,16 @@ export function MultiSignatureSwapConfig({ form }: MultiSignatureSwapConfigProps
         timeoutPeriod: 24,
         timeoutUnit: "hours",
         enableSecurityDelay: true,
-        securityDelayPeriod: 4
+        securityDelayPeriod: 4,
+        useAtomicMultiSig: true,
+        useBackupRecovery: useBackupRecovery,
+        recoveryAddress: recoveryAddress,
+        geolocationRestricted: showGeolocation,
+        allowedGeolocationHashes: [],
+        securityLevel: securityLevel
       });
     }
-  }, [form, signers]);
+  }, [form, signers, useBackupRecovery, recoveryAddress, showGeolocation, securityLevel]);
 
   return (
     <div className="space-y-6">
@@ -296,6 +306,138 @@ export function MultiSignatureSwapConfig({ form }: MultiSignatureSwapConfigProps
                     Add a mandatory waiting period of {form.watch("multiSignatureConfig")?.securityDelayPeriod || 4} hours before the swap transaction can complete
                   </p>
                 </div>
+              </div>
+              
+              {/* Security Level */}
+              <div className="pt-4">
+                <div className="flex items-center gap-2 mb-2">
+                  <Shield className="h-4 w-4 text-[#FF5AF7]" />
+                  <h3 className="text-sm font-medium">Security Level</h3>
+                </div>
+                <div className="flex flex-wrap gap-2">
+                  {['standard', 'enhanced', 'max'].map((level) => (
+                    <Button 
+                      key={level}
+                      variant={securityLevel === level ? "default" : "outline"}
+                      size="sm"
+                      className={securityLevel === level 
+                        ? level === 'standard' ? "bg-blue-600 hover:bg-blue-700" :
+                          level === 'enhanced' ? "bg-[#FF5AF7] hover:bg-[#FF5AF7]/90" :
+                          "bg-purple-700 hover:bg-purple-800"
+                        : "border-gray-600 hover:bg-black/20"}
+                      onClick={() => {
+                        setSecurityLevel(level as 'standard' | 'enhanced' | 'max');
+                        form.setValue("multiSignatureConfig", {
+                          ...form.watch("multiSignatureConfig"),
+                          securityLevel: level
+                        });
+                      }}
+                    >
+                      {level.charAt(0).toUpperCase() + level.slice(1)}
+                    </Button>
+                  ))}
+                </div>
+                <p className="text-xs text-gray-400 mt-1">
+                  {securityLevel === 'standard' && "Basic protection with standard security features"}
+                  {securityLevel === 'enhanced' && "Additional protection with enhanced security verification"}
+                  {securityLevel === 'max' && "Maximum security with comprehensive protection layers"}
+                </p>
+              </div>
+              
+              {/* Backup Recovery */}
+              <div className="pt-4 pb-2">
+                <div className="flex items-center gap-2 mb-2">
+                  <Key className="h-4 w-4 text-[#FF5AF7]" />
+                  <h3 className="text-sm font-medium">Backup Recovery Protection</h3>
+                </div>
+                <div className="flex items-start space-x-2">
+                  <Checkbox 
+                    id="backup-recovery" 
+                    checked={useBackupRecovery} 
+                    onCheckedChange={(checked) => {
+                      setUseBackupRecovery(!!checked);
+                      form.setValue("multiSignatureConfig", {
+                        ...form.watch("multiSignatureConfig"),
+                        useBackupRecovery: !!checked
+                      });
+                    }}
+                  />
+                  <div className="grid gap-1.5 leading-none">
+                    <label
+                      htmlFor="backup-recovery"
+                      className="text-sm font-medium leading-none"
+                    >
+                      Enable Backup Recovery
+                    </label>
+                    <p className="text-xs text-gray-400">
+                      Add a backup address that can recover funds if the swap fails or times out
+                    </p>
+                  </div>
+                </div>
+              </div>
+              
+              {useBackupRecovery && (
+                <div className="ml-6 mt-2">
+                  <Input 
+                    placeholder="Backup Recovery Address" 
+                    value={recoveryAddress}
+                    onChange={(e) => {
+                      setRecoveryAddress(e.target.value);
+                      form.setValue("multiSignatureConfig", {
+                        ...form.watch("multiSignatureConfig"),
+                        recoveryAddress: e.target.value
+                      });
+                    }}
+                    className="bg-black/30 border-[#FF5AF7]/20 focus:border-[#FF5AF7]/50 text-sm"
+                  />
+                </div>
+              )}
+              
+              {/* Geolocation Restrictions */}
+              <div className="pt-4 pb-2">
+                <div className="flex items-center gap-2 mb-2">
+                  <Globe className="h-4 w-4 text-[#FF5AF7]" />
+                  <h3 className="text-sm font-medium">Geolocation Security</h3>
+                </div>
+                <div className="flex items-start space-x-2">
+                  <Checkbox 
+                    id="geolocation-restricted" 
+                    checked={showGeolocation} 
+                    onCheckedChange={(checked) => {
+                      setShowGeolocation(!!checked);
+                      form.setValue("multiSignatureConfig", {
+                        ...form.watch("multiSignatureConfig"),
+                        geolocationRestricted: !!checked
+                      });
+                    }}
+                  />
+                  <div className="grid gap-1.5 leading-none">
+                    <label
+                      htmlFor="geolocation-restricted"
+                      className="text-sm font-medium leading-none"
+                    >
+                      Enable Geolocation Restrictions
+                    </label>
+                    <p className="text-xs text-gray-400">
+                      Restrict swap operations to specific geographic locations for enhanced security
+                    </p>
+                  </div>
+                </div>
+                {showGeolocation && (
+                  <div className="mt-3 p-3 bg-[#231A2A] border border-[#FF5AF7]/20 rounded-md">
+                    <p className="text-xs text-[#FF5AF7] mb-1">Allowed Locations:</p>
+                    <div className="flex flex-wrap gap-2">
+                      <Badge variant="outline" className="bg-[#FF5AF7]/10 border-[#FF5AF7]/30 text-xs">
+                        <Map className="mr-1 h-3 w-3" />
+                        Current Location (Auto-detected)
+                      </Badge>
+                      <Badge variant="outline" className="border-gray-700 text-gray-400 text-xs">
+                        <Plus className="mr-1 h-3 w-3" />
+                        Add Location
+                      </Badge>
+                    </div>
+                  </div>
+                )}
               </div>
               
               {/* Warning Note */}
