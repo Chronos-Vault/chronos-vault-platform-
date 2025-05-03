@@ -78,7 +78,8 @@ const Footer = () => {
             <ul className="space-y-4">
               <li><Link href="/about" className="text-gray-300 hover:text-[#FF5AF7] transition-all font-poppins font-light hover:translate-x-1 inline-flex">About Us</Link></li>
               <li><Link href="/roadmap" className="text-gray-300 hover:text-[#FF5AF7] transition-all font-poppins font-light hover:translate-x-1 inline-flex">Roadmap</Link></li>
-              <li><Link href="/whitepaper" className="text-gray-300 hover:text-[#FF5AF7] transition-all font-poppins font-light hover:translate-x-1 inline-flex">Whitepaper</Link></li>
+              <li><Link href="/project-whitepaper" className="text-gray-300 hover:text-[#FF5AF7] transition-all font-poppins font-light hover:translate-x-1 inline-flex">Project Whitepaper</Link></li>
+              <li><Link href="/whitepaper" className="text-gray-300 hover:text-[#FF5AF7] transition-all font-poppins font-light hover:translate-x-1 inline-flex">CVT Whitepaper</Link></li>
               <li><a href="https://x.com/chronosvaultx?s=21" target="_blank" rel="noopener noreferrer" className="text-gray-300 hover:text-[#FF5AF7] transition-all font-poppins font-light hover:translate-x-1 inline-flex">Twitter (X)</a></li>
               <li><a href="mailto:chronosvault@chronosvault.org" className="text-gray-300 hover:text-[#FF5AF7] transition-all font-poppins font-light hover:translate-x-1 inline-flex">Contact</a></li>
             </ul>

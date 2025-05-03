@@ -92,6 +92,7 @@ function Router() {
         <Route path="/technical-specification" component={TechnicalSpecificationPage} />
         <Route path="/cvt-tokenomics" component={CVTTokenomicsPage} />
         <Route path="/whitepaper" component={WhitepaperPage} />
+        <Route path="/project-whitepaper" component={ProjectWhitepaperPage} />
         <Route path="/privacy-dashboard" component={PrivacyDashboardPage} />
         <Route path="/security-testing" component={SecurityTestingPage} />
         <Route path="/test-contract" component={TestContractPage} />
