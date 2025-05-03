@@ -309,6 +309,7 @@ const CreateVaultForm = ({
   };
   
   const handleVaultTypeChange = (type: SpecializedVaultType) => {
+    console.log("Changing vault type to:", type);
     form.setValue("vaultType", type);
   };
 
@@ -901,7 +902,7 @@ const CreateVaultForm = ({
           <CardContent className="p-6">
             <Form {...form}>
               <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-                <div className="mb-8" style={{display: 'none'}}>
+                <div className="mb-8">
                   <h3 className="text-xl font-semibold mb-3 bg-clip-text text-transparent bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7]">
                     Choose Vault Type
                   </h3>
