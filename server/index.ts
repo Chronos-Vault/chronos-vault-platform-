@@ -32,7 +32,17 @@ app.use(
   })
 );
 
+// Set CORS headers for all routes to ensure compatibility with HTTP and HTTPS
 app.use((req, res, next) => {
+  res.header('Access-Control-Allow-Origin', '*');
+  res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+  res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
+  
+  // Handle preflight requests
+  if (req.method === 'OPTIONS') {
+    return res.status(200).end();
+  }
+  
   const start = Date.now();
   const path = req.path;
   let capturedJsonResponse: Record<string, any> | undefined = undefined;
@@ -76,6 +86,11 @@ app.use((req, res, next) => {
     throw err;
   });
 
+  // Add a health check endpoint
+  app.get('/health', (_req, res) => {
+    res.status(200).json({ status: 'ok', timestamp: new Date().toISOString() });
+  });
+
   // importantly only setup vite in development and after
   // setting up all the other routes so the catch-all route
   // doesn't interfere with the other routes
@@ -95,5 +110,7 @@ app.use((req, res, next) => {
     reusePort: true,
   }, () => {
     log(`serving on port ${port}`);
+    log(`Application URL: https://${process.env.REPL_SLUG}.${process.env.REPL_OWNER}.repl.co`);
+    log(`Health check: https://${process.env.REPL_SLUG}.${process.env.REPL_OWNER}.repl.co/health`);
   });
 })();
