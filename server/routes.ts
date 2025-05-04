@@ -9,7 +9,9 @@ import {
   insertUserSchema, 
   insertVaultSchema, 
   insertBeneficiarySchema,
-  insertAttachmentSchema
+  insertAttachmentSchema,
+  insertSignatureRequestSchema,
+  insertSignatureSchema
 } from "@shared/schema";
 import { ZodError } from "zod";
 
