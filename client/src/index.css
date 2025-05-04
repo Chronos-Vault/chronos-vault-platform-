@@ -274,10 +274,13 @@
     transform-style: preserve-3d;
   }
   
-  .subtitle-glow {
-    text-shadow: 0 0 15px rgba(255, 90, 247, 0.7),
-                0 0 25px rgba(107, 0, 215, 0.5);
+  .subtitle-portrait {
+    text-shadow: 1px 1px 0 rgba(107, 0, 215, 0.4),
+                2px 2px 0 rgba(255, 90, 247, 0.3),
+                3px 3px 0 rgba(107, 0, 215, 0.2),
+                4px 4px 8px rgba(0, 0, 0, 0.5);
     letter-spacing: 1px;
+    transform: perspective(500px) rotateX(5deg);
   }
   
   .animate-spin-slow {
