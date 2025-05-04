@@ -446,11 +446,45 @@ export class DatabaseStorage implements IStorage {
   }
 
   async createVault(insertVault: InsertVault): Promise<Vault> {
-    const [vault] = await db
-      .insert(vaults)
-      .values(insertVault)
-      .returning();
-    return vault;
+    try {
+      console.log('Creating vault with data:', JSON.stringify(insertVault));
+      
+      // Ensure unlockDate is a proper Date object if it's a string ISO date
+      let processedVaultData = {...insertVault};
+      if (typeof processedVaultData.unlockDate === 'string') {
+        try {
+          processedVaultData.unlockDate = new Date(processedVaultData.unlockDate);
+          console.log('Converted unlockDate string to Date:', processedVaultData.unlockDate);
+        } catch (dateError) {
+          console.error('Error parsing unlock date:', dateError);
+          // If conversion fails, use current date + 1 year as fallback
+          const fallbackDate = new Date();
+          fallbackDate.setFullYear(fallbackDate.getFullYear() + 1);
+          processedVaultData.unlockDate = fallbackDate;
+        }
+      }
+      
+      // Convert any JSON objects to proper jsonb for postgres
+      if (processedVaultData.metadata && typeof processedVaultData.metadata === 'object') {
+        try {
+          console.log('Processing metadata object');
+          // Metadata is already an object, which is what Drizzle expects
+        } catch (metadataError) {
+          console.error('Error processing metadata:', metadataError);
+        }
+      }
+      
+      const [vault] = await db
+        .insert(vaults)
+        .values(processedVaultData)
+        .returning();
+        
+      console.log('Vault created successfully:', JSON.stringify(vault));
+      return vault;
+    } catch (error) {
+      console.error('Error in DatabaseStorage.createVault:', error);
+      throw error;
+    }
   }
 
   async updateVault(id: number, updateData: Partial<Vault>): Promise<Vault | undefined> {

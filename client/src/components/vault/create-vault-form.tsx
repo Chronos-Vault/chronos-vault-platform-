@@ -246,10 +246,22 @@ export function CreateVaultForm({
 
   const mutation = useMutation({
     mutationFn: async (data: FormValues) => {
-      const response = await apiRequest("POST", "/api/vaults", data);
-      return response.json();
+      console.log("Submitting vault data:", data);
+      try {
+        const response = await apiRequest("POST", "/api/vaults", data);
+        if (!response.ok) {
+          const errorData = await response.json().catch(() => null);
+          console.error("Server returned an error:", response.status, errorData);
+          throw new Error(errorData?.message || `Server returned ${response.status}`);
+        }
+        return response.json();
+      } catch (err) {
+        console.error("Error in vault creation request:", err);
+        throw err;
+      }
     },
     onSuccess: (data) => {
+      console.log("Vault created successfully:", data);
       setCreatedVaultId(data.id);
       
       // If attachments were already uploaded with the enhanced uploader
@@ -277,6 +289,7 @@ export function CreateVaultForm({
       }
     },
     onError: (error) => {
+      console.error("Mutation error:", error);
       toast({
         title: "Failed to create vault",
         description: error.message || "Something went wrong while creating your vault.",
@@ -710,8 +723,26 @@ export function CreateVaultForm({
       }
     };
     
+    // Before submitting to database, ensure the data follows the schema properly
+    const finalVaultData = {
+      ...vaultData,
+      // Make sure these required fields are properly formatted
+      userId: 1, // Default user ID
+      name: data.name,
+      description: data.description || "",
+      vaultType: data.vaultType,
+      assetType: data.assetType,
+      assetAmount: data.assetAmount,
+      timeLockPeriod: parseInt(data.timeLockPeriod.toString(), 10),
+      unlockDate: data.unlockDate,
+      // Format metadata as a proper object, not nested fields
+      metadata: data.metadata || {}
+    };
+    
+    console.log("Final data being sent to server:", finalVaultData);
+    
     // Store in database
-    mutation.mutate(vaultData as FormValues);
+    mutation.mutate(finalVaultData as FormValues);
   }
 
   const getTabStyle = () => {
