@@ -274,22 +274,13 @@
     transform-style: preserve-3d;
   }
   
-  .subtitle-elegant {
-    text-shadow: 0 0 10px rgba(255, 90, 247, 0.5),
+  .title-3d-animated {
+    text-shadow: 0 0 5px rgba(107, 0, 215, 0.8),
+                0 0 10px rgba(255, 90, 247, 0.5),
                 0 0 20px rgba(107, 0, 215, 0.3);
-    letter-spacing: 0.5px;
-    position: relative;
+    letter-spacing: 2px;
     display: inline-block;
-  }
-  
-  .subtitle-elegant:after {
-    content: '';
-    position: absolute;
-    bottom: -8px;
-    left: 0;
-    right: 0;
-    height: 1px;
-    background: linear-gradient(90deg, transparent, rgba(255, 90, 247, 0.7), transparent);
+    animation: textFloat 7s ease-in-out infinite;
   }
   
   .animate-spin-slow {

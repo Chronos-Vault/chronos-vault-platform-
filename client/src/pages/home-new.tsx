@@ -144,11 +144,8 @@ const Home = () => {
               </div>
               
               {/* Centered 3D Headline */}
-              <h1 className="font-poppins font-bold mb-6">
-                <span className="inline md:inline-block hero-title bg-clip-text text-transparent bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] animate-text-shine bg-300%">Chronos&nbsp;Vault</span>
-                <div className="mt-4 md:mt-6 w-full max-w-4xl mx-auto relative text-center">
-                  <span className="inline-block text-2xl md:text-3xl lg:text-4xl font-medium text-white subtitle-elegant">Security that transcends time</span>
-                </div>
+              <h1 className="font-poppins font-bold mb-16">
+                <span className="text-5xl md:text-6xl lg:text-7xl title-3d-animated bg-clip-text text-transparent bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] animate-text-shine bg-300%">Chronos&nbsp;Vault</span>
               </h1>
               
               <p className="mt-8 text-xl md:text-2xl text-gray-300 max-w-3xl mx-auto leading-relaxed">
