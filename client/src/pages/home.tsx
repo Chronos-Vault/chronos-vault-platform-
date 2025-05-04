@@ -73,12 +73,12 @@ const Home = () => {
           <div className="flex flex-col md:flex-row gap-12 items-center">
             <div className="md:w-1/2 space-y-8">
               <div>
-                <h2 className="font-poppins font-bold text-4xl md:text-5xl lg:text-6xl leading-tight">
+                <h2 className="font-poppins font-bold text-3xl md:text-4xl lg:text-5xl leading-tight">
                   <span className="title-3d">
                     Chronos Vault
                   </span>
                 </h2>
-                <p className="text-2xl md:text-3xl font-light mt-2 text-gray-200">
+                <p className="text-xl md:text-2xl font-light mt-2 text-gray-200">
                   Lock your assets today,<br/>secure your tomorrow.
                 </p>
               </div>
