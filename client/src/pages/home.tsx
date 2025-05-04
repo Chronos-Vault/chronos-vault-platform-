@@ -63,10 +63,14 @@ const Home = () => {
           <div className="flex flex-col md:flex-row gap-12 items-center">
             <div className="md:w-1/2 space-y-8">
               <div>
-                <h1 className="font-poppins font-bold text-7xl md:text-8xl lg:text-9xl xl:text-10xl leading-none tracking-tight title-3d mb-6">
-                  <span className="block">Chronos Vault</span>
-                  <span className="block text-3xl md:text-4xl lg:text-5xl mt-2 font-medium opacity-80 text-gray-200">Lock your assets today, secure your tomorrow</span>
-                </h1>
+                <div className="text-center md:text-left mb-8">
+                  <h1 className="font-poppins font-bold text-6xl sm:text-7xl md:text-8xl lg:text-9xl leading-none neon-purple animate-neon-glow mb-4">
+                    Chronos Vault
+                  </h1>
+                  <p className="text-xl sm:text-2xl md:text-3xl mt-4 text-purple-300 font-light opacity-90">
+                    Timeless Security for Digital Assets
+                  </p>
+                </div>
               </div>
               
               <p className="text-gray-300 text-lg max-w-lg">

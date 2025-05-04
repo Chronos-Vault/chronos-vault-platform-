@@ -34,6 +34,25 @@
   }
 }
 
+@keyframes neon-glow {
+  0%, 100% {
+    text-shadow: 
+      0 0 5px rgba(170, 36, 255, 0.8),
+      0 0 10px rgba(170, 36, 255, 0.7),
+      0 0 20px rgba(170, 36, 255, 0.6),
+      0 0 40px rgba(151, 0, 255, 0.5),
+      0 0 80px rgba(151, 0, 255, 0.4);
+  }
+  50% {
+    text-shadow: 
+      0 0 5px rgba(220, 67, 255, 0.8),
+      0 0 15px rgba(220, 67, 255, 0.7),
+      0 0 25px rgba(220, 67, 255, 0.6),
+      0 0 35px rgba(220, 67, 255, 0.5),
+      0 0 45px rgba(220, 67, 255, 0.4);
+  }
+}
+
 .animate-float {
   animation: float 6s ease-in-out infinite;
 }
@@ -42,9 +61,22 @@
   animation: pulse-slow 4s cubic-bezier(0.4, 0, 0.6, 1) infinite;
 }
 
+.animate-neon-glow {
+  animation: neon-glow 3s ease-in-out infinite;
+}
+
 .animate-gradient-slow {
   background-size: 200% 200%;
   animation: gradient-shift 8s ease infinite;
+}
+
+.neon-purple {
+  color: #a942ff;
+  text-shadow: 
+    0 0 5px rgba(170, 36, 255, 0.8),
+    0 0 10px rgba(170, 36, 255, 0.6),
+    0 0 20px rgba(151, 0, 255, 0.5),
+    0 0 40px rgba(151, 0, 255, 0.4);
 }
 
 .shadow-glow-sm {
