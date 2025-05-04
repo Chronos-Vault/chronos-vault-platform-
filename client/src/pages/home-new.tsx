@@ -144,8 +144,10 @@ const Home = () => {
               </div>
               
               {/* Centered 3D Headline */}
-              <h1 className="font-poppins font-bold mb-16">
-                <span className="text-5xl md:text-6xl lg:text-7xl title-3d-animated bg-clip-text text-transparent bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] animate-text-shine bg-300%">Chronos&nbsp;Vault</span>
+              <h1 className="font-poppins font-bold mb-16 w-full overflow-hidden">
+                <div className="w-full overflow-hidden text-center">
+                  <span className="text-6xl sm:text-7xl md:text-8xl lg:text-9xl whitespace-nowrap title-3d-animated bg-clip-text text-transparent bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] animate-text-shine bg-300%">Chronos&nbsp;Vault</span>
+                </div>
               </h1>
               
               <p className="mt-8 text-xl md:text-2xl text-gray-300 max-w-3xl mx-auto leading-relaxed">

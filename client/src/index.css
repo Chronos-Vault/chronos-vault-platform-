@@ -280,7 +280,11 @@
                 0 0 20px rgba(107, 0, 215, 0.3);
     letter-spacing: 2px;
     display: inline-block;
+    max-width: 100%;
+    text-align: center;
     animation: textFloat 7s ease-in-out infinite;
+    perspective: 1000px;
+    transform-style: preserve-3d;
   }
   
   .animate-spin-slow {
