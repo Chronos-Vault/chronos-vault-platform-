@@ -752,7 +752,7 @@ export function CreateVaultForm({
       description: data.description || "",
       vaultType: data.vaultType,
       assetType: data.assetType,
-      assetAmount: parseFloat(data.assetAmount.toString()), // Ensure number type
+      assetAmount: data.assetAmount.toString(), // Ensure string type to match database
       timeLockPeriod: parseInt(data.timeLockPeriod.toString(), 10),
       unlockDate: new Date(data.unlockDate), // Convert to Date object
       // Format metadata as a proper object, not nested fields

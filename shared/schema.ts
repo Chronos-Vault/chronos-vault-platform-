@@ -138,9 +138,9 @@ export const insertVaultSchema = createInsertSchema(vaults)
     privacyEnabled: true,
   })
   .extend({
-    // Allow string inputs and convert to appropriate types
+    // Match database schema where assetAmount is a text field
     assetAmount: z.union([z.string(), z.number()])
-      .transform(val => typeof val === 'string' ? parseFloat(val) : val),
+      .transform(val => typeof val === 'string' ? val : String(val)),
     timeLockPeriod: z.union([z.string(), z.number()])
       .transform(val => typeof val === 'string' ? parseInt(val, 10) : val),
     securityLevel: z.union([z.string(), z.number(), z.null()])

@@ -195,8 +195,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
           ...req.body,
           // Convert string date to Date object
           unlockDate: typeof req.body.unlockDate === 'string' ? new Date(req.body.unlockDate) : req.body.unlockDate,
+          // Keep assetAmount as string to match database schema
+          assetAmount: typeof req.body.assetAmount === 'string' ? req.body.assetAmount : String(req.body.assetAmount),
           // Convert string numbers to actual numbers
-          assetAmount: typeof req.body.assetAmount === 'string' ? parseFloat(req.body.assetAmount) : req.body.assetAmount,
           timeLockPeriod: typeof req.body.timeLockPeriod === 'string' ? parseInt(req.body.timeLockPeriod, 10) : req.body.timeLockPeriod,
           securityLevel: typeof req.body.securityLevel === 'string' ? parseInt(req.body.securityLevel, 10) : req.body.securityLevel
         };
