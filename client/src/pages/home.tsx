@@ -74,7 +74,7 @@ const Home = () => {
             <div className="md:w-1/2 space-y-8">
               <div>
                 <h2 className="font-poppins font-bold text-3xl md:text-4xl lg:text-5xl leading-tight">
-                  <span className="bg-clip-text text-transparent bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7]">
+                  <span className="bg-clip-text text-transparent bg-gradient-to-r from-[#6B00D7] via-[#B168D4] to-[#FF5AF7] animate-gradient-slow">
                     Chronos Vault
                   </span>
                 </h2>
@@ -105,7 +105,7 @@ const Home = () => {
               <div className="flex flex-col sm:flex-row gap-4">
                 <Button
                   onClick={handleCreateVault}
-                  className="cta-button prismatic-border bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] px-6 py-3 sm:px-8 sm:py-4 rounded-lg font-poppins font-medium text-white shadow-lg hover:shadow-xl hover:shadow-[#6B00D7]/20 transition-all w-full sm:w-auto"
+                  className="cta-button prismatic-border bg-gradient-to-r from-[#6B00D7] via-[#B168D4] to-[#FF5AF7] animate-gradient-slow px-6 py-3 sm:px-8 sm:py-4 rounded-lg font-poppins font-medium text-white shadow-lg hover:shadow-xl hover:shadow-[#6B00D7]/20 transition-all w-full sm:w-auto"
                 >
                   <div className="flex items-center justify-center w-full">
                     <span>Create Your Vault</span>
@@ -147,7 +147,7 @@ const Home = () => {
                 {/* Vault Type Selector */}
                 <div className="mb-4 z-10 flex justify-center space-x-2 md:space-x-4">
                   <div className="flex overflow-hidden rounded-lg border border-[#6B00D7] bg-[#0A0A0A]/70 backdrop-blur-sm">
-                    <button className="px-3 py-2 md:px-4 md:py-2 bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] text-white text-xs md:text-sm font-medium transition-all">
+                    <button className="px-3 py-2 md:px-4 md:py-2 bg-gradient-to-r from-[#6B00D7] via-[#B168D4] to-[#FF5AF7] animate-gradient-slow text-white text-xs md:text-sm font-medium transition-all">
                       Heritage
                     </button>
                     <button className="px-3 py-2 md:px-4 md:py-2 text-white text-xs md:text-sm font-medium transition-all hover:bg-white/5">
