@@ -104,9 +104,9 @@ const formSchema = insertVaultSchema.extend({
   giftRecipient: z.string().optional(),
   giftMessage: z.string().optional(),
   
-  // Make sure asset amount is properly typed
+  // Make sure asset amount is properly typed as string to match database
   assetAmount: z.union([z.string(), z.number()])
-    .transform(val => typeof val === 'string' ? parseFloat(val) : val),
+    .transform(val => typeof val === 'string' ? val : String(val)),
 }).refine((data) => {
   // Convert both to strings for comparison to avoid type issues
   return String(data.assetAmount) === String(data.confirmAmount);
