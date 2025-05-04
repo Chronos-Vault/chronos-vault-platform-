@@ -193,13 +193,23 @@ export async function registerRoutes(app: Express): Promise<Server> {
         // Manually convert problematic fields before validation
         const preparedData = {
           ...req.body,
-          // Convert string date to Date object
-          unlockDate: typeof req.body.unlockDate === 'string' ? new Date(req.body.unlockDate) : req.body.unlockDate,
+          // Convert string date to Date object - ensure it's a valid date
+          unlockDate: req.body.unlockDate ? (
+            typeof req.body.unlockDate === 'string' ? new Date(req.body.unlockDate) : 
+            req.body.unlockDate instanceof Date ? req.body.unlockDate : 
+            new Date(req.body.unlockDate)
+          ) : new Date(),
           // Keep assetAmount as string to match database schema
-          assetAmount: typeof req.body.assetAmount === 'string' ? req.body.assetAmount : String(req.body.assetAmount),
+          assetAmount: typeof req.body.assetAmount !== 'undefined' ? 
+            (typeof req.body.assetAmount === 'string' ? req.body.assetAmount : String(req.body.assetAmount)) : 
+            "0",
           // Convert string numbers to actual numbers
-          timeLockPeriod: typeof req.body.timeLockPeriod === 'string' ? parseInt(req.body.timeLockPeriod, 10) : req.body.timeLockPeriod,
-          securityLevel: typeof req.body.securityLevel === 'string' ? parseInt(req.body.securityLevel, 10) : req.body.securityLevel
+          timeLockPeriod: typeof req.body.timeLockPeriod !== 'undefined' ? 
+            (typeof req.body.timeLockPeriod === 'string' ? parseInt(req.body.timeLockPeriod, 10) : req.body.timeLockPeriod) : 
+            0,
+          securityLevel: typeof req.body.securityLevel !== 'undefined' ? 
+            (typeof req.body.securityLevel === 'string' ? parseInt(req.body.securityLevel, 10) : req.body.securityLevel) : 
+            3
         };
         
         console.log("Prepared data with conversions:", {
