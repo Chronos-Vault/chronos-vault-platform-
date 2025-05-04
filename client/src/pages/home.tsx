@@ -64,7 +64,7 @@ const Home = () => {
             <div className="md:w-1/2 space-y-8">
               <div>
                 <div className="text-center md:text-left mb-8">
-                  <h1 className="font-poppins font-bold text-8xl sm:text-9xl md:text-10xl lg:text-[10rem] xl:text-[12rem] leading-none neon-purple animate-neon-glow mb-4">
+                  <h1 className="font-poppins font-bold hero-title neon-purple animate-neon-glow mb-4">
                     Chronos Vault
                   </h1>
                   <p className="text-xl sm:text-2xl md:text-3xl mt-4 text-purple-300 font-light opacity-90">

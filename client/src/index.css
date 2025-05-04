@@ -79,6 +79,36 @@
     0 0 40px rgba(151, 0, 255, 0.4);
 }
 
+.hero-title {
+  font-size: 6rem !important; /* Mobile size */
+  line-height: 1 !important;
+  letter-spacing: -2px;
+}
+
+@media (min-width: 640px) {
+  .hero-title {
+    font-size: 7rem !important;
+  }
+}
+
+@media (min-width: 768px) {
+  .hero-title {
+    font-size: 8rem !important;
+  }
+}
+
+@media (min-width: 1024px) {
+  .hero-title {
+    font-size: 10rem !important;
+  }
+}
+
+@media (min-width: 1280px) {
+  .hero-title {
+    font-size: 12rem !important;
+  }
+}
+
 .shadow-glow-sm {
   box-shadow: 0 0 15px rgba(107, 0, 215, 0.5);
 }
