@@ -108,6 +108,34 @@ export const securityIncidents = pgTable("security_incidents", {
   metadata: jsonb("metadata"),
 });
 
+// New table for multi-signature requests
+export const signatureRequests = pgTable("signature_requests", {
+  id: serial("id").primaryKey(),
+  vaultId: integer("vault_id").notNull(),
+  requestType: text("request_type").notNull(), // withdraw, transfer, settings_change
+  requesterAddress: text("requester_address").notNull(),
+  requesterName: text("requester_name"),
+  description: text("description"),
+  status: text("status").notNull().default("pending"), // pending, approved, executed, rejected, expired
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+  expiresAt: timestamp("expires_at").notNull(),
+  executedAt: timestamp("executed_at"),
+  threshold: integer("threshold").notNull(), // Number of signatures required
+  metadata: jsonb("metadata"), // Additional request details
+});
+
+// Table for signature approvals on multi-sig requests
+export const signatures = pgTable("signatures", {
+  id: serial("id").primaryKey(),
+  requestId: integer("request_id").notNull(),
+  signerAddress: text("signer_address").notNull(),
+  signerName: text("signer_name"),
+  signatureData: text("signature_data").notNull(), // Actual blockchain signature
+  signedAt: timestamp("signed_at").notNull().defaultNow(),
+  weight: integer("weight").default(1), // Signature weight for weighted voting
+  metadata: jsonb("metadata"), // Additional signature metadata
+});
+
 export const insertUserSchema = createInsertSchema(users).pick({
   username: true,
   password: true,
@@ -240,3 +268,31 @@ export type CrossChainTransaction = typeof crossChainTransactions.$inferSelect;
 
 export type InsertSecurityIncident = z.infer<typeof insertSecurityIncidentSchema>;
 export type SecurityIncident = typeof securityIncidents.$inferSelect;
+
+// Add insert schemas for signature requests and signatures
+export const insertSignatureRequestSchema = createInsertSchema(signatureRequests).pick({
+  vaultId: true,
+  requestType: true,
+  requesterAddress: true,
+  requesterName: true,
+  description: true,
+  status: true,
+  expiresAt: true,
+  threshold: true,
+  metadata: true,
+});
+
+export const insertSignatureSchema = createInsertSchema(signatures).pick({
+  requestId: true,
+  signerAddress: true,
+  signerName: true,
+  signatureData: true,
+  weight: true,
+  metadata: true,
+});
+
+export type InsertSignatureRequest = z.infer<typeof insertSignatureRequestSchema>;
+export type SignatureRequest = typeof signatureRequests.$inferSelect;
+
+export type InsertSignature = z.infer<typeof insertSignatureSchema>;
+export type Signature = typeof signatures.$inferSelect;

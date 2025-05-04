@@ -5,7 +5,9 @@ import {
   attachments, type Attachment, type InsertAttachment,
   chainContracts, type ChainContract, type InsertChainContract,
   crossChainTransactions, type CrossChainTransaction, type InsertCrossChainTransaction,
-  securityIncidents, type SecurityIncident, type InsertSecurityIncident
+  securityIncidents, type SecurityIncident, type InsertSecurityIncident,
+  signatureRequests, type SignatureRequest, type InsertSignatureRequest,
+  signatures, type Signature, type InsertSignature
 } from "@shared/schema";
 
 export interface IStorage {
@@ -58,6 +60,22 @@ export interface IStorage {
   createSecurityIncident(incident: InsertSecurityIncident): Promise<SecurityIncident>;
   updateSecurityIncident(id: number, incident: Partial<SecurityIncident>): Promise<SecurityIncident | undefined>;
   resolveSecurityIncident(id: number, resolutionDetails: string): Promise<SecurityIncident | undefined>;
+  
+  // Multi-signature request methods
+  getSignatureRequest(id: number): Promise<SignatureRequest | undefined>;
+  getSignatureRequestsByVault(vaultId: number): Promise<SignatureRequest[]>;
+  getSignatureRequestsByStatus(status: string): Promise<SignatureRequest[]>;
+  getSignatureRequestsByRequester(requesterAddress: string): Promise<SignatureRequest[]>;
+  createSignatureRequest(request: InsertSignatureRequest): Promise<SignatureRequest>;
+  updateSignatureRequest(id: number, request: Partial<SignatureRequest>): Promise<SignatureRequest | undefined>;
+  completeSignatureRequest(id: number): Promise<SignatureRequest | undefined>;
+  
+  // Signature methods
+  getSignature(id: number): Promise<Signature | undefined>;
+  getSignaturesByRequest(requestId: number): Promise<Signature[]>;
+  getSignaturesBySigner(signerAddress: string): Promise<Signature[]>;
+  createSignature(signature: InsertSignature): Promise<Signature>;
+  deleteSignature(id: number): Promise<boolean>;
 }
 
 export class MemStorage implements IStorage {
@@ -68,6 +86,8 @@ export class MemStorage implements IStorage {
   private chainContracts: Map<number, ChainContract>;
   private crossChainTransactions: Map<number, CrossChainTransaction>;
   private securityIncidents: Map<number, SecurityIncident>;
+  private signatureRequests: Map<number, SignatureRequest>;
+  private signatures: Map<number, Signature>;
   private currentUserId: number;
   private currentVaultId: number;
   private currentBeneficiaryId: number;
@@ -75,6 +95,8 @@ export class MemStorage implements IStorage {
   private currentChainContractId: number;
   private currentCrossChainTransactionId: number;
   private currentSecurityIncidentId: number;
+  private currentSignatureRequestId: number;
+  private currentSignatureId: number;
 
   constructor() {
     this.users = new Map();
@@ -84,6 +106,8 @@ export class MemStorage implements IStorage {
     this.chainContracts = new Map();
     this.crossChainTransactions = new Map();
     this.securityIncidents = new Map();
+    this.signatureRequests = new Map();
+    this.signatures = new Map();
     this.currentUserId = 1;
     this.currentVaultId = 1;
     this.currentBeneficiaryId = 1;
@@ -91,6 +115,8 @@ export class MemStorage implements IStorage {
     this.currentChainContractId = 1;
     this.currentCrossChainTransactionId = 1;
     this.currentSecurityIncidentId = 1;
+    this.currentSignatureRequestId = 1;
+    this.currentSignatureId = 1;
     
     // Add a demo user for testing
     this.createUser({
@@ -396,6 +422,103 @@ export class MemStorage implements IStorage {
     
     this.securityIncidents.set(id, resolvedIncident);
     return resolvedIncident;
+  }
+
+  // Multi-signature request methods
+  async getSignatureRequest(id: number): Promise<SignatureRequest | undefined> {
+    return this.signatureRequests.get(id);
+  }
+
+  async getSignatureRequestsByVault(vaultId: number): Promise<SignatureRequest[]> {
+    return Array.from(this.signatureRequests.values()).filter(
+      (request) => request.vaultId === vaultId
+    );
+  }
+
+  async getSignatureRequestsByStatus(status: string): Promise<SignatureRequest[]> {
+    return Array.from(this.signatureRequests.values()).filter(
+      (request) => request.status === status
+    );
+  }
+
+  async getSignatureRequestsByRequester(requesterAddress: string): Promise<SignatureRequest[]> {
+    return Array.from(this.signatureRequests.values()).filter(
+      (request) => request.requesterAddress === requesterAddress
+    );
+  }
+
+  async createSignatureRequest(insertRequest: InsertSignatureRequest): Promise<SignatureRequest> {
+    const id = this.currentSignatureRequestId++;
+    const request: SignatureRequest = {
+      ...insertRequest,
+      id,
+      status: insertRequest.status ?? "pending",
+      createdAt: new Date(),
+      executedAt: null,
+      requesterName: insertRequest.requesterName ?? null,
+      description: insertRequest.description ?? null,
+      metadata: insertRequest.metadata ?? {}
+    };
+    this.signatureRequests.set(id, request);
+    return request;
+  }
+
+  async updateSignatureRequest(id: number, updateData: Partial<SignatureRequest>): Promise<SignatureRequest | undefined> {
+    const request = this.signatureRequests.get(id);
+    if (!request) return undefined;
+
+    const updatedRequest = { ...request, ...updateData };
+    this.signatureRequests.set(id, updatedRequest);
+    return updatedRequest;
+  }
+
+  async completeSignatureRequest(id: number): Promise<SignatureRequest | undefined> {
+    const request = this.signatureRequests.get(id);
+    if (!request) return undefined;
+
+    const completedRequest = {
+      ...request,
+      status: "executed",
+      executedAt: new Date()
+    };
+
+    this.signatureRequests.set(id, completedRequest);
+    return completedRequest;
+  }
+
+  // Signature methods
+  async getSignature(id: number): Promise<Signature | undefined> {
+    return this.signatures.get(id);
+  }
+
+  async getSignaturesByRequest(requestId: number): Promise<Signature[]> {
+    return Array.from(this.signatures.values()).filter(
+      (signature) => signature.requestId === requestId
+    );
+  }
+
+  async getSignaturesBySigner(signerAddress: string): Promise<Signature[]> {
+    return Array.from(this.signatures.values()).filter(
+      (signature) => signature.signerAddress === signerAddress
+    );
+  }
+
+  async createSignature(insertSignature: InsertSignature): Promise<Signature> {
+    const id = this.currentSignatureId++;
+    const signature: Signature = {
+      ...insertSignature,
+      id,
+      signedAt: new Date(),
+      signerName: insertSignature.signerName ?? null,
+      weight: insertSignature.weight ?? 1,
+      metadata: insertSignature.metadata ?? {}
+    };
+    this.signatures.set(id, signature);
+    return signature;
+  }
+
+  async deleteSignature(id: number): Promise<boolean> {
+    return this.signatures.delete(id);
   }
 }
 
@@ -703,6 +826,104 @@ export class DatabaseStorage implements IStorage {
       .where(eq(securityIncidents.id, id))
       .returning();
     return resolvedIncident || undefined;
+  }
+
+  // Multi-signature request methods
+  async getSignatureRequest(id: number): Promise<SignatureRequest | undefined> {
+    const [request] = await db
+      .select()
+      .from(signatureRequests)
+      .where(eq(signatureRequests.id, id));
+    return request || undefined;
+  }
+
+  async getSignatureRequestsByVault(vaultId: number): Promise<SignatureRequest[]> {
+    return await db
+      .select()
+      .from(signatureRequests)
+      .where(eq(signatureRequests.vaultId, vaultId));
+  }
+
+  async getSignatureRequestsByStatus(status: string): Promise<SignatureRequest[]> {
+    return await db
+      .select()
+      .from(signatureRequests)
+      .where(eq(signatureRequests.status, status));
+  }
+
+  async getSignatureRequestsByRequester(requesterAddress: string): Promise<SignatureRequest[]> {
+    return await db
+      .select()
+      .from(signatureRequests)
+      .where(eq(signatureRequests.requesterAddress, requesterAddress));
+  }
+
+  async createSignatureRequest(request: InsertSignatureRequest): Promise<SignatureRequest> {
+    const [newRequest] = await db
+      .insert(signatureRequests)
+      .values(request)
+      .returning();
+    return newRequest;
+  }
+
+  async updateSignatureRequest(id: number, request: Partial<SignatureRequest>): Promise<SignatureRequest | undefined> {
+    const [updatedRequest] = await db
+      .update(signatureRequests)
+      .set(request)
+      .where(eq(signatureRequests.id, id))
+      .returning();
+    return updatedRequest || undefined;
+  }
+
+  async completeSignatureRequest(id: number): Promise<SignatureRequest | undefined> {
+    const [completedRequest] = await db
+      .update(signatureRequests)
+      .set({
+        status: "executed",
+        executedAt: new Date()
+      })
+      .where(eq(signatureRequests.id, id))
+      .returning();
+    return completedRequest || undefined;
+  }
+
+  // Signature methods
+  async getSignature(id: number): Promise<Signature | undefined> {
+    const [signature] = await db
+      .select()
+      .from(signatures)
+      .where(eq(signatures.id, id));
+    return signature || undefined;
+  }
+
+  async getSignaturesByRequest(requestId: number): Promise<Signature[]> {
+    return await db
+      .select()
+      .from(signatures)
+      .where(eq(signatures.requestId, requestId));
+  }
+
+  async getSignaturesBySigner(signerAddress: string): Promise<Signature[]> {
+    return await db
+      .select()
+      .from(signatures)
+      .where(eq(signatures.signerAddress, signerAddress));
+  }
+
+  async createSignature(signature: InsertSignature): Promise<Signature> {
+    const [newSignature] = await db
+      .insert(signatures)
+      .values(signature)
+      .returning();
+    return newSignature;
+  }
+
+  async deleteSignature(id: number): Promise<boolean> {
+    const result = await db
+      .delete(signatures)
+      .where(eq(signatures.id, id))
+      .returning({ id: signatures.id });
+    return result.length > 0;
   }
 }
 
