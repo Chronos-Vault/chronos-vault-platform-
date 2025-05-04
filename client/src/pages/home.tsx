@@ -74,7 +74,7 @@ const Home = () => {
             <div className="md:w-1/2 space-y-8">
               <div>
                 <h2 className="font-poppins font-bold text-3xl md:text-4xl lg:text-5xl leading-tight">
-                  <span className="bg-clip-text text-transparent bg-gradient-to-r from-[#6B00D7] via-[#B168D4] to-[#FF5AF7] animate-gradient-slow">
+                  <span className="bg-clip-text text-transparent bg-gradient-to-r from-[#6B00D7] via-[#C74DFF] to-[#FF5AF7] animate-gradient-slow">
                     Chronos Vault
                   </span>
                 </h2>
@@ -105,7 +105,7 @@ const Home = () => {
               <div className="flex flex-col sm:flex-row gap-4">
                 <Button
                   onClick={handleCreateVault}
-                  className="cta-button prismatic-border bg-gradient-to-r from-[#6B00D7] via-[#B168D4] to-[#FF5AF7] animate-gradient-slow px-6 py-3 sm:px-8 sm:py-4 rounded-lg font-poppins font-medium text-white shadow-lg hover:shadow-xl hover:shadow-[#6B00D7]/20 transition-all w-full sm:w-auto"
+                  className="cta-button prismatic-border bg-gradient-to-r from-[#6B00D7] via-[#C74DFF] to-[#FF5AF7] animate-gradient-slow px-6 py-3 sm:px-8 sm:py-4 rounded-lg font-poppins font-medium text-white shadow-lg hover:shadow-xl hover:shadow-[#FF5AF7]/30 transition-all w-full sm:w-auto"
                 >
                   <div className="flex items-center justify-center w-full">
                     <span>Create Your Vault</span>
@@ -147,7 +147,7 @@ const Home = () => {
                 {/* Vault Type Selector */}
                 <div className="mb-4 z-10 flex justify-center space-x-2 md:space-x-4">
                   <div className="flex overflow-hidden rounded-lg border border-[#6B00D7] bg-[#0A0A0A]/70 backdrop-blur-sm">
-                    <button className="px-3 py-2 md:px-4 md:py-2 bg-gradient-to-r from-[#6B00D7] via-[#B168D4] to-[#FF5AF7] animate-gradient-slow text-white text-xs md:text-sm font-medium transition-all">
+                    <button className="px-3 py-2 md:px-4 md:py-2 bg-gradient-to-r from-[#6B00D7] via-[#C74DFF] to-[#FF5AF7] animate-gradient-slow text-white text-xs md:text-sm font-medium transition-all">
                       Heritage
                     </button>
                     <button className="px-3 py-2 md:px-4 md:py-2 text-white text-xs md:text-sm font-medium transition-all hover:bg-white/5">
@@ -195,30 +195,30 @@ const Home = () => {
                   <div className="absolute inset-0 bg-gradient-to-r from-[#6B00D7]/5 via-transparent to-[#FF5AF7]/5 animate-pulse-slow"></div>
                   
                   {/* Lock icon */}
-                  <div className="absolute -top-5 -right-5 w-20 h-20 rounded-full bg-gradient-to-br from-[#6B00D7] to-[#FF5AF7] flex items-center justify-center text-white text-2xl shadow-lg shadow-[#FF5AF7]/30 border-2 border-white/30 animate-pulse-slow z-20">
+                  <div className="absolute -top-5 -right-5 w-20 h-20 rounded-full bg-gradient-to-r from-[#6B00D7] via-[#C74DFF] to-[#FF5AF7] animate-gradient-slow flex items-center justify-center text-white text-2xl shadow-xl shadow-[#FF5AF7]/40 border-2 border-white/30 z-20">
                     <i className="ri-lock-line"></i>
                   </div>
                   
                   {/* Security indicators */}
                   <div className="absolute top-6 left-6 flex items-center gap-3">
-                    <div className="w-5 h-5 rounded-full bg-[#FF5AF7] animate-pulse-slow"></div>
+                    <div className="w-5 h-5 rounded-full bg-gradient-to-r from-[#FF5AF7] to-[#C74DFF] animate-gradient-slow shadow-sm shadow-[#FF5AF7]/50"></div>
                     <div className="text-base font-bold text-white uppercase tracking-widest">MULTI-SIGNATURE SECURITY</div>
                   </div>
                   
                   {/* Content */}
                   <div className="text-center p-8 z-10 mt-4 w-full">
-                    <div className="text-lg font-bold uppercase tracking-widest mb-5 animate-text-3d bg-clip-text text-transparent bg-gradient-to-r from-[#6B00D7] via-[#FF5AF7] to-[#6B00D7]">
+                    <div className="text-lg font-bold uppercase tracking-widest mb-5 animate-text-3d bg-clip-text text-transparent bg-gradient-to-r from-[#6B00D7] via-[#C74DFF] to-[#FF5AF7] animate-gradient-slow">
                       MESSAGE FROM THE FUTURE
                     </div>
                     
                     <div className="font-poppins font-extrabold text-3xl md:text-5xl mb-5 title-3d">THE TIME VAULT</div>
                     
                     <div className="flex justify-center mb-6">
-                      <div className="h-1 w-44 bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] rounded-full"></div>
+                      <div className="h-1 w-44 bg-gradient-to-r from-[#6B00D7] via-[#C74DFF] to-[#FF5AF7] animate-gradient-slow rounded-full"></div>
                     </div>
                     
                     <div className="relative mb-8 p-5 text-base md:text-xl text-white leading-relaxed border-2 border-[#6B00D7]/50 rounded-lg backdrop-blur-sm bg-black/30">
-                      <div className="absolute -top-3 left-1/2 transform -translate-x-1/2 bg-black px-4 py-1 text-[#FF5AF7] text-sm font-bold uppercase tracking-wider border border-[#6B00D7]/50 rounded-full">
+                      <div className="absolute -top-3 left-1/2 transform -translate-x-1/2 bg-black px-4 py-1 text-transparent bg-clip-text bg-gradient-to-r from-[#FF5AF7] to-[#C74DFF] animate-gradient-slow text-sm font-bold uppercase tracking-wider border border-[#FF5AF7]/50 rounded-full">
                         2050 A.D.
                       </div>
                       
@@ -236,7 +236,7 @@ const Home = () => {
                     </div>
                     
                     <div className="animate-scan relative h-4 bg-[#222] rounded-full overflow-hidden mb-8 border border-[#444]">
-                      <div className="absolute top-0 left-0 h-full w-[16%] bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7]"></div>
+                      <div className="absolute top-0 left-0 h-full w-[16%] bg-gradient-to-r from-[#6B00D7] via-[#C74DFF] to-[#FF5AF7] animate-gradient-slow"></div>
                     </div>
                     
                     <div className="flex flex-col gap-3 bg-[#111]/60 p-5 rounded-lg border-2 border-[#333] mb-6 shadow-inner">
@@ -313,8 +313,9 @@ const Home = () => {
         
         {/* Background Elements */}
         <div className="absolute inset-0 -z-10">
-          <div className="absolute top-1/4 left-1/4 w-64 h-64 bg-[#6B00D7] rounded-full filter blur-[100px] opacity-10 animate-pulse-slow"></div>
-          <div className="absolute bottom-1/4 right-1/3 w-64 h-64 bg-[#FF5AF7] rounded-full filter blur-[100px] opacity-10 animate-pulse-slow" style={{animationDelay: '1s'}}></div>
+          <div className="absolute top-1/4 left-1/4 w-64 h-64 bg-[#6B00D7] rounded-full filter blur-[100px] opacity-20 animate-pulse-slow"></div>
+          <div className="absolute bottom-1/4 right-1/3 w-64 h-64 bg-[#FF5AF7] rounded-full filter blur-[100px] opacity-20 animate-pulse-slow" style={{animationDelay: '1s'}}></div>
+          <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-gradient-to-r from-[#6B00D7]/10 via-[#C74DFF]/10 to-[#FF5AF7]/10 rounded-full filter blur-[120px] opacity-30 animate-gradient-slow"></div>
         </div>
       </section>
 
