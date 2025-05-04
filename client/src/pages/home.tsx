@@ -74,7 +74,7 @@ const Home = () => {
             <div className="md:w-1/2 space-y-8">
               <div>
                 <h2 className="font-poppins font-bold text-4xl md:text-5xl lg:text-6xl leading-tight">
-                  <span className="bg-clip-text text-transparent bg-gradient-to-r from-[#6B00D7] via-[#C74DFF] to-[#FF5AF7] animate-gradient-slow">
+                  <span className="title-3d">
                     Chronos Vault
                   </span>
                 </h2>
