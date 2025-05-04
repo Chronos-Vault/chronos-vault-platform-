@@ -235,8 +235,6 @@
     transform: rotateY(-15deg);
   }
   
-
-  
   .animate-scan {
     animation: scanDown 2s linear infinite;
   }
