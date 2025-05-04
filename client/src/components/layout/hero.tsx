@@ -88,16 +88,32 @@ export function Hero() {
 
           <motion.h1 
             variants={itemVariants} 
-            className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-bold mb-6 text-white"
+            className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-bold mb-6 text-white relative z-10"
           >
-            <span className="bg-clip-text text-transparent bg-gradient-to-r from-[#9F00FF] to-[#C87DFF] animate-text-shine bg-300%">Chronos Vault</span>
+            <span className="bg-clip-text text-transparent bg-gradient-to-r from-[#9F00FF] via-[#FF5AF7] to-[#C87DFF] animate-text-shine bg-300% title-3d-animated relative inline-block">
+              <span className="absolute -inset-1 bg-gradient-to-r from-[#9F00FF]/20 to-[#FF5AF7]/20 blur-xl rounded-3xl -z-10 opacity-70"></span>
+              Chronos Vault
+            </span>
           </motion.h1>
+
+          {/* Luxury divider */}
+          <motion.div
+            variants={itemVariants}
+            className="w-40 h-0.5 mx-auto mb-6 relative overflow-hidden">
+            <div className="absolute inset-0 bg-gradient-to-r from-[#6B00D7] via-[#FF5AF7] to-[#9F00FF]"></div>
+            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white to-transparent animate-shimmer"></div>
+          </motion.div>
 
           <motion.p 
             variants={itemVariants} 
-            className="text-xl sm:text-2xl md:text-2xl lg:text-3xl text-gray-300 mb-10 max-w-3xl mx-auto leading-relaxed"
+            className="text-xl sm:text-2xl md:text-2xl lg:text-3xl mb-10 max-w-3xl mx-auto leading-relaxed relative"
           >
-            Chronos Vault combines military-grade security with elegant design, providing a decentralized platform for secure asset management across multiple blockchains.
+            <span className="relative">              
+              <span className="bg-clip-text text-transparent bg-gradient-to-r from-white via-[#C87DFF] to-white font-medium">Timeless Security for Digital Assets</span>
+              <span className="block mt-2 text-lg sm:text-xl md:text-xl lg:text-2xl text-gray-300">
+                The <span className="text-[#FF5AF7]">ultimate</span> fusion of <span className="text-[#9F00FF]">precision engineering</span> and <span className="text-[#C87DFF]">cutting-edge technology</span>
+              </span>
+            </span>
           </motion.p>
 
           <motion.div variants={itemVariants} className="flex flex-col sm:flex-row gap-4 justify-center mb-16">
