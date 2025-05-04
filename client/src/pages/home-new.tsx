@@ -144,11 +144,15 @@ const Home = () => {
               </div>
               
               {/* Centered 3D Headline */}
-              <h1 className="font-poppins font-bold mb-24 w-full overflow-hidden">
+              <h1 className="font-poppins font-bold mb-16 w-full overflow-hidden">
                 <div className="w-full overflow-hidden text-center">
                   <span className="text-7xl sm:text-8xl md:text-9xl lg:text-[10rem] whitespace-nowrap title-3d-animated bg-clip-text text-transparent bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] animate-text-shine bg-300%">Chronos&nbsp;Vault</span>
                 </div>
               </h1>
+              
+              <p className="mt-8 text-xl md:text-2xl text-gray-300 max-w-3xl mx-auto leading-relaxed">
+                The most sophisticated digital vault system ever created, combining Triple-Chain Security, Zero-Knowledge Privacy, and Quantum-Resistant Encryption.  
+              </p>
               
               {/* Premium 3D Rotating Vault Visualization */}
               <div className="mt-12 mb-16 relative">
