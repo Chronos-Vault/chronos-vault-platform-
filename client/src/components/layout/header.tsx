@@ -102,19 +102,19 @@ const Header = () => {
             </div>
           </Link>
           
-          <div className="hidden md:flex items-center gap-8">
+          <div className="hidden md:flex items-center gap-1 lg:gap-4">
             {desktopNavigationLinks.map((link) => (
               <Link 
                 key={link.name} 
                 href={link.href}
-                className={`flex items-center gap-1.5 text-gray-300 hover:text-white font-poppins font-medium text-lg transition-all hover:scale-105 ${
+                className={`flex items-center gap-1.5 px-3 py-2 rounded-lg text-gray-300 hover:text-white font-poppins font-medium text-sm lg:text-base transition-all hover:bg-[#6B00D7]/10 ${
                   location === link.href 
-                  ? 'text-white relative after:absolute after:bottom-[-8px] after:left-0 after:w-full after:h-[3px] after:bg-gradient-to-r after:from-[#6B00D7] after:to-[#FF5AF7] after:rounded-full' 
+                  ? 'text-white bg-[#6B00D7]/20 relative after:absolute after:bottom-[6px] after:left-[10px] after:right-[10px] after:h-[2px] after:bg-gradient-to-r after:from-[#6B00D7] after:to-[#FF5AF7] after:rounded-full' 
                   : ''
-                } ${link.highlight ? 'relative px-2 py-1 rounded-lg bg-gradient-to-r from-[#6B00D7]/20 to-[#FF5AF7]/20 border border-[#FF5AF7]/30 text-[#FF5AF7] animate-pulse-subtle' : ''}`}
+                } ${link.highlight ? 'relative bg-gradient-to-r from-[#6B00D7]/20 to-[#FF5AF7]/20 border border-[#FF5AF7]/30 text-[#FF5AF7] shadow-sm' : ''}`}
               >
                 <span className="text-base">{link.icon}</span>
-                {link.name}
+                <span className="truncate">{link.name}</span>
               </Link>
             ))}
           </div>
@@ -169,29 +169,29 @@ const Header = () => {
                     </SheetClose>
                   </div>
                   
-                  {/* Innovative scrollable navigation with categories */}
+                  {/* Mobile navigation with improved UX and accessibility */}
                   <div className="flex-1 overflow-y-auto py-4 pr-2 -mr-2 mobile-menu-scrollbar">
-                    <div className="flex flex-col gap-8">
+                    <div className="flex flex-col gap-6">
                       {mobileCategoryMenu.map((category) => (
-                        <div key={category.id} className="space-y-4">
-                          <div className="flex items-center gap-2 px-2 border-b border-[#6B00D7]/20 pb-2">
-                            <div className="flex items-center justify-center w-7 h-7 rounded-lg bg-gradient-to-br from-[#6B00D7]/50 to-[#FF5AF7]/30 shadow-inner shadow-[#6B00D7]/20">
+                        <div key={category.id} className="space-y-3">
+                          <div className="flex items-center gap-2 pl-2 pr-3 border-b border-[#6B00D7]/30 pb-2">
+                            <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-gradient-to-br from-[#6B00D7]/50 to-[#FF5AF7]/30 shadow-inner shadow-[#6B00D7]/20">
                               <span className="text-lg">{category.icon}</span>
                             </div>
                             <h3 className="text-[#FF5AF7] font-medium tracking-wide">{category.title}</h3>
                           </div>
                           
-                          <div className="flex flex-col gap-4 pl-2">
+                          <div className="grid grid-cols-1 gap-2 pl-1">
                             {category.items.map((link) => (
                               <SheetClose key={link.name} asChild>
                                 <Link 
                                   href={link.href}
-                                  className={`flex items-center gap-3 ${location === link.href 
-                                    ? 'font-poppins font-semibold text-white bg-gradient-to-r from-[#6B00D7]/20 to-transparent pl-4 py-2 border-l-2 border-[#6B00D7]' 
-                                    : 'text-gray-300 hover:text-white font-poppins font-medium transition-all hover:translate-x-1'
-                                  } ${link.highlight ? 'relative rounded-lg bg-gradient-to-r from-[#6B00D7]/20 to-[#FF5AF7]/20 border border-[#FF5AF7]/30 text-[#FF5AF7]' : ''}`}
+                                  className={`flex items-center gap-3 px-3 py-3 rounded-lg ${location === link.href 
+                                    ? 'bg-[#6B00D7]/20 text-white font-poppins font-semibold border-l-2 border-[#FF5AF7]' 
+                                    : 'text-gray-300 hover:text-white hover:bg-[#6B00D7]/10 font-poppins font-medium transition-all'
+                                  } ${link.highlight ? 'relative bg-gradient-to-r from-[#6B00D7]/20 to-[#FF5AF7]/20 border border-[#FF5AF7]/30 text-[#FF5AF7] shadow-sm' : ''}`}
                                 >
-                                  <div className="flex items-center justify-center w-9 h-9 rounded-lg bg-gradient-to-br from-[#6B00D7]/30 to-[#FF5AF7]/20 shadow-inner shadow-[#6B00D7]/10 border border-[#6B00D7]/20">
+                                  <div className="flex items-center justify-center w-10 h-10 rounded-lg bg-gradient-to-br from-[#6B00D7]/30 to-[#FF5AF7]/20 shadow-inner shadow-[#6B00D7]/10 border border-[#6B00D7]/20">
                                     <span className="text-xl text-[#FF5AF7]">{link.icon}</span>
                                   </div>
                                   <span className="text-base">{link.name}</span>
@@ -204,7 +204,8 @@ const Header = () => {
                     </div>
                   </div>
                   
-                  <div className="pt-4 mt-4 border-t border-[#6B00D7]/30 space-y-3">
+                  <div className="pt-4 mt-4 border-t border-[#6B00D7]/30 space-y-4">
+                    <h3 className="text-sm font-medium text-[#FF5AF7]">Connect Wallet</h3>
                     <CrossChainWalletSelector className="w-full" />
                   </div>
                 </div>
