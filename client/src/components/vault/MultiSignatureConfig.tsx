@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { PlusCircle, Trash2, Users, Shield } from 'lucide-react';
+import { PlusCircle, Trash2, Users, Shield, Globe, Clock, Lock, Wallet } from 'lucide-react';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
@@ -143,44 +143,49 @@ export function MultiSignatureConfig({
   };
 
   return (
-    <Card className={`${className || ''} border-purple-700/30 bg-black/40`}>
-      <CardHeader>
-        <CardTitle className="flex items-center gap-2 text-lg text-white">
-          <Users className="h-5 w-5 text-purple-500" />
+    <Card className={`${className || ''} border-purple-700/30 bg-black/40 shadow-xl`}>
+      <CardHeader className="pb-4 md:pb-6">
+        <CardTitle className="flex items-center gap-2 text-lg md:text-xl text-white">
+          <Users className="h-5 w-5 md:h-6 md:w-6 text-purple-500" />
           Multi-Signature Configuration
         </CardTitle>
-        <CardDescription>
+        <CardDescription className="text-sm md:text-base opacity-80">
           Setup trusted parties who must approve vault operations
         </CardDescription>
       </CardHeader>
-      <CardContent>
+      <CardContent className="px-4 md:px-6">
         <Form {...form}>
           <div className="space-y-4">
-            <div className="grid gap-6 sm:gap-4 grid-cols-1 sm:grid-cols-2">
+            <div className="grid gap-6 grid-cols-1 sm:grid-cols-2">
               <FormField
                 control={form.control}
                 name="threshold"
                 render={({ field }) => (
-                  <FormItem className="space-y-2">
-                    <FormLabel className="text-sm">Approval Threshold</FormLabel>
-                    <div className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:items-center sm:gap-2">
-                      <Slider
-                        min={1}
-                        max={Math.max(signers.length, 2)}
-                        step={1}
-                        value={[field.value]}
-                        onValueChange={(value) => field.onChange(value[0])}
-                        className="flex-1"
-                      />
-                      <div className="w-16 text-center">
-                        <div className="rounded-md border border-input bg-background px-2 py-1 text-sm">
-                          {field.value}/{signers.length}
+                  <FormItem className="space-y-3 bg-black/20 rounded-lg p-4 border border-purple-600/20">
+                    <FormLabel className="text-sm font-medium flex items-center gap-2">
+                      <Shield className="h-4 w-4 text-purple-500" />
+                      Approval Threshold
+                    </FormLabel>
+                    <div className="flex flex-col space-y-3">
+                      <div className="flex items-center gap-3">
+                        <Slider
+                          min={1}
+                          max={Math.max(signers.length, 2)}
+                          step={1}
+                          value={[field.value]}
+                          onValueChange={(value) => field.onChange(value[0])}
+                          className="flex-1"
+                        />
+                        <div className="w-16 text-center">
+                          <div className="rounded-md border border-purple-600/30 bg-purple-900/20 px-3 py-1.5 text-sm font-medium text-white">
+                            {field.value}/{signers.length}
+                          </div>
                         </div>
                       </div>
+                      <div className="text-xs text-gray-400">
+                        At least <span className="text-purple-400 font-medium">{field.value}</span> out of <span className="text-purple-400 font-medium">{signers.length}</span> signers must approve
+                      </div>
                     </div>
-                    <p className="text-xs text-muted-foreground">
-                      At least {field.value} out of {signers.length} signers must approve
-                    </p>
                     <FormMessage />
                   </FormItem>
                 )}
@@ -190,22 +195,27 @@ export function MultiSignatureConfig({
                 control={form.control}
                 name="timeLimit"
                 render={({ field }) => (
-                  <FormItem className="space-y-2">
-                    <FormLabel className="text-sm">Time Limit (hours)</FormLabel>
-                    <FormControl>
-                      <Input
-                        type="number"
-                        min={1}
-                        max={720} // 30 days max
-                        {...field}
-                        value={field.value || ''}
-                        onChange={(e) => field.onChange(parseInt(e.target.value) || 24)}
-                        className="h-9"
-                      />
-                    </FormControl>
-                    <p className="text-xs text-muted-foreground">
-                      Signatures must be collected within this time window
-                    </p>
+                  <FormItem className="space-y-3 bg-black/20 rounded-lg p-4 border border-purple-600/20">
+                    <FormLabel className="text-sm font-medium flex items-center gap-2">
+                      <Clock className="h-4 w-4 text-purple-500" />
+                      Time Limit (hours)
+                    </FormLabel>
+                    <div className="space-y-3">
+                      <FormControl>
+                        <Input
+                          type="number"
+                          min={1}
+                          max={720} // 30 days max
+                          {...field}
+                          value={field.value || ''}
+                          onChange={(e) => field.onChange(parseInt(e.target.value) || 24)}
+                          className="h-10 bg-purple-900/10 border-purple-600/30 text-base md:text-sm"
+                        />
+                      </FormControl>
+                      <div className="text-xs text-gray-400">
+                        Signatures must be collected within this time window
+                      </div>
+                    </div>
                     <FormMessage />
                   </FormItem>
                 )}
@@ -216,23 +226,23 @@ export function MultiSignatureConfig({
               control={form.control}
               name="requireGeolocation"
               render={({ field }) => (
-                <FormItem className="flex flex-col sm:flex-row sm:items-center justify-between space-y-2 sm:space-y-0 rounded-lg border border-purple-600/20 p-4 bg-purple-800/10">
+                <FormItem className="flex flex-col sm:flex-row sm:items-center justify-between space-y-3 sm:space-y-0 rounded-lg border border-purple-600/20 p-4 bg-gradient-to-br from-purple-900/10 to-black/40 shadow-inner">
                   <div className="space-y-1">
                     <FormLabel className="text-base flex items-center gap-2">
-                      <Shield className="h-5 w-5 text-purple-500" />
+                      <Globe className="h-5 w-5 text-purple-500" />
                       Require Geolocation Verification
                     </FormLabel>
-                    <p className="text-xs text-muted-foreground">
+                    <p className="text-xs text-gray-400">
                       Signers must verify their location matches predefined safe zones
                     </p>
                   </div>
                   <FormControl>
-                    <div className="flex h-8 w-12 items-center justify-center rounded-md bg-purple-900/20 border border-purple-600/20">
+                    <div className="flex h-10 w-16 items-center justify-center rounded-lg bg-purple-900/20 border border-purple-600/30 hover:border-purple-500/70 transition-colors shadow-md">
                       <input
                         type="checkbox"
                         checked={field.value}
                         onChange={field.onChange}
-                        className="accent-purple-600 h-5 w-5"
+                        className="accent-purple-600 h-6 w-6"
                       />
                     </div>
                   </FormControl>
@@ -240,67 +250,81 @@ export function MultiSignatureConfig({
               )}
             />
 
-            <div className="space-y-3">
-              <div className="flex justify-between items-center">
-                <h3 className="text-sm font-medium">Authorized Signers</h3>
+            <div className="space-y-4">
+              <div className="flex flex-col sm:flex-row justify-between sm:items-center space-y-3 sm:space-y-0 bg-gradient-to-r from-purple-900/20 to-black/20 rounded-lg p-4 border border-purple-600/20">
+                <div>
+                  <h3 className="text-base font-medium flex items-center gap-2">
+                    <Users className="h-5 w-5 text-purple-500" />
+                    Authorized Signers
+                  </h3>
+                  <p className="text-xs text-gray-400 mt-1">
+                    Add wallet addresses of trusted parties who can approve vault operations
+                  </p>
+                </div>
                 <Button 
                   variant="outline" 
-                  size="sm" 
+                  size="default"
                   onClick={addSigner}
-                  className="gap-1 text-xs border-purple-600/50 hover:bg-purple-600/20"
+                  className="gap-2 text-sm font-medium border-purple-600/50 hover:bg-purple-600/20 bg-black/20 h-11"
                 >
-                  <PlusCircle className="h-3.5 w-3.5" />
+                  <PlusCircle className="h-4 w-4" />
                   Add Signer
                 </Button>
               </div>
               
-              <div className="rounded-md border border-purple-600/20 divide-y divide-purple-600/10 bg-black/20">
+              <div className="rounded-lg overflow-hidden border border-purple-600/30 divide-y divide-purple-600/10 bg-black/20 shadow-xl">
                 {signers.map((signer, index) => (
-                  <div key={index} className="p-3 flex flex-col gap-3">
+                  <div key={index} className="p-4 flex flex-col gap-4 transition-colors hover:bg-purple-900/5">
                     <div className="flex items-center justify-between">
-                      <div className="flex items-center space-x-2">
-                        <div className="flex items-center justify-center w-8 h-8 rounded-full bg-purple-800/40 text-white text-xs font-medium border border-purple-600/30">
+                      <div className="flex items-center gap-3">
+                        <div className="flex items-center justify-center w-10 h-10 rounded-full bg-gradient-to-br from-purple-800/40 to-fuchsia-600/20 text-white text-sm font-medium border border-purple-600/30 shadow-inner">
                           {index + 1}
                         </div>
-                        <span className="text-sm font-medium">{signer.name || `Signer ${index + 1}`}</span>
+                        <div className="space-y-0.5">
+                          <span className="text-sm font-medium text-white">{signer.name || `Signer ${index + 1}`}</span>
+                          <div className="text-xs text-gray-400 flex items-center gap-1">
+                            <Wallet className="h-3 w-3" />
+                            <span className="truncate max-w-[180px]">{signer.address ? signer.address.substring(0, 8) + '...' + signer.address.substring(signer.address.length - 6) : 'No address yet'}</span>
+                          </div>
+                        </div>
                       </div>
                       <Button
-                        variant="ghost"
-                        size="sm"
+                        variant="outline"
+                        size="icon"
                         onClick={() => removeSigner(index)}
-                        className="h-8 text-red-500 hover:text-red-700 hover:bg-red-700/10"
+                        className="h-9 w-9 text-red-500 hover:text-red-700 hover:bg-red-700/10 border-red-500/20"
                         disabled={signers.length <= 2}
                       >
                         <Trash2 className="h-4 w-4" />
                       </Button>
                     </div>
                     
-                    <div className="grid grid-cols-1 md:grid-cols-12 gap-3">
+                    <div className="grid grid-cols-1 md:grid-cols-12 gap-4">
                       <div className="md:col-span-7">
-                        <FormLabel className="text-xs mb-1 block">Wallet Address</FormLabel>
+                        <FormLabel className="text-xs font-medium text-gray-400 mb-1.5 block">Wallet Address</FormLabel>
                         <Input
                           placeholder="0x..."
                           value={signer.address}
                           onChange={(e) => updateSignerAddress(index, e.target.value)}
-                          className="h-9 text-xs sm:text-sm"
+                          className="h-10 text-xs sm:text-sm bg-black/30 border-purple-600/30 focus:border-purple-500"
                         />
                       </div>
                       <div className="md:col-span-3">
-                        <FormLabel className="text-xs mb-1 block">Name</FormLabel>
+                        <FormLabel className="text-xs font-medium text-gray-400 mb-1.5 block">Name (Optional)</FormLabel>
                         <Input
                           placeholder="Alice"
                           value={signer.name || ''}
                           onChange={(e) => updateSignerName(index, e.target.value)}
-                          className="h-9 text-xs sm:text-sm"
+                          className="h-10 text-xs sm:text-sm bg-black/30 border-purple-600/30 focus:border-purple-500"
                         />
                       </div>
                       <div className="md:col-span-2">
-                        <FormLabel className="text-xs mb-1 block">Weight</FormLabel>
+                        <FormLabel className="text-xs font-medium text-gray-400 mb-1.5 block">Weight</FormLabel>
                         <Select
                           value={signer.weight.toString()}
                           onValueChange={(value) => updateSignerWeight(index, parseInt(value))}
                         >
-                          <SelectTrigger className="h-9 text-xs sm:text-sm">
+                          <SelectTrigger className="h-10 text-xs sm:text-sm bg-black/30 border-purple-600/30">
                             <SelectValue placeholder="1" />
                           </SelectTrigger>
                           <SelectContent>
