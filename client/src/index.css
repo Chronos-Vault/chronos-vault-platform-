@@ -278,7 +278,7 @@
     text-shadow: 0 0 5px rgba(107, 0, 215, 0.8),
                 0 0 10px rgba(255, 90, 247, 0.5),
                 0 0 20px rgba(107, 0, 215, 0.3);
-    letter-spacing: -0.02em;
+    letter-spacing: 2px;
     display: inline-block;
     max-width: 100%;
     text-align: center;
