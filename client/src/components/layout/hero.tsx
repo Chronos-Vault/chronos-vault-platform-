@@ -123,7 +123,7 @@ export function Hero() {
             </div>
           </motion.div>
 
-          {/* 3D Title Container with perspective */}
+          {/* 3D Title Container with perspective - Tesla x Rolex x Web3 luxury design */}
           <motion.div 
             variants={itemVariants} 
             className="relative perspective-1000 mb-4 py-8 transform-style-3d"
@@ -139,17 +139,21 @@ export function Hero() {
 
               {/* Main 3D title */}
               <h1 className="text-6xl sm:text-7xl md:text-8xl lg:text-9xl font-bold relative">
-                {/* Luxurious lighting effect behind text */}
-                <span className="absolute -inset-6 bg-gradient-to-r from-[#9F00FF]/10 via-[#FF5AF7]/10 to-[#9F00FF]/10 rounded-full blur-2xl opacity-80"></span>
+                {/* Luxury metallic backlight effect */}
+                <span className="absolute -inset-6 bg-gradient-to-r from-[#9F00FF]/20 via-[#FF5AF7]/20 to-[#9F00FF]/20 rounded-full blur-2xl opacity-80"></span>
                 
-                {/* Text with premium gradient */}
+                {/* Premium metallic border glow */}
+                <span className="absolute -inset-1 bg-gradient-to-r from-[#9F00FF]/40 via-[#FF5AF7]/40 to-[#9F00FF]/40 rounded-full blur-md opacity-70"></span>
+                
+                {/* Text with premium Tesla x Rolex x Web3 gradient */}
                 <span className="relative bg-clip-text text-transparent bg-gradient-to-r from-[#9F00FF] via-[#FF5AF7] to-[#C87DFF] animate-text-shine bg-300%">
                   Chronos Vault
                 </span>
 
-                {/* Subtle sparkle highlights */}
+                {/* Luxury sparkle highlights */}
                 <Sparkle className="absolute top-0 right-1/4 h-6 w-6 text-white opacity-70 animate-pulse-slow" />
-                <Sparkle className="absolute bottom-1/4 left-1/3 h-4 w-4 text-white opacity-60 animate-pulse-slow animation-delay-1000" />
+                <Sparkle className="absolute -top-4 left-1/4 h-5 w-5 text-[#FF5AF7] opacity-60 animate-pulse-slow animation-delay-1000" />
+                <Sparkle className="absolute bottom-1/4 left-1/3 h-4 w-4 text-[#9F00FF] opacity-60 animate-pulse-slow animation-delay-2000" />
               </h1>
             </motion.div>
           </motion.div>
