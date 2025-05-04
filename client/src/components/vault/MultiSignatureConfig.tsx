@@ -156,14 +156,14 @@ export function MultiSignatureConfig({
       <CardContent>
         <Form {...form}>
           <div className="space-y-4">
-            <div className="grid gap-4 md:grid-cols-2">
+            <div className="grid gap-6 sm:gap-4 grid-cols-1 sm:grid-cols-2">
               <FormField
                 control={form.control}
                 name="threshold"
                 render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Approval Threshold</FormLabel>
-                    <div className="flex items-center gap-2">
+                  <FormItem className="space-y-2">
+                    <FormLabel className="text-sm">Approval Threshold</FormLabel>
+                    <div className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:items-center sm:gap-2">
                       <Slider
                         min={1}
                         max={Math.max(signers.length, 2)}
@@ -172,7 +172,7 @@ export function MultiSignatureConfig({
                         onValueChange={(value) => field.onChange(value[0])}
                         className="flex-1"
                       />
-                      <div className="w-12 text-center">
+                      <div className="w-16 text-center">
                         <div className="rounded-md border border-input bg-background px-2 py-1 text-sm">
                           {field.value}/{signers.length}
                         </div>
@@ -190,8 +190,8 @@ export function MultiSignatureConfig({
                 control={form.control}
                 name="timeLimit"
                 render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Time Limit (hours)</FormLabel>
+                  <FormItem className="space-y-2">
+                    <FormLabel className="text-sm">Time Limit (hours)</FormLabel>
                     <FormControl>
                       <Input
                         type="number"
@@ -200,6 +200,7 @@ export function MultiSignatureConfig({
                         {...field}
                         value={field.value || ''}
                         onChange={(e) => field.onChange(parseInt(e.target.value) || 24)}
+                        className="h-9"
                       />
                     </FormControl>
                     <p className="text-xs text-muted-foreground">
@@ -215,10 +216,10 @@ export function MultiSignatureConfig({
               control={form.control}
               name="requireGeolocation"
               render={({ field }) => (
-                <FormItem className="flex flex-row items-center justify-between space-y-0 rounded-lg border border-purple-600/20 p-3 bg-purple-800/10">
-                  <div className="space-y-0.5">
+                <FormItem className="flex flex-col sm:flex-row sm:items-center justify-between space-y-2 sm:space-y-0 rounded-lg border border-purple-600/20 p-4 bg-purple-800/10">
+                  <div className="space-y-1">
                     <FormLabel className="text-base flex items-center gap-2">
-                      <Shield className="h-4 w-4 text-purple-500" />
+                      <Shield className="h-5 w-5 text-purple-500" />
                       Require Geolocation Verification
                     </FormLabel>
                     <p className="text-xs text-muted-foreground">
@@ -226,12 +227,14 @@ export function MultiSignatureConfig({
                     </p>
                   </div>
                   <FormControl>
-                    <input
-                      type="checkbox"
-                      checked={field.value}
-                      onChange={field.onChange}
-                      className="accent-purple-600 h-4 w-4"
-                    />
+                    <div className="flex h-8 w-12 items-center justify-center rounded-md bg-purple-900/20 border border-purple-600/20">
+                      <input
+                        type="checkbox"
+                        checked={field.value}
+                        onChange={field.onChange}
+                        className="accent-purple-600 h-5 w-5"
+                      />
+                    </div>
                   </FormControl>
                 </FormItem>
               )}
@@ -253,44 +256,14 @@ export function MultiSignatureConfig({
               
               <div className="rounded-md border border-purple-600/20 divide-y divide-purple-600/10 bg-black/20">
                 {signers.map((signer, index) => (
-                  <div key={index} className="p-3 flex flex-col md:flex-row gap-3">
-                    <div className="flex-1">
-                      <FormLabel className="text-xs mb-1 block">Wallet Address</FormLabel>
-                      <Input
-                        placeholder="0x..."
-                        value={signer.address}
-                        onChange={(e) => updateSignerAddress(index, e.target.value)}
-                        className="h-8 text-xs"
-                      />
-                    </div>
-                    <div className="w-full md:w-1/4">
-                      <FormLabel className="text-xs mb-1 block">Name (Optional)</FormLabel>
-                      <Input
-                        placeholder="Alice"
-                        value={signer.name || ''}
-                        onChange={(e) => updateSignerName(index, e.target.value)}
-                        className="h-8 text-xs"
-                      />
-                    </div>
-                    <div className="w-full md:w-32">
-                      <FormLabel className="text-xs mb-1 block">Weight</FormLabel>
-                      <Select
-                        value={signer.weight.toString()}
-                        onValueChange={(value) => updateSignerWeight(index, parseInt(value))}
-                      >
-                        <SelectTrigger className="h-8 text-xs">
-                          <SelectValue placeholder="1" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="1">1</SelectItem>
-                          <SelectItem value="2">2</SelectItem>
-                          <SelectItem value="3">3</SelectItem>
-                          <SelectItem value="5">5</SelectItem>
-                          <SelectItem value="10">10</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </div>
-                    <div className="flex items-end md:ml-2">
+                  <div key={index} className="p-3 flex flex-col gap-3">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center space-x-2">
+                        <div className="flex items-center justify-center w-8 h-8 rounded-full bg-purple-800/40 text-white text-xs font-medium border border-purple-600/30">
+                          {index + 1}
+                        </div>
+                        <span className="text-sm font-medium">{signer.name || `Signer ${index + 1}`}</span>
+                      </div>
                       <Button
                         variant="ghost"
                         size="sm"
@@ -300,6 +273,45 @@ export function MultiSignatureConfig({
                       >
                         <Trash2 className="h-4 w-4" />
                       </Button>
+                    </div>
+                    
+                    <div className="grid grid-cols-1 md:grid-cols-12 gap-3">
+                      <div className="md:col-span-7">
+                        <FormLabel className="text-xs mb-1 block">Wallet Address</FormLabel>
+                        <Input
+                          placeholder="0x..."
+                          value={signer.address}
+                          onChange={(e) => updateSignerAddress(index, e.target.value)}
+                          className="h-9 text-xs sm:text-sm"
+                        />
+                      </div>
+                      <div className="md:col-span-3">
+                        <FormLabel className="text-xs mb-1 block">Name</FormLabel>
+                        <Input
+                          placeholder="Alice"
+                          value={signer.name || ''}
+                          onChange={(e) => updateSignerName(index, e.target.value)}
+                          className="h-9 text-xs sm:text-sm"
+                        />
+                      </div>
+                      <div className="md:col-span-2">
+                        <FormLabel className="text-xs mb-1 block">Weight</FormLabel>
+                        <Select
+                          value={signer.weight.toString()}
+                          onValueChange={(value) => updateSignerWeight(index, parseInt(value))}
+                        >
+                          <SelectTrigger className="h-9 text-xs sm:text-sm">
+                            <SelectValue placeholder="1" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="1">1</SelectItem>
+                            <SelectItem value="2">2</SelectItem>
+                            <SelectItem value="3">3</SelectItem>
+                            <SelectItem value="5">5</SelectItem>
+                            <SelectItem value="10">10</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
                     </div>
                   </div>
                 ))}
