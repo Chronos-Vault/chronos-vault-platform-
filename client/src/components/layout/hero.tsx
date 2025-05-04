@@ -88,16 +88,14 @@ export function Hero() {
 
           <motion.h1 
             variants={itemVariants} 
-            className="text-4xl md:text-6xl font-bold mb-6 text-white"
+            className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-bold mb-6 text-white"
           >
-            <span className="bg-clip-text text-transparent bg-gradient-to-r from-white to-gray-400">Redefining </span>
-            <span className="bg-clip-text text-transparent bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7]">Digital Asset</span>
-            <span className="bg-clip-text text-transparent bg-gradient-to-r from-white to-gray-400"> Security</span>
+            <span className="bg-clip-text text-transparent bg-gradient-to-r from-[#9F00FF] to-[#C87DFF] animate-text-shine bg-300%">Chronos Vault</span>
           </motion.h1>
 
           <motion.p 
             variants={itemVariants} 
-            className="text-xl text-gray-300 mb-10 max-w-3xl mx-auto leading-relaxed"
+            className="text-xl sm:text-2xl md:text-2xl lg:text-3xl text-gray-300 mb-10 max-w-3xl mx-auto leading-relaxed"
           >
             Chronos Vault combines military-grade security with elegant design, providing a decentralized platform for secure asset management across multiple blockchains.
           </motion.p>

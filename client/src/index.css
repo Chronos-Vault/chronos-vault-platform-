@@ -197,6 +197,14 @@
     }
   }
   
+  .animate-text-shine {
+    animation: textShine 3s ease-in-out infinite;
+  }
+  
+  .bg-300\% {
+    background-size: 300% 100%;
+  }
+  
   @keyframes scanHorizontal {
     0% {
       opacity: 0;
