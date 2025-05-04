@@ -744,25 +744,70 @@ export function CreateVaultForm({
     };
     
     // Before submitting to database, ensure the data follows the schema properly
+    // Some fields might not exist in all states, so add defaults and handles nulls/undefined values
     const finalVaultData = {
       ...vaultData,
       // Make sure these required fields are properly formatted
       userId: 1, // Default user ID
-      name: data.name,
+      name: data.name || "",
       description: data.description || "",
-      vaultType: data.vaultType,
-      assetType: data.assetType,
-      assetAmount: data.assetAmount.toString(), // Ensure string type to match database
-      timeLockPeriod: parseInt(data.timeLockPeriod.toString(), 10),
-      unlockDate: new Date(data.unlockDate), // Convert to Date object
-      // Format metadata as a proper object, not nested fields
-      metadata: data.metadata || {}
+      vaultType: data.vaultType || "standard",
+      assetType: data.assetType || "ETH",
+      // Ensure assetAmount is a string to match the database schema
+      assetAmount: data.assetAmount ? 
+        (typeof data.assetAmount === 'string' ? data.assetAmount : String(data.assetAmount)) : 
+        "0",
+      // Ensure timeLockPeriod is a number
+      timeLockPeriod: data.timeLockPeriod ? 
+        (typeof data.timeLockPeriod === 'string' ? parseInt(data.timeLockPeriod, 10) : Number(data.timeLockPeriod)) : 
+        30,
+      // Format the date consistently
+      unlockDate: data.unlockDate ? 
+        (data.unlockDate instanceof Date ? data.unlockDate.toISOString() : new Date(data.unlockDate).toISOString()) : 
+        new Date(Date.now() + 30*24*60*60*1000).toISOString(),
+      // Format metadata as a proper JSON-serializable object
+      metadata: data.metadata ? 
+        (typeof data.metadata === 'string' ? JSON.parse(data.metadata) : data.metadata) : 
+        {}
     };
     
+    // More detailed logging to help debug data type issues
     console.log("Final data being sent to server:", finalVaultData);
+    console.log("Data types of important fields:", {
+      assetAmount: typeof finalVaultData.assetAmount,
+      timeLockPeriod: typeof finalVaultData.timeLockPeriod,
+      unlockDate: typeof finalVaultData.unlockDate,
+      metadata: typeof finalVaultData.metadata,
+    });
+    console.log("Sample values of fields:", {
+      assetAmount: finalVaultData.assetAmount,
+      timeLockPeriod: finalVaultData.timeLockPeriod,
+      unlockDate: finalVaultData.unlockDate,
+      metadata: JSON.stringify(finalVaultData.metadata).substring(0, 100) + "...",
+    });
     
     // Store in database
-    mutation.mutate(finalVaultData as FormValues);
+    // Only pass the fields that are expected by the server
+    const serverVaultData = {
+      userId: finalVaultData.userId,
+      name: finalVaultData.name,
+      description: finalVaultData.description,
+      vaultType: finalVaultData.vaultType,
+      assetType: finalVaultData.assetType,
+      assetAmount: finalVaultData.assetAmount,
+      timeLockPeriod: finalVaultData.timeLockPeriod,
+      unlockDate: finalVaultData.unlockDate,
+      metadata: finalVaultData.metadata,
+      ethereumContractAddress: finalVaultData.ethereumContractAddress,
+      solanaContractAddress: finalVaultData.solanaContractAddress,
+      tonContractAddress: finalVaultData.tonContractAddress,
+      securityLevel: finalVaultData.securityLevel || 3,
+      crossChainEnabled: finalVaultData.crossChainEnabled || false,
+      privacyEnabled: finalVaultData.privacyEnabled || false
+    };
+    
+    console.log("Final data to server:", serverVaultData);
+    mutation.mutate(serverVaultData);
   }
 
   const getTabStyle = () => {
