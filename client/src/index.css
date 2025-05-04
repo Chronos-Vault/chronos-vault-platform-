@@ -275,9 +275,10 @@
   }
   
   .title-3d-animated {
-    text-shadow: 0 0 5px rgba(107, 0, 215, 0.8),
-                0 0 10px rgba(255, 90, 247, 0.5),
-                0 0 20px rgba(107, 0, 215, 0.3);
+    text-shadow: 0 0 8px rgba(159, 0, 255, 0.9),
+                0 0 15px rgba(200, 125, 255, 0.8),
+                0 0 30px rgba(159, 0, 255, 0.7),
+                0 0 45px rgba(159, 0, 255, 0.4);
     letter-spacing: 2px;
     display: inline-block;
     max-width: 100%;
@@ -525,44 +526,44 @@
   0% {
     transform: translateX(0) translateZ(0) rotateY(0deg);
     text-shadow: 
-      0 0 5px rgba(107, 0, 215, 0.8),
-      0 0 10px rgba(255, 90, 247, 0.5),
-      0 0 20px rgba(107, 0, 215, 0.3);
+      0 0 5px rgba(159, 0, 255, 0.8),
+      0 0 10px rgba(200, 125, 255, 0.6),
+      0 0 20px rgba(159, 0, 255, 0.4);
   }
   20% {
     transform: translateX(-15px) translateZ(25px) rotateY(-2deg);
     text-shadow: 
-      0 0 8px rgba(107, 0, 215, 0.9),
-      0 0 15px rgba(255, 90, 247, 0.7),
-      0 0 30px rgba(107, 0, 215, 0.5);
+      0 0 8px rgba(159, 0, 255, 0.9),
+      0 0 15px rgba(200, 125, 255, 0.7),
+      0 0 30px rgba(159, 0, 255, 0.5);
   }
   40% {
     transform: translateX(0) translateZ(50px) rotateY(0deg);
     text-shadow: 
-      0 0 12px rgba(107, 0, 215, 1),
-      0 0 24px rgba(255, 90, 247, 0.9),
-      0 0 45px rgba(107, 0, 215, 0.7);
+      0 0 12px rgba(159, 0, 255, 1),
+      0 0 24px rgba(200, 125, 255, 0.9),
+      0 0 45px rgba(159, 0, 255, 0.7);
   }
   60% {
     transform: translateX(15px) translateZ(40px) rotateY(2deg);
     text-shadow: 
-      0 0 15px rgba(107, 0, 215, 1),
-      0 0 30px rgba(255, 90, 247, 0.9),
-      0 0 60px rgba(107, 0, 215, 0.8);
+      0 0 15px rgba(159, 0, 255, 1),
+      0 0 30px rgba(200, 125, 255, 1),
+      0 0 60px rgba(159, 0, 255, 0.8);
   }
   80% {
     transform: translateX(10px) translateZ(20px) rotateY(1deg);
     text-shadow: 
-      0 0 10px rgba(107, 0, 215, 0.9),
-      0 0 20px rgba(255, 90, 247, 0.8),
-      0 0 40px rgba(107, 0, 215, 0.6);
+      0 0 10px rgba(159, 0, 255, 0.9),
+      0 0 20px rgba(200, 125, 255, 0.8),
+      0 0 40px rgba(159, 0, 255, 0.6);
   }
   100% {
     transform: translateX(0) translateZ(0) rotateY(0deg);
     text-shadow: 
-      0 0 5px rgba(107, 0, 215, 0.8),
-      0 0 10px rgba(255, 90, 247, 0.5),
-      0 0 20px rgba(107, 0, 215, 0.3);
+      0 0 5px rgba(159, 0, 255, 0.8),
+      0 0 10px rgba(200, 125, 255, 0.6),
+      0 0 20px rgba(159, 0, 255, 0.4);
   }
 }
 
@@ -757,6 +758,13 @@
   .card-mobile-full {
     width: 100% !important;
   }
+}
+
+/* Subtitle glow effect */
+.subtitle-glow {
+  text-shadow: 0 0 4px rgba(159, 0, 255, 0.7),
+              0 0 8px rgba(200, 125, 255, 0.5),
+              0 0 15px rgba(159, 0, 255, 0.3);
 }
 
 /* Token Economics Chart Animations */
