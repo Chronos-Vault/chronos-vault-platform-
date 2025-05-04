@@ -721,10 +721,35 @@
     min-height: 44px;
   }
   
-  /* Reduce font sizes on mobile */
-  h1:not(:has(.title-3d-animated)) {
+  /* Reduce font sizes on mobile for regular headings */
+  h1 {
     font-size: 1.75rem !important;
     line-height: 1.2 !important;
+  }
+  
+  /* Override for our hero title - keep it large */
+  .title-3d-animated {
+    font-size: 3.5rem !important; /* Base size on mobile */
+    line-height: 1 !important;
+  }
+  
+  /* Responsive sizes for the title */
+  @media (min-width: 640px) {
+    .title-3d-animated {
+      font-size: 4rem !important;
+    }
+  }
+  
+  @media (min-width: 768px) {
+    .title-3d-animated {
+      font-size: 5rem !important;
+    }
+  }
+  
+  @media (min-width: 1024px) {
+    .title-3d-animated {
+      font-size: 6rem !important;
+    }
   }
   
   h2 {
