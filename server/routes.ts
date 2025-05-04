@@ -1365,6 +1365,211 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Multi-Signature Routes
+  // Get all signature requests for a vault
+  app.get("/api/signature-requests/vault/:vaultId", async (req: Request, res: Response) => {
+    try {
+      const vaultId = parseInt(req.params.vaultId);
+      if (isNaN(vaultId)) {
+        return res.status(400).json({ message: "Invalid vault ID" });
+      }
+
+      const vault = await storage.getVault(vaultId);
+      if (!vault) {
+        return res.status(404).json({ message: "Vault not found" });
+      }
+
+      const signatureRequests = await storage.getSignatureRequestsByVault(vaultId);
+      res.status(200).json(signatureRequests);
+    } catch (error) {
+      handleError(res, error);
+    }
+  });
+
+  // Get signature requests by status
+  app.get("/api/signature-requests/status/:status", async (req: Request, res: Response) => {
+    try {
+      const { status } = req.params;
+      if (!status) {
+        return res.status(400).json({ message: "Status parameter is required" });
+      }
+
+      const signatureRequests = await storage.getSignatureRequestsByStatus(status);
+      res.status(200).json(signatureRequests);
+    } catch (error) {
+      handleError(res, error);
+    }
+  });
+
+  // Get signature requests by requester address
+  app.get("/api/signature-requests/requester/:address", async (req: Request, res: Response) => {
+    try {
+      const { address } = req.params;
+      if (!address) {
+        return res.status(400).json({ message: "Requester address is required" });
+      }
+
+      const signatureRequests = await storage.getSignatureRequestsByRequester(address);
+      res.status(200).json(signatureRequests);
+    } catch (error) {
+      handleError(res, error);
+    }
+  });
+
+  // Get a specific signature request
+  app.get("/api/signature-requests/:id", async (req: Request, res: Response) => {
+    try {
+      const requestId = parseInt(req.params.id);
+      if (isNaN(requestId)) {
+        return res.status(400).json({ message: "Invalid signature request ID" });
+      }
+
+      const signatureRequest = await storage.getSignatureRequest(requestId);
+      if (!signatureRequest) {
+        return res.status(404).json({ message: "Signature request not found" });
+      }
+
+      // Get all signatures for this request
+      const signatures = await storage.getSignaturesByRequest(requestId);
+
+      res.status(200).json({ ...signatureRequest, signatures });
+    } catch (error) {
+      handleError(res, error);
+    }
+  });
+
+  // Create a new signature request
+  app.post("/api/signature-requests", async (req: Request, res: Response) => {
+    try {
+      const requestData = insertSignatureRequestSchema.parse(req.body);
+      
+      // Verify the vault exists
+      const vault = await storage.getVault(requestData.vaultId);
+      if (!vault) {
+        return res.status(404).json({ message: "Vault not found" });
+      }
+
+      const signatureRequest = await storage.createSignatureRequest(requestData);
+      res.status(201).json(signatureRequest);
+    } catch (error) {
+      handleError(res, error);
+    }
+  });
+
+  // Update a signature request
+  app.put("/api/signature-requests/:id", async (req: Request, res: Response) => {
+    try {
+      const requestId = parseInt(req.params.id);
+      if (isNaN(requestId)) {
+        return res.status(400).json({ message: "Invalid signature request ID" });
+      }
+
+      const existingRequest = await storage.getSignatureRequest(requestId);
+      if (!existingRequest) {
+        return res.status(404).json({ message: "Signature request not found" });
+      }
+
+      const updatedRequest = await storage.updateSignatureRequest(requestId, req.body);
+      res.status(200).json(updatedRequest);
+    } catch (error) {
+      handleError(res, error);
+    }
+  });
+
+  // Complete a signature request (mark as approved/executed)
+  app.post("/api/signature-requests/:id/complete", async (req: Request, res: Response) => {
+    try {
+      const requestId = parseInt(req.params.id);
+      if (isNaN(requestId)) {
+        return res.status(400).json({ message: "Invalid signature request ID" });
+      }
+
+      const existingRequest = await storage.getSignatureRequest(requestId);
+      if (!existingRequest) {
+        return res.status(404).json({ message: "Signature request not found" });
+      }
+
+      // Check if the request has enough signatures
+      const signatures = await storage.getSignaturesByRequest(requestId);
+      const signatureCount = signatures.length;
+      
+      // Assuming required signature count is stored in the request
+      if (signatureCount < existingRequest.requiredSignatures) {
+        return res.status(400).json({ 
+          message: "Not enough signatures to complete this request", 
+          currentCount: signatureCount,
+          requiredCount: existingRequest.requiredSignatures
+        });
+      }
+
+      const completedRequest = await storage.completeSignatureRequest(requestId);
+      res.status(200).json(completedRequest);
+    } catch (error) {
+      handleError(res, error);
+    }
+  });
+
+  // Add a signature to a request
+  app.post("/api/signatures", async (req: Request, res: Response) => {
+    try {
+      const signatureData = insertSignatureSchema.parse(req.body);
+      
+      // Verify the signature request exists
+      const request = await storage.getSignatureRequest(signatureData.requestId);
+      if (!request) {
+        return res.status(404).json({ message: "Signature request not found" });
+      }
+      
+      // Check if the request is still pending
+      if (request.status !== 'pending') {
+        return res.status(400).json({ 
+          message: `Cannot sign a request with status: ${request.status}` 
+        });
+      }
+
+      // Check if the signer has already signed
+      const existingSignatures = await storage.getSignaturesByRequest(signatureData.requestId);
+      const alreadySigned = existingSignatures.some(sig => 
+        sig.signerAddress.toLowerCase() === signatureData.signerAddress.toLowerCase()
+      );
+      
+      if (alreadySigned) {
+        return res.status(400).json({ message: "This address has already signed this request" });
+      }
+
+      const signature = await storage.createSignature(signatureData);
+      
+      // Check if we now have enough signatures to auto-complete the request
+      const updatedSignatures = await storage.getSignaturesByRequest(signatureData.requestId);
+      if (updatedSignatures.length >= request.requiredSignatures) {
+        await storage.completeSignatureRequest(signatureData.requestId);
+      }
+      
+      res.status(201).json(signature);
+    } catch (error) {
+      handleError(res, error);
+    }
+  });
+
+  // Delete a signature
+  app.delete("/api/signatures/:id", async (req: Request, res: Response) => {
+    try {
+      const signatureId = parseInt(req.params.id);
+      if (isNaN(signatureId)) {
+        return res.status(400).json({ message: "Invalid signature ID" });
+      }
+
+      const success = await storage.deleteSignature(signatureId);
+      if (!success) {
+        return res.status(404).json({ message: "Signature not found" });
+      }
+
+      res.status(204).send();
+    } catch (error) {
+      handleError(res, error);
+    }
+  });
+
   // Stripe Payment Integration Routes
   // One-time payment route
   app.post("/api/payments/create-payment-intent", async (req: Request, res: Response) => {
