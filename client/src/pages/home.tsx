@@ -88,23 +88,26 @@ const Home = () => {
                 Secure, user-friendly, and unstoppable — the future of blockchain vaults.
               </p>
               
-              <div className="mt-4 mb-6 rounded-xl bg-[#1A1A1A]/50 border border-[#6B00D7]/20 p-3 inline-flex items-center">
+              <div className="mt-4 mb-6 rounded-xl bg-[#1A1A1A]/50 border border-[#6B00D7]/20 p-3 flex flex-wrap items-center">
                 <span className="text-[#FF5AF7] mr-2">💰</span>
-                <span className="text-white font-medium">Now with multi-chain payments! Pay with</span>
-                <div className="ml-2 flex items-center space-x-2">
-                  <span className="px-2 py-1 bg-[#6B00D7]/20 rounded-md text-white font-semibold">ETH</span>
-                  <span className="px-2 py-1 bg-[#6B00D7]/20 rounded-md text-white font-semibold">SOL</span>
-                  <span className="px-2 py-1 bg-[#6B00D7]/20 rounded-md text-white font-semibold">TON</span>
-                  <span className="px-2 py-1 bg-[#6B00D7]/20 rounded-md text-white font-semibold">BTC</span>
+                <span className="text-white font-medium">Now with multi-chain payments!</span>
+                <div className="w-full sm:w-auto sm:ml-2 mt-2 sm:mt-0 flex flex-wrap gap-2 items-center">
+                  <span className="text-white font-medium sm:mr-2 w-full sm:w-auto text-center sm:text-left">Pay with:</span>
+                  <div className="flex flex-wrap gap-2 justify-center sm:justify-start w-full sm:w-auto">
+                    <span className="px-2 py-1 bg-[#6B00D7]/20 rounded-md text-white font-semibold">ETH</span>
+                    <span className="px-2 py-1 bg-[#6B00D7]/20 rounded-md text-white font-semibold">SOL</span>
+                    <span className="px-2 py-1 bg-[#6B00D7]/20 rounded-md text-white font-semibold">TON</span>
+                    <span className="px-2 py-1 bg-[#6B00D7]/20 rounded-md text-white font-semibold">BTC</span>
+                  </div>
                 </div>
               </div>
               
               <div className="flex flex-col sm:flex-row gap-4">
                 <Button
                   onClick={handleCreateVault}
-                  className="cta-button prismatic-border bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] px-8 py-4 rounded-lg font-poppins font-medium text-white shadow-lg hover:shadow-xl hover:shadow-[#6B00D7]/20 transition-all"
+                  className="cta-button prismatic-border bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] px-6 py-3 sm:px-8 sm:py-4 rounded-lg font-poppins font-medium text-white shadow-lg hover:shadow-xl hover:shadow-[#6B00D7]/20 transition-all w-full sm:w-auto"
                 >
-                  <div className="flex items-center">
+                  <div className="flex items-center justify-center w-full">
                     <span>Create Your Vault</span>
                     <div className="flex -space-x-1 ml-2">
                       <div className="w-5 h-5 rounded-full bg-blue-500 flex items-center justify-center text-[8px] font-bold">ETH</div>
@@ -116,10 +119,10 @@ const Home = () => {
                 </Button>
                 <Button
                   variant="outline"
-                  className="px-8 py-4 rounded-lg bg-[#1A1A1A] border border-[#6B00D7]/30 text-white font-poppins font-medium hover:border-[#6B00D7] transition-all"
+                  className="px-6 py-3 sm:px-8 sm:py-4 rounded-lg bg-[#1A1A1A] border border-[#6B00D7]/30 text-white font-poppins font-medium hover:border-[#6B00D7] transition-all w-full sm:w-auto"
                   asChild
                 >
-                  <a href="#features">Learn More</a>
+                  <a href="#features" className="flex items-center justify-center w-full">Learn More</a>
                 </Button>
               </div>
               
