@@ -262,10 +262,20 @@ export function CreateVaultForm({
         if (!response.ok) {
           const errorData = await response.json().catch(() => null);
           console.error("Server returned an error:", response.status, errorData);
-          throw new Error(errorData?.message || `Server returned ${response.status}`);
+          
+          // Display more detailed error information
+          let errorMessage = errorData?.message || `Server returned ${response.status}`;
+          if (errorData?.errors) {
+            const details = Array.isArray(errorData.errors) 
+              ? errorData.errors.map((e: any) => `${e.path?.[0] || ''}: ${e.message}`).join(', ')
+              : JSON.stringify(errorData.errors);
+            errorMessage += `. Details: ${details}`;
+          }
+          
+          throw new Error(errorMessage);
         }
         return response.json();
-      } catch (err) {
+      } catch (err: any) {
         console.error("Error in vault creation request:", err);
         throw err;
       }

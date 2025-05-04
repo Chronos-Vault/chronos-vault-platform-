@@ -190,7 +190,25 @@ export async function registerRoutes(app: Express): Promise<Server> {
       });
       
       try {
-        const vaultData = insertVaultSchema.parse(req.body);
+        // Manually convert problematic fields before validation
+        const preparedData = {
+          ...req.body,
+          // Convert string date to Date object
+          unlockDate: typeof req.body.unlockDate === 'string' ? new Date(req.body.unlockDate) : req.body.unlockDate,
+          // Convert string numbers to actual numbers
+          assetAmount: typeof req.body.assetAmount === 'string' ? parseFloat(req.body.assetAmount) : req.body.assetAmount,
+          timeLockPeriod: typeof req.body.timeLockPeriod === 'string' ? parseInt(req.body.timeLockPeriod, 10) : req.body.timeLockPeriod,
+          securityLevel: typeof req.body.securityLevel === 'string' ? parseInt(req.body.securityLevel, 10) : req.body.securityLevel
+        };
+        
+        console.log("Prepared data with conversions:", {
+          unlockDate: preparedData.unlockDate,
+          unlockDateType: typeof preparedData.unlockDate,
+          assetAmount: preparedData.assetAmount,
+          assetAmountType: typeof preparedData.assetAmount
+        });
+        
+        const vaultData = insertVaultSchema.parse(preparedData);
         console.log("Parsed vault data:", JSON.stringify(vaultData));
         
         const user = await storage.getUser(vaultData.userId);

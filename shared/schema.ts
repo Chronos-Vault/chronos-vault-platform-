@@ -139,10 +139,29 @@ export const insertVaultSchema = createInsertSchema(vaults)
   })
   .extend({
     // Allow string inputs and convert to appropriate types
-    assetAmount: z.union([z.string(), z.number()]).transform(val => typeof val === 'string' ? parseFloat(val) : val),
-    unlockDate: z.union([z.string(), z.date()]).transform(val => typeof val === 'string' ? new Date(val) : val),
-    securityLevel: z.union([z.string(), z.number()]).transform(val => typeof val === 'string' ? parseInt(val, 10) : val),
-    timeLockPeriod: z.union([z.string(), z.number()]).transform(val => typeof val === 'string' ? parseInt(val, 10) : val),
+    assetAmount: z.union([z.string(), z.number()])
+      .transform(val => typeof val === 'string' ? parseFloat(val) : val),
+    timeLockPeriod: z.union([z.string(), z.number()])
+      .transform(val => typeof val === 'string' ? parseInt(val, 10) : val),
+    securityLevel: z.union([z.string(), z.number(), z.null()])
+      .optional()
+      .transform(val => {
+        if (val === null || val === undefined) return null;
+        return typeof val === 'string' ? parseInt(val, 10) : val;
+      }),
+    // Accept string, date, or ISO date string for unlockDate
+    unlockDate: z.union([z.string(), z.date()])
+      .transform(val => {
+        if (val instanceof Date) return val;
+        if (typeof val === 'string') {
+          const date = new Date(val);
+          if (isNaN(date.getTime())) {
+            throw new Error('Invalid date format for unlockDate');
+          }
+          return date;
+        }
+        return new Date();
+      })
   });
 
 export const insertBeneficiarySchema = createInsertSchema(beneficiaries).pick({
