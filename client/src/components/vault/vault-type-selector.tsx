@@ -21,7 +21,7 @@ const VaultTypeSelector: React.FC<VaultTypeProps> = ({ selectedType, onChange })
   console.log("VaultTypeSelector rendering with selectedType:", selectedType);
   
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-2 sm:gap-3 max-w-7xl mx-auto">
+    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-5 gap-4 max-w-7xl mx-auto">
       <VaultTypeCard 
         type="standard"
         title="Standard Vault"
@@ -231,7 +231,7 @@ const VaultTypeCard: React.FC<VaultTypeCardProps> = ({
   return (
     <div 
       className={`
-        p-3 sm:p-4 rounded-lg cursor-pointer transition-all duration-200 h-full hover:translate-y-[-4px]
+        p-3 sm:p-4 rounded-lg cursor-pointer transition-all duration-200 h-full hover:translate-y-[-4px] flex flex-col
         ${isSelected ? 'bg-gradient-to-r from-black/40 to-black/20 shadow-lg' : 'border border-gray-700 bg-black/20 hover:bg-black/40'}
       `}
       style={{
@@ -286,7 +286,7 @@ const VaultTypeCard: React.FC<VaultTypeCardProps> = ({
       
       {/* Features (visible when selected) */}
       {isSelected && features.length > 0 && (
-        <div className="mt-3 pt-2 sm:pt-3 border-t border-gray-700">
+        <div className="mt-3 pt-2 sm:pt-3 border-t border-gray-700 mt-auto">
           <p className="text-[10px] sm:text-xs font-medium text-gray-300 mb-1 text-center sm:text-left">Key Features:</p>
           <ul className="text-[10px] sm:text-xs text-gray-400">
             {features.map((feature, index) => (
