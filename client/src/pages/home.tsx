@@ -73,7 +73,7 @@ const Home = () => {
           <div className="flex flex-col md:flex-row gap-12 items-center">
             <div className="md:w-1/2 space-y-8">
               <div>
-                <h2 className="font-poppins font-bold text-3xl md:text-4xl lg:text-5xl leading-tight">
+                <h2 className="font-poppins font-bold text-4xl md:text-5xl lg:text-6xl leading-tight">
                   <span className="bg-clip-text text-transparent bg-gradient-to-r from-[#6B00D7] via-[#C74DFF] to-[#FF5AF7] animate-gradient-slow">
                     Chronos Vault
                   </span>
