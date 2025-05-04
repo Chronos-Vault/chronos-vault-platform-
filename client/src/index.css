@@ -274,6 +274,14 @@
     transform-style: preserve-3d;
   }
   
+  .subtitle-3d {
+    text-shadow: 1px 1px 0px rgba(255, 90, 247, 0.2),
+                2px 2px 0px rgba(255, 90, 247, 0.4),
+                3px 3px 0px rgba(107, 0, 215, 0.4),
+                4px 4px 8px rgba(0, 0, 0, 0.5);
+    letter-spacing: 2px;
+  }
+  
   .animate-spin-slow {
     animation: spin 15s linear infinite;
   }
