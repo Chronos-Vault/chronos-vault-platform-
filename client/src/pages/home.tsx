@@ -4,6 +4,12 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import VaultCard from "@/components/vault/vault-card";
 import Hero from "@/components/layout/hero";
+import { Shield, Layers, Fingerprint, Lock } from "lucide-react";
+
+// Helper function to format numbers with commas
+const formatNumber = (num: number): string => {
+  return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+};
 
 const Home = () => {
   const [_, setLocation] = useLocation();
@@ -70,14 +76,163 @@ const Home = () => {
       {/* Hero Section */}
       <section className="relative hero-gradient overflow-hidden pt-12 pb-20 md:pt-16 md:pb-32">
         <div className="container mx-auto px-4 relative z-10">
-          <div className="flex flex-col md:flex-row gap-12 items-center">
-            <div className="md:w-1/2 space-y-8">
+          <div className="text-center mb-8">
+            <h1 className="font-poppins font-bold text-5xl md:text-6xl lg:text-7xl xl:text-8xl leading-none tracking-tight title-3d mb-4">
+              <span className="block">Chronos Vault</span>
+              <span className="block text-3xl md:text-4xl lg:text-5xl mt-2 font-medium opacity-80 text-gray-200">Lock your assets today, secure your tomorrow</span>
+            </h1>
+            <p className="mt-8 text-xl md:text-2xl text-gray-300 max-w-3xl mx-auto leading-relaxed">
+              The most sophisticated digital vault system ever created, combining Triple-Chain Security, Zero-Knowledge Privacy, and Quantum-Resistant Encryption.
+            </p>
+            
+            {/* Action Buttons */}
+            <div className="flex flex-wrap justify-center gap-6 mt-12">
+              <Link 
+                to="/create-vault" 
+                className="px-8 py-5 bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] hover:from-[#5500AB] hover:to-[#FF46E8] text-white text-lg font-semibold rounded-xl shadow-xl shadow-[#6B00D7]/20 hover:shadow-2xl hover:shadow-[#FF5AF7]/30 flex items-center gap-3 transition-all duration-300 relative overflow-hidden group"
+              >
+                <span className="absolute inset-0 w-full h-full bg-white opacity-0 group-hover:opacity-10 transition-opacity duration-300"></span>
+                <i className="ri-shield-keyhole-line text-xl"></i> 
+                <span>Create New Vault</span>
+              </Link>
+              
+              <Link 
+                to="/multi-signature-vault" 
+                className="px-8 py-5 bg-transparent border border-[#6B00D7] hover:border-[#FF5AF7] text-white text-lg font-semibold rounded-xl flex items-center gap-3 transition-all duration-300 hover:bg-[#FF5AF7]/5"
+              >
+                <i className="ri-user-shared-line text-xl"></i>
+                <span>Multi-Signature Vault</span>
+              </Link>
+            </div>
+            
+            {/* Stats Row */}
+            <div className="grid grid-cols-3 gap-12 max-w-3xl mx-auto mt-16 pt-8 border-t border-white/10">
               <div>
-                <h1 className="font-poppins font-bold text-5xl md:text-6xl lg:text-7xl xl:text-8xl leading-none tracking-tight title-3d mb-4">
-                  <span className="block">Chronos Vault</span>
-                  <span className="block text-3xl md:text-4xl lg:text-5xl mt-2 font-medium opacity-80 text-gray-200">Lock your assets today, secure your tomorrow</span>
-                </h1>
+                <div className="text-3xl md:text-4xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-[#6B00D7] via-[#FF5AF7] to-[#6B00D7] animate-text-shine bg-300%">
+                  {formatNumber(10467)}
+                </div>
+                <p className="text-sm text-gray-300 mt-1">Active Vaults</p>
               </div>
+              <div>
+                <div className="text-3xl md:text-4xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-[#6B00D7] via-[#FF5AF7] to-[#6B00D7] animate-text-shine bg-300%">
+                  {formatNumber(3)}+
+                </div>
+                <p className="text-sm text-gray-300 mt-1">Blockchains</p>
+              </div>
+              <div>
+                <div className="text-3xl md:text-4xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-[#6B00D7] via-[#FF5AF7] to-[#6B00D7] animate-text-shine bg-300%">
+                  100%
+                </div>
+                <p className="text-sm text-gray-300 mt-1">Security Rating</p>
+              </div>
+            </div>
+            
+            {/* Trust Badges */}
+            <div className="flex flex-wrap justify-center gap-4 mt-16">
+              <div className="px-3 py-1 rounded-full bg-white/5 border border-white/10 text-xs font-medium text-gray-300 flex items-center gap-1">
+                <Shield className="h-3 w-3 text-[#6B00D7]" /> Military-Grade Encryption
+              </div>
+              <div className="px-3 py-1 rounded-full bg-white/5 border border-white/10 text-xs font-medium text-gray-300 flex items-center gap-1">
+                <Layers className="h-3 w-3 text-[#FF5AF7]" /> Triple-Chain Security
+              </div>
+              <div className="px-3 py-1 rounded-full bg-white/5 border border-white/10 text-xs font-medium text-gray-300 flex items-center gap-1">
+                <Fingerprint className="h-3 w-3 text-[#6B00D7]" /> Zero-Knowledge Privacy
+              </div>
+            </div>
+            
+            {/* Premium 3D Rotating Vault Visualization */}
+            <div className="mt-12 mb-16 relative">
+              <div className="relative w-full max-w-3xl aspect-[16/9] mx-auto">
+                {/* 3D Vault Container */}
+                <div className="absolute inset-0 perspective-1000 transform-style-3d animate-float">
+                  {/* 3D Vault - Back Panel */}
+                  <div className="absolute inset-0 bg-gradient-to-br from-[#0D0D0D] to-[#1A1A1A] rounded-3xl transform translate-z-[-100px] border border-[#6B00D7]/20 shadow-2xl">
+                    {/* Grid pattern */}
+                    <div className="absolute inset-0 bg-grid-pattern opacity-10"></div>
+                  </div>
+                  
+                  {/* 3D Holographic Interfaces - Left Panel */}
+                  <div className="absolute left-[-15%] top-[15%] bottom-[15%] w-[25%] bg-gradient-to-br from-[#6B00D7]/10 to-[#6B00D7]/5 backdrop-blur-md rounded-2xl transform translate-z-[-50px] rotateY-15 border border-[#6B00D7]/30 shadow-lg animate-float animation-delay-1000">
+                    {/* Decorative interface elements */}
+                    <div className="absolute inset-4 border border-[#6B00D7]/20 rounded-xl grid grid-rows-4 gap-2 p-3">
+                      <div className="h-2 w-3/4 bg-[#6B00D7]/40 rounded-full"></div>
+                      <div className="h-2 w-1/2 bg-[#6B00D7]/30 rounded-full"></div>
+                      <div className="h-2 w-2/3 bg-[#6B00D7]/20 rounded-full"></div>
+                      <div className="h-2 w-1/3 bg-[#6B00D7]/40 rounded-full"></div>
+                    </div>
+                  </div>
+                  
+                  {/* 3D Holographic Interfaces - Right Panel */}
+                  <div className="absolute right-[-15%] top-[15%] bottom-[15%] w-[25%] bg-gradient-to-br from-[#FF5AF7]/10 to-[#FF5AF7]/5 backdrop-blur-md rounded-2xl transform translate-z-[-50px] rotateY-neg-15 border border-[#FF5AF7]/30 shadow-lg animate-float animation-delay-2000">
+                    {/* Decorative interface elements */}
+                    <div className="absolute inset-4 border border-[#FF5AF7]/20 rounded-xl grid grid-rows-4 gap-2 p-3">
+                      <div className="h-2 w-1/2 bg-[#FF5AF7]/30 rounded-full"></div>
+                      <div className="h-2 w-3/4 bg-[#FF5AF7]/40 rounded-full"></div>
+                      <div className="h-2 w-1/3 bg-[#FF5AF7]/30 rounded-full"></div>
+                      <div className="h-2 w-2/3 bg-[#FF5AF7]/20 rounded-full"></div>
+                    </div>
+                  </div>
+                  
+                  {/* Blockchain Streaming Data - Top */}
+                  <div className="absolute top-[-10%] inset-x-[15%] h-[20%] bg-black/50 backdrop-blur-lg rounded-xl transform translate-z-[-30px] border border-white/10 overflow-hidden">
+                    <div className="absolute inset-0 p-2 font-mono text-[8px] text-[#6B00D7] opacity-70">
+                      0xf7b8a865c831d9bd5ec48bc5dc95c63a103e056fb869c27c826fc6d6a5d31234...
+                    </div>
+                    <div className="absolute inset-0 animate-scan"></div>
+                  </div>
+                  
+                  {/* Blockchain Streaming Data - Bottom */}
+                  <div className="absolute bottom-[-10%] inset-x-[15%] h-[20%] bg-black/50 backdrop-blur-lg rounded-xl transform translate-z-[-30px] border border-white/10 overflow-hidden">
+                    <div className="absolute inset-0 p-2 font-mono text-[8px] text-[#FF5AF7] opacity-70">
+                      EQBcp_kl_gSEtJygbLkwk-3pfPn6Iha6ODW2RJJAa-n0_HFZ...
+                    </div>
+                    <div className="absolute inset-0 animate-scan"></div>
+                  </div>
+                  
+                  {/* Main Vault Body */}
+                  <div className="absolute inset-[12%] bg-gradient-to-br from-[#151515] to-[#0A0A0A] rounded-2xl transform translate-z-[30px] border border-white/10 shadow-2xl overflow-hidden">
+                    {/* Vault Door Seam */}
+                    <div className="absolute inset-y-0 left-[48%] right-[48%] bg-gradient-to-r from-transparent via-white/10 to-transparent"></div>
+                    
+                    {/* Vault Lock Interface */}
+                    <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-24 h-24 bg-gradient-to-r from-[#6B00D7]/20 to-[#FF5AF7]/20 rounded-full backdrop-blur-md border border-white/10 shadow-lg animate-pulse-slow">
+                      <div className="absolute inset-2 rounded-full border border-white/20 flex items-center justify-center">
+                        <div className="relative">
+                          <div className="absolute inset-0 rounded-full bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] blur-md opacity-60"></div>
+                          <i className="ri-lock-2-line text-3xl text-white relative z-10"></i>
+                        </div>
+                      </div>
+                    </div>
+                    
+                    {/* Security Indicators */}
+                    <div className="absolute top-[20%] left-[20%] w-3 h-3 rounded-full bg-[#6B00D7] animate-pulse-slow shadow-glow-sm"></div>
+                    <div className="absolute top-[20%] right-[20%] w-3 h-3 rounded-full bg-[#FF5AF7] animate-pulse-slow animation-delay-1000 shadow-glow-sm"></div>
+                    <div className="absolute bottom-[20%] left-[20%] w-3 h-3 rounded-full bg-[#FF5AF7] animate-pulse-slow animation-delay-2000 shadow-glow-sm"></div>
+                    <div className="absolute bottom-[20%] right-[20%] w-3 h-3 rounded-full bg-[#6B00D7] animate-pulse-slow animation-delay-3000 shadow-glow-sm"></div>
+                  </div>
+                  
+                  {/* Floating Chain Icons */}
+                  <div className="absolute top-[5%] left-[30%] transform -translate-x-1/2 -translate-y-1/2 p-3 bg-[#151515]/80 backdrop-blur-md rounded-xl border border-[#6B00D7]/30 shadow-lg shadow-[#6B00D7]/20 animate-float">
+                    <i className="ri-ethereum-line text-xl text-[#6B00D7]"></i>
+                  </div>
+                  
+                  <div className="absolute top-[15%] right-[25%] transform translate-x-1/2 -translate-y-1/2 p-3 bg-[#151515]/80 backdrop-blur-md rounded-xl border border-[#FF5AF7]/30 shadow-lg shadow-[#FF5AF7]/20 animate-float animation-delay-2000">
+                    <i className="ri-copper-coin-line text-xl text-[#FF5AF7]"></i>
+                  </div>
+                  
+                  <div className="absolute bottom-[10%] left-[40%] transform -translate-x-1/2 translate-y-1/2 p-3 bg-[#151515]/80 backdrop-blur-md rounded-xl border border-[#6B00D7]/30 shadow-lg shadow-[#6B00D7]/20 animate-float animation-delay-3000">
+                    <Lock className="h-5 w-5 text-[#6B00D7]" />
+                  </div>
+                  
+                  <div className="absolute bottom-[20%] right-[35%] transform translate-x-1/2 translate-y-1/2 p-3 bg-[#151515]/80 backdrop-blur-md rounded-xl border border-[#FF5AF7]/30 shadow-lg shadow-[#FF5AF7]/20 animate-float animation-delay-1000">
+                    <Shield className="h-5 w-5 text-[#FF5AF7]" />
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div className="flex flex-col md:flex-row gap-12 items-center hidden">
+            <div className="md:w-1/2 space-y-8">
               
               <p className="text-gray-300 text-lg max-w-lg">
                 Chronos Vault redefines time-locked assets for the decentralized world. 
