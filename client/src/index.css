@@ -275,10 +275,9 @@
   }
   
   .title-3d-animated {
-    text-shadow: 0 0 8px rgba(107, 0, 215, 0.9),
-                0 0 15px rgba(255, 90, 247, 0.7),
-                0 0 25px rgba(107, 0, 215, 0.5),
-                0 0 40px rgba(255, 90, 247, 0.3);
+    text-shadow: 0 0 5px rgba(107, 0, 215, 0.8),
+                0 0 10px rgba(255, 90, 247, 0.5),
+                0 0 20px rgba(107, 0, 215, 0.3);
     letter-spacing: 2px;
     display: inline-block;
     max-width: 100%;
@@ -526,44 +525,44 @@
   0% {
     transform: translateX(0) translateZ(0) rotateY(0deg);
     text-shadow: 
-      0 0 8px rgba(107, 0, 215, 0.9),
-      0 0 15px rgba(166, 77, 255, 0.7),
-      0 0 25px rgba(255, 90, 247, 0.6);
+      0 0 5px rgba(107, 0, 215, 0.8),
+      0 0 10px rgba(255, 90, 247, 0.5),
+      0 0 20px rgba(107, 0, 215, 0.3);
   }
   20% {
     transform: translateX(-15px) translateZ(25px) rotateY(-2deg);
     text-shadow: 
-      0 0 12px rgba(107, 0, 215, 1),
-      0 0 20px rgba(166, 77, 255, 0.8),
-      0 0 35px rgba(255, 90, 247, 0.7);
+      0 0 8px rgba(107, 0, 215, 0.9),
+      0 0 15px rgba(255, 90, 247, 0.7),
+      0 0 30px rgba(107, 0, 215, 0.5);
   }
   40% {
     transform: translateX(0) translateZ(50px) rotateY(0deg);
     text-shadow: 
-      0 0 15px rgba(107, 0, 215, 1),
-      0 0 30px rgba(166, 77, 255, 1),
-      0 0 50px rgba(255, 90, 247, 0.9);
+      0 0 12px rgba(107, 0, 215, 1),
+      0 0 24px rgba(255, 90, 247, 0.9),
+      0 0 45px rgba(107, 0, 215, 0.7);
   }
   60% {
     transform: translateX(15px) translateZ(40px) rotateY(2deg);
     text-shadow: 
-      0 0 20px rgba(107, 0, 215, 1),
-      0 0 40px rgba(166, 77, 255, 1),
-      0 0 70px rgba(255, 90, 247, 1);
+      0 0 15px rgba(107, 0, 215, 1),
+      0 0 30px rgba(255, 90, 247, 0.9),
+      0 0 60px rgba(107, 0, 215, 0.8);
   }
   80% {
     transform: translateX(10px) translateZ(20px) rotateY(1deg);
     text-shadow: 
-      0 0 15px rgba(107, 0, 215, 1),
-      0 0 25px rgba(166, 77, 255, 0.9),
-      0 0 40px rgba(255, 90, 247, 0.8);
+      0 0 10px rgba(107, 0, 215, 0.9),
+      0 0 20px rgba(255, 90, 247, 0.8),
+      0 0 40px rgba(107, 0, 215, 0.6);
   }
   100% {
     transform: translateX(0) translateZ(0) rotateY(0deg);
     text-shadow: 
-      0 0 8px rgba(107, 0, 215, 0.9),
-      0 0 15px rgba(166, 77, 255, 0.7),
-      0 0 25px rgba(255, 90, 247, 0.6);
+      0 0 5px rgba(107, 0, 215, 0.8),
+      0 0 10px rgba(255, 90, 247, 0.5),
+      0 0 20px rgba(107, 0, 215, 0.3);
   }
 }
 
@@ -728,30 +727,7 @@
     line-height: 1.2 !important;
   }
   
-  /* Override for our hero title - keep it large */
-  .title-3d-animated {
-    font-size: 3.5rem !important; /* Base size on mobile */
-    line-height: 1 !important;
-  }
-  
-  /* Responsive sizes for the title */
-  @media (min-width: 640px) {
-    .title-3d-animated {
-      font-size: 4rem !important;
-    }
-  }
-  
-  @media (min-width: 768px) {
-    .title-3d-animated {
-      font-size: 5rem !important;
-    }
-  }
-  
-  @media (min-width: 1024px) {
-    .title-3d-animated {
-      font-size: 6rem !important;
-    }
-  }
+  /* Title size is controlled by Tailwind classes in the component */
   
   h2 {
     font-size: 1.5rem !important;
