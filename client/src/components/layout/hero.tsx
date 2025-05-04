@@ -81,7 +81,7 @@ export function Hero() {
           <motion.div variants={itemVariants} className="mb-6">
             <div className="inline-block px-4 py-2 bg-gradient-to-r from-[#6B00D7]/10 to-[#FF5AF7]/10 rounded-full border border-[#6B00D7]/30 mb-4">
               <span className="bg-clip-text text-transparent bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] font-medium">
-                The Swiss Bank of Web3
+                Revolutionary Multi-Chain Security
               </span>
             </div>
           </motion.div>
@@ -90,16 +90,16 @@ export function Hero() {
             variants={itemVariants} 
             className="text-4xl md:text-6xl font-bold mb-6 text-white"
           >
-            <span className="bg-clip-text text-transparent bg-gradient-to-r from-white to-gray-400">Secure Your </span>
-            <span className="bg-clip-text text-transparent bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7]">Digital Legacy</span>
-            <span className="bg-clip-text text-transparent bg-gradient-to-r from-white to-gray-400"> Across Time</span>
+            <span className="bg-clip-text text-transparent bg-gradient-to-r from-white to-gray-400">Redefining </span>
+            <span className="bg-clip-text text-transparent bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7]">Digital Asset</span>
+            <span className="bg-clip-text text-transparent bg-gradient-to-r from-white to-gray-400"> Security</span>
           </motion.h1>
 
           <motion.p 
             variants={itemVariants} 
             className="text-xl text-gray-300 mb-10 max-w-3xl mx-auto leading-relaxed"
           >
-            A trustless vault protocol that locks your digital assets with unbreakable time mechanisms, ensuring your wealth remains secure for generations.
+            Chronos Vault combines military-grade security with elegant design, providing a decentralized platform for secure asset management across multiple blockchains.
           </motion.p>
 
           <motion.div variants={itemVariants} className="flex flex-col sm:flex-row gap-4 justify-center mb-16">
