@@ -56,7 +56,7 @@ const metadataSchema = z.object({
 const formSchema = insertVaultSchema.extend({
   confirmAmount: z.string().min(1, "Please confirm the amount"),
   includeAttachments: z.boolean().optional().default(true),
-  unlockDate: z.string(), // Modified to handle string for date ISO
+  unlockDate: z.union([z.string(), z.date()]), // Handle both string and Date objects
   tripleChainSecurity: z.boolean().optional().default(false),
   
   // Payment options for dual token system
@@ -69,7 +69,8 @@ const formSchema = insertVaultSchema.extend({
   }),
   // Specialized vault type fields
   // Multi-signature vault fields
-  requiredSignatures: z.string().optional(),
+  requiredSignatures: z.union([z.string(), z.number()]).optional()
+    .transform(val => typeof val === 'string' ? parseInt(val, 10) : val),
   
   // Biometric vault fields
   biometricType: z.string().optional(),
@@ -78,7 +79,8 @@ const formSchema = insertVaultSchema.extend({
   scheduleType: z.string().optional(),
   
   // Geolocation vault fields
-  geoRadius: z.string().optional(),
+  geoRadius: z.union([z.string(), z.number()]).optional()
+    .transform(val => typeof val === 'string' ? parseInt(val, 10) : val),
   geoLocation: z.string().optional(),
   
   // Cross-chain vault fields
@@ -94,13 +96,21 @@ const formSchema = insertVaultSchema.extend({
   nftType: z.string().optional(),
   
   // Unique security vault fields
-  securityLevel: z.string().optional(),
+  securityLevel: z.union([z.string(), z.number()]).optional()
+    .transform(val => typeof val === 'string' ? parseInt(val, 10) : val),
   
   // Gift-specific fields
   giftType: z.string().optional(),
   giftRecipient: z.string().optional(),
-  giftMessage: z.string().optional()
-}).refine((data) => data.assetAmount === data.confirmAmount, {
+  giftMessage: z.string().optional(),
+  
+  // Make sure asset amount is properly typed
+  assetAmount: z.union([z.string(), z.number()])
+    .transform(val => typeof val === 'string' ? parseFloat(val) : val),
+}).refine((data) => {
+  // Convert both to strings for comparison to avoid type issues
+  return String(data.assetAmount) === String(data.confirmAmount);
+}, {
   message: "Asset amounts do not match",
   path: ["confirmAmount"],
 });
@@ -732,9 +742,9 @@ export function CreateVaultForm({
       description: data.description || "",
       vaultType: data.vaultType,
       assetType: data.assetType,
-      assetAmount: data.assetAmount,
+      assetAmount: parseFloat(data.assetAmount.toString()), // Ensure number type
       timeLockPeriod: parseInt(data.timeLockPeriod.toString(), 10),
-      unlockDate: data.unlockDate,
+      unlockDate: new Date(data.unlockDate), // Convert to Date object
       // Format metadata as a proper object, not nested fields
       metadata: data.metadata || {}
     };

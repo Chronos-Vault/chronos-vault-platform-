@@ -119,23 +119,31 @@ export const insertUserSchema = createInsertSchema(users).pick({
   metadata: true,
 });
 
-export const insertVaultSchema = createInsertSchema(vaults).pick({
-  userId: true,
-  name: true,
-  description: true,
-  vaultType: true,
-  assetType: true,
-  assetAmount: true,
-  timeLockPeriod: true,
-  unlockDate: true,
-  metadata: true,
-  ethereumContractAddress: true,
-  solanaContractAddress: true,
-  tonContractAddress: true,
-  securityLevel: true,
-  crossChainEnabled: true,
-  privacyEnabled: true,
-});
+export const insertVaultSchema = createInsertSchema(vaults)
+  .pick({
+    userId: true,
+    name: true,
+    description: true,
+    vaultType: true,
+    assetType: true,
+    assetAmount: true,
+    timeLockPeriod: true,
+    unlockDate: true,
+    metadata: true,
+    ethereumContractAddress: true,
+    solanaContractAddress: true,
+    tonContractAddress: true,
+    securityLevel: true,
+    crossChainEnabled: true,
+    privacyEnabled: true,
+  })
+  .extend({
+    // Allow string inputs and convert to appropriate types
+    assetAmount: z.union([z.string(), z.number()]).transform(val => typeof val === 'string' ? parseFloat(val) : val),
+    unlockDate: z.union([z.string(), z.date()]).transform(val => typeof val === 'string' ? new Date(val) : val),
+    securityLevel: z.union([z.string(), z.number()]).transform(val => typeof val === 'string' ? parseInt(val, 10) : val),
+    timeLockPeriod: z.union([z.string(), z.number()]).transform(val => typeof val === 'string' ? parseInt(val, 10) : val),
+  });
 
 export const insertBeneficiarySchema = createInsertSchema(beneficiaries).pick({
   vaultId: true,

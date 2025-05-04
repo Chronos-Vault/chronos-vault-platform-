@@ -180,24 +180,44 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.post("/api/vaults", async (req: Request, res: Response) => {
     try {
       console.log("Received vault creation request:", JSON.stringify(req.body));
-      const vaultData = insertVaultSchema.parse(req.body);
-      console.log("Parsed vault data:", JSON.stringify(vaultData));
       
-      const user = await storage.getUser(vaultData.userId);
-      if (!user) {
-        console.log("User not found for ID:", vaultData.userId);
-        return res.status(404).json({ message: "User not found" });
-      }
-
+      // Additional logging for data types
+      console.log("Data types in request:", {
+        assetAmount: typeof req.body.assetAmount,
+        unlockDate: typeof req.body.unlockDate,
+        timeLockPeriod: typeof req.body.timeLockPeriod,
+        securityLevel: typeof req.body.securityLevel
+      });
+      
       try {
-        const vault = await storage.createVault(vaultData);
-        console.log("Vault created successfully:", JSON.stringify(vault));
-        res.status(201).json(vault);
-      } catch (dbError) {
-        console.error("Error creating vault in database:", dbError);
-        throw dbError;
+        const vaultData = insertVaultSchema.parse(req.body);
+        console.log("Parsed vault data:", JSON.stringify(vaultData));
+        
+        const user = await storage.getUser(vaultData.userId);
+        if (!user) {
+          console.log("User not found for ID:", vaultData.userId);
+          return res.status(404).json({ message: "User not found" });
+        }
+
+        try {
+          const vault = await storage.createVault(vaultData);
+          console.log("Vault created successfully:", JSON.stringify(vault));
+          res.status(201).json(vault);
+        } catch (dbError) {
+          console.error("Error creating vault in database:", dbError);
+          return res.status(500).json({ 
+            message: "Database error", 
+            error: dbError.message || "Unknown database error" 
+          });
+        }
+      } catch (validationError: any) {
+        console.error("Validation error:", validationError);
+        return res.status(400).json({ 
+          message: "Invalid input data", 
+          errors: validationError.errors || validationError.message 
+        });
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error("Error in vault creation:", error);
       handleError(res, error);
     }
