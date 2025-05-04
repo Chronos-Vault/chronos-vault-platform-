@@ -146,7 +146,7 @@ const Home = () => {
               {/* Centered 3D Headline */}
               <h1 className="font-poppins font-bold mb-6">
                 <span className="block hero-title neon-purple animate-neon-glow">Chronos Vault</span>
-                <span className="block text-3xl md:text-4xl lg:text-5xl mt-2 font-medium opacity-80 text-purple-300">Timeless Security for Digital Assets</span>
+                <span className="block text-3xl md:text-4xl lg:text-5xl mt-6 font-medium neon-purple animate-neon-glow opacity-80">Timeless Security for Digital Assets</span>
               </h1>
               
               <p className="mt-8 text-xl md:text-2xl text-gray-300 max-w-3xl mx-auto leading-relaxed">
