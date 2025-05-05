@@ -351,55 +351,55 @@
     perspective: 1000px;
     transform-style: preserve-3d;
   }
-  
-  .animate-spin-slow {
-    animation: spin 15s linear infinite;
-  }
-  
-  @keyframes spin {
-    from {
-      transform: rotate(0deg);
-    }
-    to {
-      transform: rotate(360deg);
-    }
-  }
+}
 
-  .translate-z-\[-100px\] {
-    transform: translateZ(-100px);
-  }
+.animate-spin-slow {
+  animation: spin 15s linear infinite;
+}
 
-  .translate-z-\[-50px\] {
-    transform: translateZ(-50px);
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
   }
+  to {
+    transform: rotate(360deg);
+  }
+}
 
-  .translate-z-\[-30px\] {
-    transform: translateZ(-30px);
-  }
+.translate-z-\[-100px\] {
+  transform: translateZ(-100px);
+}
 
-  .translate-z-\[30px\] {
-    transform: translateZ(30px);
-  }
+.translate-z-\[-50px\] {
+  transform: translateZ(-50px);
+}
 
-  .rotateY-15 {
-    transform: rotateY(15deg);
-  }
+.translate-z-\[-30px\] {
+  transform: translateZ(-30px);
+}
 
-  .rotateY-neg-15 {
-    transform: rotateY(-15deg);
+.translate-z-\[30px\] {
+  transform: translateZ(30px);
+}
+
+.rotateY-15 {
+  transform: rotateY(15deg);
+}
+
+.rotateY-neg-15 {
+  transform: rotateY(-15deg);
+}
+
+.animate-scan {
+  animation: scanDown 2s linear infinite;
+}
+
+@keyframes scanDown {
+  0% {
+    transform: translateY(-100%);
   }
-  
-  .animate-scan {
-    animation: scanDown 2s linear infinite;
-  }
-  
-  @keyframes scanDown {
-    0% {
-      transform: translateY(-100%);
-    }
-    100% {
-      transform: translateY(1000%);
-    }
+  100% {
+    transform: translateY(1000%);
   }
 }
 
