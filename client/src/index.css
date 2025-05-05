@@ -811,68 +811,75 @@
   position: absolute;
 }
 
-/* Mobile-friendly hero title styles */
+/* Extra-large hero title styles */
 .hero-title {
-  font-size: 2.5rem;
-  line-height: 1.2;
+  font-size: 4rem;
+  line-height: 1.1;
   font-weight: 800;
   text-align: center;
   letter-spacing: -0.5px;
   color: #9F00FF;
-  text-shadow: 0 0 10px rgba(159, 0, 255, 0.8),
-             0 0 20px rgba(255, 90, 247, 0.5);
+  text-shadow: 0 0 15px rgba(159, 0, 255, 0.9),
+             0 0 25px rgba(255, 90, 247, 0.7);
   margin-bottom: 0.5rem;
 }
 
 @media (min-width: 640px) {
   .hero-title {
-    font-size: 3.5rem;
+    font-size: 5.5rem;
   }
 }
 
 @media (min-width: 768px) {
   .hero-title {
-    font-size: 4.5rem;
+    font-size: 7rem;
   }
 }
 
 @media (min-width: 1024px) {
   .hero-title {
-    font-size: 5.5rem;
+    font-size: 9rem;
   }
 }
 
 .hero-subtitle {
-  font-size: 1.5rem;
+  font-size: 1.8rem;
   font-weight: 600;
   text-align: center;
   color: #FF5AF7;
-  text-shadow: 0 0 8px rgba(255, 90, 247, 0.6);
+  text-shadow: 0 0 10px rgba(255, 90, 247, 0.7);
   margin-bottom: 2rem;
 }
 
 @media (min-width: 640px) {
   .hero-subtitle {
-    font-size: 2rem;
+    font-size: 2.2rem;
   }
 }
 
 @media (min-width: 768px) {
   .hero-subtitle {
-    font-size: 2.5rem;
+    font-size: 3rem;
   }
 }
 
-/* Fancy glow effect */
+@media (min-width: 1024px) {
+  .hero-subtitle {
+    font-size: 3.5rem;
+  }
+}
+
+/* Enhanced glow effect */
 @keyframes glow-pulse {
   0%, 100% {
-    text-shadow: 0 0 8px rgba(159, 0, 255, 0.6),
-               0 0 12px rgba(255, 90, 247, 0.4);
+    text-shadow: 0 0 10px rgba(159, 0, 255, 0.7),
+               0 0 15px rgba(255, 90, 247, 0.5),
+               0 0 25px rgba(200, 125, 255, 0.3);
   }
   50% {
-    text-shadow: 0 0 15px rgba(159, 0, 255, 0.8),
-               0 0 20px rgba(255, 90, 247, 0.6),
-               0 0 30px rgba(200, 125, 255, 0.5);
+    text-shadow: 0 0 20px rgba(159, 0, 255, 0.9),
+               0 0 30px rgba(255, 90, 247, 0.7),
+               0 0 40px rgba(200, 125, 255, 0.6);
   }
 }
 
