@@ -876,8 +876,33 @@
   }
 }
 
+/* Left-right motion animation with float effect */
+@keyframes slide-lr {
+  0%, 100% {
+    transform: translateX(-15px);
+  }
+  50% {
+    transform: translateX(15px);
+  }
+}
+
+/* Floating motion for 3D effect */
+@keyframes float-y {
+  0%, 100% {
+    transform: translateY(-5px);
+  }
+  50% {
+    transform: translateY(5px);
+  }
+}
+
 .animate-glow {
   animation: glow-pulse 3s ease-in-out infinite;
+}
+
+.animate-slide-lr {
+  animation: slide-lr 4s ease-in-out infinite;
+  display: inline-block;
 }
 
 /* Original code continues here */

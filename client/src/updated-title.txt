@@ -1,0 +1,16 @@
+// Updated title with left-right animation
+
+              {/* Mobile-friendly Centered Headline */}
+              <h1 className="font-poppins font-bold mb-8">
+                <div className="animate-slide-lr">
+                  <span className="hero-title animate-glow whitespace-nowrap">Chronos Vault</span>
+                </div>
+              </h1>
+              
+              <div className="mt-4 mb-8">
+                <div className="animate-slide-lr" style={{ animationDelay: '0.5s' }}>
+                  <p className="hero-subtitle animate-glow max-w-3xl mx-auto">
+                    Timeless Security for Digital Assets
+                  </p>
+                </div>
+              </div>
