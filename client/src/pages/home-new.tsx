@@ -107,17 +107,17 @@ const Home = () => {
                 </span>
               </div>
               
-              {/* Animated Title - Added animation-slide-lr class */}
+              {/* Extra-Large Animated Title with Left-Right Movement */}
               <div className="animate-slide-lr">
                 <h1 className="font-poppins font-bold mb-8">
-                  <span className="text-6xl sm:text-7xl md:text-8xl lg:text-9xl whitespace-nowrap title-3d-animated bg-clip-text text-transparent bg-gradient-to-r from-[#9F00FF] to-[#C87DFF] animate-text-shine bg-300%">Chronos Vault</span>
+                  <span className="text-7xl sm:text-8xl md:text-9xl lg:text-[10rem] whitespace-nowrap title-3d-animated bg-clip-text text-transparent bg-gradient-to-r from-[#9F00FF] to-[#C87DFF] animate-text-shine bg-300%">Chronos Vault</span>
                 </h1>
               </div>
               
               <div className="mt-4 mb-8">
-                {/* Animated Subtitle - Added animation-slide-lr class with delay */}
+                {/* Animated Subtitle with Left-Right Movement */}
                 <div className="animate-slide-lr" style={{ animationDelay: '0.5s' }}>
-                  <p className="text-xl md:text-2xl bg-clip-text text-transparent bg-gradient-to-r from-[#9F00FF] to-[#C87DFF] max-w-3xl mx-auto font-medium subtitle-glow">
+                  <p className="text-2xl md:text-3xl lg:text-4xl bg-clip-text text-transparent bg-gradient-to-r from-[#9F00FF] to-[#C87DFF] max-w-3xl mx-auto font-medium subtitle-glow">
                     Timeless Security for Digital Assets
                   </p>
                 </div>

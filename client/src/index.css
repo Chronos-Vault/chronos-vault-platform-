@@ -876,13 +876,13 @@
   }
 }
 
-/* Left-right motion animation with float effect */
+/* Left-right motion animation with float effect - more pronounced */
 @keyframes slide-lr {
   0%, 100% {
-    transform: translateX(-15px);
+    transform: translateX(-20px);
   }
   50% {
-    transform: translateX(15px);
+    transform: translateX(20px);
   }
 }
 
@@ -901,7 +901,7 @@
 }
 
 .animate-slide-lr {
-  animation: slide-lr 4s ease-in-out infinite;
+  animation: slide-lr 6s ease-in-out infinite;
   display: inline-block;
 }
 
