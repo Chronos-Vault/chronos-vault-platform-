@@ -88,72 +88,13 @@ const Home = () => {
   return (
     <div className="flex flex-col text-white font-poppins bg-black">
       <main className="flex-1">
-        {/* Hero Section with Animation */}
+        {/* Ultra-Premium 3D Hero Section */}
         <section className="min-h-[100vh] relative overflow-hidden flex items-center justify-center">
-          {/* Background Effects */}
+          {/* Advanced Background Effects */}
           <div className="absolute inset-0 bg-black overflow-hidden">
+            {/* Deep space gradient background */}
             <div className="absolute inset-0 bg-gradient-to-b from-[#050505] via-[#0A0A0A] to-[#050505]"></div>
+            
+            {/* Animated luxury gradient orbs */}
             <div className="absolute top-1/4 left-1/3 w-[60vw] h-[60vw] rounded-full bg-gradient-to-r from-[#6B00D7]/20 via-[#FF5AF7]/10 to-[#6B00D7]/5 blur-[120px] opacity-30 animate-pulse-slow"></div>
             <div className="absolute bottom-1/4 right-1/3 w-[40vw] h-[40vw] rounded-full bg-gradient-to-r from-[#FF5AF7]/10 via-[#6B00D7]/15 to-[#FF5AF7]/5 blur-[100px] opacity-20 animate-pulse-slow animation-delay-2000"></div>
-          </div>
-          
-          <div className="container mx-auto px-4 z-10 py-20">
-            <div className="text-center max-w-5xl mx-auto">
-              {/* Badge */}
-              <div className="inline-flex items-center px-4 py-1.5 rounded-full bg-gradient-to-r from-[#6B00D7]/10 to-[#FF5AF7]/10 border border-[#6B00D7]/30 backdrop-blur-sm mb-8 mx-auto">
-                <span className="flex items-center text-xs md:text-sm font-medium text-[#FF5AF7]">
-                  <i className="ri-verified-badge-line mr-2"></i>
-                  Ultra-Premium Blockchain Security <div className="mx-2 w-1 h-1 rounded-full bg-[#FF5AF7]"></div> Triple-Chain Architecture
-                </span>
-              </div>
-              
-              {/* Animated Title - Added animation-slide-lr class */}
-              <div className="animate-slide-lr">
-                <h1 className="font-poppins font-bold mb-8">
-                  <span className="text-6xl sm:text-7xl md:text-8xl lg:text-9xl whitespace-nowrap title-3d-animated bg-clip-text text-transparent bg-gradient-to-r from-[#9F00FF] to-[#C87DFF] animate-text-shine bg-300%">Chronos Vault</span>
-                </h1>
-              </div>
-              
-              <div className="mt-4 mb-8">
-                {/* Animated Subtitle - Added animation-slide-lr class with delay */}
-                <div className="animate-slide-lr" style={{ animationDelay: '0.5s' }}>
-                  <p className="text-xl md:text-2xl bg-clip-text text-transparent bg-gradient-to-r from-[#9F00FF] to-[#C87DFF] max-w-3xl mx-auto font-medium subtitle-glow">
-                    Timeless Security for Digital Assets
-                  </p>
-                </div>
-                <p className="mt-4 text-xl md:text-2xl text-gray-300 max-w-3xl mx-auto leading-relaxed">
-                  The most sophisticated digital vault system ever created, combining Triple-Chain Security, Zero-Knowledge Privacy, and Quantum-Resistant Encryption.  
-                </p>
-              </div>
-              
-              {/* Action Buttons */}
-              <div className="flex flex-wrap justify-center gap-6 mt-12">
-                <Link 
-                  to="/create-vault" 
-                  className="px-8 py-5 bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] hover:from-[#5500AB] hover:to-[#FF46E8] text-white text-lg font-semibold rounded-xl shadow-xl shadow-[#6B00D7]/20 hover:shadow-2xl hover:shadow-[#FF5AF7]/30 flex items-center gap-3 transition-all duration-300 relative overflow-hidden group"
-                >
-                  <span className="absolute inset-0 w-full h-full bg-white opacity-0 group-hover:opacity-10 transition-opacity duration-300"></span>
-                  <i className="ri-shield-keyhole-line text-xl"></i> 
-                  <span>Create New Vault</span>
-                </Link>
-                
-                <Link 
-                  to="/multi-signature-vault" 
-                  className="px-8 py-5 bg-transparent border border-[#6B00D7] hover:border-[#FF5AF7] text-white text-lg font-semibold rounded-xl flex items-center gap-3 transition-all duration-300 hover:bg-[#FF5AF7]/5"
-                >
-                  <i className="ri-user-shared-line text-xl"></i>
-                  <span>Multi-Signature Vault</span>
-                </Link>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        {/* Additional sections go here */}
-        {/* This is a shortened version just to fix the structure */}
-      </main>
-    </div>
-  );
-};
-
-export default Home;
