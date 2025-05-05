@@ -99,11 +99,11 @@ const Home = () => {
           
           <div className="container mx-auto px-4 z-10 py-20">
             <div className="text-center max-w-5xl mx-auto">
-              {/* Badge */}
-              <div className="inline-flex items-center px-4 py-1.5 rounded-full bg-gradient-to-r from-[#6B00D7]/10 to-[#FF5AF7]/10 border border-[#6B00D7]/30 backdrop-blur-sm mb-8 mx-auto">
+              {/* Badge - Enhanced */}
+              <div className="inline-flex items-center px-4 py-1.5 rounded-full bg-gradient-to-r from-[#6B00D7]/20 to-[#FF5AF7]/20 border border-[#6B00D7]/40 backdrop-blur-sm mb-8 mx-auto shadow-sm shadow-[#FF5AF7]/20">
                 <span className="flex items-center text-xs md:text-sm font-medium text-[#FF5AF7]">
-                  <i className="ri-verified-badge-line mr-2"></i>
-                  Ultra-Premium Blockchain Security <div className="mx-2 w-1 h-1 rounded-full bg-[#FF5AF7]"></div> Triple-Chain Architecture
+                  <i className="ri-verified-badge-line mr-2 animate-pulse"></i>
+                  Ultra-Premium Blockchain Security
                 </span>
               </div>
               
