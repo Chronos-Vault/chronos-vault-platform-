@@ -3,7 +3,8 @@ import { Link, useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import VaultCard from "@/components/vault/vault-card";
-import Hero from "@/components/layout/hero";
+import SmartContractInfoCard from "@/components/contract/smart-contract-info-card";
+// import Hero from "@/components/layout/hero"; // Not used in Tesla x Rolex x Web3 design
 
 const Home = () => {
   const [_, setLocation] = useLocation();
