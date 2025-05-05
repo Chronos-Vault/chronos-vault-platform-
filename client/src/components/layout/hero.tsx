@@ -137,31 +137,21 @@ export function Hero() {
               {/* Title shadow/reflection on the "floor" */}
               <div className="absolute top-full left-1/2 -translate-x-1/2 w-4/5 h-12 bg-gradient-to-t from-[#9F00FF]/30 to-transparent blur-xl rounded-full transform -translateZ-20 opacity-60 scale-75"></div>
 
-              {/* Massive Eye-Catching 3D Title */}
-              <div className="relative h-[300px] lg:h-[350px] flex items-center justify-center overflow-visible p-4 mb-6">
+              {/* Simple Mobile-Friendly Hero Title */}
+              <div className="relative py-8 flex flex-col items-center justify-center overflow-visible mb-4">
                 {/* Premium glow background */}
                 <div className="absolute inset-0 bg-gradient-to-r from-[#9F00FF]/30 via-[#FF5AF7]/20 to-[#9F00FF]/30 rounded-full blur-3xl opacity-80"></div>
                 
-                <div className="relative w-full">
-                  {/* MEGA 3D TITLE */}
-                  <h1 className="mega-title text-7xl sm:text-8xl md:text-9xl lg:text-[120px] font-black text-center leading-none mb-2">
-                    {/* Giant glowing Title */}
-                    <span className="animate-mega-pulse text-3d text-white block">
-                      CHRONOS VAULT
-                    </span>
+                <div className="relative w-full text-center">
+                  {/* Main title */}
+                  <h1 className="hero-title animate-glow mb-4">
+                    Chronos Vault
                   </h1>
                   
-                  {/* Animated ticker subtitle */}
-                  <div className="ticker-container text-3xl sm:text-4xl md:text-5xl font-bold mt-6 sm:mt-8 mx-auto max-w-3xl">
-                    <div className="ticker-wrapper ticker-animate">
-                      <div className="ticker-text text-metal">
-                        TIMELESS SECURITY
-                      </div>
-                      <div className="ticker-text bg-clip-text text-transparent bg-gradient-to-r from-[#9F00FF] via-[#FF5AF7] to-[#C87DFF]">
-                        THE FUTURE OF VAULTS
-                      </div>
-                    </div>
-                  </div>
+                  {/* Subtitle */}
+                  <h2 className="hero-subtitle animate-glow">
+                    Timeless Security for Digital Assets
+                  </h2>
                 </div>
 
                 {/* Luxury sparkle highlights */}
