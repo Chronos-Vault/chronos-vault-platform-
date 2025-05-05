@@ -811,16 +811,19 @@
   position: absolute;
 }
 
-/* Extra-large hero title styles */
+/* Extra-large hero title styles with purple-pink gradient */
 .hero-title {
   font-size: 4rem;
   line-height: 1.1;
   font-weight: 800;
   text-align: center;
   letter-spacing: -0.5px;
-  color: #9F00FF;
-  text-shadow: 0 0 15px rgba(159, 0, 255, 0.9),
-             0 0 25px rgba(255, 90, 247, 0.7);
+  background: linear-gradient(to right, #9F00FF, #FF5AF7);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  text-shadow: 0 0 15px rgba(159, 0, 255, 0.8),
+             0 0 25px rgba(255, 90, 247, 0.6);
   margin-bottom: 0.5rem;
 }
 
@@ -883,13 +886,13 @@
   }
 }
 
-/* Left-right motion animation with float effect - more pronounced */
+/* Left-right motion animation with float effect - more subtle */
 @keyframes slide-lr {
   0%, 100% {
-    transform: translateX(-20px);
+    transform: translateX(-12px);
   }
   50% {
-    transform: translateX(20px);
+    transform: translateX(12px);
   }
 }
 
@@ -908,7 +911,7 @@
 }
 
 .animate-slide-lr {
-  animation: slide-lr 6s ease-in-out infinite;
+  animation: slide-lr 8s ease-in-out infinite;
   display: inline-block;
 }
 

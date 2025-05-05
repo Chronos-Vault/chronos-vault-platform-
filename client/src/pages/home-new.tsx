@@ -115,7 +115,7 @@ const Home = () => {
               </h1>
               
               <div className="mt-4 mb-8">
-                <p className="mt-4 text-xl sm:text-2xl md:text-3xl lg:text-3xl bg-clip-text text-transparent bg-gradient-to-r from-white to-gray-300 max-w-3xl mx-auto leading-relaxed font-medium description-glow animate-pulse-slow">
+                <p className="mt-4 text-xl sm:text-2xl md:text-3xl text-gray-200 max-w-3xl mx-auto leading-relaxed font-medium">
                   The most sophisticated digital vault system ever created, combining Triple-Chain Security, Zero-Knowledge Privacy, and Quantum-Resistant Encryption.
                 </p>
               </div>
