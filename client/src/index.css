@@ -912,6 +912,25 @@
   display: inline-block;
 }
 
+/* Slow pulse for the description text */
+@keyframes pulse-slow {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.85;
+  }
+}
+
+.animate-pulse-slow {
+  animation: pulse-slow 8s ease-in-out infinite;
+}
+
+.description-glow {
+  text-shadow: 0 0 5px rgba(255, 255, 255, 0.5),
+             0 0 10px rgba(200, 200, 255, 0.3);
+}
+
 /* Original code continues here */
 .prismatic-border::before {
   content: '';

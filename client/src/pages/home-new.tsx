@@ -115,13 +115,8 @@ const Home = () => {
               </h1>
               
               <div className="mt-4 mb-8">
-                <div className="animate-slide-lr" style={{ animationDelay: '0.5s' }}>
-                  <p className="hero-subtitle animate-glow max-w-3xl mx-auto">
-                    Timeless Security for Digital Assets
-                  </p>
-                </div>
-                <p className="mt-4 text-xl md:text-2xl text-gray-300 max-w-3xl mx-auto leading-relaxed">
-                  The most sophisticated digital vault system ever created, combining Triple-Chain Security, Zero-Knowledge Privacy, and Quantum-Resistant Encryption.  
+                <p className="mt-4 text-xl sm:text-2xl md:text-3xl lg:text-3xl bg-clip-text text-transparent bg-gradient-to-r from-white to-gray-300 max-w-3xl mx-auto leading-relaxed font-medium description-glow animate-pulse-slow">
+                  The most sophisticated digital vault system ever created, combining Triple-Chain Security, Zero-Knowledge Privacy, and Quantum-Resistant Encryption.
                 </p>
               </div>
               
