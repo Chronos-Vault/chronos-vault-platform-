@@ -809,6 +809,47 @@
 .prismatic-border::before {
   content: '';
   position: absolute;
+}
+
+/* 3D Title Flip Animation */
+@keyframes title-flip {
+  0%, 45%, 100% {
+    transform: rotateX(0deg) translateZ(0px);
+    opacity: 1;
+  }
+  50%, 95% {
+    transform: rotateX(180deg) translateZ(-50px);
+    opacity: 0;
+  }
+}
+
+@keyframes subtitle-flip {
+  0%, 45%, 100% {
+    transform: rotateX(180deg) translateZ(-50px);
+    opacity: 0;
+  }
+  50%, 95% {
+    transform: rotateX(0deg) translateZ(0px);
+    opacity: 1;
+  }
+}
+
+.animate-title-flip {
+  animation: title-flip 10s cubic-bezier(0.6, -0.28, 0.735, 0.045) infinite;
+  backface-visibility: hidden;
+  transform-origin: center center;
+}
+
+.animate-subtitle-flip {
+  animation: subtitle-flip 10s cubic-bezier(0.6, -0.28, 0.735, 0.045) infinite;
+  backface-visibility: hidden;
+  transform-origin: center center;
+}
+
+/* Original code continues here */
+.prismatic-border::before {
+  content: '';
+  position: absolute;
   inset: -1px;
   z-index: -1;
   border-radius: inherit;

@@ -130,31 +130,49 @@ export function Hero() {
           >
             {/* 3D Title that floats and rotates slightly */}
             <motion.div 
-              className="relative inline-block transform-style-3d" 
+              className="relative perspective-1000 inline-block"
               style={{ transformStyle: 'preserve-3d' }}
               animate={titleControls}
             >
               {/* Title shadow/reflection on the "floor" */}
               <div className="absolute top-full left-1/2 -translate-x-1/2 w-4/5 h-12 bg-gradient-to-t from-[#9F00FF]/30 to-transparent blur-xl rounded-full transform -translateZ-20 opacity-60 scale-75"></div>
 
-              {/* Main 3D title */}
-              <h1 className="text-7xl sm:text-7xl md:text-8xl lg:text-9xl font-bold relative tracking-tight leading-tight">
+              {/* 3D Rotating Title Container */}
+              <div className="relative transform-style-3d h-[220px] sm:h-[240px] md:h-[280px] lg:h-[320px] flex items-center justify-center">
                 {/* Luxury metallic backlight effect */}
-                <span className="absolute -inset-6 bg-gradient-to-r from-[#9F00FF]/20 via-[#FF5AF7]/20 to-[#9F00FF]/20 rounded-full blur-2xl opacity-80"></span>
+                <div className="absolute inset-0 bg-gradient-to-r from-[#9F00FF]/20 via-[#FF5AF7]/20 to-[#9F00FF]/20 rounded-full blur-2xl opacity-80"></div>
                 
-                {/* Premium metallic border glow */}
-                <span className="absolute -inset-1 bg-gradient-to-r from-[#9F00FF]/40 via-[#FF5AF7]/40 to-[#9F00FF]/40 rounded-full blur-md opacity-70"></span>
+                {/* Main title side */}
+                <div className="flex-none absolute w-full h-full flex items-center justify-center transform-style-3d animate-title-flip">
+                  {/* Premium 3D shadow effect */}
+                  <div className="absolute w-[90%] h-[90%] bg-[#6B00D7]/10 rounded-full blur-3xl z-[-1]"></div>
+                  <h1 className="text-7xl sm:text-7xl md:text-8xl lg:text-9xl font-bold tracking-tight leading-tight">
+                    {/* Premium metallic border glow */}
+                    <span className="absolute -inset-1 bg-gradient-to-r from-[#9F00FF]/40 via-[#FF5AF7]/40 to-[#9F00FF]/40 rounded-full blur-md opacity-70"></span>
+                    
+                    {/* Text with premium gradient */}
+                    <span className="relative bg-clip-text text-transparent bg-gradient-to-r from-[#9F00FF] via-[#FF5AF7] to-[#C87DFF] animate-text-shine bg-300%">
+                      Chronos Vault
+                    </span>
+                  </h1>
+                </div>
                 
-                {/* Text with premium Tesla x Rolex x Web3 gradient */}
-                <span className="relative bg-clip-text text-transparent bg-gradient-to-r from-[#9F00FF] via-[#FF5AF7] to-[#C87DFF] animate-text-shine bg-300%">
-                  Chronos Vault
-                </span>
+                {/* Subtitle side - rotated 180 degrees */}
+                <div className="flex-none absolute w-full h-full flex items-center justify-center transform-style-3d animate-subtitle-flip">
+                  {/* Premium 3D shadow effect for subtitle */}
+                  <div className="absolute w-[80%] h-[70%] bg-[#FF5AF7]/10 rounded-full blur-3xl z-[-1]"></div>
+                  <h2 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-semibold tracking-tight">
+                    <span className="bg-clip-text text-transparent bg-gradient-to-r from-[#C87DFF] via-white to-[#FF5AF7] inline-block">
+                      Timeless Security
+                    </span>
+                  </h2>
+                </div>
 
                 {/* Luxury sparkle highlights */}
                 <Sparkle className="absolute top-0 right-1/4 h-6 w-6 text-white opacity-70 animate-pulse-slow" />
                 <Sparkle className="absolute -top-4 left-1/4 h-5 w-5 text-[#FF5AF7] opacity-60 animate-pulse-slow animation-delay-1000" />
                 <Sparkle className="absolute bottom-1/4 left-1/3 h-4 w-4 text-[#9F00FF] opacity-60 animate-pulse-slow animation-delay-2000" />
-              </h1>
+              </div>
             </motion.div>
           </motion.div>
 
@@ -168,14 +186,10 @@ export function Hero() {
             </div>
           </motion.div>
 
-          {/* Premium Subtitle with 3D Effect */}
+          {/* Premium Subtitle with 3D Effect - now merged with rotating title above */}
           <motion.div variants={itemVariants} className="mb-12 perspective-1000">
             <div className="transform-style-3d relative">
-              <h2 className="text-3xl sm:text-4xl md:text-5xl font-medium mb-4 tracking-tight px-4">
-                <span className="bg-clip-text text-transparent bg-gradient-to-r from-white via-[#C87DFF] to-white inline-block">Timeless Security for Digital Assets</span>
-              </h2>
-              
-              <p className="text-xl sm:text-2xl text-gray-300 max-w-3xl mx-auto leading-relaxed px-4">
+              <p className="text-xl sm:text-2xl text-gray-300 max-w-3xl mx-auto leading-relaxed px-4 mt-6">
                 The <span className="text-[#FF5AF7] font-medium">ultimate</span> fusion of <span className="text-[#9F00FF] font-medium">precision engineering</span> and <span className="text-[#C87DFF] font-medium">cutting-edge technology</span>
               </p>
             </div>
