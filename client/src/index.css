@@ -1156,3 +1156,233 @@
 .animate-gradient-slow {
   animation: gradient-shift 5s ease infinite;
 }
+
+/* Enhanced Hero Component Styles */
+@keyframes text-rotation {
+  0%, 20%, 100% { transform: translateY(0); }
+  25%, 45% { transform: translateY(-100%); }
+  50%, 70% { transform: translateY(-200%); }
+  75%, 95% { transform: translateY(-300%); }
+}
+
+@keyframes scan-vertical {
+  0% {
+    background-image: linear-gradient(0deg, transparent 0%, rgba(255, 90, 247, 0.2) 10%, transparent 20%);
+    background-position: 0% 0%;
+    background-size: 100% 500%;
+    transform: translateY(-100%);
+  }
+  100% {
+    background-image: linear-gradient(0deg, transparent 0%, rgba(255, 90, 247, 0.2) 10%, transparent 20%);
+    background-position: 0% 0%;
+    background-size: 100% 500%;
+    transform: translateY(100%);
+  }
+}
+
+@keyframes scan-horizontal {
+  0% {
+    background-image: linear-gradient(90deg, transparent 0%, rgba(107, 0, 215, 0.2) 10%, transparent 20%);
+    background-position: 0% 0%;
+    background-size: 500% 100%;
+    transform: translateX(-100%);
+  }
+  100% {
+    background-image: linear-gradient(90deg, transparent 0%, rgba(107, 0, 215, 0.2) 10%, transparent 20%);
+    background-position: 0% 0%;
+    background-size: 500% 100%;
+    transform: translateX(100%);
+  }
+}
+
+@keyframes text3d {
+  0% {
+    text-shadow: 1px 1px 0 rgba(217, 70, 239, 0.5), 2px 2px 0 rgba(107, 0, 215, 0.3), 3px 3px 0 rgba(217, 70, 239, 0.1);
+  }
+  50% {
+    text-shadow: 1px 1px 0 rgba(107, 0, 215, 0.5), 2px 2px 0 rgba(217, 70, 239, 0.3), 3px 3px 0 rgba(107, 0, 215, 0.1);
+  }
+  100% {
+    text-shadow: 1px 1px 0 rgba(217, 70, 239, 0.5), 2px 2px 0 rgba(107, 0, 215, 0.3), 3px 3px 0 rgba(217, 70, 239, 0.1);
+  }
+}
+
+.animate-text-rotation {
+  animation: text-rotation 10s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+}
+
+.animate-scan-vertical {
+  animation: scan-vertical 4s linear infinite;
+}
+
+.animate-scan-horizontal {
+  animation: scan-horizontal 6s linear infinite;
+}
+
+/* More animations for EnhancedHero component */
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0) translateX(0);
+  }
+  25% {
+    transform: translateY(-20px) translateX(10px);
+  }
+  50% {
+    transform: translateY(10px) translateX(-15px);
+  }
+  75% {
+    transform: translateY(-15px) translateX(5px);
+  }
+}
+
+@keyframes scan {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+@keyframes slide-lr {
+  0% {
+    transform: translateX(-100px);
+    opacity: 0;
+  }
+  100% {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes pulse-slow {
+  0%, 100% {
+    opacity: 0.1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.2;
+    transform: scale(1.05);
+  }
+}
+
+@keyframes gradient-slow {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+@keyframes spin-slow {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.animate-float {
+  animation: float 15s ease-in-out infinite;
+}
+
+.animate-spin-slow {
+  animation: spin-slow 20s linear infinite;
+}
+
+.animate-pulse-slow {
+  animation: pulse-slow 3s ease-in-out infinite;
+}
+
+.animate-gradient-slow {
+  background-size: 200% 200%;
+  animation: gradient-slow 5s ease infinite;
+}
+
+.animate-slide-lr {
+  animation: slide-lr 0.8s ease-out forwards;
+}
+
+.animate-text-3d {
+  animation: text3d 3s ease-in-out infinite;
+}
+
+.hero-gradient {
+  background: radial-gradient(circle at center, rgba(107, 0, 215, 0.15), rgba(0, 0, 0, 0.95));
+}
+
+.title-3d {
+  color: rgba(255, 255, 255, 0.9);
+  text-shadow: 
+    0 0 3px rgba(255, 255, 255, 0.5),
+    0 0 10px rgba(107, 0, 215, 0.5),
+    0 0 20px rgba(255, 90, 247, 0.3),
+    0 0 30px rgba(107, 0, 215, 0.1);
+}
+
+.glow-border {
+  box-shadow: 
+    0 0 5px rgba(107, 0, 215, 0.2),
+    0 0 20px rgba(255, 90, 247, 0.1);
+}
+
+.prismatic-border {
+  position: relative;
+  border-radius: 12px;
+  overflow: hidden;
+  z-index: 0;
+}
+
+.prismatic-border::before {
+  content: '';
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  right: -2px;
+  bottom: -2px;
+  background: linear-gradient(45deg, #6B00D7, #FF5AF7, #6B00D7, #FF5AF7);
+  background-size: 400% 400%;
+  z-index: -1;
+  animation: gradient-slow 5s ease infinite;
+  border-radius: 14px;
+}
+
+.shadow-glow-sm {
+  box-shadow:
+    0 0 5px rgba(255, 90, 247, 0.5),
+    0 0 10px rgba(107, 0, 215, 0.3);
+}
+
+.hero-title {
+  font-size: 3.5rem;
+  line-height: 1.1;
+  background: linear-gradient(90deg, #FFFFFF, #DADADA, #FFFFFF);
+  background-size: 200% auto;
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+  animation: gradient-slow 5s ease infinite;
+}
+
+.animate-glow {
+  text-shadow:
+    0 0 5px rgba(255, 255, 255, 0.5),
+    0 0 10px rgba(107, 0, 215, 0.5),
+    0 0 15px rgba(255, 90, 247, 0.3);
+}
+
+.bg-grid-pattern {
+  background-image: 
+    linear-gradient(to right, rgba(107, 0, 215, 0.1) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255, 90, 247, 0.1) 1px, transparent 1px);
+  background-size: 30px 30px;
+}
+
+.cta-button {
+  background-size: 200% 200%;
+}

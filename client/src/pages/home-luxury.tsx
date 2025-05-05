@@ -6,7 +6,7 @@ import { Separator } from "@/components/ui/separator";
 import VaultCard from "@/components/vault/vault-card";
 import { Zap, Coins, Sparkles, ArrowRight } from "lucide-react";
 import { useCVTToken } from "@/contexts/cvt-token-context";
-import LuxuryHero from "@/components/hero/LuxuryHero";
+import EnhancedHero from "@/components/hero/EnhancedHero";
 
 const Home = () => {
   const [_, setLocation] = useLocation();
@@ -67,8 +67,8 @@ const Home = () => {
   return (
     <div className="flex flex-col bg-gradient-to-b from-[#121212] to-[#1A1A1A] text-white font-poppins">
       <main className="flex-1">
-        {/* Hero Section using LuxuryHero component */}
-        <LuxuryHero onCreateVault={() => setLocation("/create-vault")} />
+        {/* Hero Section using EnhancedHero component */}
+        <EnhancedHero onCreateVault={() => setLocation("/create-vault")} />
         
         {/* Triple-Chain Security Architecture Section */}
         <section className="py-16 md:py-20 bg-[#121212] overflow-hidden relative border-t border-[#6B00D7]/20">
