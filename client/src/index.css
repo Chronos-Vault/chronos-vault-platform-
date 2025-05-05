@@ -25,6 +25,48 @@
   }
 }
 
+@keyframes scan {
+  0% {
+    transform: translateY(-100%);
+  }
+  100% {
+    transform: translateY(100%);
+  }
+}
+
+@keyframes spin-slow {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes slide-lr {
+  0% {
+    transform: translateX(0px);
+  }
+  50% {
+    transform: translateX(12px);
+  }
+  100% {
+    transform: translateX(0px);
+  }
+}
+
+@keyframes animate-glow {
+  0% {
+    text-shadow: 0 0 10px rgba(107, 0, 215, 0.8), 0 0 20px rgba(107, 0, 215, 0.8), 0 0 30px rgba(107, 0, 215, 0.8);
+  }
+  50% {
+    text-shadow: 0 0 10px rgba(255, 90, 247, 0.8), 0 0 20px rgba(255, 90, 247, 0.8), 0 0 30px rgba(255, 90, 247, 0.8);
+  }
+  100% {
+    text-shadow: 0 0 10px rgba(107, 0, 215, 0.8), 0 0 20px rgba(107, 0, 215, 0.8), 0 0 30px rgba(107, 0, 215, 0.8);
+  }
+}
+
 @keyframes gradient-shift {
   0%, 100% {
     background-position: 0% 50%;
@@ -83,6 +125,20 @@
   font-size: 3.5rem !important; /* Mobile size */
   line-height: 1.1 !important;
   letter-spacing: -1px;
+  color: transparent;
+  background: linear-gradient(to right, #6B00D7, #FF5AF7, #6B00D7);
+  background-size: 200% auto;
+  background-clip: text;
+  -webkit-background-clip: text;
+  animation: textShine 3s linear infinite, animate-glow 4s ease-in-out infinite;
+}
+
+.animate-slide-lr {
+  animation: slide-lr 8s ease-in-out infinite;
+}
+
+.animate-glow {
+  animation: animate-glow 4s ease-in-out infinite;
 }
 
 @media (min-width: 640px) {
@@ -962,6 +1018,23 @@
   animation: shine 3s ease-in-out infinite;
 }
 
+/* Float animation for the vault */
+@keyframes float {
+  0% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+  100% {
+    transform: translateY(0px);
+  }
+}
+
+.animate-float {
+  animation: float 6s ease-in-out infinite;
+}
+
 /* Scan line animation */
 @keyframes scanLine {
   0% {
@@ -979,6 +1052,30 @@
 
 .animate-scan {
   animation: scanLine 1.5s ease-in-out infinite;
+}
+
+/* 3D text animation */
+@keyframes text3d {
+  0% {
+    text-shadow: 1px 1px 0 rgba(217, 70, 239, 0.5), 2px 2px 0 rgba(107, 0, 215, 0.3), 3px 3px 0 rgba(217, 70, 239, 0.1);
+  }
+  50% {
+    text-shadow: 1px 1px 0 rgba(107, 0, 215, 0.5), 2px 2px 0 rgba(217, 70, 239, 0.3), 3px 3px 0 rgba(107, 0, 215, 0.1);
+  }
+  100% {
+    text-shadow: 1px 1px 0 rgba(217, 70, 239, 0.5), 2px 2px 0 rgba(107, 0, 215, 0.3), 3px 3px 0 rgba(217, 70, 239, 0.1);
+  }
+}
+
+.animate-text-3d {
+  animation: text3d 6s infinite;
+}
+
+.title-3d {
+  color: white;
+  text-shadow: 1px 1px 0 rgba(255, 90, 247, 0.5),
+               2px 2px 0 rgba(107, 0, 215, 0.3),
+               3px 3px 0 rgba(255, 90, 247, 0.1);
 }
 
 /* Original code continues here */
