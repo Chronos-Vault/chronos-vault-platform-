@@ -270,17 +270,33 @@ export type InsertSecurityIncident = z.infer<typeof insertSecurityIncidentSchema
 export type SecurityIncident = typeof securityIncidents.$inferSelect;
 
 // Add insert schemas for signature requests and signatures
-export const insertSignatureRequestSchema = createInsertSchema(signatureRequests).pick({
-  vaultId: true,
-  requestType: true,
-  requesterAddress: true,
-  requesterName: true,
-  description: true,
-  status: true,
-  expiresAt: true,
-  threshold: true,
-  metadata: true,
-});
+export const insertSignatureRequestSchema = createInsertSchema(signatureRequests)
+  .pick({
+    vaultId: true,
+    requestType: true,
+    requesterAddress: true,
+    requesterName: true,
+    description: true,
+    status: true,
+    expiresAt: true,
+    threshold: true,
+    metadata: true,
+  })
+  .extend({
+    // Accept string, date, or ISO date string for expiresAt
+    expiresAt: z.union([z.string(), z.date()])
+      .transform(val => {
+        if (val instanceof Date) return val;
+        if (typeof val === 'string') {
+          const date = new Date(val);
+          if (isNaN(date.getTime())) {
+            throw new Error('Invalid date format for expiresAt');
+          }
+          return date;
+        }
+        return new Date();
+      })
+  });
 
 export const insertSignatureSchema = createInsertSchema(signatures).pick({
   requestId: true,

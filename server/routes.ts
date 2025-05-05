@@ -1493,12 +1493,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const signatures = await storage.getSignaturesByRequest(requestId);
       const signatureCount = signatures.length;
       
-      // Assuming required signature count is stored in the request
-      if (signatureCount < existingRequest.requiredSignatures) {
+      // Required signature count is stored in threshold property
+      if (signatureCount < existingRequest.threshold) {
         return res.status(400).json({ 
           message: "Not enough signatures to complete this request", 
           currentCount: signatureCount,
-          requiredCount: existingRequest.requiredSignatures
+          requiredCount: existingRequest.threshold
         });
       }
 
@@ -1541,7 +1541,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       // Check if we now have enough signatures to auto-complete the request
       const updatedSignatures = await storage.getSignaturesByRequest(signatureData.requestId);
-      if (updatedSignatures.length >= request.requiredSignatures) {
+      if (updatedSignatures.length >= request.threshold) {
         await storage.completeSignatureRequest(signatureData.requestId);
       }
       
