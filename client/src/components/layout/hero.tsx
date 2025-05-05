@@ -137,35 +137,37 @@ export function Hero() {
               {/* Title shadow/reflection on the "floor" */}
               <div className="absolute top-full left-1/2 -translate-x-1/2 w-4/5 h-12 bg-gradient-to-t from-[#9F00FF]/30 to-transparent blur-xl rounded-full transform -translateZ-20 opacity-60 scale-75"></div>
 
-              {/* 3D Rotating Title Container */}
-              <div className="relative transform-style-3d h-[220px] sm:h-[240px] md:h-[280px] lg:h-[320px] flex items-center justify-center">
+              {/* 3D Rotating Title Container - Using Flip Card Pattern */}
+              <div className="flip-card h-[220px] sm:h-[240px] md:h-[280px] lg:h-[320px]">
                 {/* Luxury metallic backlight effect */}
                 <div className="absolute inset-0 bg-gradient-to-r from-[#9F00FF]/20 via-[#FF5AF7]/20 to-[#9F00FF]/20 rounded-full blur-2xl opacity-80"></div>
                 
-                {/* Main title side */}
-                <div className="flex-none absolute w-full h-full flex items-center justify-center transform-style-3d animate-title-flip">
-                  {/* Premium 3D shadow effect */}
-                  <div className="absolute w-[90%] h-[90%] bg-[#6B00D7]/10 rounded-full blur-3xl z-[-1]"></div>
-                  <h1 className="text-7xl sm:text-7xl md:text-8xl lg:text-9xl font-bold tracking-tight leading-tight">
-                    {/* Premium metallic border glow */}
-                    <span className="absolute -inset-1 bg-gradient-to-r from-[#9F00FF]/40 via-[#FF5AF7]/40 to-[#9F00FF]/40 rounded-full blur-md opacity-70"></span>
-                    
-                    {/* Text with premium gradient */}
-                    <span className="relative bg-clip-text text-transparent bg-gradient-to-r from-[#9F00FF] via-[#FF5AF7] to-[#C87DFF] animate-text-shine bg-300%">
-                      Chronos Vault
-                    </span>
-                  </h1>
-                </div>
-                
-                {/* Subtitle side - rotated 180 degrees */}
-                <div className="flex-none absolute w-full h-full flex items-center justify-center transform-style-3d animate-subtitle-flip">
-                  {/* Premium 3D shadow effect for subtitle */}
-                  <div className="absolute w-[80%] h-[70%] bg-[#FF5AF7]/10 rounded-full blur-3xl z-[-1]"></div>
-                  <h2 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-semibold tracking-tight">
-                    <span className="bg-clip-text text-transparent bg-gradient-to-r from-[#C87DFF] via-white to-[#FF5AF7] inline-block">
-                      Timeless Security
-                    </span>
-                  </h2>
+                <div className="flip-card-inner">
+                  {/* Main title side */}
+                  <div className="flip-title">
+                    {/* Premium 3D shadow effect */}
+                    <div className="absolute w-full h-full bg-[#6B00D7]/10 rounded-full blur-3xl -z-10"></div>
+                    <h1 className="text-7xl sm:text-7xl md:text-8xl lg:text-9xl font-bold tracking-tight leading-tight">
+                      {/* Premium metallic border glow */}
+                      <span className="absolute -inset-1 bg-gradient-to-r from-[#9F00FF]/40 via-[#FF5AF7]/40 to-[#9F00FF]/40 rounded-full blur-md opacity-70"></span>
+                      
+                      {/* Text with premium gradient */}
+                      <span className="relative bg-clip-text text-transparent bg-gradient-to-r from-[#9F00FF] via-[#FF5AF7] to-[#C87DFF] animate-text-shine bg-300%">
+                        Chronos Vault
+                      </span>
+                    </h1>
+                  </div>
+                  
+                  {/* Subtitle side */}
+                  <div className="flip-subtitle">
+                    {/* Premium 3D shadow effect for subtitle */}
+                    <div className="absolute w-full h-full bg-[#FF5AF7]/10 rounded-full blur-3xl -z-10"></div>
+                    <h2 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-semibold tracking-tight">
+                      <span className="bg-clip-text text-transparent bg-gradient-to-r from-[#C87DFF] via-white to-[#FF5AF7] inline-block">
+                        Timeless Security
+                      </span>
+                    </h2>
+                  </div>
                 </div>
 
                 {/* Luxury sparkle highlights */}

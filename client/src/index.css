@@ -813,37 +813,73 @@
 
 /* 3D Title Flip Animation */
 @keyframes title-flip {
-  0%, 45%, 100% {
-    transform: rotateX(0deg) translateZ(0px);
+  0%, 40% {
+    transform: rotateX(0deg) translateZ(0);
     opacity: 1;
   }
-  50%, 95% {
-    transform: rotateX(180deg) translateZ(-50px);
+  45%, 55% {
+    transform: rotateX(90deg) translateZ(0);
+    opacity: 0.5;
+  }
+  60%, 100% {
+    transform: rotateX(180deg) translateZ(0);
     opacity: 0;
   }
 }
 
 @keyframes subtitle-flip {
-  0%, 45%, 100% {
-    transform: rotateX(180deg) translateZ(-50px);
+  0%, 40% {
+    transform: rotateX(180deg) translateZ(0);
     opacity: 0;
   }
-  50%, 95% {
-    transform: rotateX(0deg) translateZ(0px);
+  45%, 55% {
+    transform: rotateX(90deg) translateZ(0);
+    opacity: 0.5;
+  }
+  60%, 100% {
+    transform: rotateX(0deg) translateZ(0);
     opacity: 1;
   }
 }
 
-.animate-title-flip {
-  animation: title-flip 10s cubic-bezier(0.6, -0.28, 0.735, 0.045) infinite;
-  backface-visibility: hidden;
-  transform-origin: center center;
+.flip-card {
+  perspective: 1000px;
+  position: relative; 
+  width: 100%;
+  height: 100%;
 }
 
-.animate-subtitle-flip {
-  animation: subtitle-flip 10s cubic-bezier(0.6, -0.28, 0.735, 0.045) infinite;
+.flip-card-inner {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  text-align: center;
+  transition: transform 0.8s;
+  transform-style: preserve-3d;
+}
+
+.flip-title {
+  animation: title-flip 6s ease-in-out infinite;
   backface-visibility: hidden;
-  transform-origin: center center;
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  transform-style: preserve-3d;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.flip-subtitle {
+  animation: subtitle-flip 6s ease-in-out infinite;
+  backface-visibility: hidden;
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  transform-style: preserve-3d;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 /* Original code continues here */
