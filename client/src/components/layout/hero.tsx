@@ -126,7 +126,7 @@ export function Hero() {
           {/* 3D Title Container with perspective - Tesla x Rolex x Web3 luxury design */}
           <motion.div 
             variants={itemVariants} 
-            className="relative perspective-1000 mb-4 py-8 transform-style-3d"
+            className="relative perspective-1000 mb-8 py-10 transform-style-3d px-4"
           >
             {/* 3D Title that floats and rotates slightly */}
             <motion.div 
@@ -138,7 +138,7 @@ export function Hero() {
               <div className="absolute top-full left-1/2 -translate-x-1/2 w-4/5 h-12 bg-gradient-to-t from-[#9F00FF]/30 to-transparent blur-xl rounded-full transform -translateZ-20 opacity-60 scale-75"></div>
 
               {/* Main 3D title */}
-              <h1 className="text-6xl sm:text-7xl md:text-8xl lg:text-9xl font-bold relative">
+              <h1 className="text-7xl sm:text-7xl md:text-8xl lg:text-9xl font-bold relative tracking-tight leading-tight">
                 {/* Luxury metallic backlight effect */}
                 <span className="absolute -inset-6 bg-gradient-to-r from-[#9F00FF]/20 via-[#FF5AF7]/20 to-[#9F00FF]/20 rounded-full blur-2xl opacity-80"></span>
                 
@@ -171,11 +171,11 @@ export function Hero() {
           {/* Premium Subtitle with 3D Effect */}
           <motion.div variants={itemVariants} className="mb-12 perspective-1000">
             <div className="transform-style-3d relative">
-              <h2 className="text-3xl sm:text-4xl md:text-5xl font-medium mb-4 tracking-tight">
+              <h2 className="text-3xl sm:text-4xl md:text-5xl font-medium mb-4 tracking-tight px-4">
                 <span className="bg-clip-text text-transparent bg-gradient-to-r from-white via-[#C87DFF] to-white inline-block">Timeless Security for Digital Assets</span>
               </h2>
               
-              <p className="text-xl sm:text-2xl text-gray-300 max-w-3xl mx-auto leading-relaxed">
+              <p className="text-xl sm:text-2xl text-gray-300 max-w-3xl mx-auto leading-relaxed px-4">
                 The <span className="text-[#FF5AF7] font-medium">ultimate</span> fusion of <span className="text-[#9F00FF] font-medium">precision engineering</span> and <span className="text-[#C87DFF] font-medium">cutting-edge technology</span>
               </p>
             </div>
