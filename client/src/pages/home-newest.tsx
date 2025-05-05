@@ -26,8 +26,9 @@ const Home = () => {
     solanaContractAddress: "5678...",
     tonContractAddress: "EQAbc...",
     bitCoinAddress: "bc1q...",
-    multisigEnabled: false,
-    geolocationEnabled: false,
+    securityLevel: 3,
+    crossChainEnabled: false,
+    privacyEnabled: true,
   };
 
   // Handle create vault button click
