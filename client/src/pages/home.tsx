@@ -7,6 +7,7 @@ import VaultCard from "@/components/vault/vault-card";
 import { BitcoinHalvingVault } from "@/components/bitcoin/BitcoinHalvingVault";
 import { Zap, Coins, Sparkles, ArrowRight } from "lucide-react";
 import { useCVTToken } from "@/contexts/cvt-token-context";
+import CyberpunkHolographicHero from "@/components/hero/CyberpunkHolographicHero";
 
 const Home = () => {
   const [_, setLocation] = useLocation();
@@ -67,101 +68,8 @@ const Home = () => {
   return (
     <div className="flex flex-col bg-gradient-to-b from-[#121212] to-[#1A1A1A] text-white font-poppins">
       <main className="flex-1">
-        {/* Hero Section */}
-        <section className="py-16 md:py-24 relative overflow-hidden">
-          {/* Decorative elements */}
-          <div className="absolute w-full h-full top-0 left-0 overflow-hidden pointer-events-none">
-            <div className="absolute top-40 left-20 w-64 h-64 rounded-full bg-gradient-to-r from-[#6B00D7]/30 to-[#FF5AF7]/10 blur-3xl opacity-50"></div>
-            <div className="absolute top-80 right-10 w-80 h-80 rounded-full bg-gradient-to-r from-[#FF5AF7]/20 to-[#6B00D7]/10 blur-3xl opacity-40"></div>
-            <div className="absolute -bottom-20 left-1/3 w-96 h-96 rounded-full bg-gradient-to-r from-blue-500/10 to-purple-500/10 blur-3xl opacity-30"></div>
-          </div>
-          
-          <div className="container mx-auto px-4 relative z-10">
-            {/* Main Hero Content */}
-            <div className="relative">
-              {/* Headline and Primary Content */}
-              <div className="text-center mb-12">
-                <div className="inline-block mb-4 px-4 py-1 rounded-full bg-gradient-to-r from-[#6B00D7]/20 to-[#FF5AF7]/20 border border-[#6B00D7]/40 backdrop-blur-sm">
-                  <span className="text-sm font-medium text-[#FF5AF7]">Introducing Revolutionary Multi-Chain Security</span>
-                </div>
-              
-                <h1 className="font-poppins font-bold text-4xl md:text-7xl leading-tight mb-8">
-                  <span className="animate-text-shine bg-gradient-to-r from-[#6B00D7] via-[#FF5AF7] to-[#6B00D7] bg-clip-text text-transparent bg-300% inline-block">Next-Generation</span>
-                  <br />
-                  <span className="bg-gradient-to-r from-white via-gray-100 to-gray-200 bg-clip-text text-transparent">Digital Asset Security</span>
-                </h1>
-                
-                <div className="flex flex-wrap justify-center gap-2 items-center my-6 max-w-md mx-auto">
-                  <span className="px-3 sm:px-4 py-1.5 bg-gradient-to-r from-[#6B00D7]/30 to-[#6B00D7]/20 border border-[#6B00D7]/40 rounded-full text-[#FF5AF7] text-xs sm:text-sm font-medium backdrop-blur-sm">Triple-Chain Security</span>
-                  <span className="px-3 sm:px-4 py-1.5 bg-gradient-to-r from-[#6B00D7]/30 to-[#6B00D7]/20 border border-[#6B00D7]/40 rounded-full text-[#FF5AF7] text-xs sm:text-sm font-medium backdrop-blur-sm">TON</span>
-                  <span className="px-3 sm:px-4 py-1.5 bg-gradient-to-r from-[#6B00D7]/30 to-[#6B00D7]/20 border border-[#6B00D7]/40 rounded-full text-[#FF5AF7] text-xs sm:text-sm font-medium backdrop-blur-sm">ETH</span>
-                  <span className="px-3 sm:px-4 py-1.5 bg-gradient-to-r from-[#6B00D7]/30 to-[#6B00D7]/20 border border-[#6B00D7]/40 rounded-full text-[#FF5AF7] text-xs sm:text-sm font-medium backdrop-blur-sm">SOL</span>
-                  <span className="px-3 sm:px-4 py-1.5 bg-gradient-to-r from-[#6B00D7]/30 to-[#6B00D7]/20 border border-[#6B00D7]/40 rounded-full text-[#FF5AF7] text-xs sm:text-sm font-medium backdrop-blur-sm">BTC</span>
-                  <span className="px-3 sm:px-4 py-1.5 bg-gradient-to-r from-[#6B00D7]/30 to-[#6B00D7]/20 border border-[#6B00D7]/40 rounded-full text-[#FF5AF7] text-xs sm:text-sm font-medium backdrop-blur-sm">Zero-Knowledge</span>
-                  <span className="px-3 sm:px-4 py-1.5 bg-gradient-to-r from-[#6B00D7]/30 to-[#6B00D7]/20 border border-[#6B00D7]/40 rounded-full text-[#FF5AF7] text-xs sm:text-sm font-medium backdrop-blur-sm">Military-Grade</span>
-                  <span className="px-3 sm:px-4 py-1.5 bg-gradient-to-r from-[#6B00D7]/30 to-[#6B00D7]/20 border border-[#6B00D7]/40 rounded-full text-[#FF5AF7] text-xs sm:text-sm font-medium backdrop-blur-sm">Quantum-Resistant</span>
-                  <span className="px-3 sm:px-4 py-1.5 bg-gradient-to-r from-[#6B00D7]/30 to-[#6B00D7]/20 border border-[#6B00D7]/40 rounded-full text-[#FF5AF7] text-xs sm:text-sm font-medium backdrop-blur-sm">Cross-Chain</span>
-                  <span className="px-3 sm:px-4 py-1.5 bg-gradient-to-r from-[#6B00D7]/30 to-[#6B00D7]/20 border border-[#6B00D7]/40 rounded-full text-[#FF5AF7] text-xs sm:text-sm font-medium backdrop-blur-sm">Ultra-Premium</span>
-                </div>
-                
-                <div className="flex flex-col items-center gap-6 mt-10">
-                  <div className="flex flex-col sm:flex-row gap-4 sm:gap-6 w-full justify-center max-w-md sm:max-w-none mx-auto">
-                    <Button
-                      variant="default"
-                      className="bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] hover:from-[#5300A8] hover:to-[#DC38D8] text-white font-bold rounded-lg px-6 sm:px-10 py-3 sm:py-6 text-sm sm:text-lg shadow-glow hover:shadow-lg hover:shadow-[#6B00D7]/40 transition-all"
-                      onClick={() => setLocation("/create-vault")}
-                    >
-                      <span className="text-base sm:text-xl mr-2">🔒</span> Create Your Vault
-                    </Button>
-                    
-                    <Button
-                      variant="outline"
-                      className="border-2 border-[#6B00D7] hover:border-[#FF5AF7] text-white font-bold rounded-lg px-6 sm:px-10 py-3 sm:py-6 text-sm sm:text-lg hover:bg-[#6B00D7]/10 transition-all"
-                      onClick={() => setLocation("/multi-signature-vault")}
-                    >
-                      <span className="text-base sm:text-xl mr-2">👥</span> Multi-Signature Vault
-                    </Button>
-                  </div>
-                  
-                  {/* Large security testing button */}
-                  <div className="flex justify-center gap-4 mt-4 mb-6 w-full max-w-md mx-auto">
-                    <Button
-                      variant="default"
-                      className="bg-[#FF5AF7] hover:bg-[#6B00D7] text-white font-bold rounded-lg px-4 sm:px-8 py-3 sm:py-4 text-base sm:text-lg shadow-glow hover:shadow-lg hover:shadow-[#FF5AF7]/40 transition-all animate-pulse-subtle w-full"
-                      onClick={() => setLocation("/security-testing")}
-                    >
-                      <span className="text-base sm:text-xl mr-2">🔒</span> Security Dashboard
-                    </Button>
-                  </div>
-                  
-                  <div className="flex flex-wrap justify-center gap-2 sm:gap-4 mt-4 max-w-md sm:max-w-none mx-auto">
-                    <Button
-                      variant="outline"
-                      className="border border-[#FF5AF7] bg-[#1A1A1A] text-[#FF5AF7] hover:bg-[#6B00D7]/20 font-medium rounded-lg px-3 sm:px-5 py-2 text-xs sm:text-md flex items-center gap-1 sm:gap-2 transition-all w-[45%] sm:w-auto justify-center"
-                      onClick={() => setLocation("/solana-integration")}
-                    >
-                      <span className="text-sm sm:text-lg">◎</span> <span>Solana</span>
-                    </Button>
-                    <Button
-                      variant="outline"
-                      className="border border-[#FF5AF7] bg-[#1A1A1A] text-[#FF5AF7] hover:bg-[#6B00D7]/20 font-medium rounded-lg px-3 sm:px-5 py-2 text-xs sm:text-md flex items-center gap-1 sm:gap-2 transition-all w-[45%] sm:w-auto justify-center"
-                      onClick={() => setLocation("/ton-integration")}
-                    >
-                      <span className="text-sm sm:text-lg">💎</span> <span>TON</span>
-                    </Button>
-                    <Button
-                      variant="outline"
-                      className="border border-[#FF5AF7] bg-[#1A1A1A] text-[#FF5AF7] hover:bg-[#6B00D7]/20 font-medium rounded-lg px-3 sm:px-5 py-2 text-xs sm:text-md flex items-center gap-1 sm:gap-2 transition-all w-[92%] sm:w-auto justify-center"
-                      onClick={() => setLocation("/cross-chain")}
-                    >
-                      <span className="text-sm sm:text-lg">🔄</span> <span>Cross-Chain Features</span>
-                    </Button>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
+        {/* Cyberpunk Holographic Hero Section */}
+        <CyberpunkHolographicHero onCreateVault={() => setLocation("/create-vault")} />
 
         {/* Multi-Chain Architecture Section */}
         <section className="py-16 md:py-20 bg-[#121212] overflow-hidden relative border-t border-[#6B00D7]/20">

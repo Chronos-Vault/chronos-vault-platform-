@@ -437,7 +437,7 @@
       transform: translateX(-100%);
     }
     50% {
-      opacity: 1;
+      opacity: 0.6;
     }
     100% {
       opacity: 0;
