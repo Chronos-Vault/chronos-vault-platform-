@@ -811,86 +811,96 @@
   position: absolute;
 }
 
-/* Simple fade animation between title and subtitle */
-@keyframes fade-in-out {
-  0%, 45% {
-    opacity: 1;
-  }
-  50% {
-    opacity: 0;
-  }
-  55%, 100% {
-    opacity: 0;
-  }
-}
-
-@keyframes fade-out-in {
-  0%, 45% {
-    opacity: 0;
-  }
-  50% {
-    opacity: 0;
-  }
-  55%, 100% {
-    opacity: 1;
-  }
-}
-
-/* Scaling animation - more compatible with mobile browsers */
-@keyframes scale-up-down {
-  0%, 45% {
-    transform: scale(1);
-    opacity: 1;
-  }
-  50% {
-    transform: scale(0.9);
-    opacity: 0;
-  }
-  55%, 100% {
-    transform: scale(0.9);
-    opacity: 0;
-  }
-}
-
-@keyframes scale-down-up {
-  0%, 45% {
-    transform: scale(0.9);
-    opacity: 0;
-  }
-  50% {
-    transform: scale(0.9);
-    opacity: 0;
-  }
-  55%, 100% {
-    transform: scale(1);
-    opacity: 1;
-  }
-}
-
-.flip-container {
+/* Bold title animation for high visibility */
+.mega-title {
   position: relative;
-  width: 100%;
-  height: 100%;
+  display: inline-block;
+  text-transform: uppercase;
+  letter-spacing: -1px;
+  transform-style: preserve-3d;
+  perspective: 500px;
 }
 
-.flip-title {
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  animation: scale-up-down 8s ease-in-out infinite;
+/* Animate the title with a pulsing glow effect */
+@keyframes mega-pulse {
+  0%, 100% {
+    text-shadow: 0 0 15px rgba(159, 0, 255, 0.7),
+                0 0 30px rgba(255, 90, 247, 0.5),
+                0 0 50px rgba(159, 0, 255, 0.3);
+    transform: translateZ(0px);
+  }
+  50% {
+    text-shadow: 0 0 25px rgba(159, 0, 255, 0.9),
+                0 0 50px rgba(255, 90, 247, 0.7),
+                0 0 75px rgba(159, 0, 255, 0.5);
+    transform: translateZ(10px);
+  }
 }
 
-.flip-subtitle {
-  position: absolute;
-  width: 100%;
-  height: 100%;
+.animate-mega-pulse {
+  animation: mega-pulse 4s ease-in-out infinite;
+}
+
+/* Animated ticker for alternate text */
+.ticker-container {
   display: flex;
-  justify-content: center;
   align-items: center;
-  animation: scale-down-up 8s ease-in-out infinite;
+  justify-content: center;
+  overflow: hidden;
+  position: relative;
+  height: 1.2em;
+}
+
+.ticker-wrapper {
+  position: relative;
+  height: 2.4em;
+}
+
+@keyframes ticker {
+  0%, 45% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-50%);
+  }
+  95%, 100% {
+    transform: translateY(-50%);
+  }
+}
+
+.ticker-animate {
+  animation: ticker 8s ease-in-out infinite;
+}
+
+.ticker-text {
+  height: 1.2em;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* 3D Text Effects */
+.text-3d {
+  text-shadow: 
+    1px 1px 0 rgba(159, 0, 255, 0.9),
+    2px 2px 0 rgba(200, 125, 255, 0.8),
+    3px 3px 0 rgba(255, 90, 247, 0.7),
+    4px 4px 0 rgba(159, 0, 255, 0.6),
+    5px 5px 10px rgba(0, 0, 0, 0.4);
+}
+
+.text-metal {
+  background: linear-gradient(
+    to bottom,
+    #fff 0%,
+    #d7c5f3 40%,
+    #9f00ff 41%,
+    #d7c5f3 42%,
+    #fff 80%
+  );
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
 
 /* Original code continues here */

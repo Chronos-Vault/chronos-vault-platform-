@@ -137,42 +137,36 @@ export function Hero() {
               {/* Title shadow/reflection on the "floor" */}
               <div className="absolute top-full left-1/2 -translate-x-1/2 w-4/5 h-12 bg-gradient-to-t from-[#9F00FF]/30 to-transparent blur-xl rounded-full transform -translateZ-20 opacity-60 scale-75"></div>
 
-              {/* Mobile-friendly title container with scale/fade animations */}
-              <div className="relative h-[220px] sm:h-[240px] md:h-[280px] lg:h-[320px] overflow-visible">
-                {/* Luxury backlight effect */}
-                <div className="absolute inset-0 bg-gradient-to-r from-[#9F00FF]/20 via-[#FF5AF7]/20 to-[#9F00FF]/20 rounded-full blur-2xl opacity-80"></div>
+              {/* Massive Eye-Catching 3D Title */}
+              <div className="relative h-[300px] lg:h-[350px] flex items-center justify-center overflow-visible p-4 mb-6">
+                {/* Premium glow background */}
+                <div className="absolute inset-0 bg-gradient-to-r from-[#9F00FF]/30 via-[#FF5AF7]/20 to-[#9F00FF]/30 rounded-full blur-3xl opacity-80"></div>
                 
-                <div className="flip-container">
-                  {/* Main title side */}
-                  <div className="flip-title">
-                    {/* Premium shadow effect */}
-                    <div className="absolute w-full h-full bg-[#6B00D7]/10 rounded-full blur-3xl -z-10"></div>
-                    <h1 className="text-7xl sm:text-7xl md:text-8xl lg:text-9xl font-bold tracking-tight leading-tight">
-                      {/* Premium metallic border glow */}
-                      <span className="absolute -inset-1 bg-gradient-to-r from-[#9F00FF]/40 via-[#FF5AF7]/40 to-[#9F00FF]/40 rounded-full blur-md opacity-70"></span>
-                      
-                      {/* Text with premium gradient */}
-                      <span className="relative bg-clip-text text-transparent bg-gradient-to-r from-[#9F00FF] via-[#FF5AF7] to-[#C87DFF] animate-text-shine bg-300%">
-                        Chronos Vault
-                      </span>
-                    </h1>
-                  </div>
+                <div className="relative w-full">
+                  {/* MEGA 3D TITLE */}
+                  <h1 className="mega-title text-7xl sm:text-8xl md:text-9xl lg:text-[120px] font-black text-center leading-none mb-2">
+                    {/* Giant glowing Title */}
+                    <span className="animate-mega-pulse text-3d text-white block">
+                      CHRONOS VAULT
+                    </span>
+                  </h1>
                   
-                  {/* Subtitle with alternate animation */}
-                  <div className="flip-subtitle">
-                    {/* Premium shadow effect for subtitle */}
-                    <div className="absolute w-full h-full bg-[#FF5AF7]/10 rounded-full blur-3xl -z-10"></div>
-                    <h2 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-semibold tracking-tight">
-                      <span className="bg-clip-text text-transparent bg-gradient-to-r from-[#C87DFF] via-white to-[#FF5AF7] inline-block">
-                        Timeless Security
-                      </span>
-                    </h2>
+                  {/* Animated ticker subtitle */}
+                  <div className="ticker-container text-3xl sm:text-4xl md:text-5xl font-bold mt-6 sm:mt-8 mx-auto max-w-3xl">
+                    <div className="ticker-wrapper ticker-animate">
+                      <div className="ticker-text text-metal">
+                        TIMELESS SECURITY
+                      </div>
+                      <div className="ticker-text bg-clip-text text-transparent bg-gradient-to-r from-[#9F00FF] via-[#FF5AF7] to-[#C87DFF]">
+                        THE FUTURE OF VAULTS
+                      </div>
+                    </div>
                   </div>
                 </div>
 
                 {/* Luxury sparkle highlights */}
-                <Sparkle className="absolute top-0 right-1/4 h-6 w-6 text-white opacity-70 animate-pulse-slow" />
-                <Sparkle className="absolute -top-4 left-1/4 h-5 w-5 text-[#FF5AF7] opacity-60 animate-pulse-slow animation-delay-1000" />
+                <Sparkle className="absolute top-4 right-1/4 h-6 w-6 text-white opacity-70 animate-pulse-slow" />
+                <Sparkle className="absolute top-0 left-1/3 h-5 w-5 text-[#FF5AF7] opacity-60 animate-pulse-slow animation-delay-1000" />
                 <Sparkle className="absolute bottom-1/4 left-1/3 h-4 w-4 text-[#9F00FF] opacity-60 animate-pulse-slow animation-delay-2000" />
               </div>
             </motion.div>
