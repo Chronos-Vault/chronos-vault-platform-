@@ -137,15 +137,15 @@ export function Hero() {
               {/* Title shadow/reflection on the "floor" */}
               <div className="absolute top-full left-1/2 -translate-x-1/2 w-4/5 h-12 bg-gradient-to-t from-[#9F00FF]/30 to-transparent blur-xl rounded-full transform -translateZ-20 opacity-60 scale-75"></div>
 
-              {/* 3D Rotating Title Container - Using Flip Card Pattern */}
-              <div className="flip-card h-[220px] sm:h-[240px] md:h-[280px] lg:h-[320px]">
-                {/* Luxury metallic backlight effect */}
+              {/* Mobile-friendly title container with scale/fade animations */}
+              <div className="relative h-[220px] sm:h-[240px] md:h-[280px] lg:h-[320px] overflow-visible">
+                {/* Luxury backlight effect */}
                 <div className="absolute inset-0 bg-gradient-to-r from-[#9F00FF]/20 via-[#FF5AF7]/20 to-[#9F00FF]/20 rounded-full blur-2xl opacity-80"></div>
                 
-                <div className="flip-card-inner">
+                <div className="flip-container">
                   {/* Main title side */}
                   <div className="flip-title">
-                    {/* Premium 3D shadow effect */}
+                    {/* Premium shadow effect */}
                     <div className="absolute w-full h-full bg-[#6B00D7]/10 rounded-full blur-3xl -z-10"></div>
                     <h1 className="text-7xl sm:text-7xl md:text-8xl lg:text-9xl font-bold tracking-tight leading-tight">
                       {/* Premium metallic border glow */}
@@ -158,9 +158,9 @@ export function Hero() {
                     </h1>
                   </div>
                   
-                  {/* Subtitle side */}
+                  {/* Subtitle with alternate animation */}
                   <div className="flip-subtitle">
-                    {/* Premium 3D shadow effect for subtitle */}
+                    {/* Premium shadow effect for subtitle */}
                     <div className="absolute w-full h-full bg-[#FF5AF7]/10 rounded-full blur-3xl -z-10"></div>
                     <h2 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-semibold tracking-tight">
                       <span className="bg-clip-text text-transparent bg-gradient-to-r from-[#C87DFF] via-white to-[#FF5AF7] inline-block">

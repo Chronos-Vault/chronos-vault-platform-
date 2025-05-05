@@ -811,75 +811,86 @@
   position: absolute;
 }
 
-/* 3D Title Flip Animation */
-@keyframes title-flip {
-  0%, 40% {
-    transform: rotateX(0deg) translateZ(0);
+/* Simple fade animation between title and subtitle */
+@keyframes fade-in-out {
+  0%, 45% {
     opacity: 1;
   }
-  45%, 55% {
-    transform: rotateX(90deg) translateZ(0);
-    opacity: 0.5;
+  50% {
+    opacity: 0;
   }
-  60%, 100% {
-    transform: rotateX(180deg) translateZ(0);
+  55%, 100% {
     opacity: 0;
   }
 }
 
-@keyframes subtitle-flip {
-  0%, 40% {
-    transform: rotateX(180deg) translateZ(0);
+@keyframes fade-out-in {
+  0%, 45% {
     opacity: 0;
   }
-  45%, 55% {
-    transform: rotateX(90deg) translateZ(0);
-    opacity: 0.5;
+  50% {
+    opacity: 0;
   }
-  60%, 100% {
-    transform: rotateX(0deg) translateZ(0);
+  55%, 100% {
     opacity: 1;
   }
 }
 
-.flip-card {
-  perspective: 1000px;
-  position: relative; 
-  width: 100%;
-  height: 100%;
+/* Scaling animation - more compatible with mobile browsers */
+@keyframes scale-up-down {
+  0%, 45% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(0.9);
+    opacity: 0;
+  }
+  55%, 100% {
+    transform: scale(0.9);
+    opacity: 0;
+  }
 }
 
-.flip-card-inner {
+@keyframes scale-down-up {
+  0%, 45% {
+    transform: scale(0.9);
+    opacity: 0;
+  }
+  50% {
+    transform: scale(0.9);
+    opacity: 0;
+  }
+  55%, 100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.flip-container {
   position: relative;
   width: 100%;
   height: 100%;
-  text-align: center;
-  transition: transform 0.8s;
-  transform-style: preserve-3d;
 }
 
 .flip-title {
-  animation: title-flip 6s ease-in-out infinite;
-  backface-visibility: hidden;
   position: absolute;
   width: 100%;
   height: 100%;
-  transform-style: preserve-3d;
   display: flex;
-  align-items: center;
   justify-content: center;
+  align-items: center;
+  animation: scale-up-down 8s ease-in-out infinite;
 }
 
 .flip-subtitle {
-  animation: subtitle-flip 6s ease-in-out infinite;
-  backface-visibility: hidden;
   position: absolute;
   width: 100%;
   height: 100%;
-  transform-style: preserve-3d;
   display: flex;
-  align-items: center;
   justify-content: center;
+  align-items: center;
+  animation: scale-down-up 8s ease-in-out infinite;
 }
 
 /* Original code continues here */
