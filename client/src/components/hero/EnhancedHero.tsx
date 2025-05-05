@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { motion, useAnimation, useInView } from 'framer-motion';
 import { Button } from "@/components/ui/button";
+import ThreeDHeroBackground from './3DHeroBackground';
 
 interface EnhancedHeroProps {
   onCreateVault: () => void;
@@ -117,51 +118,20 @@ const EnhancedHero: React.FC<EnhancedHeroProps> = ({ onCreateVault }) => {
 
   return (
     <section ref={heroRef} className="relative hero-gradient min-h-screen overflow-hidden pt-12 pb-20 md:pt-16 md:pb-32 flex items-center">
-      {/* Background Particles and Effects */}
-      <div className="absolute inset-0 -z-10">
-        <div className="absolute inset-0 bg-[#080808] opacity-90"></div>
-        
+      {/* 3D Background with Three.js */}
+      <ThreeDHeroBackground />
+      
+      {/* Semi-transparent overlay */}
+      <div className="absolute inset-0 bg-[#080808] opacity-50"></div>
+      
+      {/* Additional visual elements */}
+      <div className="absolute inset-0 -z-5 pointer-events-none">
         {/* Animated gradient orbs */}
         <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-[#6B00D7] rounded-full filter blur-[180px] opacity-10 animate-pulse-slow"></div>
         <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-[#FF5AF7] rounded-full filter blur-[180px] opacity-10 animate-pulse-slow" style={{animationDelay: '1s'}}></div>
         
-        {/* Particle system */}
-        {particles.map(particle => (
-          <div 
-            key={`particle-${particle.id}`}
-            className="absolute rounded-full"
-            style={{
-              width: `${particle.size}px`,
-              height: `${particle.size}px`,
-              backgroundColor: Math.random() > 0.5 ? '#6B00D7' : '#FF5AF7',
-              left: `${particle.x}%`,
-              top: `${particle.y}%`,
-              opacity: particle.opacity,
-              animation: `float ${particle.speed}s infinite`,
-              animationDelay: `${particle.delay}s`,
-              boxShadow: `0 0 ${particle.size * 2}px ${Math.random() > 0.5 ? '#6B00D7' : '#FF5AF7'}`
-            }}
-          />
-        ))}
-        
         {/* Circuit pattern background */}
-        <div className="absolute inset-0 bg-grid-pattern opacity-10"></div>
-        
-        {/* Glowing grid lines */}
-        {Array.from({ length: 8 }).map((_, i) => (
-          <div 
-            key={`h-line-${i}`}
-            className="absolute h-[1px] w-full bg-gradient-to-r from-transparent via-[#6B00D7]/20 to-transparent opacity-30"
-            style={{ top: `${(i + 1) * 12.5}%` }}
-          />
-        ))}
-        {Array.from({ length: 8 }).map((_, i) => (
-          <div 
-            key={`v-line-${i}`}
-            className="absolute w-[1px] h-full bg-gradient-to-b from-transparent via-[#FF5AF7]/20 to-transparent opacity-30"
-            style={{ left: `${(i + 1) * 12.5}%` }}
-          />
-        ))}
+        <div className="absolute inset-0 bg-grid-pattern opacity-5"></div>
         
         {/* Scanline effect */}
         <div className="absolute inset-0 overflow-hidden opacity-5 pointer-events-none">
@@ -328,7 +298,8 @@ const EnhancedHero: React.FC<EnhancedHeroProps> = ({ onCreateVault }) => {
             initial={{ opacity: 0, x: 50 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.7 }}
-            className="w-full md:w-1/2 flex justify-center"
+            className="w-full md:w-1/2 flex justify-center relative z-20"
+            style={{ transformStyle: 'preserve-3d' }}
           >
             <div ref={orbitalsRef} className="relative transition-transform duration-300 ease-out" style={{ transformStyle: 'preserve-3d', perspective: '1000px' }}>
               {/* Orbital rings with 3D effect */}
@@ -359,7 +330,7 @@ const EnhancedHero: React.FC<EnhancedHeroProps> = ({ onCreateVault }) => {
                 ))}
                 
                 {/* Main vault - with premium luxury design */}
-                <div className="relative w-72 h-[520px] md:w-[400px] md:h-[620px] bg-gradient-to-br from-[#1A1A1A] to-black rounded-3xl shadow-2xl border-4 border-[#333333] glow-border flex items-center justify-center animate-float overflow-hidden">
+                <div className="relative w-72 h-[520px] md:w-[400px] md:h-[620px] bg-gradient-to-br from-[#1A1A1A] to-black rounded-3xl shadow-2xl border-4 border-[#333333] glow-border flex items-center justify-center overflow-hidden backdrop-blur-lg" style={{transform: 'translateZ(50px)'}}> {/* Added 3D transform with Z translation */}
                   {/* Hologram security lines */}
                   <div className="absolute inset-0 overflow-hidden opacity-20">
                     <div className="absolute top-0 left-0 right-0 h-full w-full">
