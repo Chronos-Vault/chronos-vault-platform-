@@ -934,6 +934,53 @@
              0 0 10px rgba(200, 200, 255, 0.3);
 }
 
+/* Slow spin animation for rings */
+@keyframes spin-slow {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.animate-spin-slow {
+  animation: spin-slow 20s linear infinite;
+}
+
+/* Shine effect */
+@keyframes shine {
+  0% {
+    left: -100%;
+  }
+  100% {
+    left: 100%;
+  }
+}
+
+.animate-shine {
+  animation: shine 3s ease-in-out infinite;
+}
+
+/* Scan line animation */
+@keyframes scanLine {
+  0% {
+    transform: translateY(0%);
+    opacity: 0.5;
+  }
+  50% {
+    opacity: 0.1;
+  }
+  100% {
+    transform: translateY(0%);
+    opacity: 0.5;
+  }
+}
+
+.animate-scan {
+  animation: scanLine 1.5s ease-in-out infinite;
+}
+
 /* Original code continues here */
 .prismatic-border::before {
   content: '';
