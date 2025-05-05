@@ -10,7 +10,7 @@ import { CVTTokenProvider } from "@/contexts/cvt-token-context";
 import Layout from "@/components/layout/Layout";
 
 // Pages
-import Home from "@/pages/home-luxury";
+import Home from "@/pages/home-revolutionary";
 import CreateVault from "@/pages/create-vault";
 import CreateVaultEnhancedPage from "@/pages/create-vault-enhanced";
 import AdvancedVaultCreationPage from "@/pages/advanced-vault-creation";

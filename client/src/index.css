@@ -1,8 +1,178 @@
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap');
+@import url('https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css');
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer utilities {
+  .animate-gradient-slow {
+    background-size: 200% 200%;
+    animation: gradientAnimation 8s linear infinite;
+  }
+  
+  .animate-pulse-slow {
+    animation: pulseSlow 6s ease-in-out infinite;
+  }
+  
+  .animate-float {
+    animation: float 10s ease-in-out infinite;
+  }
+  
+  .animate-spin-slow {
+    animation: spin 15s linear infinite;
+  }
+  
+  .animate-scan {
+    animation: scanLine 4s linear infinite;
+  }
+  
+  .animate-text-3d {
+    animation: text3D 2.5s ease infinite;
+  }
+  
+  .animate-text-shimmer {
+    animation: textShimmer 4s linear infinite;
+  }
+  
+  .animate-bg-pan-slow {
+    animation: bgPanSlow 30s linear infinite;
+  }
+  
+  .bg-size-200 {
+    background-size: 200% 200%;
+  }
+  
+  .bg-grid-pattern {
+    background-image: linear-gradient(to right, rgba(107,0,215,0.1) 1px, transparent 1px), 
+                       linear-gradient(to bottom, rgba(255,90,247,0.1) 1px, transparent 1px);
+    background-size: 40px 40px;
+  }
+  
+  .hero-gradient {
+    background-color: #080808;
+    background-image: radial-gradient(circle at 20% 20%, rgba(107,0,215,0.15) 0%, transparent 40%),
+                       radial-gradient(circle at 80% 80%, rgba(255,90,247,0.15) 0%, transparent 40%);
+  }
+  
+  .prismatic-border {
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+  }
+  
+  .prismatic-border:after {
+    content: '';
+    position: absolute;
+    inset: -2px;
+    background: linear-gradient(90deg, #6B00D7, #FF5AF7, #6B00D7);
+    background-size: 200% 200%;
+    animation: gradientBorder 5s linear infinite;
+    z-index: -1;
+  }
+  
+  .glow-border {
+    box-shadow: 0 0 20px rgba(107,0,215,0.3), inset 0 0 10px rgba(107,0,215,0.1);
+  }
+  
+  .shadow-glow-sm {
+    box-shadow: 0 0 10px currentColor;
+  }
+  
+  .title-3d {
+    color: white;
+    text-shadow: 0 1px 0 rgba(255,255,255,0.4),
+                0 2px 0 rgba(255,255,255,0.3),
+                0 3px 0 rgba(255,255,255,0.2),
+                0 4px 0 rgba(255,255,255,0.1),
+                0 8px 10px rgba(0,0,0,0.6);
+  }
+  
+  .hero-title {
+    font-size: 4rem;
+    font-weight: 800;
+    line-height: 1.1;
+    color: white;
+    background-image: linear-gradient(135deg, white 0%, rgba(255,255,255,0.7) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    text-shadow: 0 8px 15px rgba(107,0,215,0.8);
+  }
+}
+
+/* Custom Animations */
+@keyframes gradientAnimation {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+@keyframes pulseSlow {
+  0%, 100% { transform: scale(1); opacity: 0.5; }
+  50% { transform: scale(1.1); opacity: 0.7; }
+}
+
+@keyframes float {
+  0%, 100% { transform: translate(0, 0); }
+  25% { transform: translate(5px, -5px); }
+  50% { transform: translate(0, -10px); }
+  75% { transform: translate(-5px, -5px); }
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+@keyframes scanLine {
+  0% { transform: translateX(-100%); opacity: 0; }
+  10% { opacity: 0.8; }
+  50% { opacity: 0.3; }
+  90% { opacity: 0.8; }
+  100% { transform: translateX(100%); opacity: 0; }
+}
+
+@keyframes text3D {
+  0%, 100% { text-shadow: 0 0 0 transparent, 0 0 0 transparent, 0 0 0 transparent, 0 0 0 transparent; }
+  50% { text-shadow: -1px -1px 0 rgba(255,90,247,0.3), 1px 1px 0 rgba(107,0,215,0.3), 2px 2px 3px rgba(0,0,0,0.3), 0 0 5px rgba(107,0,215,0.5); }
+}
+
+@keyframes textShimmer {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
+
+@keyframes bgPanSlow {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+@keyframes gradientBorder {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+@keyframes slideIn {
+  0% { transform: translateY(100%); opacity: 0; }
+  100% { transform: translateY(0); opacity: 1; }
+}
+
+@keyframes slide-lr {
+  0% { transform: translateX(-50px); opacity: 0; }
+  100% { transform: translateX(0); opacity: 1; }
+}
+
+@keyframes glowPulse {
+  0%, 100% { filter: drop-shadow(0 0 5px rgba(107,0,215,0.4)); }
+  50% { filter: drop-shadow(0 0 15px rgba(107,0,215,0.8)); }
+}
+
+@keyframes shine {
+  0% { mask-position: -100% 0; }
+  100% { mask-position: 200% 0; }
+}
 
 @keyframes float {
   0% {
