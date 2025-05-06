@@ -726,6 +726,25 @@
   }
 }
 
+/* Sci-fi movie scan line animation */
+@keyframes scanline-move {
+  0% { transform: translateY(0); }
+  100% { transform: translateY(100%); }
+}
+
+/* Cinematic pulse glow animation */
+@keyframes pulse-glow {
+  0% { filter: drop-shadow(0 0 5px rgba(255, 90, 247, 0.4)); }
+  50% { filter: drop-shadow(0 0 15px rgba(255, 90, 247, 0.8)); }
+  100% { filter: drop-shadow(0 0 5px rgba(255, 90, 247, 0.4)); }
+}
+
+/* 3D card hover animation - used for sci-fi movie effect */
+@keyframes card-hover {
+  0% { transform: perspective(1000px) rotateX(0deg) rotateY(0deg); }
+  100% { transform: perspective(1000px) rotateX(5deg) rotateY(5deg); }
+}
+
 @keyframes ping-slow {
   0% {
     transform: scale(1);

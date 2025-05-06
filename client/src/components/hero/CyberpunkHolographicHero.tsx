@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
 import { Shield, CheckCircle2, Lock, LockKeyhole, Network, BarChart3 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -21,6 +21,8 @@ const CyberpunkHolographicHero: React.FC<CyberpunkHolographicHeroProps> = ({ onC
     top: 'SXFE7bb82Egdh4j8dFcg3X1HE2t000c6',
     bottom: 'ED8cp_j4_g8t33ygbLwk-3pfFHsiNadbXZJ3'
   });
+  const [glitchActive, setGlitchActive] = useState(false);
+  const cardRef = useRef<HTMLDivElement>(null);
   
   // Initialize scan lines
   useEffect(() => {
@@ -29,6 +31,49 @@ const CyberpunkHolographicHero: React.FC<CyberpunkHolographicHeroProps> = ({ onC
       delay: i * 0.1
     }));
     setScanLines(lines);
+  }, []);
+  
+  // Add occasional glitch effect for sci-fi movie feel
+  useEffect(() => {
+    const glitchTimer = setInterval(() => {
+      setGlitchActive(true);
+      setTimeout(() => setGlitchActive(false), 150);
+    }, 8000);
+
+    return () => clearInterval(glitchTimer);
+  }, []);
+
+  // Add 3D hover effect for sci-fi movie feel
+  useEffect(() => {
+    const card = cardRef.current;
+    if (!card) return;
+
+    const handleMouseMove = (e: MouseEvent) => {
+      const rect = card.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      const y = e.clientY - rect.top;
+      
+      const centerX = rect.width / 2;
+      const centerY = rect.height / 2;
+      
+      const rotateX = (y - centerY) / 30;
+      const rotateY = (centerX - x) / 30;
+      
+      card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
+    };
+
+    const handleMouseLeave = () => {
+      card.style.transform = 'perspective(1000px) rotateX(0deg) rotateY(0deg)';
+      card.style.transition = 'transform 0.5s ease';
+    };
+
+    card.addEventListener('mousemove', handleMouseMove);
+    card.addEventListener('mouseleave', handleMouseLeave);
+
+    return () => {
+      card.removeEventListener('mousemove', handleMouseMove);
+      card.removeEventListener('mouseleave', handleMouseLeave);
+    };
   }, []);
 
   // Simulate security hash updates - with reduced frequency and complexity
@@ -104,48 +149,118 @@ const CyberpunkHolographicHero: React.FC<CyberpunkHolographicHeroProps> = ({ onC
               {hashDisplay.top}
             </div>
             
-            {/* Main security card - exact match to the image */}
-            <div className="relative mb-3">
-              <div className="relative bg-[#121212] border border-[#333] rounded-xl p-8 shadow-[0_0_30px_rgba(107,0,215,0.3)] overflow-hidden">
-                {/* Subtle scan line effect */}
+            {/* Main security card - sci-fi movie style */}
+            <div className="relative mb-3" ref={cardRef} style={{ transition: 'transform 0.1s ease' }}>
+              <div className={`relative bg-[#121212] border border-[#6B00D7]/40 rounded-xl p-8 shadow-[0_0_40px_rgba(107,0,215,0.6)] overflow-hidden backdrop-blur-sm ${glitchActive ? 'animate-pulse' : ''}`}>
+                {/* Enhanced sci-fi scan lines effect */}
                 <div className="absolute inset-0 overflow-hidden rounded-xl pointer-events-none">
-                  <div className="absolute h-[2px] w-full bg-[#FF5AF7]/20 top-1/4"></div>
-                  <div className="absolute h-[2px] w-full bg-[#FF5AF7]/20 top-3/4"></div>
-                  <div className="absolute w-[2px] h-full bg-[#FF5AF7]/20 left-1/4"></div>
-                  <div className="absolute w-[2px] h-full bg-[#FF5AF7]/20 left-3/4"></div>
-                </div>
-                
-                {/* Security rating */}
-                <div className="text-center mb-6">
-                  <div className="text-xs text-gray-400 uppercase tracking-wider mb-1">SECURITY RATING:</div>
-                  <div className="text-xl font-bold text-[#FF5AF7]">{securityRating}%</div>
-                </div>
-                
-                {/* Central Shield Icon - matching image */}
-                <div className="relative flex justify-center items-center mb-4">
-                  {/* Purple circles behind shield */}
-                  <div className="absolute w-32 h-32 rounded-full bg-[#6B00D7]/10"></div>
-                  <div className="absolute w-24 h-24 rounded-full bg-[#6B00D7]/15"></div>
-                  <div className="absolute w-16 h-16 rounded-full bg-[#6B00D7]/20"></div>
+                  {/* Holographic scan lines - subtle animation */}
+                  {scanLines.slice(0, 15).map((line, index) => (
+                    <div 
+                      key={line.id} 
+                      className="absolute h-[1px] w-full bg-gradient-to-r from-transparent via-[#FF5AF7]/30 to-transparent"
+                      style={{ 
+                        top: `${(line.id * 100) / 15}%`,
+                        animation: `scanline-move ${2 + index % 3}s linear infinite`,
+                        animationDelay: `${index * 0.1}s`,
+                        opacity: 0.2 + (index % 3) * 0.1
+                      }} 
+                    />
+                  ))}
                   
-                  {/* Central shield */}
-                  <div className="relative z-10">
-                    <Shield className="w-12 h-12 text-[#FF5AF7]" />
+                  {/* Cross hairs */}
+                  <div className="absolute h-[1.5px] w-full bg-gradient-to-r from-transparent via-[#FF5AF7]/40 to-transparent top-1/4"></div>
+                  <div className="absolute h-[1.5px] w-full bg-gradient-to-r from-transparent via-[#FF5AF7]/40 to-transparent top-3/4"></div>
+                  <div className="absolute w-[1.5px] h-full bg-gradient-to-b from-transparent via-[#FF5AF7]/40 to-transparent left-1/4"></div>
+                  <div className="absolute w-[1.5px] h-full bg-gradient-to-b from-transparent via-[#FF5AF7]/40 to-transparent left-3/4"></div>
+                </div>
+                
+                {/* Background glow effect */}
+                <div className="absolute inset-0 bg-gradient-to-tr from-[#6B00D7]/5 to-[#FF5AF7]/5 opacity-50"></div>
+                
+                {/* Sci-fi grid pattern overlay */}
+                <div className="absolute inset-0 opacity-20" 
+                  style={{
+                    backgroundImage: 'linear-gradient(to right, #FF5AF7 1px, transparent 1px), linear-gradient(to bottom, #FF5AF7 1px, transparent 1px)',
+                    backgroundSize: '20px 20px'
+                  }}
+                ></div>
+                
+                {/* Security rating - sci-fi style */}
+                <div className="text-center mb-6 relative z-10">
+                  <div className="text-xs text-gray-400 uppercase tracking-wider mb-1 font-mono letter-spacing-wider">SECURITY RATING:</div>
+                  <div className="text-xl font-bold text-[#FF5AF7] glow-text"
+                    style={{ textShadow: '0 0 10px rgba(255, 90, 247, 0.7)' }}>
+                    {securityRating}%
+                  </div>
+                </div>
+                
+                {/* Central Shield Icon - sci-fi movie style */}
+                <div className="relative flex justify-center items-center mb-4">
+                  {/* Pulsating circles behind shield */}
+                  <div className="absolute w-40 h-40 rounded-full bg-[#6B00D7]/5 animate-pulse-slow"></div>
+                  <div className="absolute w-32 h-32 rounded-full bg-[#6B00D7]/10" 
+                    style={{ animation: 'pulse 4s ease-in-out infinite' }}></div>
+                  <div className="absolute w-24 h-24 rounded-full bg-[#6B00D7]/15" 
+                    style={{ animation: 'pulse 3s ease-in-out infinite' }}></div>
+                  <div className="absolute w-16 h-16 rounded-full bg-[#6B00D7]/20" 
+                    style={{ animation: 'pulse 2s ease-in-out infinite' }}></div>
+                  
+                  {/* Central shield with glow effect */}
+                  <div className="relative z-10" style={{ filter: 'drop-shadow(0 0 10px rgba(255, 90, 247, 0.7))' }}>
+                    <Shield className="w-14 h-14 text-[#FF5AF7]" />
                   </div>
                   
-                  {/* Connection points - purple dots */}
+                  {/* Connection points - pulsating purple dots with glow */}
                   <div className="absolute w-full h-full pointer-events-none">
                     {[45, 135, 225, 315].map((angle, index) => (
                       <div 
                         key={index}
-                        className="absolute w-2.5 h-2.5 rounded-full bg-[#FF5AF7]"
+                        className="absolute rounded-full"
                         style={{
                           top: `${50 + 42 * Math.sin(angle * Math.PI / 180)}%`,
                           left: `${50 + 42 * Math.cos(angle * Math.PI / 180)}%`,
+                          width: '10px',
+                          height: '10px',
+                          background: 'rgba(255, 90, 247, 0.7)',
+                          boxShadow: '0 0 10px 2px rgba(255, 90, 247, 0.7)',
+                          animation: `pulse ${1.5 + index * 0.5}s ease-in-out infinite`
                         }}
                       />
                     ))}
                   </div>
+                  
+                  {/* Connection lines between dots */}
+                  <svg className="absolute inset-0 w-full h-full" style={{ zIndex: 5 }}>
+                    <line 
+                      x1="8%" y1="8%"
+                      x2="92%" y2="8%"
+                      stroke="rgba(255, 90, 247, 0.4)"
+                      strokeWidth="1"
+                      strokeDasharray="4 2"
+                    />
+                    <line 
+                      x1="8%" y1="8%"
+                      x2="8%" y2="92%"
+                      stroke="rgba(255, 90, 247, 0.4)"
+                      strokeWidth="1"
+                      strokeDasharray="4 2"
+                    />
+                    <line 
+                      x1="92%" y1="8%"
+                      x2="92%" y2="92%"
+                      stroke="rgba(255, 90, 247, 0.4)"
+                      strokeWidth="1"
+                      strokeDasharray="4 2"
+                    />
+                    <line 
+                      x1="8%" y1="92%"
+                      x2="92%" y2="92%"
+                      stroke="rgba(255, 90, 247, 0.4)"
+                      strokeWidth="1"
+                      strokeDasharray="4 2"
+                    />
+                  </svg>
                 </div>
               </div>
             </div>
