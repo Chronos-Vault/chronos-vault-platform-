@@ -839,12 +839,12 @@ const Home = () => {
                 className="inline-block"
               >
                 <button 
-                  onClick={() => setLocation('/vaults')}
+                  onClick={() => setLocation('/specialized-vault-creation')}
                   className="relative px-8 py-3 group"
                 >
                   <div className="absolute inset-0 bg-gradient-to-r from-[#6B00D7]/60 to-[#FF5AF7]/60 opacity-50 group-hover:opacity-70 rounded-lg blur-sm transition-opacity duration-300"></div>
                   <div className="relative flex items-center justify-center space-x-2 bg-black rounded-lg border border-[#6B00D7]/40 px-6 py-2.5">
-                    <span className="text-white font-medium">Explore All Vault Types</span>
+                    <span className="text-white font-medium">Create Specialized Vault</span>
                     <ArrowRight className="w-4 h-4 text-[#FF5AF7] group-hover:translate-x-1 transition-transform" />
                   </div>
                 </button>
