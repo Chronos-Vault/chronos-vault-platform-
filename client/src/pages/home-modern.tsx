@@ -93,14 +93,14 @@ const Home = () => {
             {/* Call to action buttons */}
             <div className="flex flex-col sm:flex-row justify-center space-y-4 sm:space-y-0 sm:space-x-6 mt-8">
               <Button 
-                onClick={() => setLocation('/dashboard')} 
+                onClick={() => setLocation('/create-vault')} 
                 className="bg-[#6B00D7] hover:bg-[#6B00D7]/90 text-white px-8 py-6 rounded-lg text-lg"
               >
                 Create Your Vault
               </Button>
               
               <Button 
-                onClick={() => setLocation('/dashboard')}
+                onClick={() => setLocation('/my-vaults')}
                 variant="outline" 
                 className="border-[#FF5AF7] text-[#FF5AF7] hover:bg-[#FF5AF7]/10 px-8 py-6 rounded-lg text-lg"
               >
