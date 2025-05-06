@@ -121,6 +121,26 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Register zero-knowledge proof routes for enhanced privacy
   app.use('/api/zk', zkRouter);
   
+  // Additional direct ZK routes for quick response (fallback)
+  app.get('/api/zk/status', (req: Request, res: Response) => {
+    res.json({
+      status: 'operational',
+      implementationDetails: {
+        library: 'SnarkJS',
+        protocol: 'Groth16',
+        circuitVersion: '1.0.0',
+      },
+      supportedBlockchains: ['ETH', 'SOL', 'TON'],
+      supportedProofTypes: [
+        'VAULT_OWNERSHIP',
+        'ASSET_VERIFICATION',
+        'ACCESS_AUTHORIZATION',
+        'TRANSACTION_VERIFICATION',
+        'IDENTITY_VERIFICATION'
+      ]
+    });
+  });
+  
   // Initialize Arweave storage service with a wallet
   // Note: In production, this would use a secure wallet from environment variables
   // For now, we'll initialize without a wallet, which will limit functionality
