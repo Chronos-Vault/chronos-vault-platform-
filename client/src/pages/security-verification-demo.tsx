@@ -20,7 +20,7 @@ export default function SecurityVerificationDemo() {
   const [sourceChain, setSourceChain] = useState<BlockchainType>('ETH');
   const [requiredChains, setRequiredChains] = useState<BlockchainType[]>(['ETH', 'SOL', 'TON']);
   const [step, setStep] = useState<'config' | 'verification'>('config');
-  const [activeTab, setActiveTab] = useState<'cross-chain' | 'zero-knowledge'>('zero-knowledge');
+  const [activeTab, setActiveTab] = useState<'cross-chain' | 'zero-knowledge'>('cross-chain');
 
   const handleSuccess = () => {
     toast({
@@ -288,69 +288,90 @@ export default function SecurityVerificationDemo() {
               Back to Configuration
             </Button>
 
-            <Tabs value={activeTab} onValueChange={(value) => setActiveTab(value as 'cross-chain' | 'zero-knowledge')} className="w-full">
-              <TabsList className="grid w-full grid-cols-2 mb-4">
-                <TabsTrigger value="cross-chain" className="flex items-center gap-2">
-                  <Shield className="h-4 w-4" />
-                  Cross-Chain Verification
-                </TabsTrigger>
-                <TabsTrigger value="zero-knowledge" className="flex items-center gap-2">
-                  <LockKeyhole className="h-4 w-4" />
-                  Zero-Knowledge Privacy
-                </TabsTrigger>
-              </TabsList>
-              
-              <TabsContent value="cross-chain" className="p-0 border-0">
-                <MultiChainSecurityVerification
-                  vaultId={vaultId}
-                  txHash={txHash}
-                  sourceChain={sourceChain}
-                  requiredChains={requiredChains}
-                  onSuccess={handleSuccess}
-                  onError={handleError}
-                />
+            <div className="space-y-8">
+              <div className="flex flex-col sm:flex-row gap-4 items-stretch">
+                <Button 
+                  variant={activeTab === 'cross-chain' ? 'default' : 'outline'} 
+                  size="lg" 
+                  className={`w-full py-6 h-auto flex flex-col gap-3 ${activeTab === 'cross-chain' ? 'bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] hover:opacity-90' : 'border-[#6B00D7]/20 hover:bg-[#6B00D7]/10'}`}
+                  onClick={() => setActiveTab('cross-chain')}
+                >
+                  <Shield className="h-8 w-8 mb-1" />
+                  <div className="text-center">
+                    <h3 className="text-lg font-bold">Triple-Chain Verification</h3>
+                    <p className="text-xs text-gray-300 mt-1">ETH + SOL + TON Security</p>
+                  </div>
+                </Button>
                 
-                <Card className="mt-6 border border-[#6B00D7]/20 bg-gradient-to-br from-black/60 to-[#6B00D7]/10">
-                  <CardHeader className="pb-3">
-                    <CardTitle className="text-lg">Why Cross-Chain Verification Matters</CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="space-y-3">
-                      <div className="flex items-start space-x-3">
-                        <div className="h-6 w-6 rounded-full bg-gradient-to-br from-[#6B00D7] to-[#FF5AF7] flex items-center justify-center shrink-0">
-                          <CheckCircle2 className="h-4 w-4 text-white" />
-                        </div>
-                        <p className="text-sm">
-                          <span className="font-medium">Triple Security Layers:</span> Each blockchain adds an independent layer of protection, making attacks exponentially harder.
-                        </p>
-                      </div>
-                      
-                      <div className="flex items-start space-x-3">
-                        <div className="h-6 w-6 rounded-full bg-gradient-to-br from-[#6B00D7] to-[#FF5AF7] flex items-center justify-center shrink-0">
-                          <CheckCircle2 className="h-4 w-4 text-white" />
-                        </div>
-                        <p className="text-sm">
-                          <span className="font-medium">Specialized Chain Roles:</span> Ethereum provides robust ownership verification, Solana enables high-frequency monitoring, and TON creates a reliable backup layer.
-                        </p>
-                      </div>
-                      
-                      <div className="flex items-start space-x-3">
-                        <div className="h-6 w-6 rounded-full bg-gradient-to-br from-[#6B00D7] to-[#FF5AF7] flex items-center justify-center shrink-0">
-                          <CheckCircle2 className="h-4 w-4 text-white" />
-                        </div>
-                        <p className="text-sm">
-                          <span className="font-medium">Zero-Knowledge Proofs:</span> Verify transaction validity without revealing sensitive details, preserving privacy while maintaining security.
-                        </p>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-              </TabsContent>
+                <Button 
+                  variant={activeTab === 'zero-knowledge' ? 'default' : 'outline'} 
+                  size="lg" 
+                  className={`w-full py-6 h-auto flex flex-col gap-3 ${activeTab === 'zero-knowledge' ? 'bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] hover:opacity-90' : 'border-[#6B00D7]/20 hover:bg-[#6B00D7]/10'}`}
+                  onClick={() => setActiveTab('zero-knowledge')}
+                >
+                  <LockKeyhole className="h-8 w-8 mb-1" />
+                  <div className="text-center">
+                    <h3 className="text-lg font-bold">Zero-Knowledge Privacy</h3>
+                    <p className="text-xs text-gray-300 mt-1">Prove without revealing data</p>
+                  </div>
+                </Button>
+              </div>
 
-              <TabsContent value="zero-knowledge" className="p-0 border-0">
-                <ZeroKnowledgeDashboard />
-              </TabsContent>
-            </Tabs>
+              {activeTab === 'cross-chain' && (
+                <div className="space-y-6">
+                  <MultiChainSecurityVerification
+                    vaultId={vaultId}
+                    txHash={txHash}
+                    sourceChain={sourceChain}
+                    requiredChains={requiredChains}
+                    onSuccess={handleSuccess}
+                    onError={handleError}
+                  />
+                  
+                  <Card className="mt-6 border border-[#6B00D7]/20 bg-gradient-to-br from-black/60 to-[#6B00D7]/10">
+                    <CardHeader className="pb-3">
+                      <CardTitle className="text-lg">Why Triple-Chain Verification Matters</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="space-y-3">
+                        <div className="flex items-start space-x-3">
+                          <div className="h-6 w-6 rounded-full bg-gradient-to-br from-[#6B00D7] to-[#FF5AF7] flex items-center justify-center shrink-0">
+                            <CheckCircle2 className="h-4 w-4 text-white" />
+                          </div>
+                          <p className="text-sm">
+                            <span className="font-medium">Triple Security Layers:</span> Each blockchain adds an independent layer of protection, making attacks exponentially harder.
+                          </p>
+                        </div>
+                        
+                        <div className="flex items-start space-x-3">
+                          <div className="h-6 w-6 rounded-full bg-gradient-to-br from-[#6B00D7] to-[#FF5AF7] flex items-center justify-center shrink-0">
+                            <CheckCircle2 className="h-4 w-4 text-white" />
+                          </div>
+                          <p className="text-sm">
+                            <span className="font-medium">Specialized Chain Roles:</span> Ethereum provides robust ownership verification, Solana enables high-frequency monitoring, and TON creates a reliable backup layer.
+                          </p>
+                        </div>
+                        
+                        <div className="flex items-start space-x-3">
+                          <div className="h-6 w-6 rounded-full bg-gradient-to-br from-[#6B00D7] to-[#FF5AF7] flex items-center justify-center shrink-0">
+                            <CheckCircle2 className="h-4 w-4 text-white" />
+                          </div>
+                          <p className="text-sm">
+                            <span className="font-medium">Zero-Knowledge Proofs:</span> Verify transaction validity without revealing sensitive details, preserving privacy while maintaining security.
+                          </p>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                </div>
+              )}
+
+              {activeTab === 'zero-knowledge' && (
+                <div>
+                  <ZeroKnowledgeDashboard />
+                </div>
+              )}
+            </div>
           </div>
         )}
       </div>
