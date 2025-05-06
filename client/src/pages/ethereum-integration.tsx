@@ -9,7 +9,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Separator } from '@/components/ui/separator';
 import { PageHeader } from '@/components/page-header';
-import { RefreshCw, SendHorizontal, Calendar, ArrowRightCircle, Wallet } from 'lucide-react';
+import { RefreshCw, SendHorizontal, Calendar, ArrowRightCircle, KeyRound } from 'lucide-react';
 
 /**
  * Ethereum Integration Page
@@ -162,7 +162,7 @@ const EthereumIntegrationPage: React.FC = () => {
         <Card className="md:col-span-1 border-purple-900/30 backdrop-blur-sm bg-black/40">
           <CardHeader>
             <CardTitle className="flex items-center text-xl">
-              <Wallet className="mr-2 h-5 w-5 text-purple-400" />
+              <KeyRound className="mr-2 h-5 w-5 text-purple-400" />
               Wallet Connection
             </CardTitle>
             <CardDescription>

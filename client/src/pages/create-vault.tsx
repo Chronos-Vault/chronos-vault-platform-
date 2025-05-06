@@ -6,7 +6,7 @@ import { CreateVaultForm } from "@/components/vault/create-vault-form";
 import VaultTypeSelector, { SpecializedVaultType } from "@/components/vault/vault-type-selector";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, Shield, Clock, File, Wallet, Users } from "lucide-react";
+import { ArrowLeft, Shield, Clock, File, KeyRound, Users } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
 const CreateVault = () => {
@@ -305,7 +305,7 @@ const CreateVault = () => {
                   <div className="p-3 sm:p-4 border border-[#FF5AF7]/30 rounded-lg bg-[#1F1F1F] mb-4 shadow-lg shadow-[#FF5AF7]/5">
                     <div className="flex flex-col sm:flex-row sm:items-center mb-3">
                       <div className="flex items-center mb-2 sm:mb-0 sm:mr-3">
-                        <Wallet className="h-5 w-5 text-[#FF5AF7] mr-2" />
+                        <KeyRound className="h-5 w-5 text-[#FF5AF7] mr-2" />
                         <h3 className="font-medium text-white text-base sm:text-lg">Connect Your Wallet</h3>
                       </div>
                       <div className="ml-0 sm:ml-auto flex-shrink-0 hidden sm:block">
@@ -331,7 +331,7 @@ const CreateVault = () => {
                           </>
                         ) : (
                           <>
-                            <Wallet className="h-4 w-4 mr-2" />
+                            <KeyRound className="h-4 w-4 mr-2" />
                             Connect {selectedBlockchain} Wallet
                           </>
                         )}
