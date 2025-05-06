@@ -216,12 +216,32 @@ const StoragePage = () => {
               </div>
               
               <div>
-                <h3 className="text-lg font-medium mb-2">How It Works</h3>
-                <p className="text-muted-foreground">
-                  When you upload a file, it's processed through Bundlr (for faster uploads) and permanently stored on the Arweave network. 
-                  We generate a unique transaction ID that can be used to verify and access your file. The file is encrypted and stored 
-                  with cross-chain verification for enhanced security.
-                </p>
+                <h3 className="text-lg font-medium mb-2">How Storage Works in Chronos Vault</h3>
+                <div className="space-y-4 text-muted-foreground">
+                  <p>
+                    When a user uploads files in our system:
+                  </p>
+                  <ol className="list-decimal pl-5 space-y-2">
+                    <li><strong>First Upload:</strong> The file is uploaded through our interface to Bundlr</li>
+                    <li><strong>Permanent Storage:</strong> Bundlr processes the payment and stores the file permanently on Arweave network</li>
+                    <li><strong>Link to Vault:</strong> The transaction ID (like a receipt) is saved in our database and connected to the user's vault</li>
+                    <li><strong>Cross-Chain Verification:</strong> We record proof of this storage across multiple blockchains for extra security</li>
+                  </ol>
+                  <p className="mt-4">
+                    This means:
+                  </p>
+                  <ul className="list-disc pl-5 space-y-1">
+                    <li>Files are stored permanently and can't be deleted</li>
+                    <li>Data is completely decentralized (not on our servers)</li>
+                    <li>Each file has a unique transaction ID that proves ownership</li>
+                    <li>Your vault contains references to these files but not the files themselves</li>
+                  </ul>
+                  <p className="mt-4">
+                    This approach gives users the benefits of both worlds:
+                    the security and permanent storage of decentralized networks
+                    and the user-friendly interface of Chronos Vault to manage everything.
+                  </p>
+                </div>
               </div>
               
               <Alert className="bg-purple-950/20 border-purple-500/30">

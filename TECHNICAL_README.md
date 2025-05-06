@@ -64,6 +64,27 @@ The security system leverages three blockchains for maximum protection:
 
 These services are coordinated by the `SecurityServiceAggregator` which manages cross-chain validation.
 
+### Permanent Storage System
+
+Chronos Vault uses Arweave with Bundlr for permanent, decentralized storage:
+
+#### How Storage Works in Chronos Vault
+
+When a user uploads files in our system:
+
+1. **First Upload**: The file is uploaded through our interface to Bundlr
+2. **Permanent Storage**: Bundlr processes the payment and stores the file permanently on Arweave network
+3. **Link to Vault**: The transaction ID (like a receipt) is saved in our database and connected to the user's vault
+4. **Cross-Chain Verification**: We record proof of this storage across multiple blockchains for extra security
+
+This means:
+- Files are stored permanently and can't be deleted
+- Data is completely decentralized (not on our servers)
+- Each file has a unique transaction ID that proves ownership
+- Vaults contain references to these files but not the files themselves
+
+This architecture provides users with both permanent decentralized storage and a user-friendly management interface.
+
 ### Cross-Chain Bridge
 
 Chronos Vault implements a secure bridge system:
