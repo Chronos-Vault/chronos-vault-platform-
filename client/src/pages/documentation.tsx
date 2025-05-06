@@ -61,10 +61,10 @@ export default function Documentation() {
                       </a>
                     </li>
                     <li>
-                      <a href="#storage" className="text-gray-300 hover:text-white transition-colors flex items-center gap-2">
-                        <span className="w-1.5 h-1.5 rounded-full bg-[#6B00D7]"></span>
-                        Permanent Storage
-                      </a>
+                      <Link href="/storage" className="text-gray-300 hover:text-white transition-colors flex items-center gap-2">
+                        <span className="w-1.5 h-1.5 rounded-full bg-[#FF5AF7]"></span>
+                        <span className="text-[#FF5AF7] font-medium">Decentralized Storage</span>
+                      </Link>
                     </li>
                   </ul>
                 </div>
@@ -398,13 +398,20 @@ export default function Documentation() {
                   <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-[#6B00D7]/30 to-[#FF5AF7]/20 flex items-center justify-center">
                     <span className="text-xl">🗄️</span>
                   </div>
-                  Permanent Storage
+                  Decentralized Storage
                 </h2>
                 
                 <div className="space-y-4 text-gray-300">
                   <p>
                     Chronos Vault integrates with decentralized storage networks to provide permanent, tamper-proof storage for vault contents that endures far beyond the lifetime of traditional storage systems.
                   </p>
+                  
+                  <div className="mt-5">
+                    <Link href="/storage" className="inline-flex items-center justify-center gap-2 px-4 py-2.5 bg-gradient-to-r from-[#6B00D7]/30 to-[#FF5AF7]/30 hover:from-[#6B00D7]/40 hover:to-[#FF5AF7]/40 rounded-xl border border-[#FF5AF7]/30 text-white font-medium transition-all transform hover:translate-y-[-2px]">
+                      <span className="text-xl">🚀</span>
+                      Visit Storage Page
+                    </Link>
+                  </div>
                   
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
                     <div className="p-4 bg-[#141414] rounded-lg border border-[#333]">

@@ -53,6 +53,7 @@ const Footer = ({ className = '' }: { className?: string }) => {
               <li><Link href="/token-vaults" className="text-gray-300 hover:text-[#FF5AF7] transition-all font-poppins font-light hover:translate-x-1 inline-flex">Token Vaults</Link></li>
               <li><Link href="/bitcoin-halving-vault" className="text-gray-300 hover:text-[#FF5AF7] transition-all font-poppins font-light hover:translate-x-1 inline-flex">Bitcoin Halving Vault</Link></li>
               <li><Link href="/my-vaults" className="text-gray-300 hover:text-[#FF5AF7] transition-all font-poppins font-light hover:translate-x-1 inline-flex">My Vaults</Link></li>
+              <li><Link href="/storage" className="text-gray-300 hover:text-[#FF5AF7] transition-all font-poppins font-light hover:translate-x-1 inline-flex bg-gradient-to-r from-[#6B00D7]/10 to-[#FF5AF7]/10 px-3 py-1 rounded-md border border-[#FF5AF7]/20">Decentralized Storage</Link></li>
             </ul>
           </div>
           
@@ -96,6 +97,7 @@ const Footer = ({ className = '' }: { className?: string }) => {
             <a href="#" className="text-gray-300 hover:text-[#FF5AF7] font-poppins font-light transition-all hover:translate-y-[-2px]">Privacy Policy</a>
             <a href="#" className="text-gray-300 hover:text-[#FF5AF7] font-poppins font-light transition-all hover:translate-y-[-2px]">Terms of Service</a>
             <a href="#" className="text-gray-300 hover:text-[#FF5AF7] font-poppins font-light transition-all hover:translate-y-[-2px]">Cookie Policy</a>
+            <Link href="/storage" className="text-[#FF5AF7] font-poppins font-medium transition-all hover:translate-y-[-2px] px-2 py-1 bg-gradient-to-r from-[#6B00D7]/10 to-[#FF5AF7]/10 rounded-full border border-[#FF5AF7]/20">Storage</Link>
           </div>
         </div>
       </div>
