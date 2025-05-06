@@ -1,46 +1,40 @@
 pragma circom 2.0.0;
 
 /*
- * Vault Ownership Circuit
+ * Vault Ownership Circuit for Chronos Vault
  * 
- * Proves that the prover knows the private key corresponding to a 
- * public wallet address that owns a specific vault, without revealing the private key.
- * This uses a hash verification approach similar to how blockchain addresses are derived.
+ * This circuit validates that a user has the correct private key
+ * that corresponds to the owner address of a specific vault.
  */
 
-include "node_modules/circomlib/circuits/mimc.circom";
-include "node_modules/circomlib/circuits/bitify.circom";
+include "../node_modules/circomlib/circuits/mimc.circom";
 
-template VaultOwnershipProof() {
-    // Public inputs 
-    signal input vaultId; // Public vault ID to prove ownership for
-    signal input publicOwnerAddress; // Public blockchain address of the vault owner
-
+template VaultOwnershipVerifier() {
+    // Public inputs
+    signal input vaultId;
+    signal input publicOwnerAddress;
+    
     // Private inputs
-    signal input privateKey; // The private key (kept secret)
-    signal input salt; // A random salt for added security
-
-    // Verify that privateKey generates the correct publicOwnerAddress
-    // In real implementation, this would use proper EdDSA or other verification
-    // Here we use a simplified MiMC hash for demonstration
-    component hasher = MiMC7(1);
-    hasher.ins[0] <== privateKey;
-    hasher.k <== salt;
-
-    // The output of the hash should match the publicOwnerAddress
-    publicOwnerAddress === hasher.outs[0];
+    signal input privateKey;
+    signal input salt;
     
-    // Link the privateKey to the vaultId through another hash
-    // This proves that this privateKey is associated with this specific vault
-    component vaultVerifier = MiMC7(2);
-    vaultVerifier.ins[0] <== privateKey;
-    vaultVerifier.ins[1] <== vaultId;
-    vaultVerifier.k <== salt;
+    // Intermediate values
+    component mimc1 = MiMC7(91);
+    mimc1.x_in <== privateKey;
+    mimc1.k <== salt;
     
-    // The output is a signal that can be used for further verification
-    signal output verificationHash;
-    verificationHash <== vaultVerifier.outs[0];
+    // Verify that the privateKey corresponds to the publicOwnerAddress
+    signal addressHash <== mimc1.out;
+    
+    // For enhanced security, we also compute a hash that includes the vaultId
+    component mimc2 = MiMC7(91);
+    mimc2.x_in <== privateKey;
+    mimc2.k <== vaultId + salt;
+    
+    signal verificationHash <== mimc2.out;
+    
+    // Assert that the publicOwnerAddress matches what we expect
+    publicOwnerAddress === addressHash;
 }
 
-// The main component that will be used for the proof
-component main {public [vaultId, publicOwnerAddress]} = VaultOwnershipProof();
+component main {public [vaultId, publicOwnerAddress]} = VaultOwnershipVerifier();

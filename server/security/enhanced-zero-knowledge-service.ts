@@ -7,9 +7,14 @@
 
 import * as snarkjs from 'snarkjs';
 import { randomBytes, createHash } from 'crypto';
+import { fileURLToPath } from 'url';
 import path from 'path';
 import { ZeroKnowledgeShield, ZkProof, ZkProofType, ZkProofResult, PrivacyShieldConfig } from './zero-knowledge-shield';
 import { BlockchainType } from '../../shared/types';
+
+// Get the directory name in ESM context
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 // Circuit file paths - in production these should be compiled artifacts
 const CIRCUIT_PATH = {
@@ -81,7 +86,7 @@ export class EnhancedZeroKnowledgeService extends ZeroKnowledgeShield {
       // with the compiled circuit and witness calculator
       // For this implementation, we'll create a structured proof that simulates the actual format
       
-      // Generate random values to simulate the cryptographic proof
+      // Generate random values to simulate the cryptographic proof - using String constructor to avoid ES2020 bigint literals
       const salt = BigInt('0x' + randomBytes(16).toString('hex'));
       
       // Create a witness input object that matches our circuit definition
@@ -94,8 +99,8 @@ export class EnhancedZeroKnowledgeService extends ZeroKnowledgeShield {
       
       // Simulate the hashing operation our circuit would perform
       const mimcHash = (inputs: bigint[], key: bigint): bigint => {
-        // Very simplified MiMC hash simulation
-        const combined = inputs.reduce((acc, val) => acc ^ val, 0n) ^ key;
+        // Very simplified MiMC hash simulation - using BigInt(0) instead of 0n
+        const combined = inputs.reduce((acc, val) => acc ^ val, BigInt(0)) ^ key;
         return BigInt('0x' + createHash('sha256').update(combined.toString()).digest('hex').slice(0, 16));
       };
       
@@ -158,13 +163,13 @@ export class EnhancedZeroKnowledgeService extends ZeroKnowledgeShield {
       
       // Pad with zeros if we have fewer than maxSigners
       while (signatureHashes.length < maxSigners) {
-        signatureHashes.push(0n);
+        signatureHashes.push(BigInt(0));
       }
       
       // Create validity flags (1 for valid signatures, 0 for padding)
-      const validityFlags = Array(maxSigners).fill(0n);
+      const validityFlags = Array(maxSigners).fill(BigInt(0));
       for (let i = 0; i < signatures.length; i++) {
-        validityFlags[i] = 1n;
+        validityFlags[i] = BigInt(1);
       }
       
       // Create a witness input object that matches our circuit definition
@@ -182,7 +187,7 @@ export class EnhancedZeroKnowledgeService extends ZeroKnowledgeShield {
       // Simulate the combined hash calculation
       const combinedHash = signatureHashes
         .map((hash, i) => hash * validityFlags[i])
-        .reduce((acc, val) => acc ^ val, 0n) ^ witnessInput.vaultId;
+        .reduce((acc, val) => acc ^ val, BigInt(0)) ^ witnessInput.vaultId;
       
       // Create a structured proof
       const proof: EnhancedZkProof = {

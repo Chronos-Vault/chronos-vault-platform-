@@ -4,6 +4,17 @@
  * Common type definitions used across the application.
  */
 
+// Zero-Knowledge proof types
+export enum ZkProofType {
+  VAULT_OWNERSHIP = 'VAULT_OWNERSHIP',
+  ASSET_VERIFICATION = 'ASSET_VERIFICATION',
+  MULTI_SIGNATURE = 'MULTI_SIGNATURE',
+  ACCESS_AUTHORIZATION = 'ACCESS_AUTHORIZATION',
+  TRANSACTION_VERIFICATION = 'TRANSACTION_VERIFICATION',
+  IDENTITY_VERIFICATION = 'IDENTITY_VERIFICATION',
+  CROSS_CHAIN = 'CROSS_CHAIN'
+}
+
 // Supported blockchain types
 export enum BlockchainType {
   TON = 'TON',

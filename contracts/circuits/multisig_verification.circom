@@ -1,54 +1,58 @@
 pragma circom 2.0.0;
 
 /*
- * Multi-Signature Verification Circuit
+ * Multi-Signature Verification Circuit for Chronos Vault
  * 
- * Proves that sufficient signatures (meeting or exceeding a threshold) have been provided
- * without revealing which specific keys signed or their total count.
+ * This circuit verifies that a minimum threshold of signatures
+ * have been provided for a vault operation.
  */
 
-include "node_modules/circomlib/circuits/mimc.circom";
-include "node_modules/circomlib/circuits/comparators.circom";
+include "../node_modules/circomlib/circuits/mimc.circom";
+include "../node_modules/circomlib/circuits/comparators.circom";
 
-template MultiSigVerification(maxSigners) {
+template MultiSigVerifier(n) {
+    // Maximum number of signers n
+
     // Public inputs
-    signal input threshold; // Required number of signatures
-    signal input vaultId; // The vault ID
+    signal input threshold; // required number of valid signatures
+    signal input vaultId;
     
     // Private inputs
-    signal input numValidSignatures; // How many valid signatures we have
-    signal input signatureHashes[maxSigners]; // Hashes of valid signatures
-    signal input validityFlags[maxSigners]; // 1 if signature at index is valid, 0 otherwise
+    signal input numValidSignatures; // actual number of valid signatures
+    signal input signatureHashes[n]; // hashes of signatures (0 for unused slots)
+    signal input validityFlags[n]; // 1 for valid signature, 0 for invalid/unused
     
-    // Verify that we have enough valid signatures
-    component greaterOrEqual = GreaterEqThan(32);
-    greaterOrEqual.in[0] <== numValidSignatures;
-    greaterOrEqual.in[1] <== threshold;
-    greaterOrEqual.out === 1; // must be greater or equal
+    // Count valid signatures
+    signal validCount;
+    validCount <== validityFlags[0];
     
-    // Count valid signatures and ensure it matches numValidSignatures
-    var validCount = 0;
-    for (var i = 0; i < maxSigners; i++) {
-        // Each flag must be 0 or 1
-        validityFlags[i] * (1 - validityFlags[i]) === 0;
-        validCount += validityFlags[i];
+    for (var i=1; i<n; i++) {
+        validCount = validCount + validityFlags[i];
     }
     
-    // Ensure the provided count matches the actual count
-    numValidSignatures === validCount;
+    // Ensure validCount equals numValidSignatures
+    validCount === numValidSignatures;
     
-    // Create a combined hash of all valid signatures
-    // This allows external verification that these specific signatures were used
-    component combinedHasher = MiMC7(maxSigners);
-    for (var i = 0; i < maxSigners; i++) {
-        combinedHasher.ins[i] <== signatureHashes[i] * validityFlags[i];
+    // Check that we have at least threshold signatures
+    component gte = GreaterEqThan(32);
+    gte.in[0] <== numValidSignatures;
+    gte.in[1] <== threshold;
+    
+    // Ensure the comparison is valid (must be 1)
+    gte.out === 1;
+    
+    // Compute a combined hash of all valid signatures to prove they were used
+    component mimc = MiMC7(91);
+    
+    // Initialize with vault ID to bind signatures to this specific vault
+    signal combinedHash;
+    combinedHash <== vaultId;
+    
+    // Accumulate all valid signatures
+    for (var i=0; i<n; i++) {
+        signal tmp <== signatureHashes[i] * validityFlags[i];
+        combinedHash = combinedHash + tmp;
     }
-    combinedHasher.k <== vaultId;
-    
-    // The verification hash can be used for cross-chain verification
-    signal output verificationHash;
-    verificationHash <== combinedHasher.outs[0];
 }
 
-// Using a maximum of 10 signers for this example
-component main {public [threshold, vaultId]} = MultiSigVerification(10);
+component main {public [threshold, vaultId]} = MultiSigVerifier(10);

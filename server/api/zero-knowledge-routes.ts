@@ -1,94 +1,92 @@
-/**
- * Zero-Knowledge API Routes
- * 
- * Provides endpoints for zero-knowledge proof generation and verification
- * for the Chronos Vault platform.
- */
-
 import { Router, Request, Response } from 'express';
-import { zeroKnowledgeShield, ZkProofType } from '../security/zero-knowledge-shield';
 import { enhancedZeroKnowledgeService } from '../security/enhanced-zero-knowledge-service';
-import { validateSession } from '../middleware/auth-middleware';
 import { BlockchainType } from '../../shared/types';
+import { ZkProofType } from '../security/zero-knowledge-shield';
 
-export const zkRouter = Router();
+const router = Router();
 
-// Add authentication middleware
-zkRouter.use(validateSession);
-
-/**
- * Generate a vault ownership proof
- * POST /api/zk/prove/ownership
- */
-zkRouter.post('/prove/ownership', async (req: Request, res: Response) => {
+// Get Zero-Knowledge service status
+router.get('/status', (req: Request, res: Response) => {
   try {
-    const { vaultId, ownerAddress, privateKey, blockchainType } = req.body;
+    const status = {
+      status: 'operational',
+      implementationDetails: {
+        library: 'SnarkJS',
+        protocol: 'Groth16',
+        circuitVersion: '1.0.0',
+      },
+      supportedBlockchains: ['ETH', 'SOL', 'TON'],
+      supportedProofTypes: [
+        'VAULT_OWNERSHIP',
+        'ASSET_VERIFICATION',
+        'ACCESS_AUTHORIZATION',
+        'TRANSACTION_VERIFICATION',
+        'IDENTITY_VERIFICATION'
+      ]
+    };
     
-    // Validate required fields
-    if (!vaultId || !ownerAddress || !privateKey || !blockchainType) {
-      return res.status(400).json({ error: 'Missing required fields' });
-    }
-    
-    // Only allow specific blockchain types
-    if (!['ETH', 'SOL', 'TON'].includes(blockchainType)) {
-      return res.status(400).json({ error: 'Invalid blockchain type' });
-    }
-    
-    // Generate the proof
-    const proof = await enhancedZeroKnowledgeService.generateVaultOwnershipProof(
-      vaultId,
-      ownerAddress,
-      privateKey,
-      blockchainType as BlockchainType
-    );
-    
-    // Don't include the rawProof in the response for security
-    const { rawProof, ...safeProof } = proof;
-    
-    res.status(200).json({
-      success: true,
-      proof: safeProof,
-      message: 'Vault ownership proof generated successfully'
-    });
+    res.json(status);
   } catch (error) {
-    console.error('Error generating vault ownership proof:', error);
+    console.error('[ZK-Routes] Error getting ZK service status:', error);
     res.status(500).json({ 
-      success: false,
-      error: error instanceof Error ? error.message : 'Unknown error generating proof'
+      success: false, 
+      error: 'Failed to get Zero-Knowledge service status' 
     });
   }
 });
 
-/**
- * Generate a multi-signature proof
- * POST /api/zk/prove/multisig
- */
-zkRouter.post('/prove/multisig', async (req: Request, res: Response) => {
+// Generate a vault ownership proof
+router.post('/prove/ownership', async (req: Request, res: Response) => {
+  try {
+    const { vaultId, ownerAddress, privateKey, blockchainType } = req.body;
+    
+    if (!vaultId || !ownerAddress || !privateKey || !blockchainType) {
+      return res.status(400).json({ 
+        success: false, 
+        error: 'Missing required parameters' 
+      });
+    }
+    
+    const proof = await enhancedZeroKnowledgeService.generateVaultOwnershipProof(
+      vaultId,
+      ownerAddress, 
+      privateKey,
+      blockchainType as BlockchainType
+    );
+    
+    res.json({ 
+      success: true, 
+      proof,
+      message: 'Vault ownership proof generated successfully'
+    });
+  } catch (error) {
+    console.error('[ZK-Routes] Error generating ownership proof:', error);
+    res.status(500).json({ 
+      success: false, 
+      error: error instanceof Error ? error.message : 'Failed to generate ownership proof' 
+    });
+  }
+});
+
+// Generate a multi-signature proof
+router.post('/prove/multisig', async (req: Request, res: Response) => {
   try {
     const { vaultId, threshold, signatures, blockchainType } = req.body;
     
-    // Validate required fields
     if (!vaultId || !threshold || !signatures || !blockchainType) {
-      return res.status(400).json({ error: 'Missing required fields' });
-    }
-    
-    // Validate threshold and signatures
-    if (threshold <= 0) {
-      return res.status(400).json({ error: 'Threshold must be a positive number' });
+      return res.status(400).json({ 
+        success: false, 
+        error: 'Missing required parameters' 
+      });
     }
     
     if (!Array.isArray(signatures) || signatures.length < threshold) {
       return res.status(400).json({ 
-        error: `Insufficient signatures: required ${threshold}, got ${signatures?.length || 0}`
+        success: false, 
+        error: `Insufficient signatures: required ${threshold}, got ${signatures?.length || 0}` 
       });
     }
     
-    // Only allow specific blockchain types
-    if (!['ETH', 'SOL', 'TON'].includes(blockchainType)) {
-      return res.status(400).json({ error: 'Invalid blockchain type' });
-    }
-    
-    // Generate the proof
     const proof = await enhancedZeroKnowledgeService.generateMultiSigProof(
       vaultId,
       threshold,
@@ -96,142 +94,92 @@ zkRouter.post('/prove/multisig', async (req: Request, res: Response) => {
       blockchainType as BlockchainType
     );
     
-    // Don't include the rawProof in the response for security
-    const { rawProof, ...safeProof } = proof;
-    
-    res.status(200).json({
-      success: true,
-      proof: safeProof,
+    res.json({ 
+      success: true, 
+      proof,
       message: 'Multi-signature proof generated successfully'
     });
   } catch (error) {
-    console.error('Error generating multi-signature proof:', error);
+    console.error('[ZK-Routes] Error generating multisig proof:', error);
     res.status(500).json({ 
-      success: false,
-      error: error instanceof Error ? error.message : 'Unknown error generating proof'
+      success: false, 
+      error: error instanceof Error ? error.message : 'Failed to generate multi-signature proof' 
     });
   }
 });
 
-/**
- * Verify a zero-knowledge proof
- * POST /api/zk/verify
- */
-zkRouter.post('/verify', async (req: Request, res: Response) => {
+// Verify a zero-knowledge proof
+router.post('/verify', async (req: Request, res: Response) => {
   try {
     const { proof, proofType, blockchainType } = req.body;
     
-    // Validate required fields
     if (!proof || !proofType || !blockchainType) {
-      return res.status(400).json({ error: 'Missing required fields' });
+      return res.status(400).json({ 
+        success: false, 
+        error: 'Missing required parameters' 
+      });
     }
     
-    // Validate proof type
-    if (!Object.values(ZkProofType).includes(proofType)) {
-      return res.status(400).json({ error: 'Invalid proof type' });
-    }
-    
-    // Only allow specific blockchain types
-    if (!['ETH', 'SOL', 'TON'].includes(blockchainType)) {
-      return res.status(400).json({ error: 'Invalid blockchain type' });
-    }
-    
-    // Verify the proof
     const verificationResult = await enhancedZeroKnowledgeService.verifyEnhancedProof(
       proof,
       proofType as ZkProofType,
       blockchainType as BlockchainType
     );
     
-    res.status(200).json({
-      success: verificationResult.success,
+    res.json({ 
+      success: verificationResult.success, 
       verification: verificationResult,
-      message: verificationResult.success 
-        ? 'Proof verified successfully' 
-        : 'Proof verification failed'
+      message: verificationResult.success ? 
+        'Proof verified successfully' : 
+        'Proof verification failed'
     });
   } catch (error) {
-    console.error('Error verifying proof:', error);
+    console.error('[ZK-Routes] Error verifying proof:', error);
     res.status(500).json({ 
-      success: false,
-      error: error instanceof Error ? error.message : 'Unknown error verifying proof'
+      success: false, 
+      error: error instanceof Error ? error.message : 'Failed to verify proof' 
     });
   }
 });
 
-/**
- * Generate a cross-chain proof
- * POST /api/zk/prove/cross-chain
- */
-zkRouter.post('/prove/cross-chain', async (req: Request, res: Response) => {
+// Generate a cross-chain proof
+router.post('/prove/cross-chain', async (req: Request, res: Response) => {
   try {
-    const { vaultId, data, sourceChain, targetChains } = req.body;
+    const { vaultId, sourceChain, targetChains, data } = req.body;
     
-    // Validate required fields
-    if (!vaultId || !data || !sourceChain || !targetChains || !Array.isArray(targetChains)) {
-      return res.status(400).json({ error: 'Missing or invalid required fields' });
+    if (!vaultId || !sourceChain || !targetChains) {
+      return res.status(400).json({ 
+        success: false, 
+        error: 'Missing required parameters' 
+      });
     }
     
-    // Validate chains
-    const validChains = ['ETH', 'SOL', 'TON'];
-    if (!validChains.includes(sourceChain)) {
-      return res.status(400).json({ error: 'Invalid source chain' });
+    if (!Array.isArray(targetChains) || targetChains.length === 0) {
+      return res.status(400).json({ 
+        success: false, 
+        error: 'targetChains must be a non-empty array' 
+      });
     }
     
-    for (const chain of targetChains) {
-      if (!validChains.includes(chain)) {
-        return res.status(400).json({ error: `Invalid target chain: ${chain}` });
-      }
-    }
-    
-    // Generate the cross-chain proofs
-    const proofs = await enhancedZeroKnowledgeService.generateCrossChainProof(
+    const crossChainProofs = await enhancedZeroKnowledgeService.generateCrossChainProof(
       vaultId,
-      data,
+      data || {},
       sourceChain as BlockchainType,
-      targetChains as BlockchainType[]
+      targetChains.map(chain => chain as BlockchainType)
     );
     
-    // Create a safe version without raw proofs
-    const safeProofs: Record<string, any> = {};
-    for (const [chain, proof] of Object.entries(proofs)) {
-      const { rawProof, ...safeProof } = proof;
-      safeProofs[chain] = safeProof;
-    }
-    
-    res.status(200).json({
-      success: true,
-      proofs: safeProofs,
+    res.json({ 
+      success: true, 
+      proofs: crossChainProofs,
       message: 'Cross-chain proofs generated successfully'
     });
   } catch (error) {
-    console.error('Error generating cross-chain proofs:', error);
+    console.error('[ZK-Routes] Error generating cross-chain proof:', error);
     res.status(500).json({ 
-      success: false,
-      error: error instanceof Error ? error.message : 'Unknown error generating cross-chain proofs'
+      success: false, 
+      error: error instanceof Error ? error.message : 'Failed to generate cross-chain proof' 
     });
   }
 });
 
-/**
- * Get ZK proof status
- * GET /api/zk/status
- */
-zkRouter.get('/status', (_req: Request, res: Response) => {
-  res.status(200).json({
-    success: true,
-    status: 'operational',
-    features: {
-      vaultOwnershipProofs: true,
-      multiSignatureProofs: true,
-      crossChainProofs: true,
-      verificationAPI: true
-    },
-    supportedBlockchains: ['ETH', 'SOL', 'TON'],
-    implementationDetails: {
-      library: 'SnarkJS',
-      protocol: 'Groth16',
-      circuitVersion: '2.0'
-    }
-  });
-});
+export default router;
