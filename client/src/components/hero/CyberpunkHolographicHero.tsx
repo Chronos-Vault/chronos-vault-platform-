@@ -99,52 +99,49 @@ const CyberpunkHolographicHero: React.FC<CyberpunkHolographicHeroProps> = ({ onC
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 items-center">
           {/* Left column - Security Dashboard */}
           <div className="relative mx-auto lg:mx-0 max-w-md w-full">
-            {/* Top hash display */}
-            <div className="text-xs text-[#FF5AF7]/70 font-mono mb-2 overflow-hidden whitespace-nowrap">
+            {/* Top hash display - styled to match image */}
+            <div className="text-xs text-[#6B00D7] font-mono mb-3 overflow-hidden whitespace-nowrap text-center bg-[#121212]/50 py-1 rounded-md">
               {hashDisplay.top}
             </div>
             
-            {/* Main security card */}
+            {/* Main security card - exact match to the image */}
             <div className="relative mb-3">
-              <div className="relative bg-[#121212] border-2 border-[#333] rounded-xl p-8 shadow-[0_0_30px_rgba(107,0,215,0.3)]">
-                {/* Hologram scan effect - reduced */}
+              <div className="relative bg-[#121212] border border-[#333] rounded-xl p-8 shadow-[0_0_30px_rgba(107,0,215,0.3)] overflow-hidden">
+                {/* Subtle scan line effect */}
                 <div className="absolute inset-0 overflow-hidden rounded-xl pointer-events-none">
-                  {scanLines.slice(0, 10).map(line => (
-                    <div 
-                      key={line.id} 
-                      className="absolute h-[1px] w-full bg-[#FF5AF7]/30"
-                      style={{ 
-                        top: `${(line.id * 100) / 10}%`
-                      }} 
-                    />
-                  ))}
+                  <div className="absolute h-[2px] w-full bg-[#FF5AF7]/20 top-1/4"></div>
+                  <div className="absolute h-[2px] w-full bg-[#FF5AF7]/20 top-3/4"></div>
+                  <div className="absolute w-[2px] h-full bg-[#FF5AF7]/20 left-1/4"></div>
+                  <div className="absolute w-[2px] h-full bg-[#FF5AF7]/20 left-3/4"></div>
                 </div>
                 
                 {/* Security rating */}
-                <div className="text-center mb-8">
-                  <div className="text-sm text-gray-400 uppercase tracking-wider mb-1">SECURITY RATING:</div>
-                  <div className="text-2xl font-bold text-[#FF5AF7]">{securityRating}%</div>
+                <div className="text-center mb-6">
+                  <div className="text-xs text-gray-400 uppercase tracking-wider mb-1">SECURITY RATING:</div>
+                  <div className="text-xl font-bold text-[#FF5AF7]">{securityRating}%</div>
                 </div>
                 
-                {/* Central Shield Icon - simplified */}
-                <div className="relative flex justify-center items-center mb-6">
-                  <div className="w-24 h-24 rounded-full bg-[#6B00D7]/10 flex items-center justify-center">
-                    <div className="w-16 h-16 rounded-full bg-[#6B00D7]/20 flex items-center justify-center">
-                      <div className="relative z-10 bg-[#121212] border-2 border-[#6B00D7]/40 rounded-full p-4 shadow-[0_0_15px_rgba(107,0,215,0.4)]">
-                        <Shield className="w-10 h-10 text-[#FF5AF7]" />
-                      </div>
-                    </div>
+                {/* Central Shield Icon - matching image */}
+                <div className="relative flex justify-center items-center mb-4">
+                  {/* Purple circles behind shield */}
+                  <div className="absolute w-32 h-32 rounded-full bg-[#6B00D7]/10"></div>
+                  <div className="absolute w-24 h-24 rounded-full bg-[#6B00D7]/15"></div>
+                  <div className="absolute w-16 h-16 rounded-full bg-[#6B00D7]/20"></div>
+                  
+                  {/* Central shield */}
+                  <div className="relative z-10">
+                    <Shield className="w-12 h-12 text-[#FF5AF7]" />
                   </div>
                   
-                  {/* Connection points - simplified */}
+                  {/* Connection points - purple dots */}
                   <div className="absolute w-full h-full pointer-events-none">
                     {[45, 135, 225, 315].map((angle, index) => (
                       <div 
                         key={index}
-                        className="absolute w-3 h-3 rounded-full bg-[#FF5AF7]"
+                        className="absolute w-2.5 h-2.5 rounded-full bg-[#FF5AF7]"
                         style={{
-                          top: `${50 + 40 * Math.sin(angle * Math.PI / 180)}%`,
-                          left: `${50 + 40 * Math.cos(angle * Math.PI / 180)}%`,
+                          top: `${50 + 42 * Math.sin(angle * Math.PI / 180)}%`,
+                          left: `${50 + 42 * Math.cos(angle * Math.PI / 180)}%`,
                         }}
                       />
                     ))}
@@ -153,40 +150,40 @@ const CyberpunkHolographicHero: React.FC<CyberpunkHolographicHeroProps> = ({ onC
               </div>
             </div>
             
-            {/* Bottom hash display */}
-            <div className="text-xs text-[#FF5AF7]/70 font-mono mt-2 overflow-hidden whitespace-nowrap">
+            {/* Bottom hash display - styled to match image */}
+            <div className="text-xs text-[#6B00D7] font-mono mt-3 overflow-hidden whitespace-nowrap text-center bg-[#121212]/50 py-1 rounded-md">
               {hashDisplay.bottom}
             </div>
             
-            {/* Blockchain connections */}
-            <div className="grid grid-cols-2 gap-4 mt-6">
-              <div className="bg-[#121212] border border-[#333] rounded-lg p-3 flex items-center space-x-2">
-                <div className="flex-shrink-0 p-1.5 rounded bg-[#6B00D7]/20 text-[#6B00D7]">
-                  <Network className="w-4 h-4" />
+            {/* Blockchain connections - styled like the image */}
+            <div className="flex justify-between mt-6">
+              <div className="bg-[#121212]/80 border border-[#333] rounded-lg px-3 py-2 flex items-center w-[48%]">
+                <div className="mr-2">
+                  <div className="h-3 w-3 rounded-full bg-[#FF5AF7]"></div>
                 </div>
-                <div className="text-sm">ETH Secured</div>
+                <div className="text-xs md:text-sm">ETH Secured</div>
               </div>
               
-              <div className="bg-[#121212] border border-[#333] rounded-lg p-3 flex items-center space-x-2">
-                <div className="flex-shrink-0 p-1.5 rounded bg-[#6B00D7]/20 text-[#6B00D7]">
-                  <Network className="w-4 h-4" />
+              <div className="bg-[#121212]/80 border border-[#333] rounded-lg px-3 py-2 flex items-center w-[48%]">
+                <div className="mr-2">
+                  <div className="h-3 w-3 rounded-full bg-[#FF5AF7]"></div>
                 </div>
-                <div className="text-sm">TON Secured</div>
+                <div className="text-xs md:text-sm">TON Secured</div>
               </div>
             </div>
           </div>
           
           {/* Right column - Features and CTA */}
           <div className="space-y-8">
-            {/* Security features - simplified */}
-            <div className="flex flex-wrap gap-2">
+            {/* Security features - exactly matching the image */}
+            <div className="flex flex-col space-y-3">
               {securityFeatures.map((feature) => (
                 <div 
                   key={feature.id} 
-                  className="bg-[#121212]/50 border border-[#333] rounded-full py-2 px-4 flex items-center"
+                  className="bg-[#121212]/80 border border-[#6B00D7]/30 rounded-full py-2.5 px-5 inline-flex items-center w-fit"
                 >
-                  <div className="h-2 w-2 rounded-full bg-[#FF5AF7] mr-2"></div>
-                  <span className="text-sm text-white">{feature.name}</span>
+                  <div className="h-2.5 w-2.5 rounded-full bg-[#FF5AF7] mr-3"></div>
+                  <span className="text-sm text-white font-medium">{feature.name}</span>
                 </div>
               ))}
             </div>
