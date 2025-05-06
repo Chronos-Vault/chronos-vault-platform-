@@ -166,7 +166,6 @@ export default function SecurityDashboard() {
       toast({
         title: "Security Check Complete",
         description: "All systems secure. No issues detected.",
-        variant: "success",
       });
     }, 2000);
   };
@@ -189,7 +188,6 @@ export default function SecurityDashboard() {
       toast({
         title: "Backup Complete",
         description: "Your vault data has been successfully backed up.",
-        variant: "success",
       });
     }, 2000);
   };
@@ -198,7 +196,6 @@ export default function SecurityDashboard() {
     toast({
       title: "Restore Point Created",
       description: "A new restore point has been created for your vault.",
-      variant: "success",
     });
   };
   
@@ -206,7 +203,6 @@ export default function SecurityDashboard() {
     toast({
       title: "Security Level Upgraded",
       description: `Your security level has been upgraded to ${targetSecurityLevel}.`,
-      variant: "success",
     });
     setUpgradeDialogOpen(false);
   };

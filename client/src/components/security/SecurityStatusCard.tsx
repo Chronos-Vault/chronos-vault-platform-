@@ -1,13 +1,12 @@
 import React from 'react';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Progress } from '@/components/ui/progress';
-import { Badge } from '@/components/ui/badge';
-import { Shield, RefreshCw } from 'lucide-react';
+import { ShieldCheck, ShieldAlert, RefreshCw, ArrowRight } from 'lucide-react';
+import SecurityHealthGauge from './SecurityHealthGauge';
 
 type SecurityStatusCardProps = {
   securityLevel: 'standard' | 'enhanced' | 'maximum';
-  securityScore: number;
+  securityScore: number; // 0-100
   lastChecked: string;
   activeFeatureCount: number;
   totalFeatureCount: number;
@@ -16,35 +15,39 @@ type SecurityStatusCardProps = {
 };
 
 /**
- * Security Status Card showing current security level, score, and last check time
+ * Card showing current security status and score
  */
 export default function SecurityStatusCard({
   securityLevel = 'standard',
-  securityScore = 75,
-  lastChecked = 'Never',
-  activeFeatureCount = 3,
-  totalFeatureCount = 8,
+  securityScore = 0,
+  lastChecked = 'Unknown',
+  activeFeatureCount = 0,
+  totalFeatureCount = 0,
   onUpgradeClick,
   onCheckNowClick
 }: SecurityStatusCardProps) {
-  // Format for visual display
-  const formattedSecurityLevel = securityLevel.charAt(0).toUpperCase() + securityLevel.slice(1);
-  
-  // Badge color based on security level
-  const getBadgeVariant = () => {
+  // Get color and label based on security level
+  const getSecurityLevelInfo = () => {
     switch(securityLevel) {
-      case 'standard': return 'default';
-      case 'enhanced': return 'secondary';
-      case 'maximum': return 'destructive';
-      default: return 'default';
+      case 'standard':
+        return { color: 'text-blue-400', label: 'Standard' };
+      case 'enhanced':
+        return { color: 'text-purple-400', label: 'Enhanced' };
+      case 'maximum':
+        return { color: 'text-amber-400', label: 'Maximum' };
+      default:
+        return { color: 'text-blue-400', label: 'Standard' };
     }
   };
   
-  // Progress color based on score
-  const getProgressColor = () => {
-    if (securityScore < 50) return 'bg-red-500';
-    if (securityScore < 75) return 'bg-amber-500';
-    return 'bg-green-500';
+  const { color, label } = getSecurityLevelInfo();
+  
+  // Get indicator component based on security score
+  const getScoreIndicator = () => {
+    if (securityScore >= 80) {
+      return <ShieldCheck className="h-5 w-5 text-green-500" />;
+    }
+    return <ShieldAlert className="h-5 w-5 text-amber-500" />;
   };
   
   return (
@@ -53,66 +56,67 @@ export default function SecurityStatusCard({
       <div className="absolute inset-0 bg-gradient-to-br from-purple-900/5 to-purple-500/5 z-0"></div>
       
       <CardHeader className="relative z-10">
-        <div className="flex justify-between items-start">
+        <div className="flex justify-between items-center">
           <CardTitle className="text-xl">Security Status</CardTitle>
-          <Badge variant={getBadgeVariant()}>
-            {formattedSecurityLevel} Level
-          </Badge>
+          <div className={`flex items-center gap-1 text-sm font-medium ${color}`}>
+            {label}
+          </div>
         </div>
         <CardDescription>
-          Your vault security overview and status
+          Overall security health and status
         </CardDescription>
       </CardHeader>
       
-      <CardContent className="relative z-10 space-y-5">
-        {/* Security Score */}
-        <div className="space-y-2">
-          <div className="flex justify-between text-sm">
-            <span>Security Score</span>
-            <span className="font-medium">{securityScore}/100</span>
-          </div>
-          <Progress value={securityScore} className={getProgressColor()} />
+      <CardContent className="relative z-10">
+        <div className="flex flex-col items-center justify-center mb-4">
+          <SecurityHealthGauge score={securityScore} size="medium" />
         </div>
         
-        {/* Features */}
-        <div className="space-y-2">
-          <div className="flex justify-between text-sm">
-            <span>Active Features</span>
-            <span className="font-medium">{activeFeatureCount}/{totalFeatureCount}</span>
+        <div className="space-y-3">
+          <div className="flex justify-between items-center">
+            <span className="text-sm text-muted-foreground">Security Features:</span>
+            <span className="text-sm font-medium">{activeFeatureCount}/{totalFeatureCount} Active</span>
           </div>
-          <Progress 
-            value={(activeFeatureCount / totalFeatureCount) * 100}
-            className="bg-purple-600" 
-          />
-        </div>
-        
-        {/* Last Check */}
-        <div className="flex justify-between items-center text-sm pt-2 border-t border-border/50">
-          <span className="text-muted-foreground">Last Security Check:</span>
-          <span>{lastChecked}</span>
+          
+          <div className="flex justify-between items-center">
+            <span className="text-sm text-muted-foreground">Last Security Check:</span>
+            <span className="text-sm font-medium">{lastChecked}</span>
+          </div>
+          
+          <div className="flex justify-between items-center">
+            <span className="text-sm text-muted-foreground">Security Status:</span>
+            <div className="flex items-center gap-1">
+              {getScoreIndicator()}
+              <span className="text-sm font-medium">
+                {securityScore >= 80 ? 'Secure' : 'Action Needed'}
+              </span>
+            </div>
+          </div>
         </div>
       </CardContent>
       
-      <CardFooter className="flex gap-2 relative z-10">
-        {securityLevel !== 'maximum' && (
-          <Button 
-            variant="default" 
-            className="flex-1 bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800"
-            onClick={onUpgradeClick}
-          >
-            <Shield className="mr-2 h-4 w-4" />
-            Upgrade Security
-          </Button>
-        )}
-        
+      <CardFooter className="relative z-10 flex gap-2">
         <Button 
           variant="outline" 
+          size="sm" 
           className="flex-1"
           onClick={onCheckNowClick}
         >
-          <RefreshCw className="mr-2 h-4 w-4" />
+          <RefreshCw className="mr-1 h-3.5 w-3.5" />
           Check Now
         </Button>
+        
+        {securityLevel !== 'maximum' && (
+          <Button 
+            variant="default" 
+            size="sm" 
+            className="flex-1"
+            onClick={onUpgradeClick}
+          >
+            Upgrade
+            <ArrowRight className="ml-1 h-3.5 w-3.5" />
+          </Button>
+        )}
       </CardFooter>
     </Card>
   );

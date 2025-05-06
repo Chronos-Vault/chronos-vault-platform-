@@ -28,7 +28,7 @@ export default function SecurityPage() {
     toast({
       title: "Security Level Changed",
       description: `Your security level has been changed to ${level}.`,
-      variant: "success",
+
     });
   };
   
