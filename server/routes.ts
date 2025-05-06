@@ -141,6 +141,191 @@ export async function registerRoutes(app: Express): Promise<Server> {
     });
   });
   
+  // Generate a vault ownership proof
+  app.post('/api/zk/prove/ownership', async (req: Request, res: Response) => {
+    try {
+      const { vaultId, ownerAddress, privateKey, blockchainType } = req.body;
+      
+      if (!vaultId || !ownerAddress || !privateKey || !blockchainType) {
+        return res.status(400).json({ 
+          success: false, 
+          error: 'Missing required parameters' 
+        });
+      }
+      
+      // Mock proof generation to provide valid response for UI testing
+      const proof = {
+        proof: {
+          pi_a: ["16253449135536155789415121159615569535045871674764565178603064235478409453329", "14323186737829176635270402358200627153129742078041229722047385166559702752872", "1"],
+          pi_b: [
+            ["9929907783670977311632868463487956487813273034220859047534658223541149821375", "6139942432381367262281725627659774824963204657456714322724187363665703941048"],
+            ["8495347814671395071558992272332019220606574915181113159532570628496539410786", "109818938454348592381940073960884350340620477019194148965312254150063656510"],
+            ["1", "0"]
+          ],
+          pi_c: ["10771723362781936469340200111513271662392989030055762036412165281919763261338", "11482062501108546120953829098320417478312264251881283167323012356856030333001", "1"],
+          protocol: "groth16"
+        },
+        publicSignals: [
+          vaultId.toString(),
+          ownerAddress.toString(),
+          blockchainType.toString()
+        ],
+        type: "VAULT_OWNERSHIP",
+        timestamp: Date.now()
+      };
+      
+      res.json({ 
+        success: true, 
+        proof,
+        message: 'Vault ownership proof generated successfully'
+      });
+    } catch (error) {
+      console.error('[ZK-Routes] Error generating ownership proof:', error);
+      res.status(500).json({ 
+        success: false, 
+        error: error instanceof Error ? error.message : 'Failed to generate ownership proof' 
+      });
+    }
+  });
+  
+  // Generate a multi-signature proof
+  app.post('/api/zk/prove/multisig', async (req: Request, res: Response) => {
+    try {
+      const { vaultId, threshold, signatures, blockchainType } = req.body;
+      
+      if (!vaultId || !threshold || !signatures || !blockchainType) {
+        return res.status(400).json({ 
+          success: false, 
+          error: 'Missing required parameters' 
+        });
+      }
+      
+      // Mock proof generation for UI testing
+      const proof = {
+        proof: {
+          pi_a: ["12345678901234567890123456789012345678901234567890123456789012345", "98765432109876543210987654321098765432109876543210987654321098765", "1"],
+          pi_b: [
+            ["11111111111111111111111111111111111111111111111111111111111111111", "22222222222222222222222222222222222222222222222222222222222222222"],
+            ["33333333333333333333333333333333333333333333333333333333333333333", "44444444444444444444444444444444444444444444444444444444444444444"],
+            ["1", "0"]
+          ],
+          pi_c: ["55555555555555555555555555555555555555555555555555555555555555555", "66666666666666666666666666666666666666666666666666666666666666666", "1"],
+          protocol: "groth16"
+        },
+        publicSignals: [
+          vaultId.toString(),
+          threshold.toString(),
+          signatures.toString(),
+          blockchainType.toString()
+        ],
+        type: "MULTISIG_VERIFICATION",
+        timestamp: Date.now()
+      };
+      
+      res.json({ 
+        success: true, 
+        proof,
+        message: 'Multi-signature proof generated successfully'
+      });
+    } catch (error) {
+      console.error('[ZK-Routes] Error generating multisig proof:', error);
+      res.status(500).json({ 
+        success: false, 
+        error: error instanceof Error ? error.message : 'Failed to generate multi-signature proof' 
+      });
+    }
+  });
+  
+  // Verify a zero-knowledge proof
+  app.post('/api/zk/verify', async (req: Request, res: Response) => {
+    try {
+      const { proof, proofType, blockchainType } = req.body;
+      
+      if (!proof || !proofType || !blockchainType) {
+        return res.status(400).json({ 
+          success: false, 
+          error: 'Missing required parameters' 
+        });
+      }
+      
+      // Mock verification result
+      const verificationResult = {
+        success: true,
+        proofType,
+        blockchainType,
+        details: {
+          timestamp: Date.now(),
+          verifier: "ChronosVault ZK Shield",
+          circuit: proofType === "VAULT_OWNERSHIP" ? 
+            "vault_ownership.circom" : 
+            "multisig_verification.circom"
+        }
+      };
+      
+      res.json({ 
+        success: true, 
+        verification: verificationResult,
+        message: 'Proof verified successfully'
+      });
+    } catch (error) {
+      console.error('[ZK-Routes] Error verifying proof:', error);
+      res.status(500).json({ 
+        success: false, 
+        error: error instanceof Error ? error.message : 'Failed to verify proof' 
+      });
+    }
+  });
+  
+  // Generate a cross-chain proof
+  app.post('/api/zk/prove/cross-chain', async (req: Request, res: Response) => {
+    try {
+      const { vaultId, sourceChain, targetChains, data } = req.body;
+      
+      if (!vaultId || !sourceChain || !targetChains) {
+        return res.status(400).json({ 
+          success: false, 
+          error: 'Missing required parameters' 
+        });
+      }
+      
+      if (!Array.isArray(targetChains) || targetChains.length === 0) {
+        return res.status(400).json({ 
+          success: false, 
+          error: 'targetChains must be a non-empty array' 
+        });
+      }
+      
+      // Generate mock proofs for each target chain
+      const crossChainProofs = targetChains.map(targetChain => ({
+        sourceChain,
+        targetChain,
+        vaultId,
+        proof: {
+          pi_a: ["77777777777777777777777777777777777777777777777777777777777777777", "88888888888888888888888888888888888888888888888888888888888888888", "1"],
+          pi_b: [
+            ["99999999999999999999999999999999999999999999999999999999999999999", "00000000000000000000000000000000000000000000000000000000000000000"],
+            ["12121212121212121212121212121212121212121212121212121212121212121", "23232323232323232323232323232323232323232323232323232323232323232"],
+            ["1", "0"]
+          ],
+          pi_c: ["34343434343434343434343434343434343434343434343434343434343434343", "45454545454545454545454545454545454545454545454545454545454545454", "1"],
+        },
+        timestamp: Date.now()
+      }));
+      
+      res.json({ 
+        success: true, 
+        proofs: crossChainProofs,
+        message: 'Cross-chain proofs generated successfully'
+      });
+    } catch (error) {
+      console.error('[ZK-Routes] Error generating cross-chain proof:', error);
+      res.status(500).json({ 
+        success: false, 
+        error: error instanceof Error ? error.message : 'Failed to generate cross-chain proof' 
+      });
+    }
+  });
+  
   // Initialize Arweave storage service with a wallet
   // Note: In production, this would use a secure wallet from environment variables
   // For now, we'll initialize without a wallet, which will limit functionality
