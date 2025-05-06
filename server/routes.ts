@@ -14,6 +14,7 @@ import {
   insertSignatureSchema
 } from "@shared/schema";
 import { ZodError } from "zod";
+import { registerAdminRoutes } from "./api/admin-routes";
 
 if (!process.env.STRIPE_SECRET_KEY) {
   throw new Error('Missing required Stripe secret: STRIPE_SECRET_KEY');
@@ -94,6 +95,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
   
   const httpServer = createServer(app);
+  
+  // Register admin routes for technical testing
+  registerAdminRoutes(app);
 
   // Helper function to handle errors
   const handleError = (res: Response, error: any) => {

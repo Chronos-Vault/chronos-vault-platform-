@@ -3,6 +3,25 @@ import { PenetrationTestConfig } from '../security/penetration-tester';
 import { TestnetConfig } from './enterprise-testnet';
 import { TestingFrameworkConfig } from './testing-framework';
 
+// Define the BlockchainBenchmarkConfig interface directly to avoid circular dependencies
+// Using 'export type' to properly expose this interface
+export type BlockchainBenchmarkConfig = {
+  operationsPerChain: number;
+  includeOperations: {
+    createVault: boolean;
+    readVaultInfo: boolean;
+    updateVault: boolean;
+    deleteVault: boolean;
+    queryVaults: boolean;
+  };
+  concurrentOperations: number;
+  warmupIterations: number;
+  cooldownBetweenTestsMs: number;
+  includeGasAnalysis: boolean;
+  includeRecommendations: boolean;
+  timeoutMs: number;
+}
+
 /**
  * Testing Configuration
  * Contains default configurations for all testing components
@@ -84,6 +103,24 @@ export const DEFAULT_TESTING_FRAMEWORK_CONFIG: TestingFrameworkConfig = {
   stressTest: DEFAULT_STRESS_TEST_CONFIG,
   securityTest: DEFAULT_SECURITY_TEST_CONFIG,
   enterpriseTestnet: DEFAULT_TESTNET_CONFIG
+};
+
+// Default benchmark configuration
+export const DEFAULT_BENCHMARK_CONFIG: BlockchainBenchmarkConfig = {
+  operationsPerChain: 10,
+  includeOperations: {
+    createVault: true,
+    readVaultInfo: true,
+    updateVault: true,
+    deleteVault: true,
+    queryVaults: true
+  },
+  concurrentOperations: 5,
+  warmupIterations: 2,
+  cooldownBetweenTestsMs: 1000,
+  includeGasAnalysis: true,
+  includeRecommendations: true,
+  timeoutMs: 60000 // 1 minute timeout
 };
 
 // Environment-specific configurations

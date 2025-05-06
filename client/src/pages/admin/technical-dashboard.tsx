@@ -117,8 +117,7 @@ export default function TechnicalDashboard() {
           <Progress 
             value={score} 
             max={100} 
-            className="h-2 mt-2" 
-            indicatorClassName={score > 80 ? 'bg-green-500' : score > 60 ? 'bg-amber-500' : 'bg-red-500'}
+            className={`h-2 mt-2 ${score > 80 ? 'bg-green-500' : score > 60 ? 'bg-amber-500' : 'bg-red-500'}`}
           />
           <div className="flex justify-between text-xs text-muted-foreground mt-1">
             <span>Critical</span>

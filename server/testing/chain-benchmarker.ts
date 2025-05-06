@@ -1,4 +1,6 @@
 import { BlockchainConnector, VaultCreationParams } from '../../shared/interfaces/blockchain-connector';
+// Import the config types and constants
+import { BlockchainBenchmarkConfig, DEFAULT_BENCHMARK_CONFIG } from './config';
 
 /**
  * Blockchain Benchmark Tool
@@ -52,42 +54,8 @@ export interface TransactionBenchmarkResult {
   throughputTPS: number;
 }
 
-export interface BlockchainBenchmarkConfig {
-  operationsPerChain: number;
-  includeOperations: {
-    createVault: boolean;
-    readVaultInfo: boolean;
-    updateVault: boolean;
-    deleteVault: boolean;
-    queryVaults: boolean;
-  };
-  concurrentOperations: number;
-  warmupIterations: number;
-  cooldownBetweenTestsMs: number;
-  includeGasAnalysis: boolean;
-  includeRecommendations: boolean;
-  timeoutMs: number;
-}
-
-/**
- * Default benchmark configuration
- */
-export const DEFAULT_BENCHMARK_CONFIG: BlockchainBenchmarkConfig = {
-  operationsPerChain: 10,
-  includeOperations: {
-    createVault: true,
-    readVaultInfo: true,
-    updateVault: true,
-    deleteVault: true,
-    queryVaults: true
-  },
-  concurrentOperations: 5,
-  warmupIterations: 2,
-  cooldownBetweenTestsMs: 1000,
-  includeGasAnalysis: true,
-  includeRecommendations: true,
-  timeoutMs: 60000 // 1 minute timeout
-};
+// The BlockchainBenchmarkConfig interface and DEFAULT_BENCHMARK_CONFIG
+// are imported at the top of this file
 
 /**
  * Blockchain Benchmark Tool

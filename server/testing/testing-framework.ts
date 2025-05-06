@@ -1,7 +1,10 @@
-import { BlockchainConnector } from '../../shared/interfaces/blockchain-connector';
-import { VaultStressTester, StressTestConfig, TestResults } from './stress-tester';
-import { SecurityPenetrationTester, PenetrationTestConfig, SecurityTestResults } from '../security/penetration-tester';
-import { EnterpriseTestnetEnvironment, TestnetConfig, TestnetEnvironment } from './enterprise-testnet';
+import type { BlockchainConnector } from '../../shared/interfaces/blockchain-connector';
+import { VaultStressTester } from './stress-tester';
+import type { StressTestConfig, TestResults } from './stress-tester';
+import { SecurityPenetrationTester } from '../security/penetration-tester';
+import type { PenetrationTestConfig, SecurityTestResults } from '../security/penetration-tester';
+import { EnterpriseTestnetEnvironment } from './enterprise-testnet';
+import type { TestnetConfig, TestnetEnvironment } from './enterprise-testnet';
 
 /**
  * Comprehensive Testing Framework for Chronos Vault

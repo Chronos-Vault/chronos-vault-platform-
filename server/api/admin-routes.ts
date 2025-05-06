@@ -1,8 +1,9 @@
 import { Request, Response } from 'express';
 import { ChronosVaultTestingFramework, BlockchainConnectorFactory, getEnvironmentConfig } from '../testing';
-import { VaultStressTester, DEFAULT_STRESS_TEST_CONFIG } from '../testing/stress-tester';
-import { SecurityPenetrationTester, DEFAULT_SECURITY_TEST_CONFIG } from '../security/penetration-tester';
-import { ChainBenchmarker, DEFAULT_BENCHMARK_CONFIG } from '../testing/chain-benchmarker';
+import { VaultStressTester } from '../testing/stress-tester';
+import { SecurityPenetrationTester } from '../security/penetration-tester';
+import { ChainBenchmarker } from '../testing/chain-benchmarker';
+import { DEFAULT_STRESS_TEST_CONFIG, DEFAULT_SECURITY_TEST_CONFIG, DEFAULT_BENCHMARK_CONFIG } from '../testing/config';
 
 // Mock test results for development - in production these would come from actual test runs
 let cachedTestResults: any = null;
