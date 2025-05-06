@@ -295,7 +295,7 @@ const Home = () => {
               <div className="inline-flex mb-3 items-center justify-center space-x-2 px-4 py-1 rounded-full border border-[#6B00D7]/30 bg-black/30 animate-pulse-slow">
                 <span className="text-sm font-medium text-[#FF5AF7]">TRIPLE-CHAIN SECURITY ARCHITECTURE</span>
               </div>
-              <h2 className="text-4xl sm:text-5xl font-bold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-[#6B00D7] via-[#FF5AF7] to-[#6B00D7]">Unbreakable Vault Technology</h2>
+              <h2 className="text-4xl sm:text-5xl font-bold mb-4 text-[#FF5AF7] neon-glow">Unbreakable Vault Technology</h2>
               <p className="text-gray-300 max-w-3xl mx-auto text-lg">Pioneering the most sophisticated security architecture ever developed for digital assets</p>
             </div>
             
