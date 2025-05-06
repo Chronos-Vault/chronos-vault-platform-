@@ -139,8 +139,12 @@ export function FileUpload({ vaultId, onUploadComplete, className }: FileUploadP
           <Upload className="mr-2 h-5 w-5" />
           Add Media Attachment
         </CardTitle>
-        <CardDescription>
-          Upload images, documents, videos, or audio files to your vault
+        <CardDescription className="space-y-2">
+          <p>Upload images, documents, videos, or audio files to your vault</p>
+          <div className="mt-2 p-2 text-xs rounded-md bg-[#6B00D7]/10 border border-[#6B00D7]/20">
+            <p className="font-medium text-[#FF5AF7]">Permanent Storage Notice:</p> 
+            <p className="mt-1">Files uploaded will be permanently stored on the Arweave network and cannot be deleted. Your vault will contain secure references to these decentralized files.</p>
+          </div>
         </CardDescription>
       </CardHeader>
       <CardContent>
