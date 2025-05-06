@@ -1,0 +1,134 @@
+/* Digital Rain effect */
+.digital-rain {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  opacity: 0.3;
+  overflow: hidden;
+  z-index: 1;
+}
+
+.rain-column {
+  position: absolute;
+  top: -100%;
+  width: 26px;
+  height: 100%;
+  animation: rain-fall linear infinite;
+  text-align: center;
+}
+
+.rain-drop {
+  color: #FF5AF7;
+  font-size: 14px;
+  line-height: 1;
+  animation: rain-glow 3s ease-in-out infinite alternate;
+  text-shadow: 0 0 5px #FF5AF7, 0 0 10px #FF5AF7, 0 0 15px #6B00D7;
+}
+
+@keyframes rain-fall {
+  0% {
+    transform: translateY(-100%);
+  }
+  100% {
+    transform: translateY(100%);
+  }
+}
+
+@keyframes rain-glow {
+  0%, 100% {
+    opacity: 0.3;
+    text-shadow: 0 0 5px #FF5AF7, 0 0 10px #6B00D7;
+  }
+  50% {
+    opacity: 0.8;
+    text-shadow: 0 0 8px #FF5AF7, 0 0 15px #6B00D7, 0 0 20px #FF5AF7;
+  }
+}
+
+/* Holographic effects */
+.shadow-neon-purple {
+  box-shadow: 0 0 15px 2px rgba(107, 0, 215, 0.7), 0 0 30px 5px rgba(255, 90, 247, 0.4);
+}
+
+.drop-shadow-glow {
+  filter: drop-shadow(0 0 8px rgba(255, 90, 247, 0.8));
+}
+
+/* Holographic borders */
+.holographic-border {
+  position: relative;
+  z-index: 1;
+  overflow: hidden;
+}
+
+.holographic-border::before {
+  content: '';
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  right: -2px;
+  bottom: -2px;
+  z-index: -1;
+  background: linear-gradient(45deg, #6B00D7, #FF5AF7, #6B00D7, #FF5AF7);
+  background-size: 400% 400%;
+  animation: gradient-shift 6s ease infinite;
+  border-radius: 0.5rem;
+}
+
+@keyframes gradient-shift {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+/* Shimmer effect */
+.shimmer {
+  position: relative;
+  overflow: hidden;
+}
+
+.shimmer::after {
+  content: '';
+  position: absolute;
+  top: -100%;
+  left: -100%;
+  right: -100%;
+  bottom: -100%;
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0) 0%,
+    rgba(255, 255, 255, 0.05) 25%,
+    rgba(255, 255, 255, 0.2) 50%,
+    rgba(255, 255, 255, 0.05) 75%,
+    rgba(255, 255, 255, 0) 100%
+  );
+  transform: rotate(45deg) translateX(-50%) translateY(-50%);
+  animation: shimmer 6s ease-in-out infinite;
+}
+
+@keyframes shimmer {
+  0% {
+    transform: rotate(15deg) translateX(-200%) translateY(-200%);
+  }
+  25% {
+    transform: rotate(15deg) translateX(200%) translateY(200%);
+  }
+  50% {
+    transform: rotate(45deg) translateX(200%) translateY(-200%);
+  }
+  75% {
+    transform: rotate(45deg) translateX(-200%) translateY(200%);
+  }
+  100% {
+    transform: rotate(15deg) translateX(-200%) translateY(-200%);
+  }
+}
