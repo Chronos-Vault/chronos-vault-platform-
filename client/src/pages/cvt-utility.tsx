@@ -7,7 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { Progress } from "@/components/ui/progress";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { KeyRound, Zap, ArrowRight, CheckCircle2, Lock, Globe, Clock, ShieldCheck, Users, FileKey, Shield, Sparkles } from "lucide-react";
+import { KeyRound, Zap, ArrowRight, CheckCircle2, Lock, Globe, Clock, ShieldCheck, Users, FileKey, Shield, Sparkles, FileText, BarChart3 } from "lucide-react";
 import { useCVTToken } from "@/contexts/cvt-token-context";
 
 const CVTUtilityPage = () => {
@@ -535,13 +535,31 @@ const CVTUtilityPage = () => {
             </div>
 
             <div className="text-center">
-              <Button 
-                className="bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] hover:from-[#5500AB] hover:to-[#FF46E8] text-white px-8 py-6 text-lg rounded-xl shadow-glow hover:shadow-lg hover:shadow-[#FF5AF7]/40 transition-all"
-                onClick={() => setLocation("/cvt-token")}
-              >
-                <KeyRound className="h-5 w-5 mr-2" />
-                Manage Your CVT Tokens
-              </Button>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+                <Button 
+                  className="bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] hover:from-[#5500AB] hover:to-[#FF46E8] text-white px-6 py-5 text-lg rounded-xl shadow-glow hover:shadow-lg hover:shadow-[#FF5AF7]/40 transition-all"
+                  onClick={() => setLocation("/cvt-token")}
+                >
+                  <KeyRound className="h-5 w-5 mr-2" />
+                  Manage Your CVT Tokens
+                </Button>
+                
+                <Button 
+                  className="bg-gradient-to-br from-[#6B00D7]/90 to-[#1A1A1A] hover:from-[#5500AB] hover:to-[#222222] border border-[#6B00D7]/40 text-white px-6 py-5 text-lg rounded-xl shadow-glow hover:shadow-lg hover:shadow-[#6B00D7]/40 transition-all"
+                  onClick={() => setLocation("/cvt-tokenomics")}
+                >
+                  <FileText className="h-5 w-5 mr-2" />
+                  CVT Tokenomics
+                </Button>
+                
+                <Button 
+                  className="bg-gradient-to-br from-[#FF5AF7]/90 to-[#1A1A1A] hover:from-[#FF46E8] hover:to-[#222222] border border-[#FF5AF7]/40 text-white px-6 py-5 text-lg rounded-xl shadow-glow hover:shadow-lg hover:shadow-[#FF5AF7]/40 transition-all"
+                  onClick={() => setLocation("/whitepaper")}
+                >
+                  <BarChart3 className="h-5 w-5 mr-2" />
+                  Whitepaper & Staking Tiers
+                </Button>
+              </div>
             </div>
           </div>
         </section>
