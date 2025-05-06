@@ -55,7 +55,7 @@ export interface CrossChainVerifierConfig {
  */
 export const DEFAULT_CROSS_CHAIN_VERIFIER_CONFIG: CrossChainVerifierConfig = {
   timeoutMs: 30000, // 30 seconds
-  maxRetries: 3,
+  maxRetries: 5, // Increased from 3 to 5 for better reliability
   consistencyChecks: {
     ownerAddress: true,
     beneficiaries: true,
@@ -63,7 +63,7 @@ export const DEFAULT_CROSS_CHAIN_VERIFIER_CONFIG: CrossChainVerifierConfig = {
     status: true,
     metadata: true
   },
-  requireAllChains: false,
+  requireAllChains: true, // Changed to true for stricter verification
   verifySignatures: true,
   detailedAnalysis: true
 };

@@ -8,6 +8,8 @@ import { DEFAULT_STRESS_TEST_CONFIG, DEFAULT_SECURITY_TEST_CONFIG, DEFAULT_BENCH
 // Mock test results for development - in production these would come from actual test runs
 let cachedTestResults: any = null;
 let cachedBenchmarkResults: any = null;
+import { dataPersistenceService } from '../security/data-persistence-service';
+
 let cachedSecurityResults: any = null;
 
 /**
@@ -215,6 +217,163 @@ export function registerAdminRoutes(app: any) {
   });
   
   // Run tests endpoint
+  // Data persistence API endpoints
+  
+  // Get backup stats
+  app.get('/api/admin/backup-stats', requireAdmin, async (req: Request, res: Response) => {
+    try {
+      const stats = dataPersistenceService.getStats();
+      res.json(stats);
+    } catch (error) {
+      console.error('Error fetching backup stats:', error);
+      res.status(500).json({
+        error: 'Failed to fetch backup stats',
+        message: error instanceof Error ? error.message : 'Unknown error'
+      });
+    }
+  });
+  
+  // Create system backup
+  app.post('/api/admin/create-backup', requireAdmin, async (req: Request, res: Response) => {
+    try {
+      const success = await dataPersistenceService.createSystemBackup();
+      
+      if (success) {
+        res.json({
+          success: true,
+          message: 'System backup created successfully',
+          timestamp: new Date()
+        });
+      } else {
+        res.status(500).json({
+          success: false,
+          message: 'Failed to create system backup'
+        });
+      }
+    } catch (error) {
+      console.error('Error creating system backup:', error);
+      res.status(500).json({
+        error: 'Failed to create system backup',
+        message: error instanceof Error ? error.message : 'Unknown error'
+      });
+    }
+  });
+  
+  // Create restore point
+  app.post('/api/admin/create-restore-point', requireAdmin, async (req: Request, res: Response) => {
+    try {
+      const { description } = req.body;
+      
+      if (!description) {
+        return res.status(400).json({
+          error: 'Description is required for restore points'
+        });
+      }
+      
+      const restorePoint = await dataPersistenceService.createRestorePoint(description);
+      
+      res.json({
+        success: true,
+        message: 'Restore point created successfully',
+        restorePoint
+      });
+    } catch (error) {
+      console.error('Error creating restore point:', error);
+      res.status(500).json({
+        error: 'Failed to create restore point',
+        message: error instanceof Error ? error.message : 'Unknown error'
+      });
+    }
+  });
+  
+  // Restore from backup
+  app.post('/api/admin/restore-from-backup', requireAdmin, async (req: Request, res: Response) => {
+    try {
+      const { backupId } = req.body;
+      
+      if (!backupId) {
+        return res.status(400).json({
+          error: 'Backup ID is required'
+        });
+      }
+      
+      const success = await dataPersistenceService.restoreFromBackup(backupId);
+      
+      if (success) {
+        res.json({
+          success: true,
+          message: 'Successfully restored from backup',
+          timestamp: new Date()
+        });
+      } else {
+        res.status(500).json({
+          success: false,
+          message: 'Failed to restore from backup'
+        });
+      }
+    } catch (error) {
+      console.error('Error restoring from backup:', error);
+      res.status(500).json({
+        error: 'Failed to restore from backup',
+        message: error instanceof Error ? error.message : 'Unknown error'
+      });
+    }
+  });
+  
+  // Restore to point
+  app.post('/api/admin/restore-to-point', requireAdmin, async (req: Request, res: Response) => {
+    try {
+      const { restorePointId } = req.body;
+      
+      if (!restorePointId) {
+        return res.status(400).json({
+          error: 'Restore point ID is required'
+        });
+      }
+      
+      const success = await dataPersistenceService.restoreToPoint(restorePointId);
+      
+      if (success) {
+        res.json({
+          success: true,
+          message: 'Successfully restored to restore point',
+          timestamp: new Date()
+        });
+      } else {
+        res.status(500).json({
+          success: false,
+          message: 'Failed to restore to restore point'
+        });
+      }
+    } catch (error) {
+      console.error('Error restoring to point:', error);
+      res.status(500).json({
+        error: 'Failed to restore to point',
+        message: error instanceof Error ? error.message : 'Unknown error'
+      });
+    }
+  });
+  
+  // Verify system integrity
+  app.post('/api/admin/verify-integrity', requireAdmin, async (req: Request, res: Response) => {
+    try {
+      const verification = await dataPersistenceService.verifySystemIntegrity();
+      
+      res.json({
+        success: verification.successful,
+        integrityScore: verification.integrityScore,
+        errors: verification.errors,
+        timestamp: verification.verificationTimestamp
+      });
+    } catch (error) {
+      console.error('Error verifying system integrity:', error);
+      res.status(500).json({
+        error: 'Failed to verify system integrity',
+        message: error instanceof Error ? error.message : 'Unknown error'
+      });
+    }
+  });
+
   app.post('/api/admin/run-tests', requireAdmin, async (req: Request, res: Response) => {
     try {
       const { testType, blockchains: selectedBlockchains } = req.body;

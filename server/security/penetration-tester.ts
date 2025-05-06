@@ -484,7 +484,7 @@ export class SecurityPenetrationTester {
       // 5. Test Cross-Chain Oracle Manipulation
       await this.testCrossChainOracleManipulation(primaryChain, secondaryChain, startTime);
     } catch (error) {
-      this.logger.error('Error during cross-chain vulnerability testing', error);
+      this.logger.error('Error during cross-chain vulnerability testing', error instanceof Error ? error.message : 'Unknown error');
       
       // Record test error
       this.testResults.push({

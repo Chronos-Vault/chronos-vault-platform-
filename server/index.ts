@@ -5,6 +5,7 @@ import { setupVite, serveStatic, log } from "./vite";
 import { initializeAuth } from "./auth";
 import connectPg from "connect-pg-simple";
 import { pool } from "./db";
+import { dataPersistenceService } from "./security/data-persistence-service";
 
 const app = express();
 app.use(express.json());
@@ -73,6 +74,15 @@ app.use((req, res, next) => {
 });
 
 (async () => {
+  // Initialize data persistence service
+  try {
+    await dataPersistenceService.initialize();
+    log('Data persistence service initialized successfully');
+  } catch (error) {
+    log(`Warning: Failed to initialize data persistence service: ${error instanceof Error ? error.message : 'Unknown error'}`);
+    // Continue startup even if data persistence fails
+  }
+
   // Initialize authentication routes
   initializeAuth(app);
   
