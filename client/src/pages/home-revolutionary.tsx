@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react';
 import { useLocation } from "wouter";
+import CyberpunkTripleChainCard from "@/components/cross-chain/CyberpunkTripleChainCard";
 import RevolutionaryHero from "@/components/hero/RevolutionaryHero";
 import { Separator } from "@/components/ui/separator";
 import { Card, CardContent } from "@/components/ui/card";
@@ -182,152 +183,78 @@ const Home = () => {
                 transition={{ duration: 0.8 }}
                 viewport={{ once: true, margin: "-100px" }}
               >
+                {/* Triple Chain Security Visualization */}
                 <div className="relative max-w-lg mx-auto">
-                  {/* Futuristic Security Architecture Visualization */}
-                  <div className="relative h-80 md:h-96 lg:h-[30rem] rounded-2xl overflow-hidden">
-                    <div className="absolute inset-0 bg-gradient-to-br from-[#050505] to-[#0D0D0D] border border-[#6B00D7]/20"></div>
-                    
-                    {/* Center Core */}
-                    <motion.div 
-                      className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-20 h-20 md:w-28 md:h-28 bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] rounded-full flex items-center justify-center z-20"
-                      animate={{ boxShadow: ['0 0 20px rgba(107,0,215,0.4)', '0 0 40px rgba(107,0,215,0.6)', '0 0 20px rgba(107,0,215,0.4)'] }}
-                      transition={{ duration: 3, repeat: Infinity }}
-                    >
-                      <div className="w-16 h-16 md:w-24 md:h-24 rounded-full bg-[#080808] flex items-center justify-center border-4 border-[#FF5AF7]/50">
-                        <div className="text-white font-bold text-2xl">CVT</div>
+                  <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.8 }}
+                    viewport={{ once: true, margin: "-100px" }}
+                  >
+                    {/* Security Rating Card above Triple Chain Card */}
+                    <div className="mb-12 relative">
+                      <div className="absolute -top-6 left-1/2 transform -translate-x-1/2 z-10 bg-[#121212]/70 backdrop-blur-sm px-4 py-1.5 rounded-full border border-[#6B00D7]/30 shadow-glow">
+                        <h3 className="text-center uppercase tracking-wider text-sm font-medium text-[#FF5AF7]">
+                          SECURITY RATING:&nbsp;
+                          <span className="font-bold">100%</span>
+                        </h3>
                       </div>
-                    </motion.div>
-                    
-                    {/* Orbital rings */}
-                    <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-60 h-60 md:w-80 md:h-80 lg:w-96 lg:h-96">
+                      
                       <motion.div 
-                        className="absolute inset-0 rounded-full border border-[#6B00D7]/30"
-                        animate={{ rotate: 360 }}
-                        transition={{ duration: 30, repeat: Infinity, ease: "linear" }}
+                        className="absolute -z-10 inset-0 bg-gradient-to-r from-[#6B00D7]/10 to-[#FF5AF7]/10 blur-2xl opacity-30 rounded-full"
+                        animate={{ scale: [1, 1.05, 1] }}
+                        transition={{ duration: 4, repeat: Infinity }}
                       />
-                      <motion.div 
-                        className="absolute inset-4 rounded-full border border-[#FF5AF7]/20"
-                        animate={{ rotate: -360 }}
-                        transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
-                      />
-                      <motion.div 
-                        className="absolute inset-8 rounded-full border border-[#6B00D7]/10"
-                        animate={{ rotate: 360 }}
-                        transition={{ duration: 40, repeat: Infinity, ease: "linear" }}
-                      />
+                      
+                      {/* Top Hash */}
+                      <div className="text-center text-xs text-[#6B00D7] font-mono mb-2 opacity-70 overflow-hidden">
+                        <motion.div
+                          animate={{ x: [-20, 0, -20] }}
+                          transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
+                        >
+                          0xf7eb8C954b3fAbD4bCd5F9bF888B81546aE85039...
+                        </motion.div>
+                      </div>
                     </div>
                     
-                    {/* Blockchain Nodes */}
-                    <motion.div 
-                      className="absolute top-1/4 left-1/4 transform -translate-x-1/2 -translate-y-1/2 flex items-center justify-center"
-                      animate={{ y: [0, -10, 0] }}
-                      transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
-                    >
-                      <div className="w-16 h-16 rounded-xl bg-gradient-to-br from-[#3c3483]/20 to-[#3c3483]/40 flex items-center justify-center border border-[#3c3483]/60 backdrop-blur-sm">
-                        <i className="ri-ethereum-line text-3xl text-white"></i>
-                      </div>
-                      <motion.div 
-                        className="absolute h-[2px] w-32 bg-gradient-to-r from-[#3c3483] to-transparent"
-                        style={{ transform: 'rotate(45deg) translateX(30px)' }}
-                      >
-                        <motion.div 
-                          className="absolute h-full w-8 bg-[#3c3483]/80 blur-[2px]"
-                          animate={{ x: [0, 120, 0] }}
-                          transition={{ duration: 3, repeat: Infinity, delay: 1 }}
-                        />
-                      </motion.div>
-                    </motion.div>
+                    {/* Cyberpunk Triple Chain Card */}
+                    <div data-card-container className="relative h-80 md:h-96 lg:h-[30rem] rounded-2xl overflow-hidden">
+                      <CyberpunkTripleChainCard />
+                    </div>
                     
-                    <motion.div 
-                      className="absolute top-1/4 right-1/4 transform translate-x-1/2 -translate-y-1/2 flex items-center justify-center"
-                      animate={{ y: [0, -15, 0] }}
-                      transition={{ duration: 5, repeat: Infinity, ease: "easeInOut", delay: 0.5 }}
-                    >
-                      <div className="w-16 h-16 rounded-xl bg-gradient-to-br from-[#9945FF]/20 to-[#9945FF]/40 flex items-center justify-center border border-[#9945FF]/60 backdrop-blur-sm">
-                        <i className="ri-sun-line text-3xl text-white"></i>
-                      </div>
-                      <motion.div 
-                        className="absolute h-[2px] w-32 bg-gradient-to-l from-[#9945FF] to-transparent"
-                        style={{ transform: 'rotate(-45deg) translateX(30px)' }}
-                      >
-                        <motion.div 
-                          className="absolute h-full w-8 bg-[#9945FF]/80 blur-[2px]"
-                          animate={{ x: [0, 120, 0] }}
-                          transition={{ duration: 3, repeat: Infinity, delay: 0.5 }}
-                        />
-                      </motion.div>
-                    </motion.div>
-                    
-                    <motion.div 
-                      className="absolute bottom-1/4 left-1/4 transform -translate-x-1/2 translate-y-1/2 flex items-center justify-center"
-                      animate={{ y: [0, 10, 0] }}
-                      transition={{ duration: 4.5, repeat: Infinity, ease: "easeInOut", delay: 1 }}
-                    >
-                      <div className="w-16 h-16 rounded-xl bg-gradient-to-br from-[#0098EA]/20 to-[#0098EA]/40 flex items-center justify-center border border-[#0098EA]/60 backdrop-blur-sm">
-                        <i className="ri-coin-line text-3xl text-white"></i>
-                      </div>
-                      <motion.div 
-                        className="absolute h-[2px] w-32 bg-gradient-to-r from-[#0098EA] to-transparent"
-                        style={{ transform: 'rotate(-45deg) translateX(30px)' }}
-                      >
-                        <motion.div 
-                          className="absolute h-full w-8 bg-[#0098EA]/80 blur-[2px]"
-                          animate={{ x: [0, 120, 0] }}
-                          transition={{ duration: 3, repeat: Infinity, delay: 1.5 }}
-                        />
-                      </motion.div>
-                    </motion.div>
-                    
-                    <motion.div 
-                      className="absolute bottom-1/4 right-1/4 transform translate-x-1/2 translate-y-1/2 flex items-center justify-center"
-                      animate={{ y: [0, 15, 0] }}
-                      transition={{ duration: 5.5, repeat: Infinity, ease: "easeInOut", delay: 1.5 }}
-                    >
-                      <div className="w-16 h-16 rounded-xl bg-gradient-to-br from-[#f7931a]/20 to-[#f7931a]/40 flex items-center justify-center border border-[#f7931a]/60 backdrop-blur-sm">
-                        <i className="ri-bit-coin-line text-3xl text-white"></i>
-                      </div>
-                      <motion.div 
-                        className="absolute h-[2px] w-32 bg-gradient-to-l from-[#f7931a] to-transparent"
-                        style={{ transform: 'rotate(45deg) translateX(30px)' }}
-                      >
-                        <motion.div 
-                          className="absolute h-full w-8 bg-[#f7931a]/80 blur-[2px]"
-                          animate={{ x: [0, 120, 0] }}
-                          transition={{ duration: 3, repeat: Infinity, delay: 2 }}
-                        />
-                      </motion.div>
-                    </motion.div>
-                    
-                    {/* Data Particles */}
-                    {Array.from({ length: 20 }).map((_, i) => (
+                    {/* Bottom Hash */}
+                    <div className="text-center text-xs text-[#6B00D7] font-mono mt-2 opacity-70 overflow-hidden">
                       <motion.div
-                        key={`particle-${i}`}
-                        className="absolute rounded-full"
-                        style={{
-                          width: `${Math.random() * 4 + 2}px`,
-                          height: `${Math.random() * 4 + 2}px`,
-                          backgroundColor: i % 4 === 0 ? '#3c3483' : 
-                                           i % 4 === 1 ? '#9945FF' : 
-                                           i % 4 === 2 ? '#0098EA' : '#f7931a',
-                          left: `${Math.random() * 100}%`,
-                          top: `${Math.random() * 100}%`,
-                          opacity: 0.6,
-                        }}
-                        animate={{
-                          x: [0, Math.random() * 50 - 25],
-                          y: [0, Math.random() * 50 - 25],
-                          opacity: [0.6, 1, 0.6],
-                          scale: [1, 1.5, 1],
-                        }}
-                        transition={{
-                          duration: Math.random() * 4 + 3,
-                          repeat: Infinity,
-                          repeatType: "mirror",
-                          delay: Math.random() * 2,
-                        }}
-                      />
-                    ))}
-                  </div>
+                        animate={{ x: [20, 0, 20] }}
+                        transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
+                      >
+                        E0mck_t1_g6EtJydbLvwk.3pPfMn1HwdG0DWKU3X...
+                      </motion.div>
+                    </div>
+                    
+                    {/* Security Features List */}
+                    <div className="mt-10 grid grid-cols-1 md:grid-cols-2 gap-3">
+                      {[
+                        { id: 1, name: "Military-Grade Encryption" },
+                        { id: 2, name: "Triple-Chain Verification" },
+                        { id: 3, name: "Quantum-Resistant Algorithms" },
+                        { id: 4, name: "Zero-Knowledge Privacy" }
+                      ].map((feature) => (
+                        <motion.div 
+                          key={feature.id}
+                          className="bg-[#121212]/50 backdrop-blur-sm rounded-full border border-[#6B00D7]/20 px-4 py-2 flex items-center gap-2"
+                          whileHover={{ borderColor: 'rgba(255, 90, 247, 0.4)', backgroundColor: 'rgba(107, 0, 215, 0.1)' }}
+                          initial={{ opacity: 0, y: 10 }}
+                          whileInView={{ opacity: 1, y: 0 }}
+                          transition={{ duration: 0.5, delay: 0.2 * feature.id }}
+                          viewport={{ once: true, margin: "-50px" }}
+                        >
+                          <div className="h-3 w-3 rounded-full bg-[#FF5AF7] opacity-70 animate-pulse"></div>
+                          <span className="text-white text-sm">{feature.name}</span>
+                        </motion.div>
+                      ))}
+                    </div>
+                  </motion.div>
                 </div>
               </motion.div>
             </motion.div>

@@ -5,7 +5,10 @@ const CyberpunkTripleChainCard: React.FC = () => {
   console.log('CyberpunkTripleChainCard rendering');
   const [scanLines, setScanLines] = useState<Array<{id: number, delay: number}>>([]);
   const [glitchActive, setGlitchActive] = useState(false);
-  const [dataPoints, setDataPoints] = useState<Array<{active: boolean}>>([]);
+  // Initialize dataPoints with default values to prevent undefined errors
+  const [dataPoints, setDataPoints] = useState<Array<{active: boolean}>>(
+    Array.from({ length: 4 }, () => ({ active: true }))
+  );
   const cardRef = useRef<HTMLDivElement>(null);
   
   // Initialize scan lines
