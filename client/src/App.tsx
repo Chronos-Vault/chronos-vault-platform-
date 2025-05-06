@@ -43,6 +43,7 @@ import WhitepaperPage from "@/pages/whitepaper";
 import ProjectWhitepaperPage from "@/pages/project-whitepaper";
 import PrivacyDashboardPage from "@/pages/privacy-dashboard";
 import SecurityTestingPage from "@/pages/security-testing";
+import SecurityPage from "@/pages/security-page";
 import NotFound from "@/pages/not-found";
 import TestContractPage from "@/pages/test-contract";
 import WalletManagerPage from "@/pages/wallet-manager";
@@ -101,6 +102,7 @@ function Router() {
         <Route path="/project-whitepaper" component={ProjectWhitepaperPage} />
         <Route path="/privacy-dashboard" component={PrivacyDashboardPage} />
         <Route path="/security-testing" component={SecurityTestingPage} />
+        <Route path="/security" component={SecurityPage} />
         {/* Development routes hidden from navigation */}
         <Route path="/test-contract" component={TestContractPage} />
         <Route path="/wallet-manager" component={WalletManagerPage} />
