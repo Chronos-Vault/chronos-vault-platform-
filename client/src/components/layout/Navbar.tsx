@@ -38,8 +38,7 @@ const Navbar = () => {
         { name: "Home", href: "/", icon: "🏠" },
         { name: "Create Vault", href: "/create-vault", icon: "🔒" },
         { name: "My Vaults", href: "/my-vaults", icon: "📊" },
-        { name: "Storage", href: "/storage", icon: "🗄️", highlight: true },
-        { name: "Gift Crypto", href: "/gift-crypto", icon: "🎁" },
+        { name: "Gift Crypto", href: "/gift-crypto", icon: "🎁", highlight: true },
       ]
     },
     {
@@ -122,11 +121,6 @@ const Navbar = () => {
                 <Link href="/my-vaults">
                   <DropdownMenuItem className="cursor-pointer">
                     My Vaults
-                  </DropdownMenuItem>
-                </Link>
-                <Link href="/storage">
-                  <DropdownMenuItem className="cursor-pointer bg-gradient-to-r from-[#6B00D7]/20 to-[#FF5AF7]/20 border border-[#FF5AF7]/30 text-[#FF5AF7] font-bold">
-                    Storage Page
                   </DropdownMenuItem>
                 </Link>
               </DropdownMenuContent>
