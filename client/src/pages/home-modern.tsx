@@ -493,14 +493,20 @@ const Home = () => {
           <div className="container mx-auto px-4">
             <div className="max-w-2xl mx-auto mb-12">
               <div className="text-center mb-8">
-                <div className="inline-flex mb-3 items-center justify-center space-x-2 px-4 py-1 rounded-full border border-[#6B00D7]/30 bg-black/30">
-                  <span className="text-sm font-medium text-[#FF5AF7]">REVOLUTIONARY SECURITY ARCHITECTURE</span>
+                <div className="inline-flex mb-3 items-center justify-center space-x-2 px-6 py-2 rounded-full border border-[#6B00D7]/50 bg-gradient-to-r from-black/80 via-[#6B00D7]/20 to-black/80 shadow-[0_0_10px_rgba(107,0,215,0.6)]">
+                  <span className="text-base font-bold bg-clip-text text-transparent bg-gradient-to-r from-white via-[#FF5AF7] to-white uppercase tracking-wider animate-text-shine">Revolutionary Security Architecture</span>
                 </div>
-                <h2 className="text-3xl font-bold text-white mb-4">Next-Generation Vault Visualization</h2>
-                <p className="text-gray-300 max-w-3xl mx-auto">Experience the most sophisticated visual representation of blockchain vault security ever created</p>
+                <h2 className="text-3xl sm:text-4xl font-bold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-[#6B00D7] via-[#FF5AF7] to-[#6B00D7]">Next-Generation Vault Visualization</h2>
+                <p className="text-gray-300 max-w-3xl mx-auto text-lg">Experience the most sophisticated visual representation of blockchain vault security ever created</p>
               </div>
               
-              <div className="bg-black border border-[#6B00D7]/30 rounded-xl p-6">
+              <div className="relative mx-auto mb-8">
+                {/* Animated glow effects */}
+                <div className="absolute -inset-4 bg-gradient-to-r from-[#6B00D7]/20 via-[#FF5AF7]/20 to-[#6B00D7]/20 rounded-2xl blur-xl opacity-70 animate-pulse-slow"></div>
+                <div className="absolute -inset-1 bg-gradient-to-r from-[#6B00D7]/30 via-[#FF5AF7]/30 to-[#6B00D7]/30 rounded-xl blur-md"></div>
+                
+                {/* Main card */}
+                <div className="relative bg-black border border-[#6B00D7]/40 rounded-xl p-6 backdrop-blur-xl z-10 shadow-[0_0_25px_rgba(255,90,247,0.15)]">
                 <div className="grid grid-cols-3 gap-4 mb-6">
                   <div className="text-sm">
                     <div className="text-[#FF5AF7] mb-1 flex items-center gap-1">
@@ -552,6 +558,7 @@ const Home = () => {
                   Chronos Vault Secure Interface • Quantum Resistant • Triple-Chain Protection • Zero-Knowledge Privacy
                 </div>
               </div>
+              </div>
               
               <div className="mt-8 text-center">
                 <Button className="bg-[#6B00D7] hover:bg-[#FF5AF7] text-white py-3 px-6 rounded-full shadow-glow-sm">
@@ -566,11 +573,11 @@ const Home = () => {
         <section className="py-16 bg-black">
           <div className="container mx-auto px-4">
             <div className="text-center mb-12">
-              <div className="inline-flex mb-3 items-center justify-center space-x-2 px-4 py-1 rounded-full border border-[#6B00D7]/30 bg-black/30">
-                <span className="text-sm font-medium text-[#FF5AF7]">SPECIALIZED VAULTS</span>
+              <div className="inline-flex mb-3 items-center justify-center space-x-2 px-6 py-2 rounded-full border border-[#6B00D7]/50 bg-gradient-to-r from-black/80 via-[#6B00D7]/20 to-black/80 shadow-[0_0_10px_rgba(107,0,215,0.6)]">
+                <span className="text-base font-bold bg-clip-text text-transparent bg-gradient-to-r from-white via-[#FF5AF7] to-white uppercase tracking-wider animate-text-shine">Specialized Vaults</span>
               </div>
-              <h2 className="text-4xl font-bold text-white mb-4">Premium Vault Solutions</h2>
-              <p className="text-gray-300 max-w-3xl mx-auto">Choose from specialized vault templates, each designed for unique security needs and blockchain interactions.</p>
+              <h2 className="text-4xl sm:text-5xl font-bold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-[#6B00D7] via-[#FF5AF7] to-[#6B00D7]">Premium Vault Solutions</h2>
+              <p className="text-gray-300 max-w-3xl mx-auto text-lg">Choose from specialized vault templates, each designed for unique security needs and blockchain interactions</p>
             </div>
             
             <div className="mt-8 max-w-md mx-auto text-right">
@@ -580,7 +587,13 @@ const Home = () => {
             </div>
             
             {/* Multi-Signature Vault Card */}
-            <div className="max-w-md mx-auto bg-black border border-[#6B00D7]/30 rounded-xl p-6 mt-4">
+            <div className="max-w-md mx-auto relative mt-4 mb-8">
+              {/* Animated glow effects */}
+              <div className="absolute -inset-4 bg-gradient-to-r from-[#6B00D7]/20 via-[#FF5AF7]/20 to-[#6B00D7]/20 rounded-2xl blur-xl opacity-70 animate-pulse-slow"></div>
+              <div className="absolute -inset-1 bg-gradient-to-r from-[#6B00D7]/30 via-[#FF5AF7]/30 to-[#6B00D7]/30 rounded-xl blur-md"></div>
+              
+              {/* Main card */}
+              <div className="relative bg-black border border-[#6B00D7]/40 rounded-xl p-6 backdrop-blur-xl z-10 shadow-[0_0_25px_rgba(255,90,247,0.15)]">
               <div className="flex items-center space-x-4 mb-6">
                 <div className="bg-[#6B00D7]/20 p-3 rounded-lg">
                   <Users className="text-[#FF5AF7] w-6 h-6" />
@@ -603,6 +616,7 @@ const Home = () => {
                 </Link>
               </div>
             </div>
+            </div>
           </div>
         </section>
         
@@ -610,15 +624,21 @@ const Home = () => {
         <section className="py-16 bg-black">
           <div className="container mx-auto px-4">
             <div className="text-center mb-12">
-              <div className="inline-flex mb-3 items-center justify-center space-x-2 px-4 py-1 rounded-full border border-[#6B00D7]/30 bg-black/30">
-                <span className="text-sm font-medium text-[#FF5AF7]">HOW CHRONOS VAULT WORKS</span>
+              <div className="inline-flex mb-3 items-center justify-center space-x-2 px-6 py-2 rounded-full border border-[#6B00D7]/50 bg-gradient-to-r from-black/80 via-[#6B00D7]/20 to-black/80 shadow-[0_0_10px_rgba(107,0,215,0.6)]">
+                <span className="text-base font-bold bg-clip-text text-transparent bg-gradient-to-r from-white via-[#FF5AF7] to-white uppercase tracking-wider animate-text-shine">How Chronos Vault Works</span>
               </div>
-              <h2 className="text-4xl font-bold text-white mb-4">Secure Your Digital Legacy</h2>
-              <p className="text-gray-300 max-w-3xl mx-auto">Cutting-edge blockchain technology meets intuitive design to create the most secure vault system in existence</p>
+              <h2 className="text-4xl sm:text-5xl font-bold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-[#6B00D7] via-[#FF5AF7] to-[#6B00D7]">Secure Your Digital Legacy</h2>
+              <p className="text-gray-300 max-w-3xl mx-auto text-lg">Cutting-edge blockchain technology meets intuitive design to create the most secure vault system in existence</p>
             </div>
             
             {/* Step 1 */}
-            <div className="max-w-md mx-auto bg-black border border-[#6B00D7]/30 rounded-xl p-6 mb-12 relative">
+            <div className="max-w-md mx-auto relative mb-12">
+              {/* Animated glow effects */}
+              <div className="absolute -inset-4 bg-gradient-to-r from-[#6B00D7]/20 via-[#FF5AF7]/20 to-[#6B00D7]/20 rounded-2xl blur-xl opacity-70 animate-pulse-slow"></div>
+              <div className="absolute -inset-1 bg-gradient-to-r from-[#6B00D7]/30 via-[#FF5AF7]/30 to-[#6B00D7]/30 rounded-xl blur-md"></div>
+              
+              {/* Main card */}
+              <div className="relative bg-black border border-[#6B00D7]/40 rounded-xl p-6 backdrop-blur-xl z-10 shadow-[0_0_25px_rgba(255,90,247,0.15)]">
               <div className="absolute -right-4 -top-4 w-10 h-10 rounded-full bg-[#FF5AF7] flex items-center justify-center text-white font-bold text-lg">
                 1
               </div>
@@ -632,6 +652,7 @@ const Home = () => {
                 </div>
               </div>
               <p className="text-gray-400">Connect your wallet to our secure platform and set up your personal profile with advanced security options.</p>
+              </div>
             </div>
           </div>
         </section>
@@ -640,56 +661,69 @@ const Home = () => {
         <section className="py-16 bg-black">
           <div className="container mx-auto px-4">
             <div className="text-center mb-12">
-              <div className="inline-flex mb-3 items-center justify-center">
-                <div className="px-4 py-1 rounded-full border border-[#6B00D7]/30 bg-black/30">
-                  <span className="text-sm font-medium text-[#FF5AF7]">Deflationary Token Model</span>
+              <div className="inline-flex mb-3 items-center justify-center space-x-4">
+                <div className="px-6 py-2 rounded-full border border-[#6B00D7]/50 bg-gradient-to-r from-black/80 via-[#6B00D7]/20 to-black/80 shadow-[0_0_10px_rgba(107,0,215,0.6)]">
+                  <span className="text-base font-bold bg-clip-text text-transparent bg-gradient-to-r from-white via-[#FF5AF7] to-white uppercase tracking-wider animate-text-shine">Deflationary Token Model</span>
                 </div>
-                <div className="w-4"></div>
-                <div className="px-4 py-1 rounded-full border border-[#6B00D7]/30 bg-black/30">
-                  <span className="text-sm font-medium text-[#FF5AF7]">Utility-First Design</span>
+                <div className="px-6 py-2 rounded-full border border-[#6B00D7]/50 bg-gradient-to-r from-black/80 via-[#6B00D7]/20 to-black/80 shadow-[0_0_10px_rgba(107,0,215,0.6)]">
+                  <span className="text-base font-bold bg-clip-text text-transparent bg-gradient-to-r from-white via-[#FF5AF7] to-white uppercase tracking-wider animate-text-shine">Utility-First Design</span>
                 </div>
               </div>
-              <h2 className="text-4xl font-bold text-white mb-4">CVT Token Economics</h2>
-              <p className="text-gray-300 max-w-3xl mx-auto">The ChronosVault Token (CVT) lies at the core of our ecosystem, powering transactions, reducing fees, and enabling premium features</p>
+              <h2 className="text-4xl sm:text-5xl font-bold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-[#6B00D7] via-[#FF5AF7] to-[#6B00D7]">CVT Token Economics</h2>
+              <p className="text-gray-300 max-w-3xl mx-auto text-lg">The ChronosVault Token (CVT) lies at the core of our ecosystem, powering transactions, reducing fees, and enabling premium features</p>
             </div>
             
             {/* Token Distribution Chart */}
-            <div className="max-w-md mx-auto mb-16">
-              <h3 className="text-xl font-bold text-white mb-6 text-center">Token Distribution</h3>
-              <div className="relative h-64 w-64 mx-auto">
-                {/* This would be a proper chart in a real implementation */}
-                <div className="absolute inset-0 rounded-full border-8 border-[#6B00D7] opacity-25"></div>
-                <div className="absolute inset-8 rounded-full border-8 border-[#FF5AF7] opacity-25"></div>
-                <div className="absolute inset-16 rounded-full border-8 border-purple-800 opacity-25"></div>
-                <div className="absolute inset-24 rounded-full bg-black flex items-center justify-center">
-                  <div className="text-[#FF5AF7]">CVT</div>
-                </div>
-              </div>
+            <div className="max-w-md mx-auto mb-16 relative">
+              {/* Animated glow effects */}
+              <div className="absolute -inset-4 bg-gradient-to-r from-[#6B00D7]/20 via-[#FF5AF7]/20 to-[#6B00D7]/20 rounded-2xl blur-xl opacity-70 animate-pulse-slow"></div>
+              <div className="absolute -inset-1 bg-gradient-to-r from-[#6B00D7]/30 via-[#FF5AF7]/30 to-[#6B00D7]/30 rounded-xl blur-md"></div>
               
-              <div className="grid grid-cols-2 gap-4 mt-12">
-                <div className="flex items-center gap-2">
-                  <div className="h-3 w-3 rounded-full bg-[#6B00D7]"></div>
-                  <div className="text-sm text-white">Community (40%)</div>
+              {/* Main card */}
+              <div className="relative bg-black border border-[#6B00D7]/40 rounded-xl p-8 backdrop-blur-xl z-10 shadow-[0_0_25px_rgba(255,90,247,0.15)]">
+                <h3 className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-white via-[#FF5AF7] to-white mb-6 text-center animate-text-shine">Token Distribution</h3>
+                
+                <div className="relative h-64 w-64 mx-auto group">
+                  {/* Enhanced circular chart with animation and glow effects */}
+                  <div className="absolute inset-0 rounded-full border-8 border-[#6B00D7] opacity-40 animate-spin-slow"></div>
+                  <div className="absolute inset-8 rounded-full border-8 border-[#FF5AF7] opacity-30 animate-spin-slow-reverse"></div>
+                  <div className="absolute inset-16 rounded-full border-8 border-purple-800 opacity-50"></div>
+                  <div className="absolute inset-24 rounded-full bg-black/80 backdrop-blur-sm border border-[#6B00D7]/40 flex items-center justify-center shadow-[0_0_15px_rgba(107,0,215,0.6)]">
+                    <span className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-br from-[#FF5AF7] to-[#6B00D7] animate-text-shine">CVT</span>
+                  </div>
+                  
+                  {/* Animated dots around the circle */}
+                  <div className="absolute top-0 left-1/2 -translate-x-1/2 h-2 w-2 rounded-full bg-[#FF5AF7] animate-pulse"></div>
+                  <div className="absolute bottom-0 left-1/2 -translate-x-1/2 h-2 w-2 rounded-full bg-[#FF5AF7] animate-pulse delay-300"></div>
+                  <div className="absolute left-0 top-1/2 -translate-y-1/2 h-2 w-2 rounded-full bg-[#FF5AF7] animate-pulse delay-100"></div>
+                  <div className="absolute right-0 top-1/2 -translate-y-1/2 h-2 w-2 rounded-full bg-[#FF5AF7] animate-pulse delay-200"></div>
                 </div>
                 
-                <div className="flex items-center gap-2">
-                  <div className="h-3 w-3 rounded-full bg-purple-600"></div>
-                  <div className="text-sm text-white">Ecosystem (25%)</div>
-                </div>
-                
-                <div className="flex items-center gap-2">
-                  <div className="h-3 w-3 rounded-full bg-purple-400"></div>
-                  <div className="text-sm text-white">Team (15%)</div>
-                </div>
-                
-                <div className="flex items-center gap-2">
-                  <div className="h-3 w-3 rounded-full bg-[#6B00D7]/40"></div>
-                  <div className="text-sm text-white">Reserve (10%)</div>
-                </div>
-                
-                <div className="flex items-center gap-2">
-                  <div className="h-3 w-3 rounded-full bg-[#FF5AF7]"></div>
-                  <div className="text-sm text-white">Marketing (10%)</div>
+                <div className="grid grid-cols-2 gap-4 mt-12">
+                  <div className="flex items-center gap-3 group">
+                    <div className="h-4 w-4 rounded-full bg-gradient-to-r from-[#6B00D7] to-[#6B00D7]/70 shadow-[0_0_8px_rgba(107,0,215,0.6)] group-hover:scale-125 transition-transform"></div>
+                    <div className="text-sm text-white font-medium group-hover:text-[#FF5AF7] transition-colors">Community (40%)</div>
+                  </div>
+                  
+                  <div className="flex items-center gap-3 group">
+                    <div className="h-4 w-4 rounded-full bg-gradient-to-r from-purple-600 to-purple-500 shadow-[0_0_8px_rgba(147,51,234,0.6)] group-hover:scale-125 transition-transform"></div>
+                    <div className="text-sm text-white font-medium group-hover:text-[#FF5AF7] transition-colors">Ecosystem (25%)</div>
+                  </div>
+                  
+                  <div className="flex items-center gap-3 group">
+                    <div className="h-4 w-4 rounded-full bg-gradient-to-r from-purple-400 to-purple-300 shadow-[0_0_8px_rgba(192,132,252,0.6)] group-hover:scale-125 transition-transform"></div>
+                    <div className="text-sm text-white font-medium group-hover:text-[#FF5AF7] transition-colors">Team (15%)</div>
+                  </div>
+                  
+                  <div className="flex items-center gap-3 group">
+                    <div className="h-4 w-4 rounded-full bg-gradient-to-r from-[#6B00D7]/60 to-[#6B00D7]/40 shadow-[0_0_8px_rgba(107,0,215,0.3)] group-hover:scale-125 transition-transform"></div>
+                    <div className="text-sm text-white font-medium group-hover:text-[#FF5AF7] transition-colors">Reserve (10%)</div>
+                  </div>
+                  
+                  <div className="flex items-center gap-3 group">
+                    <div className="h-4 w-4 rounded-full bg-gradient-to-r from-[#FF5AF7] to-[#FF5AF7]/70 shadow-[0_0_8px_rgba(255,90,247,0.6)] group-hover:scale-125 transition-transform"></div>
+                    <div className="text-sm text-white font-medium group-hover:text-[#FF5AF7] transition-colors">Marketing (10%)</div>
+                  </div>
                 </div>
               </div>
             </div>
@@ -697,15 +731,46 @@ const Home = () => {
         </section>
         
         {/* Call to Action */}
-        <section className="py-16 bg-black">
-          <div className="container mx-auto px-4 text-center">
-            <h2 className="text-3xl font-bold text-white mb-8">Ready to secure your digital assets?</h2>
-            <Button 
-              onClick={() => setLocation("/create-vault")} 
-              className="bg-[#6B00D7] hover:bg-[#FF5AF7] text-white font-medium py-3 px-8 rounded-full shadow-glow-sm"
-            >
-              Create Your Vault Now
-            </Button>
+        <section className="py-24 bg-black relative">
+          {/* Background glow */}
+          <div className="absolute inset-0 bg-gradient-to-b from-black via-[#6B00D7]/5 to-black"></div>
+          
+          <div className="container mx-auto px-4 text-center relative z-10">
+            {/* Decorative elements */}
+            <div className="absolute left-1/4 top-0 w-24 h-24 rounded-full bg-gradient-to-r from-[#6B00D7]/20 to-[#FF5AF7]/5 blur-xl"></div>
+            <div className="absolute right-1/4 bottom-0 w-32 h-32 rounded-full bg-gradient-to-r from-[#FF5AF7]/10 to-[#6B00D7]/20 blur-xl"></div>
+            
+            <h2 className="text-4xl sm:text-5xl font-bold mb-6 bg-clip-text text-transparent bg-gradient-to-r from-white via-[#FF5AF7] to-white animate-text-shine">Ready to secure your digital legacy?</h2>
+            <p className="text-gray-300 max-w-2xl mx-auto mb-10 text-lg">Join thousands of users who trust Chronos Vault with their most valuable digital assets</p>
+            
+            <div className="relative inline-block group">
+              {/* Button glow effect */}
+              <div className="absolute -inset-1 bg-gradient-to-r from-[#6B00D7] via-[#FF5AF7] to-[#6B00D7] rounded-full blur opacity-70 group-hover:opacity-100 transition duration-1000 group-hover:duration-200 animate-gradient-x"></div>
+              
+              <Button 
+                onClick={() => setLocation("/create-vault")} 
+                className="relative px-10 py-4 bg-black text-white text-lg font-bold rounded-full transition-all duration-300 hover:bg-black/50 hover:scale-105 shadow-[0_0_20px_rgba(107,0,215,0.7)]"
+              >
+                Create Your Vault Now
+                <ArrowRight className="inline-block ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
+              </Button>
+            </div>
+            
+            {/* Trust indicators */}
+            <div className="flex flex-wrap justify-center gap-8 mt-16">
+              <div className="flex items-center space-x-2">
+                <Shield className="text-[#FF5AF7] w-5 h-5" />
+                <span className="text-sm text-white">Military-Grade Security</span>
+              </div>
+              <div className="flex items-center space-x-2">
+                <Lock className="text-[#FF5AF7] w-5 h-5" />
+                <span className="text-sm text-white">Zero-Knowledge Privacy</span>
+              </div>
+              <div className="flex items-center space-x-2">
+                <Hexagon className="text-[#FF5AF7] w-5 h-5" />
+                <span className="text-sm text-white">Cross-Chain Support</span>
+              </div>
+            </div>
           </div>
         </section>
       </main>
