@@ -70,8 +70,8 @@ const Home = () => {
   return (
     <div className="flex flex-col bg-gradient-to-b from-[#121212] to-[#1A1A1A] text-white font-poppins">
       <main className="flex-1">
-        {/* Advanced Holographic Hero Section */}
-        <AdvancedHolographicHero />
+        {/* Cyberpunk Holographic Hero Section */}
+        <CyberpunkHolographicHero onCreateVault={() => setLocation("/create-vault")} />
 
         {/* Multi-Chain Architecture Section */}
         <section className="py-16 md:py-20 bg-[#121212] overflow-hidden relative border-t border-[#6B00D7]/20">
