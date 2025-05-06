@@ -1,6 +1,7 @@
 import React, { useRef, useEffect } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
 import { Environment, Grid, OrbitControls, RoundedBox, Torus, Icosahedron } from '@react-three/drei';
+import * as THREE from 'three';
 import { Shield } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
