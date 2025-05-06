@@ -488,33 +488,9 @@ const Home = () => {
           </div>
         </section>
         
-        {/* Revolutionary Security Features */}
+        {/* Next-Generation Vault Visualization */}
         <section className="py-16 bg-black">
           <div className="container mx-auto px-4">
-            <div className="text-center mb-16">
-              <div className="inline-flex mb-3 items-center justify-center space-x-2 px-4 py-1 rounded-full border border-[#6B00D7]/30 bg-black/30">
-                <span className="text-sm font-medium text-[#FF5AF7]">MILITARY-GRADE PROTECTION</span>
-              </div>
-              <h2 className="text-4xl font-bold mb-4 text-[#FF5AF7]">Revolutionary Security</h2>
-              <p className="text-gray-300 max-w-3xl mx-auto">
-                Chronos Vault combines quantum-resistant encryption with cutting-edge blockchain technology to create an impenetrable shield for your digital assets.
-              </p>
-            </div>
-            
-            {/* Security Feature Card */}
-            <div className="max-w-xl mx-auto bg-black border border-[#6B00D7]/30 rounded-xl p-6 mb-12">
-              <div className="flex items-center space-x-4 mb-4">
-                <div className="bg-[#6B00D7]/20 p-3 rounded-lg">
-                  <Shield className="text-[#FF5AF7] w-6 h-6" />
-                </div>
-                <div>
-                  <h3 className="text-xl font-semibold"><span className="text-[#FF5AF7]">Triple</span>-Chain Security</h3>
-                </div>
-              </div>
-              <p className="text-gray-400 mb-4">Assets secured with immutable cross-verification across Ethereum, Solana, and TON networks for unparalleled security.</p>
-            </div>
-            
-            {/* Next-Generation Vault Visualization */}
             <div className="max-w-2xl mx-auto mb-12">
               <div className="text-center mb-8">
                 <div className="inline-flex mb-3 items-center justify-center space-x-2 px-4 py-1 rounded-full border border-[#6B00D7]/30 bg-black/30">
