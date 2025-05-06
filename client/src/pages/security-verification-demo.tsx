@@ -20,7 +20,7 @@ export default function SecurityVerificationDemo() {
   const [sourceChain, setSourceChain] = useState<BlockchainType>('ETH');
   const [requiredChains, setRequiredChains] = useState<BlockchainType[]>(['ETH', 'SOL', 'TON']);
   const [step, setStep] = useState<'config' | 'verification'>('config');
-  const [activeTab, setActiveTab] = useState<'cross-chain' | 'zero-knowledge'>('cross-chain');
+  const [activeTab, setActiveTab] = useState<'cross-chain' | 'zero-knowledge'>('zero-knowledge');
 
   const handleSuccess = () => {
     toast({
