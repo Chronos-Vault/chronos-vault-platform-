@@ -466,6 +466,15 @@ const Home = () => {
                   <div className="text-[10px] text-gray-500 font-mono">
                     VAULT ACCESS: TRIPLE VERIFICATION REQUIRED
                   </div>
+                  
+                  {/* Action button to view security details */}
+                  <div className="mt-6">
+                    <Link to="/security" className="inline-flex items-center justify-center px-6 py-3 rounded-lg bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] text-white font-medium text-sm transition-all duration-300 hover:shadow-lg hover:shadow-[#6B00D7]/30 hover:-translate-y-1 cta-button">
+                      <Shield className="w-4 h-4 mr-2" />
+                      Explore Triple-Chain Security
+                      <ChevronRight className="w-4 h-4 ml-1" />
+                    </Link>
+                  </div>
                 </div>
                 
                 {/* Security code scrolling effect */}
