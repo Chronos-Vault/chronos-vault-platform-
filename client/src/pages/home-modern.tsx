@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { Link, useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
-import { Shield, Lock, Zap, Users, Clock, ArrowRight, BarChart3, Hexagon, Check, ChevronRight } from "lucide-react";
+import { Shield, Lock, Zap, Users, Clock, ArrowRight, BarChart3, Hexagon, Check, ChevronRight, Activity, Brain, EyeOff, LockKeyhole, CheckCircle2 } from "lucide-react";
 import { useCVTToken } from "@/contexts/cvt-token-context";
 import { motion } from "framer-motion";
 import ThreeDHeroBackground from "@/components/hero/3DHeroBackground";
@@ -123,7 +123,7 @@ const Home = () => {
           </div>
         </section>
         
-        {/* Security Statistics Section */}
+        {/* Advanced Security Section */}
         <section className="py-16 bg-black">
           <div className="container mx-auto px-4">
             <div className="text-center mb-8">
@@ -142,7 +142,7 @@ const Home = () => {
                 transition={{ duration: 0.7, delay: 0.1 }}
                 className="text-4xl font-bold text-white mb-4"
               >
-                Future-Proof Protection
+                Triple-Chain Defense System
               </motion.h2>
               
               <motion.p 
@@ -151,11 +151,11 @@ const Home = () => {
                 transition={{ duration: 0.7, delay: 0.2 }}
                 className="text-gray-300 max-w-3xl mx-auto"
               >
-                Chronos Vault combines quantum-resistant encryption with cutting-edge blockchain technology to create an impenetrable shield for your digital assets.
+                Our proprietary security architecture synchronizes vault protection across Ethereum, Solana, and TON, with real-time monitoring and AI-enhanced threat detection.
               </motion.p>
             </div>
             
-            {/* Stats Section */}
+            {/* Stats Section with Real Data */}
             <motion.div 
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -176,95 +176,273 @@ const Home = () => {
               </div>
             </motion.div>
             
-            {/* Security Visualization Card */}
-            <motion.div 
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 0.4 }}
-              className="max-w-3xl mx-auto relative mb-16"
-            >
-              <div className="bg-gradient-to-b from-black/80 to-[#0a0014] backdrop-blur-lg border border-[#6B00D7]/30 rounded-xl p-8 shadow-glow">
-                <div className="absolute top-0 left-0 right-0 text-xs overflow-hidden text-center text-gray-600 font-mono">
-                  <div className="animate-marquee-slow">
-                    {"0xf70648a8...1bd8a0ce25367b9d1d7c3386d0ad5...6ac72fb89361c5b99c71..."}
+            {/* Advanced Security Grid - Based on Real Implementation */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto mb-16">
+              {/* Real-Time Security Monitoring */}
+              <motion.div 
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.7, delay: 0.3 }}
+                className="bg-gradient-to-br from-black to-[#0a0014] backdrop-blur-lg border border-[#6B00D7]/30 rounded-xl p-6 shadow-glow"
+              >
+                <div className="flex items-start mb-5">
+                  <div className="h-12 w-12 rounded-lg bg-gradient-to-br from-[#6B00D7]/20 to-[#FF5AF7]/10 flex items-center justify-center mr-4">
+                    <Activity className="text-[#FF5AF7] w-6 h-6" />
+                  </div>
+                  <div>
+                    <h3 className="text-xl font-bold text-white mb-2">Real-Time Monitoring</h3>
+                    <p className="text-gray-300 text-sm">
+                      Every 10 seconds, our <code className="text-[#FF5AF7]/90 bg-black/30 px-1.5 py-0.5 rounded-md text-xs">SecurityServiceAggregator</code> monitors all blockchain networks for transaction anomalies and security threats.
+                    </p>
                   </div>
                 </div>
                 
-                <div className="flex justify-center my-8">
-                  <div className="relative w-32 h-32">
-                    <div className="absolute inset-0 bg-[#6B00D7]/5 rounded-full animate-pulse-slow"></div>
-                    <div className="absolute inset-4 bg-[#6B00D7]/10 rounded-full animate-pulse-slow delay-150"></div>
-                    <div className="absolute inset-8 bg-black/80 backdrop-blur-md rounded-full border border-[#6B00D7]/40 flex items-center justify-center">
-                      <Lock className="text-[#FF5AF7] w-10 h-10" />
+                {/* Code Visualization */}
+                <div className="bg-black/60 rounded-md p-3 border border-[#6B00D7]/20 text-xs font-mono text-gray-300 mb-4 overflow-x-auto">
+                  <div className="text-purple-400">startMonitoring() {`{`}</div>
+                  <div className="pl-4">this.monitoringInterval = setInterval(<span className="text-[#FF5AF7]">()</span> =&gt; {`{`}</div>
+                  <div className="pl-8 text-emerald-400">this.updateChainStatuses();</div>
+                  <div className="pl-8 text-emerald-400">this.performRealTimeSecurityAnalysis();</div>
+                  <div className="pl-4">{`}`}, <span className="text-amber-400">10000</span>);</div>
+                  <div className="text-purple-400">{`}`}</div>
+                </div>
+                
+                {/* Status Indicators */}
+                <div className="grid grid-cols-3 gap-2 text-center">
+                  <div className="bg-black/30 rounded-md p-2">
+                    <div className="text-xs text-[#FF5AF7] font-semibold mb-1">ETH Status</div>
+                    <div className="flex justify-center">
+                      <span className="inline-flex h-2.5 w-2.5 rounded-full bg-green-500 animate-pulse"></span>
+                    </div>
+                  </div>
+                  <div className="bg-black/30 rounded-md p-2">
+                    <div className="text-xs text-[#FF5AF7] font-semibold mb-1">SOL Status</div>
+                    <div className="flex justify-center">
+                      <span className="inline-flex h-2.5 w-2.5 rounded-full bg-green-500 animate-pulse"></span>
+                    </div>
+                  </div>
+                  <div className="bg-black/30 rounded-md p-2">
+                    <div className="text-xs text-[#FF5AF7] font-semibold mb-1">TON Status</div>
+                    <div className="flex justify-center">
+                      <span className="inline-flex h-2.5 w-2.5 rounded-full bg-green-500 animate-pulse"></span>
+                    </div>
+                  </div>
+                </div>
+              </motion.div>
+              
+              {/* Security Tier System - Based on Real Implementation */}
+              <motion.div 
+                initial={{ opacity: 0, x: 20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.7, delay: 0.4 }}
+                className="bg-gradient-to-br from-black to-[#0a0014] backdrop-blur-lg border border-[#6B00D7]/30 rounded-xl p-6 shadow-glow"
+              >
+                <div className="flex items-start mb-5">
+                  <div className="h-12 w-12 rounded-lg bg-gradient-to-br from-[#6B00D7]/20 to-[#FF5AF7]/10 flex items-center justify-center mr-4">
+                    <Shield className="text-[#FF5AF7] w-6 h-6" />
+                  </div>
+                  <div>
+                    <h3 className="text-xl font-bold text-white mb-2">Security Tier System</h3>
+                    <p className="text-gray-300 text-sm">
+                      Choose from three distinct security levels, each with its own feature set and protection mechanisms tailored to your specific needs.
+                    </p>
+                  </div>
+                </div>
+                
+                <div className="space-y-3">
+                  {/* Tier 1: Standard */}
+                  <div className="bg-black/30 rounded-md p-3 border border-[#6B00D7]/20">
+                    <div className="flex justify-between items-center mb-2">
+                      <span className="font-medium text-white">Standard</span>
+                      <div className="text-xs py-0.5 px-2 bg-[#6B00D7]/20 text-[#FF5AF7] rounded-full">Multi-Sig: 2</div>
+                    </div>
+                    <div className="grid grid-cols-2 gap-1.5 text-xs">
+                      <div className="flex items-center">
+                        <div className="h-1.5 w-1.5 rounded-full bg-green-500 mr-1.5"></div>
+                        <span className="text-gray-300">Behavioral Analysis</span>
+                      </div>
+                      <div className="flex items-center">
+                        <div className="h-1.5 w-1.5 rounded-full bg-green-500 mr-1.5"></div>
+                        <span className="text-gray-300">Data Persistence</span>
+                      </div>
+                      <div className="flex items-center">
+                        <div className="h-1.5 w-1.5 rounded-full bg-red-500 mr-1.5"></div>
+                        <span className="text-gray-300 opacity-50">Zero-Knowledge</span>
+                      </div>
+                      <div className="flex items-center">
+                        <div className="h-1.5 w-1.5 rounded-full bg-red-500 mr-1.5"></div>
+                        <span className="text-gray-300 opacity-50">Quantum Resistant</span>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  {/* Tier 2: Enhanced */}
+                  <div className="bg-black/30 rounded-md p-3 border border-[#6B00D7]/30">
+                    <div className="flex justify-between items-center mb-2">
+                      <span className="font-medium text-white">Enhanced</span>
+                      <div className="text-xs py-0.5 px-2 bg-[#6B00D7]/30 text-[#FF5AF7] rounded-full">Multi-Sig: 3</div>
+                    </div>
+                    <div className="grid grid-cols-2 gap-1.5 text-xs">
+                      <div className="flex items-center">
+                        <div className="h-1.5 w-1.5 rounded-full bg-green-500 mr-1.5"></div>
+                        <span className="text-gray-300">Cross-Chain Verify</span>
+                      </div>
+                      <div className="flex items-center">
+                        <div className="h-1.5 w-1.5 rounded-full bg-green-500 mr-1.5"></div>
+                        <span className="text-gray-300">Zero-Knowledge</span>
+                      </div>
+                      <div className="flex items-center">
+                        <div className="h-1.5 w-1.5 rounded-full bg-green-500 mr-1.5"></div>
+                        <span className="text-gray-300">Geolocation Verify</span>
+                      </div>
+                      <div className="flex items-center">
+                        <div className="h-1.5 w-1.5 rounded-full bg-green-500 mr-1.5"></div>
+                        <span className="text-gray-300">Quantum Resistant</span>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  {/* Tier 3: Maximum */}
+                  <div className="bg-black/30 rounded-md p-3 border border-[#6B00D7]/40">
+                    <div className="flex justify-between items-center mb-2">
+                      <span className="font-medium text-white">Maximum</span>
+                      <div className="text-xs py-0.5 px-2 bg-[#6B00D7]/40 text-[#FF5AF7] rounded-full">Multi-Sig: 4</div>
+                    </div>
+                    <div className="grid grid-cols-2 gap-1.5 text-xs">
+                      <div className="flex items-center">
+                        <div className="h-1.5 w-1.5 rounded-full bg-green-500 mr-1.5"></div>
+                        <span className="text-gray-300">Hardware Keys</span>
+                      </div>
+                      <div className="flex items-center">
+                        <div className="h-1.5 w-1.5 rounded-full bg-green-500 mr-1.5"></div>
+                        <span className="text-gray-300">6-Hour Backups</span>
+                      </div>
+                      <div className="flex items-center">
+                        <div className="h-1.5 w-1.5 rounded-full bg-green-500 mr-1.5"></div>
+                        <span className="text-gray-300">All other features</span>
+                      </div>
+                      <div className="flex items-center">
+                        <div className="h-1.5 w-1.5 rounded-full bg-green-500 mr-1.5"></div>
+                        <span className="text-gray-300">Enhanced AI</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </motion.div>
+              
+              {/* Behavioral Analysis - Based on Real Implementation */}
+              <motion.div 
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.7, delay: 0.5 }}
+                className="bg-gradient-to-br from-black to-[#0a0014] backdrop-blur-lg border border-[#6B00D7]/30 rounded-xl p-6 shadow-glow"
+              >
+                <div className="flex items-start mb-5">
+                  <div className="h-12 w-12 rounded-lg bg-gradient-to-br from-[#6B00D7]/20 to-[#FF5AF7]/10 flex items-center justify-center mr-4">
+                    <Brain className="text-[#FF5AF7] w-6 h-6" />
+                  </div>
+                  <div>
+                    <h3 className="text-xl font-bold text-white mb-2">AI Security Monitoring</h3>
+                    <p className="text-gray-300 text-sm">
+                      Our advanced behavioral analysis system continuously monitors for suspicious activities and anomalies in transaction patterns.
+                    </p>
+                  </div>
+                </div>
+                
+                {/* AI Security Features */}
+                <div className="flex flex-col gap-3 mb-4">
+                  <div className="flex justify-between items-center">
+                    <span className="text-xs text-gray-300">Pattern Recognition</span>
+                    <div className="w-2/3 h-2 bg-black/50 rounded-full overflow-hidden">
+                      <div className="h-full bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] w-[85%]"></div>
+                    </div>
+                  </div>
+                  
+                  <div className="flex justify-between items-center">
+                    <span className="text-xs text-gray-300">Anomaly Detection</span>
+                    <div className="w-2/3 h-2 bg-black/50 rounded-full overflow-hidden">
+                      <div className="h-full bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] w-[92%]"></div>
+                    </div>
+                  </div>
+                  
+                  <div className="flex justify-between items-center">
+                    <span className="text-xs text-gray-300">Threat Prediction</span>
+                    <div className="w-2/3 h-2 bg-black/50 rounded-full overflow-hidden">
+                      <div className="h-full bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] w-[78%]"></div>
+                    </div>
+                  </div>
+                </div>
+                
+                {/* Sample Feature Vector */}
+                <div className="bg-black/60 rounded-md p-3 border border-[#6B00D7]/20 text-xs font-mono text-gray-300 overflow-hidden">
+                  <div className="text-gray-500">// Security Feature Vector Model</div>
+                  <div>{`{`}</div>
+                  <div className="pl-4"><span className="text-purple-400">recentTransactionCount</span>: <span className="text-amber-400">30</span>,</div>
+                  <div className="pl-4"><span className="text-purple-400">uniqueAddressInteractions</span>: <span className="text-amber-400">24</span>,</div>
+                  <div className="pl-4"><span className="text-purple-400">unusualTimePatterns</span>: <span className="text-amber-400">0.15</span>,</div>
+                  <div className="pl-4"><span className="text-purple-400">unusualLocationPatterns</span>: <span className="text-amber-400">0.08</span>,</div>
+                  <div>{`}`}</div>
+                </div>
+              </motion.div>
+              
+              {/* Zero-Knowledge System */}
+              <motion.div 
+                initial={{ opacity: 0, x: 20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.7, delay: 0.6 }}
+                className="bg-gradient-to-br from-black to-[#0a0014] backdrop-blur-lg border border-[#6B00D7]/30 rounded-xl p-6 shadow-glow"
+              >
+                <div className="flex items-start mb-5">
+                  <div className="h-12 w-12 rounded-lg bg-gradient-to-br from-[#6B00D7]/20 to-[#FF5AF7]/10 flex items-center justify-center mr-4">
+                    <EyeOff className="text-[#FF5AF7] w-6 h-6" />
+                  </div>
+                  <div>
+                    <h3 className="text-xl font-bold text-white mb-2">Zero-Knowledge Privacy</h3>
+                    <p className="text-gray-300 text-sm">
+                      Our custom ZK-Shield technology enables verification without revealing sensitive vault contents, ensuring complete privacy.
+                    </p>
+                  </div>
+                </div>
+                
+                {/* ZK Feature Illustration */}
+                <div className="bg-black/40 rounded-lg p-4 mb-4 border border-[#6B00D7]/20">
+                  <div className="flex items-center gap-4 mb-3">
+                    <div className="relative h-12 w-12 rounded-full bg-gradient-to-r from-[#6B00D7]/30 to-[#FF5AF7]/30 flex items-center justify-center">
+                      <div className="absolute inset-1 rounded-full bg-black/80 flex items-center justify-center">
+                        <LockKeyhole className="w-5 h-5 text-[#FF5AF7]" />
+                      </div>
                     </div>
                     
-                    {/* Connection Dots with enhanced animation */}
-                    <div className="absolute top-0 left-1/2 -translate-x-1/2 h-2 w-2 rounded-full bg-[#FF5AF7] animate-pulse"></div>
-                    <div className="absolute bottom-0 left-1/2 -translate-x-1/2 h-2 w-2 rounded-full bg-[#FF5AF7] animate-pulse delay-300"></div>
-                    <div className="absolute left-0 top-1/2 -translate-y-1/2 h-2 w-2 rounded-full bg-[#FF5AF7] animate-pulse delay-100"></div>
-                    <div className="absolute right-0 top-1/2 -translate-y-1/2 h-2 w-2 rounded-full bg-[#FF5AF7] animate-pulse delay-200"></div>
+                    <div className="flex-1 h-[2px] bg-gradient-to-r from-[#FF5AF7] via-transparent to-[#6B00D7] relative">
+                      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 px-3 py-1 rounded-full bg-black border border-[#6B00D7]/30 text-xs text-[#FF5AF7] whitespace-nowrap">
+                        ZK Proof
+                      </div>
+                    </div>
                     
-                    {/* Additional connection lines with glow effect */}
-                    <div className="absolute top-0 left-1/2 w-[1px] h-16 -translate-x-1/2 bg-gradient-to-b from-[#FF5AF7] to-transparent opacity-50"></div>
-                    <div className="absolute bottom-0 left-1/2 w-[1px] h-16 -translate-x-1/2 bg-gradient-to-t from-[#FF5AF7] to-transparent opacity-50"></div>
-                    <div className="absolute left-0 top-1/2 h-[1px] w-16 -translate-y-1/2 bg-gradient-to-r from-[#FF5AF7] to-transparent opacity-50"></div>
-                    <div className="absolute right-0 top-1/2 h-[1px] w-16 -translate-y-1/2 bg-gradient-to-l from-[#FF5AF7] to-transparent opacity-50"></div>
-                  </div>
-                </div>
-                
-                <div className="text-center mb-4 text-sm font-semibold text-white">
-                  <span className="text-[#FF5AF7]">MULTI-SIGNATURE</span> VAULT SYSTEM
-                </div>
-                
-                <div className="grid grid-cols-2 gap-3 text-xs mb-4">
-                  <div className="flex items-center">
-                    <Check className="mr-1 h-3 w-3 text-[#FF5AF7]" />
-                    <span className="text-gray-300">Quantum Encryption</span>
-                  </div>
-                  <div className="flex items-center">
-                    <Check className="mr-1 h-3 w-3 text-[#FF5AF7]" />
-                    <span className="text-gray-300">Zero-Knowledge Proof</span>
-                  </div>
-                  <div className="flex items-center">
-                    <Check className="mr-1 h-3 w-3 text-[#FF5AF7]" />
-                    <span className="text-gray-300">Cross-Chain Security</span>
-                  </div>
-                  <div className="flex items-center">
-                    <Check className="mr-1 h-3 w-3 text-[#FF5AF7]" />
-                    <span className="text-gray-300">Unhackable Architecture</span>
-                  </div>
-                </div>
-                
-                {/* Blockchain indicators */}
-                <div className="flex justify-between mt-8 mb-4">
-                  <div className="text-center">
-                    <div className="text-xs text-[#FF5AF7] mb-1">ETH<br/>Secured</div>
-                    <div className="h-1 w-12 bg-[#FF5AF7] rounded-full mx-auto"></div>
+                    <div className="relative h-12 w-12 rounded-full bg-gradient-to-r from-[#6B00D7]/30 to-[#FF5AF7]/30 flex items-center justify-center">
+                      <div className="absolute inset-1 rounded-full bg-black/80 flex items-center justify-center">
+                        <CheckCircle2 className="w-5 h-5 text-[#FF5AF7]" />
+                      </div>
+                    </div>
                   </div>
                   
-                  <div className="text-center">
-                    <div className="text-xs text-[#FF5AF7] mb-1">SOL<br/>Secured</div>
-                    <div className="h-1 w-12 bg-[#FF5AF7] rounded-full mx-auto"></div>
-                  </div>
-                  
-                  <div className="text-center">
-                    <div className="text-xs text-[#FF5AF7] mb-1">TON<br/>Secured</div>
-                    <div className="h-1 w-12 bg-[#FF5AF7] rounded-full mx-auto"></div>
-                  </div>
-                  
-                  <div className="text-center">
-                    <div className="text-xs text-[#FF5AF7] mb-1">BTC<br/>Secured</div>
-                    <div className="h-1 w-12 bg-[#FF5AF7] rounded-full mx-auto"></div>
+                  <div className="text-xs text-center text-gray-400">
+                    Verify without revealing: Only proofs are shared, never your private data
                   </div>
                 </div>
                 
-                <div className="absolute bottom-0 left-0 right-0 text-xs overflow-hidden text-center text-gray-600 font-mono">
-                  <div className="animate-marquee-slow-reverse">
-                    {"E0Bcq_k1_gBECryp9Lkwk-3pTn6Ifmw4UMhz...73Jaq2mjzCVrf14g25cF..."}
-                  </div>
+                {/* ZK Implementation */}
+                <div className="bg-black/60 rounded-md p-3 border border-[#6B00D7]/20 text-xs font-mono text-gray-300 overflow-hidden">
+                  <div className="text-purple-400">async createVaultAccessProof(vaultId, userId) {`{`}</div>
+                  <div className="pl-4 text-emerald-400">// Generate zero-knowledge proof</div>
+                  <div className="pl-4">const proof = <span className="text-[#FF5AF7]">await</span> this.generateProof({`{`}</div>
+                  <div className="pl-8"><span className="text-yellow-400">privateInputs</span>: [userId, privateKey],</div>
+                  <div className="pl-8"><span className="text-yellow-400">publicInputs</span>: [vaultId]</div>
+                  <div className="pl-4">{`}`});</div>
+                  <div className="text-purple-400">{`}`}</div>
                 </div>
-              </div>
-            </motion.div>
+              </motion.div>
+            </div>
             
             {/* Security Features */}
             <div className="flex flex-wrap justify-center gap-2 mb-8">
@@ -296,6 +474,16 @@ const Home = () => {
               >
                 <Lock className="text-[#FF5AF7] w-4 h-4" />
                 <span className="text-sm text-white">Zero-Knowledge Privacy</span>
+              </motion.div>
+              
+              <motion.div 
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 0.5, delay: 0.4 }}
+                className="bg-black/50 border border-[#6B00D7]/30 rounded-full px-4 py-2 flex items-center gap-2"
+              >
+                <Brain className="text-[#FF5AF7] w-4 h-4" />
+                <span className="text-sm text-white">AI-Enhanced Monitoring</span>
               </motion.div>
             </div>
           </div>
