@@ -56,8 +56,11 @@
   width: 300px;
   height: 300px;
   perspective: 800px;
-  z-index: 5;
+  z-index: 20;
   pointer-events: none;
+  /* Make sure objects are properly visible */
+  filter: drop-shadow(0 0 20px rgba(255, 90, 247, 0.5));
+  transform-style: preserve-3d;
 }
 
 .holographic-cube {
