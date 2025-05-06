@@ -1,27 +1,49 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import * as THREE from 'three';
 
 const ThreeDHeroBackground: React.FC = () => {
   const mountRef = useRef<HTMLDivElement>(null);
+  const [hasWebGLError, setHasWebGLError] = useState(false);
   
   useEffect(() => {
     if (!mountRef.current) return;
     
-    // Scene setup
-    const scene = new THREE.Scene();
-    const camera = new THREE.PerspectiveCamera(
-      75, 
-      window.innerWidth / window.innerHeight, 
-      0.1, 
-      1000
-    );
-    camera.position.z = 15;
+    // Function to check if WebGL is available
+    const isWebGLAvailable = () => {
+      try {
+        const canvas = document.createElement('canvas');
+        return !!(window.WebGLRenderingContext && 
+          (canvas.getContext('webgl') || canvas.getContext('experimental-webgl')));
+      } catch (e) {
+        return false;
+      }
+    };
     
-    // Renderer setup
-    const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
-    renderer.setSize(window.innerWidth, window.innerHeight);
-    renderer.setClearColor(0x000000, 0); // Transparent background
-    mountRef.current.appendChild(renderer.domElement);
+    // Check if WebGL is supported
+    if (!isWebGLAvailable()) {
+      console.warn("WebGL is not available in this environment");
+      setHasWebGLError(true);
+      return;
+    }
+    
+    let renderer: THREE.WebGLRenderer;
+    
+    try {
+      // Scene setup
+      const scene = new THREE.Scene();
+      const camera = new THREE.PerspectiveCamera(
+        75, 
+        window.innerWidth / window.innerHeight, 
+        0.1, 
+        1000
+      );
+      camera.position.z = 15;
+      
+      // Renderer setup with error handling
+      renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
+      renderer.setSize(window.innerWidth, window.innerHeight);
+      renderer.setClearColor(0x000000, 0); // Transparent background
+      mountRef.current.appendChild(renderer.domElement);
     
     // Create particles
     const particlesGeometry = new THREE.BufferGeometry();
@@ -232,12 +254,35 @@ const ThreeDHeroBackground: React.FC = () => {
     return () => {
       window.removeEventListener('resize', handleResize);
       window.removeEventListener('mousemove', handleMouseMove);
-      cancelAnimationFrame(animationFrameId);
-      if (mountRef.current) {
+      if (animationFrameId) {
+        cancelAnimationFrame(animationFrameId);
+      }
+      if (mountRef.current && renderer.domElement && mountRef.current.contains(renderer.domElement)) {
         mountRef.current.removeChild(renderer.domElement);
       }
     };
+    
+    } catch (error) {
+      console.error("Error creating WebGL context:", error);
+      setHasWebGLError(true);
+      return;
+    }
   }, []);
+  
+  // Fallback background when WebGL is not available
+  if (hasWebGLError) {
+    return (
+      <div className="absolute inset-0 z-0 overflow-hidden bg-gradient-to-b from-black via-[#1A0033] to-black">
+        {/* Static gradient background with subtle particle effects */}
+        <div className="absolute h-2 w-2 rounded-full bg-[#FF5AF7]/30 top-[10%] left-[5%] animate-pulse-slow"></div>
+        <div className="absolute h-3 w-3 rounded-full bg-[#6B00D7]/30 top-[20%] left-[25%] animate-pulse-slow delay-150"></div>
+        <div className="absolute h-2 w-2 rounded-full bg-[#FF5AF7]/30 top-[15%] left-[75%] animate-pulse-slow delay-300"></div>
+        <div className="absolute h-3 w-3 rounded-full bg-[#6B00D7]/30 top-[60%] left-[85%] animate-pulse-slow delay-200"></div>
+        <div className="absolute h-2 w-2 rounded-full bg-[#FF5AF7]/30 top-[80%] left-[15%] animate-pulse-slow delay-700"></div>
+        <div className="absolute h-2 w-2 rounded-full bg-[#6B00D7]/30 top-[70%] left-[45%] animate-pulse-slow delay-500"></div>
+      </div>
+    );
+  }
   
   return (
     <div 
