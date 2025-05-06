@@ -5,7 +5,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { useCVTToken } from "@/contexts/cvt-token-context";
-import { ArrowRight, Clock, Lock, Shield, Sparkles, Zap, CreditCard, FileKey, CheckCircle2, KeyRound, Globe, Fingerprint } from "lucide-react";
+import { ArrowRight, Clock, Lock, Shield, Sparkles, Zap, CreditCard, FileKey, CheckCircle2, KeyRound, Globe, Fingerprint, FileText } from "lucide-react";
 
 const CVTUtilityPage = () => {
   const [_, setLocation] = useLocation();
@@ -654,6 +654,15 @@ const CVTUtilityPage = () => {
                 >
                   <Globe className="mr-2 h-5 w-5" />
                   CVT Tokenomics
+                </Button>
+                
+                <Button 
+                  variant="outline" 
+                  className="border-[#6B00D7] text-[#FF5AF7] hover:bg-[#6B00D7]/10 font-semibold py-6 px-8 rounded-xl transition-all"
+                  onClick={() => setLocation("/whitepaper")}
+                >
+                  <FileText className="mr-2 h-5 w-5" />
+                  CVT Whitepaper
                 </Button>
               </div>
             </div>
