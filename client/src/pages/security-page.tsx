@@ -3,6 +3,10 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import TripleChainExplainer from '@/components/security/TripleChainExplainer';
 import SecurityFeatureCards from '@/components/security/SecurityFeatureCards';
 import SecurityLevelSelector from '@/components/security/SecurityLevelSelector';
+import SecurityDashboard from '@/components/security/SecurityDashboard';
+import SecurityTip from '@/components/security/SecurityTip';
+import { useToast } from '@/hooks/use-toast';
+import { Shield } from 'lucide-react';
 
 /**
  * Security Page for Chronos Vault
@@ -12,6 +16,8 @@ import SecurityLevelSelector from '@/components/security/SecurityLevelSelector';
  * security level options.
  */
 export default function SecurityPage() {
+  const { toast } = useToast();
+  
   // In a real implementation, these would come from your security API
   const currentSecurityLevel = 'enhanced' as const;
   const vaultId = 'v-12345';
@@ -19,7 +25,27 @@ export default function SecurityPage() {
   // Handle security level changes
   const handleSecurityLevelChange = (level: 'standard' | 'enhanced' | 'maximum') => {
     // In a real implementation, this would call an API to change the security level
-    console.log(`Changing security level to: ${level}`);
+    toast({
+      title: "Security Level Changed",
+      description: `Your security level has been changed to ${level}.`,
+      variant: "success",
+    });
+  };
+  
+  // Example security tip
+  const securityTip = {
+    id: 'tip-001',
+    title: 'Enhance Your Security',
+    message: 'For high-value vaults, we recommend enabling hardware key authentication for maximum protection.',
+    actionLabel: 'Learn More',
+    dismissable: true
+  };
+  
+  const handleTipAction = () => {
+    toast({
+      title: "Hardware Key Authentication",
+      description: "Hardware keys provide an additional layer of security for high-value vaults.",
+    });
   };
   
   return (
@@ -31,12 +57,28 @@ export default function SecurityPage() {
         </p>
       </header>
       
-      <Tabs defaultValue="overview" className="w-full">
-        <TabsList className="grid w-full grid-cols-3">
-          <TabsTrigger value="overview">Security Overview</TabsTrigger>
+      {/* Security Tip */}
+      <div className="max-w-3xl mx-auto">
+        <SecurityTip 
+          tip={securityTip}
+          variant="suggestion"
+          icon={<Shield className="h-5 w-5" />}
+          onActionClick={handleTipAction}
+          onDismiss={() => {}}
+        />
+      </div>
+      
+      <Tabs defaultValue="dashboard" className="w-full">
+        <TabsList className="grid w-full grid-cols-4">
+          <TabsTrigger value="dashboard">Dashboard</TabsTrigger>
+          <TabsTrigger value="overview">Security Architecture</TabsTrigger>
           <TabsTrigger value="features">Security Features</TabsTrigger>
           <TabsTrigger value="levels">Security Levels</TabsTrigger>
         </TabsList>
+        
+        <TabsContent value="dashboard" className="mt-6">
+          <SecurityDashboard />
+        </TabsContent>
         
         <TabsContent value="overview" className="mt-6">
           <div className="space-y-12">
