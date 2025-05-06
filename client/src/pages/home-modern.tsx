@@ -4,8 +4,8 @@ import { Button } from "@/components/ui/button";
 import { Shield, Lock, Zap, Users, Clock, ArrowRight, BarChart3, Hexagon, Check, ChevronRight } from "lucide-react";
 import { useCVTToken } from "@/contexts/cvt-token-context";
 import { motion } from "framer-motion";
-import AdvancedHolographicHero from "@/components/hero/AdvancedHolographicHero";
 import ThreeDHeroBackground from "@/components/hero/3DHeroBackground";
+import LuxuryHero from "@/components/hero/LuxuryHero";
 
 const Home = () => {
   const [_, setLocation] = useLocation();
@@ -70,50 +70,70 @@ const Home = () => {
           </motion.div>
         </div>
         
-        {/* Advanced Hero Section */}
+        {/* Luxury Hero Section */}
         <section className="py-12 mt-4 relative" ref={heroRef}>
-          <div className="absolute inset-0 z-0 opacity-60">
-            <AdvancedHolographicHero />
-          </div>
-          
-          <div className="container mx-auto px-4 text-center relative z-10">
+          <LuxuryHero onCreateVault={() => setLocation('/dashboard')} />
+        </section>
+        
+        {/* Security Statistics Section */}
+        <section className="py-16 bg-black">
+          <div className="container mx-auto px-4">
+            <div className="text-center mb-8">
+              <motion.div 
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.7 }}
+                className="inline-flex mb-3 items-center justify-center space-x-2 px-4 py-1 rounded-full border border-[#6B00D7]/30 bg-black/30"
+              >
+                <span className="text-sm font-medium text-[#FF5AF7]">ADVANCED BLOCKCHAIN SECURITY</span>
+              </motion.div>
+              
+              <motion.h2 
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.7, delay: 0.1 }}
+                className="text-4xl font-bold text-white mb-4"
+              >
+                Future-Proof Protection
+              </motion.h2>
+              
+              <motion.p 
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.7, delay: 0.2 }}
+                className="text-gray-300 max-w-3xl mx-auto"
+              >
+                Chronos Vault combines quantum-resistant encryption with cutting-edge blockchain technology to create an impenetrable shield for your digital assets.
+              </motion.p>
+            </div>
+            
+            {/* Stats Section */}
             <motion.div 
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.7 }}
-              className="inline-flex mb-3 items-center justify-center space-x-2 px-4 py-1 rounded-full border border-[#6B00D7]/30 bg-black/30 backdrop-blur-sm"
-            >
-              <span className="h-3 w-3 rounded-full bg-[#6B00D7]"></span>
-              <span className="text-sm font-medium text-[#FF5AF7]">Ultra-Premium Blockchain Security</span>
-              <span className="text-xs text-gray-400">•</span>
-              <span className="text-sm font-medium text-[#FF5AF7]">Quantum-Resistant Architecture</span>
-            </motion.div>
-            
-            <motion.h1 
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.7, delay: 0.2 }}
-              className="text-5xl md:text-7xl font-bold mb-6 mt-8 text-[#FF5AF7] glow-text"
-            >
-              Chronos Vault
-              <div className="text-2xl md:text-3xl text-white/70 mt-1">The Future of Digital Vaults</div>
-            </motion.h1>
-            
-            <motion.p 
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.7, delay: 0.3 }}
-              className="text-gray-300 mb-10 max-w-3xl mx-auto"
+              className="grid grid-cols-3 gap-4 max-w-2xl mx-auto mb-12 bg-black/40 backdrop-blur-sm p-6 rounded-xl border border-[#6B00D7]/20"
             >
-              The most sophisticated digital vault system ever created, combining Triple-Chain Security, Zero-Knowledge Privacy, and Quantum-Resistant Encryption for unrivaled asset protection.
-            </motion.p>
+              <div className="text-center">
+                <div className="text-3xl font-bold text-[#FF5AF7] mb-1">{activeVaults.toLocaleString()}</div>
+                <div className="text-sm text-gray-400">Active Vaults</div>
+              </div>
+              <div className="text-center">
+                <div className="text-3xl font-bold text-[#FF5AF7] mb-1">{blockchains}+</div>
+                <div className="text-sm text-gray-400">Blockchains</div>
+              </div>
+              <div className="text-center">
+                <div className="text-3xl font-bold text-[#FF5AF7] mb-1">{securityRating}%</div>
+                <div className="text-sm text-gray-400">Security Rating</div>
+              </div>
+            </motion.div>
             
             {/* Security Visualization Card */}
             <motion.div 
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: 0.4 }}
-              className="max-w-2xl mx-auto relative mb-16"
+              className="max-w-3xl mx-auto relative mb-16"
             >
               <div className="bg-gradient-to-b from-black/80 to-[#0a0014] backdrop-blur-lg border border-[#6B00D7]/30 rounded-xl p-8 shadow-glow">
                 <div className="absolute top-0 left-0 right-0 text-xs overflow-hidden text-center text-gray-600 font-mono">
@@ -167,6 +187,29 @@ const Home = () => {
                   </div>
                 </div>
                 
+                {/* Blockchain indicators */}
+                <div className="flex justify-between mt-8 mb-4">
+                  <div className="text-center">
+                    <div className="text-xs text-[#FF5AF7] mb-1">ETH<br/>Secured</div>
+                    <div className="h-1 w-12 bg-[#FF5AF7] rounded-full mx-auto"></div>
+                  </div>
+                  
+                  <div className="text-center">
+                    <div className="text-xs text-[#FF5AF7] mb-1">SOL<br/>Secured</div>
+                    <div className="h-1 w-12 bg-[#FF5AF7] rounded-full mx-auto"></div>
+                  </div>
+                  
+                  <div className="text-center">
+                    <div className="text-xs text-[#FF5AF7] mb-1">TON<br/>Secured</div>
+                    <div className="h-1 w-12 bg-[#FF5AF7] rounded-full mx-auto"></div>
+                  </div>
+                  
+                  <div className="text-center">
+                    <div className="text-xs text-[#FF5AF7] mb-1">BTC<br/>Secured</div>
+                    <div className="h-1 w-12 bg-[#FF5AF7] rounded-full mx-auto"></div>
+                  </div>
+                </div>
+                
                 <div className="absolute bottom-0 left-0 right-0 text-xs overflow-hidden text-center text-gray-600 font-mono">
                   <div className="animate-marquee-slow-reverse">
                     {"E0Bcq_k1_gBECryp9Lkwk-3pTn6Ifmw4UMhz...73Jaq2mjzCVrf14g25cF..."}
@@ -175,36 +218,37 @@ const Home = () => {
               </div>
             </motion.div>
             
-            {/* Stats Section */}
-            <div className="grid grid-cols-3 gap-4 max-w-2xl mx-auto mb-12">
-              <div className="text-center">
-                <div className="text-3xl font-bold text-[#FF5AF7] mb-1">{activeVaults.toLocaleString()}</div>
-                <div className="text-sm text-gray-400">Active Vaults</div>
-              </div>
-              <div className="text-center">
-                <div className="text-3xl font-bold text-[#FF5AF7] mb-1">{blockchains}+</div>
-                <div className="text-sm text-gray-400">Blockchains</div>
-              </div>
-              <div className="text-center">
-                <div className="text-3xl font-bold text-[#FF5AF7] mb-1">{securityRating}%</div>
-                <div className="text-sm text-gray-400">Security Rating</div>
-              </div>
-            </div>
-            
             {/* Security Features */}
-            <div className="flex flex-wrap justify-center gap-2 mb-16">
-              <div className="bg-black/50 border border-[#6B00D7]/30 rounded-full px-4 py-2 flex items-center gap-2">
+            <div className="flex flex-wrap justify-center gap-2 mb-8">
+              <motion.div 
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 0.5, delay: 0.1 }}
+                className="bg-black/50 border border-[#6B00D7]/30 rounded-full px-4 py-2 flex items-center gap-2"
+              >
                 <Shield className="text-[#FF5AF7] w-4 h-4" />
                 <span className="text-sm text-white">Military-Grade Encryption</span>
-              </div>
-              <div className="bg-black/50 border border-[#6B00D7]/30 rounded-full px-4 py-2 flex items-center gap-2">
+              </motion.div>
+              
+              <motion.div 
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 0.5, delay: 0.2 }}
+                className="bg-black/50 border border-[#6B00D7]/30 rounded-full px-4 py-2 flex items-center gap-2"
+              >
                 <Zap className="text-[#FF5AF7] w-4 h-4" />
                 <span className="text-sm text-white">Triple-Chain Security</span>
-              </div>
-              <div className="bg-black/50 border border-[#6B00D7]/30 rounded-full px-4 py-2 flex items-center gap-2">
+              </motion.div>
+              
+              <motion.div 
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 0.5, delay: 0.3 }}
+                className="bg-black/50 border border-[#6B00D7]/30 rounded-full px-4 py-2 flex items-center gap-2"
+              >
                 <Lock className="text-[#FF5AF7] w-4 h-4" />
                 <span className="text-sm text-white">Zero-Knowledge Privacy</span>
-              </div>
+              </motion.div>
             </div>
           </div>
         </section>
