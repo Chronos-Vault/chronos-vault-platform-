@@ -131,16 +131,19 @@ const Home = () => {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.7 }}
-                className="inline-flex mb-3 items-center justify-center space-x-2 px-4 py-1 rounded-full border border-[#6B00D7]/30 bg-black/30"
+                className="inline-flex mb-6 items-center px-3 py-1 rounded-full bg-[#6B00D7]/20 border border-[#6B00D7]/40"
               >
-                <span className="text-sm font-medium text-[#FF5AF7]">ADVANCED BLOCKCHAIN SECURITY</span>
+                <span className="text-xs font-medium text-[#FF5AF7] tracking-wider uppercase flex items-center">
+                  <Shield className="w-3.5 h-3.5 text-[#FF5AF7] mr-1.5" />
+                  <span>ADVANCED BLOCKCHAIN SECURITY</span>
+                </span>
               </motion.div>
               
               <motion.h2 
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.7, delay: 0.1 }}
-                className="text-4xl font-bold text-white mb-4"
+                className="text-4xl md:text-5xl lg:text-6xl font-bold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-white via-[#FF5AF7] to-white"
               >
                 Triple-Chain Defense System
               </motion.h2>
