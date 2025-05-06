@@ -1,17 +1,22 @@
-import { useEffect } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Link, useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
-import { Shield, Lock, Zap, Users, Clock, ArrowRight } from "lucide-react";
+import { Shield, Lock, Zap, Users, Clock, ArrowRight, BarChart3, Hexagon, Check, ChevronRight } from "lucide-react";
 import { useCVTToken } from "@/contexts/cvt-token-context";
+import { motion } from "framer-motion";
+import AdvancedHolographicHero from "@/components/hero/AdvancedHolographicHero";
+import ThreeDHeroBackground from "@/components/hero/3DHeroBackground";
 
 const Home = () => {
   const [_, setLocation] = useLocation();
   const { tokenBalance } = useCVTToken();
+  const [isVisible, setIsVisible] = useState(false);
+  const heroRef = useRef<HTMLDivElement>(null);
 
-  // Sample vault data for display purposes
+  // Enhanced vault data for impressive display
   const securityRating = 100;
   const activeVaults = 10467;
-  const blockchains = 3;
+  const blockchains = 4;
 
   // Handle smooth scrolling for anchor links
   useEffect(() => {
@@ -37,39 +42,80 @@ const Home = () => {
     return () => document.removeEventListener('click', handleAnchorClick);
   }, []);
 
+  useEffect(() => {
+    // Set visibility for animation effects after component mount
+    setTimeout(() => {
+      setIsVisible(true);
+    }, 300);
+  }, []);
+
   return (
-    <div className="flex flex-col bg-black text-white min-h-screen">
-      <main className="flex-1">
+    <div className="flex flex-col bg-black text-white min-h-screen overflow-hidden">
+      {/* Advanced 3D Hero Background */}
+      <div className="fixed inset-0 z-0">
+        <ThreeDHeroBackground />
+      </div>
+      
+      <main className="flex-1 relative z-10">
         {/* Status Badge */}
         <div className="w-full flex justify-center mt-4">
-          <div className="bg-black/50 border border-[#6B00D7]/30 rounded-full px-6 py-2 flex items-center gap-2 max-w-sm">
+          <motion.div 
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+            className="bg-black/50 border border-[#6B00D7]/30 backdrop-blur-sm rounded-full px-6 py-2 flex items-center gap-2 max-w-sm"
+          >
             <div className="h-2 w-2 rounded-full bg-[#FF5AF7] animate-pulse"></div>
             <p className="text-sm">Vault Security Status: <span className="text-[#FF5AF7] font-medium">Active & Secure</span></p>
-          </div>
+          </motion.div>
         </div>
         
-        {/* Hero Section */}
-        <section className="py-12 mt-4">
-          <div className="container mx-auto px-4 text-center">
-            <div className="inline-flex mb-3 items-center justify-center space-x-2 px-4 py-1 rounded-full border border-[#6B00D7]/30 bg-black/30">
+        {/* Advanced Hero Section */}
+        <section className="py-12 mt-4 relative" ref={heroRef}>
+          <div className="absolute inset-0 z-0 opacity-60">
+            <AdvancedHolographicHero />
+          </div>
+          
+          <div className="container mx-auto px-4 text-center relative z-10">
+            <motion.div 
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.7 }}
+              className="inline-flex mb-3 items-center justify-center space-x-2 px-4 py-1 rounded-full border border-[#6B00D7]/30 bg-black/30 backdrop-blur-sm"
+            >
               <span className="h-3 w-3 rounded-full bg-[#6B00D7]"></span>
               <span className="text-sm font-medium text-[#FF5AF7]">Ultra-Premium Blockchain Security</span>
               <span className="text-xs text-gray-400">•</span>
-              <span className="text-sm font-medium text-[#FF5AF7]">Triple-Chain Architecture</span>
-            </div>
+              <span className="text-sm font-medium text-[#FF5AF7]">Quantum-Resistant Architecture</span>
+            </motion.div>
             
-            <h1 className="text-5xl md:text-7xl font-bold mb-6 mt-8 text-[#FF5AF7] glow-text">
+            <motion.h1 
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.7, delay: 0.2 }}
+              className="text-5xl md:text-7xl font-bold mb-6 mt-8 text-[#FF5AF7] glow-text"
+            >
               Chronos Vault
               <div className="text-2xl md:text-3xl text-white/70 mt-1">The Future of Digital Vaults</div>
-            </h1>
+            </motion.h1>
             
-            <p className="text-gray-300 mb-10 max-w-3xl mx-auto">
-              The most sophisticated digital vault system ever created, combining Triple-Chain Security, Zero-Knowledge Privacy, and Quantum-Resistant Encryption.
-            </p>
+            <motion.p 
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.7, delay: 0.3 }}
+              className="text-gray-300 mb-10 max-w-3xl mx-auto"
+            >
+              The most sophisticated digital vault system ever created, combining Triple-Chain Security, Zero-Knowledge Privacy, and Quantum-Resistant Encryption for unrivaled asset protection.
+            </motion.p>
             
             {/* Security Visualization Card */}
-            <div className="max-w-2xl mx-auto relative mb-16">
-              <div className="bg-gradient-to-b from-black to-[#0a0014] border border-[#6B00D7]/30 rounded-xl p-8 shadow-glow">
+            <motion.div 
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, delay: 0.4 }}
+              className="max-w-2xl mx-auto relative mb-16"
+            >
+              <div className="bg-gradient-to-b from-black/80 to-[#0a0014] backdrop-blur-lg border border-[#6B00D7]/30 rounded-xl p-8 shadow-glow">
                 <div className="absolute top-0 left-0 right-0 text-xs overflow-hidden text-center text-gray-600 font-mono">
                   <div className="animate-marquee-slow">
                     {"0xf70648a8...1bd8a0ce25367b9d1d7c3386d0ad5...6ac72fb89361c5b99c71..."}
@@ -80,15 +126,44 @@ const Home = () => {
                   <div className="relative w-32 h-32">
                     <div className="absolute inset-0 bg-[#6B00D7]/5 rounded-full animate-pulse-slow"></div>
                     <div className="absolute inset-4 bg-[#6B00D7]/10 rounded-full animate-pulse-slow delay-150"></div>
-                    <div className="absolute inset-8 bg-black rounded-full border border-[#6B00D7]/40 flex items-center justify-center">
+                    <div className="absolute inset-8 bg-black/80 backdrop-blur-md rounded-full border border-[#6B00D7]/40 flex items-center justify-center">
                       <Lock className="text-[#FF5AF7] w-10 h-10" />
                     </div>
                     
-                    {/* Connection Dots */}
+                    {/* Connection Dots with enhanced animation */}
                     <div className="absolute top-0 left-1/2 -translate-x-1/2 h-2 w-2 rounded-full bg-[#FF5AF7] animate-pulse"></div>
-                    <div className="absolute bottom-0 left-1/2 -translate-x-1/2 h-2 w-2 rounded-full bg-[#FF5AF7] animate-pulse"></div>
-                    <div className="absolute left-0 top-1/2 -translate-y-1/2 h-2 w-2 rounded-full bg-[#FF5AF7] animate-pulse"></div>
-                    <div className="absolute right-0 top-1/2 -translate-y-1/2 h-2 w-2 rounded-full bg-[#FF5AF7] animate-pulse"></div>
+                    <div className="absolute bottom-0 left-1/2 -translate-x-1/2 h-2 w-2 rounded-full bg-[#FF5AF7] animate-pulse delay-300"></div>
+                    <div className="absolute left-0 top-1/2 -translate-y-1/2 h-2 w-2 rounded-full bg-[#FF5AF7] animate-pulse delay-100"></div>
+                    <div className="absolute right-0 top-1/2 -translate-y-1/2 h-2 w-2 rounded-full bg-[#FF5AF7] animate-pulse delay-200"></div>
+                    
+                    {/* Additional connection lines with glow effect */}
+                    <div className="absolute top-0 left-1/2 w-[1px] h-16 -translate-x-1/2 bg-gradient-to-b from-[#FF5AF7] to-transparent opacity-50"></div>
+                    <div className="absolute bottom-0 left-1/2 w-[1px] h-16 -translate-x-1/2 bg-gradient-to-t from-[#FF5AF7] to-transparent opacity-50"></div>
+                    <div className="absolute left-0 top-1/2 h-[1px] w-16 -translate-y-1/2 bg-gradient-to-r from-[#FF5AF7] to-transparent opacity-50"></div>
+                    <div className="absolute right-0 top-1/2 h-[1px] w-16 -translate-y-1/2 bg-gradient-to-l from-[#FF5AF7] to-transparent opacity-50"></div>
+                  </div>
+                </div>
+                
+                <div className="text-center mb-4 text-sm font-semibold text-white">
+                  <span className="text-[#FF5AF7]">MULTI-SIGNATURE</span> VAULT SYSTEM
+                </div>
+                
+                <div className="grid grid-cols-2 gap-3 text-xs mb-4">
+                  <div className="flex items-center">
+                    <Check className="mr-1 h-3 w-3 text-[#FF5AF7]" />
+                    <span className="text-gray-300">Quantum Encryption</span>
+                  </div>
+                  <div className="flex items-center">
+                    <Check className="mr-1 h-3 w-3 text-[#FF5AF7]" />
+                    <span className="text-gray-300">Zero-Knowledge Proof</span>
+                  </div>
+                  <div className="flex items-center">
+                    <Check className="mr-1 h-3 w-3 text-[#FF5AF7]" />
+                    <span className="text-gray-300">Cross-Chain Security</span>
+                  </div>
+                  <div className="flex items-center">
+                    <Check className="mr-1 h-3 w-3 text-[#FF5AF7]" />
+                    <span className="text-gray-300">Unhackable Architecture</span>
                   </div>
                 </div>
                 
@@ -98,7 +173,7 @@ const Home = () => {
                   </div>
                 </div>
               </div>
-            </div>
+            </motion.div>
             
             {/* Stats Section */}
             <div className="grid grid-cols-3 gap-4 max-w-2xl mx-auto mb-12">
