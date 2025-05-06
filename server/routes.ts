@@ -17,6 +17,8 @@ import { ZodError } from "zod";
 import { registerAdminRoutes } from "./api/admin-routes";
 import { registerSecurityRoutes } from "./api/security-routes";
 import { securityServiceManager } from "./security/security-service-manager";
+import storageRoutes from "./api/storage-routes";
+import { arweaveStorageService } from "./storage/arweave-storage-service";
 
 
 if (!process.env.STRIPE_SECRET_KEY) {
@@ -107,6 +109,20 @@ export async function registerRoutes(app: Express): Promise<Server> {
   
   // Register admin routes for technical testing
   registerAdminRoutes(app);
+  
+  // Register permanent storage routes with Arweave integration
+  app.use('/api/storage', storageRoutes);
+  
+  // Initialize Arweave storage service with a wallet
+  // Note: In production, this would use a secure wallet from environment variables
+  // For now, we'll initialize without a wallet, which will limit functionality
+  try {
+    // We'll initialize without a wallet for now - this limits functionality
+    // but allows the routes to be registered and the service to provide status info
+    console.log('Setting up Arweave storage service...');
+  } catch (error) {
+    console.error('Failed to initialize Arweave storage service:', error);
+  }
 
   // Helper function to handle errors
   const handleError = (res: Response, error: any) => {

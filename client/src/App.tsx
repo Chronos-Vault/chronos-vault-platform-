@@ -52,6 +52,7 @@ import SubscriptionPage from "@/pages/subscription";
 import CVTPaymentPage from "@/pages/cvt-payment";
 import CVTUtilityPage from "@/pages/cvt-utility-new";
 import TechnicalDashboardPage from "@/pages/admin/technical-dashboard";
+import StoragePage from "@/pages/storage-page";
 
 
 // Redirect component for wouter
@@ -110,6 +111,7 @@ function Router() {
         <Route path="/cvt-payment/:vaultId?" component={CVTPaymentPage} />
         <Route path="/subscription" component={SubscriptionPage} />
         <Route path="/admin/technical-dashboard" component={TechnicalDashboardPage} />
+        <Route path="/storage" component={StoragePage} />
 
         <Route component={NotFound} />
       </Switch>
