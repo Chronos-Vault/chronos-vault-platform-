@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { useLocation } from "wouter";
-import CyberpunkTripleChainCard from "@/components/cross-chain/CyberpunkTripleChainCard";
+import SecurityRatingCard from "@/components/security/SecurityRatingCard";
 import RevolutionaryHero from "@/components/hero/RevolutionaryHero";
 import { Separator } from "@/components/ui/separator";
 import { Card, CardContent } from "@/components/ui/card";
@@ -185,76 +185,8 @@ const Home = () => {
               >
                 {/* Triple Chain Security Visualization */}
                 <div className="relative max-w-lg mx-auto">
-                  <motion.div
-                    initial={{ opacity: 0, y: 20 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.8 }}
-                    viewport={{ once: true, margin: "-100px" }}
-                  >
-                    {/* Security Rating Card above Triple Chain Card */}
-                    <div className="mb-12 relative">
-                      <div className="absolute -top-6 left-1/2 transform -translate-x-1/2 z-10 bg-[#121212]/70 backdrop-blur-sm px-4 py-1.5 rounded-full border border-[#6B00D7]/30 shadow-glow">
-                        <h3 className="text-center uppercase tracking-wider text-sm font-medium text-[#FF5AF7]">
-                          SECURITY RATING:&nbsp;
-                          <span className="font-bold">100%</span>
-                        </h3>
-                      </div>
-                      
-                      <motion.div 
-                        className="absolute -z-10 inset-0 bg-gradient-to-r from-[#6B00D7]/10 to-[#FF5AF7]/10 blur-2xl opacity-30 rounded-full"
-                        animate={{ scale: [1, 1.05, 1] }}
-                        transition={{ duration: 4, repeat: Infinity }}
-                      />
-                      
-                      {/* Top Hash */}
-                      <div className="text-center text-xs text-[#6B00D7] font-mono mb-2 opacity-70 overflow-hidden">
-                        <motion.div
-                          animate={{ x: [-20, 0, -20] }}
-                          transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
-                        >
-                          0xf7eb8C954b3fAbD4bCd5F9bF888B81546aE85039...
-                        </motion.div>
-                      </div>
-                    </div>
-                    
-                    {/* Cyberpunk Triple Chain Card */}
-                    <div data-card-container className="relative h-80 md:h-96 lg:h-[30rem] rounded-2xl overflow-hidden">
-                      <CyberpunkTripleChainCard />
-                    </div>
-                    
-                    {/* Bottom Hash */}
-                    <div className="text-center text-xs text-[#6B00D7] font-mono mt-2 opacity-70 overflow-hidden">
-                      <motion.div
-                        animate={{ x: [20, 0, 20] }}
-                        transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
-                      >
-                        E0mck_t1_g6EtJydbLvwk.3pPfMn1HwdG0DWKU3X...
-                      </motion.div>
-                    </div>
-                    
-                    {/* Security Features List */}
-                    <div className="mt-10 grid grid-cols-1 md:grid-cols-2 gap-3">
-                      {[
-                        { id: 1, name: "Military-Grade Encryption" },
-                        { id: 2, name: "Triple-Chain Verification" },
-                        { id: 3, name: "Quantum-Resistant Algorithms" },
-                        { id: 4, name: "Zero-Knowledge Privacy" }
-                      ].map((feature) => (
-                        <motion.div 
-                          key={feature.id}
-                          className="bg-[#121212]/50 backdrop-blur-sm rounded-full border border-[#6B00D7]/20 px-4 py-2 flex items-center gap-2"
-                          whileHover={{ borderColor: 'rgba(255, 90, 247, 0.4)', backgroundColor: 'rgba(107, 0, 215, 0.1)' }}
-                          initial={{ opacity: 0, y: 10 }}
-                          whileInView={{ opacity: 1, y: 0 }}
-                          transition={{ duration: 0.5, delay: 0.2 * feature.id }}
-                          viewport={{ once: true, margin: "-50px" }}
-                        >
-                          <div className="h-3 w-3 rounded-full bg-[#FF5AF7] opacity-70 animate-pulse"></div>
-                          <span className="text-white text-sm">{feature.name}</span>
-                        </motion.div>
-                      ))}
-                    </div>
-                  </motion.div>
+                  <SecurityRatingCard />
+                </div>
                 </div>
               </motion.div>
             </motion.div>
