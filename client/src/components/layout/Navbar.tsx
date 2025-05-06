@@ -54,7 +54,7 @@ const Navbar = () => {
         { name: "Atomic Swaps", href: "/cross-chain-atomic-swap", icon: "⚛️", highlight: true },
         { name: "Cross-Chain vs Atomic Swaps", href: "/cross-chain-vs-atomic-swap", icon: "📘" },
         { name: "Security Testing", href: "/security-testing", icon: "🔒" },
-
+        { name: "Security Features", href: "/security", icon: "🛡️", highlight: true },
       ]
     },
     {
@@ -164,6 +164,31 @@ const Navbar = () => {
                   </DropdownMenuItem>
                 </Link>
 
+              </DropdownMenuContent>
+            </DropdownMenu>
+
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" className="flex items-center gap-1">
+                  Security <ChevronDown className="h-4 w-4" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent>
+                <Link href="/security">
+                  <DropdownMenuItem className="cursor-pointer">
+                    <span className="flex items-center gap-1"><span>🛡️</span> Security Features</span>
+                  </DropdownMenuItem>
+                </Link>
+                <Link href="/cross-chain-security">
+                  <DropdownMenuItem className="cursor-pointer">
+                    Chain Security
+                  </DropdownMenuItem>
+                </Link>
+                <Link href="/security-testing">
+                  <DropdownMenuItem className="cursor-pointer">
+                    Security Testing
+                  </DropdownMenuItem>
+                </Link>
               </DropdownMenuContent>
             </DropdownMenu>
 
