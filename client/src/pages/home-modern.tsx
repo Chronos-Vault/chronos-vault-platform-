@@ -1,7 +1,12 @@
 import { useEffect, useRef, useState } from "react";
 import { Link, useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
-import { Shield, Lock, Zap, Users, Clock, ArrowRight, BarChart3, Hexagon, Check, ChevronRight, Activity, Brain, EyeOff, LockKeyhole, CheckCircle2, MapPin } from "lucide-react";
+import { 
+  Shield, Lock, Zap, Users, Clock, ArrowRight, BarChart3, Hexagon, 
+  Check, ChevronRight, Activity, Brain, EyeOff, LockKeyhole, 
+  CheckCircle2, MapPin, Settings, ExternalLink, 
+  CheckCircle, Landmark, Diamond, KeyRound, ShieldCheck
+} from "lucide-react";
 import { useCVTToken } from "@/contexts/cvt-token-context";
 import { motion } from "framer-motion";
 import ThreeDHeroBackground from "@/components/hero/3DHeroBackground";
@@ -1143,31 +1148,149 @@ const Home = () => {
               <div className="inline-flex mb-3 items-center justify-center space-x-2 px-6 py-2 rounded-full border border-[#6B00D7]/50 bg-gradient-to-r from-black/80 via-[#6B00D7]/20 to-black/80 shadow-[0_0_10px_rgba(107,0,215,0.6)]">
                 <span className="text-base font-bold bg-clip-text text-transparent bg-gradient-to-r from-white via-[#FF5AF7] to-white uppercase tracking-wider animate-text-shine">How Chronos Vault Works</span>
               </div>
-              <h2 className="text-4xl sm:text-5xl font-bold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-[#6B00D7] via-[#FF5AF7] to-[#6B00D7]">Secure Your Digital Legacy</h2>
-              <p className="text-gray-300 max-w-3xl mx-auto text-lg">Cutting-edge blockchain technology meets intuitive design to create the most secure vault system in existence</p>
+              <h2 className="text-4xl sm:text-5xl font-bold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-[#6B00D7] via-[#FF5AF7] to-[#6B00D7]">Triple-Chain Security Architecture</h2>
+              <p className="text-gray-300 max-w-3xl mx-auto text-lg">Our advanced multi-blockchain security system utilizes TON, Ethereum, and Solana to create an impenetrable vault system</p>
             </div>
             
-            {/* Step 1 */}
-            <div className="max-w-md mx-auto relative mb-12">
-              {/* Animated glow effects */}
-              <div className="absolute -inset-4 bg-gradient-to-r from-[#6B00D7]/20 via-[#FF5AF7]/20 to-[#6B00D7]/20 rounded-2xl blur-xl opacity-70 animate-pulse-slow"></div>
-              <div className="absolute -inset-1 bg-gradient-to-r from-[#6B00D7]/30 via-[#FF5AF7]/30 to-[#6B00D7]/30 rounded-xl blur-md"></div>
-              
-              {/* Main card */}
-              <div className="relative bg-black border border-[#6B00D7]/40 rounded-xl p-6 backdrop-blur-xl z-10 shadow-[0_0_25px_rgba(255,90,247,0.15)]">
-              <div className="absolute -right-4 -top-4 w-10 h-10 rounded-full bg-[#FF5AF7] flex items-center justify-center text-white font-bold text-lg">
-                1
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl mx-auto">
+              {/* Step 1 */}
+              <div className="relative mb-6 md:mb-0">
+                {/* Animated glow effects */}
+                <div className="absolute -inset-4 bg-gradient-to-r from-[#6B00D7]/20 via-[#FF5AF7]/20 to-[#6B00D7]/20 rounded-2xl blur-xl opacity-70 animate-pulse-slow"></div>
+                
+                {/* Main card */}
+                <div className="relative h-full bg-black border border-[#6B00D7]/40 rounded-xl p-6 backdrop-blur-xl z-10 shadow-[0_0_25px_rgba(255,90,247,0.15)]">
+                  <div className="absolute -right-4 -top-4 w-10 h-10 rounded-full bg-[#FF5AF7] flex items-center justify-center text-white font-bold text-lg">
+                    1
+                  </div>
+                  
+                  <div className="flex items-center space-x-4 mb-6">
+                    <div className="bg-[#6B00D7]/20 p-3 rounded-lg">
+                      <KeyRound className="text-[#FF5AF7] w-6 h-6" />
+                    </div>
+                    <div>
+                      <h3 className="text-xl font-semibold text-white">Wallet Connection</h3>
+                    </div>
+                  </div>
+                  <p className="text-gray-400">Connect any of our supported wallets (TON, Ethereum, or Solana) to securely authenticate and access our platform.</p>
+                  
+                  <div className="mt-4 pt-4 border-t border-gray-800">
+                    <div className="flex items-center space-x-2 text-sm text-gray-500">
+                      <span className="flex items-center"><Activity className="w-4 h-4 mr-1 text-[#FF5AF7]" /> Real-time security monitoring</span>
+                    </div>
+                  </div>
+                </div>
               </div>
               
-              <div className="flex items-center space-x-4 mb-6">
-                <div className="bg-[#6B00D7]/20 p-3 rounded-lg">
-                  <Users className="text-[#FF5AF7] w-6 h-6" />
-                </div>
-                <div>
-                  <h3 className="text-xl font-semibold text-white">Create Your Account</h3>
+              {/* Step 2 */}
+              <div className="relative mb-6 md:mb-0">
+                {/* Animated glow effects */}
+                <div className="absolute -inset-4 bg-gradient-to-r from-[#6B00D7]/20 via-[#FF5AF7]/20 to-[#6B00D7]/20 rounded-2xl blur-xl opacity-70 animate-pulse-slow"></div>
+                
+                {/* Main card */}
+                <div className="relative h-full bg-black border border-[#6B00D7]/40 rounded-xl p-6 backdrop-blur-xl z-10 shadow-[0_0_25px_rgba(255,90,247,0.15)]">
+                  <div className="absolute -right-4 -top-4 w-10 h-10 rounded-full bg-[#FF5AF7] flex items-center justify-center text-white font-bold text-lg">
+                    2
+                  </div>
+                  
+                  <div className="flex items-center space-x-4 mb-6">
+                    <div className="bg-[#6B00D7]/20 p-3 rounded-lg">
+                      <Shield className="text-[#FF5AF7] w-6 h-6" />
+                    </div>
+                    <div>
+                      <h3 className="text-xl font-semibold text-white">Vault Creation</h3>
+                    </div>
+                  </div>
+                  <p className="text-gray-400">Create and configure your vault with options for time-locking, multi-signature requirements, and advanced security parameters.</p>
+                  
+                  <div className="mt-4 pt-4 border-t border-gray-800">
+                    <div className="flex items-center space-x-2 text-sm text-gray-500">
+                      <span className="flex items-center"><CheckCircle className="w-4 h-4 mr-1 text-[#FF5AF7]" /> AI security analysis active</span>
+                    </div>
+                  </div>
                 </div>
               </div>
-              <p className="text-gray-400">Connect your wallet to our secure platform and set up your personal profile with advanced security options.</p>
+              
+              {/* Step 3 */}
+              <div className="relative">
+                {/* Animated glow effects */}
+                <div className="absolute -inset-4 bg-gradient-to-r from-[#6B00D7]/20 via-[#FF5AF7]/20 to-[#6B00D7]/20 rounded-2xl blur-xl opacity-70 animate-pulse-slow"></div>
+                
+                {/* Main card */}
+                <div className="relative h-full bg-black border border-[#6B00D7]/40 rounded-xl p-6 backdrop-blur-xl z-10 shadow-[0_0_25px_rgba(255,90,247,0.15)]">
+                  <div className="absolute -right-4 -top-4 w-10 h-10 rounded-full bg-[#FF5AF7] flex items-center justify-center text-white font-bold text-lg">
+                    3
+                  </div>
+                  
+                  <div className="flex items-center space-x-4 mb-6">
+                    <div className="bg-[#6B00D7]/20 p-3 rounded-lg">
+                      <ExternalLink className="text-[#FF5AF7] w-6 h-6" />
+                    </div>
+                    <div>
+                      <h3 className="text-xl font-semibold text-white">Cross-Chain Verification</h3>
+                    </div>
+                  </div>
+                  <p className="text-gray-400">Your vault is secured across three independent blockchains, creating a security architecture that prevents single points of failure.</p>
+                  
+                  <div className="mt-4 pt-4 border-t border-gray-800">
+                    <div className="flex items-center space-x-2 text-sm text-gray-500">
+                      <span className="flex items-center"><ShieldCheck className="w-4 h-4 mr-1 text-[#FF5AF7]" /> Triple-chain monitoring</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            {/* Security Status Dashboard Preview */}
+            <div className="mt-16 max-w-4xl mx-auto bg-black/50 border border-[#6B00D7]/30 rounded-xl p-6 backdrop-blur-sm">
+              <h3 className="text-xl font-semibold text-white mb-4 flex items-center">
+                <Shield className="mr-2 text-[#FF5AF7]" /> Security Status Dashboard
+              </h3>
+              
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div className="bg-black/70 border border-[#6B00D7]/20 rounded-lg p-4">
+                  <div className="flex justify-between items-center mb-2">
+                    <span className="text-sm text-gray-400">Ethereum Status</span>
+                    <span className="text-xs px-2 py-1 bg-green-500/20 text-green-400 rounded-full">Online</span>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="text-xs text-gray-500">Block Height</span>
+                    <span className="text-xs text-white">18,356,932</span>
+                  </div>
+                </div>
+                
+                <div className="bg-black/70 border border-[#6B00D7]/20 rounded-lg p-4">
+                  <div className="flex justify-between items-center mb-2">
+                    <span className="text-sm text-gray-400">Solana Status</span>
+                    <span className="text-xs px-2 py-1 bg-green-500/20 text-green-400 rounded-full">Online</span>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="text-xs text-gray-500">Security Alerts</span>
+                    <span className="text-xs text-white">None</span>
+                  </div>
+                </div>
+                
+                <div className="bg-black/70 border border-[#6B00D7]/20 rounded-lg p-4">
+                  <div className="flex justify-between items-center mb-2">
+                    <span className="text-sm text-gray-400">TON Status</span>
+                    <span className="text-xs px-2 py-1 bg-green-500/20 text-green-400 rounded-full">Online</span>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="text-xs text-gray-500">Vault Contracts</span>
+                    <span className="text-xs text-white">Active</span>
+                  </div>
+                </div>
+              </div>
+              
+              <div className="mt-4 p-4 bg-[#6B00D7]/10 border border-[#6B00D7]/30 rounded-lg">
+                <div className="flex justify-between items-center mb-2">
+                  <span className="text-sm text-gray-300">Cross-Chain Security Score</span>
+                  <span className="text-sm font-bold text-[#FF5AF7]">98/100</span>
+                </div>
+                <div className="w-full bg-gray-800 rounded-full h-2 overflow-hidden">
+                  <div className="bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] h-full rounded-full" style={{ width: '98%' }}></div>
+                </div>
+                <div className="mt-2 text-xs text-gray-500 text-center">AI-enhanced security monitoring active across three independent blockchain networks</div>
               </div>
             </div>
           </div>

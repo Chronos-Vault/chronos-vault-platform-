@@ -41,7 +41,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { 
-  Wallet, 
+  KeyRound, 
   ArrowRight, 
   Loader2, 
   AlertCircle, 
@@ -470,7 +470,7 @@ const TONIntegrationPage: React.FC = () => {
             <Card className="mb-8 border-[#0088CC]/30 bg-gradient-to-b from-black/40 to-[#0088CC]/5 backdrop-blur-sm shadow-xl">
               <CardHeader>
                 <CardTitle className="flex items-center text-2xl">
-                  <Wallet className="mr-2 h-6 w-6 text-[#0088CC]" />
+                  <KeyRound className="mr-2 h-6 w-6 text-[#0088CC]" />
                   TON Wallet
                 </CardTitle>
                 <CardDescription>
