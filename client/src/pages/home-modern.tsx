@@ -4,8 +4,8 @@ import { Button } from "@/components/ui/button";
 import { 
   Shield, Lock, Zap, Users, Clock, ArrowRight, BarChart3, Hexagon, 
   Check, ChevronRight, Activity, Brain, EyeOff, LockKeyhole, 
-  CheckCircle2, MapPin, Settings, ExternalLink, 
-  CheckCircle, Landmark, Diamond, KeyRound, ShieldCheck
+  CheckCircle2, MapPin, Settings, ExternalLink, FileText,
+  CheckCircle, Landmark, Diamond, KeyRound, ShieldCheck, Globe
 } from "lucide-react";
 import { useCVTToken } from "@/contexts/cvt-token-context";
 import { motion } from "framer-motion";
