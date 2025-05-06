@@ -289,57 +289,189 @@ const Home = () => {
         </section>
         
         {/* Triple-Chain Security Section */}
-        <section className="py-16 bg-black">
+        <section className="py-20 bg-black">
           <div className="container mx-auto px-4">
-            <div className="text-center mb-8">
-              <div className="inline-flex mb-3 items-center justify-center space-x-2 px-4 py-1 rounded-full border border-[#6B00D7]/30 bg-black/30">
+            <div className="text-center mb-12">
+              <div className="inline-flex mb-3 items-center justify-center space-x-2 px-4 py-1 rounded-full border border-[#6B00D7]/30 bg-black/30 animate-pulse-slow">
                 <span className="text-sm font-medium text-[#FF5AF7]">TRIPLE-CHAIN SECURITY ARCHITECTURE</span>
               </div>
-              <h2 className="text-4xl font-bold text-white mb-4">Unbreakable Vault Technology</h2>
-              <p className="text-gray-300 max-w-3xl mx-auto">Pioneering the most sophisticated security architecture ever developed for digital assets</p>
+              <h2 className="text-4xl sm:text-5xl font-bold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-[#6B00D7] via-[#FF5AF7] to-[#6B00D7]">Unbreakable Vault Technology</h2>
+              <p className="text-gray-300 max-w-3xl mx-auto text-lg">Pioneering the most sophisticated security architecture ever developed for digital assets</p>
             </div>
             
-            {/* Security Visualization */}
-            <div className="max-w-3xl mx-auto relative mb-12 mt-16">
-              <div className="bg-gradient-to-b from-black to-[#0a0014] border border-[#6B00D7]/30 rounded-xl p-8 shadow-glow">
-                <div className="text-center font-medium mb-2 uppercase text-sm text-gray-400">
-                  SECURITY RATING:
-                </div>
-                <div className="text-center font-bold text-2xl text-[#FF5AF7] mb-6">
-                  100%
+            {/* Enhanced Security Visualization */}
+            <div className="max-w-4xl mx-auto relative mb-16 mt-16">
+              {/* Animated glow effects */}
+              <div className="absolute -inset-4 bg-gradient-to-r from-[#6B00D7]/20 via-[#FF5AF7]/20 to-[#6B00D7]/20 rounded-2xl blur-xl opacity-70 animate-pulse-slow"></div>
+              <div className="absolute -inset-1 bg-gradient-to-r from-[#6B00D7]/30 via-[#FF5AF7]/30 to-[#6B00D7]/30 rounded-xl blur-md"></div>
+              
+              {/* Main card */}
+              <div className="relative bg-black border border-[#6B00D7]/40 rounded-xl p-8 backdrop-blur-xl z-10 shadow-[0_0_25px_rgba(255,90,247,0.15)]">
+                {/* Laser grid background effect */}
+                <div className="absolute inset-0 overflow-hidden rounded-xl opacity-10">
+                  <div className="absolute inset-0 grid grid-cols-12 gap-0.5">
+                    {Array(12).fill(0).map((_, i) => (
+                      <div key={`col-${i}`} className="h-full w-full border-r border-[#FF5AF7]/20"></div>
+                    ))}
+                  </div>
+                  <div className="absolute inset-0 grid grid-rows-12 gap-0.5">
+                    {Array(12).fill(0).map((_, i) => (
+                      <div key={`row-${i}`} className="w-full h-full border-b border-[#FF5AF7]/20"></div>
+                    ))}
+                  </div>
                 </div>
                 
-                <div className="flex justify-center my-6">
-                  <div className="relative w-24 h-24">
-                    <div className="absolute inset-0 bg-[#6B00D7]/5 rounded-full animate-pulse-slow"></div>
-                    <div className="absolute inset-3 bg-[#6B00D7]/10 rounded-full animate-pulse-slow delay-150"></div>
-                    <div className="absolute inset-6 bg-black rounded-full border border-[#6B00D7]/40 flex items-center justify-center">
-                      <Shield className="text-[#FF5AF7] w-8 h-8" />
+                {/* Header with hexagon badge */}
+                <div className="flex flex-col items-center mb-8 relative">
+                  <div className="w-24 h-24 relative mb-4">
+                    {/* Animated rings */}
+                    <div className="absolute inset-0 rounded-full border-2 border-[#6B00D7] opacity-50 animate-ping-slow"></div>
+                    <div className="absolute inset-[4px] rounded-full border-2 border-[#FF5AF7] opacity-30 animate-ping-slow animation-delay-500"></div>
+                    <div className="absolute inset-[8px] rounded-full border-2 border-[#6B00D7] opacity-20 animate-ping-slow animation-delay-1000"></div>
+                    
+                    {/* Central shield with glow */}
+                    <div className="absolute inset-[12px] bg-black rounded-full flex items-center justify-center border border-[#FF5AF7]/50 shadow-[0_0_15px_rgba(107,0,215,0.5)]">
+                      <Shield className="w-9 h-9 text-[#FF5AF7]" />
                     </div>
                     
-                    {/* Connection Dots */}
-                    <div className="absolute top-0 left-1/2 -translate-x-1/2 h-2 w-2 rounded-full bg-[#FF5AF7] animate-pulse"></div>
-                    <div className="absolute bottom-0 left-1/2 -translate-x-1/2 h-2 w-2 rounded-full bg-[#FF5AF7] animate-pulse"></div>
-                    <div className="absolute left-0 top-1/2 -translate-y-1/2 h-2 w-2 rounded-full bg-[#FF5AF7] animate-pulse"></div>
-                    <div className="absolute right-0 top-1/2 -translate-y-1/2 h-2 w-2 rounded-full bg-[#FF5AF7] animate-pulse"></div>
+                    {/* Animated particles */}
+                    <div className="absolute top-0 left-1/2 -translate-x-1/2 w-2 h-2 rounded-full bg-[#FF5AF7] animate-pulse"></div>
+                    <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-2 h-2 rounded-full bg-[#6B00D7] animate-pulse delay-300"></div>
+                    <div className="absolute left-0 top-1/2 -translate-y-1/2 w-2 h-2 rounded-full bg-[#FF5AF7] animate-pulse delay-100"></div>
+                    <div className="absolute right-0 top-1/2 -translate-y-1/2 w-2 h-2 rounded-full bg-[#6B00D7] animate-pulse delay-200"></div>
+                  </div>
+                  
+                  <div className="text-center font-medium uppercase text-sm text-gray-400 mb-1">
+                    SECURITY RATING
+                  </div>
+                  <div className="text-center font-bold text-3xl bg-clip-text text-transparent bg-gradient-to-r from-[#FF5AF7] to-[#6B00D7] mb-1">
+                    100%
+                  </div>
+                  <div className="text-xs text-gray-500 font-mono">QUANTUM-RESISTANT ENCRYPTION</div>
+                  
+                  {/* Animated security status */}
+                  <div className="mt-2 flex items-center space-x-1.5">
+                    <div className="h-1.5 w-1.5 rounded-full bg-[#FF5AF7] animate-pulse"></div>
+                    <span className="text-xs text-gray-300 font-mono">SYSTEM ACTIVE</span>
+                    <div className="h-1.5 w-1.5 rounded-full bg-[#FF5AF7] animate-pulse animation-delay-500"></div>
                   </div>
                 </div>
                 
-                {/* Blockchain Indicators */}
-                <div className="flex justify-between mt-8">
-                  <div className="text-center">
-                    <div className="text-xs text-[#FF5AF7] mb-1">ETH<br/>Secured</div>
-                    <div className="h-1 w-12 bg-[#FF5AF7] rounded-full mx-auto"></div>
+                {/* Triple-Chain Architecture Diagram */}
+                <div className="relative mx-auto max-w-3xl mb-10 pt-6">
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    {/* Ethereum Layer */}
+                    <div className="relative group">
+                      <div className="absolute -inset-0.5 bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] rounded-lg blur opacity-30 group-hover:opacity-70 transition duration-500"></div>
+                      <div className="relative bg-black p-4 rounded-lg border border-[#6B00D7]/50 h-full">
+                        <div className="flex items-center mb-3">
+                          <div className="w-10 h-10 rounded-full bg-black/50 flex items-center justify-center border border-[#6B00D7] mr-3 shadow-[0_0_10px_rgba(107,0,215,0.5)]">
+                            <div className="text-[#FF5AF7] text-xs font-bold">ETH</div>
+                          </div>
+                          <div>
+                            <span className="text-white text-sm font-semibold block">Ethereum Layer</span>
+                            <span className="text-[#FF5AF7] text-xs">Primary Security</span>
+                          </div>
+                        </div>
+                        <div className="h-0.5 w-full bg-gradient-to-r from-transparent via-[#6B00D7] to-transparent mb-3 opacity-50"></div>
+                        <p className="text-gray-400 text-xs leading-relaxed">
+                          Provides primary blockchain security for ownership records and access control with immutable contract verification.
+                        </p>
+                        <div className="mt-3 text-[10px] text-gray-500 font-mono flex items-center">
+                          <div className="h-1 w-1 rounded-full bg-[#6B00D7] animate-pulse mr-1"></div>
+                          NETWORK ACTIVE
+                        </div>
+                      </div>
+                    </div>
+                    
+                    {/* Solana Layer */}
+                    <div className="relative group">
+                      <div className="absolute -inset-0.5 bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] rounded-lg blur opacity-30 group-hover:opacity-70 transition duration-500"></div>
+                      <div className="relative bg-black p-4 rounded-lg border border-[#6B00D7]/50 h-full">
+                        <div className="flex items-center mb-3">
+                          <div className="w-10 h-10 rounded-full bg-black/50 flex items-center justify-center border border-[#6B00D7] mr-3 shadow-[0_0_10px_rgba(107,0,215,0.5)]">
+                            <div className="text-[#FF5AF7] text-xs font-bold">SOL</div>
+                          </div>
+                          <div>
+                            <span className="text-white text-sm font-semibold block">Solana Layer</span>
+                            <span className="text-[#FF5AF7] text-xs">Rapid Validation</span>
+                          </div>
+                        </div>
+                        <div className="h-0.5 w-full bg-gradient-to-r from-transparent via-[#6B00D7] to-transparent mb-3 opacity-50"></div>
+                        <p className="text-gray-400 text-xs leading-relaxed">
+                          High-frequency monitoring and rapid validation system with millisecond security confirmation protocol.
+                        </p>
+                        <div className="mt-3 text-[10px] text-gray-500 font-mono flex items-center">
+                          <div className="h-1 w-1 rounded-full bg-[#6B00D7] animate-pulse mr-1"></div>
+                          NETWORK ACTIVE
+                        </div>
+                      </div>
+                    </div>
+                    
+                    {/* TON Layer */}
+                    <div className="relative group">
+                      <div className="absolute -inset-0.5 bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] rounded-lg blur opacity-30 group-hover:opacity-70 transition duration-500"></div>
+                      <div className="relative bg-black p-4 rounded-lg border border-[#6B00D7]/50 h-full">
+                        <div className="flex items-center mb-3">
+                          <div className="w-10 h-10 rounded-full bg-black/50 flex items-center justify-center border border-[#6B00D7] mr-3 shadow-[0_0_10px_rgba(107,0,215,0.5)]">
+                            <div className="text-[#FF5AF7] text-xs font-bold">TON</div>
+                          </div>
+                          <div>
+                            <span className="text-white text-sm font-semibold block">TON Layer</span>
+                            <span className="text-[#FF5AF7] text-xs">Recovery System</span>
+                          </div>
+                        </div>
+                        <div className="h-0.5 w-full bg-gradient-to-r from-transparent via-[#6B00D7] to-transparent mb-3 opacity-50"></div>
+                        <p className="text-gray-400 text-xs leading-relaxed">
+                          Backup security system with secure recovery operations and emergency validation protocols.
+                        </p>
+                        <div className="mt-3 text-[10px] text-gray-500 font-mono flex items-center">
+                          <div className="h-1 w-1 rounded-full bg-[#6B00D7] animate-pulse mr-1"></div>
+                          NETWORK ACTIVE
+                        </div>
+                      </div>
+                    </div>
                   </div>
                   
-                  <div className="text-center">
-                    <div className="text-xs text-[#FF5AF7] mb-1">SOL<br/>Secured</div>
-                    <div className="h-1 w-12 bg-[#FF5AF7] rounded-full mx-auto"></div>
+                  {/* Connection lines animation */}
+                  <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-24 h-24 opacity-30 md:block hidden">
+                    <div className="absolute inset-0 rounded-full border border-[#FF5AF7] animate-pulse-slow"></div>
+                    <div className="absolute inset-[4px] rounded-full border border-[#6B00D7] animate-pulse-slow delay-150"></div>
+                    <div className="absolute inset-[8px] rounded-full border border-[#FF5AF7] animate-pulse-slow delay-300"></div>
+                  </div>
+                </div>
+                
+                {/* Security verification status */}
+                <div className="flex flex-col items-center mt-8">
+                  <div className="text-xs text-gray-400 font-mono mb-2">CROSS-CHAIN VERIFICATION STATUS</div>
+                  <div className="flex space-x-4 mb-3">
+                    <div className="flex items-center space-x-1">
+                      <div className="h-2 w-2 rounded-full bg-[#6B00D7] animate-pulse"></div>
+                      <span className="text-xs text-white">ETH</span>
+                    </div>
+                    <div className="flex items-center space-x-1">
+                      <div className="h-2 w-2 rounded-full bg-[#6B00D7] animate-pulse delay-150"></div>
+                      <span className="text-xs text-white">SOL</span>
+                    </div>
+                    <div className="flex items-center space-x-1">
+                      <div className="h-2 w-2 rounded-full bg-[#6B00D7] animate-pulse delay-300"></div>
+                      <span className="text-xs text-white">TON</span>
+                    </div>
                   </div>
                   
-                  <div className="text-center">
-                    <div className="text-xs text-[#FF5AF7] mb-1">TON<br/>Secured</div>
-                    <div className="h-1 w-12 bg-[#FF5AF7] rounded-full mx-auto"></div>
+                  {/* Security verification pulse indicator */}
+                  <div className="w-full max-w-sm h-1.5 bg-[#0f0f0f] rounded-full overflow-hidden mb-2">
+                    <div className="h-full w-full bg-gradient-to-r from-[#6B00D7] via-[#FF5AF7] to-[#6B00D7] animate-pulse-slow"></div>
+                  </div>
+                  <div className="text-[10px] text-gray-500 font-mono">
+                    VAULT ACCESS: TRIPLE VERIFICATION REQUIRED
+                  </div>
+                </div>
+                
+                {/* Security code scrolling effect */}
+                <div className="absolute bottom-0 left-0 right-0 h-4 overflow-hidden text-xs text-gray-600 font-mono opacity-30">
+                  <div className="animate-marquee-slow whitespace-nowrap">
+                    {"{xA4F2}|AUTH_KEY:0xf70648a8...1bd8a0ce25|{xB773}|VAULT_ID:0x3386d0ad5...6ac72fb893|{xD98E}|CROSS_CHAIN_VERIFY:ACTIVE|{xC221}|STATUS:SECURED"}
                   </div>
                 </div>
               </div>

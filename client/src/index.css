@@ -246,6 +246,75 @@
   }
 }
 
+@keyframes ping-slow {
+  0% {
+    transform: scale(1);
+    opacity: 0.6;
+  }
+  50% {
+    transform: scale(1.2);
+    opacity: 0.4;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 0.6;
+  }
+}
+
+@keyframes ping-slow-alt {
+  0% {
+    transform: scale(0.95);
+    opacity: 0.5;
+  }
+  50% {
+    transform: scale(1.05);
+    opacity: 0.3;
+  }
+  100% {
+    transform: scale(0.95);
+    opacity: 0.5;
+  }
+}
+
+@keyframes orbitV {
+  0% {
+    transform: translateY(-40px) translateX(-50%);
+    opacity: 0.2;
+  }
+  50% {
+    transform: translateY(40px) translateX(-50%);
+    opacity: 0.8;
+  }
+  100% {
+    transform: translateY(-40px) translateX(-50%);
+    opacity: 0.2;
+  }
+}
+
+@keyframes orbitH {
+  0% {
+    transform: translateX(-40px) translateY(-50%);
+    opacity: 0.2;
+  }
+  50% {
+    transform: translateX(40px) translateY(-50%);
+    opacity: 0.8;
+  }
+  100% {
+    transform: translateX(-40px) translateY(-50%);
+    opacity: 0.2;
+  }
+}
+
+@keyframes secure-pulse {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
+
 @keyframes neon-glow {
   0%, 100% {
     text-shadow: 
@@ -491,6 +560,31 @@
 
   .animation-delay-4000 {
     animation-delay: 4s;
+  }
+  
+  /* Adding utility classes for our new Triple-Chain Security Architecture card */
+  .delay-100 {
+    animation-delay: 100ms;
+  }
+  
+  .delay-150 {
+    animation-delay: 150ms;
+  }
+  
+  .delay-200 {
+    animation-delay: 200ms;
+  }
+  
+  .delay-250 {
+    animation-delay: 250ms;
+  }
+  
+  .delay-300 {
+    animation-delay: 300ms;
+  }
+  
+  .delay-500 {
+    animation-delay: 500ms;
   }
 
   .bg-grid-pattern {
