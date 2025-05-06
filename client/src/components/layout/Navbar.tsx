@@ -55,6 +55,7 @@ const Navbar = () => {
         { name: "Cross-Chain vs Atomic Swaps", href: "/cross-chain-vs-atomic-swap", icon: "📘" },
         { name: "Security Testing", href: "/security-testing", icon: "🔒" },
         { name: "Security Features", href: "/security", icon: "🛡️", highlight: true },
+        { name: "Triple-Chain Verification", href: "/security-verification-demo", icon: "🔍" },
       ]
     },
     {
@@ -187,6 +188,11 @@ const Navbar = () => {
                 <Link href="/security-testing">
                   <DropdownMenuItem className="cursor-pointer">
                     Security Testing
+                  </DropdownMenuItem>
+                </Link>
+                <Link href="/security-verification-demo">
+                  <DropdownMenuItem className="cursor-pointer">
+                    <span className="flex items-center gap-1"><span>🔍</span> Triple-Chain Verification</span>
                   </DropdownMenuItem>
                 </Link>
               </DropdownMenuContent>
