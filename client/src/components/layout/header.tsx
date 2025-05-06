@@ -21,6 +21,7 @@ const Header = () => {
   const desktopNavigationLinks = [
     { name: "Create Vault", href: "/create-vault", icon: "🔐" },
     { name: "My Vaults", href: "/my-vaults", icon: "📊" },
+    { name: "Storage", href: "/storage", icon: "🗄️" },
     { name: "Gift Crypto", href: "/gift-crypto", icon: "🎁", highlight: true },
     { name: "CVT Token", href: "/cvt-token", icon: "🪙" },
     { name: "Documentation", href: "/documentation", icon: "📄" },
@@ -39,6 +40,7 @@ const Header = () => {
         { name: "Home", href: "/", icon: "🏠" },
         { name: "Create Vault", href: "/create-vault", icon: "🔐" },
         { name: "My Vaults", href: "/my-vaults", icon: "📊" },
+        { name: "Storage", href: "/storage", icon: "🗄️" },
         { name: "Gift Crypto", href: "/gift-crypto", icon: "🎁", highlight: true },
       ]
     },
