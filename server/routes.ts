@@ -19,6 +19,7 @@ import { registerSecurityRoutes } from "./api/security-routes";
 import { securityServiceManager } from "./security/security-service-manager";
 import storageRoutes from "./api/storage-routes";
 import { arweaveStorageService } from "./storage/arweave-storage-service";
+import securityVerificationRoutes from "./api/security-verification-routes";
 
 
 if (!process.env.STRIPE_SECRET_KEY) {
@@ -112,6 +113,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
   
   // Register permanent storage routes with Arweave integration
   app.use('/api/storage', storageRoutes);
+  
+  // Register enhanced security verification routes for cross-chain verification
+  app.use('/api/security', securityVerificationRoutes);
   
   // Initialize Arweave storage service with a wallet
   // Note: In production, this would use a secure wallet from environment variables
