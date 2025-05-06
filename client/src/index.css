@@ -745,6 +745,17 @@
   100% { transform: perspective(1000px) rotateX(5deg) rotateY(5deg); }
 }
 
+/* Data flow animation for connection lines */
+@keyframes dataFlow {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(400%); }
+}
+
+@keyframes dataFlowReverse {
+  0% { transform: translateX(400%); }
+  100% { transform: translateX(-100%); }
+}
+
 @keyframes ping-slow {
   0% {
     transform: scale(1);
