@@ -10,6 +10,7 @@ import {
 import { useCVTToken } from "@/contexts/cvt-token-context";
 import { motion } from "framer-motion";
 import ThreeDHeroBackground from "@/components/hero/3DHeroBackground";
+import StakingTiersSection from "@/components/token/StakingTiersSection";
 
 const Home = () => {
   const [_, setLocation] = useLocation();
@@ -1366,6 +1367,9 @@ const Home = () => {
                 </div>
               </div>
             </div>
+            
+            {/* Staking Tiers and Benefits */}
+            <StakingTiersSection />
           </div>
         </section>
         
