@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { Link, useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
-import { Shield, Lock, Zap, Users, Clock, ArrowRight, BarChart3, Hexagon, Check, ChevronRight, Activity, Brain, EyeOff, LockKeyhole, CheckCircle2 } from "lucide-react";
+import { Shield, Lock, Zap, Users, Clock, ArrowRight, BarChart3, Hexagon, Check, ChevronRight, Activity, Brain, EyeOff, LockKeyhole, CheckCircle2, MapPin } from "lucide-react";
 import { useCVTToken } from "@/contexts/cvt-token-context";
 import { motion } from "framer-motion";
 import ThreeDHeroBackground from "@/components/hero/3DHeroBackground";
@@ -559,6 +559,295 @@ const Home = () => {
               >
                 <Brain className="text-[#FF5AF7] w-4 h-4" />
                 <span className="text-sm text-white">AI-Enhanced Monitoring</span>
+              </motion.div>
+            </div>
+          </div>
+        </section>
+        
+        {/* Specialized Vaults Section */}
+        <section className="py-16 bg-black relative overflow-hidden">
+          {/* Subtle particle background effect */}
+          <div className="absolute inset-0 z-0 opacity-30">
+            <div className="absolute h-2 w-2 rounded-full bg-[#FF5AF7]/30 top-[10%] left-[5%] animate-pulse-slow"></div>
+            <div className="absolute h-3 w-3 rounded-full bg-[#6B00D7]/30 top-[20%] left-[25%] animate-pulse-slow delay-150"></div>
+            <div className="absolute h-2 w-2 rounded-full bg-[#FF5AF7]/30 top-[15%] left-[75%] animate-pulse-slow delay-300"></div>
+            <div className="absolute h-3 w-3 rounded-full bg-[#6B00D7]/30 top-[60%] left-[85%] animate-pulse-slow delay-200"></div>
+            <div className="absolute h-2 w-2 rounded-full bg-[#FF5AF7]/30 top-[80%] left-[15%] animate-pulse-slow delay-700"></div>
+            <div className="absolute h-2 w-2 rounded-full bg-[#6B00D7]/30 top-[70%] left-[45%] animate-pulse-slow delay-500"></div>
+          </div>
+          
+          <div className="container mx-auto px-4 relative z-10">
+            <div className="text-center mb-12">
+              <motion.div 
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.7 }}
+                className="inline-flex mb-6 items-center px-3 py-1 rounded-full bg-[#6B00D7]/20 border border-[#6B00D7]/40"
+              >
+                <span className="text-xs font-medium text-[#FF5AF7] tracking-wider uppercase flex items-center">
+                  <Hexagon className="w-3.5 h-3.5 text-[#FF5AF7] mr-1.5" />
+                  <span>SPECIALIZED VAULTS</span>
+                </span>
+              </motion.div>
+              
+              <motion.h2 
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.7, delay: 0.1 }}
+                className="text-4xl md:text-5xl lg:text-6xl font-bold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-white via-[#FF5AF7] to-white"
+              >
+                Premium Vault Solutions
+              </motion.h2>
+              
+              <motion.p 
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.7, delay: 0.2 }}
+                className="text-gray-300 max-w-3xl mx-auto"
+              >
+                Choose from specialized vault templates, each designed for unique security needs and blockchain interactions
+              </motion.p>
+            </div>
+            
+            {/* Specialized Vaults Display */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
+              {/* Vault Type 1: Multi-Signature Vault */}
+              <motion.div 
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.7, delay: 0.3 }}
+                className="relative group overflow-hidden"
+              >
+                {/* Premium Card Style with Better Gradients */}
+                <div className="absolute inset-0 bg-gradient-to-br from-[#6B00D7]/40 to-[#FF5AF7]/30 opacity-0 group-hover:opacity-100 transition-opacity duration-700 -z-10 blur-xl"></div>
+                
+                <div className="relative bg-gradient-to-b from-black/80 to-[#0a0014] backdrop-blur-lg border border-[#6B00D7]/20 hover:border-[#6B00D7]/40 rounded-2xl p-6 transition-all duration-300 shadow-glow overflow-hidden group-hover:shadow-[0_0_25px_rgba(107,0,215,0.3)] h-full">
+                  {/* Badge */}
+                  <div className="absolute top-3 right-3 text-xs px-2.5 py-1 bg-[#6B00D7]/20 text-[#FF5AF7] rounded-full font-medium">
+                    Governance
+                  </div>
+                  
+                  {/* Top Gradient Line Effect */}
+                  <div className="absolute top-0 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-[#FF5AF7]/50 to-transparent"></div>
+
+                  {/* Vault Icon */}
+                  <div className="mb-5 relative">
+                    <div className="h-16 w-16 rounded-xl bg-gradient-to-br from-[#6B00D7]/20 to-[#FF5AF7]/10 flex items-center justify-center mx-auto">
+                      <Users className="text-[#FF5AF7] w-8 h-8" />
+                    </div>
+                    <div className="absolute top-0 right-0 left-0 bottom-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-500">
+                      <div className="w-20 h-20 rounded-full border-2 border-dashed border-[#FF5AF7]/30 animate-spin-slow"></div>
+                    </div>
+                  </div>
+
+                  {/* Title and Description */}
+                  <h3 className="text-xl md:text-2xl font-bold text-white mb-3 text-center">
+                    <span className="bg-clip-text text-transparent bg-gradient-to-r from-white to-white via-[#FF5AF7] animate-gradient-text">Multi-Signature Vault</span>
+                  </h3>
+                  
+                  <p className="text-gray-300 text-sm text-center mb-5">
+                    Secure assets with multiple approvers. Ideal for DAOs, teams, and organizations requiring collective authorization.
+                  </p>
+                  
+                  {/* Key Features */}
+                  <div className="space-y-2 mb-6">
+                    <div className="flex items-center">
+                      <div className="h-1.5 w-1.5 rounded-full bg-[#FF5AF7] mr-2"></div>
+                      <span className="text-xs text-gray-300">M-of-N signature scheme</span>
+                    </div>
+                    <div className="flex items-center">
+                      <div className="h-1.5 w-1.5 rounded-full bg-[#FF5AF7] mr-2"></div>
+                      <span className="text-xs text-gray-300">Multi-chain governance</span>
+                    </div>
+                    <div className="flex items-center">
+                      <div className="h-1.5 w-1.5 rounded-full bg-[#FF5AF7] mr-2"></div>
+                      <span className="text-xs text-gray-300">Customizable thresholds</span>
+                    </div>
+                  </div>
+                  
+                  {/* Interactive Element */}
+                  <div className="bg-black/40 rounded-lg p-3 border border-[#6B00D7]/20 group-hover:border-[#6B00D7]/40 transition-all duration-300">
+                    <div className="flex justify-between text-xs text-gray-400">
+                      <span>Approval Threshold</span>
+                      <span className="text-[#FF5AF7]">3 of 5</span>
+                    </div>
+                    <div className="mt-2 h-1.5 w-full bg-gray-800 rounded-full overflow-hidden">
+                      <div className="h-full bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] w-[60%]"></div>
+                    </div>
+                  </div>
+                  
+                  {/* Shimmering Effect */}
+                  <div className="absolute -inset-4 -z-10 opacity-0 group-hover:opacity-30 transition-opacity duration-700">
+                    <div className="absolute inset-0 translate-x-[-100%] group-hover:translate-x-[100%] transition-all duration-2000 ease-in-out bg-gradient-to-r from-transparent via-white to-transparent"></div>
+                  </div>
+                </div>
+              </motion.div>
+              
+              {/* Vault Type 2: Timelock Vault */}
+              <motion.div 
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.7, delay: 0.4 }}
+                className="relative group overflow-hidden"
+              >
+                {/* Premium Card Style with Better Gradients */}
+                <div className="absolute inset-0 bg-gradient-to-br from-[#6B00D7]/40 to-[#FF5AF7]/30 opacity-0 group-hover:opacity-100 transition-opacity duration-700 -z-10 blur-xl"></div>
+                
+                <div className="relative bg-gradient-to-b from-black/80 to-[#0a0014] backdrop-blur-lg border border-[#6B00D7]/20 hover:border-[#6B00D7]/40 rounded-2xl p-6 transition-all duration-300 shadow-glow overflow-hidden group-hover:shadow-[0_0_25px_rgba(107,0,215,0.3)] h-full">
+                  {/* Badge */}
+                  <div className="absolute top-3 right-3 text-xs px-2.5 py-1 bg-[#6B00D7]/20 text-[#FF5AF7] rounded-full font-medium">
+                    Time-Based
+                  </div>
+                  
+                  {/* Top Gradient Line Effect */}
+                  <div className="absolute top-0 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-[#FF5AF7]/50 to-transparent"></div>
+
+                  {/* Vault Icon */}
+                  <div className="mb-5 relative">
+                    <div className="h-16 w-16 rounded-xl bg-gradient-to-br from-[#6B00D7]/20 to-[#FF5AF7]/10 flex items-center justify-center mx-auto">
+                      <Clock className="text-[#FF5AF7] w-8 h-8" />
+                    </div>
+                    <div className="absolute top-0 right-0 left-0 bottom-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-500">
+                      <div className="w-20 h-20 rounded-full border-2 border-dashed border-[#FF5AF7]/30 animate-spin-slow"></div>
+                    </div>
+                  </div>
+
+                  {/* Title and Description */}
+                  <h3 className="text-xl md:text-2xl font-bold text-white mb-3 text-center">
+                    <span className="bg-clip-text text-transparent bg-gradient-to-r from-white to-white via-[#FF5AF7] animate-gradient-text">Timelock Vault</span>
+                  </h3>
+                  
+                  <p className="text-gray-300 text-sm text-center mb-5">
+                    Lock assets until a specific date or block height. Perfect for long-term investments and scheduled distributions.
+                  </p>
+                  
+                  {/* Key Features */}
+                  <div className="space-y-2 mb-6">
+                    <div className="flex items-center">
+                      <div className="h-1.5 w-1.5 rounded-full bg-[#FF5AF7] mr-2"></div>
+                      <span className="text-xs text-gray-300">Precise timestamp or block unlock</span>
+                    </div>
+                    <div className="flex items-center">
+                      <div className="h-1.5 w-1.5 rounded-full bg-[#FF5AF7] mr-2"></div>
+                      <span className="text-xs text-gray-300">Emergency override options</span>
+                    </div>
+                    <div className="flex items-center">
+                      <div className="h-1.5 w-1.5 rounded-full bg-[#FF5AF7] mr-2"></div>
+                      <span className="text-xs text-gray-300">Scheduled partial distributions</span>
+                    </div>
+                  </div>
+                  
+                  {/* Interactive Element */}
+                  <div className="bg-black/40 rounded-lg p-3 border border-[#6B00D7]/20 group-hover:border-[#6B00D7]/40 transition-all duration-300">
+                    <div className="flex justify-between text-xs text-gray-400">
+                      <span>Time Remaining</span>
+                      <span className="text-[#FF5AF7]">224 days</span>
+                    </div>
+                    <div className="mt-2 h-1.5 w-full bg-gray-800 rounded-full overflow-hidden">
+                      <div className="h-full bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] w-[38%] animate-pulse-slow"></div>
+                    </div>
+                  </div>
+                  
+                  {/* Shimmering Effect */}
+                  <div className="absolute -inset-4 -z-10 opacity-0 group-hover:opacity-30 transition-opacity duration-700">
+                    <div className="absolute inset-0 translate-x-[-100%] group-hover:translate-x-[100%] transition-all duration-2000 ease-in-out bg-gradient-to-r from-transparent via-white to-transparent"></div>
+                  </div>
+                </div>
+              </motion.div>
+              
+              {/* Vault Type 3: GeoLocked Vault */}
+              <motion.div 
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.7, delay: 0.5 }}
+                className="relative group overflow-hidden"
+              >
+                {/* Premium Card Style with Better Gradients */}
+                <div className="absolute inset-0 bg-gradient-to-br from-[#6B00D7]/40 to-[#FF5AF7]/30 opacity-0 group-hover:opacity-100 transition-opacity duration-700 -z-10 blur-xl"></div>
+                
+                <div className="relative bg-gradient-to-b from-black/80 to-[#0a0014] backdrop-blur-lg border border-[#6B00D7]/20 hover:border-[#6B00D7]/40 rounded-2xl p-6 transition-all duration-300 shadow-glow overflow-hidden group-hover:shadow-[0_0_25px_rgba(107,0,215,0.3)] h-full">
+                  {/* Badge */}
+                  <div className="absolute top-3 right-3 text-xs px-2.5 py-1 bg-[#6B00D7]/20 text-[#FF5AF7] rounded-full font-medium">
+                    Location-Based
+                  </div>
+                  
+                  {/* Top Gradient Line Effect */}
+                  <div className="absolute top-0 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-[#FF5AF7]/50 to-transparent"></div>
+
+                  {/* Vault Icon */}
+                  <div className="mb-5 relative">
+                    <div className="h-16 w-16 rounded-xl bg-gradient-to-br from-[#6B00D7]/20 to-[#FF5AF7]/10 flex items-center justify-center mx-auto">
+                      <MapPin className="text-[#FF5AF7] w-8 h-8" />
+                    </div>
+                    <div className="absolute top-0 right-0 left-0 bottom-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-500">
+                      <div className="w-20 h-20 rounded-full border-2 border-dashed border-[#FF5AF7]/30 animate-spin-slow"></div>
+                    </div>
+                  </div>
+
+                  {/* Title and Description */}
+                  <h3 className="text-xl md:text-2xl font-bold text-white mb-3 text-center">
+                    <span className="bg-clip-text text-transparent bg-gradient-to-r from-white to-white via-[#FF5AF7] animate-gradient-text">GeoLocked Vault</span>
+                  </h3>
+                  
+                  <p className="text-gray-300 text-sm text-center mb-5">
+                    Access assets only from specific geographical locations. Enhanced security for physical presence verification.
+                  </p>
+                  
+                  {/* Key Features */}
+                  <div className="space-y-2 mb-6">
+                    <div className="flex items-center">
+                      <div className="h-1.5 w-1.5 rounded-full bg-[#FF5AF7] mr-2"></div>
+                      <span className="text-xs text-gray-300">GPS and IP verification</span>
+                    </div>
+                    <div className="flex items-center">
+                      <div className="h-1.5 w-1.5 rounded-full bg-[#FF5AF7] mr-2"></div>
+                      <span className="text-xs text-gray-300">Multiple approved locations</span>
+                    </div>
+                    <div className="flex items-center">
+                      <div className="h-1.5 w-1.5 rounded-full bg-[#FF5AF7] mr-2"></div>
+                      <span className="text-xs text-gray-300">Geofencing with radius control</span>
+                    </div>
+                  </div>
+                  
+                  {/* Interactive Element */}
+                  <div className="bg-black/40 rounded-lg p-3 border border-[#6B00D7]/20 group-hover:border-[#6B00D7]/40 transition-all duration-300">
+                    <div className="flex justify-between text-xs text-gray-400">
+                      <span>Current Location</span>
+                      <span className="text-green-500">✓ Authorized</span>
+                    </div>
+                    <div className="mt-2 flex space-x-1.5">
+                      <div className="h-1.5 w-1/3 bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] rounded-full"></div>
+                      <div className="h-1.5 w-1/3 bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] rounded-full opacity-70"></div>
+                      <div className="h-1.5 w-1/3 bg-gray-800 rounded-full"></div>
+                    </div>
+                  </div>
+                  
+                  {/* Shimmering Effect */}
+                  <div className="absolute -inset-4 -z-10 opacity-0 group-hover:opacity-30 transition-opacity duration-700">
+                    <div className="absolute inset-0 translate-x-[-100%] group-hover:translate-x-[100%] transition-all duration-2000 ease-in-out bg-gradient-to-r from-transparent via-white to-transparent"></div>
+                  </div>
+                </div>
+              </motion.div>
+            </div>
+            
+            {/* Learn More Button */}
+            <div className="mt-12 text-center">
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.7, delay: 0.6 }}
+                className="inline-block"
+              >
+                <button 
+                  onClick={() => setLocation('/vaults')}
+                  className="relative px-8 py-3 group"
+                >
+                  <div className="absolute inset-0 bg-gradient-to-r from-[#6B00D7]/60 to-[#FF5AF7]/60 opacity-50 group-hover:opacity-70 rounded-lg blur-sm transition-opacity duration-300"></div>
+                  <div className="relative flex items-center justify-center space-x-2 bg-black rounded-lg border border-[#6B00D7]/40 px-6 py-2.5">
+                    <span className="text-white font-medium">Explore All Vault Types</span>
+                    <ArrowRight className="w-4 h-4 text-[#FF5AF7] group-hover:translate-x-1 transition-transform" />
+                  </div>
+                </button>
               </motion.div>
             </div>
           </div>
