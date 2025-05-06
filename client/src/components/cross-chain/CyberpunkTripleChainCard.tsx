@@ -1,6 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
 
 const CyberpunkTripleChainCard: React.FC = () => {
+  // For debugging
+  console.log('CyberpunkTripleChainCard rendering');
   const [scanLines, setScanLines] = useState<Array<{id: number, delay: number}>>([]);
   const [glitchActive, setGlitchActive] = useState(false);
   const [dataPoints, setDataPoints] = useState<Array<{active: boolean}>>([]);
