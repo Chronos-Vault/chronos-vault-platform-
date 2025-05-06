@@ -90,16 +90,16 @@ const Home = () => {
               </p>
             </div>
             
-            {/* Call to action buttons with premium styling */}
-            <div className="flex flex-col sm:flex-row justify-center space-y-6 sm:space-y-0 sm:space-x-8 mt-12">
+            {/* Call to action buttons with premium styling - Centered */}
+            <div className="flex flex-col items-center justify-center space-y-6 mt-12">
               {/* Create Vault Button with premium effect */}
-              <div className="relative inline-block group">
+              <div className="relative group">
                 {/* Button glow effect */}
                 <div className="absolute -inset-1 bg-gradient-to-r from-[#6B00D7] via-[#FF5AF7] to-[#6B00D7] rounded-full blur opacity-70 group-hover:opacity-100 transition duration-1000 group-hover:duration-200 animate-gradient-x"></div>
                 
                 <Button 
                   onClick={() => setLocation('/create-vault')} 
-                  className="relative px-10 py-4 bg-black text-white text-xl font-bold rounded-full transition-all duration-300 hover:bg-black/50 hover:scale-105 shadow-[0_0_20px_rgba(107,0,215,0.7)]"
+                  className="relative px-12 py-5 bg-black text-white text-xl font-bold rounded-full transition-all duration-300 hover:bg-black/50 hover:scale-105 shadow-[0_0_20px_rgba(107,0,215,0.7)]"
                 >
                   Create Your Vault
                   <ArrowRight className="inline-block ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
@@ -107,13 +107,13 @@ const Home = () => {
               </div>
               
               {/* Explore Vaults Button with alternative premium effect */}
-              <div className="relative inline-block group">
+              <div className="relative group">
                 {/* Button subtle glow effect */}
                 <div className="absolute -inset-1 bg-gradient-to-r from-[#FF5AF7]/40 via-transparent to-[#FF5AF7]/40 rounded-full blur-sm opacity-50 group-hover:opacity-80 transition duration-1000 group-hover:duration-200"></div>
                 
                 <Button 
                   onClick={() => setLocation('/my-vaults')}
-                  className="relative px-10 py-4 bg-transparent border border-[#FF5AF7]/60 text-white text-xl font-bold rounded-full transition-all duration-300 hover:bg-[#FF5AF7]/10 hover:scale-105 shadow-[0_0_15px_rgba(255,90,247,0.4)]"
+                  className="relative px-12 py-5 bg-transparent border border-[#FF5AF7]/60 text-white text-xl font-bold rounded-full transition-all duration-300 hover:bg-[#FF5AF7]/10 hover:scale-105 shadow-[0_0_15px_rgba(255,90,247,0.4)]"
                 >
                   Explore Vaults
                   <ChevronRight className="inline-block ml-1 w-5 h-5 group-hover:translate-x-1 transition-transform" />
