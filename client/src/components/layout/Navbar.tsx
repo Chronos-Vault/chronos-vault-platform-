@@ -55,7 +55,7 @@ const Navbar = () => {
         { name: "Cross-Chain vs Atomic Swaps", href: "/cross-chain-vs-atomic-swap", icon: "📘" },
         { name: "Security Testing", href: "/security-testing", icon: "🔒" },
         { name: "Security Features", href: "/security", icon: "🛡️", highlight: true },
-        { name: "Triple-Chain Verification", href: "/security-verification-demo", icon: "🔍" },
+        { name: "Advanced Security Demo", href: "/security-verification-demo", icon: "🔍", highlight: true },
       ]
     },
     {
@@ -168,6 +168,15 @@ const Navbar = () => {
               </DropdownMenuContent>
             </DropdownMenu>
 
+            <Link href="/security-verification-demo">
+              <Button variant="outline" className="hidden lg:flex relative items-center gap-1 mr-1 border-[#6B00D7]/50 hover:border-[#FF5AF7]/80 hover:bg-[#6B00D7]/10 text-[#FF5AF7]">
+                <span className="flex items-center gap-1">
+                  <span>🔍</span> Security Demo
+                </span>
+                <span className="absolute -top-2 -right-2 bg-[#FF5AF7] text-white text-[8px] px-1.5 py-0.5 rounded-full font-bold tracking-wider shadow-md shadow-[#FF5AF7]/30 animate-pulse">NEW</span>
+              </Button>
+            </Link>
+
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button variant="ghost" className="flex items-center gap-1">
@@ -192,7 +201,7 @@ const Navbar = () => {
                 </Link>
                 <Link href="/security-verification-demo">
                   <DropdownMenuItem className="cursor-pointer">
-                    <span className="flex items-center gap-1"><span>🔍</span> Triple-Chain Verification</span>
+                    <span className="flex items-center gap-1"><span>🔍</span> Advanced Security Demo</span>
                   </DropdownMenuItem>
                 </Link>
               </DropdownMenuContent>
