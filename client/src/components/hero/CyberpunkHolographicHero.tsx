@@ -135,7 +135,7 @@ const CyberpunkHolographicHero: React.FC<CyberpunkHolographicHeroProps> = ({ onC
   const particles = generateRandomParticles();
   
   return (
-    <section className="relative overflow-hidden bg-[#080808] py-20 flex items-center justify-center min-h-[90vh]">
+    <section className="relative overflow-hidden bg-[#080808] py-20 flex items-center justify-center min-h-[90vh] z-10">
       {/* Digital rain effect */}
       <div className="digital-rain">
         {Array.from({ length: 20 }).map((_, i) => (
@@ -159,7 +159,7 @@ const CyberpunkHolographicHero: React.FC<CyberpunkHolographicHeroProps> = ({ onC
       </div>
       
       {/* Holographic 3D objects */}
-      <div className="holographic-object" style={{ top: '15%', left: '15%', zIndex: 5 }}>
+      <div className="holographic-object" style={{ top: '15%', left: '15%', zIndex: 25 }}>
         <div className="holographic-cube">
           <div className="holographic-face"></div>
           <div className="holographic-face"></div>
@@ -170,7 +170,7 @@ const CyberpunkHolographicHero: React.FC<CyberpunkHolographicHeroProps> = ({ onC
         </div>
       </div>
       
-      <div className="holographic-object" style={{ top: '25%', right: '15%', width: '200px', height: '200px', zIndex: 5 }}>
+      <div className="holographic-object" style={{ top: '25%', right: '15%', width: '200px', height: '200px', zIndex: 25 }}>
         <div className="holographic-pyramid">
           <div className="pyramid-face"></div>
           <div className="pyramid-face"></div>
@@ -180,7 +180,7 @@ const CyberpunkHolographicHero: React.FC<CyberpunkHolographicHeroProps> = ({ onC
       </div>
       
       {/* Add more 3D objects for better effect */}
-      <div className="holographic-object" style={{ bottom: '25%', left: '20%', width: '180px', height: '180px', zIndex: 5 }}>
+      <div className="holographic-object" style={{ bottom: '25%', left: '20%', width: '180px', height: '180px', zIndex: 25 }}>
         <div className="holographic-cube">
           <div className="holographic-face" style={{ borderColor: '#6B00D7' }}></div>
           <div className="holographic-face" style={{ borderColor: '#6B00D7' }}></div>
