@@ -5,7 +5,6 @@ import { Shield, Lock, Zap, Users, Clock, ArrowRight, BarChart3, Hexagon, Check,
 import { useCVTToken } from "@/contexts/cvt-token-context";
 import { motion } from "framer-motion";
 import ThreeDHeroBackground from "@/components/hero/3DHeroBackground";
-import LuxuryHero from "@/components/hero/LuxuryHero";
 
 const Home = () => {
   const [_, setLocation] = useLocation();
@@ -70,9 +69,45 @@ const Home = () => {
           </motion.div>
         </div>
         
-        {/* Luxury Hero Section */}
+        {/* Custom Hero Section */}
         <section className="py-12 mt-4 relative" ref={heroRef}>
-          <LuxuryHero onCreateVault={() => setLocation('/dashboard')} />
+          <div className="container relative z-20 mx-auto px-4 max-w-5xl">
+            {/* Main header */}
+            <div className="text-center mb-10">
+              <div className="inline-flex items-center px-3 py-1 rounded-full bg-[#6B00D7]/20 border border-[#6B00D7]/40 mb-6">
+                <span className="text-xs font-medium text-[#FF5AF7] tracking-wider uppercase flex items-center">
+                  <Shield className="w-3.5 h-3.5 text-[#FF5AF7] mr-1.5" />
+                  <span>TRIPLE-CHAIN SECURITY ARCHITECTURE</span>
+                </span>
+              </div>
+              
+              <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-white via-[#FF5AF7] to-white">
+                Unbreakable Vault Technology
+              </h1>
+              
+              <p className="text-xl text-gray-300 max-w-2xl mx-auto leading-relaxed">
+                Pioneering the most sophisticated security architecture ever developed for digital assets
+              </p>
+            </div>
+            
+            {/* Call to action buttons */}
+            <div className="flex flex-col sm:flex-row justify-center space-y-4 sm:space-y-0 sm:space-x-6 mt-8">
+              <Button 
+                onClick={() => setLocation('/dashboard')} 
+                className="bg-[#6B00D7] hover:bg-[#6B00D7]/90 text-white px-8 py-6 rounded-lg text-lg"
+              >
+                Create Your Vault
+              </Button>
+              
+              <Button 
+                onClick={() => setLocation('/dashboard')}
+                variant="outline" 
+                className="border-[#FF5AF7] text-[#FF5AF7] hover:bg-[#FF5AF7]/10 px-8 py-6 rounded-lg text-lg"
+              >
+                Explore Vaults
+              </Button>
+            </div>
+          </div>
         </section>
         
         {/* Security Statistics Section */}
