@@ -1,8 +1,9 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { motion } from 'framer-motion';
 import { Shield, CheckCircle2, Lock, LockKeyhole, Network, BarChart3 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Link } from 'wouter';
+import './HolographicHero.css';
 
 interface CyberpunkHolographicHeroProps {
   onCreateVault: () => void;
@@ -23,6 +24,48 @@ const CyberpunkHolographicHero: React.FC<CyberpunkHolographicHeroProps> = ({ onC
   });
   const [glitchActive, setGlitchActive] = useState(false);
   const cardRef = useRef<HTMLDivElement>(null);
+  
+  // Canvas ref for 3D animations
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const animationRef = useRef<number>(0);
+  
+  // 3D cube vertices
+  const cubeVertices = [
+    // Front face
+    {x: -1, y: -1, z: 1},
+    {x: 1, y: -1, z: 1},
+    {x: 1, y: 1, z: 1},
+    {x: -1, y: 1, z: 1},
+    // Back face
+    {x: -1, y: -1, z: -1},
+    {x: 1, y: -1, z: -1},
+    {x: 1, y: 1, z: -1},
+    {x: -1, y: 1, z: -1},
+  ];
+  
+  // Cube edges
+  const cubeEdges = [
+    [0, 1], [1, 2], [2, 3], [3, 0], // front face
+    [4, 5], [5, 6], [6, 7], [7, 4], // back face
+    [0, 4], [1, 5], [2, 6], [3, 7], // connecting edges
+  ];
+  
+  // Octahedron vertices
+  const octaVertices = [
+    {x: 0, y: 0, z: 1.5}, // top
+    {x: 1, y: 0, z: 0},   // right
+    {x: 0, y: 1, z: 0},   // front
+    {x: -1, y: 0, z: 0},  // left
+    {x: 0, y: -1, z: 0},  // back
+    {x: 0, y: 0, z: -1.5} // bottom
+  ];
+  
+  // Octahedron edges
+  const octaEdges = [
+    [0, 1], [0, 2], [0, 3], [0, 4], // top connections
+    [5, 1], [5, 2], [5, 3], [5, 4], // bottom connections
+    [1, 2], [2, 3], [3, 4], [4, 1]  // middle
+  ];
   
   // Initialize scan lines
   useEffect(() => {
@@ -115,12 +158,367 @@ const CyberpunkHolographicHero: React.FC<CyberpunkHolographicHeroProps> = ({ onC
     return () => clearInterval(interval);
   }, [hashDisplay]);
 
+  // 3D Canvas animation with holographic objects
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+    
+    const setCanvasSize = () => {
+      const rect = canvas.getBoundingClientRect();
+      canvas.width = rect.width;
+      canvas.height = rect.height;
+    };
+    
+    setCanvasSize();
+    window.addEventListener('resize', setCanvasSize);
+    
+    // Rotation angles
+    let rotationX = 0;
+    let rotationY = 0;
+    let rotationZ = 0;
+    
+    // Grid properties
+    const grid = {
+      size: 20,
+      divisions: 20,
+      lineWidth: 1,
+      color: '#6B00D7'
+    };
+    
+    // Function to create particle cloud
+    const particles = [];
+    const particleCount = 50;
+    for (let i = 0; i < particleCount; i++) {
+      particles.push({
+        x: (Math.random() - 0.5) * 15,
+        y: (Math.random() - 0.5) * 15,
+        z: (Math.random() - 0.5) * 15,
+        size: Math.random() * 2 + 1,
+        color: Math.random() > 0.6 ? '#FF5AF7' : '#6B00D7',
+        speed: {
+          x: (Math.random() - 0.5) * 0.01,
+          y: (Math.random() - 0.5) * 0.01,
+          z: (Math.random() - 0.5) * 0.01
+        }
+      });
+    }
+    
+    // Function to project 3D point to 2D
+    const project = (point, width, height, fov = 200, distance = 5) => {
+      const scale = fov / (distance + point.z);
+      return {
+        x: point.x * scale + width / 2,
+        y: point.y * scale + height / 2,
+        scale
+      };
+    };
+    
+    // Function to rotate point around X axis
+    const rotateX = (point, angle) => {
+      const cos = Math.cos(angle);
+      const sin = Math.sin(angle);
+      return {
+        x: point.x,
+        y: point.y * cos - point.z * sin,
+        z: point.y * sin + point.z * cos
+      };
+    };
+    
+    // Function to rotate point around Y axis
+    const rotateY = (point, angle) => {
+      const cos = Math.cos(angle);
+      const sin = Math.sin(angle);
+      return {
+        x: point.x * cos - point.z * sin,
+        y: point.y,
+        z: point.x * sin + point.z * cos
+      };
+    };
+    
+    // Function to rotate point around Z axis
+    const rotateZ = (point, angle) => {
+      const cos = Math.cos(angle);
+      const sin = Math.sin(angle);
+      return {
+        x: point.x * cos - point.y * sin,
+        y: point.x * sin + point.y * cos,
+        z: point.z
+      };
+    };
+    
+    // Function to draw a grid
+    const drawGrid = (width, height) => {
+      const gridZ = -3;
+      const size = grid.size;
+      const divisions = grid.divisions;
+      const step = size / divisions;
+      const halfSize = size / 2;
+      
+      // Draw grid lines
+      ctx.strokeStyle = grid.color;
+      ctx.lineWidth = 0.5;
+      ctx.globalAlpha = 0.2;
+      
+      for (let i = 0; i <= divisions; i++) {
+        const pos = i * step - halfSize;
+        
+        // Create X axis lines
+        let start = {x: -halfSize, y: pos, z: gridZ};
+        let end = {x: halfSize, y: pos, z: gridZ};
+        
+        // Apply rotations
+        start = rotateX(start, rotationX);
+        start = rotateY(start, rotationY);
+        start = rotateZ(start, rotationZ);
+        
+        end = rotateX(end, rotationX);
+        end = rotateY(end, rotationY);
+        end = rotateZ(end, rotationZ);
+        
+        // Project to 2D
+        const startProj = project(start, width, height);
+        const endProj = project(end, width, height);
+        
+        // Draw line
+        ctx.beginPath();
+        ctx.moveTo(startProj.x, startProj.y);
+        ctx.lineTo(endProj.x, endProj.y);
+        ctx.stroke();
+        
+        // Create Y axis lines
+        start = {x: pos, y: -halfSize, z: gridZ};
+        end = {x: pos, y: halfSize, z: gridZ};
+        
+        // Apply rotations
+        start = rotateX(start, rotationX);
+        start = rotateY(start, rotationY);
+        start = rotateZ(start, rotationZ);
+        
+        end = rotateX(end, rotationX);
+        end = rotateY(end, rotationY);
+        end = rotateZ(end, rotationZ);
+        
+        // Project to 2D
+        const startProj2 = project(start, width, height);
+        const endProj2 = project(end, width, height);
+        
+        // Draw line
+        ctx.beginPath();
+        ctx.moveTo(startProj2.x, startProj2.y);
+        ctx.lineTo(endProj2.x, endProj2.y);
+        ctx.stroke();
+      }
+      
+      ctx.globalAlpha = 1;
+    };
+    
+    // Function to draw 3D object
+    const drawObject = (vertices, edges, scale = 1, offsetX = 0, offsetY = 0, offsetZ = 0, width, height, color = '#FF5AF7') => {
+      // Scale and offset vertices
+      const transformedVertices = vertices.map(v => ({
+        x: v.x * scale + offsetX,
+        y: v.y * scale + offsetY,
+        z: v.z * scale + offsetZ
+      }));
+      
+      // Apply rotations
+      let rotatedVertices = transformedVertices.map(v => {
+        let point = rotateX(v, rotationX);
+        point = rotateY(point, rotationY);
+        point = rotateZ(point, rotationZ);
+        return point;
+      });
+      
+      // Project to 2D
+      const projectedVertices = rotatedVertices.map(v => project(v, width, height));
+      
+      // Draw edges
+      ctx.strokeStyle = color;
+      ctx.lineWidth = 2;
+      
+      edges.forEach(edge => {
+        const v1 = projectedVertices[edge[0]];
+        const v2 = projectedVertices[edge[1]];
+        
+        // Create gradient for edge
+        const gradient = ctx.createLinearGradient(v1.x, v1.y, v2.x, v2.y);
+        gradient.addColorStop(0, '#6B00D7');
+        gradient.addColorStop(0.5, color);
+        gradient.addColorStop(1, '#6B00D7');
+        
+        // Draw line with glow effect
+        ctx.beginPath();
+        ctx.moveTo(v1.x, v1.y);
+        ctx.lineTo(v2.x, v2.y);
+        ctx.strokeStyle = gradient;
+        ctx.lineWidth = 2 * Math.max(v1.scale, v2.scale);
+        ctx.stroke();
+        
+        // Add glow
+        ctx.beginPath();
+        ctx.moveTo(v1.x, v1.y);
+        ctx.lineTo(v2.x, v2.y);
+        ctx.strokeStyle = 'rgba(255, 90, 247, 0.3)';
+        ctx.lineWidth = 4 * Math.max(v1.scale, v2.scale);
+        ctx.stroke();
+      });
+      
+      // Draw vertices
+      projectedVertices.forEach(vertex => {
+        ctx.beginPath();
+        ctx.arc(vertex.x, vertex.y, 3 * vertex.scale, 0, Math.PI * 2);
+        ctx.fillStyle = color;
+        ctx.fill();
+        
+        // Add glow to vertex
+        ctx.beginPath();
+        ctx.arc(vertex.x, vertex.y, 6 * vertex.scale, 0, Math.PI * 2);
+        const glow = ctx.createRadialGradient(
+          vertex.x, vertex.y, 0,
+          vertex.x, vertex.y, 6 * vertex.scale
+        );
+        glow.addColorStop(0, 'rgba(255, 90, 247, 0.8)');
+        glow.addColorStop(1, 'rgba(255, 90, 247, 0)');
+        ctx.fillStyle = glow;
+        ctx.fill();
+      });
+    };
+    
+    // Draw particles
+    const drawParticles = (width, height) => {
+      particles.forEach(p => {
+        // Update position
+        p.x += p.speed.x;
+        p.y += p.speed.y;
+        p.z += p.speed.z;
+        
+        // Wrap around if out of bounds
+        if (p.x > 10 || p.x < -10) p.speed.x *= -1;
+        if (p.y > 10 || p.y < -10) p.speed.y *= -1;
+        if (p.z > 10 || p.z < -10) p.speed.z *= -1;
+        
+        // Create a rotated point
+        let point = {x: p.x, y: p.y, z: p.z};
+        point = rotateX(point, rotationX);
+        point = rotateY(point, rotationY);
+        point = rotateZ(point, rotationZ);
+        
+        // Project to 2D
+        const proj = project(point, width, height);
+        
+        // Only draw if in front of camera
+        if (point.z < 0) return;
+        
+        // Draw particle with glow
+        ctx.beginPath();
+        ctx.arc(proj.x, proj.y, p.size * proj.scale, 0, Math.PI * 2);
+        ctx.fillStyle = p.color;
+        ctx.fill();
+        
+        // Add glow effect
+        ctx.beginPath();
+        ctx.arc(proj.x, proj.y, p.size * 3 * proj.scale, 0, Math.PI * 2);
+        const glow = ctx.createRadialGradient(
+          proj.x, proj.y, 0,
+          proj.x, proj.y, p.size * 3 * proj.scale
+        );
+        glow.addColorStop(0, p.color);
+        glow.addColorStop(1, 'rgba(0, 0, 0, 0)');
+        ctx.fillStyle = glow;
+        ctx.globalAlpha = 0.3;
+        ctx.fill();
+        ctx.globalAlpha = 1;
+      });
+    };
+    
+    // Animation loop
+    const animate = () => {
+      if (!canvas || !ctx) return;
+      
+      // Update canvas size if needed
+      if (canvas.width !== canvas.clientWidth || canvas.height !== canvas.clientHeight) {
+        setCanvasSize();
+      }
+      
+      // Clear canvas with semi-transparent black (for motion trails)
+      ctx.fillStyle = 'rgba(0, 0, 0, 0.1)';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      
+      // Update rotations
+      rotationX += 0.003;
+      rotationY += 0.005;
+      rotationZ += 0.001;
+      
+      // Draw the grid
+      drawGrid(canvas.width, canvas.height);
+      
+      // Draw main cube
+      drawObject(cubeVertices, cubeEdges, 2, 0, 0, -5, canvas.width, canvas.height);
+      
+      // Draw octahedron
+      drawObject(octaVertices, octaEdges, 1.5, 3, -2, -7, canvas.width, canvas.height, '#6B00D7');
+      
+      // Draw another smaller cube
+      drawObject(cubeVertices, cubeEdges, 1, -3, 2, -6, canvas.width, canvas.height, '#FF5AF7');
+      
+      // Draw particles
+      drawParticles(canvas.width, canvas.height);
+      
+      // Continue animation loop
+      animationRef.current = requestAnimationFrame(animate);
+    };
+    
+    // Start animation
+    animationRef.current = requestAnimationFrame(animate);
+    
+    // Cleanup
+    return () => {
+      cancelAnimationFrame(animationRef.current);
+      window.removeEventListener('resize', setCanvasSize);
+    };
+  }, []);
+  
   return (
     <section className="relative overflow-hidden bg-[#080808] py-20 flex items-center justify-center min-h-[90vh]">
-      {/* Background grid - simpler */}
+      {/* Digital rain effect */}
+      <div className="digital-rain">
+        {Array.from({ length: 20 }).map((_, i) => (
+          <div key={i} className="rain-column" style={{ 
+            left: `${i * 5}%`, 
+            animationDelay: `${Math.random() * 2}s`,
+            animationDuration: `${Math.random() * 5 + 10}s`
+          }}>
+            {Array.from({ length: 30 }).map((_, j) => (
+              <div key={j} className="rain-drop"
+                style={{ 
+                  animationDelay: `${Math.random() * 5}s`,
+                  opacity: Math.random() * 0.5 + 0.5
+                }}
+              >
+                {String.fromCharCode(0x30A0 + Math.floor(Math.random() * 96))}
+              </div>
+            ))}
+          </div>
+        ))}
+      </div>
+      
+      {/* 3D Canvas background */}
+      <canvas 
+        ref={canvasRef} 
+        className="absolute inset-0 w-full h-full z-0" 
+        style={{ background: 'transparent' }} 
+      />
+      
+      {/* Background grid and glows - simpler */}
       <div className="absolute inset-0 bg-grid-pattern opacity-10"></div>
       <div className="absolute top-1/4 left-1/4 w-40 h-40 bg-[#6B00D7] rounded-full filter blur-[120px] opacity-10"></div>
       <div className="absolute bottom-1/3 right-1/4 w-56 h-56 bg-[#FF5AF7] rounded-full filter blur-[140px] opacity-10"></div>
+      
+      {/* Shimmering overlay */}
+      <div className="absolute inset-0 shimmer"></div>
       
       <div className="container mx-auto px-4 z-10 max-w-5xl">
         {/* Main header */}
