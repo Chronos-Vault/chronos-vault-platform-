@@ -1134,56 +1134,7 @@ const Home = () => {
           </div>
         </section>
         
-        {/* Specialized Vault Types */}
-        <section className="py-16 bg-black">
-          <div className="container mx-auto px-4">
-            <div className="text-center mb-12">
-              <div className="inline-flex mb-3 items-center justify-center space-x-2 px-6 py-2 rounded-full border border-[#6B00D7]/50 bg-gradient-to-r from-black/80 via-[#6B00D7]/20 to-black/80 shadow-[0_0_10px_rgba(107,0,215,0.6)]">
-                <span className="text-base font-bold bg-clip-text text-transparent bg-gradient-to-r from-white via-[#FF5AF7] to-white uppercase tracking-wider animate-text-shine">Specialized Vaults</span>
-              </div>
-              <h2 className="text-4xl sm:text-5xl font-bold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-[#6B00D7] via-[#FF5AF7] to-[#6B00D7]">Premium Vault Solutions</h2>
-              <p className="text-gray-300 max-w-3xl mx-auto text-lg">Choose from specialized vault templates, each designed for unique security needs and blockchain interactions</p>
-            </div>
-            
-            <div className="mt-8 max-w-md mx-auto text-right">
-              <Link to="/vault-types" className="text-[#FF5AF7] font-medium inline-flex items-center hover:underline">
-                View All Vault Types <ArrowRight className="ml-1 h-4 w-4" />
-              </Link>
-            </div>
-            
-            {/* Multi-Signature Vault Card */}
-            <div className="max-w-md mx-auto relative mt-4 mb-8">
-              {/* Animated glow effects */}
-              <div className="absolute -inset-4 bg-gradient-to-r from-[#6B00D7]/20 via-[#FF5AF7]/20 to-[#6B00D7]/20 rounded-2xl blur-xl opacity-70 animate-pulse-slow"></div>
-              <div className="absolute -inset-1 bg-gradient-to-r from-[#6B00D7]/30 via-[#FF5AF7]/30 to-[#6B00D7]/30 rounded-xl blur-md"></div>
-              
-              {/* Main card */}
-              <div className="relative bg-black border border-[#6B00D7]/40 rounded-xl p-6 backdrop-blur-xl z-10 shadow-[0_0_25px_rgba(255,90,247,0.15)]">
-              <div className="flex items-center space-x-4 mb-6">
-                <div className="bg-[#6B00D7]/20 p-3 rounded-lg">
-                  <Users className="text-[#FF5AF7] w-6 h-6" />
-                </div>
-                <div className="flex-1">
-                  <div className="bg-[#6B00D7]/20 text-[#FF5AF7] text-xs font-medium inline-block px-2 py-1 rounded-full mb-1">
-                    Enhanced Security
-                  </div>
-                  <h3 className="text-xl font-semibold text-white">Multi-Signature Vault</h3>
-                </div>
-              </div>
-              <p className="text-gray-400 mb-6">Requires multiple authorized signatures to access or modify vault contents, ideal for high-value assets.</p>
-              
-              <div className="flex items-center justify-between">
-                <div className="text-sm text-gray-400">
-                  2-15 Signers
-                </div>
-                <Link to="/multi-signature-vault" className="text-[#FF5AF7] font-medium inline-flex items-center hover:underline">
-                  Create <ArrowRight className="ml-1 h-4 w-4" />
-                </Link>
-              </div>
-            </div>
-            </div>
-          </div>
-        </section>
+        {/* Intentionally removed duplicate Specialized Vaults section */}
         
         {/* How Chronos Vault Works Section */}
         <section className="py-16 bg-black">
