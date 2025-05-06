@@ -7,7 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { Progress } from "@/components/ui/progress";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Wallet, Zap, ArrowRight, CheckCircle2, Lock, Globe, Clock, ShieldCheck, Users, FileKey, Shield, Sparkles } from "lucide-react";
+import { KeyRound, Zap, ArrowRight, CheckCircle2, Lock, Globe, Clock, ShieldCheck, Users, FileKey, Shield, Sparkles } from "lucide-react";
 import { useCVTToken } from "@/contexts/cvt-token-context";
 
 const CVTUtilityPage = () => {
@@ -211,7 +211,7 @@ const CVTUtilityPage = () => {
                 </div>
                 <div className="flex items-center gap-3">
                   <div className="h-16 w-16 rounded-full bg-gradient-to-r from-[#6B00D7]/20 to-[#FF5AF7]/10 border border-[#6B00D7]/40 flex items-center justify-center">
-                    <Wallet className="h-7 w-7 text-[#FF5AF7]" />
+                    <KeyRound className="h-7 w-7 text-[#FF5AF7]" />
                   </div>
                   <div>
                     <div className="text-4xl font-bold text-[#FF5AF7]">{parseFloat(tokenBalance || '0').toFixed(2)}</div>
@@ -539,7 +539,7 @@ const CVTUtilityPage = () => {
                 className="bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] hover:from-[#5500AB] hover:to-[#FF46E8] text-white px-8 py-6 text-lg rounded-xl shadow-glow hover:shadow-lg hover:shadow-[#FF5AF7]/40 transition-all"
                 onClick={() => setLocation("/cvt-token")}
               >
-                <Wallet className="h-5 w-5 mr-2" />
+                <KeyRound className="h-5 w-5 mr-2" />
                 Manage Your CVT Tokens
               </Button>
             </div>
