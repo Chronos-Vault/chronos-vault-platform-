@@ -176,270 +176,342 @@ const Home = () => {
               </div>
             </motion.div>
             
-            {/* Advanced Security Grid - Based on Real Implementation */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto mb-16">
+            {/* Advanced Security Cards Grid - Matching Premium Triple-Chain Style */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto mb-16">
               {/* Real-Time Security Monitoring */}
               <motion.div 
-                initial={{ opacity: 0, x: -20 }}
-                animate={{ opacity: 1, x: 0 }}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.7, delay: 0.3 }}
-                className="bg-gradient-to-br from-black to-[#0a0014] backdrop-blur-lg border border-[#6B00D7]/30 rounded-xl p-6 shadow-glow"
+                className="relative group overflow-hidden"
               >
-                <div className="flex items-start mb-5">
-                  <div className="h-12 w-12 rounded-lg bg-gradient-to-br from-[#6B00D7]/20 to-[#FF5AF7]/10 flex items-center justify-center mr-4">
-                    <Activity className="text-[#FF5AF7] w-6 h-6" />
-                  </div>
-                  <div>
-                    <h3 className="text-xl font-bold text-white mb-2">Real-Time Monitoring</h3>
-                    <p className="text-gray-300 text-sm">
-                      Every 10 seconds, our <code className="text-[#FF5AF7]/90 bg-black/30 px-1.5 py-0.5 rounded-md text-xs">SecurityServiceAggregator</code> monitors all blockchain networks for transaction anomalies and security threats.
-                    </p>
-                  </div>
-                </div>
+                {/* Premium Card Style with Better Gradients */}
+                <div className="absolute inset-0 bg-gradient-to-br from-[#6B00D7]/40 to-[#FF5AF7]/30 opacity-0 group-hover:opacity-100 transition-opacity duration-700 -z-10 blur-xl"></div>
                 
-                {/* Code Visualization */}
-                <div className="bg-black/60 rounded-md p-3 border border-[#6B00D7]/20 text-xs font-mono text-gray-300 mb-4 overflow-x-auto">
-                  <div className="text-purple-400">startMonitoring() {`{`}</div>
-                  <div className="pl-4">this.monitoringInterval = setInterval(<span className="text-[#FF5AF7]">()</span> =&gt; {`{`}</div>
-                  <div className="pl-8 text-emerald-400">this.updateChainStatuses();</div>
-                  <div className="pl-8 text-emerald-400">this.performRealTimeSecurityAnalysis();</div>
-                  <div className="pl-4">{`}`}, <span className="text-amber-400">10000</span>);</div>
-                  <div className="text-purple-400">{`}`}</div>
-                </div>
-                
-                {/* Status Indicators */}
-                <div className="grid grid-cols-3 gap-2 text-center">
-                  <div className="bg-black/30 rounded-md p-2">
-                    <div className="text-xs text-[#FF5AF7] font-semibold mb-1">ETH Status</div>
-                    <div className="flex justify-center">
-                      <span className="inline-flex h-2.5 w-2.5 rounded-full bg-green-500 animate-pulse"></span>
+                <div className="relative bg-gradient-to-b from-black/80 to-[#0a0014] backdrop-blur-lg border border-[#6B00D7]/20 hover:border-[#6B00D7]/40 rounded-2xl p-6 transition-all duration-300 shadow-glow overflow-hidden group-hover:shadow-[0_0_25px_rgba(107,0,215,0.3)]">
+                  {/* Badge */}
+                  <div className="absolute top-3 right-3 text-xs px-2.5 py-1 bg-[#6B00D7]/20 text-[#FF5AF7] rounded-full font-medium">
+                    Core Security
+                  </div>
+                  
+                  {/* Top Gradient Line Effect */}
+                  <div className="absolute top-0 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-[#FF5AF7]/50 to-transparent"></div>
+
+                  {/* Title and Description */}
+                  <h3 className="text-xl md:text-2xl font-bold text-white mt-4 mb-3 flex items-center">
+                    <div className="mr-3 p-2 rounded-lg bg-gradient-to-br from-[#6B00D7]/20 to-[#FF5AF7]/10 flex items-center justify-center">
+                      <Activity className="text-[#FF5AF7] w-6 h-6" />
+                    </div>
+                    <span className="bg-clip-text text-transparent bg-gradient-to-r from-white to-white via-[#FF5AF7] animate-gradient-text">Real-Time Monitoring</span>
+                  </h3>
+                  
+                  <p className="text-gray-300 mb-5 pl-1">
+                    Every 10 seconds, our security system monitors all blockchain networks for transaction anomalies and security threats.
+                  </p>
+                  
+                  {/* Code Visualization with Premium Style */}
+                  <div className="bg-black/60 rounded-md p-3 border border-[#6B00D7]/20 group-hover:border-[#6B00D7]/40 text-xs font-mono text-gray-300 mb-4 overflow-x-auto transition-all duration-300">
+                    <div className="text-purple-400">startMonitoring() {`{`}</div>
+                    <div className="pl-4">this.monitoringInterval = setInterval(<span className="text-[#FF5AF7]">()</span> =&gt; {`{`}</div>
+                    <div className="pl-8 text-emerald-400">this.updateChainStatuses();</div>
+                    <div className="pl-8 text-emerald-400">this.performRealTimeSecurityAnalysis();</div>
+                    <div className="pl-4">{`}`}, <span className="text-amber-400">10000</span>);</div>
+                    <div className="text-purple-400">{`}`}</div>
+                  </div>
+                  
+                  {/* Status Indicators with Premium Style */}
+                  <div className="grid grid-cols-3 gap-2 text-center">
+                    <div className="bg-black/40 rounded-xl p-2 border border-[#6B00D7]/10 group-hover:border-[#6B00D7]/30 transition-all duration-300">
+                      <div className="text-xs text-[#FF5AF7] font-semibold mb-2">ETH Status</div>
+                      <div className="flex justify-center">
+                        <span className="inline-flex h-2.5 w-2.5 rounded-full bg-green-500 animate-pulse"></span>
+                      </div>
+                    </div>
+                    <div className="bg-black/40 rounded-xl p-2 border border-[#6B00D7]/10 group-hover:border-[#6B00D7]/30 transition-all duration-300">
+                      <div className="text-xs text-[#FF5AF7] font-semibold mb-2">SOL Status</div>
+                      <div className="flex justify-center">
+                        <span className="inline-flex h-2.5 w-2.5 rounded-full bg-green-500 animate-pulse"></span>
+                      </div>
+                    </div>
+                    <div className="bg-black/40 rounded-xl p-2 border border-[#6B00D7]/10 group-hover:border-[#6B00D7]/30 transition-all duration-300">
+                      <div className="text-xs text-[#FF5AF7] font-semibold mb-2">TON Status</div>
+                      <div className="flex justify-center">
+                        <span className="inline-flex h-2.5 w-2.5 rounded-full bg-green-500 animate-pulse"></span>
+                      </div>
                     </div>
                   </div>
-                  <div className="bg-black/30 rounded-md p-2">
-                    <div className="text-xs text-[#FF5AF7] font-semibold mb-1">SOL Status</div>
-                    <div className="flex justify-center">
-                      <span className="inline-flex h-2.5 w-2.5 rounded-full bg-green-500 animate-pulse"></span>
-                    </div>
-                  </div>
-                  <div className="bg-black/30 rounded-md p-2">
-                    <div className="text-xs text-[#FF5AF7] font-semibold mb-1">TON Status</div>
-                    <div className="flex justify-center">
-                      <span className="inline-flex h-2.5 w-2.5 rounded-full bg-green-500 animate-pulse"></span>
-                    </div>
+                  
+                  {/* Shimmering Effect */}
+                  <div className="absolute -inset-4 -z-10 opacity-0 group-hover:opacity-30 transition-opacity duration-700">
+                    <div className="absolute inset-0 translate-x-[-100%] group-hover:translate-x-[100%] transition-all duration-2000 ease-in-out bg-gradient-to-r from-transparent via-white to-transparent"></div>
                   </div>
                 </div>
               </motion.div>
               
-              {/* Security Tier System - Based on Real Implementation */}
+              {/* Security Tier System - Based on Real Implementation with Premium Design */}
               <motion.div 
-                initial={{ opacity: 0, x: 20 }}
-                animate={{ opacity: 1, x: 0 }}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.7, delay: 0.4 }}
-                className="bg-gradient-to-br from-black to-[#0a0014] backdrop-blur-lg border border-[#6B00D7]/30 rounded-xl p-6 shadow-glow"
+                className="relative group overflow-hidden"
               >
-                <div className="flex items-start mb-5">
-                  <div className="h-12 w-12 rounded-lg bg-gradient-to-br from-[#6B00D7]/20 to-[#FF5AF7]/10 flex items-center justify-center mr-4">
-                    <Shield className="text-[#FF5AF7] w-6 h-6" />
-                  </div>
-                  <div>
-                    <h3 className="text-xl font-bold text-white mb-2">Security Tier System</h3>
-                    <p className="text-gray-300 text-sm">
-                      Choose from three distinct security levels, each with its own feature set and protection mechanisms tailored to your specific needs.
-                    </p>
-                  </div>
-                </div>
+                {/* Premium Card Style with Better Gradients */}
+                <div className="absolute inset-0 bg-gradient-to-br from-[#6B00D7]/40 to-[#FF5AF7]/30 opacity-0 group-hover:opacity-100 transition-opacity duration-700 -z-10 blur-xl"></div>
                 
-                <div className="space-y-3">
-                  {/* Tier 1: Standard */}
-                  <div className="bg-black/30 rounded-md p-3 border border-[#6B00D7]/20">
-                    <div className="flex justify-between items-center mb-2">
-                      <span className="font-medium text-white">Standard</span>
-                      <div className="text-xs py-0.5 px-2 bg-[#6B00D7]/20 text-[#FF5AF7] rounded-full">Multi-Sig: 2</div>
+                <div className="relative bg-gradient-to-b from-black/80 to-[#0a0014] backdrop-blur-lg border border-[#6B00D7]/20 hover:border-[#6B00D7]/40 rounded-2xl p-6 transition-all duration-300 shadow-glow overflow-hidden group-hover:shadow-[0_0_25px_rgba(107,0,215,0.3)]">
+                  {/* Badge */}
+                  <div className="absolute top-3 right-3 text-xs px-2.5 py-1 bg-[#6B00D7]/20 text-[#FF5AF7] rounded-full font-medium">
+                    Customizable
+                  </div>
+                  
+                  {/* Top Gradient Line Effect */}
+                  <div className="absolute top-0 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-[#FF5AF7]/50 to-transparent"></div>
+
+                  {/* Title and Description */}
+                  <h3 className="text-xl md:text-2xl font-bold text-white mt-4 mb-3 flex items-center">
+                    <div className="mr-3 p-2 rounded-lg bg-gradient-to-br from-[#6B00D7]/20 to-[#FF5AF7]/10 flex items-center justify-center">
+                      <Shield className="text-[#FF5AF7] w-6 h-6" />
                     </div>
-                    <div className="grid grid-cols-2 gap-1.5 text-xs">
-                      <div className="flex items-center">
-                        <div className="h-1.5 w-1.5 rounded-full bg-green-500 mr-1.5"></div>
-                        <span className="text-gray-300">Behavioral Analysis</span>
+                    <span className="bg-clip-text text-transparent bg-gradient-to-r from-white to-white via-[#FF5AF7] animate-gradient-text">Security Tier System</span>
+                  </h3>
+                  
+                  <p className="text-gray-300 mb-5 pl-1">
+                    Choose from three distinct security levels, each with increasing protection features based on your specific needs.
+                  </p>
+                  
+                  <div className="space-y-3">
+                    {/* Tier 1: Standard with Premium Style */}
+                    <div className="bg-black/40 rounded-xl p-3 border border-[#6B00D7]/10 group-hover:border-[#6B00D7]/20 transition-all duration-300">
+                      <div className="flex justify-between items-center mb-2">
+                        <span className="font-medium text-white">Standard</span>
+                        <div className="text-xs py-0.5 px-2 bg-[#6B00D7]/20 text-[#FF5AF7] rounded-full">Multi-Sig: 2</div>
                       </div>
-                      <div className="flex items-center">
-                        <div className="h-1.5 w-1.5 rounded-full bg-green-500 mr-1.5"></div>
-                        <span className="text-gray-300">Data Persistence</span>
+                      <div className="grid grid-cols-2 gap-1.5 text-xs">
+                        <div className="flex items-center">
+                          <div className="h-1.5 w-1.5 rounded-full bg-green-500 mr-1.5"></div>
+                          <span className="text-gray-300">Behavioral Analysis</span>
+                        </div>
+                        <div className="flex items-center">
+                          <div className="h-1.5 w-1.5 rounded-full bg-green-500 mr-1.5"></div>
+                          <span className="text-gray-300">Data Persistence</span>
+                        </div>
+                        <div className="flex items-center">
+                          <div className="h-1.5 w-1.5 rounded-full bg-red-500 mr-1.5"></div>
+                          <span className="text-gray-300 opacity-50">Zero-Knowledge</span>
+                        </div>
+                        <div className="flex items-center">
+                          <div className="h-1.5 w-1.5 rounded-full bg-red-500 mr-1.5"></div>
+                          <span className="text-gray-300 opacity-50">Quantum Resistant</span>
+                        </div>
                       </div>
-                      <div className="flex items-center">
-                        <div className="h-1.5 w-1.5 rounded-full bg-red-500 mr-1.5"></div>
-                        <span className="text-gray-300 opacity-50">Zero-Knowledge</span>
+                    </div>
+                    
+                    {/* Tier 2: Enhanced with Premium Style */}
+                    <div className="bg-black/40 rounded-xl p-3 border border-[#6B00D7]/20 group-hover:border-[#6B00D7]/30 transition-all duration-300">
+                      <div className="flex justify-between items-center mb-2">
+                        <span className="font-medium text-white">Enhanced</span>
+                        <div className="text-xs py-0.5 px-2 bg-[#6B00D7]/30 text-[#FF5AF7] rounded-full">Multi-Sig: 3</div>
                       </div>
-                      <div className="flex items-center">
-                        <div className="h-1.5 w-1.5 rounded-full bg-red-500 mr-1.5"></div>
-                        <span className="text-gray-300 opacity-50">Quantum Resistant</span>
+                      <div className="grid grid-cols-2 gap-1.5 text-xs">
+                        <div className="flex items-center">
+                          <div className="h-1.5 w-1.5 rounded-full bg-green-500 mr-1.5"></div>
+                          <span className="text-gray-300">Cross-Chain Verify</span>
+                        </div>
+                        <div className="flex items-center">
+                          <div className="h-1.5 w-1.5 rounded-full bg-green-500 mr-1.5"></div>
+                          <span className="text-gray-300">Zero-Knowledge</span>
+                        </div>
+                        <div className="flex items-center">
+                          <div className="h-1.5 w-1.5 rounded-full bg-green-500 mr-1.5"></div>
+                          <span className="text-gray-300">Geolocation Verify</span>
+                        </div>
+                        <div className="flex items-center">
+                          <div className="h-1.5 w-1.5 rounded-full bg-green-500 mr-1.5"></div>
+                          <span className="text-gray-300">Quantum Resistant</span>
+                        </div>
+                      </div>
+                    </div>
+                    
+                    {/* Tier 3: Maximum with Premium Style */}
+                    <div className="bg-black/40 rounded-xl p-3 border border-[#6B00D7]/30 group-hover:border-[#6B00D7]/40 transition-all duration-300">
+                      <div className="flex justify-between items-center mb-2">
+                        <span className="font-medium text-white">Maximum</span>
+                        <div className="text-xs py-0.5 px-2 bg-[#6B00D7]/40 text-[#FF5AF7] rounded-full">Multi-Sig: 4</div>
+                      </div>
+                      <div className="grid grid-cols-2 gap-1.5 text-xs">
+                        <div className="flex items-center">
+                          <div className="h-1.5 w-1.5 rounded-full bg-green-500 mr-1.5"></div>
+                          <span className="text-gray-300">Hardware Keys</span>
+                        </div>
+                        <div className="flex items-center">
+                          <div className="h-1.5 w-1.5 rounded-full bg-green-500 mr-1.5"></div>
+                          <span className="text-gray-300">6-Hour Backups</span>
+                        </div>
+                        <div className="flex items-center">
+                          <div className="h-1.5 w-1.5 rounded-full bg-green-500 mr-1.5"></div>
+                          <span className="text-gray-300">All other features</span>
+                        </div>
+                        <div className="flex items-center">
+                          <div className="h-1.5 w-1.5 rounded-full bg-green-500 mr-1.5"></div>
+                          <span className="text-gray-300">Enhanced AI</span>
+                        </div>
                       </div>
                     </div>
                   </div>
                   
-                  {/* Tier 2: Enhanced */}
-                  <div className="bg-black/30 rounded-md p-3 border border-[#6B00D7]/30">
-                    <div className="flex justify-between items-center mb-2">
-                      <span className="font-medium text-white">Enhanced</span>
-                      <div className="text-xs py-0.5 px-2 bg-[#6B00D7]/30 text-[#FF5AF7] rounded-full">Multi-Sig: 3</div>
-                    </div>
-                    <div className="grid grid-cols-2 gap-1.5 text-xs">
-                      <div className="flex items-center">
-                        <div className="h-1.5 w-1.5 rounded-full bg-green-500 mr-1.5"></div>
-                        <span className="text-gray-300">Cross-Chain Verify</span>
-                      </div>
-                      <div className="flex items-center">
-                        <div className="h-1.5 w-1.5 rounded-full bg-green-500 mr-1.5"></div>
-                        <span className="text-gray-300">Zero-Knowledge</span>
-                      </div>
-                      <div className="flex items-center">
-                        <div className="h-1.5 w-1.5 rounded-full bg-green-500 mr-1.5"></div>
-                        <span className="text-gray-300">Geolocation Verify</span>
-                      </div>
-                      <div className="flex items-center">
-                        <div className="h-1.5 w-1.5 rounded-full bg-green-500 mr-1.5"></div>
-                        <span className="text-gray-300">Quantum Resistant</span>
-                      </div>
-                    </div>
-                  </div>
-                  
-                  {/* Tier 3: Maximum */}
-                  <div className="bg-black/30 rounded-md p-3 border border-[#6B00D7]/40">
-                    <div className="flex justify-between items-center mb-2">
-                      <span className="font-medium text-white">Maximum</span>
-                      <div className="text-xs py-0.5 px-2 bg-[#6B00D7]/40 text-[#FF5AF7] rounded-full">Multi-Sig: 4</div>
-                    </div>
-                    <div className="grid grid-cols-2 gap-1.5 text-xs">
-                      <div className="flex items-center">
-                        <div className="h-1.5 w-1.5 rounded-full bg-green-500 mr-1.5"></div>
-                        <span className="text-gray-300">Hardware Keys</span>
-                      </div>
-                      <div className="flex items-center">
-                        <div className="h-1.5 w-1.5 rounded-full bg-green-500 mr-1.5"></div>
-                        <span className="text-gray-300">6-Hour Backups</span>
-                      </div>
-                      <div className="flex items-center">
-                        <div className="h-1.5 w-1.5 rounded-full bg-green-500 mr-1.5"></div>
-                        <span className="text-gray-300">All other features</span>
-                      </div>
-                      <div className="flex items-center">
-                        <div className="h-1.5 w-1.5 rounded-full bg-green-500 mr-1.5"></div>
-                        <span className="text-gray-300">Enhanced AI</span>
-                      </div>
-                    </div>
+                  {/* Shimmering Effect */}
+                  <div className="absolute -inset-4 -z-10 opacity-0 group-hover:opacity-30 transition-opacity duration-700">
+                    <div className="absolute inset-0 translate-x-[-100%] group-hover:translate-x-[100%] transition-all duration-2000 ease-in-out bg-gradient-to-r from-transparent via-white to-transparent"></div>
                   </div>
                 </div>
               </motion.div>
               
-              {/* Behavioral Analysis - Based on Real Implementation */}
+              {/* AI Security Monitoring with Premium Design */}
               <motion.div 
-                initial={{ opacity: 0, x: -20 }}
-                animate={{ opacity: 1, x: 0 }}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.7, delay: 0.5 }}
-                className="bg-gradient-to-br from-black to-[#0a0014] backdrop-blur-lg border border-[#6B00D7]/30 rounded-xl p-6 shadow-glow"
+                className="relative group overflow-hidden"
               >
-                <div className="flex items-start mb-5">
-                  <div className="h-12 w-12 rounded-lg bg-gradient-to-br from-[#6B00D7]/20 to-[#FF5AF7]/10 flex items-center justify-center mr-4">
-                    <Brain className="text-[#FF5AF7] w-6 h-6" />
-                  </div>
-                  <div>
-                    <h3 className="text-xl font-bold text-white mb-2">AI Security Monitoring</h3>
-                    <p className="text-gray-300 text-sm">
-                      Our advanced behavioral analysis system continuously monitors for suspicious activities and anomalies in transaction patterns.
-                    </p>
-                  </div>
-                </div>
+                {/* Premium Card Style with Better Gradients */}
+                <div className="absolute inset-0 bg-gradient-to-br from-[#6B00D7]/40 to-[#FF5AF7]/30 opacity-0 group-hover:opacity-100 transition-opacity duration-700 -z-10 blur-xl"></div>
                 
-                {/* AI Security Features */}
-                <div className="flex flex-col gap-3 mb-4">
-                  <div className="flex justify-between items-center">
-                    <span className="text-xs text-gray-300">Pattern Recognition</span>
-                    <div className="w-2/3 h-2 bg-black/50 rounded-full overflow-hidden">
-                      <div className="h-full bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] w-[85%]"></div>
+                <div className="relative bg-gradient-to-b from-black/80 to-[#0a0014] backdrop-blur-lg border border-[#6B00D7]/20 hover:border-[#6B00D7]/40 rounded-2xl p-6 transition-all duration-300 shadow-glow overflow-hidden group-hover:shadow-[0_0_25px_rgba(107,0,215,0.3)]">
+                  {/* Badge */}
+                  <div className="absolute top-3 right-3 text-xs px-2.5 py-1 bg-[#6B00D7]/20 text-[#FF5AF7] rounded-full font-medium">
+                    AI-Enhanced
+                  </div>
+                  
+                  {/* Top Gradient Line Effect */}
+                  <div className="absolute top-0 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-[#FF5AF7]/50 to-transparent"></div>
+
+                  {/* Title and Description */}
+                  <h3 className="text-xl md:text-2xl font-bold text-white mt-4 mb-3 flex items-center">
+                    <div className="mr-3 p-2 rounded-lg bg-gradient-to-br from-[#6B00D7]/20 to-[#FF5AF7]/10 flex items-center justify-center">
+                      <Brain className="text-[#FF5AF7] w-6 h-6" />
+                    </div>
+                    <span className="bg-clip-text text-transparent bg-gradient-to-r from-white to-white via-[#FF5AF7] animate-gradient-text">Behavioral Analysis</span>
+                  </h3>
+                  
+                  <p className="text-gray-300 mb-5 pl-1">
+                    Advanced AI continually monitors your vault for suspicious activities, detecting anomalies before they become security threats.
+                  </p>
+                  
+                  {/* AI Security Features with Premium Style */}
+                  <div className="flex flex-col gap-3 mb-4 p-4 bg-black/40 rounded-xl border border-[#6B00D7]/10 group-hover:border-[#6B00D7]/30">
+                    <div className="flex justify-between items-center">
+                      <span className="text-xs text-gray-300">Pattern Recognition</span>
+                      <div className="w-2/3 h-2 bg-black/50 rounded-full overflow-hidden">
+                        <div className="h-full bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] w-[85%] animate-pulse-slow"></div>
+                      </div>
+                    </div>
+                    
+                    <div className="flex justify-between items-center">
+                      <span className="text-xs text-gray-300">Anomaly Detection</span>
+                      <div className="w-2/3 h-2 bg-black/50 rounded-full overflow-hidden">
+                        <div className="h-full bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] w-[92%] animate-pulse-slow delay-150"></div>
+                      </div>
+                    </div>
+                    
+                    <div className="flex justify-between items-center">
+                      <span className="text-xs text-gray-300">Threat Prediction</span>
+                      <div className="w-2/3 h-2 bg-black/50 rounded-full overflow-hidden">
+                        <div className="h-full bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] w-[78%] animate-pulse-slow delay-300"></div>
+                      </div>
                     </div>
                   </div>
                   
-                  <div className="flex justify-between items-center">
-                    <span className="text-xs text-gray-300">Anomaly Detection</span>
-                    <div className="w-2/3 h-2 bg-black/50 rounded-full overflow-hidden">
-                      <div className="h-full bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] w-[92%]"></div>
-                    </div>
+                  {/* Sample Feature Vector with Premium Style */}
+                  <div className="bg-black/60 rounded-md p-3 border border-[#6B00D7]/20 group-hover:border-[#6B00D7]/40 text-xs font-mono text-gray-300 overflow-hidden transition-all duration-300">
+                    <div className="text-gray-500">// Security Feature Vector Model</div>
+                    <div>{`{`}</div>
+                    <div className="pl-4"><span className="text-purple-400">recentTransactionCount</span>: <span className="text-amber-400">30</span>,</div>
+                    <div className="pl-4"><span className="text-purple-400">uniqueAddressInteractions</span>: <span className="text-amber-400">24</span>,</div>
+                    <div className="pl-4"><span className="text-purple-400">unusualTimePatterns</span>: <span className="text-amber-400">0.15</span>,</div>
+                    <div className="pl-4"><span className="text-purple-400">unusualLocationPatterns</span>: <span className="text-amber-400">0.08</span>,</div>
+                    <div>{`}`}</div>
                   </div>
                   
-                  <div className="flex justify-between items-center">
-                    <span className="text-xs text-gray-300">Threat Prediction</span>
-                    <div className="w-2/3 h-2 bg-black/50 rounded-full overflow-hidden">
-                      <div className="h-full bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] w-[78%]"></div>
-                    </div>
+                  {/* Shimmering Effect */}
+                  <div className="absolute -inset-4 -z-10 opacity-0 group-hover:opacity-30 transition-opacity duration-700">
+                    <div className="absolute inset-0 translate-x-[-100%] group-hover:translate-x-[100%] transition-all duration-2000 ease-in-out bg-gradient-to-r from-transparent via-white to-transparent"></div>
                   </div>
-                </div>
-                
-                {/* Sample Feature Vector */}
-                <div className="bg-black/60 rounded-md p-3 border border-[#6B00D7]/20 text-xs font-mono text-gray-300 overflow-hidden">
-                  <div className="text-gray-500">// Security Feature Vector Model</div>
-                  <div>{`{`}</div>
-                  <div className="pl-4"><span className="text-purple-400">recentTransactionCount</span>: <span className="text-amber-400">30</span>,</div>
-                  <div className="pl-4"><span className="text-purple-400">uniqueAddressInteractions</span>: <span className="text-amber-400">24</span>,</div>
-                  <div className="pl-4"><span className="text-purple-400">unusualTimePatterns</span>: <span className="text-amber-400">0.15</span>,</div>
-                  <div className="pl-4"><span className="text-purple-400">unusualLocationPatterns</span>: <span className="text-amber-400">0.08</span>,</div>
-                  <div>{`}`}</div>
                 </div>
               </motion.div>
               
-              {/* Zero-Knowledge System */}
+              {/* Zero-Knowledge Privacy with Premium Design */}
               <motion.div 
-                initial={{ opacity: 0, x: 20 }}
-                animate={{ opacity: 1, x: 0 }}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.7, delay: 0.6 }}
-                className="bg-gradient-to-br from-black to-[#0a0014] backdrop-blur-lg border border-[#6B00D7]/30 rounded-xl p-6 shadow-glow"
+                className="relative group overflow-hidden"
               >
-                <div className="flex items-start mb-5">
-                  <div className="h-12 w-12 rounded-lg bg-gradient-to-br from-[#6B00D7]/20 to-[#FF5AF7]/10 flex items-center justify-center mr-4">
-                    <EyeOff className="text-[#FF5AF7] w-6 h-6" />
-                  </div>
-                  <div>
-                    <h3 className="text-xl font-bold text-white mb-2">Zero-Knowledge Privacy</h3>
-                    <p className="text-gray-300 text-sm">
-                      Our custom ZK-Shield technology enables verification without revealing sensitive vault contents, ensuring complete privacy.
-                    </p>
-                  </div>
-                </div>
+                {/* Premium Card Style with Better Gradients */}
+                <div className="absolute inset-0 bg-gradient-to-br from-[#6B00D7]/40 to-[#FF5AF7]/30 opacity-0 group-hover:opacity-100 transition-opacity duration-700 -z-10 blur-xl"></div>
                 
-                {/* ZK Feature Illustration */}
-                <div className="bg-black/40 rounded-lg p-4 mb-4 border border-[#6B00D7]/20">
-                  <div className="flex items-center gap-4 mb-3">
-                    <div className="relative h-12 w-12 rounded-full bg-gradient-to-r from-[#6B00D7]/30 to-[#FF5AF7]/30 flex items-center justify-center">
-                      <div className="absolute inset-1 rounded-full bg-black/80 flex items-center justify-center">
-                        <LockKeyhole className="w-5 h-5 text-[#FF5AF7]" />
+                <div className="relative bg-gradient-to-b from-black/80 to-[#0a0014] backdrop-blur-lg border border-[#6B00D7]/20 hover:border-[#6B00D7]/40 rounded-2xl p-6 transition-all duration-300 shadow-glow overflow-hidden group-hover:shadow-[0_0_25px_rgba(107,0,215,0.3)]">
+                  {/* Badge */}
+                  <div className="absolute top-3 right-3 text-xs px-2.5 py-1 bg-[#6B00D7]/20 text-[#FF5AF7] rounded-full font-medium">
+                    Privacy-First
+                  </div>
+                  
+                  {/* Top Gradient Line Effect */}
+                  <div className="absolute top-0 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-[#FF5AF7]/50 to-transparent"></div>
+
+                  {/* Title and Description */}
+                  <h3 className="text-xl md:text-2xl font-bold text-white mt-4 mb-3 flex items-center">
+                    <div className="mr-3 p-2 rounded-lg bg-gradient-to-br from-[#6B00D7]/20 to-[#FF5AF7]/10 flex items-center justify-center">
+                      <EyeOff className="text-[#FF5AF7] w-6 h-6" />
+                    </div>
+                    <span className="bg-clip-text text-transparent bg-gradient-to-r from-white to-white via-[#FF5AF7] animate-gradient-text">Zero-Knowledge Privacy</span>
+                  </h3>
+                  
+                  <p className="text-gray-300 mb-5 pl-1">
+                    Our custom ZK-Shield technology enables verification without revealing sensitive vault contents, ensuring complete data privacy.
+                  </p>
+                  
+                  {/* ZK Feature Illustration with Premium Style */}
+                  <div className="bg-black/40 rounded-xl p-4 mb-4 border border-[#6B00D7]/10 group-hover:border-[#6B00D7]/30 transition-all duration-300">
+                    <div className="flex items-center gap-4 mb-3">
+                      <div className="relative h-12 w-12 rounded-full bg-gradient-to-r from-[#6B00D7]/30 to-[#FF5AF7]/30 flex items-center justify-center">
+                        <div className="absolute inset-1 rounded-full bg-black/80 flex items-center justify-center">
+                          <LockKeyhole className="w-5 h-5 text-[#FF5AF7]" />
+                        </div>
+                      </div>
+                      
+                      <div className="flex-1 h-[2px] bg-gradient-to-r from-[#FF5AF7]/70 via-transparent to-[#6B00D7]/70 relative animate-pulse-slow">
+                        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 px-3 py-1 rounded-full bg-black border border-[#6B00D7]/30 text-xs text-[#FF5AF7] whitespace-nowrap">
+                          ZK Proof
+                        </div>
+                      </div>
+                      
+                      <div className="relative h-12 w-12 rounded-full bg-gradient-to-r from-[#6B00D7]/30 to-[#FF5AF7]/30 flex items-center justify-center">
+                        <div className="absolute inset-1 rounded-full bg-black/80 flex items-center justify-center">
+                          <CheckCircle2 className="w-5 h-5 text-[#FF5AF7]" />
+                        </div>
                       </div>
                     </div>
                     
-                    <div className="flex-1 h-[2px] bg-gradient-to-r from-[#FF5AF7] via-transparent to-[#6B00D7] relative">
-                      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 px-3 py-1 rounded-full bg-black border border-[#6B00D7]/30 text-xs text-[#FF5AF7] whitespace-nowrap">
-                        ZK Proof
-                      </div>
-                    </div>
-                    
-                    <div className="relative h-12 w-12 rounded-full bg-gradient-to-r from-[#6B00D7]/30 to-[#FF5AF7]/30 flex items-center justify-center">
-                      <div className="absolute inset-1 rounded-full bg-black/80 flex items-center justify-center">
-                        <CheckCircle2 className="w-5 h-5 text-[#FF5AF7]" />
-                      </div>
+                    <div className="text-xs text-center text-gray-400">
+                      Verify without revealing: Only proofs are shared, never your private data
                     </div>
                   </div>
                   
-                  <div className="text-xs text-center text-gray-400">
-                    Verify without revealing: Only proofs are shared, never your private data
+                  {/* ZK Implementation with Premium Style */}
+                  <div className="bg-black/60 rounded-md p-3 border border-[#6B00D7]/20 group-hover:border-[#6B00D7]/40 text-xs font-mono text-gray-300 overflow-hidden transition-all duration-300">
+                    <div className="text-purple-400">async createVaultAccessProof(vaultId, userId) {`{`}</div>
+                    <div className="pl-4 text-emerald-400">// Generate zero-knowledge proof</div>
+                    <div className="pl-4">const proof = <span className="text-[#FF5AF7]">await</span> this.generateProof({`{`}</div>
+                    <div className="pl-8"><span className="text-yellow-400">privateInputs</span>: [userId, privateKey],</div>
+                    <div className="pl-8"><span className="text-yellow-400">publicInputs</span>: [vaultId]</div>
+                    <div className="pl-4">{`}`});</div>
+                    <div className="text-purple-400">{`}`}</div>
                   </div>
-                </div>
-                
-                {/* ZK Implementation */}
-                <div className="bg-black/60 rounded-md p-3 border border-[#6B00D7]/20 text-xs font-mono text-gray-300 overflow-hidden">
-                  <div className="text-purple-400">async createVaultAccessProof(vaultId, userId) {`{`}</div>
-                  <div className="pl-4 text-emerald-400">// Generate zero-knowledge proof</div>
-                  <div className="pl-4">const proof = <span className="text-[#FF5AF7]">await</span> this.generateProof({`{`}</div>
-                  <div className="pl-8"><span className="text-yellow-400">privateInputs</span>: [userId, privateKey],</div>
-                  <div className="pl-8"><span className="text-yellow-400">publicInputs</span>: [vaultId]</div>
-                  <div className="pl-4">{`}`});</div>
-                  <div className="text-purple-400">{`}`}</div>
+                  
+                  {/* Shimmering Effect */}
+                  <div className="absolute -inset-4 -z-10 opacity-0 group-hover:opacity-30 transition-opacity duration-700">
+                    <div className="absolute inset-0 translate-x-[-100%] group-hover:translate-x-[100%] transition-all duration-2000 ease-in-out bg-gradient-to-r from-transparent via-white to-transparent"></div>
+                  </div>
                 </div>
               </motion.div>
             </div>
