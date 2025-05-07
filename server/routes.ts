@@ -21,6 +21,7 @@ import storageRoutes from "./api/storage-routes";
 import { arweaveStorageService } from "./storage/arweave-storage-service";
 import securityVerificationRoutes from "./api/security-verification-routes";
 import zkRouter from "./api/zero-knowledge-routes";
+import { registerExplorerRoutes } from "./api/explorer-routes";
 
 
 if (!process.env.STRIPE_SECRET_KEY) {
