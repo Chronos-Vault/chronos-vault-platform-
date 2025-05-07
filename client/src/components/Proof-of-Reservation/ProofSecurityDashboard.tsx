@@ -29,7 +29,7 @@ import {
   TooltipProvider,
   TooltipTrigger
 } from '@/components/ui/tooltip';
-import { formatDate } from '@/lib/utils';
+import { formatDate } from '@/utils/date-utils';
 import { ProofType, ProofRecord, VerificationStatus } from '@/hooks/use-proof-verification';
 import { ProofVerificationSummary } from './ProofVerificationSummary';
 

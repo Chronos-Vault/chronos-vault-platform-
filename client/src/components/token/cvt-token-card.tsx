@@ -5,7 +5,7 @@ import { Coins, CoinsIcon, Award, TrendingUp, Lock, Shield } from 'lucide-react'
 import { Progress } from '@/components/ui/progress';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { formatDate } from '@/lib/utils';
+import { formatDate } from '@/utils/date-utils';
 
 export const CVTTokenCard: React.FC = () => {
   const { 

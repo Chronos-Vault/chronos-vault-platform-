@@ -2,7 +2,7 @@ import { Link } from "wouter";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { calculateProgress, formatDate } from "@/lib/utils";
+import { calculateProgress, formatDate } from "@/utils/date-utils";
 import { Progress } from "@/components/ui/progress";
 import { Vault } from "@shared/schema";
 

@@ -3,7 +3,7 @@ import { Link } from 'wouter';
 import { Bitcoin, LockIcon, Calendar, ArrowRight, TrendingUp, Shield } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
-import { calculateTimeRemaining, formatDate } from '@/lib/utils';
+import { calculateTimeRemaining, formatDate } from '@/utils/date-utils';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 

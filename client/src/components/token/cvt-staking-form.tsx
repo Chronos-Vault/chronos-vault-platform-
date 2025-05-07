@@ -18,7 +18,7 @@ import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Coins, Clock, TrendingUp, BarChart } from 'lucide-react';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-import { formatDate } from '@/lib/utils';
+import { formatDate } from '@/utils/date-utils';
 
 // Define form schema with Zod
 const stakingFormSchema = z.object({
