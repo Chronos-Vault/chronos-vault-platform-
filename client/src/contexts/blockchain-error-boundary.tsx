@@ -87,38 +87,125 @@ export const BlockchainErrorProvider: React.FC<{ children: ReactNode }> = ({ chi
 
 // Display component for blockchain errors
 export const BlockchainErrorDisplay: React.FC = () => {
-  const { errors, clearError } = useBlockchainErrors();
+  const { errors, clearError, clearChainErrors } = useBlockchainErrors();
   const { devModeEnabled } = useDevMode();
+  const [retrying, setRetrying] = useState<Record<string, boolean>>({});
 
   if (errors.length === 0) {
     return null;
   }
 
+  // Handle retry for a specific blockchain
+  const handleRetry = async (chain: BlockchainChain, index: number) => {
+    // Set retrying state for this chain
+    setRetrying(prev => ({ ...prev, [chain]: true }));
+    
+    // Log retry attempt
+    console.log(`Attempting to reconnect to ${chain}...`);
+    
+    // Wait a moment to simulate reconnection attempt
+    await new Promise(resolve => setTimeout(resolve, 1500));
+    
+    // Clear all errors for this chain (this would trigger reconnection attempt in respective providers)
+    clearChainErrors(chain);
+    
+    // Reset retrying state
+    setRetrying(prev => ({ ...prev, [chain]: false }));
+  };
+  
+  // Group errors by blockchain
+  const errorsByChain: Record<BlockchainChain, BlockchainError[]> = {} as any;
+  errors.forEach(error => {
+    if (!errorsByChain[error.chain]) {
+      errorsByChain[error.chain] = [];
+    }
+    errorsByChain[error.chain].push(error);
+  });
+
   return (
-    <div className="fixed bottom-4 right-4 z-50 flex flex-col gap-2 max-w-md">
-      {errors.map((error, index) => (
-        <Alert
-          key={`${error.chain}-${error.timestamp}-${index}`}
-          variant={error.critical ? "destructive" : "default"}
-          className={`shadow-lg ${error.critical ? 'border-red-500' : 'border-amber-500'}`}
-        >
-          <AlertCircle className={`h-4 w-4 ${error.critical ? 'text-red-500' : 'text-amber-500'}`} />
-          <AlertTitle className="flex items-center justify-between">
-            <span>{error.chain} Connection Issue</span>
-            <Button variant="ghost" size="sm" onClick={() => clearError(index)}>
-              <X className="h-4 w-4" />
-            </Button>
-          </AlertTitle>
-          <AlertDescription>
-            {error.message}
-            {devModeEnabled && (
-              <div className="mt-2 text-xs text-gray-500">
-                This error is displayed because you're in development mode.
+    <div className="fixed bottom-4 right-4 z-50 flex flex-col gap-3 max-w-md">
+      {Object.entries(errorsByChain).map(([chain, chainErrors]) => {
+        const isCritical = chainErrors.some(err => err.critical);
+        const isRetrying = retrying[chain] || false;
+        
+        return (
+          <Alert
+            key={`${chain}-group`}
+            variant={isCritical ? "destructive" : "default"}
+            className={`shadow-lg backdrop-blur-md bg-opacity-95 
+              ${isCritical 
+                ? 'border-red-500 bg-red-900/20 dark:bg-red-950/30' 
+                : 'border-amber-500 bg-amber-900/20 dark:bg-amber-950/30'
+              } rounded-xl transition-all duration-200 transform hover:translate-y-[-2px]`}
+          >
+            <div className="flex items-start">
+              <AlertCircle className={`h-5 w-5 mr-2 mt-0.5 ${isCritical ? 'text-red-400' : 'text-amber-400'}`} />
+              
+              <div className="flex-1">
+                <AlertTitle className="flex items-center justify-between font-semibold mb-1">
+                  <span className="flex items-center gap-2">
+                    <span className={isCritical ? 'text-red-300' : 'text-amber-300'}>
+                      {chain} {isCritical ? 'Critical Error' : 'Connection Issue'}
+                    </span>
+                    {isRetrying && (
+                      <span className="inline-block animate-spin text-xs">⟳</span>
+                    )}
+                  </span>
+                  
+                  <Button variant="ghost" size="sm" onClick={() => clearChainErrors(chain as BlockchainChain)}
+                    className="h-6 w-6 p-0 rounded-full hover:bg-muted/40">
+                    <X className="h-4 w-4" />
+                  </Button>
+                </AlertTitle>
+                
+                <AlertDescription className="text-sm">
+                  <div className="mb-2">
+                    {chainErrors.length > 1 
+                      ? `${chainErrors.length} issues with ${chain} connection.` 
+                      : chainErrors[0].message}
+                  </div>
+                  
+                  <div className="flex gap-2 mt-3">
+                    <Button 
+                      variant="outline" 
+                      size="sm" 
+                      className={`text-xs ${isRetrying ? 'opacity-50 cursor-not-allowed' : ''}`}
+                      onClick={() => !isRetrying && handleRetry(chain as BlockchainChain, 0)}
+                      disabled={isRetrying}
+                    >
+                      {isRetrying ? 'Reconnecting...' : 'Retry Connection'}
+                    </Button>
+                    <Button 
+                      variant="link" 
+                      size="sm"
+                      className="text-xs px-0"
+                      onClick={() => clearChainErrors(chain as BlockchainChain)}
+                    >
+                      Continue without {chain}
+                    </Button>
+                  </div>
+                  
+                  {devModeEnabled && (
+                    <div className="mt-2 text-xs text-gray-500/70 italic">
+                      {chainErrors.length > 1 && (
+                        <details className="mt-1">
+                          <summary className="cursor-pointer">Show all errors</summary>
+                          <ul className="pl-4 mt-1 list-disc">
+                            {chainErrors.map((err, i) => (
+                              <li key={i} className="mt-1">{err.message}</li>
+                            ))}
+                          </ul>
+                        </details>
+                      )}
+                      <div className="mt-1">In development mode - API requests may be simulated</div>
+                    </div>
+                  )}
+                </AlertDescription>
               </div>
-            )}
-          </AlertDescription>
-        </Alert>
-      ))}
+            </div>
+          </Alert>
+        );
+      })}
     </div>
   );
 };

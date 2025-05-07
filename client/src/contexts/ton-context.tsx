@@ -118,103 +118,137 @@ export const TonProvider: React.FC<TonProviderProps> = ({ children }) => {
   const [transactionHistory, setTransactionHistory] = useState<TONTransactionHistory[]>([]);
   const [isLoadingHistory, setIsLoadingHistory] = useState(false);
   
+  // Retry mechanism state
+  const [manualRetryInProgress, setManualRetryInProgress] = useState(false);
+  const [initAttempts, setInitAttempts] = useState(0);
+  const MAX_INIT_ATTEMPTS = 5; // Maximum number of attempts before showing an error
+  
   // Error handling
   const { addError, clearChainErrors } = useBlockchainErrors();
+
+  // Initialize TON service function - extracted so it can be called from retry
+  const initTon = async (isManualRetry = false): Promise<boolean> => {
+    try {
+      // Only increment automatic retry attempts
+      if (!isManualRetry) {
+        setInitAttempts(prev => prev + 1);
+      }
+      
+      console.log(`Attempting to initialize TON service${isManualRetry ? ' (manual retry)' : ''}`);
+      const success = await tonService.initialize();
+      
+      if (success) {
+        // If successfully initialized, update state
+        setConnectionStatus(tonService.getConnectionStatus());
+        setWalletInfo(tonService.getWalletInfo());
+        setIsInitializing(false);
+        
+        // Clear any existing TON errors since initialization succeeded
+        clearChainErrors('TON');
+        
+        // Reset attempt counter on success
+        setInitAttempts(0);
+        
+        // Try to restore session after successful initialization
+        try {
+          await restoreSession();
+        } catch (error) {
+          console.warn('Failed to restore TON session:', error);
+        }
+        
+        return true;
+      } else {
+        // Handle failed initialization
+        if (!isManualRetry && initAttempts >= MAX_INIT_ATTEMPTS - 1) {
+          // Add an error after maximum attempts
+          addError({
+            chain: 'TON',
+            message: 'Failed to initialize TON connection after multiple attempts. You can continue using other features.',
+            critical: false,
+            timestamp: Date.now()
+          });
+          
+          // Still set initializing to false so the app continues
+          setIsInitializing(false);
+        }
+        
+        return false;
+      }
+    } catch (error: any) {
+      console.error("Failed to initialize TON service:", error);
+      
+      if (!isManualRetry && initAttempts >= MAX_INIT_ATTEMPTS - 1) {
+        // Add error to the blockchain error context
+        addError({
+          chain: 'TON',
+          message: `TON initialization error: ${error?.message || 'Unknown error'}`,
+          critical: false,
+          timestamp: Date.now()
+        });
+        
+        // Still set initializing to false so the app continues
+        setIsInitializing(false);
+      }
+      
+      return false;
+    } finally {
+      if (isManualRetry) {
+        setManualRetryInProgress(false);
+      }
+    }
+  };
+
+  // Manual retry function that can be called from UI
+  const retryTonConnection = async () => {
+    if (manualRetryInProgress) return false;
+    
+    // Set retrying state
+    setManualRetryInProgress(true);
+    
+    // Clear any existing errors before retry
+    clearChainErrors('TON');
+    
+    // Attempt manual initialization
+    return await initTon(true);
+  };
 
   // Initialize TON service and setup connection
   useEffect(() => {
     let isComponentMounted = true;
     let initInterval: NodeJS.Timeout | null = null;
     let updateInterval: NodeJS.Timeout | null = null;
-    let initAttempts = 0;
-    const MAX_INIT_ATTEMPTS = 5; // Maximum number of attempts before showing an error
     
-    const initTon = async () => {
-      try {
-        // Attempt to initialize TON service
-        initAttempts++;
-        const success = await tonService.initialize();
-        
-        if (success && isComponentMounted) {
-          // If successfully initialized, update state and clear init interval
-          setConnectionStatus(tonService.getConnectionStatus());
-          setWalletInfo(tonService.getWalletInfo());
-          setIsInitializing(false);
-          
-          // Clear any existing TON errors since initialization succeeded
-          clearChainErrors('TON');
-          
-          if (initInterval) {
-            clearInterval(initInterval);
-            initInterval = null;
-          }
-          
-          // Start update interval only after successful initialization
-          updateInterval = setInterval(() => {
-            if (isComponentMounted) {
-              setConnectionStatus(tonService.getConnectionStatus());
-              setWalletInfo(tonService.getWalletInfo());
-            }
-          }, 3000);
-          
-          // Try to restore session after successful initialization
-          try {
-            await restoreSession();
-          } catch (error) {
-            console.warn('Failed to restore TON session:', error);
-          }
-        } else if (initAttempts >= MAX_INIT_ATTEMPTS) {
-          // Add an error after several failed attempts
-          addError({
-            chain: 'TON',
-            message: 'Failed to initialize TON connection after multiple attempts. You can continue using other features.',
-            critical: false
-          });
-          
-          // Stop trying to initialize
-          if (initInterval) {
-            clearInterval(initInterval);
-            initInterval = null;
-          }
-          
-          // Still set initializing to false so the app continues
-          setIsInitializing(false);
-        }
-      } catch (error: any) {
-        console.error("Failed to initialize TON service:", error);
-        
-        if (initAttempts >= MAX_INIT_ATTEMPTS) {
-          // Add error to the blockchain error context
-          addError({
-            chain: 'TON',
-            message: `TON initialization error: ${error?.message || 'Unknown error'}`,
-            critical: false
-          });
-          
-          // Stop trying to initialize
-          if (initInterval) {
-            clearInterval(initInterval);
-            initInterval = null;
-          }
-          
-          // Still set initializing to false so the app continues
-          setIsInitializing(false);
-        }
-      }
-    };
-
     // First attempt immediately
     initTon();
     
-    // If not successful, try again periodically
-    initInterval = setInterval(initTon, 1000);
+    // If not successful, try again periodically until max attempts
+    initInterval = setInterval(() => {
+      // Only continue auto-retries if we haven't hit max attempts and not in manual retry
+      if (isComponentMounted && initAttempts < MAX_INIT_ATTEMPTS && !manualRetryInProgress) {
+        initTon();
+      } else if (initAttempts >= MAX_INIT_ATTEMPTS) {
+        // Stop trying to initialize automatically after max attempts
+        if (initInterval) {
+          clearInterval(initInterval);
+          initInterval = null;
+        }
+      }
+    }, 1500);
+    
+    // Start update interval for wallet info updates
+    updateInterval = setInterval(() => {
+      if (isComponentMounted && tonService.isInitialized) {
+        setConnectionStatus(tonService.getConnectionStatus());
+        setWalletInfo(tonService.getWalletInfo());
+      }
+    }, 3000);
 
     return () => {
       isComponentMounted = false;
       if (initInterval) clearInterval(initInterval);
       if (updateInterval) clearInterval(updateInterval);
     };
-  }, []);
+  }, [manualRetryInProgress]); // Add dependency on manualRetryInProgress
   
   // Load transaction history when wallet is connected
   useEffect(() => {
