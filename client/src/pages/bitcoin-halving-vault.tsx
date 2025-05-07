@@ -4,7 +4,7 @@ import { PageHeader } from '@/components/page-header';
 import { Button } from '@/components/ui/button';
 import { Helmet } from 'react-helmet';
 import { Link } from 'wouter';
-import { ArrowLeft, Bitcoin, Shield, AlertTriangle } from 'lucide-react';
+import { ArrowLeft, Bitcoin, Shield, AlertTriangle, Bug } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Input } from '@/components/ui/input';
@@ -13,9 +13,12 @@ import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Switch } from '@/components/ui/switch';
 import { useAuthContext } from '@/contexts/auth-context';
+import { useDevMode } from '@/contexts/dev-mode-context';
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 
 export default function BitcoinHalvingVaultPage() {
   const { isAuthenticated } = useAuthContext();
+  const { devModeEnabled, toggleDevMode } = useDevMode();
 
   return (
     <>
@@ -41,7 +44,25 @@ export default function BitcoinHalvingVaultPage() {
           separator
         />
         
-        {!isAuthenticated ? (
+        {devModeEnabled && (
+          <Alert className="my-4 border-amber-500 dark:border-amber-600 bg-amber-50 dark:bg-amber-950/40">
+            <Bug className="h-4 w-4 text-amber-500 dark:text-amber-400" />
+            <AlertTitle className="text-amber-700 dark:text-amber-400">Development Mode Enabled</AlertTitle>
+            <AlertDescription className="text-amber-600 dark:text-amber-500">
+              You're using the app in development mode without wallet connection. 
+              <Button 
+                variant="outline" 
+                size="sm" 
+                className="ml-4 border-amber-500 text-amber-600 hover:bg-amber-100 dark:border-amber-700 dark:text-amber-400 dark:hover:bg-amber-900/20"
+                onClick={toggleDevMode}
+              >
+                Disable Dev Mode
+              </Button>
+            </AlertDescription>
+          </Alert>
+        )}
+        
+        {!isAuthenticated && !devModeEnabled ? (
           <div className="mt-10">
             <Card className="bg-gradient-to-br from-orange-50 to-amber-50 dark:from-orange-950/30 dark:to-amber-950/30 border-orange-200 dark:border-orange-800/70 shadow-lg overflow-hidden">
               <CardHeader>
