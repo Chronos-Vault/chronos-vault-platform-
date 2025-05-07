@@ -18,6 +18,7 @@ import { registerAdminRoutes } from "./api/admin-routes";
 import { registerSecurityRoutes } from "./api/security-routes";
 import { securityServiceManager } from "./security/security-service-manager";
 import storageRoutes from "./api/storage-routes";
+import { getStakedCVTAmount } from "./token/cvt-staking-service";
 import { arweaveStorageService } from "./storage/arweave-storage-service";
 import securityVerificationRoutes from "./api/security-verification-routes";
 import zkRouter from "./api/zero-knowledge-routes";
