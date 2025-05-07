@@ -30,8 +30,8 @@ import {
   AlertCircle
 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
-import { BlockchainType, VaultInfo, VaultStatus, ExplorerStats } from '@/lib/cross-chain/types';
-import useChainExplorer from '@/hooks/use-chain-explorer';
+import { BlockchainType, VaultInfo, VaultStatus, ExplorerStats, SecurityLevel } from '@shared/schema';
+import { useChainExplorer } from '../hooks/use-chain-explorer';
 import { useQuery } from '@tanstack/react-query';
 
 /**
@@ -99,7 +99,7 @@ const BlockchainIcon = ({ blockchain }: { blockchain: BlockchainType }) => {
 /**
  * Component to display vault security level
  */
-const SecurityLevel = ({ level }: { level: 'standard' | 'enhanced' | 'maximum' }) => {
+const SecurityLevelBadge = ({ level }: { level: SecurityLevel }) => {
   const getColor = () => {
     switch (level) {
       case 'standard':
@@ -153,7 +153,7 @@ const VaultCard = ({ vault, showExplorer = true }: { vault: VaultInfo, showExplo
               {vault.status.charAt(0).toUpperCase() + vault.status.slice(1)}
             </Badge>
           </div>
-          <SecurityLevel level={vault.securityLevel} />
+          <SecurityLevelBadge level={vault.securityLevel} />
         </div>
         <CardTitle className="mt-2">{vault.name}</CardTitle>
         <CardDescription>

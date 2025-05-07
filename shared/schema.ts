@@ -312,3 +312,41 @@ export type SignatureRequest = typeof signatureRequests.$inferSelect;
 
 export type InsertSignature = z.infer<typeof insertSignatureSchema>;
 export type Signature = typeof signatures.$inferSelect;
+
+// Explorer types for the Vault Explorer feature
+export type BlockchainType = 'ETH' | 'SOL' | 'TON';
+export type VaultStatus = 'active' | 'locked' | 'unlocked' | 'pending';
+export type SecurityLevel = 'standard' | 'enhanced' | 'maximum';
+
+export interface VaultInfo {
+  id: string;
+  name: string;
+  owner: string;
+  blockchain: BlockchainType;
+  status: VaultStatus;
+  unlockDate: Date | null;
+  value: string;
+  txHash: string;
+  securityLevel: SecurityLevel;
+  createdAt: Date;
+}
+
+export interface ExplorerStats {
+  totalVaults: number;
+  byChain: {
+    ETH: number;
+    SOL: number;
+    TON: number;
+  };
+  byStatus: {
+    active: number;
+    locked: number;
+    unlocked: number;
+    pending: number;
+  };
+  totalValue: {
+    ETH: string;
+    SOL: string;
+    TON: string;
+  };
+}
