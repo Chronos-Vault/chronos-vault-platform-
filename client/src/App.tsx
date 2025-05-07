@@ -7,6 +7,7 @@ import { TonProvider } from "@/contexts/ton-context";
 import { SolanaProvider } from "@/contexts/solana-context";
 import { EthereumProvider } from "@/contexts/ethereum-context";
 import { BitcoinProvider } from "@/contexts/bitcoin-context";
+import { BitcoinWalletProvider } from "@/contexts/bitcoin-wallet-context";
 import { CVTTokenProvider } from "@/contexts/cvt-token-context";
 import { DevModeProvider } from "@/contexts/dev-mode-context";
 import Layout from "@/components/layout/Layout";
@@ -136,11 +137,13 @@ function App() {
           <SolanaProvider>
             <TonProvider>
               <BitcoinProvider>
-                <MultiChainProvider>
-                  <CVTTokenProvider>
-                    <Router />
-                  </CVTTokenProvider>
-                </MultiChainProvider>
+                <BitcoinWalletProvider>
+                  <MultiChainProvider>
+                    <CVTTokenProvider>
+                      <Router />
+                    </CVTTokenProvider>
+                  </MultiChainProvider>
+                </BitcoinWalletProvider>
               </BitcoinProvider>
             </TonProvider>
           </SolanaProvider>
