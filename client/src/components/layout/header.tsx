@@ -32,6 +32,7 @@ const Header = () => {
     { name: "Create Vault", href: "/create-vault", icon: "🔐" },
     { name: "My Vaults", href: "/my-vaults", icon: "📊" },
     { name: "Storage", href: "/storage", icon: "🗄️", highlight: true }, // Highlighted for better visibility
+    { name: "Transaction Monitor", href: "/transaction-monitor", icon: "📈", highlight: true }, // New transaction monitor
     { name: "Gift Crypto", href: "/gift-crypto", icon: "🎁" },
     { name: "CVT Token", href: "/cvt-token", icon: "🪙" },
     { name: "Documentation", href: "/documentation", icon: "📄" },
@@ -51,6 +52,7 @@ const Header = () => {
         { name: "Create Vault", href: "/create-vault", icon: "🔐" },
         { name: "My Vaults", href: "/my-vaults", icon: "📊" },
         { name: "Storage", href: "/storage", icon: "🗄️", highlight: true }, // Highlighted for better visibility
+        { name: "Transaction Monitor", href: "/transaction-monitor", icon: "📈", highlight: true }, // New transaction monitor
         { name: "Gift Crypto", href: "/gift-crypto", icon: "🎁" },
       ]
     },

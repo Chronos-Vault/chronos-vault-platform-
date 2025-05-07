@@ -1,41 +1,23 @@
 import React from 'react';
-import { CrossChainTransaction, VerificationAttempt } from '@shared/transaction-types';
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { ArrowRightLeft, Shield, Clock, CheckCircle2, AlertCircle, AlertTriangle, ArrowUpRight, RefreshCw } from 'lucide-react';
-import { formatDistanceToNow } from 'date-fns';
-import { Separator } from '@/components/ui/separator';
 import { useTransactionMonitoring } from '@/contexts/transaction-monitoring-context';
+import { CrossChainTransaction } from '@shared/transaction-types';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Separator } from '@/components/ui/separator';
+import { ScrollArea } from '@/components/ui/scroll-area';
+import { CopyIcon, ExternalLinkIcon, ShieldCheckIcon, RefreshCw, Clock, CheckCircle, XCircle, AlertTriangle } from 'lucide-react';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
-interface TransactionDetailPanelProps {
-  transaction: CrossChainTransaction;
-  className?: string;
-}
-
-const chainColors = {
+// Network colors for badges
+const networkColors = {
   'Ethereum': 'bg-indigo-500/20 text-indigo-500 border-indigo-500/50',
   'Solana': 'bg-purple-500/20 text-purple-500 border-purple-500/50',
   'TON': 'bg-blue-500/20 text-blue-500 border-blue-500/50',
   'Bitcoin': 'bg-amber-500/20 text-amber-500 border-amber-500/50'
 };
 
-const statusColors = {
-  'pending': 'bg-amber-500/20 text-amber-500 border-amber-500/50',
-  'confirming': 'bg-blue-500/20 text-blue-500 border-blue-500/50',
-  'confirmed': 'bg-green-500/20 text-green-500 border-green-500/50',
-  'failed': 'bg-red-500/20 text-red-500 border-red-500/50'
-};
-
-const verificationStatusColors = {
-  'not_required': 'bg-gray-500/20 text-gray-500 border-gray-500/50',
-  'pending': 'bg-amber-500/20 text-amber-500 border-amber-500/50',
-  'verified': 'bg-emerald-500/20 text-emerald-500 border-emerald-500/50',
-  'failed': 'bg-red-500/20 text-red-500 border-red-500/50',
-  'timeout': 'bg-purple-500/20 text-purple-500 border-purple-500/50'
-};
-
+// Status icon helper function
 const getStatusIcon = (status: string) => {
   switch (status) {
     case 'pending':
@@ -43,305 +25,429 @@ const getStatusIcon = (status: string) => {
     case 'confirming':
       return <RefreshCw className="h-4 w-4 text-blue-500 animate-spin" />;
     case 'confirmed':
-    case 'verified':
-    case 'success':
-      return <CheckCircle2 className="h-4 w-4 text-green-500" />;
+      return <CheckCircle className="h-4 w-4 text-green-500" />;
     case 'failed':
-      return <AlertCircle className="h-4 w-4 text-red-500" />;
-    case 'timeout':
-      return <AlertTriangle className="h-4 w-4 text-purple-500" />;
+      return <XCircle className="h-4 w-4 text-red-500" />;
     default:
       return null;
   }
 };
 
-const TransactionDetailPanel: React.FC<TransactionDetailPanelProps> = ({ transaction, className = '' }) => {
-  const { verifyTransaction, getTransactionsByCorrelationId, getVerificationAttempts } = useTransactionMonitoring();
-  const [verifyingTx, setVerifyingTx] = React.useState(false);
+// Verification status icon helper function
+const getVerificationIcon = (status: string) => {
+  switch (status) {
+    case 'pending':
+      return <Clock className="h-4 w-4 text-amber-500" />;
+    case 'verified':
+      return <CheckCircle className="h-4 w-4 text-green-500" />;
+    case 'failed':
+      return <XCircle className="h-4 w-4 text-red-500" />;
+    case 'timeout':
+      return <AlertTriangle className="h-4 w-4 text-purple-500" />;
+    case 'not_required':
+      return null;
+    default:
+      return null;
+  }
+};
+
+// Property row component
+interface PropertyRowProps {
+  label: string;
+  value: React.ReactNode;
+  copyable?: boolean;
+  link?: string;
+}
+
+const PropertyRow: React.FC<PropertyRowProps> = ({ label, value, copyable, link }) => {
+  const handleCopy = () => {
+    if (typeof value === 'string') {
+      navigator.clipboard.writeText(value);
+    }
+  };
+
+  return (
+    <div className="flex flex-col space-y-1 py-2">
+      <div className="text-xs font-medium text-muted-foreground">{label}</div>
+      <div className="flex items-center gap-2">
+        <div className="text-sm break-all">{value}</div>
+        {copyable && (
+          <Button 
+            variant="ghost" 
+            size="icon" 
+            className="h-6 w-6 rounded-full hover:bg-muted"
+            onClick={handleCopy}
+          >
+            <CopyIcon className="h-3 w-3" />
+          </Button>
+        )}
+        {link && (
+          <Button 
+            variant="ghost" 
+            size="icon" 
+            className="h-6 w-6 rounded-full hover:bg-muted"
+            asChild
+          >
+            <a href={link} target="_blank" rel="noopener noreferrer">
+              <ExternalLinkIcon className="h-3 w-3" />
+            </a>
+          </Button>
+        )}
+      </div>
+    </div>
+  );
+};
+
+interface TransactionDetailPanelProps {
+  transaction: CrossChainTransaction;
+}
+
+const TransactionDetailPanel: React.FC<TransactionDetailPanelProps> = ({ 
+  transaction 
+}) => {
+  const { verifyTransaction, getVerificationAttempts } = useTransactionMonitoring();
   
-  // Get related transactions
-  const relatedTransactions = getTransactionsByCorrelationId(transaction.correlationId)
-    .filter(tx => tx.id !== transaction.id);
-  
-  // Get verification attempts
-  const verificationAttempts = getVerificationAttempts(transaction.correlationId);
-  
-  // Handle manual verification
-  const handleVerify = async () => {
-    setVerifyingTx(true);
-    await verifyTransaction(transaction.id);
-    setVerifyingTx(false);
+  // Format date for better readability
+  const formatDate = (timestamp: number) => {
+    return new Date(timestamp).toLocaleString('en-US', {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+      second: '2-digit'
+    });
   };
   
+  // Get explorer URL based on network (simplified mock for demo)
+  const getExplorerUrl = (network: string, txHash: string) => {
+    switch (network) {
+      case 'Ethereum':
+        return `https://etherscan.io/tx/${txHash}`;
+      case 'Solana':
+        return `https://explorer.solana.com/tx/${txHash}`;
+      case 'TON':
+        return `https://tonwhales.com/explorer/transaction/${txHash}`;
+      case 'Bitcoin':
+        return `https://mempool.space/tx/${txHash}`;
+      default:
+        return '#';
+    }
+  };
+  
+  // Handle verify transaction
+  const handleVerifyTransaction = async () => {
+    await verifyTransaction(transaction.id);
+  };
+  
+  // Get verification attempts for this transaction
+  const verificationAttempts = getVerificationAttempts(transaction.correlationId);
+  
   return (
-    <Card className={`${className}`}>
+    <Card>
       <CardHeader>
-        <div className="flex justify-between items-start">
+        <div className="flex items-center justify-between">
           <div>
-            <CardTitle className="flex items-center gap-2">
-              <Badge className={`${chainColors[transaction.network]}`}>
-                {transaction.network}
-              </Badge>
-              {transaction.label || transaction.type.replace('_', ' ')}
-            </CardTitle>
-            <CardDescription>
-              {new Date(transaction.timestamp).toLocaleString()}
-            </CardDescription>
+            <CardTitle>{transaction.label || transaction.type.replace('_', ' ')}</CardTitle>
+            <CardDescription>Transaction Details</CardDescription>
           </div>
-          <div className="flex flex-col items-end gap-1">
-            <Badge className={`flex items-center gap-1 ${statusColors[transaction.status]}`}>
-              {getStatusIcon(transaction.status)}
-              {transaction.status}
+          <div className="flex flex-col items-end">
+            <Badge className={networkColors[transaction.network]}>
+              {transaction.network}
             </Badge>
-            {transaction.verificationStatus !== 'not_required' && (
-              <Badge className={`flex items-center gap-1 ${verificationStatusColors[transaction.verificationStatus]}`}>
-                {getStatusIcon(transaction.verificationStatus)}
-                Verification: {transaction.verificationStatus.replace('_', ' ')}
-              </Badge>
-            )}
+            <span className="text-xs text-muted-foreground mt-1">
+              Security Level {transaction.securityLevel || 1}
+            </span>
           </div>
         </div>
       </CardHeader>
-      <CardContent>
-        <Tabs defaultValue="details" className="w-full">
-          <TabsList className="grid w-full grid-cols-3">
-            <TabsTrigger value="details">Details</TabsTrigger>
-            <TabsTrigger value="verification">Verification</TabsTrigger>
-            <TabsTrigger value="related">Related Txs</TabsTrigger>
+      
+      <CardContent className="p-0">
+        <Tabs defaultValue="details">
+          <TabsList className="w-full">
+            <TabsTrigger value="details" className="flex-1">Details</TabsTrigger>
+            <TabsTrigger value="verification" className="flex-1">Verification</TabsTrigger>
+            <TabsTrigger value="json" className="flex-1">JSON</TabsTrigger>
           </TabsList>
           
-          <TabsContent value="details" className="space-y-4 mt-4">
-            <div className="grid grid-cols-2 gap-3">
-              <div>
-                <h4 className="text-sm font-medium text-muted-foreground mb-1">Transaction Hash</h4>
-                <div className="font-mono text-sm break-all bg-muted p-2 rounded-md">
-                  {transaction.txHash}
-                </div>
+          <TabsContent value="details" className="p-6 space-y-6">
+            <div className="flex flex-col space-y-2">
+              <div className="flex items-center justify-between">
+                <Badge 
+                  variant={
+                    transaction.status === 'confirmed' ? 'default' : 
+                    transaction.status === 'failed' ? 'destructive' : 
+                    'outline'
+                  }
+                  className="px-3 py-1 text-xs"
+                >
+                  {getStatusIcon(transaction.status)}
+                  <span className="ml-1">{transaction.status}</span>
+                </Badge>
+                
+                {transaction.verificationStatus !== 'not_required' && (
+                  <Badge 
+                    variant={
+                      transaction.verificationStatus === 'verified' ? 'default' : 
+                      transaction.verificationStatus === 'failed' ? 'destructive' : 
+                      'outline'
+                    }
+                    className="px-3 py-1 text-xs"
+                  >
+                    {getVerificationIcon(transaction.verificationStatus)}
+                    <span className="ml-1">Verification: {transaction.verificationStatus}</span>
+                  </Badge>
+                )}
               </div>
               
-              {transaction.blockNumber && (
-                <div>
-                  <h4 className="text-sm font-medium text-muted-foreground mb-1">Block Number</h4>
-                  <div className="font-mono text-sm bg-muted p-2 rounded-md">
-                    {transaction.blockNumber}
-                  </div>
-                </div>
+              {transaction.verificationStatus === 'pending' && transaction.securityLevel && transaction.securityLevel > 1 && (
+                <Button 
+                  variant="outline"
+                  size="sm"
+                  className="mt-2 w-full gap-2 border-dashed"
+                  onClick={handleVerifyTransaction}
+                >
+                  <ShieldCheckIcon className="h-4 w-4 text-[#FF5AF7]" />
+                  <span>Verify on {transaction.network === 'Ethereum' ? 'Solana' : 'Ethereum'}</span>
+                </Button>
               )}
-              
-              <div>
-                <h4 className="text-sm font-medium text-muted-foreground mb-1">From</h4>
-                <div className="font-mono text-sm break-all bg-muted p-2 rounded-md">
-                  {transaction.fromAddress}
-                </div>
-              </div>
-              
-              {transaction.toAddress && (
-                <div>
-                  <h4 className="text-sm font-medium text-muted-foreground mb-1">To</h4>
-                  <div className="font-mono text-sm break-all bg-muted p-2 rounded-md">
-                    {transaction.toAddress}
-                  </div>
-                </div>
-              )}
-              
-              {transaction.amount && (
-                <div>
-                  <h4 className="text-sm font-medium text-muted-foreground mb-1">Amount</h4>
-                  <div className="font-mono text-sm bg-muted p-2 rounded-md">
-                    {transaction.amount} {transaction.symbol || ''}
-                  </div>
-                </div>
-              )}
-              
-              {transaction.fee && (
-                <div>
-                  <h4 className="text-sm font-medium text-muted-foreground mb-1">Fee</h4>
-                  <div className="font-mono text-sm bg-muted p-2 rounded-md">
-                    {transaction.fee}
-                  </div>
-                </div>
-              )}
-              
-              {transaction.confirmations !== undefined && (
-                <div>
-                  <h4 className="text-sm font-medium text-muted-foreground mb-1">Confirmations</h4>
-                  <div className="font-mono text-sm bg-muted p-2 rounded-md">
-                    {transaction.confirmations}
-                  </div>
-                </div>
-              )}
-              
-              <div>
-                <h4 className="text-sm font-medium text-muted-foreground mb-1">Correlation ID</h4>
-                <div className="font-mono text-sm break-all bg-muted p-2 rounded-md">
-                  {transaction.correlationId}
-                </div>
-              </div>
             </div>
             
-            {transaction.contractAddress && (
-              <div>
-                <h4 className="text-sm font-medium text-muted-foreground mb-1">Contract</h4>
-                <div className="font-mono text-sm break-all bg-muted p-2 rounded-md">
-                  {transaction.contractAddress}
-                </div>
-              </div>
-            )}
+            <Separator />
             
-            {transaction.securityLevel && (
-              <div className="mt-4">
-                <h4 className="text-sm font-medium text-muted-foreground mb-1">Security Level</h4>
-                <div className="flex items-center gap-1">
-                  {Array.from({ length: 3 }).map((_, i) => (
-                    <Shield 
-                      key={i} 
-                      className={`h-5 w-5 ${i < transaction.securityLevel! ? 'text-emerald-500' : 'text-muted-foreground/30'}`} 
-                    />
-                  ))}
-                </div>
-              </div>
-            )}
+            <div className="space-y-0">
+              <PropertyRow 
+                label="Transaction Hash" 
+                value={transaction.txHash} 
+                copyable
+                link={getExplorerUrl(transaction.network, transaction.txHash)}
+              />
+              <PropertyRow 
+                label="From Address" 
+                value={transaction.fromAddress} 
+                copyable
+              />
+              {transaction.toAddress && (
+                <PropertyRow 
+                  label="To Address" 
+                  value={transaction.toAddress} 
+                  copyable
+                />
+              )}
+              {transaction.contractAddress && (
+                <PropertyRow 
+                  label="Contract Address" 
+                  value={transaction.contractAddress} 
+                  copyable
+                />
+              )}
+              <PropertyRow 
+                label="Timestamp" 
+                value={formatDate(transaction.timestamp)} 
+              />
+              {transaction.amount && transaction.symbol && (
+                <PropertyRow 
+                  label="Amount" 
+                  value={`${transaction.amount} ${transaction.symbol}`} 
+                />
+              )}
+              {transaction.fee && (
+                <PropertyRow 
+                  label="Fee" 
+                  value={`${transaction.fee} ${transaction.symbol || getNetworkCurrency(transaction.network)}`} 
+                />
+              )}
+              {transaction.blockNumber && (
+                <PropertyRow 
+                  label="Block Number" 
+                  value={transaction.blockNumber} 
+                />
+              )}
+              {transaction.confirmations && (
+                <PropertyRow 
+                  label="Confirmations" 
+                  value={transaction.confirmations} 
+                />
+              )}
+              <PropertyRow 
+                label="Correlation ID" 
+                value={transaction.correlationId} 
+                copyable
+              />
+            </div>
           </TabsContent>
           
-          <TabsContent value="verification" className="space-y-4 mt-4">
-            {transaction.verificationStatus === 'not_required' ? (
-              <div className="text-center p-4 border rounded-md bg-muted/50">
-                <p className="text-muted-foreground">No verification required for this transaction</p>
-              </div>
-            ) : (
-              <>
-                <div className="flex justify-between items-center">
-                  <h3 className="text-sm font-medium">Verification Status</h3>
-                  <Button 
-                    variant="outline" 
-                    size="sm" 
-                    className="gap-1"
-                    onClick={handleVerify}
-                    disabled={verifyingTx || transaction.verificationStatus === 'verified'}
-                  >
-                    {verifyingTx ? <RefreshCw className="h-4 w-4 animate-spin" /> : <Shield className="h-4 w-4" />}
-                    {verifyingTx ? 'Verifying...' : 'Verify'}
-                  </Button>
-                </div>
-                
-                <div className="border rounded-md">
-                  <div className="p-3 flex items-center justify-between">
-                    <span className="flex items-center gap-1">
-                      {getStatusIcon(transaction.verificationStatus)}
-                      {transaction.verificationStatus.replace('_', ' ')}
-                    </span>
-                    {transaction.verificationTimestamp && (
-                      <span className="text-sm text-muted-foreground">
-                        {formatDistanceToNow(new Date(transaction.verificationTimestamp), { addSuffix: true })}
+          <TabsContent value="verification" className="p-6">
+            <div className="space-y-4">
+              <div>
+                <h3 className="text-sm font-medium mb-2">Verification Status</h3>
+                <div className="p-3 rounded-md bg-[#1A1A1A]">
+                  <div className="flex items-center justify-between">
+                    <span>
+                      Status: <span className={
+                        transaction.verificationStatus === 'verified' ? 'text-green-500' :
+                        transaction.verificationStatus === 'failed' ? 'text-red-500' :
+                        transaction.verificationStatus === 'pending' ? 'text-amber-500' :
+                        'text-muted-foreground'
+                      }>
+                        {transaction.verificationStatus}
                       </span>
-                    )}
+                    </span>
+                    {getVerificationIcon(transaction.verificationStatus)}
                   </div>
-                  <Separator />
-                  <div className="p-3">
-                    <h4 className="text-sm font-medium mb-2">Verified By</h4>
-                    {transaction.verifiedBy && transaction.verifiedBy.length > 0 ? (
-                      <div className="flex flex-wrap gap-2">
-                        {transaction.verifiedBy.map((chain) => (
-                          <Badge key={chain} className={chainColors[chain]}>
-                            {chain}
+                  
+                  {transaction.verificationTimestamp && (
+                    <div className="text-xs text-muted-foreground mt-1">
+                      Verified at: {formatDate(transaction.verificationTimestamp)}
+                    </div>
+                  )}
+                  
+                  {transaction.verifiedBy && transaction.verifiedBy.length > 0 && (
+                    <div className="mt-2">
+                      <span className="text-xs text-muted-foreground">Verified by:</span>
+                      <div className="flex flex-wrap gap-1 mt-1">
+                        {transaction.verifiedBy.map(network => (
+                          <Badge 
+                            key={network}
+                            variant="outline"
+                            className={networkColors[network]}
+                          >
+                            {network}
                           </Badge>
                         ))}
                       </div>
-                    ) : (
-                      <p className="text-sm text-muted-foreground">Not verified by any chains yet</p>
-                    )}
-                  </div>
+                    </div>
+                  )}
                 </div>
-                
-                <div className="border rounded-md">
-                  <div className="p-3">
-                    <h4 className="text-sm font-medium mb-2">Verification History</h4>
-                    {verificationAttempts.length > 0 ? (
-                      <div className="divide-y">
-                        {verificationAttempts.map((attempt: VerificationAttempt) => (
-                          <div key={attempt.id} className="py-2 first:pt-0 last:pb-0">
-                            <div className="flex justify-between items-start">
-                              <div className="flex items-center gap-2">
-                                <Badge className={attempt.status === 'success' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}>
-                                  {getStatusIcon(attempt.status)}
-                                  {attempt.status}
-                                </Badge>
-                                <Badge variant="outline">{attempt.network}</Badge>
+              </div>
+              
+              {verificationAttempts.length > 0 && (
+                <div>
+                  <h3 className="text-sm font-medium mb-2">Verification History</h3>
+                  <ScrollArea className="h-[250px]">
+                    <div className="space-y-2">
+                      {verificationAttempts.map(attempt => (
+                        <div 
+                          key={attempt.id}
+                          className="p-3 rounded-md bg-[#1A1A1A] border border-[#333]"
+                        >
+                          <div className="flex items-start justify-between">
+                            <div>
+                              <Badge 
+                                variant={attempt.status === 'success' ? 'default' : 'destructive'}
+                                className="px-2 py-0 text-xs"
+                              >
+                                {attempt.status === 'success' ? 
+                                  <CheckCircle className="h-3 w-3 mr-1" /> : 
+                                  <XCircle className="h-3 w-3 mr-1" />
+                                }
+                                {attempt.status}
+                              </Badge>
+                              <div className="mt-1">
+                                <span className="text-xs text-muted-foreground">
+                                  Verification on {attempt.network}
+                                </span>
                               </div>
-                              <span className="text-xs text-muted-foreground">
-                                {formatDistanceToNow(new Date(attempt.timestamp), { addSuffix: true })}
-                              </span>
                             </div>
-                            {attempt.reason && (
-                              <p className="text-sm text-muted-foreground mt-1">{attempt.reason}</p>
-                            )}
+                            <Badge 
+                              variant="outline" 
+                              className={networkColors[attempt.network]}
+                            >
+                              {attempt.network}
+                            </Badge>
                           </div>
-                        ))}
-                      </div>
-                    ) : (
-                      <p className="text-sm text-muted-foreground">No verification attempts yet</p>
-                    )}
-                  </div>
+                          
+                          <div className="text-xs text-muted-foreground mt-2">
+                            {formatDate(attempt.timestamp)}
+                          </div>
+                          
+                          {attempt.reason && (
+                            <div className="mt-2 text-xs p-2 rounded bg-red-500/10 text-red-400 border border-red-500/20">
+                              {attempt.reason}
+                            </div>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  </ScrollArea>
                 </div>
-              </>
-            )}
+              )}
+              
+              {transaction.securityLevel && transaction.securityLevel > 1 && transaction.verificationStatus !== 'verified' && (
+                <Button 
+                  variant="outline"
+                  className="w-full gap-2 bg-[#6B00D7]/10 border-[#6B00D7]/30 hover:bg-[#6B00D7]/20"
+                  onClick={handleVerifyTransaction}
+                >
+                  <ShieldCheckIcon className="h-4 w-4 text-[#FF5AF7]" />
+                  <span>Verify on {transaction.network === 'Ethereum' ? 'Solana' : 'Ethereum'}</span>
+                </Button>
+              )}
+            </div>
           </TabsContent>
           
-          <TabsContent value="related" className="space-y-4 mt-4">
-            {relatedTransactions.length > 0 ? (
-              <div className="border rounded-md overflow-hidden">
-                <table className="w-full text-sm">
-                  <thead className="bg-muted">
-                    <tr>
-                      <th className="p-2 text-left">Network</th>
-                      <th className="p-2 text-left">Type</th>
-                      <th className="p-2 text-left">Status</th>
-                      <th className="p-2 text-left">Time</th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y">
-                    {relatedTransactions.map((related) => (
-                      <tr key={related.id}>
-                        <td className="p-2">
-                          <Badge className={`${chainColors[related.network]}`}>
-                            {related.network}
-                          </Badge>
-                        </td>
-                        <td className="p-2">{related.label || related.type.replace('_', ' ')}</td>
-                        <td className="p-2">
-                          <span className="flex items-center gap-1">
-                            {getStatusIcon(related.status)}
-                            {related.status}
-                          </span>
-                        </td>
-                        <td className="p-2 text-muted-foreground">
-                          {formatDistanceToNow(new Date(related.timestamp), { addSuffix: true })}
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            ) : (
-              <div className="text-center p-4 border rounded-md bg-muted/50">
-                <p className="text-muted-foreground">No related transactions found</p>
-              </div>
-            )}
+          <TabsContent value="json" className="p-0">
+            <ScrollArea className="h-[500px]">
+              <pre className="p-4 text-xs font-mono whitespace-pre-wrap bg-[#1A1A1A] rounded-b-md text-gray-300">
+                {JSON.stringify(transaction, null, 2)}
+              </pre>
+            </ScrollArea>
           </TabsContent>
         </Tabs>
       </CardContent>
-      <CardFooter className="flex justify-end gap-2">
-        <Button variant="outline" size="sm" className="gap-1">
-          <ArrowUpRight className="h-4 w-4" />
-          Explorer
-        </Button>
-        <Button size="sm" className="gap-1">
-          <ArrowRightLeft className="h-4 w-4" />
-          View Group
-        </Button>
+      
+      <CardFooter className="bg-[#1A1A1A]/50 p-4 border-t border-[#6B00D7]/10">
+        <div className="w-full flex flex-col gap-1">
+          <div className="flex justify-between items-center">
+            <span className="text-xs text-muted-foreground">
+              Transaction Type: {transaction.type}
+            </span>
+            <span className="text-xs text-muted-foreground">
+              ID: {transaction.id.substring(0, 8)}...
+            </span>
+          </div>
+          <div className="flex justify-between items-center">
+            <Button 
+              variant="ghost" 
+              size="sm"
+              className="text-xs h-7 px-2 text-indigo-400"
+              asChild
+            >
+              <a href={getExplorerUrl(transaction.network, transaction.txHash)} target="_blank" rel="noopener noreferrer">
+                <ExternalLinkIcon className="h-3 w-3 mr-1" />
+                View on Explorer
+              </a>
+            </Button>
+            <Button 
+              variant="ghost" 
+              size="sm"
+              className="text-xs h-7 px-2"
+              onClick={() => navigator.clipboard.writeText(transaction.txHash)}
+            >
+              <CopyIcon className="h-3 w-3 mr-1" />
+              Copy Tx Hash
+            </Button>
+          </div>
+        </div>
       </CardFooter>
     </Card>
   );
 };
+
+// Helper to get currency symbol for a blockchain network
+function getNetworkCurrency(network: string): string {
+  switch (network) {
+    case 'Ethereum':
+      return 'ETH';
+    case 'Solana':
+      return 'SOL';
+    case 'TON':
+      return 'TON';
+    case 'Bitcoin':
+      return 'BTC';
+    default:
+      return 'CRYPTO';
+  }
+}
 
 export default TransactionDetailPanel;
