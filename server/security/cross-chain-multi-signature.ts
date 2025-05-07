@@ -312,15 +312,38 @@ class CrossChainMultiSignature {
   async generateMultiSignatureProof(
     requestId: string,
     blockchain: BlockchainType
-  ): Promise<any> {
+  ): Promise<CompleteProof | null> {
     securityLogger.info('Generating multi-signature proof', { requestId, blockchain });
     
     // In development mode, generate a mock proof
     if (config.isDevelopmentMode) {
-      return await zeroKnowledgeShield.generateProof('multiSignature', {
-        requestId,
-        blockchain
-      });
+      // Validate the client's blockchain connection first
+      const client = this.getClient(blockchain);
+      if (!client.isInitialized()) {
+        try {
+          await client.initialize();
+        } catch (error) {
+          securityLogger.error(`Failed to initialize ${blockchain} client for proof generation`, error);
+          return null;
+        }
+      }
+      
+      try {
+        return await zeroKnowledgeShield.generateProof(
+          ProofType.MULTI_SIGNATURE,
+          requestId,
+          // Simulated vault ID for the multi-signature operation
+          `vault-${Date.now()}`,
+          // Mock signers
+          [`signer1-${blockchain}`, `signer2-${blockchain}`],
+          2, // Threshold  
+          [`sig1-${Date.now()}`, `sig2-${Date.now()}`],
+          blockchain
+        );
+      } catch (error) {
+        securityLogger.error(`Failed to generate ZK proof for multi-signature on ${blockchain}`, error);
+        return null;
+      }
     }
     
     // In a real implementation, this would generate a zero-knowledge proof
@@ -393,7 +416,7 @@ class CrossChainMultiSignature {
   async generateZKProof(
     requestId: string,
     blockchain: BlockchainType
-  ): Promise<any> {
+  ): Promise<CompleteProof | null> {
     return this.generateMultiSignatureProof(requestId, blockchain);
   }
 }

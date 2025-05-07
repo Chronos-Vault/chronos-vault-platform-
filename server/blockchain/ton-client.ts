@@ -55,10 +55,13 @@ class TonClient {
       return {
         hash: `ton-${txId}`,
         confirmations: Math.floor(Math.random() * 30) + 1,
-        from: 'SimulatedTonAddress',
-        to: 'SimulatedTonRecipient',
+        from: 'EQAvDfYmkVV2zFXzC0Hs2e2RGWJyMXHpnMTXH4jnI2W3AwLb',
+        to: 'EQB0gCDoGJNTfoPUSCgBxLuZ_O-7aYUccU0P1Vj_QdO6rQTf',
         value: '1.0',
-        data: 'SimulatedTonData'
+        data: 'SimulatedTonData',
+        status: 'confirmed',
+        timestamp: Date.now() - Math.floor(Math.random() * 86400000),
+        blockNumber: 30000000 + Math.floor(Math.random() * 1000)
       };
     }
     
@@ -67,9 +70,138 @@ class TonClient {
   }
   
   /**
+   * Validate a transaction
+   */
+  async validateTransaction(txId: string, options: any = {}): Promise<{
+    isValid: boolean;
+    confirmations: number;
+    status: string;
+    message: string;
+  }> {
+    try {
+      // In development mode, return a simulated validation result
+      if (config.isDevelopmentMode) {
+        const confirmations = Math.floor(Math.random() * 30) + 1;
+        const requiredConfirmations = options.requiredConfirmations || 12;
+        const isValid = confirmations >= requiredConfirmations;
+        
+        return {
+          isValid,
+          confirmations,
+          status: isValid ? 'confirmed' : 'pending',
+          message: isValid 
+            ? `Transaction confirmed with ${confirmations} confirmations` 
+            : `Transaction pending with ${confirmations}/${requiredConfirmations} confirmations`
+        };
+      }
+      
+      // In a real implementation, this would use TON SDK to validate the transaction
+      const tx = await this.getTransaction(txId);
+      
+      if (!tx) {
+        return {
+          isValid: false,
+          confirmations: 0,
+          status: 'not_found',
+          message: 'Transaction not found'
+        };
+      }
+      
+      const confirmations = tx.confirmations || 0;
+      const requiredConfirmations = options.requiredConfirmations || 12;
+      const isValid = confirmations >= requiredConfirmations;
+      
+      return {
+        isValid,
+        confirmations,
+        status: tx.status || (isValid ? 'confirmed' : 'pending'),
+        message: isValid 
+          ? `Transaction confirmed with ${confirmations} confirmations` 
+          : `Transaction pending with ${confirmations}/${requiredConfirmations} confirmations`
+      };
+    } catch (error) {
+      securityLogger.error('Failed to validate TON transaction', error);
+      
+      return {
+        isValid: false,
+        confirmations: 0,
+        status: 'error',
+        message: `Failed to validate transaction: ${error instanceof Error ? error.message : 'Unknown error'}`
+      };
+    }
+  }
+  
+  /**
+   * Get transactions for an address
+   */
+  async getTransactionsForAddress(address: string): Promise<any[]> {
+    // Validate the address first
+    if (!this.validateAddress(address)) {
+      securityLogger.warn(`Invalid TON address format: ${address}`);
+      throw new Error(`Invalid TON address format: ${address}`);
+    }
+    
+    // In development mode, return mock transactions
+    if (config.isDevelopmentMode) {
+      const txCount = Math.floor(Math.random() * 5) + 1;
+      const transactions = [];
+      
+      for (let i = 0; i < txCount; i++) {
+        transactions.push({
+          hash: `ton-tx-${Date.now()}-${i}`,
+          confirmations: Math.floor(Math.random() * 30) + 1,
+          from: address,
+          to: i % 2 === 0 ? 'EQB0gCDoGJNTfoPUSCgBxLuZ_O-7aYUccU0P1Vj_QdO6rQTf' : 'EQDi_PSI1WbigxBKCj7vEz2pAvUQfw0IFZz9Sz2aGHUFNpSw',
+          value: (Math.random() * 10).toFixed(2),
+          timestamp: Date.now() - Math.floor(Math.random() * 86400000)
+        });
+      }
+      
+      return transactions;
+    }
+    
+    // In a real implementation, this would use TON SDK to get transactions
+    throw new Error('Not implemented - production TON client');
+  }
+  
+  /**
+   * Validate a TON address format
+   */
+  validateAddress(address: string): boolean {
+    // Basic validation for TON address format
+    // TON addresses are typically in the format of "EQ..." or "UQ..." and are 48 characters long
+    if (!address) {
+      return false;
+    }
+    
+    // In development mode, accept addresses that match the pattern
+    if (config.isDevelopmentMode) {
+      // Allow known test addresses
+      if (address === 'EQAvDfYmkVV2zFXzC0Hs2e2RGWJyMXHpnMTXH4jnI2W3AwLb' ||
+          address === 'EQB0gCDoGJNTfoPUSCgBxLuZ_O-7aYUccU0P1Vj_QdO6rQTf' ||
+          address === 'EQDi_PSI1WbigxBKCj7vEz2pAvUQfw0IFZz9Sz2aGHUFNpSw') {
+        return true;
+      }
+      
+      // Validate format for other addresses
+      const validFormatRegex = /^(EQ|UQ)[a-zA-Z0-9_-]{46}$/;
+      return validFormatRegex.test(address);
+    }
+    
+    // In a real implementation, this would use TON SDK to validate the address
+    throw new Error('Not implemented - production TON address validation');
+  }
+
+  /**
    * Verify a signature
    */
   async verifySignature(data: any, signature: string, address: string): Promise<boolean> {
+    // Check if the address is valid first
+    if (!this.validateAddress(address)) {
+      securityLogger.warn(`Invalid TON address format: ${address}`);
+      return false;
+    }
+    
     // In development mode, return true
     if (config.isDevelopmentMode) {
       return true;
