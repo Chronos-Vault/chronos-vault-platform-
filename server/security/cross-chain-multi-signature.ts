@@ -122,9 +122,14 @@ export class CrossChainMultiSignatureService {
           );
           
           return { chain, requestId: request.id, status: 'created' };
-        } catch (error) {
+        } catch (error: any) {
           console.error(`[CrossChainMultiSig] Error creating approval request for chain ${chain}:`, error);
-          return { chain, requestId: null, status: 'failed', error };
+          return { 
+            chain, 
+            requestId: null, 
+            status: 'failed', 
+            error: error.message || 'Unknown error during approval request creation'
+          };
         }
       })
     );
@@ -209,9 +214,14 @@ export class CrossChainMultiSignatureService {
             }
             
             return { chain: chainType, verified, reason: verified ? 'success' : 'invalid-signature' };
-          } catch (error) {
+          } catch (error: any) {
             console.error(`[CrossChainMultiSig] Error verifying signature for chain ${chain}:`, error);
-            return { chain: chainType, verified: false, reason: 'verification-error' };
+            return { 
+              chain: chainType, 
+              verified: false, 
+              reason: 'verification-error', 
+              errorMessage: error.message || 'Unknown signature verification error'
+            };
           }
         })
     );
@@ -356,8 +366,8 @@ export class CrossChainMultiSignatureService {
       );
       
       return zkProof;
-    } catch (error) {
-      console.error('[CrossChainMultiSig] Error generating ZK proof:', error);
+    } catch (error: any) {
+      console.error('[CrossChainMultiSig] Error generating ZK proof:', error?.message || 'Unknown error');
       return null;
     }
   }

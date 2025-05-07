@@ -152,13 +152,13 @@ export class CrossChainVerificationProtocol {
           chainResults
         );
       }
-    } catch (error) {
+    } catch (error: any) {
       return this.createFailedResult(
         requestId,
         sourceChain,
         targetChains,
         startTimestamp,
-        `Error verifying transaction on source chain: ${error.message}`,
+        `Error verifying transaction on source chain: ${error.message || 'Unknown error'}`,
         chainResults
       );
     }
@@ -177,7 +177,7 @@ export class CrossChainVerificationProtocol {
           );
           
           chainResults[chain] = result;
-        } catch (error) {
+        } catch (error: any) {
           console.error(`[CrossChainVerification] Error verifying on chain ${chain}:`, error);
           chainResults[chain] = {
             chain,
@@ -186,7 +186,7 @@ export class CrossChainVerificationProtocol {
             timestamp: Date.now(),
             executionTimeMs: Date.now() - startTimestamp,
             details: {},
-            errors: [error.message]
+            errors: [error.message || 'Unknown error during chain verification']
           };
         }
       })
@@ -295,9 +295,9 @@ export class CrossChainVerificationProtocol {
           executionTimeMs: Date.now() - startTime,
           details: verificationResult.details || {}
         };
-      } catch (error) {
+      } catch (error: any) {
         console.warn(`[CrossChainVerification] Attempt ${attempt + 1} failed for ${chain}:`, error);
-        lastError = error;
+        lastError = error instanceof Error ? error : new Error(error?.message || 'Unknown error');
         attempt++;
         
         // Only sleep between retries, not after the last one
