@@ -6,8 +6,9 @@
  */
 
 import { Router, Request, Response } from 'express';
-import { crossChainVerificationProtocol, VerificationMethod } from '../security/cross-chain-verification-protocol';
-import { crossChainMultiSignatureService } from '../security/cross-chain-multi-signature';
+import { crossChainVerification } from '../security/cross-chain-verification-protocol';
+import { VerificationMethod } from '../../shared/types';
+import { crossChainMultiSignature } from '../security/cross-chain-multi-signature';
 import { initializeBlockchainValidators } from '../security/blockchain-validators';
 import { ApprovalType } from '../security/multi-signature-gateway';
 import { BlockchainType } from '../../shared/types';
@@ -51,44 +52,32 @@ securityRouter.post('/verify-transaction', async (req: Request, res: Response) =
     
     console.log(`Starting verification for tx ${txHash} from ${sourceChain} across chains:`, finalTargetChains);
     
-    const verificationResult = await crossChainVerificationProtocol.verifyTransaction(
+    const verificationResult = await crossChainVerification.verifyTransactionAcrossChains(
       txHash,
       sourceChain as BlockchainType,
       finalTargetChains,
-      verificationMethod,
       {
-        timeout: 20000, // 20 seconds timeout
-        requiredConfirmations: {
-          'ETH': 12,
-          'SOL': 32,
-          'TON': 16
-        },
-        consistencyThreshold: 80, // 80% consistency required
-        retryAttempts: 2
+        timeoutMs: 20000, // 20 seconds timeout
+        requiredConfirmations: 12, // Default confirmations
+        includeProofs: false
       }
     );
     
     // Transform the result for the API response
     const response = {
-      requestId: verificationResult.requestId,
-      overallStatus: verificationResult.overallStatus.toLowerCase(),
-      progress: calculateProgress(verificationResult.chainResults),
-      chainStatuses: Object.entries(verificationResult.chainResults).reduce((acc, [chain, result]) => {
-        acc[chain] = {
-          status: result.status.toLowerCase(),
-          confirmations: result.confirmations,
-          progress: (result.confirmations / getRequiredConfirmations(chain as BlockchainType)) * 100
-        };
-        return acc;
-      }, {} as Record<string, any>),
-      consistencyScore: verificationResult.consistencyScore,
-      completedChains: Object.entries(verificationResult.chainResults)
-        .filter(([_, result]) => result.status === 'VERIFIED')
-        .map(([chain]) => chain),
-      pendingChains: Object.entries(verificationResult.chainResults)
-        .filter(([_, result]) => result.status === 'PENDING')
-        .map(([chain]) => chain),
-      errors: verificationResult.inconsistencies?.map(inc => inc.description)
+      success: verificationResult.success,
+      method: verificationResult.method,
+      sourceChain: verificationResult.sourceChain,
+      targetChains: verificationResult.targetChains,
+      verifiedOn: verificationResult.verifiedOn,
+      pendingOn: verificationResult.pendingOn,
+      failedOn: verificationResult.failedOn,
+      timestamp: verificationResult.timestamp,
+      message: verificationResult.message,
+      progress: calculateProgress({
+        verified: verificationResult.verifiedOn.length,
+        total: verificationResult.targetChains.length
+      })
     };
     
     res.json(response);
@@ -136,15 +125,14 @@ securityRouter.post('/create-multisig-request', async (req: Request, res: Respon
     }
     
     // Create the cross-chain approval request
-    const request = await crossChainMultiSignatureService.createCrossChainApprovalRequest(
+    const request = await crossChainMultiSignature.createApprovalRequest(
       vaultId,
       creatorId,
       sourceChain as BlockchainType,
       secondaryChains || [],
       mappedApprovalType,
       transactionData,
-      requiredConfirmations || 2,
-      options || {}
+      requiredConfirmations || 2
     );
     
     res.json(request);
@@ -172,7 +160,7 @@ securityRouter.get('/multisig-status/:requestId', async (req: Request, res: Resp
       });
     }
     
-    const status = await crossChainMultiSignatureService.getCrossChainRequestStatus(requestId);
+    const status = await crossChainMultiSignature.getRequestStatus(requestId);
     res.json(status);
   } catch (error) {
     console.error('Error getting multi-signature status:', error);
@@ -204,11 +192,10 @@ securityRouter.post('/submit-signature', async (req: Request, res: Response) => 
     }
     
     // Verify the signatures
-    const result = await crossChainMultiSignatureService.verifyCrossChainSignature(
+    const result = await crossChainMultiSignature.verifySignature(
       requestId,
       signerAddress,
-      signatures,
-      method
+      signatures
     );
     
     res.json(result);
@@ -236,7 +223,7 @@ securityRouter.get('/generate-zk-proof/:requestId', async (req: Request, res: Re
       });
     }
     
-    const zkProof = await crossChainMultiSignatureService.generateCrossChainZKProof(requestId);
+    const zkProof = await crossChainMultiSignature.generateZKProof(requestId);
     
     if (!zkProof) {
       return res.status(404).json({ 
@@ -277,33 +264,24 @@ function mapApprovalType(type: string): ApprovalType | null {
 /**
  * Calculate the overall progress based on chain results
  */
-function calculateProgress(chainResults: Record<string, any>): number {
-  const chains = Object.keys(chainResults);
-  
-  if (chains.length === 0) {
+function calculateProgress(data: { verified: number, total: number }): number {
+  if (data.total === 0) {
     return 0;
   }
   
-  let totalProgress = 0;
-  
-  for (const chain of chains) {
-    const result = chainResults[chain];
-    const requiredConfirmations = getRequiredConfirmations(chain as BlockchainType);
-    const chainProgress = Math.min(100, (result.confirmations / requiredConfirmations) * 100);
-    totalProgress += chainProgress;
-  }
-  
-  return Math.round(totalProgress / chains.length);
+  return Math.round((data.verified / data.total) * 100);
 }
 
 /**
  * Get the required confirmations for a blockchain
  */
 function getRequiredConfirmations(chain: BlockchainType): number {
-  const confirmations: Record<BlockchainType, number> = {
+  const confirmations: Record<string, number> = {
     'ETH': 12,
     'SOL': 32,
-    'TON': 16
+    'TON': 16,
+    'POLYGON': 20,
+    'BTC': 6
   };
   
   return confirmations[chain] || 12;

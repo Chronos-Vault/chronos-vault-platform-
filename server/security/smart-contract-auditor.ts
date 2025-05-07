@@ -7,7 +7,7 @@
 
 import { BlockchainType } from '../../shared/types';
 import { createHash } from 'crypto';
-import { crossChainVerificationProtocol } from './cross-chain-verification-protocol';
+import { crossChainVerification } from './cross-chain-verification-protocol';
 
 // Security vulnerability categories
 export enum VulnerabilityCategory {

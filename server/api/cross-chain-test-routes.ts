@@ -1,194 +1,304 @@
 /**
- * Cross-Chain Test API Routes
+ * Cross-Chain Test Routes
  * 
- * This file contains API routes for testing cross-chain verification and
- * multi-signature functionality of the Chronos Vault platform.
+ * This module provides API routes for testing cross-chain functionality.
  */
 
-import { Request, Response } from 'express';
-import { crossChainVerificationProtocol, VerificationMethod } from '../security/cross-chain-verification-protocol';
-import { crossChainMultiSignatureService } from '../security/cross-chain-multi-signature';
-import { BlockchainType } from '../../shared/types';
+import { Request, Response, Router } from 'express';
+import { securityLogger } from '../monitoring/security-logger';
+import { crossChainVerification } from '../security/cross-chain-verification-protocol';
+import { crossChainMultiSignature } from '../security/cross-chain-multi-signature';
+import { zeroKnowledgeShield } from '../privacy/zero-knowledge-shield';
+import { VerificationMethod, BlockchainType } from '../../shared/types';
 
-export async function registerCrossChainTestRoutes(app: any) {
-  // Test cross-chain verification
-  app.post('/api/security/test-cross-chain-verification', async (req: Request, res: Response) => {
-    try {
-      const { 
-        transactionId, 
-        sourceChain, 
-        targetChains,
-        requiredConfirmations,
-        method = 'standard' 
-      } = req.body;
-      
-      if (!transactionId || !sourceChain || !targetChains || !Array.isArray(targetChains)) {
-        return res.status(400).json({ 
-          error: 'Invalid parameters. Required: transactionId, sourceChain, and targetChains (array)' 
-        });
-      }
-      
-      // Convert method string to enum value
-      let verificationMethod: VerificationMethod;
-      switch (method.toLowerCase()) {
-        case 'deep':
-          verificationMethod = VerificationMethod.DEEP;
-          break;
-        case 'zero_knowledge':
-          verificationMethod = VerificationMethod.ZERO_KNOWLEDGE;
-          break;
-        case 'quantum_resistant':
-          verificationMethod = VerificationMethod.QUANTUM_RESISTANT;
-          break;
-        default:
-          verificationMethod = VerificationMethod.STANDARD;
-      }
-      
-      // Execute the cross-chain verification
-      const result = await crossChainVerificationProtocol.verifyTransaction(
-        transactionId,
-        sourceChain as BlockchainType,
-        targetChains as BlockchainType[],
-        verificationMethod,
-        requiredConfirmations || undefined
-      );
-      
-      // Return the verification result
-      res.status(200).json(result);
-    } catch (error: any) {
-      console.error('[API] Cross-chain verification test error:', error);
-      res.status(500).json({ 
-        error: 'Failed to perform cross-chain verification',
-        message: error.message || 'Unknown error'
+const router = Router();
+
+/**
+ * Test cross-chain verification of a vault
+ * 
+ * @route POST /api/test/cross-chain/verify-vault
+ */
+router.post('/cross-chain/verify-vault', async (req: Request, res: Response) => {
+  try {
+    const { vaultId, sourceChain, targetChains, options } = req.body;
+    
+    if (!vaultId || !sourceChain || !targetChains || !Array.isArray(targetChains)) {
+      return res.status(400).json({
+        success: false,
+        error: 'Missing required parameters',
+        timestamp: Date.now()
       });
     }
-  });
-  
-  // Get verification status
-  app.get('/api/security/verification-status/:requestId', async (req: Request, res: Response) => {
-    try {
-      const { requestId } = req.params;
-      
-      if (!requestId) {
-        return res.status(400).json({ error: 'Request ID is required' });
-      }
-      
-      // Get the verification result from cache
-      const result = await crossChainVerificationProtocol.getVerificationResult(requestId);
-      
-      if (!result) {
-        return res.status(404).json({ error: 'Verification result not found' });
-      }
-      
-      res.status(200).json(result);
-    } catch (error: any) {
-      console.error('[API] Error fetching verification status:', error);
-      res.status(500).json({ 
-        error: 'Failed to fetch verification status',
-        message: error.message || 'Unknown error'
+    
+    securityLogger.info('Testing cross-chain vault verification', { vaultId, sourceChain, targetChains });
+    
+    const result = await crossChainVerification.verifyVaultAcrossChains(
+      vaultId,
+      sourceChain as BlockchainType,
+      targetChains as BlockchainType[],
+      options
+    );
+    
+    return res.json({
+      success: true,
+      data: result,
+      timestamp: Date.now()
+    });
+  } catch (error) {
+    securityLogger.error('Error in cross-chain vault verification test', error);
+    
+    return res.status(500).json({
+      success: false,
+      error: error instanceof Error ? error.message : 'Unknown error',
+      timestamp: Date.now()
+    });
+  }
+});
+
+/**
+ * Test cross-chain verification of a transaction
+ * 
+ * @route POST /api/test/cross-chain/verify-transaction
+ */
+router.post('/cross-chain/verify-transaction', async (req: Request, res: Response) => {
+  try {
+    const { transactionId, sourceChain, targetChains, options } = req.body;
+    
+    if (!transactionId || !sourceChain || !targetChains || !Array.isArray(targetChains)) {
+      return res.status(400).json({
+        success: false,
+        error: 'Missing required parameters',
+        timestamp: Date.now()
       });
     }
-  });
-  
-  // Test creating a cross-chain multi-signature request
-  app.post('/api/security/test-cross-chain-multi-sig', async (req: Request, res: Response) => {
-    try {
-      const { 
-        vaultId, 
-        creatorId, 
-        sourceChain, 
-        secondaryChains,
-        type,
-        transactionData,
-        requiredConfirmations
-      } = req.body;
-      
-      if (!vaultId || !creatorId || !sourceChain || !secondaryChains || !Array.isArray(secondaryChains) || !type) {
-        return res.status(400).json({ 
-          error: 'Invalid parameters. Required: vaultId, creatorId, sourceChain, secondaryChains (array), and type' 
-        });
-      }
-      
-      // Create a cross-chain approval request
-      const result = await crossChainMultiSignatureService.createCrossChainApprovalRequest(
-        vaultId,
-        creatorId,
-        sourceChain as BlockchainType,
-        secondaryChains as BlockchainType[],
-        type,
-        transactionData || {},
-        requiredConfirmations
-      );
-      
-      // Get the full status with chain details
-      const status = await crossChainMultiSignatureService.getCrossChainRequestStatus(result.crossChainRequestId);
-      
-      // Return combined result
-      res.status(200).json({
-        ...result,
-        ...status
-      });
-    } catch (error: any) {
-      console.error('[API] Cross-chain multi-signature test error:', error);
-      res.status(500).json({ 
-        error: 'Failed to create cross-chain multi-signature request',
-        message: error.message || 'Unknown error'
+    
+    securityLogger.info('Testing cross-chain transaction verification', { transactionId, sourceChain, targetChains });
+    
+    const result = await crossChainVerification.verifyTransactionAcrossChains(
+      transactionId,
+      sourceChain as BlockchainType,
+      targetChains as BlockchainType[],
+      options
+    );
+    
+    return res.json({
+      success: true,
+      data: result,
+      timestamp: Date.now()
+    });
+  } catch (error) {
+    securityLogger.error('Error in cross-chain transaction verification test', error);
+    
+    return res.status(500).json({
+      success: false,
+      error: error instanceof Error ? error.message : 'Unknown error',
+      timestamp: Date.now()
+    });
+  }
+});
+
+/**
+ * Test multi-signature request creation
+ * 
+ * @route POST /api/test/cross-chain/create-multisig
+ */
+router.post('/cross-chain/create-multisig', async (req: Request, res: Response) => {
+  try {
+    const { data, signers, options } = req.body;
+    
+    if (!data || !signers || !Array.isArray(signers) || signers.length === 0) {
+      return res.status(400).json({
+        success: false,
+        error: 'Missing required parameters',
+        timestamp: Date.now()
       });
     }
-  });
-  
-  // Test signing a multi-signature request
-  app.post('/api/security/test-sign-multi-sig', async (req: Request, res: Response) => {
-    try {
-      const { 
-        crossChainRequestId, 
-        signerAddress, 
-        signatures,
-        method = 'standard'
-      } = req.body;
-      
-      if (!crossChainRequestId || !signerAddress || !signatures) {
-        return res.status(400).json({ 
-          error: 'Invalid parameters. Required: crossChainRequestId, signerAddress, and signatures' 
-        });
-      }
-      
-      // Verify the signatures
-      const result = await crossChainMultiSignatureService.verifyCrossChainSignature(
-        crossChainRequestId,
-        signerAddress,
-        signatures
-      );
-      
-      res.status(200).json(result);
-    } catch (error: any) {
-      console.error('[API] Cross-chain signature verification error:', error);
-      res.status(500).json({ 
-        error: 'Failed to verify cross-chain signatures',
-        message: error.message || 'Unknown error'
+    
+    securityLogger.info('Testing multi-signature request creation', { signerCount: signers.length });
+    
+    const result = await crossChainMultiSignature.createMultiSignatureRequest(
+      data,
+      signers,
+      options
+    );
+    
+    return res.json({
+      success: true,
+      data: result,
+      timestamp: Date.now()
+    });
+  } catch (error) {
+    securityLogger.error('Error in multi-signature request creation test', error);
+    
+    return res.status(500).json({
+      success: false,
+      error: error instanceof Error ? error.message : 'Unknown error',
+      timestamp: Date.now()
+    });
+  }
+});
+
+/**
+ * Test multi-signature status checking
+ * 
+ * @route POST /api/test/cross-chain/check-multisig
+ */
+router.post('/cross-chain/check-multisig', async (req: Request, res: Response) => {
+  try {
+    const { requestId, signers, options } = req.body;
+    
+    if (!requestId || !signers || !Array.isArray(signers) || signers.length === 0) {
+      return res.status(400).json({
+        success: false,
+        error: 'Missing required parameters',
+        timestamp: Date.now()
       });
     }
-  });
-  
-  // Get multi-signature request status
-  app.get('/api/security/multi-sig-status/:requestId', async (req: Request, res: Response) => {
-    try {
-      const { requestId } = req.params;
-      
-      if (!requestId) {
-        return res.status(400).json({ error: 'Request ID is required' });
-      }
-      
-      // Get the status of the cross-chain request
-      const status = await crossChainMultiSignatureService.getCrossChainRequestStatus(requestId);
-      
-      res.status(200).json(status);
-    } catch (error: any) {
-      console.error('[API] Error fetching multi-signature status:', error);
-      res.status(500).json({ 
-        error: 'Failed to fetch multi-signature status',
-        message: error.message || 'Unknown error'
+    
+    securityLogger.info('Testing multi-signature status check', { requestId, signerCount: signers.length });
+    
+    const result = await crossChainMultiSignature.getMultiSignatureStatus(
+      requestId,
+      signers,
+      options
+    );
+    
+    return res.json({
+      success: true,
+      data: result,
+      timestamp: Date.now()
+    });
+  } catch (error) {
+    securityLogger.error('Error in multi-signature status check test', error);
+    
+    return res.status(500).json({
+      success: false,
+      error: error instanceof Error ? error.message : 'Unknown error',
+      timestamp: Date.now()
+    });
+  }
+});
+
+/**
+ * Test adding a signature to a multi-signature request
+ * 
+ * @route POST /api/test/cross-chain/add-signature
+ */
+router.post('/cross-chain/add-signature', async (req: Request, res: Response) => {
+  try {
+    const { requestId, signerId, blockchain, address, signature, data } = req.body;
+    
+    if (!requestId || !signerId || !blockchain || !address || !signature || !data) {
+      return res.status(400).json({
+        success: false,
+        error: 'Missing required parameters',
+        timestamp: Date.now()
       });
     }
-  });
-}
+    
+    securityLogger.info('Testing adding signature to multi-signature request', { requestId, signerId, blockchain });
+    
+    const result = await crossChainMultiSignature.addSignature(
+      requestId,
+      signerId,
+      blockchain as BlockchainType,
+      address,
+      signature,
+      data
+    );
+    
+    return res.json({
+      success: true,
+      data: result,
+      timestamp: Date.now()
+    });
+  } catch (error) {
+    securityLogger.error('Error in adding signature test', error);
+    
+    return res.status(500).json({
+      success: false,
+      error: error instanceof Error ? error.message : 'Unknown error',
+      timestamp: Date.now()
+    });
+  }
+});
+
+/**
+ * Test generating a zero-knowledge proof
+ * 
+ * @route POST /api/test/cross-chain/generate-zk-proof
+ */
+router.post('/cross-chain/generate-zk-proof', async (req: Request, res: Response) => {
+  try {
+    const { sourceChain, targetChains, transactionId } = req.body;
+    
+    if (!sourceChain || !targetChains || !Array.isArray(targetChains) || !transactionId) {
+      return res.status(400).json({
+        success: false,
+        error: 'Missing required parameters',
+        timestamp: Date.now()
+      });
+    }
+    
+    securityLogger.info('Testing zero-knowledge proof generation', { sourceChain, targetChains, transactionId });
+    
+    const result = await zeroKnowledgeShield.generateCrossChainProof({
+      sourceChain,
+      targetChains,
+      transactionId
+    });
+    
+    return res.json({
+      success: true,
+      data: result,
+      timestamp: Date.now()
+    });
+  } catch (error) {
+    securityLogger.error('Error in zero-knowledge proof generation test', error);
+    
+    return res.status(500).json({
+      success: false,
+      error: error instanceof Error ? error.message : 'Unknown error',
+      timestamp: Date.now()
+    });
+  }
+});
+
+/**
+ * Test verifying a zero-knowledge proof
+ * 
+ * @route POST /api/test/cross-chain/verify-zk-proof
+ */
+router.post('/cross-chain/verify-zk-proof', async (req: Request, res: Response) => {
+  try {
+    const { proof, publicInputs } = req.body;
+    
+    if (!proof || !publicInputs || !Array.isArray(publicInputs)) {
+      return res.status(400).json({
+        success: false,
+        error: 'Missing required parameters',
+        timestamp: Date.now()
+      });
+    }
+    
+    securityLogger.info('Testing zero-knowledge proof verification');
+    
+    const result = await zeroKnowledgeShield.verifyProof(proof, publicInputs);
+    
+    return res.json({
+      success: true,
+      data: { verified: result },
+      timestamp: Date.now()
+    });
+  } catch (error) {
+    securityLogger.error('Error in zero-knowledge proof verification test', error);
+    
+    return res.status(500).json({
+      success: false,
+      error: error instanceof Error ? error.message : 'Unknown error',
+      timestamp: Date.now()
+    });
+  }
+});
+
+export { router as crossChainTestRoutes };

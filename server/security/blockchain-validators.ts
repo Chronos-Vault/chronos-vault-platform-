@@ -7,7 +7,7 @@
 
 import { BlockchainType } from '../../shared/types';
 import { CrossChainValidator } from './cross-chain-verification-protocol';
-import { crossChainVerificationProtocol } from './cross-chain-verification-protocol';
+import { crossChainVerification } from './cross-chain-verification-protocol';
 
 // Ethereum Validator
 export class EthereumValidator implements CrossChainValidator {
@@ -362,9 +362,9 @@ export function initializeBlockchainValidators() {
   const tonValidator = new TonValidator();
   
   // Register with the verification protocol
-  crossChainVerificationProtocol.registerValidator('ETH', ethereumValidator);
-  crossChainVerificationProtocol.registerValidator('SOL', solanaValidator);
-  crossChainVerificationProtocol.registerValidator('TON', tonValidator);
+  crossChainVerification.registerValidator('ETH', ethereumValidator);
+  crossChainVerification.registerValidator('SOL', solanaValidator);
+  crossChainVerification.registerValidator('TON', tonValidator);
   
   console.log('[BlockchainValidators] All validators initialized and registered');
   

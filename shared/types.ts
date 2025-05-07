@@ -1,130 +1,233 @@
 /**
  * Shared Types
  * 
- * Common type definitions used across the application.
+ * This module provides shared types used across the frontend and backend.
  */
 
-// Zero-Knowledge proof types
-export enum ZkProofType {
-  VAULT_OWNERSHIP = 'VAULT_OWNERSHIP',
-  ASSET_VERIFICATION = 'ASSET_VERIFICATION',
-  MULTI_SIGNATURE = 'MULTI_SIGNATURE',
-  ACCESS_AUTHORIZATION = 'ACCESS_AUTHORIZATION',
-  TRANSACTION_VERIFICATION = 'TRANSACTION_VERIFICATION',
-  IDENTITY_VERIFICATION = 'IDENTITY_VERIFICATION',
-  CROSS_CHAIN = 'CROSS_CHAIN'
-}
+// Blockchain types
+export type BlockchainType = 'ETH' | 'SOL' | 'TON' | 'POLYGON' | 'BTC';
 
-// Supported blockchain types
-export enum BlockchainType {
-  TON = 'TON',
-  ETHEREUM = 'ETH',
-  SOLANA = 'SOL',
-  POLYGON = 'POLYGON',
-  BITCOIN = 'BTC'
-}
+// Security levels
+export type SecurityLevel = 1 | 2 | 3;
 
-// Transaction types
-export enum TransactionType {
-  CREATE_VAULT = 'CREATE_VAULT',
-  MODIFY_VAULT = 'MODIFY_VAULT',
-  DELETE_VAULT = 'DELETE_VAULT',
-  DEPOSIT_ASSET = 'DEPOSIT_ASSET',
-  WITHDRAW_ASSET = 'WITHDRAW_ASSET',
-  TRANSFER_ASSET = 'TRANSFER_ASSET',
-  UNLOCK_VAULT = 'UNLOCK_VAULT',
-  ADD_BENEFICIARY = 'ADD_BENEFICIARY',
-  REMOVE_BENEFICIARY = 'REMOVE_BENEFICIARY',
-  MODIFY_BENEFICIARY = 'MODIFY_BENEFICIARY',
-  SIGNATURE_OPERATION = 'SIGNATURE_OPERATION'
-}
+// Vault types
+export type VaultType = 'personal' | 'multisig' | 'timed' | 'geolocked' | 'diamond-hands';
 
-// Vault metadata type
-export interface VaultMetadata {
-  name?: string;
+// Vault status
+export type VaultStatus = 'pending' | 'active' | 'locked' | 'unlocked' | 'closed' | 'breached';
+
+// Cross-chain verification status
+export type VerificationStatus = 'pending' | 'verified' | 'failed' | 'partial';
+
+// Signature request status
+export type SignatureRequestStatus = 'pending' | 'approved' | 'rejected' | 'expired';
+
+// User roles
+export type UserRole = 'user' | 'admin' | 'vault-owner' | 'beneficiary' | 'signer';
+
+// Vault interfaces
+export interface IVault {
+  id: string;
+  name: string;
   description?: string;
-  tags?: string[];
-  customData?: Record<string, any>;
-  [key: string]: any; // Allow for flexible additional fields
+  ownerId: string;
+  type: VaultType;
+  securityLevel: SecurityLevel;
+  status: VaultStatus;
+  primaryChain: BlockchainType;
+  secondaryChains?: BlockchainType[];
+  createdAt: Date;
+  updatedAt: Date;
+  unlockDate?: Date;
+  requiredSignatures?: number;
+  totalSigners?: number;
+  geoLocation?: {
+    latitude: number;
+    longitude: number;
+    radius: number;
+  };
 }
 
-// Cross-chain transaction status
-export enum CrossChainTxStatus {
-  PENDING = 'PENDING',
-  PROCESSING = 'PROCESSING',
-  COMPLETED = 'COMPLETED',
-  FAILED = 'FAILED',
-  REVERTED = 'REVERTED'
+// User interfaces
+export interface IUser {
+  id: string;
+  username: string;
+  email?: string;
+  wallets: {
+    [key in BlockchainType]?: string;
+  };
+  role: UserRole;
+  createdAt: Date;
+  updatedAt: Date;
 }
 
-// Security incident types
-export enum SecurityIncidentType {
-  UNAUTHORIZED_ACCESS = 'UNAUTHORIZED_ACCESS',
-  SUSPICIOUS_TRANSACTION = 'SUSPICIOUS_TRANSACTION',
-  MULTI_SIG_FAILURE = 'MULTI_SIG_FAILURE',
-  CROSS_CHAIN_DISCREPANCY = 'CROSS_CHAIN_DISCREPANCY',
-  INTEGRITY_VIOLATION = 'INTEGRITY_VIOLATION',
-  DATA_CORRUPTION = 'DATA_CORRUPTION',
-  BRUTE_FORCE_ATTEMPT = 'BRUTE_FORCE_ATTEMPT',
-  UNUSUAL_GEOLOCATION = 'UNUSUAL_GEOLOCATION'
+// Beneficiary interfaces
+export interface IBeneficiary {
+  id: string;
+  vaultId: string;
+  userId: string;
+  name: string;
+  chain: BlockchainType;
+  walletAddress: string;
+  accessType: 'full' | 'limited' | 'view-only';
+  createdAt: Date;
+  updatedAt: Date;
 }
 
-// Security incident severity
-export enum SecurityIncidentSeverity {
-  LOW = 'LOW',
-  MEDIUM = 'MEDIUM',
-  HIGH = 'HIGH',
-  CRITICAL = 'CRITICAL'
+// Attachment interfaces
+export interface IAttachment {
+  id: string;
+  vaultId: string;
+  name: string;
+  description?: string;
+  fileType: string;
+  fileSize: number;
+  url: string;
+  hash: string;
+  createdAt: Date;
+  updatedAt: Date;
 }
 
-// Cross-chain transaction type for bridge operations
-export interface CrossChainTransaction {
+// Cross-chain transaction interfaces
+export interface ICrossChainTransaction {
   id: string;
   vaultId: string;
   sourceChain: BlockchainType;
   targetChain: BlockchainType;
-  sourceTxHash: string;
-  targetTxHash?: string;
-  amount: string;
-  assetType: string;
-  status: CrossChainTxStatus;
+  sourceTransactionId: string;
+  targetTransactionId?: string;
+  status: 'pending' | 'completed' | 'failed';
+  amount?: string;
+  asset?: string;
   createdAt: Date;
-  completedAt?: Date;
-  verificationProof?: string;
-  metadata?: Record<string, any>;
+  updatedAt: Date;
 }
 
-// Security verification result type
-export interface SecurityVerification {
-  isVerified: boolean;
-  timestamp: number;
+// Security incident interfaces
+export interface ISecurityIncident {
+  id: string;
   vaultId: string;
-  integrityScore: number; // 0-100
-  securityAlerts: {
-    level: 'info' | 'warning' | 'error' | 'critical';
-    message: string;
-    code?: string;
-  }[];
-  chainId: string;
-  verificationMethod: string;
-  metadata?: Record<string, any>;
+  type: 'access-attempt' | 'signature-failure' | 'cross-chain-verification-failure' | 'time-manipulation' | 'geolocation-spoofing';
+  severity: 'low' | 'medium' | 'high' | 'critical';
+  description: string;
+  sourceIp?: string;
+  walletAddress?: string;
+  chain?: BlockchainType;
+  resolved: boolean;
+  createdAt: Date;
+  updatedAt: Date;
 }
 
-// Extension to Express Request for security features
-declare global {
-  namespace Express {
-    interface Request {
-      securityAlert?: any;
-      securityChallenge?: boolean;
-    }
-    
-    interface Session {
-      userId?: string;
-      userRole?: string;
-      nonce?: string;
-      siwe?: {
-        address: string;
-      };
-    }
-  }
+// Signature request interfaces
+export interface ISignatureRequest {
+  id: string;
+  vaultId: string;
+  requesterId: string;
+  description: string;
+  status: SignatureRequestStatus;
+  requiredSignatures: number;
+  confirmedSignatures: number;
+  expiresAt: Date;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+// Signature interfaces
+export interface ISignature {
+  id: string;
+  requestId: string;
+  signerId: string;
+  chain: BlockchainType;
+  walletAddress: string;
+  signature: string;
+  createdAt: Date;
+}
+
+// CVT token interfaces
+export interface ICVTBalance {
+  walletAddress: string;
+  chain: BlockchainType;
+  balance: string;
+  staked: string;
+  updatedAt: Date;
+}
+
+// Smart contract interfaces
+export interface ISmartContract {
+  id: string;
+  name: string;
+  description?: string;
+  blockchain: BlockchainType;
+  address: string;
+  abi: string;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+// Cross-chain verification methods
+export enum VerificationMethod {
+  STANDARD = 'standard',
+  DEEP = 'deep',
+  ZERO_KNOWLEDGE = 'zero-knowledge',
+  QUANTUM_RESISTANT = 'quantum-resistant',
+  MERKLE_PROOF = 'merkle-proof',
+  MULTI_SIGNATURE = 'multi-signature',
+  CONSENSUS_VERIFICATION = 'consensus-verification',
+  TIME_LOCKED_VERIFICATION = 'time-locked-verification',
+}
+
+// Cross-chain verification result
+export interface VerificationResult {
+  success: boolean;
+  vaultId: string;
+  method: VerificationMethod;
+  sourceChain: BlockchainType;
+  targetChains: BlockchainType[];
+  verifiedOn: BlockchainType[];
+  pendingOn: BlockchainType[];
+  failedOn: BlockchainType[];
+  timestamp: number;
+  message: string;
+}
+
+// Multi-signature request
+export interface MultiSignatureRequest {
+  id: string;
+  vaultId: string;
+  description: string;
+  requiredSignatures: number;
+  confirmedSignatures: number;
+  status: SignatureRequestStatus;
+  createdBy: string;
+  createdAt: Date;
+  updatedAt: Date;
+  expiresAt: Date;
+}
+
+// ZK Proof result
+export interface ZkProofResult {
+  success: boolean;
+  proofType: string;
+  proof: any;
+  publicInputs: any[];
+  verified: boolean;
+  timestamp: number;
+}
+
+// API response format
+export interface ApiResponse<T> {
+  success: boolean;
+  data?: T;
+  error?: string;
+  timestamp: number;
+}
+
+// Development mode configuration
+export interface DevModeConfig {
+  enabled: boolean;
+  bypassWalletConnection: boolean;
+  simulateLatency: boolean;
+  latencyMs: number;
+  showDebugControls: boolean;
+  mockBlockchainData: boolean;
 }
