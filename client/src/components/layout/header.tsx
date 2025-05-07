@@ -35,6 +35,8 @@ const Header = () => {
     { name: "Transaction Monitor", href: "/transaction-monitor", icon: "📈", highlight: true, important: true, isNew: true },
     { name: "Storage", href: "/storage", icon: "🗄️", highlight: true },
     { name: "Gift Crypto", href: "/gift-crypto", icon: "🎁" },
+    { name: "Security Verification", href: "/security-verification-demo", icon: "🔐", highlight: true },
+    { name: "Triple-Chain Security", href: "/triple-chain-security-demo", icon: "⛓️", highlight: true },
     { name: "CVT Token", href: "/cvt-token", icon: "🪙" },
     { name: "Documentation", href: "/documentation", icon: "📄" },
     { name: "Whitepaper", href: "/project-whitepaper", icon: "📑" },
