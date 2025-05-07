@@ -10,7 +10,7 @@ import { BitcoinProvider } from "@/contexts/bitcoin-context";
 import { BitcoinWalletProvider } from "@/contexts/bitcoin-wallet-context";
 import { CVTTokenProvider } from "@/contexts/cvt-token-context";
 import { DevModeProvider } from "@/contexts/dev-mode-context";
-import { BlockchainErrorProvider, BlockchainErrorDisplay } from "@/contexts/blockchain-error-boundary";
+import { BlockchainErrorDisplay } from "@/contexts/blockchain-error-boundary";
 import { AuthProvider } from "@/contexts/auth-context";
 import Layout from "@/components/layout/Layout";
 
@@ -141,6 +141,7 @@ function App() {
               <MultiChainProvider>
                 <CVTTokenProvider>
                   <Router />
+                  <BlockchainErrorDisplay />
                 </CVTTokenProvider>
               </MultiChainProvider>
             </BitcoinWalletProvider>

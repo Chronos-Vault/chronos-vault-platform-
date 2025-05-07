@@ -13,8 +13,8 @@ import { DevModeProvider } from "@/contexts/dev-mode-context";
 import { TooltipProvider } from "@/components/ui/tooltip";
 
 // Create a properly nested provider structure
-// BlockchainErrorProvider needs to be highest in the hierarchy since 
-// other blockchain providers use it
+// We need to move the BlockchainErrorDisplay after all blockchain providers
+// are initialized in the App component
 createRoot(document.getElementById("root")!).render(
   <WagmiProvider config={wagmiConfig}>
     <QueryClientProvider client={queryClient}>
@@ -24,7 +24,6 @@ createRoot(document.getElementById("root")!).render(
             <DevModeProvider>
               <AuthProvider>
                 <App />
-                <BlockchainErrorDisplay />
                 <Toaster />
               </AuthProvider>
             </DevModeProvider>
