@@ -1,453 +1,432 @@
 import React from 'react';
-import { useTransactionMonitoring } from '@/contexts/transaction-monitoring-context';
 import { CrossChainTransaction } from '@shared/transaction-types';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from '@/components/ui/card';
+import { useTransactionMonitoring } from '@/contexts/transaction-monitoring-context';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
-import { ScrollArea } from '@/components/ui/scroll-area';
-import { CopyIcon, ExternalLinkIcon, ShieldCheckIcon, RefreshCw, Clock, CheckCircle, XCircle, AlertTriangle } from 'lucide-react';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-
-// Network colors for badges
-const networkColors = {
-  'Ethereum': 'bg-indigo-500/20 text-indigo-500 border-indigo-500/50',
-  'Solana': 'bg-purple-500/20 text-purple-500 border-purple-500/50',
-  'TON': 'bg-blue-500/20 text-blue-500 border-blue-500/50',
-  'Bitcoin': 'bg-amber-500/20 text-amber-500 border-amber-500/50'
-};
-
-// Status icon helper function
-const getStatusIcon = (status: string) => {
-  switch (status) {
-    case 'pending':
-      return <Clock className="h-4 w-4 text-amber-500" />;
-    case 'confirming':
-      return <RefreshCw className="h-4 w-4 text-blue-500 animate-spin" />;
-    case 'confirmed':
-      return <CheckCircle className="h-4 w-4 text-green-500" />;
-    case 'failed':
-      return <XCircle className="h-4 w-4 text-red-500" />;
-    default:
-      return null;
-  }
-};
-
-// Verification status icon helper function
-const getVerificationIcon = (status: string) => {
-  switch (status) {
-    case 'pending':
-      return <Clock className="h-4 w-4 text-amber-500" />;
-    case 'verified':
-      return <CheckCircle className="h-4 w-4 text-green-500" />;
-    case 'failed':
-      return <XCircle className="h-4 w-4 text-red-500" />;
-    case 'timeout':
-      return <AlertTriangle className="h-4 w-4 text-purple-500" />;
-    case 'not_required':
-      return null;
-    default:
-      return null;
-  }
-};
-
-// Property row component
-interface PropertyRowProps {
-  label: string;
-  value: React.ReactNode;
-  copyable?: boolean;
-  link?: string;
-}
-
-const PropertyRow: React.FC<PropertyRowProps> = ({ label, value, copyable, link }) => {
-  const handleCopy = () => {
-    if (typeof value === 'string') {
-      navigator.clipboard.writeText(value);
-    }
-  };
-
-  return (
-    <div className="flex flex-col space-y-1 py-2">
-      <div className="text-xs font-medium text-muted-foreground">{label}</div>
-      <div className="flex items-center gap-2">
-        <div className="text-sm break-all">{value}</div>
-        {copyable && (
-          <Button 
-            variant="ghost" 
-            size="icon" 
-            className="h-6 w-6 rounded-full hover:bg-muted"
-            onClick={handleCopy}
-          >
-            <CopyIcon className="h-3 w-3" />
-          </Button>
-        )}
-        {link && (
-          <Button 
-            variant="ghost" 
-            size="icon" 
-            className="h-6 w-6 rounded-full hover:bg-muted"
-            asChild
-          >
-            <a href={link} target="_blank" rel="noopener noreferrer">
-              <ExternalLinkIcon className="h-3 w-3" />
-            </a>
-          </Button>
-        )}
-      </div>
-    </div>
-  );
-};
+import {
+  Activity,
+  AlertTriangle,
+  ArrowRightLeft,
+  CheckCircle,
+  Clock,
+  Copy,
+  ExternalLink,
+  RefreshCw,
+  Shield,
+  XCircle,
+} from 'lucide-react';
 
 interface TransactionDetailPanelProps {
   transaction: CrossChainTransaction;
 }
 
-const TransactionDetailPanel: React.FC<TransactionDetailPanelProps> = ({ 
-  transaction 
-}) => {
-  const { verifyTransaction, getVerificationAttempts } = useTransactionMonitoring();
+const TransactionDetailPanel: React.FC<TransactionDetailPanelProps> = ({ transaction }) => {
+  const { getRelatedTransactions, refreshTransaction } = useTransactionMonitoring();
   
-  // Format date for better readability
+  // Get related transactions
+  const relatedTransactions = getRelatedTransactions(transaction.correlationId || '');
+  
+  // Format address for display
+  const formatAddress = (address: string) => {
+    if (!address) return '';
+    if (address.length < 12) return address;
+    return `${address.substring(0, 8)}...${address.substring(address.length - 8)}`;
+  };
+  
+  // Format amount with currency
+  const formatAmount = (amount?: string | number, symbol?: string) => {
+    if (!amount) return 'N/A';
+    return `${amount} ${symbol || ''}`;
+  };
+  
+  // Format date
   const formatDate = (timestamp: number) => {
     return new Date(timestamp).toLocaleString('en-US', {
-      year: 'numeric',
       month: 'short',
       day: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit',
-      second: '2-digit'
+      year: 'numeric',
+      hour: 'numeric',
+      minute: 'numeric',
+      second: 'numeric',
+      hour12: true,
     });
   };
   
-  // Get explorer URL based on network (simplified mock for demo)
-  const getExplorerUrl = (network: string, txHash: string) => {
+  // Copy to clipboard
+  const copyToClipboard = (text: string) => {
+    navigator.clipboard.writeText(text);
+    // You could add a toast notification here
+  };
+  
+  // Get status icon
+  const getStatusIcon = (status: string) => {
+    switch (status) {
+      case 'pending':
+        return <Clock className="h-4 w-4 text-amber-500" />;
+      case 'confirming':
+        return <RefreshCw className="h-4 w-4 text-blue-500 animate-spin" />;
+      case 'confirmed':
+        return <CheckCircle className="h-4 w-4 text-green-500" />;
+      case 'failed':
+        return <XCircle className="h-4 w-4 text-red-500" />;
+      default:
+        return <AlertTriangle className="h-4 w-4 text-gray-500" />;
+    }
+  };
+  
+  // Get verification status color
+  const getVerificationStatusClass = (status: string) => {
+    switch (status) {
+      case 'verified':
+        return 'bg-green-500/10 text-green-500 border-green-500/30';
+      case 'pending':
+        return 'bg-amber-500/10 text-amber-500 border-amber-500/30';
+      case 'failed':
+        return 'bg-red-500/10 text-red-500 border-red-500/30';
+      case 'not_required':
+        return 'bg-gray-500/10 text-gray-500 border-gray-500/30';
+      default:
+        return 'bg-gray-500/10 text-gray-500 border-gray-500/30';
+    }
+  };
+  
+  // Get network color
+  const getNetworkColor = (network: string) => {
+    switch (network) {
+      case 'Ethereum':
+        return 'bg-indigo-500/10 text-indigo-500 border-indigo-500/30';
+      case 'Solana':
+        return 'bg-purple-500/10 text-purple-500 border-purple-500/30';
+      case 'TON':
+        return 'bg-blue-500/10 text-blue-500 border-blue-500/30';
+      case 'Bitcoin':
+        return 'bg-amber-500/10 text-amber-500 border-amber-500/30';
+      default:
+        return 'bg-gray-500/10 text-gray-500 border-gray-500/30';
+    }
+  };
+  
+  // Handle refresh
+  const handleRefresh = async () => {
+    await refreshTransaction(transaction.id);
+  };
+  
+  // Get explorer URL based on network
+  const getExplorerUrl = (txHash: string, network: string) => {
     switch (network) {
       case 'Ethereum':
         return `https://etherscan.io/tx/${txHash}`;
       case 'Solana':
         return `https://explorer.solana.com/tx/${txHash}`;
       case 'TON':
-        return `https://tonwhales.com/explorer/transaction/${txHash}`;
+        return `https://tonscan.org/tx/${txHash}`;
       case 'Bitcoin':
         return `https://mempool.space/tx/${txHash}`;
       default:
-        return '#';
+        return `https://explorer.blockchain.com/tx/${txHash}`;
     }
   };
   
-  // Handle verify transaction
-  const handleVerifyTransaction = async () => {
-    await verifyTransaction(transaction.id);
-  };
-  
-  // Get verification attempts for this transaction
-  const verificationAttempts = getVerificationAttempts(transaction.correlationId);
-  
   return (
-    <Card>
-      <CardHeader>
-        <div className="flex items-center justify-between">
+    <Card className="border border-[#6B00D7]/20 bg-gradient-to-b from-[#1A1A1A] to-[#121212] shadow-md">
+      <CardHeader className="pb-2">
+        <div className="flex justify-between items-start">
           <div>
-            <CardTitle>{transaction.label || transaction.type.replace('_', ' ')}</CardTitle>
-            <CardDescription>Transaction Details</CardDescription>
+            <CardTitle className="flex gap-2 items-center">
+              <Badge variant="outline" className={`${getNetworkColor(transaction.network)}`}>
+                {transaction.network}
+              </Badge>
+              <span>{transaction.label || transaction.type.replace('_', ' ')}</span>
+            </CardTitle>
+            <CardDescription>
+              {transaction.description || 'Transaction details'}
+            </CardDescription>
           </div>
-          <div className="flex flex-col items-end">
-            <Badge className={networkColors[transaction.network]}>
-              {transaction.network}
-            </Badge>
-            <span className="text-xs text-muted-foreground mt-1">
-              Security Level {transaction.securityLevel || 1}
-            </span>
-          </div>
+          <Button size="sm" variant="outline" onClick={handleRefresh}>
+            <RefreshCw className="h-4 w-4 mr-1" />
+            Refresh
+          </Button>
         </div>
       </CardHeader>
       
-      <CardContent className="p-0">
-        <Tabs defaultValue="details">
-          <TabsList className="w-full">
-            <TabsTrigger value="details" className="flex-1">Details</TabsTrigger>
-            <TabsTrigger value="verification" className="flex-1">Verification</TabsTrigger>
-            <TabsTrigger value="json" className="flex-1">JSON</TabsTrigger>
+      <CardContent className="space-y-6">
+        <Tabs defaultValue="details" className="w-full">
+          <TabsList className="grid grid-cols-3 mb-2">
+            <TabsTrigger value="details">Details</TabsTrigger>
+            <TabsTrigger value="security">Security</TabsTrigger>
+            <TabsTrigger value="related">Related ({relatedTransactions.length})</TabsTrigger>
           </TabsList>
           
-          <TabsContent value="details" className="p-6 space-y-6">
-            <div className="flex flex-col space-y-2">
-              <div className="flex items-center justify-between">
-                <Badge 
-                  variant={
-                    transaction.status === 'confirmed' ? 'default' : 
-                    transaction.status === 'failed' ? 'destructive' : 
-                    'outline'
-                  }
-                  className="px-3 py-1 text-xs"
-                >
+          <TabsContent value="details" className="space-y-4">
+            <div className="space-y-2">
+              <div className="flex justify-between items-center">
+                <span className="text-sm text-muted-foreground">Status</span>
+                <div className="flex items-center gap-2">
                   {getStatusIcon(transaction.status)}
-                  <span className="ml-1">{transaction.status}</span>
-                </Badge>
-                
-                {transaction.verificationStatus !== 'not_required' && (
-                  <Badge 
-                    variant={
-                      transaction.verificationStatus === 'verified' ? 'default' : 
-                      transaction.verificationStatus === 'failed' ? 'destructive' : 
-                      'outline'
-                    }
-                    className="px-3 py-1 text-xs"
-                  >
-                    {getVerificationIcon(transaction.verificationStatus)}
-                    <span className="ml-1">Verification: {transaction.verificationStatus}</span>
-                  </Badge>
-                )}
+                  <span className="capitalize">{transaction.status}</span>
+                </div>
               </div>
               
-              {transaction.verificationStatus === 'pending' && transaction.securityLevel && transaction.securityLevel > 1 && (
-                <Button 
-                  variant="outline"
-                  size="sm"
-                  className="mt-2 w-full gap-2 border-dashed"
-                  onClick={handleVerifyTransaction}
-                >
-                  <ShieldCheckIcon className="h-4 w-4 text-[#FF5AF7]" />
-                  <span>Verify on {transaction.network === 'Ethereum' ? 'Solana' : 'Ethereum'}</span>
-                </Button>
-              )}
-            </div>
-            
-            <Separator />
-            
-            <div className="space-y-0">
-              <PropertyRow 
-                label="Transaction Hash" 
-                value={transaction.txHash} 
-                copyable
-                link={getExplorerUrl(transaction.network, transaction.txHash)}
-              />
-              <PropertyRow 
-                label="From Address" 
-                value={transaction.fromAddress} 
-                copyable
-              />
+              <Separator className="bg-[#333]" />
+              
+              <div className="flex justify-between items-center">
+                <span className="text-sm text-muted-foreground">Transaction Hash</span>
+                <div className="flex items-center gap-2">
+                  <span className="text-xs font-mono">{formatAddress(transaction.txHash)}</span>
+                  <Button 
+                    variant="ghost" 
+                    size="icon" 
+                    className="h-6 w-6" 
+                    onClick={() => copyToClipboard(transaction.txHash)}
+                  >
+                    <Copy className="h-3 w-3" />
+                  </Button>
+                  <Button 
+                    variant="ghost" 
+                    size="icon" 
+                    className="h-6 w-6"
+                    asChild
+                  >
+                    <a 
+                      href={getExplorerUrl(transaction.txHash, transaction.network)} 
+                      target="_blank" 
+                      rel="noopener noreferrer"
+                    >
+                      <ExternalLink className="h-3 w-3" />
+                    </a>
+                  </Button>
+                </div>
+              </div>
+              
+              <Separator className="bg-[#333]" />
+              
+              <div className="flex justify-between items-center">
+                <span className="text-sm text-muted-foreground">From</span>
+                <div className="flex items-center gap-2">
+                  <span className="text-xs font-mono">{formatAddress(transaction.fromAddress)}</span>
+                  <Button 
+                    variant="ghost" 
+                    size="icon" 
+                    className="h-6 w-6" 
+                    onClick={() => copyToClipboard(transaction.fromAddress)}
+                  >
+                    <Copy className="h-3 w-3" />
+                  </Button>
+                </div>
+              </div>
+              
               {transaction.toAddress && (
-                <PropertyRow 
-                  label="To Address" 
-                  value={transaction.toAddress} 
-                  copyable
-                />
+                <>
+                  <Separator className="bg-[#333]" />
+                  <div className="flex justify-between items-center">
+                    <span className="text-sm text-muted-foreground">To</span>
+                    <div className="flex items-center gap-2">
+                      <span className="text-xs font-mono">{formatAddress(transaction.toAddress)}</span>
+                      <Button 
+                        variant="ghost" 
+                        size="icon" 
+                        className="h-6 w-6" 
+                        onClick={() => copyToClipboard(transaction.toAddress)}
+                      >
+                        <Copy className="h-3 w-3" />
+                      </Button>
+                    </div>
+                  </div>
+                </>
               )}
-              {transaction.contractAddress && (
-                <PropertyRow 
-                  label="Contract Address" 
-                  value={transaction.contractAddress} 
-                  copyable
-                />
+              
+              {transaction.amount && (
+                <>
+                  <Separator className="bg-[#333]" />
+                  <div className="flex justify-between items-center">
+                    <span className="text-sm text-muted-foreground">Amount</span>
+                    <span>{formatAmount(transaction.amount, transaction.symbol)}</span>
+                  </div>
+                </>
               )}
-              <PropertyRow 
-                label="Timestamp" 
-                value={formatDate(transaction.timestamp)} 
-              />
-              {transaction.amount && transaction.symbol && (
-                <PropertyRow 
-                  label="Amount" 
-                  value={`${transaction.amount} ${transaction.symbol}`} 
-                />
-              )}
-              {transaction.fee && (
-                <PropertyRow 
-                  label="Fee" 
-                  value={`${transaction.fee} ${transaction.symbol || getNetworkCurrency(transaction.network)}`} 
-                />
-              )}
+              
+              <Separator className="bg-[#333]" />
+              
+              <div className="flex justify-between items-center">
+                <span className="text-sm text-muted-foreground">Timestamp</span>
+                <span className="text-sm">{formatDate(transaction.timestamp)}</span>
+              </div>
+              
               {transaction.blockNumber && (
-                <PropertyRow 
-                  label="Block Number" 
-                  value={transaction.blockNumber} 
-                />
+                <>
+                  <Separator className="bg-[#333]" />
+                  <div className="flex justify-between items-center">
+                    <span className="text-sm text-muted-foreground">Block Number</span>
+                    <span>{transaction.blockNumber}</span>
+                  </div>
+                </>
               )}
-              {transaction.confirmations && (
-                <PropertyRow 
-                  label="Confirmations" 
-                  value={transaction.confirmations} 
-                />
+              
+              {transaction.fee && (
+                <>
+                  <Separator className="bg-[#333]" />
+                  <div className="flex justify-between items-center">
+                    <span className="text-sm text-muted-foreground">Transaction Fee</span>
+                    <span>{formatAmount(transaction.fee, transaction.feeCurrency || transaction.symbol)}</span>
+                  </div>
+                </>
               )}
-              <PropertyRow 
-                label="Correlation ID" 
-                value={transaction.correlationId} 
-                copyable
-              />
             </div>
           </TabsContent>
           
-          <TabsContent value="verification" className="p-6">
-            <div className="space-y-4">
-              <div>
-                <h3 className="text-sm font-medium mb-2">Verification Status</h3>
-                <div className="p-3 rounded-md bg-[#1A1A1A]">
-                  <div className="flex items-center justify-between">
-                    <span>
-                      Status: <span className={
-                        transaction.verificationStatus === 'verified' ? 'text-green-500' :
-                        transaction.verificationStatus === 'failed' ? 'text-red-500' :
-                        transaction.verificationStatus === 'pending' ? 'text-amber-500' :
-                        'text-muted-foreground'
-                      }>
-                        {transaction.verificationStatus}
-                      </span>
-                    </span>
-                    {getVerificationIcon(transaction.verificationStatus)}
-                  </div>
-                  
-                  {transaction.verificationTimestamp && (
-                    <div className="text-xs text-muted-foreground mt-1">
-                      Verified at: {formatDate(transaction.verificationTimestamp)}
-                    </div>
+          <TabsContent value="security" className="space-y-4">
+            <div className="space-y-2">
+              <div className="flex justify-between items-center">
+                <span className="text-sm text-muted-foreground">Security Level</span>
+                <Badge variant="outline" className="bg-[#6B00D7]/10 border-[#6B00D7]/30 text-[#FF5AF7]">
+                  <Shield className="h-3 w-3 mr-1" />
+                  Level {transaction.securityLevel || 1}
+                </Badge>
+              </div>
+              
+              <Separator className="bg-[#333]" />
+              
+              <div className="flex justify-between items-center">
+                <span className="text-sm text-muted-foreground">Verification Status</span>
+                <Badge 
+                  variant="outline" 
+                  className={getVerificationStatusClass(transaction.verificationStatus || 'not_required')}
+                >
+                  {transaction.verificationStatus === 'verified' ? (
+                    <CheckCircle className="h-3 w-3 mr-1" />
+                  ) : transaction.verificationStatus === 'pending' ? (
+                    <Clock className="h-3 w-3 mr-1" />
+                  ) : transaction.verificationStatus === 'failed' ? (
+                    <XCircle className="h-3 w-3 mr-1" />
+                  ) : (
+                    <span className="h-3 w-3 mr-1" />
                   )}
-                  
-                  {transaction.verifiedBy && transaction.verifiedBy.length > 0 && (
-                    <div className="mt-2">
-                      <span className="text-xs text-muted-foreground">Verified by:</span>
-                      <div className="flex flex-wrap gap-1 mt-1">
-                        {transaction.verifiedBy.map(network => (
-                          <Badge 
-                            key={network}
-                            variant="outline"
-                            className={networkColors[network]}
-                          >
-                            {network}
-                          </Badge>
-                        ))}
+                  {transaction.verificationStatus === 'not_required' 
+                    ? 'Not Required' 
+                    : transaction.verificationStatus?.charAt(0).toUpperCase() + transaction.verificationStatus?.slice(1)}
+                </Badge>
+              </div>
+              
+              {transaction.verifiedAt && (
+                <>
+                  <Separator className="bg-[#333]" />
+                  <div className="flex justify-between items-center">
+                    <span className="text-sm text-muted-foreground">Verified At</span>
+                    <span className="text-sm">{formatDate(transaction.verifiedAt)}</span>
+                  </div>
+                </>
+              )}
+              
+              {transaction.verifierAddress && (
+                <>
+                  <Separator className="bg-[#333]" />
+                  <div className="flex justify-between items-center">
+                    <span className="text-sm text-muted-foreground">Verifier</span>
+                    <div className="flex items-center gap-2">
+                      <span className="text-xs font-mono">{formatAddress(transaction.verifierAddress)}</span>
+                      <Button 
+                        variant="ghost" 
+                        size="icon" 
+                        className="h-6 w-6" 
+                        onClick={() => copyToClipboard(transaction.verifierAddress)}
+                      >
+                        <Copy className="h-3 w-3" />
+                      </Button>
+                    </div>
+                  </div>
+                </>
+              )}
+              
+              {transaction.confirmations !== undefined && (
+                <>
+                  <Separator className="bg-[#333]" />
+                  <div className="flex justify-between items-center">
+                    <span className="text-sm text-muted-foreground">Confirmations</span>
+                    <span>{transaction.confirmations}</span>
+                  </div>
+                </>
+              )}
+              
+              {transaction.securityNotes && (
+                <>
+                  <Separator className="bg-[#333]" />
+                  <div className="space-y-1">
+                    <span className="text-sm text-muted-foreground">Security Notes</span>
+                    <p className="text-xs bg-[#1A1A1A] p-2 rounded-md border border-[#333]">
+                      {transaction.securityNotes}
+                    </p>
+                  </div>
+                </>
+              )}
+            </div>
+          </TabsContent>
+          
+          <TabsContent value="related" className="space-y-4">
+            {relatedTransactions.length > 0 ? (
+              <div className="space-y-3">
+                {relatedTransactions.map(tx => (
+                  <div 
+                    key={tx.id}
+                    className={`p-3 rounded-lg border ${
+                      tx.id === transaction.id 
+                        ? 'border-[#6B00D7] bg-[#6B00D7]/10' 
+                        : 'border-[#333] hover:border-[#6B00D7]/50 hover:bg-[#1A1A1A] cursor-pointer'
+                    }`}
+                  >
+                    <div className="flex justify-between items-center mb-2">
+                      <div className="flex items-center gap-2">
+                        <Badge variant="outline" className={`${getNetworkColor(tx.network)}`}>
+                          {tx.network}
+                        </Badge>
+                        <span className="text-sm">{tx.label || tx.type.replace('_', ' ')}</span>
+                      </div>
+                      <div className="flex items-center gap-1">
+                        {getStatusIcon(tx.status)}
+                        <span className="text-xs capitalize">{tx.status}</span>
                       </div>
                     </div>
-                  )}
-                </div>
-              </div>
-              
-              {verificationAttempts.length > 0 && (
-                <div>
-                  <h3 className="text-sm font-medium mb-2">Verification History</h3>
-                  <ScrollArea className="h-[250px]">
-                    <div className="space-y-2">
-                      {verificationAttempts.map(attempt => (
-                        <div 
-                          key={attempt.id}
-                          className="p-3 rounded-md bg-[#1A1A1A] border border-[#333]"
-                        >
-                          <div className="flex items-start justify-between">
-                            <div>
-                              <Badge 
-                                variant={attempt.status === 'success' ? 'default' : 'destructive'}
-                                className="px-2 py-0 text-xs"
-                              >
-                                {attempt.status === 'success' ? 
-                                  <CheckCircle className="h-3 w-3 mr-1" /> : 
-                                  <XCircle className="h-3 w-3 mr-1" />
-                                }
-                                {attempt.status}
-                              </Badge>
-                              <div className="mt-1">
-                                <span className="text-xs text-muted-foreground">
-                                  Verification on {attempt.network}
-                                </span>
-                              </div>
-                            </div>
-                            <Badge 
-                              variant="outline" 
-                              className={networkColors[attempt.network]}
-                            >
-                              {attempt.network}
-                            </Badge>
-                          </div>
-                          
-                          <div className="text-xs text-muted-foreground mt-2">
-                            {formatDate(attempt.timestamp)}
-                          </div>
-                          
-                          {attempt.reason && (
-                            <div className="mt-2 text-xs p-2 rounded bg-red-500/10 text-red-400 border border-red-500/20">
-                              {attempt.reason}
-                            </div>
-                          )}
-                        </div>
-                      ))}
+                    <div className="flex justify-between text-xs text-muted-foreground">
+                      <span>{formatDate(tx.timestamp)}</span>
+                      {tx.amount && (
+                        <span>{formatAmount(tx.amount, tx.symbol)}</span>
+                      )}
                     </div>
-                  </ScrollArea>
-                </div>
-              )}
-              
-              {transaction.securityLevel && transaction.securityLevel > 1 && transaction.verificationStatus !== 'verified' && (
-                <Button 
-                  variant="outline"
-                  className="w-full gap-2 bg-[#6B00D7]/10 border-[#6B00D7]/30 hover:bg-[#6B00D7]/20"
-                  onClick={handleVerifyTransaction}
-                >
-                  <ShieldCheckIcon className="h-4 w-4 text-[#FF5AF7]" />
-                  <span>Verify on {transaction.network === 'Ethereum' ? 'Solana' : 'Ethereum'}</span>
-                </Button>
-              )}
-            </div>
-          </TabsContent>
-          
-          <TabsContent value="json" className="p-0">
-            <ScrollArea className="h-[500px]">
-              <pre className="p-4 text-xs font-mono whitespace-pre-wrap bg-[#1A1A1A] rounded-b-md text-gray-300">
-                {JSON.stringify(transaction, null, 2)}
-              </pre>
-            </ScrollArea>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="py-8 text-center">
+                <ArrowRightLeft className="h-8 w-8 text-[#6B00D7]/50 mx-auto mb-2" />
+                <p className="text-muted-foreground">No related transactions found</p>
+              </div>
+            )}
           </TabsContent>
         </Tabs>
       </CardContent>
       
-      <CardFooter className="bg-[#1A1A1A]/50 p-4 border-t border-[#6B00D7]/10">
-        <div className="w-full flex flex-col gap-1">
-          <div className="flex justify-between items-center">
-            <span className="text-xs text-muted-foreground">
-              Transaction Type: {transaction.type}
-            </span>
-            <span className="text-xs text-muted-foreground">
-              ID: {transaction.id.substring(0, 8)}...
-            </span>
-          </div>
-          <div className="flex justify-between items-center">
-            <Button 
-              variant="ghost" 
-              size="sm"
-              className="text-xs h-7 px-2 text-indigo-400"
-              asChild
-            >
-              <a href={getExplorerUrl(transaction.network, transaction.txHash)} target="_blank" rel="noopener noreferrer">
-                <ExternalLinkIcon className="h-3 w-3 mr-1" />
-                View on Explorer
-              </a>
-            </Button>
-            <Button 
-              variant="ghost" 
-              size="sm"
-              className="text-xs h-7 px-2"
-              onClick={() => navigator.clipboard.writeText(transaction.txHash)}
-            >
-              <CopyIcon className="h-3 w-3 mr-1" />
-              Copy Tx Hash
-            </Button>
-          </div>
+      <CardFooter className="justify-between border-t border-[#333] pt-4 text-xs text-muted-foreground">
+        <div className="flex items-center gap-1">
+          <Activity className="h-3 w-3" />
+          <span>Transaction ID: {transaction.id.substring(0, 8)}...</span>
+        </div>
+        <div>
+          {transaction.correlationId && (
+            <span>Group: {transaction.correlationId.substring(0, 8)}...</span>
+          )}
         </div>
       </CardFooter>
     </Card>
   );
 };
-
-// Helper to get currency symbol for a blockchain network
-function getNetworkCurrency(network: string): string {
-  switch (network) {
-    case 'Ethereum':
-      return 'ETH';
-    case 'Solana':
-      return 'SOL';
-    case 'TON':
-      return 'TON';
-    case 'Bitcoin':
-      return 'BTC';
-    default:
-      return 'CRYPTO';
-  }
-}
 
 export default TransactionDetailPanel;

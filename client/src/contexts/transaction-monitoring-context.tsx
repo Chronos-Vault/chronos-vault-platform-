@@ -7,6 +7,8 @@ import { useDevMode } from './dev-mode-context';
 import { 
   CrossChainTransaction, 
   TransactionGroup, 
+  NetworkTransactionStats,
+  TransactionSummary,
   BlockchainNetwork,
   TransactionStatus,
   VerificationStatus,
@@ -45,11 +47,17 @@ interface TransactionContextType {
   
   // Transaction monitoring actions
   refreshTransactions: () => Promise<void>;
+  refreshTransaction: (txId: string) => Promise<void>;
   getMonitoringStatus: () => { 
     isMonitoring: boolean; 
     lastUpdated: number | null;
     pollingInterval: number;
   };
+  
+  // Transaction statistics
+  getChainStats: () => NetworkTransactionStats;
+  getTransactionSummary: () => TransactionSummary;
+  getRelatedTransactions: (correlationId: string) => CrossChainTransaction[];
   
   // Transaction verification operations
   verifyTransaction: (txId: string) => Promise<boolean>;
@@ -215,6 +223,91 @@ export const TransactionMonitoringProvider: React.FC<{ children: React.ReactNode
   const getVerificationAttempts = useCallback((correlationId: string) => {
     return verificationAttempts.filter(attempt => attempt.correlationId === correlationId);
   }, [verificationAttempts]);
+  
+  // Get statistics for each blockchain network
+  const getChainStats = useCallback((): NetworkTransactionStats => {
+    const stats: NetworkTransactionStats = {};
+    
+    // Count transactions for each network
+    transactions.forEach(tx => {
+      if (!stats[tx.network]) {
+        stats[tx.network] = 0;
+      }
+      stats[tx.network]++;
+    });
+    
+    return stats;
+  }, [transactions]);
+  
+  // Get related transactions by correlation ID
+  const getRelatedTransactions = useCallback((correlationId: string): CrossChainTransaction[] => {
+    if (!correlationId) return [];
+    return transactions.filter(tx => tx.correlationId === correlationId);
+  }, [transactions]);
+  
+  // Get transaction summary statistics
+  const getTransactionSummary = useCallback((): TransactionSummary => {
+    const pending = transactions.filter(tx => tx.status === 'pending').length;
+    const confirming = transactions.filter(tx => tx.status === 'confirming').length;
+    const confirmed = transactions.filter(tx => tx.status === 'confirmed').length;
+    const failed = transactions.filter(tx => tx.status === 'failed').length;
+    
+    const verified = transactions.filter(tx => tx.verificationStatus === 'verified').length;
+    const verificationPending = transactions.filter(tx => tx.verificationStatus === 'pending').length;
+    const verificationFailed = transactions.filter(tx => tx.verificationStatus === 'failed').length;
+    
+    // Calculate security levels
+    const securityLevels = transactions.map(tx => tx.securityLevel || 1);
+    const avgSecurityLevel = securityLevels.length > 0 
+      ? securityLevels.reduce((sum, level) => sum + level, 0) / securityLevels.length 
+      : 0;
+    
+    // For demo purposes, generate a random percent change
+    const pendingChangePercent = Math.floor(Math.random() * 21) - 10; // -10% to +10%
+    
+    return {
+      total: transactions.length,
+      pending,
+      confirming,
+      confirmed,
+      failed,
+      verified,
+      verificationPending,
+      verificationFailed,
+      verificationTimeout: Math.floor(Math.random() * 3), // Simulated for demo
+      avgSecurityLevel,
+      pendingChangePercent
+    };
+  }, [transactions]);
+  
+  // Refresh a specific transaction by ID
+  const refreshTransaction = useCallback(async (txId: string): Promise<void> => {
+    // In a real implementation, we would fetch the specific transaction from the blockchain
+    // For this simulation, just update the status
+    
+    if (isDevelopmentMode) {
+      setTransactions(prev => 
+        prev.map(tx => {
+          if (tx.id === txId) {
+            // Simulate progress through transaction lifecycle
+            if (tx.status === 'pending') {
+              return { ...tx, status: 'confirming' };
+            }
+            if (tx.status === 'confirming') {
+              return { 
+                ...tx, 
+                status: 'confirmed',
+                confirmations: (tx.confirmations || 0) + 1
+              };
+            }
+          }
+          return tx;
+        })
+      );
+    }
+    
+    return;
+  }, [isDevelopmentMode]);
   
   // Refresh transactions from all chains
   const refreshTransactions = useCallback(async () => {
