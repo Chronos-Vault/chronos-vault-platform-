@@ -8,6 +8,7 @@ import { SolanaProvider } from "@/contexts/solana-context";
 import { EthereumProvider } from "@/contexts/ethereum-context";
 import { BitcoinProvider } from "@/contexts/bitcoin-context";
 import { CVTTokenProvider } from "@/contexts/cvt-token-context";
+import { DevModeProvider } from "@/contexts/dev-mode-context";
 import Layout from "@/components/layout/Layout";
 
 // Pages
@@ -130,19 +131,21 @@ function Router() {
 function App() {
   return (
     <TooltipProvider>
-      <EthereumProvider>
-        <SolanaProvider>
-          <TonProvider>
-            <BitcoinProvider>
-              <MultiChainProvider>
-                <CVTTokenProvider>
-                  <Router />
-                </CVTTokenProvider>
-              </MultiChainProvider>
-            </BitcoinProvider>
-          </TonProvider>
-        </SolanaProvider>
-      </EthereumProvider>
+      <DevModeProvider>
+        <EthereumProvider>
+          <SolanaProvider>
+            <TonProvider>
+              <BitcoinProvider>
+                <MultiChainProvider>
+                  <CVTTokenProvider>
+                    <Router />
+                  </CVTTokenProvider>
+                </MultiChainProvider>
+              </BitcoinProvider>
+            </TonProvider>
+          </SolanaProvider>
+        </EthereumProvider>
+      </DevModeProvider>
     </TooltipProvider>
   );
 }

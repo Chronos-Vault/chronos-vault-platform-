@@ -9,13 +9,22 @@ import {
   SheetTitle,
   SheetDescription
 } from "@/components/ui/sheet";
-import { Menu, X } from "lucide-react";
+import { 
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+  DropdownMenuSeparator
+} from "@/components/ui/dropdown-menu";
+import { Menu, X, Settings, Bug } from "lucide-react";
 import CrossChainWalletSelector from "@/components/auth/cross-chain-wallet-selector";
 import { useAuthContext } from "@/contexts/auth-context";
+import { useDevMode } from "@/contexts/dev-mode-context";
 
 const Header = () => {
   const [location] = useLocation();
   const { isAuthenticated } = useAuthContext();
+  const { devModeEnabled, toggleDevMode, isDevelopmentEnvironment } = useDevMode();
 
   // Desktop navigation links (limited set for better UX)
   const desktopNavigationLinks = [
@@ -123,6 +132,36 @@ const Header = () => {
           
           <div className="flex items-center gap-4">
             <div className="hidden md:flex items-center gap-2">
+              {isDevelopmentEnvironment && (
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button 
+                      variant="outline" 
+                      size="icon" 
+                      className={`rounded-full p-2 ${devModeEnabled 
+                        ? 'bg-amber-500/10 text-amber-500 border-amber-500/50 hover:bg-amber-500/20' 
+                        : 'bg-gray-800/50 text-gray-400 border-gray-700 hover:bg-gray-800'}`}
+                    >
+                      <Bug className="h-5 w-5" />
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end" className="w-56 bg-[#1A1A1A] border border-[#333] shadow-xl">
+                    <DropdownMenuItem 
+                      className="flex items-center gap-2 cursor-pointer hover:bg-[#333]"
+                      onClick={toggleDevMode}
+                    >
+                      <Bug className={`h-4 w-4 ${devModeEnabled ? 'text-amber-500' : 'text-gray-400'}`} />
+                      <span>Development Mode: {devModeEnabled ? 'ON' : 'OFF'}</span>
+                    </DropdownMenuItem>
+                    <DropdownMenuSeparator className="bg-[#333]" />
+                    <DropdownMenuItem className="hover:bg-[#333]">
+                      <span className="text-xs text-gray-500">
+                        Dev mode bypasses wallet requirements
+                      </span>
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              )}
               <CrossChainWalletSelector />
             </div>
 
@@ -207,6 +246,34 @@ const Header = () => {
                   </div>
                   
                   <div className="pt-4 mt-4 border-t border-[#6B00D7]/30 space-y-4">
+                    {isDevelopmentEnvironment && (
+                      <div className="mb-6">
+                        <h3 className="text-sm font-medium text-[#FF5AF7] mb-2">Developer Options</h3>
+                        <div 
+                          className={`flex items-center justify-between p-3 rounded-lg cursor-pointer ${
+                            devModeEnabled 
+                              ? 'bg-amber-500/10 border border-amber-500/40' 
+                              : 'bg-gray-800/50 border border-gray-700'
+                          }`}
+                          onClick={toggleDevMode}
+                        >
+                          <div className="flex items-center gap-3">
+                            <Bug className={`h-5 w-5 ${devModeEnabled ? 'text-amber-500' : 'text-gray-400'}`} />
+                            <div>
+                              <div className="text-sm font-medium">Development Mode</div>
+                              <div className="text-xs text-gray-400">Bypass wallet requirements</div>
+                            </div>
+                          </div>
+                          <div className={`h-4 w-7 rounded-full relative flex items-center p-0.5 ${
+                            devModeEnabled ? 'bg-amber-500' : 'bg-gray-700'
+                          }`}>
+                            <div className={`h-3 w-3 rounded-full bg-white absolute transition-all ${
+                              devModeEnabled ? 'translate-x-3' : 'translate-x-0'
+                            }`}></div>
+                          </div>
+                        </div>
+                      </div>
+                    )}
                     <h3 className="text-sm font-medium text-[#FF5AF7]">Connect Wallet</h3>
                     <CrossChainWalletSelector className="w-full" />
                   </div>
