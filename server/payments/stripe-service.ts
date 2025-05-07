@@ -189,7 +189,7 @@ class StripeService {
    */
   private async handleInvoicePaymentFailed(invoice: Stripe.Invoice): Promise<{ success: boolean; message: string }> {
     // In a real implementation, this would update the user's subscription status
-    securityLogger.warn('Invoice payment failed', SecurityEventType.VAULT_OPERATION_FAILED, { 
+    securityLogger.warn('Invoice payment failed', SecurityEventType.SYSTEM_ERROR, { 
       invoiceId: invoice.id, 
       customerId: String(invoice.customer), 
       amount: invoice.amount_due 
@@ -217,9 +217,9 @@ class StripeService {
    */
   private async handleSubscriptionUpdated(subscription: Stripe.Subscription): Promise<{ success: boolean; message: string }> {
     // In a real implementation, this would update the user's subscription status
-    securityLogger.info('Subscription updated', { 
+    securityLogger.info('Subscription updated', SecurityEventType.VAULT_MODIFICATION, { 
       subscriptionId: subscription.id, 
-      customerId: subscription.customer, 
+      customerId: String(subscription.customer), 
       status: subscription.status 
     });
     
@@ -231,9 +231,9 @@ class StripeService {
    */
   private async handleSubscriptionDeleted(subscription: Stripe.Subscription): Promise<{ success: boolean; message: string }> {
     // In a real implementation, this would update the user's subscription status
-    securityLogger.info('Subscription deleted', { 
+    securityLogger.info('Subscription deleted', SecurityEventType.VAULT_MODIFICATION, { 
       subscriptionId: subscription.id, 
-      customerId: subscription.customer, 
+      customerId: String(subscription.customer), 
       status: subscription.status 
     });
     
