@@ -4,7 +4,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Loader2, FileText } from 'lucide-react';
 import { Progress } from '@/components/ui/progress';
-import { Incident, IncidentStatistics, SystemHealth } from '../types/monitoring';
+import { Incident, IncidentStatistics, SystemHealth } from '@/types/monitoring';
 
 interface IncidentMonitorProps {
   systemHealth: SystemHealth | null;
@@ -180,7 +180,7 @@ export const IncidentMonitor = ({
                   <div className="mt-3">
                     <div className="text-sm font-medium mb-2">Response Actions</div>
                     <div className="max-h-28 overflow-y-auto">
-                      {incident.responseActions.map(action => (
+                      {incident.responseActions.map((action: ResponseAction) => (
                         <div 
                           key={action.id} 
                           className="text-sm mb-1 p-2 rounded bg-white dark:bg-black bg-opacity-50"
@@ -242,7 +242,7 @@ export const IncidentMonitor = ({
         </div>
         
         <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-          {Object.entries(systemHealth.components).map(([name, component]) => (
+          {Object.entries(systemHealth.components).map(([name, component]: [string, ComponentHealth]) => (
             <div 
               key={name} 
               className={`rounded-lg border p-3 ${
