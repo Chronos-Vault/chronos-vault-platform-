@@ -27,7 +27,12 @@ class TONService {
   private tonConnectUI: TonConnectUI | null = null;
   private walletInfo: TONWalletInfo | null = null;
   private connectionStatus: TonConnectionStatus = TonConnectionStatus.DISCONNECTED;
-  private isInitialized: boolean = false;
+  private _isInitialized: boolean = false;
+  
+  // Public getter for isInitialized
+  get isInitialized(): boolean {
+    return this._isInitialized;
+  }
 
   /**
    * Initialize TON service
@@ -93,7 +98,7 @@ class TONService {
               await this.updateWalletInfo();
             }
             
-            this.isInitialized = true;
+            this._isInitialized = true;
             console.log("TON service successfully initialized");
           }
         } catch (initError) {
@@ -102,13 +107,48 @@ class TONService {
         }
       }
       
-      return this.isInitialized;
+      return this._isInitialized;
     } catch (error) {
       console.error('Failed to initialize TON service:', error);
       return false;
     }
   }
 
+  /**
+   * Create a mock TonConnectUI for development scenarios
+   * This is used when the real UI initialization fails
+   */
+  private createMockTonConnectUI(): any {
+    return {
+      connected: false,
+      account: null,
+      connect: async () => {
+        console.log('Mock TonConnectUI: Simulating connection...');
+        return Promise.resolve(true);
+      },
+      disconnect: async () => {
+        console.log('Mock TonConnectUI: Simulating disconnection...');
+        return Promise.resolve(true);
+      },
+      onStatusChange: (callback: any) => {
+        console.log('Mock TonConnectUI: Registered status change callback');
+      },
+      sendTransaction: async (options: any) => {
+        console.log('Mock TonConnectUI: Simulating transaction send', options);
+        return {
+          boc: 'mock_transaction_boc',
+        };
+      },
+      openModal: async () => {
+        console.log('Mock TonConnectUI: Opening modal in mock mode is not supported');
+        return Promise.resolve();
+      },
+      closeModal: () => {
+        console.log('Mock TonConnectUI: Closing modal in mock mode is not supported');
+      }
+    };
+  }
+  
   /**
    * Handle connection status change
    */

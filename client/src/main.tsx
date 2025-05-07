@@ -18,11 +18,11 @@ createRoot(document.getElementById("root")!).render(
     <QueryClientProvider client={queryClient}>
       <ThemeProvider defaultTheme="dark" storageKey="chronos-vault-theme">
         <BlockchainErrorProvider>
-          <BlockchainErrorDisplay />
           <AuthProvider>
             <EthereumProvider>
               <SolanaProvider>
                 <TonProvider>
+                  <BlockchainErrorDisplay />
                   <App />
                   <Toaster />
                 </TonProvider>
