@@ -75,11 +75,11 @@ const explorers: Record<BlockchainType, Record<'mainnet' | 'testnet', ChainExplo
       name: 'TON Testnet Explorer',
       logo: '/assets/logos/ton-explorer.svg',
       baseUrl: 'https://testnet.tonscan.org',
-      getAddressUrl: (address) => `https://testnet.tonscan.org/address/${address}`,
-      getTransactionUrl: (txHash) => `https://testnet.tonscan.org/tx/${txHash}`,
-      getTokenUrl: (tokenAddress) => `https://testnet.tonscan.org/jetton/${tokenAddress}`,
-      getBlockUrl: (blockNumber) => `https://testnet.tonscan.org/block/${blockNumber}`,
-      formatAddress: (address) => address.length > 10 ? `${address.substring(0, 6)}...${address.substring(address.length - 4)}` : address,
+      getAddressUrl: (address: string) => `https://testnet.tonscan.org/address/${address}`,
+      getTransactionUrl: (txHash: string) => `https://testnet.tonscan.org/tx/${txHash}`,
+      getTokenUrl: (tokenAddress: string) => `https://testnet.tonscan.org/jetton/${tokenAddress}`,
+      getBlockUrl: (blockNumber: string | number) => `https://testnet.tonscan.org/block/${blockNumber}`,
+      formatAddress: (address: string) => address.length > 10 ? `${address.substring(0, 6)}...${address.substring(address.length - 4)}` : address,
     }
   }
 };
@@ -111,8 +111,12 @@ export const useChainExplorer = (blockchain: BlockchainType, useTestnet = true) 
   }, [explorer]);
 
   return {
-    explorer,
+    ...explorer,
     getExplorerLink,
-    formatAddress
+    formatAddress,
+    getAddressUrl: explorer.getAddressUrl,
+    getTransactionUrl: explorer.getTransactionUrl,
+    getTokenUrl: explorer.getTokenUrl,
+    getBlockUrl: explorer.getBlockUrl
   };
 };

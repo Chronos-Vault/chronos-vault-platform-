@@ -73,11 +73,33 @@ const getBlockchainColor = (blockchain: BlockchainType): string => {
  */
 const formatDate = (date: Date | null): string => {
   if (!date) return 'N/A';
-  return new Intl.DateTimeFormat('en-US', {
-    year: 'numeric',
-    month: 'short',
-    day: 'numeric'
-  }).format(date);
+  
+  // Handle date string format from API
+  if (typeof date === 'string') {
+    try {
+      const parsedDate = new Date(date);
+      if (isNaN(parsedDate.getTime())) return 'Invalid Date';
+      return new Intl.DateTimeFormat('en-US', {
+        year: 'numeric',
+        month: 'short',
+        day: 'numeric'
+      }).format(parsedDate);
+    } catch (e) {
+      return 'Invalid Date';
+    }
+  }
+  
+  // Handle Date object
+  try {
+    if (isNaN(date.getTime())) return 'Invalid Date';
+    return new Intl.DateTimeFormat('en-US', {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric'
+    }).format(date);
+  } catch (e) {
+    return 'Invalid Date';
+  }
 };
 
 /**
@@ -230,27 +252,35 @@ const VaultExplorer = () => {
   const [activeBlockchain, setActiveBlockchain] = useState<BlockchainType | 'ALL'>('ALL');
   const [activeTab, setActiveTab] = useState('all');
 
+  // Define response types for API endpoints
+  type ApiResponse<T> = {
+    success: boolean;
+    stats?: ExplorerStats;
+    vaults?: VaultInfo[];
+    message?: string;
+  };
+
   // Fetch explorer stats
-  const { data: statsData, isLoading: statsLoading } = useQuery({
+  const { data: statsData, isLoading: statsLoading } = useQuery<ApiResponse<ExplorerStats>>({
     queryKey: ['/api/explorer/stats'],
     retry: 1
   });
 
   // Fetch recent vaults
-  const { data: recentVaultsData, isLoading: recentVaultsLoading } = useQuery({
+  const { data: recentVaultsData, isLoading: recentVaultsLoading } = useQuery<ApiResponse<VaultInfo[]>>({
     queryKey: ['/api/vaults/recent'],
     retry: 1
   });
 
   // Fetch blockchain-specific vaults
-  const { data: blockchainVaultsData, isLoading: blockchainVaultsLoading } = useQuery({
+  const { data: blockchainVaultsData, isLoading: blockchainVaultsLoading } = useQuery<ApiResponse<VaultInfo[]>>({
     queryKey: ['/api/vaults/blockchain', activeBlockchain],
     enabled: activeBlockchain !== 'ALL',
     retry: 1
   });
 
   // Fetch search results
-  const { data: searchResultsData, isLoading: searchResultsLoading, refetch: refetchSearch } = useQuery({
+  const { data: searchResultsData, isLoading: searchResultsLoading, refetch: refetchSearch } = useQuery<ApiResponse<VaultInfo[]>>({
     queryKey: ['/api/vaults/search', searchQuery],
     enabled: false,
     retry: 1
@@ -271,22 +301,25 @@ const VaultExplorer = () => {
     }
   };
 
-  // Extract stats from data
-  const stats: ExplorerStats = statsData?.success ? statsData.stats : {
+  // Default empty stats
+  const defaultStats: ExplorerStats = {
     totalVaults: 0,
     byChain: { ETH: 0, SOL: 0, TON: 0 },
     byStatus: { active: 0, locked: 0, unlocked: 0, pending: 0 },
     totalValue: { ETH: '0 ETH', SOL: '0 SOL', TON: '0 TON' }
   };
 
+  // Extract stats from data
+  const stats: ExplorerStats = statsData?.success && statsData.stats ? statsData.stats : defaultStats;
+
   // Extract vaults from data based on active tab
-  const vaults = (() => {
+  const vaults: VaultInfo[] = (() => {
     if (activeTab === 'search') {
-      return searchResultsData?.success ? searchResultsData.vaults : [];
+      return searchResultsData?.success && searchResultsData.vaults ? searchResultsData.vaults : [];
     } else if (activeTab === 'blockchain' && activeBlockchain !== 'ALL') {
-      return blockchainVaultsData?.success ? blockchainVaultsData.vaults : [];
+      return blockchainVaultsData?.success && blockchainVaultsData.vaults ? blockchainVaultsData.vaults : [];
     } else {
-      return recentVaultsData?.success ? recentVaultsData.vaults : [];
+      return recentVaultsData?.success && recentVaultsData.vaults ? recentVaultsData.vaults : [];
     }
   })();
 
