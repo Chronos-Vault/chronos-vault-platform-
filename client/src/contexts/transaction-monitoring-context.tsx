@@ -15,6 +15,13 @@ import {
   TransactionType,
   SecurityLevel
 } from '@shared/transaction-types';
+import { enhancedCrossChainVerifier } from '../lib/verification/enhanced-cross-chain-verifier';
+import { 
+  transactionIntegrityMonitor, 
+  IntegrityCheckResult, 
+  TransactionAnomaly, 
+  MonitoringStatus 
+} from '../lib/monitoring/transaction-integrity-monitor';
 
 // Verification attempt interface for tracking verification history
 export interface VerificationAttempt {
@@ -62,6 +69,17 @@ interface TransactionContextType {
   // Transaction verification operations
   verifyTransaction: (txId: string) => Promise<boolean>;
   getVerificationAttempts: (correlationId: string) => VerificationAttempt[];
+  
+  // Enhanced cross-chain verification
+  verifyTransactionWithEnhancedVerifier: (txId: string) => Promise<boolean>;
+  getEnhancedVerificationStats: () => any;
+  
+  // Transaction integrity monitoring
+  getTransactionAnomalies: (transactionId?: string) => TransactionAnomaly[];
+  getIntegrityCheckResults: (transactionId?: string) => IntegrityCheckResult[];
+  getIntegrityMonitoringStatus: () => MonitoringStatus;
+  startIntegrityMonitoring: () => boolean;
+  stopIntegrityMonitoring: () => boolean;
   
   // Clear data (mainly for development)
   clearAllTransactions: () => void;
