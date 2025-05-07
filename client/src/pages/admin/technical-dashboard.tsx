@@ -10,7 +10,13 @@ import { Progress } from '@/components/ui/progress';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
-import { Loader2, Shield, Activity, Server, BarChart4, Zap, FileText } from 'lucide-react';
+import { Loader2, Shield, Activity, Server, BarChart4, Zap, FileText, AlertCircle, Clock, Bell } from 'lucide-react';
+
+// Custom components
+import { IncidentMonitor } from '@/components/incident-monitor';
+
+// Types
+import { SystemHealth, Incident, IncidentStatistics } from '@/types/monitoring';
 
 // Types for test results
 interface TestResults {
@@ -57,10 +63,90 @@ interface SecurityTestResults {
   recommendations: { title: string; description: string; }[];
 }
 
+// Types for incident monitoring system
+interface IncidentStatistics {
+  totalIncidents: number;
+  recentIncidents: number;
+  byStatus: Record<string, number>;
+  byType: Record<string, number>;
+  bySeverity: Record<string, number>;
+  averageResolutionTimeMinutes: number;
+}
+
+interface ResponseAction {
+  id: string;
+  incidentId: string;
+  type: string;
+  status: string;
+  description: string;
+  createdAt: string;
+  updatedAt: string;
+  metadata: Record<string, any>;
+  result?: string;
+  completedAt?: string;
+}
+
+interface Incident {
+  id: string;
+  type: string;
+  severity: 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL';
+  status: 'DETECTED' | 'INVESTIGATING' | 'MITIGATING' | 'RESOLVED' | 'CLOSED';
+  description: string;
+  component?: string;
+  detectedAt: string;
+  updatedAt: string;
+  relatedLogs: string[];
+  responseActions: ResponseAction[];
+  metadata?: Record<string, any>;
+}
+
+interface SystemHealth {
+  status: 'OPTIMAL' | 'GOOD' | 'DEGRADED' | 'CRITICAL';
+  lastChecked: string;
+  components: Record<string, ComponentHealth>;
+  metrics: SystemMetrics;
+}
+
+interface ComponentHealth {
+  status: 'OPTIMAL' | 'GOOD' | 'DEGRADED' | 'CRITICAL';
+  latencyMs: number;
+  errorRate: number;
+  lastChecked: string;
+  details?: Record<string, any>;
+}
+
+interface SystemMetrics {
+  vaultOperations: {
+    creationSuccess: number;
+    creationFailed: number;
+    accessSuccess: number;
+    accessFailed: number;
+    totalOperations: number;
+  };
+  crossChainOperations: {
+    verificationSuccess: number;
+    verificationFailed: number;
+    totalOperations: number;
+  };
+  securityMetrics: {
+    criticalAlerts: number;
+    suspiciousActivities: number;
+    authFailures: number;
+  };
+  performanceMetrics: {
+    apiLatencyMs: number;
+    databaseLatencyMs: number;
+    cacheHitRate: number;
+    cpuUtilization: number;
+    memoryUtilization: number;
+  };
+}
+
 export default function TechnicalDashboard() {
   const [activeTab, setActiveTab] = useState('overview');
   const [testInProgress, setTestInProgress] = useState(false);
   const [selectedBlockchain, setSelectedBlockchain] = useState('all');
+  const [incidentFilter, setIncidentFilter] = useState<string[]>(['DETECTED', 'INVESTIGATING', 'MITIGATING']);
   
   // Query to get latest test results
   const { data: testResults, isLoading, error, refetch } = 
@@ -81,6 +167,28 @@ export default function TechnicalDashboard() {
     useQuery<SecurityTestResults>({
       queryKey: ['/api/admin/security-results'],
       enabled: activeTab === 'security' // Only fetch when tab is active
+    });
+    
+  // Queries for incident monitoring system
+  const { data: systemHealth, isLoading: healthLoading, refetch: refetchHealth } = 
+    useQuery<SystemHealth>({
+      queryKey: ['/api/health/status'],
+      enabled: activeTab === 'incidents' || activeTab === 'overview',
+      refetchInterval: activeTab === 'incidents' ? 10000 : false // Auto-refresh every 10 seconds if active
+    });
+    
+  const { data: incidents, isLoading: incidentsLoading, refetch: refetchIncidents } = 
+    useQuery<Incident[]>({
+      queryKey: ['/api/incidents/incidents', { status: incidentFilter }],
+      enabled: activeTab === 'incidents',
+      refetchInterval: activeTab === 'incidents' ? 10000 : false // Auto-refresh every 10 seconds if active
+    });
+    
+  const { data: incidentStats, isLoading: statsLoading, refetch: refetchStats } = 
+    useQuery<IncidentStatistics>({
+      queryKey: ['/api/incidents/statistics'],
+      enabled: activeTab === 'incidents',
+      refetchInterval: activeTab === 'incidents' ? 30000 : false // Auto-refresh every 30 seconds if active
     });
   
   // Mutation to run tests
@@ -468,6 +576,10 @@ export default function TechnicalDashboard() {
             <Server className="h-4 w-4 mr-2" />
             Overview
           </TabsTrigger>
+          <TabsTrigger value="incidents">
+            <AlertCircle className="h-4 w-4 mr-2" />
+            Incident Monitor
+          </TabsTrigger>
           <TabsTrigger value="benchmark">
             <BarChart4 className="h-4 w-4 mr-2" />
             Blockchain Benchmarks
@@ -484,6 +596,10 @@ export default function TechnicalDashboard() {
         
         <TabsContent value="overview">
           {isLoading ? <LoadingState /> : <HealthOverview />}
+        </TabsContent>
+        
+        <TabsContent value="incidents">
+          <IncidentMonitor />
         </TabsContent>
         
         <TabsContent value="benchmark">

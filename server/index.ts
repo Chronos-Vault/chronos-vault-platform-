@@ -16,6 +16,7 @@ const app = express();
 // Middleware
 app.use(cors());
 app.use(bodyParser.json());
+app.use(express.static('public')); // Serve static files from the public directory
 
 // Initialize services
 (async () => {
