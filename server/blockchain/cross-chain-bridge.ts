@@ -1,8 +1,9 @@
 /**
  * Cross-Chain Bridge
  * 
- * This module provides functionality for cross-chain communication and verification
- * between different blockchains in the Chronos Vault ecosystem.
+ * This module provides bridge functionality for cross-chain operations,
+ * allowing vault verification data to be bridged between different blockchains
+ * for enhanced security and redundancy.
  */
 
 import { securityLogger } from '../monitoring/security-logger';
@@ -10,36 +11,36 @@ import { ethersClient } from './ethereum-client';
 import { solanaClient } from './solana-client';
 import { tonClient } from './ton-client';
 import { BlockchainType } from '../../shared/types';
-import { withBlockchainErrorHandling, BlockchainErrorCategory } from './enhanced-error-handling';
 import config from '../config';
+import { 
+  BlockchainError, 
+  BlockchainErrorCategory,
+  createBlockchainError,
+  withBlockchainErrorHandling
+} from './enhanced-error-handling';
 
-export interface BridgeTransactionResult {
+// Status for cross-chain bridge operations
+export type BridgeStatus = 'initiated' | 'pending' | 'completed' | 'failed';
+
+// Result interface for bridge operations
+export interface BridgeResult {
   success: boolean;
-  sourceChain: BlockchainType;
-  targetChain: BlockchainType;
-  sourceTransactionId: string;
-  targetTransactionId?: string;
-  status: 'pending' | 'completed' | 'failed';
+  status: BridgeStatus;
   message: string;
+  sourceTransactionId?: string;
+  targetTransactionId?: string;
   timestamp: number;
 }
 
-export interface CrossChainBridgeRequest {
-  vaultId: string;
-  sourceChain: BlockchainType;
-  targetChain: BlockchainType;
-  data: any;
-  requester: string;
-}
-
-interface BridgeValidationResult {
+// Result interface for cross-chain message verification
+export interface MessageVerificationResult {
   isValid: boolean;
-  signature?: string;
   message: string;
+  verifiedTimestamp?: number;
 }
 
 class CrossChainBridge {
-  private initialized: boolean = false;
+  private initialized = false;
   
   /**
    * Initialize the cross-chain bridge
@@ -52,18 +53,17 @@ class CrossChainBridge {
     try {
       securityLogger.info('Initializing cross-chain bridge');
       
-      // Initialize blockchain clients if needed
+      // Ensure all blockchain clients are initialized
       if (!ethersClient.isInitialized()) {
         await ethersClient.initialize();
-      }
-      
-      if (!solanaClient.isInitialized()) {
-        await solanaClient.initialize();
       }
       
       if (!tonClient.isInitialized()) {
         await tonClient.initialize();
       }
+      
+      // Initialize Solana client if needed
+      await solanaClient.initialize();
       
       this.initialized = true;
       securityLogger.info('Cross-chain bridge initialized successfully');
@@ -79,215 +79,176 @@ class CrossChainBridge {
   isInitialized(): boolean {
     return this.initialized;
   }
-
+  
   /**
-   * Bridge a vault verification from source chain to target chain
+   * Bridge vault verification data between blockchains
    */
   async bridgeVaultVerification(
     vaultId: string,
     sourceChain: BlockchainType,
     targetChain: BlockchainType,
     requester: string
-  ): Promise<BridgeTransactionResult> {
-    securityLogger.info('Bridging vault verification', { vaultId, sourceChain, targetChain, requester });
-    
-    // For development mode, return a simulated result
-    if (config.isDevelopmentMode) {
-      const success = Math.random() > 0.1; // 90% success rate in development
-      
-      return {
-        success,
-        sourceChain,
-        targetChain,
-        sourceTransactionId: `${sourceChain}-tx-${Date.now()}`,
-        targetTransactionId: success ? `${targetChain}-tx-${Date.now()}` : undefined,
-        status: success ? 'completed' : 'failed',
-        message: success 
-          ? `Successfully bridged vault verification for ${vaultId} from ${sourceChain} to ${targetChain}` 
-          : `Failed to bridge vault verification for ${vaultId}`,
-        timestamp: Date.now()
-      };
+  ): Promise<BridgeResult> {
+    if (!this.initialized) {
+      await this.initialize();
     }
     
     try {
-      // In production environment, execute the actual bridge operation
-      return await withBlockchainErrorHandling(
-        async () => {
-          // 1. Verify the vault exists on the source chain
-          const sourceVaultVerified = await this.verifyVaultOnChain(vaultId, sourceChain);
-          
-          if (!sourceVaultVerified.isValid) {
-            return {
-              success: false,
-              sourceChain,
-              targetChain,
-              sourceTransactionId: '',
-              status: 'failed',
-              message: `Vault verification failed on source chain: ${sourceVaultVerified.message}`,
-              timestamp: Date.now()
-            };
-          }
-          
-          // 2. Prepare the cross-chain message with the vault data and signature
-          const bridgeRequest: CrossChainBridgeRequest = {
-            vaultId,
-            sourceChain,
-            targetChain,
-            data: {
-              verificationTimestamp: Date.now(),
-              signature: sourceVaultVerified.signature
-            },
-            requester
-          };
-          
-          // 3. Send the cross-chain message to the target chain
-          const bridgeResult = await this.sendCrossChainMessage(bridgeRequest);
-          
-          return {
-            success: bridgeResult.success,
-            sourceChain,
-            targetChain,
-            sourceTransactionId: `${sourceChain}-tx-${Date.now()}`, // In real implementation, this would be the actual tx ID
-            targetTransactionId: bridgeResult.success ? `${targetChain}-tx-${Date.now()}` : undefined,
-            status: bridgeResult.success ? 'completed' : 'failed',
-            message: bridgeResult.success 
-              ? `Successfully bridged vault verification for ${vaultId} from ${sourceChain} to ${targetChain}` 
-              : `Failed to bridge vault verification: ${bridgeResult.message}`,
-            timestamp: Date.now()
-          };
-        },
-        sourceChain,
-        { vaultId, targetChain, operation: 'bridgeVaultVerification' }
-      );
-    } catch (error) {
-      securityLogger.error('Cross-chain bridge failure', error);
-      
-      return {
-        success: false,
+      securityLogger.info('Bridging vault verification', {
+        vaultId,
         sourceChain,
         targetChain,
-        sourceTransactionId: '',
-        status: 'failed',
-        message: `Cross-chain bridge failure: ${error instanceof Error ? error.message : 'Unknown error'}`,
-        timestamp: Date.now()
-      };
-    }
-  }
-
-  /**
-   * Verify that a vault exists on a specific blockchain
-   */
-  private async verifyVaultOnChain(vaultId: string, chain: BlockchainType): Promise<BridgeValidationResult> {
-    try {
-      switch (chain) {
-        case 'ETH':
-          const ethResult = await ethersClient.verifyVaultExists(vaultId);
-          return {
-            isValid: ethResult.exists,
-            signature: ethResult.exists ? `eth-sig-${Date.now()}` : undefined,
-            message: ethResult.exists 
-              ? `Vault verified on Ethereum` 
-              : `Vault not found on Ethereum`
-          };
-          
-        case 'SOL':
-          const solResult = await solanaClient.verifyVaultExists(vaultId);
-          return {
-            isValid: solResult.exists,
-            signature: solResult.exists ? `sol-sig-${Date.now()}` : undefined,
-            message: solResult.exists 
-              ? `Vault verified on Solana` 
-              : `Vault not found on Solana`
-          };
-          
-        case 'TON':
-          const tonResult = await tonClient.verifyVaultExists(vaultId);
-          return {
-            isValid: tonResult.exists,
-            signature: tonResult.exists ? `ton-sig-${Date.now()}` : undefined,
-            message: tonResult.exists 
-              ? `Vault verified on TON` 
-              : `Vault not found on TON`
-          };
-          
-        default:
-          return {
-            isValid: false,
-            message: `Unsupported blockchain: ${chain}`
-          };
+        requester
+      });
+      
+      // In development mode, we simulate successful bridge operations
+      if (config.isDevelopmentMode) {
+        return this.simulateBridgeOperation(vaultId, sourceChain, targetChain);
       }
-    } catch (error) {
-      securityLogger.error(`Failed to verify vault on ${chain}`, error);
-      return {
-        isValid: false,
-        message: `Error verifying vault: ${error instanceof Error ? error.message : 'Unknown error'}`
-      };
-    }
-  }
-
-  /**
-   * Send a cross-chain message
-   */
-  private async sendCrossChainMessage(request: CrossChainBridgeRequest): Promise<{
-    success: boolean;
-    message: string;
-  }> {
-    const { sourceChain, targetChain, vaultId, data, requester } = request;
-    
-    // In development mode, simulate success with occasional failures
-    if (config.isDevelopmentMode) {
-      const success = Math.random() > 0.1;
-      return {
-        success,
-        message: success 
-          ? 'Cross-chain message sent successfully' 
-          : 'Failed to send cross-chain message'
-      };
-    }
-    
-    try {
-      // In a real implementation, this would interact with the appropriate bridge contract
-      switch (targetChain) {
-        case 'ETH':
-          // Send message to Ethereum bridge contract
-          // This would involve calling a contract method on Ethereum
-          securityLogger.info(`Sending cross-chain message to Ethereum for vault ${vaultId}`);
-          // await ethersClient.sendBridgeMessage(vaultId, sourceChain, data);
-          break;
-          
-        case 'SOL':
-          // Send message to Solana bridge program
-          securityLogger.info(`Sending cross-chain message to Solana for vault ${vaultId}`);
-          // await solanaClient.sendBridgeMessage(vaultId, sourceChain, data);
-          break;
-          
-        case 'TON':
-          // Send message to TON bridge contract
-          securityLogger.info(`Sending cross-chain message to TON for vault ${vaultId}`);
-          // await tonClient.sendBridgeMessage(vaultId, sourceChain, data);
-          break;
-          
-        default:
-          return {
-            success: false,
-            message: `Unsupported target blockchain: ${targetChain}`
-          };
+      
+      // Get source vault data
+      let sourceVaultData: any;
+      let sourceVaultExists = false;
+      
+      // Verify source vault exists
+      if (sourceChain === 'ETH') {
+        const result = await ethersClient.verifyVaultExists(vaultId);
+        sourceVaultExists = result.exists;
+        sourceVaultData = result.vaultData;
+      } else if (sourceChain === 'TON') {
+        const result = await tonClient.verifyVaultExists(vaultId);
+        sourceVaultExists = result.exists;
+        sourceVaultData = result.vaultData;
+      } else if (sourceChain === 'SOL') {
+        const result = await solanaClient.verifyVaultExists(vaultId);
+        sourceVaultExists = result.exists;
+        sourceVaultData = result.vaultData;
+      }
+      
+      if (!sourceVaultExists) {
+        throw createBlockchainError(
+          new Error(`Vault ${vaultId} not found on ${sourceChain}`),
+          sourceChain,
+          BlockchainErrorCategory.VALIDATION,
+          { vaultId, operation: 'bridgeVaultVerification' }
+        );
+      }
+      
+      // Now perform the actual bridging operation
+      let sourceTransactionId: string;
+      let targetTransactionId: string;
+      
+      // Prepare message to be signed and sent
+      const messageToSign = JSON.stringify({
+        type: 'vault_verification',
+        vaultId,
+        sourceChain,
+        timestamp: Date.now(),
+        requester
+      });
+      
+      // Sign message with source chain
+      let signature: string;
+      
+      if (sourceChain === 'ETH') {
+        signature = await ethersClient.signMessage(messageToSign);
+        sourceTransactionId = await ethersClient.sendCrossChainVerification(
+          vaultId, 
+          targetChain, 
+          signature
+        );
+      } else if (sourceChain === 'TON') {
+        signature = await tonClient.signMessage(messageToSign);
+        sourceTransactionId = await tonClient.sendCrossChainVerification(
+          vaultId, 
+          targetChain, 
+          signature
+        );
+      } else if (sourceChain === 'SOL') {
+        signature = await solanaClient.signMessage(messageToSign);
+        sourceTransactionId = await solanaClient.sendCrossChainVerification(
+          vaultId, 
+          targetChain, 
+          signature
+        );
+      } else {
+        throw new Error(`Unsupported source chain: ${sourceChain}`);
+      }
+      
+      // Process on target chain
+      if (targetChain === 'ETH') {
+        targetTransactionId = await ethersClient.receiveCrossChainVerification(
+          vaultId,
+          sourceChain,
+          signature
+        );
+      } else if (targetChain === 'TON') {
+        targetTransactionId = await tonClient.receiveCrossChainVerification(
+          vaultId,
+          sourceChain,
+          signature
+        );
+      } else if (targetChain === 'SOL') {
+        targetTransactionId = await solanaClient.receiveCrossChainVerification(
+          vaultId,
+          sourceChain,
+          signature
+        );
+      } else {
+        throw new Error(`Unsupported target chain: ${targetChain}`);
       }
       
       return {
         success: true,
-        message: `Successfully sent cross-chain message from ${sourceChain} to ${targetChain}`
+        status: 'completed',
+        message: `Successfully bridged vault verification from ${sourceChain} to ${targetChain}`,
+        sourceTransactionId,
+        targetTransactionId,
+        timestamp: Date.now()
       };
     } catch (error) {
-      securityLogger.error(`Failed to send cross-chain message to ${targetChain}`, error);
+      securityLogger.error('Failed to bridge vault verification', error);
       
-      return {
-        success: false,
-        message: `Failed to send cross-chain message: ${error instanceof Error ? error.message : 'Unknown error'}`
-      };
+      if (error instanceof BlockchainError) {
+        throw error;
+      }
+      
+      throw createBlockchainError(
+        error,
+        sourceChain,
+        BlockchainErrorCategory.CROSS_CHAIN,
+        {
+          vaultId,
+          sourceChain,
+          targetChain,
+          requester,
+          operation: 'bridgeVaultVerification'
+        }
+      );
     }
   }
-
+  
+  /**
+   * Simulate a bridge operation for development mode
+   */
+  private simulateBridgeOperation(
+    vaultId: string,
+    sourceChain: BlockchainType,
+    targetChain: BlockchainType
+  ): BridgeResult {
+    const sourceTransactionId = `${sourceChain.toLowerCase()}-bridge-tx-${Date.now()}`;
+    const targetTransactionId = `${targetChain.toLowerCase()}-bridge-tx-${Date.now()}`;
+    
+    return {
+      success: true,
+      status: 'completed',
+      message: `Successfully bridged vault verification from ${sourceChain} to ${targetChain} (simulated)`,
+      sourceTransactionId,
+      targetTransactionId,
+      timestamp: Date.now()
+    };
+  }
+  
   /**
    * Verify a cross-chain message
    */
@@ -296,78 +257,305 @@ class CrossChainBridge {
     sourceChain: BlockchainType,
     targetChain: BlockchainType,
     signature: string
-  ): Promise<{
-    isValid: boolean;
-    message: string;
-  }> {
-    securityLogger.info('Verifying cross-chain message', { vaultId, sourceChain, targetChain });
-    
-    // For development mode, return a simulated result
-    if (config.isDevelopmentMode) {
-      const isValid = Math.random() > 0.1;
-      
-      return {
-        isValid,
-        message: isValid 
-          ? `Successfully verified cross-chain message for ${vaultId} from ${sourceChain} to ${targetChain}` 
-          : `Failed to verify cross-chain message for ${vaultId}`
-      };
+  ): Promise<MessageVerificationResult> {
+    if (!this.initialized) {
+      await this.initialize();
     }
     
     try {
-      // In production environment, verify the signature from the source chain
-      let isValid = false;
-      let verificationMessage = '';
+      securityLogger.info('Verifying cross-chain message', {
+        vaultId,
+        sourceChain,
+        targetChain
+      });
       
-      switch (sourceChain) {
-        case 'ETH':
-          // Verify Ethereum signature
-          isValid = await ethersClient.verifySignature(
-            { vaultId, targetChain }, 
-            signature, 
-            config.blockchainConfig.ethereum.contractAddresses.bridge
-          );
-          verificationMessage = isValid 
-            ? 'Ethereum signature verified' 
-            : 'Invalid Ethereum signature';
-          break;
-          
-        case 'SOL':
-          // Verify Solana signature
-          isValid = await solanaClient.verifySignature(
-            { vaultId, targetChain }, 
-            signature, 
-            config.blockchainConfig.solana.programIds.bridge
-          );
-          verificationMessage = isValid 
-            ? 'Solana signature verified' 
-            : 'Invalid Solana signature';
-          break;
-          
-        case 'TON':
-          // Verify TON signature
-          isValid = await tonClient.verifySignature(
-            { vaultId, targetChain }, 
-            signature, 
-            config.blockchainConfig.ton.contractAddresses.bridge
-          );
-          verificationMessage = isValid 
-            ? 'TON signature verified' 
-            : 'Invalid TON signature';
-          break;
-          
-        default:
-          verificationMessage = `Unsupported source blockchain: ${sourceChain}`;
+      // In development mode, we simulate successful verification
+      if (config.isDevelopmentMode) {
+        return {
+          isValid: true,
+          message: `Cross-chain message verified successfully (simulated)`,
+          verifiedTimestamp: Date.now()
+        };
       }
       
-      return { isValid, message: verificationMessage };
+      // Get the message data from the source chain
+      let messageData: any;
+      let isValid = false;
+      
+      if (sourceChain === 'ETH') {
+        isValid = await ethersClient.verifyCrossChainMessage(
+          vaultId,
+          targetChain,
+          signature
+        );
+      } else if (sourceChain === 'TON') {
+        isValid = await tonClient.verifyCrossChainMessage(
+          vaultId,
+          targetChain,
+          signature
+        );
+      } else if (sourceChain === 'SOL') {
+        isValid = await solanaClient.verifyCrossChainMessage(
+          vaultId,
+          targetChain,
+          signature
+        );
+      } else {
+        throw new Error(`Unsupported source chain: ${sourceChain}`);
+      }
+      
+      if (isValid) {
+        return {
+          isValid: true,
+          message: `Cross-chain message verified successfully`,
+          verifiedTimestamp: Date.now()
+        };
+      } else {
+        return {
+          isValid: false,
+          message: `Cross-chain message verification failed`
+        };
+      }
     } catch (error) {
       securityLogger.error('Failed to verify cross-chain message', error);
       
+      if (error instanceof BlockchainError) {
+        throw error;
+      }
+      
+      throw createBlockchainError(
+        error,
+        sourceChain,
+        BlockchainErrorCategory.CROSS_CHAIN,
+        {
+          vaultId,
+          sourceChain,
+          targetChain,
+          operation: 'verifyCrossChainMessage'
+        }
+      );
+    }
+  }
+  
+  /**
+   * Create a cross-chain verification proof
+   */
+  async createCrossChainProof(
+    vaultId: string,
+    sourceChain: BlockchainType,
+    targetChains: BlockchainType[]
+  ): Promise<{
+    success: boolean;
+    proofs: any[];
+    message: string;
+  }> {
+    if (!this.initialized) {
+      await this.initialize();
+    }
+    
+    try {
+      securityLogger.info('Creating cross-chain verification proof', {
+        vaultId,
+        sourceChain,
+        targetChains
+      });
+      
+      // Simulate proof creation for now
+      const proofs = targetChains.map(targetChain => ({
+        sourceChain,
+        targetChain,
+        vaultId,
+        proof: {
+          signature: `${sourceChain}-to-${targetChain}-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`,
+          timestamp: Date.now(),
+          verificationHash: `0x${Math.random().toString(36).substring(2, 15)}`,
+        }
+      }));
+      
       return {
-        isValid: false,
-        message: `Verification error: ${error instanceof Error ? error.message : 'Unknown error'}`
+        success: true,
+        proofs,
+        message: 'Cross-chain proofs generated successfully'
       };
+    } catch (error) {
+      securityLogger.error('Failed to create cross-chain proof', error);
+      
+      if (error instanceof BlockchainError) {
+        throw error;
+      }
+      
+      throw createBlockchainError(
+        error,
+        sourceChain,
+        BlockchainErrorCategory.CROSS_CHAIN,
+        {
+          vaultId,
+          sourceChain,
+          targetChains,
+          operation: 'createCrossChainProof'
+        }
+      );
+    }
+  }
+  
+  /**
+   * Broadcast a vault action across multiple chains
+   */
+  async broadcastVaultAction(
+    vaultId: string,
+    action: 'create' | 'update' | 'unlock',
+    sourceChain: BlockchainType,
+    targetChains: BlockchainType[],
+    data: any
+  ): Promise<{
+    success: boolean;
+    results: Record<BlockchainType, {
+      success: boolean;
+      transactionId?: string;
+      error?: string;
+    }>;
+    message: string;
+  }> {
+    if (!this.initialized) {
+      await this.initialize();
+    }
+    
+    try {
+      securityLogger.info('Broadcasting vault action across chains', {
+        vaultId,
+        action,
+        sourceChain,
+        targetChains
+      });
+      
+      const results: Record<BlockchainType, {
+        success: boolean;
+        transactionId?: string;
+        error?: string;
+      }> = {} as any;
+      
+      // Process source chain first
+      try {
+        let transactionId: string;
+        
+        if (sourceChain === 'ETH') {
+          if (action === 'create') {
+            transactionId = await ethersClient.createVault(vaultId, data);
+          } else if (action === 'update') {
+            transactionId = await ethersClient.updateVault(vaultId, data);
+          } else if (action === 'unlock') {
+            transactionId = await ethersClient.unlockVault(vaultId);
+          } else {
+            throw new Error(`Unsupported action: ${action}`);
+          }
+        } else if (sourceChain === 'TON') {
+          if (action === 'create') {
+            transactionId = await tonClient.createVault(vaultId, data);
+          } else if (action === 'update') {
+            transactionId = await tonClient.updateVault(vaultId, data);
+          } else if (action === 'unlock') {
+            transactionId = await tonClient.unlockVault(vaultId);
+          } else {
+            throw new Error(`Unsupported action: ${action}`);
+          }
+        } else if (sourceChain === 'SOL') {
+          if (action === 'create') {
+            transactionId = await solanaClient.createVault(vaultId, data);
+          } else if (action === 'update') {
+            transactionId = await solanaClient.updateVault(vaultId, data);
+          } else if (action === 'unlock') {
+            transactionId = await solanaClient.unlockVault(vaultId);
+          } else {
+            throw new Error(`Unsupported action: ${action}`);
+          }
+        } else {
+          throw new Error(`Unsupported source chain: ${sourceChain}`);
+        }
+        
+        results[sourceChain] = {
+          success: true,
+          transactionId
+        };
+      } catch (error) {
+        securityLogger.error(`Failed to perform ${action} on source chain ${sourceChain}`, error);
+        
+        results[sourceChain] = {
+          success: false,
+          error: error instanceof Error ? error.message : 'Unknown error'
+        };
+      }
+      
+      // Process target chains
+      for (const targetChain of targetChains) {
+        try {
+          // Skip if it's the same as source chain
+          if (targetChain === sourceChain) {
+            continue;
+          }
+          
+          // Create a cross-chain message with the action data
+          const bridgeResult = await this.bridgeVaultVerification(
+            vaultId,
+            sourceChain,
+            targetChain,
+            'system'
+          );
+          
+          if (bridgeResult.success) {
+            results[targetChain] = {
+              success: true,
+              transactionId: bridgeResult.targetTransactionId
+            };
+          } else {
+            results[targetChain] = {
+              success: false,
+              error: 'Failed to bridge verification'
+            };
+          }
+        } catch (error) {
+          securityLogger.error(`Failed to bridge to ${targetChain}`, error);
+          
+          results[targetChain] = {
+            success: false,
+            error: error instanceof Error ? error.message : 'Unknown error'
+          };
+        }
+      }
+      
+      // Determine overall success
+      const successCount = Object.values(results).filter(r => r.success).length;
+      const totalCount = Object.keys(results).length;
+      const allSuccess = successCount === totalCount;
+      const majoritySuccess = successCount >= totalCount / 2;
+      
+      return {
+        success: majoritySuccess,
+        results,
+        message: allSuccess 
+          ? `Successfully broadcast ${action} across all chains` 
+          : majoritySuccess 
+            ? `Partially broadcast ${action}, succeeded on ${successCount}/${totalCount} chains` 
+            : `Failed to broadcast ${action} across most chains, only succeeded on ${successCount}/${totalCount}`
+      };
+    } catch (error) {
+      securityLogger.error('Failed to broadcast vault action', error);
+      
+      if (error instanceof BlockchainError) {
+        throw error;
+      }
+      
+      throw createBlockchainError(
+        error,
+        sourceChain,
+        BlockchainErrorCategory.CROSS_CHAIN,
+        {
+          vaultId,
+          action,
+          sourceChain,
+          targetChains,
+          operation: 'broadcastVaultAction'
+        }
+      );
     }
   }
 }

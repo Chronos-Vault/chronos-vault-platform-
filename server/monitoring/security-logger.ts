@@ -1,120 +1,360 @@
 /**
  * Security Logger
  * 
- * This module provides specialized logging for security-related events,
- * including cross-chain verification operations, multi-signature requests,
- * and potential security incidents.
+ * A specialized logger for security events and operations
+ * with additional features like tamper detection and alert triggers.
  */
 
 import config from '../config';
 
+// Security log severity levels
+export enum SecurityLogLevel {
+  INFO = 'INFO',
+  WARNING = 'WARNING',
+  ERROR = 'ERROR',
+  CRITICAL = 'CRITICAL'
+}
+
+// Security event types
+export enum SecurityEventType {
+  AUTH_ATTEMPT = 'AUTH_ATTEMPT',
+  AUTH_SUCCESS = 'AUTH_SUCCESS',
+  AUTH_FAILURE = 'AUTH_FAILURE',
+  VAULT_ACCESS = 'VAULT_ACCESS',
+  VAULT_CREATION = 'VAULT_CREATION',
+  VAULT_MODIFICATION = 'VAULT_MODIFICATION',
+  CROSS_CHAIN_VERIFICATION = 'CROSS_CHAIN_VERIFICATION', 
+  RATE_LIMIT_EXCEEDED = 'RATE_LIMIT_EXCEEDED',
+  SUSPICIOUS_ACTIVITY = 'SUSPICIOUS_ACTIVITY',
+  SYSTEM_ERROR = 'SYSTEM_ERROR'
+}
+
+// Structure of a security log entry
+interface SecurityLogEntry {
+  timestamp: Date;
+  level: SecurityLogLevel;
+  eventType: SecurityEventType;
+  message: string;
+  userId?: string;
+  ip?: string;
+  userAgent?: string;
+  blockchainAddress?: string;
+  vaultId?: string;
+  chainId?: string;
+  metadata?: any;
+  hash?: string; // For tamper detection
+}
+
+/**
+ * Security Logger Class
+ * 
+ * Handles logging of security-related events with support for:
+ * - Multiple severity levels
+ * - Tamper detection via hash chaining
+ * - Alert triggering for critical events
+ */
 class SecurityLogger {
-  private logLevel: 'debug' | 'info' | 'warn' | 'error';
+  private logs: SecurityLogEntry[] = [];
+  private lastLogHash: string = '';
+  private alertThresholds: Map<SecurityEventType, number> = new Map();
+  private eventCounts: Map<SecurityEventType, { count: number, lastReset: Date }> = new Map();
   
   constructor() {
-    this.logLevel = config.isDevelopmentMode ? 'debug' : 'info';
-    console.log('[SecurityLogger] Initialized with log level:', this.logLevel);
+    this.initializeAlertThresholds();
+    this.initializeEventCounts();
+    
+    // Start the periodic counter reset
+    setInterval(() => this.resetEventCounts(), 3600000); // Reset counts every hour
   }
   
-  private formatLogMessage(message: string, data?: any): string {
-    const timestamp = new Date().toISOString();
-    const dataStr = data ? ` | ${JSON.stringify(data)}` : '';
-    return `[${timestamp}] ${message}${dataStr}`;
+  /**
+   * Initialize alert thresholds for different event types
+   */
+  private initializeAlertThresholds(): void {
+    this.alertThresholds.set(SecurityEventType.AUTH_FAILURE, 5); // 5 failed auth attempts
+    this.alertThresholds.set(SecurityEventType.RATE_LIMIT_EXCEEDED, 10); // 10 rate limit events
+    this.alertThresholds.set(SecurityEventType.SUSPICIOUS_ACTIVITY, 3); // 3 suspicious activities
   }
   
-  private shouldLog(level: 'debug' | 'info' | 'warn' | 'error'): boolean {
-    const levels = {
-      debug: 0,
-      info: 1,
-      warn: 2,
-      error: 3
+  /**
+   * Initialize event counters
+   */
+  private initializeEventCounts(): void {
+    Object.values(SecurityEventType).forEach(eventType => {
+      this.eventCounts.set(eventType as SecurityEventType, {
+        count: 0,
+        lastReset: new Date()
+      });
+    });
+  }
+  
+  /**
+   * Reset event counters periodically
+   */
+  private resetEventCounts(): void {
+    for (const [eventType, data] of this.eventCounts.entries()) {
+      data.count = 0;
+      data.lastReset = new Date();
+    }
+    
+    if (config.isDevelopmentMode) {
+      console.log('Security event counters reset');
+    }
+  }
+  
+  /**
+   * Log an informational message
+   */
+  info(message: string, eventType: SecurityEventType, metadata?: any): void {
+    this.log(SecurityLogLevel.INFO, eventType, message, metadata);
+  }
+  
+  /**
+   * Log a warning message
+   */
+  warn(message: string, eventType: SecurityEventType, metadata?: any): void {
+    this.log(SecurityLogLevel.WARNING, eventType, message, metadata);
+  }
+  
+  /**
+   * Log an error message
+   */
+  error(message: string, eventType: SecurityEventType, metadata?: any): void {
+    this.log(SecurityLogLevel.ERROR, eventType, message, metadata);
+  }
+  
+  /**
+   * Log a critical security event (highest severity)
+   */
+  critical(message: string, eventType: SecurityEventType, metadata?: any): void {
+    this.log(SecurityLogLevel.CRITICAL, eventType, message, metadata);
+    this.triggerAlert(eventType, message, metadata);
+  }
+  
+  /**
+   * Internal logging method
+   */
+  private log(level: SecurityLogLevel, eventType: SecurityEventType, message: string, metadata?: any): void {
+    const timestamp = new Date();
+    
+    // Create log entry
+    const logEntry: SecurityLogEntry = {
+      timestamp,
+      level,
+      eventType,
+      message,
+      metadata
     };
     
-    return levels[level] >= levels[this.logLevel];
+    // Add user info if available in metadata
+    if (metadata) {
+      if (metadata.userId) logEntry.userId = metadata.userId;
+      if (metadata.ip) logEntry.ip = metadata.ip;
+      if (metadata.userAgent) logEntry.userAgent = metadata.userAgent;
+      if (metadata.blockchainAddress) logEntry.blockchainAddress = metadata.blockchainAddress;
+      if (metadata.vaultId) logEntry.vaultId = metadata.vaultId;
+      if (metadata.chainId) logEntry.chainId = metadata.chainId;
+    }
+    
+    // Generate hash for tamper detection
+    logEntry.hash = this.generateLogHash(logEntry);
+    
+    // Store the log
+    this.logs.push(logEntry);
+    
+    // Update event counter
+    this.incrementEventCounter(eventType);
+    
+    // Check if we need to trigger an alert based on threshold
+    this.checkAlertThreshold(eventType);
+    
+    // Console output in development mode
+    if (config.isDevelopmentMode) {
+      console.log(`[SECURITY ${level}] [${eventType}] ${message}`);
+      if (metadata) console.log('Metadata:', JSON.stringify(metadata));
+    }
   }
   
   /**
-   * Log debug information
+   * Increment the counter for a specific event type
    */
-  debug(message: string, data?: any): void {
-    if (!this.shouldLog('debug')) return;
+  private incrementEventCounter(eventType: SecurityEventType): void {
+    if (!this.eventCounts.has(eventType)) {
+      this.eventCounts.set(eventType, { count: 0, lastReset: new Date() });
+    }
     
-    console.debug(`[SECURITY:DEBUG] ${this.formatLogMessage(message, data)}`);
+    const data = this.eventCounts.get(eventType)!;
+    data.count++;
   }
   
   /**
-   * Log informational events
+   * Check if an event type has exceeded its alert threshold
    */
-  info(message: string, data?: any): void {
-    if (!this.shouldLog('info')) return;
+  private checkAlertThreshold(eventType: SecurityEventType): void {
+    if (!this.alertThresholds.has(eventType)) return;
     
-    console.info(`[SECURITY:INFO] ${this.formatLogMessage(message, data)}`);
+    const threshold = this.alertThresholds.get(eventType)!;
+    const count = this.eventCounts.get(eventType)!.count;
+    
+    if (count >= threshold) {
+      this.triggerAlert(
+        eventType,
+        `Alert threshold exceeded for ${eventType}: ${count} events`,
+        { threshold, count }
+      );
+      
+      // Reset counter after triggering alert
+      this.eventCounts.get(eventType)!.count = 0;
+    }
   }
   
   /**
-   * Log potential security issues (warnings)
+   * Generate a hash for tamper detection
+   * The hash includes the previous log's hash to create a chain
    */
-  warn(message: string, data?: any): void {
-    if (!this.shouldLog('warn')) return;
+  private generateLogHash(logEntry: SecurityLogEntry): string {
+    // In a real implementation, this would use a secure hashing algorithm
+    // For simplicity, we're creating a basic hash representation
+    const dataString = `${this.lastLogHash}|${logEntry.timestamp.toISOString()}|${logEntry.level}|${logEntry.eventType}|${logEntry.message}`;
+    const hash = Buffer.from(dataString).toString('base64');
     
-    console.warn(`[SECURITY:WARN] ${this.formatLogMessage(message, data)}`);
+    // Store this hash for the next log entry
+    this.lastLogHash = hash;
     
-    // In a production implementation, this would:
-    // 1. Send an alert to security monitoring systems
-    // 2. Store the warning in a security log database
-    // 3. Potentially trigger additional verification steps
+    return hash;
   }
   
   /**
-   * Log security incidents (errors)
+   * Trigger an alert for critical security events
    */
-  error(message: string, error?: any): void {
-    if (!this.shouldLog('error')) return;
+  private triggerAlert(eventType: SecurityEventType, message: string, metadata?: any): void {
+    // In a production system, this would:
+    // 1. Send an email to security admins
+    // 2. Send a webhook to an incident response system
+    // 3. Potentially trigger an automated response
     
-    const errorMessage = error instanceof Error ? error.message : String(error);
-    const stack = error instanceof Error ? error.stack : undefined;
+    console.log(`🚨 SECURITY ALERT: [${eventType}] ${message}`);
+    if (metadata) console.log('Alert metadata:', JSON.stringify(metadata));
     
-    console.error(`[SECURITY:ERROR] ${this.formatLogMessage(message, { error: errorMessage, stack })}`);
-    
-    // In a production implementation, this would:
-    // 1. Send high-priority alerts to security monitoring systems
-    // 2. Store the incident in a security log database
-    // 3. Trigger incident response procedures
+    // Log the alert itself
+    this.logs.push({
+      timestamp: new Date(),
+      level: SecurityLogLevel.CRITICAL,
+      eventType: SecurityEventType.SUSPICIOUS_ACTIVITY,
+      message: `ALERT TRIGGERED: ${message}`,
+      metadata: { originalEventType: eventType, ...metadata },
+      hash: this.lastLogHash
+    });
   }
   
   /**
-   * Log critical security breaches
+   * Verify the integrity of the log chain
+   * Returns true if the log chain is intact, false if tampering is detected
    */
-  critical(message: string, data?: any): void {
-    console.error(`[SECURITY:CRITICAL] ${this.formatLogMessage(message, data)}`);
+  verifyLogIntegrity(): boolean {
+    if (this.logs.length === 0) return true;
     
-    // In a production implementation, this would:
-    // 1. Send immediate alerts to security teams
-    // 2. Trigger automatic lockdown procedures
-    // 3. Store the breach in a security log database
-    // 4. Initiate incident response protocols
+    let previousHash = '';
+    
+    for (let i = 0; i < this.logs.length; i++) {
+      const log = this.logs[i];
+      
+      // Recalculate the hash
+      const dataString = `${previousHash}|${log.timestamp.toISOString()}|${log.level}|${log.eventType}|${log.message}`;
+      const calculatedHash = Buffer.from(dataString).toString('base64');
+      
+      // Compare with stored hash
+      if (log.hash !== calculatedHash) {
+        return false; // Tampering detected
+      }
+      
+      previousHash = log.hash!;
+    }
+    
+    return true;
   }
   
   /**
-   * Log blockchain-specific security events
+   * Get logs filtered by various criteria
    */
-  blockchain(chain: string, message: string, data?: any): void {
-    this.info(`[BLOCKCHAIN:${chain}] ${message}`, data);
+  getLogs(options: {
+    startTime?: Date;
+    endTime?: Date;
+    level?: SecurityLogLevel;
+    eventType?: SecurityEventType;
+    userId?: string;
+    limit?: number;
+  } = {}): SecurityLogEntry[] {
+    let filteredLogs = [...this.logs];
+    
+    if (options.startTime) {
+      filteredLogs = filteredLogs.filter(log => log.timestamp >= options.startTime!);
+    }
+    
+    if (options.endTime) {
+      filteredLogs = filteredLogs.filter(log => log.timestamp <= options.endTime!);
+    }
+    
+    if (options.level) {
+      filteredLogs = filteredLogs.filter(log => log.level === options.level);
+    }
+    
+    if (options.eventType) {
+      filteredLogs = filteredLogs.filter(log => log.eventType === options.eventType);
+    }
+    
+    if (options.userId) {
+      filteredLogs = filteredLogs.filter(log => log.userId === options.userId);
+    }
+    
+    // Sort by timestamp descending (newest first)
+    filteredLogs.sort((a, b) => b.timestamp.getTime() - a.timestamp.getTime());
+    
+    // Apply limit if specified
+    if (options.limit && options.limit > 0) {
+      filteredLogs = filteredLogs.slice(0, options.limit);
+    }
+    
+    return filteredLogs;
   }
   
   /**
-   * Log multi-signature security events
+   * Get aggregated security metrics
    */
-  multiSig(message: string, data?: any): void {
-    this.info(`[MULTISIG] ${message}`, data);
-  }
-  
-  /**
-   * Log zero-knowledge proof events
-   */
-  zkp(message: string, data?: any): void {
-    this.info(`[ZKP] ${message}`, data);
+  getSecurityMetrics(): any {
+    const eventCounts: Record<string, number> = {};
+    const levelCounts: Record<string, number> = {};
+    
+    // Initialize counts
+    Object.values(SecurityEventType).forEach(type => {
+      eventCounts[type] = 0;
+    });
+    
+    Object.values(SecurityLogLevel).forEach(level => {
+      levelCounts[level] = 0;
+    });
+    
+    // Count events
+    this.logs.forEach(log => {
+      eventCounts[log.eventType]++;
+      levelCounts[log.level]++;
+    });
+    
+    // Get recent events (last 24 hours)
+    const oneDayAgo = new Date();
+    oneDayAgo.setDate(oneDayAgo.getDate() - 1);
+    
+    const recentLogs = this.logs.filter(log => log.timestamp >= oneDayAgo);
+    
+    return {
+      totalLogs: this.logs.length,
+      recentLogs: recentLogs.length,
+      byEventType: eventCounts,
+      byLevel: levelCounts,
+      logIntegrityIntact: this.verifyLogIntegrity()
+    };
   }
 }
 
+// Export singleton instance
 export const securityLogger = new SecurityLogger();

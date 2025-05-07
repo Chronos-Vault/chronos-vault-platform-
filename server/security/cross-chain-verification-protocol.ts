@@ -1,409 +1,451 @@
 /**
  * Cross-Chain Verification Protocol
  * 
- * This module provides functionality for verifying vault and transaction data
- * across multiple blockchains, enabling enhanced security through cross-chain validation.
+ * This module provides a comprehensive verification protocol for cross-chain
+ * vault operations, ensuring vault security through multi-chain verification.
+ * It implements the Triple-Chain Security architecture of Chronos Vault.
  */
 
-// Define the cross-chain validator interface
-export interface CrossChainValidator {
-  verify(transactionId: string, options?: any): Promise<any>;
-  deepVerify(transactionId: string, options?: any): Promise<any>;
-  zkVerify(transactionId: string, options?: any): Promise<any>;
-  quantumResistantVerify(transactionId: string, options?: any): Promise<any>;
-}
-
+import { securityLogger } from '../monitoring/security-logger';
 import { ethersClient } from '../blockchain/ethereum-client';
 import { solanaClient } from '../blockchain/solana-client';
 import { tonClient } from '../blockchain/ton-client';
-import { bitcoinClient } from '../blockchain/bitcoin-client';
-import { polygonClient } from '../blockchain/polygon-client';
-import { zeroKnowledgeShield, CompleteProof } from '../privacy/zero-knowledge-shield';
-import { securityLogger } from '../monitoring/security-logger';
-import config from '../config';
 import { BlockchainType } from '../../shared/types';
+import config from '../config';
+import { 
+  BlockchainError, 
+  BlockchainErrorCategory,
+  createBlockchainError,
+  withBlockchainErrorHandling 
+} from '../blockchain/enhanced-error-handling';
+import { crossChainBridge } from '../blockchain/cross-chain-bridge';
+import { bitcoinService } from '../blockchain/bitcoin-service';
 
-interface CrossChainVerificationResult {
+// Interface for verification results
+export interface VerificationResult {
   success: boolean;
-  sourceChain: BlockchainType;
-  targetChains: BlockchainType[];
-  verifiedOn: BlockchainType[];
-  pendingOn: BlockchainType[];
-  failedOn: BlockchainType[];
   message: string;
+  data?: any;
   timestamp: number;
-  proofs?: any[];
 }
 
-interface VerificationOptions {
-  requireAllChains?: boolean;
-  requiredConfirmations?: number;
-  requiredSignatures?: number;
-  timeoutMs?: number;
-  includeProofs?: boolean;
+// Interface for multi-chain verification results
+export interface MultiChainVerificationResult {
+  success: boolean;
+  message: string;
+  chains: Record<BlockchainType, {
+    verified: boolean;
+    confirmations: number;
+    message: string;
+    timestamp: number;
+  }>;
+  overallConfidence: number;
+  timestamp: number;
 }
 
 class CrossChainVerificationProtocol {
-  private validators: { [blockchain: string]: CrossChainValidator } = {};
-
+  private initialized = false;
+  
   /**
-   * Register a blockchain validator
+   * Initialize the verification protocol
    */
-  registerValidator(blockchain: BlockchainType, validator: CrossChainValidator): void {
-    this.validators[blockchain] = validator;
-    securityLogger.info(`Registered validator for ${blockchain}`);
-  }
-
-  /**
-   * Get the appropriate blockchain client
-   */
-  private getClient(blockchain: BlockchainType) {
-    switch (blockchain) {
-      case 'ETH':
-        return ethersClient;
-      case 'SOL':
-        return solanaClient;
-      case 'TON':
-        return tonClient;
-      case 'BTC':
-        return bitcoinClient;
-      case 'POLYGON':
-        return polygonClient;
-      default:
-        throw new Error(`Unsupported blockchain: ${blockchain}`);
+  async initialize(): Promise<void> {
+    if (this.initialized) {
+      return;
+    }
+    
+    try {
+      securityLogger.info('Initializing cross-chain verification protocol');
+      
+      // Initialize blockchain clients
+      if (!ethersClient.isInitialized()) {
+        await ethersClient.initialize();
+      }
+      
+      if (!solanaClient.isInitialized()) {
+        await solanaClient.initialize();
+      }
+      
+      if (!tonClient.isInitialized()) {
+        await tonClient.initialize();
+      }
+      
+      if (!crossChainBridge.isInitialized()) {
+        await crossChainBridge.initialize();
+      }
+      
+      this.initialized = true;
+      securityLogger.info('Cross-chain verification protocol initialized successfully');
+    } catch (error) {
+      securityLogger.error('Failed to initialize cross-chain verification protocol', error);
+      throw error;
     }
   }
   
   /**
-   * Verify a vault exists and is valid across multiple blockchains
+   * Check if the protocol is initialized
+   */
+  isInitialized(): boolean {
+    return this.initialized;
+  }
+  
+  /**
+   * Verify a vault on a specific blockchain
+   */
+  async verifyVaultExists(
+    vaultId: string,
+    blockchain: BlockchainType
+  ): Promise<VerificationResult> {
+    if (!this.initialized) {
+      await this.initialize();
+    }
+    
+    try {
+      securityLogger.info(`Verifying vault ${vaultId} on ${blockchain}`);
+      
+      let exists = false;
+      let confirmations = 0;
+      let owner = '';
+      
+      // Check for vault on the specified blockchain
+      if (blockchain === 'ETH') {
+        const result = await ethersClient.verifyVaultExists(vaultId);
+        exists = result.exists;
+        confirmations = result.confirmations;
+        owner = result.owner;
+      } else if (blockchain === 'SOL') {
+        const result = await solanaClient.verifyVaultExists(vaultId);
+        exists = result.exists;
+        confirmations = result.confirmations;
+        owner = result.owner;
+      } else if (blockchain === 'TON') {
+        const result = await tonClient.verifyVaultExists(vaultId);
+        exists = result.exists;
+        confirmations = result.confirmations;
+        owner = result.owner;
+      } else if (blockchain === 'BTC') {
+        // For Bitcoin, we don't have native vault functionality yet
+        // This is a placeholder for future integration
+        if (config.isDevelopmentMode) {
+          exists = true;
+          confirmations = 6;
+          owner = `btc-dev-owner-${Date.now()}`;
+        } else {
+          throw new Error("Bitcoin vault verification not yet implemented");
+        }
+      } else {
+        throw new Error(`Unsupported blockchain: ${blockchain}`);
+      }
+      
+      if (exists) {
+        return {
+          success: true,
+          message: `Vault ${vaultId} verified on ${blockchain} with ${confirmations} confirmations`,
+          data: {
+            vaultId,
+            blockchain,
+            confirmations,
+            owner
+          },
+          timestamp: Date.now()
+        };
+      } else {
+        return {
+          success: false,
+          message: `Vault ${vaultId} not found on ${blockchain}`,
+          timestamp: Date.now()
+        };
+      }
+    } catch (error) {
+      securityLogger.error(`Failed to verify vault ${vaultId} on ${blockchain}`, error);
+      
+      if (error instanceof BlockchainError) {
+        throw error;
+      }
+      
+      throw createBlockchainError(
+        error,
+        blockchain,
+        BlockchainErrorCategory.VALIDATION,
+        {
+          vaultId,
+          operation: 'verifyVaultExists'
+        }
+      );
+    }
+  }
+  
+  /**
+   * Verify a vault across multiple blockchains
    */
   async verifyVaultAcrossChains(
     vaultId: string,
-    sourceChain: BlockchainType,
-    targetChains: BlockchainType[],
-    options: VerificationOptions = {}
-  ): Promise<CrossChainVerificationResult> {
-    securityLogger.info('Verifying vault across chains', { vaultId, sourceChain, targetChains });
-    
-    const start = Date.now();
-    const verifiedOn: BlockchainType[] = [];
-    const pendingOn: BlockchainType[] = [];
-    const failedOn: BlockchainType[] = [];
-    const proofs: any[] = [];
-    
-    // Default options
-    const {
-      requireAllChains = true,
-      requiredConfirmations = 12,
-      timeoutMs = 30000,
-      includeProofs = false
-    } = options;
-    
-    // In development mode, generate a simulated result
-    if (config.isDevelopmentMode) {
-      // Add the source chain as verified
-      verifiedOn.push(sourceChain);
-      
-      // Randomly verify some target chains
-      for (const chain of targetChains) {
-        const random = Math.random();
-        if (random > 0.7) {
-          pendingOn.push(chain);
-        } else if (random > 0.2) {
-          verifiedOn.push(chain);
-        } else {
-          failedOn.push(chain);
-        }
-      }
-      
-      // If we need ZK proofs, generate them
-      if (includeProofs) {
-        try {
-          const zkProof = await zeroKnowledgeShield.generateCrossChainProof(
-            sourceChain,
-            targetChains,
-            vaultId
-          );
-          
-          // Store the proof if it was successfully generated
-          if (zkProof) {
-            proofs.push(zkProof);
-          }
-        } catch (error) {
-          securityLogger.error('Failed to generate ZK proofs', error);
-        }
-      }
-      
-      const success = requireAllChains
-        ? targetChains.every(chain => verifiedOn.includes(chain))
-        : verifiedOn.length > 0;
-      
-      return {
-        success,
-        sourceChain,
-        targetChains,
-        verifiedOn,
-        pendingOn,
-        failedOn,
-        message: success 
-          ? 'Vault successfully verified across chains' 
-          : 'Vault verification partially failed',
-        timestamp: Date.now(),
-        proofs: includeProofs ? proofs : undefined
-      };
+    primaryChain: BlockchainType,
+    secondaryChains: BlockchainType[]
+  ): Promise<MultiChainVerificationResult> {
+    if (!this.initialized) {
+      await this.initialize();
     }
-    
-    // In a production environment, verify across all chains by checking the vault exists
-    // on each chain and validating its state
     
     try {
-      // 1. First verify on the source chain
-      const sourceClient = this.getClient(sourceChain);
-      if (!sourceClient.isInitialized()) {
-        await sourceClient.initialize();
+      securityLogger.info(`Verifying vault ${vaultId} across chains`, {
+        primaryChain,
+        secondaryChains
+      });
+      
+      // Check primary chain first
+      const primaryResult = await this.verifyVaultExists(vaultId, primaryChain);
+      
+      if (!primaryResult.success) {
+        // If the vault doesn't exist on the primary chain, consider it a failure
+        const results: Record<BlockchainType, any> = {} as any;
+        results[primaryChain] = {
+          verified: false,
+          confirmations: 0,
+          message: `Vault not found on primary chain ${primaryChain}`,
+          timestamp: Date.now()
+        };
+        
+        return {
+          success: false,
+          message: `Vault ${vaultId} not found on primary chain ${primaryChain}`,
+          chains: results,
+          overallConfidence: 0,
+          timestamp: Date.now()
+        };
       }
       
-      // Get the vault data from the source chain
-      let sourceVaultExists = false;
-      try {
-        // Different chains have different verification methods
-        if (sourceChain === 'ETH') {
-          const result = await (sourceClient as any).verifyVaultExists(vaultId);
-          sourceVaultExists = result.exists;
-          if (!sourceVaultExists) {
-            securityLogger.error(`Vault does not exist on source chain ${sourceChain}: ${vaultId}`);
-            failedOn.push(sourceChain);
-          } else {
-            // Check if it has enough confirmations
-            const minConfirmations = options.requiredConfirmations || 
-              config.securityConfig.minConfirmations.ethereum;
-            
-            if (result.confirmations < minConfirmations) {
-              securityLogger.warn(`Vault on ${sourceChain} doesn't have enough confirmations: ${result.confirmations}/${minConfirmations}`);
-              pendingOn.push(sourceChain);
-            } else {
-              verifiedOn.push(sourceChain);
-            }
-          }
-        } else if (sourceChain === 'SOL') {
-          // Solana-specific verification logic
-          const result = await (sourceClient as any).verifyVaultExists(vaultId);
-          sourceVaultExists = result.exists;
-          if (sourceVaultExists) {
-            verifiedOn.push(sourceChain);
-          } else {
-            failedOn.push(sourceChain);
-          }
-        } else if (sourceChain === 'TON') {
-          // TON-specific verification logic
-          const result = await (sourceClient as any).verifyVaultExists(vaultId);
-          sourceVaultExists = result.exists;
-          if (sourceVaultExists) {
-            verifiedOn.push(sourceChain);
-          } else {
-            failedOn.push(sourceChain);
-          }
-        } else {
-          // For other chains, mark as verified for now
-          verifiedOn.push(sourceChain);
-          sourceVaultExists = true;
-        }
-      } catch (error) {
-        securityLogger.error(`Failed to verify on source chain ${sourceChain}`, error);
-        failedOn.push(sourceChain);
-      }
+      // Store the results for each chain
+      const results: Record<BlockchainType, any> = {} as any;
+      results[primaryChain] = {
+        verified: true,
+        confirmations: primaryResult.data.confirmations,
+        message: primaryResult.message,
+        timestamp: primaryResult.timestamp
+      };
       
-      // Only proceed to target chains if the vault exists on the source chain
-      if (sourceVaultExists) {
-        // 2. Verify across all target chains
-        for (const chain of targetChains) {
-          try {
-            const client = this.getClient(chain);
-            if (!client.isInitialized()) {
-              await client.initialize();
-            }
-            
-            // Different verification logic based on chain type
-            if (chain === 'ETH') {
-              // For Ethereum, we can use the cross-chain verification contract
-              const result = await (client as any).verifyVaultCrossChain(vaultId, sourceChain);
-              
-              if (result.verified) {
-                // Check when the verification happened
-                const verificationAge = Date.now() - result.timestamp;
-                if (verificationAge > 86400000) { // More than 24 hours old
-                  securityLogger.warn(`Vault cross-chain verification on ETH is outdated: ${Math.floor(verificationAge / 3600000)} hours old`);
-                  pendingOn.push(chain);
-                } else {
-                  verifiedOn.push(chain);
-                }
-              } else {
-                pendingOn.push(chain);
-              }
-            } else if (chain === 'SOL') {
-              // Solana-specific cross-chain verification
-              try {
-                const result = await (client as any).verifyVaultCrossChain(vaultId, sourceChain);
-                if (result.verified) {
-                  verifiedOn.push(chain);
-                } else {
-                  pendingOn.push(chain);
-                }
-              } catch (error) {
-                securityLogger.error(`Failed to verify on Solana: ${error instanceof Error ? error.message : 'Unknown error'}`);
-                failedOn.push(chain);
-              }
-            } else if (chain === 'TON') {
-              // TON-specific cross-chain verification
-              try {
-                const result = await (client as any).verifyVaultCrossChain(vaultId, sourceChain);
-                if (result.verified) {
-                  verifiedOn.push(chain);
-                } else {
-                  pendingOn.push(chain);
-                }
-              } catch (error) {
-                securityLogger.error(`Failed to verify on TON: ${error instanceof Error ? error.message : 'Unknown error'}`);
-                failedOn.push(chain);
-              }
-            } else {
-              // For other chains (like BTC), just mark as pending for now
-              pendingOn.push(chain);
-            }
-          } catch (error) {
-            securityLogger.error(`Failed to verify on chain ${chain}`, error);
-            failedOn.push(chain);
-          }
-        }
-      }
-      
-      // 3. Generate zero-knowledge proofs if requested
-      if (includeProofs) {
+      // Check secondary chains
+      const chainPromises = secondaryChains.map(async (chain) => {
         try {
-          const zkProof = await zeroKnowledgeShield.generateCrossChainProof(
-            sourceChain,
-            targetChains,
-            vaultId
-          );
-          
-          // Store the proof if it was successfully generated
-          if (zkProof) {
-            proofs.push(zkProof);
+          // For development mode, simulate verification
+          if (config.isDevelopmentMode) {
+            // Simplify by assuming secondary chains match in dev mode
+            results[chain] = {
+              verified: true,
+              confirmations: Math.floor(Math.random() * 30) + 1,
+              message: `Vault ${vaultId} verified on ${chain} in development mode`,
+              timestamp: Date.now()
+            };
+            return;
           }
+          
+          const result = await this.verifyVaultExists(vaultId, chain);
+          results[chain] = {
+            verified: result.success,
+            confirmations: result.success ? result.data.confirmations : 0,
+            message: result.message,
+            timestamp: result.timestamp
+          };
         } catch (error) {
-          securityLogger.error('Failed to generate ZK proofs', error);
+          securityLogger.error(`Error verifying vault on ${chain}`, error);
+          results[chain] = {
+            verified: false,
+            confirmations: 0,
+            message: error instanceof Error ? error.message : "Unknown error",
+            timestamp: Date.now()
+          };
         }
-      }
+      });
       
-      const success = requireAllChains
-        ? targetChains.every(chain => verifiedOn.includes(chain))
-        : verifiedOn.length > 0;
+      // Wait for all chain verifications to complete
+      await Promise.all(chainPromises);
+      
+      // Calculate overall confidence based on verification results
+      const verifiedChains = Object.values(results).filter(r => r.verified).length;
+      const totalChains = Object.keys(results).length;
+      const overallConfidence = totalChains > 0 ? verifiedChains / totalChains : 0;
+      
+      // Determine success based on confidence threshold
+      const confidenceThreshold = config.security.crossChain.verificationThreshold || 0.51; // Default to majority
+      const success = overallConfidence >= confidenceThreshold;
       
       return {
         success,
-        sourceChain,
-        targetChains,
-        verifiedOn,
-        pendingOn,
-        failedOn,
         message: success 
-          ? 'Vault successfully verified across chains' 
-          : 'Vault verification partially failed',
-        timestamp: Date.now(),
-        proofs: includeProofs ? proofs : undefined
-      };
-    } catch (error) {
-      securityLogger.error('Cross-chain verification failed', error);
-      
-      return {
-        success: false,
-        sourceChain,
-        targetChains,
-        verifiedOn,
-        pendingOn,
-        failedOn: [...targetChains], // All chains failed
-        message: `Cross-chain verification failed: ${error instanceof Error ? error.message : 'Unknown error'}`,
-        timestamp: Date.now(),
-        proofs: includeProofs ? proofs : undefined
-      };
-    }
-  }
-  
-  /**
-   * Verify a transaction across multiple blockchains
-   */
-  async verifyTransactionAcrossChains(
-    transactionId: string,
-    sourceChain: BlockchainType,
-    targetChains: BlockchainType[],
-    options: VerificationOptions = {}
-  ): Promise<CrossChainVerificationResult> {
-    securityLogger.info('Verifying transaction across chains', { transactionId, sourceChain, targetChains });
-    
-    // This method would be similar to verifyVaultAcrossChains but for transactions
-    // For now, we'll reuse the same logic with a different log message
-    
-    return this.verifyVaultAcrossChains(transactionId, sourceChain, targetChains, options);
-  }
-  
-  /**
-   * Verify and register a new vault across multiple blockchains
-   */
-  async registerVaultAcrossChains(
-    vaultData: any,
-    sourceChain: BlockchainType,
-    targetChains: BlockchainType[]
-  ): Promise<CrossChainVerificationResult> {
-    securityLogger.info('Registering vault across chains', { sourceChain, targetChains });
-    
-    // In development mode, generate a simulated result
-    if (config.isDevelopmentMode) {
-      const verifiedOn = [sourceChain];
-      const pendingOn: BlockchainType[] = [];
-      const failedOn: BlockchainType[] = [];
-      
-      // Randomly verify some target chains
-      for (const chain of targetChains) {
-        const random = Math.random();
-        if (random > 0.7) {
-          pendingOn.push(chain);
-        } else if (random > 0.2) {
-          verifiedOn.push(chain);
-        } else {
-          failedOn.push(chain);
-        }
-      }
-      
-      const success = verifiedOn.length > targetChains.length / 2;
-      
-      return {
-        success,
-        sourceChain,
-        targetChains,
-        verifiedOn,
-        pendingOn,
-        failedOn,
-        message: success 
-          ? 'Vault successfully registered across chains' 
-          : 'Vault registration partially failed',
+          ? `Vault ${vaultId} verified across ${verifiedChains}/${totalChains} chains` 
+          : `Vault ${vaultId} verification failed on majority of chains`,
+        chains: results,
+        overallConfidence,
         timestamp: Date.now()
       };
+    } catch (error) {
+      securityLogger.error(`Failed to verify vault ${vaultId} across chains`, error);
+      
+      if (error instanceof BlockchainError) {
+        throw error;
+      }
+      
+      throw createBlockchainError(
+        error,
+        primaryChain,
+        BlockchainErrorCategory.CROSS_CHAIN,
+        {
+          vaultId,
+          primaryChain,
+          secondaryChains,
+          operation: 'verifyVaultAcrossChains'
+        }
+      );
+    }
+  }
+  
+  /**
+   * Create cross-chain verification proofs
+   */
+  async createVerificationProofs(
+    vaultId: string,
+    primaryChain: BlockchainType,
+    secondaryChains: BlockchainType[]
+  ): Promise<{
+    success: boolean;
+    proofs: any[];
+    message: string;
+  }> {
+    if (!this.initialized) {
+      await this.initialize();
     }
     
-    // In a production environment, we would actually register the vault on all chains
-    // This would involve creating corresponding vault contracts on each chain
+    try {
+      // Delegate to bridge service for proof creation
+      return await crossChainBridge.createCrossChainProof(
+        vaultId,
+        primaryChain,
+        secondaryChains
+      );
+    } catch (error) {
+      securityLogger.error(`Failed to create verification proofs for vault ${vaultId}`, error);
+      
+      if (error instanceof BlockchainError) {
+        throw error;
+      }
+      
+      throw createBlockchainError(
+        error,
+        primaryChain,
+        BlockchainErrorCategory.CROSS_CHAIN,
+        {
+          vaultId,
+          primaryChain,
+          secondaryChains,
+          operation: 'createVerificationProofs'
+        }
+      );
+    }
+  }
+  
+  /**
+   * Check the full security status of a vault across all chains
+   */
+  async checkVaultSecurityStatus(
+    vaultId: string,
+    primaryChain: BlockchainType
+  ): Promise<{
+    success: boolean;
+    securityLevel: number;
+    riskFactors: string[];
+    verificationResults: MultiChainVerificationResult;
+    recommendations: string[];
+  }> {
+    if (!this.initialized) {
+      await this.initialize();
+    }
     
-    // For now, return a failure as this isn't implemented
-    return {
-      success: false,
-      sourceChain,
-      targetChains,
-      verifiedOn: [],
-      pendingOn: [],
-      failedOn: [...targetChains],
-      message: 'Production vault registration not implemented',
-      timestamp: Date.now()
-    };
+    try {
+      // Define the verification chains
+      const secondaryChains: BlockchainType[] = ['ETH', 'SOL', 'TON'].filter(
+        chain => chain !== primaryChain
+      ) as BlockchainType[];
+      
+      // Verify the vault across chains
+      const verificationResults = await this.verifyVaultAcrossChains(
+        vaultId,
+        primaryChain,
+        secondaryChains
+      );
+      
+      // Analyze security based on verification results
+      const riskFactors: string[] = [];
+      let securityLevel = 3; // Start with highest security
+      
+      // Check verification confidence
+      if (verificationResults.overallConfidence < 1.0) {
+        riskFactors.push('Not all chains have verified the vault');
+        securityLevel = Math.min(securityLevel, 2);
+      }
+      
+      // Check confirmations on primary chain
+      const primaryConfirmations = verificationResults.chains[primaryChain].confirmations;
+      const minConfirmations = config.security.minConfirmations[primaryChain] || 12;
+      
+      if (primaryConfirmations < minConfirmations) {
+        riskFactors.push(`Primary chain has only ${primaryConfirmations}/${minConfirmations} recommended confirmations`);
+        securityLevel = Math.min(securityLevel, 2);
+      }
+      
+      // Check if any secondary chains failed verification
+      const failedChains = secondaryChains.filter(
+        chain => !verificationResults.chains[chain]?.verified
+      );
+      
+      if (failedChains.length > 0) {
+        riskFactors.push(`Verification failed on secondary chains: ${failedChains.join(', ')}`);
+        securityLevel = Math.min(securityLevel, 1);
+      }
+      
+      // Generate recommendations based on risk factors
+      const recommendations: string[] = [];
+      
+      if (riskFactors.length === 0) {
+        recommendations.push('No action needed. Vault has maximum security.');
+      } else {
+        if (failedChains.length > 0) {
+          recommendations.push(`Re-initialize cross-chain verification for ${failedChains.join(', ')}`);
+        }
+        
+        if (primaryConfirmations < minConfirmations) {
+          recommendations.push(`Wait for additional confirmations on ${primaryChain} (currently ${primaryConfirmations}/${minConfirmations})`);
+        }
+        
+        if (verificationResults.overallConfidence < 1.0) {
+          recommendations.push('Verify vault integrity across all chains');
+        }
+      }
+      
+      return {
+        success: verificationResults.success,
+        securityLevel,
+        riskFactors,
+        verificationResults,
+        recommendations
+      };
+    } catch (error) {
+      securityLogger.error(`Failed to check vault security status for ${vaultId}`, error);
+      
+      if (error instanceof BlockchainError) {
+        throw error;
+      }
+      
+      throw createBlockchainError(
+        error,
+        primaryChain,
+        BlockchainErrorCategory.CROSS_CHAIN,
+        {
+          vaultId,
+          primaryChain,
+          operation: 'checkVaultSecurityStatus'
+        }
+      );
+    }
   }
 }
 

@@ -1,293 +1,444 @@
 /**
  * Enhanced Error Handling for Blockchain Operations
  * 
- * This module provides specialized error handling for blockchain operations,
- * including categorization, recovery mechanisms, and detailed logging.
+ * Provides a robust error handling system for blockchain operations with:
+ * - Standardized blockchain error types with contextual information
+ * - Error categorization for intelligent recovery strategies
+ * - Detailed error logging and analysis
+ * - Cross-chain error correlation
  */
 
 import { securityLogger } from '../monitoring/security-logger';
 import { BlockchainType } from '../../shared/types';
 
-// Error categories for blockchain operations
 export enum BlockchainErrorCategory {
-  NETWORK = 'NETWORK',                 // Network connectivity issues
-  VALIDATION = 'VALIDATION',           // Transaction/data validation failures
-  AUTHENTICATION = 'AUTHENTICATION',   // Authentication/authorization failures
-  CONTRACT = 'CONTRACT',               // Smart contract execution errors
-  CROSS_CHAIN = 'CROSS_CHAIN',         // Cross-chain operation failures
-  SIGNATURE = 'SIGNATURE',             // Signature verification failures
-  RPC = 'RPC',                         // RPC endpoint errors
-  UNKNOWN = 'UNKNOWN'                  // Uncategorized errors
+  // Network-related errors (connectivity, timeout, rate limiting)
+  NETWORK = 'NETWORK',
+  
+  // Smart contract errors (execution reverts, gas issues)
+  CONTRACT = 'CONTRACT',
+  
+  // Transaction errors (failed, rejected, invalid)
+  TRANSACTION = 'TRANSACTION',
+  
+  // Validation errors (invalid input, address, signature)
+  VALIDATION = 'VALIDATION',
+  
+  // Cross-chain errors (bridge failure, verification error)
+  CROSS_CHAIN = 'CROSS_CHAIN',
+  
+  // Authentication errors (wallet errors, signature issues)
+  AUTHENTICATION = 'AUTHENTICATION',
+  
+  // Internal errors (client issues, unexpected state)
+  INTERNAL = 'INTERNAL',
+  
+  // Unknown errors (catch-all for unclassified errors)
+  UNKNOWN = 'UNKNOWN'
 }
 
-// Detailed blockchain error structure
-export interface BlockchainError {
-  category: BlockchainErrorCategory;
-  originalError: Error | unknown;
-  message: string;
-  blockchain: BlockchainType;
-  code?: string | number;
-  retryable: boolean;
-  timestamp: number;
-  context?: Record<string, any>;
-}
-
-// Recovery strategies for different error types
 export enum RecoveryStrategy {
-  RETRY,              // Simple retry with backoff
-  ALTERNATE_RPC,      // Try with an alternate RPC endpoint
-  FALLBACK_CHAIN,     // Use a fallback blockchain
-  MANUAL_RESOLUTION,  // Requires manual intervention
-  NONE                // No recovery possible
+  // Retry the operation with the same parameters
+  RETRY = 'RETRY',
+  
+  // Use an alternative chain or pathway to complete the operation
+  FALLBACK_CHAIN = 'FALLBACK_CHAIN',
+  
+  // Operation needs manual intervention from administrators
+  MANUAL_RESOLUTION = 'MANUAL_RESOLUTION',
+  
+  // Abort the operation and notify the user
+  ABORT = 'ABORT',
+  
+  // No recovery action possible or necessary
+  NONE = 'NONE'
+}
+
+export interface BlockchainErrorContext {
+  operation?: string;
+  transactionId?: string;
+  contractAddress?: string;
+  address?: string;
+  functionName?: string;
+  parameters?: Record<string, any>;
+  timestamp?: number;
+  [key: string]: any;
+}
+
+export class BlockchainError extends Error {
+  originalError: Error | unknown;
+  blockchain: BlockchainType;
+  category: BlockchainErrorCategory;
+  context: BlockchainErrorContext;
+  recoveryStrategy?: RecoveryStrategy;
+  correlationId?: string;
+  
+  constructor(
+    originalError: Error | unknown,
+    blockchain: BlockchainType,
+    category: BlockchainErrorCategory,
+    context: BlockchainErrorContext = {},
+    message?: string
+  ) {
+    // Create appropriate error message
+    const errorMessage = message || 
+      (originalError instanceof Error ? originalError.message : 'Blockchain operation failed');
+    
+    super(`[${blockchain}] [${category}] ${errorMessage}`);
+    
+    this.name = 'BlockchainError';
+    this.originalError = originalError;
+    this.blockchain = blockchain;
+    this.category = category;
+    this.context = {
+      ...context,
+      timestamp: context.timestamp || Date.now()
+    };
+    
+    // Generate a correlation ID for tracking related errors across chains
+    this.correlationId = `err-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`;
+    
+    // Determine recovery strategy
+    this.recoveryStrategy = getRecoveryStrategy(this);
+    
+    // Capture stack trace
+    if (Error.captureStackTrace) {
+      Error.captureStackTrace(this, BlockchainError);
+    }
+    
+    // Log the error
+    this.logError();
+  }
+  
+  /**
+   * Log detailed information about this error
+   */
+  private logError(): void {
+    securityLogger.error(`Blockchain error on ${this.blockchain}`, {
+      message: this.message,
+      category: this.category,
+      blockchain: this.blockchain,
+      context: this.context,
+      correlationId: this.correlationId,
+      recoveryStrategy: this.recoveryStrategy,
+      stack: this.stack,
+      originalError: this.originalError instanceof Error ? {
+        name: this.originalError.name,
+        message: this.originalError.message,
+        stack: this.originalError.stack
+      } : this.originalError
+    });
+  }
+  
+  /**
+   * Create a related error on another blockchain with the same correlation ID
+   */
+  createRelatedError(
+    blockchain: BlockchainType,
+    category: BlockchainErrorCategory,
+    context: BlockchainErrorContext = {},
+    message?: string
+  ): BlockchainError {
+    const relatedError = new BlockchainError(
+      this.originalError,
+      blockchain,
+      category,
+      context,
+      message || this.message
+    );
+    
+    // Link the errors by using the same correlation ID
+    relatedError.correlationId = this.correlationId;
+    
+    return relatedError;
+  }
+  
+  /**
+   * Get a user-friendly description of the error
+   */
+  getUserFriendlyMessage(): string {
+    switch (this.category) {
+      case BlockchainErrorCategory.NETWORK:
+        return `Network connection issue with ${this.blockchain} blockchain. Please check your internet connection and try again.`;
+        
+      case BlockchainErrorCategory.CONTRACT:
+        return `Smart contract error on ${this.blockchain} network. The operation could not be completed due to contract restrictions or limitations.`;
+        
+      case BlockchainErrorCategory.TRANSACTION:
+        return `Transaction failed on ${this.blockchain} network. This could be due to insufficient funds, gas issues, or network congestion.`;
+        
+      case BlockchainErrorCategory.VALIDATION:
+        return `Invalid data provided for ${this.blockchain} operation. Please check the information you entered and try again.`;
+        
+      case BlockchainErrorCategory.CROSS_CHAIN:
+        return `Cross-chain operation between ${this.blockchain} and another blockchain failed. The system will try an alternative path.`;
+        
+      case BlockchainErrorCategory.AUTHENTICATION:
+        return `Authentication error with your ${this.blockchain} wallet. Please check your wallet connection and try again.`;
+        
+      case BlockchainErrorCategory.INTERNAL:
+        return `Internal system error while processing ${this.blockchain} operation. Our team has been notified.`;
+        
+      default:
+        return `Error processing your request on ${this.blockchain} network. Please try again later.`;
+    }
+  }
+  
+  /**
+   * Check if the error is transient (temporary) and can be retried
+   */
+  isTransient(): boolean {
+    return this.recoveryStrategy === RecoveryStrategy.RETRY;
+  }
+  
+  /**
+   * Check if this error requires manual intervention
+   */
+  requiresManualIntervention(): boolean {
+    return this.recoveryStrategy === RecoveryStrategy.MANUAL_RESOLUTION;
+  }
 }
 
 /**
- * Create a structured blockchain error
+ * Creates a blockchain error with proper categorization
  */
 export function createBlockchainError(
   error: Error | unknown,
   blockchain: BlockchainType,
-  category: BlockchainErrorCategory = BlockchainErrorCategory.UNKNOWN,
-  context?: Record<string, any>
+  category: BlockchainErrorCategory,
+  context: BlockchainErrorContext = {},
+  message?: string
 ): BlockchainError {
-  let message = 'Unknown blockchain error';
-  let code: string | number | undefined = undefined;
-  let retryable = false;
-  
-  if (error instanceof Error) {
-    message = error.message;
-    
-    // Extract error code if available
-    const anyError = error as any;
-    if (anyError.code) {
-      code = anyError.code;
-    }
-    
-    // Determine if the error is retryable
-    retryable = isRetryableError(error, category);
-  }
-  
-  const blockchainError: BlockchainError = {
-    category,
-    originalError: error,
-    message,
-    blockchain,
-    code,
-    retryable,
-    timestamp: Date.now(),
-    context
-  };
-  
-  // Log the structured error
-  logBlockchainError(blockchainError);
-  
-  return blockchainError;
+  return new BlockchainError(error, blockchain, category, context, message);
 }
 
 /**
- * Determine if an error is retryable
- */
-function isRetryableError(error: Error, category: BlockchainErrorCategory): boolean {
-  // Network errors are generally retryable
-  if (category === BlockchainErrorCategory.NETWORK) {
-    return true;
-  }
-  
-  // RPC errors may be retryable
-  if (category === BlockchainErrorCategory.RPC) {
-    const message = error.message.toLowerCase();
-    
-    // These typically indicate temporary issues
-    if (
-      message.includes('timeout') ||
-      message.includes('rate limit') ||
-      message.includes('too many requests') ||
-      message.includes('server busy') ||
-      message.includes('try again')
-    ) {
-      return true;
-    }
-  }
-  
-  // By default, other categories are not retryable
-  return false;
-}
-
-/**
- * Log a blockchain error with appropriate severity
- */
-function logBlockchainError(error: BlockchainError): void {
-  const logData = {
-    blockchain: error.blockchain,
-    category: error.category,
-    code: error.code,
-    retryable: error.retryable,
-    timestamp: error.timestamp,
-    context: error.context
-  };
-  
-  switch (error.category) {
-    case BlockchainErrorCategory.NETWORK:
-    case BlockchainErrorCategory.RPC:
-      // Network and RPC errors are typically transient
-      securityLogger.warn(`Blockchain error: ${error.message}`, logData);
-      break;
-    
-    case BlockchainErrorCategory.AUTHENTICATION:
-    case BlockchainErrorCategory.CONTRACT:
-    case BlockchainErrorCategory.CROSS_CHAIN:
-    case BlockchainErrorCategory.SIGNATURE:
-      // These may indicate security concerns
-      securityLogger.error(`Blockchain error: ${error.message}`, logData);
-      break;
-    
-    case BlockchainErrorCategory.VALIDATION:
-      // Validation errors need investigation
-      securityLogger.error(`Blockchain validation error: ${error.message}`, logData);
-      break;
-    
-    default:
-      securityLogger.error(`Unspecified blockchain error: ${error.message}`, logData);
-  }
-}
-
-/**
- * Get recommended recovery strategy for an error
+ * Determines the appropriate recovery strategy for a blockchain error
  */
 export function getRecoveryStrategy(error: BlockchainError): RecoveryStrategy {
-  if (!error.retryable) {
-    return RecoveryStrategy.NONE;
-  }
+  // Start with a default strategy based on error category
+  let strategy: RecoveryStrategy;
   
   switch (error.category) {
     case BlockchainErrorCategory.NETWORK:
-      return RecoveryStrategy.RETRY;
-    
-    case BlockchainErrorCategory.RPC:
-      return RecoveryStrategy.ALTERNATE_RPC;
-    
-    case BlockchainErrorCategory.CROSS_CHAIN:
-      return RecoveryStrategy.FALLBACK_CHAIN;
-    
+      // Network errors are usually transient and can be retried
+      strategy = RecoveryStrategy.RETRY;
+      break;
+      
     case BlockchainErrorCategory.CONTRACT:
+      // Contract errors usually need manual review
+      strategy = RecoveryStrategy.MANUAL_RESOLUTION;
+      break;
+      
+    case BlockchainErrorCategory.TRANSACTION:
+      // Transaction errors might be retried with adjusted parameters
+      strategy = RecoveryStrategy.RETRY;
+      break;
+      
     case BlockchainErrorCategory.VALIDATION:
-      // These typically need human review
-      return RecoveryStrategy.MANUAL_RESOLUTION;
-    
+      // Validation errors typically cannot be automatically resolved
+      strategy = RecoveryStrategy.ABORT;
+      break;
+      
+    case BlockchainErrorCategory.CROSS_CHAIN:
+      // Cross-chain errors can try an alternative chain
+      strategy = RecoveryStrategy.FALLBACK_CHAIN;
+      break;
+      
+    case BlockchainErrorCategory.AUTHENTICATION:
+      // Authentication errors typically need user intervention
+      strategy = RecoveryStrategy.ABORT;
+      break;
+      
+    case BlockchainErrorCategory.INTERNAL:
+      // Internal errors need manual review
+      strategy = RecoveryStrategy.MANUAL_RESOLUTION;
+      break;
+      
     default:
-      return RecoveryStrategy.NONE;
+      // Unknown errors are safest to abort
+      strategy = RecoveryStrategy.ABORT;
   }
+  
+  // Further refine strategy based on the specific error
+  if (error.originalError instanceof Error) {
+    const errorMessage = error.originalError.message.toLowerCase();
+    
+    // Refine strategy based on error message patterns
+    if (errorMessage.includes('timeout') || 
+        errorMessage.includes('timed out') || 
+        errorMessage.includes('rate limit')) {
+      return RecoveryStrategy.RETRY;
+    }
+    
+    if (errorMessage.includes('nonce too low') || 
+        errorMessage.includes('replacement transaction underpriced')) {
+      return RecoveryStrategy.RETRY;
+    }
+    
+    if (errorMessage.includes('insufficient funds') || 
+        errorMessage.includes('out of gas')) {
+      return RecoveryStrategy.ABORT;
+    }
+    
+    if (errorMessage.includes('rejected') || 
+        errorMessage.includes('denied')) {
+      return RecoveryStrategy.ABORT;
+    }
+    
+    if (errorMessage.includes('already exists') || 
+        errorMessage.includes('duplicate')) {
+      // Operation may have actually succeeded despite error
+      return RecoveryStrategy.NONE;
+    }
+  }
+  
+  return strategy;
 }
 
 /**
- * Execute a blockchain operation with enhanced error handling
+ * Logs error details and returns a recovery plan object
+ */
+export function handleBlockchainError(
+  error: BlockchainError
+): {
+  strategy: RecoveryStrategy;
+  message: string;
+  shouldAlert: boolean;
+  retryAfter?: number;
+  alternativeChain?: BlockchainType;
+} {
+  // Get the recovery strategy (if not already determined)
+  const strategy = error.recoveryStrategy || getRecoveryStrategy(error);
+  
+  // Record detailed error data for analysis
+  securityLogger.error(`Handling blockchain error: ${error.message}`, {
+    blockchain: error.blockchain,
+    category: error.category,
+    correlationId: error.correlationId,
+    context: error.context,
+    recoveryStrategy: strategy
+  });
+  
+  // Determine if this error should trigger alerts
+  const shouldAlert = [
+    RecoveryStrategy.MANUAL_RESOLUTION,
+    RecoveryStrategy.ABORT
+  ].includes(strategy);
+  
+  // Create a user-friendly message
+  const message = error.getUserFriendlyMessage();
+  
+  // Default retry backoff is 3 seconds
+  const retryAfter = 3000;
+  
+  // Determine alternative chain if needed
+  let alternativeChain: BlockchainType | undefined = undefined;
+  
+  if (strategy === RecoveryStrategy.FALLBACK_CHAIN) {
+    // Choose a fallback chain different from the current one
+    if (error.blockchain === 'ETH') {
+      alternativeChain = 'TON';
+    } else if (error.blockchain === 'TON') {
+      alternativeChain = 'SOL';
+    } else if (error.blockchain === 'SOL') {
+      alternativeChain = 'ETH';
+    }
+  }
+  
+  return {
+    strategy,
+    message,
+    shouldAlert,
+    ...(strategy === RecoveryStrategy.RETRY ? { retryAfter } : {}),
+    ...(alternativeChain ? { alternativeChain } : {})
+  };
+}
+
+/**
+ * Safe wrapper for blockchain operations to catch and handle errors
  */
 export async function withBlockchainErrorHandling<T>(
   operation: () => Promise<T>,
   blockchain: BlockchainType,
-  context?: Record<string, any>,
-  maxRetries: number = 3
+  operationName: string,
+  context: BlockchainErrorContext = {}
 ): Promise<T> {
-  let retryCount = 0;
-  
-  while (true) {
-    try {
-      return await operation();
-    } catch (error) {
-      // Analyze and categorize the error
-      const category = categorizeError(error);
-      const blockchainError = createBlockchainError(error, blockchain, category, context);
+  try {
+    return await operation();
+  } catch (error) {
+    // Categorize the error
+    let category = BlockchainErrorCategory.UNKNOWN;
+    
+    if (error instanceof Error) {
+      const errorMessage = error.message.toLowerCase();
       
-      // If error is not retryable or we've exhausted retries, rethrow
-      if (!blockchainError.retryable || retryCount >= maxRetries) {
-        throw blockchainError;
+      if (errorMessage.includes('network') || 
+          errorMessage.includes('connection') || 
+          errorMessage.includes('timeout')) {
+        category = BlockchainErrorCategory.NETWORK;
+      } else if (errorMessage.includes('contract') || 
+                errorMessage.includes('execution') || 
+                errorMessage.includes('revert')) {
+        category = BlockchainErrorCategory.CONTRACT;
+      } else if (errorMessage.includes('transaction') || 
+                errorMessage.includes('gas') || 
+                errorMessage.includes('fee')) {
+        category = BlockchainErrorCategory.TRANSACTION;
+      } else if (errorMessage.includes('invalid') || 
+                errorMessage.includes('address') || 
+                errorMessage.includes('validate')) {
+        category = BlockchainErrorCategory.VALIDATION;
+      } else if (errorMessage.includes('cross-chain') || 
+                errorMessage.includes('bridge')) {
+        category = BlockchainErrorCategory.CROSS_CHAIN;
+      } else if (errorMessage.includes('wallet') || 
+                errorMessage.includes('sign') || 
+                errorMessage.includes('auth')) {
+        category = BlockchainErrorCategory.AUTHENTICATION;
+      } else if (errorMessage.includes('internal') || 
+                errorMessage.includes('client')) {
+        category = BlockchainErrorCategory.INTERNAL;
       }
-      
-      // Apply an exponential backoff for retries
-      const backoffMs = Math.pow(2, retryCount) * 1000;
-      await new Promise(resolve => setTimeout(resolve, backoffMs));
-      
-      retryCount++;
-      securityLogger.info(`Retrying blockchain operation (${retryCount}/${maxRetries})`, {
-        blockchain,
-        error: blockchainError.message,
-        backoffMs
-      });
     }
+    
+    // Create enhanced blockchain error
+    const blockchainError = createBlockchainError(
+      error,
+      blockchain,
+      category,
+      {
+        operation: operationName,
+        ...context
+      }
+    );
+    
+    // Handle the error based on strategy
+    const recovery = handleBlockchainError(blockchainError);
+    
+    // Implement automatic recovery if possible
+    if (recovery.strategy === RecoveryStrategy.RETRY) {
+      securityLogger.info(`Retrying operation '${operationName}' after error`, {
+        blockchain,
+        retryAfter: recovery.retryAfter
+      });
+      
+      // Wait for retry backoff period
+      await new Promise(resolve => setTimeout(resolve, recovery.retryAfter));
+      
+      // Retry the operation
+      return await withBlockchainErrorHandling(
+        operation,
+        blockchain,
+        operationName,
+        {
+          ...context,
+          retryAttempt: (context.retryAttempt || 0) + 1
+        }
+      );
+    }
+    
+    // Re-throw the enhanced error for caller to handle
+    throw blockchainError;
   }
-}
-
-/**
- * Categorize an error based on its characteristics
- */
-function categorizeError(error: unknown): BlockchainErrorCategory {
-  if (!(error instanceof Error)) {
-    return BlockchainErrorCategory.UNKNOWN;
-  }
-  
-  const message = error.message.toLowerCase();
-  
-  // Check for network errors
-  if (
-    message.includes('network') ||
-    message.includes('connection') ||
-    message.includes('timeout') ||
-    message.includes('unreachable')
-  ) {
-    return BlockchainErrorCategory.NETWORK;
-  }
-  
-  // Check for RPC errors
-  if (
-    message.includes('rpc') ||
-    message.includes('rate limit') ||
-    message.includes('too many requests')
-  ) {
-    return BlockchainErrorCategory.RPC;
-  }
-  
-  // Check for validation errors
-  if (
-    message.includes('invalid') ||
-    message.includes('validation') ||
-    message.includes('format')
-  ) {
-    return BlockchainErrorCategory.VALIDATION;
-  }
-  
-  // Check for contract errors
-  if (
-    message.includes('contract') ||
-    message.includes('execution') ||
-    message.includes('reverted')
-  ) {
-    return BlockchainErrorCategory.CONTRACT;
-  }
-  
-  // Check for auth errors
-  if (
-    message.includes('unauthorized') ||
-    message.includes('forbidden') ||
-    message.includes('permission')
-  ) {
-    return BlockchainErrorCategory.AUTHENTICATION;
-  }
-  
-  // Check for cross-chain errors
-  if (
-    message.includes('cross-chain') ||
-    message.includes('bridge')
-  ) {
-    return BlockchainErrorCategory.CROSS_CHAIN;
-  }
-  
-  // Check for signature errors
-  if (
-    message.includes('signature') ||
-    message.includes('signing')
-  ) {
-    return BlockchainErrorCategory.SIGNATURE;
-  }
-  
-  return BlockchainErrorCategory.UNKNOWN;
 }
