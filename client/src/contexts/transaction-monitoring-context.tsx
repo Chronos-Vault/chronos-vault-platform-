@@ -95,7 +95,7 @@ export const TransactionMonitoringProvider: React.FC<{ children: React.ReactNode
   const solana = useSolana();
   const ton = useTon();
   const bitcoin = useBitcoin();
-  const { isDevelopmentMode } = useDevMode();
+  const { devModeEnabled } = useDevMode();
   
   // State for transactions and groups
   const [transactions, setTransactions] = useState<CrossChainTransaction[]>([]);
@@ -104,6 +104,10 @@ export const TransactionMonitoringProvider: React.FC<{ children: React.ReactNode
   const [isMonitoring, setIsMonitoring] = useState(true);
   const [lastUpdated, setLastUpdated] = useState<number | null>(null);
   const [pollingInterval] = useState(10000); // 10 seconds
+  
+  // State for enhanced verification and monitoring
+  const [enhancedVerificationResults, setEnhancedVerificationResults] = useState<Record<string, any>>({});
+  const [integrityMonitorActive, setIntegrityMonitorActive] = useState(false);
   
   // Helper methods for transaction filtering
   const getTransactionById = useCallback((id: string) => {
@@ -315,7 +319,7 @@ export const TransactionMonitoringProvider: React.FC<{ children: React.ReactNode
     // In a real implementation, we would fetch the specific transaction from the blockchain
     // For this simulation, just update the status
     
-    if (isDevelopmentMode) {
+    if (devModeEnabled) {
       setTransactions(prev => 
         prev.map(tx => {
           if (tx.id === txId) {
@@ -337,7 +341,7 @@ export const TransactionMonitoringProvider: React.FC<{ children: React.ReactNode
     }
     
     return;
-  }, [isDevelopmentMode]);
+  }, [devModeEnabled]);
   
   // Refresh transactions from all chains
   const refreshTransactions = useCallback(async () => {
@@ -346,7 +350,7 @@ export const TransactionMonitoringProvider: React.FC<{ children: React.ReactNode
     // In a real implementation, fetch transactions from all chains
     // For this simulation, add mock data if in development mode
     
-    if (isDevelopmentMode) {
+    if (devModeEnabled) {
       // Generate simulated transactions if we don't have any
       if (transactions.length === 0) {
         const mockTransactions = generateMockTransactions();
@@ -375,7 +379,7 @@ export const TransactionMonitoringProvider: React.FC<{ children: React.ReactNode
     
     setLastUpdated(Date.now());
     return;
-  }, [isDevelopmentMode, transactions]);
+  }, [devModeEnabled, transactions]);
   
   // Get monitoring status
   const getMonitoringStatus = useCallback(() => {
@@ -386,11 +390,120 @@ export const TransactionMonitoringProvider: React.FC<{ children: React.ReactNode
     };
   }, [isMonitoring, lastUpdated, pollingInterval]);
   
+  // Enhanced cross-chain verification methods
+  const verifyTransactionWithEnhancedVerifier = useCallback(async (txId: string): Promise<boolean> => {
+    const tx = transactions.find(t => t.id === txId);
+    if (!tx) return false;
+    
+    try {
+      console.log(`Verifying transaction ${txId} with enhanced cross-chain verifier`);
+      
+      // Execute verification through enhanced verifier
+      const result = await enhancedCrossChainVerifier.verifyTransaction({
+        transactionId: tx.id,
+        correlationId: tx.correlationId || tx.id,
+        sourceNetwork: tx.network,
+        initiatedAt: tx.timestamp,
+        securityLevel: tx.securityLevel as SecurityLevel || 1,
+        requireAllPaths: tx.securityLevel === 3 // Require all paths for highest security level
+      });
+      
+      // Store result for reference
+      setEnhancedVerificationResults(prev => ({
+        ...prev,
+        [txId]: result
+      }));
+      
+      // Update the transaction's verification status based on result
+      if (result.overallResult) {
+        setTransactions(prev => 
+          prev.map(t => {
+            if (t.id === txId) {
+              return {
+                ...t,
+                verificationStatus: 'verified',
+                verificationTimestamp: Date.now()
+              };
+            }
+            return t;
+          })
+        );
+      } else {
+        // If verification failed, update status
+        setTransactions(prev => 
+          prev.map(t => {
+            if (t.id === txId) {
+              return {
+                ...t,
+                verificationStatus: 'failed'
+              };
+            }
+            return t;
+          })
+        );
+      }
+      
+      // Return overall success
+      return result.overallResult;
+    } catch (error) {
+      console.error('Error using enhanced verification:', error);
+      return false;
+    }
+  }, [transactions]);
+  
+  // Get statistics for enhanced verification
+  const getEnhancedVerificationStats = useCallback(() => {
+    return enhancedCrossChainVerifier.getVerificationStats();
+  }, []);
+  
+  // Transaction integrity monitoring integration
+  
+  // Get anomalies for a transaction or all transactions
+  const getTransactionAnomalies = useCallback((transactionId?: string): TransactionAnomaly[] => {
+    return transactionIntegrityMonitor.getAnomalies(transactionId);
+  }, []);
+  
+  // Get integrity check results
+  const getIntegrityCheckResults = useCallback((transactionId?: string): IntegrityCheckResult[] => {
+    if (transactionId) {
+      return transactionIntegrityMonitor.getTransactionIntegrityHistory(transactionId);
+    }
+    return transactionIntegrityMonitor.getIntegrityCheckHistory();
+  }, []);
+  
+  // Get integrity monitoring status
+  const getIntegrityMonitoringStatus = useCallback((): MonitoringStatus => {
+    return transactionIntegrityMonitor.getMonitoringStatus();
+  }, []);
+  
+  // Start integrity monitoring
+  const startIntegrityMonitoring = useCallback((): boolean => {
+    const result = transactionIntegrityMonitor.startMonitoring();
+    setIntegrityMonitorActive(result);
+    return result;
+  }, []);
+  
+  // Stop integrity monitoring
+  const stopIntegrityMonitoring = useCallback((): boolean => {
+    const result = transactionIntegrityMonitor.stopMonitoring();
+    setIntegrityMonitorActive(!result);
+    return result;
+  }, []);
+  
+  // Register transactions with integrity monitor when they change
+  useEffect(() => {
+    // Register all transactions with the integrity monitor
+    transactions.forEach(tx => {
+      transactionIntegrityMonitor.monitorTransaction(tx);
+    });
+  }, [transactions]);
+  
   // Clear all transactions
   const clearAllTransactions = useCallback(() => {
     setTransactions([]);
     setTransactionGroups([]);
     setVerificationAttempts([]);
+    setEnhancedVerificationResults({});
   }, []);
   
   // Set up periodic transaction refresh
@@ -438,7 +551,16 @@ export const TransactionMonitoringProvider: React.FC<{ children: React.ReactNode
     getRelatedTransactions,
     verifyTransaction,
     getVerificationAttempts,
-    clearAllTransactions
+    clearAllTransactions,
+    // Enhanced verification methods
+    verifyTransactionWithEnhancedVerifier,
+    getEnhancedVerificationStats,
+    // Transaction integrity monitoring
+    getTransactionAnomalies,
+    getIntegrityCheckResults,
+    getIntegrityMonitoringStatus,
+    startIntegrityMonitoring,
+    stopIntegrityMonitoring
   };
   
   return (
