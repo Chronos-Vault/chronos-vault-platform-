@@ -194,6 +194,7 @@ router.get('/bridge/verify/:sourceChain/:targetChain/:txHash', async (req: Reque
       });
     }
     
+    // Verify transaction with correct parameter order
     const verificationResult = await crossChainBridge.verifyTransaction(
       txHash,
       sourceChain as BlockchainType,

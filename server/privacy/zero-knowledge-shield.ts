@@ -239,9 +239,13 @@ class ZeroKnowledgeShield {
    */
   async verifyProof(
     proof: ZKProof, 
-    publicInputs: string[],
+    publicInputs: string[] | string,
     proofType: ProofType | string
   ): Promise<boolean> {
+    // Convert the publicInputs to array if it's a string
+    const inputsArray = typeof publicInputs === 'string' 
+      ? [publicInputs] 
+      : publicInputs;
     securityLogger.info(`Verifying ${proofType} proof`);
     
     try {

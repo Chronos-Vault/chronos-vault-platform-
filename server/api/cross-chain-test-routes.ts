@@ -287,7 +287,12 @@ router.post('/cross-chain/verify-zk-proof', async (req: Request, res: Response) 
     
     securityLogger.info('Testing zero-knowledge proof verification');
     
-    const result = await zeroKnowledgeShield.verifyProof(proof, publicInputs, 'VAULT_OWNERSHIP');
+    // With our updated verifyProof method, we can pass either a string or string array
+    const result = await zeroKnowledgeShield.verifyProof(
+      proof, 
+      Array.isArray(publicInputs) ? publicInputs.map(String) : String(publicInputs), 
+      'VAULT_OWNERSHIP'
+    );
     
     return res.json({
       success: true,
