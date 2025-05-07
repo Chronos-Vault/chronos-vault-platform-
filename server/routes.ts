@@ -24,6 +24,7 @@ import zkRouter from "./api/zero-knowledge-routes";
 import { registerExplorerRoutes } from "./api/explorer-routes";
 import { smartContractAuditRouter } from "./api/smart-contract-audit-routes";
 import { smartContractAuditor } from "./security/smart-contract-auditor";
+import { registerCrossChainTestRoutes } from "./api/cross-chain-test-routes";
 
 
 if (!process.env.STRIPE_SECRET_KEY) {
@@ -129,6 +130,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
   
   // Register smart contract audit routes
   app.use('/api/audit', smartContractAuditRouter);
+  
+  // Register cross-chain testing routes
+  registerCrossChainTestRoutes(app);
   
   // Additional direct ZK routes for quick response (fallback)
   app.get('/api/zk/status', (req: Request, res: Response) => {
