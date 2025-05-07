@@ -8,6 +8,7 @@ import { performanceRoutes } from './api/performance-routes';
 import securityLoggerRoutes from './api/security-logger-routes';
 import healthRoutes from './api/health-routes';
 import incidentRoutes from './api/incident-routes';
+import paymentRoutes from './api/payment-routes';
 import { systemHealthMonitor } from './monitoring/system-health-monitor';
 import { incidentResponseSystem } from './monitoring/incident-response';
 
@@ -23,6 +24,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   apiRouter.use('/security', securityLoggerRoutes);
   apiRouter.use('/health', healthRoutes);
   apiRouter.use('/incidents', incidentRoutes);
+  apiRouter.use('/payments', paymentRoutes);
   
   // Simple health check route - lightweight version for quick status checks
   apiRouter.get('/health-check', (_req: Request, res: Response) => {
