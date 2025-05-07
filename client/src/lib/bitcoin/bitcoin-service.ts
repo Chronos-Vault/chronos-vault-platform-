@@ -110,7 +110,7 @@ class BitcoinService {
   // Calculate next halving date: approximately every 4 years
   public getNextHalvingDate(): Date {
     // The latest halving occurred on April 19, 2024
-    const lastHalvingDate = new Date('2024-04-19T00:00:00Z');
+    const lastHalvingDate = new Date('2024-04-19T18:25:00Z');
     
     // Next halving approximately 4 years later
     const nextHalvingDate = new Date(lastHalvingDate);
@@ -140,7 +140,7 @@ class BitcoinService {
   
   // Returns the percentage progress between halvings (0-100)
   public calculateHalvingCycleProgress(): number {
-    const lastHalvingDate = new Date('2024-04-19T00:00:00Z');
+    const lastHalvingDate = new Date('2024-04-19T18:25:00Z');
     const nextHalvingDate = this.getNextHalvingDate();
     const now = new Date();
     
@@ -153,17 +153,17 @@ class BitcoinService {
   // Mocked data for development mode
   private getMockedNetworkStats(): BitcoinNetworkStats {
     return {
-      blockHeight: 840000,
-      hashRate: '587.3',
-      difficulty: '73.35T',
-      nextDifficultyChange: '+2.1%',
+      blockHeight: 845721,
+      hashRate: '612.8',
+      difficulty: '78.43T',
+      nextDifficultyChange: '+3.2%',
       mempool: {
-        count: 37420,
-        size: '54.7',
+        count: 42560,
+        size: '68.3',
         fees: {
-          low: 18,
-          medium: 32,
-          high: 60
+          low: 24,
+          medium: 45,
+          high: 85
         }
       }
     };
@@ -171,8 +171,8 @@ class BitcoinService {
   
   private getMockedPrice(): BitcoinPrice {
     return {
-      usd: 68850.42,
-      usd24hChange: 2.4,
+      usd: 97405.00,
+      usd24hChange: 3.8,
       lastUpdated: new Date()
     };
   }
@@ -181,8 +181,8 @@ class BitcoinService {
     const nextHalvingDate = this.getNextHalvingDate();
     
     return {
-      currentBlock: 840000,
-      blocksUntilHalving: 210000,
+      currentBlock: 845721,
+      blocksUntilHalving: 204279,
       estimatedTimeUntilHalving: nextHalvingDate,
       currentReward: 3.125,
       nextReward: 1.5625,
