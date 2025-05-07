@@ -1,6 +1,6 @@
 import { Connection, Keypair, PublicKey, clusterApiUrl } from '@solana/web3.js';
 import { Buffer } from 'buffer';
-import { SolanaConnectionStatus, SolanaCluster, SolanaWalletInfo } from './solana-types';
+import { SolanaConnectionStatus, SolanaCluster, SolanaWalletInfo } from '../../types/solana-types';
 
 // Re-export the types
 export { SolanaConnectionStatus, SolanaCluster, SolanaWalletInfo };

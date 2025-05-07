@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import { solanaService, SolanaConnectionStatus, SolanaWalletInfo, SolanaCluster } from '../lib/solana/solana-service';
+import { solanaService } from '../lib/solana/solana-service';
+import { SolanaConnectionStatus, SolanaWalletInfo, SolanaCluster } from '../types/solana-types';
 
 interface SolanaWallet {
   name: string;
