@@ -39,11 +39,11 @@ smartContractAuditRouter.post('/contract', async (req: Request, res: Response) =
     );
     
     res.json(result);
-  } catch (error) {
+  } catch (error: any) {
     console.error('Error auditing contract:', error);
     res.status(500).json({
       error: 'Failed to audit contract',
-      message: error.message
+      message: error.message || 'Unknown error occurred'
     });
   }
 });
@@ -109,11 +109,11 @@ smartContractAuditRouter.get('/contract/:auditId', async (req: Request, res: Res
     };
     
     res.json(result);
-  } catch (error) {
+  } catch (error: any) {
     console.error('Error retrieving audit result:', error);
     res.status(500).json({
       error: 'Failed to retrieve audit result',
-      message: error.message
+      message: error.message || 'Unknown error occurred'
     });
   }
 });
@@ -159,11 +159,11 @@ smartContractAuditRouter.get('/stats', async (_req: Request, res: Response) => {
     };
     
     res.json(stats);
-  } catch (error) {
+  } catch (error: any) {
     console.error('Error retrieving audit statistics:', error);
     res.status(500).json({
       error: 'Failed to retrieve audit statistics',
-      message: error.message
+      message: error.message || 'Unknown error occurred'
     });
   }
 });

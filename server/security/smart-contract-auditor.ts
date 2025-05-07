@@ -267,7 +267,7 @@ export class SmartContractAuditorService {
       }
       
       return result;
-    } catch (error) {
+    } catch (error: any) {
       console.error(`[SmartContractAuditor] Error during audit:`, error);
       
       // Create a partial result with error information
@@ -292,7 +292,7 @@ export class SmartContractAuditorService {
           remediated: 0
         },
         recommendations: [
-          'Audit failed due to error: ' + error.message,
+          'Audit failed due to error: ' + (error.message || 'Unknown error'),
           'Ensure source code and bytecode are available for analysis',
           'Check network connectivity for cross-chain verification'
         ]
@@ -411,10 +411,12 @@ export class SmartContractAuditorService {
     // In this implementation, we'll simulate the verification process
     
     // Check contract attestations across chains
-    const attestations: Record<BlockchainType, boolean> = {
+    const attestations: Record<string, boolean> = {
       'ETH': true,
       'SOL': contract.blockchain !== 'SOL', // Simulating a verification issue on non-Solana contracts
-      'TON': contract.blockchain !== 'TON'  // Simulating a verification issue on non-TON contracts
+      'TON': contract.blockchain !== 'TON',  // Simulating a verification issue on non-TON contracts
+      'POLYGON': true,
+      'BTC': true
     };
     
     // Detect inconsistencies across chains

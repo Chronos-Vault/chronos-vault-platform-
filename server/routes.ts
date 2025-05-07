@@ -22,6 +22,8 @@ import { arweaveStorageService } from "./storage/arweave-storage-service";
 import securityVerificationRoutes from "./api/security-verification-routes";
 import zkRouter from "./api/zero-knowledge-routes";
 import { registerExplorerRoutes } from "./api/explorer-routes";
+import { smartContractAuditRouter } from "./api/smart-contract-audit-routes";
+import { smartContractAuditor } from "./security/smart-contract-auditor";
 
 
 if (!process.env.STRIPE_SECRET_KEY) {
@@ -124,6 +126,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
   
   // Register blockchain explorer routes for multi-chain vault tracking
   registerExplorerRoutes(app);
+  
+  // Register smart contract audit routes
+  app.use('/api/audit', smartContractAuditRouter);
   
   // Additional direct ZK routes for quick response (fallback)
   app.get('/api/zk/status', (req: Request, res: Response) => {
