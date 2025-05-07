@@ -25,32 +25,52 @@ class TonConnector {
         }
       });
       
-      // Initialize TonConnectUI
-      const manifestUrl = `${window.location.origin}/tonconnect-manifest.json`;
-      console.log('Initializing TonConnectUI with manifest URL:', manifestUrl);
+      // Check if window has global tonConnectUI instance to avoid duplicate creation
+      const existingTonConnectUI = (window as any).__tonConnectUIInstance;
       
-      this.tonConnectUI = new TonConnectUI({
-        manifestUrl,
-        buttonRootId: 'ton-connect-button'
-      });
-      
-      // Check if wallet is already connected
-      this.isConnected = !!this.tonConnectUI.connected;
-      
-      if (this.isConnected) {
+      if (existingTonConnectUI) {
+        console.log('TON Connect UI elements already defined, reusing existing instance');
+        this.tonConnectUI = existingTonConnectUI;
+      } else {
         try {
-          const walletInfo = this.tonConnectUI.wallet;
-          this.walletAddress = walletInfo?.account.address || null;
+          // Initialize TonConnectUI
+          const manifestUrl = `${window.location.origin}/tonconnect-manifest.json`;
+          console.log('Initializing TonConnectUI with manifest URL:', manifestUrl);
+          
+          // Create new instance
+          this.tonConnectUI = new TonConnectUI({
+            manifestUrl,
+            buttonRootId: 'ton-connect-button'
+          });
+          
+          // Store as global instance
+          (window as any).__tonConnectUIInstance = this.tonConnectUI;
         } catch (error) {
-          console.error('Error getting wallet info:', error);
+          console.warn('Could not create new TonConnectUI, using fallback:', error);
+          // Handle as gracefully as possible
         }
       }
       
-      // Add listeners
-      this.tonConnectUI.onStatusChange((wallet) => {
-        this.isConnected = !!wallet;
-        this.walletAddress = wallet?.account.address || null;
-      });
+      // Only continue with the rest if we have a valid instance
+      if (this.tonConnectUI) {
+        // Check if wallet is already connected
+        this.isConnected = !!this.tonConnectUI.connected;
+        
+        if (this.isConnected) {
+          try {
+            const walletInfo = this.tonConnectUI.wallet;
+            this.walletAddress = walletInfo?.account.address || null;
+          } catch (error) {
+            console.error('Error getting wallet info:', error);
+          }
+        }
+        
+        // Add listeners
+        this.tonConnectUI.onStatusChange((wallet) => {
+          this.isConnected = !!wallet;
+          this.walletAddress = wallet?.account.address || null;
+        });
+      }
       
       console.log('TON service successfully initialized');
       console.log('Attempting to restore TON wallet session...');
