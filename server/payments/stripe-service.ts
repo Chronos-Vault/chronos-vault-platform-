@@ -80,7 +80,7 @@ class StripeService {
         },
       });
     } catch (error) {
-      securityLogger.error('Failed to create payment intent', error);
+      securityLogger.error('Failed to create payment intent', SecurityEventType.SYSTEM_ERROR, { errorDetails: String(error) });
       throw new Error(`Failed to create payment intent: ${error instanceof Error ? error.message : 'Unknown error'}`);
     }
   }
@@ -106,7 +106,7 @@ class StripeService {
 
       return await stripe.subscriptions.create(subscriptionParams);
     } catch (error) {
-      securityLogger.error('Failed to create subscription', error);
+      securityLogger.error('Failed to create subscription', SecurityEventType.SYSTEM_ERROR, { errorDetails: String(error) });
       throw new Error(`Failed to create subscription: ${error instanceof Error ? error.message : 'Unknown error'}`);
     }
   }
@@ -118,7 +118,7 @@ class StripeService {
     try {
       return await stripe.subscriptions.cancel(subscriptionId);
     } catch (error) {
-      securityLogger.error('Failed to cancel subscription', error);
+      securityLogger.error('Failed to cancel subscription', SecurityEventType.SYSTEM_ERROR, { errorDetails: String(error) });
       throw new Error(`Failed to cancel subscription: ${error instanceof Error ? error.message : 'Unknown error'}`);
     }
   }
@@ -130,7 +130,7 @@ class StripeService {
     try {
       return await stripe.subscriptions.retrieve(subscriptionId);
     } catch (error) {
-      securityLogger.error('Failed to retrieve subscription', error);
+      securityLogger.error('Failed to retrieve subscription', SecurityEventType.SYSTEM_ERROR, { errorDetails: String(error) });
       throw new Error(`Failed to retrieve subscription: ${error instanceof Error ? error.message : 'Unknown error'}`);
     }
   }
@@ -140,7 +140,7 @@ class StripeService {
    */
   async handleWebhookEvent(event: Stripe.Event): Promise<{ success: boolean; message: string }> {
     try {
-      securityLogger.info('Processing Stripe webhook event', { type: event.type });
+      securityLogger.info('Processing Stripe webhook event', SecurityEventType.SYSTEM_ERROR, { type: event.type });
 
       switch (event.type) {
         case 'invoice.payment_succeeded':
@@ -162,7 +162,7 @@ class StripeService {
           return { success: true, message: `Unhandled event type: ${event.type}` };
       }
     } catch (error) {
-      securityLogger.error('Failed to process webhook event', error);
+      securityLogger.error('Failed to process webhook event', SecurityEventType.SYSTEM_ERROR, { errorDetails: String(error) });
       return { 
         success: false, 
         message: `Error processing webhook: ${error instanceof Error ? error.message : 'Unknown error'}` 
@@ -175,9 +175,9 @@ class StripeService {
    */
   private async handleInvoicePaymentSucceeded(invoice: Stripe.Invoice): Promise<{ success: boolean; message: string }> {
     // In a real implementation, this would update the user's subscription status
-    securityLogger.info('Invoice payment succeeded', { 
+    securityLogger.info('Invoice payment succeeded', SecurityEventType.VAULT_MODIFICATION, { 
       invoiceId: invoice.id, 
-      customerId: invoice.customer, 
+      customerId: String(invoice.customer), 
       amount: invoice.amount_paid 
     });
     
@@ -189,9 +189,9 @@ class StripeService {
    */
   private async handleInvoicePaymentFailed(invoice: Stripe.Invoice): Promise<{ success: boolean; message: string }> {
     // In a real implementation, this would update the user's subscription status
-    securityLogger.warn('Invoice payment failed', { 
+    securityLogger.warn('Invoice payment failed', SecurityEventType.VAULT_OPERATION_FAILED, { 
       invoiceId: invoice.id, 
-      customerId: invoice.customer, 
+      customerId: String(invoice.customer), 
       amount: invoice.amount_due 
     });
     
@@ -203,9 +203,9 @@ class StripeService {
    */
   private async handleSubscriptionCreated(subscription: Stripe.Subscription): Promise<{ success: boolean; message: string }> {
     // In a real implementation, this would update the user's subscription status
-    securityLogger.info('Subscription created', { 
+    securityLogger.info('Subscription created', SecurityEventType.VAULT_MODIFICATION, { 
       subscriptionId: subscription.id, 
-      customerId: subscription.customer, 
+      customerId: String(subscription.customer), 
       status: subscription.status 
     });
     
