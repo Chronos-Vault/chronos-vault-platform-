@@ -1,31 +1,16 @@
 /**
- * Solana types for Chronos Vault
+ * @deprecated DEPRECATED: This file is kept for backward compatibility but should not be used.
+ * Import Solana types from 'solana-common.ts' instead.
  */
 
-/**
- * Solana connection status
- */
-export enum SolanaConnectionStatus {
-  CONNECTED = 'connected',
-  CONNECTING = 'connecting',
-  DISCONNECTED = 'disconnected',
-  ERROR = 'error'
-}
+import { 
+  SolanaConnectionStatus, 
+  SolanaCluster, 
+  SolanaWalletInfo 
+} from './solana-common';
 
-/**
- * Solana network cluster
- */
-export enum SolanaCluster {
-  MAINNET = 'mainnet-beta',
-  DEVNET = 'devnet',
-  TESTNET = 'testnet'
-}
-
-/**
- * Solana wallet information
- */
-export interface SolanaWalletInfo {
-  address: string;
-  balance: number;
-  network: string;
-}
+export { 
+  SolanaConnectionStatus, 
+  SolanaCluster, 
+  SolanaWalletInfo 
+};

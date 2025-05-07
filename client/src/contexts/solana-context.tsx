@@ -1,11 +1,6 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { solanaService } from '../lib/solana/solana-service';
-import { SolanaConnectionStatus, SolanaWalletInfo, SolanaCluster } from '../types/blockchain';
-
-interface SolanaWallet {
-  name: string;
-  adapter: any;
-}
+import { SolanaConnectionStatus, SolanaWalletInfo, SolanaCluster, SolanaWallet } from '../types/solana-common';
 
 interface SolanaContextType {
   isConnected: boolean;

@@ -1,9 +1,9 @@
 import { Connection, Keypair, PublicKey, clusterApiUrl } from '@solana/web3.js';
 import { Buffer } from 'buffer';
-import { SolanaConnectionStatus, SolanaCluster, SolanaWalletInfo } from '../../types/blockchain';
+import { SolanaConnectionStatus, SolanaCluster, SolanaWalletInfo, SolanaWallet } from '../../types/solana-common';
 
 // Re-export the types
-export { SolanaConnectionStatus, SolanaCluster, SolanaWalletInfo };
+export { SolanaConnectionStatus, SolanaCluster, SolanaWalletInfo, SolanaWallet };
 
 /**
  * Solana Service for Chronos Vault
@@ -250,7 +250,7 @@ class SolanaService {
   /**
    * Get available wallets
    */
-  getAvailableWallets(): Array<{ name: string; adapter: any }> {
+  getAvailableWallets(): Array<SolanaWallet> {
     // In a real implementation, this would return actual wallet options
     return [
       { name: 'Phantom', adapter: {} },
