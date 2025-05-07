@@ -66,7 +66,7 @@ securityRouter.post('/verify-transaction', async (req: Request, res: Response) =
     // Transform the result for the API response
     const response = {
       success: verificationResult.success,
-      method: verificationResult.method,
+      verificationType: 'CROSS_CHAIN_VERIFICATION', // Adding verification type instead of method
       sourceChain: verificationResult.sourceChain,
       targetChains: verificationResult.targetChains,
       verifiedOn: verificationResult.verifiedOn,
@@ -83,9 +83,10 @@ securityRouter.post('/verify-transaction', async (req: Request, res: Response) =
     res.json(response);
   } catch (error) {
     console.error('Error verifying transaction:', error);
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
     res.status(500).json({ 
       error: 'Verification failed', 
-      message: error.message 
+      message: errorMessage 
     });
   }
 });
@@ -141,7 +142,7 @@ securityRouter.post('/create-multisig-request', async (req: Request, res: Respon
         blockchain: sourceChain as BlockchainType, 
         address: creatorId // Using creatorId as address
       },
-      ...(secondaryChains || []).map(chain => ({
+      ...(secondaryChains || []).map((chain: string) => ({
         id: `${creatorId}-${chain}`,
         blockchain: chain as BlockchainType,
         address: creatorId
@@ -161,9 +162,10 @@ securityRouter.post('/create-multisig-request', async (req: Request, res: Respon
     res.json(request);
   } catch (error) {
     console.error('Error creating multi-signature request:', error);
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
     res.status(500).json({ 
       error: 'Failed to create multi-signature request', 
-      message: error.message 
+      message: errorMessage 
     });
   }
 });
@@ -194,9 +196,10 @@ securityRouter.get('/multisig-status/:requestId', async (req: Request, res: Resp
     res.json(status);
   } catch (error) {
     console.error('Error getting multi-signature status:', error);
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
     res.status(500).json({ 
       error: 'Failed to get multi-signature status', 
-      message: error.message 
+      message: errorMessage 
     });
   }
 });
@@ -239,9 +242,10 @@ securityRouter.post('/submit-signature', async (req: Request, res: Response) => 
     res.json(result);
   } catch (error) {
     console.error('Error submitting signature:', error);
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
     res.status(500).json({ 
       error: 'Failed to submit signature', 
-      message: error.message 
+      message: errorMessage 
     });
   }
 });
@@ -276,9 +280,10 @@ securityRouter.get('/generate-zk-proof/:requestId', async (req: Request, res: Re
     res.json({ requestId, zkProof });
   } catch (error) {
     console.error('Error generating ZK proof:', error);
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
     res.status(500).json({ 
       error: 'Failed to generate ZK proof', 
-      message: error.message 
+      message: errorMessage 
     });
   }
 });
