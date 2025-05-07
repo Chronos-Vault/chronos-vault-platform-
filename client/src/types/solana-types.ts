@@ -2,12 +2,12 @@
  * Solana types for Chronos Vault
  */
 
-// Import and re-export from solana.ts to maintain compatibility with both import paths
+// Import and re-export from blockchain.ts to maintain compatibility with both import paths
 import {
   SolanaConnectionStatus,
   SolanaCluster,
   SolanaWalletInfo
-} from './solana';
+} from './blockchain';
 
 export {
   SolanaConnectionStatus,
