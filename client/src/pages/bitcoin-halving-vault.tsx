@@ -62,7 +62,8 @@ export default function BitcoinHalvingVaultPage() {
           </Alert>
         )}
         
-        {!isAuthenticated && !devModeEnabled ? (
+        {/* Show vault creation form if authenticated OR in dev mode */}
+        {(isAuthenticated || devModeEnabled) ? (
           <div className="mt-10">
             <Card className="bg-gradient-to-br from-orange-50 to-amber-50 dark:from-orange-950/30 dark:to-amber-950/30 border-orange-200 dark:border-orange-800/70 shadow-lg overflow-hidden">
               <CardHeader>
