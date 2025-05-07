@@ -3,6 +3,7 @@ import { AlertCircle, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { useDevMode } from './dev-mode-context';
+import { useTon } from './ton-context';
 
 export type BlockchainChain = 'Ethereum' | 'Solana' | 'TON' | 'Bitcoin';
 
@@ -91,26 +92,63 @@ export const BlockchainErrorDisplay: React.FC = () => {
   const { devModeEnabled } = useDevMode();
   const [retrying, setRetrying] = useState<Record<string, boolean>>({});
 
+  // Get the TON context hooks 
+  const { retryTonConnection, manualRetryInProgress } = useTon();
+
   if (errors.length === 0) {
     return null;
   }
-
+  
   // Handle retry for a specific blockchain
   const handleRetry = async (chain: BlockchainChain, index: number) => {
+    // If already retrying (from context state), don't trigger another retry
+    if (retrying[chain]) return;
+    
     // Set retrying state for this chain
     setRetrying(prev => ({ ...prev, [chain]: true }));
     
     // Log retry attempt
     console.log(`Attempting to reconnect to ${chain}...`);
     
-    // Wait a moment to simulate reconnection attempt
-    await new Promise(resolve => setTimeout(resolve, 1500));
-    
-    // Clear all errors for this chain (this would trigger reconnection attempt in respective providers)
-    clearChainErrors(chain);
-    
-    // Reset retrying state
-    setRetrying(prev => ({ ...prev, [chain]: false }));
+    try {
+      // Call the appropriate retry function based on the blockchain
+      let success = false;
+      
+      if (chain === 'TON') {
+        // Use the TON context's retry functionality
+        success = await retryTonConnection();
+      } else if (chain === 'Ethereum') {
+        // Ethereum retry logic would go here
+        // For now we'll just simulate a retry
+        await new Promise(resolve => setTimeout(resolve, 1500));
+        clearChainErrors(chain);
+        success = true;
+      } else if (chain === 'Solana') {
+        // Solana retry logic would go here
+        // For now we'll just simulate a retry
+        await new Promise(resolve => setTimeout(resolve, 1500));
+        clearChainErrors(chain);
+        success = true;
+      } else if (chain === 'Bitcoin') {
+        // Bitcoin retry logic would go here
+        // For now we'll just simulate a retry
+        await new Promise(resolve => setTimeout(resolve, 1500));
+        clearChainErrors(chain);
+        success = true;
+      }
+      
+      console.log(`${chain} reconnection attempt ${success ? 'succeeded' : 'failed'}`);
+      
+      // If not successful, we'll leave the error in place to allow for another retry
+      if (success) {
+        clearChainErrors(chain);
+      }
+    } catch (error) {
+      console.error(`Error during ${chain} retry:`, error);
+    } finally {
+      // Always reset our local retrying state
+      setRetrying(prev => ({ ...prev, [chain]: false }));
+    }
   };
   
   // Group errors by blockchain
@@ -126,7 +164,8 @@ export const BlockchainErrorDisplay: React.FC = () => {
     <div className="fixed bottom-4 right-4 z-50 flex flex-col gap-3 max-w-md">
       {Object.entries(errorsByChain).map(([chain, chainErrors]) => {
         const isCritical = chainErrors.some(err => err.critical);
-        const isRetrying = retrying[chain] || false;
+        // Check both our local retrying state and the blockchain context's retry state
+        const isRetrying = retrying[chain] || (chain === 'TON' && manualRetryInProgress);
         
         return (
           <Alert
