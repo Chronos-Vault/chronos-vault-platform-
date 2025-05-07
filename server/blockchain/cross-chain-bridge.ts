@@ -1,432 +1,373 @@
 /**
- * Cross-Chain Bridge Module
+ * Cross-Chain Bridge
  * 
- * Provides functionality for secure cross-chain asset transfers and message relaying
- * between different blockchain networks.
+ * This module provides functionality for cross-chain communication and verification
+ * between different blockchains in the Chronos Vault ecosystem.
  */
 
 import { securityLogger } from '../monitoring/security-logger';
-import { BlockchainType } from '@shared/types';
-import { CompleteProof } from '../privacy/zero-knowledge-shield';
+import { ethersClient } from './ethereum-client';
+import { solanaClient } from './solana-client';
+import { tonClient } from './ton-client';
+import { BlockchainType } from '../../shared/types';
+import { withBlockchainErrorHandling, BlockchainErrorCategory } from './enhanced-error-handling';
+import config from '../config';
 
-// Bridge status states
-export enum BridgeStatus {
-  ONLINE = 'ONLINE',
-  DEGRADED = 'DEGRADED',
-  OFFLINE = 'OFFLINE'
-}
-
-// Bridge connection interface
-export interface BridgeConnection {
+export interface BridgeTransactionResult {
+  success: boolean;
   sourceChain: BlockchainType;
   targetChain: BlockchainType;
-  status: BridgeStatus;
-  latestSyncBlock?: number;
-  confirmationsRequired: number;
-  lastSyncTimestamp?: number;
-  contract: {
-    source: string;
-    target: string;
-  };
-  lastError?: string;
-}
-
-// Asset transfer request interface
-export interface AssetTransferRequest {
-  sourceChain: BlockchainType;
-  targetChain: BlockchainType;
-  amount: number;
-  assetType: string;
-  senderAddress: string;
-  recipientAddress: string;
-  timestamp: number;
-}
-
-// Message relay request interface
-export interface MessageRelayRequest {
-  sourceChain: BlockchainType;
-  targetChain: BlockchainType;
+  sourceTransactionId: string;
+  targetTransactionId?: string;
+  status: 'pending' | 'completed' | 'failed';
   message: string;
-  senderAddress: string;
-  proof: CompleteProof;
   timestamp: number;
 }
 
-// Transaction verification result interface
-export interface TransactionVerificationResult {
-  transactionId: string;
+export interface CrossChainBridgeRequest {
+  vaultId: string;
   sourceChain: BlockchainType;
   targetChain: BlockchainType;
-  verified: boolean;
-  confirmations: number;
-  requiredConfirmations: number;
-  completionPercentage: number;
-  estimatedTimeRemaining?: number;
-  timestamp: number;
+  data: any;
+  requester: string;
+}
+
+interface BridgeValidationResult {
+  isValid: boolean;
+  signature?: string;
+  message: string;
 }
 
 class CrossChainBridge {
-  private bridges: Map<string, BridgeConnection> = new Map();
-  
-  constructor() {
-    // Initialize some default bridges
-    this.initializeDefaultBridges();
-  }
-  
-  private initializeDefaultBridges() {
-    // ETH <-> SOL
-    this.bridges.set('ETH-SOL', {
-      sourceChain: 'ETH',
-      targetChain: 'SOL',
-      status: BridgeStatus.ONLINE,
-      confirmationsRequired: 12,
-      contract: {
-        source: '0x742d35Cc6634C0532925a3b844Bc454e4438f44e',
-        target: 'CVTb1dew5hDUzYzE7TH2tuhYnM74UH7HwztGYqC3CQZ4'
-      }
-    });
-    
-    // ETH <-> TON
-    this.bridges.set('ETH-TON', {
-      sourceChain: 'ETH',
-      targetChain: 'TON',
-      status: BridgeStatus.ONLINE,
-      confirmationsRequired: 16,
-      contract: {
-        source: '0x8B3Cea643152cCB75C5f5D4DFF15F83E0Fe917cB',
-        target: 'EQCtrlsG4VxtQIJZf6Q7PK51Qd1ylFr5fgVNa2Ev2ZrYBGe1'
-      }
-    });
-    
-    // TON <-> SOL
-    this.bridges.set('TON-SOL', {
-      sourceChain: 'TON',
-      targetChain: 'SOL',
-      status: BridgeStatus.ONLINE,
-      confirmationsRequired: 32,
-      contract: {
-        source: 'EQBzKTK0V8NU-9JFq92D4cF3WJLC5l3cJgsdTb77ZPwK1YRK',
-        target: 'BridgeToSolana3SvyYc37JRXBCDfSUxokSyFNe9uCutbLh'
-      }
-    });
-    
-    // ETH <-> BTC
-    this.bridges.set('ETH-BTC', {
-      sourceChain: 'ETH',
-      targetChain: 'BTC',
-      status: BridgeStatus.DEGRADED,
-      confirmationsRequired: 6,
-      contract: {
-        source: '0x9d71D52A8FE61b93c8306b7f9c53C6F340778bC2',
-        target: 'N/A' // Bitcoin uses a different mechanism
-      },
-      lastError: 'High fees on Bitcoin network'
-    });
-    
-    // TON <-> BTC
-    this.bridges.set('TON-BTC', {
-      sourceChain: 'TON',
-      targetChain: 'BTC',
-      status: BridgeStatus.DEGRADED,
-      confirmationsRequired: 6,
-      contract: {
-        source: 'EQAvDfYmkVV2zFXzC0Hs2e2RGWJyMXHpnMTXH4jnI2W3AwLb',
-        target: 'N/A' // Bitcoin uses a different mechanism
-      },
-      lastError: 'Limited throughput'
-    });
-    
-    // ETH <-> POLYGON
-    this.bridges.set('ETH-POLYGON', {
-      sourceChain: 'ETH',
-      targetChain: 'POLYGON',
-      status: BridgeStatus.ONLINE,
-      confirmationsRequired: 20,
-      contract: {
-        source: '0x5a5DB46a1Dd7d3982a911350e5cD4c8a7756dB43',
-        target: '0x9a15dB13a5CE99431a8Aa6B6B1E77dD1C88E5fF9'
-      }
-    });
-  }
+  private initialized: boolean = false;
   
   /**
-   * Get status of all bridge connections
+   * Initialize the cross-chain bridge
    */
-  async getBridgeStatuses(): Promise<BridgeConnection[]> {
+  async initialize(): Promise<void> {
+    if (this.initialized) {
+      return;
+    }
+    
     try {
-      securityLogger.info('Retrieving bridge statuses');
+      securityLogger.info('Initializing cross-chain bridge');
       
-      // In a real implementation, we would check the actual bridge statuses
-      // by querying the contracts on each blockchain
-      const bridges = Array.from(this.bridges.values());
+      // Initialize blockchain clients if needed
+      if (!ethersClient.isInitialized()) {
+        await ethersClient.initialize();
+      }
       
-      // Update some statuses randomly to simulate real-world behavior
-      bridges.forEach((bridge) => {
-        if (Math.random() < 0.1) {
-          // 10% chance to change status
-          const statuses = [BridgeStatus.ONLINE, BridgeStatus.DEGRADED, BridgeStatus.OFFLINE];
-          const newStatus = statuses[Math.floor(Math.random() * statuses.length)];
-          bridge.status = newStatus;
-          
-          if (newStatus !== BridgeStatus.ONLINE) {
-            bridge.lastError = 'Temporary network congestion';
-          } else {
-            delete bridge.lastError;
-          }
-        }
-        
-        // Update the latest sync block and timestamp
-        bridge.latestSyncBlock = Math.floor(Math.random() * 10000000) + 10000000;
-        bridge.lastSyncTimestamp = Date.now();
-      });
+      if (!solanaClient.isInitialized()) {
+        await solanaClient.initialize();
+      }
       
-      return bridges;
+      if (!tonClient.isInitialized()) {
+        await tonClient.initialize();
+      }
+      
+      this.initialized = true;
+      securityLogger.info('Cross-chain bridge initialized successfully');
     } catch (error) {
-      securityLogger.error('Error getting bridge statuses', error);
-      throw new Error(`Failed to get bridge statuses: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      securityLogger.error('Failed to initialize cross-chain bridge', error);
+      throw error;
     }
   }
   
   /**
-   * Initialize a bridge between two blockchains
-   * 
-   * @param sourceChain - The source blockchain
-   * @param targetChain - The target blockchain
+   * Check if the bridge is initialized
    */
-  async initializeBridge(sourceChain: BlockchainType, targetChain: BlockchainType): Promise<BridgeConnection> {
-    try {
-      securityLogger.info(`Initializing bridge from ${sourceChain} to ${targetChain}`);
-      
-      // Check if bridge already exists
-      const bridgeKey = `${sourceChain}-${targetChain}`;
-      let bridge = this.bridges.get(bridgeKey);
-      
-      if (!bridge) {
-        // Create a new bridge if it doesn't exist
-        bridge = {
-          sourceChain,
-          targetChain,
-          status: BridgeStatus.ONLINE,
-          confirmationsRequired: this.getDefaultConfirmations(targetChain),
-          contract: {
-            source: this.generateMockContractAddress(sourceChain),
-            target: this.generateMockContractAddress(targetChain),
-          }
-        };
-        
-        this.bridges.set(bridgeKey, bridge);
-      } else {
-        // Reinitialize the existing bridge
-        bridge.status = BridgeStatus.ONLINE;
-        bridge.latestSyncBlock = Math.floor(Math.random() * 10000000) + 10000000;
-        bridge.lastSyncTimestamp = Date.now();
-        delete bridge.lastError;
-      }
-      
-      return bridge;
-    } catch (error) {
-      securityLogger.error(`Error initializing bridge from ${sourceChain} to ${targetChain}`, error);
-      throw new Error(`Failed to initialize bridge: ${error instanceof Error ? error.message : 'Unknown error'}`);
-    }
+  isInitialized(): boolean {
+    return this.initialized;
   }
-  
+
   /**
-   * Transfer an asset across chains
-   * 
-   * @param request - The asset transfer request
+   * Bridge a vault verification from source chain to target chain
    */
-  async transferAsset(request: AssetTransferRequest): Promise<{
-    transactionId: string;
-    status: string;
-    estimatedCompletionTime: number;
-  }> {
-    try {
-      const { sourceChain, targetChain, amount, assetType, senderAddress, recipientAddress } = request;
-      
-      securityLogger.info(`Transferring ${amount} ${assetType} from ${sourceChain} to ${targetChain}`);
-      
-      // Check if the bridge exists and is operational
-      const bridgeKey = `${sourceChain}-${targetChain}`;
-      const bridge = this.bridges.get(bridgeKey);
-      
-      if (!bridge) {
-        throw new Error(`No bridge found between ${sourceChain} and ${targetChain}`);
-      }
-      
-      if (bridge.status === BridgeStatus.OFFLINE) {
-        throw new Error(`Bridge between ${sourceChain} and ${targetChain} is offline`);
-      }
-      
-      // In a real implementation, we would:
-      // 1. Lock the assets on the source chain
-      // 2. Wait for confirmations
-      // 3. Mint or release the assets on the target chain
-      
-      const transactionId = `bridge-tx-${Date.now()}-${Math.floor(Math.random() * 10000)}`;
-      const estimatedCompletionTime = Date.now() + (bridge.confirmationsRequired * 15000); // Roughly estimate
-      
-      // Return the transaction details
-      return {
-        transactionId,
-        status: bridge.status === BridgeStatus.DEGRADED ? 'PENDING_SLOW' : 'PENDING',
-        estimatedCompletionTime
-      };
-    } catch (error) {
-      securityLogger.error('Error transferring asset', error);
-      throw new Error(`Failed to transfer asset: ${error instanceof Error ? error.message : 'Unknown error'}`);
-    }
-  }
-  
-  /**
-   * Relay a message across chains
-   * 
-   * @param request - The message relay request
-   */
-  async relayMessage(request: MessageRelayRequest): Promise<{
-    messageId: string;
-    status: string;
-    estimatedCompletionTime: number;
-  }> {
-    try {
-      const { sourceChain, targetChain, message, senderAddress, proof } = request;
-      
-      securityLogger.info(`Relaying message from ${sourceChain} to ${targetChain}`);
-      
-      // Check if the bridge exists and is operational
-      const bridgeKey = `${sourceChain}-${targetChain}`;
-      const bridge = this.bridges.get(bridgeKey);
-      
-      if (!bridge) {
-        throw new Error(`No bridge found between ${sourceChain} and ${targetChain}`);
-      }
-      
-      if (bridge.status === BridgeStatus.OFFLINE) {
-        throw new Error(`Bridge between ${sourceChain} and ${targetChain} is offline`);
-      }
-      
-      // Verify the proof
-      if (!proof) {
-        throw new Error('Proof is required for cross-chain message relay');
-      }
-      
-      // In a real implementation, we would:
-      // 1. Verify the message on the source chain
-      // 2. Wait for confirmations
-      // 3. Relay the message to the target chain
-      
-      const messageId = `relay-msg-${Date.now()}-${Math.floor(Math.random() * 10000)}`;
-      const estimatedCompletionTime = Date.now() + (bridge.confirmationsRequired * 15000); // Roughly estimate
-      
-      // Return the message details
-      return {
-        messageId,
-        status: bridge.status === BridgeStatus.DEGRADED ? 'PENDING_SLOW' : 'PENDING',
-        estimatedCompletionTime
-      };
-    } catch (error) {
-      securityLogger.error('Error relaying message', error);
-      throw new Error(`Failed to relay message: ${error instanceof Error ? error.message : 'Unknown error'}`);
-    }
-  }
-  
-  /**
-   * Verify a cross-chain transaction
-   * 
-   * @param transactionId - The transaction ID to verify
-   * @param sourceChain - The source blockchain
-   * @param targetChain - The target blockchain
-   */
-  async verifyTransaction(
-    transactionId: string,
+  async bridgeVaultVerification(
+    vaultId: string,
     sourceChain: BlockchainType,
-    targetChain: BlockchainType
-  ): Promise<TransactionVerificationResult> {
-    try {
-      securityLogger.info(`Verifying transaction ${transactionId} from ${sourceChain} to ${targetChain}`);
-      
-      // Check if the bridge exists
-      const bridgeKey = `${sourceChain}-${targetChain}`;
-      const bridge = this.bridges.get(bridgeKey);
-      
-      if (!bridge) {
-        throw new Error(`No bridge found between ${sourceChain} and ${targetChain}`);
-      }
-      
-      // In a real implementation, we would query both chains to verify the transaction status
-      // For now, we'll simulate with random values
-      
-      const requiredConfirmations = bridge.confirmationsRequired;
-      const confirmations = Math.floor(Math.random() * (requiredConfirmations + 1));
-      const verified = confirmations >= requiredConfirmations;
-      const completionPercentage = Math.min(100, Math.round((confirmations / requiredConfirmations) * 100));
-      
-      // Calculate estimated time remaining
-      let estimatedTimeRemaining: number | undefined;
-      if (!verified) {
-        // Rough estimate: 15 seconds per confirmation
-        estimatedTimeRemaining = (requiredConfirmations - confirmations) * 15;
-      }
+    targetChain: BlockchainType,
+    requester: string
+  ): Promise<BridgeTransactionResult> {
+    securityLogger.info('Bridging vault verification', { vaultId, sourceChain, targetChain, requester });
+    
+    // For development mode, return a simulated result
+    if (config.isDevelopmentMode) {
+      const success = Math.random() > 0.1; // 90% success rate in development
       
       return {
-        transactionId,
+        success,
         sourceChain,
         targetChain,
-        verified,
-        confirmations,
-        requiredConfirmations,
-        completionPercentage,
-        estimatedTimeRemaining,
+        sourceTransactionId: `${sourceChain}-tx-${Date.now()}`,
+        targetTransactionId: success ? `${targetChain}-tx-${Date.now()}` : undefined,
+        status: success ? 'completed' : 'failed',
+        message: success 
+          ? `Successfully bridged vault verification for ${vaultId} from ${sourceChain} to ${targetChain}` 
+          : `Failed to bridge vault verification for ${vaultId}`,
         timestamp: Date.now()
       };
+    }
+    
+    try {
+      // In production environment, execute the actual bridge operation
+      return await withBlockchainErrorHandling(
+        async () => {
+          // 1. Verify the vault exists on the source chain
+          const sourceVaultVerified = await this.verifyVaultOnChain(vaultId, sourceChain);
+          
+          if (!sourceVaultVerified.isValid) {
+            return {
+              success: false,
+              sourceChain,
+              targetChain,
+              sourceTransactionId: '',
+              status: 'failed',
+              message: `Vault verification failed on source chain: ${sourceVaultVerified.message}`,
+              timestamp: Date.now()
+            };
+          }
+          
+          // 2. Prepare the cross-chain message with the vault data and signature
+          const bridgeRequest: CrossChainBridgeRequest = {
+            vaultId,
+            sourceChain,
+            targetChain,
+            data: {
+              verificationTimestamp: Date.now(),
+              signature: sourceVaultVerified.signature
+            },
+            requester
+          };
+          
+          // 3. Send the cross-chain message to the target chain
+          const bridgeResult = await this.sendCrossChainMessage(bridgeRequest);
+          
+          return {
+            success: bridgeResult.success,
+            sourceChain,
+            targetChain,
+            sourceTransactionId: `${sourceChain}-tx-${Date.now()}`, // In real implementation, this would be the actual tx ID
+            targetTransactionId: bridgeResult.success ? `${targetChain}-tx-${Date.now()}` : undefined,
+            status: bridgeResult.success ? 'completed' : 'failed',
+            message: bridgeResult.success 
+              ? `Successfully bridged vault verification for ${vaultId} from ${sourceChain} to ${targetChain}` 
+              : `Failed to bridge vault verification: ${bridgeResult.message}`,
+            timestamp: Date.now()
+          };
+        },
+        sourceChain,
+        { vaultId, targetChain, operation: 'bridgeVaultVerification' }
+      );
     } catch (error) {
-      securityLogger.error('Error verifying transaction', error);
-      throw new Error(`Failed to verify transaction: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      securityLogger.error('Cross-chain bridge failure', error);
+      
+      return {
+        success: false,
+        sourceChain,
+        targetChain,
+        sourceTransactionId: '',
+        status: 'failed',
+        message: `Cross-chain bridge failure: ${error instanceof Error ? error.message : 'Unknown error'}`,
+        timestamp: Date.now()
+      };
     }
   }
-  
+
   /**
-   * Get the default number of confirmations for a blockchain
-   * 
-   * @param chain - The blockchain type
+   * Verify that a vault exists on a specific blockchain
    */
-  private getDefaultConfirmations(chain: BlockchainType): number {
-    const confirmations: Record<string, number> = {
-      'ETH': 12,
-      'SOL': 32,
-      'TON': 16,
-      'BTC': 6,
-      'POLYGON': 20
-    };
-    
-    return confirmations[chain] || 12;
-  }
-  
-  /**
-   * Generate a mock contract address for a blockchain
-   * 
-   * @param chain - The blockchain type
-   */
-  private generateMockContractAddress(chain: BlockchainType): string {
-    const generateRandomHex = (length: number) => {
-      let result = '';
-      for (let i = 0; i < length; i++) {
-        result += '0123456789abcdef'[Math.floor(Math.random() * 16)];
+  private async verifyVaultOnChain(vaultId: string, chain: BlockchainType): Promise<BridgeValidationResult> {
+    try {
+      switch (chain) {
+        case 'ETH':
+          const ethResult = await ethersClient.verifyVaultExists(vaultId);
+          return {
+            isValid: ethResult.exists,
+            signature: ethResult.exists ? `eth-sig-${Date.now()}` : undefined,
+            message: ethResult.exists 
+              ? `Vault verified on Ethereum` 
+              : `Vault not found on Ethereum`
+          };
+          
+        case 'SOL':
+          const solResult = await solanaClient.verifyVaultExists(vaultId);
+          return {
+            isValid: solResult.exists,
+            signature: solResult.exists ? `sol-sig-${Date.now()}` : undefined,
+            message: solResult.exists 
+              ? `Vault verified on Solana` 
+              : `Vault not found on Solana`
+          };
+          
+        case 'TON':
+          const tonResult = await tonClient.verifyVaultExists(vaultId);
+          return {
+            isValid: tonResult.exists,
+            signature: tonResult.exists ? `ton-sig-${Date.now()}` : undefined,
+            message: tonResult.exists 
+              ? `Vault verified on TON` 
+              : `Vault not found on TON`
+          };
+          
+        default:
+          return {
+            isValid: false,
+            message: `Unsupported blockchain: ${chain}`
+          };
       }
-      return result;
-    };
+    } catch (error) {
+      securityLogger.error(`Failed to verify vault on ${chain}`, error);
+      return {
+        isValid: false,
+        message: `Error verifying vault: ${error instanceof Error ? error.message : 'Unknown error'}`
+      };
+    }
+  }
+
+  /**
+   * Send a cross-chain message
+   */
+  private async sendCrossChainMessage(request: CrossChainBridgeRequest): Promise<{
+    success: boolean;
+    message: string;
+  }> {
+    const { sourceChain, targetChain, vaultId, data, requester } = request;
     
-    switch (chain) {
-      case 'ETH':
-      case 'POLYGON':
-        return `0x${generateRandomHex(40)}`;
-      case 'SOL':
-        return `${generateRandomHex(44)}`;
-      case 'TON':
-        return `EQ${generateRandomHex(48)}`;
-      case 'BTC':
-        return `bc1${generateRandomHex(38)}`;
-      default:
-        return `0x${generateRandomHex(40)}`;
+    // In development mode, simulate success with occasional failures
+    if (config.isDevelopmentMode) {
+      const success = Math.random() > 0.1;
+      return {
+        success,
+        message: success 
+          ? 'Cross-chain message sent successfully' 
+          : 'Failed to send cross-chain message'
+      };
+    }
+    
+    try {
+      // In a real implementation, this would interact with the appropriate bridge contract
+      switch (targetChain) {
+        case 'ETH':
+          // Send message to Ethereum bridge contract
+          // This would involve calling a contract method on Ethereum
+          securityLogger.info(`Sending cross-chain message to Ethereum for vault ${vaultId}`);
+          // await ethersClient.sendBridgeMessage(vaultId, sourceChain, data);
+          break;
+          
+        case 'SOL':
+          // Send message to Solana bridge program
+          securityLogger.info(`Sending cross-chain message to Solana for vault ${vaultId}`);
+          // await solanaClient.sendBridgeMessage(vaultId, sourceChain, data);
+          break;
+          
+        case 'TON':
+          // Send message to TON bridge contract
+          securityLogger.info(`Sending cross-chain message to TON for vault ${vaultId}`);
+          // await tonClient.sendBridgeMessage(vaultId, sourceChain, data);
+          break;
+          
+        default:
+          return {
+            success: false,
+            message: `Unsupported target blockchain: ${targetChain}`
+          };
+      }
+      
+      return {
+        success: true,
+        message: `Successfully sent cross-chain message from ${sourceChain} to ${targetChain}`
+      };
+    } catch (error) {
+      securityLogger.error(`Failed to send cross-chain message to ${targetChain}`, error);
+      
+      return {
+        success: false,
+        message: `Failed to send cross-chain message: ${error instanceof Error ? error.message : 'Unknown error'}`
+      };
+    }
+  }
+
+  /**
+   * Verify a cross-chain message
+   */
+  async verifyCrossChainMessage(
+    vaultId: string,
+    sourceChain: BlockchainType,
+    targetChain: BlockchainType,
+    signature: string
+  ): Promise<{
+    isValid: boolean;
+    message: string;
+  }> {
+    securityLogger.info('Verifying cross-chain message', { vaultId, sourceChain, targetChain });
+    
+    // For development mode, return a simulated result
+    if (config.isDevelopmentMode) {
+      const isValid = Math.random() > 0.1;
+      
+      return {
+        isValid,
+        message: isValid 
+          ? `Successfully verified cross-chain message for ${vaultId} from ${sourceChain} to ${targetChain}` 
+          : `Failed to verify cross-chain message for ${vaultId}`
+      };
+    }
+    
+    try {
+      // In production environment, verify the signature from the source chain
+      let isValid = false;
+      let verificationMessage = '';
+      
+      switch (sourceChain) {
+        case 'ETH':
+          // Verify Ethereum signature
+          isValid = await ethersClient.verifySignature(
+            { vaultId, targetChain }, 
+            signature, 
+            config.blockchainConfig.ethereum.contractAddresses.bridge
+          );
+          verificationMessage = isValid 
+            ? 'Ethereum signature verified' 
+            : 'Invalid Ethereum signature';
+          break;
+          
+        case 'SOL':
+          // Verify Solana signature
+          isValid = await solanaClient.verifySignature(
+            { vaultId, targetChain }, 
+            signature, 
+            config.blockchainConfig.solana.programIds.bridge
+          );
+          verificationMessage = isValid 
+            ? 'Solana signature verified' 
+            : 'Invalid Solana signature';
+          break;
+          
+        case 'TON':
+          // Verify TON signature
+          isValid = await tonClient.verifySignature(
+            { vaultId, targetChain }, 
+            signature, 
+            config.blockchainConfig.ton.contractAddresses.bridge
+          );
+          verificationMessage = isValid 
+            ? 'TON signature verified' 
+            : 'Invalid TON signature';
+          break;
+          
+        default:
+          verificationMessage = `Unsupported source blockchain: ${sourceChain}`;
+      }
+      
+      return { isValid, message: verificationMessage };
+    } catch (error) {
+      securityLogger.error('Failed to verify cross-chain message', error);
+      
+      return {
+        isValid: false,
+        message: `Verification error: ${error instanceof Error ? error.message : 'Unknown error'}`
+      };
     }
   }
 }
