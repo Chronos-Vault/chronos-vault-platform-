@@ -1,29 +1,32 @@
-// Bitcoin wallet connector service
-import { BitcoinNetworkType } from './bitcoin-types';
+import { BitcoinNetworkType, BitcoinWalletProvider } from './bitcoin-types';
 
-// Types for Bitcoin wallet connection
+// Type for Bitcoin wallet information
 export interface BitcoinWalletInfo {
   address: string;
   balance: number;
   network: BitcoinNetworkType;
-  publicKey?: string;
   isConnected: boolean;
 }
 
-// BitcoinWallet class to handle wallet connections
+// Callback type for wallet changes
+type WalletChangeCallback = (walletInfo: BitcoinWalletInfo | null) => void;
+
+/**
+ * BitcoinWalletConnector class implements the Singleton pattern
+ * to handle Bitcoin wallet connections
+ */
 export class BitcoinWalletConnector {
   private static instance: BitcoinWalletConnector;
   private walletInfo: BitcoinWalletInfo | null = null;
-  private walletProviders: string[] = ['Unisat', 'Xverse', 'OKX', 'Leather']; // Supported wallet providers
-  private detectInterval: NodeJS.Timeout | null = null;
-  private callbacks: ((walletInfo: BitcoinWalletInfo | null) => void)[] = [];
+  private subscribers: WalletChangeCallback[] = [];
+  private connectedProvider: string | null = null;
 
-  // Private constructor for singleton pattern
-  private constructor() {
-    this.detectWalletProviders();
-  }
+  // Private constructor to prevent direct instantiation
+  private constructor() {}
 
-  // Get singleton instance
+  /**
+   * Get the singleton instance of BitcoinWalletConnector
+   */
   public static getInstance(): BitcoinWalletConnector {
     if (!BitcoinWalletConnector.instance) {
       BitcoinWalletConnector.instance = new BitcoinWalletConnector();
@@ -31,286 +34,502 @@ export class BitcoinWalletConnector {
     return BitcoinWalletConnector.instance;
   }
 
-  // Detect available Bitcoin wallet providers
-  private detectWalletProviders(): void {
-    this.detectInterval = setInterval(() => {
-      // Check for window.unisat (Unisat wallet)
-      if ((window as any).unisat) {
-        console.log('Unisat wallet detected');
-        clearInterval(this.detectInterval as NodeJS.Timeout);
-        this.detectInterval = null;
+  /**
+   * Connect to a Bitcoin wallet provider
+   */
+  public async connect(providerName: string): Promise<void> {
+    try {
+      // Check if window object exists (browser environment)
+      if (typeof window === 'undefined') {
+        throw new Error('Bitcoin wallet connection requires a browser environment');
       }
-      
-      // Check for window.xverse (Xverse wallet)
-      if ((window as any).xverse) {
-        console.log('Xverse wallet detected');
-        clearInterval(this.detectInterval as NodeJS.Timeout);
-        this.detectInterval = null;
+
+      // Detect and connect to the appropriate wallet provider
+      switch (providerName) {
+        case 'Unisat':
+          await this.connectUnisat();
+          break;
+        case 'Xverse':
+          await this.connectXverse();
+          break;
+        case 'OKX':
+          await this.connectOKX();
+          break;
+        case 'Leather':
+          await this.connectLeather();
+          break;
+        default:
+          throw new Error(`Unsupported wallet provider: ${providerName}`);
       }
-    }, 1000);
+
+      // Save the connected provider name
+      this.connectedProvider = providerName;
+
+      // Notify subscribers about the wallet connection
+      this.notifySubscribers();
+    } catch (error) {
+      console.error(`Failed to connect to ${providerName} wallet:`, error);
+      throw error;
+    }
   }
 
-  // Subscribe to wallet changes
-  public subscribe(callback: (walletInfo: BitcoinWalletInfo | null) => void): void {
-    this.callbacks.push(callback);
-    
-    // Immediately call with current wallet info
-    if (this.walletInfo) {
+  /**
+   * Disconnect from the currently connected wallet provider
+   */
+  public disconnect(): void {
+    this.walletInfo = null;
+    this.connectedProvider = null;
+    // Notify subscribers about the wallet disconnection
+    this.notifySubscribers();
+  }
+
+  /**
+   * Subscribe to wallet changes
+   */
+  public subscribe(callback: WalletChangeCallback): void {
+    if (!this.subscribers.includes(callback)) {
+      this.subscribers.push(callback);
+      // Immediately notify the new subscriber with current wallet state
       callback(this.walletInfo);
     }
   }
 
-  // Unsubscribe from wallet changes
-  public unsubscribe(callback: (walletInfo: BitcoinWalletInfo | null) => void): void {
-    this.callbacks = this.callbacks.filter(cb => cb !== callback);
+  /**
+   * Unsubscribe from wallet changes
+   */
+  public unsubscribe(callback: WalletChangeCallback): void {
+    this.subscribers = this.subscribers.filter(subscriber => subscriber !== callback);
   }
 
-  // Notify all subscribers of wallet changes
-  private notifySubscribers(): void {
-    this.callbacks.forEach(callback => callback(this.walletInfo));
-  }
-
-  // Get available wallet providers
+  /**
+   * Get available Bitcoin wallet providers
+   */
   public getAvailableProviders(): string[] {
-    const available: string[] = [];
-    
+    if (typeof window === 'undefined') {
+      return [];
+    }
+
+    const providers: string[] = [];
+
+    // Check for Unisat wallet
     if ((window as any).unisat) {
-      available.push('Unisat');
+      providers.push('Unisat');
     }
-    
+
+    // Check for Xverse wallet
     if ((window as any).xverse) {
-      available.push('Xverse');
+      providers.push('Xverse');
     }
-    
-    // More wallet detections can be added here
-    
-    return available;
+
+    // Check for OKX wallet
+    if ((window as any).okxwallet) {
+      providers.push('OKX');
+    }
+
+    // Check for Leather wallet
+    if ((window as any).leather) {
+      providers.push('Leather');
+    }
+
+    return providers;
   }
 
-  // Connect to Bitcoin wallet
-  public async connect(provider: string = 'Unisat'): Promise<BitcoinWalletInfo> {
+  /**
+   * Refresh wallet information (balance, etc.)
+   */
+  public async refreshWalletInfo(): Promise<void> {
+    if (!this.connectedProvider || !this.walletInfo) {
+      throw new Error('No wallet connected');
+    }
+
     try {
-      let connected = false;
-      
-      // Connect to Unisat Wallet
-      if (provider === 'Unisat' && (window as any).unisat) {
-        const unisat = (window as any).unisat;
-        
-        // Request accounts access
-        const accounts = await unisat.requestAccounts();
-        
-        if (accounts && accounts.length > 0) {
-          const address = accounts[0];
-          const network = await unisat.getNetwork();
-          const balance = await unisat.getBalance();
-          const publicKey = await unisat.getPublicKey();
-          
-          this.walletInfo = {
-            address,
-            balance: balance.total / 100000000, // Convert sats to BTC
-            network: network === 'livenet' ? 'mainnet' : network,
-            publicKey,
-            isConnected: true
-          };
-          
-          connected = true;
-          
-          // Set up event listeners for account changes
-          (window as any).addEventListener('unisat:accountsChanged', (accounts: string[]) => {
-            if (accounts.length === 0) {
-              this.disconnect();
-            } else {
-              this.refreshWalletInfo();
-            }
-          });
-        }
+      // Update wallet info based on the connected provider
+      switch (this.connectedProvider) {
+        case 'Unisat':
+          await this.refreshUnisatWalletInfo();
+          break;
+        case 'Xverse':
+          await this.refreshXverseWalletInfo();
+          break;
+        case 'OKX':
+          await this.refreshOKXWalletInfo();
+          break;
+        case 'Leather':
+          await this.refreshLeatherWalletInfo();
+          break;
       }
-      
-      // Connect to Xverse Wallet
-      if (provider === 'Xverse' && (window as any).xverse) {
-        const xverse = (window as any).xverse;
-        
-        // Request accounts access
-        const response = await xverse.bitcoin.request('getAccounts');
-        
-        if (response && response.result && response.result.addresses) {
-          const btcAddress = response.result.addresses.find((addr: any) => addr.type === 'p2wpkh');
-          
-          if (btcAddress) {
-            this.walletInfo = {
-              address: btcAddress.address,
-              balance: 0, // Xverse doesn't provide balance directly
-              network: response.result.network === 'mainnet' ? 'mainnet' : 'testnet',
-              isConnected: true
-            };
-            
-            connected = true;
-            
-            // Try to get balance if possible
-            try {
-              const balanceResponse = await xverse.bitcoin.request('getBalance', {
-                address: btcAddress.address
-              });
-              
-              if (balanceResponse && balanceResponse.result) {
-                this.walletInfo.balance = balanceResponse.result.balance / 100000000; // Convert sats to BTC
-              }
-            } catch (error) {
-              console.warn('Could not retrieve balance from Xverse wallet:', error);
-            }
-          }
-        }
-      }
-      
-      // If no wallet was connected, throw error
-      if (!connected) {
-        throw new Error(`Could not connect to ${provider} wallet. Make sure it's installed and unlocked.`);
-      }
-      
-      // Notify subscribers about wallet connection
+
+      // Notify subscribers about the wallet update
       this.notifySubscribers();
-      
-      return this.walletInfo as BitcoinWalletInfo;
     } catch (error) {
-      console.error('Error connecting to Bitcoin wallet:', error);
+      console.error('Failed to refresh wallet info:', error);
       throw error;
     }
   }
 
-  // Disconnect from Bitcoin wallet
-  public disconnect(): void {
-    this.walletInfo = null;
-    this.notifySubscribers();
-  }
-
-  // Check if wallet is connected
-  public isConnected(): boolean {
-    return this.walletInfo !== null && this.walletInfo.isConnected;
-  }
-
-  // Get current wallet info
-  public getWalletInfo(): BitcoinWalletInfo | null {
-    return this.walletInfo;
-  }
-
-  // Refresh wallet info (balance, etc.)
-  public async refreshWalletInfo(): Promise<BitcoinWalletInfo | null> {
-    if (!this.walletInfo || !this.walletInfo.isConnected) {
-      return null;
-    }
-    
-    try {
-      // Refresh Unisat wallet info
-      if ((window as any).unisat) {
-        const unisat = (window as any).unisat;
-        const network = await unisat.getNetwork();
-        const balance = await unisat.getBalance();
-        
-        this.walletInfo = {
-          ...this.walletInfo,
-          balance: balance.total / 100000000, // Convert sats to BTC
-          network: network === 'livenet' ? 'mainnet' : network
-        };
-      }
-      
-      // Refresh Xverse wallet info (if implemented)
-      
-      this.notifySubscribers();
-      return this.walletInfo;
-    } catch (error) {
-      console.error('Error refreshing wallet info:', error);
-      return this.walletInfo;
-    }
-  }
-
-  // Sign a message with the connected wallet
+  /**
+   * Sign a message with the connected wallet
+   */
   public async signMessage(message: string): Promise<string> {
-    if (!this.walletInfo || !this.walletInfo.isConnected) {
-      throw new Error('Wallet not connected');
+    if (!this.connectedProvider || !this.walletInfo) {
+      throw new Error('No wallet connected');
     }
-    
+
     try {
-      // Sign with Unisat wallet
-      if ((window as any).unisat) {
-        const unisat = (window as any).unisat;
-        const signature = await unisat.signMessage(message);
-        return signature;
+      // Sign message based on the connected provider
+      switch (this.connectedProvider) {
+        case 'Unisat':
+          return await this.signMessageWithUnisat(message);
+        case 'Xverse':
+          return await this.signMessageWithXverse(message);
+        case 'OKX':
+          return await this.signMessageWithOKX(message);
+        case 'Leather':
+          return await this.signMessageWithLeather(message);
+        default:
+          throw new Error(`Unsupported wallet provider: ${this.connectedProvider}`);
       }
-      
-      // Sign with Xverse wallet
-      if ((window as any).xverse) {
-        const xverse = (window as any).xverse;
-        const response = await xverse.bitcoin.request('signMessage', {
-          message,
-          address: this.walletInfo.address
-        });
-        
-        if (response && response.result && response.result.signature) {
-          return response.result.signature;
-        }
-      }
-      
-      throw new Error('No compatible wallet found for signing');
     } catch (error) {
-      console.error('Error signing message:', error);
+      console.error('Failed to sign message:', error);
       throw error;
     }
   }
 
-  // Send Bitcoin transaction (simplified)
+  /**
+   * Send a Bitcoin transaction
+   */
   public async sendTransaction(receiverAddress: string, amountBTC: number): Promise<string> {
-    if (!this.walletInfo || !this.walletInfo.isConnected) {
-      throw new Error('Wallet not connected');
+    if (!this.connectedProvider || !this.walletInfo) {
+      throw new Error('No wallet connected');
     }
-    
+
     try {
-      // Send with Unisat wallet
-      if ((window as any).unisat) {
-        const unisat = (window as any).unisat;
-        // Convert BTC to satoshis
-        const amountSats = Math.floor(amountBTC * 100000000);
-        const txid = await unisat.sendBitcoin(receiverAddress, amountSats);
-        return txid;
+      // Send transaction based on the connected provider
+      switch (this.connectedProvider) {
+        case 'Unisat':
+          return await this.sendTransactionWithUnisat(receiverAddress, amountBTC);
+        case 'Xverse':
+          return await this.sendTransactionWithXverse(receiverAddress, amountBTC);
+        case 'OKX':
+          return await this.sendTransactionWithOKX(receiverAddress, amountBTC);
+        case 'Leather':
+          return await this.sendTransactionWithLeather(receiverAddress, amountBTC);
+        default:
+          throw new Error(`Unsupported wallet provider: ${this.connectedProvider}`);
       }
-      
-      // Send with Xverse wallet
-      if ((window as any).xverse) {
-        const xverse = (window as any).xverse;
-        const response = await xverse.bitcoin.request('sendTransfer', {
-          recipients: [
-            {
-              address: receiverAddress,
-              amountSats: Math.floor(amountBTC * 100000000)
-            }
-          ],
-          senderAddress: this.walletInfo.address
-        });
-        
-        if (response && response.result && response.result.txid) {
-          return response.result.txid;
-        }
-      }
-      
-      throw new Error('No compatible wallet found for sending transaction');
     } catch (error) {
-      console.error('Error sending transaction:', error);
+      console.error('Failed to send transaction:', error);
       throw error;
     }
   }
 
-  // Clean up resources
-  public cleanup(): void {
-    if (this.detectInterval) {
-      clearInterval(this.detectInterval);
-      this.detectInterval = null;
-    }
-    
-    this.callbacks = [];
-    this.walletInfo = null;
+  /**
+   * Notify all subscribers about wallet changes
+   */
+  private notifySubscribers(): void {
+    this.subscribers.forEach(callback => callback(this.walletInfo));
   }
-}
 
-// Create a hook for using BitcoinWalletConnector
-export function useBitcoinWallet() {
-  return BitcoinWalletConnector.getInstance();
+  /* Provider-specific implementation methods */
+
+  // Unisat wallet methods
+  private async connectUnisat(): Promise<void> {
+    const unisat = (window as any).unisat;
+    if (!unisat) {
+      throw new Error('Unisat wallet not found');
+    }
+
+    // Request accounts from Unisat
+    const accounts = await unisat.requestAccounts();
+    if (!accounts || accounts.length === 0) {
+      throw new Error('No accounts found in Unisat wallet');
+    }
+
+    // Get network and balance
+    const network = await unisat.getNetwork();
+    const balance = await unisat.getBalance();
+
+    // Set wallet info
+    this.walletInfo = {
+      address: accounts[0],
+      balance: balance.total / 100000000, // Convert from satoshis to BTC
+      network: this.mapNetworkType(network),
+      isConnected: true
+    };
+  }
+
+  private async refreshUnisatWalletInfo(): Promise<void> {
+    if (!this.walletInfo) return;
+
+    const unisat = (window as any).unisat;
+    if (!unisat) {
+      throw new Error('Unisat wallet not found');
+    }
+
+    // Get updated balance
+    const balance = await unisat.getBalance();
+    
+    // Update wallet info
+    this.walletInfo = {
+      ...this.walletInfo,
+      balance: balance.total / 100000000 // Convert from satoshis to BTC
+    };
+  }
+
+  private async signMessageWithUnisat(message: string): Promise<string> {
+    const unisat = (window as any).unisat;
+    if (!unisat) {
+      throw new Error('Unisat wallet not found');
+    }
+
+    return await unisat.signMessage(message);
+  }
+
+  private async sendTransactionWithUnisat(receiverAddress: string, amountBTC: number): Promise<string> {
+    const unisat = (window as any).unisat;
+    if (!unisat) {
+      throw new Error('Unisat wallet not found');
+    }
+
+    // Convert BTC to satoshis
+    const amountSatoshis = Math.floor(amountBTC * 100000000);
+    
+    // Send transaction
+    const txid = await unisat.sendBitcoin(receiverAddress, amountSatoshis);
+    return txid;
+  }
+
+  // Xverse wallet methods
+  private async connectXverse(): Promise<void> {
+    const xverse = (window as any).xverse;
+    if (!xverse) {
+      throw new Error('Xverse wallet not found');
+    }
+
+    // Connect to Xverse (simplified implementation)
+    const connection = await xverse.bitcoin.connect();
+    const address = connection.address;
+    const network = connection.network;
+    
+    // Get balance (implementation may vary based on Xverse API)
+    const balance = await xverse.bitcoin.getBalance(address);
+
+    // Set wallet info
+    this.walletInfo = {
+      address,
+      balance: balance / 100000000, // Convert from satoshis to BTC
+      network: this.mapNetworkType(network),
+      isConnected: true
+    };
+  }
+
+  private async refreshXverseWalletInfo(): Promise<void> {
+    if (!this.walletInfo) return;
+
+    const xverse = (window as any).xverse;
+    if (!xverse) {
+      throw new Error('Xverse wallet not found');
+    }
+
+    // Get updated balance
+    const balance = await xverse.bitcoin.getBalance(this.walletInfo.address);
+    
+    // Update wallet info
+    this.walletInfo = {
+      ...this.walletInfo,
+      balance: balance / 100000000 // Convert from satoshis to BTC
+    };
+  }
+
+  private async signMessageWithXverse(message: string): Promise<string> {
+    const xverse = (window as any).xverse;
+    if (!xverse) {
+      throw new Error('Xverse wallet not found');
+    }
+
+    const signature = await xverse.bitcoin.signMessage(this.walletInfo?.address || '', message);
+    return signature;
+  }
+
+  private async sendTransactionWithXverse(receiverAddress: string, amountBTC: number): Promise<string> {
+    const xverse = (window as any).xverse;
+    if (!xverse) {
+      throw new Error('Xverse wallet not found');
+    }
+
+    // Convert BTC to satoshis
+    const amountSatoshis = Math.floor(amountBTC * 100000000);
+    
+    // Create and send transaction
+    const txResponse = await xverse.bitcoin.sendBitcoin({
+      recipients: [{ address: receiverAddress, amountSats: amountSatoshis }]
+    });
+    
+    return txResponse.txid;
+  }
+
+  // OKX wallet methods
+  private async connectOKX(): Promise<void> {
+    const okxwallet = (window as any).okxwallet;
+    if (!okxwallet) {
+      throw new Error('OKX wallet not found');
+    }
+
+    // Request accounts from OKX
+    const accounts = await okxwallet.bitcoin.requestAccounts();
+    if (!accounts || accounts.length === 0) {
+      throw new Error('No accounts found in OKX wallet');
+    }
+
+    // Get network and balance
+    const network = await okxwallet.bitcoin.getNetwork();
+    const balance = await okxwallet.bitcoin.getBalance(accounts[0]);
+
+    // Set wallet info
+    this.walletInfo = {
+      address: accounts[0],
+      balance: balance / 100000000, // Convert from satoshis to BTC
+      network: this.mapNetworkType(network),
+      isConnected: true
+    };
+  }
+
+  private async refreshOKXWalletInfo(): Promise<void> {
+    if (!this.walletInfo) return;
+
+    const okxwallet = (window as any).okxwallet;
+    if (!okxwallet) {
+      throw new Error('OKX wallet not found');
+    }
+
+    // Get updated balance
+    const balance = await okxwallet.bitcoin.getBalance(this.walletInfo.address);
+    
+    // Update wallet info
+    this.walletInfo = {
+      ...this.walletInfo,
+      balance: balance / 100000000 // Convert from satoshis to BTC
+    };
+  }
+
+  private async signMessageWithOKX(message: string): Promise<string> {
+    const okxwallet = (window as any).okxwallet;
+    if (!okxwallet) {
+      throw new Error('OKX wallet not found');
+    }
+
+    const signature = await okxwallet.bitcoin.signMessage(message, this.walletInfo?.address || '');
+    return signature;
+  }
+
+  private async sendTransactionWithOKX(receiverAddress: string, amountBTC: number): Promise<string> {
+    const okxwallet = (window as any).okxwallet;
+    if (!okxwallet) {
+      throw new Error('OKX wallet not found');
+    }
+
+    // Convert BTC to satoshis
+    const amountSatoshis = Math.floor(amountBTC * 100000000);
+    
+    // Send transaction
+    const txid = await okxwallet.bitcoin.sendTransaction({
+      to: receiverAddress,
+      amount: amountSatoshis,
+      from: this.walletInfo?.address || ''
+    });
+    
+    return txid;
+  }
+
+  // Leather wallet methods
+  private async connectLeather(): Promise<void> {
+    const leather = (window as any).leather;
+    if (!leather) {
+      throw new Error('Leather wallet not found');
+    }
+
+    // Connect to Leather
+    const connection = await leather.enable();
+    const address = await leather.getAddress();
+    
+    // Get network type
+    const network = await leather.getNetwork();
+    
+    // Get balance
+    const balance = await leather.getBalance(address);
+
+    // Set wallet info
+    this.walletInfo = {
+      address,
+      balance: balance / 100000000, // Convert from satoshis to BTC
+      network: this.mapNetworkType(network),
+      isConnected: true
+    };
+  }
+
+  private async refreshLeatherWalletInfo(): Promise<void> {
+    if (!this.walletInfo) return;
+
+    const leather = (window as any).leather;
+    if (!leather) {
+      throw new Error('Leather wallet not found');
+    }
+
+    // Get updated balance
+    const balance = await leather.getBalance(this.walletInfo.address);
+    
+    // Update wallet info
+    this.walletInfo = {
+      ...this.walletInfo,
+      balance: balance / 100000000 // Convert from satoshis to BTC
+    };
+  }
+
+  private async signMessageWithLeather(message: string): Promise<string> {
+    const leather = (window as any).leather;
+    if (!leather) {
+      throw new Error('Leather wallet not found');
+    }
+
+    const signature = await leather.signMessage(message);
+    return signature;
+  }
+
+  private async sendTransactionWithLeather(receiverAddress: string, amountBTC: number): Promise<string> {
+    const leather = (window as any).leather;
+    if (!leather) {
+      throw new Error('Leather wallet not found');
+    }
+
+    // Convert BTC to satoshis
+    const amountSatoshis = Math.floor(amountBTC * 100000000);
+    
+    // Send transaction
+    const txid = await leather.sendTransaction({
+      recipient: receiverAddress,
+      amount: amountSatoshis,
+      memo: "Chronos Vault Transfer"
+    });
+    
+    return txid;
+  }
+
+  // Helper methods
+  private mapNetworkType(networkValue: string): BitcoinNetworkType {
+    // Map network value to BitcoinNetworkType
+    switch (networkValue.toLowerCase()) {
+      case 'mainnet':
+      case 'main':
+      case 'livenet':
+        return 'mainnet';
+      case 'testnet':
+      case 'test':
+        return 'testnet';
+      case 'regtest':
+        return 'regtest';
+      default:
+        // Default to testnet for safety
+        return 'testnet';
+    }
+  }
 }

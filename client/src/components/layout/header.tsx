@@ -278,6 +278,9 @@ const Header = () => {
                     )}
                     <h3 className="text-sm font-medium text-[#FF5AF7]">Connect Wallet</h3>
                     <CrossChainWalletSelector className="w-full" />
+                    <div className="mt-3">
+                      <BitcoinWalletConnector />
+                    </div>
                   </div>
                 </div>
               </SheetContent>

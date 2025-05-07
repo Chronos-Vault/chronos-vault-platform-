@@ -14,11 +14,13 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Switch } from '@/components/ui/switch';
 import { useAuthContext } from '@/contexts/auth-context';
 import { useDevMode } from '@/contexts/dev-mode-context';
+import { useBitcoinWallet } from '@/contexts/bitcoin-wallet-context';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 
 export default function BitcoinHalvingVaultPage() {
   const { isAuthenticated } = useAuthContext();
   const { devModeEnabled, toggleDevMode } = useDevMode();
+  const { isConnected, connectWallet, walletInfo } = useBitcoinWallet();
 
   return (
     <>
@@ -62,8 +64,8 @@ export default function BitcoinHalvingVaultPage() {
           </Alert>
         )}
         
-        {/* Show connection required message only if not authenticated AND not in dev mode */}
-        {(!isAuthenticated && !devModeEnabled) ? (
+        {/* Show connection required message only if not connected to Bitcoin wallet AND not in dev mode */}
+        {(!isConnected && !devModeEnabled) ? (
           <div className="mt-10">
             <Card className="bg-gradient-to-br from-orange-50 to-amber-50 dark:from-orange-950/30 dark:to-amber-950/30 border-orange-200 dark:border-orange-800/70 shadow-lg overflow-hidden">
               <CardHeader>
@@ -87,8 +89,9 @@ export default function BitcoinHalvingVaultPage() {
                 <Button 
                   variant="default" 
                   className="bg-gradient-to-r from-orange-600 to-amber-600 hover:from-orange-700 hover:to-amber-700 text-white"
+                  onClick={() => connectWallet()}
                 >
-                  Connect Wallet
+                  Connect Bitcoin Wallet
                 </Button>
               </CardContent>
             </Card>
@@ -105,6 +108,29 @@ export default function BitcoinHalvingVaultPage() {
                   <CardDescription>
                     Configure your Bitcoin vault parameters to align with the halving cycle
                   </CardDescription>
+                  {walletInfo && (
+                    <div className="mt-4 p-3 bg-gradient-to-r from-orange-50/50 to-amber-50/50 dark:from-orange-950/20 dark:to-amber-950/20 rounded-lg border border-orange-200/50 dark:border-orange-800/50">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-2">
+                          <Bitcoin className="h-4 w-4 text-orange-600" />
+                          <span className="text-sm font-medium text-orange-800 dark:text-orange-300">
+                            Connected Wallet
+                          </span>
+                        </div>
+                        <span className="text-xs bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 px-2 py-0.5 rounded-full">
+                          {walletInfo.network}
+                        </span>
+                      </div>
+                      <div className="mt-2 flex justify-between">
+                        <div className="text-xs text-gray-500 dark:text-gray-400">
+                          <div className="font-mono">{walletInfo.address.substring(0, 8)}...{walletInfo.address.substring(walletInfo.address.length - 8)}</div>
+                        </div>
+                        <div className="text-sm font-medium text-orange-800 dark:text-orange-300">
+                          {walletInfo.balance.toFixed(4)} BTC
+                        </div>
+                      </div>
+                    </div>
+                  )}
                 </CardHeader>
                 <CardContent className="space-y-6">
                   <Tabs defaultValue="basic" className="w-full">
