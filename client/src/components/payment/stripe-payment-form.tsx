@@ -1,23 +1,16 @@
-import { useEffect, useState } from 'react';
-import { useToast } from '@/hooks/use-toast';
-import { apiRequest } from '@/lib/queryClient';
+import { useState, useEffect } from 'react';
+import { useStripe, useElements, PaymentElement, Elements } from '@stripe/react-stripe-js';
 import { loadStripe } from '@stripe/stripe-js';
-import { 
-  PaymentElement, 
-  Elements, 
-  useStripe, 
-  useElements 
-} from '@stripe/react-stripe-js';
 import { Button } from '@/components/ui/button';
-import { Loader2 } from 'lucide-react';
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card } from '@/components/ui/card';
+import { useToast } from '@/hooks/use-toast';
+import { Loader2, ShieldCheck, AlertCircle } from 'lucide-react';
 
-// Check for Stripe key
+// Make sure to call loadStripe outside of a component's render to avoid
+// recreating the Stripe object on every render
 if (!import.meta.env.VITE_STRIPE_PUBLIC_KEY) {
   throw new Error('Missing required Stripe key: VITE_STRIPE_PUBLIC_KEY');
 }
-
-// Load Stripe outside component to avoid recreating on render
 const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLIC_KEY);
 
 interface CheckoutFormProps {
@@ -29,43 +22,50 @@ const CheckoutForm = ({ onSuccess, onCancel }: CheckoutFormProps) => {
   const stripe = useStripe();
   const elements = useElements();
   const [isLoading, setIsLoading] = useState(false);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const { toast } = useToast();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     if (!stripe || !elements) {
+      // Stripe.js hasn't yet loaded
       return;
     }
 
     setIsLoading(true);
+    setErrorMessage(null);
 
     try {
       const { error } = await stripe.confirmPayment({
         elements,
         confirmParams: {
-          return_url: window.location.origin + '/payment-success',
+          return_url: `${window.location.origin}/payment-confirmation`,
         },
         redirect: 'if_required',
       });
 
       if (error) {
+        setErrorMessage(error.message || 'An unexpected error occurred');
         toast({
           title: "Payment Failed",
-          description: error.message,
+          description: error.message || 'An unexpected error occurred',
           variant: "destructive",
         });
       } else {
+        // The payment has been processed successfully
         toast({
           title: "Payment Successful",
-          description: "Thank you for your purchase!",
+          description: "Thank you for your subscription!",
+          variant: "default",
         });
-        onSuccess?.();
+        if (onSuccess) onSuccess();
       }
-    } catch (err: any) {
+    } catch (e: any) {
+      setErrorMessage(e.message || 'An unexpected error occurred');
       toast({
         title: "Payment Error",
-        description: err.message || "Something went wrong",
+        description: e.message || 'An unexpected error occurred',
         variant: "destructive",
       });
     } finally {
@@ -75,21 +75,33 @@ const CheckoutForm = ({ onSuccess, onCancel }: CheckoutFormProps) => {
 
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
-      <PaymentElement />
+      <div className="space-y-4">
+        <PaymentElement />
+        
+        {errorMessage && (
+          <div className="flex items-center p-3 text-sm text-red-500 bg-red-50 border border-red-200 rounded-md">
+            <AlertCircle className="h-4 w-4 mr-2 flex-shrink-0" />
+            {errorMessage}
+          </div>
+        )}
+      </div>
       
-      <div className="flex space-x-4">
+      <div className="flex flex-col gap-4">
         <Button 
           type="submit" 
-          disabled={!stripe || isLoading} 
-          className="w-full"
+          className="w-full" 
+          disabled={!stripe || isLoading}
         >
           {isLoading ? (
             <>
               <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-              Processing
+              Processing...
             </>
           ) : (
-            'Pay Now'
+            <>
+              <ShieldCheck className="mr-2 h-4 w-4" />
+              Secure Payment
+            </>
           )}
         </Button>
         
@@ -97,9 +109,9 @@ const CheckoutForm = ({ onSuccess, onCancel }: CheckoutFormProps) => {
           <Button 
             type="button" 
             variant="outline" 
+            className="w-full" 
             onClick={onCancel}
             disabled={isLoading}
-            className="w-full"
           >
             Cancel
           </Button>
@@ -127,151 +139,114 @@ export function StripePaymentForm({
   onCancel
 }: StripePaymentFormProps) {
   const [clientSecret, setClientSecret] = useState<string | null>(null);
-  const [originalAmount, setOriginalAmount] = useState<number>(amount);
-  const [discountedAmount, setDiscountedAmount] = useState<number>(amount);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const { toast } = useToast();
 
   useEffect(() => {
-    const fetchPaymentIntent = async () => {
-      setIsLoading(true);
-      setError(null);
-      
+    async function createPaymentIntent() {
       try {
-        const response = await apiRequest('POST', '/api/payments/create-payment-intent', {
+        setIsLoading(true);
+        setError(null);
+        
+        const payload = {
           amount,
           currency,
-          description: description || `Payment for premium vault services`,
-          vaultId
+          description,
+          ...(vaultId && { vaultId })
+        };
+        
+        const response = await fetch('/api/payments/create-payment-intent', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(payload),
         });
         
+        if (!response.ok) {
+          const errorData = await response.json();
+          throw new Error(errorData.message || 'Failed to create payment intent');
+        }
+        
         const data = await response.json();
-        
-        if (data.error) {
-          throw new Error(data.error);
-        }
-        
         setClientSecret(data.clientSecret);
-        
-        if (data.originalAmount && data.amount) {
-          setOriginalAmount(data.originalAmount);
-          setDiscountedAmount(data.amount);
-        }
-      } catch (err: any) {
-        setError(err.message || 'Failed to initialize payment');
+      } catch (e: any) {
+        setError(e.message || 'An error occurred while setting up the payment');
         toast({
           title: "Payment Setup Failed",
-          description: err.message || "There was a problem setting up the payment method",
+          description: e.message || 'An error occurred while setting up the payment',
           variant: "destructive",
         });
       } finally {
         setIsLoading(false);
       }
-    };
-
-    fetchPaymentIntent();
+    }
+    
+    createPaymentIntent();
   }, [amount, currency, description, vaultId, toast]);
 
   if (isLoading) {
     return (
-      <div className="w-full flex items-center justify-center p-8">
-        <Loader2 className="h-8 w-8 animate-spin text-primary" />
-      </div>
+      <Card className="p-6 flex flex-col items-center justify-center min-h-[200px]">
+        <Loader2 className="h-10 w-10 text-primary animate-spin mb-4" />
+        <p className="text-muted-foreground text-sm">Setting up payment...</p>
+      </Card>
     );
   }
 
   if (error) {
     return (
-      <Card className="w-full">
-        <CardHeader>
-          <CardTitle className="text-destructive">Payment Error</CardTitle>
-          <CardDescription>
-            Unable to initialize payment process
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <p className="text-sm text-destructive">{error}</p>
-        </CardContent>
-        <CardFooter className="flex justify-end">
-          <Button variant="outline" onClick={onCancel}>
+      <Card className="p-6 flex flex-col items-center justify-center min-h-[200px]">
+        <AlertCircle className="h-10 w-10 text-destructive mb-4" />
+        <p className="text-destructive font-semibold mb-2">Payment Setup Failed</p>
+        <p className="text-muted-foreground text-sm text-center">{error}</p>
+        {onCancel && (
+          <Button onClick={onCancel} variant="outline" className="mt-4">
             Go Back
           </Button>
-        </CardFooter>
+        )}
       </Card>
     );
   }
 
   if (!clientSecret) {
-    return null;
+    return (
+      <Card className="p-6 flex flex-col items-center justify-center min-h-[200px]">
+        <AlertCircle className="h-10 w-10 text-amber-500 mb-4" />
+        <p className="text-amber-500 font-semibold mb-2">Unable to Initialize Payment</p>
+        <p className="text-muted-foreground text-sm text-center">
+          The payment system is temporarily unavailable. Please try again later.
+        </p>
+        {onCancel && (
+          <Button onClick={onCancel} variant="outline" className="mt-4">
+            Go Back
+          </Button>
+        )}
+      </Card>
+    );
   }
 
-  const hasDiscount = originalAmount > discountedAmount;
+  // Stripe Elements options
+  const options = {
+    clientSecret,
+    appearance: {
+      theme: 'night',
+      variables: {
+        colorPrimary: '#6B00D7',
+        colorBackground: '#1A1A1A',
+        colorText: '#FFFFFF',
+        colorDanger: '#EF4444',
+        fontFamily: 'Inter, system-ui, sans-serif',
+      },
+    },
+  };
 
   return (
-    <Card className="w-full">
-      <CardHeader>
-        <CardTitle>Secure Payment</CardTitle>
-        <CardDescription>
-          Complete your payment for premium vault services
-        </CardDescription>
-      </CardHeader>
-      <CardContent>
-        <div className="mb-6">
-          <div className="flex justify-between items-center mb-2">
-            <span className="text-muted-foreground">Service fee:</span>
-            <span className={hasDiscount ? "line-through text-muted-foreground" : ""}>
-              {new Intl.NumberFormat('en-US', {
-                style: 'currency',
-                currency: currency.toUpperCase(),
-              }).format(originalAmount)}
-            </span>
-          </div>
-          
-          {hasDiscount && (
-            <div className="flex justify-between items-center mb-2">
-              <span className="text-green-500 font-medium">CVT Staking Discount:</span>
-              <span className="text-green-500 font-medium">
-                {new Intl.NumberFormat('en-US', {
-                  style: 'currency',
-                  currency: currency.toUpperCase(),
-                }).format(originalAmount - discountedAmount)}
-              </span>
-            </div>
-          )}
-          
-          <div className="flex justify-between items-center border-t pt-2 font-medium">
-            <span>Total:</span>
-            <span>
-              {new Intl.NumberFormat('en-US', {
-                style: 'currency',
-                currency: currency.toUpperCase(),
-              }).format(discountedAmount)}
-            </span>
-          </div>
-        </div>
-        
-        <Elements 
-          stripe={stripePromise} 
-          options={{ 
-            clientSecret,
-            appearance: {
-              theme: 'night',
-              variables: {
-                colorPrimary: '#6B00D7',
-                colorBackground: '#1a1a1a',
-                colorText: '#ffffff',
-                colorDanger: '#ef4444',
-                fontFamily: 'Inter, system-ui, sans-serif',
-                spacingUnit: '4px',
-                borderRadius: '8px',
-              },
-            },
-          }}
-        >
-          <CheckoutForm onSuccess={onSuccess} onCancel={onCancel} />
-        </Elements>
-      </CardContent>
+    <Card className="p-6 border border-gray-800 bg-gradient-to-b from-gray-900 to-gray-950">
+      <Elements stripe={stripePromise} options={options}>
+        <CheckoutForm onSuccess={onSuccess} onCancel={onCancel} />
+      </Elements>
     </Card>
   );
 }

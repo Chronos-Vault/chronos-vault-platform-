@@ -5,7 +5,7 @@ import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Shield, Zap, Cpu, Lock, Check } from 'lucide-react';
-import { useDevMode } from '@/hooks/use-dev-mode';
+import { useDevMode } from '@/contexts/dev-mode-context';
 import { useToast } from '@/hooks/use-toast';
 import { Link } from 'wouter';
 
@@ -56,7 +56,7 @@ const PRODUCTS = [
 export default function PremiumFeaturesPage() {
   const [selectedProduct, setSelectedProduct] = useState(PRODUCTS[1]); // Default to Advanced
   const [showPaymentForm, setShowPaymentForm] = useState(false);
-  const { isDevMode } = useDevMode();
+  const { devModeEnabled } = useDevMode();
   const { toast } = useToast();
 
   const handlePaymentSuccess = () => {
@@ -124,7 +124,7 @@ export default function PremiumFeaturesPage() {
                     className="w-full"
                     onClick={() => {
                       setSelectedProduct(product);
-                      if (isDevMode) {
+                      if (devModeEnabled) {
                         handleSubmitForDevMode();
                       } else {
                         setShowPaymentForm(true);

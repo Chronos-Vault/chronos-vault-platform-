@@ -60,6 +60,7 @@ import PremiumPaymentPage from "@/pages/premium-payment";
 import SubscriptionPage from "@/pages/subscription";
 import CVTPaymentPage from "@/pages/cvt-payment";
 import CVTUtilityPage from "@/pages/cvt-utility-new";
+import PremiumFeaturesPage from "@/pages/premium-features";
 import TechnicalDashboardPage from "@/pages/admin/technical-dashboard";
 import StoragePage from "@/pages/storage-page";
 import TransactionMonitorPage from "@/pages/transaction-monitor";
@@ -122,6 +123,7 @@ function Router() {
         {/* Development routes hidden from navigation */}
         <Route path="/test-contract" component={TestContractPage} />
         <Route path="/wallet-manager" component={WalletManagerPage} />
+        <Route path="/premium-features" component={PremiumFeaturesPage} />
         <Route path="/premium-payment/:vaultId?" component={PremiumPaymentPage} />
         <Route path="/cvt-payment/:vaultId?" component={CVTPaymentPage} />
         <Route path="/subscription" component={SubscriptionPage} />

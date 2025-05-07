@@ -35,6 +35,7 @@ const Header = () => {
     { name: "Transaction Monitor", href: "/transaction-monitor", icon: "📈", highlight: true, important: true, isNew: true },
     { name: "Storage", href: "/storage", icon: "🗄️", highlight: true },
     { name: "Gift Crypto", href: "/gift-crypto", icon: "🎁" },
+    { name: "Premium Features", href: "/premium-features", icon: "⭐", highlight: true, important: true, isNew: true },
     { name: "Security Verification", href: "/security-verification-demo", icon: "🔐", highlight: true },
     { name: "Triple-Chain Security", href: "/triple-chain-security-demo", icon: "⛓️", highlight: true },
     { name: "CVT Token", href: "/cvt-token", icon: "🪙" },
@@ -71,7 +72,8 @@ const Header = () => {
         { name: "Cross-Chain Features", href: "/cross-chain", icon: "🔄" },
         { name: "Multi-Signature Vault", href: "/multi-signature-vault", icon: "👥" },
         { name: "Security Verification", href: "/security-verification-demo", icon: "🔐", highlight: true },
-        { name: "Triple-Chain Security", href: "/triple-chain-security-demo", icon: "⛓️", highlight: true }
+        { name: "Triple-Chain Security", href: "/triple-chain-security-demo", icon: "⛓️", highlight: true },
+        { name: "Premium Features", href: "/premium-features", icon: "⭐", highlight: true, important: true, isNew: true }
       ]
     },
     {
