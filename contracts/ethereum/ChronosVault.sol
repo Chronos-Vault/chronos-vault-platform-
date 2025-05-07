@@ -6,6 +6,7 @@ import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 import "@openzeppelin/contracts/utils/math/Math.sol";
+import "@openzeppelin/contracts/utils/cryptography/ECDSA.sol";
 
 /**
  * @title ChronosVault
@@ -13,10 +14,18 @@ import "@openzeppelin/contracts/utils/math/Math.sol";
  *      with cross-chain integration capabilities
  * 
  * This vault implements the ERC-4626 Tokenized Vault Standard to provide
- * advanced financial functionality for the Chronos Vault platform.
+ * advanced financial functionality for the Chronos Vault platform, while
+ * integrating a Triple-Chain Security architecture with Ethereum (primary ownership),
+ * Solana (monitoring and verification), and TON (backup and recovery).
+ * 
+ * Security levels:
+ * 1. Standard - Basic time-lock functionality
+ * 2. Enhanced - Requires access key and authorized retrievers
+ * 3. Maximum - Adds cross-chain verification and multi-signature requirements
  */
 contract ChronosVault is ERC4626, Ownable, ReentrancyGuard {
     using Math for uint256;
+    using ECDSA for bytes32;
 
     // =========== State Variables ===========
 
@@ -43,6 +52,54 @@ contract ChronosVault is ERC4626, Ownable, ReentrancyGuard {
     mapping(address => bool) public authorizedRetrievers;
     bytes32 public accessKeyHash;  // Hashed access key for high security levels
     
+    // Multi-signature requirements
+    struct MultiSigConfig {
+        address[] signers;
+        uint256 threshold;   // Number of signatures required
+        bool enabled;
+    }
+    MultiSigConfig public multiSig;
+    
+    // Cross-chain verification
+    struct CrossChainVerification {
+        // TON verification
+        bytes32 tonVerificationHash;
+        uint256 tonLastVerified;
+        bool tonVerified;
+        
+        // Solana verification
+        bytes32 solanaVerificationHash;
+        uint256 solanaLastVerified;
+        bool solanaVerified;
+        
+        // Emergency recovery
+        address emergencyRecoveryAddress;
+        bool emergencyModeActive;
+    }
+    CrossChainVerification public crossChainVerification;
+    
+    // Withdrawal requests for multi-sig vaults
+    struct WithdrawalRequest {
+        address requester;
+        address receiver;
+        uint256 amount;
+        uint256 requestTime;
+        mapping(address => bool) approvals;
+        uint256 approvalCount;
+        bool executed;
+        bool cancelled;
+    }
+    mapping(uint256 => WithdrawalRequest) public withdrawalRequests;
+    uint256 public nextWithdrawalRequestId;
+    
+    // Geolocation lock (optional security feature)
+    struct GeoLock {
+        string allowedRegion;    // ISO country code or region identifier
+        bytes32 regionProofHash; // Hash of proof required to verify location
+        bool enabled;
+    }
+    GeoLock public geoLock;
+    
     // Proof of reserve
     uint256 public lastVerificationTimestamp;
     bytes32 public verificationProof;
@@ -51,6 +108,12 @@ contract ChronosVault is ERC4626, Ownable, ReentrancyGuard {
     uint256 public performanceFee; // Basis points (1/100 of a percent)
     uint256 public managementFee;  // Basis points per year
     uint256 public lastFeeCollection;
+    
+    // Triple-Chain security status
+    uint8 public constant CHAIN_ETHEREUM = 1;
+    uint8 public constant CHAIN_SOLANA = 2;
+    uint8 public constant CHAIN_TON = 3;
+    mapping(uint8 => bool) public chainVerificationStatus;
     
     // =========== Events ===========
     
@@ -61,6 +124,26 @@ contract ChronosVault is ERC4626, Ownable, ReentrancyGuard {
     event VerificationProofUpdated(bytes32 proof, uint256 timestamp);
     event AssetDeposited(address indexed from, uint256 amount);
     event AssetWithdrawn(address indexed to, uint256 amount);
+    
+    // Multi-signature events
+    event SignerAdded(address indexed signer);
+    event SignerRemoved(address indexed signer);
+    event ThresholdChanged(uint256 oldThreshold, uint256 newThreshold);
+    event MultiSigEnabled(bool enabled);
+    event WithdrawalRequested(uint256 indexed requestId, address indexed requester, uint256 amount);
+    event WithdrawalApproved(uint256 indexed requestId, address indexed approver);
+    event WithdrawalExecuted(uint256 indexed requestId, address indexed receiver, uint256 amount);
+    event WithdrawalCancelled(uint256 indexed requestId, address indexed canceller);
+    
+    // Cross-chain verification events
+    event CrossChainVerified(uint8 chainId, bytes32 verificationHash);
+    event EmergencyModeActivated(address recoveryAddress);
+    event EmergencyModeDeactivated();
+    
+    // Geolocation events
+    event GeoLockEnabled(string region);
+    event GeoLockDisabled();
+    event GeoVerificationSuccessful(address verifier);
     
     // =========== Constructor ===========
     
@@ -100,6 +183,7 @@ contract ChronosVault is ERC4626, Ownable, ReentrancyGuard {
         isUnlocked = false;
         securityLevel = _securityLevel;
         lastFeeCollection = block.timestamp;
+        nextWithdrawalRequestId = 1;
         
         // Initialize metadata
         metadata = VaultMetadata({
@@ -112,6 +196,22 @@ contract ChronosVault is ERC4626, Ownable, ReentrancyGuard {
         
         // Add vault creator as authorized retriever
         authorizedRetrievers[msg.sender] = true;
+        
+        // Initialize Triple-Chain security verification
+        // Ethereum is always verified by default since this is an Ethereum contract
+        chainVerificationStatus[CHAIN_ETHEREUM] = true;
+        
+        // Initialize cross-chain verification structure
+        crossChainVerification.tonVerified = false;
+        crossChainVerification.solanaVerified = false;
+        crossChainVerification.emergencyModeActive = false;
+        
+        // Initialize multi-sig as disabled by default
+        multiSig.enabled = false;
+        multiSig.threshold = 0;
+        
+        // Initialize geolocation lock as disabled by default
+        geoLock.enabled = false;
         
         emit VaultCreated(msg.sender, _unlockTime, _securityLevel);
     }
@@ -465,5 +565,419 @@ contract ChronosVault is ERC4626, Ownable, ReentrancyGuard {
      */
     function verifyAccessKey(string memory _accessKey) external view returns (bool) {
         return keccak256(abi.encodePacked(_accessKey)) == accessKeyHash;
+    }
+    
+    // =========== Multi-Signature Functions ===========
+    
+    /**
+     * @dev Enable multi-signature requirements for this vault
+     * @param _signers Array of authorized signer addresses
+     * @param _threshold Number of signatures required (must be <= signers.length)
+     */
+    function enableMultiSig(address[] memory _signers, uint256 _threshold) external onlyOwner {
+        require(!multiSig.enabled, "Multi-sig already enabled");
+        require(_signers.length > 0, "At least one signer required");
+        require(_threshold > 0 && _threshold <= _signers.length, "Invalid threshold");
+        
+        // Add all signers
+        for (uint256 i = 0; i < _signers.length; i++) {
+            require(_signers[i] != address(0), "Invalid signer address");
+        }
+        
+        multiSig.signers = _signers;
+        multiSig.threshold = _threshold;
+        multiSig.enabled = true;
+        
+        emit MultiSigEnabled(true);
+    }
+    
+    /**
+     * @dev Disable multi-signature requirements
+     */
+    function disableMultiSig() external onlyOwner {
+        require(multiSig.enabled, "Multi-sig not enabled");
+        
+        multiSig.enabled = false;
+        
+        emit MultiSigEnabled(false);
+    }
+    
+    /**
+     * @dev Add a new signer to the multi-sig configuration
+     * @param _signer New signer address
+     */
+    function addSigner(address _signer) external onlyOwner {
+        require(multiSig.enabled, "Multi-sig not enabled");
+        require(_signer != address(0), "Invalid signer address");
+        
+        // Check if signer already exists
+        for (uint256 i = 0; i < multiSig.signers.length; i++) {
+            require(multiSig.signers[i] != _signer, "Signer already exists");
+        }
+        
+        // Add new signer
+        multiSig.signers.push(_signer);
+        
+        emit SignerAdded(_signer);
+    }
+    
+    /**
+     * @dev Remove a signer from the multi-sig configuration
+     * @param _signer Signer address to remove
+     */
+    function removeSigner(address _signer) external onlyOwner {
+        require(multiSig.enabled, "Multi-sig not enabled");
+        require(multiSig.signers.length > multiSig.threshold, "Cannot reduce signers below threshold");
+        
+        bool found = false;
+        uint256 signerIndex;
+        
+        // Find signer
+        for (uint256 i = 0; i < multiSig.signers.length; i++) {
+            if (multiSig.signers[i] == _signer) {
+                found = true;
+                signerIndex = i;
+                break;
+            }
+        }
+        
+        require(found, "Signer not found");
+        
+        // Remove signer by replacing with the last element and popping
+        multiSig.signers[signerIndex] = multiSig.signers[multiSig.signers.length - 1];
+        multiSig.signers.pop();
+        
+        emit SignerRemoved(_signer);
+    }
+    
+    /**
+     * @dev Update the multi-sig threshold
+     * @param _newThreshold New threshold value
+     */
+    function updateSignatureThreshold(uint256 _newThreshold) external onlyOwner {
+        require(multiSig.enabled, "Multi-sig not enabled");
+        require(_newThreshold > 0, "Threshold must be greater than 0");
+        require(_newThreshold <= multiSig.signers.length, "Threshold cannot exceed number of signers");
+        
+        uint256 oldThreshold = multiSig.threshold;
+        multiSig.threshold = _newThreshold;
+        
+        emit ThresholdChanged(oldThreshold, _newThreshold);
+    }
+    
+    /**
+     * @dev Create a withdrawal request that requires multi-signature approval
+     * @param _receiver Receiver of the assets
+     * @param _amount Amount of assets to withdraw
+     * @return requestId The ID of the created request
+     */
+    function createWithdrawalRequest(address _receiver, uint256 _amount) external onlyWhenUnlocked returns (uint256) {
+        require(multiSig.enabled, "Multi-sig not enabled");
+        require(_receiver != address(0), "Invalid receiver address");
+        require(_amount > 0, "Amount must be greater than 0");
+        require(totalAssets() >= _amount, "Insufficient assets in vault");
+        
+        uint256 requestId = nextWithdrawalRequestId++;
+        
+        WithdrawalRequest storage request = withdrawalRequests[requestId];
+        request.requester = msg.sender;
+        request.receiver = _receiver;
+        request.amount = _amount;
+        request.requestTime = block.timestamp;
+        request.approvalCount = 0;
+        request.executed = false;
+        request.cancelled = false;
+        
+        // Auto-approve if the requester is a signer
+        bool isRequesterSigner = false;
+        for (uint256 i = 0; i < multiSig.signers.length; i++) {
+            if (multiSig.signers[i] == msg.sender) {
+                isRequesterSigner = true;
+                request.approvals[msg.sender] = true;
+                request.approvalCount = 1;
+                break;
+            }
+        }
+        
+        emit WithdrawalRequested(requestId, msg.sender, _amount);
+        return requestId;
+    }
+    
+    /**
+     * @dev Approve a withdrawal request (only signers can call)
+     * @param _requestId ID of the withdrawal request
+     */
+    function approveWithdrawal(uint256 _requestId) external {
+        require(multiSig.enabled, "Multi-sig not enabled");
+        
+        // Check if caller is a signer
+        bool isSigner = false;
+        for (uint256 i = 0; i < multiSig.signers.length; i++) {
+            if (multiSig.signers[i] == msg.sender) {
+                isSigner = true;
+                break;
+            }
+        }
+        require(isSigner, "Not a signer");
+        
+        WithdrawalRequest storage request = withdrawalRequests[_requestId];
+        
+        require(!request.executed, "Request already executed");
+        require(!request.cancelled, "Request was cancelled");
+        require(!request.approvals[msg.sender], "Already approved");
+        
+        request.approvals[msg.sender] = true;
+        request.approvalCount++;
+        
+        emit WithdrawalApproved(_requestId, msg.sender);
+        
+        // If enough approvals, execute the withdrawal
+        if (request.approvalCount >= multiSig.threshold) {
+            _executeWithdrawal(_requestId);
+        }
+    }
+    
+    /**
+     * @dev Cancel a withdrawal request (only owner or requester can call)
+     * @param _requestId ID of the withdrawal request
+     */
+    function cancelWithdrawal(uint256 _requestId) external {
+        WithdrawalRequest storage request = withdrawalRequests[_requestId];
+        
+        require(!request.executed, "Request already executed");
+        require(!request.cancelled, "Request already cancelled");
+        require(msg.sender == request.requester || msg.sender == owner(), "Not authorized");
+        
+        request.cancelled = true;
+        
+        emit WithdrawalCancelled(_requestId, msg.sender);
+    }
+    
+    /**
+     * @dev Get withdrawal request information
+     * @param _requestId ID of the withdrawal request
+     * @return requester The address that created the request
+     * @return receiver The address that will receive the assets
+     * @return amount The amount of assets to withdraw
+     * @return requestTime The timestamp when the request was created
+     * @return approvalCount The number of approvals received
+     * @return executed Whether the request has been executed
+     * @return cancelled Whether the request has been cancelled
+     */
+    function getWithdrawalRequest(uint256 _requestId) external view returns (
+        address requester,
+        address receiver,
+        uint256 amount,
+        uint256 requestTime,
+        uint256 approvalCount,
+        bool executed,
+        bool cancelled
+    ) {
+        WithdrawalRequest storage request = withdrawalRequests[_requestId];
+        return (
+            request.requester,
+            request.receiver,
+            request.amount,
+            request.requestTime,
+            request.approvalCount,
+            request.executed,
+            request.cancelled
+        );
+    }
+    
+    /**
+     * @dev Check if a signer has approved a withdrawal request
+     * @param _requestId ID of the withdrawal request
+     * @param _signer Address of the signer
+     * @return True if the signer has approved the request
+     */
+    function hasApproved(uint256 _requestId, address _signer) external view returns (bool) {
+        return withdrawalRequests[_requestId].approvals[_signer];
+    }
+    
+    /**
+     * @dev Internal function to execute a withdrawal after sufficient approvals
+     * @param _requestId ID of the withdrawal request
+     */
+    function _executeWithdrawal(uint256 _requestId) internal {
+        WithdrawalRequest storage request = withdrawalRequests[_requestId];
+        
+        require(!request.executed, "Request already executed");
+        require(!request.cancelled, "Request was cancelled");
+        require(request.approvalCount >= multiSig.threshold, "Insufficient approvals");
+        
+        request.executed = true;
+        
+        // Transfer assets to the receiver
+        uint256 shares = convertToShares(request.amount);
+        super._withdraw(msg.sender, request.receiver, owner(), request.amount, shares);
+        
+        emit WithdrawalExecuted(_requestId, request.receiver, request.amount);
+    }
+    
+    // =========== Cross-Chain Verification Functions ===========
+    
+    /**
+     * @dev Register a verification from TON blockchain
+     * @param _verificationHash Hash verifying the vault state on TON
+     * @param _verificationProof Proof of the verification (signature)
+     */
+    function registerTONVerification(bytes32 _verificationHash, bytes memory _verificationProof) external {
+        // Verify the proof is coming from an authorized validator
+        bytes32 messageHash = keccak256(abi.encodePacked(
+            "\x19Ethereum Signed Message:\n32",
+            _verificationHash
+        ));
+        address recoveredAddress = messageHash.recover(_verificationProof);
+        require(authorizedRetrievers[recoveredAddress] || recoveredAddress == owner(), "Invalid verification signer");
+        
+        // Update TON verification status
+        crossChainVerification.tonVerificationHash = _verificationHash;
+        crossChainVerification.tonLastVerified = block.timestamp;
+        crossChainVerification.tonVerified = true;
+        
+        // Update chain verification status
+        chainVerificationStatus[CHAIN_TON] = true;
+        
+        emit CrossChainVerified(CHAIN_TON, _verificationHash);
+    }
+    
+    /**
+     * @dev Register a verification from Solana blockchain
+     * @param _verificationHash Hash verifying the vault state on Solana
+     * @param _verificationProof Proof of the verification (signature)
+     */
+    function registerSolanaVerification(bytes32 _verificationHash, bytes memory _verificationProof) external {
+        // Verify the proof is coming from an authorized validator
+        bytes32 messageHash = keccak256(abi.encodePacked(
+            "\x19Ethereum Signed Message:\n32",
+            _verificationHash
+        ));
+        address recoveredAddress = messageHash.recover(_verificationProof);
+        require(authorizedRetrievers[recoveredAddress] || recoveredAddress == owner(), "Invalid verification signer");
+        
+        // Update Solana verification status
+        crossChainVerification.solanaVerificationHash = _verificationHash;
+        crossChainVerification.solanaLastVerified = block.timestamp;
+        crossChainVerification.solanaVerified = true;
+        
+        // Update chain verification status
+        chainVerificationStatus[CHAIN_SOLANA] = true;
+        
+        emit CrossChainVerified(CHAIN_SOLANA, _verificationHash);
+    }
+    
+    /**
+     * @dev Check if the vault is verified across all required chains
+     * @return True if all required chains have verified the vault
+     */
+    function isFullyVerified() external view returns (bool) {
+        // Always verified on Ethereum since this is the Ethereum contract
+        bool ethereumVerified = true;
+        
+        // For security level 3, verification on all chains is required
+        if (securityLevel >= 3) {
+            return (
+                ethereumVerified && 
+                crossChainVerification.tonVerified && 
+                crossChainVerification.solanaVerified
+            );
+        }
+        
+        // For security level 2, only TON backup verification is required
+        if (securityLevel == 2) {
+            return ethereumVerified && crossChainVerification.tonVerified;
+        }
+        
+        // For security level 1, only Ethereum verification is required
+        return ethereumVerified;
+    }
+    
+    /**
+     * @dev Setup emergency recovery mode for this vault
+     * @param _recoveryAddress Address authorized for emergency recovery
+     */
+    function setupEmergencyRecovery(address _recoveryAddress) external onlyOwner {
+        require(_recoveryAddress != address(0), "Invalid recovery address");
+        
+        crossChainVerification.emergencyRecoveryAddress = _recoveryAddress;
+    }
+    
+    /**
+     * @dev Activate emergency recovery mode (requires verification)
+     * @param _tonRecoveryProof Proof of recovery authorization from TON chain
+     */
+    function activateEmergencyMode(bytes memory _tonRecoveryProof) external {
+        require(crossChainVerification.emergencyRecoveryAddress != address(0), "Recovery not set up");
+        require(!crossChainVerification.emergencyModeActive, "Emergency mode already active");
+        
+        // Verify the proof is coming from TON recovery mechanism
+        bytes32 messageHash = keccak256(abi.encodePacked(
+            "\x19Ethereum Signed Message:\n32",
+            keccak256(abi.encodePacked("EMERGENCY_RECOVERY", address(this), block.timestamp))
+        ));
+        address recoveredAddress = messageHash.recover(_tonRecoveryProof);
+        
+        require(
+            recoveredAddress == crossChainVerification.emergencyRecoveryAddress, 
+            "Invalid recovery proof"
+        );
+        
+        crossChainVerification.emergencyModeActive = true;
+        
+        emit EmergencyModeActivated(crossChainVerification.emergencyRecoveryAddress);
+    }
+    
+    /**
+     * @dev Deactivate emergency recovery mode (only owner)
+     */
+    function deactivateEmergencyMode() external onlyOwner {
+        require(crossChainVerification.emergencyModeActive, "Emergency mode not active");
+        
+        crossChainVerification.emergencyModeActive = false;
+        
+        emit EmergencyModeDeactivated();
+    }
+    
+    // =========== Geolocation Functions ===========
+    
+    /**
+     * @dev Enable geolocation lock for the vault
+     * @param _region ISO country code or region identifier
+     * @param _regionProof Proof used to verify location (hashed)
+     */
+    function enableGeoLock(string memory _region, string memory _regionProof) external onlyOwner {
+        require(bytes(_region).length > 0, "Region cannot be empty");
+        require(bytes(_regionProof).length > 0, "Region proof cannot be empty");
+        
+        geoLock.allowedRegion = _region;
+        geoLock.regionProofHash = keccak256(abi.encodePacked(_regionProof));
+        geoLock.enabled = true;
+        
+        emit GeoLockEnabled(_region);
+    }
+    
+    /**
+     * @dev Disable geolocation lock
+     */
+    function disableGeoLock() external onlyOwner {
+        require(geoLock.enabled, "Geo lock not enabled");
+        
+        geoLock.enabled = false;
+        
+        emit GeoLockDisabled();
+    }
+    
+    /**
+     * @dev Verify a user's geolocation matches the vault's allowed region
+     * @param _regionProof Proof of the user's region
+     * @return True if the user's region matches the allowed region
+     */
+    function verifyGeolocation(string memory _regionProof) external view returns (bool) {
+        if (!geoLock.enabled) {
+            return true;
+        }
+        
+        return keccak256(abi.encodePacked(_regionProof)) == geoLock.regionProofHash;
     }
 }
