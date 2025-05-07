@@ -45,6 +45,7 @@ import PrivacyDashboardPage from "@/pages/privacy-dashboard";
 import SecurityTestingPage from "@/pages/security-testing";
 import SecurityPage from "@/pages/security-page";
 import SecurityVerificationDemo from "@/pages/security-verification-demo";
+import VaultExplorer from "@/pages/vault-explorer";
 import NotFound from "@/pages/not-found";
 import TestContractPage from "@/pages/test-contract";
 import WalletManagerPage from "@/pages/wallet-manager";
@@ -106,6 +107,7 @@ function Router() {
         <Route path="/security-testing" component={SecurityTestingPage} />
         <Route path="/security" component={SecurityPage} />
         <Route path="/security-verification-demo" component={SecurityVerificationDemo} />
+        <Route path="/vault-explorer" component={VaultExplorer} />
         {/* Development routes hidden from navigation */}
         <Route path="/test-contract" component={TestContractPage} />
         <Route path="/wallet-manager" component={WalletManagerPage} />

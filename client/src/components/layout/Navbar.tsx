@@ -56,6 +56,7 @@ const Navbar = () => {
         { name: "Security Testing", href: "/security-testing", icon: "🔒" },
         { name: "Security Features", href: "/security", icon: "🛡️", highlight: true },
         { name: "Advanced Security Demo", href: "/security-verification-demo", icon: "🔍", highlight: true },
+        { name: "Vault Explorer", href: "/vault-explorer", icon: "🔎", highlight: true },
       ]
     },
     {
@@ -202,6 +203,11 @@ const Navbar = () => {
                 <Link href="/security-verification-demo">
                   <DropdownMenuItem className="cursor-pointer">
                     <span className="flex items-center gap-1"><span>🔍</span> Advanced Security Demo</span>
+                  </DropdownMenuItem>
+                </Link>
+                <Link href="/vault-explorer">
+                  <DropdownMenuItem className="cursor-pointer">
+                    <span className="flex items-center gap-1"><span>🔎</span> Vault Explorer</span>
                   </DropdownMenuItem>
                 </Link>
               </DropdownMenuContent>
