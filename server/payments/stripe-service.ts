@@ -7,7 +7,7 @@
  */
 
 import Stripe from 'stripe';
-import { securityLogger } from '../monitoring/security-logger';
+import { securityLogger, SecurityEventType, SecurityLogLevel } from '../monitoring/security-logger';
 import config from '../config';
 
 if (!process.env.STRIPE_SECRET_KEY) {
@@ -58,7 +58,7 @@ class StripeService {
         metadata
       });
     } catch (error) {
-      securityLogger.error('Failed to create Stripe customer', error);
+      securityLogger.error('Failed to create Stripe customer', SecurityEventType.SYSTEM_ERROR, { errorDetails: String(error) });
       throw new Error(`Failed to create customer: ${error instanceof Error ? error.message : 'Unknown error'}`);
     }
   }

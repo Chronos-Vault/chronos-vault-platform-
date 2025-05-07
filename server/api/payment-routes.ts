@@ -6,7 +6,7 @@
 
 import { Router, Request, Response } from 'express';
 import { stripeService } from '../payments/stripe-service';
-import { securityLogger } from '../monitoring/security-logger';
+import { securityLogger, SecurityEventType } from '../monitoring/security-logger';
 
 const router = Router();
 
@@ -47,7 +47,7 @@ router.post('/create-payment-intent', async (req: Request, res: Response) => {
       clientSecret: paymentIntent.client_secret
     });
   } catch (error) {
-    securityLogger.error('Failed to create payment intent', { error: String(error) });
+    securityLogger.error('Failed to create payment intent', SecurityEventType.SYSTEM_ERROR, { errorDetails: String(error) });
     
     res.status(500).json({
       status: 'error',
@@ -83,7 +83,7 @@ router.post('/webhook', async (req: Request, res: Response) => {
       message: result.message
     });
   } catch (error) {
-    securityLogger.error('Failed to process Stripe webhook', { error: String(error) });
+    securityLogger.error('Failed to process Stripe webhook', SecurityEventType.SYSTEM_ERROR, { errorDetails: String(error) });
     
     res.status(400).json({
       status: 'error',
