@@ -93,7 +93,7 @@ export const DATABASE_CONFIG = {
 
 // Server configuration
 export const SERVER_CONFIG = {
-  port: parseInt(process.env.PORT || '5000'),
+  port: parseInt(process.env.PORT || '5173'),
   sessionSecret: process.env.SESSION_SECRET || 'chronos-vault-secret-key',
   environment: process.env.NODE_ENV || 'development',
   // Deployment type for scaling
