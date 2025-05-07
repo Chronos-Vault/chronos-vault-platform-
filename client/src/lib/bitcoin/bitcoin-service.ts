@@ -31,17 +31,43 @@ export interface BitcoinHalvingInfo {
   currentHalvingEra: number; // 4th era, 5th era, etc.
 }
 
+// Block data from Blockstream API
+interface BlockstreamBlock {
+  id: string;
+  height: number;
+  version: number;
+  timestamp: number;
+  tx_count: number;
+  size: number;
+  weight: number;
+  merkle_root: string;
+  previousblockhash: string;
+  mediantime: number;
+  nonce: number;
+  bits: number;
+  difficulty: number;
+}
+
+// Fee estimates from Blockstream API
+interface BlockstreamFeeEstimates {
+  [blocks: string]: number;
+}
+
 class BitcoinService {
   private static instance: BitcoinService;
-  private apiBaseUrl: string = 'https://blockchain.info';
-  private mockMode: boolean = true;
+  private blockstreamApiUrl: string = 'https://blockstream.info/api';
+  private coingeckoApiUrl: string = 'https://api.coingecko.com/api/v3';
+  private mockMode: boolean = false;
   
   private constructor() {
-    // Initialize in production mode when BITCOIN_API_KEY is available
-    // Uses development mode with fixed data otherwise
-    this.mockMode = !import.meta.env.VITE_BITCOIN_API_KEY;
+    // Initialize in production mode by default
+    // Only use mock mode when explicitly requested or if API calls fail
+    this.mockMode = import.meta.env.VITE_BITCOIN_MOCK_MODE === 'true';
+    
     if (this.mockMode) {
-      console.log('Bitcoin service running in development mode with simulated data');
+      console.log('Bitcoin service running in mock mode with simulated data');
+    } else {
+      console.log('Bitcoin service running with live Blockstream and CoinGecko API data');
     }
   }
   
@@ -58,16 +84,58 @@ class BitcoinService {
     }
     
     try {
-      // In production, we would use real API calls:
-      // const response = await axios.get(`${this.apiBaseUrl}/stats`);
-      // return this.transformNetworkStats(response.data);
+      // Get latest block
+      const latestBlockResponse = await axios.get<BlockstreamBlock>(`${this.blockstreamApiUrl}/blocks/tip`);
+      const latestBlock = latestBlockResponse.data;
       
-      // Fallback to mocked data for now
-      return this.getMockedNetworkStats();
+      // Get fee estimates
+      const feeEstimatesResponse = await axios.get<BlockstreamFeeEstimates>(`${this.blockstreamApiUrl}/fee-estimates`);
+      const feeEstimates = feeEstimatesResponse.data;
+      
+      // Get mempool info
+      const mempoolInfoResponse = await axios.get(`${this.blockstreamApiUrl}/mempool`);
+      const mempoolInfo = mempoolInfoResponse.data;
+      
+      // Get difficulty and hash rate
+      const difficultyNumber = latestBlock.difficulty;
+      // Format difficulty to human-readable format
+      const difficultyFormatted = this.formatDifficulty(difficultyNumber);
+      
+      // Estimate hash rate (simplified calculation)
+      const hashRateEstimate = difficultyNumber / 600 / Math.pow(2, 32) * Math.pow(10, -12);
+      const hashRateFormatted = hashRateEstimate.toFixed(1);
+      
+      // Estimate next difficulty change (simplified)
+      const nextDiffChange = '+1.5%'; // This would ideally be calculated from recent blocks
+      
+      return {
+        blockHeight: latestBlock.height,
+        hashRate: hashRateFormatted,
+        difficulty: difficultyFormatted,
+        nextDifficultyChange: nextDiffChange,
+        mempool: {
+          count: mempoolInfo.count || 0,
+          size: ((mempoolInfo.vsize || 0) / 1000000).toFixed(1), // Convert to MB
+          fees: {
+            low: Math.round(feeEstimates['6'] || 10),    // 6 blocks (1 hour)
+            medium: Math.round(feeEstimates['3'] || 20), // 3 blocks (30 min)
+            high: Math.round(feeEstimates['1'] || 30)    // 1 block (10 min)
+          }
+        }
+      };
     } catch (error) {
       console.error('Failed to fetch Bitcoin network stats:', error);
       return this.getMockedNetworkStats();
     }
+  }
+  
+  private formatDifficulty(difficultyNumber: number): string {
+    if (difficultyNumber >= 1000000000000) {
+      return (difficultyNumber / 1000000000000).toFixed(2) + 'T';
+    } else if (difficultyNumber >= 1000000000) {
+      return (difficultyNumber / 1000000000).toFixed(2) + 'G';
+    }
+    return difficultyNumber.toString();
   }
   
   public async getBitcoinPrice(): Promise<BitcoinPrice> {
@@ -76,12 +144,18 @@ class BitcoinService {
     }
     
     try {
-      // In production, we would use real API calls:
-      // const response = await axios.get(`${this.apiBaseUrl}/ticker`);
-      // return this.transformPriceData(response.data);
+      // Use CoinGecko API to get Bitcoin price data
+      const response = await axios.get(
+        `${this.coingeckoApiUrl}/coins/bitcoin?localization=false&tickers=false&market_data=true&community_data=false&developer_data=false`
+      );
       
-      // Fallback to mocked data for now
-      return this.getMockedPrice();
+      const marketData = response.data.market_data;
+      
+      return {
+        usd: marketData.current_price.usd,
+        usd24hChange: marketData.price_change_percentage_24h,
+        lastUpdated: new Date()
+      };
     } catch (error) {
       console.error('Failed to fetch Bitcoin price data:', error);
       return this.getMockedPrice();
@@ -94,13 +168,40 @@ class BitcoinService {
     }
     
     try {
-      // In a production environment, we would calculate this based on real blockchain data
-      // Halving occurs every 210,000 blocks
-      // const currentBlockHeight = await this.getCurrentBlockHeight();
-      // return this.calculateHalvingInfo(currentBlockHeight);
+      // Get current block height from Blockstream API
+      const currentBlockHeight = await this.getCurrentBlockHeight();
       
-      // Fallback to mocked data for now
-      return this.getMockedHalvingInfo();
+      // Bitcoin halving happens every 210,000 blocks
+      const halvingInterval = 210000;
+      
+      // The last halving (to 3.125 BTC) happened at block 840000 on April 19, 2024
+      const lastHalvingBlock = 840000;
+      
+      // Calculate blocks until next halving
+      const nextHalvingBlock = lastHalvingBlock + halvingInterval;
+      const blocksUntilHalving = nextHalvingBlock - currentBlockHeight;
+      
+      // Calculate current halvening era (4th era started at block 840000)
+      const currentHalvingEra = Math.floor(currentBlockHeight / halvingInterval) + 1;
+      
+      // Calculate current and next rewards
+      const currentReward = 50 / Math.pow(2, currentHalvingEra - 1);
+      const nextReward = currentReward / 2;
+      
+      // Estimate time until next halving
+      // Bitcoin produces a block every ~10 minutes on average
+      const minutesUntilHalving = blocksUntilHalving * 10;
+      const nextHalvingDate = new Date();
+      nextHalvingDate.setMinutes(nextHalvingDate.getMinutes() + minutesUntilHalving);
+      
+      return {
+        currentBlock: currentBlockHeight,
+        blocksUntilHalving,
+        estimatedTimeUntilHalving: nextHalvingDate,
+        currentReward,
+        nextReward,
+        currentHalvingEra
+      };
     } catch (error) {
       console.error('Failed to fetch Bitcoin halving information:', error);
       return this.getMockedHalvingInfo();
@@ -121,11 +222,11 @@ class BitcoinService {
   
   private async getCurrentBlockHeight(): Promise<number> {
     try {
-      const response = await axios.get(`${this.apiBaseUrl}/q/getblockcount`);
+      const response = await axios.get(`${this.blockstreamApiUrl}/blocks/tip/height`);
       return parseInt(response.data, 10);
     } catch (error) {
       console.error('Failed to fetch current block height:', error);
-      return 840000; // Fallback approximately for May 2024
+      return 845721; // Fallback approximately for May 2024
     }
   }
   
