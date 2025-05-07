@@ -31,8 +31,9 @@ const Header = () => {
   const desktopNavigationLinks = [
     { name: "Create Vault", href: "/create-vault", icon: "🔐" },
     { name: "My Vaults", href: "/my-vaults", icon: "📊" },
-    { name: "Transaction Monitor", href: "/transaction-monitor", icon: "📈", highlight: true, important: true }, // New transaction monitor - extra important
-    { name: "Storage", href: "/storage", icon: "🗄️", highlight: true }, 
+    // Transaction Monitor is now styled with extra importance and "NEW" label
+    { name: "Transaction Monitor", href: "/transaction-monitor", icon: "📈", highlight: true, important: true, isNew: true },
+    { name: "Storage", href: "/storage", icon: "🗄️", highlight: true },
     { name: "Gift Crypto", href: "/gift-crypto", icon: "🎁" },
     { name: "CVT Token", href: "/cvt-token", icon: "🪙" },
     { name: "Documentation", href: "/documentation", icon: "📄" },
@@ -51,7 +52,8 @@ const Header = () => {
         { name: "Home", href: "/", icon: "🏠" },
         { name: "Create Vault", href: "/create-vault", icon: "🔐" },
         { name: "My Vaults", href: "/my-vaults", icon: "📊" },
-        { name: "Transaction Monitor", href: "/transaction-monitor", icon: "📈", highlight: true, important: true }, // New transaction monitor - important flag
+        // Transaction Monitor with added visibility and NEW label
+        { name: "Transaction Monitor", href: "/transaction-monitor", icon: "📈", highlight: true, important: true, isNew: true },
         { name: "Storage", href: "/storage", icon: "🗄️", highlight: true },
         { name: "Gift Crypto", href: "/gift-crypto", icon: "🎁" },
       ]
@@ -66,6 +68,8 @@ const Header = () => {
         { name: "Token Vaults", href: "/token-vaults", icon: "⏳" },
         { name: "Cross-Chain Features", href: "/cross-chain", icon: "🔄" },
         { name: "Multi-Signature Vault", href: "/multi-signature-vault", icon: "👥" },
+        { name: "Security Verification", href: "/security-verification-demo", icon: "🔐", highlight: true },
+        { name: "Triple-Chain Security", href: "/triple-chain-security-demo", icon: "⛓️", highlight: true }
       ]
     },
     {
@@ -129,7 +133,12 @@ const Header = () => {
                 ${link.important ? 'animate-pulse border-2 font-bold' : ''}`}
               >
                 <span className="text-base">{link.icon}</span>
-                <span className="truncate">{link.name}</span>
+                <div className="relative">
+                  <span className="truncate">{link.name}</span>
+                  {link.isNew && (
+                    <div className="absolute -top-3 -right-6 bg-[#FF5AF7] text-white text-[8px] px-1.5 py-0.5 rounded-full font-bold tracking-wider shadow-md shadow-[#FF5AF7]/30 animate-pulse">NEW</div>
+                  )}
+                </div>
               </Link>
             ))}
           </div>
@@ -241,7 +250,12 @@ const Header = () => {
                                   <div className="flex items-center justify-center w-10 h-10 rounded-lg bg-gradient-to-br from-[#6B00D7]/30 to-[#FF5AF7]/20 shadow-inner shadow-[#6B00D7]/10 border border-[#6B00D7]/20">
                                     <span className="text-xl text-[#FF5AF7]">{link.icon}</span>
                                   </div>
-                                  <span className="text-base">{link.name}</span>
+                                  <div className="relative">
+                                    <span className="text-base">{link.name}</span>
+                                    {link.isNew && (
+                                      <div className="absolute -top-3 -right-6 bg-[#FF5AF7] text-white text-[8px] px-1.5 py-0.5 rounded-full font-bold tracking-wider shadow-md shadow-[#FF5AF7]/30 animate-pulse">NEW</div>
+                                    )}
+                                  </div>
                                 </Link>
                               </SheetClose>
                             ))}
