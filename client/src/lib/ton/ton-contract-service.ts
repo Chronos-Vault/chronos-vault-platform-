@@ -120,10 +120,25 @@ class TONContractService {
       
       // Determine the correct address to use for the API request
       let queryAddress = txHash;
-      if (!txHash.startsWith('EQ') && !txHash.startsWith('Ug')) {
-        // If the txHash isn't a valid TON address format, use the master contract address
+      
+      // Check if txHash is a simulated transaction ID for development mode
+      if (txHash.startsWith('simulated_')) {
+        // If it's a simulated transaction, use the master contract address for lookup
         queryAddress = this.cvtMasterAddress;
         console.log('Using master contract address for transaction lookup');
+      }
+      // Check if txHash is in TON address format
+      else if (!txHash.startsWith('EQ') && !txHash.startsWith('Ug')) {
+        // If not a valid TON address format, check if it's a raw address that needs to be converted
+        if (txHash.match(/^[0-9a-fA-F]{64}$/)) {
+          // Convert raw address to TON friendly format
+          queryAddress = `EQ${txHash}`;
+          console.log('Converting raw address to TON format:', queryAddress);
+        } else {
+          // Use the master contract address as fallback
+          queryAddress = this.cvtMasterAddress;
+          console.log('Using master contract address for transaction lookup');
+        }
       }
       
       // Make API request to TON Center (Testnet endpoint for development)

@@ -326,6 +326,76 @@ class CrossChainMultiSignature {
     // In a real implementation, this would generate a zero-knowledge proof
     throw new Error('Not implemented - production multi-signature proof generation');
   }
+  
+  /**
+   * Create an approval request (alias method to match the API usage)
+   */
+  async createApprovalRequest(
+    data: any,
+    signers: Array<{ id: string; blockchain: BlockchainType; address: string }>,
+    options: MultiSignatureOptions = {}
+  ): Promise<MultiSignatureResult> {
+    return this.createMultiSignatureRequest(data, signers, options);
+  }
+  
+  /**
+   * Get request status (alias method to match the API usage)
+   */
+  async getRequestStatus(
+    requestId: string,
+    signers: Array<{ id: string; blockchain: BlockchainType; address: string }>,
+    options: MultiSignatureOptions = {}
+  ): Promise<MultiSignatureResult> {
+    return this.getMultiSignatureStatus(requestId, signers, options);
+  }
+  
+  /**
+   * Verify signature (alias method to match the API usage)
+   */
+  async verifySignature(
+    requestId: string,
+    signerId: string,
+    blockchain: BlockchainType,
+    address: string,
+    signature: string,
+    data: any
+  ): Promise<{ success: boolean; message: string }> {
+    // First, check if the signature is valid
+    try {
+      const client = this.getClient(blockchain);
+      if (!client.isInitialized()) {
+        await client.initialize();
+      }
+      
+      const isValid = await client.verifySignature(data, signature, address);
+      
+      if (!isValid) {
+        return {
+          success: false,
+          message: 'Invalid signature'
+        };
+      }
+      
+      // Then add the signature to the request
+      return this.addSignature(requestId, signerId, blockchain, address, signature, data);
+    } catch (error) {
+      securityLogger.error('Failed to verify signature', error);
+      return {
+        success: false,
+        message: `Failed to verify signature: ${error instanceof Error ? error.message : 'Unknown error'}`
+      };
+    }
+  }
+  
+  /**
+   * Generate ZK proof (alias method to match the API usage)
+   */
+  async generateZKProof(
+    requestId: string,
+    blockchain: BlockchainType
+  ): Promise<any> {
+    return this.generateMultiSignatureProof(requestId, blockchain);
+  }
 }
 
 export const crossChainMultiSignature = new CrossChainMultiSignature();
