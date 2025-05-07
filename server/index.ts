@@ -9,6 +9,7 @@ import { registerRoutes } from './routes';
 import { performanceOptimizer } from './performance/optimization-service';
 import { systemHealthMonitor } from './monitoring/system-health-monitor';
 import { securityLogger, SecurityEventType } from './monitoring/security-logger';
+import { setupVite, serveStatic } from './vite';
 
 // Create Express app
 const app = express();
@@ -16,7 +17,6 @@ const app = express();
 // Middleware
 app.use(cors());
 app.use(bodyParser.json());
-app.use(express.static('public')); // Serve static files from the public directory
 
 // Initialize services
 (async () => {

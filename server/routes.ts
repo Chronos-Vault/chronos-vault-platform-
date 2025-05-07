@@ -37,6 +37,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Create HTTP server instance
   const httpServer = createServer(app);
   
+  // Set up Vite for development or serve static files for production
+  if (process.env.NODE_ENV === 'development') {
+    const { setupVite } = await import('./vite');
+    await setupVite(app, httpServer);
+  } else {
+    const { serveStatic } = await import('./vite');
+    serveStatic(app);
+  }
+  
   // Handle server shutdown to clean up resources
   process.on('SIGTERM', () => {
     console.log('Server shutting down...');
