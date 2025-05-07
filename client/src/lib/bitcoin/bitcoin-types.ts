@@ -1,96 +1,170 @@
 /**
- * Bitcoin wallet information interface
+ * Interface for Bitcoin wallet information
  */
 export interface BitcoinWalletInfo {
   address: string;
-  balance: number;
+  balance: string;
   network: string;
-  isConnected: boolean;
+  publicKey?: string;
+  type?: string;
+  isTestnet: boolean;
+  utxos?: BitcoinUTXO[];
 }
 
 /**
- * Bitcoin transaction interface
+ * Interface for Bitcoin UTXO (Unspent Transaction Output)
+ */
+export interface BitcoinUTXO {
+  txid: string;
+  vout: number;
+  value: number;
+  scriptPubKey?: string;
+  confirmations?: number;
+}
+
+/**
+ * Interface for Bitcoin transaction
  */
 export interface BitcoinTransaction {
   txid: string;
-  amount: number;
-  timestamp: number;
-  receiverAddress?: string;
-  senderAddress?: string;
+  blockHash?: string;
   blockHeight?: number;
-  confirmations?: number;
-  fees?: number;
+  timestamp?: number;
+  confirmations: number;
+  fee?: number;
+  inputs: BitcoinTxInput[];
+  outputs: BitcoinTxOutput[];
+  size?: number;
+  status: 'confirmed' | 'pending' | 'failed';
+}
+
+/**
+ * Interface for Bitcoin transaction input
+ */
+export interface BitcoinTxInput {
+  txid: string;
+  vout: number;
+  scriptSig?: string;
+  address?: string;
+  value?: number;
+  sequence?: number;
+}
+
+/**
+ * Interface for Bitcoin transaction output
+ */
+export interface BitcoinTxOutput {
+  value: number;
+  address?: string;
+  scriptPubKey?: string;
+  n: number;
+  spent?: boolean;
+}
+
+/**
+ * Interface for Bitcoin transaction history item
+ */
+export interface BitcoinTransactionHistory {
+  txid: string;
+  amount: string;
+  type: 'send' | 'receive' | 'vault' | 'contract';
+  timestamp: number;
+  recipient?: string;
+  sender?: string;
+  description?: string;
   status: 'pending' | 'confirmed' | 'failed';
+  confirmations: number;
+  blockHeight?: number;
+  fee?: string;
 }
 
 /**
- * Bitcoin provider interface
- */
-export interface BitcoinProvider {
-  name: string;
-  isAvailable: boolean;
-  icon?: string;
-  isInstalled: () => boolean;
-  connect: () => Promise<BitcoinWalletInfo>;
-  disconnect: () => Promise<void>;
-  signMessage: (message: string) => Promise<string>;
-  sendTransaction: (receiverAddress: string, amountBTC: number) => Promise<string>;
-  getBalance: () => Promise<number>;
-}
-
-/**
- * Bitcoin halving information
- */
-export interface BitcoinHalvingInfo {
-  currentBlock: number;
-  halvingBlock: number;
-  blocksRemaining: number;
-  estimatedDaysRemaining: number;
-  blocksPerDay: number;
-  currentReward: number;
-  nextReward: number;
-  currentEra: number;
-  totalHalvings: number;
-}
-
-/**
- * Bitcoin network information
- */
-export interface BitcoinNetworkInfo {
-  networkType: 'mainnet' | 'testnet' | 'regtest';
-  difficulty: number;
-  hashrate: number;
-  latestBlock: number;
-  mempoolSize: number;
-  nextDifficultyAdjustment: number;
-}
-
-/**
- * Bitcoin price information
+ * Interface for Bitcoin price information
  */
 export interface BitcoinPriceInfo {
   usd: number;
-  eur: number;
-  percentChange24h: number;
-  marketCap: number;
-  volume24h: number;
-  allTimeHigh: number;
-  allTimeHighDate: string;
+  usd_24h_change: number;
+  usd_market_cap: number;
+  last_updated_at: number;
 }
 
 /**
- * Bitcoin halving vault configuration
+ * Interface for Bitcoin provider
  */
-export interface BitcoinHalvingVaultConfig {
-  unlockTime: 'after-halving' | 'custom-date';
-  postHalvingPeriod?: '3months' | '6months' | '1year' | 'nexthalving';
-  customDate?: Date;
-  amount: number;
-  name: string;
-  isMultiSig: boolean;
-  securityLevel: 'basic' | 'enhanced' | 'advanced';
-  isPublic: boolean;
-  participateInChallenge: boolean;
-  additionalSigners?: string[];
-  requiredSignatures?: number;
+export interface BitcoinProvider {
+  connect: () => Promise<boolean>;
+  disconnect: () => Promise<boolean>;
+  getWalletInfo: () => Promise<BitcoinWalletInfo | null>;
+  sendBitcoin: (toAddress: string, amount: string) => Promise<{
+    success: boolean;
+    txid?: string;
+    error?: string;
+  }>;
+  createVault: (params: {
+    unlockDate: Date | number;
+    recipient?: string;
+    amount: string;
+    description?: string;
+  }) => Promise<{
+    success: boolean;
+    vaultAddress?: string;
+    txid?: string;
+    error?: string;
+  }>;
+  getTransactionHistory: () => Promise<BitcoinTransactionHistory[]>;
+  getPriceInfo: () => Promise<BitcoinPriceInfo | null>;
+  verifyMessage: (message: string, signature: string, address: string) => Promise<boolean>;
+  signMessage: (message: string) => Promise<{
+    success: boolean;
+    signature?: string;
+    error?: string;
+  }>;
+}
+
+/**
+ * Interface for Bitcoin network information
+ */
+export interface BitcoinNetworkInfo {
+  difficulty: number;
+  blocks: number;
+  hashrate: number;
+  chain: 'main' | 'test' | 'regtest';
+  fees: {
+    fastestFee: number;  // satoshis per byte
+    halfHourFee: number;
+    hourFee: number;
+    economyFee: number;
+    minimumFee: number;
+  };
+  nextHalvingBlock: number;
+  blocksUntilHalving: number;
+  estimatedHalvingDate: Date;
+}
+
+/**
+ * Interface for Bitcoin halving information
+ */
+export interface BitcoinHalvingInfo {
+  currentReward: number;
+  nextReward: number;
+  blocksUntilHalving: number;
+  estimatedDaysUntilHalving: number;
+  estimatedHalvingDate: Date;
+  halvingIndex: number;  // which halving is next (4 = 4th halving)
+  blockHeight: number;
+}
+
+/**
+ * Interface for Bitcoin vault configuration
+ */
+export interface BitcoinVaultConfig {
+  vaultType: 'time-locked' | 'multi-signature' | 'hash-locked' | 'diamond-hands';
+  unlockDate?: Date;
+  unlockHeight?: number;
+  signaturesRequired?: number;
+  totalSigners?: number;
+  signers?: string[];  // Array of addresses
+  hashLock?: string;   // For hash-locked contracts
+  penalty?: number;    // For early withdrawal penalty (percentage)
+  minHodlDays?: number; // Minimum holding period for diamond-hands vaults
 }
