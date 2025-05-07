@@ -2,7 +2,7 @@
  * API Routes Registration
  */
 
-import { Express, Request, Response } from 'express';
+import { Express, Request, Response, Router } from 'express';
 import { createServer, Server } from 'http';
 import { performanceRoutes } from './api/performance-routes';
 import securityLoggerRoutes from './api/security-logger-routes';
@@ -15,20 +15,17 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Create HTTP server instance
   const httpServer = createServer(app);
   
-  // Register performance optimization routes
-  app.use('/api/performance', performanceRoutes);
+  // Create API router to handle all API routes
+  const apiRouter = Router();
   
-  // Register security logger routes
-  app.use('/api/security', securityLoggerRoutes);
-  
-  // Register system health monitoring routes
-  app.use('/api/health', healthRoutes);
-  
-  // Register incident response routes
-  app.use('/api/incidents', incidentRoutes);
+  // Register API sub-routes
+  apiRouter.use('/performance', performanceRoutes);
+  apiRouter.use('/security', securityLoggerRoutes);
+  apiRouter.use('/health', healthRoutes);
+  apiRouter.use('/incidents', incidentRoutes);
   
   // Simple health check route - lightweight version for quick status checks
-  app.get('/api/health-check', (_req: Request, res: Response) => {
+  apiRouter.get('/health-check', (_req: Request, res: Response) => {
     const health = systemHealthMonitor.getSystemHealth();
     res.json({
       status: health.status,
@@ -36,6 +33,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
       version: '1.0.0'
     });
   });
+  
+  // Register the API router
+  app.use('/api', apiRouter);
   
   // Set up Vite for development or serve static files for production
   // We set this up last so API routes take precedence

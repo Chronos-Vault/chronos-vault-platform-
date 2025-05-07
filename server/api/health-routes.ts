@@ -14,6 +14,25 @@ const router: Router = express.Router();
  * 
  * Returns a comprehensive health status of the entire system
  */
+router.get('/system-health', (req: Request, res: Response) => {
+  try {
+    const healthStatus = systemHealthMonitor.getSystemHealth();
+    
+    res.status(200).json({
+      status: 'success',
+      data: healthStatus
+    });
+  } catch (error: any) {
+    res.status(500).json({
+      status: 'error',
+      message: 'Failed to retrieve system health status: ' + error.message
+    });
+  }
+});
+
+/**
+ * Get system health status (alias for system-health)
+ */
 router.get('/status', (req: Request, res: Response) => {
   try {
     const healthStatus = systemHealthMonitor.getSystemHealth();
