@@ -1,12 +1,10 @@
-import { BitcoinNetworkType, BitcoinWalletProvider } from './bitcoin-types';
+import { BitcoinWalletInfo, BitcoinProvider } from './bitcoin-types';
 
-// Type for Bitcoin wallet information
-export interface BitcoinWalletInfo {
-  address: string;
-  balance: number;
-  network: BitcoinNetworkType;
-  isConnected: boolean;
-}
+// Type for Bitcoin network
+type BitcoinNetworkType = 'mainnet' | 'testnet' | 'regtest';
+
+// Re-export BitcoinWalletInfo so it can be imported elsewhere
+export type { BitcoinWalletInfo };
 
 // Callback type for wallet changes
 type WalletChangeCallback = (walletInfo: BitcoinWalletInfo | null) => void;

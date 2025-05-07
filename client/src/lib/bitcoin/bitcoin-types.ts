@@ -1,72 +1,96 @@
-// Types for Bitcoin-related functionality
-
-// Network types for Bitcoin
-export type BitcoinNetworkType = 'mainnet' | 'testnet' | 'regtest';
-
-// Bitcoin wallet provider types
-export type BitcoinWalletProvider = 'Unisat' | 'Xverse' | 'OKX' | 'Leather';
-
-// Bitcoin transaction status
-export enum BitcoinTransactionStatus {
-  PENDING = 'pending',
-  CONFIRMED = 'confirmed',
-  FAILED = 'failed'
+/**
+ * Bitcoin wallet information interface
+ */
+export interface BitcoinWalletInfo {
+  address: string;
+  balance: number;
+  network: string;
+  isConnected: boolean;
 }
 
-// Bitcoin transaction type
+/**
+ * Bitcoin transaction interface
+ */
 export interface BitcoinTransaction {
   txid: string;
-  sender: string;
-  recipient: string;
-  amount: number; // in BTC
-  fee: number; // in BTC
-  status: BitcoinTransactionStatus;
-  confirmations: number;
+  amount: number;
   timestamp: number;
+  receiverAddress?: string;
+  senderAddress?: string;
   blockHeight?: number;
+  confirmations?: number;
+  fees?: number;
+  status: 'pending' | 'confirmed' | 'failed';
 }
 
-// Bitcoin halving information
+/**
+ * Bitcoin provider interface
+ */
+export interface BitcoinProvider {
+  name: string;
+  isAvailable: boolean;
+  icon?: string;
+  isInstalled: () => boolean;
+  connect: () => Promise<BitcoinWalletInfo>;
+  disconnect: () => Promise<void>;
+  signMessage: (message: string) => Promise<string>;
+  sendTransaction: (receiverAddress: string, amountBTC: number) => Promise<string>;
+  getBalance: () => Promise<number>;
+}
+
+/**
+ * Bitcoin halving information
+ */
 export interface BitcoinHalvingInfo {
   currentBlock: number;
-  blocksUntilHalving: number;
-  estimatedHalvingDate: Date;
-  daysUntilHalving: number;
-  currentReward: number; // BTC per block
-  nextReward: number; // BTC per block
+  halvingBlock: number;
+  blocksRemaining: number;
+  estimatedDaysRemaining: number;
+  blocksPerDay: number;
+  currentReward: number;
+  nextReward: number;
+  currentEra: number;
+  totalHalvings: number;
 }
 
-// Bitcoin vault configuration
-export interface BitcoinVaultConfig {
+/**
+ * Bitcoin network information
+ */
+export interface BitcoinNetworkInfo {
+  networkType: 'mainnet' | 'testnet' | 'regtest';
+  difficulty: number;
+  hashrate: number;
+  latestBlock: number;
+  mempoolSize: number;
+  nextDifficultyAdjustment: number;
+}
+
+/**
+ * Bitcoin price information
+ */
+export interface BitcoinPriceInfo {
+  usd: number;
+  eur: number;
+  percentChange24h: number;
+  marketCap: number;
+  volume24h: number;
+  allTimeHigh: number;
+  allTimeHighDate: string;
+}
+
+/**
+ * Bitcoin halving vault configuration
+ */
+export interface BitcoinHalvingVaultConfig {
+  unlockTime: 'after-halving' | 'custom-date';
+  postHalvingPeriod?: '3months' | '6months' | '1year' | 'nexthalving';
+  customDate?: Date;
+  amount: number;
   name: string;
-  initialDeposit: number; // in BTC
-  vaultType: 'personal' | 'multi-sig';
-  unlockType: 'after-halving' | 'custom-date';
-  lockDuration: '3months' | '6months' | '1year' | 'nexthalving';
+  isMultiSig: boolean;
   securityLevel: 'basic' | 'enhanced' | 'advanced';
   isPublic: boolean;
-  diamondHandsChallenge: boolean;
-}
-
-// Bitcoin network stats
-export interface BitcoinNetworkStats {
-  hashRate: number; // hashes per second
-  difficulty: number;
-  blockHeight: number;
-  mempoolSize: number; // number of transactions
-  avgTransactionFee: number; // in satoshis
-  medianTransactionFee: number; // in satoshis
-  feeRates: {
-    fastestFee: number; // satoshis per vbyte
-    halfHourFee: number;
-    hourFee: number;
-    economyFee: number;
-    minimumFee: number;
-  };
-}
-
-// Bitcoin price data
-export interface BitcoinPriceData {
-  usd: number;
-  usd_24h_change: number;
+  participateInChallenge: boolean;
+  additionalSigners?: string[];
+  requiredSignatures?: number;
 }

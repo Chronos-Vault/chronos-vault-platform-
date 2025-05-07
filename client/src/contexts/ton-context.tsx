@@ -4,6 +4,7 @@ import {
   TonConnectionStatus as TonConnectionStatusEnum, 
   TONWalletInfo 
 } from '@/lib/ton/ton-service';
+import { useBlockchainErrors } from './blockchain-error-boundary';
 
 // Re-export the TonConnectionStatus enum for use in components
 export const TonConnectionStatus = TonConnectionStatusEnum;
@@ -116,16 +117,22 @@ export const TonProvider: React.FC<TonProviderProps> = ({ children }) => {
   const [metadata, setMetadata] = useState<TONWalletMetadata | null>(null);
   const [transactionHistory, setTransactionHistory] = useState<TONTransactionHistory[]>([]);
   const [isLoadingHistory, setIsLoadingHistory] = useState(false);
+  
+  // Error handling
+  const { addError, clearChainErrors } = useBlockchainErrors();
 
   // Initialize TON service and setup connection
   useEffect(() => {
     let isComponentMounted = true;
     let initInterval: NodeJS.Timeout | null = null;
     let updateInterval: NodeJS.Timeout | null = null;
+    let initAttempts = 0;
+    const MAX_INIT_ATTEMPTS = 5; // Maximum number of attempts before showing an error
     
     const initTon = async () => {
       try {
         // Attempt to initialize TON service
+        initAttempts++;
         const success = await tonService.initialize();
         
         if (success && isComponentMounted) {
@@ -133,6 +140,9 @@ export const TonProvider: React.FC<TonProviderProps> = ({ children }) => {
           setConnectionStatus(tonService.getConnectionStatus());
           setWalletInfo(tonService.getWalletInfo());
           setIsInitializing(false);
+          
+          // Clear any existing TON errors since initialization succeeded
+          clearChainErrors('TON');
           
           if (initInterval) {
             clearInterval(initInterval);
@@ -153,9 +163,43 @@ export const TonProvider: React.FC<TonProviderProps> = ({ children }) => {
           } catch (error) {
             console.warn('Failed to restore TON session:', error);
           }
+        } else if (initAttempts >= MAX_INIT_ATTEMPTS) {
+          // Add an error after several failed attempts
+          addError({
+            chain: 'TON',
+            message: 'Failed to initialize TON connection after multiple attempts. You can continue using other features.',
+            critical: false
+          });
+          
+          // Stop trying to initialize
+          if (initInterval) {
+            clearInterval(initInterval);
+            initInterval = null;
+          }
+          
+          // Still set initializing to false so the app continues
+          setIsInitializing(false);
         }
-      } catch (error) {
+      } catch (error: any) {
         console.error("Failed to initialize TON service:", error);
+        
+        if (initAttempts >= MAX_INIT_ATTEMPTS) {
+          // Add error to the blockchain error context
+          addError({
+            chain: 'TON',
+            message: `TON initialization error: ${error?.message || 'Unknown error'}`,
+            critical: false
+          });
+          
+          // Stop trying to initialize
+          if (initInterval) {
+            clearInterval(initInterval);
+            initInterval = null;
+          }
+          
+          // Still set initializing to false so the app continues
+          setIsInitializing(false);
+        }
       }
     };
 
@@ -195,6 +239,9 @@ export const TonProvider: React.FC<TonProviderProps> = ({ children }) => {
       const connected = await tonService.connect();
       setConnectionStatus(tonService.getConnectionStatus());
       
+      // Clear any existing TON errors since connection attempt completed
+      clearChainErrors('TON');
+      
       // Update wallet info
       const wallet = tonService.getWalletInfo();
       setWalletInfo(wallet);
@@ -210,11 +257,26 @@ export const TonProvider: React.FC<TonProviderProps> = ({ children }) => {
         
         // Save session for future automatic reconnection
         await saveSession();
+      } else {
+        // User might have rejected the connection
+        addError({
+          chain: 'TON',
+          message: 'TON wallet connection was not completed. You may need to approve the connection in your wallet.',
+          critical: false
+        });
       }
       
       return connected;
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error connecting to TON wallet:', error);
+      
+      // Report the error
+      addError({
+        chain: 'TON',
+        message: `Failed to connect to TON wallet: ${error?.message || 'Unknown error'}`,
+        critical: false
+      });
+      
       setConnectionStatus(TonConnectionStatus.DISCONNECTED);
       return false;
     }

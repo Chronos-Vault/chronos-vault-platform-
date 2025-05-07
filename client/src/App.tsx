@@ -10,6 +10,8 @@ import { BitcoinProvider } from "@/contexts/bitcoin-context";
 import { BitcoinWalletProvider } from "@/contexts/bitcoin-wallet-context";
 import { CVTTokenProvider } from "@/contexts/cvt-token-context";
 import { DevModeProvider } from "@/contexts/dev-mode-context";
+import { BlockchainErrorProvider, BlockchainErrorDisplay } from "@/contexts/blockchain-error-boundary";
+import { AuthProvider } from "@/contexts/auth-context";
 import Layout from "@/components/layout/Layout";
 
 // Pages
@@ -133,21 +135,15 @@ function App() {
   return (
     <TooltipProvider>
       <DevModeProvider>
-        <EthereumProvider>
-          <SolanaProvider>
-            <TonProvider>
-              <BitcoinProvider>
-                <BitcoinWalletProvider>
-                  <MultiChainProvider>
-                    <CVTTokenProvider>
-                      <Router />
-                    </CVTTokenProvider>
-                  </MultiChainProvider>
-                </BitcoinWalletProvider>
-              </BitcoinProvider>
-            </TonProvider>
-          </SolanaProvider>
-        </EthereumProvider>
+        <BitcoinProvider>
+          <BitcoinWalletProvider>
+            <MultiChainProvider>
+              <CVTTokenProvider>
+                <Router />
+              </CVTTokenProvider>
+            </MultiChainProvider>
+          </BitcoinWalletProvider>
+        </BitcoinProvider>
       </DevModeProvider>
     </TooltipProvider>
   );

@@ -2,6 +2,7 @@ import React, { createContext, useContext, useState, useEffect, ReactNode } from
 import { BitcoinWalletConnector, BitcoinWalletInfo } from '@/lib/bitcoin/bitcoin-wallet-connector';
 import { useDevMode } from './dev-mode-context';
 import { toast } from '@/hooks/use-toast';
+import { useBlockchainErrors } from './blockchain-error-boundary';
 
 // Context type definition
 interface BitcoinWalletContextType {
@@ -75,6 +76,9 @@ export function BitcoinWalletProvider({ children }: BitcoinWalletProviderProps) 
     }
   };
   
+  // Get access to the blockchain error context
+  const { addError, clearChainErrors } = useBlockchainErrors();
+
   // Connect to wallet
   const connectWallet = async (provider: string = 'Unisat'): Promise<void> => {
     try {
@@ -91,6 +95,9 @@ export function BitcoinWalletProvider({ children }: BitcoinWalletProviderProps) 
         return;
       }
       
+      // Clear any existing Bitcoin errors
+      clearChainErrors('Bitcoin');
+      
       // Otherwise connect to actual wallet
       await walletConnector.connect(provider);
       
@@ -98,8 +105,15 @@ export function BitcoinWalletProvider({ children }: BitcoinWalletProviderProps) 
         title: 'Wallet connected',
         description: `Successfully connected to ${provider} wallet`,
       });
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error connecting to wallet:', error);
+      
+      // Add error to the blockchain error context
+      addError({
+        chain: 'Bitcoin',
+        message: `Failed to connect to ${provider} wallet: ${error?.message || 'Unknown error'}`,
+        critical: false
+      });
       
       toast({
         title: 'Connection failed',
