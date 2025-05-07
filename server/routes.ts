@@ -1841,26 +1841,53 @@ export async function registerRoutes(app: Express): Promise<Server> {
         });
       }
 
+      const { stripeService } = await import('./payments/stripe-service');
+      
+      // Determine if the user has CVT tokens staked to apply a discount
+      let discountedAmount = parseFloat(amount);
+      
+      // Apply discount based on staked CVT tokens if applicable
+      if (req.isAuthenticated() && req.user) {
+        try {
+          // Get user's staked CVT amount
+          const stakedAmount = await getStakedCVTAmount(req.user.id);
+          if (stakedAmount > 0) {
+            const discount = stripeService.calculateFeeDiscount(stakedAmount);
+            discountedAmount = discountedAmount * (1 - discount);
+            securityLogger.info(`Applied discount of ${discount * 100}% based on ${stakedAmount} staked CVT tokens`);
+          }
+        } catch (error) {
+          securityLogger.warn('Failed to apply CVT staking discount', error);
+          // Continue with original amount if staking check fails
+        }
+      }
+
       // Create a payment intent with Stripe
-      const paymentIntent = await stripe.paymentIntents.create({
-        amount: Math.round(parseFloat(amount) * 100), // Convert to cents
-        currency: currency,
+      const paymentIntent = await stripeService.createPaymentIntent({
+        amount: discountedAmount,
+        currency,
         description: description || `Payment for vault ${vaultId}`,
         metadata: {
           vaultId: vaultId?.toString() || "",
-          type: "premium_vault_features"
+          type: "premium_vault_features",
+          userId: req.user?.id?.toString() || 'anonymous',
+          originalAmount: amount.toString(),
+          discountedAmount: discountedAmount.toString()
         }
       });
 
       // Return the client secret to the client
       res.json({
-        clientSecret: paymentIntent.client_secret
+        clientSecret: paymentIntent.client_secret,
+        amount: discountedAmount,
+        originalAmount: parseFloat(amount),
+        discount: parseFloat(amount) - discountedAmount
       });
-    } catch (error) {
-      console.error("Error creating payment intent:", error);
+    } catch (error: any) {
+      securityLogger.error("Error creating payment intent", error);
       res.status(500).json({
         error: "Failed to create payment intent",
-        message: error.message
+        message: error instanceof Error ? error.message : 'Unknown error'
       });
     }
   });
