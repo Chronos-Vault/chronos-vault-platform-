@@ -12,6 +12,9 @@ import { systemHealthMonitor } from './monitoring/system-health-monitor';
 import { incidentResponseSystem } from './monitoring/incident-response';
 
 export async function registerRoutes(app: Express): Promise<Server> {
+  // Create HTTP server instance
+  const httpServer = createServer(app);
+  
   // Register performance optimization routes
   app.use('/api/performance', performanceRoutes);
   
@@ -34,10 +37,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
     });
   });
   
-  // Create HTTP server instance
-  const httpServer = createServer(app);
-  
   // Set up Vite for development or serve static files for production
+  // We set this up last so API routes take precedence
   if (process.env.NODE_ENV === 'development') {
     const { setupVite } = await import('./vite');
     await setupVite(app, httpServer);
