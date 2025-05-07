@@ -32,6 +32,9 @@ class TONService {
   /**
    * Initialize TON service
    */
+  // Static variable to share the TonConnectUI instance across different provider instances
+  private static sharedTonConnectUI: TonConnectUI | null = null;
+
   async initialize(): Promise<boolean> {
     try {
       if (this.isInitialized) return true;
@@ -46,8 +49,13 @@ class TONService {
         console.log("Created TON connect button container in DOM");
       }
       
-      // Check for an existing TonConnectUI instance to avoid errors with custom elements
-      if (!this.tonConnectUI) {
+      // First check if we already have a shared instance
+      if (TONService.sharedTonConnectUI) {
+        this.tonConnectUI = TONService.sharedTonConnectUI;
+        console.log('Reusing existing TON Connect UI instance');
+      }
+      // Otherwise, try to create a new instance
+      else if (!this.tonConnectUI) {
         try {
           // Get the current URL for manifest resolution
           const currentUrl = window.location.origin;
@@ -55,26 +63,23 @@ class TONService {
           
           console.log('Initializing TonConnectUI with manifest URL:', manifestUrl);
           
-          // Check if the custom element is already defined to avoid the error
-          const customElementExists = !!customElements.get('tc-root');
-          
-          if (!customElementExists) {
+          try {
             this.tonConnectUI = new TonConnectUI({
               manifestUrl: manifestUrl,
               buttonRootId: 'ton-connect-button'
             });
-          } else {
-            console.log('TON Connect UI elements already defined, attempting to reuse');
-            // We can still create a new instance, but log for debugging
-            try {
-              this.tonConnectUI = new TonConnectUI({
-                manifestUrl: manifestUrl,
-                buttonRootId: 'ton-connect-button'
-              });
-            } catch (elementError) {
-              console.warn('Could not create new TonConnectUI due to custom element registry:', elementError);
-              // This is a fallback approach - the component might not function correctly
-              // but we'll continue to avoid breaking the UI
+            
+            // Store the successful instance in the static variable for future reuse
+            TONService.sharedTonConnectUI = this.tonConnectUI;
+          } catch (elementError) {
+            console.warn('Error creating TonConnectUI:', elementError);
+            
+            // Create a minimal mock implementation for development mode
+            if (process.env.NODE_ENV === 'development') {
+              this.tonConnectUI = this.createMockTonConnectUI();
+              console.log('Created mock TON Connect UI for development mode');
+            } else {
+              throw elementError; // In production, we should handle this more gracefully
             }
           }
           
