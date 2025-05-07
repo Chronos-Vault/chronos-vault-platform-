@@ -1,95 +1,106 @@
-import { useCallback } from "react";
-import { BlockchainType } from "@/lib/cross-chain/types";
+import { useMemo } from 'react';
+import { BlockchainType } from '@/lib/cross-chain/types';
 
-// Define explorer URLs for different blockchain networks
-const EXPLORER_URLS = {
+/**
+ * Chain explorer configuration for Ethereum, Solana, and TON
+ */
+const chainExplorers: Record<BlockchainType, {
+  name: string;
+  logo: string;
+  mainnet: {
+    url: string;
+    address: string;
+    transaction: string;
+    token: string;
+    block: string;
+  };
+  testnet: {
+    url: string;
+    address: string;
+    transaction: string;
+    token: string;
+    block: string;
+  };
+}> = {
   ETH: {
+    name: 'Etherscan',
+    logo: 'https://etherscan.io/assets/svg/logos/logo-etherscan.svg',
     mainnet: {
-      address: "https://etherscan.io/address/",
-      transaction: "https://etherscan.io/tx/",
-      token: "https://etherscan.io/token/",
-      block: "https://etherscan.io/block/",
+      url: 'https://etherscan.io',
+      address: '/address/',
+      transaction: '/tx/',
+      token: '/token/',
+      block: '/block/'
     },
     testnet: {
-      address: "https://sepolia.etherscan.io/address/",
-      transaction: "https://sepolia.etherscan.io/tx/",
-      token: "https://sepolia.etherscan.io/token/",
-      block: "https://sepolia.etherscan.io/block/",
-    },
+      url: 'https://sepolia.etherscan.io',
+      address: '/address/',
+      transaction: '/tx/',
+      token: '/token/',
+      block: '/block/'
+    }
   },
   SOL: {
+    name: 'Solscan',
+    logo: 'https://solscan.io/static/media/solana-sol-logo.b612f140.svg',
     mainnet: {
-      address: "https://explorer.solana.com/address/",
-      transaction: "https://explorer.solana.com/tx/",
-      token: "https://explorer.solana.com/token/",
-      block: "https://explorer.solana.com/block/",
+      url: 'https://solscan.io',
+      address: '/account/',
+      transaction: '/tx/',
+      token: '/token/',
+      block: '/block/'
     },
     testnet: {
-      address: "https://explorer.solana.com/address/?cluster=devnet",
-      transaction: "https://explorer.solana.com/tx/?cluster=devnet",
-      token: "https://explorer.solana.com/token/?cluster=devnet",
-      block: "https://explorer.solana.com/block/?cluster=devnet",
-    },
+      url: 'https://solscan.io',
+      address: '/account/',
+      transaction: '/tx/',
+      token: '/token/',
+      block: '/block/'
+    }
   },
   TON: {
+    name: 'TON Explorer',
+    logo: 'https://ton.org/images/toncoin_symbol.svg',
     mainnet: {
-      address: "https://tonscan.org/address/",
-      transaction: "https://tonscan.org/tx/",
-      token: "https://tonscan.org/jetton/",
-      block: "https://tonscan.org/block/",
+      url: 'https://tonscan.org',
+      address: '/address/',
+      transaction: '/tx/',
+      token: '/jetton/',
+      block: '/block/'
     },
     testnet: {
-      address: "https://testnet.tonscan.org/address/",
-      transaction: "https://testnet.tonscan.org/tx/",
-      token: "https://testnet.tonscan.org/jetton/",
-      block: "https://testnet.tonscan.org/block/",
-    },
-  },
-  // Additional blockchain explorers can be added here
+      url: 'https://testnet.tonscan.org',
+      address: '/address/',
+      transaction: '/tx/',
+      token: '/jetton/',
+      block: '/block/'
+    }
+  }
 };
 
-export function useChainExplorer() {
-  const isTestnet = true; // In production, this would be determined by environment or config
-
-  const getExplorerUrl = useCallback((
-    blockchain: BlockchainType,
-    type: "address" | "transaction" | "token" | "block",
-    value: string
-  ): string | null => {
-    const network = isTestnet ? "testnet" : "mainnet";
-    
-    // Handle special case for Solana devnet explorer
-    if (blockchain === "SOL" && isTestnet) {
-      // For Solana, we need to append the value differently due to cluster parameter
-      const baseUrl = EXPLORER_URLS[blockchain][network][type];
-      if (baseUrl.includes("?cluster=")) {
-        const [url, params] = baseUrl.split("?");
-        return `${url}/${value}?${params}`;
+/**
+ * Hook for interacting with blockchain explorers
+ */
+export const useChainExplorer = (blockchain: BlockchainType, useTestnet = true) => {
+  const explorer = useMemo(() => {
+    const network = useTestnet ? 'testnet' : 'mainnet';
+    return {
+      name: chainExplorers[blockchain].name,
+      logo: chainExplorers[blockchain].logo,
+      baseUrl: chainExplorers[blockchain][network].url,
+      getAddressUrl: (address: string) => `${chainExplorers[blockchain][network].url}${chainExplorers[blockchain][network].address}${address}`,
+      getTransactionUrl: (txHash: string) => `${chainExplorers[blockchain][network].url}${chainExplorers[blockchain][network].transaction}${txHash}`,
+      getTokenUrl: (tokenAddress: string) => `${chainExplorers[blockchain][network].url}${chainExplorers[blockchain][network].token}${tokenAddress}`,
+      getBlockUrl: (blockNumber: string | number) => `${chainExplorers[blockchain][network].url}${chainExplorers[blockchain][network].block}${blockNumber}`,
+      formatAddress: (address: string) => {
+        if (!address) return '';
+        if (address.length <= 16) return address;
+        return `${address.substring(0, 8)}...${address.substring(address.length - 8)}`;
       }
-    }
-    
-    // Standard case for other blockchains
-    if (EXPLORER_URLS[blockchain]?.[network]?.[type]) {
-      return `${EXPLORER_URLS[blockchain][network][type]}${value}`;
-    }
-    
-    return null;
-  }, [isTestnet]);
+    };
+  }, [blockchain, useTestnet]);
 
-  const formatAddress = useCallback((
-    blockchain: BlockchainType, 
-    address: string, 
-    length: number = 8
-  ): string => {
-    if (!address) return "";
-    
-    if (address.length <= length * 2) return address;
-    
-    return `${address.slice(0, length)}...${address.slice(-length)}`;
-  }, []);
+  return explorer;
+};
 
-  return {
-    getExplorerUrl,
-    formatAddress,
-  };
-}
+export default useChainExplorer;
