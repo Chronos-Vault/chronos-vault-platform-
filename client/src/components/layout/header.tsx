@@ -31,8 +31,8 @@ const Header = () => {
   const desktopNavigationLinks = [
     { name: "Create Vault", href: "/create-vault", icon: "🔐" },
     { name: "My Vaults", href: "/my-vaults", icon: "📊" },
-    { name: "Storage", href: "/storage", icon: "🗄️", highlight: true }, // Highlighted for better visibility
-    { name: "Transaction Monitor", href: "/transaction-monitor", icon: "📈", highlight: true }, // New transaction monitor
+    { name: "Transaction Monitor", href: "/transaction-monitor", icon: "📈", highlight: true, important: true }, // New transaction monitor - extra important
+    { name: "Storage", href: "/storage", icon: "🗄️", highlight: true }, 
     { name: "Gift Crypto", href: "/gift-crypto", icon: "🎁" },
     { name: "CVT Token", href: "/cvt-token", icon: "🪙" },
     { name: "Documentation", href: "/documentation", icon: "📄" },
@@ -51,8 +51,8 @@ const Header = () => {
         { name: "Home", href: "/", icon: "🏠" },
         { name: "Create Vault", href: "/create-vault", icon: "🔐" },
         { name: "My Vaults", href: "/my-vaults", icon: "📊" },
-        { name: "Storage", href: "/storage", icon: "🗄️", highlight: true }, // Highlighted for better visibility
-        { name: "Transaction Monitor", href: "/transaction-monitor", icon: "📈", highlight: true }, // New transaction monitor
+        { name: "Transaction Monitor", href: "/transaction-monitor", icon: "📈", highlight: true, important: true }, // New transaction monitor - important flag
+        { name: "Storage", href: "/storage", icon: "🗄️", highlight: true },
         { name: "Gift Crypto", href: "/gift-crypto", icon: "🎁" },
       ]
     },
@@ -125,7 +125,8 @@ const Header = () => {
                   location === link.href 
                   ? 'text-white bg-[#6B00D7]/20 relative after:absolute after:bottom-[6px] after:left-[10px] after:right-[10px] after:h-[2px] after:bg-gradient-to-r after:from-[#6B00D7] after:to-[#FF5AF7] after:rounded-full' 
                   : ''
-                } ${link.highlight ? 'relative bg-gradient-to-r from-[#6B00D7]/20 to-[#FF5AF7]/20 border border-[#FF5AF7]/30 text-[#FF5AF7] shadow-sm' : ''}`}
+                } ${link.highlight ? 'relative bg-gradient-to-r from-[#6B00D7]/20 to-[#FF5AF7]/20 border border-[#FF5AF7]/30 text-[#FF5AF7] shadow-sm' : ''}
+                ${link.important ? 'animate-pulse border-2 font-bold' : ''}`}
               >
                 <span className="text-base">{link.icon}</span>
                 <span className="truncate">{link.name}</span>
@@ -234,7 +235,8 @@ const Header = () => {
                                   className={`flex items-center gap-3 px-3 py-3 rounded-lg ${location === link.href 
                                     ? 'bg-[#6B00D7]/20 text-white font-poppins font-semibold border-l-2 border-[#FF5AF7]' 
                                     : 'text-gray-300 hover:text-white hover:bg-[#6B00D7]/10 font-poppins font-medium transition-all'
-                                  } ${link.highlight ? 'relative bg-gradient-to-r from-[#6B00D7]/20 to-[#FF5AF7]/20 border border-[#FF5AF7]/30 text-[#FF5AF7] shadow-sm' : ''}`}
+                                  } ${link.highlight ? 'relative bg-gradient-to-r from-[#6B00D7]/20 to-[#FF5AF7]/20 border border-[#FF5AF7]/30 text-[#FF5AF7] shadow-sm' : ''}
+                                  ${link.important ? 'animate-pulse border-2 border-[#FF5AF7] font-bold' : ''}`}
                                 >
                                   <div className="flex items-center justify-center w-10 h-10 rounded-lg bg-gradient-to-br from-[#6B00D7]/30 to-[#FF5AF7]/20 shadow-inner shadow-[#6B00D7]/10 border border-[#6B00D7]/20">
                                     <span className="text-xl text-[#FF5AF7]">{link.icon}</span>
