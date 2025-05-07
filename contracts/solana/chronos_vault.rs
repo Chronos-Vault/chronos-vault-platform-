@@ -173,6 +173,20 @@ pub struct VaultState {
     pub cross_chain_links: Vec<CrossChainLink>,
     /// Array of tags
     pub tags: Vec<String>,
+    
+    // Triple-Chain Security Components
+    /// Cross-chain verification status
+    pub cross_chain_verification: CrossChainVerification,
+    /// Multi-signature configuration
+    pub multi_sig_config: Option<MultiSigConfig>,
+    /// Geolocation lock
+    pub geo_lock: Option<GeoLock>,
+    /// Monitoring frequency (in seconds)
+    pub monitoring_frequency: u64,
+    /// Last high-frequency monitoring timestamp
+    pub last_monitoring: u64,
+    /// Emergency mode status
+    pub emergency_mode_active: bool,
 }
 
 /// Cross-chain link to other blockchain contracts
@@ -182,6 +196,72 @@ pub struct CrossChainLink {
     pub blockchain: String,
     /// Contract address on that blockchain
     pub contract_address: String,
+}
+
+/// Cross-chain verification status
+#[derive(BorshSerialize, BorshDeserialize, Debug, Clone)]
+pub struct CrossChainVerification {
+    /// Ethereum verification status
+    pub ethereum_verified: bool,
+    /// Ethereum verification timestamp
+    pub ethereum_last_verified: u64,
+    /// Ethereum verification hash
+    pub ethereum_verification_hash: [u8; 32],
+    
+    /// TON verification status
+    pub ton_verified: bool,
+    /// TON verification timestamp
+    pub ton_last_verified: u64,
+    /// TON verification hash
+    pub ton_verification_hash: [u8; 32],
+    
+    /// Number of chains that have verified
+    pub verified_chain_count: u8,
+    /// Threshold of chains required for verification
+    pub verification_threshold: u8,
+}
+
+/// Multi-signature configuration
+#[derive(BorshSerialize, BorshDeserialize, Debug, Clone)]
+pub struct MultiSigConfig {
+    /// List of authorized signers
+    pub signers: Vec<Pubkey>,
+    /// Number of signatures required for approval
+    pub threshold: u8,
+    /// Whether multi-signature is enabled
+    pub enabled: bool,
+}
+
+/// Geolocation lock configuration
+#[derive(BorshSerialize, BorshDeserialize, Debug, Clone)]
+pub struct GeoLock {
+    /// Allowed region (ISO country code)
+    pub allowed_region: String,
+    /// Hashed proof of the allowed region
+    pub region_proof_hash: [u8; 32],
+    /// Whether geolocation locking is enabled
+    pub enabled: bool,
+}
+
+/// Withdrawal request with multi-signature approval
+#[derive(BorshSerialize, BorshDeserialize, Debug, Clone)]
+pub struct WithdrawalRequest {
+    /// Unique identifier for the request
+    pub id: u64,
+    /// Account that requested the withdrawal
+    pub requester: Pubkey,
+    /// Account that will receive the funds
+    pub receiver: Pubkey,
+    /// Amount to withdraw
+    pub amount: u64,
+    /// Timestamp when the request was created
+    pub request_time: u64,
+    /// List of signers that have approved
+    pub approvals: Vec<Pubkey>,
+    /// Whether the request has been executed
+    pub executed: bool,
+    /// Whether the request has been cancelled
+    pub cancelled: bool,
 }
 
 /// Main instruction processor
