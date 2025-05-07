@@ -1,22 +1,39 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'wouter';
-import { Bitcoin, LockIcon, Calendar, ArrowRight, TrendingUp, Shield } from 'lucide-react';
+import { Bitcoin, LockIcon, Calendar, ArrowRight, TrendingUp, Shield, RefreshCw, Activity } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
 import { calculateTimeRemaining, formatDate } from '@/utils/date-utils';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-
-// Simulating the next Bitcoin halving date
-const nextHalvingDate = new Date('2024-04-08');
-// Calculating days until next halving
-const daysUntilHalving = Math.max(0, Math.floor((nextHalvingDate.getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24)));
+import { useBitcoin } from '@/contexts/bitcoin-context';
+import { Skeleton } from '@/components/ui/skeleton';
+import { Badge } from '@/components/ui/badge';
 
 export const BitcoinHalvingVault: React.FC = () => {
   const [activeTab, setActiveTab] = useState('overview');
+  const { 
+    nextHalvingDate,
+    daysUntilHalving,
+    halvingCycleProgress,
+    networkStats,
+    priceData,
+    halvingInfo,
+    isLoading,
+    refreshData
+  } = useBitcoin();
 
   // Calculate the timeRemaining for the countdown
-  const timeRemaining = calculateTimeRemaining(nextHalvingDate);
+  const [timeRemaining, setTimeRemaining] = useState(calculateTimeRemaining(nextHalvingDate));
+  
+  // Update countdown timer every second
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setTimeRemaining(calculateTimeRemaining(nextHalvingDate));
+    }, 1000);
+    
+    return () => clearInterval(interval);
+  }, [nextHalvingDate]);
 
   return (
     <div className="w-full max-w-6xl mx-auto">
