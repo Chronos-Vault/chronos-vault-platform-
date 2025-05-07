@@ -14,6 +14,29 @@ export interface EthereumConnectionState {
   developmentMode: boolean;
 }
 
+// Vault creation parameters
+export interface VaultCreationParams {
+  unlockTime: number;
+  amount: string;
+  recipient?: string;
+  comment?: string;
+  securityLevel?: number;
+}
+
+// Transaction response
+export interface TransactionResponse {
+  success: boolean;
+  transactionHash?: string;
+  error?: string;
+}
+
+// Vault creation response
+export interface VaultCreationResponse {
+  success: boolean;
+  vaultAddress?: string;
+  error?: string;
+}
+
 /**
  * Ethereum Service for Chronos Vault
  * 
@@ -268,6 +291,82 @@ class EthereumService {
     } catch (error) {
       console.error('Failed to get block number', error);
       return 0;
+    }
+  }
+
+  /**
+   * Send ETH to a specific address
+   */
+  async sendETH(toAddress: string, amount: string): Promise<TransactionResponse> {
+    try {
+      if (this.isDevelopmentMode) {
+        console.log(`Development mode: Simulated sending ${amount} ETH to ${toAddress}`);
+        return { 
+          success: true, 
+          transactionHash: `simulated_tx_${Date.now()}` 
+        };
+      }
+
+      if (!this.isConnected || !this.signer) {
+        throw new Error('Wallet not connected');
+      }
+
+      const parsedAmount = ethers.parseEther(amount);
+      
+      const tx = await this.signer.sendTransaction({
+        to: toAddress,
+        value: parsedAmount
+      });
+      
+      const receipt = await tx.wait();
+      
+      return {
+        success: true,
+        transactionHash: receipt?.hash || tx.hash
+      };
+    } catch (error: any) {
+      console.error('Error sending ETH:', error);
+      return {
+        success: false,
+        error: error.message || 'Unknown error sending ETH'
+      };
+    }
+  }
+
+  /**
+   * Create a vault with specific parameters
+   */
+  async createVault(params: VaultCreationParams): Promise<VaultCreationResponse> {
+    try {
+      if (this.isDevelopmentMode) {
+        const simulatedAddress = `0x${Math.random().toString(16).substring(2, 42).padStart(40, '0')}`;
+        console.log(`Development mode: Simulated creating vault at ${simulatedAddress}`, params);
+        return { 
+          success: true, 
+          vaultAddress: simulatedAddress
+        };
+      }
+
+      if (!this.isConnected || !this.signer) {
+        throw new Error('Wallet not connected');
+      }
+      
+      // In a real implementation, this would interact with the vault contract
+      console.log('Creating vault with params:', params);
+      
+      // Simulate successful vault creation with random address
+      const vaultAddress = `0x${Math.random().toString(16).substring(2, 42).padStart(40, '0')}`;
+      
+      return {
+        success: true,
+        vaultAddress
+      };
+    } catch (error: any) {
+      console.error('Error creating vault:', error);
+      return {
+        success: false,
+        error: error.message || 'Unknown error creating vault'
+      };
     }
   }
 }

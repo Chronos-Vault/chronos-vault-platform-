@@ -1,6 +1,11 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import { ethereumService, EthereumConnectionState } from '@/lib/ethereum/ethereum-service';
-import { VaultCreationParams } from '@/lib/cross-chain/interfaces';
+import { 
+  ethereumService, 
+  EthereumConnectionState, 
+  VaultCreationParams,
+  TransactionResponse,
+  VaultCreationResponse 
+} from '@/lib/ethereum/ethereum-service';
 
 // Available Ethereum networks
 type EthereumNetwork = 'mainnet' | 'goerli' | 'sepolia';
@@ -222,6 +227,7 @@ export const EthereumProvider: React.FC<EthereumProviderProps> = ({ children }) 
   const contextValue: EthereumContextType = {
     isConnected: connectionState.isConnected,
     isConnecting,
+    isDevelopmentMode: connectionState.developmentMode || false,
     walletInfo: getWalletInfo(),
     connectionStatus: getConnectionStatus(),
     availableNetworks,
