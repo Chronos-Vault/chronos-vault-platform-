@@ -25,7 +25,7 @@ interface SolanaContextType {
 
 const SolanaContext = createContext<SolanaContextType | undefined>(undefined);
 
-export function useSolana(): SolanaContextType {
+export function useSolana() {
   const context = useContext(SolanaContext);
   if (!context) {
     throw new Error('useSolana must be used within a SolanaProvider');
@@ -37,10 +37,17 @@ interface SolanaProviderProps {
   children: ReactNode;
 }
 
-export const SolanaProvider: React.FC<SolanaProviderProps> = ({ children }) => {
+export function SolanaProvider({ children }: SolanaProviderProps) {
   const [connectionStatus, setConnectionStatus] = useState<SolanaConnectionStatus>(SolanaConnectionStatus.DISCONNECTED);
   const [walletInfo, setWalletInfo] = useState<SolanaWalletInfo | null>(null);
   const [availableWallets, setAvailableWallets] = useState<SolanaWallet[]>([]);
+  const [isDevelopmentMode, setIsDevelopmentMode] = useState<boolean>(false);
+  
+  // Check Solana service's development mode on mount
+  useEffect(() => {
+    const connectionState = solanaService.getConnectionState();
+    setIsDevelopmentMode(connectionState.developmentMode);
+  }, []);
   
   // Initialize available wallets on component mount
   useEffect(() => {
@@ -155,6 +162,7 @@ export const SolanaProvider: React.FC<SolanaProviderProps> = ({ children }) => {
   const contextValue: SolanaContextType = {
     isConnected: connectionStatus === SolanaConnectionStatus.CONNECTED,
     isConnecting: connectionStatus === SolanaConnectionStatus.CONNECTING,
+    isDevelopmentMode,
     walletInfo,
     connectionStatus,
     availableWallets,
