@@ -24,14 +24,38 @@ export interface TONWalletInfo {
  * TON Service - Handles TON blockchain interactions
  */
 class TONService {
+  // Static singleton instance
+  private static instance: TONService | null = null;
+  
+  // Connection state
   private tonConnectUI: TonConnectUI | null = null;
   private walletInfo: TONWalletInfo | null = null;
   private connectionStatus: TonConnectionStatus = TonConnectionStatus.DISCONNECTED;
   private _isInitialized: boolean = false;
   
+  // Circuit breaker properties
+  private initAttempts: number = 0;
+  private maxInitAttempts: number = 5;
+  private lastInitAttempt: number = 0;
+  private cooldownPeriod: number = 10000; // 10 seconds cooldown
+  private circuitOpen: boolean = false;
+  
   // Public getter for isInitialized
   get isInitialized(): boolean {
     return this._isInitialized;
+  }
+  
+  // Private constructor for singleton pattern
+  private constructor() {}
+  
+  /**
+   * Get the singleton instance of TONService
+   */
+  public static getInstance(): TONService {
+    if (!TONService.instance) {
+      TONService.instance = new TONService();
+    }
+    return TONService.instance;
   }
 
   /**
@@ -42,7 +66,42 @@ class TONService {
 
   async initialize(): Promise<boolean> {
     try {
-      if (this.isInitialized) return true;
+      // If already initialized, return immediately
+      if (this._isInitialized) {
+        return true;
+      }
+      
+      // Check if the circuit breaker is open
+      if (this.circuitOpen) {
+        const currentTime = Date.now();
+        const timeElapsed = currentTime - this.lastInitAttempt;
+        
+        // If we're still in the cooldown period, don't attempt initialization
+        if (timeElapsed < this.cooldownPeriod) {
+          console.warn(
+            `TON service initialization in cooldown. Try again in ${Math.ceil((this.cooldownPeriod - timeElapsed) / 1000)}s`
+          );
+          return false;
+        }
+        
+        // Reset circuit breaker after cooldown period
+        console.log('TON service initialization cooldown period expired, resetting circuit breaker');
+        this.circuitOpen = false;
+        this.initAttempts = 0;
+      }
+      
+      // Increment initialization attempts
+      this.initAttempts++;
+      this.lastInitAttempt = Date.now();
+      
+      // Check if we've exceeded maximum initialization attempts
+      if (this.initAttempts > this.maxInitAttempts) {
+        console.warn(
+          `TON service initialization has failed ${this.initAttempts} times, activating circuit breaker for ${this.cooldownPeriod / 1000}s`
+        );
+        this.circuitOpen = true;
+        return false;
+      }
       
       // Create the button container directly if it doesn't exist
       let buttonContainer = document.getElementById('ton-connect-button');
@@ -58,14 +117,21 @@ class TONService {
       if (TONService.sharedTonConnectUI) {
         this.tonConnectUI = TONService.sharedTonConnectUI;
         console.log('Reusing existing TON Connect UI instance');
+        
+        // Reset the counter on successful reuse
+        this.initAttempts = 0;
+        this._isInitialized = true;
+        return true;
       }
+      
       // Otherwise, try to create a new instance
-      else if (!this.tonConnectUI) {
+      if (!this.tonConnectUI) {
         try {
           // Get the current URL for manifest resolution
           const currentUrl = window.location.origin;
           const manifestUrl = `${currentUrl}/tonconnect-manifest.json`;
           
+          console.log(`TON service initialization attempt ${this.initAttempts}/${this.maxInitAttempts}`);
           console.log('Initializing TonConnectUI with manifest URL:', manifestUrl);
           
           try {
@@ -80,11 +146,12 @@ class TONService {
             console.warn('Error creating TonConnectUI:', elementError);
             
             // Create a minimal mock implementation for development mode
-            if (process.env.NODE_ENV === 'development') {
+            if (import.meta.env.DEV) {
               this.tonConnectUI = this.createMockTonConnectUI();
               console.log('Created mock TON Connect UI for development mode');
             } else {
-              throw elementError; // In production, we should handle this more gracefully
+              // In production, propagate the error
+              throw elementError;
             }
           }
           
@@ -99,10 +166,15 @@ class TONService {
             }
             
             this._isInitialized = true;
+            // Reset the counter on successful initialization
+            this.initAttempts = 0;
             console.log("TON service successfully initialized");
           }
         } catch (initError) {
           console.error("Error initializing TonConnectUI:", initError);
+          
+          // Don't trip the circuit breaker here, let the calling code retry
+          // until we reach max attempts
           return false;
         }
       }
@@ -110,6 +182,9 @@ class TONService {
       return this._isInitialized;
     } catch (error) {
       console.error('Failed to initialize TON service:', error);
+      
+      // Increment failure count but don't modify circuit breaker state here
+      // This allows controlled retry in the main initialization loop
       return false;
     }
   }
@@ -876,4 +951,4 @@ class TONService {
   }
 }
 
-export const tonService = new TONService();
+export const tonService = TONService.getInstance();

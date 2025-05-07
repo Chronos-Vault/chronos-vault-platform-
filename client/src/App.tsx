@@ -133,19 +133,21 @@ function Router() {
 
 function App() {
   return (
-    <TooltipProvider>
-      <DevModeProvider>
-        <BitcoinProvider>
-          <BitcoinWalletProvider>
-            <MultiChainProvider>
-              <CVTTokenProvider>
-                <Router />
-              </CVTTokenProvider>
-            </MultiChainProvider>
-          </BitcoinWalletProvider>
-        </BitcoinProvider>
-      </DevModeProvider>
-    </TooltipProvider>
+    <EthereumProvider>
+      <SolanaProvider>
+        <TonProvider>
+          <BitcoinProvider>
+            <BitcoinWalletProvider>
+              <MultiChainProvider>
+                <CVTTokenProvider>
+                  <Router />
+                </CVTTokenProvider>
+              </MultiChainProvider>
+            </BitcoinWalletProvider>
+          </BitcoinProvider>
+        </TonProvider>
+      </SolanaProvider>
+    </EthereumProvider>
   );
 }
 
