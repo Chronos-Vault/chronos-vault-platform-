@@ -333,7 +333,7 @@ class EthereumService {
   /**
    * Get provider instance
    */
-  getProvider(): BrowserProvider | JsonRpcProvider {
+  getProvider(): Provider {
     return this.provider;
   }
   
