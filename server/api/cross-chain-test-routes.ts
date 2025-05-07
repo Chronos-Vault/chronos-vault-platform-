@@ -242,11 +242,15 @@ router.post('/cross-chain/generate-zk-proof', async (req: Request, res: Response
     
     securityLogger.info('Testing zero-knowledge proof generation', { sourceChain, targetChains, transactionId });
     
-    const result = await zeroKnowledgeShield.generateCrossChainProof({
-      sourceChain,
-      targetChains,
-      transactionId
-    });
+    // Call with corrected parameters to match the function signature
+    const result = await zeroKnowledgeShield.generateCrossChainProof(
+      sourceChain as BlockchainType,
+      targetChains[0] as BlockchainType, // Using the first target chain
+      {
+        transactionId,
+        chains: targetChains.map(chain => ({ chain, status: 'pending' }))
+      }
+    );
     
     return res.json({
       success: true,
