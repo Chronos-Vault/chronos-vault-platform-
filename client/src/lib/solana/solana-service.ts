@@ -80,7 +80,7 @@ class SolanaService {
   private keypair: Keypair | null = null;
   private isConnected: boolean = false;
   private network: SolanaCluster = SolanaCluster.DEVNET;
-  private isDevelopmentMode: boolean = false;
+  private devModeEnabled: boolean = false;
   
   // Enhanced reliability properties
   private lastError: string | null = null;
@@ -100,9 +100,9 @@ class SolanaService {
   
   constructor() {
     // Check for development environment
-    this.isDevelopmentMode = process.env.NODE_ENV === 'development' || 
-                           window.location.hostname.includes('replit') ||
-                           window.location.hostname === 'localhost';
+    this.devModeEnabled = process.env.NODE_ENV === 'development' || 
+                        window.location.hostname.includes('replit') ||
+                        window.location.hostname === 'localhost';
     
     // Initialize endpoints
     this.initializeEndpoints();
@@ -131,6 +131,27 @@ class SolanaService {
    * Check health of all endpoints
    */
   private async checkEndpointsHealth(): Promise<void> {
+    // In development mode, mark all endpoints as healthy to avoid network errors
+    if (this.devModeEnabled) {
+      for (let i = 0; i < this.endpoints.length; i++) {
+        const endpoint = this.endpoints[i];
+        // Simulate a healthy endpoint with a reasonable response time
+        endpoint.isHealthy = true;
+        endpoint.responseTime = 250; // Simulate 250ms response time
+        endpoint.lastChecked = Date.now();
+        
+        // Update endpoint in the array
+        this.endpoints[i] = {
+          ...endpoint,
+          lastChecked: Date.now()
+        };
+        
+        console.log(`Solana endpoint ${endpoint.url} marked healthy in development mode`);
+      }
+      return;
+    }
+    
+    // Production mode - check actual endpoint health
     for (let i = 0; i < this.endpoints.length; i++) {
       const endpoint = this.endpoints[i];
       const startTime = performance.now();
@@ -143,23 +164,28 @@ class SolanaService {
           setTimeout(() => reject(new Error('Connection timeout')), 5000);
         });
         
-        // Race the getVersion call with a timeout
-        await Promise.race([
-          connection.getVersion(),
-          timeout
-        ]);
-        
-        const endTime = performance.now();
-        endpoint.responseTime = endTime - startTime;
-        endpoint.isHealthy = true;
-        
-        // Update endpoint health status
-        this.endpoints[i] = {
-          ...endpoint,
-          lastChecked: Date.now()
-        };
-        
-        console.log(`Solana endpoint ${endpoint.url} is healthy (${endpoint.responseTime.toFixed(0)}ms)`);
+        // Try/catch within the main try block to better handle the Promise.race
+        try {
+          // Race the getVersion call with a timeout
+          await Promise.race([
+            connection.getVersion(),
+            timeout
+          ]);
+          
+          const endTime = performance.now();
+          endpoint.responseTime = endTime - startTime;
+          endpoint.isHealthy = true;
+          
+          // Update endpoint health status
+          this.endpoints[i] = {
+            ...endpoint,
+            lastChecked: Date.now()
+          };
+          
+          console.log(`Solana endpoint ${endpoint.url} is healthy (${endpoint.responseTime.toFixed(0)}ms)`);
+        } catch (raceError) {
+          throw raceError; // Re-throw to be caught by the outer catch
+        }
       } catch (error) {
         endpoint.isHealthy = false;
         endpoint.lastChecked = Date.now();
@@ -215,7 +241,7 @@ class SolanaService {
       this.errorType = this.categorizeError(error);
       this.connectionQuality = 'failed';
       
-      if (this.isDevelopmentMode) {
+      if (this.devModeEnabled) {
         this.setupDevMode();
       }
     }
@@ -482,7 +508,7 @@ class SolanaService {
    * Get Solana connection
    */
   getConnection(): Connection | null {
-    if (this.circuitBreakerOpen && !this.isDevelopmentMode) {
+    if (this.circuitBreakerOpen && !this.devModeEnabled) {
       console.warn('Circuit breaker is open, connection not available');
       return null;
     }
@@ -501,7 +527,7 @@ class SolanaService {
    * Check if connected to Solana
    */
   isServiceConnected(): boolean {
-    if (this.circuitBreakerOpen && !this.isDevelopmentMode) {
+    if (this.circuitBreakerOpen && !this.devModeEnabled) {
       return false;
     }
     
@@ -519,13 +545,13 @@ class SolanaService {
    * Get block number (slot) with retry mechanism
    */
   async getBlockNumber(): Promise<number> {
-    if (this.circuitBreakerOpen && !this.isDevelopmentMode) {
+    if (this.circuitBreakerOpen && !this.devModeEnabled) {
       console.warn('Circuit breaker is open, cannot get block number');
       return 0;
     }
     
     if (!this.connection) {
-      if (this.isDevelopmentMode) {
+      if (this.devModeEnabled) {
         return 1000000; // Mock block number for development
       }
       throw new Error('Solana connection not initialized');
@@ -577,13 +603,13 @@ class SolanaService {
           this.handleError(error, errorType, 'Failed to get block number');
           
           // Return default value
-          return this.isDevelopmentMode ? 1000000 : 0;
+          return this.devModeEnabled ? 1000000 : 0;
         }
       }
     }
     
     // If we reach here after all retries, return default value
-    return this.isDevelopmentMode ? 1000000 : 0;
+    return this.devModeEnabled ? 1000000 : 0;
   }
   
   /**
@@ -594,7 +620,7 @@ class SolanaService {
     lamports: number;
     exists: boolean;
   }> {
-    if (this.circuitBreakerOpen && !this.isDevelopmentMode) {
+    if (this.circuitBreakerOpen && !this.devModeEnabled) {
       console.warn('Circuit breaker is open, cannot get account info');
       return {
         address,
@@ -604,7 +630,7 @@ class SolanaService {
     }
     
     if (!this.connection) {
-      if (this.isDevelopmentMode) {
+      if (this.devModeEnabled) {
         return {
           address,
           lamports: 1000000000, // 1 SOL
@@ -771,7 +797,7 @@ class SolanaService {
       balance: 100.0, // Mock balance for dev mode
       network: this.network,
       error: this.lastError,
-      developmentMode: this.isDevelopmentMode
+      developmentMode: this.devModeEnabled
     };
   }
 
@@ -782,7 +808,7 @@ class SolanaService {
     toAddress: string,
     amount: string
   ): Promise<SolanaTransactionResponse> {
-    if (this.isDevelopmentMode) {
+    if (this.devModeEnabled) {
       console.log(`Development mode: Simulated sending ${amount} SOL to ${toAddress}`);
       return { 
         success: true, 
@@ -893,7 +919,7 @@ class SolanaService {
    * Create a time-locked vault with retry mechanism
    */
   async createVault(params: SolanaVaultCreationParams): Promise<SolanaVaultCreationResponse> {
-    if (this.isDevelopmentMode) {
+    if (this.devModeEnabled) {
       console.log(`Development mode: Simulated creating vault with ${params.amount} SOL unlocking at ${new Date(params.unlockTime).toLocaleString()}`);
       return { 
         success: true, 
@@ -1017,7 +1043,7 @@ class SolanaService {
         console.log(`Validating Solana transaction: ${txHash}${retryAttempt > 0 ? ` (retry ${retryAttempt}/${maxRetries})` : ''}`);
         
         // In development mode or when using simulated transactions, always return true
-        if (this.isDevelopmentMode || txHash.startsWith('simulated_')) {
+        if (this.devModeEnabled || txHash.startsWith('simulated_')) {
           console.log('Using development mode validation for Solana transaction');
           return true;
         }
@@ -1116,7 +1142,7 @@ class SolanaService {
         console.log(`Getting Solana transaction details: ${txHash}${retryAttempt > 0 ? ` (retry ${retryAttempt}/${maxRetries})` : ''}`);
         
         // In development mode or when using simulated transactions, return simulated success
-        if (this.isDevelopmentMode || txHash.startsWith('simulated_')) {
+        if (this.devModeEnabled || txHash.startsWith('simulated_')) {
           console.log('Using development mode for Solana transaction details');
           return {
             isValid: true,
