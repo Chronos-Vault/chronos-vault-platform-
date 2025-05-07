@@ -158,6 +158,32 @@ router.post('/incidents/:id/close', (req: Request, res: Response) => {
 });
 
 /**
+ * Get recent incidents
+ * 
+ * Returns a list of the most recent incidents
+ */
+router.get('/recent', (req: Request, res: Response) => {
+  try {
+    const limit = 10; // Default to 10 recent incidents
+    const incidents = incidentResponseSystem.getIncidents({ 
+      limit,
+      sortBy: 'timestamp',
+      sortOrder: 'desc'
+    });
+    
+    res.status(200).json({
+      status: 'success',
+      data: incidents
+    });
+  } catch (error: any) {
+    res.status(500).json({
+      status: 'error',
+      message: 'Failed to retrieve recent incidents: ' + error.message
+    });
+  }
+});
+
+/**
  * Get incident statistics
  * 
  * Returns statistics about incidents
