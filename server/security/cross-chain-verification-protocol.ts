@@ -18,7 +18,7 @@ import { solanaClient } from '../blockchain/solana-client';
 import { tonClient } from '../blockchain/ton-client';
 import { bitcoinClient } from '../blockchain/bitcoin-client';
 import { polygonClient } from '../blockchain/polygon-client';
-import { zeroKnowledgeShield } from '../privacy/zero-knowledge-shield';
+import { zeroKnowledgeShield, CompleteProof } from '../privacy/zero-knowledge-shield';
 import { securityLogger } from '../monitoring/security-logger';
 import config from '../config';
 import { BlockchainType } from '../../shared/types';
@@ -119,14 +119,15 @@ class CrossChainVerificationProtocol {
       // If we need ZK proofs, generate them
       if (includeProofs) {
         try {
-          const zkResult = await zeroKnowledgeShield.generateCrossChainProof({
+          const zkProof = await zeroKnowledgeShield.generateCrossChainProof(
             sourceChain,
             targetChains,
-            transactionId: vaultId
-          });
+            vaultId
+          );
           
-          if (zkResult.success) {
-            zkResult.proofs.forEach(proof => proofs.push(proof));
+          // Store the proof if it was successfully generated
+          if (zkProof) {
+            proofs.push(zkProof);
           }
         } catch (error) {
           securityLogger.error('Failed to generate ZK proofs', error);
@@ -189,14 +190,15 @@ class CrossChainVerificationProtocol {
       // 3. Generate zero-knowledge proofs if requested
       if (includeProofs) {
         try {
-          const zkResult = await zeroKnowledgeShield.generateCrossChainProof({
+          const zkProof = await zeroKnowledgeShield.generateCrossChainProof(
             sourceChain,
             targetChains,
-            transactionId: vaultId
-          });
+            vaultId
+          );
           
-          if (zkResult.success) {
-            zkResult.proofs.forEach(proof => proofs.push(proof));
+          // Store the proof if it was successfully generated
+          if (zkProof) {
+            proofs.push(zkProof);
           }
         } catch (error) {
           securityLogger.error('Failed to generate ZK proofs', error);

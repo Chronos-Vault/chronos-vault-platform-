@@ -10,7 +10,7 @@ import { solanaClient } from '../blockchain/solana-client';
 import { tonClient } from '../blockchain/ton-client';
 import { bitcoinClient } from '../blockchain/bitcoin-client';
 import { polygonClient } from '../blockchain/polygon-client';
-import { zeroKnowledgeShield } from '../privacy/zero-knowledge-shield';
+import { zeroKnowledgeShield, ProofType, CompleteProof } from '../privacy/zero-knowledge-shield';
 import { securityLogger } from '../monitoring/security-logger';
 import config from '../config';
 import { BlockchainType } from '../../shared/types';
