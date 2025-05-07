@@ -6,7 +6,7 @@ import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { useToast } from "@/hooks/use-toast";
 import { useSolana } from '../contexts/solana-context';
-import { SolanaCluster } from '../types/solana-types';
+import { SolanaCluster } from '../types/solana';
 import { solanaContractService } from '../lib/solana/solana-contract-service';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { PageHeader } from '@/components/page-header';

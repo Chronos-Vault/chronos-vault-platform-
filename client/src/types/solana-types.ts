@@ -2,30 +2,17 @@
  * Solana types for Chronos Vault
  */
 
-/**
- * Solana connection status
- */
-export enum SolanaConnectionStatus {
-  CONNECTED = 'connected',
-  CONNECTING = 'connecting',
-  DISCONNECTED = 'disconnected',
-  ERROR = 'error'
-}
+// Import and re-export from solana.ts to maintain compatibility with both import paths
+import {
+  SolanaConnectionStatus,
+  SolanaCluster,
+  SolanaWalletInfo
+} from './solana';
 
-/**
- * Solana network cluster
- */
-export enum SolanaCluster {
-  MAINNET = 'mainnet-beta',
-  DEVNET = 'devnet',
-  TESTNET = 'testnet'
-}
+export {
+  SolanaConnectionStatus,
+  SolanaCluster,
+  SolanaWalletInfo
+};
 
-/**
- * Solana wallet information
- */
-export interface SolanaWalletInfo {
-  address: string;
-  balance: number;
-  network: string;
-}
+// Additional Solana-specific types can be added here
