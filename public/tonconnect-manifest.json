@@ -1,5 +1,26 @@
 {
-  "url": "https://8e33114e-6bdb-4fc9-a798-e4b7d77b5366-00-23l8s2c5r5iyx.spock.replit.dev",
+  "url": "https://workspace.holycyclop1.repl.co",
   "name": "Chronos Vault",
-  "iconUrl": "https://cdn-icons-png.flaticon.com/512/4021/4021708.png"
+  "iconUrl": "https://workspace.holycyclop1.repl.co/chronos-vault-logo.png",
+  "termsOfUseUrl": "https://workspace.holycyclop1.repl.co/terms",
+  "privacyPolicyUrl": "https://workspace.holycyclop1.repl.co/privacy",
+  
+  "platform": "web",
+  "supportedNetworks": ["mainnet", "testnet"],
+  "validUntil": "2030-01-01T00:00:00.000Z",
+  
+  "features": [
+    {
+      "name": "ton_addr",
+      "required": true,
+      "description": "Required for Triple-Chain Security"
+    },
+    {
+      "name": "ton_proof",
+      "required": true,
+      "description": "Required for secure authentication"
+    }
+  ],
+  
+  "description": "Chronos Vault: A Triple-Chain Security platform for time-locked digital assets with TON, Ethereum, and Solana blockchains."
 }
