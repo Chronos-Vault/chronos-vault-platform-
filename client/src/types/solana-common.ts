@@ -1,13 +1,10 @@
 /**
- * SOLANA TYPES - CENTRAL DEFINITION FILE
- * 
- * This is the ONLY source of truth for all Solana-related types
- * in the Chronos Vault application. All other files should import
- * types from this file to avoid circular dependencies and compilation issues.
+ * Core Solana type definitions for Chronos Vault
+ * This is the central source of truth for Solana types
  */
 
 /**
- * Solana connection status
+ * Solana connection status enumeration
  */
 export enum SolanaConnectionStatus {
   CONNECTED = 'connected',
@@ -17,7 +14,7 @@ export enum SolanaConnectionStatus {
 }
 
 /**
- * Solana network cluster
+ * Solana network cluster enumeration
  */
 export enum SolanaCluster {
   MAINNET = 'mainnet-beta',
@@ -26,7 +23,7 @@ export enum SolanaCluster {
 }
 
 /**
- * Solana wallet information
+ * Solana wallet information interface
  */
 export interface SolanaWalletInfo {
   address: string;
@@ -35,7 +32,7 @@ export interface SolanaWalletInfo {
 }
 
 /**
- * Solana wallet adapter
+ * Solana wallet adapter interface
  */
 export interface SolanaWallet {
   name: string;

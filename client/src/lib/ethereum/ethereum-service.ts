@@ -1,4 +1,4 @@
-import { ethers } from 'ethers';
+import { ethers, BrowserProvider, JsonRpcProvider, Signer, Provider } from 'ethers';
 
 // Available networks
 export type EthereumNetwork = 'mainnet' | 'sepolia' | 'goerli';
@@ -19,8 +19,8 @@ export interface EthereumConnectionState {
  * Provides connection to Ethereum blockchain
  */
 class EthereumService {
-  private provider: ethers.providers.Provider;
-  private signer: ethers.Signer | null = null;
+  private provider: BrowserProvider | JsonRpcProvider;
+  private signer: Signer | null = null;
   private address: string | null = null;
   private network: EthereumNetwork = 'sepolia'; // Default to Sepolia testnet
   private isConnected: boolean = false;
@@ -34,17 +34,23 @@ class EthereumService {
   };
   
   constructor() {
-    // Check for MetaMask
-    if (window.ethereum) {
-      this.provider = new ethers.providers.Web3Provider(window.ethereum);
-      console.log('Using MetaMask provider');
-    } else {
-      // Fallback to RPC URL
-      const rpcId = '6cde839b76d04effb07861ca9f663d31'; // This would normally come from env vars
-      const rpcUrl = `${this.networks[this.network].rpcUrl}${rpcId}`;
-      this.provider = new ethers.providers.JsonRpcProvider(rpcUrl);
-      console.log('No Ethereum provider detected (MetaMask not installed). Using RPC URL.');
-      console.log(`Initialized with fallback provider on ${this.networks[this.network].name}`);
+    try {
+      // Check for MetaMask
+      if (typeof window !== 'undefined' && window.ethereum) {
+        this.provider = new BrowserProvider(window.ethereum);
+        console.log('Using MetaMask provider');
+      } else {
+        // Fallback to RPC URL
+        const rpcId = '6cde839b76d04effb07859ca9f663d31'; // This would normally come from env vars
+        const rpcUrl = `${this.networks[this.network].rpcUrl}${rpcId}`;
+        this.provider = new JsonRpcProvider(rpcUrl);
+        console.log('No Ethereum provider detected (MetaMask not installed). Using RPC URL.');
+        console.log(`Initialized with fallback provider on ${this.networks[this.network].name}`);
+      }
+    } catch (error: any) {
+      console.error('Failed to initialize Ethereum provider:', error);
+      // Create a minimal provider to avoid null errors
+      this.provider = new JsonRpcProvider();
     }
     
     console.log('Ethereum service initialized');
@@ -54,24 +60,22 @@ class EthereumService {
    * Connect to Ethereum wallet (requires MetaMask)
    */
   async connect(): Promise<boolean> {
-    if (!window.ethereum) {
+    if (typeof window === 'undefined' || !window.ethereum) {
       this.lastError = 'MetaMask not detected. Please install MetaMask to connect wallet.';
       console.error(this.lastError);
       return false;
     }
     
     try {
-      const provider = new ethers.providers.Web3Provider(window.ethereum);
+      const provider = new BrowserProvider(window.ethereum);
       
-      // Request accounts access
-      await provider.send('eth_requestAccounts', []);
+      // Request accounts access and get signer
+      const signer = await provider.getSigner();
+      this.address = await signer.getAddress();
       
-      // Get signer and address
-      this.signer = provider.getSigner();
-      this.address = await this.signer.getAddress();
-      
-      // Update provider with connected signer
+      // Update provider and signer
       this.provider = provider;
+      this.signer = signer;
       
       // Update connection state
       this.isConnected = true;
@@ -79,7 +83,7 @@ class EthereumService {
       
       console.log(`Connected to Ethereum wallet at ${this.address}`);
       return true;
-    } catch (error) {
+    } catch (error: any) {
       this.lastError = `Failed to connect wallet: ${error.message || 'Unknown error'}`;
       console.error('Error connecting to Ethereum wallet:', error);
       
@@ -101,8 +105,8 @@ class EthereumService {
     this.isConnected = false;
     
     // Reset to provider-only state
-    if (window.ethereum) {
-      this.provider = new ethers.providers.Web3Provider(window.ethereum);
+    if (typeof window !== 'undefined' && window.ethereum) {
+      this.provider = new BrowserProvider(window.ethereum);
     }
     
     console.log('Disconnected from Ethereum wallet');
@@ -142,7 +146,7 @@ class EthereumService {
    * Switch to a different network
    */
   async switchNetwork(network: EthereumNetwork): Promise<boolean> {
-    if (!window.ethereum) {
+    if (typeof window === 'undefined' || !window.ethereum) {
       this.lastError = 'MetaMask not detected. Cannot switch network.';
       return false;
     }
@@ -157,7 +161,7 @@ class EthereumService {
           method: 'wallet_switchEthereumChain',
           params: [{ chainId: chainIdHex }]
         });
-      } catch (switchError) {
+      } catch (switchError: any) {
         if (switchError.code === 4902) {
           // Network doesn't exist, add it
           await window.ethereum.request({
@@ -177,15 +181,15 @@ class EthereumService {
       this.network = network;
       
       // Reinitialize provider
-      this.provider = new ethers.providers.Web3Provider(window.ethereum);
+      this.provider = new BrowserProvider(window.ethereum);
       
       // If connected, update signer
       if (this.isConnected) {
-        this.signer = this.provider.getSigner();
+        this.signer = await this.provider.getSigner();
       }
       
       return true;
-    } catch (error) {
+    } catch (error: any) {
       this.lastError = `Failed to switch network: ${error.message || 'Unknown error'}`;
       console.error('Error switching Ethereum network:', error);
       return false;
@@ -209,14 +213,14 @@ class EthereumService {
   /**
    * Get provider instance
    */
-  getProvider(): ethers.providers.Provider {
+  getProvider(): BrowserProvider | JsonRpcProvider {
     return this.provider;
   }
   
   /**
    * Get signer instance (if connected)
    */
-  getSigner(): ethers.Signer | null {
+  getSigner(): Signer | null {
     return this.signer;
   }
   

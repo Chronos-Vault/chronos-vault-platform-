@@ -1,18 +1,7 @@
 /**
- * @deprecated DEPRECATED: This file is kept for backward compatibility but should not be used.
+ * @deprecated This file is kept for backward compatibility but should not be used.
  * Import Solana types from '../../types/solana-common.ts' instead.
  */
 
-import { 
-  SolanaConnectionStatus, 
-  SolanaCluster, 
-  SolanaWalletInfo,
-  SolanaWallet
-} from '../../types/solana-common';
-
-export { 
-  SolanaConnectionStatus, 
-  SolanaCluster, 
-  SolanaWalletInfo,
-  SolanaWallet
-};
+// Re-export everything from solana-common
+export * from '../../types/solana-common';

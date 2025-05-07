@@ -1,6 +1,12 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { solanaService } from '../lib/solana/solana-service';
-import { SolanaConnectionStatus, SolanaWalletInfo, SolanaCluster, SolanaWallet } from '../types/solana-common';
+import { SolanaConnectionStatus, SolanaWalletInfo, SolanaCluster } from '../types/solana-common';
+
+// Local definition until we resolve the import issue
+interface SolanaWallet {
+  name: string;
+  adapter: any;
+}
 
 interface SolanaContextType {
   isConnected: boolean;

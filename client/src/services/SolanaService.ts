@@ -1,6 +1,11 @@
 import { Connection, PublicKey, Keypair, Transaction } from '@solana/web3.js';
 import { solanaService } from '@/lib/solana/solana-service';
-import { SolanaCluster, SolanaConnectionStatus, SolanaWalletInfo } from '@/types/solana-common';
+import { 
+  SolanaCluster, 
+  SolanaConnectionStatus, 
+  SolanaWalletInfo, 
+  SolanaWallet 
+} from '@/types/solana-common';
 
 /**
  * SolanaService

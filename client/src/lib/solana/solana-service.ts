@@ -1,9 +1,14 @@
 import { Connection, Keypair, PublicKey, clusterApiUrl } from '@solana/web3.js';
 import { Buffer } from 'buffer';
-import { SolanaConnectionStatus, SolanaCluster, SolanaWalletInfo, SolanaWallet } from '../../types/solana-common';
+import { 
+  SolanaConnectionStatus, 
+  SolanaCluster, 
+  SolanaWalletInfo,
+  SolanaWallet
+} from '../../types/solana-common';
 
-// Re-export the types
-export { SolanaConnectionStatus, SolanaCluster, SolanaWalletInfo, SolanaWallet };
+// Re-export SolanaWallet for other components to use
+export type { SolanaWallet };
 
 /**
  * Solana Service for Chronos Vault
