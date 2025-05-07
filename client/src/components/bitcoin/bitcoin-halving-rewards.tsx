@@ -1,17 +1,26 @@
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { useCVTToken, TimeMultiplier } from '@/contexts/cvt-token-context';
-import { Bitcoin, TrendingUp, Calendar, Coins, Trophy } from 'lucide-react';
+import { useBitcoin } from '@/contexts/bitcoin-context';
+import { Bitcoin, TrendingUp, Calendar, Coins, Trophy, Clock } from 'lucide-react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import { Slider } from '@/components/ui/slider';
+import { Skeleton } from '@/components/ui/skeleton';
 
 export const BitcoinHalvingRewards: React.FC = () => {
   const [activeTab, setActiveTab] = useState<string>('rewards');
   const [btcAmount, setBtcAmount] = useState<number>(1);
   const [lockPeriod, setLockPeriod] = useState<number>(1); // Periods in quarters (3 months)
   
+  const { 
+    nextHalvingDate, 
+    daysUntilHalving, 
+    halvingInfo,
+    priceData,
+    isLoading 
+  } = useBitcoin();
   const { estimateHalvingRewards } = useCVTToken();
   
   const [calculatedRewards, setCalculatedRewards] = useState<string>('0');
@@ -113,6 +122,44 @@ export const BitcoinHalvingRewards: React.FC = () => {
           Earn CVT tokens by locking your Bitcoin through halving cycles
         </CardDescription>
       </CardHeader>
+      <div className="bg-gradient-to-br from-orange-100 to-amber-100 dark:from-orange-950/40 dark:to-amber-950/40 p-4 flex justify-between items-center border-b border-orange-200 dark:border-orange-800/50">
+        <div className="flex items-center gap-2">
+          <Clock className="h-5 w-5 text-orange-600 dark:text-orange-400" />
+          <div>
+            <div className="text-sm font-medium text-orange-900 dark:text-orange-300">
+              Next Bitcoin Halving
+            </div>
+            <div className="text-xs text-orange-600 dark:text-orange-400">
+              {isLoading ? (
+                <Skeleton className="h-3 w-24" />
+              ) : (
+                `${daysUntilHalving} days remaining`
+              )}
+            </div>
+          </div>
+        </div>
+        <div>
+          <div className="text-sm font-medium text-orange-900 dark:text-orange-300">
+            {isLoading ? (
+              <Skeleton className="h-4 w-20" />
+            ) : (
+              `${nextHalvingDate.toLocaleDateString('en-US', { 
+                year: 'numeric', 
+                month: 'short', 
+                day: 'numeric' 
+              })}`
+            )}
+          </div>
+          <div className="text-xs text-orange-600 dark:text-orange-400 text-right">
+            {isLoading || !halvingInfo ? (
+              <Skeleton className="h-3 w-16 ml-auto" />
+            ) : (
+              `Block reward: ${halvingInfo.nextReward} BTC`
+            )}
+          </div>
+        </div>
+      </div>
+      
       <CardContent className="p-0">
         <Tabs 
           defaultValue="rewards" 

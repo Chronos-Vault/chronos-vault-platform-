@@ -252,7 +252,125 @@ export const BitcoinHalvingVault: React.FC = () => {
         </TabsContent>
       </Tabs>
       
-      <div className="flex justify-center">
+      {/* Bitcoin Network Stats */}
+      <div className="mb-8">
+        <h3 className="text-xl font-bold text-orange-900 dark:text-orange-300 mb-4 flex items-center">
+          <Activity className="h-5 w-5 mr-2 text-orange-600" />
+          Real-time Bitcoin Network Statistics
+          <Button 
+            variant="ghost" 
+            size="icon" 
+            className="ml-2 h-6 w-6 text-orange-600 hover:text-orange-800 hover:bg-orange-100"
+            onClick={() => refreshData()}
+          >
+            <RefreshCw className="h-4 w-4" />
+          </Button>
+        </h3>
+        
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+          {/* Bitcoin Price Card */}
+          <Card className="bg-gradient-to-br from-orange-50 to-amber-50 dark:from-orange-950/30 dark:to-amber-950/30 border-orange-200 dark:border-orange-800/70">
+            <CardHeader className="pb-2">
+              <CardTitle className="text-sm font-medium text-orange-900 dark:text-orange-300">
+                Bitcoin Price
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              {isLoading || !priceData ? (
+                <Skeleton className="h-6 w-32" />
+              ) : (
+                <div className="flex items-baseline">
+                  <span className="text-2xl font-bold text-orange-900 dark:text-orange-300">
+                    ${priceData.usd.toLocaleString()}
+                  </span>
+                  <Badge 
+                    className={priceData.usd24hChange >= 0 
+                      ? "ml-2 bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400" 
+                      : "ml-2 bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400"
+                    }
+                  >
+                    {priceData.usd24hChange >= 0 ? "+" : ""}{priceData.usd24hChange.toFixed(2)}%
+                  </Badge>
+                </div>
+              )}
+              <p className="text-xs text-orange-600 dark:text-orange-400 mt-1">
+                Last updated: {isLoading || !priceData ? "--" : new Date(priceData.lastUpdated).toLocaleTimeString()}
+              </p>
+            </CardContent>
+          </Card>
+          
+          {/* Block Height Card */}
+          <Card className="bg-gradient-to-br from-orange-50 to-amber-50 dark:from-orange-950/30 dark:to-amber-950/30 border-orange-200 dark:border-orange-800/70">
+            <CardHeader className="pb-2">
+              <CardTitle className="text-sm font-medium text-orange-900 dark:text-orange-300">
+                Current Block Height
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              {isLoading || !networkStats ? (
+                <Skeleton className="h-6 w-24" />
+              ) : (
+                <div>
+                  <span className="text-2xl font-bold text-orange-900 dark:text-orange-300">
+                    {networkStats.blockHeight.toLocaleString()}
+                  </span>
+                  <p className="text-xs text-orange-600 dark:text-orange-400 mt-1">
+                    {halvingInfo ? `${halvingInfo.blocksUntilHalving.toLocaleString()} blocks until next halving` : ""}
+                  </p>
+                </div>
+              )}
+            </CardContent>
+          </Card>
+          
+          {/* Hash Rate Card */}
+          <Card className="bg-gradient-to-br from-orange-50 to-amber-50 dark:from-orange-950/30 dark:to-amber-950/30 border-orange-200 dark:border-orange-800/70">
+            <CardHeader className="pb-2">
+              <CardTitle className="text-sm font-medium text-orange-900 dark:text-orange-300">
+                Network Hash Rate
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              {isLoading || !networkStats ? (
+                <Skeleton className="h-6 w-24" />
+              ) : (
+                <div>
+                  <span className="text-2xl font-bold text-orange-900 dark:text-orange-300">
+                    {networkStats.hashRate} TH/s
+                  </span>
+                  <p className="text-xs text-orange-600 dark:text-orange-400 mt-1">
+                    Difficulty: {networkStats.difficulty}
+                  </p>
+                </div>
+              )}
+            </CardContent>
+          </Card>
+          
+          {/* Block Reward Card */}
+          <Card className="bg-gradient-to-br from-orange-50 to-amber-50 dark:from-orange-950/30 dark:to-amber-950/30 border-orange-200 dark:border-orange-800/70">
+            <CardHeader className="pb-2">
+              <CardTitle className="text-sm font-medium text-orange-900 dark:text-orange-300">
+                Current Block Reward
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              {isLoading || !halvingInfo ? (
+                <Skeleton className="h-6 w-24" />
+              ) : (
+                <div>
+                  <span className="text-2xl font-bold text-orange-900 dark:text-orange-300">
+                    {halvingInfo.currentReward} BTC
+                  </span>
+                  <p className="text-xs text-orange-600 dark:text-orange-400 mt-1">
+                    Next reward: {halvingInfo.nextReward} BTC
+                  </p>
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        </div>
+      </div>
+    
+      <div className="flex justify-center mb-12">
         <Link href="/bitcoin-halving-vault">
           <Button 
             size="lg"
