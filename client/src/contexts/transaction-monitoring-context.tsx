@@ -135,16 +135,28 @@ export const TransactionMonitoringProvider: React.FC<{ children: React.ReactNode
         groupStatus = 'failed';
       }
       
-      // Create the group
-      return {
+      // Create the group following the TransactionGroup interface
+      const group: TransactionGroup = {
         id: correlationId,
-        primaryTransaction: primaryTx,
-        verificationTransactions: verificationTxs,
-        status: groupStatus,
+        name: `${primaryTx.type} Group`,
+        description: `Cross-chain transaction group for ${primaryTx.type}`,
+        transactionIds: relatedTxs.map(tx => tx.id),
+        primaryNetwork: primaryTx.network,
         securityLevel: primaryTx.securityLevel || 1,
         createdAt: primaryTx.timestamp,
-        completedAt: groupStatus === 'completed' ? Math.max(...relatedTxs.map(tx => tx.timestamp)) : undefined
-      } as TransactionGroup;
+        updatedAt: Date.now(),
+        status: groupStatus,
+        vaultId: primaryTx.vaultId,
+        initiator: primaryTx.fromAddress,
+        // Extra properties for our components to use
+        metadata: {
+          primaryTransaction: primaryTx,
+          verificationTransactions: verificationTxs,
+          completedAt: groupStatus === 'completed' ? Math.max(...relatedTxs.map(tx => tx.timestamp)) : undefined
+        }
+      };
+      
+      return group;
     });
     
     setTransactionGroups(groups);
@@ -401,7 +413,11 @@ export const TransactionMonitoringProvider: React.FC<{ children: React.ReactNode
     getTransactionsByVerificationStatus,
     getTransactionGroup,
     refreshTransactions,
+    refreshTransaction,
     getMonitoringStatus,
+    getChainStats,
+    getTransactionSummary,
+    getRelatedTransactions,
     verifyTransaction,
     getVerificationAttempts,
     clearAllTransactions

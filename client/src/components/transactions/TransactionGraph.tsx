@@ -68,8 +68,11 @@ export const TransactionGraph: React.FC<TransactionGraphProps> = ({
     const addressNodes: Record<string, boolean> = {};
     const contractNodes: Record<string, boolean> = {};
     
-    // Add primary transaction
-    const primaryTx = transactionGroup.primaryTransaction;
+    // Get primary transaction from group metadata
+    const primaryTx = transactionGroup.metadata?.primaryTransaction;
+    if (!primaryTx) {
+      return { nodes: [], links: [] };
+    }
     
     // Add from address node if not exists
     if (!addressNodes[primaryTx.fromAddress]) {
@@ -145,8 +148,9 @@ export const TransactionGraph: React.FC<TransactionGraphProps> = ({
       });
     }
     
-    // Add verification transactions
-    for (const verificationTx of transactionGroup.verificationTransactions) {
+    // Add verification transactions from group metadata
+    const verificationTransactions = transactionGroup.metadata?.verificationTransactions || [];
+    for (const verificationTx of verificationTransactions) {
       // Add from address node if not exists
       if (!addressNodes[verificationTx.fromAddress]) {
         graphNodes.push({
@@ -556,8 +560,13 @@ export const TransactionGraphCard: React.FC<TransactionGraphCardProps> = ({
       <CardFooter className="bg-[#1A1A1A]/50 border-t border-[#6B00D7]/10 flex justify-between">
         <div className="flex flex-wrap gap-1.5">
           {['Ethereum', 'Solana', 'TON', 'Bitcoin'].map(network => {
-            const networkTxs = [...transactionGroup.verificationTransactions, transactionGroup.primaryTransaction]
-              .filter(tx => tx.network === network);
+            // Get transactions from metadata
+            const primaryTx = transactionGroup.metadata?.primaryTransaction;
+            const verificationTxs = transactionGroup.metadata?.verificationTransactions || [];
+            
+            // Filter transactions by network
+            const networkTxs = [primaryTx, ...verificationTxs]
+              .filter(tx => tx && tx.network === network);
             
             if (networkTxs.length === 0) return null;
             
