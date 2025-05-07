@@ -20,6 +20,7 @@ export type EthereumConnectionStatus = 'connected' | 'connecting' | 'disconnecte
 interface EthereumContextType {
   isConnected: boolean;
   isConnecting: boolean;
+  isDevelopmentMode: boolean;
   walletInfo: EthereumWalletInfo | null;
   connectionStatus: EthereumConnectionStatus;
   availableNetworks: { id: string; name: string; chainId: number }[];

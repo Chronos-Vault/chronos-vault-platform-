@@ -11,6 +11,7 @@ export interface EthereumConnectionState {
   networkName: string | null;
   balance: string | null;
   error: string | null;
+  developmentMode: boolean;
 }
 
 /**
@@ -24,6 +25,7 @@ class EthereumService {
   private address: string | null = null;
   private network: EthereumNetwork = 'sepolia'; // Default to Sepolia testnet
   private isConnected: boolean = false;
+  private isDevelopmentMode: boolean = false;
   private lastError: string | null = null;
   
   // Network configurations
@@ -35,6 +37,11 @@ class EthereumService {
   
   constructor() {
     try {
+      // Check for development environment
+      this.isDevelopmentMode = process.env.NODE_ENV === 'development' || 
+                              window.location.hostname.includes('replit') ||
+                              window.location.hostname === 'localhost';
+      
       // Check for MetaMask
       if (typeof window !== 'undefined' && window.ethereum) {
         this.provider = new BrowserProvider(window.ethereum);
@@ -46,20 +53,47 @@ class EthereumService {
         this.provider = new JsonRpcProvider(rpcUrl);
         console.log('No Ethereum provider detected (MetaMask not installed). Using RPC URL.');
         console.log(`Initialized with fallback provider on ${this.networks[this.network].name}`);
+        
+        // In development mode, set up a simulated connection
+        if (this.isDevelopmentMode) {
+          this.setupDevMode();
+        }
       }
     } catch (error: any) {
       console.error('Failed to initialize Ethereum provider:', error);
       // Create a minimal provider to avoid null errors
       this.provider = new JsonRpcProvider();
+      
+      // In development mode, set up a simulated connection
+      if (this.isDevelopmentMode) {
+        this.setupDevMode();
+      }
     }
     
     console.log('Ethereum service initialized');
   }
   
   /**
+   * Set up development mode with simulated wallet
+   */
+  private setupDevMode(): void {
+    this.isConnected = true;
+    this.address = '0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266'; // Standard hardhat test address
+    console.log('Running in development mode with simulated wallet:', this.address);
+  }
+  
+  /**
    * Connect to Ethereum wallet (requires MetaMask)
    */
   async connect(): Promise<boolean> {
+    // Skip real connection in development mode
+    if (this.isDevelopmentMode) {
+      this.isConnected = true;
+      this.address = '0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266'; // Standard hardhat test address
+      console.log('Development mode: Simulated successful connection to:', this.address);
+      return true;
+    }
+    
     if (typeof window === 'undefined' || !window.ethereum) {
       this.lastError = 'MetaMask not detected. Please install MetaMask to connect wallet.';
       console.error(this.lastError);
@@ -127,7 +161,8 @@ class EthereumService {
       chainId,
       networkName,
       balance,
-      error: this.lastError
+      error: this.lastError,
+      developmentMode: this.isDevelopmentMode || false
     };
   }
   
