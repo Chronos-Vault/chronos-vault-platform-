@@ -1,536 +1,731 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useTransactionMonitoring } from '@/contexts/transaction-monitoring-context';
-import { 
-  BlockchainNetwork, 
-  CrossChainTransaction, 
-  TransactionStatus, 
-  VerificationStatus 
-} from '@shared/transaction-types';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
+import { CrossChainTransaction, TransactionGroup } from '@shared/transaction-types';
+import TransactionStats from '@/components/transactions/TransactionStats';
+import { TransactionGraphCard } from '@/components/transactions/TransactionGraph';
+import TransactionDetailPanel from '@/components/transactions/TransactionDetailPanel';
 import { Button } from '@/components/ui/button';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
+import { Label } from '@/components/ui/label';
 import { 
-  ArrowUpDown, 
   RefreshCw, 
   Search, 
-  Shield, 
+  ArrowUpDown, 
+  Filter, 
+  BarChart3, 
+  Network, 
+  History, 
+  CheckCircle, 
   Clock, 
-  CheckCircle2, 
-  AlertCircle, 
   AlertTriangle, 
-  Link as LinkIcon
+  XCircle 
 } from 'lucide-react';
-import { formatDistanceToNow } from 'date-fns';
+import { Separator } from '@/components/ui/separator';
+import { ScrollArea } from '@/components/ui/scroll-area';
 
-const statusColors = {
-  'pending': 'bg-amber-500/20 text-amber-500 border-amber-500/50',
-  'confirming': 'bg-blue-500/20 text-blue-500 border-blue-500/50',
-  'confirmed': 'bg-green-500/20 text-green-500 border-green-500/50',
-  'failed': 'bg-red-500/20 text-red-500 border-red-500/50'
+// Status icon helper function
+const getStatusIcon = (status: string) => {
+  switch (status) {
+    case 'pending':
+      return <Clock className="h-4 w-4 text-amber-500" />;
+    case 'confirming':
+      return <RefreshCw className="h-4 w-4 text-blue-500 animate-spin" />;
+    case 'confirmed':
+      return <CheckCircle className="h-4 w-4 text-green-500" />;
+    case 'failed':
+      return <XCircle className="h-4 w-4 text-red-500" />;
+    default:
+      return null;
+  }
 };
 
-const verificationStatusColors = {
-  'not_required': 'bg-gray-500/20 text-gray-500 border-gray-500/50',
-  'pending': 'bg-amber-500/20 text-amber-500 border-amber-500/50',
-  'verified': 'bg-emerald-500/20 text-emerald-500 border-emerald-500/50',
-  'failed': 'bg-red-500/20 text-red-500 border-red-500/50',
-  'timeout': 'bg-purple-500/20 text-purple-500 border-purple-500/50'
+// Verification status icon helper function
+const getVerificationIcon = (status: string) => {
+  switch (status) {
+    case 'pending':
+      return <Clock className="h-4 w-4 text-amber-500" />;
+    case 'verified':
+      return <CheckCircle className="h-4 w-4 text-green-500" />;
+    case 'failed':
+      return <XCircle className="h-4 w-4 text-red-500" />;
+    case 'timeout':
+      return <AlertTriangle className="h-4 w-4 text-purple-500" />;
+    case 'not_required':
+      return null;
+    default:
+      return null;
+  }
 };
 
-const chainColors = {
+// Network colors for badges
+const networkColors = {
   'Ethereum': 'bg-indigo-500/20 text-indigo-500 border-indigo-500/50',
   'Solana': 'bg-purple-500/20 text-purple-500 border-purple-500/50',
   'TON': 'bg-blue-500/20 text-blue-500 border-blue-500/50',
   'Bitcoin': 'bg-amber-500/20 text-amber-500 border-amber-500/50'
 };
 
+// Transaction list item component
+interface TransactionListItemProps {
+  transaction: CrossChainTransaction;
+  isSelected: boolean;
+  onClick: () => void;
+}
+
+const TransactionListItem: React.FC<TransactionListItemProps> = ({ 
+  transaction, 
+  isSelected, 
+  onClick 
+}) => {
+  return (
+    <div 
+      className={`p-3 border-b cursor-pointer hover:bg-accent/50 ${isSelected ? 'bg-primary/10' : ''}`}
+      onClick={onClick}
+    >
+      <div className="flex justify-between items-start">
+        <div className="flex flex-col">
+          <div className="flex items-center gap-2">
+            <span className="font-semibold">{transaction.label || transaction.type.replace('_', ' ')}</span>
+            <Badge className={`${networkColors[transaction.network]}`}>
+              {transaction.network}
+            </Badge>
+          </div>
+          <div className="text-xs text-muted-foreground mt-1">
+            {new Date(transaction.timestamp).toLocaleString()}
+          </div>
+        </div>
+        <div className="flex flex-col items-end">
+          <div className="flex items-center gap-1">
+            {getStatusIcon(transaction.status)}
+            <span className="text-sm">{transaction.status}</span>
+          </div>
+          {transaction.verificationStatus !== 'not_required' && (
+            <div className="flex items-center gap-1 mt-1">
+              {getVerificationIcon(transaction.verificationStatus)}
+              <span className="text-xs text-muted-foreground">
+                {transaction.verificationStatus}
+              </span>
+            </div>
+          )}
+        </div>
+      </div>
+      <div className="mt-1 font-mono text-xs text-muted-foreground break-all">
+        {transaction.txHash.substring(0, 12)}...{transaction.txHash.substring(transaction.txHash.length - 8)}
+      </div>
+    </div>
+  );
+};
+
+// Transaction group list item component
+interface TransactionGroupListItemProps {
+  group: TransactionGroup;
+  isSelected: boolean;
+  onClick: () => void;
+}
+
+const TransactionGroupListItem: React.FC<TransactionGroupListItemProps> = ({
+  group,
+  isSelected,
+  onClick
+}) => {
+  const primaryTx = group.primaryTransaction;
+  const verificationCount = group.verificationTransactions.length;
+  
+  return (
+    <div 
+      className={`p-3 border-b cursor-pointer hover:bg-accent/50 ${isSelected ? 'bg-primary/10' : ''}`}
+      onClick={onClick}
+    >
+      <div className="flex justify-between items-start">
+        <div className="flex flex-col">
+          <div className="flex items-center gap-2">
+            <span className="font-semibold">{primaryTx.label || primaryTx.type.replace('_', ' ')}</span>
+            <Badge className={`${networkColors[primaryTx.network]}`}>
+              {primaryTx.network}
+            </Badge>
+            {verificationCount > 0 && (
+              <Badge variant="outline" className="bg-slate-500/10">
+                {verificationCount} verifications
+              </Badge>
+            )}
+          </div>
+          <div className="text-xs text-muted-foreground mt-1">
+            {new Date(primaryTx.timestamp).toLocaleString()}
+          </div>
+        </div>
+        <div className="flex flex-col items-end">
+          <div className="flex items-center gap-1">
+            {getStatusIcon(group.status)}
+            <span className="text-sm">{group.status}</span>
+          </div>
+          <div className="mt-1">
+            <Badge variant="outline" className="text-xs">
+              Level {group.securityLevel}
+            </Badge>
+          </div>
+        </div>
+      </div>
+      <div className="mt-2 flex flex-wrap gap-1">
+        {group.verificationTransactions.map(tx => (
+          <Badge 
+            key={tx.id} 
+            variant="outline" 
+            className={`text-xs ${networkColors[tx.network]}`}
+          >
+            {tx.network} {getStatusIcon(tx.status)}
+          </Badge>
+        ))}
+      </div>
+    </div>
+  );
+};
+
 const TransactionMonitorPage: React.FC = () => {
   const { 
-    transactions, 
-    transactionGroups, 
-    recentTransactions, 
-    pendingTransactions,
+    transactions,
+    transactionGroups,
     refreshTransactions,
     getMonitoringStatus,
-    getTransactionById,
-    getTransactionsByCorrelationId,
+    getTransactionGroup
   } = useTransactionMonitoring();
   
-  const [selectedTab, setSelectedTab] = useState('all');
-  const [selectedTransaction, setSelectedTransaction] = useState<CrossChainTransaction | null>(null);
   const [isRefreshing, setIsRefreshing] = useState(false);
-  const [networkFilter, setNetworkFilter] = useState<BlockchainNetwork | 'all'>('all');
-  const [statusFilter, setStatusFilter] = useState<TransactionStatus | 'all'>('all');
+  const [selectedTxId, setSelectedTxId] = useState<string | null>(null);
+  const [selectedGroupId, setSelectedGroupId] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
+  const [networkFilter, setNetworkFilter] = useState<string | null>(null);
+  const [statusFilter, setStatusFilter] = useState<string | null>(null);
+  const [sortBy, setSortBy] = useState<'newest' | 'oldest'>('newest');
   
-  const { lastUpdated } = getMonitoringStatus();
+  // Get the selected transaction and group
+  const selectedTransaction = selectedTxId 
+    ? transactions.find(tx => tx.id === selectedTxId) 
+    : null;
+    
+  const selectedGroup = selectedGroupId 
+    ? transactionGroups.find(g => g.id === selectedGroupId) 
+    : selectedTransaction?.correlationId 
+      ? getTransactionGroup(selectedTransaction.correlationId) 
+      : null;
   
-  // Handle manual refresh
+  // Filter transactions based on search query and filters
+  const filteredTransactions = transactions.filter(tx => {
+    // Search filter
+    if (searchQuery && 
+        !tx.txHash.toLowerCase().includes(searchQuery.toLowerCase()) &&
+        !tx.fromAddress.toLowerCase().includes(searchQuery.toLowerCase()) &&
+        !(tx.toAddress && tx.toAddress.toLowerCase().includes(searchQuery.toLowerCase())) &&
+        !(tx.label && tx.label.toLowerCase().includes(searchQuery.toLowerCase())) &&
+        !tx.type.toLowerCase().includes(searchQuery.toLowerCase())) {
+      return false;
+    }
+    
+    // Network filter
+    if (networkFilter && tx.network !== networkFilter) {
+      return false;
+    }
+    
+    // Status filter
+    if (statusFilter && tx.status !== statusFilter) {
+      return false;
+    }
+    
+    return true;
+  });
+  
+  // Sort transactions
+  const sortedTransactions = [...filteredTransactions].sort((a, b) => {
+    if (sortBy === 'newest') {
+      return b.timestamp - a.timestamp;
+    } else {
+      return a.timestamp - b.timestamp;
+    }
+  });
+  
+  // Filter and sort groups
+  const filteredGroups = transactionGroups.filter(group => {
+    // Network filter
+    if (networkFilter && 
+        group.primaryTransaction.network !== networkFilter && 
+        !group.verificationTransactions.some(tx => tx.network === networkFilter)) {
+      return false;
+    }
+    
+    // Status filter
+    if (statusFilter && group.status !== statusFilter) {
+      return false;
+    }
+    
+    // Search query
+    if (searchQuery) {
+      const matchesPrimary = 
+        group.primaryTransaction.txHash.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        group.primaryTransaction.fromAddress.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        (group.primaryTransaction.toAddress && group.primaryTransaction.toAddress.toLowerCase().includes(searchQuery.toLowerCase())) ||
+        (group.primaryTransaction.label && group.primaryTransaction.label.toLowerCase().includes(searchQuery.toLowerCase())) ||
+        group.primaryTransaction.type.toLowerCase().includes(searchQuery.toLowerCase());
+        
+      const matchesVerification = group.verificationTransactions.some(tx => 
+        tx.txHash.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        tx.fromAddress.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        (tx.toAddress && tx.toAddress.toLowerCase().includes(searchQuery.toLowerCase())) ||
+        (tx.label && tx.label.toLowerCase().includes(searchQuery.toLowerCase())) ||
+        tx.type.toLowerCase().includes(searchQuery.toLowerCase())
+      );
+      
+      if (!matchesPrimary && !matchesVerification) {
+        return false;
+      }
+    }
+    
+    return true;
+  });
+  
+  // Sort groups
+  const sortedGroups = [...filteredGroups].sort((a, b) => {
+    if (sortBy === 'newest') {
+      return b.createdAt - a.createdAt;
+    } else {
+      return a.createdAt - b.createdAt;
+    }
+  });
+  
+  // Handle refresh
   const handleRefresh = async () => {
     setIsRefreshing(true);
     await refreshTransactions();
     setIsRefreshing(false);
   };
   
-  // Apply filters to transactions
-  const filteredTransactions = transactions.filter(tx => {
-    // Apply network filter
-    if (networkFilter !== 'all' && tx.network !== networkFilter) return false;
-    
-    // Apply status filter
-    if (statusFilter !== 'all' && tx.status !== statusFilter) return false;
-    
-    // Apply search query
-    if (searchQuery) {
-      const query = searchQuery.toLowerCase();
-      return (
-        tx.id.toLowerCase().includes(query) ||
-        tx.txHash.toLowerCase().includes(query) ||
-        tx.fromAddress.toLowerCase().includes(query) ||
-        (tx.toAddress && tx.toAddress.toLowerCase().includes(query)) ||
-        tx.correlationId.toLowerCase().includes(query) ||
-        (tx.label && tx.label.toLowerCase().includes(query))
-      );
+  // Auto-refresh effect
+  useEffect(() => {
+    const monitoringStatus = getMonitoringStatus();
+    if (monitoringStatus.isMonitoring) {
+      // Just a visual indicator for auto-refresh happening in the background
+      const timer = setInterval(() => {
+        setIsRefreshing(true);
+        setTimeout(() => setIsRefreshing(false), 500);
+      }, monitoringStatus.pollingInterval);
+      
+      return () => clearInterval(timer);
     }
-    
-    return true;
-  });
+  }, [getMonitoringStatus]);
   
-  // Format transaction time
-  const formatTxTime = (timestamp: number) => {
-    return formatDistanceToNow(new Date(timestamp), { addSuffix: true });
-  };
-  
-  // Get related transactions
-  const getRelatedTransactions = (tx: CrossChainTransaction) => {
-    return getTransactionsByCorrelationId(tx.correlationId).filter(t => t.id !== tx.id);
-  };
-  
-  // Get transaction status icon
-  const getStatusIcon = (status: TransactionStatus) => {
-    switch (status) {
-      case 'pending':
-        return <Clock className="h-4 w-4 text-amber-500" />;
-      case 'confirming':
-        return <RefreshCw className="h-4 w-4 text-blue-500 animate-spin" />;
-      case 'confirmed':
-        return <CheckCircle2 className="h-4 w-4 text-green-500" />;
-      case 'failed':
-        return <AlertCircle className="h-4 w-4 text-red-500" />;
-      default:
-        return null;
+  // If a transaction is selected but no group is selected, try to get its group
+  useEffect(() => {
+    if (selectedTransaction && !selectedGroup && selectedTransaction.correlationId) {
+      const group = getTransactionGroup(selectedTransaction.correlationId);
+      if (group) {
+        setSelectedGroupId(group.id);
+      }
     }
-  };
-  
-  // Get verification status icon
-  const getVerificationIcon = (status: VerificationStatus) => {
-    switch (status) {
-      case 'not_required':
-        return null;
-      case 'pending':
-        return <Clock className="h-4 w-4 text-amber-500" />;
-      case 'verified':
-        return <Shield className="h-4 w-4 text-emerald-500" />;
-      case 'failed':
-        return <AlertTriangle className="h-4 w-4 text-red-500" />;
-      case 'timeout':
-        return <AlertCircle className="h-4 w-4 text-purple-500" />;
-      default:
-        return null;
-    }
-  };
+  }, [selectedTransaction, selectedGroup, getTransactionGroup]);
   
   return (
-    <div className="container mx-auto py-8">
-      <div className="flex flex-col space-y-4">
-        <div className="flex justify-between items-center">
+    <div className="container py-8">
+      <div className="flex justify-between items-center mb-6">
+        <div>
           <h1 className="text-3xl font-bold">Transaction Monitor</h1>
-          <Button onClick={handleRefresh} disabled={isRefreshing} className="flex gap-2 items-center">
-            <RefreshCw className={`h-4 w-4 ${isRefreshing ? 'animate-spin' : ''}`} />
-            Refresh
-          </Button>
+          <p className="text-muted-foreground mt-1">
+            Track and verify cross-chain transactions across the Chronos Vault network
+          </p>
         </div>
-        
-        <div className="text-sm text-muted-foreground">
-          {lastUpdated ? (
-            <p>Last updated: {formatDistanceToNow(new Date(lastUpdated), { addSuffix: true })}</p>
-          ) : (
-            <p>Monitoring active</p>
-          )}
-        </div>
-        
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-          <Card>
-            <CardHeader className="pb-2">
-              <CardTitle>All Transactions</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-3xl font-bold">{transactions.length}</p>
-            </CardContent>
-          </Card>
-          
-          <Card>
-            <CardHeader className="pb-2">
-              <CardTitle>Pending</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-3xl font-bold">{pendingTransactions.length}</p>
-            </CardContent>
-          </Card>
-          
-          <Card>
-            <CardHeader className="pb-2">
-              <CardTitle>Transaction Groups</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-3xl font-bold">{transactionGroups.length}</p>
-            </CardContent>
-          </Card>
-          
-          <Card>
-            <CardHeader className="pb-2">
-              <CardTitle>Cross-Chain</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-3xl font-bold">
-                {transactionGroups.filter(group => group.verificationTransactions.length > 0).length}
-              </p>
-            </CardContent>
-          </Card>
-        </div>
-        
-        <div className="flex flex-col md:flex-row gap-4 md:items-center">
-          <div className="relative flex-1">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-            <Input
-              placeholder="Search transactions, addresses or hashes..."
-              className="pl-10"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-            />
-          </div>
-          
-          <div className="flex gap-2">
-            <Select value={networkFilter} onValueChange={(val) => setNetworkFilter(val as any)}>
-              <SelectTrigger className="w-[150px]">
-                <SelectValue placeholder="Network" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All Networks</SelectItem>
-                <SelectItem value="Ethereum">Ethereum</SelectItem>
-                <SelectItem value="Solana">Solana</SelectItem>
-                <SelectItem value="TON">TON</SelectItem>
-                <SelectItem value="Bitcoin">Bitcoin</SelectItem>
-              </SelectContent>
-            </Select>
-            
-            <Select value={statusFilter} onValueChange={(val) => setStatusFilter(val as any)}>
-              <SelectTrigger className="w-[150px]">
-                <SelectValue placeholder="Status" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All Statuses</SelectItem>
-                <SelectItem value="pending">Pending</SelectItem>
-                <SelectItem value="confirming">Confirming</SelectItem>
-                <SelectItem value="confirmed">Confirmed</SelectItem>
-                <SelectItem value="failed">Failed</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-        </div>
-        
-        <Tabs value={selectedTab} onValueChange={setSelectedTab}>
-          <TabsList className="grid w-full md:w-[400px] grid-cols-3">
-            <TabsTrigger value="all">All Transactions</TabsTrigger>
-            <TabsTrigger value="recent">Recent</TabsTrigger>
-            <TabsTrigger value="pending">Pending</TabsTrigger>
-          </TabsList>
-          
-          <div className="mt-4">
-            <TabsContent value="all" className="m-0">
-              <TransactionTable 
-                transactions={filteredTransactions} 
-                onSelectTransaction={setSelectedTransaction} 
-              />
-            </TabsContent>
-            
-            <TabsContent value="recent" className="m-0">
-              <TransactionTable 
-                transactions={recentTransactions} 
-                onSelectTransaction={setSelectedTransaction} 
-              />
-            </TabsContent>
-            
-            <TabsContent value="pending" className="m-0">
-              <TransactionTable 
-                transactions={pendingTransactions} 
-                onSelectTransaction={setSelectedTransaction} 
-              />
-            </TabsContent>
-          </div>
-        </Tabs>
+        <Button 
+          onClick={handleRefresh} 
+          disabled={isRefreshing}
+          className="gap-2"
+        >
+          <RefreshCw className={`h-4 w-4 ${isRefreshing ? 'animate-spin' : ''}`} />
+          Refresh
+        </Button>
       </div>
       
-      {selectedTransaction && (
-        <TransactionDetail 
-          transaction={selectedTransaction} 
-          onClose={() => setSelectedTransaction(null)} 
-          relatedTransactions={getRelatedTransactions(selectedTransaction)}
-        />
-      )}
-    </div>
-  );
-};
-
-// Transaction table component
-interface TransactionTableProps {
-  transactions: CrossChainTransaction[];
-  onSelectTransaction: (tx: CrossChainTransaction) => void;
-}
-
-const TransactionTable: React.FC<TransactionTableProps> = ({ transactions, onSelectTransaction }) => {
-  return (
-    <div className="rounded-md border">
-      <div className="relative w-full overflow-auto">
-        <table className="w-full caption-bottom text-sm">
-          <thead className="[&_tr]:border-b">
-            <tr className="border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted">
-              <th className="h-12 px-4 text-left align-middle font-medium text-muted-foreground">
-                Network
-              </th>
-              <th className="h-12 px-4 text-left align-middle font-medium text-muted-foreground">
-                Type
-              </th>
-              <th className="h-12 px-4 text-left align-middle font-medium text-muted-foreground">
-                Transaction Hash
-              </th>
-              <th className="h-12 px-4 text-left align-middle font-medium text-muted-foreground">
-                Status
-              </th>
-              <th className="h-12 px-4 text-left align-middle font-medium text-muted-foreground">
-                Verification
-              </th>
-              <th className="h-12 px-4 text-left align-middle font-medium text-muted-foreground">
-                Amount
-              </th>
-              <th className="h-12 px-4 text-left align-middle font-medium text-muted-foreground">
-                Time
-              </th>
-              <th className="h-12 px-4 text-left align-middle font-medium text-muted-foreground">
-                Actions
-              </th>
-            </tr>
-          </thead>
-          <tbody className="[&_tr:last-child]:border-0">
-            {transactions.length === 0 ? (
-              <tr>
-                <td colSpan={8} className="h-24 text-center text-muted-foreground">
-                  No transactions found
-                </td>
-              </tr>
-            ) : (
-              transactions.map((tx) => (
-                <tr 
-                  key={tx.id} 
-                  onClick={() => onSelectTransaction(tx)}
-                  className="border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted cursor-pointer"
-                >
-                  <td className="p-4 align-middle">
-                    <Badge className={`${chainColors[tx.network]}`}>
-                      {tx.network}
-                    </Badge>
-                  </td>
-                  <td className="p-4 align-middle">
-                    {tx.label || tx.type.replace('_', ' ')}
-                  </td>
-                  <td className="p-4 align-middle font-mono text-xs">
-                    {tx.txHash.substring(0, 8)}...{tx.txHash.substring(tx.txHash.length - 8)}
-                  </td>
-                  <td className="p-4 align-middle">
-                    <Badge className={`flex items-center gap-1 ${statusColors[tx.status]}`}>
-                      {getStatusIcon(tx.status)}
-                      {tx.status}
-                    </Badge>
-                  </td>
-                  <td className="p-4 align-middle">
-                    <Badge className={`flex items-center gap-1 ${verificationStatusColors[tx.verificationStatus]}`}>
-                      {getVerificationIcon(tx.verificationStatus)}
-                      {tx.verificationStatus.replace('_', ' ')}
-                    </Badge>
-                  </td>
-                  <td className="p-4 align-middle">
-                    {tx.amount ? `${tx.amount} ${tx.symbol || ''}` : '-'}
-                  </td>
-                  <td className="p-4 align-middle whitespace-nowrap">
-                    {formatDistanceToNow(new Date(tx.timestamp), { addSuffix: true })}
-                  </td>
-                  <td className="p-4 align-middle">
-                    <Button variant="ghost" size="sm" onClick={(e) => {
-                      e.stopPropagation();
-                      onSelectTransaction(tx);
-                    }}>
-                      Details
-                    </Button>
-                  </td>
-                </tr>
-              ))
-            )}
-          </tbody>
-        </table>
-      </div>
-    </div>
-  );
-};
-
-// Transaction detail modal
-interface TransactionDetailProps {
-  transaction: CrossChainTransaction;
-  relatedTransactions: CrossChainTransaction[];
-  onClose: () => void;
-}
-
-const TransactionDetail: React.FC<TransactionDetailProps> = ({ transaction, relatedTransactions, onClose }) => {
-  return (
-    <div className="fixed inset-0 bg-background/80 backdrop-blur-sm z-50 flex items-center justify-center">
-      <div className="bg-card border rounded-lg shadow-lg w-full max-w-3xl max-h-[90vh] overflow-y-auto">
-        <div className="p-6">
-          <div className="flex justify-between items-start mb-4">
-            <h2 className="text-2xl font-bold">Transaction Details</h2>
-            <Button variant="ghost" size="sm" onClick={onClose}>Close</Button>
-          </div>
-          
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-            <div>
-              <h3 className="text-sm font-medium text-muted-foreground mb-1">Network</h3>
-              <Badge className={`${chainColors[transaction.network]}`}>
-                {transaction.network}
-              </Badge>
-            </div>
-            
-            <div>
-              <h3 className="text-sm font-medium text-muted-foreground mb-1">Transaction Type</h3>
-              <p>{transaction.label || transaction.type.replace('_', ' ')}</p>
-            </div>
-            
-            <div>
-              <h3 className="text-sm font-medium text-muted-foreground mb-1">Status</h3>
-              <Badge className={`flex items-center gap-1 ${statusColors[transaction.status]}`}>
-                {getStatusIcon(transaction.status)}
-                {transaction.status}
-              </Badge>
-            </div>
-            
-            <div>
-              <h3 className="text-sm font-medium text-muted-foreground mb-1">Verification</h3>
-              <Badge className={`flex items-center gap-1 ${verificationStatusColors[transaction.verificationStatus]}`}>
-                {getVerificationIcon(transaction.verificationStatus)}
-                {transaction.verificationStatus.replace('_', ' ')}
-              </Badge>
-            </div>
-            
-            {transaction.amount && (
-              <div>
-                <h3 className="text-sm font-medium text-muted-foreground mb-1">Amount</h3>
-                <p>{transaction.amount} {transaction.symbol || ''}</p>
+      <TransactionStats className="mb-6" />
+      
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+        <div className="lg:col-span-8">
+          <Tabs defaultValue="groups">
+            <div className="flex items-center justify-between mb-4">
+              <TabsList>
+                <TabsTrigger value="groups" className="gap-2">
+                  <Network className="h-4 w-4" />
+                  Transaction Groups
+                </TabsTrigger>
+                <TabsTrigger value="transactions" className="gap-2">
+                  <History className="h-4 w-4" />
+                  All Transactions
+                </TabsTrigger>
+                <TabsTrigger value="visualization" className="gap-2">
+                  <BarChart3 className="h-4 w-4" />
+                  Visualization
+                </TabsTrigger>
+              </TabsList>
+              
+              <div className="flex items-center gap-2">
+                <Button variant="outline" size="sm" className="gap-1">
+                  <ArrowUpDown className="h-4 w-4" />
+                  {sortBy === 'newest' ? 'Newest' : 'Oldest'}
+                </Button>
+                <Button variant="outline" size="sm" className="gap-1">
+                  <Filter className="h-4 w-4" />
+                  Filter
+                </Button>
               </div>
-            )}
+            </div>
             
-            <div>
-              <h3 className="text-sm font-medium text-muted-foreground mb-1">Timestamp</h3>
-              <p>{new Date(transaction.timestamp).toLocaleString()}</p>
+            <div className="mb-4">
+              <div className="relative">
+                <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+                <Input 
+                  type="search" 
+                  placeholder="Search by transaction hash, address, or type..." 
+                  className="pl-9"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                />
+              </div>
             </div>
-          </div>
-          
-          <div className="mb-6">
-            <h3 className="text-lg font-semibold mb-2">Transaction Details</h3>
-            <div className="grid grid-cols-1 gap-2">
-              <div className="bg-muted p-3 rounded-md">
-                <h4 className="text-sm font-medium text-muted-foreground">Transaction Hash</h4>
-                <p className="font-mono text-sm break-all">{transaction.txHash}</p>
-              </div>
-              
-              <div className="bg-muted p-3 rounded-md">
-                <h4 className="text-sm font-medium text-muted-foreground">From Address</h4>
-                <p className="font-mono text-sm break-all">{transaction.fromAddress}</p>
-              </div>
-              
-              {transaction.toAddress && (
-                <div className="bg-muted p-3 rounded-md">
-                  <h4 className="text-sm font-medium text-muted-foreground">To Address</h4>
-                  <p className="font-mono text-sm break-all">{transaction.toAddress}</p>
-                </div>
-              )}
-              
-              <div className="bg-muted p-3 rounded-md">
-                <h4 className="text-sm font-medium text-muted-foreground">Correlation ID</h4>
-                <p className="font-mono text-sm break-all">{transaction.correlationId}</p>
-              </div>
-              
-              {transaction.blockNumber && (
-                <div className="bg-muted p-3 rounded-md">
-                  <h4 className="text-sm font-medium text-muted-foreground">Block Number</h4>
-                  <p className="font-mono text-sm">{transaction.blockNumber}</p>
-                </div>
-              )}
-              
-              {transaction.confirmations !== undefined && (
-                <div className="bg-muted p-3 rounded-md">
-                  <h4 className="text-sm font-medium text-muted-foreground">Confirmations</h4>
-                  <p className="font-mono text-sm">{transaction.confirmations}</p>
-                </div>
-              )}
-            </div>
-          </div>
-          
-          {relatedTransactions.length > 0 && (
+            
             <div className="mb-6">
-              <h3 className="text-lg font-semibold mb-2">Related Transactions</h3>
-              <div className="border rounded-md overflow-hidden">
-                <table className="w-full text-sm">
-                  <thead className="bg-muted">
-                    <tr>
-                      <th className="p-2 text-left">Network</th>
-                      <th className="p-2 text-left">Type</th>
-                      <th className="p-2 text-left">Status</th>
-                      <th className="p-2 text-left">Hash</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {relatedTransactions.map((related) => (
-                      <tr key={related.id} className="border-t">
-                        <td className="p-2">
-                          <Badge className={`${chainColors[related.network]}`}>
-                            {related.network}
-                          </Badge>
-                        </td>
-                        <td className="p-2">{related.label || related.type.replace('_', ' ')}</td>
-                        <td className="p-2">
-                          <Badge className={`flex items-center gap-1 ${statusColors[related.status]}`}>
-                            {getStatusIcon(related.status)}
-                            {related.status}
-                          </Badge>
-                        </td>
-                        <td className="p-2 font-mono text-xs">
-                          {related.txHash.substring(0, 6)}...{related.txHash.substring(related.txHash.length - 6)}
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
+              <div className="flex flex-wrap gap-2">
+                <Badge 
+                  variant={networkFilter === null ? 'default' : 'outline'}
+                  className="cursor-pointer"
+                  onClick={() => setNetworkFilter(null)}
+                >
+                  All Networks
+                </Badge>
+                <Badge 
+                  variant={networkFilter === 'Ethereum' ? 'default' : 'outline'}
+                  className={`cursor-pointer ${networkFilter !== 'Ethereum' ? networkColors['Ethereum'] : ''}`}
+                  onClick={() => setNetworkFilter('Ethereum')}
+                >
+                  Ethereum
+                </Badge>
+                <Badge 
+                  variant={networkFilter === 'Solana' ? 'default' : 'outline'}
+                  className={`cursor-pointer ${networkFilter !== 'Solana' ? networkColors['Solana'] : ''}`}
+                  onClick={() => setNetworkFilter('Solana')}
+                >
+                  Solana
+                </Badge>
+                <Badge 
+                  variant={networkFilter === 'TON' ? 'default' : 'outline'}
+                  className={`cursor-pointer ${networkFilter !== 'TON' ? networkColors['TON'] : ''}`}
+                  onClick={() => setNetworkFilter('TON')}
+                >
+                  TON
+                </Badge>
+                <Badge 
+                  variant={networkFilter === 'Bitcoin' ? 'default' : 'outline'}
+                  className={`cursor-pointer ${networkFilter !== 'Bitcoin' ? networkColors['Bitcoin'] : ''}`}
+                  onClick={() => setNetworkFilter('Bitcoin')}
+                >
+                  Bitcoin
+                </Badge>
+                
+                <Separator orientation="vertical" className="h-6 mx-2" />
+                
+                <Badge 
+                  variant={statusFilter === null ? 'default' : 'outline'}
+                  className="cursor-pointer"
+                  onClick={() => setStatusFilter(null)}
+                >
+                  All Statuses
+                </Badge>
+                <Badge 
+                  variant={statusFilter === 'pending' ? 'default' : 'outline'}
+                  className="cursor-pointer bg-amber-500/20 text-amber-500 border-amber-500/50"
+                  onClick={() => setStatusFilter('pending')}
+                >
+                  <Clock className="h-3 w-3 mr-1" />
+                  Pending
+                </Badge>
+                <Badge 
+                  variant={statusFilter === 'confirming' ? 'default' : 'outline'}
+                  className="cursor-pointer bg-blue-500/20 text-blue-500 border-blue-500/50"
+                  onClick={() => setStatusFilter('confirming')}
+                >
+                  <RefreshCw className="h-3 w-3 mr-1" />
+                  Confirming
+                </Badge>
+                <Badge 
+                  variant={statusFilter === 'confirmed' ? 'default' : 'outline'}
+                  className="cursor-pointer bg-green-500/20 text-green-500 border-green-500/50"
+                  onClick={() => setStatusFilter('confirmed')}
+                >
+                  <CheckCircle className="h-3 w-3 mr-1" />
+                  Confirmed
+                </Badge>
+                <Badge 
+                  variant={statusFilter === 'failed' ? 'default' : 'outline'}
+                  className="cursor-pointer bg-red-500/20 text-red-500 border-red-500/50"
+                  onClick={() => setStatusFilter('failed')}
+                >
+                  <XCircle className="h-3 w-3 mr-1" />
+                  Failed
+                </Badge>
               </div>
             </div>
+            
+            <TabsContent value="groups" className="mt-0">
+              <Card>
+                <CardHeader className="py-3">
+                  <CardTitle className="text-lg">Transaction Groups ({sortedGroups.length})</CardTitle>
+                  <CardDescription>Cross-chain transaction groups with primary and verification transactions</CardDescription>
+                </CardHeader>
+                <CardContent className="p-0">
+                  <ScrollArea className="h-[600px]">
+                    {sortedGroups.length > 0 ? (
+                      <div className="border-t">
+                        {sortedGroups.map(group => (
+                          <TransactionGroupListItem 
+                            key={group.id}
+                            group={group}
+                            isSelected={selectedGroupId === group.id}
+                            onClick={() => {
+                              setSelectedGroupId(group.id);
+                              setSelectedTxId(group.primaryTransaction.id);
+                            }}
+                          />
+                        ))}
+                      </div>
+                    ) : (
+                      <div className="p-6 text-center text-muted-foreground">
+                        No transaction groups found matching your filters
+                      </div>
+                    )}
+                  </ScrollArea>
+                </CardContent>
+              </Card>
+            </TabsContent>
+            
+            <TabsContent value="transactions" className="mt-0">
+              <Card>
+                <CardHeader className="py-3">
+                  <CardTitle className="text-lg">All Transactions ({sortedTransactions.length})</CardTitle>
+                  <CardDescription>Individual blockchain transactions across all supported networks</CardDescription>
+                </CardHeader>
+                <CardContent className="p-0">
+                  <ScrollArea className="h-[600px]">
+                    {sortedTransactions.length > 0 ? (
+                      <div className="border-t">
+                        {sortedTransactions.map(transaction => (
+                          <TransactionListItem 
+                            key={transaction.id}
+                            transaction={transaction}
+                            isSelected={selectedTxId === transaction.id}
+                            onClick={() => {
+                              setSelectedTxId(transaction.id);
+                              setSelectedGroupId(null);
+                            }}
+                          />
+                        ))}
+                      </div>
+                    ) : (
+                      <div className="p-6 text-center text-muted-foreground">
+                        No transactions found matching your filters
+                      </div>
+                    )}
+                  </ScrollArea>
+                </CardContent>
+              </Card>
+            </TabsContent>
+            
+            <TabsContent value="visualization" className="mt-0">
+              <Card>
+                <CardHeader className="py-3">
+                  <CardTitle className="text-lg">Transaction Visualization</CardTitle>
+                  <CardDescription>
+                    Visual representation of transaction flows across blockchain networks
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-6">
+                    {selectedGroup ? (
+                      <TransactionGraphCard 
+                        transactionGroup={selectedGroup}
+                        onSelectTransaction={(tx) => setSelectedTxId(tx.id)}
+                        width={700}
+                        height={400}
+                      />
+                    ) : (
+                      <div className="text-center p-12 bg-muted/30 rounded-md space-y-3">
+                        <Network className="h-16 w-16 mx-auto text-muted-foreground/50" />
+                        <div>
+                          <h3 className="text-lg font-medium">No Transaction Group Selected</h3>
+                          <p className="text-muted-foreground">
+                            Select a transaction group to visualize cross-chain relationships
+                          </p>
+                        </div>
+                        <Button 
+                          variant="outline" 
+                          onClick={() => {
+                            if (sortedGroups.length > 0) {
+                              setSelectedGroupId(sortedGroups[0].id);
+                              setSelectedTxId(sortedGroups[0].primaryTransaction.id);
+                            }
+                          }}
+                          disabled={sortedGroups.length === 0}
+                        >
+                          Select Latest Group
+                        </Button>
+                      </div>
+                    )}
+                    
+                    <div className="grid grid-cols-2 gap-4 mt-4">
+                      <Card>
+                        <CardHeader className="py-3">
+                          <CardTitle className="text-sm">Network Distribution</CardTitle>
+                        </CardHeader>
+                        <CardContent>
+                          <div className="h-[200px] flex items-center justify-center">
+                            <div className="text-muted-foreground text-sm">
+                              Network distribution visualization will appear here
+                            </div>
+                          </div>
+                        </CardContent>
+                      </Card>
+                      
+                      <Card>
+                        <CardHeader className="py-3">
+                          <CardTitle className="text-sm">Verification Success Rate</CardTitle>
+                        </CardHeader>
+                        <CardContent>
+                          <div className="h-[200px] flex items-center justify-center">
+                            <div className="text-muted-foreground text-sm">
+                              Verification success rate chart will appear here
+                            </div>
+                          </div>
+                        </CardContent>
+                      </Card>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            </TabsContent>
+          </Tabs>
+        </div>
+        
+        <div className="lg:col-span-4">
+          {selectedTransaction ? (
+            <TransactionDetailPanel transaction={selectedTransaction} />
+          ) : (
+            <Card>
+              <CardHeader>
+                <CardTitle>Transaction Details</CardTitle>
+                <CardDescription>Select a transaction to view details</CardDescription>
+              </CardHeader>
+              <CardContent className="flex flex-col items-center justify-center py-12 text-center text-muted-foreground">
+                <History className="h-16 w-16 mb-4 text-muted-foreground/50" />
+                <p>Select a transaction from the list to view its details</p>
+                <Button 
+                  variant="outline" 
+                  className="mt-4"
+                  onClick={() => {
+                    if (transactions.length > 0) {
+                      setSelectedTxId(transactions[0].id);
+                    }
+                  }}
+                  disabled={transactions.length === 0}
+                >
+                  View Latest Transaction
+                </Button>
+              </CardContent>
+            </Card>
           )}
           
-          <div className="flex justify-end gap-2">
-            <Button variant="outline" onClick={onClose}>Close</Button>
-            <Button>
-              View on Explorer
-              <LinkIcon className="ml-2 h-4 w-4" />
-            </Button>
-          </div>
+          {selectedGroup && (
+            <Card className="mt-6">
+              <CardHeader className="pb-2">
+                <CardTitle className="text-lg">Transaction Group</CardTitle>
+                <CardDescription>Cross-chain verification status</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-4">
+                  <div>
+                    <h3 className="font-medium text-sm mb-1">Primary Transaction</h3>
+                    <div className="bg-muted p-3 rounded-md">
+                      <div className="flex justify-between">
+                        <Badge className={networkColors[selectedGroup.primaryTransaction.network]}>
+                          {selectedGroup.primaryTransaction.network}
+                        </Badge>
+                        <Badge variant={
+                          selectedGroup.primaryTransaction.status === 'confirmed' ? 'default' : 
+                          selectedGroup.primaryTransaction.status === 'failed' ? 'destructive' : 
+                          'outline'
+                        }>
+                          {getStatusIcon(selectedGroup.primaryTransaction.status)}
+                          {selectedGroup.primaryTransaction.status}
+                        </Badge>
+                      </div>
+                      <div className="font-mono text-xs mt-2 break-all">
+                        {selectedGroup.primaryTransaction.txHash}
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div>
+                    <h3 className="font-medium text-sm mb-1">Verification Transactions ({selectedGroup.verificationTransactions.length})</h3>
+                    <div className="space-y-2">
+                      {selectedGroup.verificationTransactions.length > 0 ? (
+                        selectedGroup.verificationTransactions.map(tx => (
+                          <div 
+                            key={tx.id} 
+                            className="bg-muted p-3 rounded-md cursor-pointer hover:bg-muted/80"
+                            onClick={() => setSelectedTxId(tx.id)}
+                          >
+                            <div className="flex justify-between">
+                              <Badge className={networkColors[tx.network]}>
+                                {tx.network}
+                              </Badge>
+                              <Badge variant={
+                                tx.status === 'confirmed' ? 'default' : 
+                                tx.status === 'failed' ? 'destructive' : 
+                                'outline'
+                              }>
+                                {getStatusIcon(tx.status)}
+                                {tx.status}
+                              </Badge>
+                            </div>
+                            <div className="font-mono text-xs mt-2 break-all">
+                              {tx.txHash}
+                            </div>
+                          </div>
+                        ))
+                      ) : (
+                        <div className="text-center p-4 border rounded-md">
+                          <p className="text-muted-foreground text-sm">No verification transactions</p>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                  
+                  <div>
+                    <h3 className="font-medium text-sm mb-1">Security Level</h3>
+                    <RadioGroup defaultValue={selectedGroup.securityLevel.toString()} disabled>
+                      <div className="flex items-center space-x-2">
+                        <RadioGroupItem value="1" id="level-1" />
+                        <Label htmlFor="level-1">Level 1 - Basic Time Lock</Label>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <RadioGroupItem value="2" id="level-2" />
+                        <Label htmlFor="level-2">Level 2 - Cross-Chain Verification</Label>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <RadioGroupItem value="3" id="level-3" />
+                        <Label htmlFor="level-3">Level 3 - Multi-Signature Security</Label>
+                      </div>
+                    </RadioGroup>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          )}
         </div>
       </div>
     </div>

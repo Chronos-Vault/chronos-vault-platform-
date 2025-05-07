@@ -12,6 +12,7 @@ import { CVTTokenProvider } from "@/contexts/cvt-token-context";
 import { DevModeProvider } from "@/contexts/dev-mode-context";
 import { BlockchainErrorDisplay } from "@/contexts/blockchain-error-boundary";
 import { AuthProvider } from "@/contexts/auth-context";
+import { TransactionMonitoringProvider } from "@/contexts/transaction-monitoring-context";
 import Layout from "@/components/layout/Layout";
 
 // Pages
@@ -61,6 +62,7 @@ import CVTPaymentPage from "@/pages/cvt-payment";
 import CVTUtilityPage from "@/pages/cvt-utility-new";
 import TechnicalDashboardPage from "@/pages/admin/technical-dashboard";
 import StoragePage from "@/pages/storage-page";
+import TransactionMonitorPage from "@/pages/transaction-monitor";
 
 
 // Redirect component for wouter
@@ -123,6 +125,7 @@ function Router() {
         <Route path="/subscription" component={SubscriptionPage} />
         <Route path="/admin/technical-dashboard" component={TechnicalDashboardPage} />
         <Route path="/storage" component={StoragePage} />
+        <Route path="/transaction-monitor" component={TransactionMonitorPage} />
 
         <Route component={NotFound} />
       </Switch>
@@ -133,22 +136,30 @@ function Router() {
 
 function App() {
   return (
-    <EthereumProvider>
-      <SolanaProvider>
-        <TonProvider>
-          <BitcoinProvider>
-            <BitcoinWalletProvider>
-              <MultiChainProvider>
-                <CVTTokenProvider>
-                  <Router />
-                  <BlockchainErrorDisplay />
-                </CVTTokenProvider>
-              </MultiChainProvider>
-            </BitcoinWalletProvider>
-          </BitcoinProvider>
-        </TonProvider>
-      </SolanaProvider>
-    </EthereumProvider>
+    <DevModeProvider>
+      <TooltipProvider>
+        <AuthProvider>
+          <EthereumProvider>
+            <SolanaProvider>
+              <TonProvider>
+                <BitcoinProvider>
+                  <BitcoinWalletProvider>
+                    <MultiChainProvider>
+                      <CVTTokenProvider>
+                        <TransactionMonitoringProvider>
+                          <Router />
+                          <BlockchainErrorDisplay />
+                        </TransactionMonitoringProvider>
+                      </CVTTokenProvider>
+                    </MultiChainProvider>
+                  </BitcoinWalletProvider>
+                </BitcoinProvider>
+              </TonProvider>
+            </SolanaProvider>
+          </EthereumProvider>
+        </AuthProvider>
+      </TooltipProvider>
+    </DevModeProvider>
   );
 }
 
