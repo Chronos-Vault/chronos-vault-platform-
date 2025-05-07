@@ -1,173 +1,96 @@
 /**
  * Bridge Test Routes
  * 
- * This module provides API routes for testing cross-chain bridge functionality.
+ * Test endpoints for cross-chain bridge functionality, allowing
+ * developers to verify bridge operations without interacting directly
+ * with the blockchain.
  */
 
 import { Router, Request, Response } from 'express';
 import { securityLogger } from '../monitoring/security-logger';
-import { crossChainBridge, TokenStandard, BridgeTransactionStatus } from '../blockchain/cross-chain-bridge';
-import { crossChainErrorHandler, CrossChainErrorCategory } from '../security/cross-chain-error-handler';
-import { BlockchainType } from '../../shared/types';
+import { crossChainBridge } from '../blockchain/cross-chain-bridge';
+import { zeroKnowledgeShield } from '../privacy/zero-knowledge-shield';
+import { BlockchainType } from '@shared/types';
 
 const router = Router();
 
 /**
- * Get supported blockchain pairs for bridging
- * 
- * @route GET /api/test/bridge/supported-pairs
+ * Test bridge initialization
+ * GET /api/test/bridge/status
  */
-router.get('/bridge/supported-pairs', async (_req: Request, res: Response) => {
+router.get('/bridge/status', async (_req: Request, res: Response) => {
   try {
-    securityLogger.info('Testing bridge supported pairs');
-    
-    const blockchains: BlockchainType[] = ['ETH', 'SOL', 'TON', 'POLYGON', 'BTC'];
-    const supportedPairs: Array<{source: BlockchainType, target: BlockchainType}> = [];
-    
-    // Check all possible pairs
-    for (const source of blockchains) {
-      for (const target of blockchains) {
-        if (source !== target) {
-          const isSupported = await crossChainBridge.supportsPair(source, target);
-          
-          if (isSupported) {
-            supportedPairs.push({ source, target });
-          }
-        }
-      }
-    }
+    const bridges = await crossChainBridge.getBridgeStatuses();
     
     return res.json({
       success: true,
-      data: supportedPairs,
+      data: bridges,
       timestamp: Date.now()
     });
   } catch (error) {
-    const handledError = crossChainErrorHandler.handle(error);
-    securityLogger.error('Error getting supported bridge pairs', error);
+    securityLogger.error('Error getting bridge status', error);
     
     return res.status(500).json({
       success: false,
-      error: crossChainErrorHandler.createClientSafeError(handledError),
+      error: error instanceof Error ? error.message : 'Unknown error',
       timestamp: Date.now()
     });
   }
 });
 
 /**
- * Get supported token standards for a blockchain pair
- * 
- * @route GET /api/test/bridge/token-standards
+ * Test bridge initialization between two chains
+ * GET /api/test/bridge/init/:sourceChain/:targetChain
  */
-router.get('/bridge/token-standards', async (req: Request, res: Response) => {
+router.get('/bridge/init/:sourceChain/:targetChain', async (req: Request, res: Response) => {
   try {
-    const { sourceChain, targetChain } = req.query;
+    const { sourceChain, targetChain } = req.params;
     
     if (!sourceChain || !targetChain) {
       return res.status(400).json({
         success: false,
-        error: 'Missing required parameters: sourceChain and targetChain',
+        error: 'Source and target chains are required',
         timestamp: Date.now()
       });
     }
     
-    securityLogger.info('Testing bridge token standards', { 
-      sourceChain, 
-      targetChain 
-    });
-    
-    const tokenStandards = await crossChainBridge.getSupportedTokenStandards(
-      sourceChain as BlockchainType, 
+    const bridgeDetails = await crossChainBridge.initializeBridge(
+      sourceChain as BlockchainType,
       targetChain as BlockchainType
     );
     
     return res.json({
       success: true,
-      data: tokenStandards,
+      data: bridgeDetails,
       timestamp: Date.now()
     });
   } catch (error) {
-    const handledError = crossChainErrorHandler.handle(error);
-    securityLogger.error('Error getting supported token standards', error);
+    securityLogger.error('Error initializing bridge', error);
     
     return res.status(500).json({
       success: false,
-      error: crossChainErrorHandler.createClientSafeError(handledError),
+      error: error instanceof Error ? error.message : 'Unknown error',
       timestamp: Date.now()
     });
   }
 });
 
 /**
- * Estimate bridge fees
- * 
- * @route POST /api/test/bridge/estimate-fee
+ * Test bridge asset transfer between two chains
+ * POST /api/test/bridge/transfer
  */
-router.post('/bridge/estimate-fee', async (req: Request, res: Response) => {
+router.post('/bridge/transfer', async (req: Request, res: Response) => {
   try {
-    const { sourceChain, targetChain, tokenStandard, amount } = req.body;
-    
-    if (!sourceChain || !targetChain || !tokenStandard || !amount) {
-      return res.status(400).json({
-        success: false,
-        error: 'Missing required parameters: sourceChain, targetChain, tokenStandard, and amount',
-        timestamp: Date.now()
-      });
-    }
-    
-    securityLogger.info('Testing bridge fee estimation', { 
-      sourceChain, 
+    const {
+      sourceChain,
       targetChain,
-      tokenStandard,
-      amount
-    });
-    
-    const feeEstimation = await crossChainBridge.estimateFee(
-      sourceChain as BlockchainType,
-      targetChain as BlockchainType,
-      tokenStandard as TokenStandard,
-      amount
-    );
-    
-    return res.json({
-      success: true,
-      data: feeEstimation,
-      timestamp: Date.now()
-    });
-  } catch (error) {
-    const handledError = crossChainErrorHandler.handle(error, {
-      category: CrossChainErrorCategory.BRIDGE_CONTRACT_ERROR
-    });
-    
-    securityLogger.error('Error estimating bridge fees', error);
-    
-    return res.status(500).json({
-      success: false,
-      error: crossChainErrorHandler.createClientSafeError(handledError),
-      timestamp: Date.now()
-    });
-  }
-});
-
-/**
- * Initiate a bridge transfer
- * 
- * @route POST /api/test/bridge/initiate-transfer
- */
-router.post('/bridge/initiate-transfer', async (req: Request, res: Response) => {
-  try {
-    const { 
-      sourceChain, 
-      targetChain, 
-      sourceAddress, 
-      targetAddress,
-      tokenStandard,
-      tokenAddress,
       amount,
-      options
+      assetType,
+      senderAddress,
+      recipientAddress
     } = req.body;
     
-    if (!sourceChain || !targetChain || !sourceAddress || !targetAddress || !tokenStandard || !amount) {
+    if (!sourceChain || !targetChain || !amount || !assetType || !senderAddress || !recipientAddress) {
       return res.status(400).json({
         success: false,
         error: 'Missing required parameters',
@@ -175,232 +98,119 @@ router.post('/bridge/initiate-transfer', async (req: Request, res: Response) => 
       });
     }
     
-    securityLogger.info('Testing bridge transfer initiation', { 
-      sourceChain, 
-      targetChain,
-      tokenStandard,
-      amount
+    const transferResult = await crossChainBridge.transferAsset({
+      sourceChain: sourceChain as BlockchainType,
+      targetChain: targetChain as BlockchainType,
+      amount: parseFloat(amount),
+      assetType,
+      senderAddress,
+      recipientAddress,
+      timestamp: Date.now()
     });
     
-    const bridgeTransaction = await crossChainBridge.initiateTransfer(
+    return res.json({
+      success: true,
+      data: transferResult,
+      timestamp: Date.now()
+    });
+  } catch (error) {
+    securityLogger.error('Error in bridge transfer test', error);
+    
+    return res.status(500).json({
+      success: false,
+      error: error instanceof Error ? error.message : 'Unknown error',
+      timestamp: Date.now()
+    });
+  }
+});
+
+/**
+ * Test bridge relay message between chains
+ * POST /api/test/bridge/relay
+ */
+router.post('/bridge/relay', async (req: Request, res: Response) => {
+  try {
+    const {
+      sourceChain,
+      targetChain,
+      message,
+      senderAddress
+    } = req.body;
+    
+    if (!sourceChain || !targetChain || !message || !senderAddress) {
+      return res.status(400).json({
+        success: false,
+        error: 'Missing required parameters',
+        timestamp: Date.now()
+      });
+    }
+    
+    // Generate a cross-chain proof for the message relay
+    const proof = await zeroKnowledgeShield.generateCrossChainProof(
       sourceChain as BlockchainType,
       targetChain as BlockchainType,
-      sourceAddress,
-      targetAddress,
-      tokenStandard as TokenStandard,
-      tokenAddress,
-      amount,
-      options
+      { message, sender: senderAddress }
+    );
+    
+    // Relay the message with the proof
+    const relayResult = await crossChainBridge.relayMessage({
+      sourceChain: sourceChain as BlockchainType,
+      targetChain: targetChain as BlockchainType,
+      message,
+      senderAddress,
+      proof: proof,
+      timestamp: Date.now()
+    });
+    
+    return res.json({
+      success: true,
+      data: relayResult,
+      timestamp: Date.now()
+    });
+  } catch (error) {
+    securityLogger.error('Error in bridge relay test', error);
+    
+    return res.status(500).json({
+      success: false,
+      error: error instanceof Error ? error.message : 'Unknown error',
+      timestamp: Date.now()
+    });
+  }
+});
+
+/**
+ * Test bridge verification for cross-chain transaction
+ * GET /api/test/bridge/verify/:sourceChain/:targetChain/:txHash
+ */
+router.get('/bridge/verify/:sourceChain/:targetChain/:txHash', async (req: Request, res: Response) => {
+  try {
+    const { sourceChain, targetChain, txHash } = req.params;
+    
+    if (!sourceChain || !targetChain || !txHash) {
+      return res.status(400).json({
+        success: false,
+        error: 'Source chain, target chain, and transaction hash are required',
+        timestamp: Date.now()
+      });
+    }
+    
+    const verificationResult = await crossChainBridge.verifyTransaction(
+      txHash,
+      sourceChain as BlockchainType,
+      targetChain as BlockchainType
     );
     
     return res.json({
       success: true,
-      data: bridgeTransaction,
+      data: verificationResult,
       timestamp: Date.now()
     });
   } catch (error) {
-    const handledError = crossChainErrorHandler.handle(error, {
-      category: CrossChainErrorCategory.BRIDGE_CONTRACT_ERROR
-    });
-    
-    securityLogger.error('Error initiating bridge transfer', error);
+    securityLogger.error('Error in bridge verification test', error);
     
     return res.status(500).json({
       success: false,
-      error: crossChainErrorHandler.createClientSafeError(handledError),
-      timestamp: Date.now()
-    });
-  }
-});
-
-/**
- * Get bridge transaction status
- * 
- * @route GET /api/test/bridge/transaction/:transactionId
- */
-router.get('/bridge/transaction/:transactionId', async (req: Request, res: Response) => {
-  try {
-    const { transactionId } = req.params;
-    
-    if (!transactionId) {
-      return res.status(400).json({
-        success: false,
-        error: 'Missing transaction ID',
-        timestamp: Date.now()
-      });
-    }
-    
-    securityLogger.info('Getting bridge transaction status', { transactionId });
-    
-    const transaction = await crossChainBridge.getTransactionStatus(transactionId);
-    
-    return res.json({
-      success: true,
-      data: transaction,
-      timestamp: Date.now()
-    });
-  } catch (error) {
-    const handledError = crossChainErrorHandler.handle(error, {
-      category: CrossChainErrorCategory.TRANSACTION_NOT_FOUND
-    });
-    
-    securityLogger.error('Error getting bridge transaction status', error);
-    
-    return res.status(500).json({
-      success: false,
-      error: crossChainErrorHandler.createClientSafeError(handledError),
-      timestamp: Date.now()
-    });
-  }
-});
-
-/**
- * Complete a bridge transfer
- * 
- * @route POST /api/test/bridge/complete-transfer/:transactionId
- */
-router.post('/bridge/complete-transfer/:transactionId', async (req: Request, res: Response) => {
-  try {
-    const { transactionId } = req.params;
-    
-    if (!transactionId) {
-      return res.status(400).json({
-        success: false,
-        error: 'Missing transaction ID',
-        timestamp: Date.now()
-      });
-    }
-    
-    securityLogger.info('Completing bridge transfer', { transactionId });
-    
-    const transaction = await crossChainBridge.completeTransfer(transactionId);
-    
-    return res.json({
-      success: true,
-      data: transaction,
-      timestamp: Date.now()
-    });
-  } catch (error) {
-    const handledError = crossChainErrorHandler.handle(error, {
-      category: CrossChainErrorCategory.BRIDGE_CONTRACT_ERROR
-    });
-    
-    securityLogger.error('Error completing bridge transfer', error);
-    
-    return res.status(500).json({
-      success: false,
-      error: crossChainErrorHandler.createClientSafeError(handledError),
-      timestamp: Date.now()
-    });
-  }
-});
-
-/**
- * Verify a bridge transaction
- * 
- * @route GET /api/test/bridge/verify/:transactionId
- */
-router.get('/bridge/verify/:transactionId', async (req: Request, res: Response) => {
-  try {
-    const { transactionId } = req.params;
-    
-    if (!transactionId) {
-      return res.status(400).json({
-        success: false,
-        error: 'Missing transaction ID',
-        timestamp: Date.now()
-      });
-    }
-    
-    securityLogger.info('Verifying bridge transaction', { transactionId });
-    
-    const isVerified = await crossChainBridge.verifyTransaction(transactionId);
-    
-    return res.json({
-      success: true,
-      data: { verified: isVerified },
-      timestamp: Date.now()
-    });
-  } catch (error) {
-    const handledError = crossChainErrorHandler.handle(error, {
-      category: CrossChainErrorCategory.VALIDATION_FAILURE
-    });
-    
-    securityLogger.error('Error verifying bridge transaction', error);
-    
-    return res.status(500).json({
-      success: false,
-      error: crossChainErrorHandler.createClientSafeError(handledError),
-      timestamp: Date.now()
-    });
-  }
-});
-
-/**
- * Error test: intentionally trigger different error types to test error handling
- * 
- * @route POST /api/test/bridge/error-test
- */
-router.post('/bridge/error-test', async (req: Request, res: Response) => {
-  try {
-    const { errorType } = req.body;
-    
-    if (!errorType) {
-      return res.status(400).json({
-        success: false,
-        error: 'Missing error type',
-        timestamp: Date.now()
-      });
-    }
-    
-    securityLogger.info('Testing bridge error handling', { errorType });
-    
-    let error;
-    switch (errorType) {
-      case 'connection':
-        error = new Error('Connection failed to blockchain network');
-        break;
-      case 'timeout':
-        error = new Error('Operation timed out after 30 seconds');
-        break;
-      case 'rate_limit':
-        error = new Error('Rate limit exceeded for blockchain API');
-        break;
-      case 'signature':
-        error = new Error('Invalid signature for transaction');
-        break;
-      case 'insufficient_funds':
-        error = new Error('Insufficient funds for transaction');
-        break;
-      case 'validation':
-        error = new Error('Transaction validation failed: data format error');
-        break;
-      case 'bridge_error':
-        error = new Error('Bridge contract execution failed: gas limit exceeded');
-        break;
-      default:
-        error = new Error('Unknown error during bridge operation');
-    }
-    
-    const handledError = crossChainErrorHandler.handle(error);
-    
-    return res.json({
-      success: false,
-      data: {
-        errorType,
-        handledError: crossChainErrorHandler.createClientSafeError(handledError),
-        recoverable: crossChainErrorHandler.shouldAttemptRecovery(handledError),
-        recoveryDelay: crossChainErrorHandler.getRecoveryDelayMs(handledError)
-      },
-      timestamp: Date.now()
-    });
-  } catch (error) {
-    const handledError = crossChainErrorHandler.handle(error);
-    securityLogger.error('Error testing bridge error handling', error);
-    
-    return res.status(500).json({
-      success: false,
-      error: crossChainErrorHandler.createClientSafeError(handledError),
+      error: error instanceof Error ? error.message : 'Unknown error',
       timestamp: Date.now()
     });
   }

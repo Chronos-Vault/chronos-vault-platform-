@@ -287,7 +287,7 @@ router.post('/cross-chain/verify-zk-proof', async (req: Request, res: Response) 
     
     securityLogger.info('Testing zero-knowledge proof verification');
     
-    const result = await zeroKnowledgeShield.verifyProof(proof, publicInputs);
+    const result = await zeroKnowledgeShield.verifyProof(proof, publicInputs, 'VAULT_OWNERSHIP');
     
     return res.json({
       success: true,
