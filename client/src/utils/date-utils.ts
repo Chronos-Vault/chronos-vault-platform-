@@ -9,7 +9,7 @@
  */
 export function formatDate(date: Date | string): string {
   const dateObj = typeof date === 'string' ? new Date(date) : date;
-  return dateObj.toLocaleDateString(undefined, {
+  return dateObj.toLocaleDateString('en-US', {
     year: 'numeric',
     month: 'long',
     day: 'numeric'
@@ -124,4 +124,44 @@ export function getRelativeTimeString(date: Date | string): string {
     if (diffDays < 30) return `in ${diffDays} days`;
     return formatDate(dateObj);
   }
+}
+
+/**
+ * Format asset amount with currency symbol
+ * @param amount The amount as a string
+ * @param assetType The type of asset/currency
+ * @returns Formatted asset string
+ */
+export function formatAsset(amount: string, assetType: string): string {
+  return `${assetType} ${amount}`;
+}
+
+/**
+ * Truncate wallet address for display
+ * @param address The wallet address to truncate
+ * @param startLength Number of characters to show at the start
+ * @param endLength Number of characters to show at the end
+ * @returns Truncated address
+ */
+export function truncateAddress(address: string, startLength = 6, endLength = 4): string {
+  if (!address) return '';
+  return `${address.slice(0, startLength)}...${address.slice(-endLength)}`;
+}
+
+/**
+ * Validate wallet address (basic Ethereum address validation)
+ * @param address The address to validate
+ * @returns True if the address is a valid Ethereum address
+ */
+export function isValidEthereumAddress(address: string): boolean {
+  return /^0x[a-fA-F0-9]{40}$/.test(address);
+}
+
+/**
+ * Format a number with commas for readability
+ * @param num The number to format
+ * @returns Formatted number string with commas
+ */
+export function formatNumber(num: number): string {
+  return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 }
