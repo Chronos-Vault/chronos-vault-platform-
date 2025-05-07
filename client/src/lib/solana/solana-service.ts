@@ -137,7 +137,17 @@ class SolanaService {
       
       try {
         const connection = new Connection(endpoint.url, 'confirmed');
-        await connection.getVersion();
+        
+        // Add timeout for the request to avoid hanging
+        const timeout = new Promise<null>((_, reject) => {
+          setTimeout(() => reject(new Error('Connection timeout')), 5000);
+        });
+        
+        // Race the getVersion call with a timeout
+        await Promise.race([
+          connection.getVersion(),
+          timeout
+        ]);
         
         const endTime = performance.now();
         endpoint.responseTime = endTime - startTime;
