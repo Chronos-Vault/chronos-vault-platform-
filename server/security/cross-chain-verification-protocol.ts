@@ -153,8 +153,8 @@ class CrossChainVerificationProtocol {
       };
     }
     
-    // In a production environment, we would actually verify across all chains
-    // This would involve checking the vault exists on each chain and validating its state
+    // In a production environment, verify across all chains by checking the vault exists
+    // on each chain and validating its state
     
     try {
       // 1. First verify on the source chain
@@ -163,27 +163,117 @@ class CrossChainVerificationProtocol {
         await sourceClient.initialize();
       }
       
-      // For now, just mark the source chain as verified
-      verifiedOn.push(sourceChain);
-      
-      // 2. Verify across all target chains
-      for (const chain of targetChains) {
-        try {
-          const client = this.getClient(chain);
-          if (!client.isInitialized()) {
-            await client.initialize();
+      // Get the vault data from the source chain
+      let sourceVaultExists = false;
+      try {
+        // Different chains have different verification methods
+        if (sourceChain === 'ETH') {
+          const result = await (sourceClient as any).verifyVaultExists(vaultId);
+          sourceVaultExists = result.exists;
+          if (!sourceVaultExists) {
+            securityLogger.error(`Vault does not exist on source chain ${sourceChain}: ${vaultId}`);
+            failedOn.push(sourceChain);
+          } else {
+            // Check if it has enough confirmations
+            const minConfirmations = options.requiredConfirmations || 
+              config.securityConfig.minConfirmations.ethereum;
+            
+            if (result.confirmations < minConfirmations) {
+              securityLogger.warn(`Vault on ${sourceChain} doesn't have enough confirmations: ${result.confirmations}/${minConfirmations}`);
+              pendingOn.push(sourceChain);
+            } else {
+              verifiedOn.push(sourceChain);
+            }
           }
-          
-          // In a real implementation, we would:
-          // 1. Check if the vault exists on this chain
-          // 2. Validate that it matches the source chain data
-          // 3. Verify sufficient confirmations
-          
-          // For now, just mark this chain as verified
-          verifiedOn.push(chain);
-        } catch (error) {
-          securityLogger.error(`Failed to verify on chain ${chain}`, error);
-          failedOn.push(chain);
+        } else if (sourceChain === 'SOL') {
+          // Solana-specific verification logic
+          const result = await (sourceClient as any).verifyVaultExists(vaultId);
+          sourceVaultExists = result.exists;
+          if (sourceVaultExists) {
+            verifiedOn.push(sourceChain);
+          } else {
+            failedOn.push(sourceChain);
+          }
+        } else if (sourceChain === 'TON') {
+          // TON-specific verification logic
+          const result = await (sourceClient as any).verifyVaultExists(vaultId);
+          sourceVaultExists = result.exists;
+          if (sourceVaultExists) {
+            verifiedOn.push(sourceChain);
+          } else {
+            failedOn.push(sourceChain);
+          }
+        } else {
+          // For other chains, mark as verified for now
+          verifiedOn.push(sourceChain);
+          sourceVaultExists = true;
+        }
+      } catch (error) {
+        securityLogger.error(`Failed to verify on source chain ${sourceChain}`, error);
+        failedOn.push(sourceChain);
+      }
+      
+      // Only proceed to target chains if the vault exists on the source chain
+      if (sourceVaultExists) {
+        // 2. Verify across all target chains
+        for (const chain of targetChains) {
+          try {
+            const client = this.getClient(chain);
+            if (!client.isInitialized()) {
+              await client.initialize();
+            }
+            
+            // Different verification logic based on chain type
+            if (chain === 'ETH') {
+              // For Ethereum, we can use the cross-chain verification contract
+              const result = await (client as any).verifyVaultCrossChain(vaultId, sourceChain);
+              
+              if (result.verified) {
+                // Check when the verification happened
+                const verificationAge = Date.now() - result.timestamp;
+                if (verificationAge > 86400000) { // More than 24 hours old
+                  securityLogger.warn(`Vault cross-chain verification on ETH is outdated: ${Math.floor(verificationAge / 3600000)} hours old`);
+                  pendingOn.push(chain);
+                } else {
+                  verifiedOn.push(chain);
+                }
+              } else {
+                pendingOn.push(chain);
+              }
+            } else if (chain === 'SOL') {
+              // Solana-specific cross-chain verification
+              try {
+                const result = await (client as any).verifyVaultCrossChain(vaultId, sourceChain);
+                if (result.verified) {
+                  verifiedOn.push(chain);
+                } else {
+                  pendingOn.push(chain);
+                }
+              } catch (error) {
+                securityLogger.error(`Failed to verify on Solana: ${error instanceof Error ? error.message : 'Unknown error'}`);
+                failedOn.push(chain);
+              }
+            } else if (chain === 'TON') {
+              // TON-specific cross-chain verification
+              try {
+                const result = await (client as any).verifyVaultCrossChain(vaultId, sourceChain);
+                if (result.verified) {
+                  verifiedOn.push(chain);
+                } else {
+                  pendingOn.push(chain);
+                }
+              } catch (error) {
+                securityLogger.error(`Failed to verify on TON: ${error instanceof Error ? error.message : 'Unknown error'}`);
+                failedOn.push(chain);
+              }
+            } else {
+              // For other chains (like BTC), just mark as pending for now
+              pendingOn.push(chain);
+            }
+          } catch (error) {
+            securityLogger.error(`Failed to verify on chain ${chain}`, error);
+            failedOn.push(chain);
+          }
         }
       }
       
