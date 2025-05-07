@@ -225,6 +225,11 @@ const Navbar = () => {
                     <span className="flex items-center gap-1"><span>🔎</span> Vault Explorer</span>
                   </DropdownMenuItem>
                 </Link>
+                <Link href="/audit-test">
+                  <DropdownMenuItem className="cursor-pointer">
+                    <span className="flex items-center gap-1"><span>🔍</span> Smart Contract Audit</span>
+                  </DropdownMenuItem>
+                </Link>
               </DropdownMenuContent>
             </DropdownMenu>
 

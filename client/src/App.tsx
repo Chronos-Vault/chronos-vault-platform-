@@ -63,6 +63,7 @@ import CVTUtilityPage from "@/pages/cvt-utility-new";
 import TechnicalDashboardPage from "@/pages/admin/technical-dashboard";
 import StoragePage from "@/pages/storage-page";
 import TransactionMonitorPage from "@/pages/transaction-monitor";
+import SmartContractAuditTest from "@/pages/audit-test";
 
 
 // Redirect component for wouter
@@ -126,6 +127,7 @@ function Router() {
         <Route path="/admin/technical-dashboard" component={TechnicalDashboardPage} />
         <Route path="/storage" component={StoragePage} />
         <Route path="/transaction-monitor" component={TransactionMonitorPage} />
+        <Route path="/audit-test" component={SmartContractAuditTest} />
 
         <Route component={NotFound} />
       </Switch>

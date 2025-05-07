@@ -193,11 +193,11 @@ smartContractAuditRouter.post('/remediation', async (req: Request, res: Response
       remediatedFindingsCount: remediatedFindings.length,
       updatedSecurityScore: 85 // This would be recalculated in production
     });
-  } catch (error) {
+  } catch (error: any) {
     console.error('Error submitting remediation plan:', error);
     res.status(500).json({
       error: 'Failed to submit remediation plan',
-      message: error.message
+      message: error.message || 'Unknown error occurred'
     });
   }
 });
@@ -230,11 +230,11 @@ smartContractAuditRouter.post('/compliance', async (req: Request, res: Response)
         'Add explicit documentation for parameter validation'
       ]
     });
-  } catch (error) {
+  } catch (error: any) {
     console.error('Error checking compliance:', error);
     res.status(500).json({
       error: 'Failed to check compliance',
-      message: error.message
+      message: error.message || 'Unknown error occurred'
     });
   }
 });
