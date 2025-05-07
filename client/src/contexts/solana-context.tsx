@@ -1,28 +1,25 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import { solanaService } from '../lib/solana/solana-service';
+import { 
+  solanaService, 
+  SolanaWallet, 
+  SolanaConnectionState,
+  SolanaVaultCreationParams,
+  SolanaVaultCreationResponse,
+  SolanaTransactionResponse
+} from '../lib/solana/solana-service';
 import { SolanaConnectionStatus, SolanaWalletInfo, SolanaCluster } from '../types/solana-common';
-
-// Local definition until we resolve the import issue
-interface SolanaWallet {
-  name: string;
-  adapter: any;
-}
 
 interface SolanaContextType {
   isConnected: boolean;
   isConnecting: boolean;
+  isDevelopmentMode: boolean;
   walletInfo: SolanaWalletInfo | null;
   connectionStatus: SolanaConnectionStatus;
   availableWallets: SolanaWallet[];
   connect: (walletName?: string) => Promise<boolean>;
   disconnect: () => Promise<boolean>;
-  sendSOL: (toAddress: string, amount: string) => Promise<{ success: boolean; transactionHash?: string; error?: string }>;
-  createVault: (params: {
-    unlockTime: number;
-    recipient?: string;
-    amount: string;
-    comment?: string;
-  }) => Promise<{ success: boolean; vaultAddress?: string; error?: string }>;
+  sendSOL: (toAddress: string, amount: string) => Promise<SolanaTransactionResponse>;
+  createVault: (params: SolanaVaultCreationParams) => Promise<SolanaVaultCreationResponse>;
   switchNetwork: (cluster: SolanaCluster) => void;
 }
 
@@ -114,7 +111,7 @@ export const SolanaProvider: React.FC<SolanaProviderProps> = ({ children }) => {
   const sendSOL = async (
     toAddress: string,
     amount: string
-  ): Promise<{ success: boolean; transactionHash?: string; error?: string }> => {
+  ): Promise<SolanaTransactionResponse> => {
     try {
       const result = await solanaService.sendSOL(toAddress, amount);
       
@@ -130,12 +127,7 @@ export const SolanaProvider: React.FC<SolanaProviderProps> = ({ children }) => {
     }
   };
 
-  const createVault = async (params: {
-    unlockTime: number;
-    recipient?: string;
-    amount: string;
-    comment?: string;
-  }): Promise<{ success: boolean; vaultAddress?: string; error?: string }> => {
+  const createVault = async (params: SolanaVaultCreationParams): Promise<SolanaVaultCreationResponse> => {
     try {
       const result = await solanaService.createVault(params);
       

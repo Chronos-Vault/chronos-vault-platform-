@@ -37,4 +37,5 @@ export interface SolanaWalletInfo {
 export interface SolanaWallet {
   name: string;
   adapter: any;
+  publicKey?: any; // Allow PublicKey for development mode
 }
