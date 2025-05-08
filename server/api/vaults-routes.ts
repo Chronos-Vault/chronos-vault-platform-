@@ -182,7 +182,7 @@ router.post('/', async (req: Request, res: Response) => {
           },
           body: JSON.stringify({
             vaultId: validatedData.id,
-            value: validatedData.value,
+            vaultValue: validatedData.value,
             securityLevel: securityLevel
           })
         });
@@ -274,7 +274,7 @@ router.patch('/:id', async (req: Request, res: Response) => {
           },
           body: JSON.stringify({
             vaultId: req.params.id,
-            value: req.body.value
+            vaultValue: req.body.value
           })
         });
         

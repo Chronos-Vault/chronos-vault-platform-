@@ -137,9 +137,9 @@ router.post('/initialize', async (req: Request, res: Response) => {
  */
 router.post('/update-value', async (req: Request, res: Response) => {
   try {
-    const { vaultId, newValue } = req.body;
+    const { vaultId, vaultValue } = req.body;
     
-    if (!vaultId || typeof newValue !== 'number' || !securityMetrics[vaultId]) {
+    if (!vaultId || typeof vaultValue !== 'number' || !securityMetrics[vaultId]) {
       return res.status(400).json({
         success: false,
         error: 'Invalid request or vault not initialized'
@@ -148,7 +148,7 @@ router.post('/update-value', async (req: Request, res: Response) => {
     
     const currentMetrics = securityMetrics[vaultId];
     const currentTier = securityTiers.find(t => t.id === currentMetrics.currentTier);
-    const newTier = getSecurityTierForValue(newValue);
+    const newTier = getSecurityTierForValue(vaultValue);
     
     let upgraded = false;
     
