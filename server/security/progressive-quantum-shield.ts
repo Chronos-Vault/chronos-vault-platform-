@@ -374,7 +374,8 @@ export class ProgressiveQuantumShield {
   public refreshSecurityLevels(): void {
     this.logger.info('Refreshing security levels for all vaults');
     
-    for (const [vaultId, value] of this.vaultValues.entries()) {
+    // Convert to array to fix TypeScript iterator issue
+    for (const [vaultId, value] of Array.from(this.vaultValues.entries())) {
       const currentTierId = this.vaultSecurityTiers.get(vaultId);
       const newTier = this.determineSecurityTier(value);
       
@@ -548,7 +549,7 @@ let _instance: ProgressiveQuantumShield | null = null;
 
 export function getProgressiveQuantumShield(): ProgressiveQuantumShield {
   if (!_instance) {
-    import { quantumResistantEncryption } from './quantum-resistant-encryption';
+    // Use the already imported quantumResistantEncryption
     _instance = new ProgressiveQuantumShield(quantumResistantEncryption);
   }
   return _instance;
