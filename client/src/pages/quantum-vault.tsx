@@ -37,6 +37,32 @@ export default function QuantumVaultPage() {
   useEffect(() => {
     const fetchVault = async () => {
       try {
+        // If no vault ID is provided, we're in creation mode
+        if (!vaultId) {
+          console.log("No vault ID provided - initializing a new vault");
+          // Create a default vault object for the creation form
+          setVault({
+            id: 'new',
+            name: 'New Quantum-Progressive Vault',
+            description: 'A vault secured by quantum-resistant cryptography that automatically adapts its security level based on the value of stored assets.',
+            type: 'quantum-resistant',
+            value: 0,
+            createdAt: new Date().toISOString(),
+            updatedAt: new Date().toISOString(),
+            securityInfo: {
+              securityTier: 'standard',
+              quantumAlgorithms: {
+                signatures: 'Falcon-512',
+                encryption: 'Kyber-512'
+              },
+              securityStrength: 75,
+              hasZeroKnowledgeProofs: false
+            }
+          });
+          setLoading(false);
+          return;
+        }
+        
         console.log("Fetching vault with ID:", vaultId);
         const response = await fetch(`/api/vaults/${vaultId}`);
         console.log("Vault response status:", response.status);
@@ -61,13 +87,7 @@ export default function QuantumVaultPage() {
       }
     };
 
-    if (vaultId) {
-      fetchVault();
-    } else {
-      console.error("No vault ID provided in URL parameters");
-      setError("Missing vault ID parameter");
-      setLoading(false);
-    }
+    fetchVault();
   }, [vaultId]);
 
   // Handle value update
