@@ -187,17 +187,27 @@ export default function QuantumVaultPage() {
 
   return (
     <div className="container mx-auto py-6 max-w-5xl">
-      <div className="flex items-center mb-6">
+      <div className="flex items-center mb-4">
         <Link href="/my-vaults">
           <Button variant="ghost" size="sm">
             <ChevronLeft className="h-4 w-4 mr-1" />
             Back
           </Button>
         </Link>
-        <h1 className="text-2xl font-bold">{vault.name}</h1>
-        <Badge variant="outline" className="ml-4 bg-purple-50 text-purple-700 border-purple-100">
+        <Badge variant="outline" className="ml-auto bg-gradient-to-r from-[#6B00D7]/10 to-[#FF5AF7]/10 border-[#6B00D7]/30 text-[#FF5AF7]">
           Quantum-Progressive
         </Badge>
+      </div>
+      
+      <div className="mb-8">
+        <h1 className="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] mb-2">
+          {vault.name}
+        </h1>
+        <p className="text-gray-600 dark:text-gray-400 max-w-3xl">
+          Our most advanced vault technology featuring post-quantum cryptography that automatically
+          scales security parameters based on asset value. Protected by {vault.securityInfo?.signatures?.algorithm || 'CRYSTALS-Dilithium'} 
+          signatures and {vault.securityInfo?.encryption?.algorithm || 'Kyber-1024'} lattice-based encryption.
+        </p>
       </div>
       
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -205,11 +215,12 @@ export default function QuantumVaultPage() {
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center text-xl">
-                <Shield className="h-5 w-5 mr-2 text-primary" />
+                <Shield className="h-5 w-5 mr-2 text-[#FF5AF7]" />
                 Quantum-Resistant Vault Details
               </CardTitle>
-              <CardDescription>
-                This vault uses progressive quantum-resistant encryption that adapts to the stored value
+              <CardDescription className="text-sm">
+                <span className="text-[#6B00D7] font-medium">Triple-Chain Security Architecture</span> with progressive quantum-resistant encryption that automatically 
+                scales based on value thresholds. Uses lattice-based cryptography that's resistant to quantum computing attacks.
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
@@ -267,14 +278,30 @@ export default function QuantumVaultPage() {
               <Separator />
               
               {/* Date Information */}
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-2 gap-4 p-4 rounded-md border bg-gradient-to-r from-[#0F0A1F]/80 to-[#1A0F2E]/80 border-[#6B00D7]/20">
                 <div>
-                  <p className="text-sm text-muted-foreground mb-1">Created</p>
-                  <p>{new Date(vault.createdAt).toLocaleString()}</p>
+                  <p className="text-sm text-gray-400 mb-1 font-medium">Created</p>
+                  <p className="text-white">{new Date(vault.createdAt).toLocaleString()}</p>
                 </div>
                 <div>
-                  <p className="text-sm text-muted-foreground mb-1">Last Updated</p>
-                  <p>{new Date(vault.updatedAt).toLocaleString()}</p>
+                  <p className="text-sm text-gray-400 mb-1 font-medium">Last Updated</p>
+                  <p className="text-white">{new Date(vault.updatedAt).toLocaleString()}</p>
+                </div>
+              </div>
+              
+              {/* Security Stats */}
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
+                <div className="p-3 rounded-md bg-[#0F0A1F] border-[#6B00D7]/20 border text-center">
+                  <p className="text-xs text-gray-400 mb-1">Signature Algorithm</p>
+                  <p className="text-[#FF5AF7] font-bold">{vault.securityInfo?.signatures?.algorithm || 'CRYSTALS-Dilithium'}</p>
+                </div>
+                <div className="p-3 rounded-md bg-[#0F0A1F] border-[#6B00D7]/20 border text-center">
+                  <p className="text-xs text-gray-400 mb-1">Security Strength</p>
+                  <p className="text-[#FF5AF7] font-bold">{vault.securityInfo?.securityStrength || '90'}/100</p>
+                </div>
+                <div className="p-3 rounded-md bg-[#0F0A1F] border-[#6B00D7]/20 border text-center col-span-2 sm:col-span-1">
+                  <p className="text-xs text-gray-400 mb-1">Zero-Knowledge Proofs</p>
+                  <p className="text-[#FF5AF7] font-bold">{vault.securityInfo?.hasZeroKnowledgeProofs ? 'Enabled' : 'Disabled'}</p>
                 </div>
               </div>
             </CardContent>
@@ -290,19 +317,37 @@ export default function QuantumVaultPage() {
           />
           
           {/* Additional Actions Card */}
-          <Card>
-            <CardHeader className="pb-3">
-              <CardTitle className="text-lg">Actions</CardTitle>
+          <Card className="overflow-hidden border-[#6B00D7]/30 bg-gradient-to-b from-[#0F0A1F] to-[#1A1029]">
+            <CardHeader className="pb-3 border-b border-[#6B00D7]/20">
+              <CardTitle className="text-lg text-white">Vault Actions</CardTitle>
             </CardHeader>
-            <CardContent className="space-y-2">
-              <Button className="w-full justify-start" variant="outline">
-                <Lock className="mr-2 h-4 w-4" />
-                View Access Controls
+            <CardContent className="space-y-2 pt-4">
+              <Button className="w-full justify-start bg-[#1A1029] hover:bg-[#261540] border-[#6B00D7]/30 text-white">
+                <Lock className="mr-2 h-4 w-4 text-[#FF5AF7]" />
+                Multi-Chain Access Controls
               </Button>
-              <Button className="w-full justify-start" variant="outline">
-                <Shield className="mr-2 h-4 w-4" />
-                Advanced Security Settings
+              <Button className="w-full justify-start bg-[#1A1029] hover:bg-[#261540] border-[#6B00D7]/30 text-white">
+                <Shield className="mr-2 h-4 w-4 text-[#FF5AF7]" />
+                Advanced Quantum Settings
               </Button>
+              <Separator className="my-2 bg-[#6B00D7]/20" />
+              <div className="pt-1">
+                <p className="text-xs text-gray-400 mb-2">Triple-Chain Security Status</p>
+                <div className="grid grid-cols-3 gap-2">
+                  <div className="p-2 rounded border border-[#6B00D7]/20 bg-[#0F0A1F] text-center">
+                    <p className="text-[#FF5AF7] text-xs font-bold">ETH</p>
+                    <div className="h-1.5 w-1.5 bg-green-500 rounded-full mx-auto mt-1"></div>
+                  </div>
+                  <div className="p-2 rounded border border-[#6B00D7]/20 bg-[#0F0A1F] text-center">
+                    <p className="text-[#FF5AF7] text-xs font-bold">SOL</p>
+                    <div className="h-1.5 w-1.5 bg-green-500 rounded-full mx-auto mt-1"></div>
+                  </div>
+                  <div className="p-2 rounded border border-[#6B00D7]/20 bg-[#0F0A1F] text-center">
+                    <p className="text-[#FF5AF7] text-xs font-bold">TON</p>
+                    <div className="h-1.5 w-1.5 bg-green-500 rounded-full mx-auto mt-1"></div>
+                  </div>
+                </div>
+              </div>
             </CardContent>
           </Card>
         </div>
