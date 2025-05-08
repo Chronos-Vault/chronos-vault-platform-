@@ -183,7 +183,7 @@ export default function PremiumFeaturesPage() {
             </p>
           </div>
           
-          <StripePaymentForm 
+          <CryptoPaymentForm 
             amount={Math.round(selectedProduct.price * 100)}
             description={`Chronos Vault ${selectedProduct.name} Subscription`}
             onSuccess={handlePaymentSuccess}

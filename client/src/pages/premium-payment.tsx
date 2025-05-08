@@ -1,125 +1,11 @@
 import React, { useState } from 'react';
-import { useParams, useLocation } from 'wouter';
-import { useToast } from '@/hooks/use-toast';
+import { useParams } from 'wouter';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
 import { Separator } from '@/components/ui/separator';
-import { useTon } from '@/contexts/ton-context';
-import { useEthereum } from '@/contexts/ethereum-context';
-import { useSolana } from '@/contexts/solana-context';
-import { useCVTToken } from '@/contexts/cvt-token-context';
-import { ShieldCheck, QrCode, Copy, Check, AlertCircle, ArrowRight } from 'lucide-react';
+import { CryptoPaymentForm } from '@/components/payment/crypto-payment-form';
 
-interface CheckoutFormProps {
-  amount: number;
-  vaultId?: string;
-  description?: string;
-}
-
-// Blockchain Payment Component instead of Stripe
-const BlockchainPaymentForm: React.FC<CheckoutFormProps> = ({ amount, vaultId, description }) => {
-  const [isProcessing, setIsProcessing] = useState<boolean>(false);
-  const [paymentStatus, setPaymentStatus] = useState<string>('');
-  const [selectedChain, setSelectedChain] = useState<'eth' | 'sol' | 'ton' | 'btc'>('eth');
-  const [, setLocation] = useLocation();
-  const { toast } = useToast();
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    
-    setIsProcessing(true);
-    setPaymentStatus(`Processing ${selectedChain.toUpperCase()} payment...`);
-
-    try {
-      // Simulate blockchain payment processing
-      await new Promise(resolve => setTimeout(resolve, 2000));
-      
-      toast({
-        title: "Payment Initiated",
-        description: `Your ${selectedChain.toUpperCase()} payment has been initiated!`,
-      });
-      setPaymentStatus('Payment initiated!');
-      
-      // Redirect to vault details page after payment initiation
-      setTimeout(() => {
-        if (vaultId) {
-          setLocation(`/vaults/${vaultId}`);
-        } else {
-          setLocation('/my-vaults');
-        }
-      }, 2000);
-    } catch (error) {
-      toast({
-        title: "Payment Error",
-        description: error instanceof Error ? error.message : 'An unknown error occurred',
-        variant: "destructive",
-      });
-      setPaymentStatus('Payment failed. Please try again.');
-    } finally {
-      setIsProcessing(false);
-    }
-  };
-
-  return (
-    <form onSubmit={handleSubmit}>
-      <div className="space-y-4">
-        <div className="space-y-2">
-          <Label>Select Payment Method</Label>
-          <div className="grid grid-cols-2 gap-2">
-            <Button 
-              type="button" 
-              variant={selectedChain === 'eth' ? 'default' : 'outline'}
-              className={selectedChain === 'eth' ? 'bg-blue-500 hover:bg-blue-600' : ''}
-              onClick={() => setSelectedChain('eth')}
-            >
-              Ethereum
-            </Button>
-            <Button 
-              type="button" 
-              variant={selectedChain === 'sol' ? 'default' : 'outline'}
-              className={selectedChain === 'sol' ? 'bg-purple-500 hover:bg-purple-600' : ''}
-              onClick={() => setSelectedChain('sol')}
-            >
-              Solana
-            </Button>
-            <Button 
-              type="button" 
-              variant={selectedChain === 'ton' ? 'default' : 'outline'}
-              className={selectedChain === 'ton' ? 'bg-sky-500 hover:bg-sky-600' : ''}
-              onClick={() => setSelectedChain('ton')}
-            >
-              TON
-            </Button>
-            <Button 
-              type="button" 
-              variant={selectedChain === 'btc' ? 'default' : 'outline'}
-              className={selectedChain === 'btc' ? 'bg-orange-500 hover:bg-orange-600' : ''}
-              onClick={() => setSelectedChain('btc')}
-            >
-              Bitcoin
-            </Button>
-          </div>
-        </div>
-        
-        {paymentStatus && (
-          <div className={`text-sm ${paymentStatus.includes('failed') ? 'text-red-500' : paymentStatus.includes('initiated') ? 'text-green-500' : 'text-blue-500'}`}>
-            {paymentStatus}
-          </div>
-        )}
-        
-        <Button 
-          type="submit" 
-          disabled={isProcessing}
-          className="w-full bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] hover:from-[#5500AB] hover:to-[#FF46E8] text-white"
-        >
-          {isProcessing ? 'Processing...' : `Pay with ${selectedChain.toUpperCase()}`}
-        </Button>
-      </div>
-    </form>
-  );
-};
+// Using the new CryptoPaymentForm component from @/components/payment/crypto-payment-form
 
 const PremiumPaymentPage: React.FC = () => {
   const params = useParams<{ vaultId: string }>();
@@ -230,10 +116,18 @@ const PremiumPaymentPage: React.FC = () => {
                 </div>
               </div>
               
-              <BlockchainPaymentForm 
+              <CryptoPaymentForm 
                 amount={selectedPlan.price} 
-                vaultId={vaultId} 
                 description={`${selectedPlan.name} Plan for Chronos Vault`}
+                onSuccess={() => {
+                  setTimeout(() => {
+                    if (vaultId) {
+                      window.location.href = `/vaults/${vaultId}`;
+                    } else {
+                      window.location.href = '/my-vaults';
+                    }
+                  }, 2000);
+                }}
               />
             </div>
           </CardContent>
