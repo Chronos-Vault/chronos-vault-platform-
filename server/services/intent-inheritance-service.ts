@@ -47,7 +47,6 @@ interface InheritancePlan {
  * executable blockchain logic through AI interpretation.
  */
 export class IntentInheritanceService {
-  private anthropic: Anthropic;
   private readonly systemPrompt = `
     You are a legally-trained AI assistant specializing in digital asset inheritance planning.
     Your task is to interpret a user's natural language instructions for how their digital assets
@@ -108,7 +107,7 @@ export class IntentInheritanceService {
     } catch (error) {
       securityLogger.error('Failed to initialize Anthropic client', {
         error: error instanceof Error ? error.message : String(error),
-        category: CrossChainErrorCategory.INITIALIZATION_FAILURE
+        category: CrossChainErrorCategory.VALIDATION_FAILURE
       });
       this.serviceAvailable = false;
     }
@@ -141,6 +140,10 @@ export class IntentInheritanceService {
       });
 
       // Extract the JSON from the response
+      if (!message.content[0] || typeof message.content[0].text !== 'string') {
+        throw new Error('Invalid response format from AI service');
+      }
+      
       const responseText = message.content[0].text;
       const jsonMatch = responseText.match(/\{[\s\S]*\}/);
       
@@ -241,6 +244,10 @@ export class IntentInheritanceService {
       });
       
       // Extract the JSON from the response
+      if (!message.content[0] || typeof message.content[0].text !== 'string') {
+        throw new Error('Invalid response format from AI service');
+      }
+      
       const responseText = message.content[0].text;
       const jsonMatch = responseText.match(/\{[\s\S]*\}/);
       
@@ -286,6 +293,10 @@ export class IntentInheritanceService {
     plan: InheritancePlan,
     chain: BlockchainType
   ): Promise<string> {
+    if (!this.serviceAvailable) {
+      throw new Error('Intent Inheritance Service is not available. Please check ANTHROPIC_API_KEY configuration.');
+    }
+    
     try {
       let languagePrompt: string;
       let contractTemplate: string;
@@ -361,13 +372,17 @@ export class IntentInheritanceService {
         Provide comments explaining the complex logic.
       `;
       
-      const message = await this.anthropic.messages.create({
+      const message = await this.anthropicClient.messages.create({
         model: CLAUDE_MODEL,
         max_tokens: 4000, // More tokens for code generation
         messages: [{ role: 'user', content: generationPrompt }],
       });
       
       // Extract the code from the response
+      if (!message.content[0] || typeof message.content[0].text !== 'string') {
+        throw new Error('Invalid response format from AI service');
+      }
+      
       const responseText = message.content[0].text;
       const codeBlockMatch = responseText.match(/```(?:[a-z]*\n)?([\s\S]*?)```/);
       
