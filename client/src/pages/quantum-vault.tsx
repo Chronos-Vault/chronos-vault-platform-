@@ -37,20 +37,25 @@ export default function QuantumVaultPage() {
   useEffect(() => {
     const fetchVault = async () => {
       try {
+        console.log("Fetching vault with ID:", vaultId);
         const response = await fetch(`/api/vaults/${vaultId}`);
+        console.log("Vault response status:", response.status);
         const data = await response.json();
+        console.log("Vault data received:", data);
         
         if (data.success) {
+          console.log("Setting vault data:", data.vault);
           setVault(data.vault);
           if (data.vault.value) {
             setNewValue(data.vault.value.toString());
           }
         } else {
-          setError('Failed to load vault details');
+          console.error("API returned error:", data);
+          setError(`Failed to load vault details: ${data.error || 'Unknown error'}`);
         }
       } catch (err) {
         console.error('Error fetching vault:', err);
-        setError('Error connecting to server');
+        setError(`Error connecting to server: ${err.message || 'Unknown error'}`);
       } finally {
         setLoading(false);
       }
@@ -58,6 +63,10 @@ export default function QuantumVaultPage() {
 
     if (vaultId) {
       fetchVault();
+    } else {
+      console.error("No vault ID provided in URL parameters");
+      setError("Missing vault ID parameter");
+      setLoading(false);
     }
   }, [vaultId]);
 

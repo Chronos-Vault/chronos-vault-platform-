@@ -58,13 +58,45 @@ export function QuantumProgressiveShieldCard({ vaultId, vaultValue, onSecurityUp
   useEffect(() => {
     const fetchMetrics = async () => {
       try {
+        console.log("Fetching security metrics for vault ID:", vaultId);
         const response = await fetch(`/api/security/progressive-quantum/metrics/${vaultId}`);
+        console.log("Security metrics response status:", response.status);
         const data = await response.json();
+        console.log("Security metrics response data:", data);
         
         if (data.success) {
+          console.log("Setting security metrics:", data.metrics);
           setMetrics(data.metrics);
         } else {
+          console.log("Failed to load security metrics:", data.error);
           setError('Failed to load security metrics');
+          
+          // If metrics don't exist, let's initialize them
+          if (response.status === 404 && vaultValue) {
+            console.log("Attempting to initialize metrics for vault:", vaultId, "with value:", vaultValue);
+            try {
+              const initResponse = await fetch('/api/security/progressive-quantum/initialize', {
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ vaultId, vaultValue })
+              });
+              
+              console.log("Initialization response status:", initResponse.status);
+              const initData = await initResponse.json();
+              console.log("Initialization data:", initData);
+              
+              if (initData.success) {
+                setMetrics(initData.metrics);
+                setError(null); // Clear the error since we successfully initialized
+              } else {
+                console.error("Failed to initialize security metrics:", initData.error);
+              }
+            } catch (initError) {
+              console.error("Error initializing security metrics:", initError);
+            }
+          }
         }
       } catch (err) {
         setError('Error connecting to security service');
@@ -77,12 +109,17 @@ export function QuantumProgressiveShieldCard({ vaultId, vaultValue, onSecurityUp
     // Fetch security levels
     const fetchLevels = async () => {
       try {
+        console.log("Fetching security levels");
         const response = await fetch('/api/security/progressive-quantum/levels');
+        console.log("Security levels response status:", response.status);
         const data = await response.json();
+        console.log("Security levels data:", data);
         
         if (data.success) {
+          console.log("Setting security levels:", data.levels);
           setLevels(data.levels);
         } else {
+          console.error("Failed to load security levels:", data.error);
           setError('Failed to load security levels');
         }
       } catch (err) {
@@ -90,9 +127,14 @@ export function QuantumProgressiveShieldCard({ vaultId, vaultValue, onSecurityUp
       }
     };
 
-    fetchMetrics();
-    fetchLevels();
-  }, [vaultId]);
+    if (vaultId) {
+      fetchMetrics();
+      fetchLevels();
+    } else {
+      console.error("No vault ID provided to QuantumProgressiveShieldCard");
+      setLoading(false);
+    }
+  }, [vaultId, vaultValue]);
 
   // Determine the next available security tier
   const nextSecurityTier = metrics && levels.length ? 
