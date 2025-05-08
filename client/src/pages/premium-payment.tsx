@@ -1,17 +1,16 @@
-import React, { useState, useEffect } from 'react';
-// Stripe removed as per requirements
-// import { loadStripe } from '@stripe/stripe-js';
-// import { Elements, CardElement, useStripe, useElements } from '@stripe/react-stripe-js';
+import React, { useState } from 'react';
 import { useParams, useLocation } from 'wouter';
 import { useToast } from '@/hooks/use-toast';
-import { apiRequest } from '@/lib/queryClient';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Separator } from '@/components/ui/separator';
-
-// Blockchain payments only - no Stripe functionality as per requirements
+import { useTon } from '@/contexts/ton-context';
+import { useEthereum } from '@/contexts/ethereum-context';
+import { useSolana } from '@/contexts/solana-context';
+import { useCVTToken } from '@/contexts/cvt-token-context';
+import { ShieldCheck, QrCode, Copy, Check, AlertCircle, ArrowRight } from 'lucide-react';
 
 interface CheckoutFormProps {
   amount: number;

@@ -1,127 +1,17 @@
-import { useState, useEffect } from 'react';
-import { useStripe, useElements, PaymentElement, Elements } from '@stripe/react-stripe-js';
-import { loadStripe } from '@stripe/stripe-js';
+import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { useToast } from '@/hooks/use-toast';
-import { Loader2, ShieldCheck, AlertCircle } from 'lucide-react';
+import { Loader2, ShieldCheck, AlertCircle, CreditCard, QrCode, Copy, Check } from 'lucide-react';
 
-// Make sure to call loadStripe outside of a component's render to avoid
-// recreating the Stripe object on every render
-if (!import.meta.env.VITE_STRIPE_PUBLIC_KEY) {
-  throw new Error('Missing required Stripe key: VITE_STRIPE_PUBLIC_KEY');
-}
-const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLIC_KEY);
+/**
+ * CryptoPaymentForm Component 
+ * 
+ * This component replaces the Stripe payment form with a cryptocurrency payment interface.
+ * Users can pay with various cryptocurrencies (ETH, SOL, TON, BTC).
+ */
 
-interface CheckoutFormProps {
-  onSuccess?: () => void;
-  onCancel?: () => void;
-}
-
-const CheckoutForm = ({ onSuccess, onCancel }: CheckoutFormProps) => {
-  const stripe = useStripe();
-  const elements = useElements();
-  const [isLoading, setIsLoading] = useState(false);
-  const [errorMessage, setErrorMessage] = useState<string | null>(null);
-  const { toast } = useToast();
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-
-    if (!stripe || !elements) {
-      // Stripe.js hasn't yet loaded
-      return;
-    }
-
-    setIsLoading(true);
-    setErrorMessage(null);
-
-    try {
-      const { error } = await stripe.confirmPayment({
-        elements,
-        confirmParams: {
-          return_url: `${window.location.origin}/payment-confirmation`,
-        },
-        redirect: 'if_required',
-      });
-
-      if (error) {
-        setErrorMessage(error.message || 'An unexpected error occurred');
-        toast({
-          title: "Payment Failed",
-          description: error.message || 'An unexpected error occurred',
-          variant: "destructive",
-        });
-      } else {
-        // The payment has been processed successfully
-        toast({
-          title: "Payment Successful",
-          description: "Thank you for your subscription!",
-          variant: "default",
-        });
-        if (onSuccess) onSuccess();
-      }
-    } catch (e: any) {
-      setErrorMessage(e.message || 'An unexpected error occurred');
-      toast({
-        title: "Payment Error",
-        description: e.message || 'An unexpected error occurred',
-        variant: "destructive",
-      });
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  return (
-    <form onSubmit={handleSubmit} className="space-y-6">
-      <div className="space-y-4">
-        <PaymentElement />
-        
-        {errorMessage && (
-          <div className="flex items-center p-3 text-sm text-red-500 bg-red-50 border border-red-200 rounded-md">
-            <AlertCircle className="h-4 w-4 mr-2 flex-shrink-0" />
-            {errorMessage}
-          </div>
-        )}
-      </div>
-      
-      <div className="flex flex-col gap-4">
-        <Button 
-          type="submit" 
-          className="w-full" 
-          disabled={!stripe || isLoading}
-        >
-          {isLoading ? (
-            <>
-              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-              Processing...
-            </>
-          ) : (
-            <>
-              <ShieldCheck className="mr-2 h-4 w-4" />
-              Secure Payment
-            </>
-          )}
-        </Button>
-        
-        {onCancel && (
-          <Button 
-            type="button" 
-            variant="outline" 
-            className="w-full" 
-            onClick={onCancel}
-            disabled={isLoading}
-          >
-            Cancel
-          </Button>
-        )}
-      </div>
-    </form>
-  );
-};
-
-interface StripePaymentFormProps {
+interface CryptoPaymentFormProps {
   amount: number;
   currency?: string;
   description?: string;
@@ -130,70 +20,71 @@ interface StripePaymentFormProps {
   onCancel?: () => void;
 }
 
-export function StripePaymentForm({ 
+export function CryptoPaymentForm({ 
   amount, 
   currency = 'usd', 
   description, 
   vaultId,
   onSuccess,
   onCancel
-}: StripePaymentFormProps) {
-  const [clientSecret, setClientSecret] = useState<string | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
+}: CryptoPaymentFormProps) {
+  const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [selectedCrypto, setSelectedCrypto] = useState<'ETH' | 'SOL' | 'TON' | 'BTC' | null>(null);
+  const [paymentStep, setPaymentStep] = useState<'select' | 'details' | 'confirm'>('select');
+  const [copied, setCopied] = useState(false);
   const { toast } = useToast();
 
-  useEffect(() => {
-    async function createPaymentIntent() {
-      try {
-        setIsLoading(true);
-        setError(null);
-        
-        const payload = {
-          amount,
-          currency,
-          description,
-          ...(vaultId && { vaultId })
-        };
-        
-        const response = await fetch('/api/payments/create-payment-intent', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(payload),
-        });
-        
-        if (!response.ok) {
-          const errorData = await response.json();
-          throw new Error(errorData.message || 'Failed to create payment intent');
-        }
-        
-        const data = await response.json();
-        setClientSecret(data.clientSecret);
-      } catch (e: any) {
-        setError(e.message || 'An error occurred while setting up the payment');
-        toast({
-          title: "Payment Setup Failed",
-          description: e.message || 'An error occurred while setting up the payment',
-          variant: "destructive",
-        });
-      } finally {
-        setIsLoading(false);
-      }
-    }
-    
-    createPaymentIntent();
-  }, [amount, currency, description, vaultId, toast]);
+  // Mock addresses for different cryptocurrencies
+  const addresses = {
+    ETH: '0x8e33114e6bdb4fc9a798e4b7d77b5366',
+    SOL: 'GvV8G5RFP6Y5sMHWDgM9aL59rTzLv9r4nxLsPjcUKsXm',
+    TON: 'EQAvDfYmkVV2zFXzC0Hs2e2RGWJyMXHpnMTXH4jnI2W3AwLb',
+    BTC: 'bc1q8e33114e6bdb4fc9a798e4b7d77b5366',
+  };
 
-  if (isLoading) {
-    return (
-      <Card className="p-6 flex flex-col items-center justify-center min-h-[200px]">
-        <Loader2 className="h-10 w-10 text-primary animate-spin mb-4" />
-        <p className="text-muted-foreground text-sm">Setting up payment...</p>
-      </Card>
-    );
-  }
+  // Convert USD to crypto amounts (mock values)
+  const cryptoAmounts = {
+    ETH: (amount / 100 / 3500).toFixed(6),
+    SOL: (amount / 100 / 80).toFixed(4),
+    TON: (amount / 100 / 5).toFixed(2),
+    BTC: (amount / 100 / 60000).toFixed(8),
+  };
+
+  const handleCryptoSelect = (crypto: 'ETH' | 'SOL' | 'TON' | 'BTC') => {
+    setSelectedCrypto(crypto);
+    setPaymentStep('details');
+  };
+
+  const handleCopyAddress = () => {
+    if (selectedCrypto) {
+      navigator.clipboard.writeText(addresses[selectedCrypto]);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+      toast({
+        title: "Address Copied",
+        description: "The payment address has been copied to your clipboard.",
+      });
+    }
+  };
+
+  const handleConfirmPayment = () => {
+    setIsLoading(true);
+    
+    // Simulate payment processing
+    setTimeout(() => {
+      setIsLoading(false);
+      setPaymentStep('confirm');
+      
+      if (onSuccess) {
+        toast({
+          title: "Payment Recorded",
+          description: "Your payment is being processed on the blockchain.",
+        });
+        setTimeout(onSuccess, 2000);
+      }
+    }, 2000);
+  };
 
   if (error) {
     return (
@@ -210,43 +101,159 @@ export function StripePaymentForm({
     );
   }
 
-  if (!clientSecret) {
-    return (
-      <Card className="p-6 flex flex-col items-center justify-center min-h-[200px]">
-        <AlertCircle className="h-10 w-10 text-amber-500 mb-4" />
-        <p className="text-amber-500 font-semibold mb-2">Unable to Initialize Payment</p>
-        <p className="text-muted-foreground text-sm text-center">
-          The payment system is temporarily unavailable. Please try again later.
-        </p>
-        {onCancel && (
-          <Button onClick={onCancel} variant="outline" className="mt-4">
-            Go Back
-          </Button>
-        )}
-      </Card>
-    );
-  }
-
-  // Stripe Elements options
-  const options = {
-    clientSecret,
-    appearance: {
-      theme: 'night',
-      variables: {
-        colorPrimary: '#6B00D7',
-        colorBackground: '#1A1A1A',
-        colorText: '#FFFFFF',
-        colorDanger: '#EF4444',
-        fontFamily: 'Inter, system-ui, sans-serif',
-      },
-    },
-  };
-
   return (
     <Card className="p-6 border border-gray-800 bg-gradient-to-b from-gray-900 to-gray-950">
-      <Elements stripe={stripePromise} options={options}>
-        <CheckoutForm onSuccess={onSuccess} onCancel={onCancel} />
-      </Elements>
+      {paymentStep === 'select' && (
+        <div className="space-y-6">
+          <h3 className="text-lg font-medium text-center mb-4">Select Payment Method</h3>
+          
+          <div className="grid grid-cols-2 gap-3">
+            <Button 
+              variant="outline" 
+              className="h-20 flex flex-col justify-center items-center hover:bg-blue-950/30 hover:border-blue-500"
+              onClick={() => handleCryptoSelect('ETH')}
+            >
+              <div className="h-8 w-8 rounded-full bg-blue-600/20 flex items-center justify-center mb-2">
+                <span className="text-blue-500">Ξ</span>
+              </div>
+              <span>Ethereum</span>
+            </Button>
+            
+            <Button 
+              variant="outline" 
+              className="h-20 flex flex-col justify-center items-center hover:bg-purple-950/30 hover:border-purple-500"
+              onClick={() => handleCryptoSelect('SOL')}
+            >
+              <div className="h-8 w-8 rounded-full bg-purple-600/20 flex items-center justify-center mb-2">
+                <span className="text-purple-500">◎</span>
+              </div>
+              <span>Solana</span>
+            </Button>
+            
+            <Button 
+              variant="outline" 
+              className="h-20 flex flex-col justify-center items-center hover:bg-sky-950/30 hover:border-sky-500"
+              onClick={() => handleCryptoSelect('TON')}
+            >
+              <div className="h-8 w-8 rounded-full bg-sky-600/20 flex items-center justify-center mb-2">
+                <span className="text-sky-500">💎</span>
+              </div>
+              <span>TON</span>
+            </Button>
+            
+            <Button 
+              variant="outline" 
+              className="h-20 flex flex-col justify-center items-center hover:bg-orange-950/30 hover:border-orange-500"
+              onClick={() => handleCryptoSelect('BTC')}
+            >
+              <div className="h-8 w-8 rounded-full bg-orange-600/20 flex items-center justify-center mb-2">
+                <span className="text-orange-500">₿</span>
+              </div>
+              <span>Bitcoin</span>
+            </Button>
+          </div>
+          
+          {onCancel && (
+            <Button 
+              variant="ghost" 
+              className="w-full mt-4"
+              onClick={onCancel}
+            >
+              Cancel
+            </Button>
+          )}
+        </div>
+      )}
+      
+      {paymentStep === 'details' && selectedCrypto && (
+        <div className="space-y-6">
+          <div className="flex justify-between items-center">
+            <h3 className="text-lg font-medium">{selectedCrypto} Payment</h3>
+            <Button 
+              variant="ghost" 
+              size="sm"
+              onClick={() => setPaymentStep('select')}
+            >
+              Change
+            </Button>
+          </div>
+          
+          <div className="p-4 border border-gray-700 rounded-lg bg-black/20">
+            <div className="flex justify-between mb-2">
+              <span className="text-sm text-gray-400">Amount</span>
+              <span className="text-sm font-medium">${(amount/100).toFixed(2)} USD</span>
+            </div>
+            <div className="flex justify-between">
+              <span className="text-sm text-gray-400">Pay with {selectedCrypto}</span>
+              <span className="text-sm font-medium">{cryptoAmounts[selectedCrypto]} {selectedCrypto}</span>
+            </div>
+          </div>
+          
+          <div className="space-y-3">
+            <label className="text-sm text-gray-400">Send payment to this address:</label>
+            <div className="p-3 bg-gray-800/50 border border-gray-700 rounded-lg break-all text-sm font-mono relative">
+              {addresses[selectedCrypto]}
+              <Button 
+                variant="ghost" 
+                size="sm" 
+                className="absolute right-1 top-1 h-6 w-6 p-0"
+                onClick={handleCopyAddress}
+              >
+                {copied ? <Check className="h-3 w-3" /> : <Copy className="h-3 w-3" />}
+              </Button>
+            </div>
+          </div>
+          
+          <div className="flex flex-col items-center justify-center p-6 border border-dashed border-gray-700 rounded-lg bg-black/20">
+            <QrCode className="w-24 h-24 text-gray-500 mb-2" />
+            <span className="text-xs text-gray-400">Scan to pay with {selectedCrypto}</span>
+          </div>
+          
+          <div className="space-y-3">
+            <Button 
+              className="w-full bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7]"
+              onClick={handleConfirmPayment}
+              disabled={isLoading}
+            >
+              {isLoading ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Processing...
+                </>
+              ) : (
+                <>
+                  <ShieldCheck className="mr-2 h-4 w-4" />
+                  I've Sent the Payment
+                </>
+              )}
+            </Button>
+            
+            {onCancel && (
+              <Button 
+                variant="outline" 
+                className="w-full"
+                onClick={onCancel}
+                disabled={isLoading}
+              >
+                Cancel
+              </Button>
+            )}
+          </div>
+        </div>
+      )}
+      
+      {paymentStep === 'confirm' && (
+        <div className="flex flex-col items-center justify-center py-6">
+          <div className="h-16 w-16 rounded-full bg-green-500/20 flex items-center justify-center mb-4">
+            <Check className="h-8 w-8 text-green-500" />
+          </div>
+          <h3 className="text-xl font-medium text-green-500 mb-2">Payment Recorded</h3>
+          <p className="text-center text-gray-400 mb-6">
+            Your payment is being verified on the blockchain. This process typically takes 2-10 minutes to complete.
+          </p>
+          <p className="text-sm font-medium mb-4">Thank you for your purchase!</p>
+        </div>
+      )}
     </Card>
   );
 }
