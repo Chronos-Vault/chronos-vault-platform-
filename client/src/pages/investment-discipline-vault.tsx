@@ -74,7 +74,33 @@ function InvestmentDisciplineVault() {
   const [enableSentimentProtection, setEnableSentimentProtection] = useState<boolean>(true);
   
   // Technical indicators for on-chain triggers
-  const [technicalIndicators, setTechnicalIndicators] = useState<TechnicalIndicator[]>([]);
+  const [technicalIndicators, setTechnicalIndicators] = useState<TechnicalIndicator[]>([
+    {
+      id: '1',
+      type: 'ma',
+      period: 50,
+      condition: 'crossing_down',
+      value: 0,
+      enabled: true
+    },
+    {
+      id: '2',
+      type: 'rsi',
+      period: 14,
+      condition: 'above',
+      value: 70,
+      enabled: false
+    },
+    {
+      id: '3',
+      type: 'macd',
+      period: 12,
+      secondaryPeriod: 26,
+      signalPeriod: 9,
+      condition: 'crossing_down',
+      enabled: false
+    }
+  ]);
   
   // Investment strategy config
   const [selectedStrategy, setSelectedStrategy] = useState<InvestmentStrategy>('diamond_hands');
@@ -235,6 +261,24 @@ function InvestmentDisciplineVault() {
         });
         return false;
       }
+      
+      // Validate technical indicators if any are enabled
+      const enabledIndicators = technicalIndicators.filter(indicator => indicator.enabled);
+      if (enabledIndicators.length > 0) {
+        // Validate RSI indicators
+        const invalidRSI = enabledIndicators
+          .filter(indicator => indicator.type === 'rsi')
+          .some(indicator => !indicator.value || indicator.value < 0 || indicator.value > 100);
+        
+        if (invalidRSI) {
+          toast({
+            title: "Invalid RSI Configuration",
+            description: "RSI values must be between 0 and 100",
+            variant: "destructive",
+          });
+          return false;
+        }
+      }
     } else if (selectedStrategy === 'dca_exit') {
       // Validate time-based exits
       if (timeBasedExits.length === 0) {
@@ -287,6 +331,11 @@ function InvestmentDisciplineVault() {
       // Add strategy-specific configuration
       if (selectedStrategy === 'profit_taking') {
         specializedConfig.priceTargets = priceTargets;
+        // Add technical indicators if they exist
+        if (technicalIndicators.length > 0) {
+          specializedConfig.technicalIndicators = technicalIndicators.filter(indicator => indicator.enabled);
+          specializedConfig.usesChainlinkOracles = true;
+        }
       } else if (selectedStrategy === 'dca_exit') {
         specializedConfig.timeBasedExits = timeBasedExits;
       } else if (selectedStrategy === 'halvening_cycle') {
@@ -368,6 +417,12 @@ function InvestmentDisciplineVault() {
           break;
         case 'profit_taking':
           successMessage = `Your Profit-Taking vault has been created with ${priceTargets.length} price target${priceTargets.length > 1 ? 's' : ''}.`;
+          if (technicalIndicators.length > 0) {
+            const enabledIndicators = technicalIndicators.filter(indicator => indicator.enabled);
+            if (enabledIndicators.length > 0) {
+              successMessage += ` ${enabledIndicators.length} technical indicator${enabledIndicators.length > 1 ? 's' : ''} will use Chainlink price feeds.`;
+            }
+          }
           break;
         case 'dca_exit':
           successMessage = `Your DCA Exit vault has been created with systematic selling over ${timeBasedExits.length} period${timeBasedExits.length > 1 ? 's' : ''}.`;
