@@ -1,9 +1,17 @@
 /**
  * Connector Factory
  * 
- * This factory creates and manages blockchain connector instances.
+ * This factory creates and manages blockchain connector instances with enhanced reliability.
  * It ensures we only have one instance of each connector and provides
  * a simple interface for other parts of the application to access connectors.
+ * 
+ * Features:
+ * - Automatic retry with exponential backoff
+ * - Connection failure tracking
+ * - Rate limit handling
+ * - Transaction optimization
+ * - Blockchain-specific error handling
+ * - Network outage detection and recovery
  */
 
 import { BlockchainConnector } from '../../shared/interfaces/blockchain-connector';
@@ -11,8 +19,11 @@ import { EthereumConnector } from './ethereum-connector';
 import { SolanaConnector } from './solana-connector';
 import { TonConnector } from './ton-connector';
 import { BitcoinConnector } from './bitcoin-connector';
+import { enhanceConnector, ConnectorEnhancer } from './connector-enhancer';
+import { edgeCaseHandler } from './edge-case-handler';
 import config from '../config';
 import { securityLogger } from '../monitoring/security-logger';
+import { BlockchainType } from '../../shared/types';
 
 /**
  * Factory for creating and managing blockchain connector instances
@@ -29,9 +40,10 @@ export class ConnectorFactory {
    * Get a connector for a specific blockchain
    * 
    * @param chainId The blockchain identifier (ethereum, solana, ton, bitcoin)
+   * @param enhance Whether to return an enhanced connector with reliability features
    * @returns The blockchain connector instance
    */
-  getConnector(chainId: string): BlockchainConnector {
+  getConnector(chainId: string, enhance: boolean = true): BlockchainConnector {
     // Normalize chainId to lowercase
     const normalizedChainId = chainId.toLowerCase();
     
@@ -43,7 +55,52 @@ export class ConnectorFactory {
       this.connectors.set(normalizedChainId, connector);
     }
     
+    // If enhancement requested, wrap the connector with the enhancer
+    if (enhance && !config.isDevelopmentMode) {
+      // Get chain-specific endpoints
+      const endpoints = this.getEndpointsForChain(normalizedChainId);
+      
+      // Wrap the connector with our enhancer
+      return enhanceConnector(
+        connector, 
+        normalizedChainId as BlockchainType,
+        endpoints
+      );
+    }
+    
     return connector;
+  }
+  
+  /**
+   * Get endpoints for a specific blockchain
+   */
+  private getEndpointsForChain(chainId: string): Record<string, string> {
+    const endpoints: Record<string, string> = {};
+    
+    switch (chainId) {
+      case 'ethereum':
+        endpoints.default = process.env.ETHEREUM_RPC_URL || 'https://sepolia.infura.io/v3/your-api-key';
+        endpoints.fallback = 'https://eth-sepolia.g.alchemy.com/v2/demo';
+        endpoints.archive = 'https://eth-sepolia.blockpi.network/v1/rpc/public';
+        break;
+        
+      case 'solana':
+        endpoints.default = process.env.SOLANA_RPC_URL || 'https://api.devnet.solana.com';
+        endpoints.fallback = 'https://devnet.genesysgo.net/';
+        break;
+        
+      case 'ton':
+        endpoints.default = 'https://toncenter.com/api/v2/jsonRPC';
+        endpoints.fallback = 'https://testnet.toncenter.com/api/v2/jsonRPC';
+        break;
+        
+      case 'bitcoin':
+        endpoints.default = 'https://blockstream.info/testnet/api';
+        endpoints.fallback = 'https://api.blockcypher.com/v1/btc/test3';
+        break;
+    }
+    
+    return endpoints;
   }
   
   /**
