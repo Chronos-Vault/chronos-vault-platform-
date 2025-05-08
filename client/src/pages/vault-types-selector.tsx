@@ -31,7 +31,12 @@ const VaultTypesSelector = () => {
       selectedVaultType === 'smart-contract' || 
       selectedVaultType === 'dynamic' || 
       selectedVaultType === 'nft-powered' || 
-      selectedVaultType === 'unique'
+      selectedVaultType === 'unique' ||
+      selectedVaultType === 'memory-vault' ||
+      selectedVaultType === 'quantum-resistant' ||
+      selectedVaultType === 'composite-vault' ||
+      selectedVaultType === 'geo-temporal' ||
+      selectedVaultType === 'diamond-hands'
     ) {
       // Specialized vaults
       navigate(`/specialized-vault-creation?type=${selectedVaultType}`);
