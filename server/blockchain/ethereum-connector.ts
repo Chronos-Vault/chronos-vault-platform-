@@ -558,6 +558,101 @@ export class EthereumConnector implements BlockchainConnector {
     };
   }
   
+  /**
+   * Get the status of a multi-signature request
+   */
+  async getMultiSigStatus(requestId: string): Promise<any> {
+    if (config.isDevelopmentMode) {
+      return {
+        requestId,
+        operation: 'unlock',
+        vaultId: `eth_vault_${Date.now().toString(36).substring(5, 9)}`,
+        initiator: this.walletAddress || '0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266',
+        approvals: 1,
+        requiredApprovals: 3,
+        executed: false,
+        chainId: this.chainId
+      };
+    }
+    throw new Error('Multi-signature status retrieval not implemented yet');
+  }
+  
+  /**
+   * Initiate a vault sync across chains
+   */
+  async initiateVaultSync(vaultId: string, targetChain: string): Promise<any> {
+    if (config.isDevelopmentMode) {
+      return {
+        success: true,
+        transactionHash: `eth_sync_${Date.now()}_${Math.floor(Math.random() * 1000000)}`,
+        vaultId,
+        chainId: this.chainId
+      };
+    }
+    throw new Error('Cross-chain vault sync not implemented yet');
+  }
+  
+  /**
+   * Verify a vault across multiple chains
+   */
+  async verifyVaultAcrossChains(vaultId: string): Promise<Record<string, any>> {
+    if (config.isDevelopmentMode) {
+      return {
+        [this.chainId]: {
+          isValid: true,
+          signatures: ['0xSimulatedEthereumSignature1', '0xSimulatedEthereumSignature2'],
+          verifiedAt: new Date(),
+          chainId: this.chainId
+        },
+        'solana': {
+          isValid: true,
+          signatures: ['SimulatedSolanaSignature1'],
+          verifiedAt: new Date(),
+          chainId: 'solana'
+        },
+        'ton': {
+          isValid: true,
+          signatures: ['SimulatedTONSignature1'],
+          verifiedAt: new Date(),
+          chainId: 'ton'
+        }
+      };
+    }
+    throw new Error('Cross-chain verification not implemented yet');
+  }
+  
+  /**
+   * Execute a chain-specific method
+   */
+  async executeChainSpecificMethod(methodName: string, params: any): Promise<any> {
+    if (config.isDevelopmentMode) {
+      return { success: true, result: `Simulated execution of ${methodName}` };
+    }
+    throw new Error(`Chain-specific method ${methodName} not implemented`);
+  }
+  
+  /**
+   * Subscribe to vault events
+   */
+  subscribeToVaultEvents(vaultId: string, callback: (event: any) => void): () => void {
+    if (config.isDevelopmentMode) {
+      // Return an unsubscribe function
+      return () => {};
+    }
+    throw new Error('Vault event subscription not implemented yet');
+  }
+  
+  /**
+   * Subscribe to blockchain events
+   */
+  subscribeToBlockchainEvents(eventType: string, callback: (event: any) => void): () => void {
+    if (config.isDevelopmentMode) {
+      // Return an unsubscribe function
+      return () => {};
+    }
+    throw new Error('Blockchain event subscription not implemented yet');
+  }
+  
   // Private utility methods
   
   /**

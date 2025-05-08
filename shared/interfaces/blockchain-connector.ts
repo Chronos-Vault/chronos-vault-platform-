@@ -1,88 +1,31 @@
 /**
- * Universal Blockchain Connector Interface
- * This provides a standardized way to interact with multiple blockchains
- * while abstracting away the implementation details specific to each chain.
+ * Blockchain Connector Interface
+ * 
+ * Common interface for all blockchain connectors.
+ * This ensures consistent operation across different blockchain implementations.
  */
 
-export interface VaultCreationParams {
-  ownerAddress: string;
-  name: string;
-  description?: string;
-  timelock?: number; // In seconds
-  beneficiaries?: string[];
-  securityLevel: 'standard' | 'enhanced' | 'maximum';
-  vaultType: 'standard' | 'legacy' | 'multi-signature' | 'event-triggered';
-  crossChainEnabled: boolean;
-  zkPrivacyEnabled: boolean;
-  initialBalance?: string;
-  initialAssetType?: string;
-  extraParams?: Record<string, any>; // Chain-specific parameters
-}
-
-export interface SecurityVerification {
-  isIntact: boolean;
-  lastVerified: Date;
-  crossChainConfirmations: number;
-  signatureValidations: number;
-  integrityScore: number; // 0-100
-  securityAlerts: SecurityAlert[];
-}
-
-export interface SecurityAlert {
-  level: 'info' | 'warning' | 'critical';
-  message: string;
-  timestamp: Date;
-  recommendedAction?: string;
-}
-
-export interface ChainFeatures {
-  supportsSmartContracts: boolean;
-  transactionSpeed: 'slow' | 'medium' | 'fast' | 'instant';
-  costEfficiency: 'low' | 'medium' | 'high';
-  securityLevel: 'standard' | 'high' | 'maximum';
-  specialCapabilities: string[];
-  maxTransactionValue?: string;
-  governanceFeatures?: string[];
-  privacyFeatures?: string[];
-}
-
-export interface VaultStatusInfo {
-  vaultId: string;
-  chainId: string;
-  ownerAddress: string;
-  createdAt: Date;
-  lastModified: Date;
-  status: 'active' | 'pending' | 'locked' | 'unlocked';
-  balance: string;
-  assetType: string;
-  unlockDate?: Date;
-  securityInfo: SecurityVerification;
-  crossChainStatus?: Record<string, string>;
-}
-
-export interface TransactionResult {
-  success: boolean;
-  transactionHash: string;
-  blockNumber?: number;
-  timestamp: Date;
-  fee: string;
-  confirmations: number;
-  status: 'pending' | 'confirmed' | 'failed';
-  errorMessage?: string;
-}
+import { 
+  VaultCreationParams, 
+  VaultStatusInfo, 
+  TransactionResult, 
+  SecurityVerification, 
+  MultiSigRequestStatus 
+} from '../types/blockchain-types';
 
 /**
- * Primary interface that defines the standard methods available
- * for all blockchain integrations in Chronos Vault
+ * BlockchainConnector interface
+ * All blockchain implementations must adhere to this interface
  */
 export interface BlockchainConnector {
+  // Common properties
   chainId: string;
   chainName: string;
   isTestnet: boolean;
   networkVersion: string;
   
-  // Wallet connection
-  connectWallet(): Promise<string>; // Returns address
+  // Wallet operations
+  connectWallet(): Promise<string>;
   disconnectWallet(): Promise<void>;
   isConnected(): Promise<boolean>;
   getAddress(): Promise<string>;
@@ -102,20 +45,20 @@ export interface BlockchainConnector {
   signMessage(message: string): Promise<string>;
   verifySignature(message: string, signature: string, address: string): Promise<boolean>;
   
-  // Multi-signature features
-  createMultiSigRequest(vaultId: string, operation: string, params: any): Promise<string>; // Returns request ID
+  // Multi-signature operations
+  createMultiSigRequest(vaultId: string, operation: string, params: any): Promise<string>;
   approveMultiSigRequest(requestId: string): Promise<TransactionResult>;
-  getMultiSigStatus(requestId: string): Promise<{approved: number, required: number, executed: boolean}>;
+  getMultiSigStatus(requestId: string): Promise<MultiSigRequestStatus>;
   
   // Cross-chain operations
   initiateVaultSync(vaultId: string, targetChain: string): Promise<TransactionResult>;
   verifyVaultAcrossChains(vaultId: string): Promise<Record<string, SecurityVerification>>;
   
-  // Chain-specific features
-  getChainSpecificFeatures(): ChainFeatures;
+  // Miscellaneous
+  getChainSpecificFeatures(): any;
   executeChainSpecificMethod(methodName: string, params: any): Promise<any>;
   
-  // Event subscription
-  subscribeToVaultEvents(vaultId: string, callback: (event: any) => void): () => void; // Returns unsubscribe function
+  // Event subscriptions
+  subscribeToVaultEvents(vaultId: string, callback: (event: any) => void): () => void;
   subscribeToBlockchainEvents(eventType: string, callback: (event: any) => void): () => void;
 }
