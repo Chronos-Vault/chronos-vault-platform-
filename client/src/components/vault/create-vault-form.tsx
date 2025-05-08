@@ -410,7 +410,7 @@ export function CreateVaultForm({
     const currentVaultType = form.watch("vaultType");
     
     switch(currentVaultType) {
-      case 'memory-capsule':
+      case 'memory-vault':
         return (
           <div className="space-y-4 border border-[#FF3A8C]/20 rounded-lg p-4 bg-gradient-to-r from-[#1A1A1A] to-[#2A1A24]">
             <h3 className="text-lg text-[#FF3A8C] font-medium">Time-Locked Memory Vault Settings</h3>

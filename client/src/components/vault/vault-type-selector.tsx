@@ -13,7 +13,7 @@ export type SpecializedVaultType =
   | 'nft-powered' 
   | 'unique'
   | 'ai-intent-inheritance'
-  | 'memory-capsule'
+  | 'memory-vault'
   | 'quantum-resistant'
   | 'composite-vault'
   | 'geo-temporal'
@@ -32,7 +32,7 @@ export const SpecializedVaultType = {
   NFT_POWERED: 'nft-powered' as SpecializedVaultType,
   UNIQUE: 'unique' as SpecializedVaultType,
   AI_INTENT_INHERITANCE: 'ai-intent-inheritance' as SpecializedVaultType,
-  MEMORY_CAPSULE: 'memory-capsule' as SpecializedVaultType,
+  MEMORY_VAULT: 'memory-vault' as SpecializedVaultType,
   QUANTUM_RESISTANT: 'quantum-resistant' as SpecializedVaultType,
   COMPOSITE_VAULT: 'composite-vault' as SpecializedVaultType,
   GEO_TEMPORAL: 'geo-temporal' as SpecializedVaultType,
@@ -248,13 +248,13 @@ const VaultTypeSelector: React.FC<VaultTypeProps> = ({ selectedType, onChange })
 
       {/* New specialized vaults */}
       <VaultTypeCard 
-        type="memory-capsule"
+        type="memory-vault"
         title="Time-Locked Memory Vault"
         description="Digital assets with multimedia memories"
         icon="📦"
         color="#FF3A8C"
-        isSelected={selectedType === 'memory-capsule'}
-        onClick={() => onChange('memory-capsule')}
+        isSelected={selectedType === 'memory-vault'}
+        onClick={() => onChange('memory-vault')}
         securityLevel={4}
         complexityLevel={3}
         features={[
