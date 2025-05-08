@@ -216,22 +216,63 @@ export function QuantumProgressiveShieldCard({ vaultId, vaultValue, onSecurityUp
 
   // Show error state
   if (error || !metrics) {
+    // When creating a new vault, show a more positive message instead of an error
+    const isNewVault = vaultId === 'new';
+    
     return (
-      <Card className="border-red-300">
+      <Card className={isNewVault ? "border-[#6B00D7]/30 bg-[#0F0A1F]" : "border-red-300"}>
         <CardHeader className="pb-2">
-          <CardTitle className="flex items-center gap-2 text-red-500">
-            <ShieldOff className="h-5 w-5" />
-            Quantum Shield Unavailable
+          <CardTitle className="flex items-center gap-2 text-[#FF5AF7]">
+            {isNewVault ? (
+              <>
+                <Shield className="h-5 w-5" />
+                Quantum Shield Setup
+              </>
+            ) : (
+              <>
+                <ShieldOff className="h-5 w-5 text-red-500" />
+                Quantum Shield Unavailable
+              </>
+            )}
           </CardTitle>
           <CardDescription>
-            {error || 'Security metrics could not be loaded'}
+            {isNewVault 
+              ? 'Configure your quantum-resistant security parameters'
+              : (error || 'Security metrics could not be loaded')
+            }
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="p-4 bg-red-50 rounded-md text-sm text-red-800">
-            Your vault is still secure, but advanced quantum protection metrics are unavailable.
-            Please try again later or contact support if this problem persists.
-          </div>
+          {isNewVault ? (
+            <div className="p-4 bg-[#1A0F2E] border border-[#6B00D7]/30 rounded-md text-sm text-white">
+              <p className="mb-2">Your new vault will be secured with advanced quantum-resistant cryptography.</p>
+              <ul className="space-y-1 text-xs text-gray-300">
+                <li className="flex items-center">
+                  <div className="h-3 w-3 bg-[#6B00D7]/20 flex items-center justify-center rounded-full mr-2">
+                    <i className="ri-check-line text-[#FF5AF7] text-[10px]"></i>
+                  </div>
+                  Post-quantum encryption algorithms
+                </li>
+                <li className="flex items-center">
+                  <div className="h-3 w-3 bg-[#6B00D7]/20 flex items-center justify-center rounded-full mr-2">
+                    <i className="ri-check-line text-[#FF5AF7] text-[10px]"></i>
+                  </div>
+                  Automatic security scaling based on asset value
+                </li>
+                <li className="flex items-center">
+                  <div className="h-3 w-3 bg-[#6B00D7]/20 flex items-center justify-center rounded-full mr-2">
+                    <i className="ri-check-line text-[#FF5AF7] text-[10px]"></i>
+                  </div>
+                  Triple-chain verification for maximum protection
+                </li>
+              </ul>
+            </div>
+          ) : (
+            <div className="p-4 bg-red-50 rounded-md text-sm text-red-800">
+              Your vault is still secure, but advanced quantum protection metrics are unavailable.
+              Please try again later or contact support if this problem persists.
+            </div>
+          )}
         </CardContent>
       </Card>
     );
