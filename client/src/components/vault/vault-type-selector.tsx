@@ -11,7 +11,8 @@ export type SpecializedVaultType =
   | 'smart-contract' 
   | 'dynamic' 
   | 'nft-powered' 
-  | 'unique';
+  | 'unique'
+  | 'ai-intent-inheritance';
 
 // Create an object with the values as a namespace
 export const SpecializedVaultType = {
@@ -24,7 +25,8 @@ export const SpecializedVaultType = {
   SMART_CONTRACT: 'smart-contract' as SpecializedVaultType,
   DYNAMIC: 'dynamic' as SpecializedVaultType,
   NFT_POWERED: 'nft-powered' as SpecializedVaultType,
-  UNIQUE: 'unique' as SpecializedVaultType
+  UNIQUE: 'unique' as SpecializedVaultType,
+  AI_INTENT_INHERITANCE: 'ai-intent-inheritance' as SpecializedVaultType
 };
 
 interface VaultTypeProps {
@@ -213,6 +215,24 @@ const VaultTypeSelector: React.FC<VaultTypeProps> = ({ selectedType, onChange })
           "Military-grade encryption",
           "Quantum-resistant protocols",
           "Custom security combinations" 
+        ]}
+      />
+      
+      <VaultTypeCard 
+        type="ai-intent-inheritance"
+        title="AI Intent Inheritance"
+        description="Natural language inheritance planning"
+        icon="🧠"
+        color="#9E00FF"
+        isSelected={selectedType === 'ai-intent-inheritance'}
+        onClick={() => onChange('ai-intent-inheritance')}
+        securityLevel={5}
+        complexityLevel={3}
+        features={[
+          "Express intent in plain language", 
+          "AI-powered smart contract generation",
+          "Conditional inheritance rules",
+          "Adaptable to complex real-world scenarios"
         ]}
       />
     </div>

@@ -23,6 +23,9 @@ const VaultTypesSelector = () => {
         selectedVaultType === 'cross-chain') {
       // Basic and Advanced Security vaults
       navigate(`/create-vault?type=${selectedVaultType}`);
+    } else if (selectedVaultType === 'ai-intent-inheritance') {
+      // AI Intent Inheritance vault
+      navigate('/intent-inheritance-vault');
     } else if (
       selectedVaultType === 'geolocation' || 
       selectedVaultType === 'smart-contract' || 
@@ -77,11 +80,11 @@ const VaultTypesSelector = () => {
               Advanced vault types with unique security features and specialized functionality
             </p>
             <ul className="text-xs text-gray-300 space-y-1">
+              <li>• AI Intent Inheritance</li>
               <li>• Geolocation Access Control</li>
               <li>• Smart Contract Automation</li>
               <li>• NFT-Powered Access</li>
               <li>• Dynamic Security Adaptation</li>
-              <li>• Unique Customized Security</li>
             </ul>
           </div>
           
