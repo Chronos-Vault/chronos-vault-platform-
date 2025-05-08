@@ -68,6 +68,7 @@ import TransactionMonitorPage from "@/pages/transaction-monitor";
 import SmartContractAuditTest from "@/pages/audit-test";
 import CrossChainTestPage from "@/pages/cross-chain-test";
 import ZkPrivacyDemoPage from "@/pages/zk-privacy-demo";
+import QuantumVaultPage from "@/pages/quantum-vault";
 
 
 // Redirect component for wouter
@@ -136,6 +137,7 @@ function Router() {
         <Route path="/audit-test" component={SmartContractAuditTest} />
         <Route path="/cross-chain-test" component={CrossChainTestPage} />
         <Route path="/zk-privacy-demo" component={ZkPrivacyDemoPage} />
+        <Route path="/quantum-vault" component={QuantumVaultPage} />
 
         <Route component={NotFound} />
       </Switch>
