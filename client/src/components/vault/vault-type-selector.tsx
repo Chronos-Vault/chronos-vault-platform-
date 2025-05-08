@@ -300,26 +300,26 @@ const VaultTypeCard: React.FC<VaultTypeCardProps> = ({
       </div>
       
       {/* Security Level Indicator */}
-      <div className="flex flex-col sm:flex-row justify-between mt-3 mb-1 space-y-2 sm:space-y-0">
-        <div className="flex items-center justify-center sm:justify-start">
-          <span className="text-[10px] sm:text-xs text-gray-500 mr-1 sm:mr-2 w-14 sm:w-16">Security:</span>
+      <div className="flex flex-col sm:flex-row justify-between mt-3 mb-1 space-y-3 sm:space-y-0">
+        <div className="flex flex-col items-start justify-center">
+          <span className="text-[10px] sm:text-xs text-gray-500 mb-1 sm:mb-1.5">Security:</span>
           <div className="flex">
             {Array.from({ length: 5 }).map((_, i) => (
               <div 
                 key={`security-${i}`}
-                className={`w-1.5 h-2 sm:h-3 mx-0.5 rounded-sm`}
+                className={`w-2 h-2.5 sm:h-3 mx-0.5 rounded-sm`}
                 style={{ backgroundColor: i < securityLevel ? color : '#374151' }}
               />
             ))}
           </div>
         </div>
-        <div className="flex items-center justify-center sm:justify-start">
-          <span className="text-[10px] sm:text-xs text-gray-500 mr-1 sm:mr-2 w-14 sm:w-16">Complexity:</span>
+        <div className="flex flex-col items-start justify-center">
+          <span className="text-[10px] sm:text-xs text-gray-500 mb-1 sm:mb-1.5">Complexity:</span>
           <div className="flex">
             {Array.from({ length: 5 }).map((_, i) => (
               <div 
                 key={`complexity-${i}`}
-                className={`w-1.5 h-2 sm:h-3 mx-0.5 rounded-sm`}
+                className={`w-2 h-2.5 sm:h-3 mx-0.5 rounded-sm`}
                 style={{ backgroundColor: i < complexityLevel ? '#a0a0a0' : '#374151' }}
               />
             ))}
