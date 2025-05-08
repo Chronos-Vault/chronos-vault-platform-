@@ -53,45 +53,180 @@ export class ConnectorFactory {
    * @returns A new blockchain connector
    */
   private createConnector(chainId: string): BlockchainConnector {
-    // If the blockchain connector initialization is skipped, return a mock connector
-    if (config.featureFlags.SKIP_BLOCKCHAIN_CONNECTOR_INIT) {
-      // Return an empty connector that will be populated with mock methods
+    // Check if this specific blockchain should be simulated using the blockchain-specific flags
+    if (config.shouldSimulateBlockchain(chainId as any)) {
+      // Get the simulation configuration for this chain
+      const simConfig = config.simulation[chainId as keyof typeof config.simulation];
+      
+      // Use more realistic simulation data from the configuration
+      const walletAddress = simConfig?.walletAddress || "simulated_address";
+      const defaultBalance = simConfig?.balances?.default || "1000.0";
+      const successRates = simConfig?.transactions?.successRates || { 
+        vaultCreation: 0.98,
+        assetDeposit: 0.99,
+        assetWithdrawal: 0.97,
+        beneficiaryUpdate: 0.995
+      };
+      
+      // Helper function to simulate transaction delay
+      const simulateDelay = async (min: number = 1000, max: number = 5000): Promise<void> => {
+        if (!config.isDevelopmentMode) return;
+        
+        const delayTime = Math.floor(
+          Math.random() * (max - min + 1) + min
+        );
+        
+        if (process.env.VERBOSE_LOGGING === 'true') {
+          securityLogger.debug(`Simulating ${chainId} blockchain delay: ${delayTime}ms`);
+        }
+        
+        return new Promise(resolve => setTimeout(resolve, delayTime));
+      };
+      
+      // Helper function to simulate transaction with success rate
+      const simulateTransaction = async (
+        operationType: keyof typeof successRates,
+        transactionType: string,
+        minDelay: number = 1000,
+        maxDelay: number = 5000
+      ) => {
+        // Apply success rate
+        const isSuccessful = Math.random() <= successRates[operationType];
+        
+        // Simulate transaction delay
+        await simulateDelay(minDelay, maxDelay);
+        
+        if (!isSuccessful) {
+          return {
+            success: false,
+            error: `Transaction failed: ${chainId} network congestion or validation error`,
+            chainId
+          };
+        }
+        
+        // Generate a more realistic transaction hash
+        const timestamp = Date.now();
+        const txHash = `0x${timestamp.toString(16)}_${Math.floor(Math.random() * 1000000).toString(16)}`;
+        
+        return {
+          success: true,
+          transactionHash: txHash,
+          vaultId: `${chainId}_vault_${timestamp}`,
+          chainId
+        };
+      };
+      
+      // Return a mock connector with realistic simulation
       const connector = {
         chainId,
         chainName: chainId.charAt(0).toUpperCase() + chainId.slice(1),
         isTestnet: true,
-        connectWallet: async () => "simulated_address",
+        connectWallet: async () => walletAddress,
         disconnectWallet: async () => {},
         isConnected: async () => true,
-        getAddress: async () => "simulated_address",
-        getBalance: async () => "1000.0",
-        createVault: async () => ({ success: true, transactionHash: `simulated_tx_${Date.now()}`, vaultId: `${chainId}_vault_${Date.now()}`, chainId }),
-        getVaultInfo: async () => ({
-          id: `${chainId}_vault_${Date.now()}`,
-          owner: "simulated_address",
-          unlockDate: new Date(Date.now() + 86400000 * 30), // 30 days from now
-          isLocked: true,
-          balance: "1000.0",
-          chainId,
-          network: "testnet",
-          securityLevel: "medium",
-          lastActivity: new Date()
-        }),
-        listVaults: async () => [],
-        lockAssets: async () => ({ success: true, transactionHash: `simulated_tx_${Date.now()}`, chainId }),
-        unlockAssets: async () => ({ success: true, transactionHash: `simulated_tx_${Date.now()}`, chainId }),
-        addBeneficiary: async () => ({ success: true, transactionHash: `simulated_tx_${Date.now()}`, chainId }),
-        removeBeneficiary: async () => ({ success: true, transactionHash: `simulated_tx_${Date.now()}`, chainId }),
-        verifyVaultIntegrity: async () => ({ isValid: true, signatures: [], verifiedAt: new Date(), chainId }),
-        signMessage: async () => "simulated_signature",
+        getAddress: async () => walletAddress,
+        getBalance: async () => defaultBalance,
+        createVault: async () => simulateTransaction('vaultCreation', 'create_vault',
+          simConfig?.simulatedDelay?.transaction?.min,
+          simConfig?.simulatedDelay?.transaction?.max
+        ),
+        getVaultInfo: async (vaultId: string) => {
+          // Simulate delay for read operations
+          await simulateDelay(100, 1000);
+          
+          const now = new Date();
+          return {
+            id: vaultId || `${chainId}_vault_${Date.now()}`,
+            owner: walletAddress,
+            unlockDate: new Date(now.getTime() + 86400000 * 30), // 30 days from now
+            isLocked: true,
+            balance: defaultBalance,
+            chainId,
+            network: "testnet",
+            securityLevel: "medium",
+            lastActivity: new Date(now.getTime() - 24 * 60 * 60 * 1000) // 1 day ago
+          };
+        },
+        listVaults: async () => {
+          // Simulate delay
+          await simulateDelay(200, 2000);
+          
+          // Return a few simulated vaults
+          const now = new Date();
+          return [
+            {
+              id: `${chainId}_vault_${Date.now() - 86400000 * 7}`, // 1 week old
+              owner: walletAddress,
+              unlockDate: new Date(now.getTime() + 86400000 * 30), // 30 days from now
+              isLocked: true,
+              balance: defaultBalance,
+              chainId,
+              network: "testnet",
+              securityLevel: "high",
+              lastActivity: new Date(now.getTime() - 86400000 * 3) // 3 days ago
+            },
+            {
+              id: `${chainId}_vault_${Date.now() - 86400000}`, // 1 day old
+              owner: walletAddress,
+              unlockDate: new Date(now.getTime() + 86400000 * 10), // 10 days from now
+              isLocked: true,
+              balance: (parseFloat(defaultBalance) / 2).toString(),
+              chainId,
+              network: "testnet",
+              securityLevel: "medium",
+              lastActivity: new Date(now.getTime() - 12 * 60 * 60 * 1000) // 12 hours ago
+            }
+          ];
+        },
+        lockAssets: async () => simulateTransaction('assetDeposit', 'lock_assets',
+          simConfig?.simulatedDelay?.transaction?.min,
+          simConfig?.simulatedDelay?.transaction?.max
+        ),
+        unlockAssets: async () => simulateTransaction('assetWithdrawal', 'unlock_assets',
+          simConfig?.simulatedDelay?.transaction?.min,
+          simConfig?.simulatedDelay?.transaction?.max
+        ),
+        addBeneficiary: async () => simulateTransaction('beneficiaryUpdate', 'add_beneficiary',
+          simConfig?.simulatedDelay?.transaction?.min,
+          simConfig?.simulatedDelay?.transaction?.max
+        ),
+        removeBeneficiary: async () => simulateTransaction('beneficiaryUpdate', 'remove_beneficiary',
+          simConfig?.simulatedDelay?.transaction?.min,
+          simConfig?.simulatedDelay?.transaction?.max
+        ),
+        verifyVaultIntegrity: async () => {
+          await simulateDelay(500, 3000);
+          return { 
+            isValid: true, 
+            signatures: [`${chainId}_sig_${Date.now()}`], 
+            verifiedAt: new Date(), 
+            chainId 
+          };
+        },
+        signMessage: async () => `${chainId}_signature_${Date.now()}`,
         verifySignature: async () => true,
-        createMultiSigRequest: async () => "simulated_request_id",
-        approveMultiSigRequest: async () => ({ success: true, transactionHash: `simulated_tx_${Date.now()}`, chainId }),
+        createMultiSigRequest: async () => `${chainId}_request_${Date.now()}`,
+        approveMultiSigRequest: async () => simulateTransaction('beneficiaryUpdate', 'approve_multisig',
+          simConfig?.simulatedDelay?.transaction?.min,
+          simConfig?.simulatedDelay?.transaction?.max
+        ),
         getChainSpecificFeatures: () => ({}),
-        getMultiSigStatus: async () => ({}),
-        initiateVaultSync: async () => ({}),
-        verifyVaultAcrossChains: async () => ({}),
-        executeChainSpecificMethod: async () => ({}),
+        getMultiSigStatus: async () => ({ 
+          approved: 1, 
+          required: 3, 
+          status: 'pending',
+          approvers: [walletAddress] 
+        }),
+        initiateVaultSync: async () => ({ success: true }),
+        verifyVaultAcrossChains: async () => ({
+          [chainId]: {
+            isValid: true,
+            signatures: [`${chainId}_cross_sig_${Date.now()}`],
+            verifiedAt: new Date(),
+            chainId
+          }
+        }),
+        executeChainSpecificMethod: async () => ({ success: true }),
         subscribeToVaultEvents: () => () => {},
         subscribeToBlockchainEvents: () => () => {}
       } as BlockchainConnector;
@@ -123,88 +258,55 @@ export class ConnectorFactory {
    */
   private initializeConnectors() {
     try {
-      // Check if we should skip blockchain connector initialization
-      if (config.featureFlags.SKIP_BLOCKCHAIN_CONNECTOR_INIT) {
-        securityLogger.info('Skipping blockchain connector initialization due to SKIP_BLOCKCHAIN_CONNECTOR_INIT flag');
-        
-        // Create mock connectors for development
-        if (config.isDevelopmentMode) {
-          // Create simulated connectors for development
-          const createMockConnector = (chainId: string) => {
-            const connector = {
-              chainId,
-              chainName: chainId.charAt(0).toUpperCase() + chainId.slice(1),
-              isTestnet: true,
-              connectWallet: async () => "simulated_address",
-              disconnectWallet: async () => {},
-              isConnected: async () => true,
-              getAddress: async () => "simulated_address",
-              getBalance: async () => "1000.0",
-              createVault: async () => ({ success: true, transactionHash: `simulated_tx_${Date.now()}`, vaultId: `${chainId}_vault_${Date.now()}`, chainId }),
-              getVaultInfo: async () => ({
-                id: `${chainId}_vault_${Date.now()}`,
-                owner: "simulated_address",
-                unlockDate: new Date(Date.now() + 86400000 * 30), // 30 days from now
-                isLocked: true,
-                balance: "1000.0",
-                chainId,
-                network: "testnet",
-                securityLevel: "medium",
-                lastActivity: new Date()
-              }),
-              listVaults: async () => [],
-              lockAssets: async () => ({ success: true, transactionHash: `simulated_tx_${Date.now()}`, chainId }),
-              unlockAssets: async () => ({ success: true, transactionHash: `simulated_tx_${Date.now()}`, chainId }),
-              addBeneficiary: async () => ({ success: true, transactionHash: `simulated_tx_${Date.now()}`, chainId }),
-              removeBeneficiary: async () => ({ success: true, transactionHash: `simulated_tx_${Date.now()}`, chainId }),
-              verifyVaultIntegrity: async () => ({ isValid: true, signatures: [], verifiedAt: new Date(), chainId }),
-              signMessage: async () => "simulated_signature",
-              verifySignature: async () => true,
-              createMultiSigRequest: async () => "simulated_request_id",
-              approveMultiSigRequest: async () => ({ success: true, transactionHash: `simulated_tx_${Date.now()}`, chainId }),
-              getChainSpecificFeatures: () => ({}),
-              getMultiSigStatus: async () => ({}),
-              initiateVaultSync: async () => ({}),
-              verifyVaultAcrossChains: async () => ({}),
-              executeChainSpecificMethod: async () => ({}),
-              subscribeToVaultEvents: () => () => {},
-              subscribeToBlockchainEvents: () => () => {}
-            } as BlockchainConnector;
-            
-            return connector;
-          };
+      // Create an array of supported chains
+      const supportedChains = ['ethereum', 'solana', 'ton', 'bitcoin'];
+      
+      // Check chain-specific simulation flags and create appropriate connectors
+      // This allows for mixed mode operation - some chains can be simulated while others use real connections
+      for (const chainId of supportedChains) {
+        // Use our new shouldSimulateBlockchain helper to check chain-specific flags
+        if (config.shouldSimulateBlockchain(chainId as any)) {
+          securityLogger.info(`Using simulated connector for ${chainId} based on blockchain-specific simulation flags`);
           
-          this.connectors.set('ethereum', createMockConnector('ethereum'));
-          this.connectors.set('solana', createMockConnector('solana'));
-          this.connectors.set('ton', createMockConnector('ton'));
-          this.connectors.set('bitcoin', createMockConnector('bitcoin'));
+          // Create the connector using our createConnector method which handles simulation
+          const simulatedConnector = this.createConnector(chainId);
+          this.connectors.set(chainId, simulatedConnector);
+        } else if (config.blockchainConfig[chainId as keyof typeof config.blockchainConfig].enabled) {
+          // Initialize real connector only if not simulated and enabled in config
+          securityLogger.info(`Initializing real ${chainId} connector`);
           
-          securityLogger.info('Initialized mock blockchain connectors for development mode');
+          // Create a real connector for this chain
+          switch (chainId) {
+            case 'ethereum':
+              this.connectors.set(chainId, new EthereumConnector(config.blockchainConfig.ethereum.isTestnet));
+              break;
+            case 'solana':
+              this.connectors.set(chainId, new SolanaConnector(config.blockchainConfig.solana.isTestnet));
+              break;
+            case 'ton':
+              this.connectors.set(chainId, new TonConnector(config.blockchainConfig.ton.isTestnet));
+              break;
+            case 'bitcoin':
+              this.connectors.set(chainId, new BitcoinConnector(config.blockchainConfig.bitcoin.isTestnet));
+              break;
+          }
         }
-        
-        return;
       }
       
-      // Initialize only the connectors that are enabled in config
-      if (config.blockchainConfig.ethereum.enabled) {
-        this.connectors.set('ethereum', new EthereumConnector(config.blockchainConfig.ethereum.isTestnet));
+      // Log information about initialized connectors
+      const initializedChains = Array.from(this.connectors.keys());
+      if (initializedChains.length > 0) {
+        securityLogger.info('Blockchain connectors initialized', {
+          enabledConnectors: initializedChains,
+          simulatedChains: initializedChains.filter(chain => 
+            config.shouldSimulateBlockchain(chain as any)
+          )
+        });
+      } else {
+        securityLogger.warn('No blockchain connectors were initialized');
       }
       
-      if (config.blockchainConfig.solana.enabled) {
-        this.connectors.set('solana', new SolanaConnector(config.blockchainConfig.solana.isTestnet));
-      }
-      
-      if (config.blockchainConfig.ton.enabled) {
-        this.connectors.set('ton', new TonConnector(config.blockchainConfig.ton.isTestnet));
-      }
-      
-      if (config.blockchainConfig.bitcoin.enabled) {
-        this.connectors.set('bitcoin', new BitcoinConnector(config.blockchainConfig.bitcoin.isTestnet));
-      }
-      
-      securityLogger.info('Blockchain connectors initialized', {
-        enabledConnectors: Array.from(this.connectors.keys())
-      });
+      // Return early as we've already set up all required connectors
     } catch (error) {
       securityLogger.error('Failed to initialize blockchain connectors', {
         error
