@@ -35,11 +35,11 @@ export async function encryptWithZkProof(data: string, privateKeyHex: string): P
 }> {
   // Generate a random salt
   const salt = crypto.getRandomValues(new Uint8Array(16));
-  const saltBase64 = btoa(String.fromCharCode(...salt));
+  const saltBase64 = btoa(String.fromCharCode.apply(null, Array.from(salt)));
   
   // Generate a random nonce
   const nonce = crypto.getRandomValues(new Uint8Array(12));
-  const nonceBase64 = btoa(String.fromCharCode(...nonce));
+  const nonceBase64 = btoa(String.fromCharCode.apply(null, Array.from(nonce)));
   
   // Derive encryption key from private key and salt
   const encoder = new TextEncoder();
@@ -77,7 +77,7 @@ export async function encryptWithZkProof(data: string, privateKeyHex: string): P
   );
   
   const ciphertextBase64 = btoa(
-    String.fromCharCode(...new Uint8Array(encryptedBytes))
+    String.fromCharCode.apply(null, Array.from(new Uint8Array(encryptedBytes)))
   );
   
   // Generate a commitment to the data (a hash)

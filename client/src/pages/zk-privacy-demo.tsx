@@ -566,7 +566,7 @@ export default function ZkPrivacyDemoPage() {
                           {beneficiaryDemo.beneficiaries.map((address, index) => (
                             <div key={index} className="flex justify-between items-center p-2 bg-black/20 rounded border border-gray-800">
                               <span className="text-xs font-mono truncate max-w-[80%]">{address}</span>
-                              <Badge variant="outline" size="sm" className="text-xs">
+                              <Badge variant="outline" className="text-xs">
                                 {address.startsWith('0x') ? 'ETH' : 
                                  address.startsWith('EQ') ? 'TON' : 'SOL'}
                               </Badge>
