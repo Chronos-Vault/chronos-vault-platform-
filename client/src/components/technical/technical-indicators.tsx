@@ -6,7 +6,13 @@ import { Switch } from '@/components/ui/switch';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Separator } from '@/components/ui/separator';
 import { Button } from '@/components/ui/button';
-import { PlusCircle, MinusCircle, TrendingUp, Layers } from 'lucide-react';
+import { PlusCircle, MinusCircle, TrendingUp, Layers, Info, Shield } from 'lucide-react';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 export type TechnicalIndicator = {
   id: string;
@@ -33,7 +39,7 @@ const INDICATOR_CONFIGS: Record<string, IndicatorConfig> = {
   ma: {
     label: 'Moving Average',
     description: 'Trigger based on simple moving average (SMA) or exponential moving average (EMA)',
-    icon: <TrendingUp className="h-4 w-4" />,
+    icon: <TrendingUp className="h-4 w-4 text-[#3F51FF]" />,
     periods: [7, 14, 21, 50, 100, 200],
     conditions: [
       { value: 'above', label: 'Price Above MA' },
@@ -47,7 +53,7 @@ const INDICATOR_CONFIGS: Record<string, IndicatorConfig> = {
   rsi: {
     label: 'RSI',
     description: 'Relative Strength Index indicates overbought/oversold conditions',
-    icon: <Layers className="h-4 w-4" />,
+    icon: <Layers className="h-4 w-4 text-[#FF5AF7]" />,
     periods: [7, 14, 21],
     conditions: [
       { value: 'above', label: 'RSI Above Value' },
@@ -59,7 +65,7 @@ const INDICATOR_CONFIGS: Record<string, IndicatorConfig> = {
   macd: {
     label: 'MACD',
     description: 'Moving Average Convergence Divergence momentum indicator',
-    icon: <TrendingUp className="h-4 w-4" />,
+    icon: <TrendingUp className="h-4 w-4 text-[#00E5FF]" />,
     periods: [12, 26],
     conditions: [
       { value: 'crossing_up', label: 'MACD Crossing Above Signal' },
@@ -73,7 +79,7 @@ const INDICATOR_CONFIGS: Record<string, IndicatorConfig> = {
   volume: {
     label: 'Volume',
     description: 'Trading volume indicators',
-    icon: <Layers className="h-4 w-4" />,
+    icon: <Layers className="h-4 w-4 text-[#6B00D7]" />,
     periods: [7, 14, 30],
     conditions: [
       { value: 'above', label: 'Volume Above Average' },
@@ -127,7 +133,32 @@ export function TechnicalIndicators({
   
   return (
     <div className={`space-y-4 ${className}`}>
-      <h3 className="text-lg font-medium">Technical Analysis Triggers</h3>
+      <div className="flex items-center">
+        <h3 className="text-lg font-medium">Technical Analysis Triggers</h3>
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button variant="ghost" size="icon" className="ml-2 h-6 w-6 p-0">
+                <Info className="h-4 w-4 text-[#375BD2]" />
+                <span className="sr-only">Chainlink information</span>
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent className="max-w-md bg-gray-900 border border-[#375BD2]/40 p-4 shadow-lg">
+              <div className="space-y-2">
+                <p className="font-medium text-[#375BD2]">Chainlink Price Feeds</p>
+                <p className="text-xs text-gray-300">Technical triggers use Chainlink's tamper-proof price data to ensure accurate and reliable exit conditions. When an indicator's conditions are met, the smart contract will execute the defined exit strategy automatically.</p>
+                <ul className="text-xs text-gray-400 list-disc pl-4 space-y-1">
+                  <li>Decentralized price feeds from 100+ validators</li>
+                  <li>Aggregated from premium data providers</li>
+                  <li>Secured by economic incentives</li>
+                  <li>Used by top DeFi platforms</li>
+                </ul>
+              </div>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
+      </div>
+      
       <p className="text-sm text-gray-400">
         Set up automated exit conditions based on technical indicators and Chainlink oracle data
       </p>
@@ -155,7 +186,34 @@ export function TechnicalIndicators({
               <CardHeader className="pb-2">
                 <div className="flex justify-between items-center">
                   <div className="flex items-center">
-                    {INDICATOR_CONFIGS[indicator.type].icon}
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <div className="cursor-help">
+                            {INDICATOR_CONFIGS[indicator.type].icon}
+                          </div>
+                        </TooltipTrigger>
+                        <TooltipContent className="max-w-xs bg-gray-900 border border-gray-700 p-3 shadow-lg">
+                          <div className="space-y-2">
+                            <p className="font-medium text-sm">{INDICATOR_CONFIGS[indicator.type].label} Indicator</p>
+                            <p className="text-xs text-gray-300">
+                              {indicator.type === 'ma' && 
+                                'Moving Averages smooth out price data to create a trend-following indicator. They help identify the direction of the trend and potential support/resistance levels.'}
+                              {indicator.type === 'rsi' && 
+                                'Relative Strength Index (RSI) measures the speed and change of price movements. It oscillates between 0 and 100, with values above 70 indicating overbought conditions and below 30 indicating oversold conditions.'}
+                              {indicator.type === 'macd' && 
+                                'Moving Average Convergence Divergence (MACD) shows the relationship between two moving averages of a security\'s price. The MACD line is the difference between a fast and slow exponential moving average.'}
+                              {indicator.type === 'volume' && 
+                                'Volume indicators measure the strength of a trend based on trading volume. Increasing volume often confirms the direction of the existing trend.'}
+                            </p>
+                            <div className="flex items-center space-x-1 text-xs text-gray-400">
+                              <Shield className="h-3 w-3 text-[#375BD2]" />
+                              <span>Verified by Chainlink Oracle</span>
+                            </div>
+                          </div>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
                     <CardTitle className="ml-2 text-sm">
                       {INDICATOR_CONFIGS[indicator.type].label}
                     </CardTitle>
@@ -319,8 +377,35 @@ export function TechnicalIndicators({
         </>
       )}
       
-      <div className="mt-6 pt-4 border-t border-gray-800 text-xs text-gray-500">
-        <p>All technical indicators are calculated using Chainlink oracle data for reliable on-chain price feeds.</p>
+      <div className="mt-6 pt-4 border-t border-gray-800 text-xs space-y-2">
+        <div className="bg-[#375BD2]/10 p-3 rounded-md border border-[#375BD2]/30">
+          <div className="flex items-center mb-1">
+            <svg width="16" height="16" viewBox="0 0 32 44" fill="none" xmlns="http://www.w3.org/2000/svg" className="mr-2">
+              <path d="M16 0L0 16L16 32V16H32L16 0Z" fill="#375BD2"/>
+              <path d="M16 44L32 28L16 12V28H0L16 44Z" fill="#375BD2"/>
+            </svg>
+            <span className="text-[#375BD2] font-medium">Chainlink Oracle Network</span>
+          </div>
+          <p className="text-gray-400 text-xs">
+            All technical indicators utilize Chainlink's decentralized oracle network for reliable, tamper-proof price data. 
+            Indicators are calculated using time-weighted average prices (TWAP) from multiple trusted sources.
+          </p>
+        </div>
+        
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-2 mt-2">
+          <div className="bg-gray-900/50 p-2 rounded-md border border-gray-800">
+            <span className="text-[#375BD2] text-xs">Oracle Refresh Rate:</span>
+            <p className="text-gray-400 text-xs">Every block (~12 seconds)</p>
+          </div>
+          <div className="bg-gray-900/50 p-2 rounded-md border border-gray-800">
+            <span className="text-[#375BD2] text-xs">Supported Networks:</span>
+            <p className="text-gray-400 text-xs">Ethereum, Solana, TON</p>
+          </div>
+          <div className="bg-gray-900/50 p-2 rounded-md border border-gray-800">
+            <span className="text-[#375BD2] text-xs">Price Aggregation:</span>
+            <p className="text-gray-400 text-xs">9+ exchange sources</p>
+          </div>
+        </div>
       </div>
     </div>
   );
