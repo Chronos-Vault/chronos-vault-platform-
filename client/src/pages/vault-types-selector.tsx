@@ -86,8 +86,18 @@ const VaultTypeCard: React.FC<VaultTypeCardProps> = ({
   </motion.div>
 );
 
+type VaultType = {
+  id: string;
+  title: string;
+  description: string;
+  icon: React.ReactNode;
+  features: string[];
+  premium?: boolean;
+  new?: boolean;
+}
+
 // Define the categories and their vault types
-const vaultCategories = {
+const vaultCategories: Record<string, VaultType[]> = {
   basic: [
     {
       id: 'standard',
@@ -165,7 +175,11 @@ const VaultTypesSelector: React.FC = () => {
   const [sidebarOpen, setSidebarOpen] = useState(true);
   
   const navigateToVaultCreation = (type: string) => {
-    setLocation(`/create-vault-enhanced?type=${type}`);
+    if (type === 'intent-inheritance') {
+      setLocation('/intent-inheritance-vault');
+    } else {
+      setLocation(`/create-vault-enhanced?type=${type}`);
+    }
   };
   
   return (
