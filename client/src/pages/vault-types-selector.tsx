@@ -27,8 +27,14 @@ const VaultTypesSelector = () => {
       // AI Intent Inheritance vault
       navigate('/intent-inheritance-vault');
     } else if (selectedVaultType === 'quantum-resistant') {
-      // Quantum-Resistant Progressive Shield Vault
-      navigate('/quantum-vault');
+      // Give the user a choice to use either page for Quantum-Resistant vault creation
+      toast({
+        title: "Quantum-Resistant Vault Selected",
+        description: "Redirecting to specialized vault creation with cryptocurrency storage options",
+        variant: "default",
+      });
+      // Send to the specialized vault creation page for the cryptocurrency options
+      navigate(`/specialized-vault-creation?type=${selectedVaultType}`);
     } else if (
       selectedVaultType === 'geolocation' || 
       selectedVaultType === 'smart-contract' || 

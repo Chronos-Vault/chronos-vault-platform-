@@ -332,7 +332,7 @@ function SpecializedVaultCreation() {
         }
         
         // Asset-specific information
-        const cryptoInfo = {
+        const cryptoInfo: Record<string, string> = {
           BTC: "Bitcoin",
           ETH: "Ethereum",
           SOL: "Solana",
@@ -340,7 +340,9 @@ function SpecializedVaultCreation() {
           HYBRID: "Multi-Chain"
         };
         
-        successMessage = `Your Quantum-Progressive vault has been created with ${cryptoInfo[selectedCryptoAsset]} asset protection. Security tier: ${securityTierName}.`;
+        // Use type assertion to fix the TypeScript error
+        const assetName = cryptoInfo[selectedCryptoAsset as keyof typeof cryptoInfo] || selectedCryptoAsset;
+        successMessage = `Your Quantum-Progressive vault has been created with ${assetName} asset protection. Security tier: ${securityTierName}.`;
       }
       
       toast({
