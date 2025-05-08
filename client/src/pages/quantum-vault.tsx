@@ -226,37 +226,37 @@ export default function QuantumVaultPage() {
               {/* Value Management */}
               <div>
                 <h3 className="font-medium mb-4">Vault Value</h3>
-                <div className="p-4 rounded-md bg-slate-50 border">
+                <div className="p-4 rounded-md border bg-[#0F0A1F] border-[#6B00D7]/30">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
-                      <p className="text-sm text-muted-foreground mb-1.5">Current Vault Value</p>
+                      <p className="text-sm text-gray-400 mb-1.5">Current Vault Value</p>
                       <div className="flex items-center">
-                        <Wallet className="mr-2 h-4 w-4 text-primary" />
-                        <span className="font-bold">{vault.value.toLocaleString()}</span>
-                        <span className="text-muted-foreground ml-1 text-sm">CVT Tokens</span>
+                        <Wallet className="mr-2 h-4 w-4 text-[#FF5AF7]" />
+                        <span className="font-bold text-white">{vault.value.toLocaleString()}</span>
+                        <span className="text-gray-400 ml-1 text-sm">CVT Tokens</span>
                       </div>
                     </div>
                     <div>
-                      <p className="text-sm text-muted-foreground mb-1.5">Update Vault Value</p>
+                      <p className="text-sm text-gray-400 mb-1.5">Update Vault Value</p>
                       <div className="flex gap-2">
                         <Input
                           type="number"
                           value={newValue}
                           onChange={(e) => setNewValue(e.target.value)}
                           placeholder="Enter new value"
-                          className="max-w-[180px]"
+                          className="max-w-[180px] bg-[#1A1A1A] border-[#6B00D7]/30 text-white"
                         />
                         <Button 
                           onClick={handleValueUpdate}
                           disabled={updating || !newValue || isNaN(Number(newValue)) || Number(newValue) === vault.value}
                           size="sm"
-                          className="whitespace-nowrap"
+                          className="whitespace-nowrap bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] hover:from-[#5500AB] hover:to-[#FF46E8] text-white"
                         >
                           <ArrowUpDown className="mr-2 h-4 w-4" />
                           {updating ? 'Updating...' : 'Update Value'}
                         </Button>
                       </div>
-                      <p className="text-xs mt-1.5 text-muted-foreground">
+                      <p className="text-xs mt-1.5 text-gray-400">
                         Changing the vault value automatically adjusts security parameters
                       </p>
                     </div>
