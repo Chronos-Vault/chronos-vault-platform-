@@ -54,7 +54,7 @@ export class EthereumConnector implements BlockchainConnector {
   networkVersion: string;
   
   // Ethereum specific properties
-  private provider: ethers.providers.Provider;
+  private provider: ethers.JsonRpcProvider | null = null;
   private vaultContract: ethers.Contract | null = null;
   private wallet: ethers.Wallet | null = null;
   private signer: ethers.Signer | null = null;

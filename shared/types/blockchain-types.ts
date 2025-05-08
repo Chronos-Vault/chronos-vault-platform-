@@ -164,6 +164,21 @@ export interface SecurityEventType {
   [key: string]: any;
 }
 
+// Vault status info (used by blockchain connectors)
+export interface VaultStatusInfo {
+  id: string;
+  owner: string;
+  unlockDate: Date;
+  isLocked: boolean;
+  balance: string;
+  chainId: string;
+  network: string;
+  securityLevel: string | number;
+  lastActivity: Date;
+  beneficiaries?: string[];
+  metadata?: Record<string, any>;
+}
+
 // Zero-Knowledge Proof
 export interface ZKProof {
   proof: string;
