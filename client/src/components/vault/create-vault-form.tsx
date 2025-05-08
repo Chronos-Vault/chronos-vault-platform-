@@ -10,6 +10,7 @@ import { useToast } from "@/hooks/use-toast";
 import { FileUpload } from "@/components/attachments/file-upload";
 import { EnhancedMediaUploader } from "@/components/attachments/enhanced-media-uploader";
 import VaultTypeSelector, { SpecializedVaultType } from "@/components/vault/vault-type-selector";
+import { MemoryVaultContent } from "@/components/vault/memory-vault-content";
 import { useCVTToken, StakingTier } from "@/contexts/cvt-token-context";
 import { Coins, Wallet, ArrowLeftRight, ArrowRightCircle } from "lucide-react";
 
