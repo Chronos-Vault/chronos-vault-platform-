@@ -35,6 +35,14 @@ const VaultTypesSelector = () => {
       });
       // Send to the specialized vault creation page for the cryptocurrency options
       navigate(`/specialized-vault-creation?type=${selectedVaultType}`);
+    } else if (selectedVaultType === 'diamond-hands') {
+      // Investment Discipline Vault
+      toast({
+        title: "Investment Discipline Vault Selected",
+        description: "Redirecting to specialized investment discipline vault creation",
+        variant: "default",
+      });
+      navigate('/investment-discipline-vault');
     } else if (
       selectedVaultType === 'geolocation' || 
       selectedVaultType === 'smart-contract' || 
@@ -43,8 +51,7 @@ const VaultTypesSelector = () => {
       selectedVaultType === 'unique' ||
       selectedVaultType === 'memory-vault' ||
       selectedVaultType === 'composite-vault' ||
-      selectedVaultType === 'geo-temporal' ||
-      selectedVaultType === 'diamond-hands'
+      selectedVaultType === 'geo-temporal'
     ) {
       // Specialized vaults
       navigate(`/specialized-vault-creation?type=${selectedVaultType}`);
