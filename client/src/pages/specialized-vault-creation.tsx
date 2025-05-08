@@ -44,6 +44,11 @@ function SpecializedVaultCreation() {
   const [assetAmount, setAssetAmount] = useState<string>('');
   const [unlockDate, setUnlockDate] = useState<string>('');
   
+  // Quantum-Progressive vault specific state
+  const [selectedCryptoAsset, setSelectedCryptoAsset] = useState<string>('BTC');
+  const [contractIntegrationType, setContractIntegrationType] = useState<string>('generate');
+  const [contractAddress, setContractAddress] = useState<string>('');
+  
   // Configuration state specific to vault types
   const [multiSigApprovers, setMultiSigApprovers] = useState<string[]>(['']);
   const [multiSigThreshold, setMultiSigThreshold] = useState<number>(2);
@@ -176,6 +181,69 @@ function SpecializedVaultCreation() {
         specializedConfig.multiLayeredSecurity = true;
         specializedConfig.adaptiveAccessControls = true;
         specializedConfig.userControlledPrivacy = true;
+      } else if (selectedVaultType === SpecializedVaultType.QUANTUM_RESISTANT) {
+        specializedConfig.cryptoAsset = selectedCryptoAsset;
+        specializedConfig.contractIntegrationType = contractIntegrationType;
+        specializedConfig.contractAddress = contractAddress || '';
+        specializedConfig.tripleChainSecurity = contractIntegrationType === 'multi-chain';
+        
+        // Security level calculation based on asset value
+        const assetValue = parseFloat(assetAmount || '0');
+        let securityTier = 'standard';
+        let quantumAlgorithms = {
+          signatures: 'Falcon-512',
+          encryption: 'Kyber-512'
+        };
+        
+        // Determine tier based on crypto type and amount
+        if (selectedCryptoAsset === 'BTC') {
+          const btcValue = assetValue * 102122; // Current BTC price in USD
+          if (btcValue >= 1000000) {
+            securityTier = 'maximum';
+            quantumAlgorithms = { signatures: 'SPHINCS+', encryption: 'FrodoKEM-1344' };
+          } else if (btcValue >= 100000) {
+            securityTier = 'advanced';
+            quantumAlgorithms = { signatures: 'CRYSTALS-Dilithium', encryption: 'Kyber-1024' };
+          } else if (btcValue >= 10000) {
+            securityTier = 'enhanced';
+            quantumAlgorithms = { signatures: 'Falcon-1024', encryption: 'Kyber-768' };
+          }
+        } else if (selectedCryptoAsset === 'ETH') {
+          const ethValue = assetValue * 3481; // Current ETH price in USD
+          if (ethValue >= 1000000) {
+            securityTier = 'maximum';
+            quantumAlgorithms = { signatures: 'SPHINCS+', encryption: 'FrodoKEM-1344' };
+          } else if (ethValue >= 100000) {
+            securityTier = 'advanced';
+            quantumAlgorithms = { signatures: 'CRYSTALS-Dilithium', encryption: 'Kyber-1024' };
+          } else if (ethValue >= 10000) {
+            securityTier = 'enhanced';
+            quantumAlgorithms = { signatures: 'Falcon-1024', encryption: 'Kyber-768' };
+          }
+        } else if (selectedCryptoAsset === 'SOL' || selectedCryptoAsset === 'TON' || selectedCryptoAsset === 'HYBRID') {
+          // Calculate for other assets
+          const solValue = selectedCryptoAsset === 'SOL' ? assetValue * 168 : 0;
+          const tonValue = selectedCryptoAsset === 'TON' ? assetValue * 7.24 : 0;
+          // For hybrid, assume a flat higher security level
+          const hybridValue = selectedCryptoAsset === 'HYBRID' ? 100000 : 0;
+          
+          const totalValue = solValue + tonValue + hybridValue;
+          
+          if (totalValue >= 1000000) {
+            securityTier = 'maximum';
+            quantumAlgorithms = { signatures: 'SPHINCS+', encryption: 'FrodoKEM-1344' };
+          } else if (totalValue >= 100000) {
+            securityTier = 'advanced';
+            quantumAlgorithms = { signatures: 'CRYSTALS-Dilithium', encryption: 'Kyber-1024' };
+          } else if (totalValue >= 10000) {
+            securityTier = 'enhanced';
+            quantumAlgorithms = { signatures: 'Falcon-1024', encryption: 'Kyber-768' };
+          }
+        }
+        
+        specializedConfig.securityTier = securityTier;
+        specializedConfig.quantumAlgorithms = quantumAlgorithms;
+        specializedConfig.zeroKnowledgeProofs = securityTier === 'advanced' || securityTier === 'maximum';
       }
       
       // Create blockchain-specific configuration
@@ -479,36 +547,187 @@ function SpecializedVaultCreation() {
         
       case SpecializedVaultType.QUANTUM_RESISTANT:
         return (
-          <div className="space-y-4 mt-6 p-4 border border-[#3c9700]/30 rounded-lg bg-gray-900/50">
-            <h3 className="text-[#3c9700] font-medium">Quantum-Resistant Vault Configuration</h3>
+          <div className="space-y-6 mt-6 p-4 border border-[#00B8FF]/30 rounded-lg bg-gray-900/50">
+            <h3 className="text-[#00B8FF] font-medium">Quantum-Progressive Vault Configuration</h3>
+            
+            {/* Crypto Asset Selection */}
             <div className="space-y-4">
-              <div className="bg-black/20 p-4 rounded-lg">
-                <div className="flex items-center">
-                  <div className="bg-[#3c9700]/20 p-3 rounded-full mr-3">
-                    <i className="ri-lock-password-line text-[#3c9700] text-xl"></i>
+              <h4 className="text-white text-sm font-medium mb-2">1. Cryptocurrency Selection</h4>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div 
+                  className={`p-3 rounded-lg border border-[#00B8FF]/30 cursor-pointer hover:bg-[#00B8FF]/10 transition-colors ${selectedCryptoAsset === 'BTC' ? 'bg-[#00B8FF]/20' : 'bg-black/30'}`}
+                  onClick={() => setSelectedCryptoAsset('BTC')}
+                >
+                  <div className="flex items-center">
+                    <div className="bg-[#F7931A]/20 p-2 rounded-full mr-2">
+                      <i className="ri-bitcoin-fill text-[#F7931A] text-lg"></i>
+                    </div>
+                    <div>
+                      <h5 className="text-white font-medium text-sm">Bitcoin (BTC)</h5>
+                      <p className="text-gray-400 text-xs">First & largest cryptocurrency</p>
+                    </div>
                   </div>
-                  <div>
-                    <h4 className="text-white font-medium">Quantum-Safe Encryption</h4>
-                    <p className="text-xs text-gray-400">Your vault is secured against future quantum computing threats</p>
+                </div>
+                
+                <div 
+                  className={`p-3 rounded-lg border border-[#00B8FF]/30 cursor-pointer hover:bg-[#00B8FF]/10 transition-colors ${selectedCryptoAsset === 'ETH' ? 'bg-[#00B8FF]/20' : 'bg-black/30'}`}
+                  onClick={() => setSelectedCryptoAsset('ETH')}
+                >
+                  <div className="flex items-center">
+                    <div className="bg-[#627EEA]/20 p-2 rounded-full mr-2">
+                      <i className="ri-ethereum-fill text-[#627EEA] text-lg"></i>
+                    </div>
+                    <div>
+                      <h5 className="text-white font-medium text-sm">Ethereum (ETH)</h5>
+                      <p className="text-gray-400 text-xs">Smart contract platform</p>
+                    </div>
+                  </div>
+                </div>
+                
+                <div 
+                  className={`p-3 rounded-lg border border-[#00B8FF]/30 cursor-pointer hover:bg-[#00B8FF]/10 transition-colors ${selectedCryptoAsset === 'SOL' ? 'bg-[#00B8FF]/20' : 'bg-black/30'}`}
+                  onClick={() => setSelectedCryptoAsset('SOL')}
+                >
+                  <div className="flex items-center">
+                    <div className="bg-[#14F195]/20 p-2 rounded-full mr-2">
+                      <i className="ri-coin-fill text-[#14F195] text-lg"></i>
+                    </div>
+                    <div>
+                      <h5 className="text-white font-medium text-sm">Solana (SOL)</h5>
+                      <p className="text-gray-400 text-xs">High-speed blockchain</p>
+                    </div>
+                  </div>
+                </div>
+                
+                <div 
+                  className={`p-3 rounded-lg border border-[#00B8FF]/30 cursor-pointer hover:bg-[#00B8FF]/10 transition-colors ${selectedCryptoAsset === 'TON' ? 'bg-[#00B8FF]/20' : 'bg-black/30'}`}
+                  onClick={() => setSelectedCryptoAsset('TON')}
+                >
+                  <div className="flex items-center">
+                    <div className="bg-[#0098EA]/20 p-2 rounded-full mr-2">
+                      <i className="ri-flashlight-fill text-[#0098EA] text-lg"></i>
+                    </div>
+                    <div>
+                      <h5 className="text-white font-medium text-sm">TON</h5>
+                      <p className="text-gray-400 text-xs">Fast & scalable blockchain</p>
+                    </div>
                   </div>
                 </div>
               </div>
+              
+              {/* Hybrid Option */}
+              <div 
+                className={`p-3 rounded-lg border border-[#00B8FF]/30 cursor-pointer hover:bg-[#00B8FF]/10 transition-colors ${selectedCryptoAsset === 'HYBRID' ? 'bg-[#00B8FF]/20' : 'bg-black/30'}`}
+                onClick={() => setSelectedCryptoAsset('HYBRID')}
+              >
+                <div className="flex items-center">
+                  <div className="bg-[#FF5AF7]/20 p-2 rounded-full mr-2">
+                    <i className="ri-coin-line text-[#FF5AF7] text-lg"></i>
+                  </div>
+                  <div>
+                    <h5 className="text-white font-medium text-sm">Hybrid Multi-Asset</h5>
+                    <p className="text-gray-400 text-xs">Store multiple cryptocurrencies in one vault with cross-chain security</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            {/* Asset Amount Input */}
+            <div className="space-y-3">
+              <h4 className="text-white text-sm font-medium">2. Asset Amount</h4>
+              <div className="flex items-center space-x-3">
+                <Input
+                  type="number"
+                  value={assetAmount}
+                  onChange={(e) => setAssetAmount(e.target.value)}
+                  placeholder="Amount"
+                  className="bg-black/30 border-[#00B8FF]/30 text-white"
+                />
+                <div className="text-lg font-medium text-white">{selectedCryptoAsset}</div>
+              </div>
+              {selectedCryptoAsset === 'BTC' && (
+                <p className="text-xs text-gray-400">Value: ~${(parseFloat(assetAmount || '0') * 102122).toLocaleString()} USD</p>
+              )}
+              {selectedCryptoAsset === 'ETH' && (
+                <p className="text-xs text-gray-400">Value: ~${(parseFloat(assetAmount || '0') * 3481).toLocaleString()} USD</p>
+              )}
+              {selectedCryptoAsset === 'SOL' && (
+                <p className="text-xs text-gray-400">Value: ~${(parseFloat(assetAmount || '0') * 168).toLocaleString()} USD</p>
+              )}
+              {selectedCryptoAsset === 'TON' && (
+                <p className="text-xs text-gray-400">Value: ~${(parseFloat(assetAmount || '0') * 7.24).toLocaleString()} USD</p>
+              )}
+            </div>
+            
+            {/* Smart Contract Integration */}
+            <div className="space-y-3">
+              <h4 className="text-white text-sm font-medium">3. Smart Contract Integration</h4>
+              <div className="space-y-3">
+                <div>
+                  <label className="text-xs text-gray-400 mb-1 block">Integration Type</label>
+                  <select 
+                    className="w-full p-2 rounded-md bg-black/30 border border-[#00B8FF]/30 text-white text-sm"
+                    value={contractIntegrationType}
+                    onChange={(e) => setContractIntegrationType(e.target.value)}
+                  >
+                    <option value="generate">Generate New Contract</option>
+                    <option value="existing">Use Existing Contract</option>
+                    <option value="multi-chain">Multi-Chain Verification</option>
+                  </select>
+                </div>
+                
+                {contractIntegrationType === 'existing' && (
+                  <div>
+                    <label className="text-xs text-gray-400 mb-1 block">Contract Address</label>
+                    <Input
+                      placeholder="Enter smart contract address"
+                      className="bg-black/30 border-[#00B8FF]/30 text-white"
+                      onChange={(e) => setContractAddress(e.target.value)}
+                      value={contractAddress}
+                    />
+                  </div>
+                )}
+                
+                {contractIntegrationType === 'multi-chain' && (
+                  <div className="p-3 bg-black/20 rounded-lg">
+                    <div className="flex items-start">
+                      <div className="bg-[#FF5AF7]/20 p-2 rounded-full mr-2 flex-shrink-0 mt-1">
+                        <i className="ri-shield-check-line text-[#FF5AF7] text-sm"></i>
+                      </div>
+                      <div>
+                        <h5 className="text-white text-xs font-medium">Triple-Chain Security</h5>
+                        <p className="text-gray-400 text-xs mt-1">Your assets will be secured by all three blockchains with cross-verification:</p>
+                        <ul className="text-gray-400 text-xs mt-1 space-y-1 ml-3">
+                          <li>• Ethereum: Ownership verification</li>
+                          <li>• Solana: High-frequency monitoring</li>
+                          <li>• TON: Recovery operations</li>
+                        </ul>
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+            
+            {/* Security Features */}
+            <div className="space-y-3">
+              <h4 className="text-white text-sm font-medium">4. Advanced Quantum Security</h4>
               <div className="space-y-2">
                 <div className="flex items-center p-2 bg-black/20 rounded-md">
-                  <div className="h-4 w-4 bg-[#3c9700]/20 flex items-center justify-center rounded mr-2">
-                    <i className="ri-check-line text-[#3c9700] text-xs"></i>
+                  <div className="h-4 w-4 bg-[#00B8FF]/20 flex items-center justify-center rounded mr-2">
+                    <i className="ri-check-line text-[#00B8FF] text-xs"></i>
                   </div>
                   <span className="text-sm text-gray-300">Post-Quantum Cryptography</span>
                 </div>
                 <div className="flex items-center p-2 bg-black/20 rounded-md">
-                  <div className="h-4 w-4 bg-[#3c9700]/20 flex items-center justify-center rounded mr-2">
-                    <i className="ri-check-line text-[#3c9700] text-xs"></i>
+                  <div className="h-4 w-4 bg-[#00B8FF]/20 flex items-center justify-center rounded mr-2">
+                    <i className="ri-check-line text-[#00B8FF] text-xs"></i>
                   </div>
-                  <span className="text-sm text-gray-300">Multi-Layer Security</span>
+                  <span className="text-sm text-gray-300">Value-Based Security Scaling</span>
                 </div>
                 <div className="flex items-center p-2 bg-black/20 rounded-md">
-                  <div className="h-4 w-4 bg-[#3c9700]/20 flex items-center justify-center rounded mr-2">
-                    <i className="ri-check-line text-[#3c9700] text-xs"></i>
+                  <div className="h-4 w-4 bg-[#00B8FF]/20 flex items-center justify-center rounded mr-2">
+                    <i className="ri-check-line text-[#00B8FF] text-xs"></i>
                   </div>
                   <span className="text-sm text-gray-300">Lattice-Based Encryption</span>
                 </div>
