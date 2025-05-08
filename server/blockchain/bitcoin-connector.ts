@@ -51,6 +51,19 @@ export class BitcoinConnector implements BlockchainConnector {
     this.isTestnet = isTestnet;
     this.networkVersion = isTestnet ? 'testnet' : 'mainnet';
     
+    // Skip blockchain initialization if the flag is set
+    if (config.featureFlags.SKIP_BLOCKCHAIN_CONNECTOR_INIT) {
+      securityLogger.info('Skipping Bitcoin connector initialization due to SKIP_BLOCKCHAIN_CONNECTOR_INIT flag');
+      
+      // Even in skip mode, we need a wallet address for development mode
+      if (config.isDevelopmentMode) {
+        this.walletAddress = isTestnet 
+          ? 'tb1qw508d6qejxtdg4y5r3zarvary0c5xw7kxpjzsx' // Standard testnet address
+          : 'bc1qw508d6qejxtdg4y5r3zarvary0c5xw7kv8f3t4'; // Standard mainnet address
+      }
+      return;
+    }
+    
     // Set up API endpoints
     const endpoints = isTestnet ? BTC_API_ENDPOINTS.testnet : BTC_API_ENDPOINTS.mainnet;
     this.blockstreamApi = endpoints.blockstream;
@@ -121,6 +134,15 @@ export class BitcoinConnector implements BlockchainConnector {
    * Get the balance of an address in BTC
    */
   async getBalance(address: string): Promise<string> {
+    // If blockchain connector is set to be skipped, return simulated data
+    if (config.featureFlags.SKIP_BLOCKCHAIN_CONNECTOR_INIT || !this.blockstreamApi) {
+      if (config.isDevelopmentMode) {
+        // Return a simulated balance
+        return (Math.random() * 2).toFixed(8);
+      }
+      throw new Error('API endpoints not initialized due to SKIP_BLOCKCHAIN_CONNECTOR_INIT flag');
+    }
+    
     try {
       if (config.isDevelopmentMode) {
         // Return a simulated balance
