@@ -256,6 +256,38 @@ function SpecializedVaultCreation() {
         blockchainConfig.solanaContractAddress = solana.isConnected ? 'pending-deployment' : '';
       }
       
+      // Calculate asset value for security level determination
+      let calculatedAssetValueUSD = 0;
+      let securityLevelValue = 5; // Default maximum security
+      
+      if (selectedVaultType === SpecializedVaultType.QUANTUM_RESISTANT) {
+        const assetValue = parseFloat(assetAmount || '0');
+        
+        // Calculate USD value based on asset type
+        if (selectedCryptoAsset === 'BTC') {
+          calculatedAssetValueUSD = assetValue * 102122;
+        } else if (selectedCryptoAsset === 'ETH') {
+          calculatedAssetValueUSD = assetValue * 3481;
+        } else if (selectedCryptoAsset === 'SOL') {
+          calculatedAssetValueUSD = assetValue * 168;
+        } else if (selectedCryptoAsset === 'TON') {
+          calculatedAssetValueUSD = assetValue * 7.24;
+        } else if (selectedCryptoAsset === 'HYBRID') {
+          calculatedAssetValueUSD = assetValue * 250;
+        }
+        
+        // Assign security level based on value
+        if (calculatedAssetValueUSD >= 1000000) {
+          securityLevelValue = 5; // Maximum
+        } else if (calculatedAssetValueUSD >= 100000) {
+          securityLevelValue = 4; // Advanced
+        } else if (calculatedAssetValueUSD >= 10000) {
+          securityLevelValue = 3; // Enhanced
+        } else {
+          securityLevelValue = 2; // Standard
+        }
+      }
+      
       // Create vault data for API call
       const vaultData = {
         userId: 1, // This should be the actual user ID from auth
@@ -264,16 +296,19 @@ function SpecializedVaultCreation() {
         vaultType: selectedVaultType,
         assetType: selectedBlockchain,
         assetAmount: assetAmount || '0',
+        assetValueUSD: calculatedAssetValueUSD.toString(),
         timeLockPeriod: 30, // Default to 30 days
         unlockDate: unlockDateObj.toISOString(),
         metadata: JSON.stringify({
           specializedType: selectedVaultType,
           configuration: specializedConfig,
-          blockchain: selectedBlockchain
+          blockchain: selectedBlockchain,
+          assetValueUSD: calculatedAssetValueUSD,
+          calculatedAt: new Date().toISOString()
         }),
         ...blockchainConfig,
-        securityLevel: 5, // Highest security for specialized vaults
-        crossChainEnabled: selectedVaultType === SpecializedVaultType.CROSS_CHAIN,
+        securityLevel: securityLevelValue,
+        crossChainEnabled: selectedVaultType === SpecializedVaultType.CROSS_CHAIN || contractIntegrationType === 'multi-chain',
         privacyEnabled: true
       };
       
@@ -281,9 +316,36 @@ function SpecializedVaultCreation() {
       const response = await apiRequest('POST', '/api/vaults', vaultData);
       const createdVault = await response.json();
       
+      // Create a more detailed success message for quantum-resistant vaults
+      let successMessage = `Your ${selectedVaultType.replace('-', ' ')} vault has been created on ${selectedBlockchain}`;
+      
+      if (selectedVaultType === SpecializedVaultType.QUANTUM_RESISTANT) {
+        // Add security tier information to the message
+        let securityTierName = "Standard Protection";
+        
+        if (calculatedAssetValueUSD >= 1000000) {
+          securityTierName = "Maximum Protection";
+        } else if (calculatedAssetValueUSD >= 100000) {
+          securityTierName = "Advanced Protection";
+        } else if (calculatedAssetValueUSD >= 10000) {
+          securityTierName = "Enhanced Protection";
+        }
+        
+        // Asset-specific information
+        const cryptoInfo = {
+          BTC: "Bitcoin",
+          ETH: "Ethereum",
+          SOL: "Solana",
+          TON: "TON",
+          HYBRID: "Multi-Chain"
+        };
+        
+        successMessage = `Your Quantum-Progressive vault has been created with ${cryptoInfo[selectedCryptoAsset]} asset protection. Security tier: ${securityTierName}.`;
+      }
+      
       toast({
         title: "Vault Created Successfully",
-        description: `Your ${selectedVaultType.replace('-', ' ')} vault has been created on ${selectedBlockchain}`,
+        description: successMessage,
       });
       
       navigate('/my-vaults');
@@ -709,9 +771,95 @@ function SpecializedVaultCreation() {
               </div>
             </div>
             
+            {/* Security Tier Display based on current value */}
+            <div className="space-y-3">
+              <h4 className="text-white text-sm font-medium">4. Security Tier</h4>
+              <div className="p-3 rounded-lg bg-black/30 border border-[#00B8FF]/20">
+                {(() => {
+                  // Calculate USD value based on crypto selection and amount
+                  const amount = parseFloat(assetAmount || '0');
+                  if (isNaN(amount)) return null;
+                  
+                  let usdValue = 0;
+                  if (selectedCryptoAsset === 'BTC') {
+                    usdValue = amount * 102122;
+                  } else if (selectedCryptoAsset === 'ETH') {
+                    usdValue = amount * 3481;
+                  } else if (selectedCryptoAsset === 'SOL') {
+                    usdValue = amount * 168;
+                  } else if (selectedCryptoAsset === 'TON') {
+                    usdValue = amount * 7.24;
+                  } else if (selectedCryptoAsset === 'HYBRID') {
+                    usdValue = amount * 250;
+                  }
+                  
+                  // Determine security tier
+                  let tierName, progress, signatureAlgo, encryptionAlgo, zkp;
+                  
+                  if (usdValue >= 1000000) {
+                    tierName = "Maximum Security";
+                    progress = 100;
+                    signatureAlgo = "SPHINCS+";
+                    encryptionAlgo = "FrodoKEM-1344";
+                    zkp = true;
+                  } else if (usdValue >= 100000) {
+                    tierName = "Advanced Security";
+                    progress = 75;
+                    signatureAlgo = "CRYSTALS-Dilithium";
+                    encryptionAlgo = "Kyber-1024";
+                    zkp = true;
+                  } else if (usdValue >= 10000) {
+                    tierName = "Enhanced Security";
+                    progress = 50;
+                    signatureAlgo = "Falcon-1024";
+                    encryptionAlgo = "Kyber-768";
+                    zkp = false;
+                  } else {
+                    tierName = "Standard Security";
+                    progress = 25;
+                    signatureAlgo = "Falcon-512";
+                    encryptionAlgo = "Kyber-512";
+                    zkp = false;
+                  }
+                  
+                  return (
+                    <>
+                      <div className="flex justify-between items-center mb-2">
+                        <h5 className="text-[#00B8FF] font-medium text-sm">{tierName}</h5>
+                        <span className="text-gray-400 text-xs">${usdValue.toLocaleString()}</span>
+                      </div>
+                      <div className="h-2 bg-black/50 rounded-full overflow-hidden mb-3">
+                        <div 
+                          className="h-full bg-gradient-to-r from-[#00B8FF] to-[#00D7FF]" 
+                          style={{ width: `${progress}%` }}
+                        ></div>
+                      </div>
+                      <div className="grid grid-cols-2 gap-1 text-xs">
+                        <div className="flex items-center">
+                          <i className="ri-lock-line text-[#00B8FF] mr-1"></i>
+                          <span className="text-gray-400">Signatures: </span>
+                          <span className="text-white ml-1">{signatureAlgo}</span>
+                        </div>
+                        <div className="flex items-center">
+                          <i className="ri-shield-keyhole-line text-[#00B8FF] mr-1"></i>
+                          <span className="text-gray-400">Encryption: </span>
+                          <span className="text-white ml-1">{encryptionAlgo}</span>
+                        </div>
+                        <div className="flex items-center col-span-2 mt-1">
+                          <i className="ri-eye-off-line text-[#00B8FF] mr-1"></i>
+                          <span className="text-gray-400">Zero-Knowledge Proofs: </span>
+                          <span className="text-white ml-1">{zkp ? 'Enabled' : 'Disabled'}</span>
+                        </div>
+                      </div>
+                    </>
+                  );
+                })()}
+              </div>
+            </div>
+            
             {/* Security Features */}
             <div className="space-y-3">
-              <h4 className="text-white text-sm font-medium">4. Advanced Quantum Security</h4>
+              <h4 className="text-white text-sm font-medium">5. Advanced Quantum Security</h4>
               <div className="space-y-2">
                 <div className="flex items-center p-2 bg-black/20 rounded-md">
                   <div className="h-4 w-4 bg-[#00B8FF]/20 flex items-center justify-center rounded mr-2">
