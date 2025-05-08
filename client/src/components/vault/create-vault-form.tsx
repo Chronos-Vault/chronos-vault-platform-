@@ -49,7 +49,12 @@ const metadataSchema = z.object({
     augmentedMedia: z.boolean().optional(),
     appreciationRate: z.number().optional(),
     challenges: z.array(z.string()).optional()
-  }).optional()
+  }).optional(),
+  // Memory vault specific metadata
+  memoryTitle: z.string().optional(),
+  memoryDescription: z.string().optional(),
+  revealMessage: z.string().optional(),
+  showCountdown: z.boolean().default(true)
 });
 
 // Extend the vault schema with additional validation
@@ -234,7 +239,12 @@ export function CreateVaultForm({
       
       metadata: {
         allowsAttachments: true,
-        attachmentsEncryption: "AES-256"
+        attachmentsEncryption: "AES-256",
+        // Memory vault specific defaults
+        memoryTitle: "",
+        memoryDescription: "",
+        revealMessage: "",
+        showCountdown: true
       },
       // Add default values for specialized vault types
       requiredSignatures: "2",
@@ -399,6 +409,19 @@ export function CreateVaultForm({
     const currentVaultType = form.watch("vaultType");
     
     switch(currentVaultType) {
+      case 'memory-capsule':
+        return (
+          <div className="space-y-4 border border-[#FF3A8C]/20 rounded-lg p-4 bg-gradient-to-r from-[#1A1A1A] to-[#2A1A24]">
+            <h3 className="text-lg text-[#FF3A8C] font-medium">Time-Locked Memory Vault Settings</h3>
+            <p className="text-sm text-gray-300">Create a vault combining digital assets with multimedia memories</p>
+            
+            <MemoryVaultContent 
+              form={form} 
+              isSubmitting={mutation.isPending} 
+            />
+          </div>
+        );
+      
       case 'multi-signature':
         return (
           <div className="space-y-4 border border-[#FF5AF7]/20 rounded-lg p-4 bg-gradient-to-r from-[#1A1A1A] to-[#231A2A]">
