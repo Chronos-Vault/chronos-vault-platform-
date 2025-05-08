@@ -21,6 +21,8 @@ interface Vault {
   createdAt: number;
   contractAddress?: string;
   txHash?: string;
+  type?: string; // Add vault type for specialized vaults
+  value?: number; // For quantum progressive vaults
 }
 
 const MyVaults = () => {
@@ -76,6 +78,38 @@ const MyVaults = () => {
       createdAt: Date.now() - 35 * 24 * 60 * 60 * 1000, // 35 days ago
       contractAddress: "0x742d35Cc6634C0532925a3b844Bc454e4438f44e",
       txHash: "0xe6c5378a4e1a0c7fd5219fa70a0903db8ed1d4a67be5f6d83fb2fb11a5214943"
+    },
+    {
+      id: "quantum-vault-1",
+      name: "High-Value Quantum Vault",
+      description: "Quantum-resistant vault with progressive security",
+      blockchain: BlockchainType.TON,
+      unlockTime: Date.now() + 365 * 2 * 24 * 60 * 60 * 1000, // 2 years from now
+      amount: "125000",
+      recipient: walletInfo.ton.address || "EQAbc123...",
+      isLocked: true,
+      securityLevel: "advanced",
+      createdAt: Date.now() - 20 * 24 * 60 * 60 * 1000, // 20 days ago
+      contractAddress: "EQBvK49sjphKWXBw-mHaxjrmoIe_iFx-FNbKfzOWOUJrmdkT",
+      txHash: "5e9c7b3d8a4f2e1d0c7b6a5f4e3d2c1b0a9f8e7d6c5b4a3f2e1d0c9b8a7f6e5d",
+      type: "quantum-progressive",
+      value: 125000
+    },
+    {
+      id: "quantum-vault-2",
+      name: "Medium Security Quantum Vault",
+      description: "Medium-value assets with enhanced quantum protection",
+      blockchain: BlockchainType.ETHEREUM,
+      unlockTime: Date.now() + 365 * 1 * 24 * 60 * 60 * 1000, // 1 year from now
+      amount: "25000",
+      recipient: walletInfo.ethereum.address || "0x1234...",
+      isLocked: true,
+      securityLevel: "enhanced",
+      createdAt: Date.now() - 15 * 24 * 60 * 60 * 1000, // 15 days ago
+      contractAddress: "0x89B4d7f12a5096edC84344D2c1EE10bCDEF7B8CA",
+      txHash: "0x1a2b3c4d5e6f7a8b9c0d1e2f3a4b5c6d7e8f9a0b1c2d3e4f5a6b7c8d9e0f1a2b",
+      type: "quantum-progressive",
+      value: 25000
     }
   ];
 
@@ -165,7 +199,15 @@ const MyVaults = () => {
 
   // View vault details
   const viewVaultDetails = (vaultId: string) => {
-    setLocation(`/vault/${vaultId}`);
+    // Get the vault object
+    const vault = vaults.find(v => v.id === vaultId);
+    
+    // Direct to the appropriate details page based on vault type
+    if (vault?.type === 'quantum-progressive') {
+      setLocation(`/quantum-vault/${vaultId}`);
+    } else {
+      setLocation(`/vault/${vaultId}`);
+    }
   };
 
   return (
@@ -248,8 +290,15 @@ const MyVaults = () => {
                               {vault.description || "No description"}
                             </CardDescription>
                           </div>
-                          <div className={`px-2 py-1 rounded text-xs font-medium ${vault.isLocked ? 'bg-[#6B00D7]/20 text-[#FF5AF7]' : 'bg-[#4CAF50]/20 text-[#4CAF50]'}`}>
-                            {vault.isLocked ? 'Locked' : 'Unlocked'}
+                          <div className="flex flex-col items-end gap-1">
+                            <div className={`px-2 py-1 rounded text-xs font-medium ${vault.isLocked ? 'bg-[#6B00D7]/20 text-[#FF5AF7]' : 'bg-[#4CAF50]/20 text-[#4CAF50]'}`}>
+                              {vault.isLocked ? 'Locked' : 'Unlocked'}
+                            </div>
+                            {vault.type === 'quantum-progressive' && (
+                              <div className="px-2 py-1 rounded text-xs font-medium bg-purple-100 text-purple-800 border border-purple-200">
+                                Quantum Shield
+                              </div>
+                            )}
                           </div>
                         </div>
                       </CardHeader>
@@ -284,6 +333,20 @@ const MyVaults = () => {
                             <div className="flex justify-between">
                               <span className="text-gray-400 text-sm">Contract</span>
                               <span className="text-white text-sm font-medium">{formatAddress(vault.contractAddress)}</span>
+                            </div>
+                          )}
+                          
+                          {vault.type === 'quantum-progressive' && (
+                            <div className="flex justify-between">
+                              <span className="text-gray-400 text-sm">Security Level</span>
+                              <span className={`text-sm font-medium ${
+                                vault.securityLevel === 'standard' ? 'text-blue-400' : 
+                                vault.securityLevel === 'enhanced' ? 'text-indigo-400' : 
+                                vault.securityLevel === 'advanced' ? 'text-purple-400' : 
+                                'text-red-400'
+                              }`}>
+                                {vault.securityLevel.charAt(0).toUpperCase() + vault.securityLevel.slice(1)}
+                              </span>
                             </div>
                           )}
                         </div>

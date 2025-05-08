@@ -138,6 +138,7 @@ function Router() {
         <Route path="/cross-chain-test" component={CrossChainTestPage} />
         <Route path="/zk-privacy-demo" component={ZkPrivacyDemoPage} />
         <Route path="/quantum-vault" component={QuantumVaultPage} />
+        <Route path="/quantum-vault/:id" component={QuantumVaultPage} />
 
         <Route component={NotFound} />
       </Switch>
