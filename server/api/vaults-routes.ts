@@ -158,7 +158,7 @@ router.post('/', async (req: Request, res: Response) => {
     }
     
     // Add creation timestamp
-    const vault = {
+    let vault = {
       ...validatedData,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString()
@@ -251,7 +251,7 @@ router.patch('/:id', async (req: Request, res: Response) => {
     }
     
     const currentVault = vaults[vaultIndex];
-    const updatedVault = {
+    let updatedVault = {
       ...currentVault,
       ...req.body,
       updatedAt: new Date().toISOString()
