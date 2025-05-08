@@ -1,5 +1,6 @@
 import React from 'react';
 
+// Define as both type and enum for backward compatibility
 export type SpecializedVaultType = 
   | 'standard' 
   | 'multi-signature' 
@@ -11,6 +12,20 @@ export type SpecializedVaultType =
   | 'dynamic' 
   | 'nft-powered' 
   | 'unique';
+
+// Create an object with the values as a namespace
+export const SpecializedVaultType = {
+  STANDARD: 'standard' as SpecializedVaultType,
+  MULTI_SIGNATURE: 'multi-signature' as SpecializedVaultType,
+  BIOMETRIC: 'biometric' as SpecializedVaultType,
+  TIME_LOCK: 'time-lock' as SpecializedVaultType,
+  GEOLOCATION: 'geolocation' as SpecializedVaultType,
+  CROSS_CHAIN: 'cross-chain' as SpecializedVaultType,
+  SMART_CONTRACT: 'smart-contract' as SpecializedVaultType,
+  DYNAMIC: 'dynamic' as SpecializedVaultType,
+  NFT_POWERED: 'nft-powered' as SpecializedVaultType,
+  UNIQUE: 'unique' as SpecializedVaultType
+};
 
 interface VaultTypeProps {
   selectedType: SpecializedVaultType;

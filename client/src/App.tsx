@@ -85,12 +85,12 @@ function Router() {
       <Switch>
         <Route path="/" component={Home} />
         <Route path="/create-vault" component={CreateVault} />
-        <Route path="/create-vault-enhanced" component={() => <Redirect to="/create-vault" />} />
-        <Route path="/vault-types" component={() => <Redirect to="/create-vault" />} />
-        <Route path="/advanced-vault" component={() => <Redirect to="/create-vault" />} />
-        <Route path="/advanced-vault-new" component={() => <Redirect to="/create-vault" />} />
-        <Route path="/specialized-vault" component={() => <Redirect to="/create-vault" />} />
-        <Route path="/specialized-vault-creation" component={() => <Redirect to="/create-vault" />} />
+        <Route path="/create-vault-enhanced" component={CreateVaultEnhancedPage} />
+        <Route path="/vault-types" component={VaultTypesSelector} />
+        <Route path="/advanced-vault" component={AdvancedVaultCreationPage} />
+        <Route path="/advanced-vault-new" component={AdvancedVaultCreationNewPage} />
+        <Route path="/specialized-vault" component={SpecializedVaultCreationPage} />
+        <Route path="/specialized-vault-creation" component={SpecializedVaultCreationPage} />
         <Route path="/my-vaults" component={MyVaults} />
         <Route path="/vault/:id" component={VaultDetails} />
         <Route path="/about" component={About} />

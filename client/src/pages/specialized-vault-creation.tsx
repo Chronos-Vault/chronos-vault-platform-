@@ -6,13 +6,14 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Separator } from "@/components/ui/separator";
-import VaultTypeSelector, { SpecializedVaultType } from '@/components/vault/vault-type-selector';
 import { BlockchainType } from '@/contexts/multi-chain-context';
 import { useTon } from '@/contexts/ton-context';
 import { useEthereum } from '@/contexts/ethereum-context';
 import { useSolana } from '@/contexts/solana-context';
 import { useToast } from '@/hooks/use-toast';
 import { apiRequest } from '@/lib/queryClient';
+// Import both type and const from the component
+import VaultTypeSelector, { SpecializedVaultType } from '@/components/vault/vault-type-selector';
 
 function SpecializedVaultCreation() {
   const [_, navigate] = useLocation();
@@ -449,8 +450,11 @@ function SpecializedVaultCreation() {
             
             <VaultTypeSelector 
               selectedType={selectedVaultType} 
-              onChange={setSelectedVaultType} 
-              onComplete={() => setStep(2)}
+              onChange={(type) => {
+                setSelectedVaultType(type);
+                // Move to next step after selection with a small delay
+                setTimeout(() => setStep(2), 300);
+              }}
             />
           </div>
         );
