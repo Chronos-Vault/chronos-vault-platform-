@@ -6,8 +6,7 @@
  */
 
 import { getSecurityAuditFramework } from './audit-framework';
-import { ConnectorFactory } from '../blockchain/connector-factory';
-import { securityLogger } from '../monitoring/security-logger';
+import { securityLogger, SecurityEventType } from '../monitoring/security-logger';
 import { 
   SecurityAuditLevel, 
   AuditableOperation 
@@ -40,23 +39,32 @@ export class SecurityAuditService {
    */
   public initialize(): void {
     if (this.initialized) {
-      securityLogger.warn('Security Audit Service already initialized');
+      securityLogger.warn('Security Audit Service already initialized', SecurityEventType.SYSTEM_ERROR);
       return;
     }
     
     try {
       // Get blockchain connectors from the factory
-      const connectorFactory = ConnectorFactory.getInstance();
-      const connectors = connectorFactory.getAllConnectors();
+      const ethConnector = require('../blockchain/ethereum-connector').getEthereumConnector();
+      const solConnector = require('../blockchain/solana-connector').getSolanaConnector();
+      const tonConnector = require('../blockchain/ton-connector').getTONConnector();
+      const btcConnector = require('../blockchain/bitcoin-connector').getBitcoinConnector();
+      
+      // Create a map of connectors
+      const connectors = new Map();
+      connectors.set('ethereum', ethConnector);
+      connectors.set('solana', solConnector);
+      connectors.set('ton', tonConnector);
+      connectors.set('bitcoin', btcConnector);
       
       // Initialize the audit framework with the connectors
       const auditFramework = getSecurityAuditFramework();
       auditFramework.initialize(connectors);
       
       this.initialized = true;
-      securityLogger.info('Security Audit Service initialized successfully');
+      securityLogger.info('Security Audit Service initialized successfully', SecurityEventType.SYSTEM_ERROR);
     } catch (error) {
-      securityLogger.error('Failed to initialize Security Audit Service', { error });
+      securityLogger.error('Failed to initialize Security Audit Service', SecurityEventType.SYSTEM_ERROR, { error });
       throw new Error(`Failed to initialize Security Audit Service: ${error instanceof Error ? error.message : String(error)}`);
     }
   }
@@ -75,9 +83,9 @@ export class SecurityAuditService {
       auditFramework.shutdown();
       
       this.initialized = false;
-      securityLogger.info('Security Audit Service shut down successfully');
+      securityLogger.info('Security Audit Service shut down successfully', SecurityEventType.SYSTEM_ERROR);
     } catch (error) {
-      securityLogger.error('Error shutting down Security Audit Service', { error });
+      securityLogger.error('Error shutting down Security Audit Service', SecurityEventType.SYSTEM_ERROR, { error });
     }
   }
   

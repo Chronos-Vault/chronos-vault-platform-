@@ -154,26 +154,38 @@ export class SecurityAuditFramework {
         
         // Log based on threat level
         if (event.threatLevel === 'critical' || event.threatLevel === 'high') {
-          securityLogger.error(`SECURITY THREAT [${event.threatLevel}]: ${result.message}`, {
-            auditId: event.id,
-            operation: event.operation,
-            metadata: event.metadata
-          });
+          securityLogger.error(
+            `SECURITY THREAT [${event.threatLevel}]: ${result.message}`,
+            SecurityEventType.SUSPICIOUS_ACTIVITY,
+            {
+              auditId: event.id,
+              operation: event.operation,
+              metadata: event.metadata
+            }
+          );
           
           // Trigger alerts for critical threats
           if (event.threatLevel === 'critical' && config.securityConfig.logging.alertOnCriticalEvents) {
             this.triggerSecurityAlert(event);
           }
         } else if (event.threatLevel === 'medium') {
-          securityLogger.warn(`Security concern: ${result.message}`, {
-            auditId: event.id,
-            operation: event.operation
-          });
+          securityLogger.warn(
+            `Security concern: ${result.message}`,
+            SecurityEventType.VAULT_MODIFICATION,
+            {
+              auditId: event.id,
+              operation: event.operation
+            }
+          );
         } else {
-          securityLogger.info(`Audit passed: ${result.message}`, {
-            auditId: event.id,
-            operation: event.operation
-          });
+          securityLogger.info(
+            `Audit passed: ${result.message}`,
+            SecurityEventType.VAULT_ACCESS,
+            {
+              auditId: event.id,
+              operation: event.operation
+            }
+          );
         }
       } catch (error) {
         // Mark as failed
@@ -185,11 +197,15 @@ export class SecurityAuditFramework {
         };
         event.threatLevel = 'unknown';
         
-        securityLogger.error('Failed to process security audit', {
-          auditId: event.id,
-          operation: event.operation,
-          error
-        });
+        securityLogger.error(
+          'Failed to process security audit', 
+          SecurityEventType.SYSTEM_ERROR,
+          {
+            auditId: event.id,
+            operation: event.operation,
+            error
+          }
+        );
       }
     }
     
@@ -277,12 +293,16 @@ export class SecurityAuditFramework {
     // - DevOps team
     // - Platform administrators
     
-    securityLogger.error('CRITICAL SECURITY ALERT TRIGGERED', {
-      auditId: event.id,
-      operation: event.operation,
-      metadata: event.metadata,
-      result: event.result
-    });
+    securityLogger.error(
+      'CRITICAL SECURITY ALERT TRIGGERED',
+      SecurityEventType.SUSPICIOUS_ACTIVITY,
+      {
+        auditId: event.id,
+        operation: event.operation,
+        metadata: event.metadata,
+        result: event.result
+      }
+    );
     
     // For development, just log the alert
     if (config.isDevelopmentMode) {
