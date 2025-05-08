@@ -20,14 +20,35 @@ const featureFlags = {
   ENABLE_ADVANCED_SECURITY_LOGGING: true,
   ENABLE_AI_SECURITY_MONITORING: false, // Not ready for production yet
   ENABLE_TOKEN_STAKING: true,
+  
   // Check if ENABLE_DEVELOPMENT_MODE is explicitly set in env, otherwise fall back to NODE_ENV check
   ENABLE_DEVELOPMENT_MODE: process.env.ENABLE_DEVELOPMENT_MODE === 'true' 
     ? true 
     : (process.env.ENABLE_DEVELOPMENT_MODE === 'false' 
         ? false 
         : process.env.NODE_ENV !== 'production'),
-  // Disable blockchain connector initialization in case of compatibility issues
-  SKIP_BLOCKCHAIN_CONNECTOR_INIT: process.env.SKIP_BLOCKCHAIN_CONNECTOR_INIT === 'true' || true, // defaulting to true for now to fix startup issues
+  
+  // Enhanced blockchain connector simulation flags
+  // Master flag - if true, all chains are simulated unless overridden by specific flags
+  SKIP_BLOCKCHAIN_CONNECTOR_INIT: process.env.SKIP_BLOCKCHAIN_CONNECTOR_INIT === 'true' || true, // defaulting to true for now
+  
+  // Chain-specific simulation flags - these override the master flag when explicitly set
+  // If master flag is true but a specific flag is false, that specific chain will use real connections
+  SIMULATE_ETHEREUM: process.env.SIMULATE_ETHEREUM === 'true' || 
+    (process.env.SIMULATE_ETHEREUM !== 'false' && 
+     (process.env.SKIP_BLOCKCHAIN_CONNECTOR_INIT === 'true' || true)),
+  
+  SIMULATE_SOLANA: process.env.SIMULATE_SOLANA === 'true' || 
+    (process.env.SIMULATE_SOLANA !== 'false' && 
+     (process.env.SKIP_BLOCKCHAIN_CONNECTOR_INIT === 'true' || true)),
+  
+  SIMULATE_TON: process.env.SIMULATE_TON === 'true' || 
+    (process.env.SIMULATE_TON !== 'false' && 
+     (process.env.SKIP_BLOCKCHAIN_CONNECTOR_INIT === 'true' || true)),
+  
+  SIMULATE_BITCOIN: process.env.SIMULATE_BITCOIN === 'true' || 
+    (process.env.SIMULATE_BITCOIN !== 'false' && 
+     (process.env.SKIP_BLOCKCHAIN_CONNECTOR_INIT === 'true' || true)),
 };
 
 // Blockchain-specific configuration
@@ -134,6 +155,126 @@ const feeStructure = {
   },
 };
 
+// Simulation data for realistic testnet behavior
+const simulationConfig = {
+  // Realistic transaction data for simulations
+  ethereum: {
+    walletAddress: "0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf", // Standard Ethereum test address
+    balances: {
+      default: "10.0", // ETH
+      cvt: "5000.0" // CVT token balance
+    },
+    transactions: {
+      // Sample of recent transactions for the simulated wallet
+      recentTxs: [
+        {
+          hash: "0xabc123def456",
+          timestamp: new Date(Date.now() - 86400000), // 1 day ago
+          type: "vault_creation",
+          status: "confirmed"
+        },
+        {
+          hash: "0xdef456abc789",
+          timestamp: new Date(Date.now() - 43200000), // 12 hours ago
+          type: "asset_deposit",
+          status: "confirmed"
+        }
+      ],
+      // Success rates for different operation types
+      successRates: {
+        vaultCreation: 0.98, // 98% success rate
+        assetDeposit: 0.99,
+        assetWithdrawal: 0.97,
+        beneficiaryUpdate: 0.995
+      },
+      // Realistic gas ranges for different operation types (in gwei)
+      gasPrices: {
+        low: 20,
+        average: 40,
+        high: 80
+      }
+    },
+    simulatedDelay: {
+      // Realistic delays for different operations (in ms)
+      transaction: {
+        min: 2000,
+        max: 10000
+      },
+      confirmation: {
+        min: 5000,
+        max: 20000
+      }
+    }
+  },
+  
+  solana: {
+    walletAddress: "Gh9ZwEmdLJ8DscKNTkTqPbNwLNNBjuSzaG9Vp2KGtKJr", // Solana test address
+    balances: {
+      default: "20.0", // SOL
+      cvt: "5000.0" // CVT token balance
+    },
+    simulatedDelay: {
+      transaction: {
+        min: 500, // Solana is faster
+        max: 2500
+      },
+      confirmation: {
+        min: 1000,
+        max: 5000
+      }
+    }
+  },
+  
+  ton: {
+    walletAddress: "EQDrjaLahXa1xiM02skvUYxM6UGxu5taOUbjFMEVQiXXdNLQ", // TON test address
+    balances: {
+      default: "100.0", // TON
+      cvt: "5000.0" // CVT token balance
+    },
+    simulatedDelay: {
+      transaction: {
+        min: 1000,
+        max: 5000
+      },
+      confirmation: {
+        min: 3000,
+        max: 15000
+      }
+    }
+  },
+  
+  bitcoin: {
+    walletAddress: "tb1qw508d6qejxtdg4y5r3zarvary0c5xw7kxpjzsx", // Bitcoin testnet address
+    balances: {
+      default: "0.5" // BTC
+    },
+    simulatedDelay: {
+      transaction: {
+        min: 10000, // Bitcoin is slower
+        max: 30000
+      },
+      confirmation: {
+        min: 600000, // ~10 minutes
+        max: 3600000 // up to 1 hour
+      }
+    },
+    halvingInfo: {
+      // Data for Bitcoin halving simulation
+      currentBlock: 840000,
+      nextHalvingBlock: 1050000,
+      currentReward: 3.125,
+      nextReward: 1.5625,
+      // Function to calculate estimated halving date
+      getEstimatedHalvingDate: () => {
+        const blocksRemaining = 1050000 - 840000;
+        const avgBlockTimeSeconds = 600; // 10 minutes
+        const totalSeconds = blocksRemaining * avgBlockTimeSeconds;
+        return new Date(Date.now() + totalSeconds * 1000);
+      }
+    }
+  }
+};
+
 // Main configuration object
 const config = {
   port: process.env.PORT ? parseInt(process.env.PORT) : 5000,
@@ -146,6 +287,7 @@ const config = {
   blockchainConfig,
   securityConfig,
   feeStructure,
+  simulation: simulationConfig, // Add simulation data to config
   
   // Get a feature flag value with optional override
   getFeatureFlag(flagName: keyof typeof featureFlags, overrideValue?: boolean): boolean {
@@ -154,6 +296,22 @@ const config = {
     }
     return featureFlags[flagName];
   },
+  
+  // Helper to check if a specific blockchain should be simulated
+  shouldSimulateBlockchain(chain: 'ethereum' | 'solana' | 'ton' | 'bitcoin'): boolean {
+    switch (chain) {
+      case 'ethereum':
+        return this.featureFlags.SIMULATE_ETHEREUM;
+      case 'solana':
+        return this.featureFlags.SIMULATE_SOLANA;
+      case 'ton':
+        return this.featureFlags.SIMULATE_TON;
+      case 'bitcoin':
+        return this.featureFlags.SIMULATE_BITCOIN;
+      default:
+        return this.featureFlags.SKIP_BLOCKCHAIN_CONNECTOR_INIT;
+    }
+  }
 };
 
 export default config;

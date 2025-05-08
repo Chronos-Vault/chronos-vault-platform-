@@ -171,12 +171,27 @@ export class EthereumConnector implements BlockchainConnector {
    * Get the balance of an address in ETH
    */
   async getBalance(address: string): Promise<string> {
-    // If blockchain connector is set to be skipped, return simulated data
-    if (config.featureFlags.SKIP_BLOCKCHAIN_CONNECTOR_INIT || !this.provider) {
+    // Check if this specific blockchain should be simulated
+    if (config.shouldSimulateBlockchain('ethereum') || !this.provider) {
       if (config.isDevelopmentMode) {
-        return "1000.0"; // Simulated balance in development mode
+        // Use more realistic simulation data from config
+        // If the address matches our simulation address, use the preconfigured balance
+        if (address.toLowerCase() === config.simulation.ethereum.walletAddress.toLowerCase()) {
+          return config.simulation.ethereum.balances.default;
+        }
+        
+        // For other addresses, generate a randomized balance to simulate testnet variety
+        // Using a hash function of the address to always return the same value for the same address
+        const seed = address.toLowerCase().split('').reduce((a, b) => {
+          return a + b.charCodeAt(0);
+        }, 0);
+        
+        // Generate a pseudo-random balance between 0.1 and 50 ETH
+        const randomBalance = (seed % 500) / 10 + 0.1;
+        return randomBalance.toFixed(4);
       }
-      throw new Error('Provider not initialized due to SKIP_BLOCKCHAIN_CONNECTOR_INIT flag');
+      
+      throw new Error('Provider not initialized or simulation mode enabled');
     }
     
     try {
@@ -193,13 +208,41 @@ export class EthereumConnector implements BlockchainConnector {
    */
   async createVault(params: VaultCreationParams): Promise<TransactionResult> {
     try {
-      if (!this.vaultContract || !this.signer) {
+      // Check if this specific blockchain should be simulated
+      if (config.shouldSimulateBlockchain('ethereum') || !this.vaultContract || !this.signer) {
         if (config.isDevelopmentMode) {
           securityLogger.info(`Creating simulated Ethereum vault in development mode`);
+          
+          // Add realistic simulation with configurable success rates and delays
+          const simConfig = config.simulation.ethereum;
+          
+          // Apply success rate simulation - sometimes transactions can fail
+          const isSuccessful = Math.random() <= simConfig.transactions.successRates.vaultCreation;
+          
+          if (!isSuccessful) {
+            await this.simulateDelay(simConfig.simulatedDelay.transaction);
+            return {
+              success: false,
+              error: "Transaction failed: insufficient gas or network congestion",
+              chainId: this.chainId
+            };
+          }
+          
+          // Simulate transaction delay
+          await this.simulateDelay(simConfig.simulatedDelay.transaction);
+          
+          // Generate deterministic but unique vault ID
+          const timestamp = Date.now();
+          const vaultId = `eth_vault_${timestamp}_${params.owner.substring(0, 6)}`;
+          const txHash = `0x${timestamp.toString(16)}_${Math.floor(Math.random() * 1000000).toString(16)}`;
+          
+          // Simulate confirmation delay
+          await this.simulateDelay(simConfig.simulatedDelay.confirmation);
+          
           return {
             success: true,
-            transactionHash: `eth_${Date.now()}_${Math.floor(Math.random() * 1000000)}`,
-            vaultId: `eth_vault_${Date.now()}`,
+            transactionHash: txHash,
+            vaultId,
             chainId: this.chainId
           };
         }
@@ -714,6 +757,26 @@ export class EthereumConnector implements BlockchainConnector {
   }
   
   // Private utility methods
+  
+  /**
+   * Helper method to simulate realistic blockchain delays in development mode
+   * @param delayConfig Object containing min and max delay times in milliseconds
+   * @returns Promise that resolves after a random delay between min and max
+   */
+  private async simulateDelay(delayConfig: { min: number, max: number }): Promise<void> {
+    if (!config.isDevelopmentMode) return;
+    
+    const delayTime = Math.floor(
+      Math.random() * (delayConfig.max - delayConfig.min + 1) + delayConfig.min
+    );
+    
+    // Only log in verbose mode to avoid cluttering the logs
+    if (process.env.VERBOSE_LOGGING === 'true') {
+      securityLogger.debug(`Simulating Ethereum blockchain delay: ${delayTime}ms`);
+    }
+    
+    return new Promise(resolve => setTimeout(resolve, delayTime));
+  }
   
   /**
    * Generate simulated vault info for development mode
