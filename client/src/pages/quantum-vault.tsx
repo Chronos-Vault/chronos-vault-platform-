@@ -342,6 +342,12 @@ export default function QuantumVaultPage() {
               <CardTitle className="text-lg text-white">Vault Actions</CardTitle>
             </CardHeader>
             <CardContent className="space-y-2 pt-4">
+              <Link href="/specialized-vault-creation?type=quantum-resistant">
+                <Button className="w-full justify-start bg-[#1A1029] hover:bg-[#261540] border-[#6B00D7]/30 text-white">
+                  <Wallet className="mr-2 h-4 w-4 text-[#FF5AF7]" />
+                  Cryptocurrency Storage Options
+                </Button>
+              </Link>
               <Button className="w-full justify-start bg-[#1A1029] hover:bg-[#261540] border-[#6B00D7]/30 text-white">
                 <Lock className="mr-2 h-4 w-4 text-[#FF5AF7]" />
                 Multi-Chain Access Controls
