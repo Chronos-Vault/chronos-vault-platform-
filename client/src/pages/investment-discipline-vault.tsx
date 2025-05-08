@@ -581,6 +581,22 @@ function InvestmentDisciplineVault() {
                     Define price targets and percentage of holdings to sell at each target
                   </p>
                 </div>
+                
+                <Separator className="my-4 bg-gray-800" />
+                
+                {/* Technical Indicators Section */}
+                <div>
+                  <Label className="text-sm text-gray-300 mb-3 block">Technical Analysis Triggers</Label>
+                  
+                  <TechnicalIndicators 
+                    indicators={technicalIndicators}
+                    onChange={setTechnicalIndicators}
+                  />
+                  
+                  <p className="text-xs text-gray-500 mt-2">
+                    Set up automated exit conditions based on technical indicators with Chainlink oracle data
+                  </p>
+                </div>
               </div>
             </div>
           </div>
