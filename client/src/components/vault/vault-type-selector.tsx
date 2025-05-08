@@ -12,7 +12,12 @@ export type SpecializedVaultType =
   | 'dynamic' 
   | 'nft-powered' 
   | 'unique'
-  | 'ai-intent-inheritance';
+  | 'ai-intent-inheritance'
+  | 'memory-capsule'
+  | 'quantum-resistant'
+  | 'composite-vault'
+  | 'geo-temporal'
+  | 'diamond-hands';
 
 // Create an object with the values as a namespace
 export const SpecializedVaultType = {
@@ -26,7 +31,12 @@ export const SpecializedVaultType = {
   DYNAMIC: 'dynamic' as SpecializedVaultType,
   NFT_POWERED: 'nft-powered' as SpecializedVaultType,
   UNIQUE: 'unique' as SpecializedVaultType,
-  AI_INTENT_INHERITANCE: 'ai-intent-inheritance' as SpecializedVaultType
+  AI_INTENT_INHERITANCE: 'ai-intent-inheritance' as SpecializedVaultType,
+  MEMORY_CAPSULE: 'memory-capsule' as SpecializedVaultType,
+  QUANTUM_RESISTANT: 'quantum-resistant' as SpecializedVaultType,
+  COMPOSITE_VAULT: 'composite-vault' as SpecializedVaultType,
+  GEO_TEMPORAL: 'geo-temporal' as SpecializedVaultType,
+  DIAMOND_HANDS: 'diamond-hands' as SpecializedVaultType
 };
 
 interface VaultTypeProps {
@@ -233,6 +243,97 @@ const VaultTypeSelector: React.FC<VaultTypeProps> = ({ selectedType, onChange })
           "AI-powered smart contract generation",
           "Conditional inheritance rules",
           "Adaptable to complex real-world scenarios"
+        ]}
+      />
+
+      {/* New specialized vaults */}
+      <VaultTypeCard 
+        type="memory-capsule"
+        title="Memory Capsule"
+        description="Multimedia vault unlocking on set date"
+        icon="📦"
+        color="#FF3A8C"
+        isSelected={selectedType === 'memory-capsule'}
+        onClick={() => onChange('memory-capsule')}
+        securityLevel={4}
+        complexityLevel={3}
+        features={[
+          "Multimedia content support",
+          "Synchronized asset unlocking",
+          "Interactive memory experiences",
+          "Gift messaging and personalization"
+        ]}
+      />
+
+      <VaultTypeCard 
+        type="quantum-resistant"
+        title="Quantum-Resistant"
+        description="Progressive security that scales with value"
+        icon="🔐"
+        color="#00B8FF"
+        isSelected={selectedType === 'quantum-resistant'}
+        onClick={() => onChange('quantum-resistant')}
+        securityLevel={5}
+        complexityLevel={4}
+        features={[
+          "Auto-scaling security tiers",
+          "Post-quantum cryptography",
+          "Value-based security enforcement",
+          "Adaptive security protocols"
+        ]}
+      />
+
+      <VaultTypeCard 
+        type="composite-vault"
+        title="Composite Vault"
+        description="Fragment assets across multiple chains"
+        icon="🧩"
+        color="#00E5A0"
+        isSelected={selectedType === 'composite-vault'}
+        onClick={() => onChange('composite-vault')}
+        securityLevel={5}
+        complexityLevel={5}
+        features={[
+          "Multi-chain fragmentation",
+          "Distributed asset storage",
+          "Cross-chain verification mechanism",
+          "Enhanced disaster recovery"
+        ]}
+      />
+
+      <VaultTypeCard 
+        type="geo-temporal"
+        title="Geo-Temporal"
+        description="Location and time-based restrictions"
+        icon="🌎"
+        color="#47A0FF"
+        isSelected={selectedType === 'geo-temporal'}
+        onClick={() => onChange('geo-temporal')}
+        securityLevel={5}
+        complexityLevel={4}
+        features={[
+          "Combined location & time validation",
+          "Geographical access boundaries",
+          "Temporal access windows",
+          "Presence verification protocol"
+        ]}
+      />
+
+      <VaultTypeCard 
+        type="diamond-hands"
+        title="Diamond Hands"
+        description="Enforce investment holding periods"
+        icon="💎"
+        color="#3F51FF"
+        isSelected={selectedType === 'diamond-hands'}
+        onClick={() => onChange('diamond-hands')}
+        securityLevel={4}
+        complexityLevel={3}
+        features={[
+          "Programmed hodling enforcement",
+          "Market condition triggers",
+          "Strategic exit planning",
+          "Investment discipline mechanisms"
         ]}
       />
     </div>
