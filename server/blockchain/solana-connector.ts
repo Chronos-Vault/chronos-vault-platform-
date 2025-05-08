@@ -827,6 +827,101 @@ export class SolanaConnector implements BlockchainConnector {
     };
   }
   
+  /**
+   * Get the status of a multi-signature request
+   */
+  async getMultiSigStatus(requestId: string): Promise<any> {
+    if (config.isDevelopmentMode) {
+      return {
+        requestId,
+        operation: 'unlock',
+        vaultId: `sol_vault_${Date.now().toString(36).substring(5, 9)}`,
+        initiator: this.walletAddress || this.keypair?.publicKey.toString() || 'SimulatedSolanaAddress',
+        approvals: 2,
+        requiredApprovals: 3,
+        executed: false,
+        chainId: this.chainId
+      };
+    }
+    throw new Error('Multi-signature status retrieval not implemented yet for Solana');
+  }
+  
+  /**
+   * Initiate a vault sync across chains
+   */
+  async initiateVaultSync(vaultId: string, targetChain: string): Promise<any> {
+    if (config.isDevelopmentMode) {
+      return {
+        success: true,
+        transactionHash: `sol_sync_${Date.now()}_${Math.floor(Math.random() * 1000000)}`,
+        vaultId,
+        chainId: this.chainId
+      };
+    }
+    throw new Error('Cross-chain vault sync not implemented yet for Solana');
+  }
+  
+  /**
+   * Verify a vault across multiple chains
+   */
+  async verifyVaultAcrossChains(vaultId: string): Promise<Record<string, any>> {
+    if (config.isDevelopmentMode) {
+      return {
+        [this.chainId]: {
+          isValid: true,
+          signatures: ['SimulatedSolanaSignature1', 'SimulatedSolanaSignature2'],
+          verifiedAt: new Date(),
+          chainId: this.chainId
+        },
+        'ethereum': {
+          isValid: true,
+          signatures: ['0xSimulatedEthereumSignature1'],
+          verifiedAt: new Date(),
+          chainId: 'ethereum'
+        },
+        'ton': {
+          isValid: true,
+          signatures: ['SimulatedTONSignature1'],
+          verifiedAt: new Date(),
+          chainId: 'ton'
+        }
+      };
+    }
+    throw new Error('Cross-chain verification not implemented yet for Solana');
+  }
+  
+  /**
+   * Execute a chain-specific method
+   */
+  async executeChainSpecificMethod(methodName: string, params: any): Promise<any> {
+    if (config.isDevelopmentMode) {
+      return { success: true, result: `Simulated execution of ${methodName} on Solana` };
+    }
+    throw new Error(`Chain-specific method ${methodName} not implemented for Solana`);
+  }
+  
+  /**
+   * Subscribe to vault events
+   */
+  subscribeToVaultEvents(vaultId: string, callback: (event: any) => void): () => void {
+    if (config.isDevelopmentMode) {
+      // Return an unsubscribe function
+      return () => {};
+    }
+    throw new Error('Vault event subscription not implemented yet for Solana');
+  }
+  
+  /**
+   * Subscribe to blockchain events
+   */
+  subscribeToBlockchainEvents(eventType: string, callback: (event: any) => void): () => void {
+    if (config.isDevelopmentMode) {
+      // Return an unsubscribe function
+      return () => {};
+    }
+    throw new Error('Blockchain event subscription not implemented yet for Solana');
+  }
+  
   // Private utility methods
   
   /**

@@ -656,6 +656,102 @@ export class TonConnector implements BlockchainConnector {
     };
   }
   
+  /**
+   * Get the status of a multi-signature request
+   */
+  async getMultiSigStatus(requestId: string): Promise<any> {
+    if (config.isDevelopmentMode) {
+      return {
+        requestId,
+        operation: 'unlock',
+        vaultId: `ton_vault_${Date.now().toString(36).substring(5, 9)}`,
+        initiator: this.walletAddress || 'EQD4FPq-PRDieyQKkizFTRtSDyucUIqrj0qZu4_6EKgELI-Q',
+        approvals: 3,
+        requiredApprovals: 3,
+        executed: true,
+        executionTimestamp: new Date(Date.now() - 60000), // 1 minute ago
+        chainId: this.chainId
+      };
+    }
+    throw new Error('Multi-signature status retrieval not implemented yet for TON');
+  }
+  
+  /**
+   * Initiate a vault sync across chains
+   */
+  async initiateVaultSync(vaultId: string, targetChain: string): Promise<any> {
+    if (config.isDevelopmentMode) {
+      return {
+        success: true,
+        transactionHash: `ton_sync_${Date.now()}_${Math.floor(Math.random() * 1000000)}`,
+        vaultId,
+        chainId: this.chainId
+      };
+    }
+    throw new Error('Cross-chain vault sync not implemented yet for TON');
+  }
+  
+  /**
+   * Verify a vault across multiple chains
+   */
+  async verifyVaultAcrossChains(vaultId: string): Promise<Record<string, any>> {
+    if (config.isDevelopmentMode) {
+      return {
+        [this.chainId]: {
+          isValid: true,
+          signatures: ['SimulatedTONSignature1', 'SimulatedTONSignature2'],
+          verifiedAt: new Date(),
+          chainId: this.chainId
+        },
+        'ethereum': {
+          isValid: true,
+          signatures: ['0xSimulatedEthereumSignature1'],
+          verifiedAt: new Date(),
+          chainId: 'ethereum'
+        },
+        'solana': {
+          isValid: true,
+          signatures: ['SimulatedSolanaSignature1'],
+          verifiedAt: new Date(),
+          chainId: 'solana'
+        }
+      };
+    }
+    throw new Error('Cross-chain verification not implemented yet for TON');
+  }
+  
+  /**
+   * Execute a chain-specific method
+   */
+  async executeChainSpecificMethod(methodName: string, params: any): Promise<any> {
+    if (config.isDevelopmentMode) {
+      return { success: true, result: `Simulated execution of ${methodName} on TON` };
+    }
+    throw new Error(`Chain-specific method ${methodName} not implemented for TON`);
+  }
+  
+  /**
+   * Subscribe to vault events
+   */
+  subscribeToVaultEvents(vaultId: string, callback: (event: any) => void): () => void {
+    if (config.isDevelopmentMode) {
+      // Return an unsubscribe function
+      return () => {};
+    }
+    throw new Error('Vault event subscription not implemented yet for TON');
+  }
+  
+  /**
+   * Subscribe to blockchain events
+   */
+  subscribeToBlockchainEvents(eventType: string, callback: (event: any) => void): () => void {
+    if (config.isDevelopmentMode) {
+      // Return an unsubscribe function
+      return () => {};
+    }
+    throw new Error('Blockchain event subscription not implemented yet for TON');
+  }
+  
   // Private utility methods
   
   /**
