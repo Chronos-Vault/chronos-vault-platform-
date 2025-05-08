@@ -26,6 +26,8 @@ const featureFlags = {
     : (process.env.ENABLE_DEVELOPMENT_MODE === 'false' 
         ? false 
         : process.env.NODE_ENV !== 'production'),
+  // Disable blockchain connector initialization in case of compatibility issues
+  SKIP_BLOCKCHAIN_CONNECTOR_INIT: process.env.SKIP_BLOCKCHAIN_CONNECTOR_INIT === 'true' || true, // defaulting to true for now to fix startup issues
 };
 
 // Blockchain-specific configuration

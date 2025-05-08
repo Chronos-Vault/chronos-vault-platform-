@@ -67,14 +67,27 @@ export class EthereumConnector implements BlockchainConnector {
     this.isTestnet = isTestnet;
     this.networkVersion = isTestnet ? 'sepolia' : 'mainnet';
     
+    // Skip blockchain initialization if the flag is set
+    if (config.featureFlags.SKIP_BLOCKCHAIN_CONNECTOR_INIT) {
+      securityLogger.info('Skipping Ethereum connector initialization due to SKIP_BLOCKCHAIN_CONNECTOR_INIT flag');
+      return;
+    }
+    
     // Determine RPC URL based on network
+    // Use a more reliable public RPC URL if the environment variables are not set
     const rpcUrl = isTestnet
-      ? process.env.ETHEREUM_RPC_URL || "https://eth-sepolia.g.alchemy.com/v2/demo"  // Default to a public RPC URL
-      : process.env.ETHEREUM_MAINNET_RPC_URL || "https://eth-mainnet.g.alchemy.com/v2/demo";
+      ? process.env.ETHEREUM_RPC_URL || "https://ethereum-sepolia-rpc.publicnode.com"
+      : process.env.ETHEREUM_MAINNET_RPC_URL || "https://eth.llamarpc.com";
       
-    // Initialize provider
+    // Initialize provider (ethers v6 API) with specific network options to avoid additional network calls
     try {
-      this.provider = new ethers.providers.JsonRpcProvider(rpcUrl);
+      const networkName = isTestnet ? 'sepolia' : 'mainnet';
+      const networkOptions = {
+        name: networkName,
+        chainId: isTestnet ? 11155111 : 1,
+        ensAddress: null // Disable ENS resolution to avoid errors
+      };
+      this.provider = new ethers.JsonRpcProvider(rpcUrl, networkOptions, { staticNetwork: true });
       
       // Initialize contract based on network
       const contractAddresses = isTestnet ? CONTRACT_ADDRESSES.testnet : CONTRACT_ADDRESSES.mainnet;
@@ -149,9 +162,17 @@ export class EthereumConnector implements BlockchainConnector {
    * Get the balance of an address in ETH
    */
   async getBalance(address: string): Promise<string> {
+    // If blockchain connector is set to be skipped, return simulated data
+    if (config.featureFlags.SKIP_BLOCKCHAIN_CONNECTOR_INIT || !this.provider) {
+      if (config.isDevelopmentMode) {
+        return "1000.0"; // Simulated balance in development mode
+      }
+      throw new Error('Provider not initialized due to SKIP_BLOCKCHAIN_CONNECTOR_INIT flag');
+    }
+    
     try {
       const balance = await this.provider.getBalance(address);
-      return ethers.utils.formatEther(balance);
+      return ethers.formatEther(balance);
     } catch (error) {
       securityLogger.error(`Failed to get Ethereum balance for ${address}`, { error });
       throw new Error(`Failed to get balance: ${error}`);
@@ -240,7 +261,7 @@ export class EthereumConnector implements BlockchainConnector {
         owner,
         unlockDate: new Date(unlockTimestamp.toNumber() * 1000),
         isLocked,
-        balance: ethers.utils.formatEther(balance),
+        balance: ethers.formatEther(balance),
         chainId: this.chainId,
         network: this.networkVersion,
         securityLevel: await this.determineVaultSecurityLevel(vaultId),
@@ -289,7 +310,7 @@ export class EthereumConnector implements BlockchainConnector {
       let tx;
       if (assetType === 'eth' || assetType === 'native') {
         // For native ETH, use value parameter
-        const weiAmount = ethers.utils.parseEther(amount);
+        const weiAmount = ethers.parseEther(amount);
         tx = await this.vaultContract.lockAssets(vaultId, { value: weiAmount });
       } else {
         // For other assets, we would need to interact with ERC20 contracts
@@ -452,7 +473,7 @@ export class EthereumConnector implements BlockchainConnector {
       const [owner, , isLocked, ] = await this.vaultContract.getVaultInfo(vaultId);
       
       // Verify owner address is valid
-      if (!ethers.utils.isAddress(owner)) {
+      if (!ethers.isAddress(owner)) {
         return {
           isValid: false,
           error: 'Invalid vault owner address',
@@ -509,7 +530,7 @@ export class EthereumConnector implements BlockchainConnector {
         return true;
       }
       
-      const recoveredAddress = ethers.utils.verifyMessage(message, signature);
+      const recoveredAddress = ethers.verifyMessage(message, signature);
       return recoveredAddress.toLowerCase() === address.toLowerCase();
     } catch (error) {
       securityLogger.error('Failed to verify Ethereum signature', { error, address, messagePreview: message.slice(0, 32) });

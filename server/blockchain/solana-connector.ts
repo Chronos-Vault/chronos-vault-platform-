@@ -56,6 +56,12 @@ export class SolanaConnector implements BlockchainConnector {
     this.isTestnet = isTestnet;
     this.networkVersion = isTestnet ? 'devnet' : 'mainnet-beta';
     
+    // Skip blockchain initialization if the flag is set
+    if (config.featureFlags.SKIP_BLOCKCHAIN_CONNECTOR_INIT) {
+      securityLogger.info('Skipping Solana connector initialization due to SKIP_BLOCKCHAIN_CONNECTOR_INIT flag');
+      return;
+    }
+    
     // Determine RPC URL based on network
     const rpcUrl = isTestnet
       ? process.env.SOLANA_RPC_URL || 'https://api.devnet.solana.com'

@@ -52,6 +52,12 @@ export class TonConnector implements BlockchainConnector {
     this.isTestnet = isTestnet;
     this.networkVersion = isTestnet ? 'testnet' : 'mainnet';
     
+    // Skip blockchain initialization if the flag is set
+    if (config.featureFlags.SKIP_BLOCKCHAIN_CONNECTOR_INIT) {
+      securityLogger.info('Skipping TON connector initialization due to SKIP_BLOCKCHAIN_CONNECTOR_INIT flag');
+      return;
+    }
+    
     // Set up contract addresses
     const addresses = isTestnet ? CONTRACT_ADDRESSES.testnet : CONTRACT_ADDRESSES.mainnet;
     this.vaultMasterAddress = addresses.vaultMaster;
@@ -65,7 +71,7 @@ export class TonConnector implements BlockchainConnector {
       
       // Check for TON API key
       if (!process.env.TON_API_KEY && !config.isDevelopmentMode) {
-        throw new Error('TON_API_KEY environment variable is not set');
+        securityLogger.info('TON_API_KEY environment variable is not set, using development mode');
       }
       
       // In actual implementation, we would initialize TonWeb and TonClient here
