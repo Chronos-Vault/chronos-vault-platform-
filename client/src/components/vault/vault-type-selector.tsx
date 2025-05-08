@@ -307,7 +307,7 @@ const VaultTypeCard: React.FC<VaultTypeCardProps> = ({
             {Array.from({ length: 5 }).map((_, i) => (
               <div 
                 key={`security-${i}`}
-                className={`w-1.5 h-2 sm:h-3 mx-0.5 rounded-sm ${i < securityLevel ? `bg-[${color}]` : 'bg-gray-700'}`}
+                className={`w-1.5 h-2 sm:h-3 mx-0.5 rounded-sm ${i < securityLevel ? '' : 'bg-gray-700'}`}
                 style={{ backgroundColor: i < securityLevel ? color : undefined }}
               />
             ))}
@@ -320,6 +320,7 @@ const VaultTypeCard: React.FC<VaultTypeCardProps> = ({
               <div 
                 key={`complexity-${i}`}
                 className={`w-1.5 h-2 sm:h-3 mx-0.5 rounded-sm ${i < complexityLevel ? 'bg-gray-400' : 'bg-gray-700'}`}
+                style={{ backgroundColor: i < complexityLevel ? '#a0a0a0' : undefined }}
               />
             ))}
           </div>
