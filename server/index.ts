@@ -10,6 +10,7 @@ import { performanceOptimizer } from './performance/optimization-service';
 import { systemHealthMonitor } from './monitoring/system-health-monitor';
 import { securityLogger, SecurityEventType } from './monitoring/security-logger';
 import { setupVite, serveStatic } from './vite';
+import { getSecurityAuditService } from './security/security-audit-service';
 
 // Create Express app
 const app = express();
@@ -24,6 +25,16 @@ app.use(bodyParser.json());
     // Initialize performance optimization service
     await performanceOptimizer.initialize();
     console.log('Performance optimization service initialized successfully');
+    
+    // Initialize security audit service
+    try {
+      const securityAuditService = getSecurityAuditService();
+      securityAuditService.initialize();
+      console.log('Security Audit Service initialized successfully');
+    } catch (securityError: any) {
+      console.warn('Security Audit Service initialization delayed (blockchain connectors not ready):', securityError.message);
+      // We'll initialize later after blockchain connectors are ready
+    }
     
     // Log server startup
     securityLogger.info(
