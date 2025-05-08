@@ -10,6 +10,7 @@ import healthRoutes from './api/health-routes';
 import incidentRoutes from './api/incident-routes';
 import paymentRoutes from './api/payment-routes';
 import vaultVerificationRoutes, { initializeVaultVerification } from './api/vault-verification-routes';
+import { intentInheritanceRouter } from './api/intent-inheritance-routes';
 import { systemHealthMonitor } from './monitoring/system-health-monitor';
 import { incidentResponseSystem } from './monitoring/incident-response';
 import { ConnectorFactory } from './blockchain/connector-factory';
@@ -37,6 +38,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Initialize and register vault verification routes
   const crossChainVerification = initializeVaultVerification(connectorFactory);
   apiRouter.use('/vault-verification', vaultVerificationRoutes);
+  
+  // Register intent-based inheritance routes
+  apiRouter.use('/intent-inheritance', intentInheritanceRouter);
   
   // Add event listeners for verification status updates
   crossChainVerification.on('verification:completed', (result) => {
