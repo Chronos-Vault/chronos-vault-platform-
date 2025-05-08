@@ -57,6 +57,7 @@ const Navbar = () => {
         { name: "Security Features", href: "/security", icon: "🛡️", highlight: true },
         { name: "Transaction Monitor", href: "/transaction-monitor", icon: "📊", highlight: true },
         { name: "Advanced Security Demo", href: "/security-verification-demo", icon: "🔍", highlight: true },
+        { name: "ZK Privacy Demo", href: "/zk-privacy-demo", icon: "🔐", highlight: true },
         { name: "Vault Explorer", href: "/vault-explorer", icon: "🔎", highlight: true },
       ]
     },
@@ -188,6 +189,15 @@ const Navbar = () => {
               </Button>
             </Link>
 
+            <Link href="/zk-privacy-demo">
+              <Button variant="outline" className="hidden lg:flex relative items-center gap-1 mr-1 border-[#6B00D7]/50 hover:border-[#FF5AF7]/80 hover:bg-[#6B00D7]/10 text-[#FF5AF7]">
+                <span className="flex items-center gap-1">
+                  <span>🔐</span> ZK Privacy
+                </span>
+                <span className="absolute -top-2 -right-2 bg-[#FF5AF7] text-white text-[8px] px-1.5 py-0.5 rounded-full font-bold tracking-wider shadow-md shadow-[#FF5AF7]/30 animate-pulse">NEW</span>
+              </Button>
+            </Link>
+
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button variant="ghost" className="flex items-center gap-1">
@@ -228,6 +238,11 @@ const Navbar = () => {
                 <Link href="/audit-test">
                   <DropdownMenuItem className="cursor-pointer">
                     <span className="flex items-center gap-1"><span>🔍</span> Smart Contract Audit</span>
+                  </DropdownMenuItem>
+                </Link>
+                <Link href="/zk-privacy-demo">
+                  <DropdownMenuItem className="cursor-pointer">
+                    <span className="flex items-center gap-1"><span>🔐</span> ZK Privacy Demo</span>
                   </DropdownMenuItem>
                 </Link>
               </DropdownMenuContent>
