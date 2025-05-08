@@ -9,7 +9,69 @@ import { z } from 'zod';
 const router = Router();
 
 // In-memory storage for vaults during development
-let vaults: any[] = [];
+let vaults: any[] = [
+  // Sample quantum vaults for testing
+  {
+    id: "quantum-vault-1",
+    name: "High-Value Quantum Vault",
+    description: "Quantum-resistant vault with progressive security for high-value assets",
+    type: VaultType.QUANTUM_PROGRESSIVE,
+    value: 125000,
+    createdAt: new Date(Date.now() - 20 * 24 * 60 * 60 * 1000).toISOString(), // 20 days ago
+    updatedAt: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000).toISOString(), // 5 days ago
+    securityLevel: "advanced",
+    securityInfo: {
+      vaultId: "quantum-vault-1",
+      securityStrength: 90,
+      currentTier: "advanced",
+      lastUpgrade: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000).toISOString(),
+      hasZeroKnowledgeProofs: true,
+      requiredSignatures: 2,
+      signatures: {
+        algorithm: "CRYSTALS-Dilithium",
+        strength: "High"
+      },
+      encryption: {
+        algorithm: "Kyber-1024",
+        latticeParameters: {
+          dimension: 1024,
+          errorDistribution: "Gaussian",
+          ringType: "Ring-LWE"
+        }
+      }
+    }
+  },
+  {
+    id: "quantum-vault-2",
+    name: "Medium Security Quantum Vault",
+    description: "Medium-value assets with enhanced quantum protection",
+    type: VaultType.QUANTUM_PROGRESSIVE,
+    value: 25000,
+    createdAt: new Date(Date.now() - 15 * 24 * 60 * 60 * 1000).toISOString(), // 15 days ago
+    updatedAt: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toISOString(), // 3 days ago
+    securityLevel: "enhanced",
+    securityInfo: {
+      vaultId: "quantum-vault-2",
+      securityStrength: 80,
+      currentTier: "enhanced",
+      lastUpgrade: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toISOString(),
+      hasZeroKnowledgeProofs: false,
+      requiredSignatures: 2,
+      signatures: {
+        algorithm: "Falcon-1024",
+        strength: "Medium"
+      },
+      encryption: {
+        algorithm: "Kyber-768",
+        latticeParameters: {
+          dimension: 768,
+          errorDistribution: "Gaussian",
+          ringType: "Ring-LWE"
+        }
+      }
+    }
+  }
+];
 
 // Vault types enum
 export enum VaultType {

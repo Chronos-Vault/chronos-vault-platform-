@@ -29,8 +29,9 @@ export default function QuantumVaultPage() {
   const [newValue, setNewValue] = useState<string>('');
   const [error, setError] = useState<string | null>(null);
   const { toast } = useToast();
-  const [, params] = useParams();
-  const vaultId = params?.id;
+  // Use useParams correctly to get the route parameters
+  const params = useParams();
+  const vaultId = params.id;
   
   // Fetch vault data
   useEffect(() => {
