@@ -300,8 +300,8 @@ const VaultTypeCard: React.FC<VaultTypeCardProps> = ({
       </div>
       
       {/* Security Level Indicator */}
-      <div className="flex flex-col sm:flex-row justify-between mt-3 mb-1 space-y-3 sm:space-y-0">
-        <div className="flex flex-col items-start justify-center">
+      <div className="flex flex-col items-center sm:flex-row sm:justify-between mt-3 mb-1 space-y-3 sm:space-y-0">
+        <div className="flex flex-col items-center sm:items-center">
           <span className="text-[10px] sm:text-xs text-gray-500 mb-1 sm:mb-1.5">Security:</span>
           <div className="flex">
             {Array.from({ length: 5 }).map((_, i) => (
@@ -313,7 +313,7 @@ const VaultTypeCard: React.FC<VaultTypeCardProps> = ({
             ))}
           </div>
         </div>
-        <div className="flex flex-col items-start justify-center">
+        <div className="flex flex-col items-center sm:items-center">
           <span className="text-[10px] sm:text-xs text-gray-500 mb-1 sm:mb-1.5">Complexity:</span>
           <div className="flex">
             {Array.from({ length: 5 }).map((_, i) => (
