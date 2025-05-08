@@ -36,7 +36,7 @@ const Navbar = () => {
       icon: "🏠",
       items: [
         { name: "Home", href: "/", icon: "🏠" },
-        { name: "Create Vault", href: "/create-vault", icon: "🔒" },
+        { name: "Create Vault", href: "/vault-types", icon: "🔒" },
         { name: "My Vaults", href: "/my-vaults", icon: "📊" },
         { name: "Gift Crypto", href: "/gift-crypto", icon: "🎁", highlight: true },
       ]
@@ -117,7 +117,7 @@ const Navbar = () => {
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent className="w-56">
-                <Link href="/create-vault">
+                <Link href="/vault-types">
                   <DropdownMenuItem className="cursor-pointer">
                     Create Vault
                   </DropdownMenuItem>

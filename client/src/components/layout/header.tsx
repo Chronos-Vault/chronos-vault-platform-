@@ -29,7 +29,7 @@ const Header = () => {
 
   // Desktop navigation links (limited set for better UX)
   const desktopNavigationLinks = [
-    { name: "Create Vault", href: "/create-vault", icon: "🔐" },
+    { name: "Create Vault", href: "/vault-types", icon: "🔐" },
     { name: "My Vaults", href: "/my-vaults", icon: "📊" },
     // Transaction Monitor is now styled with extra importance and "NEW" label
     { name: "Transaction Monitor", href: "/transaction-monitor", icon: "📈", highlight: true, important: true, isNew: true },
@@ -53,7 +53,7 @@ const Header = () => {
       icon: "🏠",
       items: [
         { name: "Home", href: "/", icon: "🏠" },
-        { name: "Create Vault", href: "/create-vault", icon: "🔐" },
+        { name: "Create Vault", href: "/vault-types", icon: "🔐" },
         { name: "My Vaults", href: "/my-vaults", icon: "📊" },
         // Transaction Monitor with added visibility and NEW label
         { name: "Transaction Monitor", href: "/transaction-monitor", icon: "📈", highlight: true, important: true, isNew: true },
