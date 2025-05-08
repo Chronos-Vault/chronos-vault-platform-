@@ -8,6 +8,7 @@
 
 import { randomBytes, createHash } from 'crypto';
 import { QuantumResistantEncryption, QuantumResistantAlgorithm } from './quantum-resistant-encryption';
+import { quantumResistantEncryption } from './quantum-resistant-encryption';
 
 interface SecurityTier {
   id: string;

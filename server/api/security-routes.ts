@@ -11,6 +11,7 @@ import { quantumResistantEncryption, QuantumResistantAlgorithm } from '../securi
 import { behavioralAnalysisSystem, RiskLevel } from '../security/behavioral-analysis-system';
 import { multiSignatureGateway, ApprovalType, ApprovalStatus } from '../security/multi-signature-gateway';
 import { dataPersistenceService } from '../security/data-persistence-service';
+import progressiveQuantumRoutes from './progressive-quantum-vault-routes';
 
 // Middleware to ensure admin access
 const requireAdmin = (req: Request, res: Response, next: Function) => {
@@ -68,6 +69,9 @@ export function registerSecurityRoutes(app: Express): void {
       ]
     });
   });
+  
+  // Register Progressive Quantum Shield routes
+  app.use('/api/security/progressive-quantum', progressiveQuantumRoutes);
   
   // Apply security level to vault
   app.post('/api/security/vaults/:vaultId/level', async (req: Request, res: Response) => {
