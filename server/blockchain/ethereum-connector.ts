@@ -82,11 +82,13 @@ export class EthereumConnector implements BlockchainConnector {
     // Initialize provider (ethers v6 API) with specific network options to avoid additional network calls
     try {
       const networkName = isTestnet ? 'sepolia' : 'mainnet';
+      // In ethers.js v6, network format is different - ensAddress is no longer needed
       const networkOptions = {
         name: networkName,
-        chainId: isTestnet ? 11155111 : 1,
-        ensAddress: null // Disable ENS resolution to avoid errors
+        chainId: isTestnet ? 11155111 : 1
       };
+      // v6 format separates the network and options objects
+      // staticNetwork is now part of a JsonRpcClientOptions object
       this.provider = new ethers.JsonRpcProvider(rpcUrl, networkOptions, { staticNetwork: true });
       
       // Initialize contract based on network

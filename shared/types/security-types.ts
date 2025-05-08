@@ -1,253 +1,176 @@
 /**
  * Security Types
  * 
- * Type definitions for the security audit framework and related security
- * monitoring functionality. These types are used throughout the application
- * to ensure consistent security reporting and validation.
+ * This module contains the interfaces and types for the security audit framework
+ * and monitoring system used in the Chronos Vault platform.
  */
 
-/**
- * Security audit levels to prioritize processing
- */
-export type SecurityAuditLevel = 'low' | 'medium' | 'high';
+import { ChainType } from './blockchain-types';
 
 /**
- * Security threat levels for audit results
+ * Security Audit Levels
  */
-export type SecurityThreatLevel = 'info' | 'low' | 'medium' | 'high' | 'critical' | 'unknown';
-
-/**
- * Status of a security event
- */
-export type SecurityEventStatus = 'pending' | 'processing' | 'completed' | 'failed';
-
-/**
- * Types of auditable operations
- */
-export type AuditableOperation = 
-  | 'vault_creation'
-  | 'vault_unlock'
-  | 'cross_chain_verification'
-  | 'beneficiary_addition'
-  | 'asset_deposit'
-  | 'security_level_change'
-  | 'wallet_connection'
-  | 'transaction_submission';
-
-/**
- * Types of blockchain transactions
- */
-export type TransactionType = 
-  | 'vault_creation'
-  | 'vault_unlock'
-  | 'asset_deposit'
-  | 'asset_withdrawal'
-  | 'beneficiary_addition'
-  | 'beneficiary_removal'
-  | 'contract_interaction'
-  | 'token_transfer'
-  | 'cross_chain_verification';
-
-/**
- * Types of operations
- */
-export type OperationType = 
-  | 'vault_management'
-  | 'asset_management'
-  | 'user_management'
-  | 'security_management'
-  | 'system_management';
-
-/**
- * Result of a security audit
- */
-export interface AuditResult {
-  /**
-   * Whether the audit passed
-   */
-  passed: boolean;
-  
-  /**
-   * Human-readable message explaining the audit result
-   */
-  message: string;
-  
-  /**
-   * Additional details about the audit
-   */
-  details?: Record<string, any>;
+export enum SecurityAuditLevel {
+  LOW = 'low',
+  MEDIUM = 'medium',
+  HIGH = 'high',
+  CRITICAL = 'critical'
 }
 
 /**
- * A security event that needs to be audited
+ * Transaction Types monitored by security system
+ */
+export enum TransactionType {
+  VAULT_CREATION = 'vault_creation',
+  ASSET_LOCK = 'asset_lock',
+  ASSET_UNLOCK = 'asset_unlock',
+  BENEFICIARY_ADD = 'beneficiary_add',
+  BENEFICIARY_REMOVE = 'beneficiary_remove',
+  VAULT_UPDATE = 'vault_update',
+  CROSS_CHAIN_SYNC = 'cross_chain_sync',
+  MULTI_SIG_REQUEST = 'multi_sig_request',
+  MULTI_SIG_APPROVAL = 'multi_sig_approval',
+  ADMIN_ACTION = 'admin_action'
+}
+
+/**
+ * Security Operation Types
+ */
+export enum OperationType {
+  READ = 'read',
+  WRITE = 'write',
+  ADMIN = 'admin',
+  SYSTEM = 'system'
+}
+
+/**
+ * Security Threat Levels
+ */
+export enum SecurityThreatLevel {
+  NONE = 'none',
+  SUSPICIOUS = 'suspicious',
+  WARNING = 'warning',
+  ALERT = 'alert',
+  CRITICAL = 'critical'
+}
+
+/**
+ * Security Event Interface
  */
 export interface SecurityEvent {
-  /**
-   * Unique identifier for the audit event
-   */
   id: string;
-  
-  /**
-   * ISO timestamp of when the event was created
-   */
-  timestamp: string;
-  
-  /**
-   * Type of operation being audited
-   */
-  operation: AuditableOperation;
-  
-  /**
-   * Priority level for the audit
-   */
-  level: SecurityAuditLevel;
-  
-  /**
-   * Additional data needed for the audit
-   */
-  metadata: Record<string, any>;
-  
-  /**
-   * Current status of the audit process
-   */
-  status: SecurityEventStatus;
-  
-  /**
-   * Result of the audit (null if not completed)
-   */
-  result: AuditResult | null;
-  
-  /**
-   * Assessed threat level based on the audit result
-   */
+  timestamp: Date;
+  type: TransactionType | string;
+  chainId: ChainType | string;
+  vaultId?: string;
+  walletAddress?: string;
+  auditLevel: SecurityAuditLevel;
+  operationType: OperationType;
   threatLevel: SecurityThreatLevel;
+  metadata: Record<string, any>;
+  verified: boolean;
+  hash?: string; // Hash for tamper-proof record
+  previousEventHash?: string; // For hash chaining
+  signature?: string; // Digital signature for verification
 }
 
 /**
- * Security verification result for cross-chain operations
+ * Security Alert Interface
  */
-export interface SecurityVerification {
-  /**
-   * Whether verification was successful
-   */
+export interface SecurityAlert {
+  id: string;
+  timestamp: Date;
+  alertType: string;
+  severity: SecurityThreatLevel;
+  message: string;
+  vaultId?: string;
+  chainId?: ChainType | string;
+  transactionHash?: string;
+  walletAddress?: string;
+  metadata: Record<string, any>;
+  resolved: boolean;
+  resolvedAt?: Date;
+  resolvedBy?: string;
+  resolutionNotes?: string;
+}
+
+/**
+ * Audit Result Interface
+ */
+export interface AuditResult {
   success: boolean;
-  
-  /**
-   * Blockchain where verification was performed
-   */
-  chainId: string;
-  
-  /**
-   * ISO timestamp of when verification was completed
-   */
-  timestamp: string;
-  
-  /**
-   * Transaction hash or identifier for the verification
-   */
-  transactionId?: string;
-  
-  /**
-   * Additional verification details
-   */
-  details?: Record<string, any>;
+  timestamp: Date;
+  event?: SecurityEvent;
+  alert?: SecurityAlert;
+  message?: string;
+  transactionHash?: string;
+  validationResults?: Record<string, any>;
 }
 
 /**
- * Security event types for logging
+ * Auditable Operation Interface
  */
-export interface SecurityEventType {
-  /**
-   * Event category
-   */
-  category: 'access' | 'transaction' | 'system' | 'wallet' | 'vault';
-  
-  /**
-   * Event severity
-   */
-  severity: 'info' | 'warning' | 'error' | 'critical';
-  
-  /**
-   * User or wallet address associated with the event
-   */
-  user?: string;
-  
-  /**
-   * Event origin (IP, device, etc.)
-   */
-  origin?: string;
-  
-  /**
-   * Additional event metadata
-   */
-  metadata?: Record<string, any>;
+export interface AuditableOperation {
+  type: TransactionType;
+  vaultId?: string;
+  chainId: ChainType | string;
+  walletAddress: string;
+  operationType: OperationType;
+  auditLevel: SecurityAuditLevel;
+  metadata: Record<string, any>;
 }
 
 /**
- * Security analytics report
+ * Security Status Interface
  */
-export interface SecurityAnalyticsReport {
-  /**
-   * Report timeframe start (ISO timestamp)
-   */
-  startTime: string;
-  
-  /**
-   * Report timeframe end (ISO timestamp)
-   */
-  endTime: string;
-  
-  /**
-   * Critical level events count
-   */
-  criticalEvents: number;
-  
-  /**
-   * High level events count
-   */
-  highEvents: number;
-  
-  /**
-   * Medium level events count
-   */
-  mediumEvents: number;
-  
-  /**
-   * Low level events count
-   */
-  lowEvents: number;
-  
-  /**
-   * Info level events count
-   */
-  infoEvents: number;
-  
-  /**
-   * Total number of events
-   */
-  totalEvents: number;
-  
-  /**
-   * Events by category
-   */
-  eventsByCategory: Record<string, number>;
-  
-  /**
-   * Top security concerns
-   */
-  topConcerns: Array<{
-    category: string;
-    count: number;
-    description: string;
-    threatLevel: SecurityThreatLevel;
-  }>;
-  
-  /**
-   * Security improvement recommendations
-   */
-  recommendations: Array<{
-    priority: 'high' | 'medium' | 'low';
-    description: string;
-    impact: string;
-  }>;
+export interface SecurityStatus {
+  overallStatus: 'optimal' | 'good' | 'degraded' | 'critical';
+  lastUpdated: Date;
+  chainStatuses: Record<string, ChainSecurityStatus>;
+  alerts: SecurityAlert[];
+  metrics: {
+    transactionsVerified24h: number;
+    failedVerifications24h: number;
+    alertsTriggered24h: number;
+    avgResponseTimeMs: number;
+    crossChainSyncStatus: 'synced' | 'syncing' | 'failed';
+  };
+}
+
+/**
+ * Chain Security Status
+ */
+export interface ChainSecurityStatus {
+  chainId: ChainType | string;
+  status: 'online' | 'degraded' | 'offline';
+  latestBlockHeight: number;
+  latestBlockTime: Date;
+  verificationLatencyMs: number;
+  connectorHealthy: boolean;
+  lastSuccessfulVerification: Date;
+}
+
+/**
+ * Security Verification Protocol Options
+ */
+export interface SecurityVerificationOptions {
+  crossChainVerification: boolean;
+  deepInspection: boolean;
+  simulationEnabled: boolean;
+  callbackUrl?: string;
+  timeoutMs?: number;
+  minRequiredConfirmations?: number;
+}
+
+/**
+ * Security Event Subscription Options
+ */
+export interface SecurityEventSubscription {
+  id: string;
+  types: (TransactionType | string)[];
+  chainIds: (ChainType | string)[];
+  vaultIds?: string[];
+  minThreatLevel?: SecurityThreatLevel;
+  callback: (event: SecurityEvent) => void;
+  active: boolean;
 }
