@@ -20,7 +20,12 @@ const featureFlags = {
   ENABLE_ADVANCED_SECURITY_LOGGING: true,
   ENABLE_AI_SECURITY_MONITORING: false, // Not ready for production yet
   ENABLE_TOKEN_STAKING: true,
-  ENABLE_DEVELOPMENT_MODE: process.env.NODE_ENV !== 'production',
+  // Check if ENABLE_DEVELOPMENT_MODE is explicitly set in env, otherwise fall back to NODE_ENV check
+  ENABLE_DEVELOPMENT_MODE: process.env.ENABLE_DEVELOPMENT_MODE === 'true' 
+    ? true 
+    : (process.env.ENABLE_DEVELOPMENT_MODE === 'false' 
+        ? false 
+        : process.env.NODE_ENV !== 'production'),
 };
 
 // Blockchain-specific configuration
@@ -131,7 +136,8 @@ const feeStructure = {
 const config = {
   port: process.env.PORT ? parseInt(process.env.PORT) : 5000,
   environment: process.env.NODE_ENV || 'development',
-  isDevelopmentMode: process.env.NODE_ENV !== 'production',
+  // Use the feature flag for development mode
+  isDevelopmentMode: featureFlags.ENABLE_DEVELOPMENT_MODE,
   databaseUrl: process.env.DATABASE_URL,
   apiBasePath: '/api',
   featureFlags,
