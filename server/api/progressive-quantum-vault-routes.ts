@@ -9,7 +9,49 @@ import { z } from 'zod';
 const router = Router();
 
 // In-memory storage for security metrics
-const securityMetrics: Record<string, any> = {};
+const securityMetrics: Record<string, any> = {
+  // Sample metrics for demonstration purposes
+  "quantum-vault-1": {
+    vaultId: "quantum-vault-1",
+    securityStrength: 90,
+    currentTier: "advanced",
+    lastUpgrade: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000).toISOString(), // 5 days ago
+    hasZeroKnowledgeProofs: true,
+    requiredSignatures: 2,
+    signatures: {
+      algorithm: "CRYSTALS-Dilithium",
+      strength: "High"
+    },
+    encryption: {
+      algorithm: "Kyber-1024",
+      latticeParameters: {
+        dimension: 1024,
+        errorDistribution: "Gaussian",
+        ringType: "Ring-LWE"
+      }
+    }
+  },
+  "quantum-vault-2": {
+    vaultId: "quantum-vault-2",
+    securityStrength: 80,
+    currentTier: "enhanced",
+    lastUpgrade: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toISOString(), // 3 days ago
+    hasZeroKnowledgeProofs: false,
+    requiredSignatures: 2,
+    signatures: {
+      algorithm: "Falcon-1024",
+      strength: "Medium"
+    },
+    encryption: {
+      algorithm: "Kyber-768",
+      latticeParameters: {
+        dimension: 768,
+        errorDistribution: "Gaussian",
+        ringType: "Ring-LWE"
+      }
+    }
+  }
+};
 
 // Security tiers with progressive features
 const securityTiers = [
