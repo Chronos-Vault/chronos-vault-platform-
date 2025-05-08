@@ -45,7 +45,7 @@ const VaultTypesSelector = () => {
   };
   
   const handleBack = () => {
-    navigate('/dashboard');
+    navigate('/my-vaults');
   };
   
   return (
@@ -65,7 +65,7 @@ const VaultTypesSelector = () => {
           onClick={handleBack}
         >
           <ArrowLeft className="mr-2 h-4 w-4" />
-          Back to Dashboard
+          Back to My Vaults
         </Button>
       </div>
       
