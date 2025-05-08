@@ -9,8 +9,12 @@ import securityLoggerRoutes from './api/security-logger-routes';
 import healthRoutes from './api/health-routes';
 import incidentRoutes from './api/incident-routes';
 import paymentRoutes from './api/payment-routes';
+import vaultVerificationRoutes, { initializeVaultVerification } from './api/vault-verification-routes';
 import { systemHealthMonitor } from './monitoring/system-health-monitor';
 import { incidentResponseSystem } from './monitoring/incident-response';
+import { ConnectorFactory } from './blockchain/connector-factory';
+import { securityLogger } from './monitoring/security-logger';
+import { VerificationStatus } from './blockchain/cross-chain-vault-verification';
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // Create HTTP server instance
@@ -25,6 +29,41 @@ export async function registerRoutes(app: Express): Promise<Server> {
   apiRouter.use('/health', healthRoutes);
   apiRouter.use('/incidents', incidentRoutes);
   apiRouter.use('/payments', paymentRoutes);
+  
+  // Initialize the blockchain connector factory
+  // This would be done in your app initialization
+  const connectorFactory = new ConnectorFactory();
+  
+  // Initialize and register vault verification routes
+  const crossChainVerification = initializeVaultVerification(connectorFactory);
+  apiRouter.use('/vault-verification', vaultVerificationRoutes);
+  
+  // Add event listeners for verification status updates
+  crossChainVerification.on('verification:completed', (result) => {
+    securityLogger.info(`Vault verification completed for ${result.vaultId}`, {
+      vaultId: result.vaultId,
+      primaryChain: result.primaryChain,
+      isValid: result.isValid,
+      status: result.status
+    });
+  });
+  
+  crossChainVerification.on('verification:transaction:confirmed', (data) => {
+    securityLogger.info(`Verification transaction confirmed: ${data.transactionId}`, {
+      transactionId: data.transactionId,
+      vaultId: data.vaultId,
+      chainId: data.chainId
+    });
+  });
+  
+  crossChainVerification.on('verification:transaction:failed', (data) => {
+    securityLogger.warn(`Verification transaction failed: ${data.transactionId}`, {
+      transactionId: data.transactionId,
+      vaultId: data.vaultId,
+      chainId: data.chainId,
+      error: data.error
+    });
+  });
   
   // Simple health check route - lightweight version for quick status checks
   apiRouter.get('/health-check', (_req: Request, res: Response) => {

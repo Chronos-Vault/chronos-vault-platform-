@@ -6,10 +6,98 @@
  * provides graceful degradation when services are unavailable.
  */
 
-import { securityLogger } from '../monitoring/security-logger';
-import { crossChainErrorHandler, CrossChainErrorCategory, ErrorSeverity, RecoveryStrategy } from '../security/cross-chain-error-handler';
+// import { securityLogger } from '../monitoring/security-logger';
+// import { crossChainErrorHandler } from '../security/cross-chain-error-handler';
 import config from '../config';
 import { BlockchainType } from '../../shared/types';
+
+// Temporarily define a simple securityLogger until proper one is implemented
+const securityLogger = {
+  warn: (message: string, context?: any) => console.warn(`[SECURITY WARNING] ${message}`, context),
+  error: (message: string, context?: any) => console.error(`[SECURITY ERROR] ${message}`, context),
+  info: (message: string, context?: any) => console.info(`[SECURITY INFO] ${message}`, context)
+};
+
+// Define RetryStrategy interface
+interface RetryStrategy {
+  shouldRetry: boolean;
+  delayMs: number;
+  maxRetries: number;
+  exponentialBackoff: boolean;
+  alternativeEndpoint?: string;
+  fallbackChain?: BlockchainType;
+}
+
+// Define minimal version of CrossChainError
+interface CrossChainError {
+  originalError: any;
+  message: string;
+  category: CrossChainErrorCategory;
+  blockchain?: BlockchainType;
+  recoverable: boolean;
+  retryStrategy?: RetryStrategy;
+  solution?: string;
+  metadata?: Record<string, any>;
+  recoveryAttempts?: number;
+}
+
+// Define minimal ErrorContext
+interface ErrorContext {
+  category?: CrossChainErrorCategory;
+  blockchain?: BlockchainType;
+  operation?: string;
+  retryCount?: number;
+  vaultId?: string;
+  transactionId?: string;
+  severity?: ErrorSeverity;
+  recoveryStrategy?: RecoveryStrategy;
+  metadata?: Record<string, any>;
+}
+
+// Simple implementation of crossChainErrorHandler
+const crossChainErrorHandler = {
+  handle: (error: any, context: ErrorContext): CrossChainError => {
+    const message = typeof error === 'string' ? error : error?.message || 'Unknown error';
+    
+    return {
+      originalError: error,
+      message,
+      category: context.category || CrossChainErrorCategory.UNKNOWN,
+      blockchain: context.blockchain,
+      recoverable: context.recoveryStrategy === RecoveryStrategy.RETRY,
+      retryStrategy: {
+        shouldRetry: context.recoveryStrategy === RecoveryStrategy.RETRY,
+        delayMs: 1000,
+        maxRetries: 3,
+        exponentialBackoff: true
+      },
+      solution: 'retry operation',
+      metadata: context.metadata || {},
+      recoveryAttempts: context.retryCount || 0
+    };
+  },
+  
+  shouldAttemptRecovery: (error: CrossChainError): boolean => {
+    return error.recoverable && (error.recoveryAttempts || 0) < 3;
+  }
+};
+
+// Define CrossChainErrorCategory enum
+enum CrossChainErrorCategory {
+  CONNECTION_FAILURE = 'connection_failure',
+  TRANSACTION_FAILURE = 'transaction_failure',
+  VALIDATION_FAILURE = 'validation_failure', 
+  RATE_LIMIT_EXCEEDED = 'rate_limit_exceeded',
+  VERIFICATION_FAILURE = 'verification_failure',
+  ASSET_MISMATCH = 'asset_mismatch',
+  UNAUTHORIZED_ACCESS = 'unauthorized_access',
+  INVALID_PARAMETERS = 'invalid_parameters',
+  NODE_SYNCING = 'node_syncing',
+  UNKNOWN = 'unknown',
+  INSUFFICIENT_FUNDS = 'insufficient_funds',
+  TRANSACTION_REJECTED = 'transaction_rejected',
+  TRANSACTION_NOT_FOUND = 'transaction_not_found'
+}
 
 // Retry configuration by operation type
 export const retryConfig = {
@@ -29,6 +117,29 @@ export const retryConfig = {
     maxDelayMs: 15000  // 15 seconds
   }
 };
+
+// Define recovery strategies
+enum RecoveryStrategy {
+  RETRY = 'retry',
+  NOTIFY_USER = 'notify_user',
+  ABORT = 'abort',
+  FALLBACK = 'fallback'
+}
+
+// Define error severity levels
+enum ErrorSeverity {
+  LOW = 'low',
+  MEDIUM = 'medium',
+  HIGH = 'high',
+  CRITICAL = 'critical'
+}
+
+// Define additional error categories
+enum AdditionalErrorCategory {
+  INSUFFICIENT_FUNDS = 'insufficient_funds',
+  TRANSACTION_REJECTED = 'transaction_rejected',
+  TRANSACTION_NOT_FOUND = 'transaction_not_found'
+}
 
 // Chain-specific error patterns and solutions
 const chainSpecificErrorPatterns = {
@@ -109,7 +220,7 @@ const chainSpecificErrorPatterns = {
 /**
  * Edge Case Handler Class
  */
-class EdgeCaseHandler {
+export class EdgeCaseHandler {
   // Track connection failures per endpoint
   private connectionFailures: Map<string, { count: number, lastFailure: number }> = new Map();
   
@@ -389,41 +500,40 @@ class EdgeCaseHandler {
    * Get fallback options for a chain during outages
    */
   public getFallbackOptions(chain: BlockchainType): Record<string, any> {
-    // Return chain-specific fallback options
-    switch(chain) {
-      case 'ethereum':
-        return {
-          useAlternateRpc: true,
-          readOnly: true,
-          cacheResults: true
-        };
-        
-      case 'solana':
-        return {
-          useAlternateRpc: true,
-          priorityLevel: 'low',
-          cacheResults: true
-        };
-        
-      case 'ton':
-        return {
-          useAlternateApi: true,
-          readOnly: true,
-          preferCache: true
-        };
-        
-      case 'bitcoin':
-        return {
-          useAlternateNode: true,
-          preferIndexer: true,
-          readOnly: true
-        };
-        
-      default:
-        return {
-          readOnly: true,
-          preferCache: true
-        };
+    // Return chain-specific fallback options based on blockchain type
+    if (chain === 'ETH' || chain === 'ethereum') {
+      return {
+        useAlternateRpc: true,
+        readOnly: true,
+        cacheResults: true
+      };
+    } 
+    else if (chain === 'SOL' || chain === 'solana') {
+      return {
+        useAlternateRpc: true,
+        priorityLevel: 'low',
+        cacheResults: true
+      };
+    }
+    else if (chain === 'TON' || chain === 'ton') {
+      return {
+        useAlternateApi: true,
+        readOnly: true,
+        preferCache: true
+      };
+    }
+    else if (chain === 'BTC' || chain === 'bitcoin') {
+      return {
+        useAlternateNode: true,
+        preferIndexer: true,
+        readOnly: true
+      };
+    }
+    else {
+      return {
+        readOnly: true,
+        preferCache: true
+      };
     }
   }
   

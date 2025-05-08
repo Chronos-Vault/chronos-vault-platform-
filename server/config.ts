@@ -275,6 +275,94 @@ const simulationConfig = {
   }
 };
 
+// Cross-chain verification settings
+const crossChainVerificationConfig = {
+  // Cache TTL for verification results (ms)
+  cacheTTL: 5 * 60 * 1000, // 5 minutes
+  
+  // Verification levels
+  levels: {
+    basic: {
+      name: 'Basic',
+      requiredChains: 1,
+      description: 'Single-chain verification',
+      fee: 1 // Base fee multiplier
+    },
+    standard: {
+      name: 'Standard',
+      requiredChains: 2,
+      description: 'Two-chain verification with cross-validation',
+      fee: 2 // 2x base fee
+    },
+    advanced: {
+      name: 'Advanced',
+      requiredChains: 3,
+      description: 'Triple-chain verification with full security model',
+      fee: 3 // 3x base fee
+    }
+  },
+  
+  // Chain priorities and roles in verification
+  chainRoles: {
+    ethereum: {
+      role: 'primary',
+      priority: 1,
+      description: 'Primary ownership and access control'
+    },
+    solana: {
+      role: 'validation',
+      priority: 2,
+      description: 'High-speed monitoring and validation'
+    },
+    ton: {
+      role: 'backup',
+      priority: 3,
+      description: 'Backup and recovery operations'
+    },
+    bitcoin: {
+      role: 'timestamp',
+      priority: 4,
+      description: 'Immutable timestamping of major vault operations'
+    }
+  },
+  
+  // Retry settings
+  retry: {
+    maxRetries: 3,
+    baseDelayMs: 2000,
+    maxDelayMs: 30000,
+    exponentialBackoff: true
+  },
+  
+  // Fallback chains if primary verification fails
+  fallbackChains: {
+    ethereum: 'solana',
+    solana: 'ton',
+    ton: 'ethereum',
+    bitcoin: 'ethereum'
+  },
+  
+  // Alternative endpoints for each blockchain (for resilience)
+  alternativeEndpoints: {
+    ethereum: [
+      'https://mainnet.infura.io/v3/your-backup-key',
+      'https://eth-mainnet.alchemyapi.io/v2/your-backup-key'
+    ],
+    solana: [
+      'https://solana-api.projectserum.com',
+      'https://api.mainnet-beta.solana.com'
+    ],
+    ton: [
+      'https://toncenter.com/api/v2/jsonRPC',
+      'https://ton.access.orbs.network/api/v2/jsonRPC'
+    ],
+    bitcoin: [
+      'https://btc1.trezor.io/api/v2',
+      'https://blockstream.info/api'
+    ]
+  }
+};
+
 // Main configuration object
 const config = {
   port: process.env.PORT ? parseInt(process.env.PORT) : 5000,
@@ -288,6 +376,7 @@ const config = {
   securityConfig,
   feeStructure,
   simulation: simulationConfig, // Add simulation data to config
+  crossChainVerification: crossChainVerificationConfig, // Add cross-chain verification config
   
   // Get a feature flag value with optional override
   getFeatureFlag(flagName: keyof typeof featureFlags, overrideValue?: boolean): boolean {
@@ -311,6 +400,33 @@ const config = {
       default:
         return this.featureFlags.SKIP_BLOCKCHAIN_CONNECTOR_INIT;
     }
+  },
+  
+  // Get alternative endpoint for a blockchain
+  getAlternativeEndpoint(chain: 'ethereum' | 'solana' | 'ton' | 'bitcoin'): string | undefined {
+    const endpoints = this.crossChainVerification.alternativeEndpoints[chain];
+    if (!endpoints || endpoints.length === 0) {
+      return undefined;
+    }
+    
+    // Randomly select an alternative endpoint
+    const randomIndex = Math.floor(Math.random() * endpoints.length);
+    return endpoints[randomIndex];
+  },
+  
+  // Get verification level details
+  getVerificationLevel(level: 'basic' | 'standard' | 'advanced') {
+    return this.crossChainVerification.levels[level];
+  },
+  
+  // Get chain role information
+  getChainRole(chain: 'ethereum' | 'solana' | 'ton' | 'bitcoin') {
+    return this.crossChainVerification.chainRoles[chain];
+  },
+  
+  // Get fallback chain for a primary chain
+  getFallbackChain(primaryChain: 'ethereum' | 'solana' | 'ton' | 'bitcoin'): 'ethereum' | 'solana' | 'ton' | 'bitcoin' {
+    return this.crossChainVerification.fallbackChains[primaryChain];
   }
 };
 

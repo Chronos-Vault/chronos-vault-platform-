@@ -1,136 +1,276 @@
 /**
  * Cross-Chain Error Handler
  * 
- * This module provides standardized error handling for cross-chain operations,
- * including categorization, logging, recovery strategies, and client-safe error reporting.
+ * A specialized error handling system for cross-chain operations. This handler
+ * categorizes errors and provides appropriate recovery strategies specific to
+ * blockchain types and error patterns.
  */
 
-import { securityLogger } from '../monitoring/security-logger';
+import { securityLogger, SecurityEventType } from '../monitoring/security-logger';
 import { BlockchainType } from '../../shared/types';
+import config from '../config';
 
-// Error categories for cross-chain operations
+// Error categories help us identify and handle errors appropriately
 export enum CrossChainErrorCategory {
-  // Connection errors
-  CONNECTION_FAILURE = 'CONNECTION_FAILURE',
-  TIMEOUT = 'TIMEOUT',
-  RATE_LIMIT = 'RATE_LIMIT',
-  
-  // Transaction errors
-  TRANSACTION_FAILURE = 'TRANSACTION_FAILURE',
-  TRANSACTION_REJECTED = 'TRANSACTION_REJECTED',
-  TRANSACTION_NOT_FOUND = 'TRANSACTION_NOT_FOUND',
-  INSUFFICIENT_FUNDS = 'INSUFFICIENT_FUNDS',
-  
-  // Validation errors
-  VALIDATION_FAILURE = 'VALIDATION_FAILURE',
-  SIGNATURE_INVALID = 'SIGNATURE_INVALID',
-  PROOF_VERIFICATION_FAILED = 'PROOF_VERIFICATION_FAILED',
-  
-  // Bridge errors
-  BRIDGE_CONTRACT_ERROR = 'BRIDGE_CONTRACT_ERROR',
-  BRIDGE_NOT_AVAILABLE = 'BRIDGE_NOT_AVAILABLE',
-  
-  // Data errors
-  INVALID_DATA = 'INVALID_DATA',
-  MISSING_PARAMETER = 'MISSING_PARAMETER',
-  
-  // Authorization errors
-  UNAUTHORIZED = 'UNAUTHORIZED',
-  FORBIDDEN = 'FORBIDDEN',
-  
-  // System errors
-  INTERNAL_SERVER_ERROR = 'INTERNAL_SERVER_ERROR',
-  NOT_IMPLEMENTED = 'NOT_IMPLEMENTED',
-  
-  // Unknown errors
-  UNKNOWN = 'UNKNOWN'
+  CONNECTION_FAILURE = 'connection_failure',
+  TRANSACTION_FAILURE = 'transaction_failure',
+  VALIDATION_FAILURE = 'validation_failure', 
+  RATE_LIMIT_EXCEEDED = 'rate_limit_exceeded',
+  VERIFICATION_FAILURE = 'verification_failure',
+  ASSET_MISMATCH = 'asset_mismatch',
+  UNAUTHORIZED_ACCESS = 'unauthorized_access',
+  INVALID_PARAMETERS = 'invalid_parameters',
+  NODE_SYNCING = 'node_syncing',
+  UNKNOWN = 'unknown'
 }
 
-// Severity levels for errors
-export enum ErrorSeverity {
-  LOW = 'LOW',           // Minor issues, operation can continue
-  MEDIUM = 'MEDIUM',     // Significant issues, operation may be affected
-  HIGH = 'HIGH',         // Critical issues, operation likely to fail
-  CRITICAL = 'CRITICAL'  // Fatal issues, operation cannot continue
-}
-
-// Recovery strategies for different error types
-export enum RecoveryStrategy {
-  RETRY = 'RETRY',                   // Retry the operation
-  ALTERNATE_ROUTE = 'ALTERNATE_ROUTE', // Try an alternative path/method
-  FALLBACK = 'FALLBACK',             // Use fallback data/service
-  NOTIFY_USER = 'NOTIFY_USER',       // Alert the user for action
-  ABORT = 'ABORT',                   // Abort the operation
-  NONE = 'NONE'                      // No recovery possible
-}
-
-// Structured cross-chain error object
-export interface CrossChainError {
-  category: CrossChainErrorCategory;
-  message: string;
-  severity: ErrorSeverity;
+// Context for error handling
+export interface ErrorContext {
+  category?: CrossChainErrorCategory;
   blockchain?: BlockchainType;
+  operation?: string;
+  retryCount?: number;
+  vaultId?: string;
   transactionId?: string;
-  recoveryStrategy: RecoveryStrategy;
-  recoveryAttempts?: number;
-  maxRecoveryAttempts?: number;
-  originalError?: any;
-  timestamp: number;
-  correlationId?: string;
+  metadata?: Record<string, any>;
 }
 
-// Default recovery strategies mapped to error categories
-const defaultRecoveryStrategies: Record<CrossChainErrorCategory, RecoveryStrategy> = {
-  [CrossChainErrorCategory.CONNECTION_FAILURE]: RecoveryStrategy.RETRY,
-  [CrossChainErrorCategory.TIMEOUT]: RecoveryStrategy.RETRY,
-  [CrossChainErrorCategory.RATE_LIMIT]: RecoveryStrategy.RETRY,
-  [CrossChainErrorCategory.TRANSACTION_FAILURE]: RecoveryStrategy.RETRY,
-  [CrossChainErrorCategory.TRANSACTION_REJECTED]: RecoveryStrategy.NOTIFY_USER,
-  [CrossChainErrorCategory.TRANSACTION_NOT_FOUND]: RecoveryStrategy.ALTERNATE_ROUTE,
-  [CrossChainErrorCategory.INSUFFICIENT_FUNDS]: RecoveryStrategy.NOTIFY_USER,
-  [CrossChainErrorCategory.VALIDATION_FAILURE]: RecoveryStrategy.ALTERNATE_ROUTE,
-  [CrossChainErrorCategory.SIGNATURE_INVALID]: RecoveryStrategy.NOTIFY_USER,
-  [CrossChainErrorCategory.PROOF_VERIFICATION_FAILED]: RecoveryStrategy.RETRY,
-  [CrossChainErrorCategory.BRIDGE_CONTRACT_ERROR]: RecoveryStrategy.ALTERNATE_ROUTE,
-  [CrossChainErrorCategory.BRIDGE_NOT_AVAILABLE]: RecoveryStrategy.FALLBACK,
-  [CrossChainErrorCategory.INVALID_DATA]: RecoveryStrategy.NOTIFY_USER,
-  [CrossChainErrorCategory.MISSING_PARAMETER]: RecoveryStrategy.NOTIFY_USER,
-  [CrossChainErrorCategory.UNAUTHORIZED]: RecoveryStrategy.NOTIFY_USER,
-  [CrossChainErrorCategory.FORBIDDEN]: RecoveryStrategy.NOTIFY_USER,
-  [CrossChainErrorCategory.INTERNAL_SERVER_ERROR]: RecoveryStrategy.FALLBACK,
-  [CrossChainErrorCategory.NOT_IMPLEMENTED]: RecoveryStrategy.ABORT,
-  [CrossChainErrorCategory.UNKNOWN]: RecoveryStrategy.NOTIFY_USER
+// Represents a processed cross-chain error
+export interface CrossChainError {
+  originalError: any;
+  message: string;
+  category: CrossChainErrorCategory;
+  blockchain?: BlockchainType;
+  recoverable: boolean;
+  retryStrategy?: RetryStrategy;
+  solution?: string;
+  metadata?: Record<string, any>;
+}
+
+// Retry strategy for recoverable errors
+export interface RetryStrategy {
+  shouldRetry: boolean;
+  delayMs: number;
+  maxRetries: number;
+  exponentialBackoff: boolean;
+  alternativeEndpoint?: string;
+  fallbackChain?: BlockchainType;
+}
+
+/**
+ * Error patterns for different blockchains to match against
+ */
+const errorPatterns = {
+  ethereum: [
+    { 
+      pattern: /(insufficient funds|gas price|gas too low)/i,
+      category: CrossChainErrorCategory.TRANSACTION_FAILURE,
+      recoverable: true,
+      solution: 'Adjust gas price or reduce transaction complexity'
+    },
+    { 
+      pattern: /(nonce too low|nonce too high|invalid nonce)/i,
+      category: CrossChainErrorCategory.TRANSACTION_FAILURE,
+      recoverable: true,
+      solution: 'Synchronize nonce with blockchain state'
+    },
+    { 
+      pattern: /(pending|queue full|already known)/i,
+      category: CrossChainErrorCategory.TRANSACTION_FAILURE,
+      recoverable: true,
+      solution: 'Wait for network congestion to clear'
+    },
+    { 
+      pattern: /(connection refused|timeout|econnreset|econnaborted)/i,
+      category: CrossChainErrorCategory.CONNECTION_FAILURE,
+      recoverable: true,
+      solution: 'Switch to alternate Ethereum RPC endpoint'
+    },
+    { 
+      pattern: /(rate limit|too many requests|429)/i,
+      category: CrossChainErrorCategory.RATE_LIMIT_EXCEEDED,
+      recoverable: true,
+      solution: 'Implement exponential backoff and reduce request frequency'
+    },
+    { 
+      pattern: /(syncing|not up to date|still syncing)/i,
+      category: CrossChainErrorCategory.NODE_SYNCING,
+      recoverable: true,
+      solution: 'Switch to a fully synced node or wait for sync completion'
+    }
+  ],
+  solana: [
+    { 
+      pattern: /(blockhash not found|block height exceeded|too old|expired)/i,
+      category: CrossChainErrorCategory.TRANSACTION_FAILURE,
+      recoverable: true,
+      solution: 'Refresh blockhash and resend transaction'
+    },
+    { 
+      pattern: /(insufficient funds|insufficient lamports)/i,
+      category: CrossChainErrorCategory.TRANSACTION_FAILURE,
+      recoverable: false,
+      solution: 'Ensure wallet has sufficient SOL for the transaction'
+    },
+    { 
+      pattern: /(socket hang up|timeout|econnreset|econnrefused)/i,
+      category: CrossChainErrorCategory.CONNECTION_FAILURE,
+      recoverable: true,
+      solution: 'Switch to alternate Solana RPC endpoint'
+    },
+    { 
+      pattern: /(too many requests|429|rate limit)/i,
+      category: CrossChainErrorCategory.RATE_LIMIT_EXCEEDED,
+      recoverable: true,
+      solution: 'Implement exponential backoff and reduce request frequency'
+    },
+    { 
+      pattern: /(invalid.*signature|signature verification failed)/i,
+      category: CrossChainErrorCategory.VALIDATION_FAILURE,
+      recoverable: false,
+      solution: 'Check signature generation process'
+    }
+  ],
+  ton: [
+    { 
+      pattern: /(insufficient funds|not enough balance)/i,
+      category: CrossChainErrorCategory.TRANSACTION_FAILURE,
+      recoverable: false,
+      solution: 'Ensure wallet has sufficient TON for the transaction'
+    },
+    { 
+      pattern: /(connection refused|timeout|network error)/i,
+      category: CrossChainErrorCategory.CONNECTION_FAILURE,
+      recoverable: true,
+      solution: 'Switch to alternate TON endpoint'
+    },
+    { 
+      pattern: /(rate limit|too many requests|429)/i,
+      category: CrossChainErrorCategory.RATE_LIMIT_EXCEEDED,
+      recoverable: true,
+      solution: 'Implement exponential backoff and reduce request frequency'
+    },
+    { 
+      pattern: /(invalid address|incorrect address)/i,
+      category: CrossChainErrorCategory.VALIDATION_FAILURE,
+      recoverable: false,
+      solution: 'Verify TON address format'
+    },
+    { 
+      pattern: /(cell underflow|cell overflow|not enough bytes)/i,
+      category: CrossChainErrorCategory.TRANSACTION_FAILURE,
+      recoverable: false,
+      solution: 'Check TON cell serialization/deserialization logic'
+    }
+  ],
+  bitcoin: [
+    { 
+      pattern: /(insufficient funds|insufficient priority)/i,
+      category: CrossChainErrorCategory.TRANSACTION_FAILURE,
+      recoverable: true,
+      solution: 'Increase fee rate or ensure sufficient BTC balance'
+    },
+    { 
+      pattern: /(connection refused|timeout|network error)/i,
+      category: CrossChainErrorCategory.CONNECTION_FAILURE,
+      recoverable: true, 
+      solution: 'Switch to alternate Bitcoin node'
+    },
+    { 
+      pattern: /(rate limit|too many requests|429)/i,
+      category: CrossChainErrorCategory.RATE_LIMIT_EXCEEDED,
+      recoverable: true,
+      solution: 'Implement exponential backoff and reduce request frequency'
+    },
+    { 
+      pattern: /(dust threshold|output too small)/i,
+      category: CrossChainErrorCategory.TRANSACTION_FAILURE,
+      recoverable: false,
+      solution: 'Ensure outputs are above the dust threshold'
+    },
+    { 
+      pattern: /(transaction already in block chain|already confirmed)/i,
+      category: CrossChainErrorCategory.TRANSACTION_FAILURE,
+      recoverable: false,
+      solution: 'Transaction already confirmed, no action needed'
+    }
+  ]
 };
 
-// Default severity levels mapped to error categories
-const defaultSeverityLevels: Record<CrossChainErrorCategory, ErrorSeverity> = {
-  [CrossChainErrorCategory.CONNECTION_FAILURE]: ErrorSeverity.MEDIUM,
-  [CrossChainErrorCategory.TIMEOUT]: ErrorSeverity.MEDIUM,
-  [CrossChainErrorCategory.RATE_LIMIT]: ErrorSeverity.LOW,
-  [CrossChainErrorCategory.TRANSACTION_FAILURE]: ErrorSeverity.HIGH,
-  [CrossChainErrorCategory.TRANSACTION_REJECTED]: ErrorSeverity.HIGH,
-  [CrossChainErrorCategory.TRANSACTION_NOT_FOUND]: ErrorSeverity.MEDIUM,
-  [CrossChainErrorCategory.INSUFFICIENT_FUNDS]: ErrorSeverity.HIGH,
-  [CrossChainErrorCategory.VALIDATION_FAILURE]: ErrorSeverity.HIGH,
-  [CrossChainErrorCategory.SIGNATURE_INVALID]: ErrorSeverity.HIGH,
-  [CrossChainErrorCategory.PROOF_VERIFICATION_FAILED]: ErrorSeverity.HIGH,
-  [CrossChainErrorCategory.BRIDGE_CONTRACT_ERROR]: ErrorSeverity.HIGH,
-  [CrossChainErrorCategory.BRIDGE_NOT_AVAILABLE]: ErrorSeverity.HIGH,
-  [CrossChainErrorCategory.INVALID_DATA]: ErrorSeverity.MEDIUM,
-  [CrossChainErrorCategory.MISSING_PARAMETER]: ErrorSeverity.MEDIUM,
-  [CrossChainErrorCategory.UNAUTHORIZED]: ErrorSeverity.HIGH,
-  [CrossChainErrorCategory.FORBIDDEN]: ErrorSeverity.HIGH,
-  [CrossChainErrorCategory.INTERNAL_SERVER_ERROR]: ErrorSeverity.CRITICAL,
-  [CrossChainErrorCategory.NOT_IMPLEMENTED]: ErrorSeverity.MEDIUM,
-  [CrossChainErrorCategory.UNKNOWN]: ErrorSeverity.HIGH
+/**
+ * Default retry strategies for different error categories
+ */
+const defaultRetryStrategies: Record<CrossChainErrorCategory, RetryStrategy> = {
+  [CrossChainErrorCategory.CONNECTION_FAILURE]: {
+    shouldRetry: true,
+    delayMs: 2000,
+    maxRetries: 5,
+    exponentialBackoff: true
+  },
+  [CrossChainErrorCategory.TRANSACTION_FAILURE]: {
+    shouldRetry: true,
+    delayMs: 5000,
+    maxRetries: 3,
+    exponentialBackoff: true
+  },
+  [CrossChainErrorCategory.VALIDATION_FAILURE]: {
+    shouldRetry: false,
+    delayMs: 0,
+    maxRetries: 0,
+    exponentialBackoff: false
+  },
+  [CrossChainErrorCategory.RATE_LIMIT_EXCEEDED]: {
+    shouldRetry: true,
+    delayMs: 10000,
+    maxRetries: 3,
+    exponentialBackoff: true
+  },
+  [CrossChainErrorCategory.VERIFICATION_FAILURE]: {
+    shouldRetry: true,
+    delayMs: 3000,
+    maxRetries: 2,
+    exponentialBackoff: true
+  },
+  [CrossChainErrorCategory.ASSET_MISMATCH]: {
+    shouldRetry: false,
+    delayMs: 0,
+    maxRetries: 0,
+    exponentialBackoff: false
+  },
+  [CrossChainErrorCategory.UNAUTHORIZED_ACCESS]: {
+    shouldRetry: false,
+    delayMs: 0,
+    maxRetries: 0,
+    exponentialBackoff: false
+  },
+  [CrossChainErrorCategory.INVALID_PARAMETERS]: {
+    shouldRetry: false,
+    delayMs: 0,
+    maxRetries: 0,
+    exponentialBackoff: false
+  },
+  [CrossChainErrorCategory.NODE_SYNCING]: {
+    shouldRetry: true,
+    delayMs: 30000,
+    maxRetries: 2,
+    exponentialBackoff: false
+  },
+  [CrossChainErrorCategory.UNKNOWN]: {
+    shouldRetry: true,
+    delayMs: 5000,
+    maxRetries: 1,
+    exponentialBackoff: false
+  }
 };
 
-// Max recovery attempts by severity
-const maxRecoveryAttempts: Record<ErrorSeverity, number> = {
-  [ErrorSeverity.LOW]: 5,
-  [ErrorSeverity.MEDIUM]: 3,
-  [ErrorSeverity.HIGH]: 2,
-  [ErrorSeverity.CRITICAL]: 1
+/**
+ * Fallback chains for different blockchains
+ */
+const fallbackChains: Record<BlockchainType, BlockchainType> = {
+  ethereum: 'solana',
+  solana: 'ton',
+  ton: 'ethereum',
+  bitcoin: 'ethereum'
 };
 
 /**
@@ -138,252 +278,293 @@ const maxRecoveryAttempts: Record<ErrorSeverity, number> = {
  */
 class CrossChainErrorHandler {
   /**
-   * Handles a cross-chain error
+   * Analyze and categorize an error
    */
-  handle(
-    error: Error | unknown,
-    options: {
-      category?: CrossChainErrorCategory;
-      blockchain?: BlockchainType;
-      transactionId?: string;
-      severity?: ErrorSeverity;
-      recoveryStrategy?: RecoveryStrategy;
-      recoveryAttempts?: number;
-      correlationId?: string;
-    } = {}
-  ): CrossChainError {
-    // Determine the error category
-    const category = options.category || this.categorizeError(error);
+  public analyze(error: any, context: ErrorContext): CrossChainError {
+    // Extract useful information from the error
+    const errorMessage = this.extractErrorMessage(error);
+    const blockchain = context.blockchain;
     
-    // Set severity based on category or override
-    const severity = options.severity || defaultSeverityLevels[category];
+    // Try to match against known error patterns for this blockchain
+    if (blockchain) {
+      const patterns = errorPatterns[blockchain] || [];
+      
+      for (const pattern of patterns) {
+        if (pattern.pattern.test(errorMessage)) {
+          // Return categorized error with the matched pattern
+          return {
+            originalError: error,
+            message: errorMessage,
+            category: pattern.category,
+            blockchain,
+            recoverable: pattern.recoverable,
+            solution: pattern.solution,
+            retryStrategy: pattern.recoverable 
+              ? defaultRetryStrategies[pattern.category]
+              : undefined,
+            metadata: context.metadata
+          };
+        }
+      }
+    }
     
-    // Set recovery strategy based on category or override
-    const recoveryStrategy = options.recoveryStrategy || defaultRecoveryStrategies[category];
+    // If no specific match was found, use the context category if provided
+    if (context.category) {
+      return {
+        originalError: error,
+        message: errorMessage,
+        category: context.category,
+        blockchain,
+        recoverable: defaultRetryStrategies[context.category].shouldRetry,
+        retryStrategy: defaultRetryStrategies[context.category],
+        metadata: context.metadata
+      };
+    }
     
-    // Create structured error
-    const crossChainError: CrossChainError = {
-      category,
-      message: this.extractErrorMessage(error),
-      severity,
-      blockchain: options.blockchain,
-      transactionId: options.transactionId,
-      recoveryStrategy,
-      recoveryAttempts: options.recoveryAttempts || 0,
-      maxRecoveryAttempts: maxRecoveryAttempts[severity],
+    // Default to unknown error category if no match and no context category
+    return {
       originalError: error,
-      timestamp: Date.now(),
-      correlationId: options.correlationId || `err-${Date.now()}-${Math.random().toString(36).substring(2, 10)}`
+      message: errorMessage,
+      category: CrossChainErrorCategory.UNKNOWN,
+      blockchain,
+      recoverable: true,
+      retryStrategy: defaultRetryStrategies[CrossChainErrorCategory.UNKNOWN],
+      metadata: context.metadata
     };
-    
-    // Log the error
-    this.logError(crossChainError);
-    
-    return crossChainError;
   }
   
   /**
-   * Try to categorize an error based on its properties and message
+   * Handle an error with the specified context
    */
-  private categorizeError(error: Error | unknown): CrossChainErrorCategory {
-    if (!error) {
-      return CrossChainErrorCategory.UNKNOWN;
+  public handle(error: any, context: ErrorContext): CrossChainError {
+    // First analyze the error
+    const analyzedError = this.analyze(error, context);
+    
+    // Log the error with appropriate security event level
+    this.logError(analyzedError, context);
+    
+    // Apply blockchain-specific adjustments
+    this.applyBlockchainSpecificAdjustments(analyzedError);
+    
+    // For recoverable errors, provide alternative endpoints if available
+    if (analyzedError.recoverable && analyzedError.blockchain && 
+        analyzedError.category === CrossChainErrorCategory.CONNECTION_FAILURE) {
+      analyzedError.retryStrategy = {
+        ...analyzedError.retryStrategy as RetryStrategy,
+        alternativeEndpoint: this.getAlternativeEndpoint(analyzedError.blockchain)
+      };
     }
     
-    const errorMsg = this.extractErrorMessage(error).toLowerCase();
-    
-    if (errorMsg.includes('connection') || errorMsg.includes('network') || errorMsg.includes('connect')) {
-      return CrossChainErrorCategory.CONNECTION_FAILURE;
+    // For certain serious errors, suggest fallback to another chain
+    if (analyzedError.category === CrossChainErrorCategory.VALIDATION_FAILURE && 
+        analyzedError.blockchain) {
+      analyzedError.retryStrategy = {
+        ...analyzedError.retryStrategy as RetryStrategy,
+        fallbackChain: fallbackChains[analyzedError.blockchain]
+      };
     }
     
-    if (errorMsg.includes('timeout') || errorMsg.includes('timed out')) {
-      return CrossChainErrorCategory.TIMEOUT;
-    }
-    
-    if (errorMsg.includes('rate limit') || errorMsg.includes('too many requests')) {
-      return CrossChainErrorCategory.RATE_LIMIT;
-    }
-    
-    if (errorMsg.includes('invalid signature') || errorMsg.includes('signature invalid')) {
-      return CrossChainErrorCategory.SIGNATURE_INVALID;
-    }
-    
-    if (errorMsg.includes('not found') && (errorMsg.includes('transaction') || errorMsg.includes('tx'))) {
-      return CrossChainErrorCategory.TRANSACTION_NOT_FOUND;
-    }
-    
-    if (errorMsg.includes('insufficient funds') || errorMsg.includes('not enough balance')) {
-      return CrossChainErrorCategory.INSUFFICIENT_FUNDS;
-    }
-    
-    if (errorMsg.includes('validation') || errorMsg.includes('invalid')) {
-      return CrossChainErrorCategory.VALIDATION_FAILURE;
-    }
-    
-    if (errorMsg.includes('unauthorized') || errorMsg.includes('not authorized')) {
-      return CrossChainErrorCategory.UNAUTHORIZED;
-    }
-    
-    if (errorMsg.includes('forbidden') || errorMsg.includes('access denied')) {
-      return CrossChainErrorCategory.FORBIDDEN;
-    }
-    
-    if (errorMsg.includes('parameter') && errorMsg.includes('missing')) {
-      return CrossChainErrorCategory.MISSING_PARAMETER;
-    }
-    
-    if (errorMsg.includes('bridge') || errorMsg.includes('contract')) {
-      return CrossChainErrorCategory.BRIDGE_CONTRACT_ERROR;
-    }
-    
-    if (errorMsg.includes('internal') || errorMsg.includes('server error')) {
-      return CrossChainErrorCategory.INTERNAL_SERVER_ERROR;
-    }
-    
-    if (errorMsg.includes('not implemented')) {
-      return CrossChainErrorCategory.NOT_IMPLEMENTED;
-    }
-    
-    return CrossChainErrorCategory.UNKNOWN;
+    return analyzedError;
   }
   
   /**
-   * Extract a meaningful error message
+   * Extract a clean error message from any error type
    */
-  private extractErrorMessage(error: Error | unknown): string {
-    if (!error) {
-      return 'Unknown error occurred';
+  private extractErrorMessage(error: any): string {
+    if (typeof error === 'string') {
+      return error;
     }
     
     if (error instanceof Error) {
       return error.message;
     }
     
-    if (typeof error === 'string') {
-      return error;
-    }
+    // Some blockchain libraries wrap errors in specific formats
+    if (error?.reason) return error.reason;
+    if (error?.message) return error.message;
+    if (error?.error?.message) return error.error.message;
+    if (error?.data?.message) return error.data.message;
     
-    if (typeof error === 'object') {
-      // Try to extract message from common error object patterns
-      const errorObj = error as any;
-      
-      if (errorObj.message) {
-        return errorObj.message;
-      }
-      
-      if (errorObj.error && typeof errorObj.error === 'string') {
-        return errorObj.error;
-      }
-      
-      if (errorObj.error && errorObj.error.message) {
-        return errorObj.error.message;
-      }
-      
-      if (errorObj.reason) {
-        return errorObj.reason;
-      }
-      
+    // JSON stringify as fallback
+    try {
       return JSON.stringify(error);
+    } catch {
+      return 'Unknown error';
     }
-    
-    return String(error);
   }
   
   /**
-   * Log the error with appropriate severity
+   * Log error with appropriate severity level
    */
-  private logError(error: CrossChainError): void {
+  private logError(error: CrossChainError, context: ErrorContext): void {
     const logData = {
-      category: error.category,
+      errorCategory: error.category,
+      errorMessage: error.message,
       blockchain: error.blockchain,
-      transactionId: error.transactionId,
-      severity: error.severity,
-      recoveryStrategy: error.recoveryStrategy,
-      correlationId: error.correlationId,
-      timestamp: new Date(error.timestamp).toISOString()
+      operation: context.operation,
+      retryCount: context.retryCount,
+      vaultId: context.vaultId,
+      transactionId: context.transactionId,
+      recoverable: error.recoverable,
+      metadata: {
+        ...error.metadata,
+        ...context.metadata
+      }
     };
     
-    switch (error.severity) {
-      case ErrorSeverity.CRITICAL:
-        securityLogger.error(`CRITICAL: ${error.message}`, logData);
+    // Determine log level based on error category and recoverability
+    switch (error.category) {
+      case CrossChainErrorCategory.CONNECTION_FAILURE:
+      case CrossChainErrorCategory.RATE_LIMIT_EXCEEDED:
+      case CrossChainErrorCategory.NODE_SYNCING:
+        if (error.recoverable) {
+          securityLogger.info(`Recoverable ${error.category} in ${error.blockchain}`, logData);
+        } else {
+          securityLogger.warn(`Non-recoverable ${error.category} in ${error.blockchain}`, logData);
+        }
         break;
-      case ErrorSeverity.HIGH:
-        securityLogger.error(`HIGH: ${error.message}`, logData);
+        
+      case CrossChainErrorCategory.TRANSACTION_FAILURE:
+      case CrossChainErrorCategory.VERIFICATION_FAILURE:
+        if (error.recoverable) {
+          securityLogger.warn(`Recoverable ${error.category} in ${error.blockchain}`, logData);
+        } else {
+          securityLogger.error(`Non-recoverable ${error.category} in ${error.blockchain}`, logData);
+        }
         break;
-      case ErrorSeverity.MEDIUM:
-        securityLogger.warn(`MEDIUM: ${error.message}`, logData);
+        
+      case CrossChainErrorCategory.UNAUTHORIZED_ACCESS:
+        securityLogger.critical(`Security incident: ${error.category}`, logData);
         break;
-      case ErrorSeverity.LOW:
-        securityLogger.info(`LOW: ${error.message}`, logData);
-        break;
+        
       default:
-        securityLogger.info(`${error.message}`, logData);
+        securityLogger.error(`Error in ${error.blockchain || 'unknown'} blockchain: ${error.message}`, logData);
     }
   }
   
   /**
-   * Create a client-safe version of the error (removes sensitive info)
+   * Apply blockchain-specific adjustments to error handling
    */
-  createClientSafeError(error: CrossChainError): Record<string, any> {
-    // Only include properties safe for client viewing
-    return {
-      category: error.category,
-      message: error.message,
-      severity: error.severity,
-      blockchain: error.blockchain,
-      recoveryStrategy: error.recoveryStrategy,
-      recoverable: error.recoveryStrategy !== RecoveryStrategy.ABORT && 
-                   error.recoveryStrategy !== RecoveryStrategy.NONE,
-      correlationId: error.correlationId,
-      timestamp: error.timestamp
-    };
+  private applyBlockchainSpecificAdjustments(error: CrossChainError): void {
+    // Skip if no blockchain specified
+    if (!error.blockchain) return;
+    
+    // Apply blockchain-specific adjustments
+    switch (error.blockchain) {
+      case 'ethereum':
+        // For Ethereum gas-related errors, adjust retry strategy
+        if (error.message.includes('gas') && error.recoverable) {
+          error.retryStrategy = {
+            ...error.retryStrategy as RetryStrategy,
+            delayMs: 15000, // Longer delay for gas issues
+            maxRetries: 5   // More retries for gas issues
+          };
+        }
+        break;
+        
+      case 'solana':
+        // For Solana blockhash expired errors, adjust retry strategy
+        if (error.message.includes('blockhash') && error.recoverable) {
+          error.retryStrategy = {
+            ...error.retryStrategy as RetryStrategy,
+            delayMs: 1000,  // Shorter delay for blockhash refresh
+            maxRetries: 3
+          };
+        }
+        break;
+        
+      case 'ton':
+        // TON-specific adjustments
+        if (error.message.includes('fee') && error.recoverable) {
+          error.retryStrategy = {
+            ...error.retryStrategy as RetryStrategy,
+            delayMs: 5000,
+            maxRetries: 2
+          };
+        }
+        break;
+        
+      case 'bitcoin':
+        // Bitcoin-specific adjustments
+        if (error.message.includes('fee') && error.recoverable) {
+          error.retryStrategy = {
+            ...error.retryStrategy as RetryStrategy,
+            delayMs: 60000, // Bitcoin needs longer delays between retries
+            maxRetries: 3
+          };
+        }
+        break;
+    }
   }
   
   /**
-   * Determine if recovery should be attempted
+   * Get alternative endpoint for a blockchain
    */
-  shouldAttemptRecovery(error: CrossChainError): boolean {
-    // Don't attempt recovery if the strategy doesn't support it
-    if (
-      error.recoveryStrategy === RecoveryStrategy.ABORT || 
-      error.recoveryStrategy === RecoveryStrategy.NONE ||
-      error.recoveryStrategy === RecoveryStrategy.NOTIFY_USER
-    ) {
+  private getAlternativeEndpoint(blockchain: BlockchainType): string | undefined {
+    // In a real implementation, this would return actual alternative endpoints
+    // For now, just return placeholder values
+    switch (blockchain) {
+      case 'ethereum':
+        return config.getAlternativeEndpoint('ethereum');
+      case 'solana':
+        return config.getAlternativeEndpoint('solana');
+      case 'ton':
+        return config.getAlternativeEndpoint('ton');
+      case 'bitcoin':
+        return config.getAlternativeEndpoint('bitcoin');
+      default:
+        return undefined;
+    }
+  }
+  
+  /**
+   * Calculate appropriate retry delay based on retry count and strategy
+   */
+  public calculateRetryDelay(error: CrossChainError, retryCount: number): number {
+    const strategy = error.retryStrategy;
+    
+    if (!strategy || !strategy.shouldRetry) {
+      return 0;
+    }
+    
+    // Apply exponential backoff if configured
+    if (strategy.exponentialBackoff) {
+      return Math.min(
+        strategy.delayMs * Math.pow(2, retryCount),
+        60000 // Max 1 minute delay
+      );
+    }
+    
+    return strategy.delayMs;
+  }
+  
+  /**
+   * Determine if another retry should be attempted
+   */
+  public shouldRetry(error: CrossChainError, currentRetryCount: number): boolean {
+    const strategy = error.retryStrategy;
+    
+    if (!strategy || !strategy.shouldRetry) {
       return false;
     }
     
-    // Don't attempt recovery if we've reached max attempts
-    if (
-      error.recoveryAttempts !== undefined && 
-      error.maxRecoveryAttempts !== undefined &&
-      error.recoveryAttempts >= error.maxRecoveryAttempts
-    ) {
-      return false;
-    }
-    
-    return true;
+    return currentRetryCount < strategy.maxRetries;
   }
   
   /**
-   * Get recovery delay in ms based on attempt number and severity
+   * Get suggested fallback chain if available
    */
-  getRecoveryDelayMs(error: CrossChainError): number {
-    // Exponential backoff based on number of attempts
-    const baseDelay = 1000; // 1 second base delay
-    const attempts = error.recoveryAttempts || 0;
-    
-    // Calculate delay with exponential backoff: baseDelay * 2^attempts
-    // With some randomness to avoid thundering herd problem
-    const exponentialDelay = baseDelay * Math.pow(2, attempts);
-    const jitter = Math.random() * 0.3 * exponentialDelay; // 0-30% jitter
-    
-    // For rate limit errors, use a longer delay
-    if (error.category === CrossChainErrorCategory.RATE_LIMIT) {
-      return exponentialDelay * 2 + jitter;
-    }
-    
-    return exponentialDelay + jitter;
+  public getFallbackChain(error: CrossChainError): BlockchainType | undefined {
+    return error.retryStrategy?.fallbackChain;
+  }
+  
+  /**
+   * Get suggested solution for this error
+   */
+  public getSolution(error: CrossChainError): string | undefined {
+    return error.solution;
   }
 }
 
+// Export singleton instance
 export const crossChainErrorHandler = new CrossChainErrorHandler();
