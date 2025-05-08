@@ -30,6 +30,7 @@ import { useEthereum } from '@/contexts/ethereum-context';
 import { useSolana } from '@/contexts/solana-context';
 import { SentimentGauge, SentimentAlert, SentimentRecommendations } from '@/components/sentiment/sentiment-gauge';
 import { SentimentData, sentimentAnalysisService, SentimentLevel } from '@/services/sentiment-analysis-service';
+import { TechnicalIndicators, TechnicalIndicator } from '@/components/technical/technical-indicators';
 
 // Exit strategy types
 type PriceTarget = {
@@ -71,6 +72,9 @@ function InvestmentDisciplineVault() {
   const [sentimentData, setSentimentData] = useState<SentimentData | undefined>(undefined);
   const [sentimentRecommendations, setSentimentRecommendations] = useState<string[]>([]);
   const [enableSentimentProtection, setEnableSentimentProtection] = useState<boolean>(true);
+  
+  // Technical indicators for on-chain triggers
+  const [technicalIndicators, setTechnicalIndicators] = useState<TechnicalIndicator[]>([]);
   
   // Investment strategy config
   const [selectedStrategy, setSelectedStrategy] = useState<InvestmentStrategy>('diamond_hands');
