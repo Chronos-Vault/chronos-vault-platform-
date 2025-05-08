@@ -298,6 +298,17 @@ router.get('/metrics/:vaultId', (req: Request, res: Response) => {
 });
 
 /**
+ * Get all security tiers/levels
+ * GET /api/security/progressive-quantum/levels
+ */
+router.get('/levels', (_req: Request, res: Response) => {
+  res.status(200).json({
+    success: true,
+    levels: securityTiers
+  });
+});
+
+/**
  * Force refresh security levels for all vaults
  * POST /api/security/progressive-quantum/refresh
  */

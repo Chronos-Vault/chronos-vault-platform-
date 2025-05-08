@@ -44,6 +44,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Register intent-based inheritance routes
   apiRouter.use('/intent-inheritance', intentInheritanceRouter);
   
+  // Register progressive quantum vault routes
+  apiRouter.use('/security/progressive-quantum', progressiveQuantumVaultRoutes);
+  
+  // Register vault management routes
+  apiRouter.use('/vaults', vaultsRoutes);
+  
   // Add event listeners for verification status updates
   crossChainVerification.on('verification:completed', (result) => {
     securityLogger.info(`Vault verification completed for ${result.vaultId}`, {
