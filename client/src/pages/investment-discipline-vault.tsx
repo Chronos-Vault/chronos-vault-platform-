@@ -68,7 +68,7 @@ function InvestmentDisciplineVault() {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   
   // Sentiment analysis data
-  const [sentimentData, setSentimentData] = useState<SentimentData | null>(null);
+  const [sentimentData, setSentimentData] = useState<SentimentData | undefined>(undefined);
   const [sentimentRecommendations, setSentimentRecommendations] = useState<string[]>([]);
   const [enableSentimentProtection, setEnableSentimentProtection] = useState<boolean>(true);
   
@@ -287,6 +287,20 @@ function InvestmentDisciplineVault() {
         specializedConfig.timeBasedExits = timeBasedExits;
       } else if (selectedStrategy === 'halvening_cycle') {
         specializedConfig.marketConditions = marketConditions.filter(c => c.enabled);
+      }
+      
+      // Add sentiment analysis protection
+      specializedConfig.sentimentProtection = enableSentimentProtection;
+      if (sentimentData) {
+        specializedConfig.sentimentData = {
+          value: sentimentData.value,
+          classification: sentimentData.classification,
+          timestamp: sentimentData.timestamp,
+          source: sentimentData.source
+        };
+      }
+      if (sentimentRecommendations.length > 0) {
+        specializedConfig.sentimentRecommendations = sentimentRecommendations;
       }
       
       // Create blockchain-specific configuration
@@ -760,6 +774,9 @@ function InvestmentDisciplineVault() {
               <p className="text-gray-400">Configure a vault that enforces investment discipline through programmable rules</p>
             </div>
             
+            {/* Market Sentiment Alert - shows only in extreme conditions */}
+            <SentimentAlert assetSymbol={assetType} sentimentData={sentimentData} />
+            
             <Card className="bg-black/40 border-gray-800">
               <CardHeader>
                 <CardTitle>Basic Information</CardTitle>
@@ -779,7 +796,20 @@ function InvestmentDisciplineVault() {
                 
                 <div>
                   <Label>Asset Type</Label>
-                  <Select value={assetType} onValueChange={setAssetType}>
+                  <Select 
+                    value={assetType} 
+                    onValueChange={(value) => {
+                      setAssetType(value);
+                      // Fetch sentiment data when asset type changes
+                      sentimentAnalysisService.getSentiment(value)
+                        .then(data => setSentimentData(data))
+                        .catch(err => console.error("Error fetching sentiment data:", err));
+                      
+                      sentimentAnalysisService.getActionRecommendations(value)
+                        .then(recs => setSentimentRecommendations(recs))
+                        .catch(err => console.error("Error fetching recommendations:", err));
+                    }}
+                  >
                     <SelectTrigger className="bg-gray-800 border-gray-700 mt-1">
                       <SelectValue placeholder="Select Asset" />
                     </SelectTrigger>
@@ -949,6 +979,54 @@ function InvestmentDisciplineVault() {
                         Connect Wallet
                       </Button>
                     )}
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+            
+            <Card className="bg-black/40 border-gray-800">
+              <CardHeader>
+                <CardTitle>Market Sentiment Analysis</CardTitle>
+                <CardDescription>AI-powered protection against emotional investing decisions</CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                  <div className="lg:col-span-1">
+                    <SentimentGauge
+                      assetSymbol={assetType}
+                      onSentimentUpdate={setSentimentData}
+                    />
+                  </div>
+                  <div className="lg:col-span-2 bg-black/30 rounded-lg p-4 border border-gray-800">
+                    <h3 className="text-lg font-medium text-gray-200 mb-2">
+                      AI Investment Recommendations
+                    </h3>
+                    <p className="text-sm text-gray-400 mb-4">
+                      Our AI analyzes market sentiment to help prevent emotional decision-making during extreme market conditions.
+                    </p>
+                    
+                    <SentimentRecommendations
+                      assetSymbol={assetType}
+                      onRecommendationsUpdate={setSentimentRecommendations}
+                    />
+                    
+                    <div className="mt-6 pt-4 border-t border-gray-800">
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <Label htmlFor="enable-sentiment-protection" className="text-sm font-medium text-gray-300">
+                            Enable Sentiment Protection
+                          </Label>
+                          <p className="text-xs text-gray-500 mt-1">
+                            Automatically adjust your strategy during extreme market conditions
+                          </p>
+                        </div>
+                        <Switch
+                          id="enable-sentiment-protection"
+                          checked={enableSentimentProtection}
+                          onCheckedChange={setEnableSentimentProtection}
+                        />
+                      </div>
+                    </div>
                   </div>
                 </div>
               </CardContent>
