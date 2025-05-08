@@ -66,6 +66,7 @@ import StoragePage from "@/pages/storage-page";
 import TransactionMonitorPage from "@/pages/transaction-monitor";
 import SmartContractAuditTest from "@/pages/audit-test";
 import CrossChainTestPage from "@/pages/cross-chain-test";
+import ZkPrivacyDemoPage from "@/pages/zk-privacy-demo";
 
 
 // Redirect component for wouter
@@ -132,6 +133,7 @@ function Router() {
         <Route path="/transaction-monitor" component={TransactionMonitorPage} />
         <Route path="/audit-test" component={SmartContractAuditTest} />
         <Route path="/cross-chain-test" component={CrossChainTestPage} />
+        <Route path="/zk-privacy-demo" component={ZkPrivacyDemoPage} />
 
         <Route component={NotFound} />
       </Switch>
