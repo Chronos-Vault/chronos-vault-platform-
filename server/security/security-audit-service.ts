@@ -7,6 +7,11 @@
 
 import { getSecurityAuditFramework } from './audit-framework';
 import { securityLogger, SecurityEventType } from '../monitoring/security-logger';
+import { EthereumConnector } from '../blockchain/ethereum-connector';
+import { SolanaConnector } from '../blockchain/solana-connector';
+import { TonConnector } from '../blockchain/ton-connector';
+import { BitcoinConnector } from '../blockchain/bitcoin-connector';
+import config from '../config';
 import { 
   SecurityAuditLevel, 
   AuditableOperation 
@@ -44,11 +49,11 @@ export class SecurityAuditService {
     }
     
     try {
-      // Get blockchain connectors from the factory
-      const ethConnector = require('../blockchain/ethereum-connector').getEthereumConnector();
-      const solConnector = require('../blockchain/solana-connector').getSolanaConnector();
-      const tonConnector = require('../blockchain/ton-connector').getTONConnector();
-      const btcConnector = require('../blockchain/bitcoin-connector').getBitcoinConnector();
+      // Create blockchain connectors
+      const ethConnector = new EthereumConnector(config.blockchainConfig.ethereum);
+      const solConnector = new SolanaConnector(config.blockchainConfig.solana);
+      const tonConnector = new TonConnector(config.blockchainConfig.ton);
+      const btcConnector = new BitcoinConnector(config.blockchainConfig.bitcoin);
       
       // Create a map of connectors
       const connectors = new Map();
