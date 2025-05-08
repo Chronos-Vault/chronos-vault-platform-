@@ -83,13 +83,20 @@ export class EthereumConnector implements BlockchainConnector {
     try {
       const networkName = isTestnet ? 'sepolia' : 'mainnet';
       // In ethers.js v6, network format is different - ensAddress is no longer needed
-      const networkOptions = {
-        name: networkName,
-        chainId: isTestnet ? 11155111 : 1
+      // In ethers v6, we need to set up the network configuration differently
+      // Network can be created using chainId or name
+      const network = ethers.Network.from(
+        isTestnet ? "sepolia" : "mainnet"
+      );
+      
+      // Options must be passed in the correct format for v6
+      const clientOptions = {
+        staticNetwork: true, // This makes the provider keep the network even if chain changes
+        polling: true // Enable polling for more reliable connections in server environments
       };
-      // v6 format separates the network and options objects
-      // staticNetwork is now part of a JsonRpcClientOptions object
-      this.provider = new ethers.JsonRpcProvider(rpcUrl, networkOptions, { staticNetwork: true });
+      
+      // For v6, network is passed as an object with defined structure
+      this.provider = new ethers.JsonRpcProvider(rpcUrl, network, clientOptions);
       
       // Initialize contract based on network
       const contractAddresses = isTestnet ? CONTRACT_ADDRESSES.testnet : CONTRACT_ADDRESSES.mainnet;
@@ -208,7 +215,7 @@ export class EthereumConnector implements BlockchainConnector {
         : params.beneficiaries ? [params.beneficiaries] : [];
       
       // Determine if multi-sig vault
-      const isMultiSig = params.securityLevel === 'high';
+      const isMultiSig = params.securityLevel === 'high' || params.securityLevel === 3;
       
       // Create transaction
       const tx = await this.vaultContract.createVault(
@@ -217,16 +224,46 @@ export class EthereumConnector implements BlockchainConnector {
         isMultiSig
       );
       
-      // Wait for transaction confirmation
+      // Wait for transaction confirmation (ethers v6 format)
       const receipt = await tx.wait();
       
-      // Extract vault ID from events
-      const event = receipt.events.find((e: any) => e.event === 'VaultCreated');
-      if (!event) {
+      // Extract vault ID from events (ethers v6 changes the event format)
+      // Find the VaultCreated event in the logs
+      // Define proper type for log object to avoid implicit any
+      interface Log {
+        topics: ReadonlyArray<string>;
+        data: string;
+        transactionHash: string;
+        blockHash: string;
+        blockNumber: number;
+        address: string;
+        transactionIndex: number;
+        logIndex: number;
+      }
+      
+      const vaultCreatedEvent = receipt.logs.find((log: Log) => {
+        try {
+          const parsedLog = this.vaultContract!.interface.parseLog({
+            topics: log.topics,
+            data: log.data
+          });
+          return parsedLog && parsedLog.name === 'VaultCreated';
+        } catch (e) {
+          return false;
+        }
+      });
+      
+      if (!vaultCreatedEvent) {
         throw new Error('Vault creation event not found in transaction receipt');
       }
       
-      const vaultId = event.args.vaultId.toString();
+      // Parse the event with the contract interface
+      const parsedEvent = this.vaultContract!.interface.parseLog({
+        topics: vaultCreatedEvent.topics as string[],
+        data: vaultCreatedEvent.data
+      });
+      
+      const vaultId = parsedEvent!.args[0].toString(); // Assuming vaultId is first arg
       
       return {
         success: true,
