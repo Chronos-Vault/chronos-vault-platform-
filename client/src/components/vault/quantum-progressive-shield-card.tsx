@@ -1,18 +1,34 @@
-import React, { useState, useEffect } from 'react';
-import { Shield, Lock, EyeOff, Fingerprint, Zap, AlertTriangle } from 'lucide-react';
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
+import { useState, useEffect } from 'react';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
+import { Shield, ShieldCheck, ShieldOff, ArrowUp, Lock } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
-import { useToast } from "@/hooks/use-toast";
-import { apiRequest } from "@/lib/queryClient";
+import { Button } from "@/components/ui/button";
+import { Separator } from "@/components/ui/separator";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
-interface QuantumProgressiveShieldCardProps {
+type SecurityMetrics = {
   vaultId: string;
-  vaultValue: number;
-}
+  securityStrength: number;
+  currentTier: string;
+  lastUpgrade: string;
+  hasZeroKnowledgeProofs: boolean;
+  requiredSignatures: number;
+  signatures: {
+    algorithm: string;
+    strength: string;
+  };
+  encryption: {
+    algorithm: string;
+    latticeParameters: {
+      dimension: number;
+      errorDistribution: string;
+      ringType: string;
+    };
+  };
+};
 
-type SecurityTier = {
+type SecurityLevel = {
   id: string;
   name: string;
   minValueThreshold: number;
@@ -25,274 +41,281 @@ type SecurityTier = {
   requiredSignatures: number;
 };
 
-const QuantumProgressiveShieldCard: React.FC<QuantumProgressiveShieldCardProps> = ({ vaultId, vaultValue }) => {
-  const [metrics, setMetrics] = useState<any>(null);
-  const [loading, setLoading] = useState<boolean>(true);
-  const [updating, setUpdating] = useState<boolean>(false);
-  const [availableTiers, setAvailableTiers] = useState<SecurityTier[]>([]);
-  const { toast } = useToast();
+interface QuantumProgressiveShieldCardProps {
+  vaultId: string;
+  vaultValue: number;
+  onSecurityUpgrade?: (newLevel: string) => void;
+}
 
+export function QuantumProgressiveShieldCard({ vaultId, vaultValue, onSecurityUpgrade }: QuantumProgressiveShieldCardProps) {
+  const [metrics, setMetrics] = useState<SecurityMetrics | null>(null);
+  const [levels, setLevels] = useState<SecurityLevel[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [upgrading, setUpgrading] = useState(false);
+
+  // Fetch security metrics for this vault
   useEffect(() => {
+    const fetchMetrics = async () => {
+      try {
+        const response = await fetch(`/api/security/progressive-quantum/metrics/${vaultId}`);
+        const data = await response.json();
+        
+        if (data.success) {
+          setMetrics(data.metrics);
+        } else {
+          setError('Failed to load security metrics');
+        }
+      } catch (err) {
+        setError('Error connecting to security service');
+        console.error('Error fetching security metrics:', err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    // Fetch security levels
+    const fetchLevels = async () => {
+      try {
+        const response = await fetch('/api/security/progressive-quantum/levels');
+        const data = await response.json();
+        
+        if (data.success) {
+          setLevels(data.levels);
+        } else {
+          setError('Failed to load security levels');
+        }
+      } catch (err) {
+        console.error('Error fetching security levels:', err);
+      }
+    };
+
     fetchMetrics();
-    fetchAvailableTiers();
+    fetchLevels();
   }, [vaultId]);
 
-  const fetchMetrics = async () => {
-    try {
-      setLoading(true);
-      const response = await apiRequest('GET', `/api/security/progressive-quantum/metrics/${vaultId}`);
-      const data = await response.json();
-      setMetrics(data.metrics);
-    } catch (error) {
-      console.error('Error fetching quantum security metrics:', error);
-      toast({
-        title: "Failed to load security metrics",
-        description: "Could not retrieve security metrics for this vault",
-        variant: "destructive"
-      });
-    } finally {
-      setLoading(false);
-    }
-  };
+  // Determine the next available security tier
+  const nextSecurityTier = metrics && levels.length ? 
+    levels.find(level => level.id !== metrics.currentTier && 
+      levels.findIndex(l => l.id === level.id) === 
+      levels.findIndex(l => l.id === metrics.currentTier) + 1) : null;
 
-  const fetchAvailableTiers = async () => {
-    try {
-      const response = await apiRequest('GET', '/api/security/levels');
-      const data = await response.json();
-      setAvailableTiers(data.levels);
-    } catch (error) {
-      console.error('Error fetching security tiers:', error);
-    }
+  // Calculate the appropriate tier based on current value
+  const getAppropriateSecurityTier = (value: number) => {
+    if (!levels.length) return null;
+    return levels.find(tier => 
+      value >= tier.minValueThreshold && 
+      (tier.maxValueThreshold === null || value < tier.maxValueThreshold)
+    ) || levels[0];
   };
+  
+  const currentAppropriateLevel = getAppropriateSecurityTier(vaultValue);
+  
+  // Determine if current security level is too low for the vault value
+  const isSecurityLevelTooLow = metrics && currentAppropriateLevel && 
+    levels.findIndex(l => l.id === metrics.currentTier) < 
+    levels.findIndex(l => l.id === currentAppropriateLevel.id);
 
-  const handleInitialize = async () => {
-    try {
-      setUpdating(true);
-      const response = await apiRequest('POST', '/api/security/progressive-quantum/initialize', {
-        vaultId,
-        vaultValue
-      });
-      const data = await response.json();
-      setMetrics(data.metrics);
-      toast({
-        title: "Security initialized",
-        description: `Quantum-resistant shield initialized at ${data.metrics.securityStrength}% strength`,
-      });
-    } catch (error) {
-      console.error('Error initializing quantum security:', error);
-      toast({
-        title: "Initialization failed",
-        description: "Could not initialize quantum-resistant security",
-        variant: "destructive"
-      });
-    } finally {
-      setUpdating(false);
-    }
-  };
-
-  const handleUpdateValue = async () => {
-    try {
-      setUpdating(true);
-      const response = await apiRequest('POST', '/api/security/progressive-quantum/update-value', {
-        vaultId,
-        newValue: vaultValue
-      });
-      const data = await response.json();
-      setMetrics(data.metrics);
-      
-      if (data.upgraded) {
-        toast({
-          title: "Security level upgraded",
-          description: `Vault security automatically strengthened to ${data.metrics.currentTier}`,
-        });
-      } else {
-        toast({
-          title: "Security level updated",
-          description: "Vault security assessment complete",
-        });
-      }
-    } catch (error) {
-      console.error('Error updating security level:', error);
-      toast({
-        title: "Update failed",
-        description: "Could not update quantum-resistant security level",
-        variant: "destructive"
-      });
-    } finally {
-      setUpdating(false);
-    }
-  };
-
+  // Handle security upgrade
   const handleUpgrade = async () => {
-    // Find the next tier
-    if (!metrics || !availableTiers.length) return;
+    if (!nextSecurityTier) return;
     
-    const currentTierIndex = availableTiers.findIndex(t => t.id === metrics.currentTier);
-    if (currentTierIndex === -1 || currentTierIndex === availableTiers.length - 1) {
-      toast({
-        title: "Already at maximum tier",
-        description: "This vault is already at the highest security tier",
-      });
-      return;
-    }
-    
-    const nextTier = availableTiers[currentTierIndex + 1];
+    setUpgrading(true);
     
     try {
-      setUpdating(true);
-      const response = await apiRequest('POST', '/api/security/progressive-quantum/upgrade', {
-        vaultId,
-        newTierId: nextTier.id
+      const response = await fetch('/api/security/progressive-quantum/upgrade', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          vaultId,
+          newTierId: nextSecurityTier.id
+        })
       });
+      
       const data = await response.json();
-      setMetrics(data.metrics);
-      toast({
-        title: "Security upgraded",
-        description: `Quantum-resistant shield upgraded to ${nextTier.name}`,
-      });
-    } catch (error) {
-      console.error('Error upgrading security:', error);
-      toast({
-        title: "Upgrade failed",
-        description: "Could not upgrade quantum-resistant security",
-        variant: "destructive"
-      });
+      
+      if (data.success) {
+        setMetrics(data.metrics);
+        if (onSecurityUpgrade) onSecurityUpgrade(nextSecurityTier.id);
+      } else {
+        setError('Failed to upgrade security level');
+      }
+    } catch (err) {
+      setError('Error connecting to security service');
+      console.error('Error upgrading security:', err);
     } finally {
-      setUpdating(false);
+      setUpgrading(false);
     }
   };
 
+  // Show loading state
   if (loading) {
     return (
-      <Card className="w-full">
-        <CardHeader>
-          <CardTitle className="flex items-center">
-            <Shield className="mr-2 h-5 w-5 text-primary" />
-            Loading Quantum Security...
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="h-40 flex items-center justify-center">
-            <div className="w-8 h-8 border-4 border-t-transparent border-primary rounded-full animate-spin"></div>
-          </div>
-        </CardContent>
-      </Card>
-    );
-  }
-
-  if (!metrics) {
-    return (
-      <Card className="w-full">
-        <CardHeader>
-          <CardTitle className="flex items-center">
-            <Shield className="mr-2 h-5 w-5 text-primary" />
-            Quantum-Resistant Shield
+      <Card className="relative overflow-hidden">
+        <CardHeader className="pb-2">
+          <CardTitle className="flex items-center gap-2">
+            <Shield className="h-5 w-5 text-purple-500" />
+            Loading Quantum Shield
           </CardTitle>
           <CardDescription>
-            Advanced progressive security that scales with your assets
+            Retrieving quantum security metrics...
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="flex flex-col gap-4 items-center justify-center h-40">
-            <AlertTriangle className="h-10 w-10 text-amber-500" />
-            <p className="text-center text-sm text-muted-foreground">
-              Quantum-resistant protection is not yet enabled for this vault.
-              Initialize security to protect against quantum computing threats.
-            </p>
+          <div className="h-24 flex justify-center items-center">
+            <div className="animate-spin w-6 h-6 border-2 border-purple-500 border-t-transparent rounded-full"></div>
           </div>
         </CardContent>
-        <CardFooter>
-          <Button onClick={handleInitialize} disabled={updating} className="w-full">
-            {updating ? "Initializing..." : "Initialize Quantum Security"}
-          </Button>
-        </CardFooter>
       </Card>
     );
   }
 
-  const currentTier = availableTiers.find(t => t.id === metrics.currentTier) || {
-    name: 'Unknown',
-    description: 'Security tier information unavailable'
-  };
+  // Show error state
+  if (error || !metrics) {
+    return (
+      <Card className="border-red-300">
+        <CardHeader className="pb-2">
+          <CardTitle className="flex items-center gap-2 text-red-500">
+            <ShieldOff className="h-5 w-5" />
+            Quantum Shield Unavailable
+          </CardTitle>
+          <CardDescription>
+            {error || 'Security metrics could not be loaded'}
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="p-4 bg-red-50 rounded-md text-sm text-red-800">
+            Your vault is still secure, but advanced quantum protection metrics are unavailable.
+            Please try again later or contact support if this problem persists.
+          </div>
+        </CardContent>
+      </Card>
+    );
+  }
 
   return (
-    <Card className="w-full">
-      <CardHeader>
-        <div className="flex items-center justify-between">
-          <CardTitle className="flex items-center">
-            <Shield className="mr-2 h-5 w-5 text-primary" />
-            {currentTier.name}
+    <Card className="relative overflow-hidden">
+      <div 
+        className={`absolute top-0 right-0 w-32 h-32 -translate-y-16 translate-x-8 opacity-5 rounded-full
+          ${metrics.currentTier === 'standard' ? 'bg-blue-500' :
+            metrics.currentTier === 'enhanced' ? 'bg-purple-500' :
+            metrics.currentTier === 'advanced' ? 'bg-amber-500' : 'bg-red-500'}`}
+      />
+      
+      <CardHeader className="pb-2">
+        <div className="flex justify-between items-start">
+          <CardTitle className="flex items-center gap-2">
+            <ShieldCheck className={`h-5 w-5
+              ${metrics.currentTier === 'standard' ? 'text-blue-500' :
+                metrics.currentTier === 'enhanced' ? 'text-purple-500' :
+                metrics.currentTier === 'advanced' ? 'text-amber-500' : 'text-red-500'}`} 
+            />
+            Progressive Quantum Shield
+            {isSecurityLevelTooLow && (
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger>
+                    <Badge variant="destructive" className="ml-2 px-1.5 py-0">
+                      <ArrowUp className="h-3 w-3 mr-1" /> Upgrade Needed
+                    </Badge>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>Security level too low for current vault value</p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+            )}
           </CardTitle>
           <Badge 
-            variant={metrics.securityStrength > 75 ? "default" : 
-                   metrics.securityStrength > 50 ? "secondary" : 
-                   "outline"}
-            className="ml-2"
+            variant="outline" 
+            className={`
+              ${metrics.currentTier === 'standard' ? 'bg-blue-50 text-blue-700 border-blue-200' :
+               metrics.currentTier === 'enhanced' ? 'bg-purple-50 text-purple-700 border-purple-200' :
+               metrics.currentTier === 'advanced' ? 'bg-amber-50 text-amber-700 border-amber-200' :
+               'bg-red-50 text-red-700 border-red-200'}
+            `}
           >
-            {metrics.securityStrength}% Strength
+            {levels.find(l => l.id === metrics.currentTier)?.name || 'Unknown'}
           </Badge>
         </div>
         <CardDescription>
-          {currentTier.description}
+          Progressively strengthening quantum-resistant protection
         </CardDescription>
       </CardHeader>
+      
       <CardContent>
         <div className="space-y-4">
-          <div>
-            <div className="flex justify-between text-sm mb-1">
+          {/* Security Strength Indicator */}
+          <div className="space-y-1">
+            <div className="flex justify-between text-xs">
               <span>Security Strength</span>
-              <span>{metrics.securityStrength}%</span>
+              <span className="font-medium">{metrics.securityStrength}%</span>
             </div>
-            <Progress value={metrics.securityStrength} className="h-2" />
+            <Progress value={metrics.securityStrength} 
+              className={`h-2
+                ${metrics.currentTier === 'standard' ? 'bg-blue-100' :
+                 metrics.currentTier === 'enhanced' ? 'bg-purple-100' :
+                 metrics.currentTier === 'advanced' ? 'bg-amber-100' :
+                 'bg-red-100'}
+              `}
+            />
           </div>
-
+          
+          {/* Security Details */}
           <div className="grid grid-cols-2 gap-2 text-sm">
-            <div className="flex items-center">
-              <Lock className="h-4 w-4 mr-2 text-muted-foreground" />
-              <span>Encryption: {metrics.encryption.algorithm}</span>
+            <div className="space-y-0.5">
+              <p className="text-muted-foreground text-xs">Signature Algorithm</p>
+              <p className="font-mono text-xs">{metrics.signatures.algorithm}</p>
             </div>
-            <div className="flex items-center">
-              <Fingerprint className="h-4 w-4 mr-2 text-muted-foreground" />
-              <span>Signatures: {metrics.signatures.algorithm}</span>
+            <div className="space-y-0.5">
+              <p className="text-muted-foreground text-xs">Encryption</p>
+              <p className="font-mono text-xs">{metrics.encryption.algorithm}</p>
             </div>
-            <div className="flex items-center">
-              <Zap className="h-4 w-4 mr-2 text-muted-foreground" />
-              <span>Lattice: {metrics.encryption.latticeParameters.dimension}d</span>
+            <div className="space-y-0.5">
+              <p className="text-muted-foreground text-xs">Required Signatures</p>
+              <p>{metrics.requiredSignatures}</p>
             </div>
-            <div className="flex items-center">
-              <EyeOff className="h-4 w-4 mr-2 text-muted-foreground" />
-              <span>
-                {metrics.hasZeroKnowledgeProofs ? "ZK Proofs Enabled" : "ZK Proofs Disabled"}
-              </span>
+            <div className="space-y-0.5">
+              <p className="text-muted-foreground text-xs">Zero-Knowledge Proofs</p>
+              <p>{metrics.hasZeroKnowledgeProofs ? 'Enabled' : 'Disabled'}</p>
             </div>
           </div>
-
-          {metrics.lastUpgrade && (
-            <p className="text-xs text-muted-foreground">
-              Last upgraded: {new Date(metrics.lastUpgrade).toLocaleString()}
-            </p>
+          
+          <div className="mt-1 text-xs text-muted-foreground">
+            Last upgraded: {new Date(metrics.lastUpgrade).toLocaleString()}
+          </div>
+          
+          {/* Upgrade Section */}
+          {nextSecurityTier && (
+            <>
+              <Separator />
+              <div className="pt-1 space-y-3">
+                <div className="flex justify-between items-center">
+                  <div>
+                    <h4 className="text-sm font-medium">Available Upgrade</h4>
+                    <p className="text-xs text-muted-foreground">
+                      {nextSecurityTier.description}
+                    </p>
+                  </div>
+                  <Badge variant="secondary">+{nextSecurityTier.securityStrength - metrics.securityStrength}% Security</Badge>
+                </div>
+                
+                <Button 
+                  onClick={handleUpgrade}
+                  disabled={upgrading}
+                  className="w-full"
+                  variant={isSecurityLevelTooLow ? "destructive" : "secondary"}
+                >
+                  <Lock className="h-4 w-4 mr-2" />
+                  {upgrading ? 'Upgrading...' : `Upgrade to ${nextSecurityTier.name}`}
+                </Button>
+              </div>
+            </>
           )}
         </div>
       </CardContent>
-      <CardFooter className="flex gap-2">
-        <Button 
-          variant="outline" 
-          onClick={handleUpdateValue} 
-          disabled={updating}
-          className="flex-1"
-        >
-          {updating ? "Updating..." : "Refresh Security"}
-        </Button>
-        <Button 
-          onClick={handleUpgrade} 
-          disabled={updating || (availableTiers.findIndex(t => t.id === metrics.currentTier) === availableTiers.length - 1)}
-          className="flex-1"
-        >
-          {updating ? "Upgrading..." : "Upgrade Tier"}
-        </Button>
-      </CardFooter>
     </Card>
   );
-};
-
-export default QuantumProgressiveShieldCard;
+}
