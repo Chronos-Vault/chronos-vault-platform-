@@ -1,122 +1,121 @@
+/**
+ * Connector Factory
+ * 
+ * This factory creates and manages blockchain connector instances.
+ * It ensures we only have one instance of each connector and provides
+ * a simple interface for other parts of the application to access connectors.
+ */
+
 import { BlockchainConnector } from '../../shared/interfaces/blockchain-connector';
 import { EthereumConnector } from './ethereum-connector';
 import { SolanaConnector } from './solana-connector';
 import { TonConnector } from './ton-connector';
 import { BitcoinConnector } from './bitcoin-connector';
-import { PolygonConnector } from './polygon-connector';
+import config from '../config';
+import { securityLogger } from '../monitoring/security-logger';
 
 /**
- * Blockchain Connector Factory
- * Creates and manages blockchain connector instances for all supported chains
+ * Factory for creating and managing blockchain connector instances
  */
-
-export class BlockchainConnectorFactory {
-  private static instance: BlockchainConnectorFactory;
-  private connectors: Map<string, BlockchainConnector> = new Map();
-  private isTestnet: boolean;
+export class ConnectorFactory {
+  private connectors: Map<string, BlockchainConnector>;
   
-  private constructor(isTestnet: boolean = true) {
-    this.isTestnet = isTestnet;
+  constructor() {
+    this.connectors = new Map();
     this.initializeConnectors();
-  }
-  
-  /**
-   * Get the singleton instance of the connector factory
-   */
-  public static getInstance(isTestnet: boolean = true): BlockchainConnectorFactory {
-    if (!BlockchainConnectorFactory.instance) {
-      BlockchainConnectorFactory.instance = new BlockchainConnectorFactory(isTestnet);
-    }
-    return BlockchainConnectorFactory.instance;
-  }
-  
-  /**
-   * Initialize all supported blockchain connectors
-   */
-  private initializeConnectors(): void {
-    // Initialize connectors for each supported blockchain
-    try {
-      // Add Ethereum connector
-      const ethereumConnector = new EthereumConnector(this.isTestnet);
-      this.connectors.set(ethereumConnector.chainId, ethereumConnector);
-      
-      // Add Solana connector
-      const solanaConnector = new SolanaConnector(this.isTestnet);
-      this.connectors.set(solanaConnector.chainId, solanaConnector);
-      
-      // Add TON connector
-      const tonConnector = new TonConnector(this.isTestnet);
-      this.connectors.set(tonConnector.chainId, tonConnector);
-      
-      // Add Bitcoin connector
-      const bitcoinConnector = new BitcoinConnector(this.isTestnet);
-      this.connectors.set(bitcoinConnector.chainId, bitcoinConnector);
-      
-      // Add Polygon connector (for EVM compatibility)
-      const polygonConnector = new PolygonConnector(this.isTestnet);
-      this.connectors.set(polygonConnector.chainId, polygonConnector);
-    } catch (error) {
-      console.error('Error initializing blockchain connectors:', error);
-    }
-    
-    console.info(`Initialized ${this.connectors.size} blockchain connectors`);
   }
   
   /**
    * Get a connector for a specific blockchain
+   * 
+   * @param chainId The blockchain identifier (ethereum, solana, ton, bitcoin)
+   * @returns The blockchain connector instance
    */
-  public getConnector(chainId: string): BlockchainConnector {
-    const connector = this.connectors.get(chainId);
+  getConnector(chainId: string): BlockchainConnector {
+    // Normalize chainId to lowercase
+    const normalizedChainId = chainId.toLowerCase();
+    
+    // Get the existing connector or create a new one
+    let connector = this.connectors.get(normalizedChainId);
+    
     if (!connector) {
-      throw new Error(`No connector available for chain ID: ${chainId}`);
+      connector = this.createConnector(normalizedChainId);
+      this.connectors.set(normalizedChainId, connector);
     }
+    
     return connector;
   }
   
   /**
-   * Get all available connectors
+   * Create a new connector for a specific blockchain
+   * 
+   * @param chainId The blockchain identifier
+   * @returns A new blockchain connector
    */
-  public getAllConnectors(): BlockchainConnector[] {
-    return Array.from(this.connectors.values());
+  private createConnector(chainId: string): BlockchainConnector {
+    switch (chainId) {
+      case 'ethereum':
+        return new EthereumConnector(config.blockchainConfig.ethereum);
+      
+      case 'solana':
+        return new SolanaConnector(config.blockchainConfig.solana);
+      
+      case 'ton':
+        return new TonConnector(config.blockchainConfig.ton);
+      
+      case 'bitcoin':
+        return new BitcoinConnector(config.blockchainConfig.bitcoin);
+      
+      default:
+        throw new Error(`Unsupported blockchain: ${chainId}`);
+    }
   }
   
   /**
-   * Get connectors for specified chains
+   * Initialize all blockchain connectors
    */
-  public getConnectors(chainIds: string[]): BlockchainConnector[] {
-    return chainIds.map(id => this.getConnector(id));
+  private initializeConnectors() {
+    try {
+      // Initialize only the connectors that are enabled in config
+      if (config.blockchainConfig.ethereum.enabled) {
+        this.connectors.set('ethereum', new EthereumConnector(config.blockchainConfig.ethereum));
+      }
+      
+      if (config.blockchainConfig.solana.enabled) {
+        this.connectors.set('solana', new SolanaConnector(config.blockchainConfig.solana));
+      }
+      
+      if (config.blockchainConfig.ton.enabled) {
+        this.connectors.set('ton', new TonConnector(config.blockchainConfig.ton));
+      }
+      
+      if (config.blockchainConfig.bitcoin.enabled) {
+        this.connectors.set('bitcoin', new BitcoinConnector(config.blockchainConfig.bitcoin));
+      }
+      
+      securityLogger.info('Blockchain connectors initialized', {
+        enabledConnectors: Array.from(this.connectors.keys())
+      });
+    } catch (error) {
+      securityLogger.error('Failed to initialize blockchain connectors', {
+        error
+      });
+    }
   }
   
   /**
-   * Check if a connector is available for a specific chain
+   * Get all initialized connectors
+   * 
+   * @returns A record of all blockchain connectors
    */
-  public hasConnector(chainId: string): boolean {
-    return this.connectors.has(chainId);
-  }
-  
-  /**
-   * Add a new connector (for testing or dynamic addition)
-   */
-  public addConnector(connector: BlockchainConnector): void {
-    this.connectors.set(connector.chainId, connector);
-  }
-  
-  /**
-   * Remove a connector
-   */
-  public removeConnector(chainId: string): boolean {
-    return this.connectors.delete(chainId);
-  }
-  
-  /**
-   * Recreate all connectors (useful for environment changes)
-   */
-  public resetConnectors(isTestnet?: boolean): void {
-    if (isTestnet !== undefined) {
-      this.isTestnet = isTestnet;
+  getAllConnectors(): Record<string, BlockchainConnector> {
+    // Convert the map to a record
+    const record: Record<string, BlockchainConnector> = {};
+    
+    for (const [chainId, connector] of this.connectors.entries()) {
+      record[chainId] = connector;
     }
     
-    this.connectors.clear();
-    this.initializeConnectors();
+    return record;
   }
 }

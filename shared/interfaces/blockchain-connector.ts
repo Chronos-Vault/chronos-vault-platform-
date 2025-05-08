@@ -1,64 +1,81 @@
 /**
  * Blockchain Connector Interface
  * 
- * Common interface for all blockchain connectors.
- * This ensures consistent operation across different blockchain implementations.
+ * This interface defines the standard methods that each blockchain connector
+ * must implement. It provides a consistent API for interacting with different
+ * blockchain networks (Ethereum, Solana, TON, and Bitcoin).
  */
 
-import { 
-  VaultCreationParams, 
-  VaultStatusInfo, 
-  TransactionResult, 
-  SecurityVerification, 
-  MultiSigRequestStatus 
+import {
+  TransactionResult,
+  VaultData,
+  VaultCreationParams,
+  MultiSigRequestStatus,
+  SecurityVerification,
+  WalletData,
+  BitcoinData
 } from '../types/blockchain-types';
 
 /**
- * BlockchainConnector interface
- * All blockchain implementations must adhere to this interface
+ * BlockchainConnector interface defining the standard methods for blockchain interactions
  */
 export interface BlockchainConnector {
-  // Common properties
-  chainId: string;
-  chainName: string;
-  isTestnet: boolean;
-  networkVersion: string;
+  // Chain identification
+  readonly chainId: string;
+  readonly isTestnet: boolean;
   
-  // Wallet operations
-  connectWallet(): Promise<string>;
-  disconnectWallet(): Promise<void>;
+  // Connection management
+  connect(): Promise<WalletData>;
+  disconnect(): Promise<void>;
   isConnected(): Promise<boolean>;
-  getAddress(): Promise<string>;
+  getNetworkStatus(): Promise<{ isConnected: boolean; network: string; blockHeight?: number }>;
+  
+  // Basic blockchain operations
   getBalance(address: string): Promise<string>;
+  validateAddress(address: string): boolean;
+  validateTransaction(txHash: string): Promise<TransactionResult>;
+  estimateTransactionFee(to: string, amount: string, data?: any): Promise<string>;
+  
+  // Transaction operations
+  sendTransaction(to: string, amount: string, data?: any): Promise<TransactionResult>;
+  callContract(contractAddress: string, method: string, params: any[]): Promise<any>;
   
   // Vault operations
   createVault(params: VaultCreationParams): Promise<TransactionResult>;
-  getVaultInfo(vaultId: string): Promise<VaultStatusInfo>;
-  listVaults(ownerAddress: string): Promise<VaultStatusInfo[]>;
-  lockAssets(vaultId: string, amount: string, assetType: string): Promise<TransactionResult>;
-  unlockAssets(vaultId: string): Promise<TransactionResult>;
-  addBeneficiary(vaultId: string, beneficiaryAddress: string): Promise<TransactionResult>;
-  removeBeneficiary(vaultId: string, beneficiaryAddress: string): Promise<TransactionResult>;
-  
-  // Security operations
-  verifyVaultIntegrity(vaultId: string): Promise<SecurityVerification>;
-  signMessage(message: string): Promise<string>;
-  verifySignature(message: string, signature: string, address: string): Promise<boolean>;
+  getVault(vaultId: string): Promise<VaultData | null>;
+  depositToVault(vaultId: string, amount: string, assetType: string): Promise<TransactionResult>;
+  withdrawFromVault(vaultId: string): Promise<TransactionResult>;
   
   // Multi-signature operations
-  createMultiSigRequest(vaultId: string, operation: string, params: any): Promise<string>;
+  requestMultiSigOperation(
+    vaultId: string,
+    operation: 'create' | 'withdraw' | 'update' | 'transfer',
+    params: any
+  ): Promise<string>; // Returns request ID
+  
   approveMultiSigRequest(requestId: string): Promise<TransactionResult>;
+  rejectMultiSigRequest(requestId: string): Promise<TransactionResult>;
   getMultiSigStatus(requestId: string): Promise<MultiSigRequestStatus>;
+  
+  // Signature verification
+  signMessage(message: string): Promise<string>;
+  verifySignature(message: string, signature: string, address: string): Promise<boolean>;
   
   // Cross-chain operations
   initiateVaultSync(vaultId: string, targetChain: string): Promise<TransactionResult>;
   verifyVaultAcrossChains(vaultId: string): Promise<Record<string, SecurityVerification>>;
   
-  // Miscellaneous
-  getChainSpecificFeatures(): any;
-  executeChainSpecificMethod(methodName: string, params: any): Promise<any>;
+  // Chain-specific operations
+  // These might differ based on the chain's capabilities
+  executeSpecialOperation?(operationType: string, params: any): Promise<TransactionResult>;
   
-  // Event subscriptions
-  subscribeToVaultEvents(vaultId: string, callback: (event: any) => void): () => void;
-  subscribeToBlockchainEvents(eventType: string, callback: (event: any) => void): () => void;
+  // Bitcoin-specific operations (will be implemented only in the Bitcoin connector)
+  getBitcoinNetworkStats?(): Promise<BitcoinData>;
+  getHalvingInfo?(): Promise<{
+    blocksUntilHalving: number;
+    estimatedHalvingDate: Date;
+    daysUntilHalving: number;
+    currentReward: number;
+    nextReward: number;
+  }>;
 }
