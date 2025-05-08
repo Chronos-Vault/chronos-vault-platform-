@@ -26,6 +26,9 @@ const VaultTypesSelector = () => {
     } else if (selectedVaultType === 'ai-intent-inheritance') {
       // AI Intent Inheritance vault
       navigate('/intent-inheritance-vault');
+    } else if (selectedVaultType === 'quantum-resistant') {
+      // Quantum-Resistant Progressive Shield Vault
+      navigate('/quantum-vault');
     } else if (
       selectedVaultType === 'geolocation' || 
       selectedVaultType === 'smart-contract' || 
@@ -33,7 +36,6 @@ const VaultTypesSelector = () => {
       selectedVaultType === 'nft-powered' || 
       selectedVaultType === 'unique' ||
       selectedVaultType === 'memory-vault' ||
-      selectedVaultType === 'quantum-resistant' ||
       selectedVaultType === 'composite-vault' ||
       selectedVaultType === 'geo-temporal' ||
       selectedVaultType === 'diamond-hands'

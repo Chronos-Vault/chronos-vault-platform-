@@ -11,6 +11,8 @@ import incidentRoutes from './api/incident-routes';
 import paymentRoutes from './api/payment-routes';
 import vaultVerificationRoutes, { initializeVaultVerification } from './api/vault-verification-routes';
 import { intentInheritanceRouter } from './api/intent-inheritance-routes';
+import progressiveQuantumVaultRoutes from './api/progressive-quantum-vault-routes';
+import vaultsRoutes from './api/vaults-routes';
 import { systemHealthMonitor } from './monitoring/system-health-monitor';
 import { incidentResponseSystem } from './monitoring/incident-response';
 import { ConnectorFactory } from './blockchain/connector-factory';
