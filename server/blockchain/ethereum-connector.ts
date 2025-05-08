@@ -1,0 +1,612 @@
+/**
+ * Ethereum Connector
+ * 
+ * This module provides an implementation of the BlockchainConnector interface
+ * for the Ethereum blockchain. It handles wallet connections, smart contract
+ * interactions, and security operations for Ethereum-based vaults.
+ */
+
+import { ethers } from 'ethers';
+import { BlockchainConnector } from '../../shared/interfaces/blockchain-connector';
+import { 
+  VaultCreationParams, 
+  VaultStatusInfo, 
+  TransactionResult, 
+  SecurityVerification
+} from '../../shared/types/blockchain-types';
+import { securityLogger } from '../monitoring/security-logger';
+import config from '../config';
+
+// ABI definitions for vault contracts
+const VAULT_ABI = [
+  "function createVault(uint256 unlockTimestamp, address[] beneficiaries, bool isMultiSig) external returns (uint256 vaultId)",
+  "function getVaultInfo(uint256 vaultId) external view returns (address owner, uint256 unlockTimestamp, bool isLocked, uint256 balance)",
+  "function lockAssets(uint256 vaultId) external payable",
+  "function unlockAssets(uint256 vaultId) external",
+  "function addBeneficiary(uint256 vaultId, address beneficiary) external",
+  "function removeBeneficiary(uint256 vaultId, address beneficiary) external",
+  "function isVaultOwner(uint256 vaultId, address account) external view returns (bool)",
+  "function getVaultBeneficiaries(uint256 vaultId) external view returns (address[])",
+  "event VaultCreated(uint256 indexed vaultId, address indexed owner, uint256 unlockTimestamp, bool isMultiSig)",
+  "event AssetsLocked(uint256 indexed vaultId, uint256 amount)",
+  "event AssetsUnlocked(uint256 indexed vaultId, uint256 amount)",
+  "event BeneficiaryAdded(uint256 indexed vaultId, address indexed beneficiary)",
+  "event BeneficiaryRemoved(uint256 indexed vaultId, address indexed beneficiary)"
+];
+
+// Contract addresses for different networks
+const CONTRACT_ADDRESSES = {
+  mainnet: {
+    vault: "0x0000000000000000000000000000000000000000", // Replace with actual address when deployed
+    bridge: "0x0000000000000000000000000000000000000000" // Replace with actual address when deployed
+  },
+  testnet: {
+    vault: "0xEthVaultTestnetAddress000000000000000000", // Replace with actual testnet address
+    bridge: "0xEthBridgeTestnetAddress000000000000000000" // Replace with actual testnet address
+  }
+};
+
+export class EthereumConnector implements BlockchainConnector {
+  // Properties required by BlockchainConnector interface
+  chainId: string = 'ethereum';
+  chainName: string = 'Ethereum';
+  isTestnet: boolean;
+  networkVersion: string;
+  
+  // Ethereum specific properties
+  private provider: ethers.providers.Provider;
+  private vaultContract: ethers.Contract | null = null;
+  private wallet: ethers.Wallet | null = null;
+  private signer: ethers.Signer | null = null;
+  private walletAddress: string | null = null;
+  
+  /**
+   * Initialize the Ethereum connector
+   */
+  constructor(isTestnet: boolean = true) {
+    this.isTestnet = isTestnet;
+    this.networkVersion = isTestnet ? 'sepolia' : 'mainnet';
+    
+    // Determine RPC URL based on network
+    const rpcUrl = isTestnet
+      ? process.env.ETHEREUM_RPC_URL || "https://eth-sepolia.g.alchemy.com/v2/demo"  // Default to a public RPC URL
+      : process.env.ETHEREUM_MAINNET_RPC_URL || "https://eth-mainnet.g.alchemy.com/v2/demo";
+      
+    // Initialize provider
+    try {
+      this.provider = new ethers.providers.JsonRpcProvider(rpcUrl);
+      
+      // Initialize contract based on network
+      const contractAddresses = isTestnet ? CONTRACT_ADDRESSES.testnet : CONTRACT_ADDRESSES.mainnet;
+      
+      if (process.env.ETHEREUM_PRIVATE_KEY) {
+        this.wallet = new ethers.Wallet(process.env.ETHEREUM_PRIVATE_KEY, this.provider);
+        this.signer = this.wallet;
+        
+        // Initialize contract with signer
+        this.vaultContract = new ethers.Contract(contractAddresses.vault, VAULT_ABI, this.signer);
+        this.walletAddress = this.wallet.address;
+        
+        securityLogger.info(`Ethereum connector initialized with wallet ${this.walletAddress} on ${this.networkVersion}`);
+      } else if (config.isDevelopmentMode) {
+        // For development, we'll use a hardcoded address for simulation
+        this.walletAddress = "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266"; // Common Hardhat test address
+        securityLogger.info(`Ethereum connector initialized in dev mode with simulated wallet ${this.walletAddress}`);
+      } else {
+        // Initialize contract with provider (read-only)
+        this.vaultContract = new ethers.Contract(contractAddresses.vault, VAULT_ABI, this.provider);
+        securityLogger.info(`Ethereum connector initialized in read-only mode on ${this.networkVersion}`);
+      }
+    } catch (error) {
+      securityLogger.error('Failed to initialize Ethereum connector', { error });
+      throw new Error(`Failed to initialize Ethereum connector: ${error}`);
+    }
+  }
+  
+  /**
+   * Connect to an Ethereum wallet
+   * For server-side operations, this is typically not needed as we use a private key
+   */
+  async connectWallet(): Promise<string> {
+    if (this.walletAddress) {
+      return this.walletAddress;
+    }
+    
+    if (config.isDevelopmentMode) {
+      this.walletAddress = "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266"; // Hardhat test address
+      return this.walletAddress;
+    }
+    
+    throw new Error('No wallet private key provided to Ethereum connector');
+  }
+  
+  /**
+   * Disconnect from the wallet
+   */
+  async disconnectWallet(): Promise<void> {
+    // No action needed for server-side wallet
+    return;
+  }
+  
+  /**
+   * Check if wallet is connected
+   */
+  async isConnected(): Promise<boolean> {
+    return !!this.walletAddress;
+  }
+  
+  /**
+   * Get the connected wallet address
+   */
+  async getAddress(): Promise<string> {
+    if (!this.walletAddress) {
+      throw new Error('No wallet connected to Ethereum connector');
+    }
+    return this.walletAddress;
+  }
+  
+  /**
+   * Get the balance of an address in ETH
+   */
+  async getBalance(address: string): Promise<string> {
+    try {
+      const balance = await this.provider.getBalance(address);
+      return ethers.utils.formatEther(balance);
+    } catch (error) {
+      securityLogger.error(`Failed to get Ethereum balance for ${address}`, { error });
+      throw new Error(`Failed to get balance: ${error}`);
+    }
+  }
+
+  /**
+   * Create a new vault on Ethereum
+   */
+  async createVault(params: VaultCreationParams): Promise<TransactionResult> {
+    try {
+      if (!this.vaultContract || !this.signer) {
+        if (config.isDevelopmentMode) {
+          securityLogger.info(`Creating simulated Ethereum vault in development mode`);
+          return {
+            success: true,
+            transactionHash: `eth_${Date.now()}_${Math.floor(Math.random() * 1000000)}`,
+            vaultId: `eth_vault_${Date.now()}`,
+            chainId: this.chainId
+          };
+        }
+        throw new Error('Vault contract or signer not initialized');
+      }
+      
+      // Convert unlock date to timestamp
+      const unlockTimestamp = Math.floor(new Date(params.unlockDate).getTime() / 1000);
+      
+      // Convert beneficiaries to array if needed
+      const beneficiaries = Array.isArray(params.beneficiaries) 
+        ? params.beneficiaries 
+        : params.beneficiaries ? [params.beneficiaries] : [];
+      
+      // Determine if multi-sig vault
+      const isMultiSig = params.securityLevel === 'high';
+      
+      // Create transaction
+      const tx = await this.vaultContract.createVault(
+        unlockTimestamp,
+        beneficiaries,
+        isMultiSig
+      );
+      
+      // Wait for transaction confirmation
+      const receipt = await tx.wait();
+      
+      // Extract vault ID from events
+      const event = receipt.events.find((e: any) => e.event === 'VaultCreated');
+      if (!event) {
+        throw new Error('Vault creation event not found in transaction receipt');
+      }
+      
+      const vaultId = event.args.vaultId.toString();
+      
+      return {
+        success: true,
+        transactionHash: receipt.transactionHash,
+        vaultId,
+        chainId: this.chainId
+      };
+    } catch (error) {
+      securityLogger.error('Failed to create Ethereum vault', { error, params });
+      return {
+        success: false,
+        error: `Failed to create vault on Ethereum: ${error}`,
+        chainId: this.chainId
+      };
+    }
+  }
+  
+  /**
+   * Get information about a vault
+   */
+  async getVaultInfo(vaultId: string): Promise<VaultStatusInfo> {
+    try {
+      if (!this.vaultContract) {
+        if (config.isDevelopmentMode) {
+          return this.getSimulatedVaultInfo(vaultId);
+        }
+        throw new Error('Vault contract not initialized');
+      }
+      
+      const [owner, unlockTimestamp, isLocked, balance] = await this.vaultContract.getVaultInfo(vaultId);
+      
+      return {
+        id: vaultId,
+        owner,
+        unlockDate: new Date(unlockTimestamp.toNumber() * 1000),
+        isLocked,
+        balance: ethers.utils.formatEther(balance),
+        chainId: this.chainId,
+        network: this.networkVersion,
+        securityLevel: await this.determineVaultSecurityLevel(vaultId),
+        lastActivity: new Date()
+      };
+    } catch (error) {
+      securityLogger.error(`Failed to get Ethereum vault info for ${vaultId}`, { error });
+      throw new Error(`Failed to get vault info: ${error}`);
+    }
+  }
+  
+  /**
+   * Get all vaults owned by an address
+   */
+  async listVaults(ownerAddress: string): Promise<VaultStatusInfo[]> {
+    if (config.isDevelopmentMode) {
+      return [
+        this.getSimulatedVaultInfo(`eth_vault_${Date.now() - 86400000}`),
+        this.getSimulatedVaultInfo(`eth_vault_${Date.now()}`)
+      ];
+    }
+    
+    // In a real implementation, we would need an event-based approach or indexing service
+    // to efficiently query vaults by owner
+    throw new Error('Not implemented: Vault listing requires a subgraph or other indexing service');
+  }
+  
+  /**
+   * Lock assets into a vault
+   */
+  async lockAssets(vaultId: string, amount: string, assetType: string): Promise<TransactionResult> {
+    try {
+      if (!this.vaultContract || !this.signer) {
+        if (config.isDevelopmentMode) {
+          securityLogger.info(`Simulating Ethereum asset locking in development mode`);
+          return {
+            success: true,
+            transactionHash: `eth_lock_${Date.now()}_${Math.floor(Math.random() * 1000000)}`,
+            vaultId,
+            chainId: this.chainId
+          };
+        }
+        throw new Error('Vault contract or signer not initialized');
+      }
+      
+      let tx;
+      if (assetType === 'eth' || assetType === 'native') {
+        // For native ETH, use value parameter
+        const weiAmount = ethers.utils.parseEther(amount);
+        tx = await this.vaultContract.lockAssets(vaultId, { value: weiAmount });
+      } else {
+        // For other assets, we would need to interact with ERC20 contracts
+        throw new Error('ERC20 token locking not implemented yet');
+      }
+      
+      const receipt = await tx.wait();
+      
+      return {
+        success: true,
+        transactionHash: receipt.transactionHash,
+        vaultId,
+        chainId: this.chainId
+      };
+    } catch (error) {
+      securityLogger.error(`Failed to lock assets in Ethereum vault ${vaultId}`, { error, amount, assetType });
+      return {
+        success: false,
+        error: `Failed to lock assets: ${error}`,
+        vaultId,
+        chainId: this.chainId
+      };
+    }
+  }
+  
+  /**
+   * Unlock assets from a vault
+   */
+  async unlockAssets(vaultId: string): Promise<TransactionResult> {
+    try {
+      if (!this.vaultContract || !this.signer) {
+        if (config.isDevelopmentMode) {
+          securityLogger.info(`Simulating Ethereum asset unlocking in development mode`);
+          return {
+            success: true,
+            transactionHash: `eth_unlock_${Date.now()}_${Math.floor(Math.random() * 1000000)}`,
+            vaultId,
+            chainId: this.chainId
+          };
+        }
+        throw new Error('Vault contract or signer not initialized');
+      }
+      
+      const tx = await this.vaultContract.unlockAssets(vaultId);
+      const receipt = await tx.wait();
+      
+      return {
+        success: true,
+        transactionHash: receipt.transactionHash,
+        vaultId,
+        chainId: this.chainId
+      };
+    } catch (error) {
+      securityLogger.error(`Failed to unlock assets from Ethereum vault ${vaultId}`, { error });
+      return {
+        success: false,
+        error: `Failed to unlock assets: ${error}`,
+        vaultId,
+        chainId: this.chainId
+      };
+    }
+  }
+  
+  /**
+   * Add a beneficiary to a vault
+   */
+  async addBeneficiary(vaultId: string, beneficiaryAddress: string): Promise<TransactionResult> {
+    try {
+      if (!this.vaultContract || !this.signer) {
+        if (config.isDevelopmentMode) {
+          securityLogger.info(`Simulating Ethereum beneficiary addition in development mode`);
+          return {
+            success: true,
+            transactionHash: `eth_add_ben_${Date.now()}_${Math.floor(Math.random() * 1000000)}`,
+            vaultId,
+            chainId: this.chainId
+          };
+        }
+        throw new Error('Vault contract or signer not initialized');
+      }
+      
+      const tx = await this.vaultContract.addBeneficiary(vaultId, beneficiaryAddress);
+      const receipt = await tx.wait();
+      
+      return {
+        success: true,
+        transactionHash: receipt.transactionHash,
+        vaultId,
+        chainId: this.chainId
+      };
+    } catch (error) {
+      securityLogger.error(`Failed to add beneficiary to Ethereum vault ${vaultId}`, { error, beneficiaryAddress });
+      return {
+        success: false,
+        error: `Failed to add beneficiary: ${error}`,
+        vaultId,
+        chainId: this.chainId
+      };
+    }
+  }
+  
+  /**
+   * Remove a beneficiary from a vault
+   */
+  async removeBeneficiary(vaultId: string, beneficiaryAddress: string): Promise<TransactionResult> {
+    try {
+      if (!this.vaultContract || !this.signer) {
+        if (config.isDevelopmentMode) {
+          securityLogger.info(`Simulating Ethereum beneficiary removal in development mode`);
+          return {
+            success: true,
+            transactionHash: `eth_rem_ben_${Date.now()}_${Math.floor(Math.random() * 1000000)}`,
+            vaultId,
+            chainId: this.chainId
+          };
+        }
+        throw new Error('Vault contract or signer not initialized');
+      }
+      
+      const tx = await this.vaultContract.removeBeneficiary(vaultId, beneficiaryAddress);
+      const receipt = await tx.wait();
+      
+      return {
+        success: true,
+        transactionHash: receipt.transactionHash,
+        vaultId,
+        chainId: this.chainId
+      };
+    } catch (error) {
+      securityLogger.error(`Failed to remove beneficiary from Ethereum vault ${vaultId}`, { error, beneficiaryAddress });
+      return {
+        success: false,
+        error: `Failed to remove beneficiary: ${error}`,
+        vaultId,
+        chainId: this.chainId
+      };
+    }
+  }
+  
+  /**
+   * Verify the integrity of a vault
+   */
+  async verifyVaultIntegrity(vaultId: string): Promise<SecurityVerification> {
+    try {
+      if (config.isDevelopmentMode) {
+        return {
+          isValid: true,
+          signatures: ['0xSimulatedEthereumSignature1', '0xSimulatedEthereumSignature2'],
+          verifiedAt: new Date(),
+          chainId: this.chainId
+        };
+      }
+      
+      if (!this.vaultContract) {
+        throw new Error('Vault contract not initialized');
+      }
+      
+      // In a real implementation, we would check various security conditions
+      // Here, we're just verifying that the vault exists
+      const [owner, , isLocked, ] = await this.vaultContract.getVaultInfo(vaultId);
+      
+      // Verify owner address is valid
+      if (!ethers.utils.isAddress(owner)) {
+        return {
+          isValid: false,
+          error: 'Invalid vault owner address',
+          verifiedAt: new Date(),
+          chainId: this.chainId
+        };
+      }
+      
+      // For a complete implementation, we would check cross-chain verifications,
+      // contract integrity, transaction history, etc.
+      
+      return {
+        isValid: true,
+        signatures: [`0x${owner.slice(2, 10)}...${owner.slice(-8)}_verified`],
+        verifiedAt: new Date(),
+        chainId: this.chainId
+      };
+    } catch (error) {
+      securityLogger.error(`Failed to verify Ethereum vault integrity for ${vaultId}`, { error });
+      return {
+        isValid: false,
+        error: `Verification failed: ${error}`,
+        verifiedAt: new Date(),
+        chainId: this.chainId
+      };
+    }
+  }
+  
+  /**
+   * Sign a message with the connected wallet
+   */
+  async signMessage(message: string): Promise<string> {
+    if (!this.signer) {
+      if (config.isDevelopmentMode) {
+        return `0xSimulatedEthereumSignature_${Date.now()}_${message.slice(0, 10)}`;
+      }
+      throw new Error('No signer available');
+    }
+    
+    try {
+      return await this.signer.signMessage(message);
+    } catch (error) {
+      securityLogger.error('Failed to sign message with Ethereum wallet', { error, messagePreview: message.slice(0, 32) });
+      throw new Error(`Failed to sign message: ${error}`);
+    }
+  }
+  
+  /**
+   * Verify a signature against a message and address
+   */
+  async verifySignature(message: string, signature: string, address: string): Promise<boolean> {
+    try {
+      if (config.isDevelopmentMode && signature.startsWith('0xSimulated')) {
+        return true;
+      }
+      
+      const recoveredAddress = ethers.utils.verifyMessage(message, signature);
+      return recoveredAddress.toLowerCase() === address.toLowerCase();
+    } catch (error) {
+      securityLogger.error('Failed to verify Ethereum signature', { error, address, messagePreview: message.slice(0, 32) });
+      return false;
+    }
+  }
+  
+  /**
+   * Create a multi-signature request for vault operations
+   */
+  async createMultiSigRequest(vaultId: string, operation: string, params: any): Promise<string> {
+    if (config.isDevelopmentMode) {
+      return `eth_multisig_${vaultId}_${operation}_${Date.now()}`;
+    }
+    
+    // In a real implementation, we would have a multi-sig request contract
+    throw new Error('Multi-signature operations not implemented yet');
+  }
+  
+  /**
+   * Approve a multi-signature request
+   */
+  async approveMultiSigRequest(requestId: string): Promise<TransactionResult> {
+    if (config.isDevelopmentMode) {
+      return {
+        success: true,
+        transactionHash: `eth_approve_${requestId}_${Date.now()}`,
+        chainId: this.chainId
+      };
+    }
+    
+    // In a real implementation, we would have a multi-sig request contract
+    throw new Error('Multi-signature operations not implemented yet');
+  }
+  
+  /**
+   * Get chain-specific features (for client information)
+   */
+  getChainSpecificFeatures(): any {
+    return {
+      supportsERC20: true,
+      supportsERC721: true,
+      hasLowFees: false,
+      gasEstimator: true,
+      eip1559Support: true
+    };
+  }
+  
+  // Private utility methods
+  
+  /**
+   * Generate simulated vault info for development mode
+   */
+  private getSimulatedVaultInfo(vaultId: string): VaultStatusInfo {
+    const now = new Date();
+    const futureDate = new Date(now.getTime() + 30 * 24 * 60 * 60 * 1000); // 30 days in the future
+    
+    return {
+      id: vaultId,
+      owner: '0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266',
+      unlockDate: futureDate,
+      isLocked: true,
+      balance: '1.337',
+      chainId: this.chainId,
+      network: this.networkVersion,
+      securityLevel: 'medium',
+      lastActivity: new Date(now.getTime() - 24 * 60 * 60 * 1000)
+    };
+  }
+  
+  /**
+   * Determine the security level of a vault based on its configuration
+   */
+  private async determineVaultSecurityLevel(vaultId: string): Promise<'low' | 'medium' | 'high'> {
+    if (config.isDevelopmentMode) {
+      // Randomly assign a security level for development
+      const levels: ['low', 'medium', 'high'] = ['low', 'medium', 'high'];
+      return levels[Math.floor(Math.random() * levels.length)];
+    }
+    
+    if (!this.vaultContract) {
+      throw new Error('Vault contract not initialized');
+    }
+    
+    try {
+      // Check if it's a multi-sig vault
+      const isMultiSig = await this.vaultContract.isMultiSigVault(vaultId);
+      if (isMultiSig) return 'high';
+      
+      // Check number of beneficiaries
+      const beneficiaries = await this.vaultContract.getVaultBeneficiaries(vaultId);
+      if (beneficiaries.length > 0) return 'medium';
+      
+      return 'low';
+    } catch (error) {
+      securityLogger.warn(`Failed to determine security level for vault ${vaultId}`, { error });
+      return 'low'; // Default to low if cannot determine
+    }
+  }
+}
