@@ -11,6 +11,7 @@ import { systemHealthMonitor } from './monitoring/system-health-monitor';
 import { securityLogger, SecurityEventType } from './monitoring/security-logger';
 import { setupVite, serveStatic } from './vite';
 import { getSecurityAuditService } from './security/security-audit-service';
+import { transactionMonitor } from './blockchain/transaction-monitor';
 
 // Create Express app
 const app = express();
@@ -48,6 +49,10 @@ app.use(bodyParser.json());
     
     // Force an initial health check
     await systemHealthMonitor.forceHealthCheck();
+    
+    // Initialize transaction monitor
+    transactionMonitor.initialize();
+    console.log('Transaction Monitor initialized successfully');
     
   } catch (error: any) {
     console.error('Failed to initialize services:', error);
