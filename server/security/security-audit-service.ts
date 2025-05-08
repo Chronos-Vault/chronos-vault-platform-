@@ -49,11 +49,11 @@ export class SecurityAuditService {
     }
     
     try {
-      // Create blockchain connectors
-      const ethConnector = new EthereumConnector(config.blockchainConfig.ethereum);
-      const solConnector = new SolanaConnector(config.blockchainConfig.solana);
-      const tonConnector = new TonConnector(config.blockchainConfig.ton);
-      const btcConnector = new BitcoinConnector(config.blockchainConfig.bitcoin);
+      // Create blockchain connectors - pass isTestnet parameter
+      const ethConnector = new EthereumConnector(config.blockchainConfig.ethereum.isTestnet);
+      const solConnector = new SolanaConnector(config.blockchainConfig.solana.isTestnet);
+      const tonConnector = new TonConnector(config.blockchainConfig.ton.isTestnet);
+      const btcConnector = new BitcoinConnector(config.blockchainConfig.bitcoin.isTestnet);
       
       // Create a map of connectors
       const connectors = new Map();
