@@ -181,7 +181,7 @@ const MyVaults = () => {
             </div>
             <Button
               className="mt-4 md:mt-0 bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] hover:from-[#5500AB] hover:to-[#FF46E8] text-white"
-              onClick={() => setLocation("/create-vault-enhanced")}
+              onClick={() => setLocation("/vault-types")}
             >
               <PlusCircle className="h-4 w-4 mr-2" />
               Create New Vault
@@ -228,7 +228,7 @@ const MyVaults = () => {
                     <p className="text-gray-400 mb-6">You don't have any vaults on {activeBlockchain === 'all' ? 'any blockchain' : formatBlockchainName(activeBlockchain as BlockchainType)} yet</p>
                     <Button 
                       className="bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7]"
-                      onClick={() => setLocation("/create-vault-enhanced")}
+                      onClick={() => setLocation("/vault-types")}
                     >
                       <PlusCircle className="h-4 w-4 mr-2" />
                       Create Your First Vault
