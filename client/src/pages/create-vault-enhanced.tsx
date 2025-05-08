@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useLocation } from "wouter";
+import { useLocation, useSearch } from "wouter";
 import { useMultiChain, BlockchainType } from "@/contexts/multi-chain-context";
 import { useTon } from "@/contexts/ton-context";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
@@ -41,6 +41,7 @@ type VaultFormValues = z.infer<typeof vaultFormSchema>;
 
 const CreateVaultEnhanced = () => {
   const [_, navigate] = useLocation();
+  const search = useSearch();
   const { toast } = useToast();
   const { isAnyWalletConnected, connectChain, walletInfo, chainStatus } = useMultiChain();
   const ton = useTon();
@@ -48,6 +49,17 @@ const CreateVaultEnhanced = () => {
   const [isCreating, setIsCreating] = useState(false);
   const [activeBlockchain, setActiveBlockchain] = useState<BlockchainType>(BlockchainType.TON);
   const [isConnectingWallet, setIsConnectingWallet] = useState(false);
+  
+  // Get vault type from URL parameters
+  useEffect(() => {
+    const params = new URLSearchParams(search);
+    const vaultType = params.get('type');
+    
+    // Redirect to the intent inheritance vault page if that type is selected
+    if (vaultType === 'intent-inheritance') {
+      navigate('/intent-inheritance-vault');
+    }
+  }, [search, navigate]);
 
   // Initialize form with default values
   const form = useForm<VaultFormValues>({

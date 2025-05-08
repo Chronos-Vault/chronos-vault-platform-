@@ -24,6 +24,7 @@ import AdvancedVaultCreationNewPage from "@/pages/advanced-vault-creation-new";
 import VaultTypesSelector from "@/pages/vault-types-selector";
 import SpecializedVaultCreationPage from "@/pages/specialized-vault-creation";
 import MultiSignatureVaultPage from "@/pages/multi-signature-vault";
+import IntentInheritanceVault from "@/pages/intent-inheritance-vault";
 import MyVaults from "@/pages/my-vaults";
 import VaultDetails from "@/pages/vault-details";
 import About from "@/pages/about";
@@ -105,6 +106,7 @@ function Router() {
         <Route path="/cross-chain-security" component={CrossChainSecurityPage} />
         <Route path="/cross-chain-atomic-swap" component={CrossChainAtomicSwapPage} />
         <Route path="/cross-chain-vs-atomic-swap" component={CrossChainVsAtomicSwapPage} />
+        <Route path="/intent-inheritance-vault" component={IntentInheritanceVault} />
         <Route path="/ton-integration" component={TONIntegrationPage} />
         <Route path="/solana-integration" component={SolanaIntegrationPage} />
         <Route path="/ethereum-integration" component={EthereumIntegrationPage} />

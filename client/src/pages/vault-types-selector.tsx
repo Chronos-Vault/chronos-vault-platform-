@@ -1,7 +1,7 @@
 import React from 'react';
 import { useLocation } from 'wouter';
 import { motion } from 'framer-motion';
-import { Shield, ArrowLeft, Users, Globe, Coins, Calendar, Lock, LockKeyhole, Fingerprint } from 'lucide-react';
+import { Shield, ArrowLeft, Users, Globe, Coins, Calendar, Lock, LockKeyhole, Fingerprint, Brain, Sparkles } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -154,6 +154,16 @@ const VaultTypesSelector: React.FC = () => {
             features={["Triple-Chain Security", "Cross-Chain Validation", "CVT Staking"]}
             premium
             onClick={() => navigateToVaultCreation('cross-chain')}
+          />
+          
+          {/* AI-Powered Intent-Based Inheritance Vault */}
+          <VaultTypeCard
+            title="AI Intent Vault"
+            description="Revolutionary vault that interprets natural language inheritance instructions using advanced AI."
+            icon={<Brain className="h-6 w-6 text-[#FF5AF7]" />}
+            features={["Natural Language", "Adaptive Inheritance", "AI Verification"]}
+            premium
+            onClick={() => navigateToVaultCreation('intent-inheritance')}
           />
         </div>
       </div>
