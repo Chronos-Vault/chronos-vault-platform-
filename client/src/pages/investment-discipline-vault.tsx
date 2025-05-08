@@ -28,6 +28,8 @@ import { BlockchainType } from '@/contexts/multi-chain-context';
 import { useTon } from '@/contexts/ton-context';
 import { useEthereum } from '@/contexts/ethereum-context';
 import { useSolana } from '@/contexts/solana-context';
+import { SentimentGauge, SentimentAlert, SentimentRecommendations } from '@/components/sentiment/sentiment-gauge';
+import { SentimentData, sentimentAnalysisService, SentimentLevel } from '@/services/sentiment-analysis-service';
 
 // Exit strategy types
 type PriceTarget = {
@@ -64,6 +66,11 @@ function InvestmentDisciplineVault() {
   const [initialAmount, setInitialAmount] = useState<string>('');
   const [selectedBlockchain, setSelectedBlockchain] = useState<BlockchainType>(BlockchainType.ETHEREUM);
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  
+  // Sentiment analysis data
+  const [sentimentData, setSentimentData] = useState<SentimentData | null>(null);
+  const [sentimentRecommendations, setSentimentRecommendations] = useState<string[]>([]);
+  const [enableSentimentProtection, setEnableSentimentProtection] = useState<boolean>(true);
   
   // Investment strategy config
   const [selectedStrategy, setSelectedStrategy] = useState<InvestmentStrategy>('diamond_hands');
