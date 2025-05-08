@@ -292,6 +292,13 @@ const VaultTypeCard: React.FC<VaultTypeCardProps> = ({
       </div>
       <p className="text-xs text-gray-400 text-center sm:text-left mt-1">{description}</p>
       
+      {/* Technology Badges */}
+      <div className="mt-2 flex flex-wrap justify-center sm:justify-start gap-1">
+        <span className="text-[9px] px-1.5 py-0.5 rounded-full bg-[#6B00D7]/20 text-[#FF5AF7] border border-[#6B00D7]/30">Triple-Chain</span>
+        <span className="text-[9px] px-1.5 py-0.5 rounded-full bg-[#FF5AF7]/20 text-[#FF5AF7] border border-[#FF5AF7]/30">Cross-Chain</span>
+        <span className="text-[9px] px-1.5 py-0.5 rounded-full bg-[#00D7C3]/20 text-[#00D7C3] border border-[#00D7C3]/30">Multi-Payment</span>
+      </div>
+      
       {/* Security Level Indicator */}
       <div className="flex flex-col sm:flex-row justify-between mt-3 mb-1 space-y-2 sm:space-y-0">
         <div className="flex items-center justify-center sm:justify-start">
@@ -331,6 +338,29 @@ const VaultTypeCard: React.FC<VaultTypeCardProps> = ({
               </li>
             ))}
           </ul>
+          
+          {/* Core Technology Features - Always shown when selected */}
+          <div className="mt-2 pt-2 border-t border-gray-700">
+            <p className="text-[10px] sm:text-xs font-medium text-gray-300 mb-1 text-center sm:text-left">Core Technologies:</p>
+            <ul className="text-[10px] sm:text-xs text-gray-400">
+              <li className="flex items-start mb-1 sm:mb-2">
+                <span style={{ color: '#6B00D7' }} className="mr-1 mt-0.5 flex-shrink-0 text-sm">•</span>
+                <span className="flex-1">Triple-Chain Security Architecture</span>
+              </li>
+              <li className="flex items-start mb-1 sm:mb-2">
+                <span style={{ color: '#FF5AF7' }} className="mr-1 mt-0.5 flex-shrink-0 text-sm">•</span>
+                <span className="flex-1">Cross-Chain Asset Storage</span>
+              </li>
+              <li className="flex items-start mb-1 sm:mb-2">
+                <span style={{ color: '#00D7C3' }} className="mr-1 mt-0.5 flex-shrink-0 text-sm">•</span>
+                <span className="flex-1">Multiple Payment Methods</span>
+              </li>
+              <li className="flex items-start">
+                <span style={{ color: '#D76B00' }} className="mr-1 mt-0.5 flex-shrink-0 text-sm">•</span>
+                <span className="flex-1">Zero-Knowledge Privacy Layer</span>
+              </li>
+            </ul>
+          </div>
         </div>
       )}
     </div>

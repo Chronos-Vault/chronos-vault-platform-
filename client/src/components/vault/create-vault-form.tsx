@@ -1029,31 +1029,83 @@ export function CreateVaultForm({
                     )}
                   />
                   
-                  <FormField
-                    control={form.control}
-                    name="tripleChainSecurity"
-                    render={({ field }) => (
-                      <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border border-[#6B00D7]/30 p-4 shadow bg-[#1A1A1A]">
-                        <FormControl>
-                          <Checkbox
-                            checked={field.value}
-                            onCheckedChange={(checked) => {
-                              field.onChange(checked);
-                              setUseTripleChainSecurity(!!checked);
-                            }}
-                          />
-                        </FormControl>
-                        <div className="space-y-1 leading-none">
-                          <FormLabel>
-                            Enable Triple-Chain Security
-                          </FormLabel>
-                          <FormDescription>
-                            Secures your vault across multiple blockchains for maximum security
-                          </FormDescription>
+                  {/* Advanced Technologies Section */}
+                  <div className="bg-gradient-to-r from-[#6B00D7]/20 to-[#FF5AF7]/20 p-5 rounded-lg border-2 border-[#6B00D7]/40 mb-6 relative overflow-hidden">
+                    <div className="absolute top-0 right-0 bg-gradient-to-bl from-[#FF5AF7]/30 to-transparent w-32 h-32 rounded-bl-full"></div>
+                    
+                    <h3 className="text-xl font-semibold mb-2 bg-clip-text text-transparent bg-gradient-to-r from-white to-gray-300">Advanced Security Technologies</h3>
+                    <p className="text-gray-300 mb-4 text-sm">Our revolutionary security features protect your assets across multiple blockchains</p>
+                    
+                    <div className="space-y-4">
+                      {/* Triple-Chain Security */}
+                      <FormField
+                        control={form.control}
+                        name="tripleChainSecurity"
+                        render={({ field }) => (
+                          <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border border-[#6B00D7]/50 p-4 shadow-lg bg-[#1A1A1A] hover:border-[#FF5AF7]/50 transition-all">
+                            <FormControl>
+                              <Checkbox
+                                checked={field.value}
+                                onCheckedChange={(checked) => {
+                                  field.onChange(checked);
+                                  setUseTripleChainSecurity(!!checked);
+                                }}
+                                className="data-[state=checked]:bg-gradient-to-r data-[state=checked]:from-[#6B00D7] data-[state=checked]:to-[#FF5AF7]"
+                              />
+                            </FormControl>
+                            <div className="space-y-1 leading-none">
+                              <FormLabel className="text-base font-medium text-white">
+                                Triple-Chain Security Architecture
+                              </FormLabel>
+                              <FormDescription className="text-gray-300">
+                                Distributes your vault security across Ethereum, Solana, and TON blockchains for unbreakable protection.
+                                <span className="block mt-1 text-xs text-[#FF5AF7]">Recommended for all vaults</span>
+                              </FormDescription>
+                            </div>
+                          </FormItem>
+                        )}
+                      />
+                      
+                      {/* Cross-Chain Storage Options */}
+                      <div className="rounded-md border border-[#6B00D7]/50 p-4 shadow-lg bg-[#1A1A1A]">
+                        <div className="flex items-start">
+                          <div className="p-2 rounded-full bg-gradient-to-r from-[#6B00D7]/20 to-[#FF5AF7]/20 mr-3">
+                            <ArrowLeftRight className="h-4 w-4 text-[#FF5AF7]" />
+                          </div>
+                          <div>
+                            <h4 className="text-base font-medium text-white">Cross-Chain Storage Options</h4>
+                            <p className="text-sm text-gray-300 mt-1">Your vault can store assets in any combination of supported blockchains</p>
+                            <div className="flex flex-wrap gap-2 mt-2">
+                              <span className="px-2 py-1 text-xs rounded-full bg-[#6B00D7]/20 text-white">Ethereum</span>
+                              <span className="px-2 py-1 text-xs rounded-full bg-[#6B00D7]/20 text-white">Solana</span>
+                              <span className="px-2 py-1 text-xs rounded-full bg-[#6B00D7]/20 text-white">TON</span>
+                              <span className="px-2 py-1 text-xs rounded-full bg-[#6B00D7]/20 text-white">Bitcoin</span>
+                            </div>
+                          </div>
                         </div>
-                      </FormItem>
-                    )}
-                  />
+                      </div>
+                      
+                      {/* Flexible Payment Methods */}
+                      <div className="rounded-md border border-[#6B00D7]/50 p-4 shadow-lg bg-[#1A1A1A]">
+                        <div className="flex items-start">
+                          <div className="p-2 rounded-full bg-gradient-to-r from-[#6B00D7]/20 to-[#FF5AF7]/20 mr-3">
+                            <Coins className="h-4 w-4 text-[#FF5AF7]" />
+                          </div>
+                          <div>
+                            <h4 className="text-base font-medium text-white">Multiple Payment Options</h4>
+                            <p className="text-sm text-gray-300 mt-1">Pay for your vault with any cryptocurrency you prefer</p>
+                            <div className="flex flex-wrap gap-2 mt-2">
+                              <span className="px-2 py-1 text-xs rounded-full bg-[#FF5AF7]/20 text-white">CVT Token</span>
+                              <span className="px-2 py-1 text-xs rounded-full bg-[#FF5AF7]/20 text-white">ETH</span>
+                              <span className="px-2 py-1 text-xs rounded-full bg-[#FF5AF7]/20 text-white">SOL</span>
+                              <span className="px-2 py-1 text-xs rounded-full bg-[#FF5AF7]/20 text-white">TON</span>
+                              <span className="px-2 py-1 text-xs rounded-full bg-[#FF5AF7]/20 text-white">BTC</span>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
                 </div>
                 
                 <div className="bg-gradient-to-r from-[#6B00D7]/10 to-[#FF5AF7]/10 p-4 rounded-lg border border-[#6B00D7]/20">
