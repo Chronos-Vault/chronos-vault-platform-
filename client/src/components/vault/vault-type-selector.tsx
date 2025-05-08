@@ -140,8 +140,8 @@ const VaultTypeSelector: React.FC<VaultTypeProps> = ({ selectedType, onChange })
       
       <VaultTypeCard 
         type="cross-chain"
-        title="Cross-Chain"
-        description="Secure assets across multiple blockchains"
+        title="Cross-Chain Verification"
+        description="Verify assets across multiple blockchains"
         icon="⛓️"
         color="#8B00D7"
         isSelected={selectedType === 'cross-chain'}
@@ -150,9 +150,9 @@ const VaultTypeSelector: React.FC<VaultTypeProps> = ({ selectedType, onChange })
         complexityLevel={4}
         features={[
           "Triple-Chain Security", 
-          "Cross-chain transactions",
-          "Multi-network support",
-          "Unified asset management" 
+          "Cross-chain verification protocols",
+          "Multi-network validation",
+          "Unified security monitoring" 
         ]}
       />
       
@@ -285,8 +285,8 @@ const VaultTypeSelector: React.FC<VaultTypeProps> = ({ selectedType, onChange })
 
       <VaultTypeCard 
         type="composite-vault"
-        title="Composite Vault"
-        description="Fragment assets across multiple chains"
+        title="Cross-Chain Fragment Vault"
+        description="Splits your assets across multiple blockchains"
         icon="🧩"
         color="#00E5A0"
         isSelected={selectedType === 'composite-vault'}
@@ -294,17 +294,17 @@ const VaultTypeSelector: React.FC<VaultTypeProps> = ({ selectedType, onChange })
         securityLevel={5}
         complexityLevel={5}
         features={[
-          "Multi-chain fragmentation",
-          "Distributed asset storage",
-          "Cross-chain verification mechanism",
-          "Enhanced disaster recovery"
+          "Asset splitting across chains",
+          "Multiple blockchain storage",
+          "Fragmented recovery system",
+          "Protection from single-chain failures"
         ]}
       />
 
       <VaultTypeCard 
         type="geo-temporal"
-        title="Geo-Temporal"
-        description="Location and time-based restrictions"
+        title="Location-Time Restricted Vault"
+        description="Access only at specific locations during set times"
         icon="🌎"
         color="#47A0FF"
         isSelected={selectedType === 'geo-temporal'}
@@ -312,17 +312,17 @@ const VaultTypeSelector: React.FC<VaultTypeProps> = ({ selectedType, onChange })
         securityLevel={5}
         complexityLevel={4}
         features={[
-          "Combined location & time validation",
-          "Geographical access boundaries",
-          "Temporal access windows",
-          "Presence verification protocol"
+          "Dual verification: location + time window",
+          "Physical presence requirement",
+          "Scheduled access periods",
+          "Perfect for location-sensitive business assets"
         ]}
       />
 
       <VaultTypeCard 
         type="diamond-hands"
-        title="Diamond Hands"
-        description="Enforce investment holding periods"
+        title="Investment Discipline Vault"
+        description="Prevents emotional selling during market volatility"
         icon="💎"
         color="#3F51FF"
         isSelected={selectedType === 'diamond-hands'}
@@ -330,10 +330,10 @@ const VaultTypeSelector: React.FC<VaultTypeProps> = ({ selectedType, onChange })
         securityLevel={4}
         complexityLevel={3}
         features={[
-          "Programmed hodling enforcement",
-          "Market condition triggers",
-          "Strategic exit planning",
-          "Investment discipline mechanisms"
+          "Programmable exit conditions",
+          "Market event-based triggers",
+          "Time-locked investment periods",
+          "Protection from panic-selling"
         ]}
       />
     </div>
