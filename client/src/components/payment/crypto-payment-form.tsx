@@ -7,8 +7,8 @@ import { Loader2, ShieldCheck, AlertCircle, CreditCard, QrCode, Copy, Check } fr
 /**
  * CryptoPaymentForm Component 
  * 
- * This component replaces the Stripe payment form with a cryptocurrency payment interface.
- * Users can pay with various cryptocurrencies (ETH, SOL, TON, BTC).
+ * This component allows users to pay with various cryptocurrencies (ETH, SOL, TON, BTC).
+ * It replaces the Stripe payment form with a blockchain-native solution.
  */
 
 interface CryptoPaymentFormProps {

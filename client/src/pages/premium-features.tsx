@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { StripePaymentForm } from '@/components/payment/stripe-payment-form';
+import { CryptoPaymentForm } from '@/components/payment/crypto-payment-form';
 import { Button } from '@/components/ui/button';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Label } from '@/components/ui/label';
@@ -184,7 +184,7 @@ export default function PremiumFeaturesPage() {
           </div>
           
           <StripePaymentForm 
-            amount={selectedProduct.price}
+            amount={Math.round(selectedProduct.price * 100)}
             description={`Chronos Vault ${selectedProduct.name} Subscription`}
             onSuccess={handlePaymentSuccess}
             onCancel={() => setShowPaymentForm(false)}
