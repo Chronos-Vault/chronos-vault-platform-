@@ -249,8 +249,8 @@ const VaultTypeSelector: React.FC<VaultTypeProps> = ({ selectedType, onChange })
       {/* New specialized vaults */}
       <VaultTypeCard 
         type="memory-capsule"
-        title="Memory Vault"
-        description="Multimedia vault unlocking on set date"
+        title="Time-Locked Memory Vault"
+        description="Digital assets with multimedia memories"
         icon="📦"
         color="#FF3A8C"
         isSelected={selectedType === 'memory-capsule'}
@@ -258,10 +258,10 @@ const VaultTypeSelector: React.FC<VaultTypeProps> = ({ selectedType, onChange })
         securityLevel={4}
         complexityLevel={3}
         features={[
-          "Multimedia content support",
-          "Synchronized asset unlocking",
-          "Interactive memory experiences",
-          "Gift messaging and personalization"
+          "Combined assets and personal media",
+          "Photos, videos and messages storage",
+          "Synchronized unlocking on future date",
+          "Perfect for gifts and personal time capsules"
         ]}
       />
 
