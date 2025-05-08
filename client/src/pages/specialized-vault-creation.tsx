@@ -390,6 +390,52 @@ function SpecializedVaultCreation() {
             </div>
           </div>
         );
+      
+      case SpecializedVaultType.MEMORY_VAULT:
+        return (
+          <div className="space-y-4 mt-6 p-4 border border-[#9d03fc]/30 rounded-lg bg-gray-900/50">
+            <h3 className="text-[#9d03fc] font-medium">Memory Vault Configuration</h3>
+            <div className="space-y-4">
+              <div className="bg-black/20 p-4 rounded-lg">
+                <div className="flex items-center">
+                  <div className="bg-[#9d03fc]/20 p-3 rounded-full mr-3">
+                    <i className="ri-image-line text-[#9d03fc] text-xl"></i>
+                  </div>
+                  <div>
+                    <h4 className="text-white font-medium">Multimedia Time Capsule</h4>
+                    <p className="text-xs text-gray-400">Store photos, videos, and messages in a secure time-locked vault</p>
+                  </div>
+                </div>
+              </div>
+              <div className="space-y-2">
+                <div className="flex items-center p-2 bg-black/20 rounded-md">
+                  <div className="h-4 w-4 bg-[#9d03fc]/20 flex items-center justify-center rounded mr-2">
+                    <i className="ri-check-line text-[#9d03fc] text-xs"></i>
+                  </div>
+                  <span className="text-sm text-gray-300">Photo & Video Storage</span>
+                </div>
+                <div className="flex items-center p-2 bg-black/20 rounded-md">
+                  <div className="h-4 w-4 bg-[#9d03fc]/20 flex items-center justify-center rounded mr-2">
+                    <i className="ri-check-line text-[#9d03fc] text-xs"></i>
+                  </div>
+                  <span className="text-sm text-gray-300">Encrypted Message Attachments</span>
+                </div>
+                <div className="flex items-center p-2 bg-black/20 rounded-md">
+                  <div className="h-4 w-4 bg-[#9d03fc]/20 flex items-center justify-center rounded mr-2">
+                    <i className="ri-check-line text-[#9d03fc] text-xs"></i>
+                  </div>
+                  <span className="text-sm text-gray-300">Time-Locked Reveal Effect</span>
+                </div>
+                <div className="flex items-center p-2 bg-black/20 rounded-md">
+                  <div className="h-4 w-4 bg-[#9d03fc]/20 flex items-center justify-center rounded mr-2">
+                    <i className="ri-check-line text-[#9d03fc] text-xs"></i>
+                  </div>
+                  <span className="text-sm text-gray-300">Optional Countdown Display</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        );
         
       case SpecializedVaultType.UNIQUE:
         return (
@@ -425,6 +471,166 @@ function SpecializedVaultCreation() {
                     <i className="ri-check-line text-[#fca103] text-xs"></i>
                   </div>
                   <span className="text-sm text-gray-300">User-Controlled Privacy</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        );
+        
+      case SpecializedVaultType.QUANTUM_RESISTANT:
+        return (
+          <div className="space-y-4 mt-6 p-4 border border-[#3c9700]/30 rounded-lg bg-gray-900/50">
+            <h3 className="text-[#3c9700] font-medium">Quantum-Resistant Vault Configuration</h3>
+            <div className="space-y-4">
+              <div className="bg-black/20 p-4 rounded-lg">
+                <div className="flex items-center">
+                  <div className="bg-[#3c9700]/20 p-3 rounded-full mr-3">
+                    <i className="ri-lock-password-line text-[#3c9700] text-xl"></i>
+                  </div>
+                  <div>
+                    <h4 className="text-white font-medium">Quantum-Safe Encryption</h4>
+                    <p className="text-xs text-gray-400">Your vault is secured against future quantum computing threats</p>
+                  </div>
+                </div>
+              </div>
+              <div className="space-y-2">
+                <div className="flex items-center p-2 bg-black/20 rounded-md">
+                  <div className="h-4 w-4 bg-[#3c9700]/20 flex items-center justify-center rounded mr-2">
+                    <i className="ri-check-line text-[#3c9700] text-xs"></i>
+                  </div>
+                  <span className="text-sm text-gray-300">Post-Quantum Cryptography</span>
+                </div>
+                <div className="flex items-center p-2 bg-black/20 rounded-md">
+                  <div className="h-4 w-4 bg-[#3c9700]/20 flex items-center justify-center rounded mr-2">
+                    <i className="ri-check-line text-[#3c9700] text-xs"></i>
+                  </div>
+                  <span className="text-sm text-gray-300">Multi-Layer Security</span>
+                </div>
+                <div className="flex items-center p-2 bg-black/20 rounded-md">
+                  <div className="h-4 w-4 bg-[#3c9700]/20 flex items-center justify-center rounded mr-2">
+                    <i className="ri-check-line text-[#3c9700] text-xs"></i>
+                  </div>
+                  <span className="text-sm text-gray-300">Lattice-Based Encryption</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        );
+      
+      case SpecializedVaultType.COMPOSITE_VAULT:
+        return (
+          <div className="space-y-4 mt-6 p-4 border border-[#0097b2]/30 rounded-lg bg-gray-900/50">
+            <h3 className="text-[#0097b2] font-medium">Composite Vault Configuration</h3>
+            <div className="space-y-4">
+              <div className="bg-black/20 p-4 rounded-lg">
+                <div className="flex items-center">
+                  <div className="bg-[#0097b2]/20 p-3 rounded-full mr-3">
+                    <i className="ri-folders-line text-[#0097b2] text-xl"></i>
+                  </div>
+                  <div>
+                    <h4 className="text-white font-medium">Multi-Asset Protection</h4>
+                    <p className="text-xs text-gray-400">Store multiple assets with different unlock conditions in a single vault</p>
+                  </div>
+                </div>
+              </div>
+              <div className="space-y-2">
+                <div className="flex items-center p-2 bg-black/20 rounded-md">
+                  <div className="h-4 w-4 bg-[#0097b2]/20 flex items-center justify-center rounded mr-2">
+                    <i className="ri-check-line text-[#0097b2] text-xs"></i>
+                  </div>
+                  <span className="text-sm text-gray-300">Multiple Asset Support</span>
+                </div>
+                <div className="flex items-center p-2 bg-black/20 rounded-md">
+                  <div className="h-4 w-4 bg-[#0097b2]/20 flex items-center justify-center rounded mr-2">
+                    <i className="ri-check-line text-[#0097b2] text-xs"></i>
+                  </div>
+                  <span className="text-sm text-gray-300">Conditional Access Logic</span>
+                </div>
+                <div className="flex items-center p-2 bg-black/20 rounded-md">
+                  <div className="h-4 w-4 bg-[#0097b2]/20 flex items-center justify-center rounded mr-2">
+                    <i className="ri-check-line text-[#0097b2] text-xs"></i>
+                  </div>
+                  <span className="text-sm text-gray-300">Phased Release Schedule</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        );
+        
+      case SpecializedVaultType.GEO_TEMPORAL:
+        return (
+          <div className="space-y-4 mt-6 p-4 border border-[#ff3e00]/30 rounded-lg bg-gray-900/50">
+            <h3 className="text-[#ff3e00] font-medium">Geo-Temporal Vault Configuration</h3>
+            <div className="space-y-4">
+              <div className="bg-black/20 p-4 rounded-lg">
+                <div className="flex items-center">
+                  <div className="bg-[#ff3e00]/20 p-3 rounded-full mr-3">
+                    <i className="ri-map-pin-time-line text-[#ff3e00] text-xl"></i>
+                  </div>
+                  <div>
+                    <h4 className="text-white font-medium">Location + Time Lock</h4>
+                    <p className="text-xs text-gray-400">Secure assets that can only be accessed at specific locations and times</p>
+                  </div>
+                </div>
+              </div>
+              <div className="space-y-2">
+                <div className="flex items-center p-2 bg-black/20 rounded-md">
+                  <div className="h-4 w-4 bg-[#ff3e00]/20 flex items-center justify-center rounded mr-2">
+                    <i className="ri-check-line text-[#ff3e00] text-xs"></i>
+                  </div>
+                  <span className="text-sm text-gray-300">GPS Verification</span>
+                </div>
+                <div className="flex items-center p-2 bg-black/20 rounded-md">
+                  <div className="h-4 w-4 bg-[#ff3e00]/20 flex items-center justify-center rounded mr-2">
+                    <i className="ri-check-line text-[#ff3e00] text-xs"></i>
+                  </div>
+                  <span className="text-sm text-gray-300">Time-Based Unlock</span>
+                </div>
+                <div className="flex items-center p-2 bg-black/20 rounded-md">
+                  <div className="h-4 w-4 bg-[#ff3e00]/20 flex items-center justify-center rounded mr-2">
+                    <i className="ri-check-line text-[#ff3e00] text-xs"></i>
+                  </div>
+                  <span className="text-sm text-gray-300">Dual-Factor Security</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        );
+        
+      case SpecializedVaultType.DIAMOND_HANDS:
+        return (
+          <div className="space-y-4 mt-6 p-4 border border-[#f7931a]/30 rounded-lg bg-gray-900/50">
+            <h3 className="text-[#f7931a] font-medium">Diamond Hands Vault Configuration</h3>
+            <div className="space-y-4">
+              <div className="bg-black/20 p-4 rounded-lg">
+                <div className="flex items-center">
+                  <div className="bg-[#f7931a]/20 p-3 rounded-full mr-3">
+                    <i className="ri-bit-coin-line text-[#f7931a] text-xl"></i>
+                  </div>
+                  <div>
+                    <h4 className="text-white font-medium">Bitcoin HODLing Vault</h4>
+                    <p className="text-xs text-gray-400">Lock Bitcoin until next halving with enhanced security measures</p>
+                  </div>
+                </div>
+              </div>
+              <div className="space-y-2">
+                <div className="flex items-center p-2 bg-black/20 rounded-md">
+                  <div className="h-4 w-4 bg-[#f7931a]/20 flex items-center justify-center rounded mr-2">
+                    <i className="ri-check-line text-[#f7931a] text-xs"></i>
+                  </div>
+                  <span className="text-sm text-gray-300">Multi-Signature Security (2-of-3)</span>
+                </div>
+                <div className="flex items-center p-2 bg-black/20 rounded-md">
+                  <div className="h-4 w-4 bg-[#f7931a]/20 flex items-center justify-center rounded mr-2">
+                    <i className="ri-check-line text-[#f7931a] text-xs"></i>
+                  </div>
+                  <span className="text-sm text-gray-300">Halving-Synchronized Unlock</span>
+                </div>
+                <div className="flex items-center p-2 bg-black/20 rounded-md">
+                  <div className="h-4 w-4 bg-[#f7931a]/20 flex items-center justify-center rounded mr-2">
+                    <i className="ri-check-line text-[#f7931a] text-xs"></i>
+                  </div>
+                  <span className="text-sm text-gray-300">Emergency Recovery Options</span>
                 </div>
               </div>
             </div>
