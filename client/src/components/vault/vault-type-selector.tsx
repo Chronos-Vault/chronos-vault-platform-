@@ -249,7 +249,7 @@ const VaultTypeSelector: React.FC<VaultTypeProps> = ({ selectedType, onChange })
       {/* New specialized vaults */}
       <VaultTypeCard 
         type="memory-capsule"
-        title="Memory Capsule"
+        title="Memory Vault"
         description="Multimedia vault unlocking on set date"
         icon="📦"
         color="#FF3A8C"
