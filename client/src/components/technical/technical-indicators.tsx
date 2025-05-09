@@ -133,48 +133,64 @@ export function TechnicalIndicators({
   
   return (
     <div className={`space-y-4 ${className}`}>
-      <div className="flex items-center">
-        <h3 className="text-lg font-medium">Technical Analysis Triggers</h3>
-        <TooltipProvider>
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <Button variant="ghost" size="icon" className="ml-2 h-6 w-6 p-0">
-                <Info className="h-4 w-4 text-[#375BD2]" />
-                <span className="sr-only">Chainlink information</span>
-              </Button>
-            </TooltipTrigger>
-            <TooltipContent className="max-w-md bg-gray-900 border border-[#375BD2]/40 p-4 shadow-lg">
-              <div className="space-y-2">
-                <p className="font-medium text-[#375BD2]">Chainlink Price Feeds</p>
-                <p className="text-xs text-gray-300">Technical triggers use Chainlink's tamper-proof price data to ensure accurate and reliable exit conditions. When an indicator's conditions are met, the smart contract will execute the defined exit strategy automatically.</p>
-                <ul className="text-xs text-gray-400 list-disc pl-4 space-y-1">
-                  <li>Decentralized price feeds from 100+ validators</li>
-                  <li>Aggregated from premium data providers</li>
-                  <li>Secured by economic incentives</li>
-                  <li>Used by top DeFi platforms</li>
-                </ul>
-              </div>
-            </TooltipContent>
-          </Tooltip>
-        </TooltipProvider>
+      <div className="flex items-center justify-between">
+        <div className="flex items-center">
+          <Shield className="h-5 w-5 mr-2 text-[#375BD2]" />
+          <h3 className="text-lg font-medium bg-clip-text text-transparent bg-gradient-to-r from-[#375BD2] to-[#6B00D7]">Technical Analysis Triggers</h3>
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button variant="ghost" size="icon" className="ml-2 h-6 w-6 p-0">
+                  <Info className="h-4 w-4 text-[#375BD2]" />
+                  <span className="sr-only">Chainlink information</span>
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent className="max-w-md bg-gray-900 border border-[#375BD2]/40 p-4 shadow-lg">
+                <div className="space-y-2">
+                  <p className="font-medium text-[#375BD2]">Chainlink Price Feeds</p>
+                  <p className="text-xs text-gray-300">Technical triggers use Chainlink's tamper-proof price data to ensure accurate and reliable exit conditions. When an indicator's conditions are met, the smart contract will execute the defined exit strategy automatically.</p>
+                  <ul className="text-xs text-gray-400 list-disc pl-4 space-y-1">
+                    <li>Decentralized price feeds from 100+ validators</li>
+                    <li>Aggregated from premium data providers</li>
+                    <li>Secured by economic incentives</li>
+                    <li>Used by top DeFi platforms</li>
+                  </ul>
+                </div>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+        </div>
+        <div className="hidden md:flex items-center bg-[#375BD2]/10 px-2 py-1 rounded text-xs text-[#375BD2] border border-[#375BD2]/20">
+          <Shield className="h-3 w-3 mr-1" />
+          <span>Secured by Chainlink</span>
+        </div>
       </div>
       
       <p className="text-sm text-gray-400">
-        Set up automated exit conditions based on technical indicators and Chainlink oracle data
+        Set up automated exit conditions based on technical indicators and Chainlink oracle data. Your vault will automatically execute your profit-taking strategy when these conditions are met.
       </p>
       
       {indicators.length === 0 ? (
-        <Card className="bg-black/20 border-gray-800">
-          <CardContent className="pt-6 text-center">
-            <p className="text-gray-400 mb-4">No technical indicators configured yet</p>
+        <Card className="bg-black/20 border-gray-800 overflow-hidden">
+          <div className="absolute inset-0 bg-gradient-to-br from-[#375BD2]/5 to-transparent pointer-events-none"></div>
+          <CardContent className="pt-6 text-center relative">
+            <div className="flex justify-center mb-4">
+              <div className="p-3 rounded-full bg-[#375BD2]/10 border border-[#375BD2]/20">
+                <Shield className="h-6 w-6 text-[#375BD2]" />
+              </div>
+            </div>
+            <h4 className="text-gray-200 mb-2 font-medium">No Technical Indicators Configured</h4>
+            <p className="text-gray-400 mb-6 max-w-md mx-auto">
+              Technical indicators help automate your exit strategy based on market conditions. 
+              Add at least one indicator to enable automatic profit-taking.
+            </p>
             <div className="flex justify-center">
               <Button 
-                variant="outline" 
                 onClick={handleAddIndicator}
-                className="bg-black/30 border-gray-700 hover:bg-gray-800"
+                className="bg-[#375BD2] hover:bg-[#375BD2]/80 text-white"
               >
                 <PlusCircle className="mr-2 h-4 w-4" />
-                Add Indicator
+                Add Your First Indicator
               </Button>
             </div>
           </CardContent>
@@ -182,48 +198,76 @@ export function TechnicalIndicators({
       ) : (
         <>
           {indicators.map(indicator => (
-            <Card key={indicator.id} className="bg-black/20 border-gray-800">
+            <Card 
+              key={indicator.id} 
+              className={`bg-black/20 border-gray-800 ${
+                indicator.enabled 
+                  ? indicator.type === 'ma' 
+                    ? 'border-l-4 border-l-[#3F51FF]'
+                    : indicator.type === 'rsi'
+                    ? 'border-l-4 border-l-[#FF5AF7]'
+                    : indicator.type === 'macd'
+                    ? 'border-l-4 border-l-[#00E5FF]'
+                    : 'border-l-4 border-l-[#6B00D7]'
+                  : ''
+              }`}
+            >
               <CardHeader className="pb-2">
                 <div className="flex justify-between items-center">
                   <div className="flex items-center">
-                    <TooltipProvider>
-                      <Tooltip>
-                        <TooltipTrigger asChild>
-                          <div className="cursor-help">
-                            {INDICATOR_CONFIGS[indicator.type].icon}
-                          </div>
-                        </TooltipTrigger>
-                        <TooltipContent className="max-w-xs bg-gray-900 border border-gray-700 p-3 shadow-lg">
-                          <div className="space-y-2">
-                            <p className="font-medium text-sm">{INDICATOR_CONFIGS[indicator.type].label} Indicator</p>
-                            <p className="text-xs text-gray-300">
-                              {indicator.type === 'ma' && 
-                                'Moving Averages smooth out price data to create a trend-following indicator. They help identify the direction of the trend and potential support/resistance levels.'}
-                              {indicator.type === 'rsi' && 
-                                'Relative Strength Index (RSI) measures the speed and change of price movements. It oscillates between 0 and 100, with values above 70 indicating overbought conditions and below 30 indicating oversold conditions.'}
-                              {indicator.type === 'macd' && 
-                                'Moving Average Convergence Divergence (MACD) shows the relationship between two moving averages of a security\'s price. The MACD line is the difference between a fast and slow exponential moving average.'}
-                              {indicator.type === 'volume' && 
-                                'Volume indicators measure the strength of a trend based on trading volume. Increasing volume often confirms the direction of the existing trend.'}
-                            </p>
-                            <div className="flex items-center space-x-1 text-xs text-gray-400">
-                              <Shield className="h-3 w-3 text-[#375BD2]" />
-                              <span>Verified by Chainlink Oracle</span>
+                    <div className={`p-1.5 rounded-full ${
+                      indicator.type === 'ma'
+                        ? 'bg-[#3F51FF]/10'
+                        : indicator.type === 'rsi'
+                        ? 'bg-[#FF5AF7]/10'
+                        : indicator.type === 'macd'
+                        ? 'bg-[#00E5FF]/10'
+                        : 'bg-[#6B00D7]/10'
+                    }`}>
+                      <TooltipProvider>
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <div className="cursor-help">
+                              {INDICATOR_CONFIGS[indicator.type].icon}
                             </div>
-                          </div>
-                        </TooltipContent>
-                      </Tooltip>
-                    </TooltipProvider>
+                          </TooltipTrigger>
+                          <TooltipContent className="max-w-xs bg-gray-900 border border-gray-700 p-3 shadow-lg">
+                            <div className="space-y-2">
+                              <p className="font-medium text-sm">{INDICATOR_CONFIGS[indicator.type].label} Indicator</p>
+                              <p className="text-xs text-gray-300">
+                                {indicator.type === 'ma' && 
+                                  'Moving Averages smooth out price data to create a trend-following indicator. They help identify the direction of the trend and potential support/resistance levels.'}
+                                {indicator.type === 'rsi' && 
+                                  'Relative Strength Index (RSI) measures the speed and change of price movements. It oscillates between 0 and 100, with values above 70 indicating overbought conditions and below 30 indicating oversold conditions.'}
+                                {indicator.type === 'macd' && 
+                                  'Moving Average Convergence Divergence (MACD) shows the relationship between two moving averages of a security\'s price. The MACD line is the difference between a fast and slow exponential moving average.'}
+                                {indicator.type === 'volume' && 
+                                  'Volume indicators measure the strength of a trend based on trading volume. Increasing volume often confirms the direction of the existing trend.'}
+                              </p>
+                              <div className="flex items-center space-x-1 text-xs text-gray-400">
+                                <Shield className="h-3 w-3 text-[#375BD2]" />
+                                <span>Verified by Chainlink Oracle</span>
+                              </div>
+                            </div>
+                          </TooltipContent>
+                        </Tooltip>
+                      </TooltipProvider>
+                    </div>
                     <CardTitle className="ml-2 text-sm">
                       {INDICATOR_CONFIGS[indicator.type].label}
                     </CardTitle>
                   </div>
-                  <Switch
-                    checked={indicator.enabled}
-                    onCheckedChange={(checked) => handleUpdateIndicator(indicator.id, 'enabled', checked)}
-                  />
+                  <div className="flex items-center">
+                    <span className={`text-xs mr-2 ${indicator.enabled ? 'text-green-400' : 'text-gray-500'}`}>
+                      {indicator.enabled ? 'Active' : 'Inactive'}
+                    </span>
+                    <Switch
+                      checked={indicator.enabled}
+                      onCheckedChange={(checked) => handleUpdateIndicator(indicator.id, 'enabled', checked)}
+                    />
+                  </div>
                 </div>
-                <CardDescription className="text-xs">
+                <CardDescription className="text-xs mt-1">
                   {INDICATOR_CONFIGS[indicator.type].description}
                 </CardDescription>
               </CardHeader>
@@ -347,62 +391,120 @@ export function TechnicalIndicators({
           ))}
           
           <div className="mt-4">
-            <div className="flex items-end space-x-4">
-              <div className="flex-1">
-                <Label className="text-xs text-gray-300">Add New Indicator</Label>
-                <Select 
-                  value={selectedIndicatorType} 
-                  onValueChange={setSelectedIndicatorType}
+            <div className="p-4 bg-black/30 border border-gray-800 rounded-lg">
+              <h4 className="text-sm font-medium text-gray-200 mb-3 flex items-center">
+                <PlusCircle className="h-4 w-4 mr-2 text-[#375BD2]" />
+                Add New Technical Indicator
+              </h4>
+              <div className="flex flex-col md:flex-row md:items-end gap-4">
+                <div className="flex-1">
+                  <Label className="text-xs text-gray-300">Indicator Type</Label>
+                  <Select 
+                    value={selectedIndicatorType} 
+                    onValueChange={setSelectedIndicatorType}
+                  >
+                    <SelectTrigger className="mt-1 bg-gray-800 border-gray-700">
+                      <SelectValue placeholder="Select indicator type" />
+                    </SelectTrigger>
+                    <SelectContent className="bg-gray-900 border-gray-700">
+                      <SelectItem value="ma" className="flex items-center">
+                        <div className="flex items-center">
+                          <div className="bg-[#3F51FF]/10 p-1 rounded-full mr-2">
+                            <TrendingUp className="h-3 w-3 text-[#3F51FF]" />
+                          </div>
+                          Moving Average (MA)
+                        </div>
+                      </SelectItem>
+                      <SelectItem value="rsi" className="flex items-center">
+                        <div className="flex items-center">
+                          <div className="bg-[#FF5AF7]/10 p-1 rounded-full mr-2">
+                            <Layers className="h-3 w-3 text-[#FF5AF7]" />
+                          </div>
+                          Relative Strength Index (RSI)
+                        </div>
+                      </SelectItem>
+                      <SelectItem value="macd" className="flex items-center">
+                        <div className="flex items-center">
+                          <div className="bg-[#00E5FF]/10 p-1 rounded-full mr-2">
+                            <TrendingUp className="h-3 w-3 text-[#00E5FF]" />
+                          </div>
+                          MACD
+                        </div>
+                      </SelectItem>
+                      <SelectItem value="volume" className="flex items-center">
+                        <div className="flex items-center">
+                          <div className="bg-[#6B00D7]/10 p-1 rounded-full mr-2">
+                            <Layers className="h-3 w-3 text-[#6B00D7]" />
+                          </div>
+                          Volume
+                        </div>
+                      </SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <Button 
+                  onClick={handleAddIndicator}
+                  className="bg-[#375BD2] hover:bg-[#375BD2]/80 md:w-auto w-full"
                 >
-                  <SelectTrigger className="mt-1 bg-gray-800 border-gray-700">
-                    <SelectValue placeholder="Select indicator type" />
-                  </SelectTrigger>
-                  <SelectContent className="bg-gray-900 border-gray-700">
-                    <SelectItem value="ma">Moving Average (MA)</SelectItem>
-                    <SelectItem value="rsi">Relative Strength Index (RSI)</SelectItem>
-                    <SelectItem value="macd">MACD</SelectItem>
-                    <SelectItem value="volume">Volume</SelectItem>
-                  </SelectContent>
-                </Select>
+                  <PlusCircle className="mr-2 h-4 w-4" />
+                  Add Indicator
+                </Button>
               </div>
-              <Button 
-                onClick={handleAddIndicator}
-                className="bg-[#3F51FF] hover:bg-[#3F51FF]/80"
-              >
-                <PlusCircle className="mr-2 h-4 w-4" />
-                Add
-              </Button>
             </div>
           </div>
         </>
       )}
       
-      <div className="mt-6 pt-4 border-t border-gray-800 text-xs space-y-2">
-        <div className="bg-[#375BD2]/10 p-3 rounded-md border border-[#375BD2]/30">
-          <div className="flex items-center mb-1">
-            <svg width="16" height="16" viewBox="0 0 32 44" fill="none" xmlns="http://www.w3.org/2000/svg" className="mr-2">
+      <div className="mt-6 pt-4 border-t border-gray-800 text-xs space-y-3">
+        <div className="bg-gradient-to-r from-[#375BD2]/10 to-[#6B00D7]/5 p-4 rounded-md border border-[#375BD2]/30">
+          <div className="flex items-center mb-2">
+            <svg width="18" height="18" viewBox="0 0 32 44" fill="none" xmlns="http://www.w3.org/2000/svg" className="mr-2">
               <path d="M16 0L0 16L16 32V16H32L16 0Z" fill="#375BD2"/>
               <path d="M16 44L32 28L16 12V28H0L16 44Z" fill="#375BD2"/>
             </svg>
-            <span className="text-[#375BD2] font-medium">Chainlink Oracle Network</span>
+            <span className="text-[#375BD2] font-medium text-sm">Chainlink Oracle Network</span>
           </div>
-          <p className="text-gray-400 text-xs">
+          <p className="text-gray-300 text-xs leading-relaxed mb-2">
             All technical indicators utilize Chainlink's decentralized oracle network for reliable, tamper-proof price data. 
             Indicators are calculated using time-weighted average prices (TWAP) from multiple trusted sources.
           </p>
+          <div className="flex items-center space-x-1 text-[#375BD2]/80 text-xs">
+            <Shield className="h-3 w-3" />
+            <span>Military-grade security for your investment strategy</span>
+          </div>
         </div>
         
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-2 mt-2">
-          <div className="bg-gray-900/50 p-2 rounded-md border border-gray-800">
-            <span className="text-[#375BD2] text-xs">Oracle Refresh Rate:</span>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-3 mt-3">
+          <div className="bg-gray-900/50 p-3 rounded-md border border-[#375BD2]/20 hover:border-[#375BD2]/40 transition-colors">
+            <div className="flex items-center mb-1">
+              <svg className="w-4 h-4 text-[#375BD2] mr-1.5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <circle cx="12" cy="12" r="10"></circle>
+                <polyline points="12 6 12 12 16 14"></polyline>
+              </svg>
+              <span className="text-[#375BD2] text-xs font-medium">Oracle Refresh Rate</span>
+            </div>
             <p className="text-gray-400 text-xs">Every block (~12 seconds)</p>
           </div>
-          <div className="bg-gray-900/50 p-2 rounded-md border border-gray-800">
-            <span className="text-[#375BD2] text-xs">Supported Networks:</span>
+          <div className="bg-gray-900/50 p-3 rounded-md border border-[#375BD2]/20 hover:border-[#375BD2]/40 transition-colors">
+            <div className="flex items-center mb-1">
+              <svg className="w-4 h-4 text-[#375BD2] mr-1.5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M20.24 12.24a6 6 0 0 0-8.49-8.49L5 10.5V19h8.5z"></path>
+                <line x1="16" y1="8" x2="2" y2="22"></line>
+                <line x1="17.5" y1="15" x2="9" y2="15"></line>
+              </svg>
+              <span className="text-[#375BD2] text-xs font-medium">Supported Networks</span>
+            </div>
             <p className="text-gray-400 text-xs">Ethereum, Solana, TON</p>
           </div>
-          <div className="bg-gray-900/50 p-2 rounded-md border border-gray-800">
-            <span className="text-[#375BD2] text-xs">Price Aggregation:</span>
+          <div className="bg-gray-900/50 p-3 rounded-md border border-[#375BD2]/20 hover:border-[#375BD2]/40 transition-colors">
+            <div className="flex items-center mb-1">
+              <svg className="w-4 h-4 text-[#375BD2] mr-1.5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <line x1="12" y1="20" x2="12" y2="10"></line>
+                <line x1="18" y1="20" x2="18" y2="4"></line>
+                <line x1="6" y1="20" x2="6" y2="16"></line>
+              </svg>
+              <span className="text-[#375BD2] text-xs font-medium">Price Aggregation</span>
+            </div>
             <p className="text-gray-400 text-xs">9+ exchange sources</p>
           </div>
         </div>
