@@ -1,448 +1,539 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from "react";
 import {
   Card,
   CardContent,
-  CardDescription,
   CardHeader,
   CardTitle,
+  CardDescription,
 } from "@/components/ui/card";
-import { 
-  Tabs, 
-  TabsContent, 
-  TabsList, 
-  TabsTrigger 
+import {
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
 } from "@/components/ui/tabs";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Separator } from "@/components/ui/separator";
-import { OraclePriceFeed } from './oracle-price-feed';
-import { OracleTechnicalIndicator } from './oracle-technical-indicator';
 import { 
-  ArrowUpRight, 
-  ArrowDownRight, 
-  RefreshCw, 
-  Info, 
-  Link2, 
-  LineChart,
-  BarChart, 
-  Network,
-  Clock,
-  AlertTriangle,
-} from "lucide-react";
-import { chainlinkOracleService } from '@/services/chainlink-oracle-service';
-import type { PriceFeed, TechnicalIndicator, OracleNetwork } from '@/services/chainlink-oracle-service';
+  LineChart, 
+  Line, 
+  XAxis, 
+  YAxis, 
+  CartesianGrid, 
+  Tooltip, 
+  Legend, 
+  ResponsiveContainer,
+  AreaChart,
+  Area,
+  BarChart,
+  Bar
+} from "recharts";
 
-interface MarketDataDashboardProps {
-  defaultAsset?: string;
-  defaultBlockchain?: string;
-  compact?: boolean;
-}
+const MOCK_BTC_PRICE_DATA = [
+  { date: "2023-01", price: 23000 },
+  { date: "2023-02", price: 25000 },
+  { date: "2023-03", price: 28000 },
+  { date: "2023-04", price: 29500 },
+  { date: "2023-05", price: 31000 },
+  { date: "2023-06", price: 27000 },
+  { date: "2023-07", price: 29000 },
+  { date: "2023-08", price: 26000 },
+  { date: "2023-09", price: 28000 },
+  { date: "2023-10", price: 35000 },
+  { date: "2023-11", price: 42000 },
+  { date: "2023-12", price: 45000 },
+  { date: "2024-01", price: 52000 },
+  { date: "2024-02", price: 58000 },
+  { date: "2024-03", price: 65000 },
+  { date: "2024-04", price: 85000 },
+  { date: "2024-05", price: 103000 },
+];
 
-export function MarketDataDashboard({ 
-  defaultAsset = 'BTC', 
-  defaultBlockchain = 'ethereum',
-  compact = false 
-}: MarketDataDashboardProps) {
-  const [activeTab, setActiveTab] = useState('price-feeds');
-  const [selectedAsset, setSelectedAsset] = useState(defaultAsset);
-  const [selectedBlockchain, setSelectedBlockchain] = useState(defaultBlockchain);
-  const [isLoading, setIsLoading] = useState(true);
-  const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
+const MOCK_TRADING_VOLUME = [
+  { date: "2023-01", volume: 123 },
+  { date: "2023-02", volume: 156 },
+  { date: "2023-03", volume: 145 },
+  { date: "2023-04", volume: 178 },
+  { date: "2023-05", volume: 210 },
+  { date: "2023-06", volume: 198 },
+  { date: "2023-07", volume: 176 },
+  { date: "2023-08", volume: 187 },
+  { date: "2023-09", volume: 201 },
+  { date: "2023-10", volume: 234 },
+  { date: "2023-11", volume: 321 },
+  { date: "2023-12", volume: 345 },
+  { date: "2024-01", volume: 298 },
+  { date: "2024-02", volume: 319 },
+  { date: "2024-03", volume: 376 },
+  { date: "2024-04", volume: 412 },
+  { date: "2024-05", volume: 489 },
+];
+
+const MOCK_HALVING_EVENTS = [
+  { date: "2012-11-28", price: 12.5, reward: "25 BTC" },
+  { date: "2016-07-09", price: 650, reward: "12.5 BTC" },
+  { date: "2020-05-11", price: 8800, reward: "6.25 BTC" },
+  { date: "2024-04-20", price: 65000, reward: "3.125 BTC" },
+  { date: "2028-04-13", price: null, reward: "1.5625 BTC", estimated: true },
+];
+
+const MOCK_ON_CHAIN_METRICS = {
+  activeAddresses: 46372,
+  averageTransactionValue: 23450,
+  hashRate: "520 EH/s",
+  blockchainSize: "498 GB",
+  mempool: 27890,
+  nextDifficulty: "+3.2%",
+};
+
+const MOCK_MARKET_SENTIMENT = {
+  fearGreedIndex: 76,
+  fearGreedLabel: "Greed",
+  bullishPercentage: 72,
+  bearishPercentage: 28,
+  marketCap: "1.98T",
+  totalValueLocked: "46.8B",
+  averageFees: "$4.24",
+};
+
+export function MarketDataDashboard() {
+  const [timeframe, setTimeframe] = useState<string>("1y");
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   
-  // Data states
-  const [priceFeeds, setPriceFeeds] = useState<PriceFeed[]>([]);
-  const [technicalIndicators, setTechnicalIndicators] = useState<TechnicalIndicator[]>([]);
-  const [networks, setNetworks] = useState<OracleNetwork[]>([]);
-  
-  // Analytics and metrics
-  const [networkHealth, setNetworkHealth] = useState<{
-    activeNodes: number;
-    totalNodes: number;
-    avgResponseTime: number;
-    lastHeartbeat: Date | null;
-  }>({
-    activeNodes: 0,
-    totalNodes: 0,
-    avgResponseTime: 0,
-    lastHeartbeat: null
-  });
-
-  // Load data on component mount and when selected options change
   useEffect(() => {
-    loadData();
-  }, [selectedAsset, selectedBlockchain]);
-  
-  const loadData = async () => {
+    // In a real application, we would load real data here
     setIsLoading(true);
     
-    try {
-      // Get price feeds
-      const feeds = await chainlinkOracleService.getPriceFeeds(selectedBlockchain as any);
-      setPriceFeeds(feeds);
-      
-      // Get technical indicators
-      const indicators = await chainlinkOracleService.getTechnicalIndicators(selectedAsset, selectedBlockchain as any);
-      setTechnicalIndicators(indicators);
-      
-      // Get networks information
-      const networksData = await chainlinkOracleService.getNetworks();
-      setNetworks(networksData);
-      
-      // Calculate network health
-      const relevantNetworks = networksData.filter(n => n.networkType === selectedBlockchain);
-      if (relevantNetworks.length > 0) {
-        const activeNodes = relevantNetworks.filter(n => n.active).length;
-        const totalNodes = relevantNetworks.reduce((sum, n) => sum + n.nodeCount, 0);
-        const avgResponseTime = relevantNetworks.reduce((sum, n) => sum + n.responseTime, 0) / relevantNetworks.length;
-        const lastHeartbeat = new Date(Math.max(...relevantNetworks.map(n => n.lastHeartbeat)));
-        
-        setNetworkHealth({
-          activeNodes,
-          totalNodes,
-          avgResponseTime,
-          lastHeartbeat
-        });
-      }
-      
-      setLastUpdated(new Date());
-    } catch (error) {
-      console.error("Error loading oracle data:", error);
-    } finally {
+    // Simulate an API delay
+    const timeout = setTimeout(() => {
       setIsLoading(false);
-    }
-  };
-  
-  // Get appropriate price feed for the selected asset
-  const getPriceFeedForAsset = (assetSymbol: string): PriceFeed | undefined => {
-    return priceFeeds.find(feed => 
-      feed.pair.toLowerCase().startsWith(assetSymbol.toLowerCase())
-    );
-  };
-  
-  // Filter technical indicators by type
-  const getIndicatorsByType = (type: string): TechnicalIndicator[] => {
-    return technicalIndicators.filter(indicator => 
-      indicator.type === type
-    );
-  };
-  
-  // Calculate time since last update
-  const getTimeSinceUpdate = (): string => {
-    if (!lastUpdated) return 'Never';
+    }, 800);
     
-    const now = new Date();
-    const diffMs = now.getTime() - lastUpdated.getTime();
-    const diffSecs = Math.round(diffMs / 1000);
-    
-    if (diffSecs < 60) return `${diffSecs} seconds ago`;
-    if (diffSecs < 3600) return `${Math.floor(diffSecs / 60)} minutes ago`;
-    if (diffSecs < 86400) return `${Math.floor(diffSecs / 3600)} hours ago`;
-    return `${Math.floor(diffSecs / 86400)} days ago`;
-  };
-  
-  // Get icon for network status
-  const getNetworkStatusIcon = () => {
-    if (!networkHealth.lastHeartbeat) return <AlertTriangle className="h-4 w-4 text-amber-500" />;
-    
-    const now = new Date();
-    const diffMs = now.getTime() - networkHealth.lastHeartbeat.getTime();
-    const diffMins = Math.round(diffMs / 60000);
-    
-    if (diffMins < 5) return <Badge className="bg-green-600">Healthy</Badge>;
-    if (diffMins < 30) return <Badge className="bg-amber-600">Delayed</Badge>;
-    return <Badge className="bg-red-600">Degraded</Badge>;
-  };
-  
-  // Calculate network health percentage
-  const getNetworkHealthPercentage = (): number => {
-    if (networkHealth.totalNodes === 0) return 0;
-    return (networkHealth.activeNodes / networkHealth.totalNodes) * 100;
-  };
-  
-  // Render dashboard content based on selected tab
-  const renderTabContent = () => {
-    switch (activeTab) {
-      case 'price-feeds':
-        return (
-          <div className="space-y-4">
-            {!compact && (
-              <div className="bg-black/20 border border-gray-800 rounded-md p-3">
-                <div className="flex justify-between items-center">
-                  <h3 className="text-sm font-medium">Oracle Price Feeds</h3>
-                  <Badge className="bg-indigo-900/70 text-indigo-300 border border-indigo-700/50">
-                    Chainlink
-                  </Badge>
-                </div>
-                <p className="text-xs text-gray-500 mt-1">
-                  Real-time price data from decentralized oracle networks
-                </p>
-              </div>
-            )}
-            
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {/* Main asset price feed */}
-              <div className={compact ? '' : 'md:col-span-2'}>
-                <OraclePriceFeed 
-                  feed={getPriceFeedForAsset(selectedAsset)} 
-                  isLoading={isLoading} 
-                  highlighted={true}
-                />
-              </div>
-              
-              {/* Other price feeds */}
-              {!compact && priceFeeds
-                .filter(feed => !feed.pair.toLowerCase().startsWith(selectedAsset.toLowerCase()))
-                .slice(0, 3)
-                .map((feed) => (
-                  <OraclePriceFeed key={feed.id} feed={feed} isLoading={isLoading} />
-                ))}
-            </div>
-          </div>
-        );
-        
-      case 'technical':
-        return (
-          <div className="space-y-4">
-            {!compact && (
-              <div className="bg-black/20 border border-gray-800 rounded-md p-3">
-                <div className="flex justify-between items-center">
-                  <h3 className="text-sm font-medium">Technical Indicators</h3>
-                  <Badge className="bg-indigo-900/70 text-indigo-300 border border-indigo-700/50">
-                    Chainlink
-                  </Badge>
-                </div>
-                <p className="text-xs text-gray-500 mt-1">
-                  On-chain technical analysis indicators powered by oracle networks
-                </p>
-              </div>
-            )}
-            
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {/* RSI Indicator */}
-              <OracleTechnicalIndicator 
-                indicator={getIndicatorsByType('RSI')[0]} 
-                isLoading={isLoading} 
-                type="RSI"
-              />
-              
-              {/* MACD Indicator */}
-              <OracleTechnicalIndicator 
-                indicator={getIndicatorsByType('MACD')[0]} 
-                isLoading={isLoading} 
-                type="MACD"
-              />
-              
-              {!compact && (
-                <>
-                  {/* Moving Averages */}
-                  <OracleTechnicalIndicator 
-                    indicator={getIndicatorsByType('MA')[0]} 
-                    secondaryIndicator={getIndicatorsByType('MA')[1]}
-                    isLoading={isLoading} 
-                    type="MA"
-                  />
-                  
-                  {/* EMA */}
-                  <OracleTechnicalIndicator 
-                    indicator={getIndicatorsByType('EMA')[0]} 
-                    isLoading={isLoading} 
-                    type="EMA"
-                  />
-                </>
-              )}
-            </div>
-          </div>
-        );
-        
-      case 'networks':
-        if (compact) return null;
-        
-        return (
-          <div className="space-y-4">
-            <div className="bg-black/20 border border-gray-800 rounded-md p-3">
-              <div className="flex justify-between items-center">
-                <h3 className="text-sm font-medium">Oracle Networks</h3>
-                <Badge className="bg-indigo-900/70 text-indigo-300 border border-indigo-700/50">
-                  Chainlink
-                </Badge>
-              </div>
-              <p className="text-xs text-gray-500 mt-1">
-                Status and performance of decentralized oracle networks
-              </p>
-            </div>
-            
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="bg-black/30 border border-gray-800 rounded-md p-4">
-                <h3 className="text-sm font-medium flex items-center mb-3">
-                  <Network className="h-4 w-4 mr-2 text-indigo-400" />
-                  Network Health
-                </h3>
-                
-                <div className="grid grid-cols-2 gap-4 mb-4">
-                  <div>
-                    <div className="text-sm text-gray-400 mb-1">Active Nodes</div>
-                    <div className="text-xl font-semibold">
-                      {networkHealth.activeNodes} / {networkHealth.totalNodes}
-                    </div>
-                  </div>
-                  
-                  <div>
-                    <div className="text-sm text-gray-400 mb-1">Response Time</div>
-                    <div className="text-xl font-semibold">
-                      {networkHealth.avgResponseTime.toFixed(0)} ms
-                    </div>
-                  </div>
-                </div>
-                
-                <div className="mt-2">
-                  <div className="flex justify-between items-center mb-1">
-                    <span className="text-xs text-gray-500">Network Status</span>
-                    {getNetworkStatusIcon()}
-                  </div>
-                  <div className="w-full bg-gray-700 rounded-full h-2">
-                    <div 
-                      className="bg-green-500 h-2 rounded-full" 
-                      style={{ width: `${getNetworkHealthPercentage()}%` }}
-                    ></div>
-                  </div>
-                  <div className="text-xs text-gray-500 mt-1">
-                    {getNetworkHealthPercentage().toFixed(0)}% operational
-                  </div>
-                </div>
-              </div>
-              
-              <div className="bg-black/30 border border-gray-800 rounded-md p-4">
-                <h3 className="text-sm font-medium flex items-center mb-3">
-                  <Clock className="h-4 w-4 mr-2 text-indigo-400" />
-                  Oracle Activity
-                </h3>
-                
-                <div className="space-y-3">
-                  {networks
-                    .filter(network => network.networkType === selectedBlockchain)
-                    .map(network => (
-                      <div key={network.id} className="flex justify-between items-center">
-                        <div>
-                          <div className="text-sm">{network.name}</div>
-                          <div className="text-xs text-gray-500">
-                            {network.nodeCount} Nodes
-                          </div>
-                        </div>
-                        <div className="flex items-center">
-                          <Badge className={network.active ? 'bg-green-600' : 'bg-red-600'}>
-                            {network.active ? 'Active' : 'Inactive'}
-                          </Badge>
-                        </div>
-                      </div>
-                    ))}
-                  
-                  {networks.filter(network => network.networkType === selectedBlockchain).length === 0 && (
-                    <div className="text-center py-3 text-gray-500">
-                      No data available for this network
-                    </div>
-                  )}
-                </div>
-              </div>
-            </div>
-          </div>
-        );
-        
-      default:
-        return null;
-    }
-  };
+    return () => clearTimeout(timeout);
+  }, [timeframe]);
   
   return (
-    <div>
-      <div className="flex justify-between items-center mb-3">
-        {!compact && (
-          <h2 className="text-lg font-semibold flex items-center">
-            <LineChart className="h-5 w-5 mr-2 text-indigo-400" />
-            On-Chain Market Data
-          </h2>
-        )}
-        
-        <div className="flex items-center space-x-2">
-          <Select
-            value={selectedAsset}
-            onValueChange={setSelectedAsset}
-          >
-            <SelectTrigger className="w-[100px] bg-gray-800 border-gray-700 h-8">
-              <SelectValue placeholder="Asset" />
-            </SelectTrigger>
-            <SelectContent className="bg-gray-900 border-gray-700">
-              <SelectItem value="BTC">BTC</SelectItem>
-              <SelectItem value="ETH">ETH</SelectItem>
-              <SelectItem value="SOL">SOL</SelectItem>
-              <SelectItem value="LINK">LINK</SelectItem>
-            </SelectContent>
-          </Select>
-          
-          <Select
-            value={selectedBlockchain}
-            onValueChange={setSelectedBlockchain}
-          >
-            <SelectTrigger className="w-[120px] bg-gray-800 border-gray-700 h-8">
-              <SelectValue placeholder="Network" />
-            </SelectTrigger>
-            <SelectContent className="bg-gray-900 border-gray-700">
-              <SelectItem value="ethereum">Ethereum</SelectItem>
-              <SelectItem value="solana">Solana</SelectItem>
-              <SelectItem value="polygon">Polygon</SelectItem>
-              <SelectItem value="arbitrum">Arbitrum</SelectItem>
-            </SelectContent>
-          </Select>
-          
-          <Button
-            variant="outline"
-            size="icon"
-            className="h-8 w-8 border-gray-700"
-            onClick={loadData}
-            disabled={isLoading}
-          >
-            <RefreshCw className={`h-4 w-4 ${isLoading ? 'animate-spin' : ''}`} />
-          </Button>
-        </div>
-      </div>
-      
-      <Tabs value={activeTab} onValueChange={setActiveTab}>
-        <TabsList className="bg-gray-800">
-          <TabsTrigger value="price-feeds">Price Feeds</TabsTrigger>
-          <TabsTrigger value="technical">Technical</TabsTrigger>
-          {!compact && <TabsTrigger value="networks">Networks</TabsTrigger>}
+    <div className="space-y-6">
+      <Tabs defaultValue="price" className="w-full">
+        <TabsList className="grid grid-cols-4 bg-gray-800/50">
+          <TabsTrigger value="price">Price Data</TabsTrigger>
+          <TabsTrigger value="indicators">Market Indicators</TabsTrigger>
+          <TabsTrigger value="on-chain">On-Chain Metrics</TabsTrigger>
+          <TabsTrigger value="halving">Halving Analysis</TabsTrigger>
         </TabsList>
         
-        <div className="p-4 bg-black/20 border border-gray-800 rounded-md mt-3">
-          <TabsContent value="price-feeds" className="m-0">
-            {renderTabContent()}
-          </TabsContent>
+        <TabsContent value="price" className="mt-4 space-y-4">
+          <div className="flex justify-between items-center">
+            <h3 className="text-lg font-medium">BTC Price History</h3>
+            <div className="flex space-x-1">
+              <button
+                onClick={() => setTimeframe("1m")}
+                className={`px-2 py-1 text-xs rounded ${timeframe === "1m" ? "bg-[#3F51FF] text-white" : "bg-gray-800"}`}
+              >
+                1M
+              </button>
+              <button
+                onClick={() => setTimeframe("3m")}
+                className={`px-2 py-1 text-xs rounded ${timeframe === "3m" ? "bg-[#3F51FF] text-white" : "bg-gray-800"}`}
+              >
+                3M
+              </button>
+              <button
+                onClick={() => setTimeframe("6m")}
+                className={`px-2 py-1 text-xs rounded ${timeframe === "6m" ? "bg-[#3F51FF] text-white" : "bg-gray-800"}`}
+              >
+                6M
+              </button>
+              <button
+                onClick={() => setTimeframe("1y")}
+                className={`px-2 py-1 text-xs rounded ${timeframe === "1y" ? "bg-[#3F51FF] text-white" : "bg-gray-800"}`}
+              >
+                1Y
+              </button>
+              <button
+                onClick={() => setTimeframe("all")}
+                className={`px-2 py-1 text-xs rounded ${timeframe === "all" ? "bg-[#3F51FF] text-white" : "bg-gray-800"}`}
+              >
+                ALL
+              </button>
+            </div>
+          </div>
           
-          <TabsContent value="technical" className="m-0">
-            {renderTabContent()}
-          </TabsContent>
+          <Card className="bg-black/20 border-gray-800">
+            <CardContent className="pt-6">
+              <div className="h-[300px]">
+                {isLoading ? (
+                  <div className="h-full flex items-center justify-center">
+                    <div className="animate-spin w-8 h-8 border-4 border-[#3F51FF] border-t-transparent rounded-full"></div>
+                  </div>
+                ) : (
+                  <ResponsiveContainer width="100%" height="100%">
+                    <AreaChart data={MOCK_BTC_PRICE_DATA.slice(-12)}>
+                      <defs>
+                        <linearGradient id="colorPrice" x1="0" y1="0" x2="0" y2="1">
+                          <stop offset="5%" stopColor="#3F51FF" stopOpacity={0.3}/>
+                          <stop offset="95%" stopColor="#3F51FF" stopOpacity={0}/>
+                        </linearGradient>
+                      </defs>
+                      <CartesianGrid strokeDasharray="3 3" stroke="#444" />
+                      <XAxis 
+                        dataKey="date" 
+                        stroke="#888" 
+                        tick={{fill: '#888'}}
+                      />
+                      <YAxis 
+                        stroke="#888" 
+                        tick={{fill: '#888'}}
+                        tickFormatter={(value) => `$${(value / 1000)}k`}
+                        domain={['dataMin - 5000', 'dataMax + 5000']}
+                      />
+                      <Tooltip 
+                        formatter={(value) => [`$${Number(value).toLocaleString()}`, 'Price']}
+                        labelFormatter={(label) => `Date: ${label}`}
+                      />
+                      <Area 
+                        type="monotone" 
+                        dataKey="price" 
+                        stroke="#3F51FF" 
+                        fillOpacity={1}
+                        fill="url(#colorPrice)" 
+                      />
+                    </AreaChart>
+                  </ResponsiveContainer>
+                )}
+              </div>
+              
+              <div className="grid grid-cols-4 gap-4 mt-6">
+                <div className="bg-black/40 p-3 rounded-lg">
+                  <p className="text-xs text-gray-400">Current Price</p>
+                  <p className="text-xl font-bold">${MOCK_BTC_PRICE_DATA[MOCK_BTC_PRICE_DATA.length - 1].price.toLocaleString()}</p>
+                </div>
+                <div className="bg-black/40 p-3 rounded-lg">
+                  <p className="text-xs text-gray-400">All Time High</p>
+                  <p className="text-xl font-bold">$103,000</p>
+                </div>
+                <div className="bg-black/40 p-3 rounded-lg">
+                  <p className="text-xs text-gray-400">30d Change</p>
+                  <p className="text-xl font-bold text-green-500">+21.2%</p>
+                </div>
+                <div className="bg-black/40 p-3 rounded-lg">
+                  <p className="text-xs text-gray-400">Market Cap</p>
+                  <p className="text-xl font-bold">$1.98T</p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
           
-          {!compact && (
-            <TabsContent value="networks" className="m-0">
-              {renderTabContent()}
-            </TabsContent>
-          )}
-        </div>
+          <div className="grid md:grid-cols-2 gap-4">
+            <Card className="bg-black/20 border-gray-800">
+              <CardHeader>
+                <CardTitle>Trading Volume</CardTitle>
+                <CardDescription>24h trading volume in billions USD</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="h-[200px]">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <BarChart data={MOCK_TRADING_VOLUME.slice(-6)}>
+                      <CartesianGrid strokeDasharray="3 3" stroke="#444" />
+                      <XAxis dataKey="date" stroke="#888" tick={{fill: '#888'}} />
+                      <YAxis stroke="#888" tick={{fill: '#888'}} />
+                      <Tooltip 
+                        formatter={(value) => [`$${value}B`, 'Volume']}
+                        labelFormatter={(label) => `Date: ${label}`}
+                      />
+                      <Bar dataKey="volume" fill="#3F51FF" />
+                    </BarChart>
+                  </ResponsiveContainer>
+                </div>
+              </CardContent>
+            </Card>
+            
+            <Card className="bg-black/20 border-gray-800">
+              <CardHeader>
+                <CardTitle>Market Sentiment</CardTitle>
+                <CardDescription>Fear & Greed Index and market sentiment</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="flex items-center space-x-6">
+                  <div className="relative w-32 h-32">
+                    <div className="absolute inset-0 flex items-center justify-center">
+                      <div className="text-3xl font-bold">{MOCK_MARKET_SENTIMENT.fearGreedIndex}</div>
+                      <div className="text-xs mt-6">{MOCK_MARKET_SENTIMENT.fearGreedLabel}</div>
+                    </div>
+                    <svg className="w-full h-full transform -rotate-90">
+                      <circle
+                        cx="64"
+                        cy="64"
+                        r="56"
+                        stroke="#222"
+                        strokeWidth="16"
+                        fill="transparent"
+                      />
+                      <circle
+                        cx="64"
+                        cy="64"
+                        r="56"
+                        stroke={MOCK_MARKET_SENTIMENT.fearGreedIndex > 50 ? "#10b981" : "#ef4444"}
+                        strokeWidth="16"
+                        fill="transparent"
+                        strokeDasharray="351.86"
+                        strokeDashoffset={351.86 - (351.86 * MOCK_MARKET_SENTIMENT.fearGreedIndex) / 100}
+                      />
+                    </svg>
+                  </div>
+                  
+                  <div className="space-y-4 flex-1">
+                    <div>
+                      <div className="flex justify-between text-sm">
+                        <span>Bullish</span>
+                        <span>{MOCK_MARKET_SENTIMENT.bullishPercentage}%</span>
+                      </div>
+                      <div className="w-full bg-gray-800 h-2 rounded-full overflow-hidden">
+                        <div 
+                          className="h-full bg-green-500"
+                          style={{ width: `${MOCK_MARKET_SENTIMENT.bullishPercentage}%` }}
+                        ></div>
+                      </div>
+                    </div>
+                    
+                    <div>
+                      <div className="flex justify-between text-sm">
+                        <span>Bearish</span>
+                        <span>{MOCK_MARKET_SENTIMENT.bearishPercentage}%</span>
+                      </div>
+                      <div className="w-full bg-gray-800 h-2 rounded-full overflow-hidden">
+                        <div 
+                          className="h-full bg-red-500"
+                          style={{ width: `${MOCK_MARKET_SENTIMENT.bearishPercentage}%` }}
+                        ></div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        </TabsContent>
+        
+        <TabsContent value="indicators" className="mt-4 space-y-4">
+          <Card className="bg-black/20 border-gray-800">
+            <CardHeader>
+              <CardTitle>Technical Indicators</CardTitle>
+              <CardDescription>Aggregated signals from 26 technical indicators</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-3 gap-4">
+                <div className="bg-green-900/20 border border-green-900 rounded p-3">
+                  <div className="text-center">
+                    <div className="text-sm text-green-400">BUY</div>
+                    <div className="text-2xl font-bold text-green-400">14</div>
+                  </div>
+                </div>
+                
+                <div className="bg-gray-800/60 border border-gray-700 rounded p-3">
+                  <div className="text-center">
+                    <div className="text-sm text-gray-400">NEUTRAL</div>
+                    <div className="text-2xl font-bold text-gray-400">7</div>
+                  </div>
+                </div>
+                
+                <div className="bg-red-900/20 border border-red-900 rounded p-3">
+                  <div className="text-center">
+                    <div className="text-sm text-red-400">SELL</div>
+                    <div className="text-2xl font-bold text-red-400">5</div>
+                  </div>
+                </div>
+              </div>
+              
+              <div className="mt-6 space-y-3">
+                <div className="flex justify-between items-center">
+                  <span className="text-sm">RSI (14)</span>
+                  <span className="text-sm px-2 py-0.5 rounded bg-green-900/20 text-green-400">BUY</span>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span className="text-sm">MACD (12,26,9)</span>
+                  <span className="text-sm px-2 py-0.5 rounded bg-green-900/20 text-green-400">BUY</span>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span className="text-sm">MA (50)</span>
+                  <span className="text-sm px-2 py-0.5 rounded bg-green-900/20 text-green-400">BUY</span>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span className="text-sm">MA (200)</span>
+                  <span className="text-sm px-2 py-0.5 rounded bg-green-900/20 text-green-400">BUY</span>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span className="text-sm">Stochastic (14,3,3)</span>
+                  <span className="text-sm px-2 py-0.5 rounded bg-gray-800 text-gray-400">NEUTRAL</span>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span className="text-sm">Bollinger Bands (20)</span>
+                  <span className="text-sm px-2 py-0.5 rounded bg-red-900/20 text-red-400">SELL</span>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
+        
+        <TabsContent value="on-chain" className="mt-4 space-y-4">
+          <div className="grid md:grid-cols-2 gap-4">
+            <Card className="bg-black/20 border-gray-800">
+              <CardHeader>
+                <CardTitle>Network Health</CardTitle>
+                <CardDescription>Key metrics about blockchain network status</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-4">
+                  <div className="flex justify-between items-center">
+                    <span className="text-sm">Hash Rate</span>
+                    <span className="font-mono">{MOCK_ON_CHAIN_METRICS.hashRate}</span>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="text-sm">Active Addresses (24h)</span>
+                    <span className="font-mono">{MOCK_ON_CHAIN_METRICS.activeAddresses.toLocaleString()}</span>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="text-sm">Mempool Size</span>
+                    <span className="font-mono">{MOCK_ON_CHAIN_METRICS.mempool.toLocaleString()} txs</span>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="text-sm">Avg. Transaction Value</span>
+                    <span className="font-mono">${MOCK_ON_CHAIN_METRICS.averageTransactionValue.toLocaleString()}</span>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="text-sm">Blockchain Size</span>
+                    <span className="font-mono">{MOCK_ON_CHAIN_METRICS.blockchainSize}</span>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="text-sm">Next Difficulty Adjustment</span>
+                    <span className="font-mono text-green-500">{MOCK_ON_CHAIN_METRICS.nextDifficulty}</span>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+            
+            <Card className="bg-black/20 border-gray-800">
+              <CardHeader>
+                <CardTitle>Market Health</CardTitle>
+                <CardDescription>Liquidity and market depth metrics</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-4">
+                  <div className="flex justify-between items-center">
+                    <span className="text-sm">Total Market Cap</span>
+                    <span className="font-mono">${MOCK_MARKET_SENTIMENT.marketCap}</span>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="text-sm">Total Value Locked (DeFi)</span>
+                    <span className="font-mono">${MOCK_MARKET_SENTIMENT.totalValueLocked}</span>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="text-sm">Avg. Transaction Fee</span>
+                    <span className="font-mono">{MOCK_MARKET_SENTIMENT.averageFees}</span>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="text-sm">F&G Index</span>
+                    <span className="font-mono">{MOCK_MARKET_SENTIMENT.fearGreedIndex} ({MOCK_MARKET_SENTIMENT.fearGreedLabel})</span>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="text-sm">BTC Dominance</span>
+                    <span className="font-mono">53.2%</span>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="text-sm">Exchange Net Flow</span>
+                    <span className="font-mono text-red-500">-2,145 BTC</span>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        </TabsContent>
+        
+        <TabsContent value="halving" className="mt-4 space-y-4">
+          <Card className="bg-black/20 border-gray-800">
+            <CardHeader>
+              <CardTitle>Bitcoin Halving Cycle Analysis</CardTitle>
+              <CardDescription>Historical and projected impact of Bitcoin halving events</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-6">
+                <div className="overflow-x-auto">
+                  <table className="w-full text-sm">
+                    <thead>
+                      <tr className="border-b border-gray-800">
+                        <th className="py-2 px-3 text-left">Halving Event</th>
+                        <th className="py-2 px-3 text-right">Date</th>
+                        <th className="py-2 px-3 text-right">Price</th>
+                        <th className="py-2 px-3 text-right">Block Reward</th>
+                        <th className="py-2 px-3 text-right">Peak After</th>
+                        <th className="py-2 px-3 text-right">% Gain</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr className="border-b border-gray-800">
+                        <td className="py-2 px-3">1st Halving</td>
+                        <td className="py-2 px-3 text-right">Nov 28, 2012</td>
+                        <td className="py-2 px-3 text-right">$12.50</td>
+                        <td className="py-2 px-3 text-right">25 BTC</td>
+                        <td className="py-2 px-3 text-right">$1,178</td>
+                        <td className="py-2 px-3 text-right text-green-500">+9,320%</td>
+                      </tr>
+                      <tr className="border-b border-gray-800">
+                        <td className="py-2 px-3">2nd Halving</td>
+                        <td className="py-2 px-3 text-right">Jul 9, 2016</td>
+                        <td className="py-2 px-3 text-right">$650</td>
+                        <td className="py-2 px-3 text-right">12.5 BTC</td>
+                        <td className="py-2 px-3 text-right">$19,783</td>
+                        <td className="py-2 px-3 text-right text-green-500">+2,943%</td>
+                      </tr>
+                      <tr className="border-b border-gray-800">
+                        <td className="py-2 px-3">3rd Halving</td>
+                        <td className="py-2 px-3 text-right">May 11, 2020</td>
+                        <td className="py-2 px-3 text-right">$8,800</td>
+                        <td className="py-2 px-3 text-right">6.25 BTC</td>
+                        <td className="py-2 px-3 text-right">$69,044</td>
+                        <td className="py-2 px-3 text-right text-green-500">+685%</td>
+                      </tr>
+                      <tr className="border-b border-gray-800">
+                        <td className="py-2 px-3">4th Halving</td>
+                        <td className="py-2 px-3 text-right">Apr 20, 2024</td>
+                        <td className="py-2 px-3 text-right">$65,000</td>
+                        <td className="py-2 px-3 text-right">3.125 BTC</td>
+                        <td className="py-2 px-3 text-right">?</td>
+                        <td className="py-2 px-3 text-right">?</td>
+                      </tr>
+                      <tr>
+                        <td className="py-2 px-3">5th Halving (Est.)</td>
+                        <td className="py-2 px-3 text-right">Apr 13, 2028</td>
+                        <td className="py-2 px-3 text-right">?</td>
+                        <td className="py-2 px-3 text-right">1.5625 BTC</td>
+                        <td className="py-2 px-3 text-right">?</td>
+                        <td className="py-2 px-3 text-right">?</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+                
+                <div className="bg-black/30 rounded-lg p-4">
+                  <h4 className="text-sm font-medium mb-2">Halving Cycle Insights</h4>
+                  <p className="text-sm text-gray-400">
+                    Each Bitcoin halving reduces the emission rate of new bitcoins, creating a supply shock.
+                    Historically, halvings have preceded major bull runs, though with diminishing returns.
+                    The current cycle (post-4th halving) has a maximum projected ceiling around $250,000-$350,000
+                    based on previous patterns, but past performance is not indicative of future results.
+                  </p>
+                </div>
+                
+                <div className="flex items-center justify-between bg-[#3F51FF]/10 rounded-lg p-4">
+                  <div>
+                    <h4 className="text-sm font-medium text-[#3F51FF]">Next Halving Countdown</h4>
+                    <p className="text-sm text-gray-400">Estimated: April 13, 2028</p>
+                  </div>
+                  <div className="text-xl font-bold font-mono">1,070 days</div>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
       </Tabs>
-      
-      {!compact && (
-        <div className="flex justify-between items-center mt-2 text-xs text-gray-500">
-          <div>
-            Last updated: {getTimeSinceUpdate()}
-          </div>
-          <div className="flex items-center">
-            <Link2 className="h-3 w-3 mr-1" />
-            <span>Powered by Chainlink Oracle Networks</span>
-          </div>
-        </div>
-      )}
     </div>
   );
 }
-
-export default MarketDataDashboard;

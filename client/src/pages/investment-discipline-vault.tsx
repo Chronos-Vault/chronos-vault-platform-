@@ -38,6 +38,7 @@ import { PortfolioManagement } from '@/components/portfolio/portfolio-management
 import { EmergencyProtocols } from '@/components/emergency/emergency-protocols';
 import { StrategyTester } from '@/components/strategy/strategy-tester';
 import { VaultDeploymentMonitor } from '@/components/monitoring/vault-deployment-monitor';
+import { AdvancedFeaturesDashboard } from '@/components/advanced-features-dashboard';
 
 // Exit strategy types
 type PriceTarget = {
@@ -1510,6 +1511,23 @@ function InvestmentDisciplineVault() {
                 </div>
               </CardContent>
             </Card>
+            
+            {/* Advanced Features Dashboard */}
+            <AdvancedFeaturesDashboard
+              assetType={assetType}
+              initialAmount={initialAmount}
+              selectedBlockchain={selectedBlockchain}
+              securityLevel={securityLevel}
+              strategy={selectedStrategy}
+              timeBasedExits={timeBasedExits}
+              priceTargets={priceTargets}
+              technicalIndicators={technicalIndicators}
+              enableEmergencyProtocol={enableEmergencyProtocol}
+              setEnableEmergencyProtocol={setEnableEmergencyProtocol}
+              enableAnalytics={enableAnalytics}
+              setEnableAnalytics={setEnableAnalytics}
+              crossChainEnabled={crossChainEnabled}
+            />
           </div>
         );
         
