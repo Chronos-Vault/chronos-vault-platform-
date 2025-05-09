@@ -1402,6 +1402,20 @@ function InvestmentDisciplineVault() {
               </CardContent>
             </Card>
             
+            <Card className="bg-black/40 border-gray-800 mb-6">
+              <CardHeader>
+                <CardTitle>On-Chain Market Data</CardTitle>
+                <CardDescription>Real-time oracle data from Chainlink networks</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <MarketDataDashboard
+                  defaultAsset={assetType}
+                  defaultBlockchain={selectedBlockchain}
+                  compact={true}
+                />
+              </CardContent>
+            </Card>
+            
             <Card className="bg-black/40 border-gray-800">
               <CardHeader>
                 <CardTitle>Market Sentiment Analysis</CardTitle>
