@@ -13,6 +13,7 @@ import vaultVerificationRoutes, { initializeVaultVerification } from './api/vaul
 import { intentInheritanceRouter } from './api/intent-inheritance-routes';
 import progressiveQuantumVaultRoutes from './api/progressive-quantum-vault-routes';
 import vaultsRoutes from './api/vaults-routes';
+import biometricRoutes from './routes/biometric-routes';
 import { systemHealthMonitor } from './monitoring/system-health-monitor';
 import { incidentResponseSystem } from './monitoring/incident-response';
 import { ConnectorFactory } from './blockchain/connector-factory';
@@ -49,6 +50,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
   
   // Register vault management routes
   apiRouter.use('/vaults', vaultsRoutes);
+  
+  // Register biometric authentication routes
+  apiRouter.use('/biometric', biometricRoutes);
   
   // Add event listeners for verification status updates
   crossChainVerification.on('verification:completed', (result) => {
