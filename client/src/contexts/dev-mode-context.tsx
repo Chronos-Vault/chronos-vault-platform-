@@ -3,13 +3,15 @@ import { createContext, useContext, ReactNode, useState, useEffect } from 'react
 // Type definition for the dev mode context
 interface DevModeContextType {
   devModeEnabled: boolean;
+  isDevMode: boolean;  // Alias for devModeEnabled for compatibility
   toggleDevMode: () => void;
   isDevelopmentEnvironment: boolean;
 }
 
 // Create the context with default values
-const DevModeContext = createContext<DevModeContextType>({
+export const DevModeContext = createContext<DevModeContextType>({
   devModeEnabled: false,
+  isDevMode: false,
   toggleDevMode: () => {},
   isDevelopmentEnvironment: false,
 });
@@ -50,6 +52,7 @@ export function DevModeProvider({ children }: DevModeProviderProps) {
   // Create the context value
   const contextValue: DevModeContextType = {
     devModeEnabled,
+    isDevMode: devModeEnabled, // Alias for compatibility
     toggleDevMode,
     isDevelopmentEnvironment,
   };

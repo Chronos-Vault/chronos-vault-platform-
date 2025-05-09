@@ -5,7 +5,7 @@ import { Helmet } from 'react-helmet';
 import { MultiChainStateSyncPanel } from '@/components/synchronization/multi-chain-state-sync-panel';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Shield, Lock, RefreshCw, Cpu } from 'lucide-react';
-import { useDevMode } from '@/hooks/use-dev-mode';
+import { useDevMode } from '@/contexts/dev-mode-context';
 
 export default function MultiChainSyncPage() {
   const { isDevMode } = useDevMode();
