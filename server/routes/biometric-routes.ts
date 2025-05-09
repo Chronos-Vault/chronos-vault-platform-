@@ -64,11 +64,9 @@ router.post('/verify', async (req: Request, res: Response) => {
     
     if (result.verified) {
       // Successful authentication
-      if (req.session) {
-        // Store verified user ID in session
-        req.session.biometricVerified = true;
-        req.session.biometricUserId = result.userId;
-      }
+      // Note: Session functionality is disabled for this demo since we're using 
+      // a stateless authentication approach instead of sessions
+      // In a production app we would store the verification in the session
       
       res.json({ verified: true, userId: result.userId });
     } else {

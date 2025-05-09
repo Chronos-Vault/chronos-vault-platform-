@@ -153,21 +153,21 @@ const registerBiometric = async (userId: string, username: string): Promise<any>
     const credentialOptions = await getRegistrationCredentials(userId, username);
     
     // Create new credential
-    // @ts-ignore - TypeScript doesn't fully recognize WebAuthn properties
+    // TypeScript doesn't fully recognize WebAuthn properties
     const credential = await navigator.credentials.create({
       publicKey: credentialOptions
-    });
+    } as any);
     
     if (!credential) {
       throw new Error('Failed to create credential');
     }
     
     // Prepare credential for registration
-    // @ts-ignore - TypeScript doesn't fully recognize WebAuthn properties
-    const credentialResponse = credential.response;
+    // TypeScript doesn't fully recognize WebAuthn properties, so we need to cast
+    const credentialResponse = (credential as any).response;
     const registrationData = {
       id: credential.id,
-      rawId: arrayBufferToBase64(credential.rawId),
+      rawId: arrayBufferToBase64((credential as any).rawId),
       type: credential.type,
       response: {
         clientDataJSON: arrayBufferToBase64(credentialResponse.clientDataJSON),
@@ -208,21 +208,21 @@ const authenticate = async (userId: string): Promise<any> => {
     const credentialOptions = await getAuthenticationCredentials(userId);
     
     // Request assertion
-    // @ts-ignore - TypeScript doesn't fully recognize WebAuthn properties
+    // TypeScript doesn't fully recognize WebAuthn properties
     const assertion = await navigator.credentials.get({
       publicKey: credentialOptions
-    });
+    } as any);
     
     if (!assertion) {
       throw new Error('Failed to get assertion');
     }
     
     // Prepare assertion for verification
-    // @ts-ignore - TypeScript doesn't fully recognize WebAuthn properties
-    const assertionResponse = assertion.response;
+    // Type casting for WebAuthn properties
+    const assertionResponse = (assertion as any).response;
     const authData = {
       id: assertion.id,
-      rawId: arrayBufferToBase64(assertion.rawId),
+      rawId: arrayBufferToBase64((assertion as any).rawId),
       type: assertion.type,
       response: {
         clientDataJSON: arrayBufferToBase64(assertionResponse.clientDataJSON),
