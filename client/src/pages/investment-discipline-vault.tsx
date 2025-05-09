@@ -32,6 +32,7 @@ import { useSolana } from '@/contexts/solana-context';
 import { SentimentGauge, SentimentAlert, SentimentRecommendations } from '@/components/sentiment/sentiment-gauge';
 import { SentimentData, sentimentAnalysisService, SentimentLevel } from '@/services/sentiment-analysis-service';
 import { TechnicalIndicators, TechnicalIndicator } from '@/components/technical/technical-indicators';
+import { MarketDataDashboard } from '@/components/oracle/market-data-dashboard';
 
 // Exit strategy types
 type PriceTarget = {
