@@ -1,608 +1,404 @@
-/**
- * Market Sentiment Analysis Service
- * 
- * This service provides AI-powered market sentiment analysis functionality
- * by processing news, social media, and market data to generate insights.
- */
+// Definition of sentiment analysis data types and service
 
-// Types for sentiment analysis
-export type SentimentLevel = 'extremely_bearish' | 'bearish' | 'slightly_bearish' | 'neutral' | 'slightly_bullish' | 'bullish' | 'extremely_bullish';
+// Sentiment level enum representing possible sentiment classifications
+export type SentimentLevel = 
+  | 'very_positive'
+  | 'positive'
+  | 'neutral' 
+  | 'negative'
+  | 'very_negative';
 
-export type NewsSource = 'twitter' | 'reddit' | 'news_articles' | 'blockchain_metrics' | 'exchange_data';
+// Time range for analyzing sentiment
+export type TimeRange = '24h' | '7d' | '30d' | '90d'; 
 
-export type TimeRange = '24h' | '7d' | '30d' | '90d';
-
-export interface SentimentAlert {
-  id: string;
-  asset: string;
-  level: SentimentLevel;
-  title: string;
-  description: string;
-  timestamp: number;
-  source: NewsSource;
-  confidence: number;
-  impact: 'high' | 'medium' | 'low';
-  tags: string[];
+// Key factor affecting sentiment
+export interface SentimentFactor {
+  factor: string;
+  impact: number; // -3 to +3 scale
 }
 
+// Source of sentiment data
+export interface SentimentSource {
+  source: string;
+  sentiment: number; // -100 to 100 scale
+  influence: number; // 0 to 1 scale, representing percentage of overall sentiment
+}
+
+// Action recommendation based on sentiment
 export interface ActionRecommendation {
   id: string;
   action: 'buy' | 'sell' | 'hold' | 'reduce' | 'increase';
-  asset: string;
-  confidence: number;
   reasoning: string;
+  confidence: number; // 0 to 1 scale
   timeframe: string;
-  suggestedAllocation?: number;
+  suggestedAllocation?: number; // Percentage change in allocation
 }
 
+// Sentiment alert
+export interface SentimentAlert {
+  id: string;
+  type: 'warning' | 'opportunity' | 'info' | 'risk';
+  title: string;
+  description: string;
+  timestamp: string;
+  priority: 'high' | 'medium' | 'low';
+  dismissed?: boolean;
+}
+
+// Complete sentiment data structure
 export interface SentimentData {
-  asset: string;
+  score: number; // -100 to 100 scale
   level: SentimentLevel;
-  score: number; // -100 to +100
-  timestamp: number;
-  previousLevel?: SentimentLevel;
   previousScore?: number;
-  confidence: number;
-  sources: {
-    source: NewsSource;
-    influence: number; // 0 to 1
-    sentiment: number; // -100 to +100
-  }[];
-  timeRange: TimeRange;
-  alerts: SentimentAlert[];
-  recommendations: ActionRecommendation[];
+  confidence: number; // 0 to 1 scale
+  timestamp: string;
   analysisText: string;
-  keyFactors: {
-    factor: string;
-    impact: number; // -3 to +3
-  }[];
-  trendDirection: 'improving' | 'deteriorating' | 'stable';
+  keyFactors: SentimentFactor[];
+  sources: SentimentSource[];
+  recommendations: ActionRecommendation[];
+  alerts: SentimentAlert[];
 }
 
-// Map sentiment level to numerical range
-const sentimentLevelToRange = {
-  extremely_bearish: [-100, -75],
-  bearish: [-75, -40],
-  slightly_bearish: [-40, -10],
-  neutral: [-10, 10],
-  slightly_bullish: [10, 40],
-  bullish: [40, 75],
-  extremely_bullish: [75, 100]
-};
-
-// Determine sentiment level from score
-const getScoreFromLevel = (level: SentimentLevel): number => {
-  const [min, max] = sentimentLevelToRange[level];
-  return (min + max) / 2;
-};
-
-// Determine sentiment level from score
-const getLevelFromScore = (score: number): SentimentLevel => {
-  if (score <= -75) return 'extremely_bearish';
-  if (score <= -40) return 'bearish';
-  if (score <= -10) return 'slightly_bearish';
-  if (score < 10) return 'neutral';
-  if (score < 40) return 'slightly_bullish';
-  if (score < 75) return 'bullish';
-  return 'extremely_bullish';
-};
-
-// Helper function to generate random sentiment data
-const generateRandomSentimentData = (
-  asset: string = 'BTC',
-  baseScore: number = 0,
-  timeRange: TimeRange = '24h'
-): SentimentData => {
-  // Adjust base score with some randomness
-  const randomVariation = Math.random() * 30 - 15; // -15 to +15 variation
-  const score = Math.max(-100, Math.min(100, baseScore + randomVariation));
-  
-  // Determine sentiment level from score
-  const level = getLevelFromScore(score);
-  
-  // Generate random previous score
-  const previousVariation = Math.random() * 20 - 10; // -10 to +10 variation
-  const previousScore = Math.max(-100, Math.min(100, score - previousVariation));
-  const previousLevel = getLevelFromScore(previousScore);
-  
-  // Generate random source influences
-  const sources = [
-    {
-      source: 'twitter' as NewsSource,
-      influence: 0.3 + Math.random() * 0.4, // 0.3 to 0.7
-      sentiment: score + (Math.random() * 30 - 15)
-    },
-    {
-      source: 'reddit' as NewsSource,
-      influence: 0.2 + Math.random() * 0.3, // 0.2 to 0.5
-      sentiment: score + (Math.random() * 30 - 15)
-    },
-    {
-      source: 'news_articles' as NewsSource,
-      influence: 0.5 + Math.random() * 0.3, // 0.5 to 0.8
-      sentiment: score + (Math.random() * 20 - 10)
-    },
-    {
-      source: 'blockchain_metrics' as NewsSource,
-      influence: 0.6 + Math.random() * 0.3, // 0.6 to 0.9
-      sentiment: score + (Math.random() * 20 - 10)
-    },
-    {
-      source: 'exchange_data' as NewsSource,
-      influence: 0.4 + Math.random() * 0.4, // 0.4 to 0.8
-      sentiment: score + (Math.random() * 25 - 12.5)
-    }
-  ];
-  
-  // Generate alerts
-  const alerts: SentimentAlert[] = [];
-  const alertCount = Math.floor(Math.random() * 4); // 0 to 3 alerts
-  
-  for (let i = 0; i < alertCount; i++) {
-    // Choose a random news source
-    const sourceIndex = Math.floor(Math.random() * sources.length);
-    const source = sources[sourceIndex].source;
-    
-    // Generate a sentiment level based on the source's sentiment
-    const alertSentiment = sources[sourceIndex].sentiment;
-    const alertLevel = getLevelFromScore(alertSentiment) as SentimentLevel;
-    
-    // Determine impact based on the difference from overall sentiment
-    const sentimentDiff = Math.abs(alertSentiment - score);
-    let impact: 'high' | 'medium' | 'low' = 'low';
-    if (sentimentDiff > 30) impact = 'high';
-    else if (sentimentDiff > 15) impact = 'medium';
-    
-    // Generate alert text based on the source and sentiment
-    let title = '';
-    let description = '';
-    
-    switch (source) {
-      case 'twitter':
-        if (alertLevel.includes('bullish')) {
-          title = `Positive ${asset} sentiment trend on Twitter`;
-          description = `Social media analysis shows increasing positive sentiment around ${asset} with growing discussion volume.`;
-        } else if (alertLevel.includes('bearish')) {
-          title = `Negative ${asset} sentiment spreading on Twitter`;
-          description = `Social media monitoring detected a surge in negative comments about ${asset} among influential accounts.`;
-        } else {
-          title = `Mixed ${asset} discussions on Twitter`;
-          description = `Twitter sentiment is showing conflicting signals about ${asset} with no clear consensus.`;
-        }
-        break;
-        
-      case 'reddit':
-        if (alertLevel.includes('bullish')) {
-          title = `${asset} enthusiasm grows on Reddit forums`;
-          description = `Reddit communities are showing increased optimism about ${asset} fundamentals and upcoming developments.`;
-        } else if (alertLevel.includes('bearish')) {
-          title = `Reddit communities express concern about ${asset}`;
-          description = `Popular crypto forums on Reddit demonstrate growing skepticism about ${asset}'s near-term prospects.`;
-        } else {
-          title = `Balanced ${asset} discussions on Reddit`;
-          description = `Reddit analysis shows community sentiment is balanced with equal positive and negative discussions.`;
-        }
-        break;
-        
-      case 'news_articles':
-        if (alertLevel.includes('bullish')) {
-          title = `Positive ${asset} coverage in financial press`;
-          description = `Major financial news outlets are publishing favorable articles about ${asset}'s fundamentals and adoption metrics.`;
-        } else if (alertLevel.includes('bearish')) {
-          title = `Critical ${asset} reports in mainstream media`;
-          description = `Recent news articles highlight potential risks and challenges facing ${asset} in the current market environment.`;
-        } else {
-          title = `Mixed ${asset} coverage in news outlets`;
-          description = `Financial media presents balanced reporting on ${asset} with equal coverage of risks and opportunities.`;
-        }
-        break;
-        
-      case 'blockchain_metrics':
-        if (alertLevel.includes('bullish')) {
-          title = `Strong ${asset} on-chain fundamentals detected`;
-          description = `On-chain analysis shows improving adoption metrics with increased active addresses and transaction volume.`;
-        } else if (alertLevel.includes('bearish')) {
-          title = `Concerning ${asset} on-chain trends`;
-          description = `Blockchain analysis indicates decreasing network activity and potentially concerning distribution patterns.`;
-        } else {
-          title = `Steady ${asset} on-chain metrics`;
-          description = `Blockchain data shows stable utilization with no significant changes in key network metrics.`;
-        }
-        break;
-        
-      case 'exchange_data':
-        if (alertLevel.includes('bullish')) {
-          title = `Bullish ${asset} exchange flows detected`;
-          description = `Exchange outflows are exceeding inflows, suggesting accumulation and reduced selling pressure.`;
-        } else if (alertLevel.includes('bearish')) {
-          title = `${asset} exchange inflows accelerating`;
-          description = `Large inflows to exchanges could signal increased selling pressure in the near term.`;
-        } else {
-          title = `Balanced ${asset} exchange flows`;
-          description = `Exchange inflows and outflows are currently balanced with no clear directional signals.`;
-        }
-        break;
-    }
-    
-    alerts.push({
-      id: `alert-${i}-${Date.now()}`,
-      asset,
-      level: alertLevel,
-      title,
-      description,
-      timestamp: Date.now() - Math.floor(Math.random() * 24 * 60 * 60 * 1000), // 0-24 hours ago
-      source,
-      confidence: 0.5 + Math.random() * 0.4, // 0.5 to 0.9
-      impact,
-      tags: generateRandomTags(source, alertLevel)
-    });
-  }
-  
-  // Generate recommendations
-  const recommendations: ActionRecommendation[] = generateRecommendations(asset, score, level);
-  
-  // Generate key factors
-  const keyFactors = generateKeyFactors(asset, score);
-  
-  // Generate trend direction
-  let trendDirection: 'improving' | 'deteriorating' | 'stable';
-  const scoreDiff = score - (previousScore || 0);
-  if (Math.abs(scoreDiff) < 5) trendDirection = 'stable';
-  else trendDirection = scoreDiff > 0 ? 'improving' : 'deteriorating';
-  
-  // Generate analysis text
-  const analysisText = generateAnalysisText(asset, score, level, trendDirection, keyFactors);
-  
-  return {
-    asset,
-    level,
-    score,
-    timestamp: Date.now(),
-    previousLevel,
-    previousScore,
-    confidence: 0.65 + Math.random() * 0.25, // 0.65 to 0.9
-    sources,
-    timeRange,
-    alerts,
-    recommendations,
-    analysisText,
-    keyFactors,
-    trendDirection
+// Local cache to store sentiment data
+interface SentimentCache {
+  [key: string]: {
+    data: SentimentData;
+    timestamp: number;
   };
-};
+}
 
-// Helper function to generate random tags
-const generateRandomTags = (source: NewsSource, level: SentimentLevel): string[] => {
-  const baseTags = ['market_sentiment', 'analysis'];
-  
-  if (level.includes('bullish')) {
-    baseTags.push('positive', 'optimistic');
-  } else if (level.includes('bearish')) {
-    baseTags.push('negative', 'cautious');
-  } else {
-    baseTags.push('neutral', 'mixed');
-  }
-  
-  switch (source) {
-    case 'twitter':
-      baseTags.push('social_media', 'twitter');
-      break;
-    case 'reddit':
-      baseTags.push('social_media', 'reddit', 'community');
-      break;
-    case 'news_articles':
-      baseTags.push('news', 'media');
-      break;
-    case 'blockchain_metrics':
-      baseTags.push('on_chain', 'fundamentals', 'blockchain_data');
-      break;
-    case 'exchange_data':
-      baseTags.push('exchange', 'trading', 'flows');
-      break;
-  }
-  
-  return baseTags;
-};
-
-// Helper function to generate recommendations
-const generateRecommendations = (asset: string, score: number, level: SentimentLevel): ActionRecommendation[] => {
-  const recommendations: ActionRecommendation[] = [];
-  
-  // First recommendation is based on the overall sentiment
-  if (score >= 40) {
-    recommendations.push({
-      id: `rec-1-${Date.now()}`,
-      action: 'buy',
-      asset,
-      confidence: 0.6 + Math.random() * 0.3,
-      reasoning: `Strong positive sentiment across multiple data sources suggests favorable conditions for ${asset} in the short term.`,
-      timeframe: 'short-term',
-      suggestedAllocation: 5 + Math.floor(Math.random() * 10) // 5-15%
-    });
-  } else if (score >= 10) {
-    recommendations.push({
-      id: `rec-1-${Date.now()}`,
-      action: 'increase',
-      asset,
-      confidence: 0.5 + Math.random() * 0.3,
-      reasoning: `Moderately positive market sentiment indicates potential upside for ${asset}. Consider increasing exposure gradually.`,
-      timeframe: 'medium-term',
-      suggestedAllocation: 3 + Math.floor(Math.random() * 5) // 3-8%
-    });
-  } else if (score <= -40) {
-    recommendations.push({
-      id: `rec-1-${Date.now()}`,
-      action: 'reduce',
-      asset,
-      confidence: 0.6 + Math.random() * 0.3,
-      reasoning: `Significant negative sentiment suggests increased downside risk. Consider reducing exposure to mitigate potential losses.`,
-      timeframe: 'short-term',
-      suggestedAllocation: -1 * (5 + Math.floor(Math.random() * 10)) // -5 to -15%
-    });
-  } else if (score <= -10) {
-    recommendations.push({
-      id: `rec-1-${Date.now()}`,
-      action: 'hold',
-      asset,
-      confidence: 0.5 + Math.random() * 0.3,
-      reasoning: `Slightly negative market sentiment, but no extreme signals. Maintain positions while closely monitoring market developments.`,
-      timeframe: 'medium-term'
-    });
-  } else {
-    recommendations.push({
-      id: `rec-1-${Date.now()}`,
-      action: 'hold',
-      asset,
-      confidence: 0.7 + Math.random() * 0.2,
-      reasoning: `Neutral market sentiment indicates balanced risk-reward. Maintain current strategy without significant changes.`,
-      timeframe: 'medium-term'
-    });
-  }
-  
-  // Second recommendation is more nuanced or contrarian
-  if (Math.random() > 0.5) { // 50% chance of getting a second recommendation
-    if (score >= 70) {
-      // Extremely bullish sentiment might signal overheating
-      recommendations.push({
-        id: `rec-2-${Date.now()}`,
-        action: 'hold',
-        asset,
-        confidence: 0.4 + Math.random() * 0.3,
-        reasoning: `Despite very positive sentiment, consider the risk of market exuberance. Maintain positions but prepare for potential volatility.`,
-        timeframe: 'long-term'
-      });
-    } else if (score <= -70) {
-      // Extremely bearish sentiment might signal bottoming
-      recommendations.push({
-        id: `rec-2-${Date.now()}`,
-        action: 'buy',
-        asset,
-        confidence: 0.4 + Math.random() * 0.3,
-        reasoning: `Extreme negative sentiment can represent capitulation. Consider establishing small positions if aligned with long-term strategy.`,
-        timeframe: 'long-term',
-        suggestedAllocation: 2 + Math.floor(Math.random() * 3) // 2-5%
-      });
-    } else if (score >= 20 && score < 60) {
-      // Moderately positive with some caution
-      recommendations.push({
-        id: `rec-2-${Date.now()}`,
-        action: 'buy',
-        asset,
-        confidence: 0.5 + Math.random() * 0.2,
-        reasoning: `Consider dollar-cost averaging strategy to take advantage of positive momentum while managing risk.`,
-        timeframe: 'long-term',
-        suggestedAllocation: 3 + Math.floor(Math.random() * 5) // 3-8%
-      });
-    }
-  }
-  
-  return recommendations;
-};
-
-// Helper function to generate key factors
-const generateKeyFactors = (asset: string, score: number): { factor: string; impact: number }[] => {
-  const factors = [
-    {
-      factor: "Social media sentiment",
-      impact: Math.round((Math.random() * 4 - 2 + Math.sign(score) * 1) * 10) / 10 // Biased toward overall sentiment
-    },
-    {
-      factor: "Trading volume trends",
-      impact: Math.round((Math.random() * 4 - 2 + Math.sign(score) * 1) * 10) / 10
-    },
-    {
-      factor: "News cycle sentiment",
-      impact: Math.round((Math.random() * 4 - 2 + Math.sign(score) * 0.8) * 10) / 10
-    },
-    {
-      factor: "On-chain transaction activity",
-      impact: Math.round((Math.random() * 4 - 2 + Math.sign(score) * 0.5) * 10) / 10
-    },
-    {
-      factor: "Technical indicators",
-      impact: Math.round((Math.random() * 4 - 2 + Math.sign(score) * 0.7) * 10) / 10
-    }
-  ];
-  
-  // Sort by absolute impact and take the top 3-5 factors
-  return factors
-    .sort((a, b) => Math.abs(b.impact) - Math.abs(a.impact))
-    .slice(0, 3 + Math.floor(Math.random() * 3));
-};
-
-// Helper function to generate analysis text
-const generateAnalysisText = (
-  asset: string,
-  score: number,
-  level: SentimentLevel,
-  trendDirection: 'improving' | 'deteriorating' | 'stable',
-  keyFactors: { factor: string; impact: number }[]
-): string => {
-  const sentimentDescription = (() => {
-    if (level === 'extremely_bullish') return 'extremely positive';
-    if (level === 'bullish') return 'strongly positive';
-    if (level === 'slightly_bullish') return 'somewhat positive';
-    if (level === 'neutral') return 'neutral';
-    if (level === 'slightly_bearish') return 'somewhat negative';
-    if (level === 'bearish') return 'strongly negative';
-    if (level === 'extremely_bearish') return 'extremely negative';
-    return 'mixed';
-  })();
-  
-  const trendDescription = (() => {
-    if (trendDirection === 'improving') return 'improving';
-    if (trendDirection === 'deteriorating') return 'deteriorating';
-    return 'remaining stable';
-  })();
-  
-  // Start with a summary of the sentiment
-  let analysis = `Market sentiment for ${asset} is currently ${sentimentDescription} and ${trendDescription} compared to previous analysis. `;
-  
-  // Add information about key factors
-  analysis += `The most significant factors influencing this sentiment are `;
-  
-  const positiveFactors = keyFactors.filter(f => f.impact > 0).map(f => f.factor.toLowerCase());
-  const negativeFactors = keyFactors.filter(f => f.impact < 0).map(f => f.factor.toLowerCase());
-  
-  if (positiveFactors.length > 0) {
-    analysis += `positive signals from ${positiveFactors.join(', ')}`;
-    
-    if (negativeFactors.length > 0) {
-      analysis += `, while ${negativeFactors.join(', ')} contribute negative pressure. `;
-    } else {
-      analysis += `. `;
-    }
-  } else if (negativeFactors.length > 0) {
-    analysis += `negative pressure from ${negativeFactors.join(', ')}. `;
-  } else {
-    analysis += `mixed signals across different indicators. `;
-  }
-  
-  // Add conclusive sentiment based on the level
-  if (level.includes('bullish')) {
-    analysis += `The overall sentiment suggests favorable market conditions for ${asset} `;
-    
-    if (level === 'extremely_bullish') {
-      analysis += `with potential for significant upward movement, though such extreme sentiment readings warrant caution for potential market euphoria.`;
-    } else if (level === 'bullish') {
-      analysis += `with solid support from multiple sentiment indicators.`;
-    } else {
-      analysis += `though the strength of this signal is relatively modest.`;
-    }
-  } else if (level.includes('bearish')) {
-    analysis += `The overall sentiment suggests challenging market conditions for ${asset} `;
-    
-    if (level === 'extremely_bearish') {
-      analysis += `with increased downside risk, though such extreme negative sentiment can sometimes indicate potential capitulation or overselling.`;
-    } else if (level === 'bearish') {
-      analysis += `with consistent negative signals across sentiment indicators.`;
-    } else {
-      analysis += `though the negative signals are relatively mild at this stage.`;
-    }
-  } else {
-    analysis += `The overall sentiment is balanced with no strong directional bias, suggesting a period of consolidation or indecision in the market.`;
-  }
-  
-  return analysis;
-};
-
-/**
- * Sentiment Analysis Service
- * This service provides AI-powered market sentiment analysis.
- */
 class SentimentAnalysisService {
-  private cachedSentiment: Record<string, Record<TimeRange, SentimentData>> = {};
-  private lastUpdateTimestamp: number = 0;
+  private cache: SentimentCache = {};
+  private cacheValidityMs = 5 * 60 * 1000; // 5 minutes
   
-  /**
-   * Get sentiment analysis for a specific asset and time range
-   */
+  // Simulated API request for sentiment data
   async getSentimentAnalysis(
-    asset: string = 'BTC',
+    assetSymbol: string = 'BTC',
     timeRange: TimeRange = '24h'
   ): Promise<SentimentData> {
-    const now = Date.now();
-    const CACHE_DURATION = 5 * 60 * 1000; // 5 minutes
+    const cacheKey = `${assetSymbol}_${timeRange}`;
     
-    // Use cached data if available and fresh
+    // Check if we have a valid cache entry
+    const now = Date.now();
     if (
-      this.cachedSentiment[asset]?.[timeRange] &&
-      now - this.lastUpdateTimestamp < CACHE_DURATION
+      this.cache[cacheKey] && 
+      now - this.cache[cacheKey].timestamp < this.cacheValidityMs
     ) {
-      return this.cachedSentiment[asset][timeRange];
+      return this.cache[cacheKey].data;
     }
-
-    try {
-      // In a real implementation, we would fetch data from an API
-      // For this demo, we'll generate sample data
-      let baseScore = 0;
-      switch (asset) {
-        case 'BTC':
-          baseScore = 45; // Bullish
-          break;
-        case 'ETH':
-          baseScore = 20; // Slightly bullish
-          break;
-        case 'SOL':
-          baseScore = 65; // Strongly bullish
-          break;
-        case 'LINK':
-          baseScore = -10; // Slightly bearish
-          break;
-        default:
-          baseScore = 0; // Neutral
-      }
-      
-      // Adjust score based on time range
-      if (timeRange === '7d') baseScore -= 10;
-      else if (timeRange === '30d') baseScore -= 20;
-      else if (timeRange === '90d') baseScore -= 30;
-      
-      const sentimentData = generateRandomSentimentData(asset, baseScore, timeRange);
-      
-      // Cache the result
-      if (!this.cachedSentiment[asset]) {
-        this.cachedSentiment[asset] = {} as Record<TimeRange, SentimentData>;
-      }
-      this.cachedSentiment[asset][timeRange] = sentimentData;
-      this.lastUpdateTimestamp = now;
-      
-      return sentimentData;
-    } catch (error) {
-      console.error("Error fetching sentiment analysis:", error);
-      throw error;
-    }
+    
+    // For development, we'll simulate a network request with a small delay
+    await new Promise(resolve => setTimeout(resolve, 500));
+    
+    // Generate random data based on asset and time range
+    const data = this.generateSentimentData(assetSymbol, timeRange);
+    
+    // Cache the result
+    this.cache[cacheKey] = {
+      data,
+      timestamp: now
+    };
+    
+    return data;
   }
   
-  /**
-   * Get recent sentiment alerts for an asset
-   */
-  async getSentimentAlerts(
-    asset: string = 'BTC',
-    timeRange: TimeRange = '24h',
-    limit: number = 5
-  ): Promise<SentimentAlert[]> {
-    const sentimentData = await this.getSentimentAnalysis(asset, timeRange);
-    return sentimentData.alerts.slice(0, limit);
-  }
-  
-  /**
-   * Get action recommendations for an asset
-   */
-  async getActionRecommendations(
-    asset: string = 'BTC',
-    timeRange: TimeRange = '24h'
-  ): Promise<ActionRecommendation[]> {
-    const sentimentData = await this.getSentimentAnalysis(asset, timeRange);
-    return sentimentData.recommendations;
-  }
-  
-  /**
-   * Clear the cache to force fresh data fetch
-   */
+  // Clear the cache to force fresh data
   clearCache(): void {
-    this.cachedSentiment = {};
-    this.lastUpdateTimestamp = 0;
+    this.cache = {};
+  }
+  
+  // Simulate data generation for development
+  private generateSentimentData(
+    assetSymbol: string,
+    timeRange: TimeRange
+  ): SentimentData {
+    // The seed ensures consistent results for the same asset and time range
+    const seed = this.hashString(`${assetSymbol}_${timeRange}`);
+    const random = (min: number, max: number) => {
+      const x = Math.sin(seed * 9999) * 10000;
+      const r = x - Math.floor(x);
+      return min + r * (max - min);
+    };
+    
+    // Generate score between -100 and 100
+    let score: number;
+    switch (assetSymbol) {
+      case 'BTC':
+        score = random(20, 80); // Generally positive for BTC
+        break;
+      case 'ETH':
+        score = random(10, 70); // Also positive for ETH
+        break;
+      case 'SOL':
+        score = random(-30, 50); // Mixed for SOL
+        break;
+      case 'TON':
+        score = random(0, 60); // Slightly positive for TON
+        break;
+      default:
+        score = random(-40, 40); // Neutral for other assets
+    }
+    
+    // Adjust based on time range
+    if (timeRange === '90d') {
+      score *= 0.8; // More conservative for longer time ranges
+    } else if (timeRange === '24h') {
+      score *= 1.2; // More volatile for shorter time ranges
+    }
+    
+    // Ensure score stays in bounds
+    score = Math.max(-100, Math.min(100, score));
+    
+    // Previous score with some random variation
+    const previousScore = score + random(-15, 15);
+    
+    // Determine sentiment level based on score
+    let level: SentimentLevel;
+    if (score >= 60) level = 'very_positive';
+    else if (score >= 20) level = 'positive';
+    else if (score >= -20) level = 'neutral';
+    else if (score >= -60) level = 'negative';
+    else level = 'very_negative';
+    
+    // Confidence level (higher for extreme sentiments)
+    const confidence = 0.5 + Math.abs(score) / 200 + random(0, 0.3);
+    
+    // Generate timestamp - within the last day
+    const timestamp = new Date(Date.now() - random(0, 24 * 60 * 60 * 1000)).toISOString();
+    
+    // Generate analysis text based on sentiment level
+    let analysisText = '';
+    switch (level) {
+      case 'very_positive':
+        analysisText = `Market sentiment for ${assetSymbol} is extremely bullish in the ${timeRange} timeframe. Strong buying pressure and positive technical indicators suggest continued upward momentum. Institutional interest appears to be increasing, with significant accumulation observed on-chain.`;
+        break;
+      case 'positive':
+        analysisText = `Overall sentiment for ${assetSymbol} is positive in the ${timeRange} period. Recent price action has been favorable, and market participants are generally optimistic. On-chain metrics indicate healthy accumulation patterns and reduced selling pressure.`;
+        break;
+      case 'neutral':
+        analysisText = `Market sentiment for ${assetSymbol} is balanced over the ${timeRange} timeframe. While some indicators suggest potential upside, others indicate caution. Trading volume has been average, and price action remains within established ranges.`;
+        break;
+      case 'negative':
+        analysisText = `Sentiment for ${assetSymbol} has turned bearish in the ${timeRange} timeframe. Recent market movements show increased selling pressure and weakening support levels. Technical indicators suggest possible further downside in the near term.`;
+        break;
+      case 'very_negative':
+        analysisText = `Market sentiment for ${assetSymbol} is strongly bearish over the ${timeRange} period. Significant selling pressure from both retail and institutional participants has been observed. Technical and on-chain metrics indicate potential further decline.`;
+        break;
+    }
+    
+    // Generate key factors
+    const keyFactors: SentimentFactor[] = [
+      {
+        factor: 'On-chain activity',
+        impact: random(-3, 3)
+      },
+      {
+        factor: 'Social media sentiment',
+        impact: random(-3, 3)
+      },
+      {
+        factor: 'Technical indicators',
+        impact: random(-3, 3)
+      },
+      {
+        factor: 'Exchange flows',
+        impact: random(-3, 3)
+      },
+      {
+        factor: 'Institutional interest',
+        impact: random(-3, 3)
+      }
+    ].sort((a, b) => Math.abs(b.impact) - Math.abs(a.impact));
+    
+    // Generate sources
+    const sources: SentimentSource[] = [
+      {
+        source: 'social_media',
+        sentiment: score * (0.8 + random(0, 0.4)),
+        influence: 0.3 + random(0, 0.1)
+      },
+      {
+        source: 'news_articles',
+        sentiment: score * (0.7 + random(0, 0.6)),
+        influence: 0.2 + random(0, 0.1)
+      },
+      {
+        source: 'technical_analysis',
+        sentiment: score * (0.9 + random(0, 0.2)),
+        influence: 0.25 + random(0, 0.1)
+      },
+      {
+        source: 'on_chain_metrics',
+        sentiment: score * (0.85 + random(0, 0.3)),
+        influence: 0.25 + random(0, 0.1)
+      }
+    ];
+    
+    // Normalize influences to sum to 1
+    const totalInfluence = sources.reduce((sum, src) => sum + src.influence, 0);
+    sources.forEach(src => src.influence = src.influence / totalInfluence);
+    
+    // Generate recommendations based on sentiment level
+    const recommendations: ActionRecommendation[] = [];
+    
+    if (level === 'very_positive' || level === 'positive') {
+      recommendations.push({
+        id: '1',
+        action: 'buy',
+        reasoning: `Strong positive sentiment for ${assetSymbol} suggests potential upside. Technical indicators and on-chain metrics support continued growth.`,
+        confidence: 0.7 + random(0, 0.3),
+        timeframe: '1-3 months',
+        suggestedAllocation: 5 + Math.round(random(0, 15))
+      });
+      
+      if (random(0, 1) > 0.5) {
+        recommendations.push({
+          id: '2',
+          action: 'hold',
+          reasoning: `Despite positive outlook, maintaining current position is advised until clear resistance break is confirmed.`,
+          confidence: 0.6 + random(0, 0.3),
+          timeframe: '1-2 weeks'
+        });
+      }
+    } else if (level === 'neutral') {
+      if (score > 0) {
+        recommendations.push({
+          id: '1',
+          action: 'hold',
+          reasoning: `Market sentiment is balanced with slight positive bias. Current positions should be maintained while monitoring key resistance levels.`,
+          confidence: 0.5 + random(0, 0.3),
+          timeframe: '2-4 weeks'
+        });
+        
+        if (random(0, 1) > 0.6) {
+          recommendations.push({
+            id: '2',
+            action: 'increase',
+            reasoning: `Consider small position increase if price breaks above key resistance levels.`,
+            confidence: 0.4 + random(0, 0.3),
+            timeframe: '1-2 weeks',
+            suggestedAllocation: 2 + Math.round(random(0, 8))
+          });
+        }
+      } else {
+        recommendations.push({
+          id: '1',
+          action: 'hold',
+          reasoning: `Market sentiment is balanced with slight negative bias. Current positions should be maintained while monitoring key support levels.`,
+          confidence: 0.5 + random(0, 0.3),
+          timeframe: '2-4 weeks'
+        });
+        
+        if (random(0, 1) > 0.6) {
+          recommendations.push({
+            id: '2',
+            action: 'reduce',
+            reasoning: `Consider slight reduction in exposure if key support levels are broken.`,
+            confidence: 0.4 + random(0, 0.3),
+            timeframe: '1-2 weeks',
+            suggestedAllocation: -1 * (2 + Math.round(random(0, 8)))
+          });
+        }
+      }
+    } else {
+      recommendations.push({
+        id: '1',
+        action: 'reduce',
+        reasoning: `Negative market sentiment indicates increased risk. Consider reducing exposure to minimize potential downside.`,
+        confidence: 0.6 + random(0, 0.3),
+        timeframe: '1-4 weeks',
+        suggestedAllocation: -1 * (10 + Math.round(random(0, 20)))
+      });
+      
+      if (level === 'very_negative' && random(0, 1) > 0.3) {
+        recommendations.push({
+          id: '2',
+          action: 'sell',
+          reasoning: `Strong bearish signals across multiple indicators. Technical and on-chain metrics suggest further downside.`,
+          confidence: 0.7 + random(0, 0.3),
+          timeframe: '1-2 months',
+          suggestedAllocation: -100
+        });
+      }
+    }
+    
+    // Generate alerts based on sentiment and recommendations
+    const alerts: SentimentAlert[] = [];
+    
+    // Add only alerts that match current market conditions
+    if (score > 60) {
+      alerts.push({
+        id: '1',
+        type: 'opportunity',
+        title: `Strong bullish signal for ${assetSymbol}`,
+        description: `Multiple indicators suggest significant upside potential in the near term. Consider increasing allocation.`,
+        timestamp: new Date(Date.now() - random(0, 12 * 60 * 60 * 1000)).toISOString(),
+        priority: 'high'
+      });
+    } else if (score < -60) {
+      alerts.push({
+        id: '1',
+        type: 'risk',
+        title: `Critical bearish warning for ${assetSymbol}`,
+        description: `Severe negative sentiment detected across multiple indicators. Consider reducing exposure immediately.`,
+        timestamp: new Date(Date.now() - random(0, 12 * 60 * 60 * 1000)).toISOString(),
+        priority: 'high'
+      });
+    } else if (score > 40) {
+      alerts.push({
+        id: '1',
+        type: 'opportunity',
+        title: `Positive momentum building for ${assetSymbol}`,
+        description: `Sentiment analysis indicates growing bullish momentum. Technical indicators are trending positive.`,
+        timestamp: new Date(Date.now() - random(0, 18 * 60 * 60 * 1000)).toISOString(),
+        priority: 'medium'
+      });
+    } else if (score < -40) {
+      alerts.push({
+        id: '1',
+        type: 'warning',
+        title: `Bearish trend acceleration for ${assetSymbol}`,
+        description: `Sentiment has turned increasingly negative. Consider reviewing your position and risk management strategy.`,
+        timestamp: new Date(Date.now() - random(0, 18 * 60 * 60 * 1000)).toISOString(),
+        priority: 'medium'
+      });
+    }
+    
+    // Sometimes add general market info alert
+    if (random(0, 1) > 0.7) {
+      alerts.push({
+        id: alerts.length ? (parseInt(alerts[0].id) + 1).toString() : '1',
+        type: 'info',
+        title: `Market volatility expected`,
+        description: `Upcoming economic events may increase market volatility. Consider adjusting stop losses and position sizing accordingly.`,
+        timestamp: new Date(Date.now() - random(0, 24 * 60 * 60 * 1000)).toISOString(),
+        priority: random(0, 1) > 0.5 ? 'medium' : 'low'
+      });
+    }
+    
+    return {
+      score,
+      level,
+      previousScore,
+      confidence,
+      timestamp,
+      analysisText,
+      keyFactors,
+      sources,
+      recommendations,
+      alerts
+    };
+  }
+  
+  // Simple string hash function for generating pseudo-random numbers
+  private hashString(str: string): number {
+    let hash = 0;
+    for (let i = 0; i < str.length; i++) {
+      const char = str.charCodeAt(i);
+      hash = ((hash << 5) - hash) + char;
+      hash = hash & hash; // Convert to 32bit integer
+    }
+    return hash;
   }
 }
 

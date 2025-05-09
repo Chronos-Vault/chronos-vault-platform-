@@ -29,7 +29,9 @@ import { BlockchainType } from '@/contexts/multi-chain-context';
 import { useTon } from '@/contexts/ton-context';
 import { useEthereum } from '@/contexts/ethereum-context';
 import { useSolana } from '@/contexts/solana-context';
-import { SentimentGauge, SentimentAlert, SentimentRecommendations } from '@/components/sentiment/sentiment-gauge';
+import { SentimentGauge } from '@/components/sentiment/sentiment-gauge';
+import { SentimentAlerts } from '@/components/sentiment/sentiment-alerts';
+import { SentimentRecommendations } from '@/components/sentiment/sentiment-recommendations';
 import { SentimentData, sentimentAnalysisService, SentimentLevel } from '@/services/sentiment-analysis-service';
 import { TechnicalIndicators, TechnicalIndicator } from '@/components/technical/technical-indicators';
 import { MarketDataDashboard } from '@/components/oracle/market-data-dashboard';
@@ -362,10 +364,10 @@ function InvestmentDisciplineVault() {
       specializedConfig.sentimentProtection = enableSentimentProtection;
       if (sentimentData) {
         specializedConfig.sentimentData = {
-          value: sentimentData.value,
-          classification: sentimentData.classification,
+          score: sentimentData.score,
+          level: sentimentData.level,
           timestamp: sentimentData.timestamp,
-          source: sentimentData.source
+          sources: sentimentData.sources
         };
       }
       if (sentimentRecommendations.length > 0) {
@@ -1141,7 +1143,7 @@ function InvestmentDisciplineVault() {
             </div>
             
             {/* Market Sentiment Alert - shows only in extreme conditions */}
-            <SentimentAlert assetSymbol={assetType} sentimentData={sentimentData} />
+            <SentimentAlerts alerts={sentimentData?.alerts || []} isLoading={false} timeRange="24h" />
             
             <Card className="bg-black/40 border-gray-800">
               <CardHeader>
@@ -1167,13 +1169,19 @@ function InvestmentDisciplineVault() {
                     onValueChange={(value) => {
                       setAssetType(value);
                       // Fetch sentiment data when asset type changes
-                      sentimentAnalysisService.getSentiment(value)
-                        .then(data => setSentimentData(data))
-                        .catch(err => console.error("Error fetching sentiment data:", err));
+                      sentimentAnalysisService.getSentimentAnalysis(value)
+                        .then((data) => setSentimentData(data))
+                        .catch((err: Error) => console.error("Error fetching sentiment data:", err));
                       
-                      sentimentAnalysisService.getActionRecommendations(value)
-                        .then(recs => setSentimentRecommendations(recs))
-                        .catch(err => console.error("Error fetching recommendations:", err));
+                      // Extract recommendation texts
+                      sentimentAnalysisService.getSentimentAnalysis(value)
+                        .then((data) => {
+                          if (data && data.recommendations) {
+                            const recommendationTexts = data.recommendations.map(rec => rec.reasoning || '');
+                            setSentimentRecommendations(recommendationTexts);
+                          }
+                        })
+                        .catch((err: Error) => console.error("Error fetching recommendations:", err));
                     }}
                   >
                     <SelectTrigger className="bg-gray-800 border-gray-700 mt-1">
