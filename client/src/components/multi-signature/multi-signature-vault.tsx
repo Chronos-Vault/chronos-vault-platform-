@@ -84,6 +84,16 @@ interface Signer {
   role: 'owner' | 'signer' | 'viewer';
   timeAdded: Date;
   hasKey: boolean;
+  // Time-based access constraints
+  timeConstraints?: {
+    enabled: boolean;
+    startTime?: string; // Format: "HH:MM" - 24-hour format
+    endTime?: string; // Format: "HH:MM" - 24-hour format
+    allowedDays?: number[]; // 0 = Sunday, 1 = Monday, etc.
+    timeZone?: string; // e.g., "America/New_York"
+    effectiveFrom?: Date; // When these constraints become active
+    effectiveUntil?: Date; // Optional expiration of these constraints
+  };
 }
 
 // Guardian for social recovery
@@ -254,7 +264,14 @@ export function MultiSignatureVault({
       status: 'accepted' as const,
       role: 'owner' as const,
       timeAdded: new Date(),
-      hasKey: true
+      hasKey: true,
+      timeConstraints: {
+        enabled: false,
+        startTime: "09:00",
+        endTime: "17:00",
+        allowedDays: [1, 2, 3, 4, 5], // Monday to Friday
+        timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone
+      }
     }
   ]);
   const [newSignerAddress, setNewSignerAddress] = useState<string>("");
@@ -344,7 +361,14 @@ export function MultiSignatureVault({
         status: 'pending' as const,
         role: 'owner' as const,
         timeAdded: new Date(),
-        hasKey: false
+        hasKey: false,
+        timeConstraints: {
+          enabled: false,
+          startTime: "09:00",
+          endTime: "17:00",
+          allowedDays: [1, 2, 3, 4, 5], // Monday to Friday
+          timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone
+        }
       }
     ];
     
@@ -545,6 +569,16 @@ export function MultiSignatureVault({
   };
   
   const signTransaction = (txId: string) => {
+    // First check if signer can sign at current time
+    if (!canSignTransaction(txId)) {
+      // Show error message about time constraints
+      alert(
+        "You cannot sign this transaction at the current time due to time-based access constraints. " +
+        "Please check your allowed signing schedule."
+      );
+      return;
+    }
+    
     setTransactions(transactions.map(tx => {
       if (tx.id === txId && tx.status === 'pending') {
         return {
@@ -635,6 +669,100 @@ export function MultiSignatureVault({
     } else {
       return `${diffHrs}h`;
     }
+  };
+  
+  // Time-based access constraints
+  const canSignerAccessAtCurrentTime = (signer: Signer): boolean => {
+    if (!signer.timeConstraints || !signer.timeConstraints.enabled) {
+      return true; // No time constraints or disabled
+    }
+    
+    const { startTime, endTime, allowedDays, effectiveFrom, effectiveUntil, timeZone } = signer.timeConstraints;
+    const now = new Date();
+    
+    // Check if constraints are active (based on effectiveFrom/Until dates)
+    if (effectiveFrom && now < effectiveFrom) {
+      return true; // Constraints not active yet
+    }
+    
+    if (effectiveUntil && now > effectiveUntil) {
+      return true; // Constraints no longer active
+    }
+    
+    // Check day of week
+    const currentDay = now.getDay(); // 0 = Sunday, 1 = Monday, etc.
+    if (allowedDays && !allowedDays.includes(currentDay)) {
+      return false; // Current day not allowed
+    }
+    
+    // If no time restrictions set, allow access
+    if (!startTime || !endTime) {
+      return true;
+    }
+    
+    // Parse times (format: "HH:MM" in 24-hour format)
+    const [startHour, startMinute] = startTime.split(':').map(Number);
+    const [endHour, endMinute] = endTime.split(':').map(Number);
+    
+    // Get current time in the specified timezone (or local time if not specified)
+    let currentHour: number;
+    let currentMinute: number;
+    
+    try {
+      // If timezone specified, use it
+      if (timeZone) {
+        const formatter = new Intl.DateTimeFormat('en-US', {
+          hour: 'numeric', 
+          minute: 'numeric',
+          hour12: false,
+          timeZone
+        });
+        
+        const timeParts = formatter.formatToParts(now);
+        currentHour = parseInt(timeParts.find(part => part.type === 'hour')?.value || '0');
+        currentMinute = parseInt(timeParts.find(part => part.type === 'minute')?.value || '0');
+      } else {
+        // Use local time
+        currentHour = now.getHours();
+        currentMinute = now.getMinutes();
+      }
+      
+      // Convert to minutes for easier comparison
+      const currentTimeInMinutes = currentHour * 60 + currentMinute;
+      const startTimeInMinutes = startHour * 60 + startMinute;
+      const endTimeInMinutes = endHour * 60 + endMinute;
+      
+      // Check if current time is within allowed hours
+      if (endTimeInMinutes > startTimeInMinutes) {
+        // Simple case: start and end times are on the same day
+        return currentTimeInMinutes >= startTimeInMinutes && currentTimeInMinutes <= endTimeInMinutes;
+      } else {
+        // Complex case: time window crosses midnight
+        return currentTimeInMinutes >= startTimeInMinutes || currentTimeInMinutes <= endTimeInMinutes;
+      }
+    } catch (error) {
+      console.error("Error checking time constraints:", error);
+      return false; // Default to denying access on error
+    }
+  };
+  
+  // Check if a transaction can be signed based on time constraints
+  const canSignTransaction = (txId: string): boolean => {
+    const currentSigner = vaultSigners[0]; // Assuming current user is the first signer
+    
+    // Check if the transaction exists and is pending
+    const transaction = transactions.find(tx => tx.id === txId);
+    if (!transaction || transaction.status !== 'pending') {
+      return false;
+    }
+    
+    // Check if already signed
+    if (transaction.signers.includes(currentSigner.address)) {
+      return false;
+    }
+    
+    // Check time-based constraints
+    return canSignerAccessAtCurrentTime(currentSigner);
   };
   
   // UI for creating a multi-signature vault
@@ -763,33 +891,162 @@ export function MultiSignatureVault({
                     {vaultSigners.map((signer) => (
                       <div 
                         key={signer.id} 
-                        className="flex items-center justify-between p-3 bg-black/40 rounded-md border border-gray-800"
+                        className="p-3 bg-black/40 rounded-md border border-gray-800"
                       >
-                        <div className="flex items-center space-x-3">
-                          <div className="bg-[#3F51FF]/20 p-2 rounded-full">
-                            <Users className="h-4 w-4 text-[#3F51FF]" />
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center space-x-3">
+                            <div className="bg-[#3F51FF]/20 p-2 rounded-full">
+                              <Users className="h-4 w-4 text-[#3F51FF]" />
+                            </div>
+                            <div>
+                              <div className="font-medium">{signer.name}</div>
+                              <div className="text-xs text-gray-500 font-mono">{signer.address}</div>
+                            </div>
                           </div>
-                          <div>
-                            <div className="font-medium">{signer.name}</div>
-                            <div className="text-xs text-gray-500 font-mono">{signer.address}</div>
+                          <div className="flex items-center space-x-3">
+                            {signer.role === 'owner' ? (
+                              <Badge variant="outline" className="bg-purple-900/30 text-purple-400 border-purple-800">Owner</Badge>
+                            ) : (
+                              <Badge variant="outline" className="bg-blue-900/30 text-blue-400 border-blue-800">Signer</Badge>
+                            )}
+                            
+                            {signer.role !== 'owner' && (
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                onClick={() => removeSigner(signer.id)}
+                                className="h-8 w-8 p-0 text-gray-400 hover:text-white"
+                              >
+                                <XCircle className="h-4 w-4" />
+                              </Button>
+                            )}
                           </div>
                         </div>
-                        <div className="flex items-center space-x-3">
-                          {signer.role === 'owner' ? (
-                            <Badge variant="outline" className="bg-purple-900/30 text-purple-400 border-purple-800">Owner</Badge>
-                          ) : (
-                            <Badge variant="outline" className="bg-blue-900/30 text-blue-400 border-blue-800">Signer</Badge>
-                          )}
+                        
+                        {/* Time-based access constraints */}
+                        <div className="mt-3 pt-3 border-t border-gray-800">
+                          <div className="flex justify-between items-center mb-2">
+                            <Label htmlFor={`time-constraints-${signer.id}`} className="text-sm font-medium flex items-center gap-1">
+                              <Clock10 className="h-3.5 w-3.5 text-gray-400" />
+                              Time-based Access Constraints
+                            </Label>
+                            <Switch 
+                              id={`time-constraints-${signer.id}`} 
+                              checked={signer.timeConstraints?.enabled || false}
+                              onCheckedChange={(checked) => {
+                                setVaultSigners(vaultSigners.map(s => 
+                                  s.id === signer.id 
+                                    ? { 
+                                        ...s, 
+                                        timeConstraints: { 
+                                          ...(s.timeConstraints || {
+                                            startTime: "09:00",
+                                            endTime: "17:00",
+                                            allowedDays: [1, 2, 3, 4, 5],
+                                            timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone
+                                          }), 
+                                          enabled: checked 
+                                        } 
+                                      } 
+                                    : s
+                                ))
+                              }}
+                              className="ml-2"
+                            />
+                          </div>
                           
-                          {signer.role !== 'owner' && (
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              onClick={() => removeSigner(signer.id)}
-                              className="h-8 w-8 p-0 text-gray-400 hover:text-white"
-                            >
-                              <XCircle className="h-4 w-4" />
-                            </Button>
+                          {signer.timeConstraints?.enabled && (
+                            <div className="space-y-3 mt-2 text-sm">
+                              <div className="grid grid-cols-2 gap-2">
+                                <div>
+                                  <Label htmlFor={`start-time-${signer.id}`} className="text-xs">Start Time</Label>
+                                  <Input 
+                                    id={`start-time-${signer.id}`}
+                                    type="time"
+                                    value={signer.timeConstraints.startTime || "09:00"}
+                                    onChange={(e) => {
+                                      setVaultSigners(vaultSigners.map(s =>
+                                        s.id === signer.id
+                                          ? {
+                                              ...s,
+                                              timeConstraints: {
+                                                ...s.timeConstraints!,
+                                                startTime: e.target.value
+                                              }
+                                            }
+                                          : s
+                                      ))
+                                    }}
+                                    className="bg-black/40 border-gray-700 h-8 mt-1"
+                                  />
+                                </div>
+                                <div>
+                                  <Label htmlFor={`end-time-${signer.id}`} className="text-xs">End Time</Label>
+                                  <Input 
+                                    id={`end-time-${signer.id}`}
+                                    type="time"
+                                    value={signer.timeConstraints.endTime || "17:00"}
+                                    onChange={(e) => {
+                                      setVaultSigners(vaultSigners.map(s =>
+                                        s.id === signer.id
+                                          ? {
+                                              ...s,
+                                              timeConstraints: {
+                                                ...s.timeConstraints!,
+                                                endTime: e.target.value
+                                              }
+                                            }
+                                          : s
+                                      ))
+                                    }}
+                                    className="bg-black/40 border-gray-700 h-8 mt-1"
+                                  />
+                                </div>
+                              </div>
+                              
+                              <div>
+                                <Label className="text-xs block mb-1">Allowed Days</Label>
+                                <div className="flex gap-1 flex-wrap">
+                                  {['S', 'M', 'T', 'W', 'T', 'F', 'S'].map((day, idx) => (
+                                    <Button
+                                      key={idx}
+                                      type="button"
+                                      size="sm"
+                                      variant={signer.timeConstraints.allowedDays?.includes(idx) ? "default" : "outline"}
+                                      className={`h-7 w-7 p-0 ${
+                                        signer.timeConstraints.allowedDays?.includes(idx)
+                                          ? "bg-blue-800 hover:bg-blue-700"
+                                          : "bg-black/40 hover:bg-black/60"
+                                      }`}
+                                      onClick={() => {
+                                        const newAllowedDays = signer.timeConstraints.allowedDays?.includes(idx)
+                                          ? signer.timeConstraints.allowedDays.filter(d => d !== idx)
+                                          : [...(signer.timeConstraints.allowedDays || []), idx];
+                                          
+                                        setVaultSigners(vaultSigners.map(s =>
+                                          s.id === signer.id
+                                            ? {
+                                                ...s,
+                                                timeConstraints: {
+                                                  ...s.timeConstraints!,
+                                                  allowedDays: newAllowedDays
+                                                }
+                                              }
+                                            : s
+                                        ))
+                                      }}
+                                    >
+                                      {day}
+                                    </Button>
+                                  ))}
+                                </div>
+                                <p className="text-xs text-gray-500 mt-1">
+                                  {signer.timeConstraints.enabled 
+                                    ? `Signer can approve transactions during ${signer.timeConstraints.startTime} - ${signer.timeConstraints.endTime} on selected days.` 
+                                    : 'No time constraints applied.'}
+                                </p>
+                              </div>
+                            </div>
                           )}
                         </div>
                       </div>
