@@ -645,7 +645,6 @@ export function MultiSignatureVault({
     }));
   };
   
-
   // Check if a transaction can be signed based on time constraints
   const canSignTransaction = (txId: string): boolean => {
     const currentSigner = vaultSigners[0]; // Assuming current user is the first signer
