@@ -22,6 +22,7 @@ import { Switch } from "@/components/ui/switch";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
 import { Badge } from "@/components/ui/badge";
+import { Shield, BarChart4, LineChart, Timer } from "lucide-react";
 import { useToast } from '@/hooks/use-toast';
 import { apiRequest } from '@/lib/queryClient';
 import { BlockchainType } from '@/contexts/multi-chain-context';
@@ -944,6 +945,17 @@ function InvestmentDisciplineVault() {
                       <div className="space-y-2">
                         <h4 className="text-sm font-medium text-[#3F51FF]">Profit-Taking Strategy</h4>
                         <p className="text-xs text-gray-400">Pre-define price targets at which to take profits. The vault will automatically execute sales when those prices are reached.</p>
+                        
+                        <div className="flex justify-end mt-3">
+                          <Button 
+                            onClick={() => setStep(2)}
+                            size="sm"
+                            className="bg-[#375BD2] hover:bg-[#2A4DB1] text-white"
+                          >
+                            <BarChart4 className="mr-2 h-4 w-4" />
+                            Configure Technical Indicators
+                          </Button>
+                        </div>
                       </div>
                     )}
                     {selectedStrategy === 'dca_exit' && (
