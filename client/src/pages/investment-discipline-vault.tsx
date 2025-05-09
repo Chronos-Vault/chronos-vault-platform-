@@ -22,7 +22,7 @@ import { Switch } from "@/components/ui/switch";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
 import { Badge } from "@/components/ui/badge";
-import { Shield, BarChart4, LineChart, Timer, Settings, BarChart3 } from "lucide-react";
+import { Shield, BarChart4, LineChart, Timer, Settings } from "lucide-react";
 import { useToast } from '@/hooks/use-toast';
 import { apiRequest } from '@/lib/queryClient';
 import { BlockchainType } from '@/contexts/multi-chain-context';
@@ -781,7 +781,7 @@ function InvestmentDisciplineVault() {
                 <CardHeader className="pb-2">
                   <div className="flex items-center">
                     <div className="p-2 rounded-full bg-[#3F51FF]/10 mr-2">
-                      <BarChart3 className="h-4 w-4 text-[#3F51FF]" />
+                      <BarChart4 className="h-4 w-4 text-[#3F51FF]" />
                     </div>
                     <CardTitle className="text-sm">Analytics Panel</CardTitle>
                   </div>
