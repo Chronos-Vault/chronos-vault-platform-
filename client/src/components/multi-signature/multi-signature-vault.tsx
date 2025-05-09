@@ -112,11 +112,11 @@ interface Signer {
   // Time-based access constraints
   timeConstraints: {
     enabled: boolean;
-    startTime?: string; // Format: "HH:MM" - 24-hour format
-    endTime?: string; // Format: "HH:MM" - 24-hour format
-    allowedDays?: number[]; // 0 = Sunday, 1 = Monday, etc.
-    timeZone?: string; // e.g., "America/New_York"
-    effectiveFrom?: Date; // When these constraints become active
+    startTime: string; // Format: "HH:MM" - 24-hour format
+    endTime: string; // Format: "HH:MM" - 24-hour format
+    allowedDays: number[]; // 0 = Sunday, 1 = Monday, etc.
+    timeZone: string; // e.g., "America/New_York"
+    effectiveFrom?: Date; // When these constraints become active (optional)
     effectiveUntil?: Date; // Optional expiration of these constraints
   };
   // Transaction type permissions for custom signing policies
@@ -124,11 +124,11 @@ interface Signer {
     enabled: boolean;
     allowedTypes: TransactionType[]; // Types of transactions this signer can approve
     approvalLimits: {
-      [TransactionType.TRANSFER]?: {
-        maxAmount?: string; // Maximum amount this signer can approve
+      [TransactionType.TRANSFER]: {
+        maxAmount: string; // Maximum amount this signer can approve
         allowedDestinations: string[]; // Approved destination addresses
       };
-      [TransactionType.CONTRACT_INTERACTION]?: {
+      [TransactionType.CONTRACT_INTERACTION]: {
         allowedContracts: string[]; // Approved contract addresses
         allowedMethods: string[]; // Approved method signatures
       };
@@ -1315,7 +1315,7 @@ export function MultiSignatureVault({
                                             </Label>
                                             <Input
                                               id={`max-amount-${signer.id}`}
-                                              value={signer.transactionPermissions?.approvalLimits?.[TransactionType.TRANSFER]?.maxAmount || ""}
+                                              value={signer.transactionPermissions.approvalLimits[TransactionType.TRANSFER].maxAmount}
                                               onChange={(e) => {
                                                 setVaultSigners(vaultSigners.map(s => {
                                                   if (s.id !== signer.id) return s;
@@ -1386,11 +1386,11 @@ export function MultiSignatureVault({
                                               </Button>
                                             </Label>
                                             <div className="mt-1">
-                                              {(signer.transactionPermissions?.approvalLimits?.[TransactionType.TRANSFER]?.allowedDestinations || []).length === 0 ? (
+                                              {signer.transactionPermissions.approvalLimits[TransactionType.TRANSFER].allowedDestinations.length === 0 ? (
                                                 <p className="text-xs text-gray-500 italic">No allowed addresses (all transfers blocked)</p>
                                               ) : (
                                                 <div className="space-y-1">
-                                                  {signer.transactionPermissions?.approvalLimits?.[TransactionType.TRANSFER]?.allowedDestinations?.map((address, index) => (
+                                                  {signer.transactionPermissions.approvalLimits[TransactionType.TRANSFER].allowedDestinations.map((address, index) => (
                                                     <div key={index} className="flex justify-between items-center text-xs bg-black/30 px-2 py-1 rounded">
                                                       <code className="truncate">{address}</code>
                                                       <Button
@@ -1491,11 +1491,11 @@ export function MultiSignatureVault({
                                               </Button>
                                             </Label>
                                             <div className="mt-1">
-                                              {(signer.transactionPermissions?.approvalLimits?.[TransactionType.CONTRACT_INTERACTION]?.allowedMethods || []).length === 0 ? (
+                                              {signer.transactionPermissions.approvalLimits[TransactionType.CONTRACT_INTERACTION].allowedMethods.length === 0 ? (
                                                 <p className="text-xs text-gray-500 italic">No allowed methods (all methods allowed)</p>
                                               ) : (
                                                 <div className="space-y-1">
-                                                  {signer.transactionPermissions?.approvalLimits?.[TransactionType.CONTRACT_INTERACTION]?.allowedMethods?.map((method, index) => (
+                                                  {signer.transactionPermissions.approvalLimits[TransactionType.CONTRACT_INTERACTION].allowedMethods.map((method, index) => (
                                                     <div key={index} className="flex justify-between items-center text-xs bg-black/30 px-2 py-1 rounded">
                                                       <code>{method}</code>
                                                       <Button
