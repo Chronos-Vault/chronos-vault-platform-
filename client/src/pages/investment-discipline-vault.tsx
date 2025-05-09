@@ -640,17 +640,22 @@ function InvestmentDisciplineVault() {
                 <Separator className="my-4 bg-gray-800" />
                 
                 {/* Technical Indicators Section */}
-                <div>
-                  <Label className="text-sm text-gray-300 mb-3 block">Technical Analysis Triggers</Label>
+                <div className="bg-black/20 border border-[#375BD2]/30 rounded-lg p-4">
+                  <div className="flex items-center mb-3">
+                    <div className="bg-[#375BD2]/20 p-2 rounded-full mr-2">
+                      <Shield className="h-5 w-5 text-[#375BD2]" />
+                    </div>
+                    <h4 className="text-white font-medium">Technical Analysis Triggers</h4>
+                  </div>
+                  
+                  <p className="text-xs text-gray-400 mb-4">
+                    Set up automated exit conditions based on technical indicators with Chainlink oracle data
+                  </p>
                   
                   <TechnicalIndicators 
                     indicators={technicalIndicators}
                     onChange={setTechnicalIndicators}
                   />
-                  
-                  <p className="text-xs text-gray-500 mt-2">
-                    Set up automated exit conditions based on technical indicators with Chainlink oracle data
-                  </p>
                 </div>
               </div>
             </div>
