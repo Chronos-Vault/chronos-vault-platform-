@@ -244,7 +244,7 @@ class ChainAgnosticVerification {
     level: 'basic' | 'standard' | 'advanced'
   ): BlockchainType[] {
     // Default to all supported chains
-    const allChains: BlockchainType[] = ['ethereum', 'solana', 'ton', 'bitcoin'];
+    const allChains: BlockchainType[] = ['ETH', 'SOL', 'TON', 'BTC'];
     
     // Remove the primary chain from the list to avoid duplication
     const secondaryChains = allChains.filter(chain => chain !== primaryChain);

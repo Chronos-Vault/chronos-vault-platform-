@@ -10,10 +10,12 @@ import healthRoutes from './api/health-routes';
 import incidentRoutes from './api/incident-routes';
 import paymentRoutes from './api/payment-routes';
 import vaultVerificationRoutes, { initializeVaultVerification } from './api/vault-verification-routes';
+import chainAgnosticVerificationRoutes, { initializeChainAgnosticVerification } from './api/chain-agnostic-verification-routes';
 import { intentInheritanceRouter } from './api/intent-inheritance-routes';
 import progressiveQuantumVaultRoutes from './api/progressive-quantum-vault-routes';
 import vaultsRoutes from './api/vaults-routes';
 import biometricRoutes from './routes/biometric-routes';
+import zeroKnowledgeRoutes from './api/zero-knowledge-routes';
 import { systemHealthMonitor } from './monitoring/system-health-monitor';
 import { incidentResponseSystem } from './monitoring/incident-response';
 import { ConnectorFactory } from './blockchain/connector-factory';
@@ -53,6 +55,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
   
   // Register biometric authentication routes
   apiRouter.use('/biometric', biometricRoutes);
+  
+  // Register zero-knowledge proof routes
+  apiRouter.use('/zk', zeroKnowledgeRoutes);
+  
+  // Initialize and register chain-agnostic verification routes
+  const chainAgnosticVerifier = initializeChainAgnosticVerification(connectorFactory);
+  apiRouter.use('/chain-agnostic-verification', chainAgnosticVerificationRoutes);
   
   // Add event listeners for verification status updates
   crossChainVerification.on('verification:completed', (result) => {
