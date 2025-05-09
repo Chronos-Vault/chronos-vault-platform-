@@ -47,6 +47,12 @@ import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { Separator } from "@/components/ui/separator";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import { 
   Lock, 
   Users, 
@@ -1012,13 +1018,15 @@ export function MultiSignatureVault({
                                       key={idx}
                                       type="button"
                                       size="sm"
-                                      variant={signer.timeConstraints.allowedDays?.includes(idx) ? "default" : "outline"}
+                                      variant={signer.timeConstraints?.allowedDays?.includes(idx) ? "default" : "outline"}
                                       className={`h-7 w-7 p-0 ${
-                                        signer.timeConstraints.allowedDays?.includes(idx)
+                                        signer.timeConstraints?.allowedDays?.includes(idx)
                                           ? "bg-blue-800 hover:bg-blue-700"
                                           : "bg-black/40 hover:bg-black/60"
                                       }`}
                                       onClick={() => {
+                                        if (!signer.timeConstraints) return;
+                                        
                                         const newAllowedDays = signer.timeConstraints.allowedDays?.includes(idx)
                                           ? signer.timeConstraints.allowedDays.filter(d => d !== idx)
                                           : [...(signer.timeConstraints.allowedDays || []), idx];
@@ -1525,13 +1533,51 @@ export function MultiSignatureVault({
                                   </div>
                                   <div className="flex space-x-2">
                                     {transaction.status === 'pending' && !transaction.signers.includes(vaultSigners[0].address) && (
-                                      <Button 
-                                        size="sm" 
-                                        onClick={() => signTransaction(transaction.id)}
-                                        className="bg-[#3F51FF] hover:bg-[#3F51FF]/80"
-                                      >
-                                        Sign
-                                      </Button>
+                                      <TooltipProvider>
+                                        <Tooltip>
+                                          <TooltipTrigger asChild>
+                                            <Button 
+                                              size="sm" 
+                                              onClick={() => signTransaction(transaction.id)}
+                                              disabled={!canSignTransaction(transaction.id)}
+                                              className={`${
+                                                canSignTransaction(transaction.id)
+                                                  ? "bg-[#3F51FF] hover:bg-[#3F51FF]/80"
+                                                  : "bg-gray-700 text-gray-300 hover:bg-gray-600"
+                                              }`}
+                                            >
+                                              {canSignTransaction(transaction.id) ? (
+                                                <span>Sign</span>
+                                              ) : (
+                                                <span className="flex items-center gap-1">
+                                                  <Clock10 className="h-3 w-3" />
+                                                  Time Restricted
+                                                </span>
+                                              )}
+                                            </Button>
+                                          </TooltipTrigger>
+                                          {!canSignTransaction(transaction.id) && (
+                                            <TooltipContent className="max-w-xs bg-black border border-gray-700 text-gray-200 p-3">
+                                              <p className="text-sm font-medium mb-1">Time-based Access Restricted</p>
+                                              <p className="text-xs text-gray-400">
+                                                You cannot sign this transaction due to your time-based access constraints.
+                                                {vaultSigners[0].timeConstraints?.enabled && (
+                                                  <>
+                                                    <br/><br/>
+                                                    <b>Your signing window:</b><br/>
+                                                    {vaultSigners[0].timeConstraints.startTime} - {vaultSigners[0].timeConstraints.endTime}
+                                                    <br/><br/>
+                                                    <b>Allowed days:</b><br/>
+                                                    {vaultSigners[0].timeConstraints.allowedDays?.map(day => 
+                                                      ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'][day]
+                                                    ).join(', ')}
+                                                  </>
+                                                )}
+                                              </p>
+                                            </TooltipContent>
+                                          )}
+                                        </Tooltip>
+                                      </TooltipProvider>
                                     )}
                                     
                                     {transaction.status === 'approved' && (
