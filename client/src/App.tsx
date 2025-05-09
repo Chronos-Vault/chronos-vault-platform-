@@ -23,7 +23,7 @@ import AdvancedVaultCreationPage from "@/pages/advanced-vault-creation";
 import AdvancedVaultCreationNewPage from "@/pages/advanced-vault-creation-new";
 import VaultTypesSelector from "@/pages/vault-types-selector";
 import SpecializedVaultCreationPage from "@/pages/specialized-vault-creation";
-import MultiSignatureVaultPage from "@/pages/multi-signature-vault";
+import MultiSignatureVaultPage from "@/pages/multi-signature-vault-page";
 import IntentInheritanceVault from "@/pages/intent-inheritance-vault";
 import MyVaults from "@/pages/my-vaults";
 import VaultDetails from "@/pages/vault-details";

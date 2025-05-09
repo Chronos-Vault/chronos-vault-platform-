@@ -1,0 +1,1434 @@
+import React, { useState, useEffect } from "react";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Slider } from "@/components/ui/slider";
+import { Switch } from "@/components/ui/switch";
+import { 
+  Select, 
+  SelectContent, 
+  SelectItem, 
+  SelectTrigger, 
+  SelectValue 
+} from "@/components/ui/select";
+import {
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+} from "@/components/ui/tabs";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { Badge } from "@/components/ui/badge";
+import { Progress } from "@/components/ui/progress";
+import { Separator } from "@/components/ui/separator";
+import { 
+  Lock, 
+  Users, 
+  Shield, 
+  Clock, 
+  Fingerprint, 
+  Key, 
+  CheckCircle2, 
+  XCircle, 
+  AlertCircle,
+  RotateCw,
+  FileLock2,
+  FileText,
+  Clock10,
+  ArrowUpRight,
+  ShieldAlert
+} from "lucide-react";
+
+// Enum for blockchain types (this should match your existing enum if you have one)
+export enum BlockchainType {
+  ETHEREUM = 0,
+  SOLANA = 1,
+  TON = 2,
+  BITCOIN = 3
+}
+
+// Types for Multi-Signature Vault
+interface Signer {
+  id: string;
+  address: string;
+  name: string;
+  status: 'pending' | 'accepted' | 'rejected';
+  role: 'owner' | 'signer' | 'viewer';
+  timeAdded: Date;
+  hasKey: boolean;
+}
+
+interface Transaction {
+  id: string;
+  type: string;
+  status: 'pending' | 'approved' | 'rejected' | 'executed' | 'expired';
+  description: string;
+  requiredSignatures: number;
+  currentSignatures: number;
+  signers: string[];
+  creator: string;
+  timeCreated: Date;
+  timeExecuted?: Date;
+  expirationTime: Date;
+  amount?: string;
+  destination?: string;
+  contractInteraction?: {
+    method: string;
+    params: string;
+  };
+}
+
+interface VaultAsset {
+  name: string;
+  symbol: string;
+  amount: string;
+  valueUSD: number;
+  icon: string;
+}
+
+interface MultiSigVaultProps {
+  vaultName?: string;
+  vaultDescription?: string;
+  blockchain: BlockchainType;
+  threshold: number;
+  signers: Signer[];
+  assetTimelock?: Date;
+  onCreateVault?: (vaultData: any) => void;
+  isReadOnly?: boolean;
+}
+
+// Constants and mock data (in a real app, these would be loaded from the blockchain)
+const MOCK_TRANSACTIONS: Transaction[] = [
+  {
+    id: "tx-001",
+    type: "send",
+    status: "pending",
+    description: "Weekly team payment",
+    requiredSignatures: 3,
+    currentSignatures: 1,
+    signers: ["0x742d35Cc6634C0532925a3b844Bc454e4438f44e"],
+    creator: "0x742d35Cc6634C0532925a3b844Bc454e4438f44e",
+    timeCreated: new Date(Date.now() - 86400000), // 1 day ago
+    expirationTime: new Date(Date.now() + 86400000 * 2), // expires in 2 days
+    amount: "1.5 ETH",
+    destination: "0x3a9A6718D5fbC3a2360941348f5821d4c98B722d"
+  },
+  {
+    id: "tx-002",
+    type: "contract",
+    status: "approved",
+    description: "Update vault timeout settings",
+    requiredSignatures: 3,
+    currentSignatures: 3,
+    signers: [
+      "0x742d35Cc6634C0532925a3b844Bc454e4438f44e",
+      "0x5B38Da6a701c568545dCfcB03FcB875f56beddC4",
+      "0xDc26F5E4b5E4dEF47A247c38714499a9d5e57Eb9"
+    ],
+    creator: "0x5B38Da6a701c568545dCfcB03FcB875f56beddC4",
+    timeCreated: new Date(Date.now() - 86400000 * 3), // 3 days ago
+    timeExecuted: new Date(Date.now() - 86400000 * 2), // 2 days ago
+    expirationTime: new Date(Date.now() - 86400000), // expired 1 day ago
+    contractInteraction: {
+      method: "updateTimelock",
+      params: "{ timeout: 1209600 }" // 14 days in seconds
+    }
+  },
+  {
+    id: "tx-003",
+    type: "send",
+    status: "executed",
+    description: "Transfer to cold storage",
+    requiredSignatures: 3,
+    currentSignatures: 3,
+    signers: [
+      "0x742d35Cc6634C0532925a3b844Bc454e4438f44e",
+      "0x5B38Da6a701c568545dCfcB03FcB875f56beddC4",
+      "0xDc26F5E4b5E4dEF47A247c38714499a9d5e57Eb9"
+    ],
+    creator: "0x742d35Cc6634C0532925a3b844Bc454e4438f44e",
+    timeCreated: new Date(Date.now() - 86400000 * 5), // 5 days ago
+    timeExecuted: new Date(Date.now() - 86400000 * 4), // 4 days ago
+    expirationTime: new Date(Date.now() - 86400000 * 2), // expired 2 days ago
+    amount: "25 ETH",
+    destination: "0xa1B38Da6A701c968505dCfcB03FcB875f56bedEa"
+  }
+];
+
+const MOCK_VAULT_ASSETS: VaultAsset[] = [
+  {
+    name: "Ethereum",
+    symbol: "ETH",
+    amount: "32.456",
+    valueUSD: 97368,
+    icon: "ri-ethereum-line"
+  },
+  {
+    name: "USD Coin",
+    symbol: "USDC",
+    amount: "50,000",
+    valueUSD: 50000,
+    icon: "ri-coin-line"
+  },
+  {
+    name: "TON",
+    symbol: "TON",
+    amount: "10,500",
+    valueUSD: 63000,
+    icon: "ri-disc-line"
+  },
+  {
+    name: "Wrapped BTC",
+    symbol: "WBTC",
+    amount: "0.75",
+    valueUSD: 38250,
+    icon: "ri-bit-coin-line"
+  }
+];
+
+/**
+ * Multi-Signature Vault Component
+ * Provides a comprehensive UI for creating and managing a multi-signature vault
+ * with advanced security features, transaction management, and signer coordination.
+ */
+export function MultiSignatureVault({
+  vaultName = "New Multi-Signature Vault",
+  vaultDescription = "",
+  blockchain = BlockchainType.ETHEREUM,
+  threshold = 2,
+  signers = [],
+  assetTimelock,
+  onCreateVault,
+  isReadOnly = false
+}: MultiSigVaultProps) {
+  // Setup states for the vault
+  const [name, setName] = useState<string>(vaultName);
+  const [description, setDescription] = useState<string>(vaultDescription);
+  const [selectedBlockchain, setSelectedBlockchain] = useState<BlockchainType>(blockchain);
+  const [signersThreshold, setSignersThreshold] = useState<number>(threshold);
+  const [vaultSigners, setVaultSigners] = useState<Signer[]>(signers.length > 0 ? signers : [
+    {
+      id: "1",
+      address: "0x742d35Cc6634C0532925a3b844Bc454e4438f44e",
+      name: "You (Owner)",
+      status: 'accepted',
+      role: 'owner',
+      timeAdded: new Date(),
+      hasKey: true
+    }
+  ]);
+  const [newSignerAddress, setNewSignerAddress] = useState<string>("");
+  const [newSignerName, setNewSignerName] = useState<string>("");
+  const [timelock, setTimelock] = useState<Date | undefined>(assetTimelock);
+  const [timelockDays, setTimelockDays] = useState<number>(assetTimelock ? 
+    Math.ceil((assetTimelock.getTime() - new Date().getTime()) / (1000 * 3600 * 24)) : 30);
+  
+  // Transaction management
+  const [transactions, setTransactions] = useState<Transaction[]>(MOCK_TRANSACTIONS);
+  const [assets, setAssets] = useState<VaultAsset[]>(MOCK_VAULT_ASSETS);
+  const [newTransaction, setNewTransaction] = useState<{
+    type: string;
+    description: string;
+    destination?: string;
+    amount?: string;
+    contractMethod?: string;
+    contractParams?: string;
+  }>({
+    type: 'send',
+    description: '',
+    destination: '',
+    amount: '',
+    contractMethod: '',
+    contractParams: ''
+  });
+  
+  // Security Settings
+  const [enableHardwareKey, setEnableHardwareKey] = useState<boolean>(true);
+  const [enableQRSignature, setEnableQRSignature] = useState<boolean>(false);
+  const [enableBiometrics, setEnableBiometrics] = useState<boolean>(false);
+  const [enableRecovery, setEnableRecovery] = useState<boolean>(true);
+  const [enableEncryption, setEnableEncryption] = useState<boolean>(true);
+  const [activityNotifications, setActivityNotifications] = useState<boolean>(true);
+  const [gasSettings, setGasSettings] = useState<string>("automatic");
+  
+  // Additional features
+  const [transactionExpiry, setTransactionExpiry] = useState<number>(7); // days
+  const [createMode, setCreateMode] = useState<boolean>(!isReadOnly && signers.length === 0);
+  
+  const getCurrentProgress = (): number => {
+    let progress = 0;
+    
+    if (name.length > 0) progress += 20;
+    if (vaultSigners.length >= 2) progress += 20;
+    if (signersThreshold > 0 && signersThreshold <= vaultSigners.length) progress += 20;
+    if (description.length > 0) progress += 20;
+    if (enableRecovery) progress += 20;
+    
+    return progress;
+  };
+  
+  const addSigner = () => {
+    if (!newSignerAddress || !newSignerName) return;
+    
+    // Basic address validation - would be more sophisticated in production
+    if (!newSignerAddress.startsWith('0x') || newSignerAddress.length !== 42) {
+      alert('Please enter a valid Ethereum address');
+      return;
+    }
+    
+    // Check if address already exists
+    if (vaultSigners.some(signer => signer.address.toLowerCase() === newSignerAddress.toLowerCase())) {
+      alert('This address is already added as a signer');
+      return;
+    }
+    
+    const newSigners = [
+      ...vaultSigners,
+      {
+        id: (vaultSigners.length + 1).toString(),
+        address: newSignerAddress,
+        name: newSignerName,
+        status: 'pending',
+        role: 'signer',
+        timeAdded: new Date(),
+        hasKey: false
+      }
+    ];
+    
+    setVaultSigners(newSigners);
+    setNewSignerAddress("");
+    setNewSignerName("");
+    
+    // Update threshold if needed
+    if (signersThreshold > newSigners.length) {
+      setSignersThreshold(newSigners.length);
+    }
+  };
+  
+  const removeSigner = (id: string) => {
+    const newSigners = vaultSigners.filter(signer => signer.id !== id);
+    setVaultSigners(newSigners);
+    
+    // Adjust threshold if needed
+    if (signersThreshold > newSigners.length) {
+      setSignersThreshold(newSigners.length);
+    }
+  };
+  
+  const handleCreateVault = () => {
+    if (getCurrentProgress() < 100) {
+      alert('Please complete all required fields before creating the vault');
+      return;
+    }
+    
+    const vaultData = {
+      name,
+      description,
+      blockchain: selectedBlockchain,
+      threshold: signersThreshold,
+      signers: vaultSigners,
+      timelock: timelockDays > 0 ? new Date(Date.now() + timelockDays * 24 * 60 * 60 * 1000) : undefined,
+      securitySettings: {
+        enableHardwareKey,
+        enableQRSignature,
+        enableBiometrics,
+        enableRecovery,
+        enableEncryption,
+        activityNotifications,
+        transactionExpiry,
+        gasSettings
+      }
+    };
+    
+    if (onCreateVault) {
+      onCreateVault(vaultData);
+    }
+    
+    // In a real app, we would send this to the blockchain
+    console.log('Creating vault with data:', vaultData);
+    setCreateMode(false);
+  };
+  
+  const submitTransaction = () => {
+    // Validation
+    if (newTransaction.type === 'send') {
+      if (!newTransaction.destination || !newTransaction.amount || !newTransaction.description) {
+        alert('Please fill all required fields');
+        return;
+      }
+    } else if (newTransaction.type === 'contract') {
+      if (!newTransaction.contractMethod || !newTransaction.description) {
+        alert('Please fill all required fields');
+        return;
+      }
+    }
+    
+    const transaction: Transaction = {
+      id: `tx-${Math.floor(Math.random() * 10000)}`,
+      type: newTransaction.type,
+      status: 'pending',
+      description: newTransaction.description,
+      requiredSignatures: signersThreshold,
+      currentSignatures: 1, // Creator signs automatically
+      signers: [vaultSigners[0].address], // Add creator as first signer
+      creator: vaultSigners[0].address,
+      timeCreated: new Date(),
+      expirationTime: new Date(Date.now() + transactionExpiry * 24 * 60 * 60 * 1000),
+    };
+    
+    if (newTransaction.type === 'send') {
+      transaction.amount = newTransaction.amount;
+      transaction.destination = newTransaction.destination;
+    } else if (newTransaction.type === 'contract') {
+      transaction.contractInteraction = {
+        method: newTransaction.contractMethod || '',
+        params: newTransaction.contractParams || ''
+      };
+    }
+    
+    setTransactions([transaction, ...transactions]);
+    
+    // Reset form
+    setNewTransaction({
+      type: 'send',
+      description: '',
+      destination: '',
+      amount: '',
+      contractMethod: '',
+      contractParams: ''
+    });
+  };
+  
+  const signTransaction = (txId: string) => {
+    setTransactions(transactions.map(tx => {
+      if (tx.id === txId && tx.status === 'pending') {
+        return {
+          ...tx,
+          currentSignatures: tx.currentSignatures + 1,
+          signers: [...tx.signers, vaultSigners[0].address],
+          status: tx.currentSignatures + 1 >= tx.requiredSignatures ? 'approved' : 'pending'
+        };
+      }
+      return tx;
+    }));
+  };
+  
+  const executeTransaction = (txId: string) => {
+    setTransactions(transactions.map(tx => {
+      if (tx.id === txId && tx.status === 'approved') {
+        return {
+          ...tx,
+          status: 'executed',
+          timeExecuted: new Date()
+        };
+      }
+      return tx;
+    }));
+    
+    // In a real app, we would update the assets based on the transaction
+    // For this demo, we'll simulate a transfer if it's a send transaction
+    const tx = transactions.find(t => t.id === txId);
+    if (tx?.type === 'send' && tx.amount && tx.destination) {
+      // Parse amount (just for the demo)
+      const [value, symbol] = tx.amount.split(' ');
+      const numValue = parseFloat(value.replace(/,/g, ''));
+      
+      if (symbol === 'ETH') {
+        setAssets(assets.map(asset => {
+          if (asset.symbol === 'ETH') {
+            return {
+              ...asset,
+              amount: (parseFloat(asset.amount.replace(/,/g, '')) - numValue).toString(),
+              valueUSD: asset.valueUSD - (numValue * 3000) // simplified price calc
+            };
+          }
+          return asset;
+        }));
+      }
+    }
+  };
+  
+  const rejectTransaction = (txId: string) => {
+    setTransactions(transactions.map(tx => {
+      if (tx.id === txId && (tx.status === 'pending' || tx.status === 'approved')) {
+        return {
+          ...tx,
+          status: 'rejected'
+        };
+      }
+      return tx;
+    }));
+  };
+  
+  const getTransactionStatusBadge = (status: Transaction['status']) => {
+    switch (status) {
+      case 'pending':
+        return <Badge variant="outline" className="bg-orange-900/30 text-orange-400 border-orange-800">Pending</Badge>;
+      case 'approved':
+        return <Badge variant="outline" className="bg-blue-900/30 text-blue-400 border-blue-800">Approved</Badge>;
+      case 'rejected':
+        return <Badge variant="outline" className="bg-red-900/30 text-red-400 border-red-800">Rejected</Badge>;
+      case 'executed':
+        return <Badge variant="outline" className="bg-green-900/30 text-green-400 border-green-800">Executed</Badge>;
+      case 'expired':
+        return <Badge variant="outline" className="bg-gray-700 text-gray-400 border-gray-600">Expired</Badge>;
+      default:
+        return null;
+    }
+  };
+  
+  const getTimeRemaining = (expirationTime: Date) => {
+    const now = new Date();
+    if (expirationTime < now) return 'Expired';
+    
+    const diffMs = expirationTime.getTime() - now.getTime();
+    const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+    const diffHrs = Math.floor((diffMs % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+    
+    if (diffDays > 0) {
+      return `${diffDays}d ${diffHrs}h`;
+    } else {
+      return `${diffHrs}h`;
+    }
+  };
+  
+  // UI for creating a multi-signature vault
+  const renderCreationUI = () => {
+    return (
+      <div className="space-y-8">
+        <div className="space-y-2">
+          <h2 className="text-2xl font-bold text-white">Create Multi-Signature Vault</h2>
+          <p className="text-gray-400">
+            Configure advanced security settings for your multi-signature vault
+          </p>
+        </div>
+        
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="md:col-span-2 space-y-6">
+            <Card className="bg-black/40 border-gray-800">
+              <CardHeader>
+                <CardTitle className="flex items-center">
+                  <Shield className="w-5 h-5 mr-2 text-[#3F51FF]" />
+                  Vault Configuration
+                </CardTitle>
+                <CardDescription>Set up your multi-signature vault parameters</CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="space-y-2">
+                  <Label htmlFor="vault-name">Vault Name</Label>
+                  <Input 
+                    id="vault-name" 
+                    value={name} 
+                    onChange={e => setName(e.target.value)} 
+                    placeholder="Strategic Treasury Vault"
+                    className="bg-black/40 border-gray-700"
+                  />
+                </div>
+                
+                <div className="space-y-2">
+                  <Label htmlFor="vault-description">Description (optional)</Label>
+                  <Textarea 
+                    id="vault-description" 
+                    value={description} 
+                    onChange={e => setDescription(e.target.value)} 
+                    placeholder="Purpose and usage guidelines for this vault"
+                    className="bg-black/40 border-gray-700 min-h-[80px]"
+                  />
+                </div>
+                
+                <div className="space-y-2">
+                  <Label>Blockchain</Label>
+                  <Select value={selectedBlockchain.toString()} onValueChange={(value) => setSelectedBlockchain(Number(value) as BlockchainType)}>
+                    <SelectTrigger className="bg-black/40 border-gray-700">
+                      <SelectValue placeholder="Select blockchain" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value={BlockchainType.ETHEREUM.toString()}>Ethereum</SelectItem>
+                      <SelectItem value={BlockchainType.SOLANA.toString()}>Solana</SelectItem>
+                      <SelectItem value={BlockchainType.TON.toString()}>TON</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                
+                <div className="space-y-2">
+                  <Label>Time Lock (days)</Label>
+                  <div className="flex items-center space-x-4">
+                    <Slider
+                      value={[timelockDays]}
+                      min={0}
+                      max={365}
+                      step={1}
+                      onValueChange={(values) => setTimelockDays(values[0])}
+                      className="flex-1"
+                    />
+                    <span className="text-sm w-16 text-right">
+                      {timelockDays} days
+                    </span>
+                  </div>
+                  <p className="text-xs text-gray-500">
+                    Assets will be locked for {timelockDays} days after vault creation
+                    {timelockDays > 0 && ` (until ${new Date(Date.now() + timelockDays * 24 * 60 * 60 * 1000).toLocaleDateString()})`}
+                  </p>
+                </div>
+              </CardContent>
+            </Card>
+            
+            <Card className="bg-black/40 border-gray-800">
+              <CardHeader>
+                <CardTitle className="flex items-center">
+                  <Users className="w-5 h-5 mr-2 text-[#3F51FF]" />
+                  Signers Configuration
+                </CardTitle>
+                <CardDescription>Add and manage vault signers</CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="flex justify-between items-center">
+                  <div className="space-y-1">
+                    <Label>Required Signatures</Label>
+                    <p className="text-xs text-gray-500">
+                      Number of signers required to approve transactions
+                    </p>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <Button 
+                      variant="outline" 
+                      size="sm"
+                      onClick={() => setSignersThreshold(Math.max(1, signersThreshold - 1))}
+                      disabled={signersThreshold <= 1}
+                      className="h-8 w-8 p-0"
+                    >
+                      -
+                    </Button>
+                    <span className="text-lg font-bold w-8 text-center">{signersThreshold}</span>
+                    <Button 
+                      variant="outline" 
+                      size="sm"
+                      onClick={() => setSignersThreshold(Math.min(vaultSigners.length, signersThreshold + 1))}
+                      disabled={signersThreshold >= vaultSigners.length}
+                      className="h-8 w-8 p-0"
+                    >
+                      +
+                    </Button>
+                  </div>
+                </div>
+                
+                <div className="pt-2">
+                  <Label className="mb-3 block">Signers</Label>
+                  <div className="space-y-3">
+                    {vaultSigners.map((signer) => (
+                      <div 
+                        key={signer.id} 
+                        className="flex items-center justify-between p-3 bg-black/40 rounded-md border border-gray-800"
+                      >
+                        <div className="flex items-center space-x-3">
+                          <div className="bg-[#3F51FF]/20 p-2 rounded-full">
+                            <Users className="h-4 w-4 text-[#3F51FF]" />
+                          </div>
+                          <div>
+                            <div className="font-medium">{signer.name}</div>
+                            <div className="text-xs text-gray-500 font-mono">{signer.address}</div>
+                          </div>
+                        </div>
+                        <div className="flex items-center space-x-3">
+                          {signer.role === 'owner' ? (
+                            <Badge variant="outline" className="bg-purple-900/30 text-purple-400 border-purple-800">Owner</Badge>
+                          ) : (
+                            <Badge variant="outline" className="bg-blue-900/30 text-blue-400 border-blue-800">Signer</Badge>
+                          )}
+                          
+                          {signer.role !== 'owner' && (
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => removeSigner(signer.id)}
+                              className="h-8 w-8 p-0 text-gray-400 hover:text-white"
+                            >
+                              <XCircle className="h-4 w-4" />
+                            </Button>
+                          )}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+                
+                <div className="pt-2">
+                  <Label>Add New Signer</Label>
+                  <div className="grid grid-cols-12 gap-3 mt-2">
+                    <div className="col-span-5">
+                      <Input 
+                        placeholder="Name or organization" 
+                        value={newSignerName}
+                        onChange={e => setNewSignerName(e.target.value)}
+                        className="bg-black/40 border-gray-700"
+                      />
+                    </div>
+                    <div className="col-span-5">
+                      <Input 
+                        placeholder="Wallet address" 
+                        value={newSignerAddress}
+                        onChange={e => setNewSignerAddress(e.target.value)}
+                        className="bg-black/40 border-gray-700 font-mono"
+                      />
+                    </div>
+                    <div className="col-span-2">
+                      <Button 
+                        onClick={addSigner}
+                        disabled={!newSignerAddress || !newSignerName}
+                        className="w-full bg-[#3F51FF] hover:bg-[#3F51FF]/80"
+                      >
+                        Add
+                      </Button>
+                    </div>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+            
+            <Card className="bg-black/40 border-gray-800">
+              <CardHeader>
+                <CardTitle className="flex items-center">
+                  <Lock className="w-5 h-5 mr-2 text-[#3F51FF]" />
+                  Security Settings
+                </CardTitle>
+                <CardDescription>Configure advanced security features</CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="flex items-center justify-between">
+                  <div className="space-y-0.5">
+                    <Label className="text-sm">Hardware Key Authentication</Label>
+                    <p className="text-xs text-gray-500">
+                      Require hardware security keys (Ledger, Trezor, YubiKey)
+                    </p>
+                  </div>
+                  <Switch 
+                    checked={enableHardwareKey}
+                    onCheckedChange={setEnableHardwareKey}
+                  />
+                </div>
+                
+                <div className="flex items-center justify-between">
+                  <div className="space-y-0.5">
+                    <Label className="text-sm">QR Code Signature</Label>
+                    <p className="text-xs text-gray-500">
+                      Enable air-gapped signing via QR codes
+                    </p>
+                  </div>
+                  <Switch 
+                    checked={enableQRSignature}
+                    onCheckedChange={setEnableQRSignature}
+                  />
+                </div>
+                
+                <div className="flex items-center justify-between">
+                  <div className="space-y-0.5">
+                    <Label className="text-sm">Biometric Authentication</Label>
+                    <p className="text-xs text-gray-500">
+                      Use fingerprint or facial recognition for additional verification
+                    </p>
+                  </div>
+                  <Switch 
+                    checked={enableBiometrics}
+                    onCheckedChange={setEnableBiometrics}
+                  />
+                </div>
+                
+                <div className="flex items-center justify-between">
+                  <div className="space-y-0.5">
+                    <Label className="text-sm">Social Recovery</Label>
+                    <p className="text-xs text-gray-500">
+                      Allow recovery of the vault using a guardian committee
+                    </p>
+                  </div>
+                  <Switch 
+                    checked={enableRecovery}
+                    onCheckedChange={setEnableRecovery}
+                  />
+                </div>
+                
+                <div className="flex items-center justify-between">
+                  <div className="space-y-0.5">
+                    <Label className="text-sm">End-to-End Encryption</Label>
+                    <p className="text-xs text-gray-500">
+                      Encrypt off-chain data and communication between signers
+                    </p>
+                  </div>
+                  <Switch 
+                    checked={enableEncryption}
+                    onCheckedChange={setEnableEncryption}
+                  />
+                </div>
+                
+                <div className="flex items-center justify-between">
+                  <div className="space-y-0.5">
+                    <Label className="text-sm">Activity Notifications</Label>
+                    <p className="text-xs text-gray-500">
+                      Send notifications for all vault activity
+                    </p>
+                  </div>
+                  <Switch 
+                    checked={activityNotifications}
+                    onCheckedChange={setActivityNotifications}
+                  />
+                </div>
+                
+                <div className="pt-2">
+                  <Label className="mb-2 block">Transaction Expiration (days)</Label>
+                  <div className="flex items-center space-x-4">
+                    <Slider
+                      value={[transactionExpiry]}
+                      min={1}
+                      max={30}
+                      step={1}
+                      onValueChange={(values) => setTransactionExpiry(values[0])}
+                      className="flex-1"
+                    />
+                    <span className="text-sm w-16 text-right">
+                      {transactionExpiry} days
+                    </span>
+                  </div>
+                  <p className="text-xs text-gray-500 mt-1">
+                    Transactions will expire if not approved within {transactionExpiry} days
+                  </p>
+                </div>
+                
+                <div className="pt-2">
+                  <Label className="mb-2 block">Gas Settings</Label>
+                  <Select value={gasSettings} onValueChange={setGasSettings}>
+                    <SelectTrigger className="bg-black/40 border-gray-700">
+                      <SelectValue placeholder="Select gas strategy" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="automatic">Automatic (Recommended)</SelectItem>
+                      <SelectItem value="fast">Fast Priority</SelectItem>
+                      <SelectItem value="medium">Medium Priority</SelectItem>
+                      <SelectItem value="slow">Low Priority</SelectItem>
+                      <SelectItem value="custom">Custom</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+          
+          <div>
+            <div className="sticky top-6 space-y-6">
+              <Card className="bg-black/40 border-gray-800">
+                <CardHeader>
+                  <CardTitle>Creation Progress</CardTitle>
+                  <CardDescription>Complete all required fields</CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-6">
+                  <div className="space-y-2">
+                    <div className="flex justify-between text-sm">
+                      <span>Overall Progress</span>
+                      <span>{getCurrentProgress()}%</span>
+                    </div>
+                    <Progress value={getCurrentProgress()} />
+                  </div>
+                  
+                  <div className="space-y-3">
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm">Vault Name</span>
+                      {name.length > 0 ? (
+                        <CheckCircle2 className="h-4 w-4 text-green-500" />
+                      ) : (
+                        <AlertCircle className="h-4 w-4 text-gray-500" />
+                      )}
+                    </div>
+                    
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm">Signers (min. 2)</span>
+                      {vaultSigners.length >= 2 ? (
+                        <CheckCircle2 className="h-4 w-4 text-green-500" />
+                      ) : (
+                        <AlertCircle className="h-4 w-4 text-gray-500" />
+                      )}
+                    </div>
+                    
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm">Signature Threshold</span>
+                      {signersThreshold > 0 && signersThreshold <= vaultSigners.length ? (
+                        <CheckCircle2 className="h-4 w-4 text-green-500" />
+                      ) : (
+                        <AlertCircle className="h-4 w-4 text-gray-500" />
+                      )}
+                    </div>
+                    
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm">Vault Description</span>
+                      {description.length > 0 ? (
+                        <CheckCircle2 className="h-4 w-4 text-green-500" />
+                      ) : (
+                        <AlertCircle className="h-4 w-4 text-gray-500" />
+                      )}
+                    </div>
+                    
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm">Recovery Settings</span>
+                      {enableRecovery ? (
+                        <CheckCircle2 className="h-4 w-4 text-green-500" />
+                      ) : (
+                        <AlertCircle className="h-4 w-4 text-gray-500" />
+                      )}
+                    </div>
+                  </div>
+                </CardContent>
+                <CardFooter>
+                  <Button 
+                    onClick={handleCreateVault}
+                    disabled={getCurrentProgress() < 100}
+                    className="w-full bg-[#3F51FF] hover:bg-[#3F51FF]/80"
+                  >
+                    Create Vault
+                  </Button>
+                </CardFooter>
+              </Card>
+              
+              <Card className="bg-black/40 border-gray-800">
+                <CardHeader>
+                  <CardTitle>Security Rating</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm">Overall Security</span>
+                    <span className="text-sm font-bold text-green-500">A+</span>
+                  </div>
+                  <Progress value={95} className="bg-gray-800" />
+                  
+                  <div className="space-y-2 pt-2">
+                    <div className="flex items-center space-x-2">
+                      <Shield className="h-4 w-4 text-green-500" />
+                      <span className="text-xs text-gray-300">Multi-signature security</span>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <Clock className="h-4 w-4 text-green-500" />
+                      <span className="text-xs text-gray-300">Time-lock protection</span>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <Fingerprint className="h-4 w-4 text-gray-500" />
+                      <span className="text-xs text-gray-500">Biometric verification (optional)</span>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <Key className="h-4 w-4 text-green-500" />
+                      <span className="text-xs text-gray-300">Hardware key authentication</span>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  };
+  
+  // UI for managing an existing vault
+  const renderManagementUI = () => {
+    const totalAssetsValue = assets.reduce((total, asset) => total + asset.valueUSD, 0);
+    
+    return (
+      <div className="space-y-8">
+        <div className="flex items-center justify-between">
+          <div>
+            <h2 className="text-2xl font-bold text-white">{name}</h2>
+            <p className="text-gray-400">{description || "Multi-signature vault"}</p>
+          </div>
+          <div className="flex items-center space-x-2">
+            <Button variant="outline" className="space-x-2">
+              <Shield className="h-4 w-4" />
+              <span>Security</span>
+            </Button>
+            <Button variant="outline" className="space-x-2">
+              <Users className="h-4 w-4" />
+              <span>Signers</span>
+            </Button>
+            <Dialog>
+              <DialogTrigger asChild>
+                <Button className="bg-[#3F51FF] hover:bg-[#3F51FF]/80 space-x-2">
+                  <RotateCw className="h-4 w-4" />
+                  <span>New Transaction</span>
+                </Button>
+              </DialogTrigger>
+              <DialogContent className="sm:max-w-[425px] bg-gray-900 border-gray-800">
+                <DialogHeader>
+                  <DialogTitle>Create New Transaction</DialogTitle>
+                  <DialogDescription>
+                    This transaction will require {signersThreshold} out of {vaultSigners.length} signatures.
+                  </DialogDescription>
+                </DialogHeader>
+                <div className="space-y-4 py-4">
+                  <div className="space-y-2">
+                    <Label>Transaction Type</Label>
+                    <Select 
+                      value={newTransaction.type}
+                      onValueChange={(value) => setNewTransaction({...newTransaction, type: value})}
+                    >
+                      <SelectTrigger className="bg-black/40 border-gray-700">
+                        <SelectValue placeholder="Select transaction type" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="send">Send Assets</SelectItem>
+                        <SelectItem value="contract">Contract Interaction</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  
+                  <div className="space-y-2">
+                    <Label>Description</Label>
+                    <Input 
+                      value={newTransaction.description}
+                      onChange={(e) => setNewTransaction({...newTransaction, description: e.target.value})}
+                      placeholder="Purpose of this transaction"
+                      className="bg-black/40 border-gray-700"
+                    />
+                  </div>
+                  
+                  {newTransaction.type === 'send' && (
+                    <>
+                      <div className="space-y-2">
+                        <Label>Destination Address</Label>
+                        <Input 
+                          value={newTransaction.destination}
+                          onChange={(e) => setNewTransaction({...newTransaction, destination: e.target.value})}
+                          placeholder="0x..."
+                          className="bg-black/40 border-gray-700 font-mono"
+                        />
+                      </div>
+                      
+                      <div className="space-y-2">
+                        <Label>Amount</Label>
+                        <Input 
+                          value={newTransaction.amount}
+                          onChange={(e) => setNewTransaction({...newTransaction, amount: e.target.value})}
+                          placeholder="1.5 ETH"
+                          className="bg-black/40 border-gray-700"
+                        />
+                      </div>
+                    </>
+                  )}
+                  
+                  {newTransaction.type === 'contract' && (
+                    <>
+                      <div className="space-y-2">
+                        <Label>Method</Label>
+                        <Input 
+                          value={newTransaction.contractMethod}
+                          onChange={(e) => setNewTransaction({...newTransaction, contractMethod: e.target.value})}
+                          placeholder="updateTimeLock"
+                          className="bg-black/40 border-gray-700"
+                        />
+                      </div>
+                      
+                      <div className="space-y-2">
+                        <Label>Parameters (JSON)</Label>
+                        <Textarea 
+                          value={newTransaction.contractParams}
+                          onChange={(e) => setNewTransaction({...newTransaction, contractParams: e.target.value})}
+                          placeholder='{ "timeout": 1209600 }'
+                          className="bg-black/40 border-gray-700 min-h-[80px] font-mono text-sm"
+                        />
+                      </div>
+                    </>
+                  )}
+                </div>
+                <DialogFooter>
+                  <Button 
+                    onClick={submitTransaction}
+                    className="bg-[#3F51FF] hover:bg-[#3F51FF]/80"
+                  >
+                    Submit Transaction
+                  </Button>
+                </DialogFooter>
+              </DialogContent>
+            </Dialog>
+          </div>
+        </div>
+        
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <div className="lg:col-span-2">
+            <Tabs defaultValue="transactions" className="w-full">
+              <TabsList className="grid grid-cols-3 bg-gray-800/50">
+                <TabsTrigger value="transactions">Transactions</TabsTrigger>
+                <TabsTrigger value="assets">Assets</TabsTrigger>
+                <TabsTrigger value="history">History</TabsTrigger>
+              </TabsList>
+              
+              <TabsContent value="transactions" className="space-y-4 mt-4">
+                <Card className="bg-black/40 border-gray-800">
+                  <CardHeader>
+                    <CardTitle>Pending Transactions</CardTitle>
+                    <CardDescription>
+                      Transactions awaiting signatures - {transactionExpiry} day expiration period
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="space-y-4">
+                      {transactions.filter(tx => tx.status === 'pending' || tx.status === 'approved').length > 0 ? (
+                        transactions
+                          .filter(tx => tx.status === 'pending' || tx.status === 'approved')
+                          .map(transaction => (
+                            <div 
+                              key={transaction.id} 
+                              className="p-4 bg-black/50 border border-gray-800 rounded-lg space-y-3"
+                            >
+                              <div className="flex justify-between items-start">
+                                <div className="space-y-1">
+                                  <h4 className="font-medium">{transaction.description}</h4>
+                                  <div className="flex items-center space-x-2 text-xs text-gray-500">
+                                    <span>Created {new Date(transaction.timeCreated).toLocaleDateString()}</span>
+                                    <span>•</span>
+                                    <span>By {transaction.creator.slice(0, 6)}...{transaction.creator.slice(-4)}</span>
+                                  </div>
+                                </div>
+                                <div className="flex items-center space-x-2">
+                                  {getTransactionStatusBadge(transaction.status)}
+                                  <div className="text-xs bg-gray-800 px-2 py-1 rounded-md flex items-center">
+                                    <Clock10 className="h-3 w-3 mr-1" />
+                                    <span>{getTimeRemaining(transaction.expirationTime)}</span>
+                                  </div>
+                                </div>
+                              </div>
+                              
+                              <div className="bg-black/40 p-3 rounded-md space-y-2">
+                                {transaction.type === 'send' && (
+                                  <div className="flex justify-between text-sm">
+                                    <div className="text-gray-400">Send</div>
+                                    <div className="font-medium">
+                                      {transaction.amount} to {transaction.destination?.slice(0, 6)}...{transaction.destination?.slice(-4)}
+                                    </div>
+                                  </div>
+                                )}
+                                
+                                {transaction.type === 'contract' && transaction.contractInteraction && (
+                                  <div className="flex flex-col space-y-1">
+                                    <div className="flex justify-between text-sm">
+                                      <div className="text-gray-400">Method</div>
+                                      <div className="font-medium">{transaction.contractInteraction.method}</div>
+                                    </div>
+                                    <div className="flex justify-between text-sm">
+                                      <div className="text-gray-400">Parameters</div>
+                                      <div className="font-mono text-xs overflow-hidden text-ellipsis">{transaction.contractInteraction.params}</div>
+                                    </div>
+                                  </div>
+                                )}
+                              </div>
+                              
+                              <div className="pt-1">
+                                <div className="flex items-center justify-between">
+                                  <div className="text-sm flex items-center space-x-1">
+                                    <span>Signatures:</span>
+                                    <span className="font-medium">{transaction.currentSignatures}/{transaction.requiredSignatures}</span>
+                                  </div>
+                                  <div className="flex space-x-2">
+                                    {transaction.status === 'pending' && !transaction.signers.includes(vaultSigners[0].address) && (
+                                      <Button 
+                                        size="sm" 
+                                        onClick={() => signTransaction(transaction.id)}
+                                        className="bg-[#3F51FF] hover:bg-[#3F51FF]/80"
+                                      >
+                                        Sign
+                                      </Button>
+                                    )}
+                                    
+                                    {transaction.status === 'approved' && (
+                                      <Button 
+                                        size="sm" 
+                                        onClick={() => executeTransaction(transaction.id)}
+                                        className="bg-green-600 hover:bg-green-700"
+                                      >
+                                        Execute
+                                      </Button>
+                                    )}
+                                    
+                                    <Button 
+                                      size="sm" 
+                                      variant="outline"
+                                      onClick={() => rejectTransaction(transaction.id)}
+                                      className="text-red-500 border-red-900/50 hover:bg-red-950/30"
+                                    >
+                                      Reject
+                                    </Button>
+                                  </div>
+                                </div>
+                                <Progress 
+                                  value={(transaction.currentSignatures / transaction.requiredSignatures) * 100} 
+                                  className="h-1 mt-2"
+                                />
+                              </div>
+                            </div>
+                          ))
+                      ) : (
+                        <div className="text-center py-8 text-gray-500">
+                          <FileLock2 className="h-12 w-12 mx-auto mb-4 text-gray-700" />
+                          <p>No pending transactions</p>
+                        </div>
+                      )}
+                    </div>
+                  </CardContent>
+                </Card>
+              </TabsContent>
+              
+              <TabsContent value="assets" className="space-y-4 mt-4">
+                <Card className="bg-black/40 border-gray-800">
+                  <CardHeader>
+                    <CardTitle>Vault Assets</CardTitle>
+                    <CardDescription>
+                      Total value: ${totalAssetsValue.toLocaleString()}
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <Table>
+                      <TableHeader>
+                        <TableRow className="border-gray-800">
+                          <TableHead>Asset</TableHead>
+                          <TableHead>Amount</TableHead>
+                          <TableHead className="text-right">Value (USD)</TableHead>
+                        </TableRow>
+                      </TableHeader>
+                      <TableBody>
+                        {assets.map((asset) => (
+                          <TableRow key={asset.symbol} className="border-gray-800">
+                            <TableCell className="font-medium">
+                              <div className="flex items-center space-x-2">
+                                <div className="bg-gray-800 p-2 rounded-full">
+                                  <i className={`${asset.icon} text-lg`}></i>
+                                </div>
+                                <div>
+                                  <div>{asset.name}</div>
+                                  <div className="text-xs text-gray-500">{asset.symbol}</div>
+                                </div>
+                              </div>
+                            </TableCell>
+                            <TableCell>{asset.amount}</TableCell>
+                            <TableCell className="text-right">${asset.valueUSD.toLocaleString()}</TableCell>
+                          </TableRow>
+                        ))}
+                      </TableBody>
+                    </Table>
+                  </CardContent>
+                </Card>
+              </TabsContent>
+              
+              <TabsContent value="history" className="space-y-4 mt-4">
+                <Card className="bg-black/40 border-gray-800">
+                  <CardHeader>
+                    <CardTitle>Transaction History</CardTitle>
+                    <CardDescription>
+                      Complete history of executed transactions
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <Table>
+                      <TableHeader>
+                        <TableRow className="border-gray-800">
+                          <TableHead>Transaction</TableHead>
+                          <TableHead>Type</TableHead>
+                          <TableHead>Status</TableHead>
+                          <TableHead>Date</TableHead>
+                          <TableHead className="text-right">Actions</TableHead>
+                        </TableRow>
+                      </TableHeader>
+                      <TableBody>
+                        {transactions
+                          .filter(tx => tx.status === 'executed' || tx.status === 'rejected')
+                          .map((transaction) => (
+                            <TableRow key={transaction.id} className="border-gray-800">
+                              <TableCell className="font-medium">
+                                {transaction.description}
+                              </TableCell>
+                              <TableCell>
+                                {transaction.type === 'send' ? 'Transfer' : 'Contract Call'}
+                              </TableCell>
+                              <TableCell>
+                                {getTransactionStatusBadge(transaction.status)}
+                              </TableCell>
+                              <TableCell>
+                                {transaction.timeExecuted ? new Date(transaction.timeExecuted).toLocaleDateString() : '-'}
+                              </TableCell>
+                              <TableCell className="text-right">
+                                <Button variant="ghost" size="sm" className="text-gray-400">
+                                  <ArrowUpRight className="h-4 w-4" />
+                                </Button>
+                              </TableCell>
+                            </TableRow>
+                          ))}
+                      </TableBody>
+                    </Table>
+                    
+                    {transactions.filter(tx => tx.status === 'executed' || tx.status === 'rejected').length === 0 && (
+                      <div className="text-center py-8 text-gray-500">
+                        <FileText className="h-12 w-12 mx-auto mb-4 text-gray-700" />
+                        <p>No transaction history yet</p>
+                      </div>
+                    )}
+                  </CardContent>
+                </Card>
+              </TabsContent>
+            </Tabs>
+          </div>
+          
+          <div className="space-y-6">
+            <Card className="bg-black/40 border-gray-800">
+              <CardHeader>
+                <CardTitle>Vault Overview</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="bg-black/40 p-4 rounded-lg border border-gray-800">
+                  <div className="text-gray-400 text-sm mb-1">Total Value</div>
+                  <div className="text-2xl font-bold">${totalAssetsValue.toLocaleString()}</div>
+                </div>
+                
+                <div className="pt-2 space-y-3">
+                  <div className="flex justify-between items-center">
+                    <div className="flex items-center space-x-2">
+                      <Users className="h-4 w-4 text-gray-400" />
+                      <span className="text-sm">Signers</span>
+                    </div>
+                    <span className="text-sm font-medium">{vaultSigners.length}</span>
+                  </div>
+                  
+                  <div className="flex justify-between items-center">
+                    <div className="flex items-center space-x-2">
+                      <Shield className="h-4 w-4 text-gray-400" />
+                      <span className="text-sm">Required Signatures</span>
+                    </div>
+                    <span className="text-sm font-medium">{signersThreshold} of {vaultSigners.length}</span>
+                  </div>
+                  
+                  <div className="flex justify-between items-center">
+                    <div className="flex items-center space-x-2">
+                      <Clock className="h-4 w-4 text-gray-400" />
+                      <span className="text-sm">Time Lock</span>
+                    </div>
+                    <span className="text-sm font-medium">
+                      {timelockDays > 0 ? `${timelockDays} days` : 'None'}
+                    </span>
+                  </div>
+                  
+                  <div className="flex justify-between items-center">
+                    <div className="flex items-center space-x-2">
+                      <Fingerprint className="h-4 w-4 text-gray-400" />
+                      <span className="text-sm">Security Level</span>
+                    </div>
+                    <Badge variant="outline" className="bg-green-900/30 text-green-400 border-green-800">Advanced</Badge>
+                  </div>
+                </div>
+                
+                <Separator className="bg-gray-800" />
+                
+                <div className="pt-2">
+                  <div className="text-sm font-medium mb-2">Active Signers</div>
+                  <div className="space-y-2 max-h-[180px] overflow-y-auto pr-2">
+                    {vaultSigners.map((signer) => (
+                      <div 
+                        key={signer.id} 
+                        className="flex items-center justify-between py-2 border-b border-gray-800 last:border-0"
+                      >
+                        <div className="flex items-center space-x-2">
+                          <div className="bg-gray-800 p-1.5 rounded-full">
+                            <Users className="h-3.5 w-3.5 text-gray-400" />
+                          </div>
+                          <div className="text-sm font-medium">{signer.name}</div>
+                        </div>
+                        {signer.role === 'owner' ? (
+                          <Badge variant="outline" className="bg-purple-900/30 text-purple-400 border-purple-800 text-xs">Owner</Badge>
+                        ) : (
+                          <Badge variant="outline" className="bg-blue-900/30 text-blue-400 border-blue-800 text-xs">Signer</Badge>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+            
+            <Card className="bg-black/40 border-gray-800">
+              <CardHeader>
+                <CardTitle>Security Status</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="flex items-center space-x-3">
+                  <div className="bg-green-500/10 p-3 rounded-full">
+                    <ShieldAlert className="h-6 w-6 text-green-500" />
+                  </div>
+                  <div>
+                    <div className="font-medium">Secure</div>
+                    <div className="text-xs text-gray-400">All security checks passed</div>
+                  </div>
+                </div>
+                
+                <div className="pt-2 space-y-3">
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm">Multi-Signature Integrity</span>
+                    <Badge variant="outline" className="bg-green-900/30 text-green-400 border-green-800">Verified</Badge>
+                  </div>
+                  
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm">Hardware Key Auth</span>
+                    <Badge variant="outline" className="bg-green-900/30 text-green-400 border-green-800">Enabled</Badge>
+                  </div>
+                  
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm">Time-Lock Protection</span>
+                    <Badge variant="outline" className="bg-green-900/30 text-green-400 border-green-800">Active</Badge>
+                  </div>
+                  
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm">Social Recovery</span>
+                    <Badge variant="outline" className="bg-green-900/30 text-green-400 border-green-800">Configured</Badge>
+                  </div>
+                  
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm">Biometric Auth</span>
+                    <Badge variant="outline" className="bg-gray-700 text-gray-400 border-gray-600">Disabled</Badge>
+                  </div>
+                </div>
+                
+                <Alert className="mt-4 bg-[#3F51FF]/10 border-[#3F51FF]/30 text-[#3F51FF]">
+                  <Shield className="h-4 w-4" />
+                  <AlertTitle>Enhanced Security Active</AlertTitle>
+                  <AlertDescription>
+                    Your vault has advanced Triple-Chain security and quantum-resistant encryption enabled.
+                  </AlertDescription>
+                </Alert>
+              </CardContent>
+            </Card>
+          </div>
+        </div>
+      </div>
+    );
+  };
+  
+  return (
+    <div className="container py-6">
+      {createMode ? renderCreationUI() : renderManagementUI()}
+    </div>
+  );
+}
