@@ -11,7 +11,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { AlertCircle, CheckCircle, AlertTriangle, RefreshCw, Server, Shield, Clock } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { apiRequest, queryClient } from '@/lib/queryClient';
-import { useDevMode } from '@/hooks/use-dev-mode';
+import { useDevMode } from '@/contexts/dev-mode-context';
 
 export interface ChainHealthStatus {
   chain: string;
