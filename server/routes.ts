@@ -11,6 +11,7 @@ import incidentRoutes from './api/incident-routes';
 import paymentRoutes from './api/payment-routes';
 import vaultVerificationRoutes, { initializeVaultVerification } from './api/vault-verification-routes';
 import chainAgnosticVerificationRoutes, { initializeChainAgnosticVerification } from './api/chain-agnostic-verification-routes';
+import multiChainStateSyncRoutes, { initializeMultiChainSync } from './api/multi-chain-state-sync-routes';
 import { intentInheritanceRouter } from './api/intent-inheritance-routes';
 import progressiveQuantumVaultRoutes from './api/progressive-quantum-vault-routes';
 import vaultsRoutes from './api/vaults-routes';
@@ -62,6 +63,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Initialize and register chain-agnostic verification routes
   const chainAgnosticVerifier = initializeChainAgnosticVerification(connectorFactory);
   apiRouter.use('/chain-agnostic-verification', chainAgnosticVerificationRoutes);
+  
+  // Initialize and register multi-chain state synchronization routes
+  const multiChainSyncService = initializeMultiChainSync(connectorFactory);
+  apiRouter.use('/multi-chain-sync', multiChainStateSyncRoutes);
   
   // Add event listeners for verification status updates
   crossChainVerification.on('verification:completed', (result) => {
