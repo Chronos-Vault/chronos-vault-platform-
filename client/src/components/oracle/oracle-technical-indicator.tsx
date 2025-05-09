@@ -1,310 +1,245 @@
-import { useEffect, useState } from 'react';
-import { 
-  Card, 
-  CardContent, 
-  CardDescription, 
-  CardHeader, 
-  CardTitle 
-} from "@/components/ui/card";
+import React from 'react';
 import { Badge } from "@/components/ui/badge";
-import { Separator } from "@/components/ui/separator";
-import { TrendingUp, TrendingDown, Activity, RotateCcw, AlertCircle } from "lucide-react";
-import { BlockchainType } from '@/contexts/multi-chain-context';
-import { chainlinkOracleService, TechnicalIndicatorData } from '@/services/chainlink-oracle-service';
+import { cn } from "@/lib/utils";
+import { TrendingUp, TrendingDown, LineChart, HelpCircle, Info } from "lucide-react";
+import { TechnicalIndicator } from '@/services/chainlink-oracle-service';
 
 interface OracleTechnicalIndicatorProps {
-  asset: string;
-  indicator: 'ma' | 'rsi' | 'macd' | 'volume';
-  period: number;
-  secondaryPeriod?: number;
-  signalPeriod?: number;
-  blockchain: BlockchainType;
-  refreshInterval?: number; // In milliseconds
+  indicator?: TechnicalIndicator;
+  secondaryIndicator?: TechnicalIndicator;
+  isLoading?: boolean;
+  type: TechnicalIndicator['type'];
 }
 
 export function OracleTechnicalIndicator({ 
-  asset, 
   indicator, 
-  period,
-  secondaryPeriod,
-  signalPeriod,
-  blockchain, 
-  refreshInterval = 30000, // Default 30 seconds
+  secondaryIndicator,
+  isLoading = false, 
+  type 
 }: OracleTechnicalIndicatorProps) {
-  const [indicatorData, setIndicatorData] = useState<TechnicalIndicatorData | null>(null);
-  const [loading, setLoading] = useState<boolean>(true);
-  const [error, setError] = useState<string | null>(null);
+  // Helper functions
+  const formatValue = (value?: number): string => {
+    if (value === undefined) return 'N/A';
+    
+    if (type === 'RSI') {
+      return value.toFixed(2);
+    }
+    
+    if (type === 'MACD') {
+      return value.toFixed(2);
+    }
+    
+    if (type === 'MA' || type === 'EMA') {
+      return new Intl.NumberFormat('en-US', { 
+        style: 'currency', 
+        currency: 'USD',
+        minimumFractionDigits: 0,
+        maximumFractionDigits: 0
+      }).format(value);
+    }
+    
+    return value.toFixed(2);
+  };
   
-  // Get indicator name and description
-  const getIndicatorInfo = () => {
-    switch(indicator) {
-      case 'ma':
-        return {
-          name: `${period}-Day Moving Average`,
-          description: 'Average price over the specified period',
-          threshold: 0 // No specific threshold
-        };
-      case 'rsi':
-        return {
-          name: `RSI (${period})`,
-          description: 'Relative Strength Index',
-          threshold: 70 // Overbought threshold
-        };
-      case 'macd':
-        return {
-          name: `MACD (${period}/${secondaryPeriod}/${signalPeriod})`,
-          description: 'Moving Average Convergence Divergence',
-          threshold: 0 // Signal line crossover
-        };
-      case 'volume':
-        return {
-          name: 'Volume',
-          description: 'Trading volume relative to average',
-          threshold: 150 // High volume threshold (% of average)
-        };
+  const formatUpdateTime = (timestamp?: number): string => {
+    if (!timestamp) return 'N/A';
+    
+    const date = new Date(timestamp);
+    const now = new Date();
+    const diffMs = now.getTime() - date.getTime();
+    const diffSecs = Math.round(diffMs / 1000);
+    
+    if (diffSecs < 60) return `${diffSecs} seconds ago`;
+    if (diffSecs < 3600) return `${Math.floor(diffSecs / 60)} minutes ago`;
+    if (diffSecs < 86400) return `${Math.floor(diffSecs / 3600)} hours ago`;
+    return `${Math.floor(diffSecs / 86400)} days ago`;
+  };
+  
+  // Get display name based on indicator type
+  const getIndicatorName = (): string => {
+    switch (type) {
+      case 'RSI':
+        return 'Relative Strength Index';
+      case 'MACD':
+        return 'MACD';
+      case 'MA':
+        return 'Moving Average';
+      case 'EMA':
+        return 'Exponential MA';
+      case 'Bollinger':
+        return 'Bollinger Bands';
       default:
-        return {
-          name: 'Technical Indicator',
-          description: 'On-chain market data',
-          threshold: 0
-        };
+        return 'Technical Indicator';
     }
   };
   
-  // Format the indicator value based on type
-  const formatIndicatorValue = (value: number): string => {
-    switch(indicator) {
-      case 'ma':
-        return new Intl.NumberFormat('en-US', {
-          style: 'currency',
-          currency: 'USD',
-          minimumFractionDigits: value > 100 ? 0 : 2,
-          maximumFractionDigits: value > 100 ? 0 : value > 1 ? 2 : 4
-        }).format(value);
-      case 'rsi':
-        return value.toFixed(2);
-      case 'macd':
-        return value.toFixed(4);
-      case 'volume':
-        return `${value.toFixed(0)}%`;
-      default:
-        return value.toString();
-    }
-  };
-  
-  // Get icon and color based on indicator value
-  const getIndicatorStatus = () => {
-    const { threshold } = getIndicatorInfo();
+  // Get status badge based on indicator type and value
+  const getStatusBadge = () => {
+    if (!indicator) return null;
     
-    if (!indicatorData) {
-      return {
-        icon: <Activity className="h-4 w-4" />,
-        color: 'text-gray-400',
-        bgColor: 'bg-gray-800'
-      };
-    }
+    const status = indicator.status;
     
-    const value = indicatorData.value;
+    const getBadgeClass = () => {
+      switch (status) {
+        case 'bullish':
+          return 'bg-green-600 text-white';
+        case 'bearish':
+          return 'bg-red-600 text-white';
+        case 'neutral':
+          return 'bg-gray-600 text-white';
+        default:
+          return 'bg-gray-600 text-white';
+      }
+    };
     
-    switch(indicator) {
-      case 'rsi':
-        if (value > 70) {
-          return {
-            icon: <TrendingUp className="h-4 w-4" />,
-            color: 'text-orange-500',
-            bgColor: 'bg-orange-500/20',
-            label: 'Overbought'
-          };
-        } else if (value < 30) {
-          return {
-            icon: <TrendingDown className="h-4 w-4" />,
-            color: 'text-blue-500',
-            bgColor: 'bg-blue-500/20',
-            label: 'Oversold'
-          };
-        } else {
-          return {
-            icon: <Activity className="h-4 w-4" />,
-            color: 'text-green-500',
-            bgColor: 'bg-green-500/20',
-            label: 'Neutral'
-          };
-        }
-      case 'macd':
-        if (value > 0) {
-          return {
-            icon: <TrendingUp className="h-4 w-4" />,
-            color: 'text-green-500',
-            bgColor: 'bg-green-500/20',
-            label: 'Bullish'
-          };
-        } else {
-          return {
-            icon: <TrendingDown className="h-4 w-4" />,
-            color: 'text-red-500',
-            bgColor: 'bg-red-500/20',
-            label: 'Bearish'
-          };
-        }
-      case 'volume':
-        if (value > 150) {
-          return {
-            icon: <TrendingUp className="h-4 w-4" />,
-            color: 'text-purple-500',
-            bgColor: 'bg-purple-500/20',
-            label: 'High Volume'
-          };
-        } else if (value < 50) {
-          return {
-            icon: <TrendingDown className="h-4 w-4" />,
-            color: 'text-gray-500',
-            bgColor: 'bg-gray-500/20',
-            label: 'Low Volume'
-          };
-        } else {
-          return {
-            icon: <Activity className="h-4 w-4" />,
-            color: 'text-blue-500',
-            bgColor: 'bg-blue-500/20',
-            label: 'Normal'
-          };
-        }
-      case 'ma':
-      default:
-        return {
-          icon: <Activity className="h-4 w-4" />,
-          color: 'text-[#3F51FF]',
-          bgColor: 'bg-[#3F51FF]/20',
-          label: 'Active'
-        };
-    }
-  };
-  
-  // Fetch indicator data
-  const fetchIndicatorData = async () => {
-    try {
-      setLoading(true);
-      setError(null);
-      
-      const data = await chainlinkOracleService.getTechnicalIndicator(
-        asset, 
-        indicator, 
-        period, 
-        blockchain
-      );
-      
-      setIndicatorData(data);
-    } catch (err) {
-      console.error('Oracle indicator fetch error:', err);
-      setError('Failed to fetch indicator data');
-    } finally {
-      setLoading(false);
-    }
-  };
-  
-  // Initial fetch and refresh interval
-  useEffect(() => {
-    fetchIndicatorData();
+    const getStatusIcon = () => {
+      switch (status) {
+        case 'bullish':
+          return <TrendingUp className="h-3 w-3 mr-1" />;
+        case 'bearish':
+          return <TrendingDown className="h-3 w-3 mr-1" />;
+        default:
+          return null;
+      }
+    };
     
-    // Set up the refresh interval
-    const intervalId = setInterval(fetchIndicatorData, refreshInterval);
-    
-    // Clean up interval on unmount
-    return () => clearInterval(intervalId);
-  }, [asset, indicator, period, blockchain, refreshInterval]);
-  
-  // Indicator information
-  const indicatorInfo = getIndicatorInfo();
-  const indicatorStatus = getIndicatorStatus();
-  
-  // Handle loading state
-  if (loading && !indicatorData) {
     return (
-      <Card className="w-full bg-black/40 border-gray-800">
-        <CardHeader className="pb-2">
-          <CardTitle className="text-sm">{indicatorInfo.name}</CardTitle>
-          <CardDescription className="text-xs">
-            Loading indicator data...
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="pb-3 flex justify-center">
-          <div className="h-12 flex items-center justify-center">
-            <div className="w-6 h-6 rounded-full border-2 border-[#3F51FF] border-t-transparent animate-spin"></div>
-          </div>
-        </CardContent>
-      </Card>
+      <Badge className={cn("flex items-center", getBadgeClass())}>
+        {getStatusIcon()}
+        {status.charAt(0).toUpperCase() + status.slice(1)}
+      </Badge>
+    );
+  };
+  
+  // Get a description of what the indicator means
+  const getIndicatorDescription = (): string => {
+    if (!indicator) return '';
+    
+    switch (type) {
+      case 'RSI':
+        const rsiValue = indicator.value;
+        if (rsiValue > 70) return 'Potentially overbought';
+        if (rsiValue < 30) return 'Potentially oversold';
+        return 'Neutral market conditions';
+        
+      case 'MACD':
+        return indicator.status === 'bullish' 
+          ? 'Bullish momentum' 
+          : indicator.status === 'bearish' 
+            ? 'Bearish momentum' 
+            : 'Neutral momentum';
+        
+      case 'MA':
+        if (!secondaryIndicator) return 'Moving average price level';
+        
+        const ma1 = indicator.value;
+        const ma2 = secondaryIndicator.value;
+        
+        if (ma1 > ma2) {
+          return `${indicator.params.period}-day MA above ${secondaryIndicator.params.period}-day MA (bullish)`;
+        } else if (ma1 < ma2) {
+          return `${indicator.params.period}-day MA below ${secondaryIndicator.params.period}-day MA (bearish)`;
+        } else {
+          return 'Moving averages at similar levels';
+        }
+        
+      case 'EMA':
+        return 'Exponential moving average price level';
+        
+      default:
+        return '';
+    }
+  };
+  
+  // Get the period of the indicator
+  const getIndicatorPeriod = (): string => {
+    if (!indicator || !indicator.params.period) return '';
+    return `${indicator.params.period}-Period`;
+  };
+  
+  // Check if the indicator is "stale" (old data)
+  const isStaleData = (): boolean => {
+    if (!indicator || !indicator.timestamp) return false;
+    
+    const now = new Date();
+    const timestamp = new Date(indicator.timestamp);
+    const diffHours = (now.getTime() - timestamp.getTime()) / (1000 * 60 * 60);
+    
+    // Consider data stale if it's more than 12 hours old
+    return diffHours > 12;
+  };
+  
+  if (isLoading) {
+    return (
+      <div className="bg-black/30 border border-gray-800 rounded-lg p-4 h-32 flex items-center justify-center">
+        <div className="h-6 w-6 border-4 border-t-transparent border-indigo-500 rounded-full animate-spin"></div>
+      </div>
     );
   }
-  
-  // Handle error state
-  if (error && !indicatorData) {
+
+  if (!indicator) {
     return (
-      <Card className="w-full bg-black/40 border-gray-800">
-        <CardHeader className="pb-2">
-          <CardTitle className="text-sm">{indicatorInfo.name}</CardTitle>
-          <CardDescription className="text-xs text-red-400">
-            {error}
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="pb-3 flex justify-center">
-          <div className="h-12 flex flex-col items-center justify-center">
-            <AlertCircle className="w-5 h-5 text-red-500 mb-2" />
-            <button 
-              onClick={fetchIndicatorData} 
-              className="text-xs px-3 py-1 bg-[#3F51FF]/20 hover:bg-[#3F51FF]/30 text-[#3F51FF] rounded-full"
-            >
-              <RotateCcw className="h-3 w-3 inline mr-1" />
-              Retry
-            </button>
-          </div>
-        </CardContent>
-      </Card>
+      <div className="bg-black/30 border border-gray-800 rounded-lg p-4 h-32 flex flex-col items-center justify-center">
+        <p className="text-gray-400">No {getIndicatorName()} data available</p>
+        <p className="text-xs text-gray-500 mt-1">Select a different asset or network</p>
+      </div>
     );
   }
-  
-  // Render the indicator card
+
   return (
-    <Card className="w-full bg-black/40 border-gray-800">
-      <CardHeader className="pb-2">
-        <div className="flex items-center justify-between">
-          <CardTitle className="text-sm">{indicatorInfo.name}</CardTitle>
-          {indicatorData && indicatorStatus.label && (
-            <Badge 
-              variant="outline" 
-              className={`h-5 text-xs ${indicatorStatus.color} border-${indicatorStatus.color}`}
-            >
-              {indicatorStatus.label}
-            </Badge>
-          )}
+    <div className="bg-black/30 border border-gray-800 rounded-lg p-4">
+      <div className="flex justify-between items-start">
+        <div>
+          <div className="flex items-center text-sm text-gray-400">
+            <LineChart className="h-4 w-4 mr-1 text-indigo-400" />
+            {getIndicatorName()}
+            {getIndicatorPeriod() && (
+              <span className="ml-1 text-xs bg-gray-800 px-1.5 py-0.5 rounded">
+                {getIndicatorPeriod()}
+              </span>
+            )}
+          </div>
+          <div className="text-2xl font-semibold mt-1">
+            {formatValue(indicator.value)}
+          </div>
         </div>
-        <CardDescription className="text-xs">
-          {indicatorInfo.description}
-        </CardDescription>
-      </CardHeader>
+        
+        {getStatusBadge()}
+      </div>
       
-      <CardContent className="pb-3">
-        {indicatorData && (
-          <div className="space-y-2">
-            <div className="flex items-center">
-              <div className={`p-2 rounded-full ${indicatorStatus.bgColor} mr-3`}>
-                {indicatorStatus.icon}
-              </div>
-              <div className="text-xl font-bold tracking-tight">
-                {formatIndicatorValue(indicatorData.value)}
-              </div>
+      {secondaryIndicator && (
+        <div className="mt-2 pt-2 border-t border-gray-800">
+          <div className="flex justify-between items-center">
+            <div className="text-sm text-gray-400">
+              {secondaryIndicator.params.period}-Period
             </div>
-            
-            <Separator className="my-2 bg-gray-800" />
-            
-            <div className="flex justify-between text-xs text-gray-400">
-              <div>Lookback: {indicatorData.lookbackPeriod} days</div>
-              <div>
-                {new Date(indicatorData.timestamp).toLocaleTimeString()}
-              </div>
+            <div className="font-medium">
+              {formatValue(secondaryIndicator.value)}
             </div>
           </div>
+        </div>
+      )}
+      
+      <div className="mt-3">
+        <p className="text-xs text-gray-400 flex items-start">
+          <Info className="h-3 w-3 mr-1 mt-0.5 flex-shrink-0" />
+          {getIndicatorDescription()}
+        </p>
+      </div>
+      
+      <div className="mt-3 flex justify-between items-center text-xs text-gray-500">
+        <div className="flex items-center">
+          Updated {formatUpdateTime(indicator.timestamp)}
+        </div>
+        
+        {isStaleData() && (
+          <Badge variant="outline" className="text-amber-500 border-amber-900/50 text-xs">
+            Stale Data
+          </Badge>
         )}
-      </CardContent>
-    </Card>
+      </div>
+    </div>
   );
 }
+
+export default OracleTechnicalIndicator;

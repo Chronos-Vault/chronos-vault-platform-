@@ -1,309 +1,548 @@
 /**
  * Chainlink Oracle Service
- * 
- * This service provides an interface to interact with Chainlink oracles
- * across multiple blockchains (Ethereum, Solana, TON).
- * 
- * It supports price feeds, data feeds, and VRF (Verifiable Random Function)
- * for secure, tamper-proof data and randomness in the application.
+ *
+ * This service provides functionality to fetch and interact with Chainlink oracle data
+ * including price feeds and technical indicators.
  */
 
-import { BlockchainType } from '@/contexts/multi-chain-context';
-
-// Chainlink Price Feed addresses for different assets and networks
-const PRICE_FEED_ADDRESSES = {
-  [BlockchainType.ETHEREUM]: {
-    'BTC/USD': '0xF4030086522a5bEEa4988F8cA5B36dbC97BeE88c',
-    'ETH/USD': '0x5f4eC3Df9cbd43714FE2740f5E3616155c5b8419',
-    'LINK/USD': '0x2c1d072e956AFFC0D435Cb7AC38EF18d24d9127c',
-    'TON/USD': '0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D' // Example address
-  },
-  [BlockchainType.SOLANA]: {
-    'BTC/USD': 'GVXRSBjFk6e6J3NbVPXohDJetcTjaeeuykUpbQF8UoMU',
-    'SOL/USD': 'H6ARHf6YXhGYeQfUzQNGk6rDNnLBQKrenN712K4AQJEG',
-    'ETH/USD': 'JBu1AL4obBcCMqKBBxhpWCNUt136ijcuMZLFvTP7iWdB'
-  },
-  [BlockchainType.TON]: {
-    'TON/USD': 'EQC_1YoM8RBixN95lz7odcF3Vrkc_N8Ne7gQi7Abtlet_Ezo',
-    'BTC/USD': 'EQDZTALOCueDPYzJgUMR5hs1YL1CxFsCBnhvyJZy6H69hd_0',
-    'ETH/USD': 'EQD75im_x95-X_foLrOsca1stQTIW7O9kF3yG11cko20XCnG'
-  }
-};
-
-// Interface for oracle data responses
-export interface OracleDataResponse {
-  price: number; // Current price in USD
-  decimals: number; // Number of decimals
-  timestamp: number; // Last update timestamp
-  heartbeat: number; // Update frequency in seconds
-  sources: string[]; // Sources used for aggregation
+export interface PriceFeed {
+  id: string;
+  name: string;
+  pair: string;
+  address: string;
+  value: number;
+  decimals: number;
+  timestamp: number;
+  lastUpdate: string;
+  change24h: number;
+  deviation: number;
+  network: string;
 }
 
-export interface PriceFeedData extends OracleDataResponse {
+export interface TechnicalIndicator {
+  id: string;
+  name: string;
+  type: 'RSI' | 'MA' | 'EMA' | 'MACD' | 'Bollinger';
   asset: string;
-  change24h?: number; // 24-hour price change percentage
-  twap?: number; // Time-weighted average price
-}
-
-export interface TechnicalIndicatorData {
   value: number;
   timestamp: number;
-  lookbackPeriod: number;
-  sources: string[];
+  lastUpdate: string;
+  status: 'bullish' | 'bearish' | 'neutral';
+  confidence: number;
+  network: string;
+  timeframe: string;
+  params: Record<string, number>;
 }
 
-export interface MarketVolumeData {
-  volume24h: number;
-  volumeChange: number;
-  timestamp: number;
+export interface MarketAlert {
+  id: string;
+  type: 'price' | 'technical' | 'volume' | 'volatility';
+  assetPair: string;
+  threshold: number;
+  triggered: boolean;
+  currentValue: number;
+  direction: 'above' | 'below' | 'cross';
+  timeframe: string;
+  network: string;
 }
+
+export interface OracleNetwork {
+  id: string;
+  name: string;
+  networkType: string;
+  active: boolean;
+  lastHeartbeat: number;
+  nodeCount: number;
+  responseTime: number;
+}
+
+type Network = 'ethereum' | 'polygon' | 'solana' | 'bitcoin' | 'arbitrum' | 'optimism' | 'base';
+
+// Sample data generators
+const generatePriceFeeds = (network: Network): PriceFeed[] => {
+  const baseTimestamp = Date.now();
+  
+  const feeds: PriceFeed[] = [
+    {
+      id: 'btc-usd',
+      name: 'Bitcoin / USD',
+      pair: 'BTC/USD',
+      address: '0x5f4eC3Df9cbd43714FE2740f5E3616155c5b8419',
+      value: 102000 + Math.floor(Math.random() * 5000),
+      decimals: 8,
+      timestamp: baseTimestamp - Math.floor(Math.random() * 120000),
+      lastUpdate: new Date(baseTimestamp - Math.floor(Math.random() * 120000)).toISOString(),
+      change24h: (Math.random() * 10 - 2), // -2% to 8%
+      deviation: Math.random() * 0.5,
+      network
+    },
+    {
+      id: 'eth-usd',
+      name: 'Ethereum / USD',
+      pair: 'ETH/USD',
+      address: '0x37bC7498f4FF12C19678ee8fE19d713b87F6a9e6',
+      value: 3000 + Math.floor(Math.random() * 300),
+      decimals: 8,
+      timestamp: baseTimestamp - Math.floor(Math.random() * 120000),
+      lastUpdate: new Date(baseTimestamp - Math.floor(Math.random() * 120000)).toISOString(),
+      change24h: (Math.random() * 12 - 3), // -3% to 9%
+      deviation: Math.random() * 0.8,
+      network
+    },
+    {
+      id: 'sol-usd',
+      name: 'Solana / USD',
+      pair: 'SOL/USD',
+      address: '0x4ffC43a60e009B551865A93d232E33Fce9f01507',
+      value: 140 + Math.floor(Math.random() * 20),
+      decimals: 8,
+      timestamp: baseTimestamp - Math.floor(Math.random() * 120000),
+      lastUpdate: new Date(baseTimestamp - Math.floor(Math.random() * 120000)).toISOString(),
+      change24h: (Math.random() * 15 - 5), // -5% to 10% 
+      deviation: Math.random() * 1.2,
+      network
+    },
+    {
+      id: 'link-usd',
+      name: 'Chainlink / USD',
+      pair: 'LINK/USD',
+      address: '0x2c1d072e956AFFC0D435Cb7AC38EF18d24d9127c',
+      value: 15 + Math.random() * 3,
+      decimals: 8,
+      timestamp: baseTimestamp - Math.floor(Math.random() * 120000),
+      lastUpdate: new Date(baseTimestamp - Math.floor(Math.random() * 120000)).toISOString(),
+      change24h: (Math.random() * 20 - 8), // -8% to 12%
+      deviation: Math.random() * 1.5,
+      network
+    }
+  ];
+  
+  return feeds;
+};
+
+const generateTechnicalIndicators = (asset: string, network: Network): TechnicalIndicator[] => {
+  const baseTimestamp = Date.now();
+  
+  // RSI (Relative Strength Index)
+  const rsiValue = Math.floor(Math.random() * 100);
+  const rsiStatus = rsiValue > 70 ? 'bearish' : rsiValue < 30 ? 'bullish' : 'neutral';
+  
+  // MACD (Moving Average Convergence Divergence)
+  const macdValue = Math.random() * 200 - 100; // -100 to 100
+  const macdStatus = macdValue > 10 ? 'bullish' : macdValue < -10 ? 'bearish' : 'neutral';
+  
+  // MA (Moving Average)
+  const ma50 = 50000 + (Math.random() * 5000);
+  const ma200 = 45000 + (Math.random() * 5000);
+  const maStatus = ma50 > ma200 ? 'bullish' : ma50 < ma200 ? 'bearish' : 'neutral';
+  
+  const indicators: TechnicalIndicator[] = [
+    {
+      id: `rsi-${asset}-14`,
+      name: `RSI-14 ${asset}`,
+      type: 'RSI',
+      asset,
+      value: rsiValue,
+      timestamp: baseTimestamp - Math.floor(Math.random() * 300000),
+      lastUpdate: new Date(baseTimestamp - Math.floor(Math.random() * 300000)).toISOString(),
+      status: rsiStatus,
+      confidence: 0.7 + Math.random() * 0.3,
+      network,
+      timeframe: '1D',
+      params: { period: 14 }
+    },
+    {
+      id: `macd-${asset}`,
+      name: `MACD ${asset}`,
+      type: 'MACD',
+      asset,
+      value: macdValue,
+      timestamp: baseTimestamp - Math.floor(Math.random() * 300000),
+      lastUpdate: new Date(baseTimestamp - Math.floor(Math.random() * 300000)).toISOString(),
+      status: macdStatus,
+      confidence: 0.65 + Math.random() * 0.3,
+      network,
+      timeframe: '1D',
+      params: { fast: 12, slow: 26, signal: 9 }
+    },
+    {
+      id: `ma-50-${asset}`,
+      name: `MA-50 ${asset}`,
+      type: 'MA',
+      asset,
+      value: ma50,
+      timestamp: baseTimestamp - Math.floor(Math.random() * 300000),
+      lastUpdate: new Date(baseTimestamp - Math.floor(Math.random() * 300000)).toISOString(),
+      status: maStatus,
+      confidence: 0.6 + Math.random() * 0.3,
+      network,
+      timeframe: '1D',
+      params: { period: 50 }
+    },
+    {
+      id: `ma-200-${asset}`,
+      name: `MA-200 ${asset}`,
+      type: 'MA',
+      asset,
+      value: ma200,
+      timestamp: baseTimestamp - Math.floor(Math.random() * 300000),
+      lastUpdate: new Date(baseTimestamp - Math.floor(Math.random() * 300000)).toISOString(),
+      status: 'neutral',
+      confidence: 0.75 + Math.random() * 0.2,
+      network,
+      timeframe: '1D',
+      params: { period: 200 }
+    },
+    {
+      id: `ema-20-${asset}`,
+      name: `EMA-20 ${asset}`,
+      type: 'EMA',
+      asset,
+      value: 60000 + (Math.random() * 5000),
+      timestamp: baseTimestamp - Math.floor(Math.random() * 300000),
+      lastUpdate: new Date(baseTimestamp - Math.floor(Math.random() * 300000)).toISOString(),
+      status: Math.random() > 0.5 ? 'bullish' : 'bearish',
+      confidence: 0.7 + Math.random() * 0.25,
+      network,
+      timeframe: '1D',
+      params: { period: 20 }
+    }
+  ];
+  
+  return indicators;
+};
+
+const generateMarketAlerts = (asset: string, network: Network): MarketAlert[] => {
+  const baseTimestamp = Date.now();
+  
+  const alerts: MarketAlert[] = [
+    {
+      id: `price-alert-1-${asset}`,
+      type: 'price',
+      assetPair: `${asset}/USD`,
+      threshold: 110000,
+      triggered: Math.random() > 0.7,
+      currentValue: 105000,
+      direction: 'above',
+      timeframe: '1D',
+      network
+    },
+    {
+      id: `rsi-alert-1-${asset}`,
+      type: 'technical',
+      assetPair: `${asset}/USD`,
+      threshold: 70,
+      triggered: Math.random() > 0.8,
+      currentValue: 65,
+      direction: 'above',
+      timeframe: '4H',
+      network
+    },
+    {
+      id: `volume-alert-1-${asset}`,
+      type: 'volume',
+      assetPair: `${asset}/USD`,
+      threshold: 5000000000,
+      triggered: Math.random() > 0.9,
+      currentValue: 4800000000,
+      direction: 'above',
+      timeframe: '24H',
+      network
+    }
+  ];
+  
+  return alerts;
+};
+
+const generateNetworks = (): OracleNetwork[] => {
+  const baseTimestamp = Date.now();
+  
+  const networks: OracleNetwork[] = [
+    {
+      id: 'ethereum-1',
+      name: 'Ethereum Mainnet',
+      networkType: 'ethereum',
+      active: true,
+      lastHeartbeat: baseTimestamp - Math.floor(Math.random() * 30000),
+      nodeCount: 20 + Math.floor(Math.random() * 10),
+      responseTime: 200 + Math.floor(Math.random() * 300)
+    },
+    {
+      id: 'solana-1',
+      name: 'Solana Mainnet',
+      networkType: 'solana',
+      active: true,
+      lastHeartbeat: baseTimestamp - Math.floor(Math.random() * 30000),
+      nodeCount: 15 + Math.floor(Math.random() * 8),
+      responseTime: 100 + Math.floor(Math.random() * 200)
+    },
+    {
+      id: 'polygon-1',
+      name: 'Polygon PoS',
+      networkType: 'polygon',
+      active: true,
+      lastHeartbeat: baseTimestamp - Math.floor(Math.random() * 30000),
+      nodeCount: 18 + Math.floor(Math.random() * 7),
+      responseTime: 150 + Math.floor(Math.random() * 250)
+    },
+    {
+      id: 'arbitrum-1',
+      name: 'Arbitrum One',
+      networkType: 'arbitrum',
+      active: true,
+      lastHeartbeat: baseTimestamp - Math.floor(Math.random() * 30000),
+      nodeCount: 12 + Math.floor(Math.random() * 6),
+      responseTime: 120 + Math.floor(Math.random() * 180)
+    },
+    {
+      id: 'optimism-1',
+      name: 'Optimism',
+      networkType: 'optimism',
+      active: true,
+      lastHeartbeat: baseTimestamp - Math.floor(Math.random() * 30000),
+      nodeCount: 10 + Math.floor(Math.random() * 5),
+      responseTime: 130 + Math.floor(Math.random() * 220)
+    }
+  ];
+  
+  return networks;
+};
 
 /**
- * Chainlink Oracle Service class for interacting with oracle networks
+ * Chainlink Oracle Service
+ * This service handles all interactions with Chainlink oracles.
  */
-export class ChainlinkOracleService {
+class ChainlinkOracleService {
+  private cachedPriceFeeds: Record<string, PriceFeed[]> = {};
+  private cachedTechnicalIndicators: Record<string, TechnicalIndicator[]> = {};
+  private cachedNetworks: OracleNetwork[] | null = null;
+  private cachedAlerts: Record<string, MarketAlert[]> = {};
   
   /**
-   * Get current price for an asset from Chainlink Oracle
-   * 
-   * @param asset Asset symbol (e.g., 'BTC', 'ETH')
-   * @param blockchain Blockchain to query oracle from
-   * @returns Promise with price data
+   * Get price feeds for a specific network
    */
-  async getAssetPrice(asset: string, blockchain: BlockchainType): Promise<PriceFeedData> {
+  async getPriceFeeds(network: Network = 'ethereum'): Promise<PriceFeed[]> {
     try {
-      // In production, this would make a live call to the blockchain
-      // For development, we'll simulate the oracle response
-      
-      // In development mode, simulate a delay to mimic blockchain query
-      await new Promise(resolve => setTimeout(resolve, 500));
-      
-      // Base price data (this would come from the oracle in production)
-      let priceData: PriceFeedData = {
-        asset: asset,
-        price: 0,
-        decimals: 8,
-        timestamp: Date.now(),
-        heartbeat: 120, // 2 minutes
-        sources: [
-          'Binance',
-          'Coinbase',
-          'Kraken',
-          'Gemini',
-          'Bitstamp',
-          'Huobi',
-          'OKX',
-          'Bybit',
-          'KuCoin'
-        ],
-        change24h: 0
-      };
-      
-      // Set realistic price data based on asset 
-      switch(asset) {
-        case 'BTC':
-          priceData.price = 103750 + (Math.random() * 1000 - 500);
-          priceData.change24h = 4.2 + (Math.random() * 1 - 0.5);
-          priceData.twap = 102900;
-          break;
-        case 'ETH':
-          priceData.price = 3480 + (Math.random() * 100 - 50);
-          priceData.change24h = 3.5 + (Math.random() * 1 - 0.5);
-          priceData.twap = 3430;
-          break;
-        case 'SOL':
-          priceData.price = 168 + (Math.random() * 10 - 5);
-          priceData.change24h = 5.7 + (Math.random() * 1 - 0.5);
-          priceData.twap = 165;
-          break;
-        case 'TON':
-          priceData.price = 7.3 + (Math.random() * 0.2 - 0.1);
-          priceData.change24h = 2.1 + (Math.random() * 1 - 0.5);
-          priceData.twap = 7.2;
-          break;
-        default:
-          priceData.price = 100 + (Math.random() * 10 - 5);
-          priceData.change24h = 1 + (Math.random() * 2 - 1);
+      // In a real implementation, this would call an API or blockchain
+      // For now, we'll generate sample data or return cached data
+      if (!this.cachedPriceFeeds[network]) {
+        return new Promise((resolve) => {
+          setTimeout(() => {
+            this.cachedPriceFeeds[network] = generatePriceFeeds(network);
+            resolve(this.cachedPriceFeeds[network]);
+          }, 800); // Simulate network delay
+        });
       }
       
-      return priceData;
+      return this.cachedPriceFeeds[network];
     } catch (error) {
-      console.error(`Error fetching price for ${asset} from ${blockchain} oracle:`, error);
-      throw new Error(`Oracle data unavailable for ${asset}`);
+      console.error("Error fetching price feeds:", error);
+      throw error;
     }
   }
   
   /**
-   * Get technical indicator data from oracle networks
-   * 
-   * @param asset Asset symbol
-   * @param indicator Indicator type (ma, rsi, macd, etc.)
-   * @param period Period for the indicator
-   * @param blockchain Blockchain to query oracle from
-   * @returns Promise with technical indicator data
+   * Get a specific price feed for an asset
+   */
+  async getPriceFeed(asset: string, network: Network = 'ethereum'): Promise<PriceFeed | undefined> {
+    try {
+      const feeds = await this.getPriceFeeds(network);
+      return feeds.find(feed => feed.pair.toLowerCase().startsWith(asset.toLowerCase()));
+    } catch (error) {
+      console.error(`Error fetching price feed for ${asset}:`, error);
+      throw error;
+    }
+  }
+  
+  /**
+   * Get technical indicators for a specific asset
+   */
+  async getTechnicalIndicators(asset: string, network: Network = 'ethereum'): Promise<TechnicalIndicator[]> {
+    try {
+      const cacheKey = `${asset}-${network}`;
+      
+      // In a real implementation, this would call an API or blockchain
+      // For now, we'll generate sample data or return cached data
+      if (!this.cachedTechnicalIndicators[cacheKey]) {
+        return new Promise((resolve) => {
+          setTimeout(() => {
+            this.cachedTechnicalIndicators[cacheKey] = generateTechnicalIndicators(asset, network);
+            resolve(this.cachedTechnicalIndicators[cacheKey]);
+          }, 1000); // Simulate network delay
+        });
+      }
+      
+      return this.cachedTechnicalIndicators[cacheKey];
+    } catch (error) {
+      console.error(`Error fetching technical indicators for ${asset}:`, error);
+      throw error;
+    }
+  }
+  
+  /**
+   * Get a specific technical indicator for an asset
    */
   async getTechnicalIndicator(
     asset: string, 
-    indicator: 'ma' | 'rsi' | 'macd' | 'volume',
-    period: number,
-    blockchain: BlockchainType
-  ): Promise<TechnicalIndicatorData> {
+    type: TechnicalIndicator['type'], 
+    params: Record<string, number> = {}, 
+    network: Network = 'ethereum'
+  ): Promise<TechnicalIndicator | undefined> {
     try {
-      // Simulate oracle delay
-      await new Promise(resolve => setTimeout(resolve, 600));
+      const indicators = await this.getTechnicalIndicators(asset, network);
       
-      let indicatorValue: number;
-      
-      // Simulate indicator values
-      switch(indicator) {
-        case 'ma':
-          // Moving average around current price with some variance
-          indicatorValue = this.simulateMA(asset, period);
-          break;
-        case 'rsi':
-          // RSI between 0-100, typically between 30-70
-          indicatorValue = this.simulateRSI(period);
-          break;
-        case 'macd':
-          // MACD line, typically between -5 and 5
-          indicatorValue = this.simulateMACD(period);
-          break;
-        case 'volume':
-          // Volume as percentage change from average
-          indicatorValue = this.simulateVolume();
-          break;
-        default:
-          indicatorValue = 50;
-      }
-      
-      return {
-        value: indicatorValue,
-        timestamp: Date.now(),
-        lookbackPeriod: period,
-        sources: ['Chainlink Aggregation', 'Band Protocol', 'DIA']
-      };
+      // Find an indicator matching the type and params (if specified)
+      return indicators.find(indicator => {
+        // Match type
+        if (indicator.type !== type) return false;
+        
+        // If params are specified, match them
+        if (Object.keys(params).length > 0) {
+          return Object.entries(params).every(([key, value]) => 
+            indicator.params[key] === value
+          );
+        }
+        
+        return true;
+      });
     } catch (error) {
-      console.error(`Error fetching ${indicator} data for ${asset}:`, error);
-      throw new Error(`Technical indicator data unavailable for ${asset}`);
-    }
-  }
-
-  /**
-   * Get market volume data from oracles
-   * 
-   * @param asset Asset symbol
-   * @param blockchain Blockchain to query from
-   * @returns Promise with market volume data
-   */
-  async getMarketVolume(asset: string, blockchain: BlockchainType): Promise<MarketVolumeData> {
-    try {
-      // Simulate oracle delay
-      await new Promise(resolve => setTimeout(resolve, 400));
-      
-      // Calculate realistic volume based on asset
-      let volume: number;
-      
-      switch(asset) {
-        case 'BTC':
-          volume = 25000000000 + (Math.random() * 5000000000 - 2500000000);
-          break;
-        case 'ETH':
-          volume = 15000000000 + (Math.random() * 3000000000 - 1500000000);
-          break;
-        case 'SOL':
-          volume = 2500000000 + (Math.random() * 500000000 - 250000000);
-          break;
-        case 'TON':
-          volume = 250000000 + (Math.random() * 50000000 - 25000000);
-          break;
-        default:
-          volume = 500000000 + (Math.random() * 100000000 - 50000000);
-      }
-      
-      return {
-        volume24h: volume,
-        volumeChange: (Math.random() * 20 - 10), // -10% to +10%
-        timestamp: Date.now()
-      };
-    } catch (error) {
-      console.error(`Error fetching volume data for ${asset}:`, error);
-      throw new Error(`Volume data unavailable for ${asset}`);
+      console.error(`Error fetching technical indicator for ${asset}:`, error);
+      throw error;
     }
   }
   
   /**
-   * Check if the oracle for a specific asset is active and responding
-   * 
-   * @param asset Asset symbol
-   * @param blockchain Blockchain to check
-   * @returns Promise with boolean indicating oracle health
+   * Get market alerts for a specific asset
    */
-  async checkOracleHealth(asset: string, blockchain: BlockchainType): Promise<boolean> {
+  async getMarketAlerts(asset: string, network: Network = 'ethereum'): Promise<MarketAlert[]> {
     try {
-      // Simulate network latency
-      await new Promise(resolve => setTimeout(resolve, 300));
+      const cacheKey = `${asset}-${network}`;
       
-      // In development, always return true with 95% probability
-      // In production, this would check actual oracle heartbeat and last update
-      return Math.random() > 0.05; // 95% chance of oracle being healthy
+      // In a real implementation, this would call an API or blockchain
+      // For now, we'll generate sample data or return cached data
+      if (!this.cachedAlerts[cacheKey]) {
+        return new Promise((resolve) => {
+          setTimeout(() => {
+            this.cachedAlerts[cacheKey] = generateMarketAlerts(asset, network);
+            resolve(this.cachedAlerts[cacheKey]);
+          }, 700); // Simulate network delay
+        });
+      }
+      
+      return this.cachedAlerts[cacheKey];
     } catch (error) {
-      console.error(`Error checking oracle health for ${asset}:`, error);
-      return false;
+      console.error(`Error fetching market alerts for ${asset}:`, error);
+      throw error;
     }
   }
   
-  // Helper methods to simulate technical indicators
-  
-  private simulateMA(asset: string, period: number): number {
-    // Simulate moving average close to current price
-    // Shorter periods are closer to current price
-    let variance = 100 * (1 / period) * (Math.random() * 2 - 1);
-    
-    let basePrice: number;
-    switch(asset) {
-      case 'BTC':
-        basePrice = 103750;
-        break;
-      case 'ETH':
-        basePrice = 3480;
-        break;
-      case 'SOL':
-        basePrice = 168;
-        break;
-      case 'TON':
-        basePrice = 7.3;
-        break;
-      default:
-        basePrice = 100;
+  /**
+   * Get available oracle networks
+   */
+  async getNetworks(): Promise<OracleNetwork[]> {
+    try {
+      // In a real implementation, this would call an API or blockchain
+      // For now, we'll generate sample data or return cached data
+      if (!this.cachedNetworks) {
+        return new Promise((resolve) => {
+          setTimeout(() => {
+            this.cachedNetworks = generateNetworks();
+            resolve(this.cachedNetworks);
+          }, 600); // Simulate network delay
+        });
+      }
+      
+      return this.cachedNetworks;
+    } catch (error) {
+      console.error("Error fetching oracle networks:", error);
+      throw error;
     }
-    
-    return basePrice + variance * (basePrice / 100);
   }
   
-  private simulateRSI(period: number): number {
-    // Shorter periods have more extreme values
-    const volatility = 50 / Math.sqrt(period);
-    
-    // Center around 50 with variance based on period
-    const value = 50 + (Math.random() * volatility * 2 - volatility);
-    
-    // Clamp between 0 and 100
-    return Math.max(0, Math.min(100, value));
+  /**
+   * Set up an alert for a specific condition
+   */
+  async createAlert(
+    asset: string, 
+    type: MarketAlert['type'], 
+    threshold: number, 
+    direction: MarketAlert['direction'], 
+    timeframe: string,
+    network: Network = 'ethereum'
+  ): Promise<{ success: boolean, alertId: string }> {
+    try {
+      // In a real implementation, this would call an API or blockchain
+      // For now, we'll simulate a successful alert creation
+      return new Promise((resolve) => {
+        setTimeout(() => {
+          const alertId = `${type}-${asset}-${Date.now()}`;
+          
+          // Add to cached alerts
+          const cacheKey = `${asset}-${network}`;
+          if (!this.cachedAlerts[cacheKey]) {
+            this.cachedAlerts[cacheKey] = [];
+          }
+          
+          this.cachedAlerts[cacheKey].push({
+            id: alertId,
+            type,
+            assetPair: `${asset}/USD`,
+            threshold,
+            triggered: false,
+            currentValue: 0, // Will be filled in when queried
+            direction,
+            timeframe,
+            network
+          });
+          
+          resolve({
+            success: true,
+            alertId
+          });
+        }, 500);
+      });
+    } catch (error) {
+      console.error("Error creating alert:", error);
+      throw error;
+    }
   }
   
-  private simulateMACD(period: number): number {
-    // MACD line typically between -5 and 5
-    // Shorter periods have more extreme values
-    const volatility = 5 / Math.sqrt(period / 12);
-    
-    return Math.random() * volatility * 2 - volatility;
+  /**
+   * Delete an alert
+   */
+  async deleteAlert(alertId: string): Promise<{ success: boolean }> {
+    try {
+      // In a real implementation, this would call an API or blockchain
+      // For now, we'll simulate a successful alert deletion
+      return new Promise((resolve) => {
+        setTimeout(() => {
+          // Remove from cached alerts
+          Object.keys(this.cachedAlerts).forEach(key => {
+            this.cachedAlerts[key] = this.cachedAlerts[key].filter(
+              alert => alert.id !== alertId
+            );
+          });
+          
+          resolve({
+            success: true
+          });
+        }, 300);
+      });
+    } catch (error) {
+      console.error("Error deleting alert:", error);
+      throw error;
+    }
   }
   
-  private simulateVolume(): number {
-    // Volume as percentage of average (80%-120%)
-    return 80 + Math.random() * 40;
+  /**
+   * Clear the cache to force fresh data fetch
+   */
+  clearCache(): void {
+    this.cachedPriceFeeds = {};
+    this.cachedTechnicalIndicators = {};
+    this.cachedNetworks = null;
+    this.cachedAlerts = {};
   }
 }
 
-// Export singleton instance
 export const chainlinkOracleService = new ChainlinkOracleService();

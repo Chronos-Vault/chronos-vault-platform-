@@ -1,182 +1,185 @@
 import React, { useState, useEffect } from 'react';
-import { ActionRecommendation } from './sentiment-analysis';
-import { sentimentAnalysisService } from '@/services/sentiment-analysis-service';
-import { Badge } from '@/components/ui/badge';
-import { AlertCircle, ArrowBigDown, ArrowBigUp, Clock, Pause, ShoppingCart, Timer, Wallet } from 'lucide-react';
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { ActionRecommendation } from '@/services/sentiment-analysis-service';
+import {
+  TrendingUp,
+  TrendingDown,
+  DollarSign,
+  Percent,
+  ShoppingCart,
+  Clock,
+  MinusCircle,
+  PlusCircle,
+  HandCoins,
+  AlertTriangle,
+  ArrowUp,
+  ArrowDown,
+  Minus
+} from 'lucide-react';
+import { cn } from '@/lib/utils';
 
 interface SentimentRecommendationsProps {
-  assetSymbol: string;
-  recommendations?: ActionRecommendation[];
-  onRecommendationsUpdate?: (recommendations: ActionRecommendation[]) => void;
+  recommendations: ActionRecommendation[];
   isLoading?: boolean;
+  asset?: string;
+  onlyShowLatest?: boolean;
 }
 
 export function SentimentRecommendations({
-  assetSymbol,
-  recommendations: propsRecommendations,
-  onRecommendationsUpdate,
-  isLoading: propsIsLoading
+  recommendations,
+  isLoading = false,
+  asset = 'BTC',
+  onlyShowLatest = false
 }: SentimentRecommendationsProps) {
-  const [localRecommendations, setLocalRecommendations] = useState<ActionRecommendation[]>([]);
-  const [isLoading, setIsLoading] = useState(propsIsLoading !== undefined ? propsIsLoading : true);
+  const [displayedRecommendations, setDisplayedRecommendations] = useState<ActionRecommendation[]>([]);
   
-  // Use prop data or fetch our own
+  // Update displayed recommendations when props change
   useEffect(() => {
-    if (propsRecommendations && propsRecommendations.length > 0) {
-      setLocalRecommendations(propsRecommendations);
-      setIsLoading(false);
-      return;
-    }
-    
-    if (propsIsLoading !== undefined) {
-      setIsLoading(propsIsLoading);
-      return;
-    }
-    
-    const fetchData = async () => {
-      setIsLoading(true);
-      try {
-        const data = await sentimentAnalysisService.getActionRecommendations(assetSymbol);
-        setLocalRecommendations(data);
-        if (onRecommendationsUpdate) {
-          onRecommendationsUpdate(data);
-        }
-      } catch (error) {
-        console.error("Error fetching recommendation data:", error);
-      } finally {
-        setIsLoading(false);
+    if (recommendations && recommendations.length > 0) {
+      if (onlyShowLatest) {
+        // Show only the highest confidence recommendation
+        const sortedByConfidence = [...recommendations].sort((a, b) => b.confidence - a.confidence);
+        setDisplayedRecommendations([sortedByConfidence[0]]);
+      } else {
+        setDisplayedRecommendations(recommendations);
       }
-    };
+    } else {
+      setDisplayedRecommendations([]);
+    }
+  }, [recommendations, onlyShowLatest]);
+  
+  // Get icon for action
+  const getActionIcon = (action: string, className: string = "h-4 w-4 mr-2") => {
+    switch (action) {
+      case 'buy':
+        return <ShoppingCart className={className} />;
+      case 'sell':
+        return <HandCoins className={className} />;
+      case 'hold':
+        return <Minus className={className} />;
+      case 'reduce':
+        return <MinusCircle className={className} />;
+      case 'increase':
+        return <PlusCircle className={className} />;
+      default:
+        return <AlertTriangle className={className} />;
+    }
+  };
+  
+  // Get color for action
+  const getActionColor = (action: string): string => {
+    switch (action) {
+      case 'buy':
+      case 'increase':
+        return 'bg-green-600 hover:bg-green-700';
+      case 'sell':
+      case 'reduce':
+        return 'bg-red-600 hover:bg-red-700';
+      case 'hold':
+        return 'bg-blue-600 hover:bg-blue-700';
+      default:
+        return 'bg-gray-600 hover:bg-gray-700';
+    }
+  };
+  
+  // Format allocation display
+  const formatAllocation = (allocation?: number): string => {
+    if (allocation === undefined) return '';
     
-    fetchData();
-  }, [assetSymbol, propsRecommendations, propsIsLoading, onRecommendationsUpdate]);
-  
-  // Function to get action icon
-  const getActionIcon = (type: ActionRecommendation['type']) => {
-    switch (type) {
-      case 'buy':
-        return <ShoppingCart className="h-4 w-4" />;
-      case 'sell':
-        return <ArrowBigDown className="h-4 w-4" />;
-      case 'hold':
-        return <Wallet className="h-4 w-4" />;
-      case 'reduce':
-        return <ArrowBigDown className="h-4 w-4" />;
-      case 'increase':
-        return <ArrowBigUp className="h-4 w-4" />;
-      case 'wait':
-        return <Pause className="h-4 w-4" />;
-      default:
-        return <AlertCircle className="h-4 w-4" />;
-    }
-  };
-
-  // Function to get action color
-  const getActionColor = (type: ActionRecommendation['type']) => {
-    switch (type) {
-      case 'buy':
-      case 'increase':
-        return 'bg-green-600 text-white';
-      case 'sell':
-      case 'reduce':
-        return 'bg-red-600 text-white';
-      case 'hold':
-        return 'bg-blue-600 text-white';
-      case 'wait':
-        return 'bg-amber-600 text-white';
-      default:
-        return 'bg-gray-600 text-white';
-    }
+    const prefix = allocation > 0 ? '+' : '';
+    return `${prefix}${allocation}%`;
   };
   
-  // Function to get timeframe icon
-  const getTimeframeIcon = (timeframe: ActionRecommendation['timeframe']) => {
-    switch (timeframe) {
-      case 'immediate':
-        return <Clock className="h-4 w-4" />;
-      case 'short-term':
-        return <Timer className="h-4 w-4" />;
-      case 'medium-term':
-        return <Clock className="h-4 w-4" />;
-      case 'long-term':
-        return <Clock className="h-4 w-4" />;
-      default:
-        return <Clock className="h-4 w-4" />;
-    }
-  };
+  // Render loading state
+  if (isLoading) {
+    return (
+      <Card className="bg-black/40 border-gray-800">
+        <CardHeader className="pb-2">
+          <CardTitle className="text-lg">Action Recommendations</CardTitle>
+        </CardHeader>
+        <CardContent className="pt-0">
+          <div className="flex justify-center items-center h-40">
+            <div className="h-6 w-6 border-4 border-t-transparent border-indigo-500 rounded-full animate-spin"></div>
+          </div>
+        </CardContent>
+      </Card>
+    );
+  }
   
-  // Function to get confidence badge color
-  const getConfidenceBadgeColor = (confidence: number) => {
-    if (confidence >= 0.8) return 'bg-green-600 text-white';
-    if (confidence >= 0.6) return 'bg-blue-600 text-white';
-    if (confidence >= 0.4) return 'bg-yellow-600 text-white';
-    return 'bg-red-600 text-white';
-  };
+  // Render no recommendations state
+  if (!displayedRecommendations.length) {
+    return (
+      <Card className="bg-black/40 border-gray-800">
+        <CardHeader className="pb-2">
+          <CardTitle className="text-lg">Action Recommendations</CardTitle>
+        </CardHeader>
+        <CardContent className="pt-0">
+          <div className="flex flex-col items-center justify-center h-40 text-gray-500">
+            <AlertTriangle className="h-8 w-8 mb-2 text-gray-600" />
+            <p>No recommendations available</p>
+            <p className="text-xs mt-1">Check back later for updates</p>
+          </div>
+        </CardContent>
+      </Card>
+    );
+  }
   
-  // Format action type
-  const formatActionType = (type: ActionRecommendation['type']) => {
-    return type.charAt(0).toUpperCase() + type.slice(1);
-  };
-  
-  // Format timeframe
-  const formatTimeframe = (timeframe: ActionRecommendation['timeframe']) => {
-    switch (timeframe) {
-      case 'immediate':
-        return 'Immediate';
-      case 'short-term':
-        return 'Short Term';
-      case 'medium-term':
-        return 'Medium Term';
-      case 'long-term':
-        return 'Long Term';
-      default:
-        return timeframe;
-    }
-  };
-
   return (
-    <div>
-      {isLoading ? (
-        <div className="flex justify-center items-center h-32">
-          <div className="h-8 w-8 border-4 border-t-transparent border-indigo-500 rounded-full animate-spin"></div>
-        </div>
-      ) : localRecommendations.length > 0 ? (
+    <Card className="bg-black/40 border-gray-800">
+      <CardHeader className="pb-2">
+        <CardTitle className="text-lg">Action Recommendations</CardTitle>
+      </CardHeader>
+      <CardContent className="pt-0">
         <div className="space-y-4">
-          {localRecommendations.map((recommendation, index) => (
+          {displayedRecommendations.map((recommendation) => (
             <div 
-              key={index} 
-              className="bg-black/30 border border-gray-800 rounded-md p-3"
+              key={recommendation.id}
+              className="border border-gray-800 rounded-md overflow-hidden"
             >
-              <div className="flex items-center justify-between mb-2">
-                <div className="flex items-center space-x-2">
-                  <Badge className={getActionColor(recommendation.type)}>
-                    <span className="flex items-center">
-                      {getActionIcon(recommendation.type)}
-                      <span className="ml-1">{formatActionType(recommendation.type)}</span>
-                    </span>
-                  </Badge>
-                  <Badge variant="outline" className="border-gray-700 text-gray-400">
-                    <span className="flex items-center">
-                      {getTimeframeIcon(recommendation.timeframe)}
-                      <span className="ml-1">{formatTimeframe(recommendation.timeframe)}</span>
-                    </span>
-                  </Badge>
+              <div className={cn(
+                "p-3 flex justify-between items-center",
+                getActionColor(recommendation.action)
+              )}>
+                <div className="flex items-center">
+                  {getActionIcon(recommendation.action)}
+                  <span className="font-medium capitalize">{recommendation.action}</span>
+                  <span className="ml-2 text-xs opacity-80">{asset}</span>
                 </div>
-                <Badge className={getConfidenceBadgeColor(recommendation.confidence)}>
-                  {(recommendation.confidence * 100).toFixed(0)}% Confidence
-                </Badge>
+                
+                {recommendation.suggestedAllocation !== undefined && (
+                  <Badge variant="outline" className="bg-black/30 border-white/20">
+                    {formatAllocation(recommendation.suggestedAllocation)}
+                  </Badge>
+                )}
               </div>
-              <p className="text-sm text-gray-300">{recommendation.reasoning}</p>
+              
+              <div className="p-3">
+                <p className="text-sm text-gray-300 mb-3">{recommendation.reasoning}</p>
+                
+                <div className="flex justify-between items-center text-xs text-gray-500">
+                  <div className="flex items-center">
+                    <Clock className="h-3 w-3 mr-1" />
+                    {recommendation.timeframe}
+                  </div>
+                  
+                  <div className="flex items-center">
+                    <span>Confidence:</span>
+                    <div className="ml-2 w-16 bg-gray-700 h-1.5 rounded overflow-hidden">
+                      <div 
+                        className="bg-indigo-500 h-full"
+                        style={{ width: `${recommendation.confidence * 100}%` }}
+                      ></div>
+                    </div>
+                    <span className="ml-1">{Math.round(recommendation.confidence * 100)}%</span>
+                  </div>
+                </div>
+              </div>
             </div>
           ))}
         </div>
-      ) : (
-        <div className="flex flex-col items-center justify-center py-8 text-gray-500">
-          <AlertCircle className="h-8 w-8 mb-2" />
-          <p>No recommendations available</p>
-        </div>
-      )}
-    </div>
+      </CardContent>
+    </Card>
   );
 }
 
