@@ -62,7 +62,9 @@ import {
   FileText,
   Clock10,
   ArrowUpRight,
-  ShieldAlert
+  ShieldAlert,
+  Plus,
+  Download
 } from "lucide-react";
 
 // Enum for blockchain types (this should match your existing enum if you have one)

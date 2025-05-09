@@ -45,8 +45,8 @@ export default function MultiSignatureVaultPage() {
                   id: "1",
                   address: "0x742d35Cc6634C0532925a3b844Bc454e4438f44e",
                   name: "You (Owner)",
-                  status: 'accepted',
-                  role: 'owner',
+                  status: 'accepted' as const,
+                  role: 'owner' as const,
                   timeAdded: new Date(),
                   hasKey: true
                 },
@@ -54,8 +54,8 @@ export default function MultiSignatureVaultPage() {
                   id: "2",
                   address: "0x5B38Da6a701c568545dCfcB03FcB875f56beddC4",
                   name: "Alice (Finance)",
-                  status: 'accepted',
-                  role: 'signer',
+                  status: 'accepted' as const,
+                  role: 'signer' as const,
                   timeAdded: new Date(),
                   hasKey: true
                 },
@@ -63,8 +63,8 @@ export default function MultiSignatureVaultPage() {
                   id: "3",
                   address: "0xDc26F5E4b5E4dEF47A247c38714499a9d5e57Eb9",
                   name: "Bob (Operations)",
-                  status: 'accepted',
-                  role: 'signer',
+                  status: 'accepted' as const,
+                  role: 'signer' as const,
                   timeAdded: new Date(),
                   hasKey: true
                 },
@@ -72,8 +72,8 @@ export default function MultiSignatureVaultPage() {
                   id: "4",
                   address: "0x583031D1113aD414F02576BD6afaBfb302140225",
                   name: "Carol (Legal)",
-                  status: 'accepted',
-                  role: 'signer',
+                  status: 'accepted' as const,
+                  role: 'signer' as const,
                   timeAdded: new Date(),
                   hasKey: true
                 }
