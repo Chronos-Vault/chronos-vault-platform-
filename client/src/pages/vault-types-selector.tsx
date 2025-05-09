@@ -19,9 +19,11 @@ const VaultTypesSelector = () => {
     if (selectedVaultType === 'multi-signature') {
       // Our new Multi-Signature Vault
       navigate('/multi-signature-vault-new');
+    } else if (selectedVaultType === 'biometric') {
+      // New dedicated Biometric Vault page
+      navigate('/biometric-vault');
     } else if (selectedVaultType === 'standard' || 
         selectedVaultType === 'time-lock' || 
-        selectedVaultType === 'biometric' || 
         selectedVaultType === 'cross-chain') {
       // Basic and Advanced Security vaults
       navigate(`/create-vault?type=${selectedVaultType}`);

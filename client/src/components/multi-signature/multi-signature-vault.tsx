@@ -365,6 +365,7 @@ export function MultiSignatureVault({
   const [enableHardwareKey, setEnableHardwareKey] = useState<boolean>(true);
   const [enableQRSignature, setEnableQRSignature] = useState<boolean>(false);
   const [enableBiometrics, setEnableBiometrics] = useState<boolean>(false);
+  const [showBiometricSettings, setShowBiometricSettings] = useState<boolean>(false);
   const [enableRecovery, setEnableRecovery] = useState<boolean>(true);
   const [enableEncryption, setEnableEncryption] = useState<boolean>(true);
   const [activityNotifications, setActivityNotifications] = useState<boolean>(true);
@@ -1770,9 +1771,81 @@ export function MultiSignatureVault({
                   </div>
                   <Switch 
                     checked={enableBiometrics}
-                    onCheckedChange={setEnableBiometrics}
+                    onCheckedChange={(checked) => {
+                      setEnableBiometrics(checked);
+                      if (!checked) {
+                        // If disabling biometrics, hide the component
+                        setShowBiometricSettings(false);
+                      }
+                    }}
                   />
                 </div>
+                
+                {enableBiometrics && (
+                  <div className="mt-4">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="w-full"
+                      onClick={() => setShowBiometricSettings(!showBiometricSettings)}
+                    >
+                      {showBiometricSettings ? 'Hide' : 'Show'} Biometric Settings
+                    </Button>
+                    
+                    {showBiometricSettings && (
+                      <div className="mt-4">
+                        <div className="bg-black/20 p-4 rounded-lg border border-gray-800">
+                          <div className="import-component">
+                            {/* Placeholder for VaultBiometricIntegration component */}
+                            {/* 
+                              In actual implementation, would use:
+                              <VaultBiometricIntegration 
+                                userId="user-123"
+                                username="Current User"
+                                onBiometricEnabled={setEnableBiometrics}
+                                isEnabled={enableBiometrics}
+                              />
+                            */}
+                            <div className="flex flex-col space-y-3">
+                              <div className="flex items-center justify-between">
+                                <div className="flex items-center space-x-3">
+                                  <div className="bg-blue-900/30 p-2 rounded-full">
+                                    <Fingerprint className="h-4 w-4 text-blue-400" />
+                                  </div>
+                                  <div>
+                                    <div className="text-sm font-medium">Device Biometrics</div>
+                                    <div className="text-xs text-gray-500">Configure fingerprint or face ID</div>
+                                  </div>
+                                </div>
+                                <Button 
+                                  variant="outline" 
+                                  size="sm"
+                                  className="h-8 bg-black/40 text-sm"
+                                >
+                                  Configure
+                                </Button>
+                              </div>
+                              
+                              <div className="text-sm text-gray-400">
+                                Biometric authentication enhances vault security by requiring fingerprint or face ID verification for sensitive operations. This provides an additional layer of protection beyond passwords.
+                              </div>
+                              
+                              <div className="flex items-center justify-between bg-black/40 p-2 rounded-md">
+                                <span className="text-sm">Require for all transactions</span>
+                                <Switch defaultChecked={true} />
+                              </div>
+                              
+                              <div className="flex items-center justify-between bg-black/40 p-2 rounded-md">
+                                <span className="text-sm">Require for recovery operation</span>
+                                <Switch defaultChecked={true} />
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                )}
               </div>
               
               {/* QR Code Signing */}

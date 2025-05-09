@@ -1,252 +1,272 @@
 /**
  * Biometric Authentication Service
- * 
- * This service handles the server-side operations for Web Authentication (WebAuthn),
- * including challenge generation, credential storage, and verification.
+ * Provides WebAuthn (Web Authentication) functionality for biometric authentication
+ * on the server side, handling credential registration, verification, and management.
  */
-import crypto from 'crypto';
-import { db } from '../db';
-import { sql } from 'drizzle-orm';
 
-// In-memory store for challenges (for dev purposes)
-// In production, this would be in Redis or another session store
-const challengeStore: Record<string, { challenge: string; expires: number }> = {};
+import { randomBytes } from 'crypto';
 
-interface BiometricCredential {
+// In-memory storage for WebAuthn credentials and challenges
+// In a production environment, this would be stored in a database
+interface WebAuthnCredential {
   id: string;
   userId: string;
   name: string;
   publicKey: string;
   counter: number;
-  createdAt: Date;
+  createDate: Date;
   lastUsed?: Date;
 }
 
-class BiometricService {
-  // Generate a new registration challenge
-  async generateRegistrationChallenge(userId: string, username: string): Promise<object> {
-    // Generate a random challenge
-    const challenge = crypto.randomBytes(32).toString('base64url');
-    
-    // Store the challenge with an expiration (5 minutes)
-    const expires = Date.now() + 5 * 60 * 1000;
-    challengeStore[userId] = { challenge, expires };
-    
-    // Return the challenge data
-    return {
-      challenge,
-      userId,
-      username,
-      timeout: 300000, // 5 minutes
-    };
-  }
-  
-  // Generate a new authentication challenge
-  async generateAuthenticationChallenge(userId?: string): Promise<object> {
-    // Generate a random challenge
-    const challenge = crypto.randomBytes(32).toString('base64url');
-    
-    // Store the challenge with an expiration (5 minutes)
-    const expires = Date.now() + 5 * 60 * 1000;
-    const storageKey = userId || 'global-challenge';
-    challengeStore[storageKey] = { challenge, expires };
-    
-    // Get user credentials if userId is provided
-    let allowCredentials: { id: string; type: string }[] = [];
-    
-    if (userId) {
-      const credentials = await this.getUserCredentials(userId);
-      allowCredentials = credentials.map(cred => ({
-        id: cred.id,
-        type: 'public-key'
-      }));
-    }
-    
-    // Return the challenge data
-    return {
-      challenge,
-      timeout: 300000, // 5 minutes
-      allowCredentials: allowCredentials.length > 0 ? allowCredentials : undefined,
-    };
-  }
-  
-  // Register a new credential
-  async registerCredential(credentialData: any): Promise<BiometricCredential> {
-    const { id, rawId, response, type, userId } = credentialData;
-    
-    // Verify the challenge
-    const storedChallenge = challengeStore[userId];
-    if (!storedChallenge || storedChallenge.expires < Date.now()) {
-      throw new Error('Challenge expired or invalid');
-    }
-    
-    // In a real implementation, we would:
-    // 1. Verify the attestation data
-    // 2. Extract the public key from the attestation
-    // 3. Verify the signature
-    
-    // For simplicity in this implementation, we'll just store the credential
-    // Create a credential record
-    const credential: BiometricCredential = {
-      id: rawId, // Use the raw ID as the credential ID
-      userId,
-      name: `Biometric credential ${new Date().toLocaleDateString()}`,
-      publicKey: JSON.stringify(response), // In a real implementation, we'd extract the public key
-      counter: 0, // Initialize counter
-      createdAt: new Date(),
-    };
-    
-    // Store the credential in the database
-    await this.storeCredential(credential);
-    
-    // Clean up challenge
-    delete challengeStore[userId];
-    
-    return credential;
-  }
-  
-  // Verify a credential during authentication
-  async verifyCredential(credentialData: any): Promise<{ verified: boolean; userId?: string }> {
-    const { id, rawId, response, type } = credentialData;
-    
-    // Get the credential from database
-    const credential = await this.getCredentialById(rawId);
-    if (!credential) {
-      return { verified: false };
-    }
-    
-    // Get the stored challenge
-    const storedChallenge = challengeStore[credential.userId] || challengeStore['global-challenge'];
-    if (!storedChallenge || storedChallenge.expires < Date.now()) {
-      return { verified: false };
-    }
-    
-    // In a real implementation, we would:
-    // 1. Verify the assertion signature using the stored public key
-    // 2. Verify the authenticator data
-    // 3. Check and update the counter to prevent replay attacks
-    
-    // Update last used time and counter
-    await this.updateCredentialUsage(credential.id);
-    
-    // Clean up challenge
-    delete challengeStore[credential.userId];
-    delete challengeStore['global-challenge'];
-    
-    return { verified: true, userId: credential.userId };
-  }
-  
-  // Get all credentials for a user
-  async getUserCredentials(userId: string): Promise<BiometricCredential[]> {
-    try {
-      // In a real implementation, we'd query the database
-      const result = await db.execute(sql`
-        SELECT * FROM biometric_credentials WHERE user_id = ${userId}
-      `);
-      
-      // For now, return an empty array since the table might not exist yet
-      return [];
-    } catch (error) {
-      console.error('Error fetching user credentials:', error);
-      return [];
-    }
-  }
-  
-  // Get a credential by ID
-  async getCredentialById(credentialId: string): Promise<BiometricCredential | null> {
-    try {
-      // In a real implementation, we'd query the database
-      const result = await db.execute(sql`
-        SELECT * FROM biometric_credentials WHERE id = ${credentialId} LIMIT 1
-      `);
-      
-      // For now, return null since the table might not exist yet
-      return null;
-    } catch (error) {
-      console.error('Error fetching credential by ID:', error);
-      return null;
-    }
-  }
-  
-  // Store a new credential
-  private async storeCredential(credential: BiometricCredential): Promise<void> {
-    try {
-      // In a real implementation, we'd insert into the database
-      await db.execute(sql`
-        INSERT INTO biometric_credentials (
-          id, user_id, name, public_key, counter, created_at
-        ) VALUES (
-          ${credential.id}, 
-          ${credential.userId}, 
-          ${credential.name}, 
-          ${credential.publicKey}, 
-          ${credential.counter}, 
-          ${credential.createdAt}
-        )
-      `);
-    } catch (error) {
-      console.error('Error storing credential:', error);
-      // Create table if it doesn't exist (only in development)
-      if (process.env.NODE_ENV === 'development') {
-        await this.createCredentialsTable();
-        // Try again
-        await this.storeCredential(credential);
-      } else {
-        throw error;
-      }
-    }
-  }
-  
-  // Update credential usage
-  private async updateCredentialUsage(credentialId: string): Promise<void> {
-    try {
-      // In a real implementation, we'd update the database
-      await db.execute(sql`
-        UPDATE biometric_credentials 
-        SET counter = counter + 1, last_used = NOW() 
-        WHERE id = ${credentialId}
-      `);
-    } catch (error) {
-      console.error('Error updating credential usage:', error);
-    }
-  }
-  
-  // Delete a credential
-  async deleteCredential(credentialId: string): Promise<boolean> {
-    try {
-      // In a real implementation, we'd delete from the database
-      await db.execute(sql`
-        DELETE FROM biometric_credentials WHERE id = ${credentialId}
-      `);
-      return true;
-    } catch (error) {
-      console.error('Error deleting credential:', error);
-      return false;
-    }
-  }
-  
-  // Create the credentials table if it doesn't exist (development only)
-  private async createCredentialsTable(): Promise<void> {
-    if (process.env.NODE_ENV !== 'development') {
-      return;
-    }
-    
-    try {
-      await db.execute(sql`
-        CREATE TABLE IF NOT EXISTS biometric_credentials (
-          id TEXT PRIMARY KEY,
-          user_id TEXT NOT NULL,
-          name TEXT NOT NULL,
-          public_key TEXT NOT NULL,
-          counter INTEGER NOT NULL,
-          created_at TIMESTAMP NOT NULL,
-          last_used TIMESTAMP
-        )
-      `);
-    } catch (error) {
-      console.error('Error creating credentials table:', error);
-    }
-  }
+interface Challenge {
+  challenge: string;
+  timeout: number;
+  userId: string;
+  username?: string;
+  created: Date;
 }
 
-export const biometricService = new BiometricService();
+// In-memory storage
+const credentials: WebAuthnCredential[] = [];
+const challenges: Challenge[] = [];
+
+// Constants
+const CHALLENGE_TIMEOUT = 5 * 60 * 1000; // 5 minutes in milliseconds
+const RP_NAME = 'Chronos Vault';
+const RP_ID = typeof window !== 'undefined' ? window.location.hostname : 'localhost';
+
+/**
+ * Generate a random challenge
+ */
+const generateChallenge = (): string => {
+  return randomBytes(32).toString('base64')
+    .replace(/\+/g, '-')
+    .replace(/\//g, '_')
+    .replace(/=/g, '');
+};
+
+/**
+ * Clean up expired challenges
+ */
+const cleanupChallenges = (): void => {
+  const now = new Date();
+  const validChallenges = challenges.filter(
+    (challenge) => now.getTime() - challenge.created.getTime() < CHALLENGE_TIMEOUT
+  );
+  challenges.length = 0;
+  challenges.push(...validChallenges);
+};
+
+/**
+ * Generate registration options for a user
+ */
+const generateRegistrationChallenge = async (userId: string, username: string) => {
+  cleanupChallenges();
+  
+  const challenge = generateChallenge();
+  
+  // Store the challenge for later verification
+  challenges.push({
+    challenge,
+    timeout: CHALLENGE_TIMEOUT,
+    userId,
+    username,
+    created: new Date()
+  });
+  
+  // Get existing credentials for this user to exclude them
+  const existingCredentials = credentials.filter(cred => cred.userId === userId);
+  
+  // Generate registration options
+  return {
+    publicKey: {
+      challenge,
+      rp: {
+        name: RP_NAME,
+        id: RP_ID
+      },
+      user: {
+        id: userId,
+        name: username,
+        displayName: username
+      },
+      pubKeyCredParams: [
+        { type: 'public-key', alg: -7 }, // ES256
+        { type: 'public-key', alg: -257 } // RS256
+      ],
+      timeout: CHALLENGE_TIMEOUT,
+      attestation: 'direct',
+      excludeCredentials: existingCredentials.map(cred => ({
+        id: cred.id,
+        type: 'public-key'
+      })),
+      authenticatorSelection: {
+        authenticatorAttachment: 'platform',
+        requireResidentKey: false,
+        userVerification: 'preferred'
+      }
+    }
+  };
+};
+
+/**
+ * Generate authentication options for a user
+ */
+const generateAuthenticationChallenge = async (userId: string) => {
+  cleanupChallenges();
+  
+  const challenge = generateChallenge();
+  
+  // Store the challenge for later verification
+  challenges.push({
+    challenge,
+    timeout: CHALLENGE_TIMEOUT,
+    userId,
+    created: new Date()
+  });
+  
+  // Get existing credentials for this user
+  const userCredentials = credentials.filter(cred => cred.userId === userId);
+  
+  if (userCredentials.length === 0) {
+    throw new Error('No credentials found for this user');
+  }
+  
+  // Generate authentication options
+  return {
+    publicKey: {
+      challenge,
+      timeout: CHALLENGE_TIMEOUT,
+      rpId: RP_ID,
+      allowCredentials: userCredentials.map(cred => ({
+        id: cred.id,
+        type: 'public-key'
+      })),
+      userVerification: 'preferred'
+    }
+  };
+};
+
+/**
+ * Register a new credential
+ */
+const registerCredential = async (
+  data: { credential: any; userId: string }
+) => {
+  const { credential, userId } = data;
+  
+  // Find the challenge
+  const challenge = challenges.find(c => c.userId === userId);
+  
+  if (!challenge) {
+    throw new Error('Challenge not found or expired');
+  }
+  
+  // Verify the registration data (this is a simplified version)
+  // In a real implementation, you would:
+  // 1. Verify that the challenge matches
+  // 2. Verify the origin is correct
+  // 3. Verify the signature using the attestation data
+  // 4. Store the credential for future use
+  
+  // For this demo, we'll assume verification passes and store the credential
+  const newCredential: WebAuthnCredential = {
+    id: credential.id,
+    userId,
+    name: challenge.username || 'Authenticator',
+    publicKey: credential.rawId, // In a real implementation, we'd extract the actual public key
+    counter: 0,
+    createDate: new Date()
+  };
+  
+  credentials.push(newCredential);
+  
+  // Remove the used challenge
+  const challengeIndex = challenges.findIndex(c => c.userId === userId);
+  if (challengeIndex >= 0) {
+    challenges.splice(challengeIndex, 1);
+  }
+  
+  return newCredential;
+};
+
+/**
+ * Verify a credential for authentication
+ */
+const verifyCredential = async (
+  data: { credential: any; userId: string }
+): Promise<{ verified: boolean; userId: string }> => {
+  const { credential, userId } = data;
+  
+  // Find the challenge
+  const challenge = challenges.find(c => c.userId === userId);
+  
+  if (!challenge) {
+    throw new Error('Challenge not found or expired');
+  }
+  
+  // Find the credential
+  const storedCredential = credentials.find(c => c.id === credential.id);
+  
+  if (!storedCredential) {
+    throw new Error('Credential not found');
+  }
+  
+  // Verify the authentication data (this is a simplified version)
+  // In a real implementation, you would:
+  // 1. Verify that the challenge matches
+  // 2. Verify the origin is correct
+  // 3. Verify the signature using the public key
+  // 4. Verify the counter is greater than the stored counter
+  
+  // For this demo, we'll assume verification passes
+  // Update the credential information
+  storedCredential.lastUsed = new Date();
+  storedCredential.counter += 1;
+  
+  // Remove the used challenge
+  const challengeIndex = challenges.findIndex(c => c.userId === userId);
+  if (challengeIndex >= 0) {
+    challenges.splice(challengeIndex, 1);
+  }
+  
+  return { verified: true, userId };
+};
+
+/**
+ * Get all credentials for a user
+ */
+const getUserCredentials = async (userId: string): Promise<any[]> => {
+  return credentials
+    .filter(cred => cred.userId === userId)
+    .map(cred => ({
+      id: cred.id,
+      name: cred.name,
+      createDate: cred.createDate,
+      lastUsed: cred.lastUsed
+    }));
+};
+
+/**
+ * Delete a credential
+ */
+const deleteCredential = async (credentialId: string): Promise<boolean> => {
+  const index = credentials.findIndex(cred => cred.id === credentialId);
+  
+  if (index === -1) {
+    return false;
+  }
+  
+  credentials.splice(index, 1);
+  return true;
+};
+
+// Export the biometric service
+export const biometricService = {
+  generateRegistrationChallenge,
+  generateAuthenticationChallenge,
+  registerCredential,
+  verifyCredential,
+  getUserCredentials,
+  deleteCredential
+};
