@@ -135,6 +135,20 @@ function InvestmentDisciplineVault() {
   const [enableEmergencyProtocol, setEnableEmergencyProtocol] = useState<boolean>(true);
   const [enableAnalytics, setEnableAnalytics] = useState<boolean>(true);
   
+  // HODL Strategy Configuration
+  const [lockDuration, setLockDuration] = useState<'1_year' | '4_years' | 'custom'>('1_year');
+  const [customYears, setCustomYears] = useState<number>(0);
+  const [customMonths, setCustomMonths] = useState<number>(0);
+  const [customDays, setCustomDays] = useState<number>(0);
+  const [customHours, setCustomHours] = useState<number>(0);
+  const [releaseOption, setReleaseOption] = useState<'full' | 'gradual'>('full');
+  const [releaseSchedule, setReleaseSchedule] = useState<string>('30_days');
+  const [releaseFrequency, setReleaseFrequency] = useState<string>('weekly');
+  const [earlyWithdrawalFee, setEarlyWithdrawalFee] = useState<boolean>(true);
+  const [withdrawalFeePercentage, setWithdrawalFeePercentage] = useState<number>(20);
+  const [feeReducesOverTime, setFeeReducesOverTime] = useState<boolean>(true);
+  const [requireApproval, setRequireApproval] = useState<boolean>(false);
+  
   // Security
   const [securityLevel, setSecurityLevel] = useState<number>(3);
   const [crossChainEnabled, setCrossChainEnabled] = useState<boolean>(false);
