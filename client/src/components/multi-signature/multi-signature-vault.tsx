@@ -1320,19 +1320,24 @@ export function MultiSignatureVault({
                                                 setVaultSigners(vaultSigners.map(s => {
                                                   if (s.id !== signer.id) return s;
                                                   
-                                                  return {
+                                                  // Create a properly typed updated signer
+                                                  const updatedSigner: Signer = {
                                                     ...s,
                                                     transactionPermissions: {
-                                                      ...(s.transactionPermissions || {}),
+                                                      ...s.transactionPermissions,
                                                       approvalLimits: {
-                                                        ...(s.transactionPermissions?.approvalLimits || {}),
+                                                        ...s.transactionPermissions.approvalLimits,
                                                         [TransactionType.TRANSFER]: {
-                                                          ...(s.transactionPermissions?.approvalLimits?.[TransactionType.TRANSFER] || {}),
-                                                          maxAmount: e.target.value
+                                                          ...s.transactionPermissions.approvalLimits[TransactionType.TRANSFER] || {},
+                                                          maxAmount: e.target.value,
+                                                          allowedDestinations: 
+                                                            s.transactionPermissions.approvalLimits[TransactionType.TRANSFER]?.allowedDestinations || []
                                                         }
                                                       }
                                                     }
                                                   };
+                                                  
+                                                  return updatedSigner;
                                                 }));
                                               }}
                                               placeholder="1000"
@@ -1354,21 +1359,26 @@ export function MultiSignatureVault({
                                                   setVaultSigners(vaultSigners.map(s => {
                                                     if (s.id !== signer.id) return s;
                                                     
-                                                    const currentDests = s.transactionPermissions?.approvalLimits?.[TransactionType.TRANSFER]?.allowedDestinations || [];
+                                                    // Get current destinations with fallback to empty array
+                                                    const currentDests = s.transactionPermissions.approvalLimits[TransactionType.TRANSFER]?.allowedDestinations || [];
                                                     
-                                                    return {
+                                                    // Create properly typed updated signer
+                                                    const updatedSigner: Signer = {
                                                       ...s,
                                                       transactionPermissions: {
-                                                        ...(s.transactionPermissions || {}),
+                                                        ...s.transactionPermissions,
                                                         approvalLimits: {
-                                                          ...(s.transactionPermissions?.approvalLimits || {}),
+                                                          ...s.transactionPermissions.approvalLimits,
                                                           [TransactionType.TRANSFER]: {
-                                                            ...(s.transactionPermissions?.approvalLimits?.[TransactionType.TRANSFER] || {}),
+                                                            ...s.transactionPermissions.approvalLimits[TransactionType.TRANSFER] || {},
+                                                            maxAmount: s.transactionPermissions.approvalLimits[TransactionType.TRANSFER]?.maxAmount || "",
                                                             allowedDestinations: [...currentDests, address]
                                                           }
                                                         }
                                                       }
                                                     };
+                                                    
+                                                    return updatedSigner;
                                                   }));
                                                 }}
                                               >
@@ -1391,21 +1401,26 @@ export function MultiSignatureVault({
                                                           setVaultSigners(vaultSigners.map(s => {
                                                             if (s.id !== signer.id) return s;
                                                             
-                                                            const currentDests = s.transactionPermissions?.approvalLimits?.[TransactionType.TRANSFER]?.allowedDestinations || [];
+                                                            // Get current destinations with fallback to empty array
+                                                            const currentDests = s.transactionPermissions.approvalLimits[TransactionType.TRANSFER]?.allowedDestinations || [];
                                                             
-                                                            return {
+                                                            // Create properly typed updated signer
+                                                            const updatedSigner: Signer = {
                                                               ...s,
                                                               transactionPermissions: {
-                                                                ...(s.transactionPermissions || {}),
+                                                                ...s.transactionPermissions,
                                                                 approvalLimits: {
-                                                                  ...(s.transactionPermissions?.approvalLimits || {}),
+                                                                  ...s.transactionPermissions.approvalLimits,
                                                                   [TransactionType.TRANSFER]: {
-                                                                    ...(s.transactionPermissions?.approvalLimits?.[TransactionType.TRANSFER] || {}),
+                                                                    ...s.transactionPermissions.approvalLimits[TransactionType.TRANSFER] || {},
+                                                                    maxAmount: s.transactionPermissions.approvalLimits[TransactionType.TRANSFER]?.maxAmount || "",
                                                                     allowedDestinations: currentDests.filter((_, i) => i !== index)
                                                                   }
                                                                 }
                                                               }
                                                             };
+                                                            
+                                                            return updatedSigner;
                                                           }));
                                                         }}
                                                       >
@@ -1448,21 +1463,27 @@ export function MultiSignatureVault({
                                                   setVaultSigners(vaultSigners.map(s => {
                                                     if (s.id !== signer.id) return s;
                                                     
-                                                    const currentMethods = s.transactionPermissions?.approvalLimits?.[TransactionType.CONTRACT_INTERACTION]?.allowedMethods || [];
+                                                    // Get current methods with fallback to empty array
+                                                    const currentMethods = s.transactionPermissions.approvalLimits[TransactionType.CONTRACT_INTERACTION]?.allowedMethods || [];
                                                     
-                                                    return {
+                                                    // Create properly typed updated signer
+                                                    const updatedSigner: Signer = {
                                                       ...s,
                                                       transactionPermissions: {
-                                                        ...(s.transactionPermissions || {}),
+                                                        ...s.transactionPermissions,
                                                         approvalLimits: {
-                                                          ...(s.transactionPermissions?.approvalLimits || {}),
+                                                          ...s.transactionPermissions.approvalLimits,
                                                           [TransactionType.CONTRACT_INTERACTION]: {
-                                                            ...(s.transactionPermissions?.approvalLimits?.[TransactionType.CONTRACT_INTERACTION] || {}),
-                                                            allowedMethods: [...currentMethods, method]
+                                                            ...s.transactionPermissions.approvalLimits[TransactionType.CONTRACT_INTERACTION] || {},
+                                                            allowedMethods: [...currentMethods, method],
+                                                            allowedContracts: 
+                                                              s.transactionPermissions.approvalLimits[TransactionType.CONTRACT_INTERACTION]?.allowedContracts || []
                                                           }
                                                         }
                                                       }
                                                     };
+                                                    
+                                                    return updatedSigner;
                                                   }));
                                                 }}
                                               >
@@ -1485,21 +1506,27 @@ export function MultiSignatureVault({
                                                           setVaultSigners(vaultSigners.map(s => {
                                                             if (s.id !== signer.id) return s;
                                                             
-                                                            const currentMethods = s.transactionPermissions?.approvalLimits?.[TransactionType.CONTRACT_INTERACTION]?.allowedMethods || [];
+                                                            // Get current methods with fallback to empty array
+                                                            const currentMethods = s.transactionPermissions.approvalLimits[TransactionType.CONTRACT_INTERACTION]?.allowedMethods || [];
                                                             
-                                                            return {
+                                                            // Create properly typed updated signer
+                                                            const updatedSigner: Signer = {
                                                               ...s,
                                                               transactionPermissions: {
-                                                                ...(s.transactionPermissions || {}),
+                                                                ...s.transactionPermissions,
                                                                 approvalLimits: {
-                                                                  ...(s.transactionPermissions?.approvalLimits || {}),
+                                                                  ...s.transactionPermissions.approvalLimits,
                                                                   [TransactionType.CONTRACT_INTERACTION]: {
-                                                                    ...(s.transactionPermissions?.approvalLimits?.[TransactionType.CONTRACT_INTERACTION] || {}),
-                                                                    allowedMethods: currentMethods.filter((_, i) => i !== index)
+                                                                    ...s.transactionPermissions.approvalLimits[TransactionType.CONTRACT_INTERACTION] || {},
+                                                                    allowedMethods: currentMethods.filter((_, i) => i !== index),
+                                                                    allowedContracts: 
+                                                                      s.transactionPermissions.approvalLimits[TransactionType.CONTRACT_INTERACTION]?.allowedContracts || []
                                                                   }
                                                                 }
                                                               }
                                                             };
+                                                            
+                                                            return updatedSigner;
                                                           }));
                                                         }}
                                                       >
