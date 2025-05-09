@@ -1174,6 +1174,7 @@ export function MultiSignatureVault({
                 <TabsList className="bg-black/60 mb-4">
                   <TabsTrigger value="pending">Pending</TabsTrigger>
                   <TabsTrigger value="history">History</TabsTrigger>
+                  <TabsTrigger value="analytics">Analytics</TabsTrigger>
                   <TabsTrigger value="create">Create</TabsTrigger>
                 </TabsList>
                 
@@ -1289,6 +1290,244 @@ export function MultiSignatureVault({
                   </div>
                 </TabsContent>
                 
+                {/* Enhanced Transaction Analytics Tab */}
+                <TabsContent value="analytics">
+                  <div className="space-y-6">
+                    {/* Transaction Volume Overview */}
+                    <div className="bg-black/30 p-4 rounded-lg border border-gray-800">
+                      <h3 className="text-lg font-medium mb-4">Transaction Status Distribution</h3>
+                      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                        {/* Pending Transactions */}
+                        <div className="bg-amber-900/20 p-3 rounded-md border border-amber-800/40">
+                          <div className="text-2xl font-bold text-amber-400">
+                            {transactions.filter(tx => tx.status === 'pending').length}
+                          </div>
+                          <div className="text-xs text-gray-400">Pending</div>
+                        </div>
+                        
+                        {/* Executed Transactions */}
+                        <div className="bg-blue-900/20 p-3 rounded-md border border-blue-800/40">
+                          <div className="text-2xl font-bold text-blue-400">
+                            {transactions.filter(tx => tx.status === 'executed').length}
+                          </div>
+                          <div className="text-xs text-gray-400">Executed</div>
+                        </div>
+                        
+                        {/* Approved Transactions */}
+                        <div className="bg-green-900/20 p-3 rounded-md border border-green-800/40">
+                          <div className="text-2xl font-bold text-green-400">
+                            {transactions.filter(tx => tx.status === 'approved').length}
+                          </div>
+                          <div className="text-xs text-gray-400">Approved</div>
+                        </div>
+                        
+                        {/* Rejected Transactions */}
+                        <div className="bg-red-900/20 p-3 rounded-md border border-red-800/40">
+                          <div className="text-2xl font-bold text-red-400">
+                            {transactions.filter(tx => tx.status === 'rejected').length}
+                          </div>
+                          <div className="text-xs text-gray-400">Rejected</div>
+                        </div>
+                      </div>
+                    </div>
+                    
+                    {/* Transaction Types Distribution */}
+                    <div className="bg-black/30 p-4 rounded-lg border border-gray-800">
+                      <h3 className="text-lg font-medium mb-4">Transaction Types</h3>
+                      <div className="space-y-3">
+                        {/* Send Transactions */}
+                        <div>
+                          <div className="flex justify-between mb-1">
+                            <span className="text-sm text-gray-400">Send</span>
+                            <span className="text-sm text-gray-400">
+                              {transactions.filter(tx => tx.type === 'send').length} transactions
+                            </span>
+                          </div>
+                          <div className="w-full bg-gray-800 rounded-full h-2.5">
+                            <div 
+                              className="bg-purple-600 h-2.5 rounded-full" 
+                              style={{ 
+                                width: `${(transactions.filter(tx => tx.type === 'send').length / transactions.length) * 100}%` 
+                              }}
+                            ></div>
+                          </div>
+                        </div>
+                        
+                        {/* Contract Interactions */}
+                        <div>
+                          <div className="flex justify-between mb-1">
+                            <span className="text-sm text-gray-400">Contract</span>
+                            <span className="text-sm text-gray-400">
+                              {transactions.filter(tx => tx.type === 'contract').length} transactions
+                            </span>
+                          </div>
+                          <div className="w-full bg-gray-800 rounded-full h-2.5">
+                            <div 
+                              className="bg-cyan-600 h-2.5 rounded-full" 
+                              style={{ 
+                                width: `${(transactions.filter(tx => tx.type === 'contract').length / transactions.length) * 100}%` 
+                              }}
+                            ></div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    
+                    {/* Signer Activity */}
+                    <div className="bg-black/30 p-4 rounded-lg border border-gray-800">
+                      <h3 className="text-lg font-medium mb-4">Signer Activity</h3>
+                      <div className="space-y-3">
+                        {vaultSigners.map(signer => {
+                          // Calculate how many transactions this signer has signed
+                          const signedCount = transactions.filter(tx => 
+                            tx.signers.includes(signer.address)
+                          ).length;
+                          
+                          // Calculate percentage
+                          const percentage = transactions.length > 0 
+                            ? Math.round((signedCount / transactions.length) * 100) 
+                            : 0;
+                            
+                          return (
+                            <div key={signer.id}>
+                              <div className="flex justify-between mb-1">
+                                <span className="text-sm text-gray-400">{signer.name}</span>
+                                <span className="text-sm text-gray-400">
+                                  {signedCount} signatures ({percentage}%)
+                                </span>
+                              </div>
+                              <div className="w-full bg-gray-800 rounded-full h-2.5">
+                                <div 
+                                  className={`h-2.5 rounded-full ${
+                                    signer.role === 'owner' 
+                                      ? 'bg-purple-600' 
+                                      : 'bg-blue-600'
+                                  }`}
+                                  style={{ width: `${percentage}%` }}
+                                ></div>
+                              </div>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </div>
+                    
+                    {/* Response Time Analysis */}
+                    <div className="bg-black/30 p-4 rounded-lg border border-gray-800">
+                      <h3 className="text-lg font-medium mb-2">Average Response Time</h3>
+                      <p className="text-sm text-gray-400 mb-4">
+                        Typical time between transaction creation and execution
+                      </p>
+                      
+                      <div className="flex items-center justify-center p-4">
+                        <div className="text-center">
+                          <div className="text-4xl font-bold text-[#3F51FF]">16.4</div>
+                          <div className="text-sm text-gray-400">hours</div>
+                        </div>
+                      </div>
+                      
+                      <div className="mt-4">
+                        <h4 className="text-sm font-medium mb-2">Response Time Trend</h4>
+                        <div className="h-24 flex items-end space-x-2">
+                          {[35, 42, 28, 65, 72, 43, 51, 58, 40, 56, 62, 48].map((height, index) => (
+                            <div 
+                              key={index}
+                              className="bg-[#3F51FF]/60 rounded-t w-full"
+                              style={{ height: `${height}%` }}
+                            ></div>
+                          ))}
+                        </div>
+                        <div className="flex justify-between text-xs text-gray-500 mt-1">
+                          <span>Apr</span>
+                          <span>May</span>
+                          <span>Jun</span>
+                          <span>Jul</span>
+                          <span>Aug</span>
+                          <span>Sep</span>
+                        </div>
+                      </div>
+                    </div>
+                    
+                    {/* Transaction Value Analysis */}
+                    <div className="bg-black/30 p-4 rounded-lg border border-gray-800">
+                      <h3 className="text-lg font-medium mb-2">Transaction Value Analysis</h3>
+                      <p className="text-sm text-gray-400 mb-4">
+                        Distribution of transaction values over time
+                      </p>
+                      
+                      <div className="space-y-4">
+                        <div className="grid grid-cols-2 gap-4">
+                          <div className="bg-black/20 p-3 rounded-md border border-gray-800">
+                            <h4 className="text-sm font-medium text-gray-400 mb-1">Highest Value</h4>
+                            <div className="text-xl font-bold text-white">
+                              {Math.max(...transactions
+                                .filter(tx => tx.type === 'send' && tx.amount)
+                                .map(tx => {
+                                  // Extract numeric part and convert to number
+                                  const match = tx.amount?.match(/[\d.]+/);
+                                  return match ? parseFloat(match[0]) : 0;
+                                }))} ETH
+                            </div>
+                          </div>
+                          
+                          <div className="bg-black/20 p-3 rounded-md border border-gray-800">
+                            <h4 className="text-sm font-medium text-gray-400 mb-1">Average Value</h4>
+                            <div className="text-xl font-bold text-white">
+                              {(transactions
+                                .filter(tx => tx.type === 'send' && tx.amount)
+                                .map(tx => {
+                                  // Extract numeric part and convert to number
+                                  const match = tx.amount?.match(/[\d.]+/);
+                                  return match ? parseFloat(match[0]) : 0;
+                                })
+                                .reduce((sum, val) => sum + val, 0) / 
+                                (transactions.filter(tx => tx.type === 'send' && tx.amount).length || 1))
+                                .toFixed(2)} ETH
+                            </div>
+                          </div>
+                        </div>
+                        
+                        <div className="mt-4">
+                          <h4 className="text-sm font-medium mb-2">Value Distribution</h4>
+                          <div className="h-32 flex items-end space-x-1">
+                            {transactions
+                              .filter(tx => tx.type === 'send' && tx.amount)
+                              .slice(0, 12)
+                              .map((tx, index) => {
+                                // Extract numeric part and convert to number
+                                const match = tx.amount?.match(/[\d.]+/);
+                                const value = match ? parseFloat(match[0]) : 0;
+                                const maxHeight = 100; // Maximum height percentage
+                                const maxValue = 30; // Assumed maximum value for scaling
+                                const heightPercentage = Math.min((value / maxValue) * maxHeight, maxHeight);
+                                
+                                return (
+                                  <div 
+                                    key={index}
+                                    className="relative flex-1"
+                                  >
+                                    <div 
+                                      className={`
+                                        ${tx.status === 'executed' ? 'bg-blue-500/70' : 
+                                          tx.status === 'approved' ? 'bg-green-500/70' : 
+                                          tx.status === 'rejected' ? 'bg-red-500/70' : 'bg-amber-500/70'}
+                                        rounded-t
+                                      `}
+                                      style={{ height: `${heightPercentage}%` }}
+                                    ></div>
+                                    <div className="text-xs text-gray-500 mt-1 text-center overflow-hidden truncate">
+                                      {value} ETH
+                                    </div>
+                                  </div>
+                                );
+                              })}
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </TabsContent>
+                
                 <TabsContent value="create">
                   <div className="space-y-4">
                     <div>
@@ -1388,6 +1627,173 @@ export function MultiSignatureVault({
           </Card>
         )}
         
+        {/* Hardware Wallet Integration */}
+        <Card className="bg-black/40 border-gray-800">
+          <CardHeader>
+            <CardTitle className="flex items-center">
+              <Shield className="w-5 h-5 mr-2 text-[#3F51FF]" />
+              Advanced Security Settings
+            </CardTitle>
+            <CardDescription>Configure hardware wallet integration and additional security measures</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-6">
+              {/* Hardware Wallet Integration */}
+              <div className="space-y-4">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <h3 className="text-base font-medium">Hardware Wallet Support</h3>
+                    <p className="text-sm text-gray-500">
+                      Enable hardware wallet integration for enhanced security
+                    </p>
+                  </div>
+                  <Switch 
+                    checked={enableHardwareKey}
+                    onCheckedChange={setEnableHardwareKey}
+                  />
+                </div>
+                
+                {enableHardwareKey && (
+                  <div className="bg-black/30 p-4 rounded-lg border border-gray-800 space-y-4">
+                    {/* Supported Hardware Wallets */}
+                    <div>
+                      <h4 className="text-sm font-medium mb-2">Supported Devices</h4>
+                      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                        <div className="bg-black/40 p-3 rounded-md border border-gray-800 flex items-center space-x-3">
+                          <div className="bg-blue-900/30 p-2 rounded-full">
+                            <svg className="h-4 w-4 text-blue-400" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                              <rect width="24" height="24" rx="4" fill="currentColor" fillOpacity="0.2" />
+                              <path d="M7 12H17M12 7V17" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+                            </svg>
+                          </div>
+                          <span className="text-sm">Ledger</span>
+                        </div>
+                        
+                        <div className="bg-black/40 p-3 rounded-md border border-gray-800 flex items-center space-x-3">
+                          <div className="bg-purple-900/30 p-2 rounded-full">
+                            <svg className="h-4 w-4 text-purple-400" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                              <rect width="24" height="24" rx="4" fill="currentColor" fillOpacity="0.2" />
+                              <path d="M8 12H16M8 8H16M8 16H12" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+                            </svg>
+                          </div>
+                          <span className="text-sm">Trezor</span>
+                        </div>
+                        
+                        <div className="bg-black/40 p-3 rounded-md border border-gray-800 flex items-center space-x-3 opacity-50">
+                          <div className="bg-gray-900/30 p-2 rounded-full">
+                            <svg className="h-4 w-4 text-gray-400" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                              <rect width="24" height="24" rx="4" fill="currentColor" fillOpacity="0.2" />
+                              <path d="M12 8V16M8 12H16" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+                            </svg>
+                          </div>
+                          <span className="text-sm">Other (Coming soon)</span>
+                        </div>
+                      </div>
+                    </div>
+                    
+                    {/* Connection Status */}
+                    <div>
+                      <h4 className="text-sm font-medium mb-2">Connection Status</h4>
+                      <div className="bg-black/60 p-3 rounded-md border border-gray-800">
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center space-x-3">
+                            <div className="h-2 w-2 rounded-full bg-red-500"></div>
+                            <span className="text-sm text-gray-400">No hardware wallet connected</span>
+                          </div>
+                          <Button 
+                            variant="outline" 
+                            size="sm" 
+                            className="h-8 bg-black/40 text-sm"
+                          >
+                            Connect
+                          </Button>
+                        </div>
+                      </div>
+                    </div>
+                    
+                    {/* Configuration Options */}
+                    <div>
+                      <h4 className="text-sm font-medium mb-2">Hardware Wallet Configuration</h4>
+                      <div className="space-y-3">
+                        <div className="flex items-center justify-between">
+                          <span className="text-sm text-gray-400">Require hardware confirmation for all transactions</span>
+                          <Switch defaultChecked={true} />
+                        </div>
+                        <div className="flex items-center justify-between">
+                          <span className="text-sm text-gray-400">Auto-lock after 5 minutes of inactivity</span>
+                          <Switch defaultChecked={true} />
+                        </div>
+                        <div className="flex items-center justify-between">
+                          <span className="text-sm text-gray-400">Enable advanced transaction details</span>
+                          <Switch defaultChecked={false} />
+                        </div>
+                      </div>
+                    </div>
+                    
+                    {/* Device Management */}
+                    <div>
+                      <h4 className="text-sm font-medium mb-2">Advanced Settings</h4>
+                      <div className="space-y-2">
+                        <Button variant="outline" size="sm" className="w-full justify-start bg-black/40 text-sm">
+                          <svg className="h-4 w-4 mr-2" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                            <path d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                          </svg>
+                          Configure Device
+                        </Button>
+                        <Button variant="outline" size="sm" className="w-full justify-start bg-black/40 text-sm">
+                          <svg className="h-4 w-4 mr-2" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M12 15V17M6 21h12a3 3 0 003-3V8a3 3 0 00-3-3h-2.59a.1.1 0 00-.07.03l-3.76 3.76a.1.1 0 01-.07.03H8.59a.1.1 0 00-.07.03l-3.76 3.76a.1.1 0 01-.07.03H3a3 3 0 00-3 3v2a3 3 0 003 3h3-3zm0 0a3 3 0 01-3-3v-2a3 3 0 013-3h1.59a.1.1 0 00.07-.03l3.76-3.76a.1.1 0 01.07-.03h2.82a.1.1 0 00.07-.03l3.76-3.76a.1.1 0 01.07-.03H18a3 3 0 013 3v10a3 3 0 01-3 3H6z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                          </svg>
+                          Verify Firmware
+                        </Button>
+                        <Button variant="outline" size="sm" className="w-full justify-start bg-black/40 text-sm">
+                          <svg className="h-4 w-4 mr-2" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M8 14v7M12 14v7M16 14v7M3 21h18M3 10h18M3 7l9-4 9 4M4 10v11M20 10v11" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                          </svg>
+                          Test Connection
+                        </Button>
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </div>
+              
+              {/* Biometric Authentication */}
+              <div className="pt-4 border-t border-gray-800">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <h3 className="text-base font-medium">Biometric Authentication</h3>
+                    <p className="text-sm text-gray-500">
+                      Enable fingerprint or face ID authentication for web transactions
+                    </p>
+                  </div>
+                  <Switch 
+                    checked={enableBiometrics}
+                    onCheckedChange={setEnableBiometrics}
+                  />
+                </div>
+              </div>
+              
+              {/* QR Code Signing */}
+              <div className="pt-4 border-t border-gray-800">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <h3 className="text-base font-medium">QR Code Signing</h3>
+                    <p className="text-sm text-gray-500">
+                      Allow transaction signing via QR code scanning with mobile app
+                    </p>
+                  </div>
+                  <Switch 
+                    checked={enableQRSignature}
+                    onCheckedChange={setEnableQRSignature}
+                  />
+                </div>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+        
         {/* Final Action Buttons */}
         <div className="flex flex-col sm:flex-row gap-3 justify-end">
           {createMode && (
@@ -1400,7 +1806,14 @@ export function MultiSignatureVault({
                     blockchain: selectedBlockchain,
                     threshold: signersThreshold,
                     signers: vaultSigners,
-                    timelock
+                    timelock,
+                    securitySettings: {
+                      enableHardwareKey,
+                      enableQRSignature,
+                      enableBiometrics,
+                      enableRecovery,
+                      enableEncryption
+                    }
                   });
                 }
               }}
