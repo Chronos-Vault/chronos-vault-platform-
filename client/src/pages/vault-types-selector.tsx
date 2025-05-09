@@ -16,9 +16,11 @@ const VaultTypesSelector = () => {
   
   const handleContinue = () => {
     // Redirect to the appropriate vault creation page based on the selected type
-    if (selectedVaultType === 'standard' || 
+    if (selectedVaultType === 'multi-signature') {
+      // Our new Multi-Signature Vault
+      navigate('/multi-signature-vault-new');
+    } else if (selectedVaultType === 'standard' || 
         selectedVaultType === 'time-lock' || 
-        selectedVaultType === 'multi-signature' || 
         selectedVaultType === 'biometric' || 
         selectedVaultType === 'cross-chain') {
       // Basic and Advanced Security vaults

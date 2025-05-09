@@ -68,19 +68,19 @@ const VaultTypeSelector: React.FC<VaultTypeProps> = ({ selectedType, onChange })
       
       <VaultTypeCard 
         type="multi-signature"
-        title="Multi-Signature"
-        description="Require multiple signatures to access vault"
-        icon="📝"
+        title="Multi-Signature Vault"
+        description="Our advanced implementation with Triple-Chain security"
+        icon="🔐"
         color="#FF5AF7"
         isSelected={selectedType === 'multi-signature'}
         onClick={() => onChange('multi-signature')}
         securityLevel={5}
         complexityLevel={3}
         features={[
-          "Multiple approvers required",
-          "Customizable signature threshold",
-          "Team member management",
-          "Enhanced security protocol"
+          "Triple-Chain verification",
+          "Hardware key authentication",
+          "Advanced transaction signing",
+          "Biometric security options"
         ]}
       />
       
