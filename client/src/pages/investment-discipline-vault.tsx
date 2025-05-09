@@ -29,9 +29,7 @@ import { BlockchainType } from '@/contexts/multi-chain-context';
 import { useTon } from '@/contexts/ton-context';
 import { useEthereum } from '@/contexts/ethereum-context';
 import { useSolana } from '@/contexts/solana-context';
-import { SentimentGauge } from '@/components/sentiment/sentiment-gauge';
-import { SentimentAlerts } from '@/components/sentiment/sentiment-alerts';
-import { SentimentRecommendations } from '@/components/sentiment/sentiment-recommendations';
+import { SentimentAnalysis } from '@/components/sentiment/sentiment-analysis';
 import { SentimentData, sentimentAnalysisService, SentimentLevel } from '@/services/sentiment-analysis-service';
 import { TechnicalIndicators, TechnicalIndicator } from '@/components/technical/technical-indicators';
 import { MarketDataDashboard } from '@/components/oracle/market-data-dashboard';
@@ -1430,42 +1428,24 @@ function InvestmentDisciplineVault() {
                 <CardDescription>AI-powered protection against emotional investing decisions</CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
-                <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                  <div className="lg:col-span-1">
-                    <SentimentGauge
-                      assetSymbol={assetType}
-                      onSentimentUpdate={setSentimentData}
-                    />
-                  </div>
-                  <div className="lg:col-span-2 bg-black/30 rounded-lg p-4 border border-gray-800">
-                    <h3 className="text-lg font-medium text-gray-200 mb-2">
-                      AI Investment Recommendations
-                    </h3>
-                    <p className="text-sm text-gray-400 mb-4">
-                      Our AI analyzes market sentiment to help prevent emotional decision-making during extreme market conditions.
-                    </p>
-                    
-                    <SentimentRecommendations
-                      assetSymbol={assetType}
-                      onRecommendationsUpdate={setSentimentRecommendations}
-                    />
-                    
-                    <div className="mt-6 pt-4 border-t border-gray-800">
-                      <div className="flex items-center justify-between">
-                        <div>
-                          <Label htmlFor="enable-sentiment-protection" className="text-sm font-medium text-gray-300">
-                            Enable Sentiment Protection
-                          </Label>
-                          <p className="text-xs text-gray-500 mt-1">
-                            Automatically adjust your strategy during extreme market conditions
-                          </p>
-                        </div>
-                        <Switch
-                          id="enable-sentiment-protection"
-                          checked={enableSentimentProtection}
-                          onCheckedChange={setEnableSentimentProtection}
-                        />
+                <div className="space-y-6">
+                  <SentimentAnalysis assetSymbol={assetType} />
+                  
+                  <div className="mt-6 pt-4 border-t border-gray-800">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <Label htmlFor="enable-sentiment-protection" className="text-sm font-medium text-gray-300">
+                          Enable Sentiment Protection
+                        </Label>
+                        <p className="text-xs text-gray-500 mt-1">
+                          Automatically adjust your strategy during extreme market conditions
+                        </p>
                       </div>
+                      <Switch
+                        id="enable-sentiment-protection"
+                        checked={enableSentimentProtection}
+                        onCheckedChange={setEnableSentimentProtection}
+                      />
                     </div>
                   </div>
                 </div>
