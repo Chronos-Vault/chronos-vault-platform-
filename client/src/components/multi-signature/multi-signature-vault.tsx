@@ -84,6 +84,18 @@ interface Signer {
   hasKey: boolean;
 }
 
+// Guardian for social recovery
+interface RecoveryGuardian {
+  id: string;
+  address: string;
+  name: string;
+  email?: string;
+  status: 'pending' | 'active';
+  timeAdded: Date;
+  lastVerification?: Date;
+  isBackup?: boolean;
+}
+
 interface Transaction {
   id: string;
   type: string;
@@ -237,8 +249,8 @@ export function MultiSignatureVault({
       id: "1",
       address: "0x742d35Cc6634C0532925a3b844Bc454e4438f44e",
       name: "You (Owner)",
-      status: 'accepted',
-      role: 'owner',
+      status: 'accepted' as const,
+      role: 'owner' as const,
       timeAdded: new Date(),
       hasKey: true
     }
@@ -277,6 +289,19 @@ export function MultiSignatureVault({
   const [activityNotifications, setActivityNotifications] = useState<boolean>(true);
   const [gasSettings, setGasSettings] = useState<string>("automatic");
   
+  // Social Recovery Settings
+  const [recoveryGuardians, setRecoveryGuardians] = useState<RecoveryGuardian[]>([]);
+  const [guardianThreshold, setGuardianThreshold] = useState<number>(2);
+  const [newGuardian, setNewGuardian] = useState<{name: string, address: string, email: string}>({
+    name: '',
+    address: '',
+    email: ''
+  });
+  const [recoveryDialogOpen, setRecoveryDialogOpen] = useState<boolean>(false);
+  const [recoveryInitiated, setRecoveryInitiated] = useState<boolean>(false);
+  const [recoveryStep, setRecoveryStep] = useState<number>(1);
+  const [recoveryApprovals, setRecoveryApprovals] = useState<number>(0);
+  
   // Additional features
   const [transactionExpiry, setTransactionExpiry] = useState<number>(7); // days
   const [createMode, setCreateMode] = useState<boolean>(!isReadOnly && signers.length === 0);
@@ -314,8 +339,8 @@ export function MultiSignatureVault({
         id: (vaultSigners.length + 1).toString(),
         address: newSignerAddress,
         name: newSignerName,
-        status: 'pending',
-        role: 'signer',
+        status: 'pending' as const,
+        role: 'owner' as const,
         timeAdded: new Date(),
         hasKey: false
       }
@@ -339,6 +364,98 @@ export function MultiSignatureVault({
     if (signersThreshold > newSigners.length) {
       setSignersThreshold(newSigners.length);
     }
+  };
+  
+  // Social Recovery Management
+  const addGuardian = () => {
+    if (!newGuardian.name || !newGuardian.address) return;
+    
+    // Basic address validation - would be more sophisticated in production
+    if (!newGuardian.address.startsWith('0x') || newGuardian.address.length !== 42) {
+      alert('Please enter a valid Ethereum address');
+      return;
+    }
+    
+    // Check if address already exists
+    if (recoveryGuardians.some(guardian => guardian.address.toLowerCase() === newGuardian.address.toLowerCase())) {
+      alert('This address is already added as a guardian');
+      return;
+    }
+    
+    const newGuardians = [
+      ...recoveryGuardians,
+      {
+        id: (recoveryGuardians.length + 1).toString(),
+        address: newGuardian.address,
+        name: newGuardian.name,
+        email: newGuardian.email,
+        status: 'pending' as const,
+        timeAdded: new Date(),
+      }
+    ];
+    
+    setRecoveryGuardians(newGuardians);
+    setNewGuardian({
+      name: '',
+      address: '',
+      email: ''
+    });
+    
+    // Update threshold if needed
+    if (guardianThreshold > newGuardians.length) {
+      setGuardianThreshold(newGuardians.length);
+    }
+  };
+  
+  const removeGuardian = (id: string) => {
+    const newGuardians = recoveryGuardians.filter(guardian => guardian.id !== id);
+    setRecoveryGuardians(newGuardians);
+    
+    // Adjust threshold if needed
+    if (guardianThreshold > newGuardians.length) {
+      setGuardianThreshold(newGuardians.length);
+    }
+  };
+  
+  const initiateRecovery = () => {
+    setRecoveryInitiated(true);
+    setRecoveryStep(1);
+    setRecoveryApprovals(0);
+    
+    // In a real app, this would trigger notifications to all guardians
+    console.log('Recovery process initiated. Notifying guardians...');
+  };
+  
+  const approveRecovery = (guardianId: string) => {
+    // In a real app, this would verify the guardian's signature
+    const newApprovals = recoveryApprovals + 1;
+    setRecoveryApprovals(newApprovals);
+    
+    // Update guardian status
+    setRecoveryGuardians(
+      recoveryGuardians.map(guardian => 
+        guardian.id === guardianId ? {...guardian, status: 'active' as const} : guardian
+      )
+    );
+    
+    // Move to next step if threshold reached
+    if (newApprovals >= guardianThreshold) {
+      setRecoveryStep(2);
+    }
+  };
+  
+  const completeRecovery = () => {
+    // In a real app, this would generate new keys and update the blockchain
+    setRecoveryStep(3);
+    console.log('Recovery completed. New signing keys generated.');
+    
+    // Reset after a delay
+    setTimeout(() => {
+      setRecoveryInitiated(false);
+      setRecoveryDialogOpen(false);
+      setRecoveryStep(1);
+      setRecoveryApprovals(0);
+    }, 3000);
   };
   
   const handleCreateVault = () => {
@@ -1074,9 +1191,10 @@ export function MultiSignatureVault({
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           <div className="lg:col-span-2">
             <Tabs defaultValue="transactions" className="w-full">
-              <TabsList className="grid grid-cols-3 bg-gray-800/50">
+              <TabsList className="grid grid-cols-4 bg-gray-800/50">
                 <TabsTrigger value="transactions">Transactions</TabsTrigger>
                 <TabsTrigger value="assets">Assets</TabsTrigger>
+                <TabsTrigger value="guardians">Guardians</TabsTrigger>
                 <TabsTrigger value="history">History</TabsTrigger>
               </TabsList>
               
@@ -1232,6 +1350,185 @@ export function MultiSignatureVault({
                         ))}
                       </TableBody>
                     </Table>
+                  </CardContent>
+                </Card>
+              </TabsContent>
+              
+              <TabsContent value="guardians" className="space-y-4 mt-4">
+                <Card className="bg-black/40 border-gray-800">
+                  <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                    <div>
+                      <CardTitle className="flex items-center">
+                        <ShieldAlert className="w-5 h-5 mr-2 text-[#3F51FF]" />
+                        Recovery Guardians
+                      </CardTitle>
+                      <CardDescription>
+                        {enableRecovery 
+                          ? `${recoveryGuardians.length} guardians, ${guardianThreshold} required for recovery` 
+                          : 'Social recovery is disabled'}
+                      </CardDescription>
+                    </div>
+                    <Dialog>
+                      <DialogTrigger asChild>
+                        <Button 
+                          variant="outline" 
+                          className="flex-shrink-0 bg-black/40 border-gray-700"
+                          disabled={!enableRecovery}
+                        >
+                          Add Guardian
+                        </Button>
+                      </DialogTrigger>
+                      <DialogContent className="bg-gray-950 border border-gray-800 text-white">
+                        <DialogHeader>
+                          <DialogTitle>Add Recovery Guardian</DialogTitle>
+                          <DialogDescription>
+                            Add a trusted guardian who can help recover your vault if you lose access.
+                          </DialogDescription>
+                        </DialogHeader>
+                        <div className="space-y-4">
+                          <div className="space-y-2">
+                            <Label htmlFor="guardian-name">Guardian Name</Label>
+                            <Input 
+                              id="guardian-name" 
+                              value={newGuardian.name} 
+                              onChange={e => setNewGuardian({...newGuardian, name: e.target.value})} 
+                              placeholder="Guardian name or organization"
+                              className="bg-black/40 border-gray-700"
+                            />
+                          </div>
+                          
+                          <div className="space-y-2">
+                            <Label htmlFor="guardian-address">Wallet Address</Label>
+                            <Input 
+                              id="guardian-address" 
+                              value={newGuardian.address} 
+                              onChange={e => setNewGuardian({...newGuardian, address: e.target.value})} 
+                              placeholder="0x..."
+                              className="bg-black/40 border-gray-700 font-mono"
+                            />
+                          </div>
+                          
+                          <div className="space-y-2">
+                            <Label htmlFor="guardian-email">Contact Email (optional)</Label>
+                            <Input 
+                              id="guardian-email" 
+                              value={newGuardian.email} 
+                              onChange={e => setNewGuardian({...newGuardian, email: e.target.value})} 
+                              placeholder="guardian@example.com"
+                              className="bg-black/40 border-gray-700"
+                            />
+                          </div>
+                        </div>
+                        <DialogFooter>
+                          <Button 
+                            onClick={addGuardian}
+                            disabled={!newGuardian.name || !newGuardian.address}
+                            className="bg-[#3F51FF] hover:bg-[#3F51FF]/80"
+                          >
+                            Add Guardian
+                          </Button>
+                        </DialogFooter>
+                      </DialogContent>
+                    </Dialog>
+                  </CardHeader>
+                  <CardContent>
+                    {enableRecovery ? (
+                      <>
+                        <div className="space-y-4">
+                          <div className="flex items-center justify-between">
+                            <div className="space-y-0.5">
+                              <Label className="text-sm">Recovery Threshold</Label>
+                              <p className="text-xs text-gray-500">
+                                Number of guardians required to approve a recovery
+                              </p>
+                            </div>
+                            <Select 
+                              value={guardianThreshold.toString()} 
+                              onValueChange={(value) => setGuardianThreshold(Number(value))}
+                              disabled={recoveryGuardians.length === 0}
+                            >
+                              <SelectTrigger className="w-24 bg-black/40 border-gray-700">
+                                <SelectValue placeholder="Select" />
+                              </SelectTrigger>
+                              <SelectContent>
+                                {Array.from({length: recoveryGuardians.length || 1}, (_, i) => (
+                                  <SelectItem key={i + 1} value={(i + 1).toString()}>
+                                    {i + 1}
+                                  </SelectItem>
+                                ))}
+                              </SelectContent>
+                            </Select>
+                          </div>
+                          
+                          {recoveryGuardians.length > 0 ? (
+                            <div className="space-y-3">
+                              {recoveryGuardians.map(guardian => (
+                                <div key={guardian.id} className="flex items-center justify-between p-3 bg-black/40 border border-gray-800 rounded-lg">
+                                  <div className="flex items-center space-x-3">
+                                    <div className="bg-blue-900/20 p-2 rounded-full">
+                                      <Shield className="h-5 w-5 text-blue-500" />
+                                    </div>
+                                    <div>
+                                      <div className="font-medium">{guardian.name}</div>
+                                      <div className="text-xs text-gray-500">
+                                        {guardian.address.slice(0, 6)}...{guardian.address.slice(-4)}
+                                      </div>
+                                    </div>
+                                  </div>
+                                  <div className="flex items-center space-x-3">
+                                    <Badge variant="outline" className={`${
+                                      guardian.status === 'active' 
+                                      ? 'bg-green-900/20 text-green-500 border-green-800'
+                                      : 'bg-orange-900/20 text-orange-500 border-orange-800'
+                                    }`}>
+                                      {guardian.status === 'active' ? 'Active' : 'Pending'}
+                                    </Badge>
+                                    <Button 
+                                      variant="ghost" 
+                                      size="sm" 
+                                      onClick={() => removeGuardian(guardian.id)}
+                                      className="text-red-500 hover:text-red-400 hover:bg-red-950/20"
+                                    >
+                                      <XCircle className="h-4 w-4" />
+                                    </Button>
+                                  </div>
+                                </div>
+                              ))}
+                            </div>
+                          ) : (
+                            <div className="text-center py-10 text-gray-500">
+                              <ShieldAlert className="h-12 w-12 mx-auto mb-4 text-gray-700" />
+                              <p>No recovery guardians added yet</p>
+                              <p className="text-sm mt-1">Add trusted guardians to enable social recovery</p>
+                            </div>
+                          )}
+                        </div>
+                        
+                        <div className="mt-6">
+                          <Button 
+                            variant="outline" 
+                            className="w-full border-yellow-900/50 bg-yellow-950/10 text-yellow-500 hover:bg-yellow-950/20"
+                            onClick={() => setRecoveryDialogOpen(true)}
+                            disabled={recoveryGuardians.length < guardianThreshold || recoveryGuardians.length === 0}
+                          >
+                            Initiate Recovery Process
+                          </Button>
+                        </div>
+                      </>
+                    ) : (
+                      <div className="text-center py-10 text-gray-500">
+                        <Lock className="h-12 w-12 mx-auto mb-4 text-gray-700" />
+                        <p>Social recovery is disabled</p>
+                        <p className="text-sm mt-1">Enable it in Security Settings to configure recovery guardians</p>
+                        <Button 
+                          variant="outline"
+                          className="mt-4"
+                          onClick={() => setEnableRecovery(true)}
+                        >
+                          Enable Social Recovery
+                        </Button>
+                      </div>
+                    )}
                   </CardContent>
                 </Card>
               </TabsContent>
@@ -1426,9 +1723,232 @@ export function MultiSignatureVault({
     );
   };
   
+  // Recovery Dialog for the social recovery process
+  const RecoveryDialog = () => {
+    return (
+      <Dialog open={recoveryDialogOpen} onOpenChange={setRecoveryDialogOpen}>
+        <DialogContent className="bg-gray-950 border border-gray-800 text-white max-w-2xl">
+          <DialogHeader>
+            <DialogTitle className="flex items-center">
+              <ShieldAlert className="w-5 h-5 mr-2 text-yellow-500" />
+              Vault Recovery Process
+            </DialogTitle>
+            {!recoveryInitiated ? (
+              <DialogDescription>
+                Initiate the recovery process to regain access to your vault. Guardians will be notified and asked to approve the recovery.
+              </DialogDescription>
+            ) : (
+              <DialogDescription>
+                Recovery process in progress. {recoveryApprovals} of {guardianThreshold} guardian approvals received.
+              </DialogDescription>
+            )}
+          </DialogHeader>
+          
+          {!recoveryInitiated ? (
+            <div className="space-y-4">
+              <div className="p-4 bg-yellow-950/20 border border-yellow-900/50 rounded-lg">
+                <h4 className="font-medium text-yellow-500 mb-2">Important Information</h4>
+                <ul className="space-y-2 text-sm text-gray-300">
+                  <li className="flex items-start">
+                    <span className="text-yellow-500 mr-2">•</span>
+                    Recovery should only be used if you've lost access to your keys or devices.
+                  </li>
+                  <li className="flex items-start">
+                    <span className="text-yellow-500 mr-2">•</span>
+                    At least {guardianThreshold} of your {recoveryGuardians.length} guardians must approve the recovery.
+                  </li>
+                  <li className="flex items-start">
+                    <span className="text-yellow-500 mr-2">•</span>
+                    The recovery process creates new keys, invalidating old ones.
+                  </li>
+                  <li className="flex items-start">
+                    <span className="text-yellow-500 mr-2">•</span>
+                    Guardian verification happens on-chain for maximum security.
+                  </li>
+                </ul>
+              </div>
+              
+              <div className="space-y-2">
+                <Label>Recovery Reason</Label>
+                <Select defaultValue="lost_keys">
+                  <SelectTrigger className="bg-black/40 border-gray-700">
+                    <SelectValue placeholder="Select reason" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="lost_keys">Lost private keys</SelectItem>
+                    <SelectItem value="device_failure">Device failure or loss</SelectItem>
+                    <SelectItem value="seed_phrase">Lost seed phrase</SelectItem>
+                    <SelectItem value="other">Other reason</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              
+              <div className="space-y-2">
+                <Label>Additional Details (optional)</Label>
+                <Textarea 
+                  placeholder="Provide any additional context for your guardians..."
+                  className="bg-black/40 border-gray-700 min-h-[80px]"
+                />
+              </div>
+            </div>
+          ) : (
+            <div className="space-y-6">
+              {/* Step 1: Guardian Verification */}
+              <div className={`${recoveryStep !== 1 && 'opacity-50'}`}>
+                <h3 className="font-medium text-lg mb-3 flex items-center">
+                  <span className="bg-gray-800 text-white w-6 h-6 flex items-center justify-center rounded-full mr-2 text-sm">1</span>
+                  Guardian Verification
+                </h3>
+                <div className="space-y-3 pl-8">
+                  <p className="text-sm text-gray-400">Guardians must verify their identity on-chain.</p>
+                  
+                  <div className="space-y-2">
+                    {recoveryGuardians.map(guardian => (
+                      <div key={guardian.id} className="flex items-center justify-between p-3 bg-black/40 border border-gray-800 rounded-lg">
+                        <div className="flex items-center space-x-3">
+                          <div className={`p-2 rounded-full ${
+                            guardian.status === 'active' ? 'bg-green-900/20' : 'bg-gray-800'
+                          }`}>
+                            <Shield className={`h-5 w-5 ${
+                              guardian.status === 'active' ? 'text-green-500' : 'text-gray-500'
+                            }`} />
+                          </div>
+                          <div>
+                            <div className="font-medium">{guardian.name}</div>
+                            <div className="text-xs text-gray-500">
+                              {guardian.address.slice(0, 6)}...{guardian.address.slice(-4)}
+                            </div>
+                          </div>
+                        </div>
+                        <div>
+                          {guardian.status === 'active' ? (
+                            <Badge variant="outline" className="bg-green-900/20 text-green-500 border-green-800">
+                              Verified
+                            </Badge>
+                          ) : (
+                            <Button 
+                              variant="outline" 
+                              size="sm"
+                              className="text-blue-500 border-blue-900/50"
+                              onClick={() => approveRecovery(guardian.id)}
+                            >
+                              Verify
+                            </Button>
+                          )}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                  
+                  <div className="pt-2">
+                    <div className="flex items-center justify-between text-sm">
+                      <span>{recoveryApprovals} of {guardianThreshold} approvals</span>
+                      <span>{Math.floor((recoveryApprovals / guardianThreshold) * 100)}%</span>
+                    </div>
+                    <Progress 
+                      value={(recoveryApprovals / guardianThreshold) * 100} 
+                      className="h-1 mt-2"
+                    />
+                  </div>
+                </div>
+              </div>
+              
+              {/* Step 2: New Keys Generation */}
+              <div className={`${recoveryStep !== 2 && 'opacity-50'}`}>
+                <h3 className="font-medium text-lg mb-3 flex items-center">
+                  <span className="bg-gray-800 text-white w-6 h-6 flex items-center justify-center rounded-full mr-2 text-sm">2</span>
+                  Generate New Keys
+                </h3>
+                <div className="space-y-3 pl-8">
+                  <p className="text-sm text-gray-400">Create new encryption keys for your vault.</p>
+                  
+                  {recoveryStep >= 2 ? (
+                    <div className="space-y-4">
+                      <div className="p-3 bg-black/40 border border-gray-800 rounded-lg">
+                        <div className="space-y-2">
+                          <div className="flex justify-between text-sm">
+                            <span className="text-gray-400">New Address</span>
+                            <code className="text-xs bg-black/60 px-2 py-1 rounded font-mono">
+                              0x7F5aB7C2CE83613b294fc33EDf89e7b3
+                            </code>
+                          </div>
+                          <div className="flex justify-between text-sm">
+                            <span className="text-gray-400">Security Level</span>
+                            <span>Triple-Chain Verification</span>
+                          </div>
+                        </div>
+                      </div>
+                      
+                      <Button 
+                        className="w-full bg-[#3F51FF] hover:bg-[#3F51FF]/80"
+                        onClick={completeRecovery}
+                      >
+                        Complete Recovery
+                      </Button>
+                    </div>
+                  ) : (
+                    <div className="text-center py-6">
+                      <Fingerprint className="h-12 w-12 mx-auto mb-3 text-gray-700" />
+                      <p className="text-gray-500">Awaiting guardian verification</p>
+                    </div>
+                  )}
+                </div>
+              </div>
+              
+              {/* Step 3: Confirmation */}
+              <div className={`${recoveryStep !== 3 && 'opacity-50'}`}>
+                <h3 className="font-medium text-lg mb-3 flex items-center">
+                  <span className="bg-gray-800 text-white w-6 h-6 flex items-center justify-center rounded-full mr-2 text-sm">3</span>
+                  Recovery Complete
+                </h3>
+                <div className="space-y-3 pl-8">
+                  {recoveryStep === 3 ? (
+                    <div className="text-center py-6">
+                      <CheckCircle2 className="h-12 w-12 mx-auto mb-3 text-green-500" />
+                      <p className="text-green-500 font-medium">Vault recovery successful!</p>
+                      <p className="text-sm text-gray-400 mt-1">Your vault has been restored with new keys.</p>
+                    </div>
+                  ) : (
+                    <p className="text-sm text-gray-400">Final confirmation and access restoration.</p>
+                  )}
+                </div>
+              </div>
+            </div>
+          )}
+          
+          <DialogFooter>
+            {!recoveryInitiated ? (
+              <Button 
+                className="bg-yellow-600 hover:bg-yellow-700 text-white"
+                onClick={initiateRecovery}
+              >
+                Start Recovery Process
+              </Button>
+            ) : recoveryStep === 3 ? (
+              <Button 
+                className="bg-green-600 hover:bg-green-700"
+                onClick={() => setRecoveryDialogOpen(false)}
+              >
+                Close
+              </Button>
+            ) : (
+              <Button 
+                variant="outline"
+                onClick={() => setRecoveryDialogOpen(false)}
+              >
+                Cancel
+              </Button>
+            )}
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+    );
+  };
+
   return (
     <div className="container py-6">
       {createMode ? renderCreationUI() : renderManagementUI()}
+      <RecoveryDialog />
     </div>
   );
 }
