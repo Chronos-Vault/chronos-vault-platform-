@@ -77,7 +77,8 @@ import {
   ArrowUpRight,
   ShieldAlert,
   Plus,
-  Download
+  Download,
+  X
 } from "lucide-react";
 
 // Enum for blockchain types (this should match your existing enum if you have one)
@@ -109,7 +110,7 @@ interface Signer {
   timeAdded: Date;
   hasKey: boolean;
   // Time-based access constraints
-  timeConstraints?: {
+  timeConstraints: {
     enabled: boolean;
     startTime?: string; // Format: "HH:MM" - 24-hour format
     endTime?: string; // Format: "HH:MM" - 24-hour format
@@ -119,17 +120,17 @@ interface Signer {
     effectiveUntil?: Date; // Optional expiration of these constraints
   };
   // Transaction type permissions for custom signing policies
-  transactionPermissions?: {
+  transactionPermissions: {
     enabled: boolean;
     allowedTypes: TransactionType[]; // Types of transactions this signer can approve
-    approvalLimits?: {
+    approvalLimits: {
       [TransactionType.TRANSFER]?: {
         maxAmount?: string; // Maximum amount this signer can approve
-        allowedDestinations?: string[]; // Approved destination addresses
+        allowedDestinations: string[]; // Approved destination addresses
       };
       [TransactionType.CONTRACT_INTERACTION]?: {
-        allowedContracts?: string[]; // Approved contract addresses
-        allowedMethods?: string[]; // Approved method signatures
+        allowedContracts: string[]; // Approved contract addresses
+        allowedMethods: string[]; // Approved method signatures
       };
     };
   };
@@ -295,46 +296,47 @@ export function MultiSignatureVault({
   const [description, setDescription] = useState<string>(vaultDescription);
   const [selectedBlockchain, setSelectedBlockchain] = useState<BlockchainType>(blockchain);
   const [signersThreshold, setSignersThreshold] = useState<number>(threshold);
-  const [vaultSigners, setVaultSigners] = useState<Signer[]>(signers.length > 0 ? signers : [
-    {
-      id: "1",
-      address: "0x742d35Cc6634C0532925a3b844Bc454e4438f44e",
-      name: "You (Owner)",
-      status: 'accepted' as const,
-      role: 'owner' as const,
-      timeAdded: new Date(),
-      hasKey: true,
-      timeConstraints: {
-        enabled: false,
-        startTime: "09:00",
-        endTime: "17:00",
-        allowedDays: [1, 2, 3, 4, 5], // Monday to Friday
-        timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone
-      },
-      transactionPermissions: {
-        enabled: false,
-        allowedTypes: [
-          TransactionType.TRANSFER,
-          TransactionType.CONTRACT_INTERACTION,
-          TransactionType.RECOVERY,
-          TransactionType.SETTINGS_CHANGE,
-          TransactionType.ADD_SIGNER,
-          TransactionType.REMOVE_SIGNER,
-          TransactionType.CHANGE_THRESHOLD
-        ],
-        approvalLimits: {
-          [TransactionType.TRANSFER]: {
-            maxAmount: "1000",
-            allowedDestinations: []
-          },
-          [TransactionType.CONTRACT_INTERACTION]: {
-            allowedContracts: [],
-            allowedMethods: []
-          }
+  // Create a default owner signer
+  const defaultSigner: Signer = {
+    id: "1",
+    address: "0x742d35Cc6634C0532925a3b844Bc454e4438f44e",
+    name: "You (Owner)",
+    status: 'accepted' as const,
+    role: 'owner' as const,
+    timeAdded: new Date(),
+    hasKey: true,
+    timeConstraints: {
+      enabled: false,
+      startTime: "09:00",
+      endTime: "17:00",
+      allowedDays: [1, 2, 3, 4, 5], // Monday to Friday
+      timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone
+    },
+    transactionPermissions: {
+      enabled: false,
+      allowedTypes: [
+        TransactionType.TRANSFER,
+        TransactionType.CONTRACT_INTERACTION,
+        TransactionType.RECOVERY,
+        TransactionType.SETTINGS_CHANGE,
+        TransactionType.ADD_SIGNER,
+        TransactionType.REMOVE_SIGNER,
+        TransactionType.CHANGE_THRESHOLD
+      ],
+      approvalLimits: {
+        [TransactionType.TRANSFER]: {
+          maxAmount: "1000",
+          allowedDestinations: []
+        },
+        [TransactionType.CONTRACT_INTERACTION]: {
+          allowedContracts: [],
+          allowedMethods: []
         }
       }
     }
-  ]);
+  };
+  
+  const [vaultSigners, setVaultSigners] = useState<Signer[]>(signers.length > 0 ? signers : [defaultSigner]);
   const [newSignerAddress, setNewSignerAddress] = useState<string>("");
   const [newSignerName, setNewSignerName] = useState<string>("");
   const [timelock, setTimelock] = useState<Date | undefined>(assetTimelock);
@@ -413,46 +415,49 @@ export function MultiSignatureVault({
       return;
     }
     
-    const newSigners = [
-      ...vaultSigners,
-      {
-        id: (vaultSigners.length + 1).toString(),
-        address: newSignerAddress,
-        name: newSignerName,
-        status: 'pending' as const,
-        role: 'owner' as const,
-        timeAdded: new Date(),
-        hasKey: false,
-        timeConstraints: {
-          enabled: false,
-          startTime: "09:00",
-          endTime: "17:00",
-          allowedDays: [1, 2, 3, 4, 5], // Monday to Friday
-          timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone
-        },
-        transactionPermissions: {
-          enabled: false,
-          allowedTypes: [
-            TransactionType.TRANSFER,
-            TransactionType.CONTRACT_INTERACTION,
-            TransactionType.RECOVERY,
-            TransactionType.SETTINGS_CHANGE,
-            TransactionType.ADD_SIGNER,
-            TransactionType.REMOVE_SIGNER,
-            TransactionType.CHANGE_THRESHOLD
-          ],
-          approvalLimits: {
-            [TransactionType.TRANSFER]: {
-              maxAmount: "1000",
-              allowedDestinations: []
-            },
-            [TransactionType.CONTRACT_INTERACTION]: {
-              allowedContracts: [],
-              allowedMethods: []
-            }
+    // Create a new signer with the required structure
+    const newSigner: Signer = {
+      id: (vaultSigners.length + 1).toString(),
+      address: newSignerAddress,
+      name: newSignerName,
+      status: 'pending' as const,
+      role: 'owner' as const,
+      timeAdded: new Date(),
+      hasKey: false,
+      timeConstraints: {
+        enabled: false,
+        startTime: "09:00",
+        endTime: "17:00",
+        allowedDays: [1, 2, 3, 4, 5], // Monday to Friday
+        timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone
+      },
+      transactionPermissions: {
+        enabled: false,
+        allowedTypes: [
+          TransactionType.TRANSFER,
+          TransactionType.CONTRACT_INTERACTION,
+          TransactionType.RECOVERY,
+          TransactionType.SETTINGS_CHANGE,
+          TransactionType.ADD_SIGNER,
+          TransactionType.REMOVE_SIGNER,
+          TransactionType.CHANGE_THRESHOLD
+        ],
+        approvalLimits: {
+          [TransactionType.TRANSFER]: {
+            maxAmount: "1000",
+            allowedDestinations: []
+          },
+          [TransactionType.CONTRACT_INTERACTION]: {
+            allowedContracts: [],
+            allowedMethods: []
           }
         }
       }
+    };
+    
+    const newSigners = [
+      ...vaultSigners,
+      newSigner
     ];
     
     setVaultSigners(newSigners);
@@ -1264,19 +1269,19 @@ export function MultiSignatureVault({
                                     <div key={type} className="flex items-center space-x-2">
                                       <Checkbox 
                                         id={`tx-type-${type}-${signer.id}`}
-                                        checked={signer.transactionPermissions?.allowedTypes.includes(type)}
+                                        checked={signer.transactionPermissions.allowedTypes.includes(type)}
                                         onCheckedChange={(checked) => {
                                           setVaultSigners(vaultSigners.map(s => {
                                             if (s.id !== signer.id) return s;
                                             
                                             const newAllowedTypes = checked 
-                                              ? [...(s.transactionPermissions?.allowedTypes || []), type]
-                                              : (s.transactionPermissions?.allowedTypes || []).filter(t => t !== type);
+                                              ? [...s.transactionPermissions.allowedTypes, type]
+                                              : s.transactionPermissions.allowedTypes.filter(t => t !== type);
                                               
                                             return {
                                               ...s,
                                               transactionPermissions: {
-                                                ...(s.transactionPermissions || {}),
+                                                ...s.transactionPermissions,
                                                 allowedTypes: newAllowedTypes
                                               }
                                             };
@@ -1295,7 +1300,7 @@ export function MultiSignatureVault({
                               </div>
                               
                               {/* Transfer Amount Limit */}
-                              {signer.transactionPermissions?.allowedTypes.includes(TransactionType.TRANSFER) && (
+                              {signer.transactionPermissions.allowedTypes.includes(TransactionType.TRANSFER) && (
                                 <div>
                                   <Accordion type="single" collapsible className="w-full">
                                     <AccordionItem value="transfer-limits" className="border-gray-800">
@@ -1420,7 +1425,7 @@ export function MultiSignatureVault({
                               )}
                               
                               {/* Contract Interaction Limits */}
-                              {signer.transactionPermissions?.allowedTypes.includes(TransactionType.CONTRACT_INTERACTION) && (
+                              {signer.transactionPermissions.allowedTypes.includes(TransactionType.CONTRACT_INTERACTION) && (
                                 <div>
                                   <Accordion type="single" collapsible className="w-full">
                                     <AccordionItem value="contract-limits" className="border-gray-800">
