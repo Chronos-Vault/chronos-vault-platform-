@@ -47,6 +47,13 @@ import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { Separator } from "@/components/ui/separator";
+import { Checkbox } from "@/components/ui/checkbox";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
 import {
   Tooltip,
   TooltipContent,
@@ -81,6 +88,17 @@ export enum BlockchainType {
   BITCOIN = 3
 }
 
+// Transaction types for custom signing policies
+export enum TransactionType {
+  TRANSFER = 'transfer',
+  CONTRACT_INTERACTION = 'contract_interaction',
+  RECOVERY = 'recovery',
+  SETTINGS_CHANGE = 'settings_change',
+  ADD_SIGNER = 'add_signer',
+  REMOVE_SIGNER = 'remove_signer',
+  CHANGE_THRESHOLD = 'change_threshold'
+}
+
 // Types for Multi-Signature Vault
 interface Signer {
   id: string;
@@ -99,6 +117,21 @@ interface Signer {
     timeZone?: string; // e.g., "America/New_York"
     effectiveFrom?: Date; // When these constraints become active
     effectiveUntil?: Date; // Optional expiration of these constraints
+  };
+  // Transaction type permissions for custom signing policies
+  transactionPermissions?: {
+    enabled: boolean;
+    allowedTypes: TransactionType[]; // Types of transactions this signer can approve
+    approvalLimits?: {
+      [TransactionType.TRANSFER]?: {
+        maxAmount?: string; // Maximum amount this signer can approve
+        allowedDestinations?: string[]; // Approved destination addresses
+      };
+      [TransactionType.CONTRACT_INTERACTION]?: {
+        allowedContracts?: string[]; // Approved contract addresses
+        allowedMethods?: string[]; // Approved method signatures
+      };
+    };
   };
 }
 
@@ -277,6 +310,28 @@ export function MultiSignatureVault({
         endTime: "17:00",
         allowedDays: [1, 2, 3, 4, 5], // Monday to Friday
         timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone
+      },
+      transactionPermissions: {
+        enabled: false,
+        allowedTypes: [
+          TransactionType.TRANSFER,
+          TransactionType.CONTRACT_INTERACTION,
+          TransactionType.RECOVERY,
+          TransactionType.SETTINGS_CHANGE,
+          TransactionType.ADD_SIGNER,
+          TransactionType.REMOVE_SIGNER,
+          TransactionType.CHANGE_THRESHOLD
+        ],
+        approvalLimits: {
+          [TransactionType.TRANSFER]: {
+            maxAmount: "1000",
+            allowedDestinations: []
+          },
+          [TransactionType.CONTRACT_INTERACTION]: {
+            allowedContracts: [],
+            allowedMethods: []
+          }
+        }
       }
     }
   ]);
@@ -374,6 +429,28 @@ export function MultiSignatureVault({
           endTime: "17:00",
           allowedDays: [1, 2, 3, 4, 5], // Monday to Friday
           timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone
+        },
+        transactionPermissions: {
+          enabled: false,
+          allowedTypes: [
+            TransactionType.TRANSFER,
+            TransactionType.CONTRACT_INTERACTION,
+            TransactionType.RECOVERY,
+            TransactionType.SETTINGS_CHANGE,
+            TransactionType.ADD_SIGNER,
+            TransactionType.REMOVE_SIGNER,
+            TransactionType.CHANGE_THRESHOLD
+          ],
+          approvalLimits: {
+            [TransactionType.TRANSFER]: {
+              maxAmount: "1000",
+              allowedDestinations: []
+            },
+            [TransactionType.CONTRACT_INTERACTION]: {
+              allowedContracts: [],
+              allowedMethods: []
+            }
+          }
         }
       }
     ];
@@ -575,16 +652,106 @@ export function MultiSignatureVault({
   };
   
   const signTransaction = (txId: string) => {
-    // First check if signer can sign at current time
-    if (!canSignTransaction(txId)) {
-      // Show error message about time constraints
+    const currentSigner = vaultSigners[0];
+    const transaction = transactions.find(tx => tx.id === txId);
+    
+    if (!transaction || transaction.status !== 'pending') {
+      alert("This transaction is no longer pending and cannot be signed.");
+      return;
+    }
+    
+    if (transaction.signers.includes(currentSigner.address)) {
+      alert("You have already signed this transaction.");
+      return;
+    }
+    
+    // Check time-based constraints
+    if (currentSigner.timeConstraints?.enabled && !canSignerAccessAtCurrentTime(currentSigner)) {
+      // Show detailed error message about time constraints
+      const { startTime, endTime, allowedDays } = currentSigner.timeConstraints;
+      const days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+      const allowedDaysText = allowedDays?.map(day => days[day]).join(", ");
+      
       alert(
-        "You cannot sign this transaction at the current time due to time-based access constraints. " +
-        "Please check your allowed signing schedule."
+        `Time-based access denied: You can only sign transactions between ${startTime} and ${endTime} on ${allowedDaysText}.`
       );
       return;
     }
     
+    // Check transaction type permissions
+    if (currentSigner.transactionPermissions?.enabled) {
+      // Map transaction type string to enum
+      let txType: TransactionType;
+      
+      switch (transaction.type) {
+        case 'send':
+          txType = TransactionType.TRANSFER;
+          break;
+        case 'contract':
+          txType = TransactionType.CONTRACT_INTERACTION;
+          break;
+        case 'add_signer':
+          txType = TransactionType.ADD_SIGNER;
+          break;
+        case 'remove_signer':
+          txType = TransactionType.REMOVE_SIGNER;
+          break;
+        case 'change_threshold':
+          txType = TransactionType.CHANGE_THRESHOLD;
+          break;
+        case 'recovery':
+          txType = TransactionType.RECOVERY;
+          break;
+        default:
+          txType = TransactionType.SETTINGS_CHANGE;
+      }
+      
+      // Check if transaction type is allowed
+      if (!currentSigner.transactionPermissions.allowedTypes.includes(txType)) {
+        alert(`Permission denied: You are not authorized to sign ${txType.replace(/_/g, ' ')} transactions.`);
+        return;
+      }
+      
+      // Check specific limits for transfers
+      if (txType === TransactionType.TRANSFER && transaction.amount) {
+        const limits = currentSigner.transactionPermissions.approvalLimits?.[TransactionType.TRANSFER];
+        
+        // Check maximum amount if specified
+        if (limits?.maxAmount) {
+          const [value, currency] = transaction.amount.split(' ');
+          const numValue = parseFloat(value.replace(/,/g, ''));
+          const maxAmount = parseFloat(limits.maxAmount);
+          
+          if (numValue > maxAmount) {
+            alert(`Transaction amount exceeds your limit: You can only approve transactions up to ${maxAmount} ${currency}.`);
+            return;
+          }
+        }
+        
+        // Check allowed destinations if specified and not empty
+        if (limits?.allowedDestinations && 
+            limits.allowedDestinations.length > 0 && 
+            transaction.destination &&
+            !limits.allowedDestinations.includes(transaction.destination)) {
+          alert(`Destination not allowed: You can only send to pre-approved addresses.`);
+          return;
+        }
+      }
+      
+      // Check contract interaction permissions
+      if (txType === TransactionType.CONTRACT_INTERACTION && transaction.contractInteraction) {
+        const limits = currentSigner.transactionPermissions.approvalLimits?.[TransactionType.CONTRACT_INTERACTION];
+        
+        // Check allowed methods if specified
+        if (limits?.allowedMethods?.length && transaction.contractInteraction.method &&
+            !limits.allowedMethods.includes(transaction.contractInteraction.method)) {
+          alert(`Method not allowed: You can only approve specific contract methods.`);
+          return;
+        }
+      }
+    }
+    
+    // If all checks pass, sign the transaction
     setTransactions(transactions.map(tx => {
       if (tx.id === txId && tx.status === 'pending') {
         return {
@@ -645,7 +812,7 @@ export function MultiSignatureVault({
     }));
   };
   
-  // Check if a transaction can be signed based on time constraints
+  // Check if a transaction can be signed based on time and permission constraints
   const canSignTransaction = (txId: string): boolean => {
     const currentSigner = vaultSigners[0]; // Assuming current user is the first signer
     
@@ -661,7 +828,87 @@ export function MultiSignatureVault({
     }
     
     // Check time-based constraints
-    return canSignerAccessAtCurrentTime(currentSigner);
+    if (!canSignerAccessAtCurrentTime(currentSigner)) {
+      return false;
+    }
+    
+    // Check transaction type permissions if enabled
+    if (currentSigner.transactionPermissions?.enabled) {
+      // Map transaction type string to enum
+      let txType: TransactionType;
+      
+      switch (transaction.type) {
+        case 'send':
+          txType = TransactionType.TRANSFER;
+          break;
+        case 'contract':
+          txType = TransactionType.CONTRACT_INTERACTION;
+          break;
+        case 'add_signer':
+          txType = TransactionType.ADD_SIGNER;
+          break;
+        case 'remove_signer':
+          txType = TransactionType.REMOVE_SIGNER;
+          break;
+        case 'change_threshold':
+          txType = TransactionType.CHANGE_THRESHOLD;
+          break;
+        case 'recovery':
+          txType = TransactionType.RECOVERY;
+          break;
+        default:
+          txType = TransactionType.SETTINGS_CHANGE;
+      }
+      
+      // Check if transaction type is allowed
+      if (!currentSigner.transactionPermissions.allowedTypes.includes(txType)) {
+        return false;
+      }
+      
+      // Check specific limits based on transaction type
+      if (txType === TransactionType.TRANSFER && transaction.amount) {
+        const limits = currentSigner.transactionPermissions.approvalLimits?.[TransactionType.TRANSFER];
+        
+        // Check maximum amount if specified
+        if (limits?.maxAmount) {
+          const [value, _] = transaction.amount.split(' ');
+          const numValue = parseFloat(value.replace(/,/g, ''));
+          const maxAmount = parseFloat(limits.maxAmount);
+          
+          if (numValue > maxAmount) {
+            return false;
+          }
+        }
+        
+        // Check allowed destinations if specified and not empty
+        if (limits?.allowedDestinations && 
+            limits.allowedDestinations.length > 0 && 
+            transaction.destination &&
+            !limits.allowedDestinations.includes(transaction.destination)) {
+          return false;
+        }
+      }
+      
+      // Check contract interaction permissions
+      if (txType === TransactionType.CONTRACT_INTERACTION && transaction.contractInteraction) {
+        const limits = currentSigner.transactionPermissions.approvalLimits?.[TransactionType.CONTRACT_INTERACTION];
+        
+        // In a real implementation, transaction would have a contract address
+        // Check allowed contracts if specified
+        // if (limits?.allowedContracts?.length && transaction.contractAddress && 
+        //    !limits.allowedContracts.includes(transaction.contractAddress)) {
+        //   return false;
+        // }
+        
+        // Check allowed methods if specified
+        if (limits?.allowedMethods?.length && transaction.contractInteraction.method &&
+            !limits.allowedMethods.includes(transaction.contractInteraction.method)) {
+          return false;
+        }
+      }
+    }
+    
+    return true;
   };
   
   const getTransactionStatusBadge = (status: Transaction['status']) => {
@@ -927,6 +1174,346 @@ export function MultiSignatureVault({
                               </Button>
                             )}
                           </div>
+                        </div>
+                        
+                        {/* Time-based access constraints */}
+                        <div className="mt-3 pt-3 border-t border-gray-800">
+                          <div className="flex justify-between items-center mb-2">
+                            <Label htmlFor={`time-constraints-${signer.id}`} className="text-sm font-medium flex items-center gap-1">
+                              <Clock10 className="h-3.5 w-3.5 text-gray-400" />
+                              Time-based Access Constraints
+                            </Label>
+                            <Switch 
+                              id={`time-constraints-${signer.id}`} 
+                              checked={signer.timeConstraints?.enabled || false}
+                              onCheckedChange={(checked) => {
+                                setVaultSigners(vaultSigners.map(s => 
+                                  s.id === signer.id 
+                                    ? { 
+                                        ...s, 
+                                        timeConstraints: { 
+                                          ...(s.timeConstraints || {
+                                            startTime: "09:00",
+                                            endTime: "17:00",
+                                            allowedDays: [1, 2, 3, 4, 5],
+                                            timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone
+                                          }), 
+                                          enabled: checked 
+                                        } 
+                                      } 
+                                    : s
+                                ))
+                              }}
+                              className="ml-2"
+                            />
+                          </div>
+                          
+                          {signer.timeConstraints?.enabled && (
+                            <div className="space-y-3 mt-2 text-sm">
+
+                            {/* Transaction permissions - Custom Signing Policies */}
+                            </div>
+                          )}
+                        </div>
+                        
+                        {/* Transaction type permissions */}
+                        <div className="mt-3 pt-3 border-t border-gray-800">
+                          <div className="flex justify-between items-center mb-2">
+                            <Label htmlFor={`transaction-permissions-${signer.id}`} className="text-sm font-medium flex items-center gap-1">
+                              <FileLock2 className="h-3.5 w-3.5 text-gray-400" />
+                              Custom Signing Policies
+                            </Label>
+                            <Switch 
+                              id={`transaction-permissions-${signer.id}`} 
+                              checked={signer.transactionPermissions?.enabled || false}
+                              onCheckedChange={(checked) => {
+                                setVaultSigners(vaultSigners.map(s => 
+                                  s.id === signer.id 
+                                    ? { 
+                                        ...s, 
+                                        transactionPermissions: { 
+                                          ...(s.transactionPermissions || {
+                                            allowedTypes: Object.values(TransactionType),
+                                            approvalLimits: {
+                                              [TransactionType.TRANSFER]: {
+                                                maxAmount: "1000",
+                                                allowedDestinations: []
+                                              },
+                                              [TransactionType.CONTRACT_INTERACTION]: {
+                                                allowedContracts: [],
+                                                allowedMethods: []
+                                              }
+                                            }
+                                          }), 
+                                          enabled: checked 
+                                        } 
+                                      } 
+                                    : s
+                                ))
+                              }}
+                              className="ml-2"
+                            />
+                          </div>
+                          
+                          {signer.transactionPermissions?.enabled && (
+                            <div className="space-y-4 mt-2 text-sm">
+                              <div>
+                                <Label className="text-xs mb-1 block">Allowed Transaction Types</Label>
+                                <div className="grid grid-cols-2 gap-1">
+                                  {Object.values(TransactionType).map((type) => (
+                                    <div key={type} className="flex items-center space-x-2">
+                                      <Checkbox 
+                                        id={`tx-type-${type}-${signer.id}`}
+                                        checked={signer.transactionPermissions?.allowedTypes.includes(type)}
+                                        onCheckedChange={(checked) => {
+                                          setVaultSigners(vaultSigners.map(s => {
+                                            if (s.id !== signer.id) return s;
+                                            
+                                            const newAllowedTypes = checked 
+                                              ? [...(s.transactionPermissions?.allowedTypes || []), type]
+                                              : (s.transactionPermissions?.allowedTypes || []).filter(t => t !== type);
+                                              
+                                            return {
+                                              ...s,
+                                              transactionPermissions: {
+                                                ...(s.transactionPermissions || {}),
+                                                allowedTypes: newAllowedTypes
+                                              }
+                                            };
+                                          }));
+                                        }}
+                                      />
+                                      <Label 
+                                        htmlFor={`tx-type-${type}-${signer.id}`}
+                                        className="text-xs cursor-pointer"
+                                      >
+                                        {type.replace(/_/g, ' ')}
+                                      </Label>
+                                    </div>
+                                  ))}
+                                </div>
+                              </div>
+                              
+                              {/* Transfer Amount Limit */}
+                              {signer.transactionPermissions?.allowedTypes.includes(TransactionType.TRANSFER) && (
+                                <div>
+                                  <Accordion type="single" collapsible className="w-full">
+                                    <AccordionItem value="transfer-limits" className="border-gray-800">
+                                      <AccordionTrigger className="text-xs py-2">
+                                        Transfer Limits
+                                      </AccordionTrigger>
+                                      <AccordionContent>
+                                        <div className="space-y-2 pt-2">
+                                          <div>
+                                            <Label htmlFor={`max-amount-${signer.id}`} className="text-xs">
+                                              Maximum Amount
+                                            </Label>
+                                            <Input
+                                              id={`max-amount-${signer.id}`}
+                                              value={signer.transactionPermissions?.approvalLimits?.[TransactionType.TRANSFER]?.maxAmount || ""}
+                                              onChange={(e) => {
+                                                setVaultSigners(vaultSigners.map(s => {
+                                                  if (s.id !== signer.id) return s;
+                                                  
+                                                  return {
+                                                    ...s,
+                                                    transactionPermissions: {
+                                                      ...(s.transactionPermissions || {}),
+                                                      approvalLimits: {
+                                                        ...(s.transactionPermissions?.approvalLimits || {}),
+                                                        [TransactionType.TRANSFER]: {
+                                                          ...(s.transactionPermissions?.approvalLimits?.[TransactionType.TRANSFER] || {}),
+                                                          maxAmount: e.target.value
+                                                        }
+                                                      }
+                                                    }
+                                                  };
+                                                }));
+                                              }}
+                                              placeholder="1000"
+                                              className="bg-black/40 border-gray-700 h-8 mt-1"
+                                            />
+                                          </div>
+                                          
+                                          <div>
+                                            <Label className="text-xs flex items-center justify-between">
+                                              <span>Allowed Destinations</span>
+                                              <Button 
+                                                variant="ghost" 
+                                                size="sm" 
+                                                className="h-6 text-xs gap-1"
+                                                onClick={() => {
+                                                  const address = prompt("Enter address to whitelist:");
+                                                  if (!address || !address.startsWith("0x")) return;
+                                                  
+                                                  setVaultSigners(vaultSigners.map(s => {
+                                                    if (s.id !== signer.id) return s;
+                                                    
+                                                    const currentDests = s.transactionPermissions?.approvalLimits?.[TransactionType.TRANSFER]?.allowedDestinations || [];
+                                                    
+                                                    return {
+                                                      ...s,
+                                                      transactionPermissions: {
+                                                        ...(s.transactionPermissions || {}),
+                                                        approvalLimits: {
+                                                          ...(s.transactionPermissions?.approvalLimits || {}),
+                                                          [TransactionType.TRANSFER]: {
+                                                            ...(s.transactionPermissions?.approvalLimits?.[TransactionType.TRANSFER] || {}),
+                                                            allowedDestinations: [...currentDests, address]
+                                                          }
+                                                        }
+                                                      }
+                                                    };
+                                                  }));
+                                                }}
+                                              >
+                                                <Plus className="h-3 w-3" /> Add
+                                              </Button>
+                                            </Label>
+                                            <div className="mt-1">
+                                              {(signer.transactionPermissions?.approvalLimits?.[TransactionType.TRANSFER]?.allowedDestinations || []).length === 0 ? (
+                                                <p className="text-xs text-gray-500 italic">No allowed addresses (all transfers blocked)</p>
+                                              ) : (
+                                                <div className="space-y-1">
+                                                  {signer.transactionPermissions?.approvalLimits?.[TransactionType.TRANSFER]?.allowedDestinations?.map((address, index) => (
+                                                    <div key={index} className="flex justify-between items-center text-xs bg-black/30 px-2 py-1 rounded">
+                                                      <code className="truncate">{address}</code>
+                                                      <Button
+                                                        variant="ghost"
+                                                        size="sm"
+                                                        className="h-5 w-5 p-0"
+                                                        onClick={() => {
+                                                          setVaultSigners(vaultSigners.map(s => {
+                                                            if (s.id !== signer.id) return s;
+                                                            
+                                                            const currentDests = s.transactionPermissions?.approvalLimits?.[TransactionType.TRANSFER]?.allowedDestinations || [];
+                                                            
+                                                            return {
+                                                              ...s,
+                                                              transactionPermissions: {
+                                                                ...(s.transactionPermissions || {}),
+                                                                approvalLimits: {
+                                                                  ...(s.transactionPermissions?.approvalLimits || {}),
+                                                                  [TransactionType.TRANSFER]: {
+                                                                    ...(s.transactionPermissions?.approvalLimits?.[TransactionType.TRANSFER] || {}),
+                                                                    allowedDestinations: currentDests.filter((_, i) => i !== index)
+                                                                  }
+                                                                }
+                                                              }
+                                                            };
+                                                          }));
+                                                        }}
+                                                      >
+                                                        <X className="h-3 w-3" />
+                                                      </Button>
+                                                    </div>
+                                                  ))}
+                                                </div>
+                                              )}
+                                            </div>
+                                          </div>
+                                        </div>
+                                      </AccordionContent>
+                                    </AccordionItem>
+                                  </Accordion>
+                                </div>
+                              )}
+                              
+                              {/* Contract Interaction Limits */}
+                              {signer.transactionPermissions?.allowedTypes.includes(TransactionType.CONTRACT_INTERACTION) && (
+                                <div>
+                                  <Accordion type="single" collapsible className="w-full">
+                                    <AccordionItem value="contract-limits" className="border-gray-800">
+                                      <AccordionTrigger className="text-xs py-2">
+                                        Contract Interaction Limits
+                                      </AccordionTrigger>
+                                      <AccordionContent>
+                                        <div className="space-y-2 pt-2">
+                                          <div>
+                                            <Label className="text-xs flex items-center justify-between">
+                                              <span>Allowed Methods</span>
+                                              <Button 
+                                                variant="ghost" 
+                                                size="sm" 
+                                                className="h-6 text-xs gap-1"
+                                                onClick={() => {
+                                                  const method = prompt("Enter method name or signature:");
+                                                  if (!method) return;
+                                                  
+                                                  setVaultSigners(vaultSigners.map(s => {
+                                                    if (s.id !== signer.id) return s;
+                                                    
+                                                    const currentMethods = s.transactionPermissions?.approvalLimits?.[TransactionType.CONTRACT_INTERACTION]?.allowedMethods || [];
+                                                    
+                                                    return {
+                                                      ...s,
+                                                      transactionPermissions: {
+                                                        ...(s.transactionPermissions || {}),
+                                                        approvalLimits: {
+                                                          ...(s.transactionPermissions?.approvalLimits || {}),
+                                                          [TransactionType.CONTRACT_INTERACTION]: {
+                                                            ...(s.transactionPermissions?.approvalLimits?.[TransactionType.CONTRACT_INTERACTION] || {}),
+                                                            allowedMethods: [...currentMethods, method]
+                                                          }
+                                                        }
+                                                      }
+                                                    };
+                                                  }));
+                                                }}
+                                              >
+                                                <Plus className="h-3 w-3" /> Add
+                                              </Button>
+                                            </Label>
+                                            <div className="mt-1">
+                                              {(signer.transactionPermissions?.approvalLimits?.[TransactionType.CONTRACT_INTERACTION]?.allowedMethods || []).length === 0 ? (
+                                                <p className="text-xs text-gray-500 italic">No allowed methods (all methods allowed)</p>
+                                              ) : (
+                                                <div className="space-y-1">
+                                                  {signer.transactionPermissions?.approvalLimits?.[TransactionType.CONTRACT_INTERACTION]?.allowedMethods?.map((method, index) => (
+                                                    <div key={index} className="flex justify-between items-center text-xs bg-black/30 px-2 py-1 rounded">
+                                                      <code>{method}</code>
+                                                      <Button
+                                                        variant="ghost"
+                                                        size="sm"
+                                                        className="h-5 w-5 p-0"
+                                                        onClick={() => {
+                                                          setVaultSigners(vaultSigners.map(s => {
+                                                            if (s.id !== signer.id) return s;
+                                                            
+                                                            const currentMethods = s.transactionPermissions?.approvalLimits?.[TransactionType.CONTRACT_INTERACTION]?.allowedMethods || [];
+                                                            
+                                                            return {
+                                                              ...s,
+                                                              transactionPermissions: {
+                                                                ...(s.transactionPermissions || {}),
+                                                                approvalLimits: {
+                                                                  ...(s.transactionPermissions?.approvalLimits || {}),
+                                                                  [TransactionType.CONTRACT_INTERACTION]: {
+                                                                    ...(s.transactionPermissions?.approvalLimits?.[TransactionType.CONTRACT_INTERACTION] || {}),
+                                                                    allowedMethods: currentMethods.filter((_, i) => i !== index)
+                                                                  }
+                                                                }
+                                                              }
+                                                            };
+                                                          }));
+                                                        }}
+                                                      >
+                                                        <X className="h-3 w-3" />
+                                                      </Button>
+                                                    </div>
+                                                  ))}
+                                                </div>
+                                              )}
+                                            </div>
+                                          </div>
+                                        </div>
+                                      </AccordionContent>
+                                    </AccordionItem>
+                                  </Accordion>
+                                </div>
+                              )}
+                            </div>
+                          )}
                         </div>
                         
                         {/* Time-based access constraints */}
