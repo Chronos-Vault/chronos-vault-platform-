@@ -50,6 +50,7 @@ const Navbar = () => {
         { name: "CVT Token", href: "/cvt-token", icon: "🪙" },
         { name: "CVT Utility", href: "/cvt-utility", icon: "⚡" },
         { name: "Token Vaults", href: "/token-vaults", icon: "⏳" },
+        { name: "Multi-Signature Vault", href: "/multi-signature-vault-new", icon: "🔐", highlight: true },
         { name: "Cross-Chain Features", href: "/cross-chain", icon: "🔄" },
         { name: "Atomic Swaps", href: "/cross-chain-atomic-swap", icon: "⚛️", highlight: true },
         { name: "Cross-Chain vs Atomic Swaps", href: "/cross-chain-vs-atomic-swap", icon: "📘" },
@@ -243,6 +244,11 @@ const Navbar = () => {
                 <Link href="/zk-privacy-demo">
                   <DropdownMenuItem className="cursor-pointer">
                     <span className="flex items-center gap-1"><span>🔐</span> ZK Privacy Demo</span>
+                  </DropdownMenuItem>
+                </Link>
+                <Link href="/multi-signature-vault-new">
+                  <DropdownMenuItem className="cursor-pointer">
+                    <span className="flex items-center gap-1"><span>🔐</span> Multi-Signature Vault</span>
                   </DropdownMenuItem>
                 </Link>
               </DropdownMenuContent>

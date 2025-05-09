@@ -102,7 +102,7 @@ function Router() {
         <Route path="/cvt-token" component={CVTTokenPage} />
         <Route path="/cvt-utility" component={CVTUtilityPage} />
         <Route path="/token-vaults" component={TokenVaultsPage} />
-        <Route path="/multi-signature-vault" component={MultiSignatureVaultPage} />
+        <Route path="/multi-signature-vault-new" component={MultiSignatureVaultPage} />
         <Route path="/cross-chain" component={CrossChainPage} />
         <Route path="/cross-chain-vault" component={CrossChainVaultPage} />
         <Route path="/cross-chain-security" component={CrossChainSecurityPage} />
