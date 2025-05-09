@@ -645,6 +645,26 @@ export function MultiSignatureVault({
     }));
   };
   
+
+  // Check if a transaction can be signed based on time constraints
+  const canSignTransaction = (txId: string): boolean => {
+    const currentSigner = vaultSigners[0]; // Assuming current user is the first signer
+    
+    // Check if the transaction exists and is pending
+    const transaction = transactions.find(tx => tx.id === txId);
+    if (!transaction || transaction.status !== 'pending') {
+      return false;
+    }
+    
+    // Check if already signed
+    if (transaction.signers.includes(currentSigner.address)) {
+      return false;
+    }
+    
+    // Check time-based constraints
+    return canSignerAccessAtCurrentTime(currentSigner);
+  };
+  
   const getTransactionStatusBadge = (status: Transaction['status']) => {
     switch (status) {
       case 'pending':
@@ -750,25 +770,6 @@ export function MultiSignatureVault({
       console.error("Error checking time constraints:", error);
       return false; // Default to denying access on error
     }
-  };
-  
-  // Check if a transaction can be signed based on time constraints
-  const canSignTransaction = (txId: string): boolean => {
-    const currentSigner = vaultSigners[0]; // Assuming current user is the first signer
-    
-    // Check if the transaction exists and is pending
-    const transaction = transactions.find(tx => tx.id === txId);
-    if (!transaction || transaction.status !== 'pending') {
-      return false;
-    }
-    
-    // Check if already signed
-    if (transaction.signers.includes(currentSigner.address)) {
-      return false;
-    }
-    
-    // Check time-based constraints
-    return canSignerAccessAtCurrentTime(currentSigner);
   };
   
   // UI for creating a multi-signature vault
