@@ -1151,17 +1151,17 @@ export function MultiSignatureVault({
                         key={signer.id} 
                         className="p-3 bg-black/40 rounded-md border border-gray-800"
                       >
-                        <div className="flex items-center justify-between">
+                        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
                           <div className="flex items-center space-x-3">
-                            <div className="bg-[#3F51FF]/20 p-2 rounded-full">
+                            <div className="bg-[#3F51FF]/20 p-2 rounded-full min-w-[32px] flex-shrink-0">
                               <Users className="h-4 w-4 text-[#3F51FF]" />
                             </div>
-                            <div>
+                            <div className="overflow-hidden">
                               <div className="font-medium">{signer.name}</div>
-                              <div className="text-xs text-gray-500 font-mono">{signer.address}</div>
+                              <div className="text-xs text-gray-500 font-mono truncate">{signer.address}</div>
                             </div>
                           </div>
-                          <div className="flex items-center space-x-3">
+                          <div className="flex items-center justify-between sm:justify-end gap-3">
                             {signer.role === 'owner' ? (
                               <Badge variant="outline" className="bg-purple-900/30 text-purple-400 border-purple-800">Owner</Badge>
                             ) : (
