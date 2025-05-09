@@ -34,6 +34,10 @@ import SentimentAlerts from '@/components/sentiment/sentiment-alerts';
 import { SentimentData, sentimentAnalysisService, SentimentLevel } from '@/services/sentiment-analysis-service';
 import { TechnicalIndicators, TechnicalIndicator } from '@/components/technical/technical-indicators';
 import { MarketDataDashboard } from '@/components/oracle/market-data-dashboard';
+import { PortfolioManagement } from '@/components/portfolio/portfolio-management';
+import { EmergencyProtocols } from '@/components/emergency/emergency-protocols';
+import { StrategyTester } from '@/components/strategy/strategy-tester';
+import { VaultDeploymentMonitor } from '@/components/monitoring/vault-deployment-monitor';
 
 // Exit strategy types
 type PriceTarget = {
