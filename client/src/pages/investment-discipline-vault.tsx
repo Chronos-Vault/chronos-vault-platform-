@@ -928,17 +928,36 @@ function InvestmentDisciplineVault() {
               </CardHeader>
               <CardContent>
                 <Tabs defaultValue="diamond_hands" onValueChange={(value) => setSelectedStrategy(value as InvestmentStrategy)}>
-                  <TabsList className="grid grid-cols-2 md:grid-cols-4">
-                    <TabsTrigger value="diamond_hands">HODL</TabsTrigger>
-                    <TabsTrigger value="profit_taking">Profit-Taking</TabsTrigger>
-                    <TabsTrigger value="dca_exit">DCA Exit</TabsTrigger>
-                    <TabsTrigger value="halvening_cycle">Halvening Cycle</TabsTrigger>
+                  <TabsList className="grid grid-cols-2 gap-1 md:grid-cols-4">
+                    <TabsTrigger value="diamond_hands" className="px-2 py-1.5 text-sm md:text-base">
+                      <i className="ri-hand-coin-line mr-1.5 hidden sm:inline-block"></i>HODL
+                    </TabsTrigger>
+                    <TabsTrigger value="profit_taking" className="px-2 py-1.5 text-sm md:text-base">
+                      <i className="ri-line-chart-line mr-1.5 hidden sm:inline-block"></i>Profit-Taking
+                    </TabsTrigger>
+                    <TabsTrigger value="dca_exit" className="px-2 py-1.5 text-sm md:text-base">
+                      <i className="ri-calendar-line mr-1.5 hidden sm:inline-block"></i>DCA Exit
+                    </TabsTrigger>
+                    <TabsTrigger value="halvening_cycle" className="px-2 py-1.5 text-sm md:text-base">
+                      <i className="ri-bitcoin-line mr-1.5 hidden sm:inline-block"></i>Halvening
+                    </TabsTrigger>
                   </TabsList>
                   <div className="mt-4 bg-gray-900/30 rounded-lg p-4">
                     {selectedStrategy === 'diamond_hands' && (
                       <div className="space-y-2">
                         <h4 className="text-sm font-medium text-[#3F51FF]">Diamond Hands Strategy</h4>
                         <p className="text-xs text-gray-400">Lock your assets for a fixed period to avoid emotional selling during market volatility. Perfect for long-term HODLers who want to enforce discipline.</p>
+                        
+                        <div className="flex justify-end mt-3">
+                          <Button 
+                            onClick={() => setStep(2)}
+                            size="sm"
+                            className="bg-[#3F51FF] hover:bg-[#2C3CBB] text-white"
+                          >
+                            <Timer className="mr-2 h-4 w-4" />
+                            Configure Hold Period
+                          </Button>
+                        </div>
                       </div>
                     )}
                     {selectedStrategy === 'profit_taking' && (
@@ -962,12 +981,34 @@ function InvestmentDisciplineVault() {
                       <div className="space-y-2">
                         <h4 className="text-sm font-medium text-[#3F51FF]">DCA Exit Strategy</h4>
                         <p className="text-xs text-gray-400">Dollar-cost average your exit by splitting sales across multiple dates, regardless of price. Reduces timing risk and emotional decision-making.</p>
+                        
+                        <div className="flex justify-end mt-3">
+                          <Button 
+                            onClick={() => setStep(2)}
+                            size="sm"
+                            className="bg-[#3F51FF] hover:bg-[#2C3CBB] text-white"
+                          >
+                            <i className="ri-calendar-line mr-2"></i>
+                            Configure Exit Schedule
+                          </Button>
+                        </div>
                       </div>
                     )}
                     {selectedStrategy === 'halvening_cycle' && (
                       <div className="space-y-2">
                         <h4 className="text-sm font-medium text-[#3F51FF]">Halvening Cycle Strategy</h4>
                         <p className="text-xs text-gray-400">Align your investment with Bitcoin's halvening cycles. Lock assets until after the next halvening event to capture potential appreciation.</p>
+                        
+                        <div className="flex justify-end mt-3">
+                          <Button 
+                            onClick={() => setStep(2)}
+                            size="sm"
+                            className="bg-[#F7931A] hover:bg-[#E57F00] text-white"
+                          >
+                            <i className="ri-bitcoin-line mr-2"></i>
+                            Configure Halvening Rules
+                          </Button>
+                        </div>
                       </div>
                     )}
                   </div>
@@ -1224,6 +1265,7 @@ function InvestmentDisciplineVault() {
             disabled={isLoading}
             className="border-gray-700 bg-black/20 hover:bg-black/40"
           >
+            <i className="ri-arrow-left-line mr-2"></i>
             Previous
           </Button>
         ) : (
@@ -1238,6 +1280,7 @@ function InvestmentDisciplineVault() {
             className="bg-[#3F51FF] hover:bg-[#3F51FF]/80"
           >
             Next
+            <i className="ri-arrow-right-line ml-2"></i>
           </Button>
         ) : (
           <Button
@@ -1252,10 +1295,29 @@ function InvestmentDisciplineVault() {
                 Creating Vault...
               </>
             ) : (
-              'Create Vault'
+              <>
+                Create Vault
+                <i className="ri-lock-line ml-2"></i>
+              </>
             )}
           </Button>
         )}
+      </div>
+      
+      {/* Mobile Step Indicator */}
+      <div className="md:hidden flex items-center justify-center mt-6 gap-2">
+        {[1, 2, 3].map(stepNumber => (
+          <div 
+            key={stepNumber}
+            className={`w-2.5 h-2.5 rounded-full ${
+              step === stepNumber 
+                ? 'bg-[#3F51FF]' 
+                : step > stepNumber 
+                  ? 'bg-[#3F51FF]/50' 
+                  : 'bg-gray-700'
+            }`}
+          />
+        ))}
       </div>
     </div>
   );
