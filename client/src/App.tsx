@@ -71,6 +71,7 @@ import ZkPrivacyDemoPage from "@/pages/zk-privacy-demo";
 import QuantumVaultPage from "@/pages/quantum-vault";
 import InvestmentDisciplineVaultPage from "@/pages/investment-discipline-vault";
 import BiometricVaultPage from "@/pages/biometric-vault-page";
+import ZeroKnowledgeVerificationPage from "@/pages/zero-knowledge-verification-page";
 
 
 // Redirect component for wouter
@@ -143,6 +144,7 @@ function Router() {
         <Route path="/quantum-vault/:id" component={QuantumVaultPage} />
         <Route path="/investment-discipline-vault" component={InvestmentDisciplineVaultPage} />
         <Route path="/biometric-vault" component={BiometricVaultPage} />
+        <Route path="/zero-knowledge-verification" component={ZeroKnowledgeVerificationPage} />
 
         <Route component={NotFound} />
       </Switch>
