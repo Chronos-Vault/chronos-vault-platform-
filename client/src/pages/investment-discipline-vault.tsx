@@ -22,7 +22,7 @@ import { Switch } from "@/components/ui/switch";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
 import { Badge } from "@/components/ui/badge";
-import { Shield, BarChart4, LineChart, Timer } from "lucide-react";
+import { Shield, BarChart4, LineChart, Timer, Settings, BarChart3 } from "lucide-react";
 import { useToast } from '@/hooks/use-toast';
 import { apiRequest } from '@/lib/queryClient';
 import { BlockchainType } from '@/contexts/multi-chain-context';
@@ -468,91 +468,361 @@ function InvestmentDisciplineVault() {
     switch (selectedStrategy) {
       case 'diamond_hands':
         return (
-          <div className="space-y-4">
-            <div className="bg-gray-900/50 rounded-lg p-4 border border-[#3F51FF]/30">
-              <div className="flex items-center mb-4">
-                <div className="bg-[#3F51FF]/20 p-3 rounded-full mr-3">
-                  <i className="ri-hand-coin-line text-[#3F51FF] text-xl"></i>
+          <div className="space-y-6">
+            {/* HODL Period Configuration */}
+            <Card className="bg-black/40 border-gray-800 overflow-hidden">
+              <div className="absolute inset-0 bg-gradient-to-br from-[#3F51FF]/5 to-transparent pointer-events-none"></div>
+              <CardHeader>
+                <div className="flex items-center">
+                  <div className="p-2 rounded-full bg-[#3F51FF]/10 mr-3">
+                    <Timer className="h-5 w-5 text-[#3F51FF]" />
+                  </div>
+                  <div>
+                    <CardTitle>Hold Period Configuration</CardTitle>
+                    <CardDescription>Set the duration for which your assets will be locked</CardDescription>
+                  </div>
                 </div>
+              </CardHeader>
+              <CardContent className="space-y-6">
                 <div>
-                  <h4 className="text-white font-medium">Diamond Hands Strategy</h4>
-                  <p className="text-xs text-gray-400">Long-term holding strategy to avoid emotional selling</p>
+                  <h4 className="text-sm font-medium text-gray-300 mb-3">Lock Duration</h4>
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                    <div 
+                      className={`p-4 rounded-lg cursor-pointer border transition-colors ${lockDuration === '1_year' ? 'border-[#3F51FF] bg-[#3F51FF]/10' : 'border-gray-700 bg-black/20 hover:bg-black/30'}`}
+                      onClick={() => setLockDuration('1_year')}
+                    >
+                      <div className="flex items-center justify-between mb-2">
+                        <span className="text-sm font-medium">1 Year</span>
+                        {lockDuration === '1_year' && <i className="ri-check-line text-[#3F51FF]"></i>}
+                      </div>
+                      <p className="text-xs text-gray-400">Short-term commitment with good flexibility</p>
+                    </div>
+                    
+                    <div 
+                      className={`p-4 rounded-lg cursor-pointer border transition-colors ${lockDuration === '4_years' ? 'border-[#3F51FF] bg-[#3F51FF]/10' : 'border-gray-700 bg-black/20 hover:bg-black/30'}`}
+                      onClick={() => setLockDuration('4_years')}
+                    >
+                      <div className="flex items-center justify-between mb-2">
+                        <span className="text-sm font-medium">4 Years</span>
+                        {lockDuration === '4_years' && <i className="ri-check-line text-[#3F51FF]"></i>}
+                      </div>
+                      <p className="text-xs text-gray-400">Full market cycle commitment for optimal returns</p>
+                    </div>
+                    
+                    <div 
+                      className={`p-4 rounded-lg cursor-pointer border transition-colors ${lockDuration === 'custom' ? 'border-[#3F51FF] bg-[#3F51FF]/10' : 'border-gray-700 bg-black/20 hover:bg-black/30'}`}
+                      onClick={() => setLockDuration('custom')}
+                    >
+                      <div className="flex items-center justify-between mb-2">
+                        <span className="text-sm font-medium">Custom</span>
+                        {lockDuration === 'custom' && <i className="ri-check-line text-[#3F51FF]"></i>}
+                      </div>
+                      <p className="text-xs text-gray-400">Set your own specific timeframe</p>
+                    </div>
+                  </div>
                 </div>
-              </div>
-              
-              <div className="space-y-4">
+                
+                {lockDuration === 'custom' && (
+                  <div className="p-4 bg-black/30 rounded-lg border border-gray-800">
+                    <Label className="text-sm text-gray-300 mb-2 block">Custom Duration</Label>
+                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                      <div>
+                        <Input 
+                          type="number" 
+                          min="0"
+                          placeholder="0"
+                          className="bg-gray-800 border-gray-700"
+                          value={customYears}
+                          onChange={(e) => setCustomYears(parseInt(e.target.value) || 0)}
+                        />
+                        <Label className="text-xs text-gray-400 mt-1 block">Years</Label>
+                      </div>
+                      <div>
+                        <Input 
+                          type="number" 
+                          min="0"
+                          max="11"
+                          placeholder="0"
+                          className="bg-gray-800 border-gray-700"
+                          value={customMonths}
+                          onChange={(e) => setCustomMonths(parseInt(e.target.value) || 0)}
+                        />
+                        <Label className="text-xs text-gray-400 mt-1 block">Months</Label>
+                      </div>
+                      <div>
+                        <Input 
+                          type="number" 
+                          min="0"
+                          max="30"
+                          placeholder="0"
+                          className="bg-gray-800 border-gray-700"
+                          value={customDays}
+                          onChange={(e) => setCustomDays(parseInt(e.target.value) || 0)}
+                        />
+                        <Label className="text-xs text-gray-400 mt-1 block">Days</Label>
+                      </div>
+                      <div>
+                        <Input 
+                          type="number" 
+                          min="0"
+                          max="23"
+                          placeholder="0"
+                          className="bg-gray-800 border-gray-700"
+                          value={customHours}
+                          onChange={(e) => setCustomHours(parseInt(e.target.value) || 0)}
+                        />
+                        <Label className="text-xs text-gray-400 mt-1 block">Hours</Label>
+                      </div>
+                    </div>
+                  </div>
+                )}
+                
                 <div>
-                  <Label className="text-sm text-gray-300">Minimum Hold Period (days)</Label>
-                  <div className="flex items-center space-x-4 mt-2">
-                    <Slider
-                      value={[minHoldPeriod]}
-                      min={30}
-                      max={1460} // 4 years
-                      step={30}
-                      onValueChange={(value) => setMinHoldPeriod(value[0])}
-                      className="flex-1"
+                  <h4 className="text-sm font-medium text-gray-300 mb-3">Release Options</h4>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div 
+                      className={`p-4 rounded-lg cursor-pointer border transition-colors ${releaseOption === 'full' ? 'border-[#3F51FF] bg-[#3F51FF]/10' : 'border-gray-700 bg-black/20 hover:bg-black/30'}`}
+                      onClick={() => setReleaseOption('full')}
+                    >
+                      <div className="flex items-center mb-2">
+                        <div className="bg-[#3F51FF]/20 p-2 rounded-full mr-2">
+                          <i className="ri-flashlight-fill text-[#3F51FF]"></i>
+                        </div>
+                        <div>
+                          <h4 className="text-sm font-medium">Full Release</h4>
+                          <p className="text-xs text-gray-400">All assets are released at once</p>
+                        </div>
+                      </div>
+                    </div>
+                    
+                    <div 
+                      className={`p-4 rounded-lg cursor-pointer border transition-colors ${releaseOption === 'gradual' ? 'border-[#3F51FF] bg-[#3F51FF]/10' : 'border-gray-700 bg-black/20 hover:bg-black/30'}`}
+                      onClick={() => setReleaseOption('gradual')}
+                    >
+                      <div className="flex items-center mb-2">
+                        <div className="bg-[#3F51FF]/20 p-2 rounded-full mr-2">
+                          <i className="ri-drop-fill text-[#3F51FF]"></i>
+                        </div>
+                        <div>
+                          <h4 className="text-sm font-medium">Gradual Release</h4>
+                          <p className="text-xs text-gray-400">Assets are released gradually over time</p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                
+                {releaseOption === 'gradual' && (
+                  <div className="p-4 bg-black/30 rounded-lg border border-gray-800">
+                    <Label className="text-sm text-gray-300 mb-2 block">Release Schedule</Label>
+                    <div className="space-y-4">
+                      <div className="flex items-center justify-between">
+                        <span className="text-xs text-gray-400">Release period:</span>
+                        <Select 
+                          value={releaseSchedule} 
+                          onValueChange={setReleaseSchedule}
+                        >
+                          <SelectTrigger className="w-[180px] bg-gray-800 border-gray-700">
+                            <SelectValue placeholder="Select a schedule" />
+                          </SelectTrigger>
+                          <SelectContent className="bg-gray-900 border-gray-700">
+                            <SelectItem value="30_days">30 days</SelectItem>
+                            <SelectItem value="60_days">60 days</SelectItem>
+                            <SelectItem value="90_days">90 days</SelectItem>
+                            <SelectItem value="180_days">180 days</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+                      
+                      <div className="flex items-center justify-between">
+                        <span className="text-xs text-gray-400">Release frequency:</span>
+                        <Select 
+                          value={releaseFrequency} 
+                          onValueChange={setReleaseFrequency}
+                        >
+                          <SelectTrigger className="w-[180px] bg-gray-800 border-gray-700">
+                            <SelectValue placeholder="Select frequency" />
+                          </SelectTrigger>
+                          <SelectContent className="bg-gray-900 border-gray-700">
+                            <SelectItem value="daily">Daily</SelectItem>
+                            <SelectItem value="weekly">Weekly</SelectItem>
+                            <SelectItem value="biweekly">Biweekly</SelectItem>
+                            <SelectItem value="monthly">Monthly</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+            
+            {/* Early Withdrawal Protection */}
+            <Card className="bg-black/40 border-gray-800">
+              <CardHeader>
+                <div className="flex items-center">
+                  <div className="p-2 rounded-full bg-[#3F51FF]/10 mr-3">
+                    <i className="ri-lock-line text-lg text-[#3F51FF]"></i>
+                  </div>
+                  <div>
+                    <CardTitle>Early Release Protection</CardTitle>
+                    <CardDescription>Configure protections against early withdrawals</CardDescription>
+                  </div>
+                </div>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <Label htmlFor="enable-withdrawal-fee" className="text-sm font-medium text-gray-300">
+                      Enable Early Withdrawal Fee
+                    </Label>
+                    <p className="text-xs text-gray-500 mt-1">
+                      Set a penalty for withdrawing assets before the lock period ends
+                    </p>
+                  </div>
+                  <Switch
+                    id="enable-withdrawal-fee"
+                    checked={earlyWithdrawalFee}
+                    onCheckedChange={setEarlyWithdrawalFee}
+                  />
+                </div>
+                
+                {earlyWithdrawalFee && (
+                  <div className="p-4 bg-black/30 rounded-lg border border-gray-800">
+                    <div className="space-y-4">
+                      <div>
+                        <Label className="text-xs text-gray-300">Fee Percentage</Label>
+                        <div className="flex items-center space-x-4 mt-2">
+                          <Slider
+                            value={[withdrawalFeePercentage]}
+                            min={1}
+                            max={50}
+                            step={1}
+                            onValueChange={(value) => setWithdrawalFeePercentage(value[0])}
+                            className="flex-1"
+                          />
+                          <span className="text-sm text-gray-300 w-12 text-right">{withdrawalFeePercentage}%</span>
+                        </div>
+                      </div>
+                      
+                      <div className="flex items-center justify-between">
+                        <span className="text-xs text-gray-400">Fee reduction over time:</span>
+                        <Select 
+                          value={feeReducesOverTime ? 'yes' : 'no'} 
+                          onValueChange={(val) => setFeeReducesOverTime(val === 'yes')}
+                        >
+                          <SelectTrigger className="w-[180px] bg-gray-800 border-gray-700">
+                            <SelectValue placeholder="Select option" />
+                          </SelectTrigger>
+                          <SelectContent className="bg-gray-900 border-gray-700">
+                            <SelectItem value="yes">Yes, reduces linearly</SelectItem>
+                            <SelectItem value="no">No, fixed percentage</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+                    </div>
+                  </div>
+                )}
+                
+                <div className="flex items-center justify-between pt-2">
+                  <div>
+                    <Label htmlFor="require-approval" className="text-sm font-medium text-gray-300">
+                      Require Multi-Signature Approval
+                    </Label>
+                    <p className="text-xs text-gray-500 mt-1">
+                      Require additional approvals for early withdrawal
+                    </p>
+                  </div>
+                  <Switch
+                    id="require-approval"
+                    checked={requireApproval}
+                    onCheckedChange={setRequireApproval}
+                  />
+                </div>
+              </CardContent>
+            </Card>
+            
+            {/* Emergency Protocol and Analytics */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <Card className="bg-black/40 border-gray-800">
+                <CardHeader className="pb-2">
+                  <div className="flex items-center">
+                    <div className="p-2 rounded-full bg-red-500/10 mr-2">
+                      <Shield className="h-4 w-4 text-red-500" />
+                    </div>
+                    <CardTitle className="text-sm">Emergency Protocol</CardTitle>
+                  </div>
+                  <CardDescription className="text-xs">Protection against extreme market events</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm text-gray-300">Enable Emergency Exit</span>
+                    <Switch 
+                      checked={enableEmergencyProtocol} 
+                      onCheckedChange={setEnableEmergencyProtocol} 
                     />
-                    <span className="text-sm text-gray-300 w-12 text-right">{minHoldPeriod}</span>
                   </div>
-                  <div className="flex justify-between mt-1 text-xs text-gray-500">
-                    <span>30d</span>
-                    <span>1y</span>
-                    <span>2y</span>
-                    <span>4y</span>
+                  {enableEmergencyProtocol && (
+                    <div className="mt-2 p-3 bg-black/20 rounded border border-gray-800">
+                      <p className="text-xs text-gray-400 mb-1">
+                        Allows emergency access during extreme market conditions:
+                      </p>
+                      <ul className="text-xs text-gray-500 list-disc pl-4 space-y-1">
+                        <li>Market crash (-80% or more)</li>
+                        <li>Blockchain security issues</li>
+                        <li>Smart contract vulnerabilities</li>
+                      </ul>
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+                
+              <Card className="bg-black/40 border-gray-800">
+                <CardHeader className="pb-2">
+                  <div className="flex items-center">
+                    <div className="p-2 rounded-full bg-[#3F51FF]/10 mr-2">
+                      <BarChart3 className="h-4 w-4 text-[#3F51FF]" />
+                    </div>
+                    <CardTitle className="text-sm">Analytics Panel</CardTitle>
                   </div>
+                  <CardDescription className="text-xs">Track investment progress</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm text-gray-300">Enable Analytics</span>
+                    <Switch 
+                      checked={enableAnalytics} 
+                      onCheckedChange={setEnableAnalytics} 
+                    />
+                  </div>
+                  {enableAnalytics && (
+                    <div className="mt-2 p-3 bg-black/20 rounded border border-gray-800">
+                      <p className="text-xs text-gray-400 mb-1">
+                        Available analytics:
+                      </p>
+                      <ul className="text-xs text-gray-500 list-disc pl-4 space-y-1">
+                        <li>Real-time value tracking</li>
+                        <li>Performance comparison to market</li>
+                        <li>Historical price charts</li>
+                      </ul>
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+            </div>
+            
+            {/* Security Tip */}
+            <div className="p-4 bg-gradient-to-r from-[#3F51FF]/10 to-[#6B00D7]/5 rounded-lg border border-[#3F51FF]/30">
+              <div className="flex items-start">
+                <div className="p-2 rounded-full bg-[#3F51FF]/20 mr-3 mt-1">
+                  <Shield className="h-4 w-4 text-[#3F51FF]" />
                 </div>
-                
-                <Separator className="my-4 bg-gray-800" />
-                
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <Card className="bg-gray-900/20 border-gray-800">
-                    <CardHeader className="pb-2">
-                      <CardTitle className="text-sm text-[#3F51FF]">Emergency Protocol</CardTitle>
-                      <CardDescription className="text-xs">Protection against extreme market events</CardDescription>
-                    </CardHeader>
-                    <CardContent>
-                      <div className="flex items-center justify-between">
-                        <span className="text-sm text-gray-300">Enable Emergency Exit</span>
-                        <Switch 
-                          checked={enableEmergencyProtocol} 
-                          onCheckedChange={setEnableEmergencyProtocol} 
-                        />
-                      </div>
-                      {enableEmergencyProtocol && (
-                        <p className="text-xs text-gray-500 mt-2">
-                          Allows emergency access during extreme market crashes (-80% or more)
-                        </p>
-                      )}
-                    </CardContent>
-                  </Card>
-                  
-                  <Card className="bg-gray-900/20 border-gray-800">
-                    <CardHeader className="pb-2">
-                      <CardTitle className="text-sm text-[#3F51FF]">Analytics Panel</CardTitle>
-                      <CardDescription className="text-xs">Track investment progress</CardDescription>
-                    </CardHeader>
-                    <CardContent>
-                      <div className="flex items-center justify-between">
-                        <span className="text-sm text-gray-300">Enable Analytics</span>
-                        <Switch 
-                          checked={enableAnalytics} 
-                          onCheckedChange={setEnableAnalytics} 
-                        />
-                      </div>
-                      {enableAnalytics && (
-                        <p className="text-xs text-gray-500 mt-2">
-                          View performance metrics without ability to withdraw
-                        </p>
-                      )}
-                    </CardContent>
-                  </Card>
+                <div>
+                  <h4 className="text-sm font-medium text-white mb-1">Security Note</h4>
+                  <p className="text-xs text-gray-300">
+                    The Diamond Hands strategy is designed to help you overcome emotional selling during market turbulence. Assets will be securely locked until the hold period has passed, with additional protections to prevent premature withdrawals.
+                  </p>
                 </div>
-              </div>
-              
-              <div className="mt-4 p-3 bg-black/20 rounded-md">
-                <p className="text-xs text-gray-400">
-                  <span className="font-medium text-white">Security Tip:</span> The Diamond Hands strategy is designed to help you overcome emotional selling during market turbulence. Assets will be completely locked until the minimum hold period has passed.
-                </p>
               </div>
             </div>
           </div>
