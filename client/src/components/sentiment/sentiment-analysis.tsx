@@ -8,9 +8,9 @@ import {
   TimeRange,
   SentimentData
 } from '@/services/sentiment-analysis-service';
-import { SentimentGauge } from './sentiment-gauge';
-import { SentimentAlerts } from './sentiment-alerts';
-import { SentimentRecommendations } from './sentiment-recommendations';
+import SentimentGauge from './sentiment-gauge';
+import SentimentAlerts from './sentiment-alerts';
+import SentimentRecommendations from './sentiment-recommendations';
 
 interface SentimentAnalysisProps {
   assetSymbol?: string;

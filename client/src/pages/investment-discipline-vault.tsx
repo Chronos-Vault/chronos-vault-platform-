@@ -30,6 +30,7 @@ import { useTon } from '@/contexts/ton-context';
 import { useEthereum } from '@/contexts/ethereum-context';
 import { useSolana } from '@/contexts/solana-context';
 import { SentimentAnalysis } from '@/components/sentiment/sentiment-analysis';
+import SentimentAlerts from '@/components/sentiment/sentiment-alerts';
 import { SentimentData, sentimentAnalysisService, SentimentLevel } from '@/services/sentiment-analysis-service';
 import { TechnicalIndicators, TechnicalIndicator } from '@/components/technical/technical-indicators';
 import { MarketDataDashboard } from '@/components/oracle/market-data-dashboard';
@@ -1140,8 +1141,10 @@ function InvestmentDisciplineVault() {
               <p className="text-gray-400">Configure a vault that enforces investment discipline through programmable rules</p>
             </div>
             
-            {/* Market Sentiment Alert - shows only in extreme conditions */}
-            <SentimentAlerts alerts={sentimentData?.alerts || []} isLoading={false} timeRange="24h" />
+            {/* Market Sentiment Analysis - shows only in extreme conditions */}
+            {sentimentData?.alerts && sentimentData.alerts.length > 0 && (
+              <SentimentAnalysis assetSymbol={assetType} compact={true} />
+            )}
             
             <Card className="bg-black/40 border-gray-800">
               <CardHeader>
