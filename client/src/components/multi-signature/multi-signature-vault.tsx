@@ -1715,6 +1715,25 @@ export function MultiSignatureVault({
                     Your vault has advanced Triple-Chain security and quantum-resistant encryption enabled.
                   </AlertDescription>
                 </Alert>
+                
+                <div className="flex flex-col gap-2 mt-4">
+                  <Button 
+                    variant="outline" 
+                    className="border-yellow-800 bg-yellow-900/20 text-yellow-500 hover:bg-yellow-900/30 gap-2"
+                    onClick={() => setRecoveryDialogOpen(true)}
+                  >
+                    <ShieldAlert size={16} />
+                    Vault Recovery
+                  </Button>
+                  
+                  <Button 
+                    variant="outline" 
+                    className="border-gray-700 text-gray-300 hover:bg-gray-800 gap-2"
+                  >
+                    <Download size={16} />
+                    Export Vault Config
+                  </Button>
+                </div>
               </CardContent>
             </Card>
           </div>
