@@ -352,4 +352,99 @@ export interface ExplorerStats {
   };
 }
 
-// GeoVault types will be defined here during implementation
+// GeoVault database schema and types
+export const geoVaults = pgTable("geo_vaults", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").notNull(),
+  name: text("name").notNull(),
+  description: text("description"),
+  boundaryType: text("boundary_type").notNull(), // circle, polygon, country
+  coordinates: jsonb("coordinates").notNull(), // Array of lat/long points
+  radius: integer("radius"), // For circle boundaries, in meters
+  countryCode: text("country_code"), // For country boundaries
+  minAccuracy: integer("min_accuracy"), // Minimum GPS accuracy required in meters
+  requiresRealTimeVerification: boolean("requires_real_time_verification").default(false),
+  multiFactorUnlock: boolean("multi_factor_unlock").default(false),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+  updatedAt: timestamp("updated_at"),
+  metadata: jsonb("metadata"),
+});
+
+// Access logs for geo vaults
+export const geoAccessLogs = pgTable("geo_access_logs", {
+  id: serial("id").primaryKey(),
+  vaultId: integer("vault_id").notNull(),
+  userId: integer("user_id").notNull(),
+  timestamp: timestamp("timestamp").notNull().defaultNow(),
+  latitude: text("latitude").notNull(),
+  longitude: text("longitude").notNull(),
+  accuracy: integer("accuracy"),
+  success: boolean("success").notNull(),
+  failureReason: text("failure_reason"),
+  deviceInfo: jsonb("device_info"),
+});
+
+// Insert schemas for geo vaults
+export const insertGeoVaultSchema = createInsertSchema(geoVaults)
+  .pick({
+    userId: true,
+    name: true,
+    description: true,
+    boundaryType: true,
+    coordinates: true,
+    radius: true,
+    countryCode: true,
+    minAccuracy: true,
+    requiresRealTimeVerification: true,
+    multiFactorUnlock: true,
+    metadata: true,
+  })
+  .extend({
+    // Ensure coordinates is a proper array
+    coordinates: z.array(
+      z.object({
+        latitude: z.number(),
+        longitude: z.number(),
+        accuracy: z.number().optional(),
+        timestamp: z.number().optional(),
+      })
+    ),
+  });
+
+export const insertGeoAccessLogSchema = createInsertSchema(geoAccessLogs)
+  .pick({
+    vaultId: true,
+    userId: true,
+    latitude: true,
+    longitude: true,
+    accuracy: true,
+    success: true,
+    failureReason: true,
+    deviceInfo: true,
+  });
+
+export type InsertGeoVault = z.infer<typeof insertGeoVaultSchema>;
+export type GeoVault = typeof geoVaults.$inferSelect;
+
+export type InsertGeoAccessLog = z.infer<typeof insertGeoAccessLogSchema>;
+export type GeoAccessLog = typeof geoAccessLogs.$inferSelect;
+
+// GeoVault settings type
+export interface GeoVaultSettings {
+  userId: number;
+  boundaryType: GeoBoundaryType;
+  coordinates: Array<{
+    latitude: number;
+    longitude: number;
+    accuracy?: number;
+    timestamp?: number;
+  }>;
+  radius?: number; // For circle boundaries
+  countryCode?: string; // For country boundaries
+  minAccuracy?: number;
+  requiresRealTimeVerification: boolean;
+  multiFactorUnlock: boolean;
+  name: string;
+  description?: string;
+  metadata?: Record<string, any>;
+}
