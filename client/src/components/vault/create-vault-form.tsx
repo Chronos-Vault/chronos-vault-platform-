@@ -703,9 +703,9 @@ export function CreateVaultForm({
     let giftExperience;
     if (form.watch('vaultType') === "gift") {
       giftExperience = {
-        experienceType: data.giftType || "surprise",
-        recipientAddress: data.giftRecipient || "",
-        message: data.giftMessage || "",
+        experienceType: form.watch('giftType') || "surprise",
+        recipientAddress: form.watch('giftRecipient') || "",
+        message: form.watch('giftMessage') || "",
         unlockStages: [],
         augmentedMedia: true,
         appreciationRate: 1.05
@@ -734,7 +734,7 @@ export function CreateVaultForm({
       blockchain: selectedBlockchain,
       isWalletConnected,
       tripleChainSecurity: useTripleChainSecurity,
-      paymentType: data.paymentType,
+      paymentType: form.watch('paymentType'),
       creationCost
     });
     
@@ -829,10 +829,10 @@ export function CreateVaultForm({
                 recipient: ton.wallet?.address || '', // Will be the owner
                 unlockTime: unlockTime,
                 securityLevel: useTripleChainSecurity ? 5 : 3, // Higher security level when Triple-Chain is enabled
-                comment: data.description || 'ChronosVault',
+                comment: form.watch('description') || 'ChronosVault',
                 amount: nanotons,
                 // Add payment information
-                paymentType: data.paymentType,
+                paymentType: form.watch('paymentType'),
                 paymentAmount: creationCost.amount,
                 paymentCurrency: creationCost.currency
               };
@@ -941,9 +941,9 @@ export function CreateVaultForm({
           },
           adaptiveSecurity: {
             enabled: true,
-            responseLevel: data.metadata?.securityLevel === "fortress" ? "autonomous" : 
-                          data.metadata?.securityLevel === "maximum" ? "advanced" : 
-                          data.metadata?.securityLevel === "enhanced" ? "moderate" : "basic"
+            responseLevel: form.watch('metadata.securityLevel') === "fortress" ? "autonomous" : 
+                          form.watch('metadata.securityLevel') === "maximum" ? "advanced" : 
+                          form.watch('metadata.securityLevel') === "enhanced" ? "moderate" : "basic"
           }
         } : undefined,
         
