@@ -106,6 +106,11 @@ const formSchema = insertVaultSchema.extend({
   geoLocation: z.string().optional(),
   
   // Cross-chain vault fields
+  primaryChain: z.string().optional().default("TON"),
+  secondaryChain: z.string().optional().default("ETH"),
+  tertiaryChain: z.string().optional().default("SOL"),
+  verificationThreshold: z.union([z.string(), z.number()]).optional().default("2")
+    .transform(val => typeof val === 'string' ? parseInt(val, 10) : val),
   additionalChains: z.array(z.string()).optional().default([]),
   
   // Smart contract vault fields
@@ -248,11 +253,11 @@ export function CreateVaultForm({
       timeLockPeriod: 365, // Default to 1 year
       unlockDate: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toISOString(),
       includeAttachments: true,
+      
       // Cross-chain specific defaults
       primaryChain: "TON",
       secondaryChain: "ETH",
       tertiaryChain: "SOL",
-      verificationThreshold: "2", // At least 2 chains for verification
       tripleChainSecurity: false, // Our new Triple-Chain Security feature
       
       // Payment options for dual token system
@@ -288,7 +293,6 @@ export function CreateVaultForm({
       },
       // Add default values for specialized vault types
       requiredSignatures: "2",
-      primaryChain: "TON",
       secondaryChains: ["ETH", "SOL"],
       biometricType: "fingerprint",
       scheduleType: "fixed",
