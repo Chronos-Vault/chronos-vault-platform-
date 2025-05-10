@@ -317,6 +317,7 @@ export type Signature = typeof signatures.$inferSelect;
 export type BlockchainType = 'ETH' | 'SOL' | 'TON';
 export type VaultStatus = 'active' | 'locked' | 'unlocked' | 'pending';
 export type SecurityLevel = 'standard' | 'enhanced' | 'maximum';
+export type GeoBoundaryType = 'circle' | 'polygon' | 'country';
 
 export interface VaultInfo {
   id: string;
@@ -350,3 +351,5 @@ export interface ExplorerStats {
     TON: string;
   };
 }
+
+// GeoVault types will be defined here during implementation
