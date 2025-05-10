@@ -43,6 +43,21 @@ const metadataSchema = z.object({
   allowsAttachments: z.boolean().default(true),
   attachmentsEncryption: z.string().default("AES-256"),
   attachments: z.array(z.any()).optional(),
+  
+  // Sovereign Fortress Vault specific metadata
+  quantumResistant: z.boolean().optional().default(true),
+  adaptiveSecurity: z.boolean().optional().default(true),
+  instantRecovery: z.boolean().optional().default(true),
+  securityLevel: z.string().optional().default("standard"),
+  autoScalingSecurity: z.boolean().optional().default(true),
+  threatMonitoring: z.boolean().optional().default(true),
+  accessControls: z.object({
+    multiFactorAuth: z.boolean().optional().default(true),
+    temporaryAccess: z.boolean().optional().default(false),
+    deviceRestrictions: z.boolean().optional().default(false),
+    biometricAuth: z.boolean().optional().default(false)
+  }).optional().default({}),
+  
   // Gift-specific metadata
   giftExperience: z.object({
     experienceType: z.string().optional(),
@@ -51,6 +66,7 @@ const metadataSchema = z.object({
     appreciationRate: z.number().optional(),
     challenges: z.array(z.string()).optional()
   }).optional(),
+  
   // Memory vault specific metadata
   memoryTitle: z.string().optional(),
   memoryDescription: z.string().optional(),
@@ -241,6 +257,19 @@ export function CreateVaultForm({
       metadata: {
         allowsAttachments: true,
         attachmentsEncryption: "AES-256",
+        // Sovereign Fortress Vault defaults
+        quantumResistant: true,
+        adaptiveSecurity: true,
+        instantRecovery: true,
+        securityLevel: "standard",
+        autoScalingSecurity: true,
+        threatMonitoring: true,
+        accessControls: {
+          multiFactorAuth: true,
+          temporaryAccess: false,
+          deviceRestrictions: false,
+          biometricAuth: false
+        },
         // Memory vault specific defaults
         memoryTitle: "",
         memoryDescription: "",
@@ -410,6 +439,136 @@ export function CreateVaultForm({
     const currentVaultType = form.watch("vaultType");
     
     switch(currentVaultType) {
+      case 'standard':
+        return (
+          <div className="space-y-4 border border-[#6B00D7]/30 rounded-lg p-4 bg-gradient-to-r from-[#1A1A1A] to-[#1A1A2A]">
+            <h3 className="text-lg text-[#6B00D7] font-medium">Sovereign Fortress Vault™ Configuration</h3>
+            <p className="text-sm text-gray-300">Configure your premium vault with advanced security features</p>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+              <div className="space-y-4">
+                <FormField
+                  control={form.control as any}
+                  name="tripleChainSecurity"
+                  render={({ field }) => (
+                    <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border border-[#6B00D7]/20 p-4 bg-black/30">
+                      <FormControl>
+                        <Checkbox
+                          checked={field.value}
+                          onCheckedChange={field.onChange}
+                          className="data-[state=checked]:bg-[#6B00D7] data-[state=checked]:border-[#6B00D7]"
+                        />
+                      </FormControl>
+                      <div className="space-y-1 leading-none">
+                        <FormLabel className="text-white">Triple-Chain Security</FormLabel>
+                        <FormDescription className="text-xs text-gray-400">
+                          Enhances vault security by utilizing TON, Ethereum, and Solana simultaneously
+                        </FormDescription>
+                      </div>
+                    </FormItem>
+                  )}
+                />
+                
+                <FormField
+                  control={form.control as any}
+                  name="metadata.quantumResistant"
+                  render={({ field }) => (
+                    <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border border-[#6B00D7]/20 p-4 bg-black/30">
+                      <FormControl>
+                        <Checkbox
+                          checked={field.value}
+                          onCheckedChange={field.onChange}
+                          className="data-[state=checked]:bg-[#6B00D7] data-[state=checked]:border-[#6B00D7]"
+                        />
+                      </FormControl>
+                      <div className="space-y-1 leading-none">
+                        <FormLabel className="text-white">Quantum-Resistant Encryption</FormLabel>
+                        <FormDescription className="text-xs text-gray-400">
+                          Uses post-quantum cryptography to secure against future quantum computers
+                        </FormDescription>
+                      </div>
+                    </FormItem>
+                  )}
+                />
+              </div>
+              
+              <div className="space-y-4">
+                <FormField
+                  control={form.control as any}
+                  name="metadata.adaptiveSecurity"
+                  render={({ field }) => (
+                    <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border border-[#6B00D7]/20 p-4 bg-black/30">
+                      <FormControl>
+                        <Checkbox
+                          checked={field.value}
+                          onCheckedChange={field.onChange}
+                          className="data-[state=checked]:bg-[#6B00D7] data-[state=checked]:border-[#6B00D7]"
+                        />
+                      </FormControl>
+                      <div className="space-y-1 leading-none">
+                        <FormLabel className="text-white">Adaptive Multi-Layered Security</FormLabel>
+                        <FormDescription className="text-xs text-gray-400">
+                          Automatically adjusts security levels based on asset value and risk assessment
+                        </FormDescription>
+                      </div>
+                    </FormItem>
+                  )}
+                />
+                
+                <FormField
+                  control={form.control as any}
+                  name="metadata.instantRecovery"
+                  render={({ field }) => (
+                    <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border border-[#6B00D7]/20 p-4 bg-black/30">
+                      <FormControl>
+                        <Checkbox
+                          checked={field.value}
+                          onCheckedChange={field.onChange}
+                          className="data-[state=checked]:bg-[#6B00D7] data-[state=checked]:border-[#6B00D7]"
+                        />
+                      </FormControl>
+                      <div className="space-y-1 leading-none">
+                        <FormLabel className="text-white">Instant Disaster Recovery</FormLabel>
+                        <FormDescription className="text-xs text-gray-400">
+                          Provides emergency access options with multi-factor authentication
+                        </FormDescription>
+                      </div>
+                    </FormItem>
+                  )}
+                />
+              </div>
+            </div>
+            
+            <FormField
+              control={form.control as any}
+              name="metadata.securityLevel"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Security Protocol Level</FormLabel>
+                  <Select
+                    onValueChange={field.onChange}
+                    defaultValue={field.value || "standard"}
+                  >
+                    <FormControl>
+                      <SelectTrigger className="border-[#6B00D7]/30 bg-black/40">
+                        <SelectValue placeholder="Select security level" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      <SelectItem value="standard">Standard (Recommended)</SelectItem>
+                      <SelectItem value="enhanced">Enhanced (High-Value Assets)</SelectItem>
+                      <SelectItem value="maximum">Maximum (Institutional Grade)</SelectItem>
+                      <SelectItem value="fortress">Fortress Supreme (Military Grade)</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  <FormDescription>
+                    Higher security levels provide additional protection layers but may require additional verification steps
+                  </FormDescription>
+                </FormItem>
+              )}
+            />
+          </div>
+        );
       case 'memory-vault':
         return (
           <div className="space-y-4 border border-[#FF3A8C]/20 rounded-lg p-4 bg-gradient-to-r from-[#1A1A1A] to-[#2A1A24]">
