@@ -1294,7 +1294,7 @@ export function CreateVaultForm({
                       />
                       
                       {/* Sovereign Fortress Security Level Selector - Only displayed for Standard/Fortress vaults */}
-                      {data.vaultType === 'standard' && (
+                      {form.watch('vaultType') === 'standard' && (
                         <FormField
                           control={form.control}
                           name="metadata.securityLevel"
