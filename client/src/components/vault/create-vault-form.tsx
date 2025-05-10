@@ -714,7 +714,7 @@ export function CreateVaultForm({
     
     // Get the current timestamp + timelock period for the vault
     const currentTime = Math.floor(Date.now() / 1000);
-    const unlockTime = currentTime + (data.timeLockPeriod * 24 * 60 * 60); // Convert days to seconds
+    const unlockTime = currentTime + (form.watch('timeLockPeriod') * 24 * 60 * 60); // Convert days to seconds
     
     // Handle blockchain deployment if wallet is connected
     let blockchainTxHash = null;
@@ -956,9 +956,9 @@ export function CreateVaultForm({
             chains: ["TON", "Ethereum", "Solana"],
             crossValidation: true,
             redundancy: "Progressive",
-            securityLevel: data.metadata?.securityLevel === "fortress" ? "Military" :
-                          data.metadata?.securityLevel === "maximum" ? "Institutional" :
-                          data.metadata?.securityLevel === "enhanced" ? "Enterprise" : "Standard"
+            securityLevel: form.watch('metadata.securityLevel') === "fortress" ? "Military" :
+                          form.watch('metadata.securityLevel') === "maximum" ? "Institutional" :
+                          form.watch('metadata.securityLevel') === "enhanced" ? "Enterprise" : "Standard"
           }
         }),
       }
@@ -970,25 +970,25 @@ export function CreateVaultForm({
       ...vaultData,
       // Make sure these required fields are properly formatted
       userId: 1, // Default user ID
-      name: data.name || "",
-      description: data.description || "",
-      vaultType: data.vaultType || "standard",
-      assetType: data.assetType || "ETH",
+      name: form.watch('name') || "",
+      description: form.watch('description') || "",
+      vaultType: form.watch('vaultType') || "standard",
+      assetType: form.watch('assetType') || "ETH",
       // Ensure assetAmount is a string to match the database schema
-      assetAmount: data.assetAmount ? 
-        (typeof data.assetAmount === 'string' ? data.assetAmount : String(data.assetAmount)) : 
+      assetAmount: form.watch('assetAmount') ? 
+        (typeof form.watch('assetAmount') === 'string' ? form.watch('assetAmount') : String(form.watch('assetAmount'))) : 
         "0",
       // Ensure timeLockPeriod is a number
-      timeLockPeriod: data.timeLockPeriod ? 
-        (typeof data.timeLockPeriod === 'string' ? parseInt(data.timeLockPeriod, 10) : Number(data.timeLockPeriod)) : 
+      timeLockPeriod: form.watch('timeLockPeriod') ? 
+        (typeof form.watch('timeLockPeriod') === 'string' ? parseInt(form.watch('timeLockPeriod'), 10) : Number(form.watch('timeLockPeriod'))) : 
         30,
       // Format the date consistently
-      unlockDate: data.unlockDate ? 
-        (data.unlockDate instanceof Date ? data.unlockDate.toISOString() : new Date(data.unlockDate).toISOString()) : 
+      unlockDate: form.watch('unlockDate') ? 
+        (form.watch('unlockDate') instanceof Date ? form.watch('unlockDate').toISOString() : new Date(form.watch('unlockDate')).toISOString()) : 
         new Date(Date.now() + 30*24*60*60*1000).toISOString(),
       // Format metadata as a proper JSON-serializable object
-      metadata: data.metadata ? 
-        (typeof data.metadata === 'string' ? JSON.parse(data.metadata) : data.metadata) : 
+      metadata: form.watch('metadata') ? 
+        (typeof form.watch('metadata') === 'string' ? JSON.parse(form.watch('metadata')) : form.watch('metadata')) : 
         {}
     };
     
