@@ -701,7 +701,7 @@ export function CreateVaultForm({
   async function onSubmit(data: FormValues) {
     // Create gift experience metadata if vault type is "gift"
     let giftExperience;
-    if (data.vaultType === "gift") {
+    if (form.watch('vaultType') === "gift") {
       giftExperience = {
         experienceType: data.giftType || "surprise",
         recipientAddress: data.giftRecipient || "",
@@ -730,7 +730,7 @@ export function CreateVaultForm({
     
     // Add detailed tracking for the vault creation process
     console.log("Starting vault creation process", { 
-      vaultType: data.vaultType,
+      vaultType: form.watch('vaultType'),
       blockchain: selectedBlockchain,
       isWalletConnected,
       tripleChainSecurity: useTripleChainSecurity,
@@ -758,14 +758,14 @@ export function CreateVaultForm({
           
           // Use our CVT token context to process the payment
           try {
-            console.log("Initiating CVT token payment", { amount: creationCost.amount, type: data.vaultType });
+            console.log("Initiating CVT token payment", { amount: creationCost.amount, type: form.watch('vaultType') });
             // Get blockchain type as string for the token service
             const blockchainString = selectedBlockchain.toString();
             
             // Process the payment through our CVT token service
             const paymentResult = await payForVaultCreation(
               creationCost.amount,
-              data.vaultType,
+              form.watch('vaultType'),
               blockchainString
             );
             
@@ -926,18 +926,18 @@ export function CreateVaultForm({
         },
         
         // Add enhanced security protocols based on selected security level
-        securityProtocols: data.vaultType === 'standard' ? {
+        securityProtocols: form.watch('vaultType') === 'standard' ? {
           quantumResistance: {
             enabled: true, 
-            algorithm: data.metadata?.securityLevel === "fortress" ? "SPHINCS+" : 
-                       data.metadata?.securityLevel === "maximum" ? "CRYSTALS-Dilithium" : 
-                       data.metadata?.securityLevel === "enhanced" ? "Falcon-1024" : "Falcon-512"
+            algorithm: form.watch('metadata.securityLevel') === "fortress" ? "SPHINCS+" : 
+                       form.watch('metadata.securityLevel') === "maximum" ? "CRYSTALS-Dilithium" : 
+                       form.watch('metadata.securityLevel') === "enhanced" ? "Falcon-1024" : "Falcon-512"
           },
           zeroKnowledgePrivacy: {
             enabled: true,
-            level: data.metadata?.securityLevel === "fortress" ? "military" : 
-                  data.metadata?.securityLevel === "maximum" ? "enterprise" : 
-                  data.metadata?.securityLevel === "enhanced" ? "advanced" : "standard"
+            level: form.watch('metadata.securityLevel') === "fortress" ? "military" : 
+                  form.watch('metadata.securityLevel') === "maximum" ? "enterprise" : 
+                  form.watch('metadata.securityLevel') === "enhanced" ? "advanced" : "standard"
           },
           adaptiveSecurity: {
             enabled: true,
