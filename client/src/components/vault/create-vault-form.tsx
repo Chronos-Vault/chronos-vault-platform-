@@ -12,7 +12,7 @@ import { EnhancedMediaUploader } from "@/components/attachments/enhanced-media-u
 import VaultTypeSelector, { SpecializedVaultType } from "@/components/vault/vault-type-selector";
 import { MemoryVaultContent } from "@/components/vault/memory-vault-content";
 import { useCVTToken, StakingTier } from "@/contexts/cvt-token-context";
-import { Coins, Wallet, ArrowLeftRight, ArrowRightCircle } from "lucide-react";
+import { Coins, Wallet, ArrowLeftRight, ArrowRightCircle, Shield } from "lucide-react";
 
 import {
   Form,
@@ -1399,6 +1399,76 @@ export function CreateVaultForm({
                             </FormItem>
                           )}
                         />
+                      )}
+                      
+                      {/* Sovereign Fortress Premium Features - Only shown for standard vault type */}
+                      {form.watch('vaultType') === 'standard' && (
+                        <div className="rounded-md border border-[#FF5AF7]/50 p-4 shadow-lg bg-[#1A1A1A] mb-4">
+                          <div className="flex items-start mb-3">
+                            <div className="p-2 rounded-full bg-gradient-to-r from-[#FF5AF7]/20 to-[#6B00D7]/20 mr-3">
+                              <Shield className="h-4 w-4 text-[#FF5AF7]" />
+                            </div>
+                            <div>
+                              <h4 className="text-base font-medium text-white">Sovereign Fortress™ Premium Features</h4>
+                              <p className="text-sm text-gray-400 mt-1">Enhanced security technologies exclusive to Sovereign Fortress™ vaults</p>
+                            </div>
+                          </div>
+                          
+                          {/* Security Feature Cards */}
+                          <div className="grid grid-cols-2 gap-2 mt-3">
+                            <div className="p-2 rounded bg-black/30 border border-[#6B00D7]/30">
+                              <div className="flex items-center mb-1">
+                                <span className="w-3 h-3 rounded-full bg-[#FF5AF7]/30 mr-2"></span>
+                                <h5 className="text-xs font-medium text-white">Quantum-Resistant Encryption</h5>
+                              </div>
+                              <p className="text-[10px] text-gray-400">
+                                {form.watch('metadata.securityLevel') === 'standard' && "Falcon-512 signatures with Kyber-512 encryption"}
+                                {form.watch('metadata.securityLevel') === 'enhanced' && "Falcon-1024 signatures with Kyber-768 encryption"}
+                                {form.watch('metadata.securityLevel') === 'maximum' && "CRYSTALS-Dilithium signatures with Kyber-1024 encryption"}
+                                {form.watch('metadata.securityLevel') === 'fortress' && "SPHINCS+ signatures with FrodoKEM-1344 encryption"}
+                              </p>
+                            </div>
+                            
+                            <div className="p-2 rounded bg-black/30 border border-[#6B00D7]/30">
+                              <div className="flex items-center mb-1">
+                                <span className="w-3 h-3 rounded-full bg-[#FF5AF7]/30 mr-2"></span>
+                                <h5 className="text-xs font-medium text-white">Adaptive Security</h5>
+                              </div>
+                              <p className="text-[10px] text-gray-400">
+                                {form.watch('metadata.securityLevel') === 'standard' && "Basic threat monitoring & response"}
+                                {form.watch('metadata.securityLevel') === 'enhanced' && "Moderate threat analysis & protection"}
+                                {form.watch('metadata.securityLevel') === 'maximum' && "Advanced threat intelligence & prevention"}
+                                {form.watch('metadata.securityLevel') === 'fortress' && "Military-grade autonomous defense system"}
+                              </p>
+                            </div>
+                            
+                            <div className="p-2 rounded bg-black/30 border border-[#6B00D7]/30">
+                              <div className="flex items-center mb-1">
+                                <span className="w-3 h-3 rounded-full bg-[#FF5AF7]/30 mr-2"></span>
+                                <h5 className="text-xs font-medium text-white">Recovery Protocol</h5>
+                              </div>
+                              <p className="text-[10px] text-gray-400">
+                                {form.watch('metadata.securityLevel') === 'standard' && "24-hour recovery timeframe"}
+                                {form.watch('metadata.securityLevel') === 'enhanced' && "8-hour recovery timeframe"}
+                                {form.watch('metadata.securityLevel') === 'maximum' && "1-hour recovery timeframe"}
+                                {form.watch('metadata.securityLevel') === 'fortress' && "Instant recovery with zero downtime"}
+                              </p>
+                            </div>
+                            
+                            <div className="p-2 rounded bg-black/30 border border-[#6B00D7]/30">
+                              <div className="flex items-center mb-1">
+                                <span className="w-3 h-3 rounded-full bg-[#FF5AF7]/30 mr-2"></span>
+                                <h5 className="text-xs font-medium text-white">Privacy Layer</h5>
+                              </div>
+                              <p className="text-[10px] text-gray-400">
+                                {form.watch('metadata.securityLevel') === 'standard' && "Basic zero-knowledge proofs"}
+                                {form.watch('metadata.securityLevel') === 'enhanced' && "Advanced zero-knowledge schemes"}
+                                {form.watch('metadata.securityLevel') === 'maximum' && "Enterprise-grade privacy protections"}
+                                {form.watch('metadata.securityLevel') === 'fortress' && "Military-grade obfuscation techniques"}
+                              </p>
+                            </div>
+                          </div>
+                        </div>
                       )}
                       
                       {/* Cross-Chain Storage Options */}
