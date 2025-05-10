@@ -1,91 +1,63 @@
 /**
- * GeoLocation Verifier Component
+ * Geo Location Verifier Component
  * 
- * Component for verifying a user's location against geolocation vault requirements.
- * Handles location collection, accuracy verification, and boundary checking.
+ * This component allows users to verify their location against a vault's
+ * boundary requirements to gain access to the vault content.
  */
 
-import React, { useState, useEffect } from 'react';
-import { useMutation, useQuery } from '@tanstack/react-query';
+import React, { useState } from 'react';
+import { useMutation } from '@tanstack/react-query';
 import { apiRequest } from '@/lib/queryClient';
 import { useToast } from '@/hooks/use-toast';
-import { 
-  MapPin, 
-  Loader2, 
-  AlertTriangle, 
-  CheckCircle2,
-  XCircle,
-  Lock,
-  Unlock,
-  RefreshCw,
-  Shield,
-  Target
-} from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
-import { Separator } from '@/components/ui/separator';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { GeoVault } from '@shared/schema';
+import { MapPin, Shield, AlertTriangle, Check } from 'lucide-react';
 
-interface GeoVault {
-  id: string;
-  name: string;
-  boundaryType: string;
+interface GeoLocationVerifierProps {
+  vault: GeoVault;
+  onVerificationSuccess: () => void;
 }
 
-interface VerificationResult {
-  success: boolean;
-  message: string;
-  details?: {
-    distanceFromBoundary?: number;
-    insideBoundary?: boolean;
-    accuracy?: number;
-    requiredAccuracy?: number;
-  };
+interface Coordinate {
+  latitude: number;
+  longitude: number;
+  accuracy?: number;
+  timestamp?: number;
 }
 
-export function GeoLocationVerifier() {
-  const [selectedVaultId, setSelectedVaultId] = useState<string>('');
-  const [isVerifying, setIsVerifying] = useState(false);
-  const [location, setLocation] = useState<GeolocationPosition | null>(null);
-  const [locationError, setLocationError] = useState<string | null>(null);
-  const [verificationResult, setVerificationResult] = useState<VerificationResult | null>(null);
+export function GeoLocationVerifier({ vault, onVerificationSuccess }: GeoLocationVerifierProps) {
   const { toast } = useToast();
-
-  // Fetch user's vaults
-  const { data: vaults, isLoading, error } = useQuery<GeoVault[]>({
-    queryKey: ['/api/geo-vaults'],
-  });
-
+  const [isGettingLocation, setIsGettingLocation] = useState(false);
+  const [currentAccuracy, setCurrentAccuracy] = useState<number | null>(null);
+  const [verificationAttempts, setVerificationAttempts] = useState(0);
+  
   // Verification mutation
   const verifyLocationMutation = useMutation({
-    mutationFn: async (data: { vaultId: string; location: { latitude: number; longitude: number; accuracy: number; timestamp: number } }) => {
-      const response = await apiRequest('POST', '/api/geo-vaults/verify', data);
-      
+    mutationFn: async (location: Coordinate) => {
+      const response = await apiRequest('POST', `/api/geo-vaults/${vault.id}/verify`, location);
       if (!response.ok) {
         const errorData = await response.json();
         throw new Error(errorData.message || 'Verification failed');
       }
-      
-      return await response.json();
+      return response.json();
     },
     onSuccess: (data) => {
-      setVerificationResult(data);
-      
       if (data.success) {
         toast({
           title: 'Verification Successful',
-          description: data.message,
-          variant: 'default',
+          description: 'Your location has been verified successfully',
         });
+        onVerificationSuccess();
       } else {
         toast({
           title: 'Verification Failed',
-          description: data.message,
+          description: data.message || 'Your location could not be verified',
           variant: 'destructive',
         });
+        setVerificationAttempts(prev => prev + 1);
       }
     },
     onError: (error: Error) => {
@@ -94,63 +66,60 @@ export function GeoLocationVerifier() {
         description: error.message,
         variant: 'destructive',
       });
-    },
-    onSettled: () => {
-      setIsVerifying(false);
+      setVerificationAttempts(prev => prev + 1);
     },
   });
 
-  // Get current location
-  const getCurrentLocation = () => {
+  // Get and verify the current location
+  const verifyCurrentLocation = () => {
     if (!navigator.geolocation) {
-      setLocationError('Geolocation is not supported by your browser');
+      toast({
+        title: 'Error',
+        description: 'Geolocation is not supported by your browser',
+        variant: 'destructive',
+      });
       return;
     }
 
-    setIsVerifying(true);
-    setLocationError(null);
-    setVerificationResult(null);
-
+    setIsGettingLocation(true);
+    
     navigator.geolocation.getCurrentPosition(
       (position) => {
-        setLocation(position);
+        const location = {
+          latitude: position.coords.latitude,
+          longitude: position.coords.longitude,
+          accuracy: position.coords.accuracy,
+          timestamp: position.timestamp,
+        };
         
-        if (selectedVaultId) {
-          verifyLocationMutation.mutate({
-            vaultId: selectedVaultId,
-            location: {
-              latitude: position.coords.latitude,
-              longitude: position.coords.longitude,
-              accuracy: position.coords.accuracy,
-              timestamp: position.timestamp,
-            },
-          });
-        } else {
-          setIsVerifying(false);
-          toast({
-            title: 'Vault Not Selected',
-            description: 'Please select a vault to verify your location',
-            variant: 'destructive',
-          });
-        }
+        setCurrentAccuracy(position.coords.accuracy);
+        
+        // Verify the location
+        verifyLocationMutation.mutate(location);
+        setIsGettingLocation(false);
       },
       (error) => {
-        let errorMessage = 'Failed to get your current location';
+        let errorMessage = 'Unknown error';
         
         switch (error.code) {
           case error.PERMISSION_DENIED:
-            errorMessage = 'Location access denied. Please enable location services.';
+            errorMessage = 'Permission denied for geolocation';
             break;
           case error.POSITION_UNAVAILABLE:
-            errorMessage = 'Location information is unavailable.';
+            errorMessage = 'Location information is unavailable';
             break;
           case error.TIMEOUT:
-            errorMessage = 'Location request timed out.';
+            errorMessage = 'The request to get location timed out';
             break;
         }
         
-        setLocationError(errorMessage);
-        setIsVerifying(false);
+        toast({
+          title: 'Geolocation Error',
+          description: errorMessage,
+          variant: 'destructive',
+        });
+        
+        setIsGettingLocation(false);
       },
       { 
         enableHighAccuracy: true,
@@ -160,206 +129,166 @@ export function GeoLocationVerifier() {
     );
   };
 
-  // Update location accuracy display
-  const getAccuracyLevel = (accuracy: number) => {
-    if (accuracy < 10) return { label: 'Excellent', color: 'bg-green-500', percentage: 100 };
-    if (accuracy < 30) return { label: 'Good', color: 'bg-green-400', percentage: 80 };
-    if (accuracy < 100) return { label: 'Moderate', color: 'bg-yellow-400', percentage: 60 };
-    if (accuracy < 500) return { label: 'Poor', color: 'bg-orange-400', percentage: 40 };
-    return { label: 'Very Poor', color: 'bg-red-500', percentage: 20 };
+  // Format boundary information for display
+  const formatBoundaryInfo = () => {
+    switch (vault.boundaryType) {
+      case 'circle':
+        return `Circular boundary with radius of ${vault.radius}m`;
+      case 'polygon':
+        return `Polygon boundary with ${(vault.coordinates as any)?.length || 0} points`;
+      case 'country':
+        return `Country boundary (${vault.countryCode})`;
+      default:
+        return 'Unknown boundary type';
+    }
+  };
+
+  // Calculate estimated distance from target
+  const calculateDistanceDescription = () => {
+    // This would normally use the result from the verification
+    // For now, we'll just return a placeholder
+    if (verificationAttempts === 0) {
+      return 'Not yet verified';
+    } else if (verifyLocationMutation.data?.success) {
+      return 'Within boundary';
+    } else if (verifyLocationMutation.data?.details?.distance) {
+      return `Approximately ${Math.round(verifyLocationMutation.data.details.distance)}m away`;
+    } else {
+      return 'Outside boundary';
+    }
+  };
+
+  // Calculate GPS accuracy indicator
+  const getAccuracyLevel = () => {
+    if (currentAccuracy === null) return 'unknown';
+    
+    const minAccuracy = vault.minAccuracy || 100;
+    
+    if (currentAccuracy <= minAccuracy / 2) return 'excellent';
+    if (currentAccuracy <= minAccuracy) return 'good';
+    if (currentAccuracy <= minAccuracy * 2) return 'fair';
+    return 'poor';
+  };
+
+  const accuracyLevel = getAccuracyLevel();
+  const accuracyColors = {
+    unknown: 'bg-gray-300',
+    excellent: 'bg-green-500',
+    good: 'bg-blue-500',
+    fair: 'bg-yellow-500',
+    poor: 'bg-red-500',
+  };
+
+  const accuracyProgress = () => {
+    if (currentAccuracy === null) return 0;
+    
+    const minAccuracy = vault.minAccuracy || 100;
+    
+    if (currentAccuracy <= minAccuracy) {
+      // If we're within the required accuracy, map 0-minAccuracy to 50-100%
+      return 100 - (currentAccuracy / minAccuracy * 50);
+    } else {
+      // If worse than required accuracy, map to 0-50%
+      return Math.max(0, 50 - (currentAccuracy - minAccuracy) / 10);
+    }
   };
 
   return (
-    <Card className="max-w-2xl mx-auto">
+    <Card className="w-full">
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
-          <Target className="h-5 w-5 text-primary" />
-          Verify Location Access
+          <Shield className="h-5 w-5" />
+          Location Verification
         </CardTitle>
         <CardDescription>
-          Verify your current location against geolocation vault requirements
+          Verify your location to access this vault
         </CardDescription>
       </CardHeader>
       
-      <CardContent className="space-y-6">
-        {/* Vault Selection */}
-        <div>
-          <h3 className="text-sm font-medium mb-2">Select a Vault to Verify</h3>
-          
-          {isLoading ? (
-            <div className="flex items-center gap-2 text-muted-foreground">
-              <Loader2 className="h-4 w-4 animate-spin" />
-              <span>Loading vaults...</span>
-            </div>
-          ) : error ? (
-            <Alert variant="destructive">
-              <AlertTriangle className="h-4 w-4" />
-              <AlertTitle>Error</AlertTitle>
-              <AlertDescription>
-                Failed to load vaults. Please try again later.
-              </AlertDescription>
-            </Alert>
-          ) : vaults && vaults.length > 0 ? (
-            <Select value={selectedVaultId} onValueChange={setSelectedVaultId}>
-              <SelectTrigger>
-                <SelectValue placeholder="Select a geolocation vault" />
-              </SelectTrigger>
-              <SelectContent>
-                {vaults.map(vault => (
-                  <SelectItem key={vault.id} value={vault.id} className="flex items-center gap-2">
-                    <div className="flex items-center gap-2">
-                      <MapPin className="h-4 w-4" />
-                      <span>{vault.name}</span>
-                      <Badge variant="outline" className="ml-2 capitalize">
-                        {vault.boundaryType}
-                      </Badge>
-                    </div>
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          ) : (
-            <Alert variant="default" className="bg-muted">
-              <AlertTitle>No Vaults Found</AlertTitle>
-              <AlertDescription>
-                You don't have any geolocation vaults. Create one to use this feature.
-              </AlertDescription>
-            </Alert>
-          )}
+      <CardContent className="space-y-4">
+        <div className="space-y-2">
+          <div className="text-sm font-medium">Vault Boundary</div>
+          <div className="p-3 bg-muted rounded-md">
+            {formatBoundaryInfo()}
+          </div>
         </div>
         
-        <Separator />
-        
-        {/* Current Location Info */}
-        <div className="space-y-4">
-          <h3 className="text-sm font-medium flex items-center gap-2">
-            <MapPin className="h-4 w-4 text-primary" />
-            Current Location Status
-          </h3>
-          
-          {locationError ? (
-            <Alert variant="destructive">
-              <AlertTriangle className="h-4 w-4" />
-              <AlertTitle>Location Error</AlertTitle>
-              <AlertDescription>{locationError}</AlertDescription>
-            </Alert>
-          ) : location ? (
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <div className="text-sm">
-                  <span className="font-medium">Latitude:</span>{' '}
-                  <span className="text-muted-foreground">{location.coords.latitude.toFixed(6)}</span>
-                </div>
-                <div className="text-sm">
-                  <span className="font-medium">Longitude:</span>{' '}
-                  <span className="text-muted-foreground">{location.coords.longitude.toFixed(6)}</span>
-                </div>
-                <div className="text-sm">
-                  <span className="font-medium">Timestamp:</span>{' '}
-                  <span className="text-muted-foreground">
-                    {new Date(location.timestamp).toLocaleTimeString()}
-                  </span>
-                </div>
-              </div>
-              
-              <div className="space-y-2">
-                <div className="text-sm">
-                  <span className="font-medium">Accuracy:</span>{' '}
-                  <span className="text-muted-foreground">{location.coords.accuracy.toFixed(1)} meters</span>
-                </div>
-                
-                {location.coords.accuracy && (
-                  <div className="space-y-1">
-                    <div className="flex justify-between text-xs">
-                      <span>Accuracy Level</span>
-                      <span className="font-medium">{getAccuracyLevel(location.coords.accuracy).label}</span>
-                    </div>
-                    <Progress 
-                      value={getAccuracyLevel(location.coords.accuracy).percentage} 
-                      className="h-2"
-                    />
-                  </div>
-                )}
-              </div>
+        {vault.minAccuracy && (
+          <div className="space-y-2">
+            <div className="text-sm font-medium flex items-center justify-between">
+              <span>GPS Accuracy Required</span>
+              {currentAccuracy && (
+                <Badge variant={accuracyLevel === 'poor' ? 'destructive' : 'outline'}>
+                  Current: {Math.round(currentAccuracy)}m
+                </Badge>
+              )}
             </div>
-          ) : (
-            <div className="flex flex-col items-center justify-center py-6 text-center text-muted-foreground">
-              <MapPin className="h-8 w-8 mb-2 opacity-50" />
-              <p>No location data available</p>
-              <p className="text-sm">Click the verify button to check your current location</p>
-            </div>
-          )}
-        </div>
-        
-        {/* Verification Result */}
-        {verificationResult && (
-          <>
-            <Separator />
             
-            <div className="space-y-4">
-              <h3 className="text-sm font-medium flex items-center gap-2">
-                <Shield className="h-4 w-4 text-primary" />
-                Verification Result
-              </h3>
-              
-              <Alert variant={verificationResult.success ? "default" : "destructive"} className={verificationResult.success ? "bg-green-50 border-green-200" : undefined}>
-                {verificationResult.success ? (
-                  <CheckCircle2 className="h-4 w-4 text-green-500" />
-                ) : (
-                  <XCircle className="h-4 w-4" />
-                )}
-                <AlertTitle>
-                  {verificationResult.success ? 'Access Granted' : 'Access Denied'}
-                </AlertTitle>
-                <AlertDescription>
-                  {verificationResult.message}
-                  
-                  {verificationResult.details && (
-                    <div className="mt-2 text-xs space-y-1">
-                      {verificationResult.details.distanceFromBoundary !== undefined && (
-                        <div>Distance from boundary: {verificationResult.details.distanceFromBoundary.toFixed(1)} meters</div>
-                      )}
-                      {verificationResult.details.accuracy !== undefined && (
-                        <div>Your location accuracy: {verificationResult.details.accuracy.toFixed(1)} meters</div>
-                      )}
-                      {verificationResult.details.requiredAccuracy !== undefined && (
-                        <div>Required accuracy: {verificationResult.details.requiredAccuracy} meters</div>
-                      )}
-                    </div>
-                  )}
-                </AlertDescription>
-              </Alert>
+            <div className="space-y-1">
+              <div className="flex justify-between text-xs text-muted-foreground">
+                <span>More Accurate</span>
+                <span>Less Accurate</span>
+              </div>
+              <Progress 
+                value={accuracyProgress()} 
+                className={`h-2 ${accuracyColors[accuracyLevel as keyof typeof accuracyColors]}`}
+              />
+              <div className="flex justify-between text-xs text-muted-foreground">
+                <span>0m</span>
+                <span>{vault.minAccuracy}m (Required)</span>
+                <span>{vault.minAccuracy * 2}m+</span>
+              </div>
             </div>
-          </>
+          </div>
         )}
+        
+        {verificationAttempts > 0 && !verifyLocationMutation.data?.success && (
+          <div className="flex items-center p-3 rounded-md bg-destructive/10 text-destructive gap-2">
+            <AlertTriangle className="h-4 w-4 flex-shrink-0" />
+            <div className="text-sm">
+              {verifyLocationMutation.data?.message || 'Your location could not be verified. Please try again.'}
+            </div>
+          </div>
+        )}
+        
+        {verifyLocationMutation.data?.success && (
+          <div className="flex items-center p-3 rounded-md bg-green-500/10 text-green-600 gap-2">
+            <Check className="h-4 w-4 flex-shrink-0" />
+            <div className="text-sm">
+              Location verified successfully! You can now access the vault.
+            </div>
+          </div>
+        )}
+        
+        <div className="grid grid-cols-2 gap-4 mt-2">
+          <div>
+            <div className="text-sm font-medium">Distance from Target</div>
+            <div className="text-sm text-muted-foreground">
+              {calculateDistanceDescription()}
+            </div>
+          </div>
+          
+          <div>
+            <div className="text-sm font-medium">Verification Attempts</div>
+            <div className="text-sm text-muted-foreground">
+              {verificationAttempts} attempts made
+            </div>
+          </div>
+        </div>
       </CardContent>
       
-      <CardFooter className="flex justify-between">
-        <div className="text-xs text-muted-foreground">
-          {location ? `Last updated: ${new Date(location.timestamp).toLocaleTimeString()}` : 'No location data'}
-        </div>
-        
+      <CardFooter>
         <Button 
-          onClick={getCurrentLocation}
-          disabled={isVerifying || !vaults || vaults.length === 0}
-          className="gap-2"
+          onClick={verifyCurrentLocation}
+          disabled={isGettingLocation || verifyLocationMutation.isPending || verifyLocationMutation.data?.success}
+          className="w-full"
         >
-          {isVerifying ? (
-            <>
-              <Loader2 className="h-4 w-4 animate-spin" />
-              Verifying...
-            </>
-          ) : verificationResult ? (
-            <>
-              <RefreshCw className="h-4 w-4" />
-              Verify Again
-            </>
-          ) : (
-            <>
-              {verificationResult === null ? <Lock className="h-4 w-4" /> : <Unlock className="h-4 w-4" />}
-              Verify Location
-            </>
-          )}
+          <MapPin className="h-4 w-4 mr-2" />
+          {isGettingLocation || verifyLocationMutation.isPending 
+            ? 'Verifying Location...' 
+            : verifyLocationMutation.data?.success 
+              ? 'Location Verified' 
+              : 'Verify My Location'}
         </Button>
       </CardFooter>
     </Card>

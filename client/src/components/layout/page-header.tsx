@@ -1,11 +1,12 @@
 /**
- * PageHeader Component
+ * Page Header Component
  * 
- * A consistent header component for pages that displays a title,
- * optional description, and an icon.
+ * A consistent header component for pages throughout the application
+ * with support for title, description, icon, and action buttons.
  */
 
 import React, { ReactNode } from 'react';
+import { cn } from '@/lib/utils';
 
 interface PageHeaderProps {
   title: string;
@@ -15,26 +16,33 @@ interface PageHeaderProps {
   className?: string;
 }
 
-export function PageHeader({ 
-  title, 
-  description, 
-  icon, 
+export function PageHeader({
+  title,
+  description,
+  icon,
   actions,
-  className = '' 
+  className,
 }: PageHeaderProps) {
   return (
-    <div className={`mb-8 ${className}`}>
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-3">
-          {icon && <div className="flex-shrink-0">{icon}</div>}
-          <h1 className="text-2xl md:text-3xl font-bold tracking-tight">{title}</h1>
+    <div className={cn('mb-6 flex flex-col space-y-4 sm:flex-row sm:items-center sm:justify-between sm:space-y-0', className)}>
+      <div className="flex items-center gap-3">
+        {icon && (
+          <div className="rounded-md bg-muted p-2 flex items-center justify-center">
+            {icon}
+          </div>
+        )}
+        <div>
+          <h1 className="text-2xl font-bold tracking-tight">{title}</h1>
+          {description && (
+            <p className="text-muted-foreground mt-1">{description}</p>
+          )}
         </div>
-        {actions && <div className="flex items-center gap-2">{actions}</div>}
       </div>
-      {description && (
-        <p className="mt-2 text-muted-foreground text-sm md:text-base max-w-3xl">
-          {description}
-        </p>
+      
+      {actions && (
+        <div className="flex items-center gap-2">
+          {actions}
+        </div>
       )}
     </div>
   );

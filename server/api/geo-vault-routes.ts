@@ -1,359 +1,403 @@
 /**
  * Geolocation Vault API Routes
  * 
- * Endpoints for creating, managing, and accessing geolocation-based vaults
- * with advanced security features including location verification.
+ * Provides API endpoints for managing location-based vaults and verification
  */
 
-import express, { Request, Response } from 'express';
+import { Request, Response, Router } from 'express';
 import { z } from 'zod';
-import { authenticateRequest } from '../middleware/auth';
+import { db } from '../db';
+import { geolocationService, Coordinates } from '../services/geolocation-service';
+import { insertGeoVaultSchema, insertGeoAccessLogSchema } from '@shared/schema';
 import { securityLogger, SecurityEventType } from '../monitoring/security-logger';
-import { geolocationService } from '../services/geolocation-service';
-import { insertGeoVaultSchema, GeoVaultSettings } from '@shared/schema';
 
-const router = express.Router();
+// Authentication middleware
+const isAuthenticated = (req: Request, res: Response, next: Function) => {
+  // In production, this would be replaced with proper authentication
+  // For this implementation we'll use a simple check
+  if (!req.session || !req.session.userId) {
+    securityLogger.warn(
+      'Unauthorized access attempt to geo vault API',
+      SecurityEventType.UNAUTHORIZED_ACCESS,
+      { path: req.path }
+    );
+    return res.status(401).json({ error: 'Authentication required' });
+  }
+  next();
+};
 
-// Require authentication for all geo-vault routes
-router.use(authenticateRequest);
+// Router setup
+const geoVaultRouter = Router();
 
 /**
  * Create a new geolocation vault
+ * 
  * POST /api/geo-vaults
  */
-router.post('/', async (req: Request, res: Response) => {
+geoVaultRouter.post('/', isAuthenticated, async (req: Request, res: Response) => {
   try {
-    // Validate request body against schema
-    const validation = insertGeoVaultSchema.safeParse(req.body);
+    // Parse and validate request body
+    const validationResult = insertGeoVaultSchema.safeParse({
+      ...req.body,
+      userId: req.session.userId, // Override with authenticated user ID
+    });
 
-    if (!validation.success) {
+    if (!validationResult.success) {
       securityLogger.warn(
-        'Invalid geo-vault creation attempt',
+        'Invalid geolocation vault data submitted',
         SecurityEventType.INPUT_VALIDATION_FAILURE,
-        {
-          userId: req.user?.id,
-          errors: validation.error.errors,
-        }
+        { errors: validationResult.error.format() }
       );
-
+      
       return res.status(400).json({
-        success: false,
-        message: 'Invalid vault data',
-        errors: validation.error.errors,
+        error: 'Invalid data',
+        details: validationResult.error.format()
       });
     }
 
-    // Set user ID from authenticated user
-    const vaultData = {
-      ...validation.data,
-      userId: req.user.id,
-    };
-
     // Create the vault
-    const newVault = await geolocationService.createVault(vaultData);
-
-    return res.status(201).json({
-      success: true,
-      message: 'Geolocation vault created successfully',
-      vault: newVault,
-    });
+    const vault = await geolocationService.createVault(validationResult.data);
+    
+    return res.status(201).json(vault);
   } catch (error) {
     securityLogger.error(
       `Error creating geolocation vault: ${(error as Error).message}`,
       SecurityEventType.SYSTEM_ERROR,
-      {
-        userId: req.user?.id,
-        error,
-      }
+      { error }
     );
-
+    
     return res.status(500).json({
-      success: false,
-      message: 'Error creating geolocation vault',
+      error: 'Failed to create geolocation vault',
+      message: (error as Error).message
     });
   }
 });
 
 /**
- * Get all geolocation vaults for the current user
+ * Get all vaults for the authenticated user
+ * 
  * GET /api/geo-vaults
  */
-router.get('/', async (req: Request, res: Response) => {
+geoVaultRouter.get('/', isAuthenticated, async (req: Request, res: Response) => {
   try {
-    const vaults = await geolocationService.getVaultsForUser(req.user.id);
-
-    // Transform vault data for frontend display
-    const transformedVaults = vaults.map(vault => ({
-      id: vault.id.toString(),
-      name: vault.name,
-      description: vault.description || '',
-      boundaryCount: Array.isArray(vault.coordinates) ? vault.coordinates.length : 0,
-      boundaryTypes: [vault.boundaryType],
-      requiresRealTimeVerification: vault.requiresRealTimeVerification,
-      multiFactorUnlock: vault.multiFactorUnlock,
-      createdAt: vault.createdAt?.toISOString(),
-    }));
-
-    return res.json({
-      success: true,
-      vaults: transformedVaults,
-    });
+    const userId = req.session.userId;
+    const vaults = await geolocationService.getVaultsForUser(userId);
+    
+    return res.status(200).json(vaults);
   } catch (error) {
     securityLogger.error(
-      `Error fetching geolocation vaults: ${(error as Error).message}`,
+      `Error retrieving geolocation vaults: ${(error as Error).message}`,
       SecurityEventType.SYSTEM_ERROR,
-      {
-        userId: req.user?.id,
-        error,
-      }
+      { error }
     );
-
+    
     return res.status(500).json({
-      success: false,
-      message: 'Error fetching geolocation vaults',
+      error: 'Failed to retrieve geolocation vaults',
+      message: (error as Error).message
     });
   }
 });
 
 /**
- * Get a specific geolocation vault by ID
+ * Get a specific vault by ID
+ * 
  * GET /api/geo-vaults/:id
  */
-router.get('/:id', async (req: Request, res: Response) => {
+geoVaultRouter.get('/:id', isAuthenticated, async (req: Request, res: Response) => {
   try {
-    const vault = await geolocationService.getVaultById(req.params.id);
-
+    const { id } = req.params;
+    const userId = req.session.userId;
+    
+    const vault = await geolocationService.getVaultById(id);
+    
     if (!vault) {
-      return res.status(404).json({
-        success: false,
-        message: 'Vault not found',
-      });
+      return res.status(404).json({ error: 'Vault not found' });
     }
-
-    // Check if the vault belongs to the current user
-    if (vault.userId !== req.user.id) {
+    
+    // Security check - ensure user can only access their own vaults
+    if (vault.userId !== userId) {
       securityLogger.warn(
-        `Unauthorized access attempt to vault ${req.params.id}`,
+        `Unauthorized attempt to access vault ${id}`,
         SecurityEventType.UNAUTHORIZED_ACCESS,
-        {
-          vaultId: req.params.id,
-          requestingUserId: req.user.id,
-          ownerUserId: vault.userId,
-        }
+        { vaultId: id, requestingUserId: userId }
       );
-
-      return res.status(403).json({
-        success: false,
-        message: 'You do not have permission to access this vault',
-      });
+      
+      return res.status(403).json({ error: 'Access denied' });
     }
-
-    return res.json({
-      success: true,
-      vault,
-    });
+    
+    return res.status(200).json(vault);
   } catch (error) {
     securityLogger.error(
-      `Error fetching vault: ${(error as Error).message}`,
+      `Error retrieving geolocation vault: ${(error as Error).message}`,
       SecurityEventType.SYSTEM_ERROR,
-      {
-        vaultId: req.params.id,
-        userId: req.user?.id,
-        error,
-      }
+      { error, vaultId: req.params.id }
     );
-
+    
     return res.status(500).json({
-      success: false,
-      message: 'Error fetching vault details',
+      error: 'Failed to retrieve geolocation vault',
+      message: (error as Error).message
     });
   }
 });
 
 /**
- * Verify location for vault access
- * POST /api/geo-vaults/verify
+ * Verify location against a vault's boundary
+ * 
+ * POST /api/geo-vaults/:id/verify
  */
-router.post('/verify', async (req: Request, res: Response) => {
+geoVaultRouter.post('/:id/verify', isAuthenticated, async (req: Request, res: Response) => {
   try {
-    // Validate request body
-    const schema = z.object({
-      vaultId: z.string(),
-      location: z.object({
-        latitude: z.number(),
-        longitude: z.number(),
-        accuracy: z.number().optional(),
-        timestamp: z.number().optional(),
-      }),
+    const { id } = req.params;
+    const userId = req.session.userId;
+    
+    // Validate location data
+    const locationSchema = z.object({
+      latitude: z.number().min(-90).max(90),
+      longitude: z.number().min(-180).max(180),
+      accuracy: z.number().optional(),
+      timestamp: z.number().optional(),
     });
-
-    const validation = schema.safeParse(req.body);
-
-    if (!validation.success) {
+    
+    const validationResult = locationSchema.safeParse(req.body);
+    
+    if (!validationResult.success) {
+      securityLogger.warn(
+        'Invalid location data submitted for verification',
+        SecurityEventType.INPUT_VALIDATION_FAILURE,
+        { errors: validationResult.error.format() }
+      );
+      
       return res.status(400).json({
-        success: false,
-        message: 'Invalid verification data',
-        errors: validation.error.errors,
+        error: 'Invalid location data',
+        details: validationResult.error.format()
       });
     }
-
-    const { vaultId, location } = validation.data;
-
-    // Verify location
+    
+    const location = validationResult.data;
+    
+    // Get the vault
+    const vault = await geolocationService.getVaultById(id);
+    
+    if (!vault) {
+      return res.status(404).json({ error: 'Vault not found' });
+    }
+    
+    // Verify location against vault settings
     const verificationResult = await geolocationService.verifyLocation(
-      vaultId,
-      location,
-      req.user.id
+      location as Coordinates,
+      {
+        userId: vault.userId,
+        boundaryType: vault.boundaryType as any,
+        coordinates: vault.coordinates as any,
+        radius: vault.radius || undefined,
+        countryCode: vault.countryCode || undefined,
+        minAccuracy: vault.minAccuracy || undefined,
+        requiresRealTimeVerification: vault.requiresRealTimeVerification || false,
+        multiFactorUnlock: vault.multiFactorUnlock || false,
+        name: vault.name,
+        description: vault.description || undefined,
+        metadata: vault.metadata as any,
+      }
     );
-
-    return res.json({
+    
+    // Create access log entry
+    await db.insert(insertGeoAccessLogSchema.table).values({
+      vaultId: parseInt(id),
+      userId: userId,
+      latitude: location.latitude.toString(),
+      longitude: location.longitude.toString(),
+      accuracy: location.accuracy,
+      success: verificationResult.success,
+      failureReason: verificationResult.success ? null : verificationResult.message,
+      deviceInfo: {
+        userAgent: req.headers['user-agent'] || 'unknown',
+        ipAddress: req.ip || 'unknown',
+        timestamp: new Date().toISOString(),
+      },
+    });
+    
+    return res.status(200).json({
       success: verificationResult.success,
       message: verificationResult.message,
       details: verificationResult.details,
     });
   } catch (error) {
     securityLogger.error(
-      `Error verifying location: ${(error as Error).message}`,
+      `Error verifying location against vault: ${(error as Error).message}`,
       SecurityEventType.SYSTEM_ERROR,
-      {
-        userId: req.user?.id,
-        error,
-      }
+      { error, vaultId: req.params.id }
     );
-
+    
     return res.status(500).json({
-      success: false,
-      message: 'Error verifying location',
+      error: 'Failed to verify location',
+      message: (error as Error).message
     });
   }
 });
 
 /**
- * Update geolocation vault settings
+ * Update an existing vault
+ * 
  * PUT /api/geo-vaults/:id
  */
-router.put('/:id', async (req: Request, res: Response) => {
+geoVaultRouter.put('/:id', isAuthenticated, async (req: Request, res: Response) => {
   try {
-    // Validate request body (partial update)
-    const partialSchema = insertGeoVaultSchema.partial();
-    const validation = partialSchema.safeParse(req.body);
-
-    if (!validation.success) {
+    const { id } = req.params;
+    const userId = req.session.userId;
+    
+    // Get the vault first to verify ownership
+    const vault = await geolocationService.getVaultById(id);
+    
+    if (!vault) {
+      return res.status(404).json({ error: 'Vault not found' });
+    }
+    
+    // Ensure user can only update their own vaults
+    if (vault.userId !== userId) {
+      securityLogger.warn(
+        `Unauthorized attempt to update vault ${id}`,
+        SecurityEventType.UNAUTHORIZED_ACCESS,
+        { vaultId: id, requestingUserId: userId }
+      );
+      
+      return res.status(403).json({ error: 'Access denied' });
+    }
+    
+    // Validate update data
+    const updateSchema = insertGeoVaultSchema.partial();
+    const validationResult = updateSchema.safeParse(req.body);
+    
+    if (!validationResult.success) {
+      securityLogger.warn(
+        'Invalid vault update data submitted',
+        SecurityEventType.INPUT_VALIDATION_FAILURE,
+        { errors: validationResult.error.format() }
+      );
+      
       return res.status(400).json({
-        success: false,
-        message: 'Invalid vault data',
-        errors: validation.error.errors,
+        error: 'Invalid data',
+        details: validationResult.error.format()
       });
     }
-
-    // Update vault
+    
+    // Update the vault
     const updatedVault = await geolocationService.updateVault(
-      req.params.id,
-      req.user.id,
-      validation.data
+      id,
+      userId,
+      validationResult.data
     );
-
-    if (!updatedVault) {
-      return res.status(404).json({
-        success: false,
-        message: 'Vault not found or you do not have permission to modify it',
-      });
-    }
-
-    return res.json({
-      success: true,
-      message: 'Vault updated successfully',
-      vault: updatedVault,
-    });
+    
+    return res.status(200).json(updatedVault);
   } catch (error) {
     securityLogger.error(
-      `Error updating vault: ${(error as Error).message}`,
+      `Error updating geolocation vault: ${(error as Error).message}`,
       SecurityEventType.SYSTEM_ERROR,
-      {
-        vaultId: req.params.id,
-        userId: req.user?.id,
-        error,
-      }
+      { error, vaultId: req.params.id }
     );
-
+    
     return res.status(500).json({
-      success: false,
-      message: 'Error updating vault',
+      error: 'Failed to update geolocation vault',
+      message: (error as Error).message
     });
   }
 });
 
 /**
- * Delete a geolocation vault
+ * Delete a vault
+ * 
  * DELETE /api/geo-vaults/:id
  */
-router.delete('/:id', async (req: Request, res: Response) => {
+geoVaultRouter.delete('/:id', isAuthenticated, async (req: Request, res: Response) => {
   try {
-    const deleted = await geolocationService.deleteVault(
-      req.params.id,
-      req.user.id
-    );
-
-    if (!deleted) {
-      return res.status(404).json({
-        success: false,
-        message: 'Vault not found or you do not have permission to delete it',
+    const { id } = req.params;
+    const userId = req.session.userId;
+    
+    // Get the vault first to verify ownership
+    const vault = await geolocationService.getVaultById(id);
+    
+    if (!vault) {
+      return res.status(404).json({ error: 'Vault not found' });
+    }
+    
+    // Ensure user can only delete their own vaults
+    if (vault.userId !== userId) {
+      securityLogger.warn(
+        `Unauthorized attempt to delete vault ${id}`,
+        SecurityEventType.UNAUTHORIZED_ACCESS,
+        { vaultId: id, requestingUserId: userId }
+      );
+      
+      return res.status(403).json({ error: 'Access denied' });
+    }
+    
+    // Delete the vault
+    const success = await geolocationService.deleteVault(id, userId);
+    
+    if (success) {
+      return res.status(204).end();
+    } else {
+      return res.status(500).json({
+        error: 'Failed to delete geolocation vault'
       });
     }
-
-    return res.json({
-      success: true,
-      message: 'Vault deleted successfully',
-    });
   } catch (error) {
     securityLogger.error(
-      `Error deleting vault: ${(error as Error).message}`,
+      `Error deleting geolocation vault: ${(error as Error).message}`,
       SecurityEventType.SYSTEM_ERROR,
-      {
-        vaultId: req.params.id,
-        userId: req.user?.id,
-        error,
-      }
+      { error, vaultId: req.params.id }
     );
-
+    
     return res.status(500).json({
-      success: false,
-      message: 'Error deleting vault',
+      error: 'Failed to delete geolocation vault',
+      message: (error as Error).message
     });
   }
 });
 
 /**
- * Get verification history for a vault
+ * Get access history for a vault
+ * 
  * GET /api/geo-vaults/:id/history
  */
-router.get('/:id/history', async (req: Request, res: Response) => {
+geoVaultRouter.get('/:id/history', isAuthenticated, async (req: Request, res: Response) => {
   try {
-    const history = await geolocationService.getAccessHistory(
-      req.params.id,
-      req.user.id
-    );
-
-    return res.json({
-      success: true,
-      history,
-    });
+    const { id } = req.params;
+    const userId = req.session.userId;
+    
+    // Get the vault first to verify ownership
+    const vault = await geolocationService.getVaultById(id);
+    
+    if (!vault) {
+      return res.status(404).json({ error: 'Vault not found' });
+    }
+    
+    // Ensure user can only access their own vault history
+    if (vault.userId !== userId) {
+      securityLogger.warn(
+        `Unauthorized attempt to access vault history ${id}`,
+        SecurityEventType.UNAUTHORIZED_ACCESS,
+        { vaultId: id, requestingUserId: userId }
+      );
+      
+      return res.status(403).json({ error: 'Access denied' });
+    }
+    
+    // Get access history
+    const history = await geolocationService.getAccessHistory(id, userId);
+    
+    return res.status(200).json(history);
   } catch (error) {
     securityLogger.error(
-      `Error fetching vault history: ${(error as Error).message}`,
+      `Error retrieving vault access history: ${(error as Error).message}`,
       SecurityEventType.SYSTEM_ERROR,
-      {
-        vaultId: req.params.id,
-        userId: req.user?.id,
-        error,
-      }
+      { error, vaultId: req.params.id }
     );
-
+    
     return res.status(500).json({
-      success: false,
-      message: 'Error fetching vault access history',
+      error: 'Failed to retrieve vault access history',
+      message: (error as Error).message
     });
   }
 });
 
-export default router;
+export default geoVaultRouter;
