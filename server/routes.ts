@@ -75,7 +75,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   
   // Add event listeners for verification status updates
   crossChainVerification.on('verification:completed', (result) => {
-    securityLogger.info(`Vault verification completed for ${result.vaultId}`, {
+    securityLogger.info(`Vault verification completed for ${result.vaultId}`, SecurityEventType.CROSS_CHAIN_VERIFICATION, {
       vaultId: result.vaultId,
       primaryChain: result.primaryChain,
       isValid: result.isValid,
@@ -84,7 +84,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
   
   crossChainVerification.on('verification:transaction:confirmed', (data) => {
-    securityLogger.info(`Verification transaction confirmed: ${data.transactionId}`, {
+    securityLogger.info(`Verification transaction confirmed: ${data.transactionId}`, SecurityEventType.CROSS_CHAIN_VERIFICATION, {
       transactionId: data.transactionId,
       vaultId: data.vaultId,
       chainId: data.chainId
@@ -92,7 +92,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
   
   crossChainVerification.on('verification:transaction:failed', (data) => {
-    securityLogger.warn(`Verification transaction failed: ${data.transactionId}`, {
+    securityLogger.warn(`Verification transaction failed: ${data.transactionId}`, SecurityEventType.SYSTEM_ERROR, {
       transactionId: data.transactionId,
       vaultId: data.vaultId,
       chainId: data.chainId,
