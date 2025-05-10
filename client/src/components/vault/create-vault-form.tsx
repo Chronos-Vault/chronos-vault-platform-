@@ -274,6 +274,7 @@ export function CreateVaultForm({
         securityLevel: "standard",
         autoScalingSecurity: true,
         threatMonitoring: true,
+        // Cross-chain verification will use the top-level verificationThreshold field
         accessControls: {
           multiFactorAuth: true,
           temporaryAccess: false,
@@ -287,7 +288,6 @@ export function CreateVaultForm({
         showCountdown: true,
         
         // Cross-chain vault specific defaults
-        verificationThreshold: "2",
         zkVerification: false,
         crossChainKeys: []
       },
