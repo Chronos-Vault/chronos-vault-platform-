@@ -451,6 +451,22 @@ export function CreateVaultForm({
   };
   
   // Function to render specialized vault specific fields based on the vault type
+  // Use React.useEffect to update the form when initialVaultType changes
+  React.useEffect(() => {
+    console.log("Initializing vault type from props:", initialVaultType);
+    if (initialVaultType && initialVaultType !== form.getValues("vaultType")) {
+      form.setValue("vaultType", initialVaultType);
+    }
+    
+    // Force the vaultType to cross-chain if it's specified in URL
+    const urlParams = new URLSearchParams(window.location.search);
+    const typeParam = urlParams.get("type");
+    if (typeParam === "cross-chain") {
+      console.log("Force setting vault type to cross-chain from URL parameter");
+      form.setValue("vaultType", "cross-chain");
+    }
+  }, [initialVaultType, form]);
+
   const renderSpecializedFields = () => {
     const currentVaultType = form.watch("vaultType");
     
@@ -749,7 +765,7 @@ export function CreateVaultForm({
                 
                 <FormField
                   control={form.control as any}
-                  name="metadata.verificationThreshold"
+                  name="verificationThreshold"
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>Verification Threshold</FormLabel>
