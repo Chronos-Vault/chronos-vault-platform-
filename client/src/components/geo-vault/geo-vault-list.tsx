@@ -1,257 +1,325 @@
-/**
- * Geo Vault List
- * 
- * Component for displaying a list of geolocation vaults with sorting
- * and filtering options.
- */
-
 import React, { useState } from 'react';
-import { useQuery } from '@tanstack/react-query';
-import { Link, useLocation } from 'wouter';
-import { GeoVault } from '@shared/schema';
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
-import { Loader2, MapPin, Search, Plus, Globe, Circle, Square } from 'lucide-react';
+import { Input } from '@/components/ui/input';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
+import { Search, MoreHorizontal, MapPin, RefreshCw, Circle, Square, Globe } from 'lucide-react';
+import { GeoVault } from '@shared/schema';
+import { queryClient } from '@/lib/queryClient';
+import { useToast } from '@/hooks/use-toast';
+import { apiRequest } from '@/lib/queryClient';
 
-export function GeoVaultList() {
-  const [, navigate] = useLocation();
-  const [searchTerm, setSearchTerm] = useState('');
-  const [sortBy, setSortBy] = useState<'newest' | 'oldest' | 'name'>('newest');
-  const [filterType, setFilterType] = useState<string>('all');
-  
-  // Fetch the list of geo vaults
-  const { data: vaults, isLoading, error } = useQuery<GeoVault[]>({
-    queryKey: ['/api/geo-vaults'],
-    queryFn: async () => {
-      const response = await fetch('/api/geo-vaults');
+interface GeoVaultListProps {
+  vaults: GeoVault[];
+  onSelectVault: (vaultId: number) => void;
+  onRefresh?: () => void;
+}
+
+const GeoVaultList: React.FC<GeoVaultListProps> = ({ 
+  vaults, 
+  onSelectVault,
+  onRefresh
+}) => {
+  const [searchQuery, setSearchQuery] = useState('');
+  const [sortBy, setSortBy] = useState<string>('createdAt');
+  const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
+  const [filterBoundaryType, setFilterBoundaryType] = useState<string>('all');
+  const { toast } = useToast();
+
+  // Handle refresh button click
+  const handleRefresh = () => {
+    if (onRefresh) {
+      onRefresh();
+      toast({
+        title: "Refreshed",
+        description: "The vault list has been refreshed.",
+      });
+    }
+  };
+
+  // Handle delete vault
+  const handleDeleteVault = async (vaultId: number) => {
+    try {
+      const confirmed = window.confirm('Are you sure you want to delete this vault?');
+      if (!confirmed) return;
+
+      const response = await apiRequest('DELETE', `/api/geo-vaults/${vaultId}`);
+      
       if (!response.ok) {
-        throw new Error('Failed to fetch vaults');
+        throw new Error('Failed to delete vault');
       }
-      return response.json();
-    },
+      
+      toast({
+        title: "Vault Deleted",
+        description: "The vault has been successfully deleted.",
+      });
+      
+      // Refresh the vaults list
+      queryClient.invalidateQueries({ queryKey: ['/api/geo-vaults'] });
+      if (onRefresh) onRefresh();
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: error instanceof Error ? error.message : 'An error occurred while deleting the vault.',
+        variant: "destructive",
+      });
+    }
+  };
+
+  // Filter vaults by search query and boundary type
+  const filteredVaults = vaults.filter(vault => {
+    const matchesSearch = vault.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                         (vault.description?.toLowerCase().includes(searchQuery.toLowerCase()) || false);
+    
+    const matchesBoundaryType = filterBoundaryType === 'all' || vault.boundaryType === filterBoundaryType;
+    
+    return matchesSearch && matchesBoundaryType;
   });
-  
-  // Helper to get the icon for a boundary type
-  const getBoundaryIcon = (type: string) => {
+
+  // Sort vaults by selected field and order
+  const sortedVaults = [...filteredVaults].sort((a, b) => {
+    let valueA, valueB;
+    
+    switch (sortBy) {
+      case 'name':
+        valueA = a.name.toLowerCase();
+        valueB = b.name.toLowerCase();
+        break;
+      case 'boundaryType':
+        valueA = a.boundaryType.toLowerCase();
+        valueB = b.boundaryType.toLowerCase();
+        break;
+      case 'createdAt':
+        valueA = new Date(a.createdAt).getTime();
+        valueB = new Date(b.createdAt).getTime();
+        break;
+      default:
+        valueA = a.id;
+        valueB = b.id;
+    }
+    
+    return sortOrder === 'asc' 
+      ? (valueA > valueB ? 1 : -1)
+      : (valueA < valueB ? 1 : -1);
+  });
+
+  const getBoundaryTypeIcon = (type: string) => {
     switch (type) {
       case 'circle':
-        return <Circle className="h-4 w-4" />;
+        return <Circle className="h-4 w-4 mr-1" />;
       case 'polygon':
-        return <Square className="h-4 w-4" />;
+        return <Square className="h-4 w-4 mr-1" />;
       case 'country':
-        return <Globe className="h-4 w-4" />;
+        return <Globe className="h-4 w-4 mr-1" />;
       default:
-        return <MapPin className="h-4 w-4" />;
+        return <MapPin className="h-4 w-4 mr-1" />;
     }
   };
-  
-  // Filter and sort the vaults
-  const filteredAndSortedVaults = React.useMemo(() => {
-    if (!vaults) return [];
-    
-    // Apply search filter
-    let filtered = vaults.filter(vault => 
-      searchTerm === '' ||
-      vault.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      (vault.description && vault.description.toLowerCase().includes(searchTerm.toLowerCase()))
-    );
-    
-    // Apply boundary type filter
-    if (filterType !== 'all') {
-      filtered = filtered.filter(vault => vault.boundaryType === filterType);
+
+  const getBoundaryTypeName = (type: string) => {
+    switch (type) {
+      case 'circle':
+        return 'Circular Area';
+      case 'polygon':
+        return 'Custom Area';
+      case 'country':
+        return 'Country';
+      default:
+        return type;
     }
-    
-    // Sort the vaults
-    return filtered.sort((a, b) => {
-      switch (sortBy) {
-        case 'newest':
-          return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
-        case 'oldest':
-          return new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime();
-        case 'name':
-          return a.name.localeCompare(b.name);
-        default:
-          return 0;
-      }
-    });
-  }, [vaults, searchTerm, sortBy, filterType]);
-  
-  // Function to format creation date
-  const formatDate = (dateString: string) => {
-    const date = new Date(dateString);
-    return new Intl.DateTimeFormat('en-US', {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric',
-    }).format(date);
   };
-  
-  // Handle creating a new vault
-  const handleCreateNew = () => {
-    navigate('/geo-vaults/create');
-  };
-  
-  // Render loading state
-  if (isLoading) {
-    return (
-      <div className="flex items-center justify-center py-12">
-        <Loader2 className="h-8 w-8 animate-spin text-primary" />
-      </div>
-    );
-  }
-  
-  // Render error state
-  if (error) {
-    return (
-      <div className="py-8 text-center">
-        <div className="text-lg font-medium text-destructive mb-2">
-          Error Loading Vaults
-        </div>
-        <p className="text-muted-foreground mb-4">
-          {(error as Error).message || 'An unexpected error occurred'}
-        </p>
-        <Button variant="outline" onClick={() => window.location.reload()}>
-          Try Again
-        </Button>
-      </div>
-    );
-  }
-  
+
   return (
-    <div className="space-y-6">
-      <div className="flex flex-col sm:flex-row gap-4 justify-between">
-        <div className="relative flex-grow max-w-md">
-          <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+    <div className="space-y-4">
+      <div className="flex flex-col md:flex-row gap-4 mb-4">
+        <div className="relative flex-1">
+          <Search className="absolute left-2.5 top-3 h-4 w-4 text-muted-foreground" />
           <Input
+            type="text"
             placeholder="Search vaults..."
             className="pl-8"
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
           />
         </div>
         
-        <div className="flex gap-2">
-          <Select
-            value={filterType}
-            onValueChange={setFilterType}
+        <div className="flex flex-row gap-2">
+          <Select 
+            value={filterBoundaryType} 
+            onValueChange={setFilterBoundaryType}
           >
-            <SelectTrigger className="w-[140px]">
+            <SelectTrigger className="w-[180px]">
               <SelectValue placeholder="Filter by type" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="all">All Types</SelectItem>
-              <SelectItem value="circle">Circle</SelectItem>
-              <SelectItem value="polygon">Polygon</SelectItem>
+              <SelectItem value="all">All Boundary Types</SelectItem>
+              <SelectItem value="circle">Circular Area</SelectItem>
+              <SelectItem value="polygon">Custom Area</SelectItem>
               <SelectItem value="country">Country</SelectItem>
             </SelectContent>
           </Select>
           
-          <Select
-            value={sortBy}
-            onValueChange={(value) => setSortBy(value as 'newest' | 'oldest' | 'name')}
+          <Button
+            variant="outline"
+            size="icon"
+            onClick={handleRefresh}
+            title="Refresh"
           >
-            <SelectTrigger className="w-[140px]">
-              <SelectValue placeholder="Sort by" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="newest">Newest First</SelectItem>
-              <SelectItem value="oldest">Oldest First</SelectItem>
-              <SelectItem value="name">Name (A-Z)</SelectItem>
-            </SelectContent>
-          </Select>
-          
-          <Button onClick={handleCreateNew}>
-            <Plus className="h-4 w-4 mr-2" />
-            New Vault
+            <RefreshCw className="h-4 w-4" />
           </Button>
         </div>
       </div>
-      
-      {filteredAndSortedVaults.length === 0 ? (
-        <div className="text-center py-12 border rounded-lg bg-muted/40">
-          <MapPin className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-          <h3 className="text-lg font-medium mb-2">No Geolocation Vaults Found</h3>
-          <p className="text-muted-foreground mb-6 max-w-sm mx-auto">
-            {searchTerm || filterType !== 'all' 
-              ? 'Try adjusting your search or filters to find what you\'re looking for.'
-              : 'Create your first geolocation vault to get started with location-based security.'}
-          </p>
-          <Button onClick={handleCreateNew}>
-            <Plus className="h-4 w-4 mr-2" />
-            Create Your First Vault
-          </Button>
-        </div>
+
+      {sortedVaults.length === 0 ? (
+        <Card>
+          <CardContent className="pt-6 text-center">
+            <MapPin className="mx-auto h-12 w-12 text-muted-foreground/50" />
+            <h3 className="mt-3 text-lg font-semibold">No Vaults Found</h3>
+            <p className="text-sm text-muted-foreground mt-1">
+              {searchQuery || filterBoundaryType !== 'all'
+                ? "No vaults match your search criteria"
+                : "You haven't created any geolocation vaults yet"}
+            </p>
+          </CardContent>
+        </Card>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {filteredAndSortedVaults.map((vault) => (
-            <Card key={vault.id} className="overflow-hidden">
-              <CardHeader className="pb-2">
-                <div className="flex justify-between items-start">
-                  <CardTitle className="text-lg font-bold truncate">
-                    {vault.name}
-                  </CardTitle>
-                  <Badge variant="outline" className="flex gap-1 items-center">
-                    {getBoundaryIcon(vault.boundaryType)}
-                    <span className="capitalize">{vault.boundaryType}</span>
-                  </Badge>
-                </div>
-                <CardDescription className="line-clamp-2 min-h-[2.5rem]">
-                  {vault.description || 'No description provided'}
-                </CardDescription>
-              </CardHeader>
-              
-              <CardContent className="pb-2">
-                <div className="space-y-2 text-sm">
-                  <div className="flex items-center justify-between">
-                    <span className="text-muted-foreground">Created</span>
-                    <span>{formatDate(vault.createdAt)}</span>
-                  </div>
-                  
-                  {vault.boundaryType === 'circle' && (
-                    <div className="flex items-center justify-between">
-                      <span className="text-muted-foreground">Radius</span>
-                      <span>{vault.radius}m</span>
-                    </div>
-                  )}
-                  
-                  {vault.boundaryType === 'polygon' && (
-                    <div className="flex items-center justify-between">
-                      <span className="text-muted-foreground">Points</span>
-                      <span>{(vault.coordinates as any)?.length || 0} coordinates</span>
-                    </div>
-                  )}
-                  
-                  {vault.boundaryType === 'country' && (
-                    <div className="flex items-center justify-between">
-                      <span className="text-muted-foreground">Country</span>
-                      <span>{vault.countryCode}</span>
-                    </div>
-                  )}
-                  
-                  <div className="flex items-center justify-between">
-                    <span className="text-muted-foreground">Min. Accuracy</span>
-                    <span>{vault.minAccuracy || 'Not specified'}m</span>
-                  </div>
-                </div>
-              </CardContent>
-              
-              <CardFooter>
-                <Button 
-                  variant="outline" 
-                  className="w-full"
-                  onClick={() => navigate(`/geo-vaults/${vault.id}`)}
+        <div className="rounded-md border">
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead 
+                  className="cursor-pointer" 
+                  onClick={() => {
+                    if (sortBy === 'name') {
+                      setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc');
+                    } else {
+                      setSortBy('name');
+                      setSortOrder('asc');
+                    }
+                  }}
                 >
-                  <MapPin className="h-4 w-4 mr-2" />
-                  View & Verify
-                </Button>
-              </CardFooter>
-            </Card>
-          ))}
+                  Name
+                  {sortBy === 'name' && (
+                    <span className="ml-1">{sortOrder === 'asc' ? '↑' : '↓'}</span>
+                  )}
+                </TableHead>
+                <TableHead 
+                  className="cursor-pointer hidden md:table-cell" 
+                  onClick={() => {
+                    if (sortBy === 'boundaryType') {
+                      setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc');
+                    } else {
+                      setSortBy('boundaryType');
+                      setSortOrder('asc');
+                    }
+                  }}
+                >
+                  Boundary Type
+                  {sortBy === 'boundaryType' && (
+                    <span className="ml-1">{sortOrder === 'asc' ? '↑' : '↓'}</span>
+                  )}
+                </TableHead>
+                <TableHead 
+                  className="cursor-pointer hidden md:table-cell" 
+                  onClick={() => {
+                    if (sortBy === 'createdAt') {
+                      setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc');
+                    } else {
+                      setSortBy('createdAt');
+                      setSortOrder('desc');
+                    }
+                  }}
+                >
+                  Created
+                  {sortBy === 'createdAt' && (
+                    <span className="ml-1">{sortOrder === 'asc' ? '↑' : '↓'}</span>
+                  )}
+                </TableHead>
+                <TableHead className="w-[80px]"></TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {sortedVaults.map((vault) => (
+                <TableRow key={vault.id} className="hover:bg-muted/50 cursor-pointer" onClick={() => onSelectVault(vault.id)}>
+                  <TableCell className="font-medium">
+                    <div className="flex items-center">
+                      <MapPin className="mr-2 h-4 w-4 text-primary" />
+                      {vault.name}
+                    </div>
+                    <div className="text-xs text-muted-foreground mt-1 md:hidden">
+                      {getBoundaryTypeName(vault.boundaryType)} · {new Date(vault.createdAt).toLocaleDateString()}
+                    </div>
+                  </TableCell>
+                  <TableCell className="hidden md:table-cell">
+                    <Badge variant="outline" className="flex w-fit items-center">
+                      {getBoundaryTypeIcon(vault.boundaryType)}
+                      {getBoundaryTypeName(vault.boundaryType)}
+                    </Badge>
+                  </TableCell>
+                  <TableCell className="hidden md:table-cell">
+                    {new Date(vault.createdAt).toLocaleDateString()}
+                  </TableCell>
+                  <TableCell className="text-right" onClick={(e) => e.stopPropagation()}>
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Button variant="ghost" size="icon">
+                          <MoreHorizontal className="h-4 w-4" />
+                          <span className="sr-only">Actions</span>
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent align="end">
+                        <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                        <DropdownMenuItem onClick={() => onSelectVault(vault.id)}>
+                          View Details
+                        </DropdownMenuItem>
+                        <DropdownMenuSeparator />
+                        <DropdownMenuItem 
+                          className="text-destructive focus:text-destructive"
+                          onClick={() => handleDeleteVault(vault.id)}
+                        >
+                          Delete Vault
+                        </DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
         </div>
       )}
     </div>
   );
-}
+};
+
+export default GeoVaultList;

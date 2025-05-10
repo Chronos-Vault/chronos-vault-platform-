@@ -1,22 +1,8 @@
-/**
- * Create Geo Vault Form
- * 
- * Form component for creating location-based vaults with different boundary types
- * (circle, polygon, country).
- */
-
 import React, { useState } from 'react';
-import { useLocation } from 'wouter';
-import { useMutation } from '@tanstack/react-query';
-import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { useForm } from 'react-hook-form';
 import { z } from 'zod';
-import { apiRequest, queryClient } from '@/lib/queryClient';
-import { useToast } from '@/hooks/use-toast';
-
-// UI Components
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import {
   Form,
   FormControl,
@@ -28,108 +14,96 @@ import {
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
-import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
-import { Slider } from '@/components/ui/slider';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Switch } from '@/components/ui/switch';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Loader2, MapPin, Globe, Circle, SquareEqual, Info } from 'lucide-react';
+import { insertGeoVaultSchema } from '@shared/schema';
+import { useToast } from '@/hooks/use-toast';
+import { Loader2, AlertTriangle, Info, Map, Target, MapPin } from 'lucide-react';
+import { apiRequest } from '@/lib/queryClient';
 
-// Define the form schema
-const geoVaultFormSchema = z.object({
-  name: z.string().min(3, { message: 'Name must be at least 3 characters' }).max(100),
-  description: z.string().max(500).optional(),
-  boundaryType: z.enum(['circle', 'polygon', 'country']),
-  radius: z.number().min(10).max(10000).optional(),
-  coordinates: z.any().optional(), // This will be processed depending on boundaryType
-  countryCode: z.string().optional(),
-  minAccuracy: z.number().min(5).max(1000).optional(),
+// Extended form schema for the frontend with validations
+const formSchema = insertGeoVaultSchema.extend({
+  name: z.string().min(3, {
+    message: "Name must be at least 3 characters.",
+  }).max(100, {
+    message: "Name cannot be longer than 100 characters.",
+  }),
+  description: z.string().max(500, {
+    message: "Description cannot be longer than 500 characters.",
+  }).optional(),
+  boundaryType: z.enum(["circle", "polygon", "country"], {
+    required_error: "Please select a boundary type.",
+  }),
+  radius: z.number().min(10, {
+    message: "Radius must be at least 10 meters.",
+  }).max(10000, {
+    message: "Radius cannot be larger than 10,000 meters.",
+  }).optional(),
+  countryCode: z.string().max(2, {
+    message: "Country code must be 2 characters.",
+  }).optional(),
+  minAccuracy: z.number().min(5, {
+    message: "Minimum accuracy must be at least 5 meters.",
+  }).max(1000, {
+    message: "Minimum accuracy cannot be larger than 1,000 meters.",
+  }).optional(),
   requiresRealTimeVerification: z.boolean().default(false),
-  multiFactorUnlock: z.boolean().default(false),
+  multiFactorUnlock: z.boolean().default(false)
 });
 
-// Form values type
-type GeoVaultFormValues = z.infer<typeof geoVaultFormSchema>;
+type FormValues = z.infer<typeof formSchema>;
 
-// Coordinate type
-interface Coordinate {
-  latitude: number;
-  longitude: number;
-  accuracy?: number;
-  timestamp?: number;
+interface CreateGeoVaultFormProps {
+  onSuccess?: () => void;
 }
 
-// Country list for selection
-const COUNTRIES = [
-  { code: 'US', name: 'United States' },
-  { code: 'GB', name: 'United Kingdom' },
-  { code: 'CA', name: 'Canada' },
-  { code: 'AU', name: 'Australia' },
-  { code: 'FR', name: 'France' },
-  { code: 'DE', name: 'Germany' },
-  { code: 'JP', name: 'Japan' },
-  { code: 'BR', name: 'Brazil' },
-  { code: 'IN', name: 'India' },
-  { code: 'ZA', name: 'South Africa' },
-  // Add more countries as needed
-].sort((a, b) => a.name.localeCompare(b.name));
-
-export function CreateGeoVaultForm() {
-  const [, navigate] = useLocation();
+const CreateGeoVaultForm: React.FC<CreateGeoVaultFormProps> = ({ onSuccess }) => {
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [formError, setFormError] = useState<string | null>(null);
+  const [currentLocation, setCurrentLocation] = useState<GeolocationPosition | null>(null);
+  const [activeTab, setActiveTab] = useState<string>('circle');
   const { toast } = useToast();
-  const [isGettingLocation, setIsGettingLocation] = useState(false);
-  const [currentCoordinates, setCurrentCoordinates] = useState<Coordinate | null>(null);
-  const [polygonPoints, setPolygonPoints] = useState<Coordinate[]>([]);
-  
-  // Initialize the form
-  const form = useForm<GeoVaultFormValues>({
-    resolver: zodResolver(geoVaultFormSchema),
-    defaultValues: {
-      name: '',
-      description: '',
-      boundaryType: 'circle',
-      radius: 100,
-      minAccuracy: 50,
-      requiresRealTimeVerification: false,
-      multiFactorUnlock: false,
-    },
+
+  const defaultValues: Partial<FormValues> = {
+    name: '',
+    description: '',
+    boundaryType: 'circle',
+    radius: 100,
+    countryCode: '',
+    minAccuracy: 50,
+    requiresRealTimeVerification: false,
+    multiFactorUnlock: false,
+    coordinates: []
+  };
+
+  const form = useForm<FormValues>({
+    resolver: zodResolver(formSchema),
+    defaultValues,
+    mode: 'onChange',
   });
-  
-  // Extract the currently selected boundary type
-  const boundaryType = form.watch('boundaryType');
-  
-  // Mutation to create a new vault
-  const createVaultMutation = useMutation({
-    mutationFn: async (values: GeoVaultFormValues) => {
-      const response = await apiRequest('POST', '/api/geo-vaults', values);
-      
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message || 'Failed to create vault');
-      }
-      
-      return response.json();
-    },
-    onSuccess: (data) => {
-      toast({
-        title: 'Vault Created',
-        description: 'Your geolocation vault has been created successfully',
-      });
-      
-      // Invalidate queries and navigate to the vault detail page
-      queryClient.invalidateQueries({ queryKey: ['/api/geo-vaults'] });
-      navigate(`/geo-vaults/${data.id}`);
-    },
-    onError: (error: Error) => {
-      toast({
-        title: 'Error',
-        description: error.message,
-        variant: 'destructive',
-      });
-    },
-  });
-  
-  // Get current location for setting up boundaries
+
+  const watchBoundaryType = form.watch('boundaryType');
+
+  React.useEffect(() => {
+    setActiveTab(watchBoundaryType);
+  }, [watchBoundaryType]);
+
   const getCurrentLocation = () => {
     if (!navigator.geolocation) {
       toast({
@@ -139,491 +113,405 @@ export function CreateGeoVaultForm() {
       });
       return;
     }
-    
-    setIsGettingLocation(true);
-    
+
     navigator.geolocation.getCurrentPosition(
       (position) => {
-        const location = {
+        setCurrentLocation(position);
+
+        // Update form with current location
+        const updatedCoordinates = [{
           latitude: position.coords.latitude,
           longitude: position.coords.longitude,
           accuracy: position.coords.accuracy,
-          timestamp: position.timestamp,
-        };
+          timestamp: position.timestamp
+        }];
+
+        form.setValue('coordinates', updatedCoordinates);
         
-        setCurrentCoordinates(location);
-        
-        // If creating a circle, use current location as the center
-        if (boundaryType === 'circle') {
-          form.setValue('coordinates', [location]);
-        }
-        
-        // If creating a polygon, add this point to the polygon
-        if (boundaryType === 'polygon') {
-          setPolygonPoints(prev => [...prev, location]);
-          form.setValue('coordinates', [...polygonPoints, location]);
-        }
-        
-        setIsGettingLocation(false);
+        toast({
+          title: 'Location Updated',
+          description: 'Current location has been set as the vault center',
+        });
       },
       (error) => {
-        let errorMessage = 'Unknown error';
+        let errorMessage = 'Unknown location error';
         
         switch (error.code) {
           case error.PERMISSION_DENIED:
-            errorMessage = 'Permission denied for geolocation';
+            errorMessage = 'Location permission denied. Please allow location access.';
             break;
           case error.POSITION_UNAVAILABLE:
-            errorMessage = 'Location information is unavailable';
+            errorMessage = 'Location information is unavailable.';
             break;
           case error.TIMEOUT:
-            errorMessage = 'The request to get location timed out';
+            errorMessage = 'Location request timed out.';
             break;
         }
         
         toast({
-          title: 'Geolocation Error',
+          title: 'Location Error',
           description: errorMessage,
           variant: 'destructive',
         });
-        
-        setIsGettingLocation(false);
       },
-      { 
+      {
         enableHighAccuracy: true,
         timeout: 10000,
-        maximumAge: 0 
+        maximumAge: 0,
       }
     );
   };
-  
-  // Handle form submission
-  const onSubmit = (values: GeoVaultFormValues) => {
-    // Prepare form data based on boundary type
-    let formData = { ...values };
-    
-    switch (values.boundaryType) {
-      case 'circle':
-        if (!currentCoordinates) {
-          toast({
-            title: 'Error',
-            description: 'Please set a location for your circular boundary',
-            variant: 'destructive',
-          });
-          return;
-        }
-        formData.coordinates = [currentCoordinates];
-        break;
-        
-      case 'polygon':
-        if (polygonPoints.length < 3) {
-          toast({
-            title: 'Error',
-            description: 'A polygon boundary requires at least 3 points',
-            variant: 'destructive',
-          });
-          return;
-        }
-        formData.coordinates = polygonPoints;
-        break;
-        
-      case 'country':
-        if (!values.countryCode) {
-          toast({
-            title: 'Error',
-            description: 'Please select a country for your boundary',
-            variant: 'destructive',
-          });
-          return;
-        }
-        // Country code is already set
-        break;
-    }
-    
-    createVaultMutation.mutate(formData);
-  };
-  
-  // Reset polygon points
-  const resetPolygon = () => {
-    setPolygonPoints([]);
-    form.setValue('coordinates', []);
-  };
-  
-  return (
-    <Card className="w-full">
-      <CardHeader>
-        <CardTitle className="flex items-center gap-2">
-          <MapPin className="h-5 w-5" />
-          Create Geolocation Vault
-        </CardTitle>
-        <CardDescription>
-          Define a geographic boundary where your vault can be accessed
-        </CardDescription>
-      </CardHeader>
+
+  const onSubmit = async (values: FormValues) => {
+    try {
+      setIsSubmitting(true);
+      setFormError(null);
+
+      // Validate coordinates exist
+      if (!values.coordinates || values.coordinates.length === 0) {
+        setFormError('Please set your current location to define the vault boundary');
+        setIsSubmitting(false);
+        return;
+      }
+
+      // Ensure polygon has at least 3 points (not implemented in this version)
+
+      // Create payload based on boundary type
+      const payload = {
+        ...values,
+        coordinates: values.coordinates,
+      };
+
+      // Remove unnecessary fields based on boundary type
+      if (values.boundaryType !== 'circle') {
+        delete payload.radius;
+      }
+
+      if (values.boundaryType !== 'country') {
+        delete payload.countryCode;
+      }
+
+      const response = await apiRequest('POST', '/api/geo-vaults', payload);
       
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Failed to create vault');
+      }
+      
+      toast({
+        title: 'Success',
+        description: 'Geolocation vault created successfully',
+      });
+      
+      // Reset form
+      form.reset(defaultValues);
+      setCurrentLocation(null);
+      
+      if (onSuccess) {
+        onSuccess();
+      }
+    } catch (error) {
+      setFormError(error instanceof Error ? error.message : 'An unknown error occurred');
+      
+      toast({
+        title: 'Error',
+        description: error instanceof Error ? error.message : 'Failed to create vault',
+        variant: 'destructive',
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  return (
+    <div className="space-y-6">
+      {formError && (
+        <Alert variant="destructive">
+          <AlertTriangle className="h-4 w-4" />
+          <AlertTitle>Error</AlertTitle>
+          <AlertDescription>{formError}</AlertDescription>
+        </Alert>
+      )}
+
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)}>
-          <CardContent className="space-y-6">
-            {/* Basic Information */}
-            <div className="space-y-4">
-              <h3 className="text-lg font-medium">Basic Information</h3>
-              
-              <FormField
-                control={form.control}
-                name="name"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Vault Name</FormLabel>
-                    <FormControl>
-                      <Input placeholder="My Geolocation Vault" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              
-              <FormField
-                control={form.control}
-                name="description"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Description (Optional)</FormLabel>
-                    <FormControl>
-                      <Textarea 
-                        placeholder="Describe the purpose of this vault..."
-                        className="min-h-[100px]"
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </div>
+        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+          {/* Basic information */}
+          <div className="space-y-4">
+            <FormField
+              control={form.control}
+              name="name"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Vault Name</FormLabel>
+                  <FormControl>
+                    <Input placeholder="My Home Vault" {...field} />
+                  </FormControl>
+                  <FormDescription>
+                    Give a descriptive name to your geolocation vault
+                  </FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="description"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Description (Optional)</FormLabel>
+                  <FormControl>
+                    <Textarea
+                      placeholder="This vault requires me to be at my home location to unlock..."
+                      {...field}
+                      value={field.value || ''}
+                    />
+                  </FormControl>
+                  <FormDescription>
+                    Describe what this vault is for or what type of location is required
+                  </FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </div>
+
+          <div className="rounded-lg border p-4">
+            <h3 className="text-lg font-medium mb-4">Boundary Configuration</h3>
             
-            {/* Boundary Type Selection */}
-            <div className="space-y-4">
-              <h3 className="text-lg font-medium">Boundary Type</h3>
-              
-              <FormField
-                control={form.control}
-                name="boundaryType"
-                render={({ field }) => (
-                  <FormItem>
+            <FormField
+              control={form.control}
+              name="boundaryType"
+              render={({ field }) => (
+                <FormItem className="mb-4">
+                  <FormLabel>Boundary Type</FormLabel>
+                  <Select
+                    onValueChange={(value) => {
+                      field.onChange(value);
+                      setActiveTab(value);
+                    }}
+                    defaultValue={field.value}
+                    value={field.value}
+                  >
                     <FormControl>
-                      <RadioGroup
-                        onValueChange={field.onChange}
-                        defaultValue={field.value}
-                        className="grid grid-cols-1 md:grid-cols-3 gap-4"
-                      >
-                        <FormItem className="border rounded-lg p-4 space-y-2">
-                          <FormControl>
-                            <RadioGroupItem value="circle" className="sr-only" />
-                          </FormControl>
-                          <div className={`flex flex-col items-center gap-2 cursor-pointer ${field.value === 'circle' ? 'text-primary' : ''}`}>
-                            <Circle className="h-8 w-8" />
-                            <div className="text-center">
-                              <FormLabel className="text-base cursor-pointer">Circle</FormLabel>
-                              <FormDescription>Define a circular area with a specific radius</FormDescription>
-                            </div>
-                          </div>
-                        </FormItem>
-                        
-                        <FormItem className="border rounded-lg p-4 space-y-2">
-                          <FormControl>
-                            <RadioGroupItem value="polygon" className="sr-only" />
-                          </FormControl>
-                          <div className={`flex flex-col items-center gap-2 cursor-pointer ${field.value === 'polygon' ? 'text-primary' : ''}`}>
-                            <SquareEqual className="h-8 w-8" />
-                            <div className="text-center">
-                              <FormLabel className="text-base cursor-pointer">Polygon</FormLabel>
-                              <FormDescription>Create a custom shape with multiple points</FormDescription>
-                            </div>
-                          </div>
-                        </FormItem>
-                        
-                        <FormItem className="border rounded-lg p-4 space-y-2">
-                          <FormControl>
-                            <RadioGroupItem value="country" className="sr-only" />
-                          </FormControl>
-                          <div className={`flex flex-col items-center gap-2 cursor-pointer ${field.value === 'country' ? 'text-primary' : ''}`}>
-                            <Globe className="h-8 w-8" />
-                            <div className="text-center">
-                              <FormLabel className="text-base cursor-pointer">Country</FormLabel>
-                              <FormDescription>Use an entire country as the boundary</FormDescription>
-                            </div>
-                          </div>
-                        </FormItem>
-                      </RadioGroup>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select a boundary type" />
+                      </SelectTrigger>
                     </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </div>
-            
-            {/* Boundary Configuration */}
-            <div className="space-y-4">
-              <h3 className="text-lg font-medium">Boundary Configuration</h3>
-              
-              {/* Circle Configuration */}
-              {boundaryType === 'circle' && (
-                <div className="space-y-4">
-                  <FormField
-                    control={form.control}
-                    name="radius"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Radius (meters)</FormLabel>
-                        <div className="space-y-2">
-                          <FormControl>
-                            <Slider
-                              min={10}
-                              max={10000}
-                              step={10}
-                              defaultValue={[field.value || 100]}
-                              onValueChange={(values) => field.onChange(values[0])}
-                            />
-                          </FormControl>
-                          <div className="flex justify-between">
-                            <span className="text-xs text-muted-foreground">10m</span>
-                            <span className="text-sm font-medium">{field.value || 100}m</span>
-                            <span className="text-xs text-muted-foreground">10km</span>
-                          </div>
+                    <SelectContent>
+                      <SelectItem value="circle">
+                        <div className="flex items-center">
+                          <span className="mr-2">⭕</span> Circular Area
                         </div>
-                        <FormDescription>
-                          The distance from the center point where the vault can be accessed
-                        </FormDescription>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  
-                  <div className="space-y-2">
-                    <FormLabel>Center Location</FormLabel>
-                    {currentCoordinates ? (
-                      <div className="p-3 border rounded-md bg-muted/40 space-y-2">
-                        <div className="grid grid-cols-2 gap-2">
-                          <div className="text-sm font-medium">Latitude</div>
-                          <div className="text-sm">{currentCoordinates.latitude.toFixed(6)}</div>
-                          
-                          <div className="text-sm font-medium">Longitude</div>
-                          <div className="text-sm">{currentCoordinates.longitude.toFixed(6)}</div>
-                          
-                          <div className="text-sm font-medium">Accuracy</div>
-                          <div className="text-sm">{currentCoordinates.accuracy ? `${Math.round(currentCoordinates.accuracy)}m` : 'Unknown'}</div>
+                      </SelectItem>
+                      <SelectItem value="polygon">
+                        <div className="flex items-center">
+                          <span className="mr-2">🔷</span> Custom Area (Polygon)
                         </div>
-                        
-                        <Button
-                          type="button"
-                          variant="outline"
-                          size="sm"
-                          className="w-full mt-2"
-                          onClick={getCurrentLocation}
-                          disabled={isGettingLocation}
-                        >
-                          {isGettingLocation ? (
-                            <>
-                              <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                              Getting Location...
-                            </>
-                          ) : (
-                            <>
-                              <MapPin className="h-4 w-4 mr-2" />
-                              Update Location
-                            </>
-                          )}
-                        </Button>
-                      </div>
-                    ) : (
-                      <Button
-                        type="button"
+                      </SelectItem>
+                      <SelectItem value="country">
+                        <div className="flex items-center">
+                          <span className="mr-2">🌎</span> Country
+                        </div>
+                      </SelectItem>
+                    </SelectContent>
+                  </Select>
+                  <FormDescription>
+                    Choose how to define the geographical boundary for your vault
+                  </FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+              <TabsList className="grid w-full grid-cols-3">
+                <TabsTrigger value="circle" onClick={() => form.setValue('boundaryType', 'circle')}>
+                  Circular
+                </TabsTrigger>
+                <TabsTrigger value="polygon" onClick={() => form.setValue('boundaryType', 'polygon')}>
+                  Custom Area
+                </TabsTrigger>
+                <TabsTrigger value="country" onClick={() => form.setValue('boundaryType', 'country')}>
+                  Country
+                </TabsTrigger>
+              </TabsList>
+
+              <TabsContent value="circle" className="mt-4 space-y-4">
+                <Card>
+                  <CardHeader className="pb-2">
+                    <CardTitle className="text-md flex items-center">
+                      <Target className="h-4 w-4 mr-2" /> 
+                      Circular Boundary
+                    </CardTitle>
+                    <CardDescription>
+                      Define a circular area around a central point
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    <div className="flex items-center justify-center mb-4">
+                      <Button 
+                        type="button" 
                         onClick={getCurrentLocation}
-                        disabled={isGettingLocation}
+                        variant="outline"
                         className="w-full"
                       >
-                        {isGettingLocation ? (
-                          <>
-                            <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                            Getting Location...
-                          </>
-                        ) : (
-                          <>
-                            <MapPin className="h-4 w-4 mr-2" />
-                            Get Current Location
-                          </>
-                        )}
-                      </Button>
-                    )}
-                    <FormDescription>
-                      This is the central point of your circular boundary
-                    </FormDescription>
-                  </div>
-                </div>
-              )}
-              
-              {/* Polygon Configuration */}
-              {boundaryType === 'polygon' && (
-                <div className="space-y-4">
-                  <div className="space-y-2">
-                    <div className="flex justify-between items-center">
-                      <FormLabel>Polygon Points</FormLabel>
-                      <Button
-                        type="button"
-                        variant="outline"
-                        size="sm"
-                        onClick={resetPolygon}
-                        disabled={polygonPoints.length === 0 || isGettingLocation}
-                      >
-                        Reset Points
+                        <MapPin className="mr-2 h-4 w-4" />
+                        Set Current Location as Center
                       </Button>
                     </div>
-                    
-                    {polygonPoints.length > 0 ? (
-                      <div className="p-3 border rounded-md bg-muted/40 space-y-2">
-                        <div className="text-sm">
-                          {polygonPoints.length} point{polygonPoints.length !== 1 ? 's' : ''} defined
-                        </div>
-                        
-                        <div className="max-h-40 overflow-y-auto">
-                          {polygonPoints.map((point, index) => (
-                            <div key={index} className="text-sm p-2 border-b last:border-0">
-                              Point {index + 1}: {point.latitude.toFixed(6)}, {point.longitude.toFixed(6)}
-                            </div>
-                          ))}
-                        </div>
-                        
-                        <Button
-                          type="button"
-                          variant="outline"
-                          size="sm"
-                          className="w-full mt-2"
-                          onClick={getCurrentLocation}
-                          disabled={isGettingLocation}
-                        >
-                          {isGettingLocation ? (
-                            <>
-                              <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                              Adding Point...
-                            </>
-                          ) : (
-                            <>
-                              <MapPin className="h-4 w-4 mr-2" />
-                              Add Current Location as Point
-                            </>
-                          )}
-                        </Button>
+
+                    {currentLocation && (
+                      <div className="text-xs text-muted-foreground p-3 bg-secondary/50 rounded-md space-y-1">
+                        <div>Latitude: {currentLocation.coords.latitude.toFixed(6)}</div>
+                        <div>Longitude: {currentLocation.coords.longitude.toFixed(6)}</div>
+                        <div>Accuracy: ±{Math.round(currentLocation.coords.accuracy)} meters</div>
                       </div>
-                    ) : (
-                      <Button
-                        type="button"
-                        onClick={getCurrentLocation}
-                        disabled={isGettingLocation}
-                        className="w-full"
-                      >
-                        {isGettingLocation ? (
-                          <>
-                            <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                            Adding Point...
-                          </>
-                        ) : (
-                          <>
-                            <MapPin className="h-4 w-4 mr-2" />
-                            Add Current Location as Point
-                          </>
-                        )}
-                      </Button>
                     )}
-                    <FormDescription>
-                      Add multiple points to define a polygon boundary. A minimum of 3 points is required.
-                    </FormDescription>
-                  </div>
-                </div>
-              )}
-              
-              {/* Country Configuration */}
-              {boundaryType === 'country' && (
-                <FormField
-                  control={form.control}
-                  name="countryCode"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Country</FormLabel>
-                      <Select
-                        onValueChange={field.onChange}
-                        defaultValue={field.value}
+
+                    <FormField
+                      control={form.control}
+                      name="radius"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Radius (meters)</FormLabel>
+                          <FormControl>
+                            <Input
+                              type="number"
+                              {...field}
+                              onChange={(e) => field.onChange(Number(e.target.value))}
+                            />
+                          </FormControl>
+                          <FormDescription>
+                            How large the circular boundary should be (in meters)
+                          </FormDescription>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </CardContent>
+                </Card>
+              </TabsContent>
+
+              <TabsContent value="polygon" className="mt-4 space-y-4">
+                <Card>
+                  <CardHeader className="pb-2">
+                    <CardTitle className="text-md flex items-center">
+                      <Map className="h-4 w-4 mr-2" /> 
+                      Custom Area Boundary
+                    </CardTitle>
+                    <CardDescription>
+                      Define a custom area by setting multiple points
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <Alert className="mb-4">
+                      <Info className="h-4 w-4" />
+                      <AlertTitle>Feature in development</AlertTitle>
+                      <AlertDescription>
+                        Custom polygon boundaries will be available in the next update. Please use circular boundaries for now.
+                      </AlertDescription>
+                    </Alert>
+
+                    <div className="flex items-center justify-center mb-4">
+                      <Button 
+                        type="button" 
+                        onClick={getCurrentLocation} 
+                        variant="outline"
+                        className="w-full"
+                        disabled
                       >
-                        <FormControl>
-                          <SelectTrigger>
-                            <SelectValue placeholder="Select a country" />
-                          </SelectTrigger>
-                        </FormControl>
-                        <SelectContent>
-                          {COUNTRIES.map((country) => (
-                            <SelectItem key={country.code} value={country.code}>
-                              {country.name}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                      <FormDescription>
-                        The vault will be accessible from anywhere within the selected country
-                      </FormDescription>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              )}
-            </div>
+                        <MapPin className="mr-2 h-4 w-4" />
+                        Add Current Location as Point
+                      </Button>
+                    </div>
+                  </CardContent>
+                </Card>
+              </TabsContent>
+
+              <TabsContent value="country" className="mt-4 space-y-4">
+                <Card>
+                  <CardHeader className="pb-2">
+                    <CardTitle className="text-md flex items-center">
+                      <Map className="h-4 w-4 mr-2" /> 
+                      Country Boundary
+                    </CardTitle>
+                    <CardDescription>
+                      Use a country's borders as the boundary
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <Alert className="mb-4">
+                      <Info className="h-4 w-4" />
+                      <AlertTitle>Feature in development</AlertTitle>
+                      <AlertDescription>
+                        Country boundaries will be available in the next update. Please use circular boundaries for now.
+                      </AlertDescription>
+                    </Alert>
+
+                    <FormField
+                      control={form.control}
+                      name="countryCode"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Country Code</FormLabel>
+                          <FormControl>
+                            <Input
+                              placeholder="US"
+                              {...field}
+                              disabled
+                            />
+                          </FormControl>
+                          <FormDescription>
+                            Two-letter country code (ISO 3166-1 alpha-2)
+                          </FormDescription>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </CardContent>
+                </Card>
+              </TabsContent>
+            </Tabs>
+          </div>
+
+          {/* Security settings */}
+          <div className="rounded-lg border p-4">
+            <h3 className="text-lg font-medium mb-4">Security Settings</h3>
             
-            {/* Advanced Settings */}
             <div className="space-y-4">
-              <h3 className="text-lg font-medium">Advanced Settings</h3>
-              
               <FormField
                 control={form.control}
                 name="minAccuracy"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>
-                      <div className="flex items-center gap-1">
-                        Minimum GPS Accuracy (meters)
-                        <Info className="h-4 w-4 text-muted-foreground cursor-help" />
-                      </div>
-                    </FormLabel>
-                    <div className="space-y-2">
-                      <FormControl>
-                        <Slider
-                          min={5}
-                          max={1000}
-                          step={5}
-                          defaultValue={[field.value || 50]}
-                          onValueChange={(values) => field.onChange(values[0])}
-                        />
-                      </FormControl>
-                      <div className="flex justify-between">
-                        <span className="text-xs text-muted-foreground">5m (High)</span>
-                        <span className="text-sm font-medium">{field.value || 50}m</span>
-                        <span className="text-xs text-muted-foreground">1000m (Low)</span>
-                      </div>
-                    </div>
+                    <FormLabel>Minimum GPS Accuracy (meters)</FormLabel>
+                    <FormControl>
+                      <Input
+                        type="number"
+                        {...field}
+                        onChange={(e) => field.onChange(Number(e.target.value))}
+                      />
+                    </FormControl>
                     <FormDescription>
-                      The required GPS accuracy to access the vault. Lower values mean higher precision but may be harder to achieve.
+                      Maximum allowed GPS error margin in meters (smaller number = higher precision)
                     </FormDescription>
                     <FormMessage />
                   </FormItem>
                 )}
               />
-              
+
               <FormField
                 control={form.control}
                 name="requiresRealTimeVerification"
                 render={({ field }) => (
                   <FormItem className="flex flex-row items-center justify-between rounded-lg border p-3">
                     <div className="space-y-0.5">
-                      <FormLabel className="text-base">Real-Time Verification</FormLabel>
+                      <FormLabel className="text-base">
+                        Real-time Verification
+                      </FormLabel>
                       <FormDescription>
-                        Require continuous location verification while accessing the vault
+                        Require verification to happen in real-time (no cached locations)
                       </FormDescription>
                     </div>
                     <FormControl>
@@ -635,16 +523,18 @@ export function CreateGeoVaultForm() {
                   </FormItem>
                 )}
               />
-              
+
               <FormField
                 control={form.control}
                 name="multiFactorUnlock"
                 render={({ field }) => (
                   <FormItem className="flex flex-row items-center justify-between rounded-lg border p-3">
                     <div className="space-y-0.5">
-                      <FormLabel className="text-base">Multi-Factor Unlock</FormLabel>
+                      <FormLabel className="text-base">
+                        Multi-factor Unlock
+                      </FormLabel>
                       <FormDescription>
-                        Require additional authentication factors along with location verification
+                        Require additional verification beyond location check
                       </FormDescription>
                     </div>
                     <FormControl>
@@ -657,36 +547,28 @@ export function CreateGeoVaultForm() {
                 )}
               />
             </div>
-          </CardContent>
-          
-          <CardFooter className="flex justify-between">
-            <Button
-              type="button"
-              variant="outline"
-              onClick={() => navigate('/geo-vaults')}
-            >
-              Cancel
-            </Button>
-            
+          </div>
+
+          <div className="pt-4">
             <Button 
-              type="submit"
-              disabled={createVaultMutation.isPending}
+              type="submit" 
+              className="w-full bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] hover:from-[#FF5AF7] hover:to-[#6B00D7] text-white"
+              disabled={isSubmitting}
             >
-              {createVaultMutation.isPending ? (
+              {isSubmitting ? (
                 <>
-                  <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                   Creating Vault...
                 </>
               ) : (
-                <>
-                  <MapPin className="h-4 w-4 mr-2" />
-                  Create Vault
-                </>
+                <>Create Geolocation Vault</>
               )}
             </Button>
-          </CardFooter>
+          </div>
         </form>
       </Form>
-    </Card>
+    </div>
   );
-}
+};
+
+export default CreateGeoVaultForm;

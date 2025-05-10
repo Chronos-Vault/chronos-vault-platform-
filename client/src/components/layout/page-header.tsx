@@ -1,49 +1,76 @@
-/**
- * Page Header Component
- * 
- * A consistent header component for pages throughout the application
- * with support for title, description, icon, and action buttons.
- */
-
 import React, { ReactNode } from 'react';
-import { cn } from '@/lib/utils';
+import { useLocation } from 'wouter';
+import { Button } from '@/components/ui/button';
+import { ChevronLeft, Plus } from 'lucide-react';
 
 interface PageHeaderProps {
   title: string;
   description?: string;
-  icon?: ReactNode;
   actions?: ReactNode;
+  backButton?: boolean;
+  backTo?: string;
+  showCreateButton?: boolean;
+  onCreateClick?: () => void;
+  createButtonText?: string;
   className?: string;
 }
 
-export function PageHeader({
+const PageHeader: React.FC<PageHeaderProps> = ({
   title,
   description,
-  icon,
   actions,
-  className,
-}: PageHeaderProps) {
+  backButton = false,
+  backTo = '',
+  showCreateButton = false,
+  onCreateClick,
+  createButtonText = 'Create New',
+  className = '',
+}) => {
+  const [, navigate] = useLocation();
+
+  const handleBackClick = () => {
+    if (backTo) {
+      navigate(backTo);
+    } else {
+      window.history.back();
+    }
+  };
+
   return (
-    <div className={cn('mb-6 flex flex-col space-y-4 sm:flex-row sm:items-center sm:justify-between sm:space-y-0', className)}>
-      <div className="flex items-center gap-3">
-        {icon && (
-          <div className="rounded-md bg-muted p-2 flex items-center justify-center">
-            {icon}
-          </div>
-        )}
-        <div>
-          <h1 className="text-2xl font-bold tracking-tight">{title}</h1>
+    <div className={`mb-6 ${className}`}>
+      <div className="flex flex-col md:flex-row md:items-center md:justify-between">
+        <div className="flex flex-col space-y-2">
+          {backButton && (
+            <Button 
+              variant="ghost" 
+              size="sm" 
+              className="w-fit -ml-3 mb-1" 
+              onClick={handleBackClick}
+            >
+              <ChevronLeft className="mr-1 h-4 w-4" /> Back
+            </Button>
+          )}
+          <h1 className="text-2xl md:text-3xl font-bold">{title}</h1>
           {description && (
-            <p className="text-muted-foreground mt-1">{description}</p>
+            <p className="text-muted-foreground text-sm md:text-base">{description}</p>
           )}
         </div>
-      </div>
-      
-      {actions && (
-        <div className="flex items-center gap-2">
+        
+        <div className="mt-4 md:mt-0 space-x-2 flex items-center">
+          {showCreateButton && (
+            <Button 
+              onClick={onCreateClick} 
+              className="bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] hover:from-[#FF5AF7] hover:to-[#6B00D7] text-white"
+            >
+              <Plus className="mr-1 h-4 w-4" />
+              {createButtonText}
+            </Button>
+          )}
           {actions}
         </div>
-      )}
+      </div>
     </div>
   );
-}
+};
+
+export default PageHeader;

@@ -1,296 +1,204 @@
-/**
- * Geo Location Verifier Component
- * 
- * This component allows users to verify their location against a vault's
- * boundary requirements to gain access to the vault content.
- */
-
 import React, { useState } from 'react';
-import { useMutation } from '@tanstack/react-query';
-import { apiRequest } from '@/lib/queryClient';
-import { useToast } from '@/hooks/use-toast';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Progress } from '@/components/ui/progress';
-import { GeoVault } from '@shared/schema';
-import { MapPin, Shield, AlertTriangle, Check } from 'lucide-react';
+import { Badge } from '@/components/ui/badge';
+import { Loader2, MapPin, Shield, AlertTriangle, CheckCircle, Info } from 'lucide-react';
 
 interface GeoLocationVerifierProps {
-  vault: GeoVault;
-  onVerificationSuccess: () => void;
+  vaultId: number;
+  onVerificationResult?: (success: boolean, message: string) => void;
 }
 
-interface Coordinate {
-  latitude: number;
-  longitude: number;
-  accuracy?: number;
-  timestamp?: number;
+interface VerificationResult {
+  success: boolean;
+  message: string;
+  details?: {
+    distance?: number;
+    accuracy?: number;
+    boundaryType?: string;
+  };
 }
 
-export function GeoLocationVerifier({ vault, onVerificationSuccess }: GeoLocationVerifierProps) {
-  const { toast } = useToast();
-  const [isGettingLocation, setIsGettingLocation] = useState(false);
-  const [currentAccuracy, setCurrentAccuracy] = useState<number | null>(null);
-  const [verificationAttempts, setVerificationAttempts] = useState(0);
-  
-  // Verification mutation
-  const verifyLocationMutation = useMutation({
-    mutationFn: async (location: Coordinate) => {
-      const response = await apiRequest('POST', `/api/geo-vaults/${vault.id}/verify`, location);
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message || 'Verification failed');
-      }
-      return response.json();
-    },
-    onSuccess: (data) => {
-      if (data.success) {
-        toast({
-          title: 'Verification Successful',
-          description: 'Your location has been verified successfully',
-        });
-        onVerificationSuccess();
-      } else {
-        toast({
-          title: 'Verification Failed',
-          description: data.message || 'Your location could not be verified',
-          variant: 'destructive',
-        });
-        setVerificationAttempts(prev => prev + 1);
-      }
-    },
-    onError: (error: Error) => {
-      toast({
-        title: 'Verification Error',
-        description: error.message,
-        variant: 'destructive',
-      });
-      setVerificationAttempts(prev => prev + 1);
-    },
-  });
+const GeoLocationVerifier: React.FC<GeoLocationVerifierProps> = ({ vaultId, onVerificationResult }) => {
+  const [isVerifying, setIsVerifying] = useState(false);
+  const [verificationResult, setVerificationResult] = useState<VerificationResult | null>(null);
+  const [locationError, setLocationError] = useState<string | null>(null);
+  const [currentLocation, setCurrentLocation] = useState<GeolocationPosition | null>(null);
 
-  // Get and verify the current location
-  const verifyCurrentLocation = () => {
+  const handleVerifyLocation = () => {
+    setIsVerifying(true);
+    setLocationError(null);
+    setVerificationResult(null);
+
     if (!navigator.geolocation) {
-      toast({
-        title: 'Error',
-        description: 'Geolocation is not supported by your browser',
-        variant: 'destructive',
-      });
+      setLocationError('Geolocation is not supported by your browser');
+      setIsVerifying(false);
       return;
     }
 
-    setIsGettingLocation(true);
-    
     navigator.geolocation.getCurrentPosition(
-      (position) => {
-        const location = {
-          latitude: position.coords.latitude,
-          longitude: position.coords.longitude,
-          accuracy: position.coords.accuracy,
-          timestamp: position.timestamp,
-        };
-        
-        setCurrentAccuracy(position.coords.accuracy);
-        
-        // Verify the location
-        verifyLocationMutation.mutate(location);
-        setIsGettingLocation(false);
+      async (position) => {
+        setCurrentLocation(position);
+        try {
+          const response = await fetch(`/api/geo-vaults/${vaultId}/verify`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              latitude: position.coords.latitude,
+              longitude: position.coords.longitude,
+              accuracy: position.coords.accuracy,
+              timestamp: position.timestamp,
+            }),
+          });
+
+          if (!response.ok) {
+            throw new Error('Error verifying location');
+          }
+
+          const result = await response.json();
+          setVerificationResult(result);
+          if (onVerificationResult) {
+            onVerificationResult(result.success, result.message);
+          }
+        } catch (error) {
+          setLocationError(error instanceof Error ? error.message : 'Unknown error verifying location');
+        } finally {
+          setIsVerifying(false);
+        }
       },
       (error) => {
-        let errorMessage = 'Unknown error';
+        let errorMessage = 'Unknown location error';
         
         switch (error.code) {
           case error.PERMISSION_DENIED:
-            errorMessage = 'Permission denied for geolocation';
+            errorMessage = 'Location permission denied. Please allow location access to verify your position.';
             break;
           case error.POSITION_UNAVAILABLE:
-            errorMessage = 'Location information is unavailable';
+            errorMessage = 'Location information is unavailable. Please try again in a different area.';
             break;
           case error.TIMEOUT:
-            errorMessage = 'The request to get location timed out';
+            errorMessage = 'Location request timed out. Please try again.';
             break;
         }
         
-        toast({
-          title: 'Geolocation Error',
-          description: errorMessage,
-          variant: 'destructive',
-        });
-        
-        setIsGettingLocation(false);
+        setLocationError(errorMessage);
+        setIsVerifying(false);
       },
-      { 
+      {
         enableHighAccuracy: true,
         timeout: 10000,
-        maximumAge: 0 
+        maximumAge: 0,
       }
     );
   };
 
-  // Format boundary information for display
-  const formatBoundaryInfo = () => {
-    switch (vault.boundaryType) {
-      case 'circle':
-        return `Circular boundary with radius of ${vault.radius}m`;
-      case 'polygon':
-        return `Polygon boundary with ${(vault.coordinates as any)?.length || 0} points`;
-      case 'country':
-        return `Country boundary (${vault.countryCode})`;
-      default:
-        return 'Unknown boundary type';
-    }
-  };
-
-  // Calculate estimated distance from target
-  const calculateDistanceDescription = () => {
-    // This would normally use the result from the verification
-    // For now, we'll just return a placeholder
-    if (verificationAttempts === 0) {
-      return 'Not yet verified';
-    } else if (verifyLocationMutation.data?.success) {
-      return 'Within boundary';
-    } else if (verifyLocationMutation.data?.details?.distance) {
-      return `Approximately ${Math.round(verifyLocationMutation.data.details.distance)}m away`;
-    } else {
-      return 'Outside boundary';
-    }
-  };
-
-  // Calculate GPS accuracy indicator
-  const getAccuracyLevel = () => {
-    if (currentAccuracy === null) return 'unknown';
-    
-    const minAccuracy = vault.minAccuracy || 100;
-    
-    if (currentAccuracy <= minAccuracy / 2) return 'excellent';
-    if (currentAccuracy <= minAccuracy) return 'good';
-    if (currentAccuracy <= minAccuracy * 2) return 'fair';
-    return 'poor';
-  };
-
-  const accuracyLevel = getAccuracyLevel();
-  const accuracyColors = {
-    unknown: 'bg-gray-300',
-    excellent: 'bg-green-500',
-    good: 'bg-blue-500',
-    fair: 'bg-yellow-500',
-    poor: 'bg-red-500',
-  };
-
-  const accuracyProgress = () => {
-    if (currentAccuracy === null) return 0;
-    
-    const minAccuracy = vault.minAccuracy || 100;
-    
-    if (currentAccuracy <= minAccuracy) {
-      // If we're within the required accuracy, map 0-minAccuracy to 50-100%
-      return 100 - (currentAccuracy / minAccuracy * 50);
-    } else {
-      // If worse than required accuracy, map to 0-50%
-      return Math.max(0, 50 - (currentAccuracy - minAccuracy) / 10);
-    }
-  };
-
   return (
-    <Card className="w-full">
-      <CardHeader>
-        <CardTitle className="flex items-center gap-2">
-          <Shield className="h-5 w-5" />
-          Location Verification
-        </CardTitle>
-        <CardDescription>
-          Verify your location to access this vault
-        </CardDescription>
-      </CardHeader>
-      
-      <CardContent className="space-y-4">
+    <div className="space-y-6">
+      {/* Current location info */}
+      {currentLocation && (
         <div className="space-y-2">
-          <div className="text-sm font-medium">Vault Boundary</div>
-          <div className="p-3 bg-muted rounded-md">
-            {formatBoundaryInfo()}
+          <div className="text-sm font-medium">Current Location</div>
+          <div className="grid grid-cols-2 gap-2 text-xs text-muted-foreground">
+            <div>Latitude: {currentLocation.coords.latitude.toFixed(6)}</div>
+            <div>Longitude: {currentLocation.coords.longitude.toFixed(6)}</div>
+            <div>Accuracy: {Math.round(currentLocation.coords.accuracy)} meters</div>
+            <div>Timestamp: {new Date(currentLocation.timestamp).toLocaleTimeString()}</div>
           </div>
         </div>
-        
-        {vault.minAccuracy && (
-          <div className="space-y-2">
-            <div className="text-sm font-medium flex items-center justify-between">
-              <span>GPS Accuracy Required</span>
-              {currentAccuracy && (
-                <Badge variant={accuracyLevel === 'poor' ? 'destructive' : 'outline'}>
-                  Current: {Math.round(currentAccuracy)}m
-                </Badge>
-              )}
-            </div>
+      )}
+
+      {/* Verification result */}
+      {verificationResult && (
+        <Alert variant={verificationResult.success ? "default" : "destructive"} className="mt-4">
+          {verificationResult.success ? (
+            <CheckCircle className="h-4 w-4" />
+          ) : (
+            <AlertTriangle className="h-4 w-4" />
+          )}
+          <AlertTitle>
+            {verificationResult.success ? 'Verification Successful' : 'Verification Failed'}
+          </AlertTitle>
+          <AlertDescription className="mt-2">
+            <p>{verificationResult.message}</p>
             
-            <div className="space-y-1">
-              <div className="flex justify-between text-xs text-muted-foreground">
-                <span>More Accurate</span>
-                <span>Less Accurate</span>
+            {verificationResult.details && (
+              <div className="mt-2 space-y-1 text-xs">
+                {verificationResult.details.distance !== undefined && (
+                  <div>Distance: {verificationResult.details.distance} meters</div>
+                )}
+                {verificationResult.details.accuracy !== undefined && (
+                  <div>Accuracy: {verificationResult.details.accuracy} meters</div>
+                )}
+                {verificationResult.details.boundaryType && (
+                  <div>Boundary Type: {verificationResult.details.boundaryType}</div>
+                )}
               </div>
-              <Progress 
-                value={accuracyProgress()} 
-                className={`h-2 ${accuracyColors[accuracyLevel as keyof typeof accuracyColors]}`}
-              />
-              <div className="flex justify-between text-xs text-muted-foreground">
-                <span>0m</span>
-                <span>{vault.minAccuracy}m (Required)</span>
-                <span>{vault.minAccuracy * 2}m+</span>
-              </div>
-            </div>
+            )}
+          </AlertDescription>
+        </Alert>
+      )}
+
+      {/* Location error */}
+      {locationError && (
+        <Alert variant="destructive" className="mt-4">
+          <AlertTriangle className="h-4 w-4" />
+          <AlertTitle>Location Error</AlertTitle>
+          <AlertDescription>{locationError}</AlertDescription>
+        </Alert>
+      )}
+
+      {/* Guidance */}
+      <div className="rounded-lg border bg-card p-4 text-card-foreground shadow-sm">
+        <div className="flex flex-col space-y-1.5">
+          <div className="flex items-center gap-2">
+            <Shield className="h-5 w-5 text-primary" />
+            <h3 className="text-sm font-semibold leading-none tracking-tight">Location Verification</h3>
           </div>
-        )}
-        
-        {verificationAttempts > 0 && !verifyLocationMutation.data?.success && (
-          <div className="flex items-center p-3 rounded-md bg-destructive/10 text-destructive gap-2">
-            <AlertTriangle className="h-4 w-4 flex-shrink-0" />
-            <div className="text-sm">
-              {verifyLocationMutation.data?.message || 'Your location could not be verified. Please try again.'}
-            </div>
-          </div>
-        )}
-        
-        {verifyLocationMutation.data?.success && (
-          <div className="flex items-center p-3 rounded-md bg-green-500/10 text-green-600 gap-2">
-            <Check className="h-4 w-4 flex-shrink-0" />
-            <div className="text-sm">
-              Location verified successfully! You can now access the vault.
-            </div>
-          </div>
-        )}
-        
-        <div className="grid grid-cols-2 gap-4 mt-2">
-          <div>
-            <div className="text-sm font-medium">Distance from Target</div>
-            <div className="text-sm text-muted-foreground">
-              {calculateDistanceDescription()}
-            </div>
-          </div>
-          
-          <div>
-            <div className="text-sm font-medium">Verification Attempts</div>
-            <div className="text-sm text-muted-foreground">
-              {verificationAttempts} attempts made
-            </div>
-          </div>
+          <p className="text-xs text-muted-foreground">
+            Click the button below to verify your current physical location against this vault's geographical boundaries.
+          </p>
         </div>
-      </CardContent>
-      
-      <CardFooter>
-        <Button 
-          onClick={verifyCurrentLocation}
-          disabled={isGettingLocation || verifyLocationMutation.isPending || verifyLocationMutation.data?.success}
-          className="w-full"
-        >
-          <MapPin className="h-4 w-4 mr-2" />
-          {isGettingLocation || verifyLocationMutation.isPending 
-            ? 'Verifying Location...' 
-            : verifyLocationMutation.data?.success 
-              ? 'Location Verified' 
-              : 'Verify My Location'}
-        </Button>
-      </CardFooter>
-    </Card>
+        <div className="flex items-center gap-2 mt-4">
+          <Badge variant="outline" className="bg-primary/10 text-primary">
+            <MapPin className="mr-1 h-3 w-3" /> Geolocation Required
+          </Badge>
+          <Badge variant="outline" className="bg-primary/10 text-primary">
+            <Info className="mr-1 h-3 w-3" /> High Accuracy Mode
+          </Badge>
+        </div>
+      </div>
+
+      {/* Verification button */}
+      <Button 
+        onClick={handleVerifyLocation} 
+        disabled={isVerifying}
+        className="w-full bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] hover:from-[#FF5AF7] hover:to-[#6B00D7] text-white"
+      >
+        {isVerifying ? (
+          <>
+            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+            Verifying Location...
+          </>
+        ) : (
+          <>
+            <MapPin className="mr-2 h-4 w-4" />
+            Verify My Location
+          </>
+        )}
+      </Button>
+
+      {/* Progress indicator */}
+      {isVerifying && (
+        <div className="space-y-2">
+          <Progress value={45} className="h-2" />
+          <p className="text-xs text-center text-muted-foreground">Acquiring precise location...</p>
+        </div>
+      )}
+    </div>
   );
-}
+};
+
+export default GeoLocationVerifier;

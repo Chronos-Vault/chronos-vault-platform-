@@ -4,30 +4,21 @@
  * Provides API endpoints for managing location-based vaults and verification
  */
 
-import { Request, Response, Router } from 'express';
+import { Router, Request, Response } from 'express';
 import { z } from 'zod';
 import { db } from '../db';
-import { geolocationService, Coordinates } from '../services/geolocation-service';
-import { insertGeoVaultSchema, insertGeoAccessLogSchema } from '@shared/schema';
-import { securityLogger, SecurityEventType } from '../monitoring/security-logger';
+import { geoVaults, geoAccessLogs, insertGeoVaultSchema } from '@shared/schema';
+import { eq } from 'drizzle-orm';
 
-// Authentication middleware
+const geoVaultRouter = Router();
+
+// Middleware to check if user is authenticated
 const isAuthenticated = (req: Request, res: Response, next: Function) => {
-  // In production, this would be replaced with proper authentication
-  // For this implementation we'll use a simple check
-  if (!req.session || !req.session.userId) {
-    securityLogger.warn(
-      'Unauthorized access attempt to geo vault API',
-      SecurityEventType.UNAUTHORIZED_ACCESS,
-      { path: req.path }
-    );
-    return res.status(401).json({ error: 'Authentication required' });
+  if (!req.isAuthenticated || !req.isAuthenticated()) {
+    return res.status(401).json({ message: 'Unauthorized' });
   }
   next();
 };
-
-// Router setup
-const geoVaultRouter = Router();
 
 /**
  * Create a new geolocation vault
@@ -36,40 +27,37 @@ const geoVaultRouter = Router();
  */
 geoVaultRouter.post('/', isAuthenticated, async (req: Request, res: Response) => {
   try {
-    // Parse and validate request body
-    const validationResult = insertGeoVaultSchema.safeParse({
-      ...req.body,
-      userId: req.session.userId, // Override with authenticated user ID
-    });
-
+    // Validate request body
+    const validationResult = insertGeoVaultSchema.safeParse(req.body);
+    
     if (!validationResult.success) {
-      securityLogger.warn(
-        'Invalid geolocation vault data submitted',
-        SecurityEventType.INPUT_VALIDATION_FAILURE,
-        { errors: validationResult.error.format() }
-      );
-      
       return res.status(400).json({
-        error: 'Invalid data',
-        details: validationResult.error.format()
+        message: 'Invalid vault data',
+        errors: validationResult.error.errors
       });
     }
-
-    // Create the vault
-    const vault = await geolocationService.createVault(validationResult.data);
     
-    return res.status(201).json(vault);
-  } catch (error) {
-    securityLogger.error(
-      `Error creating geolocation vault: ${(error as Error).message}`,
-      SecurityEventType.SYSTEM_ERROR,
-      { error }
-    );
+    const vaultData = validationResult.data;
     
-    return res.status(500).json({
-      error: 'Failed to create geolocation vault',
-      message: (error as Error).message
-    });
+    // Add user ID from session
+    const userId = req.user?.id;
+    
+    if (!userId) {
+      return res.status(401).json({ message: 'User not authenticated' });
+    }
+    
+    // Create new vault
+    const [vault] = await db.insert(geoVaults).values({
+      ...vaultData,
+      userId,
+      createdAt: new Date(),
+      updatedAt: new Date()
+    }).returning();
+    
+    res.status(201).json(vault);
+  } catch (error: any) {
+    console.error('Error creating geo vault:', error);
+    res.status(500).json({ message: 'Error creating vault', error: error.message });
   }
 });
 
@@ -80,21 +68,22 @@ geoVaultRouter.post('/', isAuthenticated, async (req: Request, res: Response) =>
  */
 geoVaultRouter.get('/', isAuthenticated, async (req: Request, res: Response) => {
   try {
-    const userId = req.session.userId;
-    const vaults = await geolocationService.getVaultsForUser(userId);
+    const userId = req.user?.id;
     
-    return res.status(200).json(vaults);
-  } catch (error) {
-    securityLogger.error(
-      `Error retrieving geolocation vaults: ${(error as Error).message}`,
-      SecurityEventType.SYSTEM_ERROR,
-      { error }
-    );
+    if (!userId) {
+      return res.status(401).json({ message: 'User not authenticated' });
+    }
     
-    return res.status(500).json({
-      error: 'Failed to retrieve geolocation vaults',
-      message: (error as Error).message
-    });
+    // Get all vaults for the user
+    const vaults = await db.select()
+      .from(geoVaults)
+      .where(eq(geoVaults.userId, userId))
+      .orderBy(geoVaults.createdAt);
+    
+    res.json(vaults);
+  } catch (error: any) {
+    console.error('Error fetching geo vaults:', error);
+    res.status(500).json({ message: 'Error fetching vaults', error: error.message });
   }
 });
 
@@ -105,40 +94,78 @@ geoVaultRouter.get('/', isAuthenticated, async (req: Request, res: Response) => 
  */
 geoVaultRouter.get('/:id', isAuthenticated, async (req: Request, res: Response) => {
   try {
-    const { id } = req.params;
-    const userId = req.session.userId;
+    const userId = req.user?.id;
+    const vaultId = parseInt(req.params.id);
     
-    const vault = await geolocationService.getVaultById(id);
+    if (!userId) {
+      return res.status(401).json({ message: 'User not authenticated' });
+    }
+    
+    if (isNaN(vaultId)) {
+      return res.status(400).json({ message: 'Invalid vault ID' });
+    }
+    
+    // Get the vault
+    const [vault] = await db.select()
+      .from(geoVaults)
+      .where(eq(geoVaults.id, vaultId))
+      .limit(1);
     
     if (!vault) {
-      return res.status(404).json({ error: 'Vault not found' });
+      return res.status(404).json({ message: 'Vault not found' });
     }
     
-    // Security check - ensure user can only access their own vaults
+    // Check if the user owns the vault
     if (vault.userId !== userId) {
-      securityLogger.warn(
-        `Unauthorized attempt to access vault ${id}`,
-        SecurityEventType.UNAUTHORIZED_ACCESS,
-        { vaultId: id, requestingUserId: userId }
-      );
-      
-      return res.status(403).json({ error: 'Access denied' });
+      return res.status(403).json({ message: 'Access denied' });
     }
     
-    return res.status(200).json(vault);
-  } catch (error) {
-    securityLogger.error(
-      `Error retrieving geolocation vault: ${(error as Error).message}`,
-      SecurityEventType.SYSTEM_ERROR,
-      { error, vaultId: req.params.id }
-    );
-    
-    return res.status(500).json({
-      error: 'Failed to retrieve geolocation vault',
-      message: (error as Error).message
-    });
+    res.json(vault);
+  } catch (error: any) {
+    console.error('Error fetching geo vault:', error);
+    res.status(500).json({ message: 'Error fetching vault', error: error.message });
   }
 });
+
+/**
+ * Helper function to calculate distance between two coordinates in meters
+ */
+function calculateDistance(lat1: number, lon1: number, lat2: number, lon2: number): number {
+  const R = 6371e3; // Earth radius in meters
+  const φ1 = lat1 * Math.PI / 180;
+  const φ2 = lat2 * Math.PI / 180;
+  const Δφ = (lat2 - lat1) * Math.PI / 180;
+  const Δλ = (lon2 - lon1) * Math.PI / 180;
+
+  const a = Math.sin(Δφ/2) * Math.sin(Δφ/2) +
+            Math.cos(φ1) * Math.cos(φ2) *
+            Math.sin(Δλ/2) * Math.sin(Δλ/2);
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+
+  return R * c; // Distance in meters
+}
+
+/**
+ * Helper function to check if a point is within a polygon
+ */
+function isPointInPolygon(point: {latitude: number, longitude: number}, polygon: Array<{latitude: number, longitude: number}>): boolean {
+  const x = point.longitude;
+  const y = point.latitude;
+  
+  let inside = false;
+  for (let i = 0, j = polygon.length - 1; i < polygon.length; j = i++) {
+    const xi = polygon[i].longitude;
+    const yi = polygon[i].latitude;
+    const xj = polygon[j].longitude;
+    const yj = polygon[j].latitude;
+    
+    const intersect = ((yi > y) !== (yj > y)) &&
+      (x < (xj - xi) * (y - yi) / (yj - yi) + xi);
+    if (intersect) inside = !inside;
+  }
+  
+  return inside;
+}
 
 /**
  * Verify location against a vault's boundary
@@ -147,10 +174,18 @@ geoVaultRouter.get('/:id', isAuthenticated, async (req: Request, res: Response) 
  */
 geoVaultRouter.post('/:id/verify', isAuthenticated, async (req: Request, res: Response) => {
   try {
-    const { id } = req.params;
-    const userId = req.session.userId;
+    const userId = req.user?.id;
+    const vaultId = parseInt(req.params.id);
     
-    // Validate location data
+    if (!userId) {
+      return res.status(401).json({ message: 'User not authenticated' });
+    }
+    
+    if (isNaN(vaultId)) {
+      return res.status(400).json({ message: 'Invalid vault ID' });
+    }
+    
+    // Validate request body
     const locationSchema = z.object({
       latitude: z.number().min(-90).max(90),
       longitude: z.number().min(-180).max(180),
@@ -161,77 +196,123 @@ geoVaultRouter.post('/:id/verify', isAuthenticated, async (req: Request, res: Re
     const validationResult = locationSchema.safeParse(req.body);
     
     if (!validationResult.success) {
-      securityLogger.warn(
-        'Invalid location data submitted for verification',
-        SecurityEventType.INPUT_VALIDATION_FAILURE,
-        { errors: validationResult.error.format() }
-      );
-      
       return res.status(400).json({
-        error: 'Invalid location data',
-        details: validationResult.error.format()
+        message: 'Invalid location data',
+        errors: validationResult.error.errors
       });
     }
     
     const location = validationResult.data;
     
     // Get the vault
-    const vault = await geolocationService.getVaultById(id);
+    const [vault] = await db.select()
+      .from(geoVaults)
+      .where(eq(geoVaults.id, vaultId))
+      .limit(1);
     
     if (!vault) {
-      return res.status(404).json({ error: 'Vault not found' });
+      return res.status(404).json({ message: 'Vault not found' });
     }
     
-    // Verify location against vault settings
-    const verificationResult = await geolocationService.verifyLocation(
-      location as Coordinates,
-      {
-        userId: vault.userId,
-        boundaryType: vault.boundaryType as any,
-        coordinates: vault.coordinates as any,
-        radius: vault.radius || undefined,
-        countryCode: vault.countryCode || undefined,
-        minAccuracy: vault.minAccuracy || undefined,
-        requiresRealTimeVerification: vault.requiresRealTimeVerification || false,
-        multiFactorUnlock: vault.multiFactorUnlock || false,
-        name: vault.name,
-        description: vault.description || undefined,
-        metadata: vault.metadata as any,
-      }
-    );
+    // Check if the user owns the vault
+    if (vault.userId !== userId) {
+      return res.status(403).json({ message: 'Access denied' });
+    }
     
-    // Create access log entry
-    await db.insert(insertGeoAccessLogSchema.table).values({
-      vaultId: parseInt(id),
-      userId: userId,
+    // Verify the location against the vault's boundary
+    let verified = false;
+    let distance = 0;
+    let failureReason = '';
+    
+    // Check if accuracy meets minimum requirement
+    if (vault.minAccuracy && location.accuracy && location.accuracy > vault.minAccuracy) {
+      failureReason = `Location accuracy (${Math.round(location.accuracy)}m) does not meet minimum requirement (${vault.minAccuracy}m)`;
+    } else {
+      switch (vault.boundaryType) {
+        case 'circle': {
+          // For circular boundary, check distance from center
+          if (!vault.coordinates || vault.coordinates.length === 0) {
+            failureReason = 'Vault has no center coordinates defined';
+            break;
+          }
+          
+          const center = vault.coordinates[0];
+          distance = calculateDistance(
+            center.latitude, 
+            center.longitude, 
+            location.latitude, 
+            location.longitude
+          );
+          
+          if (!vault.radius) {
+            failureReason = 'Vault has no radius defined';
+            break;
+          }
+          
+          verified = distance <= vault.radius;
+          if (!verified) {
+            failureReason = `Location is outside the vault's boundary (${Math.round(distance - vault.radius)}m away)`;
+          }
+          break;
+        }
+        
+        case 'polygon': {
+          // For polygon boundary, check if point is inside the polygon
+          if (!vault.coordinates || vault.coordinates.length < 3) {
+            failureReason = 'Vault has less than 3 coordinates defined for polygon';
+            break;
+          }
+          
+          verified = isPointInPolygon(location, vault.coordinates);
+          if (!verified) {
+            failureReason = 'Location is outside the vault\'s boundary polygon';
+          }
+          break;
+        }
+        
+        case 'country': {
+          // For country-based boundary, we'd need a geolocation service with country lookups
+          // This is a simplified version that always fails
+          failureReason = 'Country boundary verification is not implemented in this prototype';
+          break;
+        }
+        
+        default:
+          failureReason = `Unknown boundary type: ${vault.boundaryType}`;
+      }
+    }
+    
+    // Log the verification attempt
+    const logEntry = {
+      vaultId,
+      userId,
       latitude: location.latitude.toString(),
       longitude: location.longitude.toString(),
-      accuracy: location.accuracy,
-      success: verificationResult.success,
-      failureReason: verificationResult.success ? null : verificationResult.message,
+      accuracy: location.accuracy ? Math.round(location.accuracy) : null,
+      timestamp: new Date(),
+      success: verified,
+      failureReason: failureReason || null,
       deviceInfo: {
-        userAgent: req.headers['user-agent'] || 'unknown',
-        ipAddress: req.ip || 'unknown',
-        timestamp: new Date().toISOString(),
+        userAgent: req.headers['user-agent'] || null,
+        ip: req.ip || null,
       },
-    });
+    };
     
-    return res.status(200).json({
-      success: verificationResult.success,
-      message: verificationResult.message,
-      details: verificationResult.details,
-    });
-  } catch (error) {
-    securityLogger.error(
-      `Error verifying location against vault: ${(error as Error).message}`,
-      SecurityEventType.SYSTEM_ERROR,
-      { error, vaultId: req.params.id }
-    );
+    await db.insert(geoAccessLogs).values(logEntry);
     
-    return res.status(500).json({
-      error: 'Failed to verify location',
-      message: (error as Error).message
+    // Return the verification result
+    res.json({
+      success: verified,
+      message: verified ? 'Location verified successfully' : failureReason,
+      details: {
+        distance: Math.round(distance),
+        accuracy: location.accuracy,
+        boundaryType: vault.boundaryType
+      }
     });
+  } catch (error: any) {
+    console.error('Error verifying location:', error);
+    res.status(500).json({ message: 'Error verifying location', error: error.message });
   }
 });
 
@@ -242,63 +323,58 @@ geoVaultRouter.post('/:id/verify', isAuthenticated, async (req: Request, res: Re
  */
 geoVaultRouter.put('/:id', isAuthenticated, async (req: Request, res: Response) => {
   try {
-    const { id } = req.params;
-    const userId = req.session.userId;
+    const userId = req.user?.id;
+    const vaultId = parseInt(req.params.id);
     
-    // Get the vault first to verify ownership
-    const vault = await geolocationService.getVaultById(id);
-    
-    if (!vault) {
-      return res.status(404).json({ error: 'Vault not found' });
+    if (!userId) {
+      return res.status(401).json({ message: 'User not authenticated' });
     }
     
-    // Ensure user can only update their own vaults
-    if (vault.userId !== userId) {
-      securityLogger.warn(
-        `Unauthorized attempt to update vault ${id}`,
-        SecurityEventType.UNAUTHORIZED_ACCESS,
-        { vaultId: id, requestingUserId: userId }
-      );
-      
-      return res.status(403).json({ error: 'Access denied' });
+    if (isNaN(vaultId)) {
+      return res.status(400).json({ message: 'Invalid vault ID' });
     }
     
-    // Validate update data
+    // Validate request body
     const updateSchema = insertGeoVaultSchema.partial();
     const validationResult = updateSchema.safeParse(req.body);
     
     if (!validationResult.success) {
-      securityLogger.warn(
-        'Invalid vault update data submitted',
-        SecurityEventType.INPUT_VALIDATION_FAILURE,
-        { errors: validationResult.error.format() }
-      );
-      
       return res.status(400).json({
-        error: 'Invalid data',
-        details: validationResult.error.format()
+        message: 'Invalid vault data',
+        errors: validationResult.error.errors
       });
     }
     
+    const vaultData = validationResult.data;
+    
+    // Get the vault to check ownership
+    const [existingVault] = await db.select()
+      .from(geoVaults)
+      .where(eq(geoVaults.id, vaultId))
+      .limit(1);
+    
+    if (!existingVault) {
+      return res.status(404).json({ message: 'Vault not found' });
+    }
+    
+    // Check if the user owns the vault
+    if (existingVault.userId !== userId) {
+      return res.status(403).json({ message: 'Access denied' });
+    }
+    
     // Update the vault
-    const updatedVault = await geolocationService.updateVault(
-      id,
-      userId,
-      validationResult.data
-    );
+    const [updatedVault] = await db.update(geoVaults)
+      .set({
+        ...vaultData,
+        updatedAt: new Date()
+      })
+      .where(eq(geoVaults.id, vaultId))
+      .returning();
     
-    return res.status(200).json(updatedVault);
-  } catch (error) {
-    securityLogger.error(
-      `Error updating geolocation vault: ${(error as Error).message}`,
-      SecurityEventType.SYSTEM_ERROR,
-      { error, vaultId: req.params.id }
-    );
-    
-    return res.status(500).json({
-      error: 'Failed to update geolocation vault',
-      message: (error as Error).message
-    });
+    res.json(updatedVault);
+  } catch (error: any) {
+    console.error('Error updating geo vault:', error);
+    res.status(500).json({ message: 'Error updating vault', error: error.message });
   }
 });
 
@@ -309,48 +385,40 @@ geoVaultRouter.put('/:id', isAuthenticated, async (req: Request, res: Response) 
  */
 geoVaultRouter.delete('/:id', isAuthenticated, async (req: Request, res: Response) => {
   try {
-    const { id } = req.params;
-    const userId = req.session.userId;
+    const userId = req.user?.id;
+    const vaultId = parseInt(req.params.id);
     
-    // Get the vault first to verify ownership
-    const vault = await geolocationService.getVaultById(id);
-    
-    if (!vault) {
-      return res.status(404).json({ error: 'Vault not found' });
+    if (!userId) {
+      return res.status(401).json({ message: 'User not authenticated' });
     }
     
-    // Ensure user can only delete their own vaults
-    if (vault.userId !== userId) {
-      securityLogger.warn(
-        `Unauthorized attempt to delete vault ${id}`,
-        SecurityEventType.UNAUTHORIZED_ACCESS,
-        { vaultId: id, requestingUserId: userId }
-      );
-      
-      return res.status(403).json({ error: 'Access denied' });
+    if (isNaN(vaultId)) {
+      return res.status(400).json({ message: 'Invalid vault ID' });
+    }
+    
+    // Get the vault to check ownership
+    const [existingVault] = await db.select()
+      .from(geoVaults)
+      .where(eq(geoVaults.id, vaultId))
+      .limit(1);
+    
+    if (!existingVault) {
+      return res.status(404).json({ message: 'Vault not found' });
+    }
+    
+    // Check if the user owns the vault
+    if (existingVault.userId !== userId) {
+      return res.status(403).json({ message: 'Access denied' });
     }
     
     // Delete the vault
-    const success = await geolocationService.deleteVault(id, userId);
+    await db.delete(geoVaults)
+      .where(eq(geoVaults.id, vaultId));
     
-    if (success) {
-      return res.status(204).end();
-    } else {
-      return res.status(500).json({
-        error: 'Failed to delete geolocation vault'
-      });
-    }
-  } catch (error) {
-    securityLogger.error(
-      `Error deleting geolocation vault: ${(error as Error).message}`,
-      SecurityEventType.SYSTEM_ERROR,
-      { error, vaultId: req.params.id }
-    );
-    
-    return res.status(500).json({
-      error: 'Failed to delete geolocation vault',
-      message: (error as Error).message
-    });
+    res.json({ success: true, message: 'Vault deleted successfully' });
+  } catch (error: any) {
+    console.error('Error deleting geo vault:', error);
+    res.status(500).json({ message: 'Error deleting vault', error: error.message });
   }
 });
 
@@ -361,42 +429,43 @@ geoVaultRouter.delete('/:id', isAuthenticated, async (req: Request, res: Respons
  */
 geoVaultRouter.get('/:id/history', isAuthenticated, async (req: Request, res: Response) => {
   try {
-    const { id } = req.params;
-    const userId = req.session.userId;
+    const userId = req.user?.id;
+    const vaultId = parseInt(req.params.id);
     
-    // Get the vault first to verify ownership
-    const vault = await geolocationService.getVaultById(id);
-    
-    if (!vault) {
-      return res.status(404).json({ error: 'Vault not found' });
+    if (!userId) {
+      return res.status(401).json({ message: 'User not authenticated' });
     }
     
-    // Ensure user can only access their own vault history
-    if (vault.userId !== userId) {
-      securityLogger.warn(
-        `Unauthorized attempt to access vault history ${id}`,
-        SecurityEventType.UNAUTHORIZED_ACCESS,
-        { vaultId: id, requestingUserId: userId }
-      );
-      
-      return res.status(403).json({ error: 'Access denied' });
+    if (isNaN(vaultId)) {
+      return res.status(400).json({ message: 'Invalid vault ID' });
     }
     
-    // Get access history
-    const history = await geolocationService.getAccessHistory(id, userId);
+    // Get the vault to check ownership
+    const [existingVault] = await db.select()
+      .from(geoVaults)
+      .where(eq(geoVaults.id, vaultId))
+      .limit(1);
     
-    return res.status(200).json(history);
-  } catch (error) {
-    securityLogger.error(
-      `Error retrieving vault access history: ${(error as Error).message}`,
-      SecurityEventType.SYSTEM_ERROR,
-      { error, vaultId: req.params.id }
-    );
+    if (!existingVault) {
+      return res.status(404).json({ message: 'Vault not found' });
+    }
     
-    return res.status(500).json({
-      error: 'Failed to retrieve vault access history',
-      message: (error as Error).message
-    });
+    // Check if the user owns the vault
+    if (existingVault.userId !== userId) {
+      return res.status(403).json({ message: 'Access denied' });
+    }
+    
+    // Get the access history
+    const history = await db.select()
+      .from(geoAccessLogs)
+      .where(eq(geoAccessLogs.vaultId, vaultId))
+      .orderBy(geoAccessLogs.timestamp, 'desc')
+      .limit(50);
+    
+    res.json(history);
+  } catch (error: any) {
+    console.error('Error fetching vault history:', error);
+    res.status(500).json({ message: 'Error fetching vault history', error: error.message });
   }
 });
 
