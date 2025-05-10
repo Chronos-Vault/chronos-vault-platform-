@@ -26,7 +26,28 @@ const CreateVault = () => {
     const typeParam = urlParams.get("type");
     const blockchainParam = urlParams.get("blockchain");
     
-    if (typeParam && [
+    // Also check path for specialized types
+    const pathParts = window.location.pathname.split('/');
+    const pathType = pathParts[pathParts.length - 1];
+    
+    // First check if the path contains a valid vault type
+    if (pathType && [
+      "standard",
+      "multi-signature",
+      "biometric", 
+      "time-lock", 
+      "geolocation", 
+      "cross-chain", 
+      "smart-contract", 
+      "dynamic", 
+      "nft-powered", 
+      "unique"
+    ].includes(pathType as SpecializedVaultType)) {
+      console.log("Setting initial vault type from URL path:", pathType);
+      setVaultType(pathType as SpecializedVaultType);
+    }
+    // If not in path, check query params
+    else if (typeParam && [
       "standard",
       "multi-signature",
       "biometric", 

@@ -90,6 +90,8 @@ function Router() {
     <Layout>
       <Switch>
         <Route path="/" component={Home} />
+        {/* Important: Route order matters! More specific routes should come before less specific ones */}
+        <Route path="/create-vault/cross-chain" component={CreateVault} />
         <Route path="/create-vault" component={CreateVault} />
         <Route path="/create-vault-enhanced" component={CreateVaultEnhancedPage} />
         <Route path="/vault-types" component={VaultTypesSelector} />
