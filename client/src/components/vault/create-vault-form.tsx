@@ -907,43 +907,43 @@ export function CreateVaultForm({
         discount: creationCost.discount || null
       },
       metadata: {
-        allowsAttachments: data.metadata?.allowsAttachments ?? true,
-        attachmentsEncryption: data.metadata?.attachmentsEncryption ?? "AES-256",
-        tripleChainSecurity: useTripleChainSecurity || data.tripleChainSecurity, // Add our Triple-Chain Security flag
-        securityLevel: data.metadata?.securityLevel || (useTripleChainSecurity ? "fortress" : "standard"), // Use selected security level or default based on Triple-Chain
+        allowsAttachments: form.watch('metadata.allowsAttachments') ?? true,
+        attachmentsEncryption: form.watch('metadata.attachmentsEncryption') ?? "AES-256",
+        tripleChainSecurity: useTripleChainSecurity || (form.watch('tripleChainSecurity') ?? false), // Add our Triple-Chain Security flag
+        securityLevel: (form.watch('metadata.securityLevel') ?? (useTripleChainSecurity ? "fortress" : "standard")), // Use selected security level or default based on Triple-Chain
         
         // Sovereign Fortress Vault™ special features
-        quantumResistant: data.metadata?.quantumResistant ?? true, 
-        adaptiveSecurity: data.metadata?.adaptiveSecurity ?? true,
-        instantRecovery: data.metadata?.instantRecovery ?? true,
-        autoScalingSecurity: data.metadata?.autoScalingSecurity ?? true,
-        threatMonitoring: data.metadata?.threatMonitoring ?? true,
-        accessControls: data.metadata?.accessControls ?? {
-          multiFactorAuth: true,
-          temporaryAccess: false,
-          deviceRestrictions: false,
-          biometricAuth: false
+        quantumResistant: form.watch('metadata.quantumResistant') ?? true, 
+        adaptiveSecurity: form.watch('metadata.adaptiveSecurity') ?? true,
+        instantRecovery: form.watch('metadata.instantRecovery') ?? true,
+        autoScalingSecurity: form.watch('metadata.autoScalingSecurity') ?? true,
+        threatMonitoring: form.watch('metadata.threatMonitoring') ?? true,
+        accessControls: {
+          multiFactorAuth: form.watch('metadata.accessControls.multiFactorAuth') ?? true,
+          temporaryAccess: form.watch('metadata.accessControls.temporaryAccess') ?? false,
+          deviceRestrictions: form.watch('metadata.accessControls.deviceRestrictions') ?? false,
+          biometricAuth: form.watch('metadata.accessControls.biometricAuth') ?? false
         },
         
         // Add enhanced security protocols based on selected security level
-        securityProtocols: form.watch('vaultType') === 'standard' ? {
+        securityProtocols: (form.watch('vaultType') === 'standard') ? {
           quantumResistance: {
             enabled: true, 
-            algorithm: form.watch('metadata.securityLevel') === "fortress" ? "SPHINCS+" : 
-                       form.watch('metadata.securityLevel') === "maximum" ? "CRYSTALS-Dilithium" : 
-                       form.watch('metadata.securityLevel') === "enhanced" ? "Falcon-1024" : "Falcon-512"
+            algorithm: ((form.watch('metadata.securityLevel') === "fortress") ? "SPHINCS+" : 
+                       (form.watch('metadata.securityLevel') === "maximum") ? "CRYSTALS-Dilithium" : 
+                       (form.watch('metadata.securityLevel') === "enhanced") ? "Falcon-1024" : "Falcon-512")
           },
           zeroKnowledgePrivacy: {
             enabled: true,
-            level: form.watch('metadata.securityLevel') === "fortress" ? "military" : 
-                  form.watch('metadata.securityLevel') === "maximum" ? "enterprise" : 
-                  form.watch('metadata.securityLevel') === "enhanced" ? "advanced" : "standard"
+            level: ((form.watch('metadata.securityLevel') === "fortress") ? "military" : 
+                  (form.watch('metadata.securityLevel') === "maximum") ? "enterprise" : 
+                  (form.watch('metadata.securityLevel') === "enhanced") ? "advanced" : "standard")
           },
           adaptiveSecurity: {
             enabled: true,
-            responseLevel: form.watch('metadata.securityLevel') === "fortress" ? "autonomous" : 
-                          form.watch('metadata.securityLevel') === "maximum" ? "advanced" : 
-                          form.watch('metadata.securityLevel') === "enhanced" ? "moderate" : "basic"
+            responseLevel: ((form.watch('metadata.securityLevel') === "fortress") ? "autonomous" : 
+                          (form.watch('metadata.securityLevel') === "maximum") ? "advanced" : 
+                          (form.watch('metadata.securityLevel') === "enhanced") ? "moderate" : "basic")
           }
         } : undefined,
         
@@ -956,9 +956,9 @@ export function CreateVaultForm({
             chains: ["TON", "Ethereum", "Solana"],
             crossValidation: true,
             redundancy: "Progressive",
-            securityLevel: form.watch('metadata.securityLevel') === "fortress" ? "Military" :
-                          form.watch('metadata.securityLevel') === "maximum" ? "Institutional" :
-                          form.watch('metadata.securityLevel') === "enhanced" ? "Enterprise" : "Standard"
+            securityLevel: ((form.watch('metadata.securityLevel') === "fortress") ? "Military" :
+                          (form.watch('metadata.securityLevel') === "maximum") ? "Institutional" :
+                          (form.watch('metadata.securityLevel') === "enhanced") ? "Enterprise" : "Standard")
           }
         }),
       }
