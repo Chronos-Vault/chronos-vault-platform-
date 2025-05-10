@@ -51,18 +51,22 @@ const VaultTypeSelector: React.FC<VaultTypeProps> = ({ selectedType, onChange })
     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-5 gap-4 max-w-7xl mx-auto">
       <VaultTypeCard 
         type="standard"
-        title="Standard Vault"
-        description="Basic time-lock vault with essential features"
-        icon="🔒"
+        title="Sovereign Fortress Vault™"
+        description="Ultimate all-in-one vault with supreme security & flexibility"
+        icon="👑"
         color="#6B00D7"
         isSelected={selectedType === 'standard'}
         onClick={() => onChange('standard')}
-        securityLevel={3}
-        complexityLevel={1}
+        securityLevel={5}
+        complexityLevel={3}
         features={[
-          "Time-based unlocking",
-          "Basic encryption",
-          "Owner & beneficiary access"
+          "Adaptive Multi-Layered Security",
+          "Quantum-Resistant Encryption",
+          "Triple-Chain Protection System",
+          "Instant Disaster Recovery",
+          "Flexible Access Control Systems",
+          "Customizable Security Protocols",
+          "Intuitive Ownership Management" 
         ]}
       />
       
