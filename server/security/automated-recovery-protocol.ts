@@ -230,11 +230,16 @@ class AutomatedRecoveryProtocol extends EventEmitter {
     if (wasAvailable && !isAvailable) {
       this.emit('chain:degraded', chain, updatedStatus);
       
+      // Truncate error message to prevent buffer issues
+      const truncatedErrorMessage = typeof errorMessage === 'string' 
+        ? errorMessage.substring(0, 500)
+        : String(errorMessage).substring(0, 500);
+      
       securityLogger.warn(`Chain ${chain} has been marked as degraded`, {
         chain,
         errorCount,
         consecutiveErrors,
-        errorMessage
+        errorMessage: truncatedErrorMessage
       });
       
       // Trigger recovery for affected vaults

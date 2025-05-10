@@ -215,13 +215,31 @@ class SecurityLogger {
   private generateLogHash(logEntry: SecurityLogEntry): string {
     // In a real implementation, this would use a secure hashing algorithm
     // For simplicity, we're creating a basic hash representation
-    const dataString = `${this.lastLogHash}|${logEntry.timestamp.toISOString()}|${logEntry.level}|${logEntry.eventType}|${logEntry.message}`;
-    const hash = Buffer.from(dataString).toString('base64');
     
-    // Store this hash for the next log entry
-    this.lastLogHash = hash;
+    // Limit the message size to prevent buffer overflow errors
+    const truncatedMessage = typeof logEntry.message === 'string' 
+      ? logEntry.message.substring(0, 1000) 
+      : String(logEntry.message).substring(0, 1000);
     
-    return hash;
+    // Create a compact event type representation to reduce string size
+    const eventType = typeof logEntry.eventType === 'string'
+      ? logEntry.eventType.substring(0, 100)
+      : 'unknown';
+    
+    const dataString = `${this.lastLogHash.substring(0, 100)}|${logEntry.timestamp.toISOString()}|${logEntry.level}|${eventType}|${truncatedMessage}`;
+    
+    try {
+      const hash = Buffer.from(dataString).toString('base64');
+      
+      // Store this hash for the next log entry (with size limit)
+      this.lastLogHash = hash.substring(0, 100);
+      
+      return this.lastLogHash;
+    } catch (error) {
+      console.error('Error generating log hash:', error);
+      // Fallback to a simple timestamp hash if we encounter errors
+      return Date.now().toString(36);
+    }
   }
   
   /**
