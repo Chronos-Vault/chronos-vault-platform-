@@ -9,23 +9,16 @@ import { z } from 'zod';
 import { db } from '../db';
 import { geoVaults, geoAccessLogs, insertGeoVaultSchema } from '@shared/schema';
 import { eq } from 'drizzle-orm';
+import { authenticateRequest } from '../middleware/auth';
 
 const geoVaultRouter = Router();
-
-// Middleware to check if user is authenticated
-const isAuthenticated = (req: Request, res: Response, next: Function) => {
-  if (!req.isAuthenticated || !req.isAuthenticated()) {
-    return res.status(401).json({ message: 'Unauthorized' });
-  }
-  next();
-};
 
 /**
  * Create a new geolocation vault
  * 
  * POST /api/geo-vaults
  */
-geoVaultRouter.post('/', isAuthenticated, async (req: Request, res: Response) => {
+geoVaultRouter.post('/', authenticateRequest, async (req: Request, res: Response) => {
   try {
     // Validate request body
     const validationResult = insertGeoVaultSchema.safeParse(req.body);
@@ -66,7 +59,7 @@ geoVaultRouter.post('/', isAuthenticated, async (req: Request, res: Response) =>
  * 
  * GET /api/geo-vaults
  */
-geoVaultRouter.get('/', isAuthenticated, async (req: Request, res: Response) => {
+geoVaultRouter.get('/', authenticateRequest, async (req: Request, res: Response) => {
   try {
     const userId = req.user?.id;
     
@@ -92,7 +85,7 @@ geoVaultRouter.get('/', isAuthenticated, async (req: Request, res: Response) => 
  * 
  * GET /api/geo-vaults/:id
  */
-geoVaultRouter.get('/:id', isAuthenticated, async (req: Request, res: Response) => {
+geoVaultRouter.get('/:id', authenticateRequest, async (req: Request, res: Response) => {
   try {
     const userId = req.user?.id;
     const vaultId = parseInt(req.params.id);
@@ -172,7 +165,7 @@ function isPointInPolygon(point: {latitude: number, longitude: number}, polygon:
  * 
  * POST /api/geo-vaults/:id/verify
  */
-geoVaultRouter.post('/:id/verify', isAuthenticated, async (req: Request, res: Response) => {
+geoVaultRouter.post('/:id/verify', authenticateRequest, async (req: Request, res: Response) => {
   try {
     const userId = req.user?.id;
     const vaultId = parseInt(req.params.id);
@@ -321,7 +314,7 @@ geoVaultRouter.post('/:id/verify', isAuthenticated, async (req: Request, res: Re
  * 
  * PUT /api/geo-vaults/:id
  */
-geoVaultRouter.put('/:id', isAuthenticated, async (req: Request, res: Response) => {
+geoVaultRouter.put('/:id', authenticateRequest, async (req: Request, res: Response) => {
   try {
     const userId = req.user?.id;
     const vaultId = parseInt(req.params.id);
@@ -383,7 +376,7 @@ geoVaultRouter.put('/:id', isAuthenticated, async (req: Request, res: Response) 
  * 
  * DELETE /api/geo-vaults/:id
  */
-geoVaultRouter.delete('/:id', isAuthenticated, async (req: Request, res: Response) => {
+geoVaultRouter.delete('/:id', authenticateRequest, async (req: Request, res: Response) => {
   try {
     const userId = req.user?.id;
     const vaultId = parseInt(req.params.id);
@@ -427,7 +420,7 @@ geoVaultRouter.delete('/:id', isAuthenticated, async (req: Request, res: Respons
  * 
  * GET /api/geo-vaults/:id/history
  */
-geoVaultRouter.get('/:id/history', isAuthenticated, async (req: Request, res: Response) => {
+geoVaultRouter.get('/:id/history', authenticateRequest, async (req: Request, res: Response) => {
   try {
     const userId = req.user?.id;
     const vaultId = parseInt(req.params.id);
