@@ -1,4 +1,4 @@
-import { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -451,8 +451,8 @@ export function CreateVaultForm({
   };
   
   // Function to render specialized vault specific fields based on the vault type
-  // Use React.useEffect to update the form when initialVaultType changes
-  React.useEffect(() => {
+  // Use useEffect to update the form when initialVaultType changes
+  useEffect(() => {
     console.log("Initializing vault type from props:", initialVaultType);
     if (initialVaultType && initialVaultType !== form.getValues("vaultType")) {
       form.setValue("vaultType", initialVaultType);
@@ -469,8 +469,23 @@ export function CreateVaultForm({
 
   const renderSpecializedFields = () => {
     const currentVaultType = form.watch("vaultType");
+    const urlParams = new URLSearchParams(window.location.search);
+    const typeParam = urlParams.get("type");
     
     console.log("Rendering specialized fields for vault type:", currentVaultType);
+    console.log("URL parameter type:", typeParam);
+    console.log("Form values:", form.getValues());
+    
+    // Force cross-chain type if URL parameter is set
+    if (typeParam === "cross-chain" && currentVaultType !== "cross-chain") {
+      console.log("Forcing cross-chain vault type from URL parameter");
+      setTimeout(() => form.setValue("vaultType", "cross-chain"), 0);
+      return (
+        <div className="p-4 border border-[#8B00D7]/30 rounded-lg animate-pulse">
+          <p className="text-center text-[#8B00D7]">Loading Cross-Chain Vault interface...</p>
+        </div>
+      );
+    }
     
     switch(currentVaultType) {
       case 'standard':
