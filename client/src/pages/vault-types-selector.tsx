@@ -199,7 +199,7 @@ const VaultTypesSelector = () => {
             onClick={handleContinue}
             className="bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] hover:opacity-90"
           >
-            Continue with {selectedVaultType.split('-').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ')} Vault
+            Continue with {selectedVaultType === 'standard' ? 'Sovereign Fortress Vault™' : selectedVaultType.split('-').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ') + ' Vault'}
             <ArrowRight className="ml-2 h-4 w-4" />
           </Button>
         </div>

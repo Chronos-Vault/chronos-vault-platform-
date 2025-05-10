@@ -151,8 +151,8 @@ const SUPPORTED_NETWORKS = [
 const VAULT_TYPES = [
   { 
     id: "standard", 
-    name: "Standard Vault", 
-    description: "A basic time-locked vault for securely storing assets.",
+    name: "Sovereign Fortress Vault™", 
+    description: "Premium vault with quantum-resistant security and advanced protection features.",
     icon: <Lock className="h-5 w-5" />,
     color: "#6B00D7"
   },
