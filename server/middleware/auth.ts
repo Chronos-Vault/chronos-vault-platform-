@@ -30,12 +30,19 @@ export function authenticateRequest(req: Request, res: Response, next: NextFunct
       id: 1,
       username: 'dev_user',
       role: 'admin',
-      walletAddress: '0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266'
+      walletAddress: '0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266',
+      // Additional properties for vault ownership checks
+      email: 'dev@example.com',
+      metadata: {
+        role: 'admin',
+        premium: true
+      }
     };
     
     // Mock the isAuthenticated method
     req.isAuthenticated = () => true;
     
+    console.log(`Development mode: Authentication bypassed for ${req.method} ${req.path}`);
     return next();
   }
   

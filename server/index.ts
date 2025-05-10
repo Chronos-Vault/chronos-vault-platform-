@@ -13,6 +13,12 @@ import { setupVite, serveStatic } from './vite';
 import { getSecurityAuditService } from './security/security-audit-service';
 import { transactionMonitor } from './blockchain/transaction-monitor';
 
+// Set development mode environment variables
+if (process.env.NODE_ENV === 'development') {
+  process.env.BYPASS_AUTH = 'true';
+  console.log('Running in development mode with authentication bypass enabled');
+}
+
 // Create Express app
 const app = express();
 
