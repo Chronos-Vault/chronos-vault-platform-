@@ -56,7 +56,10 @@ export class GeolocationService extends EventEmitter {
 
   private constructor() {
     super();
-    securityLogger.info('Geolocation Security Service initialized', 'GEO_SERVICE_INIT');
+    securityLogger.info('Geolocation Security Service initialized', SecurityEventType.SYSTEM_ERROR, {
+      service: 'GeolocationService',
+      action: 'init'
+    });
   }
 
   public static getInstance(): GeolocationService {
@@ -73,7 +76,7 @@ export class GeolocationService extends EventEmitter {
     this.vaultSettings.set(settings.id, settings);
     this.verificationHistory.set(settings.id, []);
     
-    securityLogger.info(`Registered new geolocation vault: ${settings.id}`, {
+    securityLogger.info(`Registered new geolocation vault: ${settings.id}`, SecurityEventType.VAULT_CREATION, {
       ownerId: settings.ownerId,
       boundaryCount: settings.boundaries.length,
       multiFactorRequired: settings.multiFactorUnlock
@@ -91,7 +94,7 @@ export class GeolocationService extends EventEmitter {
     }
     
     this.vaultSettings.set(settings.id, settings);
-    securityLogger.info(`Updated geolocation vault settings: ${settings.id}`);
+    securityLogger.info(`Updated geolocation vault settings: ${settings.id}`, SecurityEventType.VAULT_MODIFICATION);
     this.emit('vaultUpdated', settings);
     return true;
   }
@@ -106,7 +109,7 @@ export class GeolocationService extends EventEmitter {
     
     this.vaultSettings.delete(vaultId);
     this.verificationHistory.delete(vaultId);
-    securityLogger.info(`Removed geolocation vault: ${vaultId}`);
+    securityLogger.info(`Removed geolocation vault: ${vaultId}`, SecurityEventType.VAULT_MODIFICATION);
     this.emit('vaultRemoved', vaultId);
     return true;
   }
@@ -171,7 +174,8 @@ export class GeolocationService extends EventEmitter {
         };
         this.recordVerificationAttempt(vaultId, result);
         
-        securityLogger.info(`Successful geolocation verification for vault: ${vaultId}`, {
+        securityLogger.info(`Successful geolocation verification for vault: ${vaultId}`, SecurityEventType.VAULT_ACCESS, {
+          vaultId,
           boundaryType: boundary.type,
           accuracy: currentLocation.accuracy || 'unknown'
         });
@@ -195,7 +199,8 @@ export class GeolocationService extends EventEmitter {
     
     this.recordVerificationAttempt(vaultId, result);
     
-    securityLogger.warn(`Failed geolocation verification for vault: ${vaultId}`, {
+    securityLogger.warn(`Failed geolocation verification for vault: ${vaultId}`, SecurityEventType.SUSPICIOUS_ACTIVITY, {
+      vaultId,
       distance,
       boundaryType: nearestBoundary.type,
       accuracy: currentLocation.accuracy || 'unknown'

@@ -17,10 +17,12 @@ import progressiveQuantumVaultRoutes from './api/progressive-quantum-vault-route
 import vaultsRoutes from './api/vaults-routes';
 import biometricRoutes from './routes/biometric-routes';
 import zeroKnowledgeRoutes from './api/zero-knowledge-routes';
+import geoVaultRoutes from './api/geo-vault-routes';
 import { systemHealthMonitor } from './monitoring/system-health-monitor';
 import { incidentResponseSystem } from './monitoring/incident-response';
 import { ConnectorFactory } from './blockchain/connector-factory';
-import { securityLogger } from './monitoring/security-logger';
+import { securityLogger, SecurityEventType } from './monitoring/security-logger';
+import { geolocationService } from './services/geolocation-service';
 import { VerificationStatus } from './blockchain/cross-chain-vault-verification';
 
 export async function registerRoutes(app: Express): Promise<Server> {
@@ -59,6 +61,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
   
   // Register zero-knowledge proof routes
   apiRouter.use('/zk', zeroKnowledgeRoutes);
+  
+  // Register geolocation vault routes
+  apiRouter.use('/geo-vaults', geoVaultRoutes);
   
   // Initialize and register chain-agnostic verification routes
   const chainAgnosticVerifier = initializeChainAgnosticVerification(connectorFactory);
