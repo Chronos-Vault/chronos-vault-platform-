@@ -71,7 +71,12 @@ const metadataSchema = z.object({
   memoryTitle: z.string().optional(),
   memoryDescription: z.string().optional(),
   revealMessage: z.string().optional(),
-  showCountdown: z.boolean().default(true)
+  showCountdown: z.boolean().default(true),
+  
+  // Cross-chain specific fields
+  zkVerification: z.boolean().optional().default(false),
+  crossChainKeys: z.array(z.string()).optional().default([]),
+  verificationThreshold: z.string().optional().default("2")
 });
 
 // Extend the vault schema with additional validation
@@ -91,8 +96,7 @@ const formSchema = insertVaultSchema.extend({
   }),
   // Specialized vault type fields
   // Multi-signature vault fields
-  requiredSignatures: z.union([z.string(), z.number()]).optional()
-    .transform(val => typeof val === 'string' ? parseInt(val, 10) : val),
+  requiredSignatures: z.union([z.string(), z.number()]).optional().default("2"),
   
   // Biometric vault fields
   biometricType: z.string().optional(),
@@ -101,16 +105,14 @@ const formSchema = insertVaultSchema.extend({
   scheduleType: z.string().optional(),
   
   // Geolocation vault fields
-  geoRadius: z.union([z.string(), z.number()]).optional()
-    .transform(val => typeof val === 'string' ? parseInt(val, 10) : val),
+  geoRadius: z.union([z.string(), z.number()]).optional().default("100"),
   geoLocation: z.string().optional(),
   
   // Cross-chain vault fields
   primaryChain: z.string().optional().default("TON"),
   secondaryChain: z.string().optional().default("ETH"),
   tertiaryChain: z.string().optional().default("SOL"),
-  verificationThreshold: z.union([z.string(), z.number()]).optional().default("2")
-    .transform(val => typeof val === 'string' ? parseInt(val, 10) : val),
+  verificationThreshold: z.union([z.string(), z.number()]).optional().default("2"),
   additionalChains: z.array(z.string()).optional().default([]),
   
   // Smart contract vault fields
@@ -289,7 +291,8 @@ export function CreateVaultForm({
         
         // Cross-chain vault specific defaults
         zkVerification: false,
-        crossChainKeys: []
+        crossChainKeys: [],
+        verificationThreshold: "2"
       },
       // Add default values for specialized vault types
       requiredSignatures: "2",
