@@ -274,10 +274,17 @@ export function CreateVaultForm({
         memoryTitle: "",
         memoryDescription: "",
         revealMessage: "",
-        showCountdown: true
+        showCountdown: true,
+        
+        // Cross-chain vault specific defaults
+        verificationThreshold: "2",
+        zkVerification: false,
+        crossChainKeys: []
       },
       // Add default values for specialized vault types
       requiredSignatures: "2",
+      primaryChain: "TON",
+      secondaryChains: ["ETH", "SOL"],
       biometricType: "fingerprint",
       scheduleType: "fixed",
       geoRadius: "100",
@@ -687,6 +694,176 @@ export function CreateVaultForm({
                   <FormDescription>
                     How the asset will be released from the time-lock
                   </FormDescription>
+                </FormItem>
+              )}
+            />
+          </div>
+        );
+      
+      case 'cross-chain':
+        return (
+          <div className="space-y-4 border border-[#8B00D7]/30 rounded-lg p-4 bg-gradient-to-r from-[#1A1A1A] to-[#241A2A]">
+            <h3 className="text-lg text-[#8B00D7] font-medium">Cross-Chain Verification Vault</h3>
+            <p className="text-sm text-gray-300">Configure cross-chain verification settings for enhanced security</p>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+              <div className="space-y-4">
+                <FormField
+                  control={form.control as any}
+                  name="primaryChain"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Primary Blockchain</FormLabel>
+                      <Select
+                        onValueChange={field.onChange}
+                        defaultValue={field.value || "TON"}
+                      >
+                        <FormControl>
+                          <SelectTrigger className="border-[#8B00D7]/30 bg-black/40">
+                            <SelectValue placeholder="Select primary blockchain" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          <SelectItem value="TON">TON Network</SelectItem>
+                          <SelectItem value="ETH">Ethereum</SelectItem>
+                          <SelectItem value="SOL">Solana</SelectItem>
+                        </SelectContent>
+                      </Select>
+                      <FormDescription>
+                        Primary blockchain for vault ownership and control
+                      </FormDescription>
+                    </FormItem>
+                  )}
+                />
+                
+                <FormField
+                  control={form.control as any}
+                  name="metadata.verificationThreshold"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Verification Threshold</FormLabel>
+                      <Select
+                        onValueChange={field.onChange}
+                        defaultValue={field.value || "2"}
+                      >
+                        <FormControl>
+                          <SelectTrigger className="border-[#8B00D7]/30 bg-black/40">
+                            <SelectValue placeholder="Select verification threshold" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          <SelectItem value="1">1 chain (Primary only)</SelectItem>
+                          <SelectItem value="2">2 chains (Enhanced security)</SelectItem>
+                          <SelectItem value="3">3 chains (Maximum security)</SelectItem>
+                        </SelectContent>
+                      </Select>
+                      <FormDescription>
+                        Number of blockchains required for verification
+                      </FormDescription>
+                    </FormItem>
+                  )}
+                />
+              </div>
+              
+              <div className="space-y-4">
+                <FormField
+                  control={form.control as any}
+                  name="secondaryChains"
+                  render={({ field }) => (
+                    <FormItem className="flex flex-col space-y-3">
+                      <FormLabel>Secondary Verification Chains</FormLabel>
+                      <div className="flex flex-col space-y-2">
+                        <div className="flex items-center space-x-2">
+                          <Checkbox
+                            id="eth-chain"
+                            checked={field.value?.includes("ETH")}
+                            onCheckedChange={(checked) => {
+                              const newValue = field.value || [];
+                              if (checked) {
+                                field.onChange([...newValue, "ETH"]);
+                              } else {
+                                field.onChange(newValue.filter(v => v !== "ETH"));
+                              }
+                            }}
+                            className="data-[state=checked]:bg-[#8B00D7] data-[state=checked]:border-[#8B00D7]"
+                          />
+                          <label
+                            htmlFor="eth-chain"
+                            className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                          >
+                            Ethereum
+                          </label>
+                        </div>
+                        <div className="flex items-center space-x-2">
+                          <Checkbox
+                            id="ton-chain"
+                            checked={field.value?.includes("TON")}
+                            onCheckedChange={(checked) => {
+                              const newValue = field.value || [];
+                              if (checked) {
+                                field.onChange([...newValue, "TON"]);
+                              } else {
+                                field.onChange(newValue.filter(v => v !== "TON"));
+                              }
+                            }}
+                            className="data-[state=checked]:bg-[#8B00D7] data-[state=checked]:border-[#8B00D7]"
+                          />
+                          <label
+                            htmlFor="ton-chain"
+                            className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                          >
+                            TON Network
+                          </label>
+                        </div>
+                        <div className="flex items-center space-x-2">
+                          <Checkbox
+                            id="sol-chain"
+                            checked={field.value?.includes("SOL")}
+                            onCheckedChange={(checked) => {
+                              const newValue = field.value || [];
+                              if (checked) {
+                                field.onChange([...newValue, "SOL"]);
+                              } else {
+                                field.onChange(newValue.filter(v => v !== "SOL"));
+                              }
+                            }}
+                            className="data-[state=checked]:bg-[#8B00D7] data-[state=checked]:border-[#8B00D7]"
+                          />
+                          <label
+                            htmlFor="sol-chain"
+                            className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                          >
+                            Solana
+                          </label>
+                        </div>
+                      </div>
+                      <FormDescription>
+                        Select blockchains for additional verification
+                      </FormDescription>
+                    </FormItem>
+                  )}
+                />
+              </div>
+            </div>
+            
+            <FormField
+              control={form.control as any}
+              name="metadata.zkVerification"
+              render={({ field }) => (
+                <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border border-[#8B00D7]/20 p-4 bg-black/30 mt-4">
+                  <FormControl>
+                    <Checkbox
+                      checked={field.value}
+                      onCheckedChange={field.onChange}
+                      className="data-[state=checked]:bg-[#8B00D7] data-[state=checked]:border-[#8B00D7]"
+                    />
+                  </FormControl>
+                  <div className="space-y-1 leading-none">
+                    <FormLabel className="text-white">Enable Zero-Knowledge Proofs</FormLabel>
+                    <FormDescription className="text-xs text-gray-400">
+                      Use zero-knowledge cryptography for private cross-chain verification
+                    </FormDescription>
+                  </div>
                 </FormItem>
               )}
             />
