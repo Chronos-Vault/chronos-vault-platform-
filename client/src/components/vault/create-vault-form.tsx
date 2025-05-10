@@ -743,7 +743,7 @@ export function CreateVaultForm({
         setIsBlockchainDeploying(true);
         
         // Process payment based on payment type
-        if (data.paymentType === 'cvt') {
+        if (form.watch('paymentType') === 'cvt') {
           setDeploymentStatus("Processing CVT payment...");
           // Check if user has enough CVT tokens
           const userBalance = parseFloat(tokenBalance || '0');
