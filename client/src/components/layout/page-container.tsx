@@ -1,32 +1,21 @@
 /**
- * Page Container Component
+ * PageContainer Component
  * 
- * A reusable container component for page content with consistent padding and max width.
+ * A container component that provides consistent padding and max-width
+ * for page content throughout the application.
  */
 
 import React, { ReactNode } from 'react';
-import { cn } from '@/lib/utils';
 
 interface PageContainerProps {
   children: ReactNode;
   className?: string;
-  fullWidth?: boolean;
 }
 
-export function PageContainer({
-  children,
-  className,
-  fullWidth = false,
-}: PageContainerProps) {
+export function PageContainer({ children, className = '' }: PageContainerProps) {
   return (
-    <div
-      className={cn(
-        'container px-4 py-6 mx-auto',
-        !fullWidth && 'max-w-6xl',
-        className
-      )}
-    >
+    <main className={`container px-4 md:px-6 mx-auto py-6 max-w-6xl ${className}`}>
       {children}
-    </div>
+    </main>
   );
 }

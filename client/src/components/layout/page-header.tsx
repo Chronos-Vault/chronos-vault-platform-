@@ -1,46 +1,38 @@
 /**
- * Page Header Component
+ * PageHeader Component
  * 
- * A reusable page header component that displays a title, description, and optional icon.
+ * A consistent header component for pages that displays a title,
+ * optional description, and an icon.
  */
 
 import React, { ReactNode } from 'react';
-import { cn } from '@/lib/utils';
 
 interface PageHeaderProps {
   title: string;
   description?: string;
   icon?: ReactNode;
-  align?: 'left' | 'center';
+  actions?: ReactNode;
   className?: string;
 }
 
-export function PageHeader({
-  title,
-  description,
-  icon,
-  align = 'left',
-  className,
+export function PageHeader({ 
+  title, 
+  description, 
+  icon, 
+  actions,
+  className = '' 
 }: PageHeaderProps) {
   return (
-    <div
-      className={cn(
-        'mb-8',
-        align === 'center' && 'text-center',
-        className
-      )}
-    >
-      <div
-        className={cn(
-          'flex items-center gap-3 mb-2',
-          align === 'center' && 'justify-center'
-        )}
-      >
-        {icon}
-        <h1 className="text-3xl font-bold tracking-tight">{title}</h1>
+    <div className={`mb-8 ${className}`}>
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-3">
+          {icon && <div className="flex-shrink-0">{icon}</div>}
+          <h1 className="text-2xl md:text-3xl font-bold tracking-tight">{title}</h1>
+        </div>
+        {actions && <div className="flex items-center gap-2">{actions}</div>}
       </div>
       {description && (
-        <p className="text-lg text-muted-foreground max-w-2xl">
+        <p className="mt-2 text-muted-foreground text-sm md:text-base max-w-3xl">
           {description}
         </p>
       )}
