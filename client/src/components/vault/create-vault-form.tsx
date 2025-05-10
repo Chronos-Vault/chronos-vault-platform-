@@ -248,6 +248,11 @@ export function CreateVaultForm({
       timeLockPeriod: 365, // Default to 1 year
       unlockDate: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toISOString(),
       includeAttachments: true,
+      // Cross-chain specific defaults
+      primaryChain: "TON",
+      secondaryChain: "ETH",
+      tertiaryChain: "SOL",
+      verificationThreshold: "2", // At least 2 chains for verification
       tripleChainSecurity: false, // Our new Triple-Chain Security feature
       
       // Payment options for dual token system
@@ -444,6 +449,8 @@ export function CreateVaultForm({
   // Function to render specialized vault specific fields based on the vault type
   const renderSpecializedFields = () => {
     const currentVaultType = form.watch("vaultType");
+    
+    console.log("Rendering specialized fields for vault type:", currentVaultType);
     
     switch(currentVaultType) {
       case 'standard':
