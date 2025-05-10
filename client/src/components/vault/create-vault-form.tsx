@@ -909,8 +909,44 @@ export function CreateVaultForm({
       metadata: {
         allowsAttachments: data.metadata?.allowsAttachments ?? true,
         attachmentsEncryption: data.metadata?.attachmentsEncryption ?? "AES-256",
-        tripleChainSecurity: useTripleChainSecurity, // Add our Triple-Chain Security flag
-        securityLevel: useTripleChainSecurity ? 5 : 3, // Increase security level if Triple-Chain is enabled
+        tripleChainSecurity: useTripleChainSecurity || data.tripleChainSecurity, // Add our Triple-Chain Security flag
+        securityLevel: data.metadata?.securityLevel || (useTripleChainSecurity ? "fortress" : "standard"), // Use selected security level or default based on Triple-Chain
+        
+        // Sovereign Fortress Vault™ special features
+        quantumResistant: data.metadata?.quantumResistant ?? true, 
+        adaptiveSecurity: data.metadata?.adaptiveSecurity ?? true,
+        instantRecovery: data.metadata?.instantRecovery ?? true,
+        autoScalingSecurity: data.metadata?.autoScalingSecurity ?? true,
+        threatMonitoring: data.metadata?.threatMonitoring ?? true,
+        accessControls: data.metadata?.accessControls ?? {
+          multiFactorAuth: true,
+          temporaryAccess: false,
+          deviceRestrictions: false,
+          biometricAuth: false
+        },
+        
+        // Add enhanced security protocols based on selected security level
+        securityProtocols: data.vaultType === 'standard' ? {
+          quantumResistance: {
+            enabled: true, 
+            algorithm: data.metadata?.securityLevel === "fortress" ? "SPHINCS+" : 
+                       data.metadata?.securityLevel === "maximum" ? "CRYSTALS-Dilithium" : 
+                       data.metadata?.securityLevel === "enhanced" ? "Falcon-1024" : "Falcon-512"
+          },
+          zeroKnowledgePrivacy: {
+            enabled: true,
+            level: data.metadata?.securityLevel === "fortress" ? "military" : 
+                  data.metadata?.securityLevel === "maximum" ? "enterprise" : 
+                  data.metadata?.securityLevel === "enhanced" ? "advanced" : "standard"
+          },
+          adaptiveSecurity: {
+            enabled: true,
+            responseLevel: data.metadata?.securityLevel === "fortress" ? "autonomous" : 
+                          data.metadata?.securityLevel === "maximum" ? "advanced" : 
+                          data.metadata?.securityLevel === "enhanced" ? "moderate" : "basic"
+          }
+        } : undefined,
+        
         attachments: attachments.length > 0 ? attachments : undefined,
         ...(giftExperience && { giftExperience }),
         ...(deploymentMetadata && { blockchain: deploymentMetadata }),
@@ -920,7 +956,9 @@ export function CreateVaultForm({
             chains: ["TON", "Ethereum", "Solana"],
             crossValidation: true,
             redundancy: "Progressive",
-            securityLevel: "Enterprise"
+            securityLevel: data.metadata?.securityLevel === "fortress" ? "Military" :
+                          data.metadata?.securityLevel === "maximum" ? "Institutional" :
+                          data.metadata?.securityLevel === "enhanced" ? "Enterprise" : "Standard"
           }
         }),
       }
@@ -984,7 +1022,13 @@ export function CreateVaultForm({
       ethereumContractAddress: finalVaultData.ethereumContractAddress,
       solanaContractAddress: finalVaultData.solanaContractAddress,
       tonContractAddress: finalVaultData.tonContractAddress,
-      securityLevel: finalVaultData.securityLevel || 3,
+      // Map security level string to numeric value
+      securityLevel: typeof finalVaultData.securityLevel === 'string' 
+        ? (finalVaultData.securityLevel === "fortress" ? 5 
+            : finalVaultData.securityLevel === "maximum" ? 4 
+            : finalVaultData.securityLevel === "enhanced" ? 3 
+            : 2) 
+        : (finalVaultData.securityLevel || 3),
       crossChainEnabled: finalVaultData.crossChainEnabled || false,
       privacyEnabled: finalVaultData.privacyEnabled || false
     };
@@ -1248,6 +1292,114 @@ export function CreateVaultForm({
                           </FormItem>
                         )}
                       />
+                      
+                      {/* Sovereign Fortress Security Level Selector - Only displayed for Standard/Fortress vaults */}
+                      {data.vaultType === 'standard' && (
+                        <FormField
+                          control={form.control}
+                          name="metadata.securityLevel"
+                          render={({ field }) => (
+                            <FormItem className="rounded-md border border-[#6B00D7]/50 p-4 shadow-lg bg-[#1A1A1A]">
+                              <FormLabel className="text-base font-medium text-white mb-3 block">
+                                Sovereign Fortress™ Security Protocol Level
+                              </FormLabel>
+                              <FormDescription className="text-gray-300 mb-4">
+                                Select the security level appropriate for your asset value
+                              </FormDescription>
+                              
+                              <div className="grid grid-cols-2 gap-3 mt-3">
+                                <div
+                                  className={`border rounded-lg p-3 cursor-pointer transition-all duration-200 hover:border-[#FF5AF7] 
+                                    ${field.value === 'standard' ? 'border-[#FF5AF7] bg-gradient-to-r from-[#6B00D7]/20 to-[#FF5AF7]/20' : 'border-gray-700'}`}
+                                  onClick={() => field.onChange('standard')}
+                                >
+                                  <div className="flex items-center mb-2">
+                                    <div className="w-5 h-5 rounded-full bg-green-500/20 text-green-400 flex items-center justify-center text-xs mr-2">
+                                      <span>1</span>
+                                    </div>
+                                    <h4 className="font-medium text-sm">Standard</h4>
+                                  </div>
+                                  <p className="text-xs text-gray-400">Basic security suitable for lower value assets</p>
+                                  <div className="mt-2 text-xs text-gray-500">
+                                    <div className="flex justify-between">
+                                      <span>Falcon-512</span>
+                                      <span>Kyber-512</span>
+                                    </div>
+                                  </div>
+                                </div>
+                                
+                                <div
+                                  className={`border rounded-lg p-3 cursor-pointer transition-all duration-200 hover:border-[#FF5AF7] 
+                                    ${field.value === 'enhanced' ? 'border-[#FF5AF7] bg-gradient-to-r from-[#6B00D7]/20 to-[#FF5AF7]/20' : 'border-gray-700'}`}
+                                  onClick={() => field.onChange('enhanced')}
+                                >
+                                  <div className="flex items-center mb-2">
+                                    <div className="w-5 h-5 rounded-full bg-blue-500/20 text-blue-400 flex items-center justify-center text-xs mr-2">
+                                      <span>2</span>
+                                    </div>
+                                    <h4 className="font-medium text-sm">Enhanced</h4>
+                                  </div>
+                                  <p className="text-xs text-gray-400">Medium-grade security for valuable assets</p>
+                                  <div className="mt-2 text-xs text-gray-500">
+                                    <div className="flex justify-between">
+                                      <span>Falcon-1024</span>
+                                      <span>Kyber-768</span>
+                                    </div>
+                                  </div>
+                                </div>
+                                
+                                <div
+                                  className={`border rounded-lg p-3 cursor-pointer transition-all duration-200 hover:border-[#FF5AF7] 
+                                    ${field.value === 'maximum' ? 'border-[#FF5AF7] bg-gradient-to-r from-[#6B00D7]/20 to-[#FF5AF7]/20' : 'border-gray-700'}`}
+                                  onClick={() => field.onChange('maximum')}
+                                >
+                                  <div className="flex items-center mb-2">
+                                    <div className="w-5 h-5 rounded-full bg-amber-500/20 text-amber-400 flex items-center justify-center text-xs mr-2">
+                                      <span>3</span>
+                                    </div>
+                                    <h4 className="font-medium text-sm">Maximum</h4>
+                                  </div>
+                                  <p className="text-xs text-gray-400">High-grade security for high-value assets</p>
+                                  <div className="mt-2 text-xs text-gray-500">
+                                    <div className="flex justify-between">
+                                      <span>CRYSTALS-Dilithium</span>
+                                      <span>Kyber-1024</span>
+                                    </div>
+                                  </div>
+                                </div>
+                                
+                                <div
+                                  className={`border rounded-lg p-3 cursor-pointer transition-all duration-200 hover:border-[#FF5AF7] 
+                                    ${field.value === 'fortress' ? 'border-[#FF5AF7] bg-gradient-to-r from-[#6B00D7]/20 to-[#FF5AF7]/20' : 'border-gray-700'}`}
+                                  onClick={() => field.onChange('fortress')}
+                                >
+                                  <div className="flex items-center mb-2">
+                                    <div className="w-5 h-5 rounded-full bg-pink-500/20 text-pink-400 flex items-center justify-center text-xs mr-2">
+                                      <span>★</span>
+                                    </div>
+                                    <h4 className="font-medium text-sm">Fortress™</h4>
+                                  </div>
+                                  <p className="text-xs text-gray-400">Military-grade for critical assets</p>
+                                  <div className="mt-2 text-xs text-gray-500">
+                                    <div className="flex justify-between">
+                                      <span>SPHINCS+</span>
+                                      <span>FrodoKEM-1344</span>
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                              
+                              <p className="text-xs text-gray-500 mt-3 pl-2">
+                                {field.value === 'standard' && "Recommended for assets under 10,000 USD"}
+                                {field.value === 'enhanced' && "Recommended for assets between 10,000 - 100,000 USD"}
+                                {field.value === 'maximum' && "Recommended for assets between 100,000 - 1,000,000 USD"}
+                                {field.value === 'fortress' && "Recommended for assets over 1,000,000 USD"}
+                              </p>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                      )}
                       
                       {/* Cross-Chain Storage Options */}
                       <div className="rounded-md border border-[#6B00D7]/50 p-4 shadow-lg bg-[#1A1A1A]">
