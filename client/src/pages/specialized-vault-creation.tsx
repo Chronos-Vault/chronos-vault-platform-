@@ -52,7 +52,17 @@ function SpecializedVaultCreation() {
   // Configuration state specific to vault types
   const [multiSigApprovers, setMultiSigApprovers] = useState<string[]>(['']);
   const [multiSigThreshold, setMultiSigThreshold] = useState<number>(2);
+  
+  // Geolocation vault state
   const [geolocations, setGeolocations] = useState<string[]>(['']);
+  const [boundaryType, setBoundaryType] = useState<'circle' | 'polygon' | 'country'>('circle');
+  const [radius, setRadius] = useState<string>('500');
+  const [countryCode, setCountryCode] = useState<string>('');
+  const [minAccuracy, setMinAccuracy] = useState<string>('100');
+  const [requiresRealTimeVerification, setRequiresRealTimeVerification] = useState<boolean>(false);
+  const [multiFactorUnlock, setMultiFactorUnlock] = useState<boolean>(false);
+  
+  // Time lock vault state
   const [scheduleType, setScheduleType] = useState<string>('fixed'); // fixed, periodic, conditional
   
   // Handlers
@@ -171,7 +181,40 @@ function SpecializedVaultCreation() {
         specializedConfig.approvers = multiSigApprovers.filter(approver => approver.trim() !== '');
         specializedConfig.threshold = multiSigThreshold;
       } else if (selectedVaultType === SpecializedVaultType.GEOLOCATION) {
-        specializedConfig.safeZones = geolocations.filter(location => location.trim() !== '');
+        // Parse the location strings (format "latitude, longitude") into proper coordinates
+        const coordinates = geolocations
+          .filter(location => location.trim() !== '')
+          .map(location => {
+            const [latStr, lngStr] = location.split(',').map(s => s.trim());
+            const latitude = parseFloat(latStr);
+            const longitude = parseFloat(lngStr);
+            
+            if (isNaN(latitude) || isNaN(longitude)) {
+              throw new Error(`Invalid coordinates: ${location}. Format should be "latitude, longitude"`);
+            }
+            
+            return { latitude, longitude };
+          });
+          
+        if (coordinates.length === 0) {
+          throw new Error('At least one valid location coordinate is required');
+        }
+        
+        // Instead of just setting safeZones, create a proper geo vault object
+        const geoVaultData = {
+          name: vaultName,
+          description: vaultDescription,
+          boundaryType: boundaryType,
+          coordinates: coordinates,
+          radius: boundaryType === 'circle' ? parseInt(radius) : undefined,
+          countryCode: boundaryType === 'country' ? countryCode : undefined,
+          minAccuracy: parseInt(minAccuracy) || undefined,
+          requiresRealTimeVerification: requiresRealTimeVerification,
+          multiFactorUnlock: multiFactorUnlock,
+        };
+        
+        // Store this data - we'll need to make a separate API call
+        specializedConfig.geoVault = geoVaultData;
       } else if (selectedVaultType === SpecializedVaultType.TIME_LOCK) {
         specializedConfig.scheduleType = scheduleType;
         specializedConfig.unlockDate = unlockDateObj.toISOString();
@@ -312,9 +355,52 @@ function SpecializedVaultCreation() {
         privacyEnabled: true
       };
       
-      // Make the API call to create the vault
+      // First create the main vault
       const response = await apiRequest('POST', '/api/vaults', vaultData);
       const createdVault = await response.json();
+      
+      // If this is a geolocation vault, we need to create the geo vault separately
+      if (selectedVaultType === SpecializedVaultType.GEOLOCATION && specializedConfig.geoVault) {
+        try {
+          // Get the geo vault data
+          const geoVaultData = specializedConfig.geoVault;
+          
+          // Add the vault ID from the main vault to link them
+          const geoVaultWithLinks = {
+            ...geoVaultData,
+            // This ensures we associate the geo vault with the main vault
+            metadata: JSON.stringify({
+              mainVaultId: createdVault.id,
+              mainVaultType: selectedVaultType,
+              blockchain: selectedBlockchain
+            })
+          };
+          
+          // Create the geo vault using the dedicated API
+          const geoResponse = await apiRequest('POST', '/api/geo-vaults', geoVaultWithLinks);
+          const createdGeoVault = await geoResponse.json();
+          
+          // Store the geo vault ID in the main vault metadata for reference
+          if (createdGeoVault?.id) {
+            // Update the main vault with the geo vault ID
+            await apiRequest('PATCH', `/api/vaults/${createdVault.id}`, {
+              metadata: JSON.stringify({
+                ...JSON.parse(vaultData.metadata),
+                geoVaultId: createdGeoVault.id
+              })
+            });
+          }
+        } catch (geoError: any) {
+          // If the geo vault creation fails, let's still consider the main vault as created
+          // but add a warning to the success message
+          console.error('Error creating geo vault:', geoError);
+          toast({
+            title: "Warning",
+            description: `Vault created but geolocation features could not be set up: ${geoError.message}`,
+            variant: "warning",
+          });
+        }
+      }
       
       // Create a more detailed success message for quantum-resistant vaults
       let successMessage = `Your ${selectedVaultType.replace('-', ' ')} vault has been created on ${selectedBlockchain}`;
@@ -343,6 +429,8 @@ function SpecializedVaultCreation() {
         // Use type assertion to fix the TypeScript error
         const assetName = cryptoInfo[selectedCryptoAsset as keyof typeof cryptoInfo] || selectedCryptoAsset;
         successMessage = `Your Quantum-Progressive vault has been created with ${assetName} asset protection. Security tier: ${securityTierName}.`;
+      } else if (selectedVaultType === SpecializedVaultType.GEOLOCATION) {
+        successMessage = `Your Geolocation vault has been created with ${boundaryType} boundary. Be sure to verify your location to access vault assets.`;
       }
       
       toast({
@@ -414,7 +502,89 @@ function SpecializedVaultCreation() {
             <h3 className="text-[#00D74B] font-medium">Geolocation Configuration</h3>
             <div className="space-y-4">
               <div>
-                <label className="text-sm text-gray-300 mb-1 block">Safe Zones (Coordinates)</label>
+                <div className="mb-4">
+                  <label className="text-sm text-gray-300 mb-1 block">Boundary Type</label>
+                  <select 
+                    className="w-full px-3 py-2 rounded-md bg-gray-800 border border-gray-700 text-white"
+                    value={boundaryType}
+                    onChange={(e) => setBoundaryType(e.target.value as 'circle' | 'polygon' | 'country')}
+                  >
+                    <option value="circle">Circle (Radius)</option>
+                    <option value="polygon">Polygon (Multiple Points)</option>
+                    <option value="country">Country (Geofence)</option>
+                  </select>
+                </div>
+                
+                {boundaryType === 'circle' && (
+                  <div className="mb-4">
+                    <label className="text-sm text-gray-300 mb-1 block">Radius (meters)</label>
+                    <Input
+                      type="number"
+                      min="100"
+                      value={radius}
+                      onChange={(e) => setRadius(e.target.value)}
+                      placeholder="500"
+                      className="bg-gray-800 border-gray-700"
+                    />
+                    <p className="text-xs text-gray-500 mt-1">Distance in meters from center point</p>
+                  </div>
+                )}
+
+                {boundaryType === 'country' && (
+                  <div className="mb-4">
+                    <label className="text-sm text-gray-300 mb-1 block">Country Code</label>
+                    <Input
+                      value={countryCode}
+                      onChange={(e) => setCountryCode(e.target.value)}
+                      placeholder="US"
+                      maxLength={2}
+                      className="bg-gray-800 border-gray-700"
+                    />
+                    <p className="text-xs text-gray-500 mt-1">2-letter ISO country code (e.g. US, UK, JP)</p>
+                  </div>
+                )}
+                
+                <div className="mb-4">
+                  <label className="text-sm text-gray-300 mb-1 block">Minimum GPS Accuracy (meters)</label>
+                  <Input
+                    type="number"
+                    min="10"
+                    max="1000"
+                    value={minAccuracy}
+                    onChange={(e) => setMinAccuracy(e.target.value)}
+                    placeholder="100"
+                    className="bg-gray-800 border-gray-700"
+                  />
+                  <p className="text-xs text-gray-500 mt-1">Lower values require more precise location</p>
+                </div>
+
+                <div className="mb-4">
+                  <label className="flex items-center space-x-2 cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={requiresRealTimeVerification}
+                      onChange={(e) => setRequiresRealTimeVerification(e.target.checked)}
+                      className="w-4 h-4 bg-gray-800 rounded border-gray-700"
+                    />
+                    <span className="text-sm text-gray-300">Require Real-Time Verification</span>
+                  </label>
+                  <p className="text-xs text-gray-500 mt-1 ml-6">User must verify location in real-time to access vault</p>
+                </div>
+
+                <div className="mb-4">
+                  <label className="flex items-center space-x-2 cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={multiFactorUnlock}
+                      onChange={(e) => setMultiFactorUnlock(e.target.checked)}
+                      className="w-4 h-4 bg-gray-800 rounded border-gray-700"
+                    />
+                    <span className="text-sm text-gray-300">Multi-Factor Unlock</span>
+                  </label>
+                  <p className="text-xs text-gray-500 mt-1 ml-6">Require additional authentication after location verification</p>
+                </div>
+
+                <label className="text-sm text-gray-300 mb-1 block mt-4">{boundaryType === 'circle' ? 'Center Point' : 'Boundary Points'}</label>
                 {geolocations.map((location, index) => (
                   <div key={index} className="flex mb-2">
                     <Input
@@ -423,6 +593,20 @@ function SpecializedVaultCreation() {
                       placeholder="Latitude, Longitude"
                       className="bg-gray-800 border-gray-700 mr-2"
                     />
+                    {index > 0 && (
+                      <Button 
+                        type="button" 
+                        variant="ghost" 
+                        onClick={() => {
+                          const newLocations = [...geolocations];
+                          newLocations.splice(index, 1);
+                          setGeolocations(newLocations);
+                        }}
+                        className="px-2 text-red-400 hover:text-red-300"
+                      >
+                        ✕
+                      </Button>
+                    )}
                   </div>
                 ))}
                 <Button 
