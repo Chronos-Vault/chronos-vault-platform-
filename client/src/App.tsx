@@ -148,6 +148,9 @@ function Router() {
         <Route path="/biometric-vault" component={BiometricVaultPage} />
         <Route path="/zero-knowledge-verification" component={ZeroKnowledgeVerificationPage} />
         <Route path="/multi-chain-sync" component={MultiChainSyncPage} />
+        <Route path="/geo-vaults" component={GeoVaultPage} />
+        <Route path="/geo-vaults/:id" component={GeoVaultPage} />
+        <Route path="/geo-vaults/create" component={GeoVaultPage} />
         <Route path="/geo-vault" component={GeoVaultPage} />
 
         <Route component={NotFound} />

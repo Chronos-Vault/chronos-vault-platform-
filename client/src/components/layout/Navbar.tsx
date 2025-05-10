@@ -60,6 +60,7 @@ const Navbar = () => {
         { name: "Advanced Security Demo", href: "/security-verification-demo", icon: "🔍", highlight: true },
         { name: "ZK Privacy Demo", href: "/zk-privacy-demo", icon: "🔐", highlight: true },
         { name: "Vault Explorer", href: "/vault-explorer", icon: "🔎", highlight: true },
+        { name: "Geolocation Vault", href: "/geo-vaults", icon: "🗺️", highlight: true },
       ]
     },
     {
@@ -249,6 +250,11 @@ const Navbar = () => {
                 <Link href="/multi-signature-vault-new">
                   <DropdownMenuItem className="cursor-pointer">
                     <span className="flex items-center gap-1"><span>🔐</span> Multi-Signature Vault</span>
+                  </DropdownMenuItem>
+                </Link>
+                <Link href="/geo-vaults">
+                  <DropdownMenuItem className="cursor-pointer">
+                    <span className="flex items-center gap-1"><span>🗺️</span> Geolocation Vault</span>
                   </DropdownMenuItem>
                 </Link>
               </DropdownMenuContent>
