@@ -256,7 +256,7 @@ export default function CrossChainSecurityDashboard() {
                   />
                   <div className="mt-2 text-xs text-gray-400 flex items-center">
                     <Clock className="h-3 w-3 mr-1" />
-                    <span>Last sync: {formatDate(status.crossChainSyncStatus.lastSyncTime)}</span>
+                    <span>Last sync: {status.crossChainSyncStatus.lastSyncTime ? new Date(status.crossChainSyncStatus.lastSyncTime).toLocaleString() : 'Never'}</span>
                   </div>
                 </div>
               </CardContent>
@@ -288,7 +288,7 @@ export default function CrossChainSecurityDashboard() {
                   </div>
                   <div className="flex justify-between text-sm">
                     <span className="text-gray-400">Last Update</span>
-                    <span>{formatDate(status.chainStatuses[status.primaryChain].lastSyncTimestamp)}</span>
+                    <span>{status.chainStatuses[status.primaryChain].lastSyncTimestamp ? new Date(status.chainStatuses[status.primaryChain].lastSyncTimestamp).toLocaleString() : 'Never'}</span>
                   </div>
                 </div>
               </CardContent>
@@ -350,7 +350,7 @@ export default function CrossChainSecurityDashboard() {
                             <span>{alert.message}</span>
                           </div>
                           <div className="text-xs text-gray-400 mt-1">
-                            {formatDate(alert.timestamp)}
+                            {alert.timestamp ? new Date(alert.timestamp).toLocaleString() : 'Unknown'}
                           </div>
                         </div>
                       ))
@@ -405,7 +405,7 @@ export default function CrossChainSecurityDashboard() {
                               Strategy: {getRecoveryStrategyName(failover.strategy)}
                             </div>
                             <div className="text-xs text-gray-400">
-                              {formatDate(failover.timestamp)}
+                              {failover.timestamp ? new Date(failover.timestamp).toLocaleString() : 'Unknown'}
                             </div>
                           </div>
                         </div>
@@ -478,7 +478,7 @@ export default function CrossChainSecurityDashboard() {
                               </Badge>
                             </td>
                             <td className="py-3 px-4">{alert.message}</td>
-                            <td className="py-3 px-4 text-gray-400">{formatDate(alert.timestamp)}</td>
+                            <td className="py-3 px-4 text-gray-400">{alert.timestamp ? new Date(alert.timestamp).toLocaleString() : 'Unknown'}</td>
                             <td className="py-3 px-4">
                               <Badge variant={alert.resolved ? "outline" : "secondary"}>
                                 {alert.resolved ? "Resolved" : "Active"}
@@ -530,7 +530,7 @@ export default function CrossChainSecurityDashboard() {
                             </td>
                             <td className="py-3 px-4">{getRecoveryStrategyName(failover.strategy)}</td>
                             <td className="py-3 px-4 text-gray-400">{failover.reason}</td>
-                            <td className="py-3 px-4 text-gray-400">{formatDate(failover.timestamp)}</td>
+                            <td className="py-3 px-4 text-gray-400">{failover.timestamp ? new Date(failover.timestamp).toLocaleString() : 'Unknown'}</td>
                           </tr>
                         ))}
                       </tbody>
