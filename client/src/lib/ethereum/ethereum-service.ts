@@ -74,7 +74,7 @@ class EthereumService {
   private signer: Signer | null = null;
   private address: string | null = null;
   private network: EthereumNetwork = 'sepolia'; // Default to Sepolia testnet
-  private isConnected: boolean = false;
+  private _isConnected: boolean = false; // Renamed to avoid duplicate identifier
   private isDevelopmentMode: boolean = false;
   private lastError: string | null = null;
   private errorType: EthereumErrorType | null = null;
@@ -158,7 +158,7 @@ class EthereumService {
    * Set up development mode with simulated wallet
    */
   private setupDevMode(): void {
-    this.isConnected = true;
+    this._isConnected = true;
     this.address = '0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266'; // Standard hardhat test address
     console.log('Running in development mode with simulated wallet:', this.address);
   }
@@ -169,7 +169,7 @@ class EthereumService {
   async connect(): Promise<boolean> {
     // Skip real connection in development mode
     if (this.isDevelopmentMode) {
-      this.isConnected = true;
+      this._isConnected = true;
       this.address = '0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266'; // Standard hardhat test address
       console.log('Development mode: Simulated successful connection to:', this.address);
       return true;
@@ -193,7 +193,7 @@ class EthereumService {
       this.signer = signer;
       
       // Update connection state
-      this.isConnected = true;
+      this._isConnected = true;
       this.lastError = null;
       
       console.log(`Connected to Ethereum wallet at ${this.address}`);
@@ -203,7 +203,7 @@ class EthereumService {
       console.error('Error connecting to Ethereum wallet:', error);
       
       // Ensure disconnected state
-      this.isConnected = false;
+      this._isConnected = false;
       this.signer = null;
       this.address = null;
       
@@ -217,7 +217,7 @@ class EthereumService {
   disconnect(): boolean {
     this.signer = null;
     this.address = null;
-    this.isConnected = false;
+    this._isConnected = false;
     
     // Reset to provider-only state
     if (typeof window !== 'undefined' && window.ethereum) {
@@ -229,6 +229,16 @@ class EthereumService {
   }
   
   /**
+   * Check if connected to Ethereum wallet
+   * Required method for cross-chain security monitoring
+   * @returns boolean indicating if the wallet is connected
+   */
+  isConnected(): boolean {
+    // Using the private property, avoiding recursion
+    return !!this.signer && !!this.address && this._isConnected === true;
+  }
+
+  /**
    * Get connection state
    */
   getConnectionState(): EthereumConnectionState {
@@ -237,7 +247,7 @@ class EthereumService {
     let balance = null;
     
     return {
-      isConnected: this.isConnected,
+      isConnected: this._isConnected,
       address: this.address,
       chainId,
       networkName,
@@ -304,7 +314,7 @@ class EthereumService {
       this.provider = new BrowserProvider(window.ethereum);
       
       // If connected, update signer
-      if (this.isConnected) {
+      if (this._isConnected) {
         this.signer = await this.provider.getSigner();
       }
       
@@ -320,7 +330,7 @@ class EthereumService {
    * Check if connected to Ethereum wallet
    */
   isWalletConnected(): boolean {
-    return this.isConnected;
+    return this._isConnected;
   }
   
   /**
@@ -369,7 +379,7 @@ class EthereumService {
         };
       }
 
-      if (!this.isConnected || !this.signer) {
+      if (!this._isConnected || !this.signer) {
         throw new Error('Wallet not connected');
       }
 
@@ -409,7 +419,7 @@ class EthereumService {
         };
       }
 
-      if (!this.isConnected || !this.signer) {
+      if (!this._isConnected || !this.signer) {
         throw new Error('Wallet not connected');
       }
       
