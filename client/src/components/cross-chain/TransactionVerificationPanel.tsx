@@ -6,7 +6,7 @@ import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Separator } from '@/components/ui/separator';
 import { Badge } from '@/components/ui/badge';
 import { Loader2, AlertTriangle, CheckCircle, XCircle, RefreshCw, Shield } from 'lucide-react';
-import { useDevMode } from '@/hooks/use-dev-mode';
+import { useDevMode } from '@/contexts/dev-mode-context';
 import { useToast } from '@/hooks/use-toast';
 import { tonContractService } from '@/lib/ton/ton-contract-service';
 
@@ -255,7 +255,9 @@ const TransactionVerificationPanel: React.FC<TransactionVerificationPanelProps> 
         });
       } else {
         // Check connection quality from TON service
-        const connectionQuality = tonContractService.getConnectionQuality?.() || 'poor';
+        const connectionStatus = tonContractService.getConnectionStatus();
+        const connectionQuality = connectionStatus === 'connected' ? 'good' : 
+                                 connectionStatus === 'connecting' ? 'poor' : 'failed';
         
         updateChainStatus('ton', 'failed', {
           message: 'Failed to verify transaction on TON',
@@ -270,9 +272,6 @@ const TransactionVerificationPanel: React.FC<TransactionVerificationPanelProps> 
             description: 'Attempting to recover TON connection...',
             variant: 'default'
           });
-          
-          // Reset TON connection state
-          tonContractService.resetConnectionState?.();
           
           // Retry after a short delay
           setTimeout(() => {
@@ -435,7 +434,7 @@ const TransactionVerificationPanel: React.FC<TransactionVerificationPanelProps> 
           <Alert variant={
             overallStatus === 'success' ? 'default' :
             overallStatus === 'partial' ? 'default' :
-            overallStatus === 'failed' ? 'destructive' : 'outline'
+            overallStatus === 'failed' ? 'destructive' : undefined
           }>
             <AlertTitle className="flex items-center gap-2">
               {overallStatus === 'success' && <CheckCircle className="h-4 w-4 text-green-500" />}
