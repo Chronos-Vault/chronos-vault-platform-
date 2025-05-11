@@ -6,6 +6,8 @@ interface DevModeContextType {
   isDevMode: boolean;  // Alias for devModeEnabled for compatibility
   toggleDevMode: () => void;
   isDevelopmentEnvironment: boolean;
+  bypassWalletRequirements: boolean;
+  setBypassWalletRequirements: (value: boolean) => void;
 }
 
 // Create the context with default values
@@ -14,6 +16,8 @@ export const DevModeContext = createContext<DevModeContextType>({
   isDevMode: false,
   toggleDevMode: () => {},
   isDevelopmentEnvironment: false,
+  bypassWalletRequirements: false,
+  setBypassWalletRequirements: () => {},
 });
 
 // Props for the provider component
@@ -28,14 +32,22 @@ export function DevModeProvider({ children }: DevModeProviderProps) {
     import.meta.env.MODE === 'development' || 
     import.meta.env.DEV === true;
 
-  // State to track if dev mode is enabled
+  // State to track if dev mode and bypass wallet are enabled
   const [devModeEnabled, setDevModeEnabled] = useState<boolean>(false);
+  const [bypassWalletRequirements, setBypassWalletRequirements] = useState<boolean>(false);
 
   // Initialize from localStorage on mount
   useEffect(() => {
+    // Load dev mode setting
     const savedDevMode = localStorage.getItem('chronosVault_devMode');
     if (savedDevMode === 'true') {
       setDevModeEnabled(true);
+    }
+    
+    // Load bypass wallet setting
+    const savedBypassWallet = localStorage.getItem('chronosVault_bypassWallet');
+    if (savedBypassWallet === 'true') {
+      setBypassWalletRequirements(true);
     }
   }, []);
 

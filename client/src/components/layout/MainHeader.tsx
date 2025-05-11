@@ -439,23 +439,42 @@ const MainHeader = () => {
                             <div className="grid grid-cols-2 gap-2 pl-1">
                               {category.items.map((link) => (
                                 <SheetClose key={link.name} asChild>
-                                  <Link 
-                                    href={link.href}
-                                    className={`flex flex-col items-center justify-center gap-1 px-2 py-3 rounded-lg text-center ${location === link.href 
-                                      ? 'bg-[#6B00D7]/20 text-white font-poppins font-semibold' 
-                                      : 'text-gray-300 hover:text-white hover:bg-[#6B00D7]/10 font-poppins font-medium transition-all'
-                                    } ${link.highlight ? 'relative bg-gradient-to-r from-[#6B00D7]/20 to-[#FF5AF7]/20 border border-[#FF5AF7]/30 text-[#FF5AF7] shadow-sm' : ''}`}
-                                  >
-                                    <div className="flex items-center justify-center w-10 h-10 rounded-lg bg-gradient-to-br from-[#6B00D7]/30 to-[#FF5AF7]/20 shadow-inner shadow-[#6B00D7]/10 border border-[#6B00D7]/20">
-                                      <span className="text-xl text-[#FF5AF7]">{link.icon}</span>
-                                    </div>
-                                    <div className="relative">
-                                      <span className="text-sm">{link.name}</span>
-                                      {link.isNew ? (
-                                        <div className="absolute -top-3 -right-6 bg-[#FF5AF7] text-white text-[8px] px-1.5 py-0.5 rounded-full font-bold tracking-wider shadow-md shadow-[#FF5AF7]/30 animate-pulse">NEW</div>
-                                      ) : null}
-                                    </div>
-                                  </Link>
+                                  {link.isAction ? (
+                                    <button
+                                      onClick={link.action}
+                                      className={`flex flex-col items-center justify-center gap-1 px-2 py-3 rounded-lg text-center w-full
+                                        text-gray-300 hover:text-white hover:bg-[#6B00D7]/10 font-poppins font-medium transition-all
+                                        ${link.highlight ? 'relative bg-gradient-to-r from-[#6B00D7]/20 to-[#FF5AF7]/20 border border-[#FF5AF7]/30 text-[#FF5AF7] shadow-sm' : ''}`}
+                                    >
+                                      <div className="flex items-center justify-center w-10 h-10 rounded-lg bg-gradient-to-br from-[#6B00D7]/30 to-[#FF5AF7]/20 shadow-inner shadow-[#6B00D7]/10 border border-[#6B00D7]/20">
+                                        <span className="text-xl text-[#FF5AF7]">{link.icon}</span>
+                                      </div>
+                                      <div className="relative">
+                                        <span className="text-sm">{link.name}</span>
+                                        {link.isNew ? (
+                                          <div className="absolute -top-3 -right-6 bg-[#FF5AF7] text-white text-[8px] px-1.5 py-0.5 rounded-full font-bold tracking-wider shadow-md shadow-[#FF5AF7]/30 animate-pulse">NEW</div>
+                                        ) : null}
+                                      </div>
+                                    </button>
+                                  ) : (
+                                    <Link 
+                                      href={link.href}
+                                      className={`flex flex-col items-center justify-center gap-1 px-2 py-3 rounded-lg text-center ${location === link.href 
+                                        ? 'bg-[#6B00D7]/20 text-white font-poppins font-semibold' 
+                                        : 'text-gray-300 hover:text-white hover:bg-[#6B00D7]/10 font-poppins font-medium transition-all'
+                                      } ${link.highlight ? 'relative bg-gradient-to-r from-[#6B00D7]/20 to-[#FF5AF7]/20 border border-[#FF5AF7]/30 text-[#FF5AF7] shadow-sm' : ''}`}
+                                    >
+                                      <div className="flex items-center justify-center w-10 h-10 rounded-lg bg-gradient-to-br from-[#6B00D7]/30 to-[#FF5AF7]/20 shadow-inner shadow-[#6B00D7]/10 border border-[#6B00D7]/20">
+                                        <span className="text-xl text-[#FF5AF7]">{link.icon}</span>
+                                      </div>
+                                      <div className="relative">
+                                        <span className="text-sm">{link.name}</span>
+                                        {link.isNew ? (
+                                          <div className="absolute -top-3 -right-6 bg-[#FF5AF7] text-white text-[8px] px-1.5 py-0.5 rounded-full font-bold tracking-wider shadow-md shadow-[#FF5AF7]/30 animate-pulse">NEW</div>
+                                        ) : null}
+                                      </div>
+                                    </Link>
+                                  )}
                                 </SheetClose>
                               ))}
                             </div>
@@ -463,23 +482,43 @@ const MainHeader = () => {
                             <div className="grid grid-cols-1 gap-2 pl-1">
                               {category.items.map((link) => (
                                 <SheetClose key={link.name} asChild>
-                                  <Link 
-                                    href={link.href}
-                                    className={`flex items-center gap-3 px-3 py-3 rounded-lg ${location === link.href 
-                                      ? 'bg-[#6B00D7]/20 text-white font-poppins font-semibold border-l-2 border-[#FF5AF7]' 
-                                      : 'text-gray-300 hover:text-white hover:bg-[#6B00D7]/10 font-poppins font-medium transition-all'
-                                    } ${link.highlight ? 'relative bg-gradient-to-r from-[#6B00D7]/20 to-[#FF5AF7]/20 border border-[#FF5AF7]/30 text-[#FF5AF7] shadow-sm' : ''}`}
-                                  >
-                                    <div className="flex items-center justify-center w-10 h-10 rounded-lg bg-gradient-to-br from-[#6B00D7]/30 to-[#FF5AF7]/20 shadow-inner shadow-[#6B00D7]/10 border border-[#6B00D7]/20">
-                                      <span className="text-xl text-[#FF5AF7]">{link.icon}</span>
-                                    </div>
-                                    <div className="relative">
-                                      <span className="text-base">{link.name}</span>
-                                      {link.isNew ? (
-                                        <div className="absolute -top-3 -right-6 bg-[#FF5AF7] text-white text-[8px] px-1.5 py-0.5 rounded-full font-bold tracking-wider shadow-md shadow-[#FF5AF7]/30 animate-pulse">NEW</div>
-                                      ) : null}
-                                    </div>
-                                  </Link>
+                                  {link.isAction ? (
+                                    <button
+                                      onClick={link.action}
+                                      className={`flex items-center gap-3 px-3 py-3 rounded-lg w-full text-left
+                                        text-gray-300 hover:text-white hover:bg-[#6B00D7]/10 font-poppins font-medium transition-all
+                                        ${link.highlight ? 'relative bg-gradient-to-r from-[#6B00D7]/20 to-[#FF5AF7]/20 border border-[#FF5AF7]/30 text-[#FF5AF7] shadow-sm' : ''}
+                                      `}
+                                    >
+                                      <div className="flex items-center justify-center w-10 h-10 rounded-lg bg-gradient-to-br from-[#6B00D7]/30 to-[#FF5AF7]/20 shadow-inner shadow-[#6B00D7]/10 border border-[#6B00D7]/20">
+                                        <span className="text-xl text-[#FF5AF7]">{link.icon}</span>
+                                      </div>
+                                      <div className="relative">
+                                        <span className="text-base">{link.name}</span>
+                                        {link.isNew ? (
+                                          <div className="absolute -top-3 -right-6 bg-[#FF5AF7] text-white text-[8px] px-1.5 py-0.5 rounded-full font-bold tracking-wider shadow-md shadow-[#FF5AF7]/30 animate-pulse">NEW</div>
+                                        ) : null}
+                                      </div>
+                                    </button>
+                                  ) : (
+                                    <Link 
+                                      href={link.href}
+                                      className={`flex items-center gap-3 px-3 py-3 rounded-lg ${location === link.href 
+                                        ? 'bg-[#6B00D7]/20 text-white font-poppins font-semibold border-l-2 border-[#FF5AF7]' 
+                                        : 'text-gray-300 hover:text-white hover:bg-[#6B00D7]/10 font-poppins font-medium transition-all'
+                                      } ${link.highlight ? 'relative bg-gradient-to-r from-[#6B00D7]/20 to-[#FF5AF7]/20 border border-[#FF5AF7]/30 text-[#FF5AF7] shadow-sm' : ''}`}
+                                    >
+                                      <div className="flex items-center justify-center w-10 h-10 rounded-lg bg-gradient-to-br from-[#6B00D7]/30 to-[#FF5AF7]/20 shadow-inner shadow-[#6B00D7]/10 border border-[#6B00D7]/20">
+                                        <span className="text-xl text-[#FF5AF7]">{link.icon}</span>
+                                      </div>
+                                      <div className="relative">
+                                        <span className="text-base">{link.name}</span>
+                                        {link.isNew ? (
+                                          <div className="absolute -top-3 -right-6 bg-[#FF5AF7] text-white text-[8px] px-1.5 py-0.5 rounded-full font-bold tracking-wider shadow-md shadow-[#FF5AF7]/30 animate-pulse">NEW</div>
+                                        ) : null}
+                                      </div>
+                                    </Link>
+                                  )}
                                 </SheetClose>
                               ))}
                             </div>
