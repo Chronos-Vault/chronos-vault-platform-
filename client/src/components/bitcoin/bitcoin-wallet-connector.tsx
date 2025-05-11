@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useBitcoinWallet } from '@/contexts/bitcoin-wallet-context';
-import { Bitcoin, BitcoinCircle, Wallet, RefreshCw, LogOut, ChevronDown, ShieldCheck } from 'lucide-react';
+import { Bitcoin, Wallet, RefreshCw, LogOut, ChevronDown, ShieldCheck } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
@@ -210,6 +210,8 @@ export function BitcoinWalletConnector({ className }: BitcoinWalletConnectorProp
               </>
             )}
           </div>
+          
+          {/* Removed the extra DialogFooter with Close button that was causing duplicate close buttons */}
         </DialogContent>
       </Dialog>
     </>
