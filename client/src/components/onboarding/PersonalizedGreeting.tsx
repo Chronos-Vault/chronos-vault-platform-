@@ -42,9 +42,9 @@ export const PersonalizedGreeting = () => {
   };
   
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center p-6 bg-gradient-to-b from-background to-background/90">
+    <div className="min-h-screen flex flex-col items-center justify-center p-4 sm:p-6 bg-gradient-to-b from-background to-background/90">
       <motion.div
-        className="max-w-md w-full"
+        className="max-w-md w-full px-2 sm:px-0"
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}

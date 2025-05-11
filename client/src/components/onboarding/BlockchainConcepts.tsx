@@ -19,10 +19,10 @@ export const BlockchainConcepts = () => {
   };
   
   return (
-    <div className="min-h-screen flex flex-col p-6 bg-background overflow-hidden">
-      <div className="max-w-5xl mx-auto w-full flex-1 flex flex-col">
+    <div className="min-h-screen flex flex-col p-3 sm:p-6 bg-background overflow-x-hidden">
+      <div className="max-w-5xl mx-auto w-full flex-1 flex flex-col py-4">
         <motion.div
-          className="text-center mb-10"
+          className="text-center mb-6 sm:mb-10 px-2"
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
@@ -47,28 +47,31 @@ export const BlockchainConcepts = () => {
             onValueChange={handleTabChange}
             className="w-full"
           >
-            <TabsList className="grid grid-cols-3 mb-10">
+            <TabsList className="grid grid-cols-3 mb-6 sm:mb-10 text-xs sm:text-base">
               <TabsTrigger 
                 value="vault"
-                className={activeTab === 'vault' ? 'bg-gradient-to-r from-purple-700/20 to-purple-800/20 text-purple-400' : ''}
+                className={activeTab === 'vault' ? 'bg-gradient-to-r from-purple-700/20 to-purple-800/20 text-purple-400 px-1 sm:px-4' : 'px-1 sm:px-4'}
               >
-                Digital Vaults
+                <span className="hidden sm:inline">Digital Vaults</span>
+                <span className="sm:hidden">Vaults</span>
               </TabsTrigger>
               <TabsTrigger 
                 value="timelock"
-                className={activeTab === 'timelock' ? 'bg-gradient-to-r from-pink-700/20 to-pink-800/20 text-pink-400' : ''}
+                className={activeTab === 'timelock' ? 'bg-gradient-to-r from-pink-700/20 to-pink-800/20 text-pink-400 px-1 sm:px-4' : 'px-1 sm:px-4'}
               >
-                Time-Lock Mechanism
+                <span className="hidden sm:inline">Time-Lock Mechanism</span>
+                <span className="sm:hidden">Time-Lock</span>
               </TabsTrigger>
               <TabsTrigger 
                 value="crosschain"
-                className={activeTab === 'crosschain' ? 'bg-gradient-to-r from-blue-700/20 to-blue-800/20 text-blue-400' : ''}
+                className={activeTab === 'crosschain' ? 'bg-gradient-to-r from-blue-700/20 to-blue-800/20 text-blue-400 px-1 sm:px-4' : 'px-1 sm:px-4'}
               >
-                Triple-Chain Security
+                <span className="hidden sm:inline">Triple-Chain Security</span>
+                <span className="sm:hidden">Security</span>
               </TabsTrigger>
             </TabsList>
             
-            <div className="relative min-h-[400px] md:min-h-[500px] border rounded-lg p-4 overflow-hidden bg-background/50 border-border">
+            <div className="relative min-h-[300px] sm:min-h-[400px] md:min-h-[500px] border rounded-lg p-2 sm:p-4 overflow-hidden bg-background/50 border-border">
               <TabsContent value="vault" className="mt-0 h-full">
                 <VaultMetaphor />
               </TabsContent>

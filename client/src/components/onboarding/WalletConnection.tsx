@@ -65,10 +65,10 @@ const WalletConnection = () => {
   };
 
   return (
-    <div className="min-h-screen flex flex-col justify-center p-6 bg-background">
-      <div className="max-w-3xl mx-auto w-full">
+    <div className="min-h-screen flex flex-col justify-center p-3 sm:p-6 bg-background">
+      <div className="max-w-3xl mx-auto w-full px-2 sm:px-0">
         <motion.div
-          className="text-center mb-10"
+          className="text-center mb-6 sm:mb-10"
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
@@ -85,7 +85,7 @@ const WalletConnection = () => {
           initial="hidden"
           animate="visible"
           variants={containerVariants}
-          className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-10"
+          className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 sm:gap-4 mb-6 sm:mb-10"
         >
           {wallets.map((wallet) => (
             <motion.div key={wallet.id} variants={itemVariants}>

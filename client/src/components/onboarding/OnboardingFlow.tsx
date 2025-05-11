@@ -50,6 +50,14 @@ export const OnboardingFlow = () => {
         />
       </div>
       
+      {/* Mobile-friendly text indicator */}
+      <div className="fixed top-2 right-3 z-50 bg-background/60 backdrop-blur-sm text-xs rounded-full px-2 py-1 border border-border shadow-sm">
+        <span className="text-muted-foreground font-medium">
+          Step {currentStep !== 'complete' ? 
+            ['welcome', 'concepts', 'personalization', 'blockchain-explainer', 'wallet-connection'].indexOf(currentStep) + 1 : 5} of 5
+        </span>
+      </div>
+      
       {/* Current step content */}
       <div className="flex-1 flex flex-col">
         {renderCurrentStep()}
