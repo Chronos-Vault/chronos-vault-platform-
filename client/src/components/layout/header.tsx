@@ -274,7 +274,7 @@ const Header = () => {
                   <div className="pt-4 mt-4 border-t border-[#6B00D7]/30 space-y-4">
                     <div className="mb-4">
                       <h3 className="text-sm font-medium text-[#FF5AF7] mb-3 flex items-center">
-                        <div className="h-8 w-8 mr-2 rounded-full flex items-center justify-center shadow-lg shadow-[#FF5AF7]/30 overflow-hidden border border-white/20">
+                        <div className="h-10 w-10 mr-2 rounded-full flex items-center justify-center shadow-xl shadow-[#FF5AF7]/40 overflow-hidden border-2 border-white/40 animate-logo-glow">
                           <img src={logoPath} alt="Chronos Vault Logo" className="w-full h-full object-cover" />
                         </div>
                         Connect Wallet
