@@ -1,5 +1,5 @@
 import React from 'react';
-import Navbar from './Navbar';
+import MainHeader from './MainHeader';
 import Footer from './footer';
 import { useLocation } from 'wouter';
 
@@ -12,7 +12,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
 
   return (
     <div className="min-h-screen flex flex-col">
-      <Navbar />
+      <MainHeader />
       <main className="flex-1">
         {children}
       </main>
