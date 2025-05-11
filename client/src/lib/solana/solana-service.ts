@@ -228,7 +228,7 @@ class SolanaService {
       // In production, this would be securely stored or derived from a wallet
       this.keypair = new Keypair();
       
-      this.isConnected = true;
+      this._isConnected = true;
       this.connectionQuality = 'good';
       this.consecutiveErrors = 0;
       this.retryAttempt = 0;
@@ -236,7 +236,7 @@ class SolanaService {
       console.log(`Solana service initialized with ${this.network} for testnet development`);
     } catch (error: any) {
       console.error('Failed to initialize Solana service', error);
-      this.isConnected = false;
+      this._isConnected = false;
       this.lastError = 'Failed to initialize Solana service: ' + (error.message || 'Unknown error');
       this.errorType = this.categorizeError(error);
       this.connectionQuality = 'failed';
@@ -270,7 +270,7 @@ class SolanaService {
     try {
       const seed = new Uint8Array(32).fill(1);
       this.keypair = Keypair.fromSeed(seed);
-      this.isConnected = true;
+      this._isConnected = true;
       this.connectionQuality = 'excellent'; // Development mode is always "excellent"
       console.log('Solana running in development mode with simulated wallet:', this.keypair.publicKey.toString());
     } catch (error) {
@@ -531,7 +531,7 @@ class SolanaService {
       return false;
     }
     
-    return this.isConnected && !!this.connection;
+    return this._isConnected && !!this.connection;
   }
   
   /**
@@ -540,8 +540,7 @@ class SolanaService {
    * @returns boolean indicating if the wallet is connected
    */
   isConnected(): boolean {
-    // Using isServiceConnected to avoid recursion with the isConnected property
-    return this.isServiceConnected();
+    return this._isConnected && !!this.connection && !this.circuitBreakerOpen;
   }
   
   /**
@@ -730,14 +729,14 @@ class SolanaService {
       console.log(`Connecting to Solana wallet${walletName ? ` (${walletName})` : ''}...`);
       
       // Simulate connection success for testing
-      this.isConnected = true;
+      this._isConnected = true;
       
       return true;
     } catch (error: any) {
       const errorType = this.categorizeError(error);
       this.handleError(error, errorType, 'Failed to connect to wallet');
       
-      this.isConnected = false;
+      this._isConnected = false;
       return false;
     }
   }
@@ -751,7 +750,7 @@ class SolanaService {
       console.log('Disconnecting from Solana wallet...');
       
       // Simulate disconnection success
-      this.isConnected = false;
+      this._isConnected = false;
       
       return true;
     } catch (error: any) {
@@ -766,7 +765,7 @@ class SolanaService {
    * Get wallet info
    */
   getWalletInfo(): SolanaWalletInfo | null {
-    if (!this.isConnected || !this.keypair) {
+    if (!this._isConnected || !this.keypair) {
       return null;
     }
     
@@ -783,7 +782,7 @@ class SolanaService {
    */
   getEnhancedConnectionState(): EnhancedSolanaConnectionState {
     return {
-      isConnected: this.isConnected,
+      isConnected: this._isConnected,
       connectionQuality: this.connectionQuality,
       lastError: this.lastError,
       errorType: this.errorType,
@@ -798,7 +797,7 @@ class SolanaService {
    */
   getConnectionState(): SolanaConnectionState {
     return {
-      isConnected: this.isConnected,
+      isConnected: this._isConnected,
       wallet: this.keypair ? { 
         name: 'Development Wallet',
         adapter: {},
@@ -833,7 +832,7 @@ class SolanaService {
       };
     }
     
-    if (!this.isConnected || !this.connection || !this.keypair) {
+    if (!this._isConnected || !this.connection || !this.keypair) {
       return { 
         success: false,
         error: 'Wallet not connected'
@@ -944,7 +943,7 @@ class SolanaService {
       };
     }
     
-    if (!this.isConnected || !this.connection || !this.keypair) {
+    if (!this._isConnected || !this.connection || !this.keypair) {
       return { 
         success: false,
         error: 'Wallet not connected'
