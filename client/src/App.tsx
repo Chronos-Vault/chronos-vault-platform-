@@ -18,6 +18,7 @@ import Layout from "@/components/layout/Layout";
 
 // Pages
 import Home from "@/pages/home-modern";
+import OnboardingPage from "@/pages/onboarding-page";
 import CreateVault from "@/pages/create-vault";
 import CreateVaultEnhancedPage from "@/pages/create-vault-enhanced";
 import AdvancedVaultCreationPage from "@/pages/advanced-vault-creation";
@@ -96,6 +97,7 @@ function Router() {
     <Layout>
       <Switch>
         <Route path="/" component={Home} />
+        <Route path="/onboarding" component={OnboardingPage} />
         {/* Important: Route order matters! More specific routes should come before less specific ones */}
         <Route path="/create-vault/cross-chain" component={CreateVault} />
         <Route path="/create-vault" component={CreateVault} />
