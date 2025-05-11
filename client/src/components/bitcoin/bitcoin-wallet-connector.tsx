@@ -1,22 +1,26 @@
 import { useState } from 'react';
 import { useBitcoinWallet } from '@/contexts/bitcoin-wallet-context';
-import { Bitcoin, Wallet, RefreshCw, LogOut, ChevronDown } from 'lucide-react';
+import { Bitcoin, BitcoinCircle, Wallet, RefreshCw, LogOut, ChevronDown, ShieldCheck } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import {
   Dialog,
   DialogContent,
   DialogDescription,
+  DialogFooter,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
+  DialogClose,
 } from '@/components/ui/dialog';
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardHeader, CardTitle } from '@/components/ui/card';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useDevMode } from '@/contexts/dev-mode-context';
@@ -39,6 +43,9 @@ export function BitcoinWalletConnector({ className }: BitcoinWalletConnectorProp
   const { devModeEnabled } = useDevMode();
   const [isOpen, setIsOpen] = useState(false);
   
+  // Check if it's a mobile context
+  const isMobileContext = className?.includes('mobile-version');
+  
   // Handle wallet connection
   const handleConnect = async (provider: string) => {
     await connectWallet(provider);
@@ -46,9 +53,19 @@ export function BitcoinWalletConnector({ className }: BitcoinWalletConnectorProp
   };
   
   // Format address for display
-  const formatAddress = (address: string) => {
+  const formatAddress = (address: string, truncateLength = 6) => {
     if (!address) return '';
-    return `${address.substring(0, 6)}...${address.substring(address.length - 4)}`;
+    return `${address.substring(0, truncateLength)}...${address.substring(address.length - 4)}`;
+  };
+  
+  // Format balance with proper number of decimals
+  const formatBalance = (balance: string | number, decimals = 4) => {
+    try {
+      const numBalance = typeof balance === 'number' ? balance : Number(balance);
+      return numBalance.toFixed(decimals);
+    } catch (e) {
+      return '0.0000';
+    }
   };
 
   // If connected, show wallet info
@@ -60,7 +77,7 @@ export function BitcoinWalletConnector({ className }: BitcoinWalletConnectorProp
             <Button 
               variant="outline" 
               className={`flex items-center gap-1 bg-gradient-to-r from-orange-50 to-amber-50 hover:from-orange-100 hover:to-amber-100 border-orange-200 text-orange-900 dark:from-orange-950/30 dark:to-amber-950/30 dark:hover:from-orange-950/40 dark:hover:to-amber-950/40 dark:border-orange-800 dark:text-orange-300 px-3 py-2 ${
-                className?.includes('mobile-version') ? 'text-xs min-w-0 w-full' : ''
+                isMobileContext ? 'text-xs min-w-0 w-full' : ''
               }`}
             >
               <Bitcoin className="h-4 w-4 text-orange-600 dark:text-orange-400" />
@@ -70,19 +87,26 @@ export function BitcoinWalletConnector({ className }: BitcoinWalletConnectorProp
                 <span className="hidden md:inline">{formatAddress(walletInfo.address)}</span>
               )}
               <span className={`${isMobileContext ? '' : 'md:ml-2'} font-mono font-medium text-green-600 dark:text-green-400 ${isMobileContext ? 'text-xs' : ''}`}>
-                {typeof walletInfo.balance === 'number' 
-                  ? walletInfo.balance.toFixed(isMobileContext ? 2 : 4) 
-                  : Number(walletInfo.balance).toFixed(isMobileContext ? 2 : 4)} {isMobileContext ? 'BTC' : 'BTC'}
+                {formatBalance(walletInfo.balance, isMobileContext ? 2 : 4)} BTC
               </span>
               <ChevronDown className="h-4 w-4 ml-1 text-orange-600 dark:text-orange-400" />
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end" className="w-56">
+            <DropdownMenuLabel className="font-normal">
+              <div className="flex flex-col space-y-1">
+                <p className="text-sm font-medium leading-none">Bitcoin Wallet</p>
+                <p className="text-xs leading-none text-muted-foreground">
+                  {walletInfo.address}
+                </p>
+              </div>
+            </DropdownMenuLabel>
+            <DropdownMenuSeparator />
             <DropdownMenuItem className="flex items-center gap-2" onClick={() => refreshWalletInfo()}>
               <RefreshCw className="h-4 w-4" />
               <span>Refresh Balance</span>
             </DropdownMenuItem>
-            
+            <DropdownMenuSeparator />
             <DropdownMenuItem className="flex items-center gap-2 text-red-600 dark:text-red-400" onClick={disconnectWallet}>
               <LogOut className="h-4 w-4" />
               <span>Disconnect Wallet</span>
@@ -103,9 +127,6 @@ export function BitcoinWalletConnector({ className }: BitcoinWalletConnectorProp
     );
   }
 
-  // Check if it's a mobile context
-  const isMobileContext = className?.includes('mobile-version');
-  
   // If not connected, show connect button
   return (
     <>
