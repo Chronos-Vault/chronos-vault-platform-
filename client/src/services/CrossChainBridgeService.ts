@@ -1,309 +1,262 @@
-import { ethers } from 'ethers';
-import { TonClient } from '@tonclient/core';
-import { Connection } from '@solana/web3.js';
-
-// Chain IDs for cross-chain operations
-const CHAIN_TON = 1;
-const CHAIN_ETHEREUM = 2;
-const CHAIN_SOLANA = 3;
-
 /**
- * CrossChainBridgeService
+ * Cross-Chain Bridge Service
  * 
- * Service for managing cross-chain communication between Ethereum, TON, and Solana
- * in the Triple-Chain Security architecture. This service coordinates verification
- * across all chains and ensures consistent vault state.
+ * This service provides methods for interacting with the Cross-Chain Bridge API
+ * to transfer assets and perform atomic swaps between different blockchain networks.
  */
-class CrossChainBridgeService {
-  private ethereumProvider: ethers.providers.Provider | null = null;
-  private tonClient: TonClient | null = null;
-  private solanaConnection: Connection | null = null;
-  
-  private tonBridgeAddress: string = '';
-  private ethereumBridgeAddress: string = '';
-  private solanaBridgeProgramId: string = '';
-  
-  private initialized: boolean = false;
-  
-  // Simplified ABI for the Ethereum bridge contract
-  private ethereumBridgeAbi = [
-    "function verifyVaultOnTON(uint256 vaultId, bytes32 tonProof) public",
-    "function verifyVaultOnSolana(uint256 vaultId, bytes32 solanaProof) public",
-    "function isVaultVerified(uint256 vaultId) public view returns (bool ethereum, bool ton, bool solana)",
-    "function initiateEmergencyRecovery(uint256 vaultId, string reason) public"
-  ];
-  
+
+import { apiRequest } from '@/lib/queryClient';
+
+import { 
+  BridgeStatus, 
+  BlockchainType, 
+  BridgeTransactionParams,
+  AtomicSwapParams,
+  CrossChainTransaction
+} from '@shared/types/blockchain-types';
+
+export class CrossChainBridgeService {
   /**
-   * Initialize the cross-chain bridge service
+   * Get the status of all cross-chain bridges
+   * 
+   * @returns A record of bridge statuses indexed by source-target chain pair
    */
-  initialize(
-    ethereumProvider: ethers.providers.Provider,
-    tonClient: TonClient,
-    solanaConnection: Connection,
-    tonBridgeAddress: string,
-    ethereumBridgeAddress: string,
-    solanaBridgeProgramId: string
-  ): void {
-    try {
-      this.ethereumProvider = ethereumProvider;
-      this.tonClient = tonClient;
-      this.solanaConnection = solanaConnection;
-      
-      this.tonBridgeAddress = tonBridgeAddress;
-      this.ethereumBridgeAddress = ethereumBridgeAddress;
-      this.solanaBridgeProgramId = solanaBridgeProgramId;
-      
-      this.initialized = true;
-      console.log('Cross-Chain Bridge Service initialized');
-    } catch (error) {
-      console.error('Failed to initialize Cross-Chain Bridge Service', error);
-      this.initialized = false;
+  static async getBridgeStatuses(): Promise<Record<string, BridgeStatus>> {
+    const response = await apiRequest('GET', '/api/bridge/status');
+    const data = await response.json();
+    
+    if (!data.success) {
+      throw new Error(data.error || 'Failed to fetch bridge statuses');
     }
+    
+    return data.data;
   }
   
   /**
-   * Check if the service is initialized
+   * Get the status of a specific bridge
+   * 
+   * @param sourceChain Source blockchain
+   * @param targetChain Target blockchain
+   * @returns Bridge status
    */
-  isInitialized(): boolean {
-    return this.initialized;
+  static async getBridgeStatus(sourceChain: BlockchainType, targetChain: BlockchainType): Promise<BridgeStatus> {
+    const response = await apiRequest('GET', `/api/bridge/status/${sourceChain}/${targetChain}`);
+    const data = await response.json();
+    
+    if (!data.success) {
+      throw new Error(data.error || 'Failed to fetch bridge status');
+    }
+    
+    return data.data;
   }
   
   /**
-   * Submit Ethereum vault verification to TON and Solana
+   * Initialize a bridge between two chains
+   * 
+   * @param sourceChain Source blockchain
+   * @param targetChain Target blockchain
+   * @returns True if initialization was successful
    */
-  async submitEthereumVerification(vaultId: string, proof: string): Promise<{
-    tonTxHash: string;
-    solanaTxHash: string;
-  }> {
-    try {
-      if (!this.initialized) {
-        throw new Error('Cross-Chain Bridge Service not initialized');
-      }
-      
-      console.log(`Submitting Ethereum verification for vault ${vaultId} to other chains`);
-      
-      // In a real implementation, this would construct and send cross-chain messages
-      // For the demo, we'll simulate the transactions
-      
-      // Simulate TON transaction
-      const tonTxHash = `ton-${Date.now()}-eth-verify-${vaultId}`;
-      
-      // Simulate Solana transaction
-      const solanaTxHash = `sol-${Date.now()}-eth-verify-${vaultId}`;
-      
-      console.log('Ethereum verification submitted to other chains', { tonTxHash, solanaTxHash });
-      
-      return { tonTxHash, solanaTxHash };
-    } catch (error) {
-      console.error('Failed to submit Ethereum verification to other chains', error);
-      throw new Error(`Cross-chain Ethereum verification failed: ${error.message}`);
+  static async initializeBridge(sourceChain: BlockchainType, targetChain: BlockchainType): Promise<boolean> {
+    const response = await apiRequest('POST', '/api/bridge/initialize', {
+      sourceChain,
+      targetChain
+    });
+    
+    const data = await response.json();
+    
+    if (!data.success) {
+      throw new Error(data.error || 'Failed to initialize bridge');
     }
+    
+    return true;
   }
   
   /**
-   * Submit TON vault verification to Ethereum and Solana
+   * Transfer assets from one chain to another
+   * 
+   * @param params Transfer parameters
+   * @returns Transaction ID
    */
-  async submitTONVerification(vaultId: string, proof: string): Promise<{
-    ethereumTxHash: string;
-    solanaTxHash: string;
-  }> {
-    try {
-      if (!this.initialized) {
-        throw new Error('Cross-Chain Bridge Service not initialized');
-      }
-      
-      console.log(`Submitting TON verification for vault ${vaultId} to other chains`);
-      
-      // In a real implementation, this would construct and send cross-chain messages
-      // For the demo, we'll simulate the transactions
-      
-      // Simulate Ethereum transaction
-      const ethereumTxHash = `eth-${Date.now()}-ton-verify-${vaultId}`;
-      
-      // Simulate Solana transaction
-      const solanaTxHash = `sol-${Date.now()}-ton-verify-${vaultId}`;
-      
-      console.log('TON verification submitted to other chains', { ethereumTxHash, solanaTxHash });
-      
-      return { ethereumTxHash, solanaTxHash };
-    } catch (error) {
-      console.error('Failed to submit TON verification to other chains', error);
-      throw new Error(`Cross-chain TON verification failed: ${error.message}`);
+  static async transferAsset(params: BridgeTransactionParams): Promise<string> {
+    const response = await apiRequest('POST', '/api/bridge/transfer', params);
+    const data = await response.json();
+    
+    if (!data.success) {
+      throw new Error(data.error || 'Failed to transfer asset');
     }
+    
+    return data.data.id;
   }
   
   /**
-   * Submit Solana vault verification to Ethereum and TON
+   * Get a list of all active bridge transactions
+   * 
+   * @returns List of bridge transactions
    */
-  async submitSolanaVerification(vaultId: string, proof: string): Promise<{
-    ethereumTxHash: string;
-    tonTxHash: string;
-  }> {
-    try {
-      if (!this.initialized) {
-        throw new Error('Cross-Chain Bridge Service not initialized');
-      }
-      
-      console.log(`Submitting Solana verification for vault ${vaultId} to other chains`);
-      
-      // In a real implementation, this would construct and send cross-chain messages
-      // For the demo, we'll simulate the transactions
-      
-      // Simulate Ethereum transaction
-      const ethereumTxHash = `eth-${Date.now()}-sol-verify-${vaultId}`;
-      
-      // Simulate TON transaction
-      const tonTxHash = `ton-${Date.now()}-sol-verify-${vaultId}`;
-      
-      console.log('Solana verification submitted to other chains', { ethereumTxHash, tonTxHash });
-      
-      return { ethereumTxHash, tonTxHash };
-    } catch (error) {
-      console.error('Failed to submit Solana verification to other chains', error);
-      throw new Error(`Cross-chain Solana verification failed: ${error.message}`);
+  static async getTransactions(): Promise<any[]> {
+    const response = await apiRequest('GET', '/api/bridge/transactions');
+    const data = await response.json();
+    
+    if (!data.success) {
+      throw new Error(data.error || 'Failed to fetch transactions');
     }
+    
+    return data.data;
   }
   
   /**
-   * Check if a vault is verified across all three chains
+   * Get details of a specific transaction
+   * 
+   * @param transactionId Transaction ID
+   * @returns Transaction details
    */
-  async isVaultTripleChainVerified(vaultId: string): Promise<boolean> {
-    try {
-      if (!this.initialized) {
-        throw new Error('Cross-Chain Bridge Service not initialized');
-      }
-      
-      console.log(`Checking Triple-Chain verification for vault ${vaultId}`);
-      
-      // In a real implementation, this would query all three chains
-      // For the demo, we'll simulate the response
-      
-      // Simulate verification status (always return true for demo)
-      return true;
-    } catch (error) {
-      console.error('Failed to check Triple-Chain verification', error);
-      return false;
+  static async getTransaction(transactionId: string): Promise<any> {
+    const response = await apiRequest('GET', `/api/bridge/transactions/${transactionId}`);
+    const data = await response.json();
+    
+    if (!data.success) {
+      throw new Error(data.error || 'Failed to fetch transaction');
     }
+    
+    return data.data;
   }
   
   /**
-   * Get vault verification status from all chains
+   * Create an atomic swap between two chains
+   * 
+   * @param params Atomic swap parameters
+   * @returns Swap ID
    */
-  async getVaultVerificationStatus(vaultId: string): Promise<{
-    ethereum: boolean;
-    ton: boolean;
-    solana: boolean;
-  }> {
-    try {
-      if (!this.initialized) {
-        throw new Error('Cross-Chain Bridge Service not initialized');
-      }
-      
-      console.log(`Getting vault verification status for ${vaultId} from all chains`);
-      
-      // In a real implementation, this would query all three chains
-      // For the demo, we'll simulate the response
-      
-      return {
-        ethereum: true,
-        ton: true,
-        solana: true
-      };
-    } catch (error) {
-      console.error('Failed to get vault verification status', error);
-      
-      return {
-        ethereum: false,
-        ton: false,
-        solana: false
-      };
+  static async createAtomicSwap(params: AtomicSwapParams): Promise<string> {
+    const response = await apiRequest('POST', '/api/bridge/atomic-swap', params);
+    const data = await response.json();
+    
+    if (!data.success) {
+      throw new Error(data.error || 'Failed to create atomic swap');
     }
+    
+    return data.data.id;
   }
   
   /**
-   * Initiate emergency recovery across all chains
+   * Get all atomic swaps
+   * 
+   * @returns List of atomic swaps
    */
-  async initiateEmergencyRecovery(
-    vaultId: string,
-    reason: string,
-    signer: ethers.Signer
-  ): Promise<{
-    ethereumTxHash: string;
-    tonTxHash: string;
-    solanaTxHash: string;
-  }> {
-    try {
-      if (!this.initialized) {
-        throw new Error('Cross-Chain Bridge Service not initialized');
-      }
-      
-      console.log(`Initiating emergency recovery for vault ${vaultId} across all chains`);
-      
-      // In a real implementation, this would send transactions to all three chains
-      // For the demo, we'll simulate the transactions
-      
-      // Simulate Ethereum transaction
-      const ethereumTxHash = `eth-${Date.now()}-recovery-${vaultId}`;
-      
-      // Simulate TON transaction
-      const tonTxHash = `ton-${Date.now()}-recovery-${vaultId}`;
-      
-      // Simulate Solana transaction
-      const solanaTxHash = `sol-${Date.now()}-recovery-${vaultId}`;
-      
-      console.log('Emergency recovery initiated across all chains', {
-        ethereumTxHash,
-        tonTxHash,
-        solanaTxHash
-      });
-      
-      return {
-        ethereumTxHash,
-        tonTxHash,
-        solanaTxHash
-      };
-    } catch (error) {
-      console.error('Failed to initiate emergency recovery across chains', error);
-      throw new Error(`Cross-chain emergency recovery failed: ${error.message}`);
+  static async getAtomicSwaps(): Promise<any[]> {
+    const response = await apiRequest('GET', '/api/bridge/atomic-swaps');
+    const data = await response.json();
+    
+    if (!data.success) {
+      throw new Error(data.error || 'Failed to fetch atomic swaps');
     }
+    
+    return data.data;
+  }
+  
+  /**
+   * Get details of a specific atomic swap
+   * 
+   * @param swapId Swap ID
+   * @returns Swap details
+   */
+  static async getAtomicSwap(swapId: string): Promise<any> {
+    const response = await apiRequest('GET', `/api/bridge/atomic-swaps/${swapId}`);
+    const data = await response.json();
+    
+    if (!data.success) {
+      throw new Error(data.error || 'Failed to fetch atomic swap');
+    }
+    
+    return data.data;
+  }
+  
+  /**
+   * Participate in an atomic swap
+   * 
+   * @param swapId Swap ID
+   * @param responderAddress Responder's address
+   * @returns True if participation was successful
+   */
+  static async participateInAtomicSwap(swapId: string, responderAddress: string): Promise<boolean> {
+    const response = await apiRequest('POST', `/api/bridge/atomic-swaps/${swapId}/participate`, {
+      responderAddress
+    });
+    
+    const data = await response.json();
+    
+    if (!data.success) {
+      throw new Error(data.error || 'Failed to participate in atomic swap');
+    }
+    
+    return true;
+  }
+  
+  /**
+   * Complete an atomic swap
+   * 
+   * @param swapId Swap ID
+   * @param secret Secret to reveal
+   * @returns True if completion was successful
+   */
+  static async completeAtomicSwap(swapId: string, secret: string): Promise<boolean> {
+    const response = await apiRequest('POST', `/api/bridge/atomic-swaps/${swapId}/complete`, {
+      secret
+    });
+    
+    const data = await response.json();
+    
+    if (!data.success) {
+      throw new Error(data.error || 'Failed to complete atomic swap');
+    }
+    
+    return true;
+  }
+  
+  /**
+   * Refund an atomic swap
+   * 
+   * @param swapId Swap ID
+   * @returns True if refund was successful
+   */
+  static async refundAtomicSwap(swapId: string): Promise<boolean> {
+    const response = await apiRequest('POST', `/api/bridge/atomic-swaps/${swapId}/refund`);
+    const data = await response.json();
+    
+    if (!data.success) {
+      throw new Error(data.error || 'Failed to refund atomic swap');
+    }
+    
+    return true;
+  }
+  
+  /**
+   * Verify a transaction across chains
+   * 
+   * @param transactionId Transaction ID
+   * @param sourceChain Source blockchain
+   * @param targetChain Target blockchain
+   * @returns Verification result
+   */
+  static async verifyTransaction(
+    transactionId: string,
+    sourceChain: BlockchainType,
+    targetChain: BlockchainType
+  ): Promise<{ verified: boolean; details: any }> {
+    const response = await apiRequest('GET', `/api/bridge/verify/${transactionId}`, {
+      sourceChain,
+      targetChain
+    });
+    
+    const data = await response.json();
+    
+    if (!data.success) {
+      throw new Error(data.error || 'Failed to verify transaction');
+    }
+    
+    return data.data;
   }
 }
 
-// Singleton instance
-let instance: CrossChainBridgeService | null = null;
-
-/**
- * Initialize the cross-chain bridge service
- */
-export const initCrossChainBridge = (
-  ethereumProvider: ethers.providers.Provider,
-  tonClient: TonClient,
-  solanaConnection: Connection,
-  tonBridgeAddress: string,
-  ethereumBridgeAddress: string,
-  solanaBridgeProgramId: string
-): void => {
-  if (!instance) {
-    instance = new CrossChainBridgeService();
-  }
-  
-  instance.initialize(
-    ethereumProvider,
-    tonClient,
-    solanaConnection,
-    tonBridgeAddress,
-    ethereumBridgeAddress,
-    solanaBridgeProgramId
-  );
-};
-
-/**
- * Get the cross-chain bridge service instance
- */
-export const getCrossChainBridge = (): CrossChainBridgeService => {
-  if (!instance) {
-    instance = new CrossChainBridgeService();
-  }
-  
-  return instance;
-};
+export default CrossChainBridgeService;

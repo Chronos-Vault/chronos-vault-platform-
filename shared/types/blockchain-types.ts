@@ -13,6 +13,9 @@ export enum ChainType {
   BITCOIN = 'bitcoin',
 }
 
+// Blockchain type for API parameters
+export type BlockchainType = 'ethereum' | 'solana' | 'ton' | 'bitcoin' | 'ETH' | 'SOL' | 'TON' | 'BTC';
+
 // Transaction status
 export type TransactionStatus = 'pending' | 'confirmed' | 'failed';
 
@@ -209,4 +212,97 @@ export interface TokenData {
   marketCap: number;
   holderCount: number;
   chainId: string;
+}
+
+// Bridge status for cross-chain bridges
+export interface BridgeStatus {
+  sourceChain: string;
+  targetChain: string;
+  status: 'operational' | 'degraded' | 'offline';
+  lastChecked: Date;
+  latency: number; // Milliseconds
+  isActive: boolean;
+  pendingTransactions: number;
+  totalTransactions: number;
+  successRate: number; // Percentage
+  message?: string;
+}
+
+// Status for atomic swaps between chains
+export type AtomicSwapStatus = 'initiated' | 'locked' | 'completed' | 'expired' | 'refunded' | 'failed';
+
+// Atomic swap parameters for creation
+export interface AtomicSwapParams {
+  initiatorChain: BlockchainType;
+  responderChain: BlockchainType;
+  initiatorAsset: string;
+  responderAsset: string;
+  initiatorAmount: number;
+  responderAmount: number;
+  initiatorAddress: string;
+  responderAddress: string;
+  timelock: number; // Seconds
+}
+
+// Bridge transaction parameters
+export interface BridgeTransactionParams {
+  sourceChain: BlockchainType;
+  targetChain: BlockchainType;
+  amount: number;
+  assetType: string;
+  senderAddress: string;
+  recipientAddress: string;
+}
+
+// Cross-chain message relay
+export interface CrossChainMessage {
+  id: string;
+  sourceChain: BlockchainType;
+  targetChain: BlockchainType;
+  message: any;
+  status: 'pending' | 'delivered' | 'failed';
+  timestamp: Date;
+  deliveredAt?: Date;
+  transactionHashes: Record<string, string>;
+  error?: string;
+}
+
+// Cross-chain verification protocol status
+export interface VerificationProtocolStatus {
+  protocol: string;
+  status: 'active' | 'inactive';
+  lastUpdated: Date;
+  supportedChains: BlockchainType[];
+  verificationLatency: number; // Milliseconds
+  reliability: number; // Percentage
+}
+
+// Cross-chain asset data
+export interface CrossChainAsset {
+  name: string;
+  symbol: string;
+  nativeChain: BlockchainType;
+  supportedChains: BlockchainType[];
+  decimals: Record<BlockchainType, number>;
+  addresses: Record<BlockchainType, string>;
+  bridgeSupport: boolean;
+  atomicSwapSupport: boolean;
+}
+
+// TVL (Total Value Locked) in bridge
+export interface BridgeTVL {
+  sourceChain: BlockchainType;
+  targetChain: BlockchainType;
+  totalValueLocked: Record<string, number>; // Asset symbol to value in USD
+  lastUpdated: Date;
+}
+
+// Atomic swap fee structure
+export interface AtomicSwapFee {
+  initiatorChain: BlockchainType;
+  responderChain: BlockchainType;
+  baseFee: number; // In USD
+  percentageFee: number; // Percentage of swap amount
+  gasEstimation: Record<BlockchainType, number>; // Estimated gas cost per chain
+  totalFeeUsd: number; // Total fee in USD
 }

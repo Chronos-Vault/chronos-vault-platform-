@@ -13,6 +13,7 @@ import { DevModeProvider } from "@/contexts/dev-mode-context";
 import { BlockchainErrorDisplay } from "@/contexts/blockchain-error-boundary";
 import { AuthProvider } from "@/contexts/auth-context";
 import { TransactionMonitoringProvider } from "@/contexts/transaction-monitoring-context";
+import { BlockchainProvider } from "@/hooks/use-blockchain";
 import Layout from "@/components/layout/Layout";
 
 // Pages
@@ -38,6 +39,7 @@ import CrossChainVaultPage from "@/pages/cross-chain-vault";
 import CrossChainSecurityPage from "@/pages/cross-chain-security";
 import CrossChainAtomicSwapPage from "@/pages/cross-chain-atomic-swap";
 import CrossChainVsAtomicSwapPage from "@/pages/cross-chain-vs-atomic-swap";
+import CrossChainBridgePage from "@/pages/cross-chain-bridge";
 import TONIntegrationPage from "@/pages/ton-integration";
 import SolanaIntegrationPage from "@/pages/solana-integration";
 import EthereumIntegrationPage from "@/pages/ethereum-integration";
@@ -114,6 +116,7 @@ function Router() {
         <Route path="/cross-chain-security" component={CrossChainSecurityPage} />
         <Route path="/cross-chain-atomic-swap" component={CrossChainAtomicSwapPage} />
         <Route path="/cross-chain-vs-atomic-swap" component={CrossChainVsAtomicSwapPage} />
+        <Route path="/cross-chain-bridge" component={CrossChainBridgePage} />
         <Route path="/intent-inheritance-vault" component={IntentInheritanceVault} />
         <Route path="/ton-integration" component={TONIntegrationPage} />
         <Route path="/solana-integration" component={SolanaIntegrationPage} />
@@ -167,24 +170,26 @@ function App() {
     <DevModeProvider>
       <TooltipProvider>
         <AuthProvider>
-          <EthereumProvider>
-            <SolanaProvider>
-              <TonProvider>
-                <BitcoinProvider>
-                  <BitcoinWalletProvider>
-                    <MultiChainProvider>
-                      <CVTTokenProvider>
-                        <TransactionMonitoringProvider>
-                          <Router />
-                          <BlockchainErrorDisplay />
-                        </TransactionMonitoringProvider>
-                      </CVTTokenProvider>
-                    </MultiChainProvider>
-                  </BitcoinWalletProvider>
-                </BitcoinProvider>
-              </TonProvider>
-            </SolanaProvider>
-          </EthereumProvider>
+          <BlockchainProvider>
+            <EthereumProvider>
+              <SolanaProvider>
+                <TonProvider>
+                  <BitcoinProvider>
+                    <BitcoinWalletProvider>
+                      <MultiChainProvider>
+                        <CVTTokenProvider>
+                          <TransactionMonitoringProvider>
+                            <Router />
+                            <BlockchainErrorDisplay />
+                          </TransactionMonitoringProvider>
+                        </CVTTokenProvider>
+                      </MultiChainProvider>
+                    </BitcoinWalletProvider>
+                  </BitcoinProvider>
+                </TonProvider>
+              </SolanaProvider>
+            </EthereumProvider>
+          </BlockchainProvider>
         </AuthProvider>
       </TooltipProvider>
     </DevModeProvider>

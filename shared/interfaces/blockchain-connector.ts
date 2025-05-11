@@ -65,6 +65,42 @@ export interface BlockchainConnector {
   initiateVaultSync(vaultId: string, targetChain: string): Promise<TransactionResult>;
   verifyVaultAcrossChains(vaultId: string): Promise<Record<string, SecurityVerification>>;
   
+  // Cross-chain bridge operations
+  initializeBridge(targetChain: string): Promise<TransactionResult>;
+  getBridgeStatus(targetChain: string): Promise<any>;
+  lockAsset(amount: number, assetType: string, senderAddress: string, targetChain: string, recipientAddress: string): Promise<TransactionResult>;
+  unlockAsset(txId: string, proof: string, amount: number, recipientAddress: string): Promise<TransactionResult>;
+  verifyTransaction(txHash: string): Promise<{ verified: boolean; details: any }>;
+  
+  // Atomic swap operations
+  initiateAtomicSwap(
+    targetChain: string,
+    assetType: string,
+    amount: number,
+    senderAddress: string,
+    recipientAddress: string,
+    hashLock: string,
+    timelock: number
+  ): Promise<TransactionResult>;
+  
+  participateInAtomicSwap(
+    initiatorChain: string,
+    assetType: string,
+    amount: number,
+    initiatorAddress: string,
+    responderAddress: string,
+    hashLock: string,
+    timelock: number
+  ): Promise<TransactionResult>;
+  
+  completeAtomicSwap(swapId: string, secret: string): Promise<TransactionResult>;
+  refundAtomicSwap(swapId: string, refundAddress: string, timelock: number): Promise<TransactionResult>;
+  getAtomicSwapStatus(swapId: string): Promise<{ status: string; details: any }>;
+  
+  // Message relay across chains
+  sendCrossChainMessage(targetChain: string, message: any): Promise<TransactionResult>;
+  receiveCrossChainMessage(sourceChain: string, messageId: string, message: any, proof: string): Promise<TransactionResult>;
+  
   // Chain-specific operations
   // These might differ based on the chain's capabilities
   executeSpecialOperation?(operationType: string, params: any): Promise<TransactionResult>;
