@@ -163,9 +163,14 @@ export default function CrossChainSecurityDashboard() {
     }
   };
 
-  // Helper function to format date
-  const formatDate = (timestamp: number): string => {
-    return new Date(timestamp).toLocaleString();
+  // Helper function to format date (if needed elsewhere)
+  const formatDateString = (timestamp: number): string => {
+    try {
+      return new Date(timestamp).toLocaleString();
+    } catch (error) {
+      console.error("Error formatting date:", error);
+      return "Date unavailable";
+    }
   };
 
 
@@ -551,6 +556,7 @@ function ChainStatusCard({
   status: ChainStatus; 
   isPrimary: boolean;
 }) {
+  // No helper functions needed - directly using inline date formatting
   return (
     <Card 
       className={`border-[#6B00D7]/30 ${
@@ -586,7 +592,7 @@ function ChainStatusCard({
           </div>
           <div className="flex justify-between text-sm">
             <span className="text-gray-400">Last Update</span>
-            <span>{formatDate(status.lastSyncTimestamp)}</span>
+            <span>{status.lastSyncTimestamp ? new Date(status.lastSyncTimestamp).toLocaleString() : 'Never'}</span>
           </div>
           {status.error && (
             <div className="mt-2 text-xs text-red-400 bg-red-400/10 p-2 rounded border border-red-400/30">
