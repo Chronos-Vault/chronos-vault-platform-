@@ -79,6 +79,7 @@ import ZeroKnowledgeVerificationPage from "@/pages/zero-knowledge-verification-p
 import MultiChainSyncPage from "@/pages/multi-chain-sync-page";
 import GeoVaultPage from "@/pages/geo-vault-page";
 import FAQPage from "@/pages/faq";
+import SmartContractsPage from "@/pages/smart-contracts";
 
 
 // Redirect component for wouter
@@ -163,6 +164,7 @@ function Router() {
         <Route path="/geo-vaults/create" component={GeoVaultPage} />
         <Route path="/geo-vault" component={GeoVaultPage} />
         <Route path="/faq" component={FAQPage} />
+        <Route path="/smart-contracts" component={SmartContractsPage} />
 
         <Route component={NotFound} />
       </Switch>
