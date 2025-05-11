@@ -14,6 +14,7 @@ import { BlockchainErrorDisplay } from "@/contexts/blockchain-error-boundary";
 import { AuthProvider } from "@/contexts/auth-context";
 import { TransactionMonitoringProvider } from "@/contexts/transaction-monitoring-context";
 import { BlockchainProvider } from "@/hooks/use-blockchain";
+import { OnboardingProvider } from "@/contexts/onboarding-context";
 import Layout from "@/components/layout/Layout";
 
 // Pages
@@ -93,6 +94,9 @@ function Redirect({ to }: { to: string }) {
 }
 
 function Router() {
+  // We'll handle onboarding redirection in a separate component
+  // to avoid dependency issues between context providers
+  
   return (
     <Layout>
       <Switch>
@@ -189,8 +193,10 @@ function App() {
                       <MultiChainProvider>
                         <CVTTokenProvider>
                           <TransactionMonitoringProvider>
-                            <Router />
-                            <BlockchainErrorDisplay />
+                            <OnboardingProvider>
+                              <Router />
+                              <BlockchainErrorDisplay />
+                            </OnboardingProvider>
                           </TransactionMonitoringProvider>
                         </CVTTokenProvider>
                       </MultiChainProvider>
