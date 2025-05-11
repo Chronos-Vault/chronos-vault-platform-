@@ -1,66 +1,98 @@
-import { useState, useEffect, createContext, useContext, ReactNode } from 'react';
-import { useLocalStorage } from '@/hooks/use-local-storage';
+import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import { useLocalStorage } from './use-local-storage';
 
-export type OnboardingStep = 
+// Define the onboarding step type
+type OnboardingStep = 
   | 'welcome'
-  | 'concepts'
-  | 'personalization' 
+  | 'concepts' 
+  | 'personalization'
   | 'blockchain-explainer'
   | 'wallet-connection'
   | 'complete';
 
-type OnboardingContextType = {
+interface OnboardingContextType {
   currentStep: OnboardingStep;
-  setCurrentStep: (step: OnboardingStep) => void;
-  progress: number;
   completeCurrentStep: () => void;
   skipToEnd: () => void;
+  resetOnboarding: () => void;
+  progress: number;
   hasCompletedOnboarding: boolean;
-};
+}
 
-const OnboardingContext = createContext<OnboardingContextType | null>(null);
+const OnboardingContext = createContext<OnboardingContextType | undefined>(undefined);
+
+// Steps in order
+const ONBOARDING_STEPS: OnboardingStep[] = [
+  'welcome',
+  'concepts',
+  'personalization',
+  'blockchain-explainer',
+  'wallet-connection',
+  'complete'
+];
 
 export const OnboardingProvider = ({ children }: { children: ReactNode }) => {
-  const [currentStep, setCurrentStep] = useLocalStorage<OnboardingStep>('onboarding-step', 'welcome');
-  const [hasCompletedOnboarding, setHasCompletedOnboarding] = useLocalStorage('onboarding-completed', false);
+  // Use localStorage to persist onboarding progress
+  const [savedStep, setSavedStep] = useLocalStorage<OnboardingStep>('chronosVault.onboardingStep', 'welcome');
+  const [currentStep, setCurrentStep] = useState<OnboardingStep>(savedStep);
   
-  const steps: OnboardingStep[] = [
-    'welcome',
-    'concepts',
-    'personalization',
-    'blockchain-explainer',
-    'wallet-connection',
-    'complete'
-  ];
+  // Track whether onboarding has been fully completed
+  const [hasCompletedOnboarding, setHasCompletedOnboarding] = useLocalStorage('chronosVault.onboardingCompleted', false);
   
-  const progress = Math.round(
-    ((steps.indexOf(currentStep) + 1) / (steps.length - 1)) * 100
-  );
-  
-  const completeCurrentStep = () => {
-    const currentIndex = steps.indexOf(currentStep);
-    if (currentIndex < steps.length - 1) {
-      setCurrentStep(steps[currentIndex + 1]);
-    } else {
-      setCurrentStep('complete');
+  // Update localStorage when currentStep changes
+  useEffect(() => {
+    setSavedStep(currentStep);
+    
+    // If we've reached the 'complete' step, mark onboarding as completed
+    if (currentStep === 'complete') {
       setHasCompletedOnboarding(true);
+    }
+  }, [currentStep, setSavedStep, setHasCompletedOnboarding]);
+  
+  // Calculate current progress percentage
+  const progress = (() => {
+    const totalSteps = ONBOARDING_STEPS.length - 1; // Exclude 'complete' from progress calculation
+    const currentIndex = ONBOARDING_STEPS.indexOf(currentStep);
+    
+    if (currentIndex === -1 || currentStep === 'complete') {
+      return 100;
+    }
+    
+    return Math.round((currentIndex / (totalSteps - 1)) * 100);
+  })();
+  
+  // Move to the next step in the flow
+  const completeCurrentStep = () => {
+    const currentIndex = ONBOARDING_STEPS.indexOf(currentStep);
+    
+    if (currentIndex < ONBOARDING_STEPS.length - 1) {
+      setCurrentStep(ONBOARDING_STEPS[currentIndex + 1]);
     }
   };
   
+  // Skip to the end of onboarding
   const skipToEnd = () => {
     setCurrentStep('complete');
     setHasCompletedOnboarding(true);
   };
   
+  // Reset onboarding state (for testing)
+  const resetOnboarding = () => {
+    setCurrentStep('welcome');
+    setHasCompletedOnboarding(false);
+  };
+  
   return (
-    <OnboardingContext.Provider value={{
-      currentStep,
-      setCurrentStep,
-      progress,
-      completeCurrentStep,
-      skipToEnd,
-      hasCompletedOnboarding
-    }}>
+    <OnboardingContext.Provider
+      value={{
+        currentStep,
+        completeCurrentStep,
+        skipToEnd,
+        resetOnboarding,
+        progress,
+        hasCompletedOnboarding
+      }}
+    >
       {children}
     </OnboardingContext.Provider>
   );
@@ -68,8 +100,10 @@ export const OnboardingProvider = ({ children }: { children: ReactNode }) => {
 
 export const useOnboarding = () => {
   const context = useContext(OnboardingContext);
-  if (!context) {
+  
+  if (context === undefined) {
     throw new Error('useOnboarding must be used within an OnboardingProvider');
   }
+  
   return context;
 };

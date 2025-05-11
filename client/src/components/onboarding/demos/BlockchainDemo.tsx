@@ -149,7 +149,7 @@ export const BlockchainDemo = ({
           <span className="text-sm font-medium">Blockchain Security</span>
         </div>
         <div className="flex items-center">
-          <LockClosed className="h-5 w-5 text-[#FF5AF7] mr-2" />
+          <Lock className="h-5 w-5 text-[#FF5AF7] mr-2" />
           <span className="text-sm font-medium">Immutable Records</span>
         </div>
       </div>

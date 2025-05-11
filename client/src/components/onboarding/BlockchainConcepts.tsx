@@ -1,114 +1,92 @@
 import { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { BlockchainDemo } from './demos/BlockchainDemo';
-import { AssetVisualization } from './demos/AssetVisualization';
-import { SecurityLevelExplainer } from './demos/SecurityLevelExplainer';
 import { Button } from '@/components/ui/button';
-import { ChevronRight, ChevronLeft } from 'lucide-react';
+import { ChevronRight } from 'lucide-react';
 
 export const BlockchainConcepts = ({ onComplete }: { onComplete: () => void }) => {
-  const [conceptIndex, setConceptIndex] = useState(0);
-  const [userInteracted, setUserInteracted] = useState(false);
+  const [isInteractive, setIsInteractive] = useState(false);
+  const [hasInteracted, setHasInteracted] = useState(false);
   
-  const concepts = [
-    {
-      title: 'Blockchain Technology',
-      description: 'The secure foundation for digital asset management',
-      component: <BlockchainDemo onInteract={() => setUserInteracted(true)} />
-    },
-    {
-      title: 'Digital Assets',
-      description: 'Understanding the different types of assets you can secure',
-      component: <AssetVisualization onInteract={() => setUserInteracted(true)} />
-    },
-    {
-      title: 'Security Levels',
-      description: 'Choose the right protection level for your needs',
-      component: <SecurityLevelExplainer onInteract={() => setUserInteracted(true)} />
-    }
-  ];
-  
-  const nextConcept = () => {
-    if (conceptIndex < concepts.length - 1) {
-      setConceptIndex(conceptIndex + 1);
-      setUserInteracted(false);
-    } else {
-      onComplete();
+  const handleInteraction = () => {
+    if (!hasInteracted) {
+      setHasInteracted(true);
     }
   };
   
-  const prevConcept = () => {
-    if (conceptIndex > 0) {
-      setConceptIndex(conceptIndex - 1);
-      setUserInteracted(false);
-    }
-  };
-
   return (
-    <div className="blockchain-concepts-container p-6 max-w-5xl mx-auto">
-      <h2 className="text-3xl font-bold mb-2 bg-clip-text text-transparent bg-gradient-to-r from-primary to-[#FF5AF7]">
-        {concepts[conceptIndex].title}
-      </h2>
-      <p className="text-muted-foreground mb-8">{concepts[conceptIndex].description}</p>
-      
-      <AnimatePresence mode="wait">
-        <motion.div
-          key={conceptIndex}
+    <div className="blockchain-concepts p-6 max-w-4xl mx-auto">
+      <div className="text-center mb-8">
+        <motion.h2 
+          className="text-3xl font-bold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-primary to-[#FF5AF7]"
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+        >
+          Understanding Blockchain
+        </motion.h2>
+        
+        <motion.p 
+          className="text-lg text-muted-foreground max-w-2xl mx-auto"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: -20 }}
-          transition={{ duration: 0.5 }}
-          className="concept-demo-container bg-card/50 backdrop-blur-sm border border-muted rounded-xl shadow-sm overflow-hidden"
+          transition={{ duration: 0.5, delay: 0.2 }}
         >
-          {concepts[conceptIndex].component}
-        </motion.div>
-      </AnimatePresence>
-      
-      <div className="mt-8 flex justify-between items-center">
-        <Button 
-          variant="outline" 
-          onClick={prevConcept}
-          disabled={conceptIndex === 0}
-          size="lg"
-          className="gap-2"
-        >
-          <ChevronLeft className="h-4 w-4" /> Previous
-        </Button>
-        
-        <div className="flex space-x-2">
-          {concepts.map((_, i) => (
-            <div 
-              key={i}
-              className={`h-2 w-8 rounded-full ${
-                i === conceptIndex ? 'bg-primary' : 'bg-muted'
-              } transition-all duration-300`}
-            />
-          ))}
-        </div>
-        
-        <Button 
-          onClick={nextConcept}
-          disabled={!userInteracted && conceptIndex !== concepts.length - 1}
-          size="lg"
-          className="gap-2"
-        >
-          {conceptIndex === concepts.length - 1 ? 'Complete' : 'Next'} <ChevronRight className="h-4 w-4" />
-        </Button>
+          Explore how blockchain technology creates a secure, immutable foundation for Chronos Vault
+        </motion.p>
       </div>
       
-      {!userInteracted && conceptIndex !== concepts.length - 1 && (
-        <p className="text-center mt-4 text-sm text-muted-foreground">
-          Interact with the demo to continue
-        </p>
-      )}
-
-      <Button 
-        variant="ghost" 
-        onClick={onComplete}
-        className="mt-6 mx-auto block text-sm text-muted-foreground hover:text-primary"
-      >
-        Skip Tutorial
-      </Button>
+      <div className="demo-container p-4 bg-card/50 backdrop-blur-sm border border-muted rounded-xl shadow-sm mb-8">
+        <BlockchainDemo onInteract={handleInteraction} />
+      </div>
+      
+      <div className="key-concepts grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+        <motion.div 
+          className="concept-card p-4 bg-card border border-muted rounded-lg"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.4, delay: 0.3 }}
+        >
+          <h3 className="text-xl font-semibold mb-2">Immutability</h3>
+          <p className="text-muted-foreground text-sm">
+            Once data is written to the blockchain, it cannot be altered or deleted, ensuring the integrity of your vault records.
+          </p>
+        </motion.div>
+        
+        <motion.div 
+          className="concept-card p-4 bg-card border border-muted rounded-lg"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.4, delay: 0.4 }}
+        >
+          <h3 className="text-xl font-semibold mb-2">Decentralization</h3>
+          <p className="text-muted-foreground text-sm">
+            Your vault is secured across multiple blockchain networks with no single point of failure or central authority.
+          </p>
+        </motion.div>
+        
+        <motion.div 
+          className="concept-card p-4 bg-card border border-muted rounded-lg"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.4, delay: 0.5 }}
+        >
+          <h3 className="text-xl font-semibold mb-2">Cryptography</h3>
+          <p className="text-muted-foreground text-sm">
+            Advanced encryption algorithms protect your assets and ensure only authorized access when time-lock conditions are met.
+          </p>
+        </motion.div>
+      </div>
+      
+      <div className="text-center">
+        <Button 
+          onClick={onComplete} 
+          size="lg"
+          className="gap-2"
+        >
+          Continue <ChevronRight className="h-4 w-4" />
+        </Button>
+      </div>
     </div>
   );
 };
