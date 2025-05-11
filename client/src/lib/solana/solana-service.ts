@@ -78,7 +78,7 @@ class SolanaService {
   // Basic connection properties
   private connection: Connection | null = null;
   private keypair: Keypair | null = null;
-  private isConnected: boolean = false;
+  private _isConnected: boolean = false; // Renamed to avoid duplicate identifier
   private network: SolanaCluster = SolanaCluster.DEVNET;
   private devModeEnabled: boolean = false;
   
@@ -532,6 +532,16 @@ class SolanaService {
     }
     
     return this.isConnected && !!this.connection;
+  }
+  
+  /**
+   * Check if connected to Solana wallet
+   * Required method for cross-chain security monitoring
+   * @returns boolean indicating if the wallet is connected
+   */
+  isConnected(): boolean {
+    // Using isServiceConnected to avoid recursion with the isConnected property
+    return this.isServiceConnected();
   }
   
   /**

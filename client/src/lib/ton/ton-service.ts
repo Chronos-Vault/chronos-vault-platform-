@@ -49,6 +49,17 @@ class TONService {
   private constructor() {}
   
   /**
+   * Check if connected to TON wallet
+   * Required for cross-chain security monitoring
+   * @returns boolean indicating if the wallet is connected
+   */
+  isConnected(): boolean {
+    // Check if TON Connect UI is initialized and connected
+    return !!this.tonConnectUI && this.tonConnectUI.connected && 
+           this.connectionStatus === TonConnectionStatus.CONNECTED;
+  }
+  
+  /**
    * Get the singleton instance of TONService
    */
   public static getInstance(): TONService {
