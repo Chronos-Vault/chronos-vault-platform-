@@ -1,135 +1,141 @@
 import { useState } from 'react';
+import { motion } from 'framer-motion';
 import { useOnboarding } from '@/contexts/onboarding-context';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import { useToast } from '@/hooks/use-toast';
-import { ArrowRight, Check, Wallet } from 'lucide-react';
-import { useDevMode } from '@/contexts/dev-mode-context';
+import { ArrowRight } from 'lucide-react';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 
 /**
- * The wallet connection step of the onboarding flow
+ * WalletConnection component allows users to select and connect a blockchain wallet
+ * during the onboarding process. It supports TON, Ethereum and Solana.
  */
 const WalletConnection = () => {
   const { completeCurrentStep } = useOnboarding();
-  const { toast } = useToast();
-  const { isDevMode } = useDevMode();
+  const [selectedWallet, setSelectedWallet] = useState<string | null>(null);
   const [connecting, setConnecting] = useState(false);
-  
-  // Simulate wallet connection or use dev mode to bypass
-  const handleConnectWallet = async () => {
+
+  // Simulate wallet connection process
+  const connectWallet = async (walletType: string) => {
+    setSelectedWallet(walletType);
     setConnecting(true);
     
-    try {
-      // In dev mode, we can bypass actual wallet connection
-      if (isDevMode) {
-        // Simulate connection delay
-        await new Promise(resolve => setTimeout(resolve, 1000));
-        
-        toast({
-          title: "Development mode active",
-          description: "Wallet connection has been simulated",
-          variant: "default",
-        });
-        
-        completeCurrentStep();
-        return;
-      }
-      
-      // For production, would integrate with actual wallet connection logic here
-      // This would connect to TON, Ethereum, or other blockchains
-      
-      // For now, we'll just simulate success after a delay
-      await new Promise(resolve => setTimeout(resolve, 2000));
-      
-      toast({
-        title: "Wallet connected",
-        description: "Your wallet has been successfully connected",
-        variant: "default",
-      });
-      
-      completeCurrentStep();
-    } catch (error) {
-      toast({
-        title: "Connection failed",
-        description: "Failed to connect wallet. Please try again.",
-        variant: "destructive",
-      });
-    } finally {
+    // In a real implementation, this would use the wallet connection SDKs
+    setTimeout(() => {
       setConnecting(false);
+      // Successful connection would store wallet info in context
+    }, 1500);
+  };
+
+  const wallets = [
+    {
+      id: 'ton',
+      name: 'TON Connect',
+      description: 'Connect with TON Wallet, Tonkeeper, etc.',
+      icon: '💎'
+    },
+    {
+      id: 'ethereum',
+      name: 'Ethereum',
+      description: 'Connect with MetaMask, WalletConnect, etc.',
+      icon: '🔷'
+    },
+    {
+      id: 'solana',
+      name: 'Solana',
+      description: 'Connect with Phantom, Solflare, etc.',
+      icon: '🟣'
+    }
+  ];
+
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.1
+      }
     }
   };
-  
-  const handleSkip = () => {
-    toast({
-      title: "Wallet connection skipped",
-      description: "You can connect your wallet later from the profile menu",
-      variant: "default",
-    });
-    
-    completeCurrentStep();
+
+  const itemVariants = {
+    hidden: { y: 20, opacity: 0 },
+    visible: { y: 0, opacity: 1 }
   };
-  
+
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen p-4 bg-gradient-to-br from-background to-background/80">
-      <Card className="w-full max-w-md border border-primary/20 bg-background/80 backdrop-blur-sm shadow-lg">
-        <CardHeader className="text-center">
-          <CardTitle className="text-2xl font-bold text-foreground">Connect Your Wallet</CardTitle>
-          <CardDescription className="text-muted-foreground">
-            Connect a blockchain wallet to access the full features of Chronos Vault
-          </CardDescription>
-        </CardHeader>
-        
-        <CardContent className="space-y-6">
-          <div className="flex flex-col gap-6">
-            <div className="flex items-center gap-3 p-4 rounded-lg border border-purple-500/20 bg-gradient-to-r from-purple-950/10 to-transparent">
-              <div className="bg-purple-500/10 p-2 rounded-full">
-                <Wallet className="h-6 w-6 text-purple-500" />
-              </div>
-              <div>
-                <h3 className="font-medium">Secure Wallet Connection</h3>
-                <p className="text-sm text-muted-foreground">Your private keys never leave your device</p>
-              </div>
-            </div>
-            
-            <div className="flex items-center gap-3 p-4 rounded-lg border border-pink-500/20 bg-gradient-to-r from-pink-950/10 to-transparent">
-              <div className="bg-pink-500/10 p-2 rounded-full">
-                <Check className="h-6 w-6 text-pink-500" />
-              </div>
-              <div>
-                <h3 className="font-medium">Multi-Chain Support</h3>
-                <p className="text-sm text-muted-foreground">Connect to TON, Ethereum, or Solana wallets</p>
-              </div>
-            </div>
-          </div>
-        </CardContent>
-        
-        <CardFooter className="flex flex-col sm:flex-row gap-3">
+    <div className="min-h-screen flex flex-col justify-center p-6 bg-background">
+      <div className="max-w-3xl mx-auto w-full">
+        <motion.div
+          className="text-center mb-10"
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+        >
+          <h1 className="text-3xl md:text-4xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-primary to-secondary mb-4">
+            Connect Your Wallet
+          </h1>
+          <p className="text-muted-foreground max-w-2xl mx-auto">
+            Choose your preferred blockchain wallet to access the Chronos Vault platform
+          </p>
+        </motion.div>
+
+        <motion.div
+          initial="hidden"
+          animate="visible"
+          variants={containerVariants}
+          className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-10"
+        >
+          {wallets.map((wallet) => (
+            <motion.div key={wallet.id} variants={itemVariants}>
+              <Card 
+                className={`cursor-pointer transition-all duration-200 h-full hover:shadow-md ${
+                  selectedWallet === wallet.id ? 'border-primary ring-1 ring-primary/30' : 'border-border'
+                }`}
+                onClick={() => connectWallet(wallet.id)}
+              >
+                <CardHeader className="pb-2">
+                  <div className="text-3xl mb-2">{wallet.icon}</div>
+                  <CardTitle>{wallet.name}</CardTitle>
+                  <CardDescription>{wallet.description}</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  {selectedWallet === wallet.id && connecting ? (
+                    <div className="flex items-center justify-center">
+                      <div className="animate-spin h-5 w-5 rounded-full border-2 border-primary border-t-transparent"></div>
+                      <span className="ml-2 text-sm">Connecting...</span>
+                    </div>
+                  ) : selectedWallet === wallet.id ? (
+                    <div className="text-sm text-green-500">Ready to connect</div>
+                  ) : null}
+                </CardContent>
+              </Card>
+            </motion.div>
+          ))}
+        </motion.div>
+
+        <motion.div
+          className="flex flex-col items-center justify-center space-y-4"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.6 }}
+        >
           <Button
-            variant="default"
-            className="w-full sm:w-auto bg-gradient-to-r from-primary to-purple-600 hover:from-primary/90 hover:to-purple-700"
-            onClick={handleConnectWallet}
-            disabled={connecting}
+            size="lg"
+            className="bg-gradient-to-r from-primary to-secondary hover:from-primary/90 hover:to-secondary/90"
+            onClick={completeCurrentStep}
           >
-            {connecting ? "Connecting..." : "Connect Wallet"}
-            {!connecting && <ArrowRight className="ml-2 h-4 w-4" />}
+            Continue <ArrowRight className="ml-2 h-5 w-5" />
           </Button>
           
           <Button
-            variant="outline"
-            className="w-full sm:w-auto"
-            onClick={handleSkip}
-            disabled={connecting}
+            variant="ghost"
+            className="text-sm text-muted-foreground hover:text-foreground"
+            onClick={completeCurrentStep}
           >
-            Connect Later
+            Skip for now (Developer Mode)
           </Button>
-        </CardFooter>
-      </Card>
-      
-      {isDevMode && (
-        <div className="mt-4 px-3 py-1 bg-amber-500/10 border border-amber-500/30 rounded text-xs text-amber-500">
-          Development mode: Wallet connection will be simulated
-        </div>
-      )}
+        </motion.div>
+      </div>
     </div>
   );
 };

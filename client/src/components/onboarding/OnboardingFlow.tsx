@@ -4,14 +4,7 @@ import { WelcomeAnimation } from './WelcomeAnimation';
 import { ConceptIntroduction } from './ConceptIntroduction';
 import { PersonalizedGreeting } from './PersonalizedGreeting';
 import { BlockchainConcepts } from './BlockchainConcepts';
-// Temporary solution until the WalletConnection component is registered
-// We'll mock it with a placeholder for now
-const WalletConnection = () => (
-  <div className="flex flex-col items-center justify-center min-h-screen p-6">
-    <h2 className="text-2xl font-bold mb-4">Wallet Connection</h2>
-    <p className="text-muted-foreground mb-8">Connect your wallet to continue</p>
-  </div>
-);
+import WalletConnection from './WalletConnection';
 
 /**
  * The main onboarding flow component that displays the appropriate
