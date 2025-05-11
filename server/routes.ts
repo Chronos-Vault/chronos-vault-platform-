@@ -25,7 +25,7 @@ import { ConnectorFactory } from './blockchain/connector-factory';
 import { securityLogger, SecurityEventType } from './monitoring/security-logger';
 import { geolocationService } from './services/geolocation-service';
 import { VerificationStatus } from './blockchain/cross-chain-vault-verification';
-import { WebSocketServer } from 'ws';
+import { WebSocketServer, WebSocket } from 'ws';
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // Create HTTP server instance
@@ -155,7 +155,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
       };
       
       clients.forEach(client => {
-        if (client.readyState === WebSocket.OPEN && (client as any).bridgeSubscription) {
+        // Check if client is open and has bridgeSubscription property
+        if (client.readyState === 1 && (client as any).bridgeSubscription) {
           client.send(JSON.stringify({
             type: 'BRIDGE_STATUS_UPDATE',
             data: {

@@ -64,7 +64,9 @@ export function BitcoinWalletConnector({ className }: BitcoinWalletConnectorProp
               <Bitcoin className="h-4 w-4 text-orange-600 dark:text-orange-400" />
               <span className="hidden md:inline">{formatAddress(walletInfo.address)}</span>
               <span className="md:ml-2 font-mono font-medium text-green-600 dark:text-green-400">
-                {(walletInfo.balance as number).toFixed(4)} BTC
+                {typeof walletInfo.balance === 'number' 
+                  ? walletInfo.balance.toFixed(4) 
+                  : Number(walletInfo.balance).toFixed(4)} BTC
               </span>
               <ChevronDown className="h-4 w-4 ml-1 text-orange-600 dark:text-orange-400" />
             </Button>
