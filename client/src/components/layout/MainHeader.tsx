@@ -1,7 +1,7 @@
 import { Link, useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
 import logoPath from "@assets/IMG_3753.jpeg";
-import { useMultiChain } from "@/contexts/multi-chain-context";
+import { useMultiChain, BlockchainType } from "@/contexts/multi-chain-context";
 import {
   Sheet,
   SheetContent,
