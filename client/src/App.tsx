@@ -41,6 +41,7 @@ import CrossChainAtomicSwapPage from "@/pages/cross-chain-atomic-swap";
 import CrossChainVsAtomicSwapPage from "@/pages/cross-chain-vs-atomic-swap";
 import CrossChainBridgePage from "@/pages/cross-chain-bridge";
 import TransactionVerificationPage from "@/pages/transaction-verification";
+import CrossChainMonitorPage from "@/pages/cross-chain-monitor";
 import TONIntegrationPage from "@/pages/ton-integration";
 import SolanaIntegrationPage from "@/pages/solana-integration";
 import EthereumIntegrationPage from "@/pages/ethereum-integration";
@@ -119,6 +120,7 @@ function Router() {
         <Route path="/cross-chain-vs-atomic-swap" component={CrossChainVsAtomicSwapPage} />
         <Route path="/cross-chain-bridge" component={CrossChainBridgePage} />
         <Route path="/transaction-verification" component={TransactionVerificationPage} />
+        <Route path="/cross-chain-monitor" component={CrossChainMonitorPage} />
         <Route path="/intent-inheritance-vault" component={IntentInheritanceVault} />
         <Route path="/ton-integration" component={TONIntegrationPage} />
         <Route path="/solana-integration" component={SolanaIntegrationPage} />

@@ -158,39 +158,74 @@ const TransactionVerificationPanel: React.FC<TransactionVerificationPanelProps> 
     updateChainStatus('ethereum', 'pending');
     
     try {
-      // In a real implementation, we would call the Ethereum API
-      // For now, we'll simulate the verification
-      await new Promise(resolve => setTimeout(resolve, 1500));
+      // Import error handling at the top level to avoid dynamic imports in the function
+      const { withEthereumErrorHandling } = await import('@/lib/ethereum/ethereum-error-handling');
       
-      // In development mode, always succeed for simulated transactions
-      if (devModeEnabled && tx.startsWith('simulated_')) {
-        updateChainStatus('ethereum', 'success', {
-          message: 'Transaction verified on Ethereum',
-          txHash: tx,
-          connectionQuality: 'good'
-        });
-        return;
-      }
+      // Use the error handling system for Ethereum verification
+      const result = await withEthereumErrorHandling(
+        async () => {
+          // In a real implementation, we would call the Ethereum API
+          // For now, we'll simulate the verification
+          await new Promise(resolve => setTimeout(resolve, 1500));
+          
+          // In development mode, always succeed for simulated transactions
+          if (devModeEnabled && tx.startsWith('simulated_')) {
+            return {
+              success: true,
+              hash: tx,
+              connectionQuality: 'good' as const
+            };
+          }
+          
+          // For demo purposes, randomly succeed or fail
+          const success = Math.random() > 0.2;
+          if (!success) {
+            throw new Error('Transaction verification failed on Ethereum');
+          }
+          
+          return {
+            success: true,
+            hash: tx,
+            connectionQuality: 'excellent' as const
+          };
+        },
+        {
+          operation: 'verifyTransaction',
+          isDevelopmentMode: devModeEnabled,
+          details: { transactionId: tx }
+        }
+      );
       
-      // For demo purposes, randomly succeed or fail
-      const success = Math.random() > 0.2;
-      if (success) {
-        updateChainStatus('ethereum', 'success', {
-          message: 'Transaction verified on Ethereum',
-          txHash: tx,
-          connectionQuality: 'excellent'
-        });
-      } else {
-        updateChainStatus('ethereum', 'failed', {
-          message: 'Failed to verify transaction on Ethereum',
-          connectionQuality: 'poor'
-        });
-      }
+      // Update status based on the verification result
+      updateChainStatus('ethereum', 'success', {
+        message: 'Transaction verified on Ethereum',
+        txHash: result.hash,
+        connectionQuality: result.connectionQuality
+      });
     } catch (error) {
       console.error('Error verifying on Ethereum:', error);
+      
+      // Determine connection quality based on error
+      let connectionQuality: 'excellent' | 'good' | 'poor' | 'failed' = 'failed';
+      if (error.type === 'NETWORK_ERROR') {
+        connectionQuality = 'poor';
+      } else if (error.recoveryStrategy === 'FALLBACK' && devModeEnabled) {
+        // In development mode with fallback strategy, show as good
+        connectionQuality = 'good';
+        // Allow simulated transactions to pass in dev mode
+        if (tx.startsWith('simulated_')) {
+          updateChainStatus('ethereum', 'success', {
+            message: 'Transaction verified on Ethereum (simulated)',
+            txHash: tx,
+            connectionQuality: 'good'
+          });
+          return;
+        }
+      }
+      
       updateChainStatus('ethereum', 'failed', {
-        message: `Error: ${error instanceof Error ? error.message : 'Unknown error'}`,
-        connectionQuality: 'failed'
+        message: `Error: ${error.message || (error instanceof Error ? error.message : 'Unknown error')}`,
+        connectionQuality
       });
     }
   };
@@ -201,39 +236,74 @@ const TransactionVerificationPanel: React.FC<TransactionVerificationPanelProps> 
     updateChainStatus('solana', 'pending');
     
     try {
-      // In a real implementation, we would call the Solana API
-      // For now, we'll simulate the verification
-      await new Promise(resolve => setTimeout(resolve, 2000));
+      // Import error handling at the top level to avoid dynamic imports in the function
+      const { withSolanaErrorHandling } = await import('@/lib/solana/solana-error-handling');
       
-      // In development mode, always succeed for simulated transactions
-      if (devModeEnabled && tx.startsWith('simulated_')) {
-        updateChainStatus('solana', 'success', {
-          message: 'Transaction verified on Solana',
-          txHash: tx,
-          connectionQuality: 'good'
-        });
-        return;
-      }
+      // Use the error handling system for Solana verification
+      const result = await withSolanaErrorHandling(
+        async () => {
+          // In a real implementation, we would call the Solana API
+          // For now, we'll simulate the verification
+          await new Promise(resolve => setTimeout(resolve, 2000));
+          
+          // In development mode, always succeed for simulated transactions
+          if (devModeEnabled && tx.startsWith('simulated_')) {
+            return {
+              success: true,
+              hash: tx,
+              connectionQuality: 'good' as const
+            };
+          }
+          
+          // For demo purposes, randomly succeed or fail
+          const success = Math.random() > 0.2;
+          if (!success) {
+            throw new Error('Transaction verification failed on Solana');
+          }
+          
+          return {
+            success: true,
+            hash: tx,
+            connectionQuality: 'good' as const
+          };
+        },
+        {
+          operation: 'verifyTransaction',
+          isDevelopmentMode: devModeEnabled,
+          details: { transactionId: tx }
+        }
+      );
       
-      // For demo purposes, randomly succeed or fail
-      const success = Math.random() > 0.2;
-      if (success) {
-        updateChainStatus('solana', 'success', {
-          message: 'Transaction verified on Solana',
-          txHash: tx,
-          connectionQuality: 'good'
-        });
-      } else {
-        updateChainStatus('solana', 'failed', {
-          message: 'Failed to verify transaction on Solana',
-          connectionQuality: 'poor'
-        });
-      }
+      // Update status based on the verification result
+      updateChainStatus('solana', 'success', {
+        message: 'Transaction verified on Solana',
+        txHash: result.hash,
+        connectionQuality: result.connectionQuality
+      });
     } catch (error) {
       console.error('Error verifying on Solana:', error);
+      
+      // Determine connection quality based on error
+      let connectionQuality: 'excellent' | 'good' | 'poor' | 'failed' = 'failed';
+      if (error.type === 'NETWORK_ERROR' || error.type === 'RPC_ERROR') {
+        connectionQuality = 'poor';
+      } else if (error.recoveryStrategy === 'FALLBACK' && devModeEnabled) {
+        // In development mode with fallback strategy, show as good
+        connectionQuality = 'good';
+        // Allow simulated transactions to pass in dev mode
+        if (tx.startsWith('simulated_')) {
+          updateChainStatus('solana', 'success', {
+            message: 'Transaction verified on Solana (simulated)',
+            txHash: tx,
+            connectionQuality: 'good'
+          });
+          return;
+        }
+      }
+      
       updateChainStatus('solana', 'failed', {
-        message: `Error: ${error instanceof Error ? error.message : 'Unknown error'}`,
-        connectionQuality: 'failed'
+        message: `Error: ${error.message || (error instanceof Error ? error.message : 'Unknown error')}`,
+        connectionQuality
       });
     }
   };
