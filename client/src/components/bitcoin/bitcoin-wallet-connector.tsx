@@ -59,14 +59,20 @@ export function BitcoinWalletConnector({ className }: BitcoinWalletConnectorProp
           <DropdownMenuTrigger asChild>
             <Button 
               variant="outline" 
-              className="flex items-center gap-2 bg-gradient-to-r from-orange-50 to-amber-50 hover:from-orange-100 hover:to-amber-100 border-orange-200 text-orange-900 dark:from-orange-950/30 dark:to-amber-950/30 dark:hover:from-orange-950/40 dark:hover:to-amber-950/40 dark:border-orange-800 dark:text-orange-300 px-3 py-2"
+              className={`flex items-center gap-1 bg-gradient-to-r from-orange-50 to-amber-50 hover:from-orange-100 hover:to-amber-100 border-orange-200 text-orange-900 dark:from-orange-950/30 dark:to-amber-950/30 dark:hover:from-orange-950/40 dark:hover:to-amber-950/40 dark:border-orange-800 dark:text-orange-300 px-3 py-2 ${
+                className?.includes('mobile-version') ? 'text-xs min-w-0 w-full' : ''
+              }`}
             >
               <Bitcoin className="h-4 w-4 text-orange-600 dark:text-orange-400" />
-              <span className="hidden md:inline">{formatAddress(walletInfo.address)}</span>
-              <span className="md:ml-2 font-mono font-medium text-green-600 dark:text-green-400">
+              {isMobileContext ? (
+                <span className="font-mono text-xs">{formatAddress(walletInfo.address, 3)}</span>
+              ) : (
+                <span className="hidden md:inline">{formatAddress(walletInfo.address)}</span>
+              )}
+              <span className={`${isMobileContext ? '' : 'md:ml-2'} font-mono font-medium text-green-600 dark:text-green-400 ${isMobileContext ? 'text-xs' : ''}`}>
                 {typeof walletInfo.balance === 'number' 
-                  ? walletInfo.balance.toFixed(4) 
-                  : Number(walletInfo.balance).toFixed(4)} BTC
+                  ? walletInfo.balance.toFixed(isMobileContext ? 2 : 4) 
+                  : Number(walletInfo.balance).toFixed(isMobileContext ? 2 : 4)} {isMobileContext ? 'BTC' : 'BTC'}
               </span>
               <ChevronDown className="h-4 w-4 ml-1 text-orange-600 dark:text-orange-400" />
             </Button>
@@ -108,7 +114,7 @@ export function BitcoinWalletConnector({ className }: BitcoinWalletConnectorProp
           <Button 
             size="sm"
             className={`flex items-center gap-1 bg-gradient-to-r from-orange-600 to-amber-600 hover:from-orange-700 hover:to-amber-700 text-white ${
-              isMobileContext ? 'h-8 px-2 text-xs' : 'h-10'
+              isMobileContext ? 'h-8 px-2 text-xs min-w-0 w-full' : 'h-10'
             } ${className}`}
           >
             <Bitcoin className="h-3 w-3" />

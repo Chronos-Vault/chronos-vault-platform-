@@ -102,7 +102,7 @@ const CrossChainWalletSelector: React.FC<CrossChainWalletSelectorProps> = ({ cla
         size="sm"
         className={cn(
           "text-violet-400 hover:text-violet-300 hover:bg-violet-900/30 flex items-center gap-1",
-          isMobileContext ? "h-8 px-2 text-xs" : "",
+          isMobileContext ? "h-8 px-2 text-xs min-w-0 w-full" : "",
           className
         )}
       >

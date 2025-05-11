@@ -487,7 +487,7 @@ const MainHeader = () => {
                           <Settings className="h-4 w-4 text-[#FF5AF7]" />
                           <span className="text-[#FF5AF7] font-medium text-sm">Connect Wallets</span>
                         </div>
-                        <div className="space-y-2">
+                        <div className="grid grid-cols-2 gap-2">
                           <CrossChainWalletSelector className="mobile-version" />
                           <BitcoinWalletConnector className="mobile-version" />
                         </div>
