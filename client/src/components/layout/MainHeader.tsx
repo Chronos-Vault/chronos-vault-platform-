@@ -117,19 +117,6 @@ const MainHeader = () => {
       ]
     },
     {
-      id: "developer",
-      title: "Developer",
-      icon: "🧪",
-      items: [
-        { name: "API Documentation", href: "/documentation", icon: "📚", highlight: true },
-        { name: "SDK Access", href: "/documentation#sdk", icon: "💻", highlight: true },
-        { name: "Smart Contract Audit", href: "/audit-test", icon: "🔍", highlight: true },
-        { name: "Contract Templates", href: "/documentation#templates", icon: "📄", highlight: true },
-        { name: `Dev Mode ${devModeEnabled ? 'On' : 'Off'}`, href: "#", icon: "🛠️", isAction: true, action: () => toggleDevMode() },
-        { name: `Bypass Wallet ${devModeEnabled && bypassWalletRequirements ? 'On' : 'Off'}`, href: "#", icon: "⚡", isAction: true, action: () => setBypassWalletRequirements(!bypassWalletRequirements) },
-      ]
-    },
-    {
       id: "explore",
       title: "Explore",
       icon: "🔍",
@@ -151,6 +138,19 @@ const MainHeader = () => {
         { name: "Security", href: "/security-verification-demo", icon: "🔒", highlight: true },
         { name: "Multi-Signature", href: "/multi-signature-vault", icon: "👥" },
         { name: "Bitcoin Halving", href: "/bitcoin-halving", icon: "₿" },
+      ]
+    },
+    {
+      id: "developer",
+      title: "Developer",
+      icon: "🧪",
+      items: [
+        { name: "API Documentation", href: "/documentation", icon: "📚", highlight: true },
+        { name: "SDK Access", href: "/documentation#sdk", icon: "💻", highlight: true },
+        { name: "Smart Contract Audit", href: "/audit-test", icon: "🔍", highlight: true },
+        { name: "Contract Templates", href: "/documentation#templates", icon: "📄", highlight: true },
+        { name: `Dev Mode ${devModeEnabled ? 'On' : 'Off'}`, href: "#", icon: "🛠️", isAction: true, action: () => toggleDevMode() },
+        { name: `Bypass Wallet ${devModeEnabled && bypassWalletRequirements ? 'On' : 'Off'}`, href: "#", icon: "⚡", isAction: true, action: () => setBypassWalletRequirements(!bypassWalletRequirements) },
       ]
     },
     {
