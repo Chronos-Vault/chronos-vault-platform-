@@ -110,6 +110,15 @@ class TONContractService {
       return false;
     }
 
+    // In development mode, return true for simulated transactions
+    if (config.isDevelopmentMode && txHash.startsWith('simulated_')) {
+      console.log('Using development mode validation for TON transaction');
+      // Simulate validation delay to mimic real-world behavior
+      await new Promise(resolve => setTimeout(resolve, 500));
+      console.warn('Using fallback validation mechanism in development environment');
+      return true;
+    }
+
     try {
       // Use TON API to check transaction status
       const apiKey = import.meta.env.VITE_TON_API_KEY || import.meta.env.TON_API_KEY || '5216ae7e1e4328d7c3e07bc4d32d2694db47f2c5dd20e56872b766b2fdb7fb02';
