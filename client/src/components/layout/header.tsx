@@ -33,6 +33,10 @@ const Header = () => {
     { name: "Explore", href: "#", icon: "🔍", children: [
       { name: "📊 Cross-Chain Monitor", href: "/cross-chain-monitor", highlight: true, isNew: true },
       { name: "📈 Transaction Monitor", href: "/transaction-monitor" },
+      { name: "📝 Transaction Verification", href: "/transaction-verification" }, 
+      { name: "🔄 Cross-Chain Bridge", href: "/cross-chain-bridge" },
+      { name: "⚛️ Atomic Swaps", href: "/cross-chain-atomic-swap" },
+      { name: "🛡️ Security Dashboard", href: "/cross-chain-security" },
       { name: "📚 Vault Explorer", href: "/my-vaults" }
     ]},
     { name: "Security", href: "/security-verification-demo", icon: "🔒" },
@@ -58,6 +62,10 @@ const Header = () => {
       items: [
         { name: "Cross-Chain Monitor", href: "/cross-chain-monitor", icon: "📊", highlight: true, isNew: true },
         { name: "Transaction Monitor", href: "/transaction-monitor", icon: "📈" },
+        { name: "Transaction Verification", href: "/transaction-verification", icon: "📝" },
+        { name: "Cross-Chain Bridge", href: "/cross-chain-bridge", icon: "🔄" },
+        { name: "Atomic Swaps", href: "/cross-chain-atomic-swap", icon: "⚛️" },
+        { name: "Security Dashboard", href: "/cross-chain-security", icon: "🛡️" },
         { name: "Vault Explorer", href: "/my-vaults", icon: "📚" },
       ]
     },
