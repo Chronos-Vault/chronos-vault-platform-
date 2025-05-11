@@ -385,7 +385,7 @@ const MainHeader = () => {
                   <div className="flex justify-between items-center mb-6">
                     <div className="flex items-center gap-3">
                       <div className="h-10 w-10 rounded-full flex items-center justify-center shadow-xl shadow-[#FF5AF7]/40 overflow-hidden border-2 border-white/40 animate-logo-glow">
-                        <img src="@assets/IMG_3753.jpeg" alt="Chronos Vault Logo" className="w-full h-full object-cover" />
+                        <img src={logoPath} alt="Chronos Vault Logo" className="w-full h-full object-cover" />
                       </div>
                       <div className="relative">
                         <h1 className="text-lg font-poppins font-bold text-white">
