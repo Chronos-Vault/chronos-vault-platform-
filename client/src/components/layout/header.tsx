@@ -272,8 +272,21 @@ const Header = () => {
                   </div>
                   
                   <div className="pt-4 mt-4 border-t border-[#6B00D7]/30 space-y-4">
+                    <div className="mb-4">
+                      <h3 className="text-sm font-medium text-[#FF5AF7] mb-3 flex items-center">
+                        <div className="h-8 w-8 mr-2 rounded-full flex items-center justify-center shadow-lg shadow-[#FF5AF7]/30 overflow-hidden border border-white/20">
+                          <img src={logoPath} alt="Chronos Vault Logo" className="w-full h-full object-cover" />
+                        </div>
+                        Connect Wallet
+                      </h3>
+                      <CrossChainWalletSelector className="w-full" />
+                      <div className="mt-3">
+                        <BitcoinWalletConnector />
+                      </div>
+                    </div>
+                    
                     {isDevelopmentEnvironment && (
-                      <div className="mb-6">
+                      <div className="mt-2 pt-3 border-t border-[#6B00D7]/30">
                         <h3 className="text-sm font-medium text-[#FF5AF7] mb-2">Developer Options</h3>
                         <div 
                           className={`flex items-center justify-between p-3 rounded-lg cursor-pointer ${
@@ -300,11 +313,6 @@ const Header = () => {
                         </div>
                       </div>
                     )}
-                    <h3 className="text-sm font-medium text-[#FF5AF7]">Connect Wallet</h3>
-                    <CrossChainWalletSelector className="w-full" />
-                    <div className="mt-3">
-                      <BitcoinWalletConnector />
-                    </div>
                   </div>
                 </div>
               </SheetContent>
