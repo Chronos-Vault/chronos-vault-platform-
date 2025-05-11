@@ -4,19 +4,29 @@ import { useOnboarding } from '@/contexts/onboarding-context';
 
 /**
  * This component handles automatic redirection to the onboarding flow
- * for first-time users. It's separated from App.tsx to avoid dependency
- * cycles with context providers.
+ * for first-time users, and also handles redirection from onboarding to home
+ * when onboarding is complete.
  */
 export const OnboardingRedirect = () => {
-  const { hasCompletedOnboarding } = useOnboarding();
+  const { hasCompletedOnboarding, currentStep } = useOnboarding();
   const [location, navigate] = useLocation();
   
   useEffect(() => {
-    // Only redirect if the user is on the home page and hasn't completed onboarding
+    // Redirect users who haven't completed onboarding from home to onboarding
     if (location === '/' && !hasCompletedOnboarding) {
       navigate('/onboarding');
     }
-  }, [location, hasCompletedOnboarding, navigate]);
+    
+    // Redirect users who have completed onboarding from onboarding page to home
+    if (location === '/onboarding' && hasCompletedOnboarding) {
+      navigate('/');
+    }
+    
+    // Also redirect if the current step is 'complete'
+    if (location === '/onboarding' && currentStep === 'complete') {
+      navigate('/');
+    }
+  }, [location, hasCompletedOnboarding, currentStep, navigate]);
   
   // This is a logical component, not a visual one
   return null;
