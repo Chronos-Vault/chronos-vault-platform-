@@ -121,10 +121,10 @@ const MainHeader = () => {
       title: "Developer",
       icon: "🧪",
       items: [
-        { name: "Connect Ethereum", href: "#", icon: "🔗", highlight: true, isAction: true, action: () => multiChain.connectChain(BlockchainType.ETHEREUM) },
-        { name: "Connect Solana", href: "#", icon: "🔗", highlight: true, isAction: true, action: () => multiChain.connectChain(BlockchainType.SOLANA) },
-        { name: "Connect TON", href: "#", icon: "🔗", highlight: true, isAction: true, action: () => multiChain.connectChain(BlockchainType.TON) },
-        { name: "Connect Bitcoin", href: "#", icon: "🔗", highlight: true, isAction: true, action: () => multiChain.connectChain(BlockchainType.BITCOIN) },
+        { name: "API Documentation", href: "/documentation", icon: "📚", highlight: true },
+        { name: "SDK Access", href: "/documentation#sdk", icon: "💻", highlight: true },
+        { name: "Smart Contract Audit", href: "/audit-test", icon: "🔍", highlight: true },
+        { name: "Contract Templates", href: "/documentation#templates", icon: "📄", highlight: true },
         { name: `Dev Mode ${devModeEnabled ? 'On' : 'Off'}`, href: "#", icon: "🛠️", isAction: true, action: () => toggleDevMode() },
         { name: `Bypass Wallet ${devModeEnabled && bypassWalletRequirements ? 'On' : 'Off'}`, href: "#", icon: "⚡", isAction: true, action: () => setBypassWalletRequirements(!bypassWalletRequirements) },
       ]
