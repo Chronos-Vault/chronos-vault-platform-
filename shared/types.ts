@@ -1,112 +1,94 @@
 /**
- * Shared Types
- *
- * Common types used across the application for consistent interfaces.
+ * Shared Type Definitions
+ * 
+ * Common types used across the application for consistency
  */
 
 export type BlockchainType = 'ETH' | 'SOL' | 'TON' | 'BTC';
 
-export enum VerificationMethod {
-  STANDARD = 'STANDARD',
-  CROSS_CHAIN = 'CROSS_CHAIN',
-  MULTI_SIG = 'MULTI_SIG',
-  ZERO_KNOWLEDGE = 'ZERO_KNOWLEDGE'
-}
-
-export enum VaultType {
-  STANDARD = 'STANDARD',
-  TIME_LOCKED = 'TIME_LOCKED',
-  MULTI_SIG = 'MULTI_SIG',
-  CROSS_CHAIN = 'CROSS_CHAIN',
-  CONDITION_BASED = 'CONDITION_BASED',
-  BITCOIN_HALVING = 'BITCOIN_HALVING',
-  BITCOIN_PRICE = 'BITCOIN_PRICE'
-}
-
 export enum SecurityLevel {
-  BASIC = 1,
-  ADVANCED = 2,
-  MAXIMUM = 3
+  BASIC = 0,
+  ADVANCED = 1,
+  MAXIMUM = 2
 }
 
-/**
- * Blockchain role in the Triple-Chain Security architecture
- */
-export enum ChainRole {
-  PRIMARY = 'PRIMARY',         // Main ownership and access control (Ethereum)
-  MONITORING = 'MONITORING',   // High-speed monitoring (Solana)
-  RECOVERY = 'RECOVERY',       // Backup and recovery (TON)
-  FALLBACK = 'FALLBACK'        // Extra fallback chain
-}
-
-/**
- * Recovery strategies for cross-chain failover
- */
 export enum RecoveryStrategy {
-  NONE = 'NONE',                  // No recovery needed
-  RETRY = 'RETRY',                // Retry the operation with exponential backoff
-  SWITCH_PRIMARY = 'SWITCH_PRIMARY', // Switch to a different primary chain
-  PARTIAL_VERIFICATION = 'PARTIAL_VERIFICATION', // Use partial verification with available chains
-  EMERGENCY_PROTOCOL = 'EMERGENCY_PROTOCOL' // Activate emergency protocol
+  NONE = 0,
+  SWITCH_PRIMARY = 1,
+  PARTIAL_VERIFICATION = 2,
+  EMERGENCY_PROTOCOL = 3,
+  RETRY = 4
 }
 
-/**
- * Chain status for monitoring
- */
+export enum ChainRole {
+  PRIMARY = 'PRIMARY',
+  MONITORING = 'MONITORING',
+  RECOVERY = 'RECOVERY',
+  FALLBACK = 'FALLBACK'
+}
+
 export interface ChainStatus {
   blockchain: BlockchainType;
-  isConnected: boolean;
-  latestBlockNumber?: number;
-  latestBlockTimestamp?: number;
-  syncStatus: 'synced' | 'syncing' | 'error';
+  isAvailable: boolean;
   latency: number;
+  lastBlockNumber?: number;
+  lastSyncTimestamp: number;
   error?: string;
-  lastUpdated: number;
 }
 
-/**
- * Quantum-resistant encryption level
- */
-export enum QuantumResistanceLevel {
-  STANDARD = 'STANDARD',   // Basic protection (e.g., Kyber-512, Dilithium2)
-  ENHANCED = 'ENHANCED',   // Medium protection (e.g., Kyber-768, Dilithium3)
-  MAXIMUM = 'MAXIMUM'      // Maximum protection (e.g., Kyber-1024, Dilithium5)
+export interface SecurityDashboardStatus {
+  chainStatuses: Record<BlockchainType, ChainStatus>;
+  primaryChain: BlockchainType;
+  securityLevel: SecurityLevel;
+  crossChainSyncStatus: {
+    isSynced: boolean;
+    syncPercentage: number;
+    lastSyncTime: number;
+  };
+  activeFailovers: {
+    vaultId: string;
+    primaryChain: BlockchainType;
+    fallbackChain?: BlockchainType;
+    strategy: RecoveryStrategy;
+    reason: string;
+    timestamp: number;
+  }[];
+  securityAlerts: {
+    id: string;
+    severity: 'low' | 'medium' | 'high' | 'critical';
+    message: string;
+    timestamp: number;
+    resolved: boolean;
+  }[];
 }
 
-/**
- * Cross-chain verification result for Triple-Chain security
- */
-export interface TripleChainVerificationResult {
-  vaultId: string;
-  primaryChain: {
-    blockchain: BlockchainType;
-    verified: boolean;
-    confirmations: number;
-    timestamp: number;
-  };
-  monitoringChain: {
-    blockchain: BlockchainType;
-    verified: boolean;
-    confirmations: number;
-    timestamp: number;
-  };
-  recoveryChain: {
-    blockchain: BlockchainType;
-    verified: boolean;
-    confirmations: number;
-    timestamp: number;
-  };
-  overallStatus: 'secure' | 'warning' | 'compromised';
-  confidenceScore: number;
-  zkProofVerified: boolean;
+export interface ChainHealth {
+  role: ChainRole;
+  status: 'healthy' | 'warning' | 'error';
+  blockHeight: number;
+  syncPercentage: number;
+  verifiedTransactions: number;
+  pendingTransactions: number;
+  lastVerifiedBlock: number;
+  latency: number;
+}
+
+export interface SecurityAlert {
+  id: string;
+  severity: 'low' | 'medium' | 'high' | 'critical';
+  message: string;
   timestamp: number;
+  resolved: boolean;
+  metadata?: Record<string, any>;
 }
 
-export interface StressTestConfig {
-  iterations: number;
-  concurrency: number;
-  delay: number;
-  timeoutMs: number;
-  chains: BlockchainType[];
-  isDevelopmentMode: boolean;
+export interface FailoverEvent {
+  vaultId: string;
+  primaryChain: BlockchainType;
+  fallbackChain?: BlockchainType;
+  strategy: RecoveryStrategy;
+  reason: string;
+  timestamp: number;
+  success?: boolean;
+  errorMessage?: string;
 }
