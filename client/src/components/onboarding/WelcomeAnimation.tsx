@@ -19,7 +19,7 @@ export const WelcomeAnimation = () => {
   }, []);
   
   return (
-    <div className="relative flex flex-col items-center justify-center min-h-screen overflow-hidden bg-black">
+    <div className="relative flex flex-col items-center justify-center min-h-screen overflow-hidden bg-black px-4 py-6">
       {/* Background gradient elements */}
       <motion.div
         className="absolute w-full h-full bg-gradient-radial from-purple-900/20 to-transparent"
@@ -69,7 +69,7 @@ export const WelcomeAnimation = () => {
       
       {/* Title animation */}
       <motion.h1
-        className="relative z-10 text-4xl md:text-6xl font-bold text-white mb-4 text-center"
+        className="relative z-10 text-3xl md:text-6xl font-bold text-white mb-4 text-center"
         initial={{ y: 20, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{ duration: 1, delay: 1, ease: "easeOut" }}
@@ -79,7 +79,7 @@ export const WelcomeAnimation = () => {
       
       {/* Subtitle animation */}
       <motion.p
-        className="relative z-10 text-xl md:text-2xl text-white/80 mb-10 text-center max-w-md px-4"
+        className="relative z-10 text-lg md:text-2xl text-white/80 mb-10 text-center max-w-md px-2"
         initial={{ y: 20, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{ duration: 1, delay: 1.5, ease: "easeOut" }}

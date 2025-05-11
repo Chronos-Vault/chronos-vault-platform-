@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { useOnboarding } from '@/contexts/onboarding-context';
+import { useLocation } from 'wouter';
 import { Button } from '@/components/ui/button';
 import { ArrowRight } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
@@ -10,7 +11,8 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
  * during the onboarding process. It supports TON, Ethereum and Solana.
  */
 const WalletConnection = () => {
-  const { completeCurrentStep } = useOnboarding();
+  const { completeCurrentStep, skipToEnd } = useOnboarding();
+  const [_, navigate] = useLocation();
   const [selectedWallet, setSelectedWallet] = useState<string | null>(null);
   const [connecting, setConnecting] = useState(false);
 
@@ -122,7 +124,10 @@ const WalletConnection = () => {
           <Button
             size="lg"
             className="bg-gradient-to-r from-primary to-secondary hover:from-primary/90 hover:to-secondary/90"
-            onClick={completeCurrentStep}
+            onClick={() => {
+              skipToEnd();
+              navigate('/');
+            }}
           >
             Continue <ArrowRight className="ml-2 h-5 w-5" />
           </Button>
@@ -130,7 +135,10 @@ const WalletConnection = () => {
           <Button
             variant="ghost"
             className="text-sm text-muted-foreground hover:text-foreground"
-            onClick={completeCurrentStep}
+            onClick={() => {
+              skipToEnd();
+              navigate('/');
+            }}
           >
             Skip for now (Developer Mode)
           </Button>

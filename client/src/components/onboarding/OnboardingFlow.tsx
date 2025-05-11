@@ -41,7 +41,7 @@ export const OnboardingFlow = () => {
   
   // Show progress indicator
   return (
-    <div className="flex flex-col h-full">
+    <div className="flex flex-col min-h-screen">
       {/* Progress indicator */}
       <div className="fixed top-0 left-0 w-full h-1 bg-gray-200 z-50">
         <div 
@@ -51,7 +51,7 @@ export const OnboardingFlow = () => {
       </div>
       
       {/* Current step content */}
-      <div className="flex-1">
+      <div className="flex-1 flex flex-col">
         {renderCurrentStep()}
       </div>
     </div>

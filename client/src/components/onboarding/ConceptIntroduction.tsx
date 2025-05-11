@@ -53,8 +53,8 @@ export const ConceptIntroduction = () => {
   };
   
   return (
-    <div className="min-h-screen flex flex-col justify-between p-6 bg-background">
-      <div className="flex-1 flex flex-col items-center justify-center">
+    <div className="min-h-screen flex flex-col justify-between p-4 md:p-6 bg-background">
+      <div className="flex-1 flex flex-col items-center justify-center py-6">
         <motion.div
           className="w-full max-w-4xl mx-auto"
           initial="hidden"
@@ -71,7 +71,7 @@ export const ConceptIntroduction = () => {
           </motion.div>
           
           <motion.div 
-            className="grid grid-cols-1 md:grid-cols-3 gap-6"
+            className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 sm:gap-6"
             variants={containerVariants}
           >
             {concepts.map((concept, index) => (
