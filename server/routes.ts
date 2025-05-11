@@ -6,6 +6,7 @@ import { Express, Request, Response, Router } from 'express';
 import { createServer, Server } from 'http';
 import { performanceRoutes } from './api/performance-routes';
 import securityLoggerRoutes from './api/security-logger-routes';
+import securityRoutes from './routes/security-routes';
 import healthRoutes from './api/health-routes';
 import incidentRoutes from './api/incident-routes';
 import paymentRoutes from './api/payment-routes';
@@ -36,7 +37,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
   
   // Register API sub-routes
   apiRouter.use('/performance', performanceRoutes);
-  apiRouter.use('/security', securityLoggerRoutes);
+  apiRouter.use('/security/logs', securityLoggerRoutes);
+  apiRouter.use('/security', securityRoutes);
   apiRouter.use('/health', healthRoutes);
   apiRouter.use('/incidents', incidentRoutes);
   apiRouter.use('/payments', paymentRoutes);
