@@ -30,8 +30,12 @@ const Header = () => {
   // Desktop navigation links (streamlined for better UX)
   const desktopNavigationLinks = [
     { name: "Vaults", href: "/vault-types", icon: "🔐" },
-    { name: "Monitor", href: "/cross-chain-monitor", icon: "📊", highlight: true, important: true, isNew: true },
-    { name: "Security", href: "/security-verification-demo", icon: "⛓️", highlight: true },
+    { name: "Explore", href: "#", icon: "🔍", children: [
+      { name: "📊 Cross-Chain Monitor", href: "/cross-chain-monitor", highlight: true, isNew: true },
+      { name: "📈 Transaction Monitor", href: "/transaction-monitor" },
+      { name: "📚 Vault Explorer", href: "/my-vaults" }
+    ]},
+    { name: "Security", href: "/security-verification-demo", icon: "🔒" },
     { name: "CVT Token", href: "/cvt-token", icon: "🪙" },
     { name: "Docs", href: "/documentation", icon: "📄" },
   ];
@@ -45,8 +49,16 @@ const Header = () => {
       items: [
         { name: "Home", href: "/", icon: "🏠" },
         { name: "Vaults", href: "/vault-types", icon: "🔐" },
-        { name: "My Assets", href: "/my-vaults", icon: "📊" },
-        { name: "Cross-Chain Monitor", href: "/cross-chain-monitor", icon: "📊", highlight: true, important: true, isNew: true },
+      ]
+    },
+    {
+      id: "explore",
+      title: "Explore",
+      icon: "🔍",
+      items: [
+        { name: "Cross-Chain Monitor", href: "/cross-chain-monitor", icon: "📊", highlight: true, isNew: true },
+        { name: "Transaction Monitor", href: "/transaction-monitor", icon: "📈" },
+        { name: "Vault Explorer", href: "/my-vaults", icon: "📚" },
       ]
     },
     {
@@ -54,10 +66,9 @@ const Header = () => {
       title: "Features",
       icon: "✨",
       items: [
-        { name: "Security", href: "/security-verification-demo", icon: "🔐", highlight: true },
+        { name: "Security", href: "/security-verification-demo", icon: "🔒", highlight: true },
         { name: "Multi-Signature", href: "/multi-signature-vault", icon: "👥" },
         { name: "Bitcoin Halving", href: "/bitcoin-halving", icon: "₿" },
-        { name: "Premium", href: "/premium-features", icon: "⭐", highlight: true },
       ]
     },
     {
@@ -67,7 +78,6 @@ const Header = () => {
       items: [
         { name: "CVT Token", href: "/cvt-token", icon: "🪙" },
         { name: "Docs", href: "/documentation", icon: "📄" },
-        { name: "Whitepaper", href: "/project-whitepaper", icon: "📖" },
         { name: "About", href: "/about", icon: "ℹ️" },
       ]
     }
@@ -97,24 +107,47 @@ const Header = () => {
           
           <div className="hidden md:flex items-center gap-1 lg:gap-4">
             {desktopNavigationLinks.map((link) => (
-              <Link 
-                key={link.name} 
-                href={link.href}
-                className={`flex items-center gap-1.5 px-3 py-2 rounded-lg text-gray-300 hover:text-white font-poppins font-medium text-sm lg:text-base transition-all hover:bg-[#6B00D7]/10 ${
-                  location === link.href 
-                  ? 'text-white bg-[#6B00D7]/20 relative after:absolute after:bottom-[6px] after:left-[10px] after:right-[10px] after:h-[2px] after:bg-gradient-to-r after:from-[#6B00D7] after:to-[#FF5AF7] after:rounded-full' 
-                  : ''
-                } ${link.highlight ? 'relative bg-gradient-to-r from-[#6B00D7]/20 to-[#FF5AF7]/20 border border-[#FF5AF7]/30 text-[#FF5AF7] shadow-sm' : ''}
-                ${link.important ? 'animate-pulse border-2 font-bold' : ''}`}
-              >
-                <span className="text-base">{link.icon}</span>
-                <div className="relative">
-                  <span className="truncate">{link.name}</span>
-                  {link.isNew && (
-                    <div className="absolute -top-3 -right-6 bg-[#FF5AF7] text-white text-[8px] px-1.5 py-0.5 rounded-full font-bold tracking-wider shadow-md shadow-[#FF5AF7]/30 animate-pulse">NEW</div>
-                  )}
-                </div>
-              </Link>
+              link.children ? (
+                <DropdownMenu key={link.name}>
+                  <DropdownMenuTrigger className="flex items-center gap-1.5 px-3 py-2 rounded-lg text-gray-300 hover:text-white font-poppins font-medium text-sm lg:text-base transition-all hover:bg-[#6B00D7]/10">
+                    <span className="text-base">{link.icon}</span>
+                    <div className="relative">
+                      <span className="truncate">{link.name}</span>
+                    </div>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="center" className="w-56 bg-[#1A1A1A] border border-[#333] shadow-xl">
+                    {link.children.map((childLink) => (
+                      <Link key={childLink.name} href={childLink.href}>
+                        <DropdownMenuItem 
+                          className={`flex items-center py-2 gap-2 cursor-pointer hover:bg-[#333] ${
+                            childLink.highlight ? 'relative bg-gradient-to-r from-[#6B00D7]/20 to-[#FF5AF7]/20 border border-[#FF5AF7]/30 text-[#FF5AF7] shadow-sm' : ''
+                          }`}
+                        >
+                          <span className="truncate">{childLink.name}</span>
+                          {childLink.isNew && (
+                            <div className="bg-[#FF5AF7] text-white text-[8px] px-1.5 py-0.5 rounded-full font-bold tracking-wider shadow-md shadow-[#FF5AF7]/30 animate-pulse">NEW</div>
+                          )}
+                        </DropdownMenuItem>
+                      </Link>
+                    ))}
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              ) : (
+                <Link 
+                  key={link.name} 
+                  href={link.href}
+                  className={`flex items-center gap-1.5 px-3 py-2 rounded-lg text-gray-300 hover:text-white font-poppins font-medium text-sm lg:text-base transition-all hover:bg-[#6B00D7]/10 ${
+                    location === link.href 
+                    ? 'text-white bg-[#6B00D7]/20 relative after:absolute after:bottom-[6px] after:left-[10px] after:right-[10px] after:h-[2px] after:bg-gradient-to-r after:from-[#6B00D7] after:to-[#FF5AF7] after:rounded-full' 
+                    : ''
+                  }`}
+                >
+                  <span className="text-base">{link.icon}</span>
+                  <div className="relative">
+                    <span className="truncate">{link.name}</span>
+                  </div>
+                </Link>
+              )
             ))}
           </div>
           
@@ -219,17 +252,16 @@ const Header = () => {
                                   className={`flex items-center gap-3 px-3 py-3 rounded-lg ${location === link.href 
                                     ? 'bg-[#6B00D7]/20 text-white font-poppins font-semibold border-l-2 border-[#FF5AF7]' 
                                     : 'text-gray-300 hover:text-white hover:bg-[#6B00D7]/10 font-poppins font-medium transition-all'
-                                  } ${link.highlight ? 'relative bg-gradient-to-r from-[#6B00D7]/20 to-[#FF5AF7]/20 border border-[#FF5AF7]/30 text-[#FF5AF7] shadow-sm' : ''}
-                                  ${link.important ? 'animate-pulse border-2 border-[#FF5AF7] font-bold' : ''}`}
+                                  } ${link.highlight ? 'relative bg-gradient-to-r from-[#6B00D7]/20 to-[#FF5AF7]/20 border border-[#FF5AF7]/30 text-[#FF5AF7] shadow-sm' : ''}`}
                                 >
                                   <div className="flex items-center justify-center w-10 h-10 rounded-lg bg-gradient-to-br from-[#6B00D7]/30 to-[#FF5AF7]/20 shadow-inner shadow-[#6B00D7]/10 border border-[#6B00D7]/20">
                                     <span className="text-xl text-[#FF5AF7]">{link.icon}</span>
                                   </div>
                                   <div className="relative">
                                     <span className="text-base">{link.name}</span>
-                                    {link.isNew && (
+                                    {link.isNew ? (
                                       <div className="absolute -top-3 -right-6 bg-[#FF5AF7] text-white text-[8px] px-1.5 py-0.5 rounded-full font-bold tracking-wider shadow-md shadow-[#FF5AF7]/30 animate-pulse">NEW</div>
-                                    )}
+                                    ) : null}
                                   </div>
                                 </Link>
                               </SheetClose>
