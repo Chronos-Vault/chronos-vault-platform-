@@ -126,6 +126,7 @@ const MainHeader = () => {
         { name: "Transaction Verification", href: "/transaction-verification", icon: "📝" },
         { name: "Cross-Chain Bridge", href: "/cross-chain-bridge", icon: "🔄" },
         { name: "Atomic Swaps", href: "/cross-chain-atomic-swap", icon: "⚛️" },
+        { name: "Bridge vs Swap", href: "/cross-chain-vs-atomic-swap", icon: "🔄", highlight: true, isNew: true },
         { name: "Security Dashboard", href: "/cross-chain-security", icon: "🛡️" },
         { name: "Vault Explorer", href: "/my-vaults", icon: "📚" },
       ]
@@ -138,6 +139,8 @@ const MainHeader = () => {
         { name: "Security", href: "/security-verification-demo", icon: "🔒", highlight: true },
         { name: "Multi-Signature", href: "/multi-signature-vault", icon: "👥" },
         { name: "Bitcoin Halving", href: "/bitcoin-halving", icon: "₿" },
+        { name: "Gift Crypto", href: "/gift-crypto", icon: "🎁", highlight: true },
+        { name: "Token Vaults", href: "/token-vaults", icon: "🏦", highlight: true },
       ]
     },
     {
@@ -159,8 +162,10 @@ const MainHeader = () => {
       icon: "📚",
       items: [
         { name: "CVT Token", href: "/cvt-token", icon: "🪙" },
+        { name: "CVT Utility", href: "/cvt-utility", icon: "⚡", highlight: true },
         { name: "Tokenomics", href: "/tokenomics", icon: "📊" },
         { name: "Whitepaper", href: "/whitepaper", icon: "📑" },
+        { name: "Technical Spec", href: "/technical-specification", icon: "🔧", highlight: true },
         { name: "Smart Contracts", href: "/smart-contracts", icon: "📜" },
         { name: "Roadmap", href: "/roadmap", icon: "🗺️" },
         { name: "Team", href: "/team", icon: "👥" },
@@ -244,6 +249,14 @@ const MainHeader = () => {
                         Peer-to-peer trading between blockchain networks
                       </ListItem>
                       <ListItem 
+                        href="/cross-chain-vs-atomic-swap" 
+                        title="🔄 Bridge vs Swap"
+                        highlight={true}
+                        isNew={true}
+                      >
+                        Comparison of cross-chain bridges and atomic swaps
+                      </ListItem>
+                      <ListItem 
                         href="/cross-chain-security" 
                         title="🛡️ Security Dashboard"
                       >
@@ -297,6 +310,13 @@ const MainHeader = () => {
                         Platform native utility token
                       </ListItem>
                       <ListItem 
+                        href="/cvt-utility" 
+                        title="⚡ CVT Utility"
+                        highlight={true}
+                      >
+                        Token use cases and benefits
+                      </ListItem>
+                      <ListItem 
                         href="/tokenomics" 
                         title="📊 Tokenomics"
                       >
@@ -307,6 +327,13 @@ const MainHeader = () => {
                         title="📑 Whitepaper"
                       >
                         Technical project documentation
+                      </ListItem>
+                      <ListItem 
+                        href="/technical-specification" 
+                        title="🔧 Technical Spec"
+                        highlight={true}
+                      >
+                        Detailed technical architecture
                       </ListItem>
                       <ListItem 
                         href="/smart-contracts" 
