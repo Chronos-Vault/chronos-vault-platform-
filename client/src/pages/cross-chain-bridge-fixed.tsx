@@ -8,10 +8,8 @@ import { useState, useEffect } from 'react';
 import { Link } from 'wouter';
 import { useQuery, useMutation } from '@tanstack/react-query';
 import { crossChainBridgeService } from '@/services/CrossChainBridgeService';
-import { useBlockchain } from '@/hooks/use-blockchain';
+import { useBlockchain, type ChainType } from '@/hooks/use-blockchain';
 import { useToast } from "@/hooks/use-toast";
-import type { BlockchainType } from '@/types/blockchain';
-import { ChainType } from '@/hooks/use-blockchain';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -23,7 +21,47 @@ import { AlertCircle, ChevronRight, ArrowLeftRight, RefreshCw, CheckCircle, XCir
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Progress } from '@/components/ui/progress';
-import PageTitle from '@/components/common/PageTitle';
+
+// PageTitle component as a simple local component
+const PageTitle = ({ 
+  title, 
+  subtitle, 
+  gradientText, 
+  className = '' 
+}: { 
+  title: string; 
+  subtitle?: string; 
+  gradientText?: string; 
+  className?: string 
+}) => {
+  // Process the title to replace the gradient text if specified
+  const renderTitle = () => {
+    if (!gradientText || !title.includes(gradientText)) {
+      return <h1 className="text-4xl font-extrabold tracking-tight">{title}</h1>;
+    }
+
+    const parts = title.split(gradientText);
+    
+    return (
+      <h1 className="text-4xl font-extrabold tracking-tight flex flex-wrap">
+        {parts[0]}
+        <span className="bg-clip-text text-transparent bg-gradient-to-r from-purple-500 to-pink-600 ml-2 mr-2">
+          {gradientText}
+        </span>
+        {parts[1]}
+      </h1>
+    );
+  };
+
+  return (
+    <div className={`space-y-2 ${className}`}>
+      {renderTitle()}
+      {subtitle && (
+        <p className="text-lg text-muted-foreground max-w-2xl">{subtitle}</p>
+      )}
+    </div>
+  );
+};
 
 // Asset options for each chain
 const ASSETS = {
@@ -453,7 +491,7 @@ export default function CrossChainBridgePage() {
                               currentBridgeStatus.status === 'operational'
                                 ? 'default'
                                 : currentBridgeStatus.status === 'degraded'
-                                ? 'warning'
+                                ? 'outline' 
                                 : 'destructive'
                             }
                           >
@@ -495,7 +533,7 @@ export default function CrossChainBridgePage() {
                     
                     {/* Warning about wallet connection */}
                     {!wallets[sourceChain]?.isConnected && (
-                      <Alert variant="warning">
+                      <Alert variant="destructive">
                         <AlertCircle className="h-4 w-4" />
                         <AlertTitle>Wallet not connected</AlertTitle>
                         <AlertDescription>
@@ -690,7 +728,7 @@ export default function CrossChainBridgePage() {
                               currentBridgeStatus.status === 'operational'
                                 ? 'default'
                                 : currentBridgeStatus.status === 'degraded'
-                                ? 'warning'
+                                ? 'outline'
                                 : 'destructive'
                             }
                           >
@@ -732,7 +770,7 @@ export default function CrossChainBridgePage() {
                     
                     {/* Warning about wallet connections */}
                     {(!wallets[sourceChain]?.isConnected || !wallets[targetChain]?.isConnected) && (
-                      <Alert variant="warning">
+                      <Alert variant="destructive">
                         <AlertCircle className="h-4 w-4" />
                         <AlertTitle>Wallet not connected</AlertTitle>
                         <AlertDescription>
@@ -839,7 +877,7 @@ export default function CrossChainBridgePage() {
                             status.status === 'operational'
                               ? 'default'
                               : status.status === 'degraded'
-                              ? 'warning'
+                              ? 'outline'
                               : 'destructive'
                           }
                         >
@@ -853,13 +891,6 @@ export default function CrossChainBridgePage() {
                         <Progress 
                           value={status.successRate} 
                           className="h-1 mt-1"
-                          indicatorClassName={
-                            status.successRate > 98
-                              ? "bg-green-500"
-                              : status.successRate > 90
-                              ? "bg-amber-500"
-                              : "bg-red-500"
-                          }
                         />
                       </div>
                     </div>

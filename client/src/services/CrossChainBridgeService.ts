@@ -5,7 +5,7 @@
  */
 
 import { apiRequest } from "@/lib/queryClient";
-import type { BlockchainType } from "@/types/blockchain";
+import type { ChainType as BlockchainType } from "@/hooks/use-blockchain";
 
 /**
  * Bridge transaction status
