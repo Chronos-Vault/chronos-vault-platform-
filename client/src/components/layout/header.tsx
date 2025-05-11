@@ -27,78 +27,48 @@ const Header = () => {
   const { isAuthenticated } = useAuthContext();
   const { devModeEnabled, toggleDevMode, isDevelopmentEnvironment } = useDevMode();
 
-  // Desktop navigation links (limited set for better UX)
+  // Desktop navigation links (streamlined for better UX)
   const desktopNavigationLinks = [
-    { name: "Create Vault", href: "/vault-types", icon: "🔐" },
-    { name: "My Vaults", href: "/my-vaults", icon: "📊" },
-    // Transaction Monitor is now styled with extra importance and "NEW" label
-    { name: "Transaction Monitor", href: "/transaction-monitor", icon: "📈", highlight: true, important: true, isNew: true },
-    { name: "Storage", href: "/storage", icon: "🗄️", highlight: true },
-    { name: "Gift Crypto", href: "/gift-crypto", icon: "🎁" },
-    { name: "Premium Features", href: "/premium-features", icon: "⭐", highlight: true, important: true, isNew: true },
-    { name: "Security Verification", href: "/security-verification-demo", icon: "🔐", highlight: true },
-    { name: "Triple-Chain Security", href: "/triple-chain-security-demo", icon: "⛓️", highlight: true },
+    { name: "Vaults", href: "/vault-types", icon: "🔐" },
+    { name: "Monitor", href: "/cross-chain-monitor", icon: "📊", highlight: true, important: true, isNew: true },
+    { name: "Security", href: "/security-verification-demo", icon: "⛓️", highlight: true },
     { name: "CVT Token", href: "/cvt-token", icon: "🪙" },
-    { name: "Documentation", href: "/documentation", icon: "📄" },
-    { name: "Whitepaper", href: "/project-whitepaper", icon: "📑" },
-    { name: "Roadmap", href: "/roadmap", icon: "🗺️" },
-    { name: "About", href: "/about", icon: "ℹ️" },
+    { name: "Docs", href: "/documentation", icon: "📄" },
   ];
   
-  // Mobile navigation with categories for user-friendly navigation
+  // Mobile navigation with streamlined categories for better UX
   const mobileCategoryMenu = [
     {
       id: "main",
-      title: "Main Navigation",
+      title: "Main",
       icon: "🏠",
       items: [
         { name: "Home", href: "/", icon: "🏠" },
-        { name: "Create Vault", href: "/vault-types", icon: "🔐" },
-        { name: "My Vaults", href: "/my-vaults", icon: "📊" },
-        // Transaction Monitor with added visibility and NEW label
-        { name: "Transaction Monitor", href: "/transaction-monitor", icon: "📈", highlight: true, important: true, isNew: true },
-        { name: "Storage", href: "/storage", icon: "🗄️", highlight: true },
-        { name: "Gift Crypto", href: "/gift-crypto", icon: "🎁" },
+        { name: "Vaults", href: "/vault-types", icon: "🔐" },
+        { name: "My Assets", href: "/my-vaults", icon: "📊" },
+        { name: "Cross-Chain Monitor", href: "/cross-chain-monitor", icon: "📊", highlight: true, important: true, isNew: true },
       ]
     },
     {
       id: "features",
-      title: "Platform Features",
+      title: "Features",
       icon: "✨",
       items: [
+        { name: "Security", href: "/security-verification-demo", icon: "🔐", highlight: true },
+        { name: "Multi-Signature", href: "/multi-signature-vault", icon: "👥" },
         { name: "Bitcoin Halving", href: "/bitcoin-halving", icon: "₿" },
-        { name: "CVT Token", href: "/cvt-token", icon: "🪙" },
-        { name: "Token Vaults", href: "/token-vaults", icon: "⏳" },
-        { name: "Cross-Chain Features", href: "/cross-chain", icon: "🔄" },
-        { name: "Cross-Chain Monitor", href: "/cross-chain-monitor", icon: "📊", highlight: true, important: true, isNew: true },
-        { name: "Multi-Signature Vault", href: "/multi-signature-vault", icon: "👥" },
-        { name: "Security Verification", href: "/security-verification-demo", icon: "🔐", highlight: true },
-        { name: "Triple-Chain Security", href: "/triple-chain-security-demo", icon: "⛓️", highlight: true },
-        { name: "Premium Features", href: "/premium-features", icon: "⭐", highlight: true, important: true, isNew: true }
-      ]
-    },
-    {
-      id: "blockchains",
-      title: "Blockchain Integrations",
-      icon: "⛓️",
-      items: [
-        { name: "TON Integration", href: "/ton-integration", icon: "💎" },
-        { name: "Solana Integration", href: "/solana-integration", icon: "◎" },
-        { name: "Ethereum Integration", href: "/ethereum-integration", icon: "Ξ" },
+        { name: "Premium", href: "/premium-features", icon: "⭐", highlight: true },
       ]
     },
     {
       id: "resources",
-      title: "Resources & Documentation",
+      title: "Resources",
       icon: "📚",
       items: [
-        { name: "Documentation", href: "/documentation", icon: "📄" },
-        { name: "Technical Specification", href: "/technical-specification", icon: "🧪" },
-        { name: "Project Whitepaper", href: "/project-whitepaper", icon: "📖" },
-        { name: "CVT Whitepaper", href: "/whitepaper", icon: "📔" },
-        { name: "CVT Tokenomics", href: "/cvt-tokenomics", icon: "📊" },
+        { name: "CVT Token", href: "/cvt-token", icon: "🪙" },
+        { name: "Docs", href: "/documentation", icon: "📄" },
+        { name: "Whitepaper", href: "/project-whitepaper", icon: "📖" },
         { name: "About", href: "/about", icon: "ℹ️" },
-        { name: "Roadmap", href: "/roadmap", icon: "🗺️" },
       ]
     }
   ];
