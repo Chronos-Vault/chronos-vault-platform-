@@ -133,8 +133,14 @@ const MainHeader = () => {
       icon: "📚",
       items: [
         { name: "CVT Token", href: "/cvt-token", icon: "🪙" },
+        { name: "Tokenomics", href: "/tokenomics", icon: "📊" },
+        { name: "Whitepaper", href: "/whitepaper", icon: "📑" },
+        { name: "Smart Contracts", href: "/smart-contracts", icon: "📜" },
+        { name: "Roadmap", href: "/roadmap", icon: "🗺️" },
+        { name: "Team", href: "/team", icon: "👥" },
         { name: "Docs", href: "/documentation", icon: "📄" },
-        { name: "About", href: "/about", icon: "ℹ️" },
+        { name: "FAQ", href: "/faq", icon: "❓" },
+        { name: "About", href: "/about", icon: "ℹ️" }
       ]
     }
   ];
@@ -256,37 +262,69 @@ const MainHeader = () => {
                 </NavigationMenuItem>
 
                 <NavigationMenuItem>
-                  <NavigationMenuLink 
-                    asChild
-                    className={cn(
-                      navigationMenuTriggerStyle(),
-                      "bg-transparent text-gray-300 hover:text-white hover:bg-[#6B00D7]/10",
-                      location === "/cvt-token" ? "text-white bg-[#6B00D7]/20" : ""
-                    )}
-                  >
-                    <Link href="/cvt-token">
-                      <span className="inline-flex items-center gap-1.5">
-                        <span className="text-base">🪙</span> CVT Token
-                      </span>
-                    </Link>
-                  </NavigationMenuLink>
-                </NavigationMenuItem>
-
-                <NavigationMenuItem>
-                  <NavigationMenuLink 
-                    asChild
-                    className={cn(
-                      navigationMenuTriggerStyle(),
-                      "bg-transparent text-gray-300 hover:text-white hover:bg-[#6B00D7]/10",
-                      location === "/documentation" ? "text-white bg-[#6B00D7]/20" : ""
-                    )}
-                  >
-                    <Link href="/documentation">
-                      <span className="inline-flex items-center gap-1.5">
-                        <span className="text-base">📄</span> Docs
-                      </span>
-                    </Link>
-                  </NavigationMenuLink>
+                  <NavigationMenuTrigger className="bg-transparent text-gray-300 hover:text-white hover:bg-[#6B00D7]/10">
+                    <span className="inline-flex items-center gap-1.5">
+                      <span className="text-base">📚</span> Resources
+                    </span>
+                  </NavigationMenuTrigger>
+                  <NavigationMenuContent>
+                    <ul className="grid w-[400px] gap-2 p-4 md:grid-cols-2 bg-[#1A1A1A] border border-[#333] shadow-xl">
+                      <ListItem 
+                        href="/cvt-token" 
+                        title="🪙 CVT Token"
+                      >
+                        Platform native utility token
+                      </ListItem>
+                      <ListItem 
+                        href="/tokenomics" 
+                        title="📊 Tokenomics"
+                      >
+                        Token distribution and economics
+                      </ListItem>
+                      <ListItem 
+                        href="/whitepaper" 
+                        title="📑 Whitepaper"
+                      >
+                        Technical project documentation
+                      </ListItem>
+                      <ListItem 
+                        href="/smart-contracts" 
+                        title="📜 Smart Contracts"
+                      >
+                        Contract addresses and audits
+                      </ListItem>
+                      <ListItem 
+                        href="/roadmap" 
+                        title="🗺️ Roadmap"
+                      >
+                        Project development timeline
+                      </ListItem>
+                      <ListItem 
+                        href="/team" 
+                        title="👥 Team"
+                      >
+                        Core team and advisors
+                      </ListItem>
+                      <ListItem 
+                        href="/documentation" 
+                        title="📄 Docs"
+                      >
+                        Developer and user resources
+                      </ListItem>
+                      <ListItem 
+                        href="/faq" 
+                        title="❓ FAQ"
+                      >
+                        Frequently asked questions
+                      </ListItem>
+                      <ListItem 
+                        href="/about" 
+                        title="ℹ️ About"
+                      >
+                        About Chronos Vault
+                      </ListItem>
+                    </ul>
+                  </NavigationMenuContent>
                 </NavigationMenuItem>
               </NavigationMenuList>
             </NavigationMenu>
@@ -385,29 +423,56 @@ const MainHeader = () => {
                             <h3 className="text-[#FF5AF7] font-medium tracking-wide">{category.title}</h3>
                           </div>
                           
-                          <div className="grid grid-cols-1 gap-2 pl-1">
-                            {category.items.map((link) => (
-                              <SheetClose key={link.name} asChild>
-                                <Link 
-                                  href={link.href}
-                                  className={`flex items-center gap-3 px-3 py-3 rounded-lg ${location === link.href 
-                                    ? 'bg-[#6B00D7]/20 text-white font-poppins font-semibold border-l-2 border-[#FF5AF7]' 
-                                    : 'text-gray-300 hover:text-white hover:bg-[#6B00D7]/10 font-poppins font-medium transition-all'
-                                  } ${link.highlight ? 'relative bg-gradient-to-r from-[#6B00D7]/20 to-[#FF5AF7]/20 border border-[#FF5AF7]/30 text-[#FF5AF7] shadow-sm' : ''}`}
-                                >
-                                  <div className="flex items-center justify-center w-10 h-10 rounded-lg bg-gradient-to-br from-[#6B00D7]/30 to-[#FF5AF7]/20 shadow-inner shadow-[#6B00D7]/10 border border-[#6B00D7]/20">
-                                    <span className="text-xl text-[#FF5AF7]">{link.icon}</span>
-                                  </div>
-                                  <div className="relative">
-                                    <span className="text-base">{link.name}</span>
-                                    {link.isNew ? (
-                                      <div className="absolute -top-3 -right-6 bg-[#FF5AF7] text-white text-[8px] px-1.5 py-0.5 rounded-full font-bold tracking-wider shadow-md shadow-[#FF5AF7]/30 animate-pulse">NEW</div>
-                                    ) : null}
-                                  </div>
-                                </Link>
-                              </SheetClose>
-                            ))}
-                          </div>
+                          {/* For Resources category with many links, use a grid layout */}
+                          {category.id === "resources" ? (
+                            <div className="grid grid-cols-2 gap-2 pl-1">
+                              {category.items.map((link) => (
+                                <SheetClose key={link.name} asChild>
+                                  <Link 
+                                    href={link.href}
+                                    className={`flex flex-col items-center justify-center gap-1 px-2 py-3 rounded-lg text-center ${location === link.href 
+                                      ? 'bg-[#6B00D7]/20 text-white font-poppins font-semibold' 
+                                      : 'text-gray-300 hover:text-white hover:bg-[#6B00D7]/10 font-poppins font-medium transition-all'
+                                    } ${link.highlight ? 'relative bg-gradient-to-r from-[#6B00D7]/20 to-[#FF5AF7]/20 border border-[#FF5AF7]/30 text-[#FF5AF7] shadow-sm' : ''}`}
+                                  >
+                                    <div className="flex items-center justify-center w-10 h-10 rounded-lg bg-gradient-to-br from-[#6B00D7]/30 to-[#FF5AF7]/20 shadow-inner shadow-[#6B00D7]/10 border border-[#6B00D7]/20">
+                                      <span className="text-xl text-[#FF5AF7]">{link.icon}</span>
+                                    </div>
+                                    <div className="relative">
+                                      <span className="text-sm">{link.name}</span>
+                                      {link.isNew ? (
+                                        <div className="absolute -top-3 -right-6 bg-[#FF5AF7] text-white text-[8px] px-1.5 py-0.5 rounded-full font-bold tracking-wider shadow-md shadow-[#FF5AF7]/30 animate-pulse">NEW</div>
+                                      ) : null}
+                                    </div>
+                                  </Link>
+                                </SheetClose>
+                              ))}
+                            </div>
+                          ) : (
+                            <div className="grid grid-cols-1 gap-2 pl-1">
+                              {category.items.map((link) => (
+                                <SheetClose key={link.name} asChild>
+                                  <Link 
+                                    href={link.href}
+                                    className={`flex items-center gap-3 px-3 py-3 rounded-lg ${location === link.href 
+                                      ? 'bg-[#6B00D7]/20 text-white font-poppins font-semibold border-l-2 border-[#FF5AF7]' 
+                                      : 'text-gray-300 hover:text-white hover:bg-[#6B00D7]/10 font-poppins font-medium transition-all'
+                                    } ${link.highlight ? 'relative bg-gradient-to-r from-[#6B00D7]/20 to-[#FF5AF7]/20 border border-[#FF5AF7]/30 text-[#FF5AF7] shadow-sm' : ''}`}
+                                  >
+                                    <div className="flex items-center justify-center w-10 h-10 rounded-lg bg-gradient-to-br from-[#6B00D7]/30 to-[#FF5AF7]/20 shadow-inner shadow-[#6B00D7]/10 border border-[#6B00D7]/20">
+                                      <span className="text-xl text-[#FF5AF7]">{link.icon}</span>
+                                    </div>
+                                    <div className="relative">
+                                      <span className="text-base">{link.name}</span>
+                                      {link.isNew ? (
+                                        <div className="absolute -top-3 -right-6 bg-[#FF5AF7] text-white text-[8px] px-1.5 py-0.5 rounded-full font-bold tracking-wider shadow-md shadow-[#FF5AF7]/30 animate-pulse">NEW</div>
+                                      ) : null}
+                                    </div>
+                                  </Link>
+                                </SheetClose>
+                              ))}
+                            </div>
+                          )}
                         </div>
                       ))}
                     </div>
