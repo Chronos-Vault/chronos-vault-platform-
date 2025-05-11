@@ -58,6 +58,7 @@ import ProjectWhitepaperPage from "@/pages/project-whitepaper";
 import PrivacyDashboardPage from "@/pages/privacy-dashboard";
 import SecurityTestingPage from "@/pages/security-testing";
 import SecurityPage from "@/pages/security-page";
+import SecurityDashboardPage from "@/pages/security-dashboard-page";
 import SecurityVerificationDemo from "@/pages/security-verification-demo";
 import TripleChainSecurityDemo from "@/pages/triple-chain-security-demo";
 import VaultExplorer from "@/pages/vault-explorer";
@@ -141,6 +142,7 @@ function Router() {
         <Route path="/privacy-dashboard" component={PrivacyDashboardPage} />
         <Route path="/security-testing" component={SecurityTestingPage} />
         <Route path="/security" component={SecurityPage} />
+        <Route path="/security-dashboard" component={SecurityDashboardPage} />
         <Route path="/security-verification-demo" component={SecurityVerificationDemo} />
         <Route path="/triple-chain-security-demo" component={TripleChainSecurityDemo} />
         <Route path="/vault-explorer" component={VaultExplorer} />

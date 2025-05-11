@@ -127,7 +127,7 @@ const MainHeader = () => {
         { name: "Cross-Chain Bridge", href: "/cross-chain-bridge", icon: "🔄" },
         { name: "Atomic Swaps", href: "/cross-chain-atomic-swap", icon: "⚛️" },
         { name: "Bridge vs Swap", href: "/cross-chain-vs-atomic-swap", icon: "🔄", highlight: true, isNew: true },
-        { name: "Security Dashboard", href: "/cross-chain-security", icon: "🛡️" },
+        { name: "Security Dashboard", href: "/security-dashboard", icon: "🛡️", highlight: true, isNew: true },
         { name: "Vault Explorer", href: "/my-vaults", icon: "📚" },
       ]
     },
@@ -271,10 +271,12 @@ const MainHeader = () => {
                         Specialized vaults for token management
                       </ListItem>
                       <ListItem 
-                        href="/cross-chain-security" 
+                        href="/security-dashboard" 
                         title="🛡️ Security Dashboard"
+                        highlight={true}
+                        isNew={true}
                       >
-                        Security monitoring for cross-chain operations
+                        Enhanced security monitoring for the Triple-Chain Security Architecture
                       </ListItem>
                       <ListItem 
                         href="/my-vaults" 
