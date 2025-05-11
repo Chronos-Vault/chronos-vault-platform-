@@ -1,5 +1,6 @@
 import { Link, useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
+import logoPath from "@assets/IMG_3753.jpeg";
 import {
   Sheet,
   SheetContent,
@@ -151,7 +152,7 @@ const MainHeader = () => {
         <nav className="flex justify-between items-center">
           <Link href="/" className="flex items-center gap-3 group">
             <div className="h-12 w-12 rounded-full flex items-center justify-center shadow-xl shadow-[#FF5AF7]/40 group-hover:shadow-[#FF5AF7]/50 transition-all overflow-hidden border-2 border-white/40 animate-logo-glow">
-              <img src="@assets/IMG_3753.jpeg" alt="Chronos Vault Logo" className="w-full h-full object-cover" />
+              <img src={logoPath} alt="Chronos Vault Logo" className="w-full h-full object-cover" />
             </div>
             <div className="relative">
               <h1 className="text-xl md:text-2xl font-poppins font-bold text-white">
