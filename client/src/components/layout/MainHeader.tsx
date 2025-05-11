@@ -257,6 +257,20 @@ const MainHeader = () => {
                         Comparison of cross-chain bridges and atomic swaps
                       </ListItem>
                       <ListItem 
+                        href="/gift-crypto" 
+                        title="🎁 Gift Crypto"
+                        highlight={true}
+                      >
+                        Create and send crypto gift vaults to friends
+                      </ListItem>
+                      <ListItem 
+                        href="/token-vaults" 
+                        title="🏦 Token Vaults"
+                        highlight={true}
+                      >
+                        Specialized vaults for token management
+                      </ListItem>
+                      <ListItem 
                         href="/cross-chain-security" 
                         title="🛡️ Security Dashboard"
                       >
