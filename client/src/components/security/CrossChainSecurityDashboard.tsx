@@ -168,16 +168,7 @@ export default function CrossChainSecurityDashboard() {
     return new Date(timestamp).toLocaleString();
   };
 
-  // Helper function to format time difference
-  const getTimeSince = (timestamp: number): string => {
-    const seconds = Math.floor((Date.now() - timestamp) / 1000);
-    
-    if (seconds < 60) return `${seconds} sec ago`;
-    if (seconds < 3600) return `${Math.floor(seconds / 60)} min ago`;
-    if (seconds < 86400) return `${Math.floor(seconds / 3600)} hr ago`;
-    
-    return `${Math.floor(seconds / 86400)} day(s) ago`;
-  };
+
 
   return (
     <div className="space-y-6">
@@ -260,7 +251,7 @@ export default function CrossChainSecurityDashboard() {
                   />
                   <div className="mt-2 text-xs text-gray-400 flex items-center">
                     <Clock className="h-3 w-3 mr-1" />
-                    <span>Last sync: {getTimeSince(status.crossChainSyncStatus.lastSyncTime)}</span>
+                    <span>Last sync: {formatDate(status.crossChainSyncStatus.lastSyncTime)}</span>
                   </div>
                 </div>
               </CardContent>
@@ -292,7 +283,7 @@ export default function CrossChainSecurityDashboard() {
                   </div>
                   <div className="flex justify-between text-sm">
                     <span className="text-gray-400">Last Update</span>
-                    <span>{getTimeSince(status.chainStatuses[status.primaryChain].lastSyncTimestamp)}</span>
+                    <span>{formatDate(status.chainStatuses[status.primaryChain].lastSyncTimestamp)}</span>
                   </div>
                 </div>
               </CardContent>
@@ -354,7 +345,7 @@ export default function CrossChainSecurityDashboard() {
                             <span>{alert.message}</span>
                           </div>
                           <div className="text-xs text-gray-400 mt-1">
-                            {getTimeSince(alert.timestamp)}
+                            {formatDate(alert.timestamp)}
                           </div>
                         </div>
                       ))
@@ -409,7 +400,7 @@ export default function CrossChainSecurityDashboard() {
                               Strategy: {getRecoveryStrategyName(failover.strategy)}
                             </div>
                             <div className="text-xs text-gray-400">
-                              {getTimeSince(failover.timestamp)}
+                              {formatDate(failover.timestamp)}
                             </div>
                           </div>
                         </div>
@@ -595,7 +586,7 @@ function ChainStatusCard({
           </div>
           <div className="flex justify-between text-sm">
             <span className="text-gray-400">Last Update</span>
-            <span>{getTimeSince(status.lastSyncTimestamp)}</span>
+            <span>{formatDate(status.lastSyncTimestamp)}</span>
           </div>
           {status.error && (
             <div className="mt-2 text-xs text-red-400 bg-red-400/10 p-2 rounded border border-red-400/30">
