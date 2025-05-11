@@ -8,10 +8,8 @@ import { useState, useEffect } from 'react';
 import { Link } from 'wouter';
 import { useQuery, useMutation } from '@tanstack/react-query';
 import { crossChainBridgeService } from '@/services/CrossChainBridgeService';
-import { useBlockchain } from '@/hooks/use-blockchain';
+import { useBlockchain, type ChainType } from '@/hooks/use-blockchain';
 import { useToast } from "@/hooks/use-toast";
-import type { BlockchainType } from '@/types/blockchain';
-import { ChainType } from '@/hooks/use-blockchain';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -495,7 +493,7 @@ export default function CrossChainBridgePage() {
                     
                     {/* Warning about wallet connection */}
                     {!wallets[sourceChain]?.isConnected && (
-                      <Alert variant="warning">
+                      <Alert variant="destructive">
                         <AlertCircle className="h-4 w-4" />
                         <AlertTitle>Wallet not connected</AlertTitle>
                         <AlertDescription>
@@ -732,7 +730,7 @@ export default function CrossChainBridgePage() {
                     
                     {/* Warning about wallet connections */}
                     {(!wallets[sourceChain]?.isConnected || !wallets[targetChain]?.isConnected) && (
-                      <Alert variant="warning">
+                      <Alert variant="destructive">
                         <AlertCircle className="h-4 w-4" />
                         <AlertTitle>Wallet not connected</AlertTitle>
                         <AlertDescription>
