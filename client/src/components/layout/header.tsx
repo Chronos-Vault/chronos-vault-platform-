@@ -213,9 +213,11 @@ const Header = () => {
                 <div className="flex flex-col h-full">
                   <div className="flex justify-between items-center mb-6">
                     <div className="flex items-center gap-3">
-                      <div className="h-12 w-12 rounded-full flex items-center justify-center shadow-xl shadow-[#FF5AF7]/40 overflow-hidden border-2 border-white/40 animate-logo-glow">
-                        <img src={logoPath} alt="Chronos Vault Logo" className="w-full h-full object-cover" />
-                      </div>
+                      <Link href="/" className="block">
+                        <div className="h-12 w-12 rounded-full flex items-center justify-center shadow-xl shadow-[#FF5AF7]/40 overflow-hidden border-2 border-white/40 animate-logo-glow">
+                          <img src={logoPath} alt="Chronos Vault Logo" className="w-full h-full object-cover" />
+                        </div>
+                      </Link>
                       <div className="relative">
                         <h1 className="text-lg font-poppins font-bold text-white">
                           <span className="bg-clip-text text-transparent bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7]">Chronos</span> 
