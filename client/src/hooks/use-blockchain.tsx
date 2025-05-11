@@ -5,12 +5,28 @@
  * It manages connection state, wallet addresses, and balance information.
  */
 
-import { createContext, useState, useContext, useEffect, ReactNode } from 'react';
-import { ChainType, WalletData } from '@shared/types/blockchain-types';
+import { createContext, ReactNode, useContext, useEffect, useState } from 'react';
+import { crossChainBridgeService } from '@/services/CrossChainBridgeService';
 import { useToast } from '@/hooks/use-toast';
-import { apiRequest } from '@/lib/queryClient';
 
-// Blockchain connection context type
+// Chain types
+export type ChainType = 'ethereum' | 'solana' | 'ton' | 'bitcoin';
+
+// Wallet data structure
+export interface WalletData {
+  address: string;
+  network: string;
+  balance: {
+    total: string;
+    formatted: string;
+    symbol: string;
+    decimals: number;
+  };
+  isConnected: boolean;
+  isTestnet: boolean;
+}
+
+// Blockchain context interface
 interface BlockchainContextType {
   connected: boolean;
   connecting: boolean;
@@ -24,85 +40,41 @@ interface BlockchainContextType {
 }
 
 // Create context with default values
-const BlockchainContext = createContext<BlockchainContextType>({
-  connected: false,
-  connecting: false,
-  wallets: {
-    [ChainType.ETHEREUM]: null,
-    [ChainType.SOLANA]: null,
-    [ChainType.TON]: null,
-    [ChainType.BITCOIN]: null,
-  },
-  connect: async () => false,
-  disconnect: async () => false,
-  disconnectAll: async () => {},
-  refreshBalances: async () => {},
-  isSimulationMode: false,
-  toggleSimulationMode: () => {},
-});
+const BlockchainContext = createContext<BlockchainContextType | null>(null);
 
 /**
  * Blockchain Provider Component
  * Manages blockchain connection state and provides methods for wallet interactions
  */
 export const BlockchainProvider = ({ children }: { children: ReactNode }) => {
-  const { toast } = useToast();
-  const [connecting, setConnecting] = useState(false);
   const [wallets, setWallets] = useState<Record<ChainType, WalletData | null>>({
-    [ChainType.ETHEREUM]: null,
-    [ChainType.SOLANA]: null,
-    [ChainType.TON]: null,
-    [ChainType.BITCOIN]: null,
+    ethereum: null,
+    solana: null,
+    ton: null,
+    bitcoin: null
   });
+  const [connecting, setConnecting] = useState(false);
   const [isSimulationMode, setIsSimulationMode] = useState(() => {
-    // Check localStorage for saved preference, default to true in development
+    // Read from localStorage if available
     if (typeof window !== 'undefined') {
-      const saved = localStorage.getItem('simulationMode');
-      return saved !== null ? saved === 'true' : import.meta.env.DEV;
+      const stored = localStorage.getItem('blockchainSimulationMode');
+      return stored ? stored === 'true' : false;
     }
-    return import.meta.env.DEV;
+    return false;
   });
-
-  // Determine if any wallet is connected
+  
+  const { toast } = useToast();
+  
+  // Check if any wallet is connected
   const connected = Object.values(wallets).some(wallet => wallet?.isConnected);
-
-  // Load any existing wallet connections on mount
-  useEffect(() => {
-    const loadExistingConnections = async () => {
-      try {
-        const response = await apiRequest('GET', '/api/blockchain/wallets');
-        const data = await response.json();
-        
-        if (data.success && data.data) {
-          const loadedWallets: Record<ChainType, WalletData | null> = {
-            ...wallets
-          };
-          
-          // Update wallets with any connected ones
-          Object.entries(data.data).forEach(([chain, walletData]) => {
-            if (walletData && (walletData as WalletData).isConnected) {
-              loadedWallets[chain as ChainType] = walletData as WalletData;
-            }
-          });
-          
-          setWallets(loadedWallets);
-        }
-      } catch (error) {
-        console.error('Error loading existing connections:', error);
-      }
-    };
-    
-    loadExistingConnections();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  // Save simulation mode preference to localStorage
+  
+  // Store simulation mode in localStorage
   useEffect(() => {
     if (typeof window !== 'undefined') {
-      localStorage.setItem('simulationMode', isSimulationMode.toString());
+      localStorage.setItem('blockchainSimulationMode', isSimulationMode.toString());
     }
   }, [isSimulationMode]);
-
+  
   /**
    * Connect to a blockchain wallet
    * 
@@ -113,19 +85,17 @@ export const BlockchainProvider = ({ children }: { children: ReactNode }) => {
     try {
       setConnecting(true);
       
-      // If in simulation mode, use simulated wallet
       if (isSimulationMode) {
-        // Generate a simulated wallet
-        const simulatedAddress = `simulated_${chain}_${Date.now().toString().substring(8)}`;
+        // Simulated connection for testing/development
         const simulatedWallet: WalletData = {
-          address: simulatedAddress,
+          address: `simulated_${chain}_address_${Date.now().toString(36)}`,
           network: 'testnet',
           balance: {
             total: '1000',
             formatted: '1,000.00',
-            symbol: chain === ChainType.ETHEREUM ? 'ETH' : 
-                   chain === ChainType.SOLANA ? 'SOL' : 
-                   chain === ChainType.TON ? 'TON' : 'BTC',
+            symbol: chain === 'ethereum' ? 'ETH' : 
+                   chain === 'solana' ? 'SOL' : 
+                   chain === 'ton' ? 'TON' : 'BTC',
             decimals: 18
           },
           isConnected: true,
@@ -138,46 +108,35 @@ export const BlockchainProvider = ({ children }: { children: ReactNode }) => {
         }));
         
         toast({
-          title: 'Simulation Mode',
-          description: `Connected to simulated ${chain} wallet`,
+          title: `Simulation Mode`,
+          description: `Connected to simulated ${chain.toUpperCase()} wallet`,
+          variant: 'default',
         });
         
         return true;
       }
       
-      // Make real connection request to backend
-      const response = await apiRequest('POST', '/api/blockchain/connect', {
-        chain
+      // Real blockchain connection
+      const walletData = await crossChainBridgeService.connectWallet(chain);
+      
+      setWallets(prev => ({
+        ...prev,
+        [chain]: walletData
+      }));
+      
+      toast({
+        title: 'Connected',
+        description: `Connected to ${chain.toUpperCase()} wallet`,
+        variant: 'default',
       });
       
-      const data = await response.json();
-      
-      if (data.success) {
-        setWallets(prev => ({
-          ...prev,
-          [chain]: data.data
-        }));
-        
-        toast({
-          title: 'Connected',
-          description: `Successfully connected to ${chain}`,
-        });
-        
-        return true;
-      } else {
-        toast({
-          title: 'Connection Failed',
-          description: data.error || `Failed to connect to ${chain}`,
-          variant: 'destructive',
-        });
-        
-        return false;
-      }
+      return true;
     } catch (error) {
       console.error(`Error connecting to ${chain}:`, error);
+      
       toast({
-        title: 'Connection Error',
-        description: `An error occurred while connecting to ${chain}`,
+        title: 'Connection Failed',
+        description: error instanceof Error ? error.message : `Failed to connect to ${chain}`,
         variant: 'destructive',
       });
       
@@ -186,7 +145,7 @@ export const BlockchainProvider = ({ children }: { children: ReactNode }) => {
       setConnecting(false);
     }
   };
-
+  
   /**
    * Disconnect from a blockchain wallet
    * 
@@ -195,66 +154,55 @@ export const BlockchainProvider = ({ children }: { children: ReactNode }) => {
    */
   const disconnect = async (chain: ChainType): Promise<boolean> => {
     try {
-      // If in simulation mode, just remove the simulated wallet
       if (isSimulationMode) {
+        // Simulated disconnection
         setWallets(prev => ({
           ...prev,
           [chain]: null
         }));
         
         toast({
-          title: 'Disconnected',
-          description: `Disconnected from simulated ${chain} wallet`,
+          title: `Simulation Mode`,
+          description: `Disconnected from simulated ${chain.toUpperCase()} wallet`,
+          variant: 'default',
         });
         
         return true;
       }
       
-      // Make real disconnection request
-      const response = await apiRequest('POST', '/api/blockchain/disconnect', {
-        chain
+      // Real blockchain disconnection
+      await crossChainBridgeService.disconnectWallet(chain);
+      
+      setWallets(prev => ({
+        ...prev,
+        [chain]: null
+      }));
+      
+      toast({
+        title: 'Disconnected',
+        description: `Disconnected from ${chain.toUpperCase()} wallet`,
+        variant: 'default',
       });
       
-      const data = await response.json();
-      
-      if (data.success) {
-        setWallets(prev => ({
-          ...prev,
-          [chain]: null
-        }));
-        
-        toast({
-          title: 'Disconnected',
-          description: `Successfully disconnected from ${chain}`,
-        });
-        
-        return true;
-      } else {
-        toast({
-          title: 'Disconnection Failed',
-          description: data.error || `Failed to disconnect from ${chain}`,
-          variant: 'destructive',
-        });
-        
-        return false;
-      }
+      return true;
     } catch (error) {
       console.error(`Error disconnecting from ${chain}:`, error);
+      
       toast({
-        title: 'Disconnection Error',
-        description: `An error occurred while disconnecting from ${chain}`,
+        title: 'Disconnection Failed',
+        description: error instanceof Error ? error.message : `Failed to disconnect from ${chain}`,
         variant: 'destructive',
       });
       
       return false;
     }
   };
-
+  
   /**
    * Disconnect from all blockchain wallets
    */
   const disconnectAll = async (): Promise<void> => {
-    const chains = Object.keys(wallets) as ChainType[];
+    const chains: ChainType[] = ['ethereum', 'solana', 'ton', 'bitcoin'];
     
     for (const chain of chains) {
       if (wallets[chain]?.isConnected) {
@@ -262,7 +210,7 @@ export const BlockchainProvider = ({ children }: { children: ReactNode }) => {
       }
     }
   };
-
+  
   /**
    * Refresh wallet balances for all connected blockchains
    */
@@ -274,75 +222,82 @@ export const BlockchainProvider = ({ children }: { children: ReactNode }) => {
       
       if (connectedChains.length === 0) return;
       
-      // If in simulation mode, just update the simulated balances
       if (isSimulationMode) {
-        const updatedWallets = { ...wallets };
-        
-        connectedChains.forEach(chain => {
-          if (updatedWallets[chain]) {
-            const currentWallet = updatedWallets[chain]!;
-            updatedWallets[chain] = {
-              ...currentWallet,
-              balance: {
-                ...currentWallet.balance,
-                total: (parseFloat(currentWallet.balance.total) + Math.random() * 10).toFixed(4),
-                formatted: (parseFloat(currentWallet.balance.total) + Math.random() * 10).toFixed(4),
-              }
-            };
-          }
+        // Update simulated balances
+        setWallets(prev => {
+          const updated = { ...prev };
+          
+          connectedChains.forEach(chain => {
+            if (updated[chain]) {
+              const currentBalance = parseFloat(updated[chain]!.balance.total);
+              const newBalance = (currentBalance + Math.random() * 0.5).toFixed(4);
+              
+              updated[chain] = {
+                ...updated[chain]!,
+                balance: {
+                  ...updated[chain]!.balance,
+                  total: newBalance,
+                  formatted: Number(newBalance).toLocaleString()
+                }
+              };
+            }
+          });
+          
+          return updated;
         });
         
-        setWallets(updatedWallets);
         return;
       }
       
-      // Make real balance refresh request
-      const response = await apiRequest('POST', '/api/blockchain/refresh-balances', {
-        chains: connectedChains
-      });
+      // Real balance refresh
+      const updatedBalances = await crossChainBridgeService.refreshBalances(connectedChains);
       
-      const data = await response.json();
-      
-      if (data.success) {
-        const updatedWallets = { ...wallets };
+      setWallets(prev => {
+        const updated = { ...prev };
         
-        Object.entries(data.data).forEach(([chain, balance]) => {
-          if (updatedWallets[chain as ChainType]) {
-            updatedWallets[chain as ChainType] = {
-              ...updatedWallets[chain as ChainType]!,
-              balance: balance as WalletData['balance']
+        Object.entries(updatedBalances).forEach(([chain, balance]) => {
+          if (updated[chain as ChainType]) {
+            updated[chain as ChainType] = {
+              ...updated[chain as ChainType]!,
+              balance
             };
           }
         });
         
-        setWallets(updatedWallets);
-      }
+        return updated;
+      });
     } catch (error) {
       console.error('Error refreshing balances:', error);
+      
       toast({
         title: 'Balance Refresh Failed',
-        description: 'Failed to refresh wallet balances',
+        description: error instanceof Error ? error.message : 'Failed to refresh balances',
         variant: 'destructive',
       });
     }
   };
-
+  
   /**
    * Toggle simulation mode
    */
   const toggleSimulationMode = () => {
-    // Disconnect all wallets first
-    disconnectAll().then(() => {
-      setIsSimulationMode(prev => !prev);
-      
-      toast({
-        title: `Simulation Mode ${!isSimulationMode ? 'Enabled' : 'Disabled'}`,
-        description: `Wallet connections are now ${!isSimulationMode ? 'simulated' : 'real'}`,
-      });
+    setIsSimulationMode(prev => !prev);
+    
+    // Clear all connections when toggling
+    setWallets({
+      ethereum: null,
+      solana: null,
+      ton: null,
+      bitcoin: null
+    });
+    
+    toast({
+      title: 'Simulation Mode',
+      description: !isSimulationMode ? 'Enabled' : 'Disabled',
+      variant: 'default',
     });
   };
-
-  // Context value
+  
   const value: BlockchainContextType = {
     connected,
     connecting,
@@ -352,9 +307,9 @@ export const BlockchainProvider = ({ children }: { children: ReactNode }) => {
     disconnectAll,
     refreshBalances,
     isSimulationMode,
-    toggleSimulationMode,
+    toggleSimulationMode
   };
-
+  
   return (
     <BlockchainContext.Provider value={value}>
       {children}
@@ -371,12 +326,8 @@ export const BlockchainProvider = ({ children }: { children: ReactNode }) => {
  */
 export const useBlockchain = () => {
   const context = useContext(BlockchainContext);
-  
-  if (context === undefined) {
+  if (!context) {
     throw new Error('useBlockchain must be used within a BlockchainProvider');
   }
-  
   return context;
 };
-
-export default useBlockchain;

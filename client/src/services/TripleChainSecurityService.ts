@@ -1,7 +1,7 @@
 import { ethers } from 'ethers';
 import { TonClient } from '@tonclient/core';
 import { Connection } from '@solana/web3.js';
-import { getCrossChainBridge, initCrossChainBridge } from '@/services/CrossChainBridgeService';
+import { crossChainBridgeService } from '@/services/CrossChainBridgeService';
 import { getEthereumService } from '@/services/EthereumService';
 import { getTONService } from '@/services/TONService';
 import { getSolanaService } from '@/services/SolanaService';
@@ -52,17 +52,8 @@ export class TripleChainSecurityService {
       this.ethereumBridgeAddress = '0x9876dE49A29F1f8C121dD7e168a43Fb4f5ba2FFE'; // Ethereum testnet
       this.solanaBridgeProgramId = 'Fg6PaFpoGXkYsidMpWTK6W2BeZ7FEfcYkg476zPFsLnS'; // Solana devnet
       
-      // Initialize cross-chain bridge
-      initCrossChainBridge(
-        this.ethereumService.getProvider(),
-        this.tonService.getClient(),
-        this.solanaService.getConnection(),
-        this.tonBridgeAddress,
-        this.ethereumBridgeAddress,
-        this.solanaBridgeProgramId
-      );
-      
-      this.crossChainBridge = getCrossChainBridge();
+      // Use the crossChainBridgeService singleton
+      this.crossChainBridge = crossChainBridgeService;
       
       this.initialized = true;
       console.log('Triple-Chain Security Service initialized successfully');

@@ -1,64 +1,130 @@
 /**
  * Cross-Chain Bridge Service
  * 
- * This service provides methods for interacting with the Cross-Chain Bridge API
- * to transfer assets and perform atomic swaps between different blockchain networks.
+ * This service provides the frontend interface for interacting with the cross-chain bridge API.
  */
 
-import { apiRequest } from '@/lib/queryClient';
+import { apiRequest } from "@/lib/queryClient";
+import type { BlockchainType } from "@/types/blockchain";
 
-import { 
-  BridgeStatus, 
-  BlockchainType, 
-  BridgeTransactionParams,
-  AtomicSwapParams,
-  CrossChainTransaction
-} from '@shared/types/blockchain-types';
+/**
+ * Bridge transaction status
+ */
+export enum BridgeTransactionStatus {
+  PENDING = 'pending',
+  CONFIRMING = 'confirming',
+  COMPLETED = 'completed',
+  FAILED = 'failed'
+}
 
-export class CrossChainBridgeService {
+/**
+ * Atomic swap status
+ */
+export enum AtomicSwapStatus {
+  INITIATED = 'initiated',
+  PARTICIPANT_JOINED = 'participant_joined',
+  COMPLETED = 'completed',
+  REFUNDED = 'refunded',
+  EXPIRED = 'expired'
+}
+
+/**
+ * Bridge transaction interface
+ */
+export interface BridgeTransaction {
+  id: string;
+  sourceChain: BlockchainType;
+  targetChain: BlockchainType;
+  amount: number;
+  assetType: string;
+  senderAddress: string;
+  recipientAddress: string;
+  status: BridgeTransactionStatus;
+  sourceTransactionId?: string;
+  targetTransactionId?: string;
+  timestamp: string;
+  lastUpdated: string;
+  error?: string;
+}
+
+/**
+ * Atomic swap transaction interface
+ */
+export interface AtomicSwapTransaction {
+  id: string;
+  initiatorChain: BlockchainType;
+  responderChain: BlockchainType;
+  initiatorAsset: string;
+  responderAsset: string;
+  initiatorAmount: number;
+  responderAmount: number;
+  initiatorAddress: string;
+  responderAddress?: string;
+  status: AtomicSwapStatus;
+  timelock: number;
+  hashLock?: string;
+  secret?: string;
+  initiatorTransactionId?: string;
+  responderTransactionId?: string;
+  timestamp: string;
+  lastUpdated: string;
+  error?: string;
+}
+
+/**
+ * Bridge status interface
+ */
+export interface BridgeStatus {
+  status: 'operational' | 'degraded' | 'down';
+  latency: number;
+  pendingTransactions: number;
+  successRate: number;
+}
+
+/**
+ * Cross-Chain Bridge Service class
+ */
+class CrossChainBridgeService {
   /**
-   * Get the status of all cross-chain bridges
-   * 
-   * @returns A record of bridge statuses indexed by source-target chain pair
+   * Get all bridge statuses
+   * @returns Record of bridge statuses by chain pair
    */
-  static async getBridgeStatuses(): Promise<Record<string, BridgeStatus>> {
-    const response = await apiRequest('GET', '/api/bridge/status');
+  async getBridgeStatuses(): Promise<Record<string, BridgeStatus>> {
+    const response = await apiRequest("GET", "/api/bridge/status");
     const data = await response.json();
     
     if (!data.success) {
-      throw new Error(data.error || 'Failed to fetch bridge statuses');
+      throw new Error(data.error || "Failed to get bridge statuses");
     }
     
     return data.data;
   }
   
   /**
-   * Get the status of a specific bridge
-   * 
+   * Get status for a specific bridge
    * @param sourceChain Source blockchain
    * @param targetChain Target blockchain
    * @returns Bridge status
    */
-  static async getBridgeStatus(sourceChain: BlockchainType, targetChain: BlockchainType): Promise<BridgeStatus> {
-    const response = await apiRequest('GET', `/api/bridge/status/${sourceChain}/${targetChain}`);
+  async getBridgeStatus(sourceChain: BlockchainType, targetChain: BlockchainType): Promise<BridgeStatus> {
+    const response = await apiRequest("GET", `/api/bridge/status/${sourceChain}/${targetChain}`);
     const data = await response.json();
     
     if (!data.success) {
-      throw new Error(data.error || 'Failed to fetch bridge status');
+      throw new Error(data.error || "Failed to get bridge status");
     }
     
     return data.data;
   }
   
   /**
-   * Initialize a bridge between two chains
-   * 
+   * Initialize a bridge
    * @param sourceChain Source blockchain
    * @param targetChain Target blockchain
-   * @returns True if initialization was successful
+   * @returns Initialization result
    */
-  static async initializeBridge(sourceChain: BlockchainType, targetChain: BlockchainType): Promise<boolean> {
-    const response = await apiRequest('POST', '/api/bridge/initialize', {
+  async initializeBridge(sourceChain: BlockchainType, targetChain: BlockchainType): Promise<any> {
+    const response = await apiRequest("POST", "/api/bridge/initialize", {
       sourceChain,
       targetChain
     });
@@ -66,74 +132,105 @@ export class CrossChainBridgeService {
     const data = await response.json();
     
     if (!data.success) {
-      throw new Error(data.error || 'Failed to initialize bridge');
+      throw new Error(data.error || "Failed to initialize bridge");
     }
     
-    return true;
+    return data.data;
   }
   
   /**
-   * Transfer assets from one chain to another
-   * 
+   * Transfer an asset across chains
    * @param params Transfer parameters
    * @returns Transaction ID
    */
-  static async transferAsset(params: BridgeTransactionParams): Promise<string> {
-    const response = await apiRequest('POST', '/api/bridge/transfer', params);
+  async transferAsset(params: {
+    sourceChain: BlockchainType;
+    targetChain: BlockchainType;
+    amount: number;
+    assetType: string;
+    senderAddress: string;
+    recipientAddress: string;
+  }): Promise<string> {
+    const response = await apiRequest("POST", "/api/bridge/transfer", params);
     const data = await response.json();
     
     if (!data.success) {
-      throw new Error(data.error || 'Failed to transfer asset');
+      throw new Error(data.error || "Failed to transfer asset");
     }
     
     return data.data.id;
   }
   
   /**
-   * Get a list of all active bridge transactions
-   * 
-   * @returns List of bridge transactions
+   * Get all bridge transactions
+   * @returns List of transactions
    */
-  static async getTransactions(): Promise<any[]> {
-    const response = await apiRequest('GET', '/api/bridge/transactions');
+  async getTransactions(): Promise<BridgeTransaction[]> {
+    const response = await apiRequest("GET", "/api/bridge/transactions");
     const data = await response.json();
     
     if (!data.success) {
-      throw new Error(data.error || 'Failed to fetch transactions');
+      throw new Error(data.error || "Failed to get transactions");
     }
     
     return data.data;
   }
   
   /**
-   * Get details of a specific transaction
-   * 
-   * @param transactionId Transaction ID
+   * Get a specific transaction
+   * @param id Transaction ID
    * @returns Transaction details
    */
-  static async getTransaction(transactionId: string): Promise<any> {
-    const response = await apiRequest('GET', `/api/bridge/transactions/${transactionId}`);
+  async getTransaction(id: string): Promise<BridgeTransaction> {
+    const response = await apiRequest("GET", `/api/bridge/transactions/${id}`);
     const data = await response.json();
     
     if (!data.success) {
-      throw new Error(data.error || 'Failed to fetch transaction');
+      throw new Error(data.error || "Failed to get transaction");
     }
     
     return data.data;
   }
   
   /**
-   * Create an atomic swap between two chains
-   * 
-   * @param params Atomic swap parameters
-   * @returns Swap ID
+   * Verify a transaction
+   * @param id Transaction ID
+   * @param sourceChain Source blockchain
+   * @param targetChain Target blockchain
+   * @returns Verification result
    */
-  static async createAtomicSwap(params: AtomicSwapParams): Promise<string> {
-    const response = await apiRequest('POST', '/api/bridge/atomic-swap', params);
+  async verifyTransaction(id: string, sourceChain: BlockchainType, targetChain: BlockchainType): Promise<any> {
+    const response = await apiRequest("GET", `/api/bridge/verify/${id}?sourceChain=${sourceChain}&targetChain=${targetChain}`);
     const data = await response.json();
     
     if (!data.success) {
-      throw new Error(data.error || 'Failed to create atomic swap');
+      throw new Error(data.error || "Failed to verify transaction");
+    }
+    
+    return data.data;
+  }
+  
+  /**
+   * Create an atomic swap
+   * @param params Swap parameters
+   * @returns Swap ID
+   */
+  async createAtomicSwap(params: {
+    initiatorChain: BlockchainType;
+    responderChain: BlockchainType;
+    initiatorAsset: string;
+    responderAsset: string;
+    initiatorAmount: number;
+    responderAmount: number;
+    initiatorAddress: string;
+    responderAddress: string;
+    timelock: number;
+  }): Promise<string> {
+    const response = await apiRequest("POST", "/api/bridge/atomic-swap", params);
+    const data = await response.json();
+    
+    if (!data.success) {
+      throw new Error(data.error || "Failed to create atomic swap");
     }
     
     return data.data.id;
@@ -141,32 +238,30 @@ export class CrossChainBridgeService {
   
   /**
    * Get all atomic swaps
-   * 
    * @returns List of atomic swaps
    */
-  static async getAtomicSwaps(): Promise<any[]> {
-    const response = await apiRequest('GET', '/api/bridge/atomic-swaps');
+  async getAtomicSwaps(): Promise<AtomicSwapTransaction[]> {
+    const response = await apiRequest("GET", "/api/bridge/atomic-swaps");
     const data = await response.json();
     
     if (!data.success) {
-      throw new Error(data.error || 'Failed to fetch atomic swaps');
+      throw new Error(data.error || "Failed to get atomic swaps");
     }
     
     return data.data;
   }
   
   /**
-   * Get details of a specific atomic swap
-   * 
-   * @param swapId Swap ID
+   * Get a specific atomic swap
+   * @param id Swap ID
    * @returns Swap details
    */
-  static async getAtomicSwap(swapId: string): Promise<any> {
-    const response = await apiRequest('GET', `/api/bridge/atomic-swaps/${swapId}`);
+  async getAtomicSwap(id: string): Promise<AtomicSwapTransaction> {
+    const response = await apiRequest("GET", `/api/bridge/atomic-swaps/${id}`);
     const data = await response.json();
     
     if (!data.success) {
-      throw new Error(data.error || 'Failed to fetch atomic swap');
+      throw new Error(data.error || "Failed to get atomic swap");
     }
     
     return data.data;
@@ -174,89 +269,108 @@ export class CrossChainBridgeService {
   
   /**
    * Participate in an atomic swap
-   * 
-   * @param swapId Swap ID
-   * @param responderAddress Responder's address
-   * @returns True if participation was successful
+   * @param id Swap ID
+   * @param responderAddress Responder's blockchain address
+   * @returns Participation result
    */
-  static async participateInAtomicSwap(swapId: string, responderAddress: string): Promise<boolean> {
-    const response = await apiRequest('POST', `/api/bridge/atomic-swaps/${swapId}/participate`, {
+  async participateInAtomicSwap(id: string, responderAddress: string): Promise<any> {
+    const response = await apiRequest("POST", `/api/bridge/atomic-swaps/${id}/participate`, {
       responderAddress
     });
     
     const data = await response.json();
     
     if (!data.success) {
-      throw new Error(data.error || 'Failed to participate in atomic swap');
+      throw new Error(data.error || "Failed to participate in atomic swap");
     }
     
-    return true;
+    return data.data;
   }
   
   /**
    * Complete an atomic swap
-   * 
-   * @param swapId Swap ID
-   * @param secret Secret to reveal
-   * @returns True if completion was successful
+   * @param id Swap ID
+   * @param secret Secret to unlock the hashlock
+   * @returns Completion result
    */
-  static async completeAtomicSwap(swapId: string, secret: string): Promise<boolean> {
-    const response = await apiRequest('POST', `/api/bridge/atomic-swaps/${swapId}/complete`, {
+  async completeAtomicSwap(id: string, secret: string): Promise<any> {
+    const response = await apiRequest("POST", `/api/bridge/atomic-swaps/${id}/complete`, {
       secret
     });
     
     const data = await response.json();
     
     if (!data.success) {
-      throw new Error(data.error || 'Failed to complete atomic swap');
+      throw new Error(data.error || "Failed to complete atomic swap");
     }
     
-    return true;
+    return data.data;
   }
   
   /**
    * Refund an atomic swap
-   * 
-   * @param swapId Swap ID
-   * @returns True if refund was successful
+   * @param id Swap ID
+   * @returns Refund result
    */
-  static async refundAtomicSwap(swapId: string): Promise<boolean> {
-    const response = await apiRequest('POST', `/api/bridge/atomic-swaps/${swapId}/refund`);
+  async refundAtomicSwap(id: string): Promise<any> {
+    const response = await apiRequest("POST", `/api/bridge/atomic-swaps/${id}/refund`);
     const data = await response.json();
     
     if (!data.success) {
-      throw new Error(data.error || 'Failed to refund atomic swap');
+      throw new Error(data.error || "Failed to refund atomic swap");
+    }
+    
+    return data.data;
+  }
+  
+  /**
+   * Connect to a blockchain wallet
+   * @param chain Blockchain to connect to
+   * @returns Connection result
+   */
+  async connectWallet(chain: BlockchainType): Promise<any> {
+    const response = await apiRequest("POST", "/api/bridge/connect", { chain });
+    const data = await response.json();
+    
+    if (!data.success) {
+      throw new Error(data.error || "Failed to connect wallet");
+    }
+    
+    return data.data;
+  }
+  
+  /**
+   * Disconnect from a blockchain wallet
+   * @param chain Blockchain to disconnect from
+   * @returns Disconnection result
+   */
+  async disconnectWallet(chain: BlockchainType): Promise<boolean> {
+    const response = await apiRequest("POST", "/api/bridge/disconnect", { chain });
+    const data = await response.json();
+    
+    if (!data.success) {
+      throw new Error(data.error || "Failed to disconnect wallet");
     }
     
     return true;
   }
   
   /**
-   * Verify a transaction across chains
-   * 
-   * @param transactionId Transaction ID
-   * @param sourceChain Source blockchain
-   * @param targetChain Target blockchain
-   * @returns Verification result
+   * Refresh wallet balances
+   * @param chains List of blockchains to refresh
+   * @returns Updated balances
    */
-  static async verifyTransaction(
-    transactionId: string,
-    sourceChain: BlockchainType,
-    targetChain: BlockchainType
-  ): Promise<{ verified: boolean; details: any }> {
-    const response = await apiRequest('GET', `/api/bridge/verify/${transactionId}`, {
-      sourceChain,
-      targetChain
-    });
-    
+  async refreshBalances(chains: BlockchainType[]): Promise<Record<BlockchainType, any>> {
+    const response = await apiRequest("POST", "/api/bridge/refresh-balances", { chains });
     const data = await response.json();
     
     if (!data.success) {
-      throw new Error(data.error || 'Failed to verify transaction');
+      throw new Error(data.error || "Failed to refresh balances");
     }
     
     return data.data;
   }
 }
 
-export default CrossChainBridgeService;
+// Export a singleton instance
+export const crossChainBridgeService = new CrossChainBridgeService();
