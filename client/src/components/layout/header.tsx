@@ -70,6 +70,7 @@ const Header = () => {
         { name: "CVT Token", href: "/cvt-token", icon: "🪙" },
         { name: "Token Vaults", href: "/token-vaults", icon: "⏳" },
         { name: "Cross-Chain Features", href: "/cross-chain", icon: "🔄" },
+        { name: "Cross-Chain Monitor", href: "/cross-chain-monitor", icon: "📊", highlight: true, important: true, isNew: true },
         { name: "Multi-Signature Vault", href: "/multi-signature-vault", icon: "👥" },
         { name: "Security Verification", href: "/security-verification-demo", icon: "🔐", highlight: true },
         { name: "Triple-Chain Security", href: "/triple-chain-security-demo", icon: "⛓️", highlight: true },

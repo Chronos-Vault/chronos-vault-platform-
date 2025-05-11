@@ -33,6 +33,12 @@ export default function NavigationTestMenu() {
             Test Contract
           </a>
         </Link>
+        
+        <Link href="/cross-chain-monitor">
+          <a className="px-3 py-1 text-xs bg-red-900/50 hover:bg-red-800/60 text-white rounded-full">
+            Cross-Chain Monitor
+          </a>
+        </Link>
       </div>
       <p className="text-xs text-gray-400 mt-2">
         Use these links to navigate between pages while testing wallet connection persistence
