@@ -1,6 +1,7 @@
 import { Link, useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
 import logoPath from "@assets/IMG_3753.jpeg";
+import { useMultiChain } from "@/contexts/multi-chain-context";
 import {
   Sheet,
   SheetContent,
@@ -79,6 +80,8 @@ interface MobileNavLink {
   icon: string;
   highlight?: boolean;
   isNew?: boolean;
+  isAction?: boolean;
+  action?: () => void;
 }
 
 interface MobileNavCategory {
@@ -93,6 +96,10 @@ const MainHeader = () => {
   const { isAuthenticated } = useAuthContext();
   const { devModeEnabled, toggleDevMode, isDevelopmentEnvironment } = useDevMode();
 
+  // Combined contexts for functionality
+  const { connectEthereum, connectSolana, connectTON, connectBitcoin, walletInfo } = useMultiChain();
+  const { devModeEnabled: devMode, toggleDevMode: setDevMode, bypassWalletRequirements, setBypassWalletRequirements } = useDevMode();
+  
   // Mobile navigation with categories
   const mobileCategoryMenu: MobileNavCategory[] = [
     {
@@ -102,6 +109,19 @@ const MainHeader = () => {
       items: [
         { name: "Home", href: "/", icon: "🏠" },
         { name: "Vaults", href: "/vault-types", icon: "🔐" },
+      ]
+    },
+    {
+      id: "developer",
+      title: "Developer",
+      icon: "🧪",
+      items: [
+        { name: "Connect Ethereum", href: "#", icon: "🔗", highlight: true, isAction: true, action: () => connectEthereum() },
+        { name: "Connect Solana", href: "#", icon: "🔗", highlight: true, isAction: true, action: () => connectSolana() },
+        { name: "Connect TON", href: "#", icon: "🔗", highlight: true, isAction: true, action: () => connectTON() },
+        { name: "Connect Bitcoin", href: "#", icon: "🔗", highlight: true, isAction: true, action: () => connectBitcoin() },
+        { name: `Dev Mode ${devModeEnabled ? 'On' : 'Off'}`, href: "#", icon: "🛠️", isAction: true, action: () => toggleDevMode() },
+        { name: `Bypass Wallet ${devModeEnabled && bypassWalletRequirements ? 'On' : 'Off'}`, href: "#", icon: "⚡", isAction: true, action: () => setBypassWalletRequirements(!bypassWalletRequirements) },
       ]
     },
     {
