@@ -21,7 +21,11 @@ import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useDevMode } from '@/contexts/dev-mode-context';
 
-export function BitcoinWalletConnector() {
+interface BitcoinWalletConnectorProps {
+  className?: string;
+}
+
+export function BitcoinWalletConnector({ className }: BitcoinWalletConnectorProps = {}) {
   const { 
     walletInfo, 
     isConnecting, 
@@ -59,7 +63,9 @@ export function BitcoinWalletConnector() {
             >
               <Bitcoin className="h-4 w-4 text-orange-600 dark:text-orange-400" />
               <span className="hidden md:inline">{formatAddress(walletInfo.address)}</span>
-              <span className="md:ml-2 font-mono font-medium text-green-600 dark:text-green-400">{walletInfo.balance.toFixed(4)} BTC</span>
+              <span className="md:ml-2 font-mono font-medium text-green-600 dark:text-green-400">
+                {(walletInfo.balance as number).toFixed(4)} BTC
+              </span>
               <ChevronDown className="h-4 w-4 ml-1 text-orange-600 dark:text-orange-400" />
             </Button>
           </DropdownMenuTrigger>
@@ -89,16 +95,22 @@ export function BitcoinWalletConnector() {
     );
   }
 
+  // Check if it's a mobile context
+  const isMobileContext = className?.includes('mobile-version');
+  
   // If not connected, show connect button
   return (
     <>
       <Dialog open={isOpen} onOpenChange={setIsOpen}>
         <DialogTrigger asChild>
           <Button 
-            className="h-10 flex items-center gap-2 bg-gradient-to-r from-orange-600 to-amber-600 hover:from-orange-700 hover:to-amber-700 text-white"
+            size="sm"
+            className={`flex items-center gap-1 bg-gradient-to-r from-orange-600 to-amber-600 hover:from-orange-700 hover:to-amber-700 text-white ${
+              isMobileContext ? 'h-8 px-2 text-xs' : 'h-10'
+            } ${className}`}
           >
-            <Wallet className="h-4 w-4" />
-            <span>Connect Bitcoin Wallet</span>
+            <Bitcoin className="h-3 w-3" />
+            {!isMobileContext && <span>Connect Bitcoin</span>}
           </Button>
         </DialogTrigger>
         <DialogContent className="sm:max-w-[425px]">

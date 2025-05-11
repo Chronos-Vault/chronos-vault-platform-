@@ -478,47 +478,48 @@ const MainHeader = () => {
                     </div>
                   </div>
                   
-                  <div className="pt-4 mt-4 border-t border-[#6B00D7]/30 space-y-4">
-                    <div className="flex flex-col gap-2">
-                      <div className="flex items-center gap-2 pl-2">
-                        <Settings className="h-5 w-5 text-[#FF5AF7]" />
-                        <span className="text-[#FF5AF7] font-medium">Wallet Connection</span>
-                      </div>
-                      <div className="pl-1">
-                        <CrossChainWalletSelector />
-                        <div className="mt-2">
-                          <BitcoinWalletConnector />
-                        </div>
-                      </div>
-                    </div>
-                    
-                    {isDevelopmentEnvironment && (
+                  <div className="pt-4 mt-4 border-t border-[#6B00D7]/30">
+                    {/* More compact wallet and dev mode controls */}
+                    <div className="grid grid-cols-2 gap-3 px-1">
+                      {/* Wallet Connection - Left column */}
                       <div className="flex flex-col gap-2">
-                        <div className="flex items-center gap-2 pl-2">
-                          <Bug className={`h-5 w-5 ${devModeEnabled ? 'text-amber-500' : 'text-gray-400'}`} />
-                          <span className={`font-medium ${devModeEnabled ? 'text-amber-500' : 'text-gray-400'}`}>
-                            Development Mode
-                          </span>
+                        <div className="flex items-center gap-1.5 mb-1">
+                          <Settings className="h-4 w-4 text-[#FF5AF7]" />
+                          <span className="text-[#FF5AF7] font-medium text-sm">Connect Wallets</span>
                         </div>
-                        <div className="pl-2">
+                        <div className="space-y-2">
+                          <CrossChainWalletSelector className="mobile-version" />
+                          <BitcoinWalletConnector className="mobile-version" />
+                        </div>
+                      </div>
+
+                      {/* Development Mode - Right column */}
+                      {isDevelopmentEnvironment && (
+                        <div className="flex flex-col gap-2">
+                          <div className="flex items-center gap-1.5 mb-1">
+                            <Bug className={`h-4 w-4 ${devModeEnabled ? 'text-amber-500' : 'text-gray-400'}`} />
+                            <span className={`font-medium text-sm ${devModeEnabled ? 'text-amber-500' : 'text-gray-400'}`}>
+                              Dev Mode
+                            </span>
+                          </div>
                           <Button 
                             variant="outline" 
                             size="sm" 
                             onClick={toggleDevMode}
-                            className={`w-full justify-start ${
+                            className={`px-2 text-xs h-8 justify-center ${
                               devModeEnabled 
                                 ? 'bg-amber-500/10 text-amber-500 border-amber-500/50 hover:bg-amber-500/20' 
                                 : 'bg-gray-800/50 text-gray-400 border-gray-700 hover:bg-gray-800'
                             }`}
                           >
-                            {devModeEnabled ? 'Disable Development Mode' : 'Enable Development Mode'}
+                            {devModeEnabled ? 'Disable' : 'Enable'}
                           </Button>
-                          <p className="text-xs text-gray-500 mt-1 pl-1">
-                            Dev mode bypasses wallet requirements
+                          <p className="text-xs text-gray-500 leading-tight">
+                            Bypass wallet requirements
                           </p>
                         </div>
-                      </div>
-                    )}
+                      )}
+                    </div>
                   </div>
                 </div>
               </SheetContent>

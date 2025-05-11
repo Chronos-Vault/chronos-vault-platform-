@@ -45,7 +45,7 @@ interface MultiChainContextType {
   setActiveChain: (chain: BlockchainType) => void;
   activeChain?: BlockchainType;
   availableWallets: (chain: BlockchainType) => Array<{name: string, installed: boolean}>;
-  formatAddress: (address: string, chain: BlockchainType) => string;
+  formatAddress: (address: string, chain: BlockchainType, truncateLength?: number) => string;
   // Additional properties used by other components
   chainStatus: Record<BlockchainType, any>;
   isTestnet?: boolean;
@@ -202,12 +202,12 @@ export const MultiChainProvider: React.FC<{children: React.ReactNode}> = ({ chil
     }
   };
 
-  // Format address for display based on chain
-  const formatAddress = (address: string, chain: BlockchainType): string => {
+  // Format address for display based on chain and context
+  const formatAddress = (address: string, chain: BlockchainType, truncateLength: number = 4): string => {
     if (!address) return '';
     
-    const start = address.substring(0, 6);
-    const end = address.substring(address.length - 4);
+    const start = address.substring(0, truncateLength + 2);
+    const end = address.substring(address.length - truncateLength);
     return `${start}...${end}`;
   };
   

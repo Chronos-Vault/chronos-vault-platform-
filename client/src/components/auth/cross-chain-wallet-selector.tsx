@@ -88,6 +88,9 @@ const CrossChainWalletSelector: React.FC<CrossChainWalletSelectorProps> = ({ cla
     ([_, status]) => status.isConnected
   )?.[0] as BlockchainType | undefined;
   
+  // Detect if we're in a mobile context based on className
+  const isMobileContext = className?.includes('mobile-version');
+  
   // If wallet is connected, show connected state
   if (connectedChain) {
     const status = chainStatuses[connectedChain];
@@ -97,11 +100,15 @@ const CrossChainWalletSelector: React.FC<CrossChainWalletSelectorProps> = ({ cla
         onClick={handleDisconnect} 
         variant="ghost" 
         size="sm"
-        className={cn("text-violet-400 hover:text-violet-300 hover:bg-violet-900/30 flex items-center gap-2", className)}
+        className={cn(
+          "text-violet-400 hover:text-violet-300 hover:bg-violet-900/30 flex items-center gap-1",
+          isMobileContext ? "h-8 px-2 text-xs" : "",
+          className
+        )}
       >
-        {connectedChain === BlockchainType.TON && <SiTon className="h-4 w-4" />}
-        {connectedChain === BlockchainType.SOLANA && <SiSolana className="h-4 w-4" />}
-        {multiChain.formatAddress(status.address, connectedChain)}
+        {connectedChain === BlockchainType.TON && <SiTon className="h-3 w-3" />}
+        {connectedChain === BlockchainType.SOLANA && <SiSolana className="h-3 w-3" />}
+        {multiChain.formatAddress(status.address, connectedChain, isMobileContext ? 3 : 4)}
       </Button>
     );
   }
@@ -112,10 +119,14 @@ const CrossChainWalletSelector: React.FC<CrossChainWalletSelectorProps> = ({ cla
         <Button 
           variant="outline" 
           size="sm"
-          className={cn("border-violet-500 text-violet-400 hover:text-violet-300 hover:bg-violet-900/30", className)}
+          className={cn(
+            "border-violet-500 text-violet-400 hover:text-violet-300 hover:bg-violet-900/30",
+            isMobileContext ? "h-8 px-2 text-xs" : "",
+            className
+          )}
         >
-          <Wallet className="mr-2 h-4 w-4" />
-          Connect Wallet
+          <Wallet className={cn("h-3 w-3", isMobileContext ? "" : "mr-2")} />
+          {isMobileContext ? null : "Connect Wallet"}
         </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px] bg-[#121212] border border-[#333]">
