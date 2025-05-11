@@ -78,6 +78,7 @@ import BiometricVaultPage from "@/pages/biometric-vault-page";
 import ZeroKnowledgeVerificationPage from "@/pages/zero-knowledge-verification-page";
 import MultiChainSyncPage from "@/pages/multi-chain-sync-page";
 import GeoVaultPage from "@/pages/geo-vault-page";
+import FAQPage from "@/pages/faq";
 
 
 // Redirect component for wouter
@@ -161,6 +162,7 @@ function Router() {
         <Route path="/geo-vaults/:id" component={GeoVaultPage} />
         <Route path="/geo-vaults/create" component={GeoVaultPage} />
         <Route path="/geo-vault" component={GeoVaultPage} />
+        <Route path="/faq" component={FAQPage} />
 
         <Route component={NotFound} />
       </Switch>
