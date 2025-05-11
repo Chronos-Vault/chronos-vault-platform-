@@ -232,6 +232,8 @@ const CrossChainWalletSelector: React.FC<CrossChainWalletSelectorProps> = ({ cla
             </div>
           </div>
         </Tabs>
+        
+        {/* Removed DialogFooter with Close button here that causes duplicate close buttons on mobile */}
       </DialogContent>
     </Dialog>
   );
