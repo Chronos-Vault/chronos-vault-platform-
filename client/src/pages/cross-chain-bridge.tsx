@@ -851,13 +851,6 @@ export default function CrossChainBridgePage() {
                         <Progress 
                           value={status.successRate} 
                           className="h-1 mt-1"
-                          indicatorClassName={
-                            status.successRate > 98
-                              ? "bg-green-500"
-                              : status.successRate > 90
-                              ? "bg-amber-500"
-                              : "bg-red-500"
-                          }
                         />
                       </div>
                     </div>
