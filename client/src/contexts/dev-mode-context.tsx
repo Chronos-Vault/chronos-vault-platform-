@@ -59,6 +59,25 @@ export function DevModeProvider({ children }: DevModeProviderProps) {
     
     // Log the state change for debugging
     console.log(`Development mode ${newValue ? 'enabled' : 'disabled'}`);
+    
+    // If turning dev mode off, also turn off bypass wallet requirements
+    if (!newValue && bypassWalletRequirements) {
+      setBypassWalletRequirements(false);
+      localStorage.setItem('chronosVault_bypassWallet', 'false');
+    }
+  };
+  
+  // Function to toggle bypass wallet requirements
+  const handleSetBypassWalletRequirements = (value: boolean) => {
+    // Only allow setting this if dev mode is enabled
+    if (!devModeEnabled && value) {
+      console.warn('Cannot enable bypass wallet requirements when dev mode is disabled');
+      return;
+    }
+    
+    setBypassWalletRequirements(value);
+    localStorage.setItem('chronosVault_bypassWallet', value.toString());
+    console.log(`Bypass wallet requirements ${value ? 'enabled' : 'disabled'}`);
   };
 
   // Create the context value
@@ -67,6 +86,8 @@ export function DevModeProvider({ children }: DevModeProviderProps) {
     isDevMode: devModeEnabled, // Alias for compatibility
     toggleDevMode,
     isDevelopmentEnvironment,
+    bypassWalletRequirements,
+    setBypassWalletRequirements: handleSetBypassWalletRequirements,
   };
 
   // Provide the context to children

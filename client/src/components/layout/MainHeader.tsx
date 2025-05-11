@@ -94,11 +94,16 @@ interface MobileNavCategory {
 const MainHeader = () => {
   const [location] = useLocation();
   const { isAuthenticated } = useAuthContext();
-  const { devModeEnabled, toggleDevMode, isDevelopmentEnvironment } = useDevMode();
 
   // Combined contexts for functionality
-  const { connectEthereum, connectSolana, connectTON, connectBitcoin, walletInfo } = useMultiChain();
-  const { devModeEnabled: devMode, toggleDevMode: setDevMode, bypassWalletRequirements, setBypassWalletRequirements } = useDevMode();
+  const multiChain = useMultiChain();
+  const { 
+    devModeEnabled, 
+    toggleDevMode, 
+    isDevelopmentEnvironment,
+    bypassWalletRequirements, 
+    setBypassWalletRequirements 
+  } = useDevMode();
   
   // Mobile navigation with categories
   const mobileCategoryMenu: MobileNavCategory[] = [
@@ -116,10 +121,10 @@ const MainHeader = () => {
       title: "Developer",
       icon: "🧪",
       items: [
-        { name: "Connect Ethereum", href: "#", icon: "🔗", highlight: true, isAction: true, action: () => connectEthereum() },
-        { name: "Connect Solana", href: "#", icon: "🔗", highlight: true, isAction: true, action: () => connectSolana() },
-        { name: "Connect TON", href: "#", icon: "🔗", highlight: true, isAction: true, action: () => connectTON() },
-        { name: "Connect Bitcoin", href: "#", icon: "🔗", highlight: true, isAction: true, action: () => connectBitcoin() },
+        { name: "Connect Ethereum", href: "#", icon: "🔗", highlight: true, isAction: true, action: () => multiChain.connectChain(BlockchainType.ETHEREUM) },
+        { name: "Connect Solana", href: "#", icon: "🔗", highlight: true, isAction: true, action: () => multiChain.connectChain(BlockchainType.SOLANA) },
+        { name: "Connect TON", href: "#", icon: "🔗", highlight: true, isAction: true, action: () => multiChain.connectChain(BlockchainType.TON) },
+        { name: "Connect Bitcoin", href: "#", icon: "🔗", highlight: true, isAction: true, action: () => multiChain.connectChain(BlockchainType.BITCOIN) },
         { name: `Dev Mode ${devModeEnabled ? 'On' : 'Off'}`, href: "#", icon: "🛠️", isAction: true, action: () => toggleDevMode() },
         { name: `Bypass Wallet ${devModeEnabled && bypassWalletRequirements ? 'On' : 'Off'}`, href: "#", icon: "⚡", isAction: true, action: () => setBypassWalletRequirements(!bypassWalletRequirements) },
       ]
