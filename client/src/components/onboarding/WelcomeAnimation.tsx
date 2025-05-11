@@ -1,156 +1,109 @@
 import { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
+import { useOnboarding } from '@/contexts/onboarding-context';
 import { Button } from '@/components/ui/button';
-import { ChevronRight } from 'lucide-react';
+import { ArrowRight } from 'lucide-react';
 
-export const WelcomeAnimation = ({ onComplete }: { onComplete: () => void }) => {
-  // Animation states
-  const [logoAnimationComplete, setLogoAnimationComplete] = useState(false);
-  const [showTagline, setShowTagline] = useState(false);
-  const [showDescription, setShowDescription] = useState(false);
-  const [showButton, setShowButton] = useState(false);
+const WelcomeAnimation = () => {
+  const { completeCurrentStep } = useOnboarding();
+  const [animationComplete, setAnimationComplete] = useState(false);
   
-  // Trigger sequence of animations
+  // Start animation sequence when component mounts
   useEffect(() => {
-    // Show tagline after the logo animation
-    const taglineTimer = setTimeout(() => {
-      setShowTagline(true);
-    }, 2000);
-    
-    // Show description after tagline
-    const descriptionTimer = setTimeout(() => {
-      setShowDescription(true);
-    }, 3500);
-    
-    // Show button last
-    const buttonTimer = setTimeout(() => {
-      setShowButton(true);
+    // Auto-complete animation after 5 seconds
+    const timer = setTimeout(() => {
+      setAnimationComplete(true);
     }, 5000);
     
-    return () => {
-      clearTimeout(taglineTimer);
-      clearTimeout(descriptionTimer);
-      clearTimeout(buttonTimer);
-    };
+    return () => clearTimeout(timer);
   }, []);
   
   return (
-    <div className="welcome-animation flex flex-col items-center justify-center h-full w-full">
+    <div className="relative flex flex-col items-center justify-center min-h-screen overflow-hidden bg-black">
+      {/* Background gradient elements */}
       <motion.div
-        className="logo-animation mb-12 relative"
-        initial={{ scale: 0 }}
-        animate={{ scale: 1 }}
-        transition={{
-          type: "spring",
-          stiffness: 260,
-          damping: 20,
-          duration: 1.5
-        }}
-        onAnimationComplete={() => setLogoAnimationComplete(true)}
+        className="absolute w-full h-full bg-gradient-radial from-purple-900/20 to-transparent"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 0.3 }}
+        transition={{ duration: 2, ease: "easeOut" }}
+      />
+      
+      <motion.div
+        className="absolute bottom-0 w-full h-1/3 bg-gradient-to-t from-purple-900/30 to-transparent"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 0.5 }}
+        transition={{ duration: 2, delay: 0.5, ease: "easeOut" }}
+      />
+      
+      {/* Logo animation */}
+      <motion.div
+        className="relative z-10 mb-10"
+        initial={{ scale: 0.8, opacity: 0 }}
+        animate={{ scale: 1, opacity: 1 }}
+        transition={{ duration: 1.5, ease: "easeOut" }}
       >
-        {/* Logo with glow effect */}
-        <div className="w-32 h-32 rounded-full bg-gradient-to-tr from-primary to-[#FF5AF7] flex items-center justify-center relative">
-          <motion.div 
-            className="absolute inset-0 bg-gradient-to-tr from-primary to-[#FF5AF7] rounded-full blur-xl opacity-40"
-            animate={{ 
-              scale: [1, 1.1, 1],
-              opacity: [0.4, 0.6, 0.4]
-            }}
-            transition={{
-              duration: 4,
-              repeat: Infinity,
-              repeatType: "reverse"
-            }}
-          />
-          
-          <div className="absolute inset-0 rounded-full bg-gradient-to-tr from-primary to-[#FF5AF7] opacity-90" />
-          
-          <div className="z-10 font-bold text-4xl bg-clip-text text-transparent bg-gradient-to-b from-white to-white/80">
-            CV
-          </div>
-          
-          {/* Orbiting elements */}
-          {logoAnimationComplete && (
-            <>
-              <motion.div
-                className="absolute w-6 h-6 rounded-full bg-white/20 backdrop-blur-sm border border-white/40"
-                animate={{
-                  rotate: 360
-                }}
-                transition={{
-                  duration: 8,
-                  repeat: Infinity,
-                  ease: "linear"
-                }}
-                style={{
-                  top: "calc(50% - 3px)",
-                  left: "calc(50% - 3px)",
-                  transformOrigin: "center",
-                  translate: "-50% -50%",
-                  offsetPath: "path('M 0 -70 A 70 70 0 1 1 1 -70 A 70 70 0 1 1 0 -70')",
-                  offsetDistance: "25%"
-                }}
-              />
-              
-              <motion.div
-                className="absolute w-4 h-4 rounded-full bg-white/10 backdrop-blur-sm border border-white/30"
-                animate={{
-                  rotate: -360
-                }}
-                transition={{
-                  duration: 12,
-                  repeat: Infinity,
-                  ease: "linear"
-                }}
-                style={{
-                  top: "calc(50% - 2px)",
-                  left: "calc(50% - 2px)",
-                  transformOrigin: "center",
-                  translate: "-50% -50%",
-                  offsetPath: "path('M 0 -85 A 85 85 0 1 0 1 -85 A 85 85 0 1 0 0 -85')",
-                  offsetDistance: "75%"
-                }}
-              />
-            </>
-          )}
+        <div className="w-32 h-32 md:w-40 md:h-40 rounded-full bg-gradient-to-br from-primary to-secondary flex items-center justify-center">
+          <svg
+            viewBox="0 0 24 24"
+            className="w-16 h-16 md:w-20 md:h-20 text-white"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <motion.path
+              d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z"
+              fill="currentColor"
+              initial={{ pathLength: 0, opacity: 0 }}
+              animate={{ pathLength: 1, opacity: 1 }}
+              transition={{ duration: 2, ease: "easeInOut" }}
+            />
+            <motion.path
+              d="M12.5 7H11v6l5.25 3.15.75-1.23-4.5-2.67z"
+              fill="currentColor"
+              initial={{ pathLength: 0, opacity: 0 }}
+              animate={{ pathLength: 1, opacity: 1 }}
+              transition={{ duration: 2, delay: 1, ease: "easeInOut" }}
+            />
+          </svg>
         </div>
       </motion.div>
       
-      <AnimatePresence>
-        {showTagline && (
-          <motion.h1
-            className="text-4xl font-bold mb-6 bg-clip-text text-transparent bg-gradient-to-r from-primary to-[#FF5AF7] text-center max-w-lg"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.7 }}
-          >
-            Chronos Vault
-          </motion.h1>
-        )}
-        
-        {showDescription && (
-          <motion.p
-            className="text-xl text-muted-foreground text-center max-w-lg mb-12"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.7 }}
-          >
-            The revolutionary multi-chain platform for secure time-locked digital vaults
-          </motion.p>
-        )}
-        
-        {showButton && (
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.7 }}
-          >
-            <Button size="lg" onClick={onComplete} className="gap-2">
-              Get Started <ChevronRight className="h-4 w-4" />
-            </Button>
-          </motion.div>
-        )}
-      </AnimatePresence>
+      {/* Title animation */}
+      <motion.h1
+        className="relative z-10 text-4xl md:text-6xl font-bold text-white mb-4 text-center"
+        initial={{ y: 20, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        transition={{ duration: 1, delay: 1, ease: "easeOut" }}
+      >
+        Chronos Vault
+      </motion.h1>
+      
+      {/* Subtitle animation */}
+      <motion.p
+        className="relative z-10 text-xl md:text-2xl text-white/80 mb-10 text-center max-w-md px-4"
+        initial={{ y: 20, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        transition={{ duration: 1, delay: 1.5, ease: "easeOut" }}
+      >
+        Secure your digital future with time-locked blockchain vaults
+      </motion.p>
+      
+      {/* Continue button */}
+      <motion.div
+        className="relative z-10"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: animationComplete ? 1 : 0 }}
+        transition={{ duration: 0.5 }}
+      >
+        <Button
+          size="lg"
+          className="bg-gradient-to-r from-primary to-secondary hover:from-primary/90 hover:to-secondary/90 text-white"
+          onClick={completeCurrentStep}
+        >
+          Begin Journey <ArrowRight className="ml-2 h-5 w-5" />
+        </Button>
+      </motion.div>
     </div>
   );
 };
+
+export default WelcomeAnimation;

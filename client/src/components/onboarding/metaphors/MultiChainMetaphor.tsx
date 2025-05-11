@@ -1,294 +1,226 @@
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { CheckCircle, XCircle, Shield, AlertTriangle } from 'lucide-react';
-import { Button } from '@/components/ui/button';
+import { CheckCircle2, Link, Shield, Fingerprint } from 'lucide-react';
 
-type ChainStatus = 'active' | 'verifying' | 'failed' | 'inactive';
+// Icons for the different blockchains
+const EthereumIcon = () => (
+  <svg className="h-5 w-5" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M12 1.75L5.75 12.25L12 16L18.25 12.25L12 1.75Z" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+    <path d="M5.75 12.25L12 22.25L18.25 12.25L12 16L5.75 12.25Z" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+  </svg>
+);
 
-interface Chain {
-  id: string;
-  name: string;
-  status: ChainStatus;
-  color: string;
-  role: string;
-}
+const SolanaIcon = () => (
+  <svg className="h-5 w-5" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M18.25 8.5H5.75C5.19772 8.5 4.75 8.94772 4.75 9.5V9.5C4.75 10.0523 5.19772 10.5 5.75 10.5H18.25C18.8023 10.5 19.25 10.0523 19.25 9.5V9.5C19.25 8.94772 18.8023 8.5 18.25 8.5Z" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+    <path d="M18.25 14.5H5.75C5.19772 14.5 4.75 14.9477 4.75 15.5V15.5C4.75 16.0523 5.19772 16.5 5.75 16.5H18.25C18.8023 16.5 19.25 16.0523 19.25 15.5V15.5C19.25 14.9477 18.8023 14.5 18.25 14.5Z" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+    <path d="M18.25 2.5H5.75C5.19772 2.5 4.75 2.94772 4.75 3.5V3.5C4.75 4.05228 5.19772 4.5 5.75 4.5H18.25C18.8023 4.5 19.25 4.05228 19.25 3.5V3.5C19.25 2.94772 18.8023 2.5 18.25 2.5Z" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+  </svg>
+);
+
+const TonIcon = () => (
+  <svg className="h-5 w-5" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <circle cx="12" cy="12" r="9.25" stroke="currentColor" strokeWidth="1.5" />
+    <path d="M8.75 9.75L12 13L15.25 9.75" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+    <path d="M8.75 16.25H15.25" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+  </svg>
+);
 
 export const MultiChainMetaphor = () => {
-  const [chains, setChains] = useState<Chain[]>([
-    {
-      id: 'ethereum',
-      name: 'Ethereum',
-      status: 'inactive',
-      color: '#627EEA',
-      role: 'Primary Vault'
-    },
-    {
-      id: 'solana',
-      name: 'Solana',
-      status: 'inactive',
-      color: '#9945FF',
-      role: 'Monitoring'
-    },
-    {
-      id: 'ton',
-      name: 'TON',
-      status: 'inactive',
-      color: '#0098EA',
-      role: 'Recovery'
-    }
-  ]);
+  const [verificationStage, setVerificationStage] = useState(0);
   
-  const [attackSimulation, setAttackSimulation] = useState<boolean>(false);
-  const [isInteractive, setIsInteractive] = useState<boolean>(false);
-  const [step, setStep] = useState<number>(0);
-  
-  // Auto-animate the visualization on first render
+  // Simulate the verification process across multiple chains
   useEffect(() => {
-    const activateEthereum = setTimeout(() => {
-      updateChainStatus('ethereum', 'active');
-      setStep(1);
-    }, 1000);
-    
-    const activateSolana = setTimeout(() => {
-      updateChainStatus('solana', 'active');
-      setStep(2);
-    }, 2000);
-    
-    const activateTon = setTimeout(() => {
-      updateChainStatus('ton', 'active');
-      setStep(3);
-      setIsInteractive(true);
-    }, 3000);
-    
-    return () => {
-      clearTimeout(activateEthereum);
-      clearTimeout(activateSolana);
-      clearTimeout(activateTon);
-    };
-  }, []);
-  
-  // Update a chain's status
-  const updateChainStatus = (id: string, status: ChainStatus) => {
-    setChains(chains.map(chain => 
-      chain.id === id ? { ...chain, status } : chain
-    ));
-  };
-  
-  // Handle simulated attack
-  const simulateAttack = () => {
-    // Start attack sequence
-    setAttackSimulation(true);
-    
-    // Simulate failure of Ethereum chain
-    updateChainStatus('ethereum', 'verifying');
-    
-    setTimeout(() => {
-      updateChainStatus('ethereum', 'failed');
-      
-      // Solana detects the issue
-      updateChainStatus('solana', 'verifying');
-      
-      setTimeout(() => {
-        // TON begins recovery
-        updateChainStatus('ton', 'verifying');
-        
-        setTimeout(() => {
-          // System recovers
-          updateChainStatus('ethereum', 'active');
-          updateChainStatus('solana', 'active');
-          updateChainStatus('ton', 'active');
-          
-          // End attack simulation
-          setAttackSimulation(false);
-        }, 2000);
+    if (verificationStage < 4) {
+      const timer = setTimeout(() => {
+        setVerificationStage(verificationStage + 1);
       }, 1500);
-    }, 1500);
-  };
-  
-  // Reset the simulation
-  const resetSimulation = () => {
-    chains.forEach(chain => {
-      updateChainStatus(chain.id, 'inactive');
-    });
-    
-    setStep(0);
-    setAttackSimulation(false);
-    
-    // Restart the animation sequence
-    setTimeout(() => {
-      updateChainStatus('ethereum', 'active');
-      setStep(1);
       
-      setTimeout(() => {
-        updateChainStatus('solana', 'active');
-        setStep(2);
-        
-        setTimeout(() => {
-          updateChainStatus('ton', 'active');
-          setStep(3);
-        }, 1000);
-      }, 1000);
-    }, 1000);
-  };
-  
-  // Get status icon for a chain
-  const getStatusIcon = (status: ChainStatus) => {
-    switch (status) {
-      case 'active':
-        return <CheckCircle className="h-5 w-5 text-green-500" />;
-      case 'verifying':
-        return (
-          <motion.div
-            animate={{ rotate: 360 }}
-            transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
-          >
-            <Shield className="h-5 w-5 text-amber-500" />
-          </motion.div>
-        );
-      case 'failed':
-        return <XCircle className="h-5 w-5 text-red-500" />;
-      case 'inactive':
-        return <div className="h-5 w-5 rounded-full border border-muted" />;
+      return () => clearTimeout(timer);
+    } else {
+      // Reset the animation after a delay
+      const resetTimer = setTimeout(() => {
+        setVerificationStage(0);
+      }, 3000);
+      
+      return () => clearTimeout(resetTimer);
     }
-  };
+  }, [verificationStage]);
+  
+  // The chains in our triple-chain architecture
+  const chains = [
+    { 
+      name: 'Ethereum', 
+      role: 'Primary Vault Contract', 
+      icon: <EthereumIcon />, 
+      color: 'blue',
+      verified: verificationStage >= 1 
+    },
+    { 
+      name: 'Solana', 
+      role: 'Real-time Monitoring', 
+      icon: <SolanaIcon />, 
+      color: 'purple',
+      verified: verificationStage >= 2 
+    },
+    { 
+      name: 'TON', 
+      role: 'Emergency Recovery', 
+      icon: <TonIcon />, 
+      color: 'cyan',
+      verified: verificationStage >= 3 
+    }
+  ];
   
   return (
-    <div className="multi-chain-metaphor relative h-64 w-full flex flex-col items-center justify-center">
-      {/* Security status indicator */}
-      <div className={`security-status mb-6 flex items-center gap-2 px-4 py-2 rounded-full ${
-        step === 3 && !attackSimulation
-          ? 'bg-green-500/10 text-green-500 border border-green-500/30'
-          : attackSimulation
-            ? 'bg-amber-500/10 text-amber-500 border border-amber-500/30'
-            : 'bg-muted text-muted-foreground'
-      }`}>
-        {step === 3 && !attackSimulation ? (
-          <>
-            <CheckCircle className="h-4 w-4" />
-            <span className="text-sm font-medium">Triple-Chain Protection Active</span>
-          </>
-        ) : attackSimulation ? (
-          <>
-            <AlertTriangle className="h-4 w-4" />
-            <span className="text-sm font-medium">Security Response In Progress</span>
-          </>
-        ) : (
-          <>
-            <Shield className="h-4 w-4" />
-            <span className="text-sm font-medium">Initializing Protection ({step}/3)</span>
-          </>
-        )}
-      </div>
-      
-      {/* Chain network visualization */}
-      <div className="chains-container relative w-64 h-52">
-        {/* Central asset */}
-        <motion.div 
-          className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-14 h-14 rounded-xl bg-background border-2 border-primary flex items-center justify-center z-10"
-          animate={{ 
-            scale: attackSimulation ? [1, 0.95, 1] : 1,
-            rotate: attackSimulation ? [-2, 2, -2, 0] : 0
-          }}
-          transition={{ 
-            duration: 0.5, 
-            repeat: attackSimulation ? Infinity : 0,
-            repeatType: "reverse"
-          }}
-        >
-          <span className="text-lg font-bold bg-clip-text text-transparent bg-gradient-to-r from-primary to-[#FF5AF7]">
-            Vault
-          </span>
-        </motion.div>
-        
-        {/* Chain nodes */}
-        {chains.map((chain, index) => {
-          // Calculate position on a circle
-          const angle = (index * 2 * Math.PI) / chains.length;
-          const radius = 80; // Distance from center
-          const x = Math.cos(angle) * radius;
-          const y = Math.sin(angle) * radius;
+    <div className="flex flex-col md:flex-row h-full items-center justify-between gap-6 p-4">
+      {/* Visual metaphor */}
+      <motion.div 
+        className="flex-1 flex justify-center items-center"
+        initial={{ opacity: 0, scale: 0.8 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ duration: 0.5 }}
+      >
+        <div className="relative w-64 h-64 md:w-80 md:h-80">
+          {/* Central vault representation */}
+          <motion.div
+            className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-16 h-16 bg-gradient-to-br from-blue-600/30 to-blue-900/30 backdrop-blur-sm rounded-lg border-2 border-blue-500/40 flex items-center justify-center"
+            animate={{
+              boxShadow: verificationStage === 4 
+                ? '0 0 30px rgba(59, 130, 246, 0.6)'
+                : '0 0 0 rgba(59, 130, 246, 0.4)'
+            }}
+            transition={{ duration: 0.5 }}
+          >
+            <Shield className="h-8 w-8 text-blue-400" />
+          </motion.div>
           
-          return (
-            <div key={chain.id} className="absolute left-1/2 top-1/2" style={{ transform: `translate(calc(-50% + ${x}px), calc(-50% + ${y}px))` }}>
-              {/* Chain node */}
-              <motion.div 
-                className="chain-node w-12 h-12 rounded-full flex items-center justify-center relative"
-                style={{ backgroundColor: chain.color }}
-                animate={{ 
-                  scale: chain.status === 'verifying' ? [1, 1.1, 1] : 1,
-                  opacity: chain.status === 'failed' ? 0.6 : 1
-                }}
-                transition={{ 
-                  scale: { 
-                    duration: 0.5, 
-                    repeat: chain.status === 'verifying' ? Infinity : 0,
-                    repeatType: "reverse"
-                  }
-                }}
+          {/* Chain nodes positioned around the vault */}
+          {chains.map((chain, index) => {
+            // Calculate position on a circle
+            const angle = (index * (360 / chains.length) + 270) % 360;
+            const radians = (angle * Math.PI) / 180;
+            const radius = 120; // Distance from center
+            const left = Math.cos(radians) * radius + 50;
+            const top = Math.sin(radians) * radius + 50;
+            
+            return (
+              <motion.div
+                key={chain.name}
+                className={`absolute w-20 h-20 -ml-10 -mt-10`}
+                style={{ left: `${left}%`, top: `${top}%` }}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ duration: 0.5, delay: index * 0.2 }}
               >
-                <span className="text-xs font-bold text-white">{chain.name}</span>
-                
-                {/* Status indicator */}
+                {/* Chain node */}
                 <motion.div 
-                  className="absolute -top-1 -right-1 bg-white rounded-full p-0.5"
-                  initial={{ scale: 0 }}
-                  animate={{ scale: chain.status !== 'inactive' ? 1 : 0 }}
+                  className={`w-full h-full rounded-full bg-${chain.color}-500/10 border border-${chain.color}-500/30 flex flex-col items-center justify-center p-2`}
+                  animate={{
+                    scale: chain.verified ? [1, 1.1, 1] : 1,
+                    boxShadow: chain.verified 
+                      ? `0 0 20px rgba(59, 130, 246, 0.4)`
+                      : `0 0 0 rgba(59, 130, 246, 0)`
+                  }}
+                  transition={{ duration: 0.5 }}
+                >
+                  <div className="text-blue-400 mb-1">
+                    {chain.icon}
+                  </div>
+                  <div className="text-xs font-medium text-center text-blue-400/80">{chain.name}</div>
+                </motion.div>
+                
+                {/* Verification check mark */}
+                <motion.div
+                  className="absolute -right-1 -top-1 bg-blue-500/20 rounded-full p-1"
+                  initial={{ opacity: 0, scale: 0 }}
+                  animate={{ 
+                    opacity: chain.verified ? 1 : 0,
+                    scale: chain.verified ? 1 : 0
+                  }}
                   transition={{ duration: 0.3 }}
                 >
-                  {getStatusIcon(chain.status)}
+                  <CheckCircle2 className="h-4 w-4 text-blue-400" />
                 </motion.div>
+                
+                {/* Connection line to vault */}
+                <motion.div
+                  className="absolute top-1/2 left-1/2 w-[120px] h-0.5 bg-gradient-to-r from-transparent to-blue-400/40 origin-left"
+                  style={{ 
+                    transform: `rotate(${angle + 180}deg)`,
+                    transformOrigin: 'left center' 
+                  }}
+                  initial={{ scaleX: 0 }}
+                  animate={{ scaleX: 1 }}
+                  transition={{ duration: 0.5, delay: index * 0.2 + 0.3 }}
+                />
               </motion.div>
-              
-              {/* Chain role label */}
-              <div className="mt-1 text-center">
-                <span className="text-xs text-muted-foreground">{chain.role}</span>
-              </div>
-              
-              {/* Connection line to central asset */}
-              <motion.div 
-                className="connection-line absolute top-1/2 left-1/2 bg-gradient-to-r from-primary to-[#FF5AF7] h-0.5 origin-left"
-                style={{ 
-                  width: radius,
-                  transform: `rotate(${angle}rad)`,
-                  opacity: chain.status === 'active' ? 0.7 : chain.status === 'verifying' ? 0.4 : 0.1
-                }}
-                animate={{ 
-                  opacity: chain.status === 'active' ? [0.5, 0.7, 0.5] : chain.status === 'verifying' ? [0.2, 0.4, 0.2] : 0.1
-                }}
-                transition={{ 
-                  duration: 2, 
-                  repeat: Infinity,
-                  repeatType: "reverse" 
-                }}
-              />
-            </div>
-          );
-        })}
-      </div>
-      
-      {/* Interactive controls (shown after initial animation) */}
-      {isInteractive && (
-        <div className="controls mt-4 flex gap-3">
-          <Button 
-            variant="outline" 
-            size="sm"
-            onClick={simulateAttack}
-            disabled={attackSimulation}
-            className="text-xs"
-          >
-            Simulate Attack
-          </Button>
+            );
+          })}
           
-          <Button 
-            variant="outline" 
-            size="sm"
-            onClick={resetSimulation}
-            className="text-xs"
+          {/* Final verification complete indicator */}
+          <motion.div
+            className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full pointer-events-none"
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={{ 
+              opacity: verificationStage === 4 ? 1 : 0,
+              scale: verificationStage === 4 ? 1 : 0.8
+            }}
+            transition={{ duration: 0.5 }}
           >
-            Reset Demo
-          </Button>
+            <div className="absolute inset-0 rounded-full border-2 border-blue-400/30 animate-ping" />
+            <div className="absolute inset-0 rounded-full border-4 border-blue-400/20" />
+          </motion.div>
         </div>
-      )}
+      </motion.div>
+      
+      {/* Description */}
+      <motion.div 
+        className="flex-1 space-y-4"
+        initial={{ opacity: 0, x: 20 }}
+        animate={{ opacity: 1, x: 0 }}
+        transition={{ duration: 0.5, delay: 0.3 }}
+      >
+        <h3 className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-blue-600">
+          Triple-Chain Security
+        </h3>
+        
+        <div className="space-y-3 text-muted-foreground">
+          <p>
+            Chronos Vault's revolutionary Triple-Chain Security architecture leverages multiple blockchains for unprecedented protection:
+          </p>
+          
+          <ul className="space-y-2">
+            <li className="flex items-start gap-2">
+              <div className="h-6 w-6 flex-shrink-0 mt-0.5 rounded-full bg-blue-500/10 flex items-center justify-center text-blue-400">
+                <Fingerprint className="h-4 w-4" />
+              </div>
+              <span><strong className="text-foreground">Cross-Chain Verification</strong> – Assets are verified on multiple blockchains simultaneously</span>
+            </li>
+            
+            <li className="flex items-start gap-2">
+              <div className="h-6 w-6 flex-shrink-0 mt-0.5 rounded-full bg-blue-500/10 flex items-center justify-center text-blue-400">
+                <Shield className="h-4 w-4" />
+              </div>
+              <span><strong className="text-foreground">Defense in Depth</strong> – Compromising one chain isn't enough to access the vault</span>
+            </li>
+            
+            <li className="flex items-start gap-2">
+              <div className="h-6 w-6 flex-shrink-0 mt-0.5 rounded-full bg-blue-500/10 flex items-center justify-center text-blue-400">
+                <Link className="h-4 w-4" />
+              </div>
+              <span><strong className="text-foreground">Specialized Chain Roles</strong> – Each blockchain performs specific security functions</span>
+            </li>
+            
+            <li className="flex items-start gap-2">
+              <div className="h-6 w-6 flex-shrink-0 mt-0.5 rounded-full bg-blue-500/10 flex items-center justify-center text-blue-400">
+                <CheckCircle2 className="h-4 w-4" />
+              </div>
+              <span><strong className="text-foreground">Mathematical Consensus</strong> – Uses cryptographic proofs across multiple chains</span>
+            </li>
+          </ul>
+        </div>
+      </motion.div>
     </div>
   );
 };

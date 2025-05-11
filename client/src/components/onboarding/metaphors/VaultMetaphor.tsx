@@ -1,245 +1,118 @@
-import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { Shield, Lock, Unlock, Fingerprint, Key, AlertTriangle } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Slider } from '@/components/ui/slider';
+import { Lock, Key, Shield } from 'lucide-react';
 
 export const VaultMetaphor = () => {
-  const [securityLevel, setSecurityLevel] = useState(1);
-  const [isLocked, setIsLocked] = useState(true);
-  const [isAnimating, setIsAnimating] = useState(false);
-  const [isInteractive, setIsInteractive] = useState(false);
-  const [showBreachAnimation, setShowBreachAnimation] = useState(false);
-  
-  // Auto-animate the vault after component mounts
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setIsAnimating(true);
-      
-      setTimeout(() => {
-        setIsLocked(false);
-        
-        setTimeout(() => {
-          setIsLocked(true);
-          
-          setTimeout(() => {
-            setIsAnimating(false);
-            setIsInteractive(true);
-          }, 1000);
-        }, 2000);
-      }, 2000);
-    }, 1000);
-    
-    return () => clearTimeout(timer);
-  }, []);
-  
-  // Attempt to breach security
-  const attemptBreach = () => {
-    setShowBreachAnimation(true);
-    
-    // Show breach attempt for 3 seconds then reset
-    setTimeout(() => {
-      setShowBreachAnimation(false);
-    }, 3000);
-  };
-  
-  // Toggle vault lock state
-  const toggleLock = () => {
-    if (!isAnimating) {
-      setIsAnimating(true);
-      setIsLocked(!isLocked);
-      
-      setTimeout(() => {
-        setIsAnimating(false);
-      }, 1000);
-    }
-  };
-  
-  // Define security features based on level
-  const getSecurityFeatures = () => {
-    const baseFeatures = ['Encryption'];
-    
-    if (securityLevel >= 2) {
-      baseFeatures.push('Multi-Chain');
-    }
-    
-    if (securityLevel >= 3) {
-      baseFeatures.push('Zero-Knowledge Proofs');
-    }
-    
-    if (securityLevel >= 4) {
-      baseFeatures.push('Quantum Resistance');
-      baseFeatures.push('Multi-Signature');
-    }
-    
-    return baseFeatures;
-  };
-  
-  // Generate security layers visualization
-  const renderSecurityLayers = () => {
-    const layers = [];
-    const colors = [
-      'rgba(107, 0, 215, 0.2)',  // Primary color with transparency
-      'rgba(255, 90, 247, 0.2)',  // Secondary color with transparency
-      'rgba(107, 0, 215, 0.3)',
-      'rgba(255, 90, 247, 0.3)'
-    ];
-    
-    for (let i = 0; i < securityLevel; i++) {
-      layers.push(
-        <motion.div
-          key={i}
-          className="absolute rounded-xl border"
-          style={{
-            width: `calc(100% + ${(i + 1) * 10}px)`,
-            height: `calc(100% + ${(i + 1) * 10}px)`,
-            top: `calc(50% - (100% + ${(i + 1) * 10}px)/2)`,
-            left: `calc(50% - (100% + ${(i + 1) * 10}px)/2)`,
-            backgroundColor: colors[i],
-            borderColor: i % 2 === 0 ? 'rgba(107, 0, 215, 0.3)' : 'rgba(255, 90, 247, 0.3)',
-            zIndex: -1 - i
-          }}
-          animate={{ 
-            rotate: showBreachAnimation ? [0, 5, -5, 0] : 0,
-            scale: showBreachAnimation ? [1, 1.05, 0.95, 1] : 1
-          }}
-          transition={{ 
-            duration: 0.5, 
-            repeat: showBreachAnimation ? 3 : 0, 
-            repeatType: "reverse" 
-          }}
-        />
-      );
-    }
-    
-    return layers;
-  };
-  
   return (
-    <div className="vault-metaphor w-full h-64 flex flex-col items-center justify-center relative">
-      {/* Security breach indicator */}
-      {showBreachAnimation && (
-        <motion.div
-          className="absolute top-0 left-0 right-0 bg-red-500 text-white text-center text-xs py-1 z-20"
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: -20 }}
-        >
-          <div className="flex items-center justify-center gap-1">
-            <AlertTriangle className="h-3 w-3" />
-            <span>Breach Attempt Detected</span>
-            <AlertTriangle className="h-3 w-3" />
-          </div>
-        </motion.div>
-      )}
-      
-      {/* Vault representation */}
-      <div className="vault-container relative mb-6">
-        {/* Security layers */}
-        {renderSecurityLayers()}
-        
-        {/* Main vault */}
-        <motion.div 
-          className={`w-24 h-24 rounded-xl border-2 ${isLocked ? 'border-primary' : 'border-[#FF5AF7]'} bg-card shadow-lg flex items-center justify-center relative`}
-          animate={{ 
-            scale: isAnimating ? (isLocked ? [1, 0.9, 1] : [1, 1.1, 1]) : 1,
-            rotate: showBreachAnimation ? [0, -3, 3, 0] : 0
-          }}
-          transition={{ 
-            scale: { duration: 0.5 },
-            rotate: { duration: 0.3, repeat: showBreachAnimation ? 3 : 0 }
-          }}
-        >
-          <div className="flex flex-col items-center">
-            <motion.div
-              animate={{
-                rotateY: isLocked ? 0 : 180
-              }}
-              transition={{ duration: 0.5 }}
-              className="mb-2"
-            >
-              {isLocked ? <Lock className="h-8 w-8 text-primary" /> : <Unlock className="h-8 w-8 text-[#FF5AF7]" />}
-            </motion.div>
-            <span className="text-xs font-medium">{isLocked ? 'Secured' : 'Accessible'}</span>
-          </div>
-          
-          {/* Small icons representing assets in the vault */}
+    <div className="flex flex-col md:flex-row h-full items-center justify-between gap-6 p-4">
+      {/* Visual metaphor */}
+      <motion.div 
+        className="flex-1 flex justify-center items-center"
+        initial={{ opacity: 0, scale: 0.8 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ duration: 0.5 }}
+      >
+        <div className="relative w-64 h-64 md:w-80 md:h-80">
+          {/* Vault door */}
           <motion.div 
-            className="absolute -bottom-2 -right-2 w-6 h-6 rounded-full bg-primary flex items-center justify-center"
+            className="absolute inset-0 rounded-xl border-8 border-purple-500/40 bg-gradient-to-br from-purple-900/20 to-purple-700/20 backdrop-blur-sm shadow-lg flex items-center justify-center"
+            initial={{ rotateY: 0 }}
             animate={{ 
-              scale: isAnimating ? [1, 1.2, 1] : 1
+              rotateY: [0, -60, 0],
+              boxShadow: [
+                '0 0 0 rgba(168, 85, 247, 0.4)',
+                '0 0 30px rgba(168, 85, 247, 0.6)',
+                '0 0 0 rgba(168, 85, 247, 0.4)'
+              ]
             }}
-            transition={{ duration: 0.5 }}
+            transition={{ 
+              duration: 4, 
+              repeat: Infinity, 
+              repeatType: 'reverse', 
+              repeatDelay: 1,
+              times: [0, 0.5, 1]
+            }}
           >
-            <Shield className="h-3 w-3 text-white" />
+            <Lock className="h-16 w-16 text-purple-400" />
           </motion.div>
-        </motion.div>
-      </div>
-      
-      {/* Security level indicator */}
-      {isInteractive && (
-        <div className="security-level-container max-w-xs w-full px-4">
-          <div className="flex justify-between items-center mb-2">
-            <h3 className="text-sm font-semibold">Security Level: {securityLevel}</h3>
-            <div className="flex gap-1">
-              {Array.from({length: 4}).map((_, i) => (
-                <div 
-                  key={i} 
-                  className={`w-2 h-2 rounded-full ${i < securityLevel ? 'bg-primary' : 'bg-muted'}`}
-                />
-              ))}
-            </div>
-          </div>
           
-          <Slider
-            value={[securityLevel]}
-            min={1}
-            max={4}
-            step={1}
-            onValueChange={(values) => setSecurityLevel(values[0])}
-          />
-          
-          <div className="mt-4">
-            <div className="flex gap-2 flex-wrap">
-              {getSecurityFeatures().map((feature, index) => (
-                <div 
-                  key={index}
-                  className="text-xs px-2 py-1 rounded-full bg-primary/10 border border-primary/20 text-primary"
-                >
-                  {feature}
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-      )}
-      
-      {/* Interactive controls */}
-      {isInteractive && (
-        <div className="controls mt-4 flex space-x-4">
-          <Button 
-            variant="outline" 
-            size="sm"
-            onClick={toggleLock}
-            className="text-xs"
-            disabled={isAnimating}
+          {/* Security elements orbiting the vault */}
+          <motion.div
+            className="absolute w-full h-full"
+            initial={{ rotate: 0 }}
+            animate={{ rotate: 360 }}
+            transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
           >
-            {isLocked ? <Unlock className="h-3 w-3 mr-1" /> : <Lock className="h-3 w-3 mr-1" />}
-            {isLocked ? 'Unlock Vault' : 'Lock Vault'}
-          </Button>
+            <motion.div 
+              className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-purple-400/20 p-2 rounded-full"
+              whileHover={{ scale: 1.2 }}
+            >
+              <Shield className="h-8 w-8 text-purple-400" />
+            </motion.div>
+          </motion.div>
           
-          <Button 
-            variant="destructive" 
-            size="sm"
-            onClick={attemptBreach}
-            className="text-xs"
-            disabled={showBreachAnimation}
+          <motion.div
+            className="absolute w-full h-full"
+            initial={{ rotate: 0 }}
+            animate={{ rotate: -360 }}
+            transition={{ duration: 15, repeat: Infinity, ease: "linear" }}
           >
-            <Fingerprint className="h-3 w-3 mr-1" />
-            Test Security
-          </Button>
+            <motion.div 
+              className="absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-1/2 bg-purple-400/20 p-2 rounded-full"
+              whileHover={{ scale: 1.2 }}
+            >
+              <Key className="h-8 w-8 text-purple-400" />
+            </motion.div>
+          </motion.div>
         </div>
-      )}
+      </motion.div>
+      
+      {/* Description */}
+      <motion.div 
+        className="flex-1 space-y-4"
+        initial={{ opacity: 0, x: 20 }}
+        animate={{ opacity: 1, x: 0 }}
+        transition={{ duration: 0.5, delay: 0.3 }}
+      >
+        <h3 className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-purple-400 to-purple-600">
+          Digital Vaults
+        </h3>
+        
+        <div className="space-y-3 text-muted-foreground">
+          <p>
+            Chronos Vault creates secure digital vaults using blockchain smart contracts. These vaults are:
+          </p>
+          
+          <ul className="space-y-2">
+            <li className="flex items-start gap-2">
+              <div className="h-6 w-6 flex-shrink-0 mt-0.5 rounded-full bg-purple-500/10 flex items-center justify-center text-purple-400">
+                <span className="text-xs">✓</span>
+              </div>
+              <span><strong className="text-foreground">Immutable</strong> – Once deployed, the vault's security cannot be compromised</span>
+            </li>
+            
+            <li className="flex items-start gap-2">
+              <div className="h-6 w-6 flex-shrink-0 mt-0.5 rounded-full bg-purple-500/10 flex items-center justify-center text-purple-400">
+                <span className="text-xs">✓</span>
+              </div>
+              <span><strong className="text-foreground">Cryptographically Secured</strong> – Military-grade encryption protects your assets</span>
+            </li>
+            
+            <li className="flex items-start gap-2">
+              <div className="h-6 w-6 flex-shrink-0 mt-0.5 rounded-full bg-purple-500/10 flex items-center justify-center text-purple-400">
+                <span className="text-xs">✓</span>
+              </div>
+              <span><strong className="text-foreground">Transparent</strong> – Publicly verifiable but only accessible by authorized keys</span>
+            </li>
+            
+            <li className="flex items-start gap-2">
+              <div className="h-6 w-6 flex-shrink-0 mt-0.5 rounded-full bg-purple-500/10 flex items-center justify-center text-purple-400">
+                <span className="text-xs">✓</span>
+              </div>
+              <span><strong className="text-foreground">Smart Contract Powered</strong> – Automated execution without third-party involvement</span>
+            </li>
+          </ul>
+        </div>
+      </motion.div>
     </div>
   );
 };

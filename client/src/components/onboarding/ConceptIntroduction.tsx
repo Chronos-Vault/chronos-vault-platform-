@@ -1,111 +1,127 @@
-import { motion } from 'framer-motion';
 import { useState } from 'react';
-import { VaultMetaphor } from './metaphors/VaultMetaphor';
-import { TimeLockMetaphor } from './metaphors/TimeLockMetaphor'; 
-import { MultiChainMetaphor } from './metaphors/MultiChainMetaphor';
+import { motion } from 'framer-motion';
+import { useOnboarding } from '@/contexts/onboarding-context';
 import { Button } from '@/components/ui/button';
-import { ChevronRight, ChevronLeft } from 'lucide-react';
+import { ArrowRight, Check, Clock, Lock, Shield } from 'lucide-react';
+import { Card, CardContent } from '@/components/ui/card';
 
-export const ConceptIntroduction = ({ onComplete }: { onComplete: () => void }) => {
-  const [currentConcept, setCurrentConcept] = useState<'vault' | 'timelock' | 'multichain'>('vault');
+export const ConceptIntroduction = () => {
+  const { completeCurrentStep } = useOnboarding();
+  const [activeCard, setActiveCard] = useState(0);
   
   const concepts = [
-    { 
-      id: 'vault', 
-      title: 'Secure Digital Vault', 
-      description: 'Your assets are protected with military-grade encryption. The Chronos Vault system provides a secure, decentralized way to store your digital assets with multiple layers of protection.',
-      metaphor: <VaultMetaphor />
+    {
+      id: 'time-lock',
+      title: 'Time-Locked Security',
+      description: 'Lock your digital assets until a specific date in the future. Perfect for long-term hodling, inheritance planning, or preventing emotional trading.',
+      icon: <Clock className="h-8 w-8 text-pink-400" />,
+      color: 'pink'
     },
-    { 
-      id: 'timelock', 
-      title: 'Time-Lock Technology', 
-      description: 'Lock assets until a specific date in the future. Time-locks are cryptographically enforced and cannot be circumvented, ensuring your assets remain secure until the predetermined unlock date.',
-      metaphor: <TimeLockMetaphor />
+    {
+      id: 'vault',
+      title: 'Digital Vaults',
+      description: 'Military-grade security for your crypto assets. Our vaults are built on immutable smart contracts that cannot be altered once deployed.',
+      icon: <Lock className="h-8 w-8 text-purple-400" />,
+      color: 'purple'
     },
-    { 
-      id: 'multichain', 
-      title: 'Triple-Chain Security', 
-      description: 'Protection across Ethereum, Solana, and TON networks. Our unique Triple-Chain Security Architecture distributes security responsibility across multiple blockchains for unprecedented protection.',
-      metaphor: <MultiChainMetaphor />
+    {
+      id: 'multi-chain',
+      title: 'Triple-Chain Security',
+      description: 'We leverage the security of multiple blockchains (TON, Ethereum, and Solana) to create unbreakable vaults with cross-chain verification.',
+      icon: <Shield className="h-8 w-8 text-blue-400" />,
+      color: 'blue'
     }
   ];
-
-  const currentIndex = concepts.findIndex(c => c.id === currentConcept);
   
-  const goToNextConcept = () => {
-    if (currentIndex === concepts.length - 1) {
-      onComplete();
-    } else {
-      setCurrentConcept(concepts[currentIndex + 1].id as any);
+  const handleCardClick = (index: number) => {
+    setActiveCard(index);
+  };
+  
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.3
+      }
     }
   };
   
-  const goToPrevConcept = () => {
-    if (currentIndex > 0) {
-      setCurrentConcept(concepts[currentIndex - 1].id as any);
-    }
+  const itemVariants = {
+    hidden: { y: 20, opacity: 0 },
+    visible: { y: 0, opacity: 1 }
   };
-
+  
   return (
-    <div className="concept-introduction max-w-5xl mx-auto p-6">
-      <motion.div 
-        className="concept-content"
-        key={currentConcept}
-        initial={{ opacity: 0, x: 50 }}
-        animate={{ opacity: 1, x: 0 }}
-        exit={{ opacity: 0, x: -50 }}
-        transition={{ duration: 0.5 }}
-      >
-        <div className="text-center mb-8">
-          <h2 className="text-3xl font-bold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-primary to-[#FF5AF7]">
-            {concepts[currentIndex].title}
-          </h2>
-          <p className="text-muted-foreground max-w-2xl mx-auto">
-            {concepts[currentIndex].description}
-          </p>
-        </div>
-        
-        <div className="metaphor-container h-64 mb-8 bg-card/50 backdrop-blur-sm border border-muted rounded-xl shadow-sm overflow-hidden p-4">
-          {concepts[currentIndex].metaphor}
-        </div>
-
-        <div className="flex justify-between items-center">
-          <Button
-            variant="outline"
-            onClick={goToPrevConcept}
-            disabled={currentIndex === 0}
-            size="lg"
-            className="gap-2"
-          >
-            <ChevronLeft className="h-4 w-4" /> Previous
-          </Button>
+    <div className="min-h-screen flex flex-col justify-between p-6 bg-background">
+      <div className="flex-1 flex flex-col items-center justify-center">
+        <motion.div
+          className="w-full max-w-4xl mx-auto"
+          initial="hidden"
+          animate="visible"
+          variants={containerVariants}
+        >
+          <motion.div variants={itemVariants} className="mb-10 text-center">
+            <h1 className="text-3xl md:text-4xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-primary to-secondary mb-4">
+              Key Concepts
+            </h1>
+            <p className="text-muted-foreground max-w-xl mx-auto">
+              Explore the core technologies that power the Chronos Vault platform
+            </p>
+          </motion.div>
           
-          <div className="flex space-x-2">
-            {concepts.map((c, i) => (
-              <div 
-                key={c.id} 
-                className={`h-2 w-12 rounded-full transition-all duration-300 ${currentIndex === i ? 'bg-primary' : 'bg-muted'}`}
-              />
+          <motion.div 
+            className="grid grid-cols-1 md:grid-cols-3 gap-6"
+            variants={containerVariants}
+          >
+            {concepts.map((concept, index) => (
+              <motion.div key={concept.id} variants={itemVariants}>
+                <Card 
+                  className={`cursor-pointer transition-all duration-300 h-full border ${
+                    activeCard === index 
+                      ? `border-${concept.color}-500 shadow-md shadow-${concept.color}-500/10` 
+                      : 'border-border hover:border-primary/50'
+                  }`}
+                  onClick={() => handleCardClick(index)}
+                >
+                  <CardContent className="pt-6">
+                    <div className="flex items-start gap-4">
+                      <div className={`p-2 rounded-full bg-${concept.color}-500/10 flex-shrink-0`}>
+                        {concept.icon}
+                      </div>
+                      <div>
+                        <h3 className="font-semibold text-lg mb-2">{concept.title}</h3>
+                        <p className="text-muted-foreground text-sm">{concept.description}</p>
+                      </div>
+                    </div>
+                    
+                    {activeCard === index && (
+                      <div className="mt-4 flex justify-end">
+                        <Check className={`h-5 w-5 text-${concept.color}-500`} />
+                      </div>
+                    )}
+                  </CardContent>
+                </Card>
+              </motion.div>
             ))}
-          </div>
-          
-          <Button 
-            onClick={goToNextConcept}
-            size="lg"
-            className="gap-2"
-          >
-            {currentIndex === concepts.length - 1 ? 'Get Started' : 'Next'} <ChevronRight className="h-4 w-4" />
-          </Button>
-        </div>
-      </motion.div>
+          </motion.div>
+        </motion.div>
+      </div>
       
-      <Button 
-        variant="ghost" 
-        onClick={onComplete}
-        className="mt-6 mx-auto block text-sm text-muted-foreground hover:text-primary"
+      <motion.div 
+        className="mt-10 flex justify-center"
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 1 }}
       >
-        Skip Introduction
-      </Button>
+        <Button 
+          size="lg" 
+          onClick={completeCurrentStep}
+          className="bg-gradient-to-r from-primary to-secondary hover:from-primary/90 hover:to-secondary/90"
+        >
+          Continue <ArrowRight className="ml-2 h-5 w-5" />
+        </Button>
+      </motion.div>
     </div>
   );
 };

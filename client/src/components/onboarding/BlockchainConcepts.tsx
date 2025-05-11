@@ -1,91 +1,103 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { BlockchainDemo } from './demos/BlockchainDemo';
+import { useOnboarding } from '@/contexts/onboarding-context';
 import { Button } from '@/components/ui/button';
-import { ChevronRight } from 'lucide-react';
+import { ArrowRight } from 'lucide-react';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
-export const BlockchainConcepts = ({ onComplete }: { onComplete: () => void }) => {
-  const [isInteractive, setIsInteractive] = useState(false);
-  const [hasInteracted, setHasInteracted] = useState(false);
+// Metaphor components import
+import { VaultMetaphor } from './metaphors/VaultMetaphor';
+import { TimeLockMetaphor } from './metaphors/TimeLockMetaphor';
+import { MultiChainMetaphor } from './metaphors/MultiChainMetaphor';
+
+export const BlockchainConcepts = () => {
+  const { completeCurrentStep } = useOnboarding();
+  const [activeTab, setActiveTab] = useState('vault');
   
-  const handleInteraction = () => {
-    if (!hasInteracted) {
-      setHasInteracted(true);
-    }
+  const handleTabChange = (value: string) => {
+    setActiveTab(value);
   };
   
   return (
-    <div className="blockchain-concepts p-6 max-w-4xl mx-auto">
-      <div className="text-center mb-8">
-        <motion.h2 
-          className="text-3xl font-bold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-primary to-[#FF5AF7]"
+    <div className="min-h-screen flex flex-col p-6 bg-background overflow-hidden">
+      <div className="max-w-5xl mx-auto w-full flex-1 flex flex-col">
+        <motion.div
+          className="text-center mb-10"
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
         >
-          Understanding Blockchain
-        </motion.h2>
-        
-        <motion.p 
-          className="text-lg text-muted-foreground max-w-2xl mx-auto"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 0.2 }}
-        >
-          Explore how blockchain technology creates a secure, immutable foundation for Chronos Vault
-        </motion.p>
-      </div>
-      
-      <div className="demo-container p-4 bg-card/50 backdrop-blur-sm border border-muted rounded-xl shadow-sm mb-8">
-        <BlockchainDemo onInteract={handleInteraction} />
-      </div>
-      
-      <div className="key-concepts grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-        <motion.div 
-          className="concept-card p-4 bg-card border border-muted rounded-lg"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.4, delay: 0.3 }}
-        >
-          <h3 className="text-xl font-semibold mb-2">Immutability</h3>
-          <p className="text-muted-foreground text-sm">
-            Once data is written to the blockchain, it cannot be altered or deleted, ensuring the integrity of your vault records.
+          <h1 className="text-3xl md:text-4xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-primary to-secondary mb-4">
+            Blockchain Technology in Action
+          </h1>
+          <p className="text-muted-foreground max-w-2xl mx-auto">
+            See how Chronos Vault leverages cutting-edge blockchain technologies to create secure, future-proof digital vaults
           </p>
         </motion.div>
         
-        <motion.div 
-          className="concept-card p-4 bg-card border border-muted rounded-lg"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.4, delay: 0.4 }}
+        <motion.div
+          className="flex-1"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.5, delay: 0.3 }}
         >
-          <h3 className="text-xl font-semibold mb-2">Decentralization</h3>
-          <p className="text-muted-foreground text-sm">
-            Your vault is secured across multiple blockchain networks with no single point of failure or central authority.
-          </p>
+          <Tabs
+            defaultValue="vault"
+            value={activeTab}
+            onValueChange={handleTabChange}
+            className="w-full"
+          >
+            <TabsList className="grid grid-cols-3 mb-10">
+              <TabsTrigger 
+                value="vault"
+                className={activeTab === 'vault' ? 'bg-gradient-to-r from-purple-700/20 to-purple-800/20 text-purple-400' : ''}
+              >
+                Digital Vaults
+              </TabsTrigger>
+              <TabsTrigger 
+                value="timelock"
+                className={activeTab === 'timelock' ? 'bg-gradient-to-r from-pink-700/20 to-pink-800/20 text-pink-400' : ''}
+              >
+                Time-Lock Mechanism
+              </TabsTrigger>
+              <TabsTrigger 
+                value="crosschain"
+                className={activeTab === 'crosschain' ? 'bg-gradient-to-r from-blue-700/20 to-blue-800/20 text-blue-400' : ''}
+              >
+                Triple-Chain Security
+              </TabsTrigger>
+            </TabsList>
+            
+            <div className="relative min-h-[400px] md:min-h-[500px] border rounded-lg p-4 overflow-hidden bg-background/50 border-border">
+              <TabsContent value="vault" className="mt-0 h-full">
+                <VaultMetaphor />
+              </TabsContent>
+              
+              <TabsContent value="timelock" className="mt-0 h-full">
+                <TimeLockMetaphor />
+              </TabsContent>
+              
+              <TabsContent value="crosschain" className="mt-0 h-full">
+                <MultiChainMetaphor />
+              </TabsContent>
+            </div>
+          </Tabs>
         </motion.div>
         
-        <motion.div 
-          className="concept-card p-4 bg-card border border-muted rounded-lg"
+        <motion.div
+          className="mt-10 flex justify-center"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.4, delay: 0.5 }}
+          transition={{ delay: 0.5, duration: 0.5 }}
         >
-          <h3 className="text-xl font-semibold mb-2">Cryptography</h3>
-          <p className="text-muted-foreground text-sm">
-            Advanced encryption algorithms protect your assets and ensure only authorized access when time-lock conditions are met.
-          </p>
+          <Button
+            size="lg"
+            onClick={completeCurrentStep}
+            className="bg-gradient-to-r from-primary to-secondary hover:from-primary/90 hover:to-secondary/90"
+          >
+            Continue <ArrowRight className="ml-2 h-5 w-5" />
+          </Button>
         </motion.div>
-      </div>
-      
-      <div className="text-center">
-        <Button 
-          onClick={onComplete} 
-          size="lg"
-          className="gap-2"
-        >
-          Continue <ChevronRight className="h-4 w-4" />
-        </Button>
       </div>
     </div>
   );
