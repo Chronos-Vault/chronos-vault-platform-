@@ -4,7 +4,7 @@ import { useOnboarding } from '@/contexts/onboarding-context';
 import { Button } from '@/components/ui/button';
 import { ArrowRight } from 'lucide-react';
 
-const WelcomeAnimation = () => {
+export const WelcomeAnimation = () => {
   const { completeCurrentStep } = useOnboarding();
   const [animationComplete, setAnimationComplete] = useState(false);
   
@@ -106,4 +106,5 @@ const WelcomeAnimation = () => {
   );
 };
 
+// We export both as a named and default export for flexibility
 export default WelcomeAnimation;
