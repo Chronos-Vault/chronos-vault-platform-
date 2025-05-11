@@ -7,7 +7,11 @@
 
 import * as fs from 'fs';
 import * as path from 'path';
-import * as chalk from 'chalk';
+import { fileURLToPath } from 'url';
+
+// Get current directory
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 // Parse command line arguments
 const args = process.argv.slice(2);
@@ -16,19 +20,19 @@ const env = envArg ? envArg.split('=')[1] : 'testnet';
 
 // Validate environment
 if (env !== 'testnet' && env !== 'mainnet') {
-  console.error(chalk.red(`Invalid environment: ${env}`));
-  console.error(chalk.yellow('Supported environments: testnet, mainnet'));
+  console.error(`Invalid environment: ${env}`);
+  console.error('Supported environments: testnet, mainnet');
   process.exit(1);
 }
 
 async function main() {
-  console.log(chalk.blue(`Updating contract addresses for ${env} environment...`));
+  console.log(`Updating contract addresses for ${env} environment...`);
 
   // Find latest deployment file
   const deploymentDir = path.join(__dirname, '../deployments');
   if (!fs.existsSync(deploymentDir)) {
-    console.error(chalk.red('Deployment directory not found.'));
-    console.error(chalk.yellow('Please run a deployment first.'));
+    console.error('Deployment directory not found.');
+    console.error('Please run a deployment first.');
     process.exit(1);
   }
 
@@ -42,20 +46,26 @@ async function main() {
     });
 
   if (deploymentFiles.length === 0) {
-    console.error(chalk.red('No deployment files found.'));
-    console.error(chalk.yellow('Please run a deployment first.'));
+    console.error('No deployment files found.');
+    console.error('Please run a deployment first.');
     process.exit(1);
   }
 
   const latestDeploymentFile = deploymentFiles[0];
-  console.log(chalk.blue(`Using latest deployment: ${latestDeploymentFile}`));
+  console.log(`Using latest deployment: ${latestDeploymentFile}`);
 
   // Load deployment data
   const deploymentPath = path.join(deploymentDir, latestDeploymentFile);
   const deploymentData = JSON.parse(fs.readFileSync(deploymentPath, 'utf8'));
 
+  // Create config directory if it doesn't exist
+  const configDir = path.join(__dirname, '../client/src/config');
+  if (!fs.existsSync(configDir)) {
+    fs.mkdirSync(configDir, { recursive: true });
+  }
+
   // Update frontend configuration
-  const configPath = path.join(__dirname, '../client/src/config/contracts.ts');
+  const configPath = path.join(configDir, 'contracts.ts');
   let configContent = '';
 
   if (fs.existsSync(configPath)) {
@@ -106,7 +116,7 @@ export const NETWORK_CONFIG = {
   // Write updated config
   fs.writeFileSync(configPath, configContent);
 
-  console.log(chalk.green('Contract addresses updated successfully!'));
+  console.log('Contract addresses updated successfully!');
   console.log(`Updated configuration: ${configPath}`);
 }
 
@@ -119,7 +129,14 @@ function updateContractAddresses(content: string, chain: string, addresses: any)
     .map(([key, value]) => `    ${key}: '${value}'`)
     .join(',\n');
 
-  return content.replace(pattern, `$1\n${newAddresses}\n  $2`);
+  // Check if the pattern is found
+  if (pattern.test(content)) {
+    return content.replace(pattern, `$1\n${newAddresses}\n  $2`);
+  } else {
+    // If pattern not found, just update the empty object
+    const simplePattern = new RegExp(`(${chain}: \\{)(\\})`, 'm');
+    return content.replace(simplePattern, `$1\n${newAddresses}\n  $2`);
+  }
 }
 
 function updateNetworkConfig(content: string, env: string): string {
@@ -132,7 +149,11 @@ function updateNetworkConfig(content: string, env: string): string {
   
   for (const [chain, network] of Object.entries(networks)) {
     const pattern = new RegExp(`(NETWORK_CONFIG = [\\s\\S]*?${chain}: )'[^']+'`, 'm');
-    updatedContent = updatedContent.replace(pattern, `$1'${network}'`);
+    
+    // Check if the pattern is found
+    if (pattern.test(updatedContent)) {
+      updatedContent = updatedContent.replace(pattern, `$1'${network}'`);
+    }
   }
 
   return updatedContent;
@@ -141,6 +162,6 @@ function updateNetworkConfig(content: string, env: string): string {
 main()
   .then(() => process.exit(0))
   .catch((error) => {
-    console.error(chalk.red('Failed to update contract addresses:'), error);
+    console.error('Failed to update contract addresses:', error);
     process.exit(1);
   });
