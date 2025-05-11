@@ -1,5 +1,5 @@
 import { Link } from "wouter";
-import logoPath from '@assets/IMG_3740.png';
+import logoPath from '@assets/IMG_3753.jpeg';
 
 const Footer = ({ className = '' }: { className?: string }) => {
   const currentYear = new Date().getFullYear();

@@ -1,6 +1,6 @@
 import { Link, useLocation } from 'wouter';
 import { useMultiChain, BlockchainType } from '@/contexts/multi-chain-context';
-import logoPath from '@assets/IMG_3726.jpeg';
+import logoPath from '@assets/IMG_3753.jpeg';
 import { Button } from '@/components/ui/button';
 import { ChevronDown, Menu, X } from 'lucide-react';
 import {
