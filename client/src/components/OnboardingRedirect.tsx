@@ -54,27 +54,47 @@ export const OnboardingRedirect = () => {
           !onboardingStep ||
           onboardingStep === 'null' || 
           onboardingStep === 'undefined' ||
-          typeof JSON.parse(onboardingStep) !== 'string' || 
+          (onboardingStep && (
+            typeof JSON.parse(onboardingStep) !== 'string' || 
+            JSON.parse(onboardingStep) === null || 
+            JSON.parse(onboardingStep) === undefined
+          )) || 
           !completedFlag) {
         
         console.log('AUTO-FIX: Missing or corrupt onboarding state detected, fixing and redirecting to onboarding');
         
-        // Properly set everything for first visit
-        localStorage.setItem('chronosVault.firstVisit', 'true');
-        localStorage.setItem('chronosVault.onboardingStep', JSON.stringify('welcome'));
-        localStorage.setItem('chronosVault.onboardingCompleted', 'false');
+        // Clear all potentially problematic onboarding flags first
+        localStorage.removeItem('chronosVault.onboardingStep');
+        localStorage.removeItem('chronosVault.onboardingCompleted');
+        localStorage.removeItem('chronosVault.firstVisit');
         
-        // Use the reset onboarding function to ensure context is updated
-        resetOnboarding();
+        // Properly set everything for first visit with a tiny delay to avoid race conditions
+        setTimeout(() => {
+          localStorage.setItem('chronosVault.firstVisit', 'true');
+          localStorage.setItem('chronosVault.onboardingStep', JSON.stringify('welcome'));
+          localStorage.setItem('chronosVault.onboardingCompleted', 'false');
+          
+          // Use the reset onboarding function to ensure context is updated
+          resetOnboarding();
+          
+          // Force redirect to onboarding after a very short delay
+          setTimeout(() => {
+            console.log('Navigating to onboarding with fresh state');
+            navigate('/onboarding');
+          }, 100);
+        }, 50);
         
-        // Force redirect to onboarding after a very short delay
-        setTimeout(() => navigate('/onboarding'), 50);
         return;
       }
     } catch (e) {
       // If any error occurs, assume it's a first visit and reset
       console.error('Error checking onboarding state, resetting:', e);
-      performFullReset();
+      
+      // Wait for any previous processing to finish
+      setTimeout(() => {
+        performFullReset();
+      }, 100);
+      
       return;
     }
     
@@ -134,21 +154,32 @@ export const OnboardingRedirect = () => {
   const performFullReset = () => {
     console.log('Performing full onboarding reset');
     
-    // Reset localStorage directly
+    // Reset localStorage directly - do this first
     localStorage.removeItem('chronosVault.onboardingStep');
     localStorage.removeItem('chronosVault.onboardingCompleted');
     localStorage.removeItem('chronosVault.firstVisit');
     
-    // Force first visit flag
-    localStorage.setItem('chronosVault.firstVisit', 'true');
-    
-    // Use context method to reset state
-    resetOnboarding();
-    
-    // Navigate to onboarding page with delay
+    // Brief pause to ensure removal operations complete
     setTimeout(() => {
-      navigate('/onboarding');
-    }, 100);
+      // Force first visit flag with proper values
+      localStorage.setItem('chronosVault.firstVisit', 'true');
+      localStorage.setItem('chronosVault.onboardingStep', JSON.stringify('welcome'));
+      localStorage.setItem('chronosVault.onboardingCompleted', 'false');
+      
+      // Use context method to reset state
+      resetOnboarding();
+      
+      // Double-wrap the navigation in timeouts to avoid race conditions
+      setTimeout(() => {
+        console.log('Reset complete, navigating to onboarding page');
+        
+        // One more delay to ensure state is fully reset before navigation
+        setTimeout(() => {
+          console.log('Navigation to /onboarding now occurring');
+          navigate('/onboarding');
+        }, 50);
+      }, 50);
+    }, 50);
   };
   
   // Add dev mode reset button
