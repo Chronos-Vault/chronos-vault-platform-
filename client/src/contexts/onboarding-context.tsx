@@ -107,6 +107,15 @@ export const OnboardingProvider = ({ children }: { children: ReactNode }) => {
   };
   
   // Skip to the end of onboarding
+  // Method for completing onboarding 
+  const completeOnboarding = () => {
+    console.log('Directly completing onboarding (debug)');
+    setCurrentStep('complete');
+    setHasCompletedOnboarding(true);
+    setIsFirstVisit(false);
+  };
+  
+  // Skip to the end of onboarding
   const skipToEnd = () => {
     console.log('Skipping to end of onboarding');
     setCurrentStep('complete');
@@ -151,7 +160,9 @@ export const OnboardingProvider = ({ children }: { children: ReactNode }) => {
     <OnboardingContext.Provider
       value={{
         currentStep,
+        setCurrentStep,  // Added for debug controls
         completeCurrentStep,
+        completeOnboarding,  // Added for debug controls
         skipToEnd,
         resetOnboarding,
         progress,

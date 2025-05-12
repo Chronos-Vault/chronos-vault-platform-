@@ -32,9 +32,11 @@ export const OnboardingDebugControls: React.FC = () => {
     navigate('/onboarding');
   };
   
+  // Fix type error by explicitly typing as OnboardingStep
   const handleDirectStep = (step: string) => {
     console.log(`Debug: Setting step to ${step}`);
-    setCurrentStep(step);
+    // Type assertion to match the expected OnboardingStep type
+    setCurrentStep(step as any);
     navigate('/onboarding');
   };
   
@@ -88,13 +90,20 @@ export const OnboardingDebugControls: React.FC = () => {
           {/* Step buttons */}
           <div className="flex flex-wrap gap-1">
             <p className="w-full text-gray-400">Go to step:</p>
-            {['welcome', 'intro', 'security', 'vaultSelect', 'complete'].map(step => (
+            {[
+              'welcome', 
+              'concepts', 
+              'personalization', 
+              'blockchain-explainer', 
+              'wallet-connection', 
+              'complete'
+            ].map(step => (
               <button 
                 key={step}
                 className={`px-2 py-1 rounded ${currentStep === step ? 'bg-blue-600' : 'bg-blue-600/30 hover:bg-blue-600/60'}`}
                 onClick={() => handleDirectStep(step)}
               >
-                {step}
+                {step.slice(0, 6)}...
               </button>
             ))}
           </div>
