@@ -5,6 +5,7 @@ import { ConceptIntroduction } from './ConceptIntroduction';
 import { PersonalizedGreeting } from './PersonalizedGreeting';
 import { BlockchainConcepts } from './BlockchainConcepts';
 import WalletConnection from './WalletConnection';
+import MobileStaticWelcome from './MobileStaticWelcome';
 
 /**
  * The main onboarding flow component that displays the appropriate
@@ -55,9 +56,19 @@ export const OnboardingFlow = () => {
     window.scrollTo(0, 0);
   }, [currentStep]);
   
+  // Check if we're on mobile
+  const isMobile = typeof window !== 'undefined' ? window.innerWidth < 768 : false;
+  
   // Render the appropriate step component
   const renderCurrentStep = () => {
-    // Always show welcome if force welcome is true
+    // For mobile devices, use ultra-simplified welcome screen
+    // to avoid any potential animation or rendering issues
+    if (isMobile && (currentStep === 'welcome' || forceWelcome)) {
+      console.log("Using mobile-optimized static welcome screen");
+      return <MobileStaticWelcome />;
+    }
+    
+    // Always show welcome if force welcome is true (desktop only)
     if (forceWelcome) {
       return <WelcomeAnimation />;
     }
@@ -80,7 +91,8 @@ export const OnboardingFlow = () => {
       default:
         // For safety, return welcome animation for any other value
         console.log('Invalid step detected, showing welcome animation:', currentStep);
-        return <WelcomeAnimation />;
+        // Use mobile static version on mobile for safety
+        return isMobile ? <MobileStaticWelcome /> : <WelcomeAnimation />;
     }
   };
   
