@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react';
+import { useEffect } from 'react';
 import { useLocation } from 'wouter';
 import { useOnboarding } from '@/contexts/onboarding-context';
 
@@ -7,198 +7,54 @@ import { useOnboarding } from '@/contexts/onboarding-context';
  * for first-time users, and also handles redirection from onboarding to home
  * when onboarding is complete.
  * 
- * COMPLETELY REWRITTEN FOR MAXIMUM ROBUSTNESS
+ * IMPORTANT FIX - SIMPLIFIED IMPLEMENTATION TO STOP INFINITE LOOPS
  */
 export const OnboardingRedirect = () => {
-  // Get all the values we need from the onboarding context
   const { hasCompletedOnboarding, currentStep, resetOnboarding, isFirstVisit } = useOnboarding();
   const [location, navigate] = useLocation();
   
-  // Keep track of whether we've already performed a redirect
-  // to prevent infinite loops or multiple redirects
-  const hasRedirectedRef = useRef(false);
-  
-  // Detect if we're on a mobile device for optimizations
+  // Detect if we're on a mobile device
   const isMobile = typeof window !== 'undefined' ? window.innerWidth < 768 : false;
   
-  // IMPORTANT: This primary effect runs once on initial page load
-  // and handles all initialization and redirection logic
+  // One-time effect for mobile detection
   useEffect(() => {
-    // Skip if we've already redirected
-    if (hasRedirectedRef.current) return;
-    
-    // Log the current state for debugging
-    console.log('OnboardingRedirect: Initial state check', {
-      currentPath: location,
-      isMobile,
-      hasCompletedOnboarding,
-      currentStep,
-      isFirstVisit,
-      localStorage: {
-        step: localStorage.getItem('chronosVault.onboardingStep'),
-        completed: localStorage.getItem('chronosVault.onboardingCompleted'),
-        firstVisit: localStorage.getItem('chronosVault.firstVisit')
-      }
-    });
-    
-    // Set mobile flag to help other components optimize
+    // Set mobile flag for optimizations
     if (isMobile) {
       localStorage.setItem('chronosVault.isMobile', 'true');
+      console.log('Mobile device detected, optimizing onboarding experience');
     } else {
       localStorage.removeItem('chronosVault.isMobile');
     }
-    
-    // CASE 1: Special paths that should bypass onboarding logic
-    if (location.includes('reset') || 
-        location.includes('emergency') || 
-        location.startsWith('/m-') || 
-        location === '/mobile-reset') {
-      console.log('OnboardingRedirect: Special path detected, bypassing redirection logic');
-      return;
-    }
-    
-    // CASE 2: URL has reset parameter
-    if (window.location.search.includes('resetOnboarding=true')) {
-      console.log('OnboardingRedirect: Reset parameter detected in URL');
-      performCompleteReset();
-      hasRedirectedRef.current = true;
-      return;
-    }
-    
-    // CASE 3: Missing or corrupted localStorage state
-    try {
-      const savedStep = localStorage.getItem('chronosVault.onboardingStep');
-      const completedFlag = localStorage.getItem('chronosVault.onboardingCompleted');
-      
-      // Check for any issues with the saved state
-      const hasCorruptStep = !savedStep || 
-                             savedStep === 'null' || 
-                             savedStep === 'undefined';
-                             
-      const hasCorruptFlag = completedFlag !== 'true' && completedFlag !== 'false' && completedFlag !== null;
-      
-      if (hasCorruptStep || hasCorruptFlag) {
-        console.log('OnboardingRedirect: Corrupt localStorage state detected, resetting');
-        performCompleteReset();
-        hasRedirectedRef.current = true;
-        return;
-      }
-    } catch (e) {
-      console.error('OnboardingRedirect: Error checking localStorage state', e);
-      performCompleteReset();
-      hasRedirectedRef.current = true;
-      return;
-    }
-    
-    // CASE 4: First visit - needs to go through onboarding
-    if (isFirstVisit) {
-      console.log('OnboardingRedirect: First visit detected');
-      
-      // Skip redirection if already on the correct page
-      if (location === '/onboarding' || 
-          (isMobile && location === '/mobile-direct') || 
-          (isMobile && location === '/md')) {
-        console.log('OnboardingRedirect: Already on the correct page');
-        return;
-      }
-      
-      // Redirect based on device type
-      if (isMobile) {
-        console.log('OnboardingRedirect: Redirecting mobile user to mobile-direct');
-        navigate('/mobile-direct');
-      } else {
-        console.log('OnboardingRedirect: Redirecting desktop user to onboarding');
-        navigate('/onboarding');
-      }
-      
-      hasRedirectedRef.current = true;
-      return;
-    }
-    
-    // CASE 5: Onboarding not completed, but not first visit
-    if (!hasCompletedOnboarding && location === '/') {
-      console.log('OnboardingRedirect: Onboarding not completed, redirecting from home');
-      
-      // Redirect based on device type
-      if (isMobile) {
-        navigate('/mobile-direct');
-      } else {
-        navigate('/onboarding');
-      }
-      
-      hasRedirectedRef.current = true;
-      return;
-    }
-    
-    // CASE 6: Onboarding completed, but still on onboarding page
-    if (hasCompletedOnboarding && currentStep === 'complete' && 
-        (location === '/onboarding' || location === '/mobile-direct' || location === '/md')) {
-      console.log('OnboardingRedirect: Onboarding completed, redirecting to home');
-      navigate('/');
-      hasRedirectedRef.current = true;
-      return;
-    }
-    
-  }, [currentStep, hasCompletedOnboarding, isFirstVisit, isMobile, location, navigate, resetOnboarding]);
+  }, [isMobile]);
   
-  // This effect handles location changes after initial load
+  // Main redirection logic
   useEffect(() => {
-    // Skip special paths and initial load (which is handled by the primary effect)
-    if (location.includes('reset') || 
-        location.includes('emergency') || 
-        hasRedirectedRef.current) {
+    // Skip special paths that handle resets
+    if (location.includes('reset') || location.includes('emergency')) {
       return;
     }
     
-    // Reset the redirect flag when navigation occurs
-    hasRedirectedRef.current = false;
-    
-  }, [location]);
-  
-  // Complete reset function - consolidated and simplified
-  function performCompleteReset() {
-    console.log('OnboardingRedirect: Performing complete reset');
-    
-    try {
-      // Clear all localStorage values first
-      localStorage.removeItem('chronosVault.onboardingStep');
-      localStorage.removeItem('chronosVault.onboardingCompleted');
-      localStorage.removeItem('chronosVault.firstVisit');
-      
-      // Set fresh values with forced delay to avoid race conditions
-      setTimeout(() => {
-        localStorage.setItem('chronosVault.firstVisit', 'true');
-        localStorage.setItem('chronosVault.onboardingStep', JSON.stringify('welcome'));
-        localStorage.setItem('chronosVault.onboardingCompleted', 'false');
-        
-        // Reset the React context state
-        resetOnboarding();
-        
-        // Navigate with another small delay
-        setTimeout(() => {
-          if (isMobile) {
-            navigate('/mobile-direct');
-          } else {
-            navigate('/onboarding');
-          }
-        }, 100);
-      }, 100);
-    } catch (e) {
-      console.error('OnboardingRedirect: Error during reset', e);
-      
-      // Last resort - hard reload
-      setTimeout(() => {
-        window.location.href = isMobile ? '/mobile-direct' : '/onboarding';
-      }, 200);
+    // Handle case where user is on home but needs onboarding
+    if (location === '/' && isFirstVisit && !hasCompletedOnboarding) {
+      console.log('User at home but needs onboarding, redirecting');
+      navigate(isMobile ? '/mobile-direct' : '/onboarding');
+      return;
     }
-  }
+    
+    // Handle case where onboarding is complete but user is still on onboarding page
+    if ((location === '/onboarding' || location === '/mobile-direct') && 
+        hasCompletedOnboarding && currentStep === 'complete') {
+      console.log('Onboarding complete, redirecting to home');
+      navigate('/');
+      return;
+    }
+  }, [location, hasCompletedOnboarding, currentStep, isFirstVisit, navigate, isMobile]);
   
   // Dev mode reset button
   useEffect(() => {
-    // Only add in dev mode
-    if (localStorage.getItem('chronosVault.devMode') !== 'true') return;
+    const isDevelopmentMode = localStorage.getItem('chronosVault.devMode') === 'true';
+    if (!isDevelopmentMode) return;
     
-    // Create the reset button if it doesn't exist
     if (!document.getElementById('dev-onboarding-reset')) {
       const header = document.querySelector('header');
       if (header) {
@@ -208,31 +64,93 @@ export const OnboardingRedirect = () => {
         resetButton.style.position = 'absolute';
         resetButton.style.top = '10px';
         resetButton.style.right = '10px';
-        resetButton.style.zIndex = '9999'; // Increased z-index
-        resetButton.style.background = '#FF5AF7';
+        resetButton.style.zIndex = '1000';
+        resetButton.style.background = '#6B00D7';
         resetButton.style.color = 'white';
         resetButton.style.border = 'none';
         resetButton.style.borderRadius = '4px';
-        resetButton.style.padding = '5px 10px';
-        resetButton.style.fontSize = '12px';
-        resetButton.style.fontWeight = 'bold';
+        resetButton.style.padding = '4px 8px';
+        resetButton.style.fontSize = '10px';
         resetButton.style.cursor = 'pointer';
-        resetButton.style.boxShadow = '0 2px 10px rgba(255, 90, 247, 0.5)';
         
-        resetButton.onclick = performCompleteReset;
+        resetButton.onclick = () => {
+          console.log('Performing onboarding reset');
+          
+          // Clear localStorage values
+          localStorage.removeItem('chronosVault.onboardingStep');
+          localStorage.removeItem('chronosVault.onboardingCompleted');
+          localStorage.removeItem('chronosVault.firstVisit');
+          
+          // Set fresh values
+          localStorage.setItem('chronosVault.firstVisit', 'true');
+          localStorage.setItem('chronosVault.onboardingStep', JSON.stringify('welcome'));
+          localStorage.setItem('chronosVault.onboardingCompleted', 'false');
+          
+          // Reset onboarding state in React context
+          resetOnboarding();
+          
+          // Redirect to onboarding
+          navigate(isMobile ? '/mobile-direct' : '/onboarding');
+        };
+        
         header.appendChild(resetButton);
       }
     }
     
-    // Clean up on unmount
     return () => {
       const button = document.getElementById('dev-onboarding-reset');
       if (button && button.parentNode) {
         button.parentNode.removeChild(button);
       }
     };
-  }, []);
+  }, [isMobile, navigate, resetOnboarding]);
   
-  // This is a logical component with no visual representation
+  // Create a standalone emergency reset button (outside of dev mode)
+  useEffect(() => {
+    const existingButton = document.getElementById('emergency-reset-button');
+    if (!existingButton) {
+      const resetButton = document.createElement('button');
+      resetButton.id = 'emergency-reset-button';
+      resetButton.textContent = 'Emergency Reset';
+      resetButton.style.position = 'fixed';
+      resetButton.style.bottom = '10px';
+      resetButton.style.right = '10px';
+      resetButton.style.zIndex = '9999';
+      resetButton.style.background = 'rgba(220, 38, 38, 0.2)';
+      resetButton.style.color = 'rgba(252, 165, 165, 0.8)';
+      resetButton.style.border = '1px solid rgba(220, 38, 38, 0.3)';
+      resetButton.style.borderRadius = '4px';
+      resetButton.style.padding = '5px 8px';
+      resetButton.style.fontSize = '10px';
+      resetButton.style.cursor = 'pointer';
+      resetButton.style.display = 'none'; // Hidden by default
+      
+      // Show button only when holding Alt key
+      document.addEventListener('keydown', (e) => {
+        if (e.altKey) resetButton.style.display = 'block';
+      });
+      
+      document.addEventListener('keyup', (e) => {
+        if (!e.altKey) resetButton.style.display = 'none';
+      });
+      
+      resetButton.onclick = () => {
+        if (confirm('This will completely reset the application. Continue?')) {
+          localStorage.clear();
+          resetOnboarding();
+          window.location.href = '/';
+        }
+      };
+      
+      document.body.appendChild(resetButton);
+    }
+    
+    return () => {
+      const button = document.getElementById('emergency-reset-button');
+      if (button) document.body.removeChild(button);
+    };
+  }, [resetOnboarding]);
+  
+  // This is a logical component, not a visual one
   return null;
 };
