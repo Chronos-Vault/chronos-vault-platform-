@@ -10,16 +10,24 @@ export const WelcomeAnimation = () => {
   
   // Start animation sequence when component mounts
   useEffect(() => {
-    // Auto-complete animation after 5 seconds
+    // Auto-complete animation after 4 seconds
     const timer = setTimeout(() => {
       setAnimationComplete(true);
-    }, 5000);
+    }, 4000);
+    
+    // Log when component mounts for debugging
+    console.log("Welcome animation component mounted");
     
     return () => clearTimeout(timer);
   }, []);
   
+  const handleContinue = () => {
+    console.log("Continue button clicked");
+    completeCurrentStep();
+  };
+  
   return (
-    <div className="relative flex flex-col items-center justify-center min-h-screen overflow-hidden bg-black px-4 py-6">
+    <div className="relative flex flex-col items-center justify-center min-h-screen overflow-hidden bg-gradient-to-b from-black to-gray-900 px-4 py-6">
       {/* Background gradient elements */}
       <motion.div
         className="absolute w-full h-full bg-gradient-radial from-purple-900/20 to-transparent"
@@ -90,17 +98,38 @@ export const WelcomeAnimation = () => {
       {/* Continue button */}
       <motion.div
         className="relative z-10"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: animationComplete ? 1 : 0 }}
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ 
+          opacity: animationComplete ? 1 : 0,
+          y: animationComplete ? 0 : 20
+        }}
         transition={{ duration: 0.5 }}
       >
         <Button
           size="lg"
-          className="bg-gradient-to-r from-primary to-secondary hover:from-primary/90 hover:to-secondary/90 text-white"
-          onClick={completeCurrentStep}
+          className="bg-gradient-to-r from-primary to-secondary hover:from-primary/90 hover:to-secondary/90 text-white px-8 py-6 text-lg"
+          onClick={handleContinue}
         >
           Begin Journey <ArrowRight className="ml-2 h-5 w-5" />
         </Button>
+      </motion.div>
+      
+      {/* Added a skip button for users who may want to bypass onboarding */}
+      <motion.div 
+        className="mt-4 relative z-10"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: animationComplete ? 0.8 : 0 }}
+        transition={{ duration: 0.5, delay: 0.2 }}
+      >
+        <button 
+          className="text-white/60 hover:text-white text-sm underline" 
+          onClick={() => {
+            console.log("Skip onboarding clicked");
+            completeCurrentStep();
+          }}
+        >
+          Skip intro
+        </button>
       </motion.div>
     </div>
   );

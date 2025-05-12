@@ -550,47 +550,143 @@ class CrossChainVaultVerification extends EventEmitter {
   
   /**
    * Verify a vault on a specific blockchain with enhanced recovery mechanisms
+   * Implements improved atomic commit protocol with multiple verification phases
    */
   private async verifyOnChainWithRecovery(
     vaultId: string, 
     chainId: BlockchainType,
-    existingRetryCount: number = 0
+    existingRetryCount: number = 0,
+    recoveryPhase: 'initial' | 'retry' | 'alternative' | 'fallback' = 'initial',
+    verificationContext: Record<string, any> = {}
   ): Promise<SecondaryVerification> {
+    // Track verification progress and attempts for atomic operations
+    const context = {
+      startTime: verificationContext.startTime || Date.now(),
+      attempts: verificationContext.attempts || 1,
+      chains: verificationContext.chains || new Set([chainId]),
+      recoveryPath: verificationContext.recoveryPath || [recoveryPhase],
+      ...verificationContext
+    };
+    
+    securityLogger.debug(`Starting verification phase: ${recoveryPhase}`, {
+      vaultId,
+      chainId,
+      context
+    });
+    
     // First attempt normal verification
     try {
-      return await this.verifyOnChain(vaultId, chainId);
+      // Begin the verification transaction with a pre-verification check
+      const preCheckResult = await this.connectorFactory.getConnector(chainId).checkVaultExists(vaultId);
+      
+      if (!preCheckResult.exists) {
+        return {
+          chainId,
+          status: VerificationStatus.FAILED,
+          isValid: false,
+          timestamp: new Date(),
+          error: `Vault ${vaultId} does not exist on ${chainId}`
+        };
+      }
+      
+      // Perform the full verification if pre-check passed
+      const result = await this.verifyOnChain(vaultId, chainId);
+      
+      // Track successful verification in chain availability
+      chainAvailabilityTracker.recordSuccess(chainId);
+      
+      return result;
     } catch (error) {
-      // Process the error and determine recovery strategy
+      // Track chain failure in availability tracker
+      chainAvailabilityTracker.recordFailure(chainId);
+      
+      // Process the error and determine recovery strategy with enhanced context
       const crossChainError = crossChainErrorHandler.handle(error, {
         category: CrossChainErrorCategory.VERIFICATION_FAILURE,
         blockchain: chainId,
         operation: 'verifyVault',
         vaultId,
-        retryCount: existingRetryCount
+        retryCount: existingRetryCount,
+        verificationContext: context
       });
       
-      // Check if we should attempt recovery
+      // Enhanced error logging with detailed context
+      securityLogger.error(`Verification failed for ${chainId}`, {
+        vaultId,
+        chainId,
+        errorType: crossChainError.type,
+        errorCategory: crossChainError.category,
+        context,
+        recoveryRecommended: crossChainErrorHandler.shouldAttemptRecovery(crossChainError)
+      });
+      
+      // Check if the chain is having systemic issues
+      const chainStatus = chainAvailabilityTracker.getChainStatus(chainId);
+      if (chainStatus.consecutiveFailures > 3) {
+        securityLogger.warn(`Chain ${chainId} appears to be experiencing systemic issues`, {
+          consecutiveFailures: chainStatus.consecutiveFailures,
+          failureRate: chainStatus.failureRate
+        });
+      }
+      
+      // Check if we should attempt recovery - enhanced decision logic
       if (crossChainErrorHandler.shouldAttemptRecovery(crossChainError)) {
         const retryCount = existingRetryCount + 1;
         
-        securityLogger.warn(`Attempting recovery for secondary chain verification`, {
+        // Record this recovery attempt 
+        context.attempts++;
+        context.recoveryPath.push(recoveryPhase === 'initial' ? 'retry' : recoveryPhase);
+        
+        // Enhanced recovery logging with detailed metrics
+        securityLogger.warn(`Attempting enhanced recovery for verification`, {
           vaultId,
           chainId,
           recoveryAttempt: retryCount,
-          errorMessage: crossChainError.message
+          recoveryPhase: recoveryPhase === 'initial' ? 'retry' : recoveryPhase,
+          errorType: crossChainError.type,
+          errorCategory: crossChainError.category,
+          verificationDuration: Date.now() - context.startTime
         });
         
-        // Implement exponential backoff for retries
-        const delayMs = Math.min(1000 * Math.pow(2, retryCount - 1), 15000);
+        // Implement enhanced exponential backoff for retries with jitter to prevent thundering herd
+        const maxBackoff = 20000; // 20 seconds max
+        const baseDelay = Math.min(1000 * Math.pow(1.8, retryCount - 1), maxBackoff);
+        const jitter = Math.random() * 300; // Add randomness to prevent synchronized retries
+        const delayMs = baseDelay + jitter;
+        
         await new Promise(resolve => setTimeout(resolve, delayMs));
         
-        try {
-          // Retry with the same chain
-          return await this.verifyOnChain(vaultId, chainId);
-        } catch (retryError) {
+        // PHASE 1: RETRY with same chain if we're in the initial phase
+        if (recoveryPhase === 'initial') {
+          try {
+            securityLogger.info(`Retry phase: Attempting verification with same chain`, {
+              vaultId, 
+              chainId,
+              attempt: context.attempts
+            });
+            
+            // Retry with the same chain
+            return await this.verifyOnChainWithRecovery(
+              vaultId, 
+              chainId, 
+              retryCount, 
+              'retry',
+              context
+            );
+          } catch (retryError) {
+            // Retry failed, continue to alternative endpoint phase
+            securityLogger.warn(`Retry phase failed, continuing to alternative endpoint`, {
+              vaultId,
+              chainId
+            });
+          }
+        }
+        
+        // PHASE 2: ALTERNATIVE ENDPOINT if retry fails or we're already in alternative phase
+        if (recoveryPhase === 'initial' || recoveryPhase === 'retry') {
           // Check if we should try an alternative endpoint
           if (crossChainError.retryStrategy?.alternativeEndpoint) {
-            securityLogger.warn(`Trying alternative endpoint for ${chainId}`, {
+            securityLogger.info(`Alternative endpoint phase: Trying alternative endpoint for ${chainId}`, {
               vaultId,
               chainId,
               alternativeEndpoint: crossChainError.retryStrategy.alternativeEndpoint
@@ -604,6 +700,8 @@ class CrossChainVaultVerification extends EventEmitter {
               );
               
               if (connector) {
+                context.alternativeEndpoint = crossChainError.retryStrategy.alternativeEndpoint;
+                
                 // Try verification with alternative endpoint
                 if (config.shouldSimulateBlockchain(chainId)) {
                   // Simulate verification for the alternative endpoint
@@ -616,7 +714,12 @@ class CrossChainVaultVerification extends EventEmitter {
                     isValid: true,
                     timestamp: new Date(),
                     transactionId,
-                    signature
+                    signature,
+                    metadata: {
+                      recoveryPath: context.recoveryPath,
+                      alternativeEndpoint: true,
+                      verificationDuration: Date.now() - context.startTime
+                    }
                   };
                 }
                 
@@ -629,31 +732,73 @@ class CrossChainVaultVerification extends EventEmitter {
                   isValid: altVerificationResult.isValid,
                   timestamp: new Date(),
                   transactionId: altVerificationResult.transactionHash || undefined,
-                  signature: altVerificationResult.signatures?.[0] || undefined
+                  signature: altVerificationResult.signatures?.[0] || undefined,
+                  metadata: {
+                    recoveryPath: context.recoveryPath,
+                    alternativeEndpoint: true,
+                    verificationDuration: Date.now() - context.startTime
+                  }
                 };
               }
             } catch (alternativeError) {
-              // Alternative endpoint also failed
+              // Alternative endpoint failed, continue to fallback chain phase
               securityLogger.error(`Alternative endpoint for ${chainId} also failed`, {
                 vaultId,
                 chainId,
-                error: alternativeError
+                error: alternativeError,
+                proceedingToFallback: true
               });
+              
+              // Try the fallback chain phase
+              return await this.verifyOnChainWithRecovery(
+                vaultId, 
+                chainId, 
+                retryCount, 
+                'fallback',
+                context
+              );
             }
           }
-          
+        }
+        
+        // PHASE 3: FALLBACK CHAIN if all other methods fail
+        if (recoveryPhase === 'initial' || recoveryPhase === 'retry' || recoveryPhase === 'alternative' || recoveryPhase === 'fallback') {
           // Check if we should try a fallback chain
           const fallbackChain = crossChainErrorHandler.getRecommendedFallbackChain(chainId);
-          if (fallbackChain) {
-            securityLogger.warn(`Trying fallback chain ${fallbackChain} for ${chainId}`, {
+          
+          if (fallbackChain && !context.chains.has(fallbackChain)) {
+            securityLogger.info(`Fallback phase: Trying fallback chain ${fallbackChain} for ${chainId}`, {
               vaultId,
               originalChain: chainId,
-              fallbackChain
+              fallbackChain,
+              attemptCount: context.attempts,
+              recoveryPath: context.recoveryPath
             });
             
             try {
-              // Use the fallback chain for verification
+              // Record this fallback chain to prevent cycles
+              context.chains.add(fallbackChain);
+              
+              // Use the fallback chain for verification - but start a fresh verification process
               const fallbackVerification = await this.verifyOnChain(vaultId, fallbackChain);
+              
+              // Successfully verified on fallback chain
+              securityLogger.info(`Successfully verified on fallback chain ${fallbackChain}`, {
+                vaultId,
+                originalChain: chainId,
+                fallbackChain,
+                isValid: fallbackVerification.isValid
+              });
+              
+              // Register this fallback for operational monitoring
+              fallbackRegistry.registerFallback({
+                vaultId,
+                primaryChain: chainId,
+                fallbackChain,
+                strategy: fallbackVerification.isValid ? 'verification' : 'integrity_check',
+                reason: `Primary chain ${chainId} unavailable: ${crossChainError.message}`,
+                timestamp: new Date()
+              });
               
               // Mark this as a partial verification with fallback chain
               return {
@@ -663,7 +808,14 @@ class CrossChainVaultVerification extends EventEmitter {
                 timestamp: new Date(),
                 transactionId: fallbackVerification.transactionId,
                 signature: fallbackVerification.signature,
-                error: `Used fallback chain ${fallbackChain} due to ${chainId} unavailability`
+                error: `Used fallback chain ${fallbackChain} due to ${chainId} unavailability`,
+                metadata: {
+                  originalChain: chainId,
+                  fallbackChain,
+                  recoveryPath: context.recoveryPath,
+                  verificationDuration: Date.now() - context.startTime,
+                  fallbackVerificationId: fallbackVerification.transactionId
+                }
               };
             } catch (fallbackError) {
               // Both original and fallback chains failed
@@ -672,29 +824,115 @@ class CrossChainVaultVerification extends EventEmitter {
                 originalChain: chainId,
                 fallbackChain,
                 originalError: error.message,
-                fallbackError: fallbackError.message
+                fallbackError: fallbackError.message,
+                totalAttempts: context.attempts,
+                recoveryPath: context.recoveryPath
               });
+              
+              // Try another fallback if available
+              const secondaryFallback = crossChainErrorHandler.getSecondaryFallbackChain(chainId, [fallbackChain]);
+              
+              if (secondaryFallback && !context.chains.has(secondaryFallback)) {
+                securityLogger.info(`Trying secondary fallback chain ${secondaryFallback}`, {
+                  vaultId,
+                  originalChain: chainId,
+                  secondaryFallback
+                });
+                
+                // Record this secondary fallback chain
+                context.chains.add(secondaryFallback);
+                context.attempts++;
+                
+                try {
+                  // Use the secondary fallback chain for verification
+                  const secondaryVerification = await this.verifyOnChain(vaultId, secondaryFallback);
+                  
+                  return {
+                    chainId,
+                    status: VerificationStatus.PARTIAL,
+                    isValid: secondaryVerification.isValid,
+                    timestamp: new Date(),
+                    transactionId: secondaryVerification.transactionId,
+                    signature: secondaryVerification.signature,
+                    error: `Used secondary fallback chain ${secondaryFallback} after primary fallback failure`,
+                    metadata: {
+                      originalChain: chainId,
+                      fallbackChain,
+                      secondaryFallback,
+                      recoveryPath: [...context.recoveryPath, 'secondary_fallback'],
+                      verificationDuration: Date.now() - context.startTime
+                    }
+                  };
+                } catch (secondaryError) {
+                  // All chains have failed, proceed to partial verification with emergency protocol
+                  securityLogger.error(`All fallback chains failed, proceeding with emergency protocol`, {
+                    vaultId,
+                    originalChain: chainId,
+                    triedChains: Array.from(context.chains)
+                  });
+                  
+                  // Trigger emergency notification if configured
+                  if (config.getFeatureFlag('enableEmergencyProtocol')) {
+                    this.emit('emergency:multiple-chain-failure', {
+                      vaultId,
+                      chainsFailed: Array.from(context.chains),
+                      timestamp: new Date()
+                    });
+                  }
+                }
+              }
             }
           }
-          
-          // If all attempts failed, return a special partial verification status
-          // This indicates that the verification might be valid but couldn't be fully confirmed
-          return {
-            chainId,
-            status: VerificationStatus.PARTIAL,
-            isValid: false,
-            timestamp: new Date(),
-            error: `Chain verification failed after ${retryCount} recovery attempts: ${crossChainError.message}`
-          };
         }
+        
+        // If all attempts failed, implement graceful degradation with partial verification
+        // This uses any available data to provide a best-effort verification status
+        let partialVerificationStatus: VerificationStatus;
+        let partialMessage: string;
+        
+        // Determine verification status based on context and recovery attempts
+        if (context.attempts > 5) {
+          partialVerificationStatus = VerificationStatus.EMERGENCY;
+          partialMessage = `Emergency verification status: all recovery mechanisms failed after ${context.attempts} attempts`;
+        } else if (context.recoveryPath.includes('fallback')) {
+          partialVerificationStatus = VerificationStatus.PARTIAL;
+          partialMessage = `Partial verification after fallback chain attempts: ${crossChainError.message}`;
+        } else {
+          partialVerificationStatus = VerificationStatus.PARTIAL;
+          partialMessage = `Chain verification failed after ${retryCount} recovery attempts: ${crossChainError.message}`;
+        }
+        
+        // Implement partial verification with any data we can gather
+        return {
+          chainId,
+          status: partialVerificationStatus,
+          isValid: false, // We can't confirm validity without successful verification
+          timestamp: new Date(),
+          error: partialMessage,
+          metadata: {
+            recoveryAttempts: context.attempts,
+            recoveryPath: context.recoveryPath,
+            chainsAttempted: Array.from(context.chains),
+            verificationDuration: Date.now() - context.startTime,
+            errorCategory: crossChainError.category,
+            errorType: crossChainError.type
+          }
+        };
       } else {
-        // Not recoverable, return standard failed verification
+        // Not recoverable, return standard failed verification with enhanced metadata
         return {
           chainId,
           status: VerificationStatus.FAILED,
           isValid: false,
           timestamp: new Date(),
-          error: crossChainError.message
+          error: crossChainError.message,
+          metadata: {
+            recoveryAttempted: false,
+            errorCategory: crossChainError.category,
+            errorType: crossChainError.type,
+            verificationDuration: Date.now() - context.startTime,
+            recoveryPath: context.recoveryPath
+          }
         };
       }
     }
