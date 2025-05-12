@@ -279,6 +279,10 @@ class WebSocketService {
           type === 'TRANSACTION_FAILED'
         ) {
           subscriptionTypes.add('SUBSCRIBE_TRANSACTION_UPDATES');
+        } else if (
+          type === 'SECURITY_STATUS_UPDATE'
+        ) {
+          subscriptionTypes.add('SUBSCRIBE_SECURITY_UPDATES');
         }
       });
     });

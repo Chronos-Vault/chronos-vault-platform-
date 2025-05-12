@@ -134,6 +134,7 @@ export default function CrossChainSecurityDashboard() {
         (message) => {
           if (message.type === 'SECURITY_STATUS_UPDATE') {
             // Update status with data from WebSocket
+            console.log('Received security status update via WebSocket:', message.data.status);
             setStatus(message.data.status);
             setError(null);
             setIsLoading(false);
