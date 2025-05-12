@@ -12,7 +12,10 @@ import { EnhancedMediaUploader } from "@/components/attachments/enhanced-media-u
 import VaultTypeSelector, { SpecializedVaultType } from "@/components/vault/vault-type-selector";
 import { MemoryVaultContent } from "@/components/vault/memory-vault-content";
 import { useCVTToken, StakingTier } from "@/contexts/cvt-token-context";
-import { Coins, Wallet, ArrowLeftRight, ArrowRightCircle, Shield } from "lucide-react";
+import { Coins, Wallet, ArrowLeftRight, ArrowRightCircle, Shield, CheckCircle2, AlertCircle, ChevronRight, Loader2 } from "lucide-react";
+import { ValidationSummary } from "@/components/vault/validation-summary";
+import { FormReview } from "@/components/vault/form-review";
+import { VaultCreationProgress, getDefaultVaultCreationSteps, type Step } from "@/components/vault/create-vault-progress";
 
 import {
   Form,
@@ -177,6 +180,15 @@ export function CreateVaultForm({
   const [showAttachmentUpload, setShowAttachmentUpload] = useState(false);
   const [attachments, setAttachments] = useState<any[]>([]);
   const [useTripleChainSecurity, setUseTripleChainSecurity] = useState<boolean>(false);
+  
+  // New state for form validation and progress tracking
+  const [currentStep, setCurrentStep] = useState<string>("details");
+  const [steps, setSteps] = useState<Step[]>(getDefaultVaultCreationSteps("details"));
+  const [showValidationSummary, setShowValidationSummary] = useState(false);
+  const [isReviewMode, setIsReviewMode] = useState(false);
+  const [formTouched, setFormTouched] = useState(false);
+  const [isBlockchainDeploying, setIsBlockchainDeploying] = useState(false);
+  const [blockchainAddress, setBlockchainAddress] = useState('');
   
   // Get CVT token context for balance and pricing
   const { tokenBalance, currentStakingTier, payForVaultCreation } = useCVTToken();
@@ -422,7 +434,7 @@ export function CreateVaultForm({
     form.setValue("unlockDate", unlockDate.toISOString());
   };
 
-  const [isBlockchainDeploying, setIsBlockchainDeploying] = useState(false);
+  // Using existing blockchain deployment state from higher components
   const [deploymentStatus, setDeploymentStatus] = useState<string | null>(null);
   const [contractAddress, setContractAddress] = useState<string | null>(null);
   
@@ -1284,10 +1296,37 @@ export function CreateVaultForm({
           <TabsTrigger value="gift">Gift Vault</TabsTrigger>
         </TabsList>
 
+        {/* Vault Creation Progress */}
+        <div className="mb-8">
+          <VaultCreationProgress 
+            steps={getDefaultVaultCreationSteps(createdVaultId ? "deployment" : "details")}
+            currentStepId={createdVaultId ? "deployment" : "details"}
+          />
+        </div>
+        
         <Card className={`bg-[#1E1E1E] border ${getVaultTypeStyle()} transition-all`}>
           <CardContent className="p-6">
             <Form {...form}>
-              <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+              <form onSubmit={(e) => {
+                e.preventDefault();
+                // Add form validation visual feedback
+                if (Object.keys(form.formState.errors).length > 0) {
+                  // Scroll to the top of the form to show validation errors
+                  window.scrollTo({ top: 0, behavior: 'smooth' });
+                }
+                form.handleSubmit(onSubmit)(e);
+              }} className="space-y-6">
+                {/* Add validation summary to show all errors */}
+                {Object.keys(form.formState.errors).length > 0 && (
+                  <div className="mb-6">
+                    <ValidationSummary 
+                      errors={form.formState.errors} 
+                      visible={Object.keys(form.formState.errors).length > 0} 
+                      onClose={() => form.clearErrors()}
+                    />
+                  </div>
+                )}
+                
                 <div className="mb-8">
                   <h3 className="text-xl font-semibold mb-3 bg-clip-text text-transparent bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7]">
                     Choose Vault Type
