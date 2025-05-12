@@ -21,6 +21,10 @@ export enum CrossChainErrorCategory {
   UNAUTHORIZED_ACCESS = 'unauthorized_access',
   INVALID_PARAMETERS = 'invalid_parameters',
   NODE_SYNCING = 'node_syncing',
+  CONSENSUS_FAILURE = 'consensus_failure',
+  CROSS_CHAIN_SYNC_ERROR = 'cross_chain_sync_error',
+  CHAIN_UNAVAILABLE = 'chain_unavailable',
+  VERIFICATION_TIMEOUT = 'verification_timeout',
   UNKNOWN = 'unknown'
 }
 
@@ -255,6 +259,30 @@ const defaultRetryStrategies: Record<CrossChainErrorCategory, RetryStrategy> = {
     maxRetries: 2,
     exponentialBackoff: false
   },
+  [CrossChainErrorCategory.CONSENSUS_FAILURE]: {
+    shouldRetry: true,
+    delayMs: 5000,
+    maxRetries: 3,
+    exponentialBackoff: true
+  },
+  [CrossChainErrorCategory.CROSS_CHAIN_SYNC_ERROR]: {
+    shouldRetry: true,
+    delayMs: 7000,
+    maxRetries: 4,
+    exponentialBackoff: true
+  },
+  [CrossChainErrorCategory.CHAIN_UNAVAILABLE]: {
+    shouldRetry: true,
+    delayMs: 15000,
+    maxRetries: 3,
+    exponentialBackoff: true
+  },
+  [CrossChainErrorCategory.VERIFICATION_TIMEOUT]: {
+    shouldRetry: true,
+    delayMs: 8000,
+    maxRetries: 2,
+    exponentialBackoff: true
+  },
   [CrossChainErrorCategory.UNKNOWN]: {
     shouldRetry: true,
     delayMs: 5000,
@@ -277,6 +305,19 @@ const fallbackChains: Record<BlockchainType, BlockchainType> = {
  * Cross-Chain Error Handler class
  */
 class CrossChainErrorHandler {
+  // Track chain availability status
+  private chainAvailability: Record<BlockchainType, {
+    isAvailable: boolean;
+    lastCheck: number;
+    consecutiveFailures: number;
+    recoveryAttempts: number;
+  }> = {
+    ethereum: { isAvailable: true, lastCheck: Date.now(), consecutiveFailures: 0, recoveryAttempts: 0 },
+    solana: { isAvailable: true, lastCheck: Date.now(), consecutiveFailures: 0, recoveryAttempts: 0 },
+    ton: { isAvailable: true, lastCheck: Date.now(), consecutiveFailures: 0, recoveryAttempts: 0 },
+    bitcoin: { isAvailable: true, lastCheck: Date.now(), consecutiveFailures: 0, recoveryAttempts: 0 }
+  };
+
   /**
    * Analyze and categorize an error
    */
@@ -284,6 +325,14 @@ class CrossChainErrorHandler {
     // Extract useful information from the error
     const errorMessage = this.extractErrorMessage(error);
     const blockchain = context.blockchain;
+    
+    // Update chain availability tracking if this is a connection error
+    if (blockchain && 
+        (errorMessage.includes('connection') || 
+         errorMessage.includes('timeout') || 
+         errorMessage.includes('unavailable'))) {
+      this.updateChainAvailability(blockchain, false);
+    }
     
     // Try to match against known error patterns for this blockchain
     if (blockchain) {
@@ -302,9 +351,30 @@ class CrossChainErrorHandler {
             retryStrategy: pattern.recoverable 
               ? defaultRetryStrategies[pattern.category]
               : undefined,
-            metadata: context.metadata
+            metadata: {
+              ...context.metadata,
+              chainAvailability: this.chainAvailability[blockchain]
+            }
           };
         }
+      }
+      
+      // Check if the chain might be unavailable based on our tracking
+      if (this.isChainPotentiallyUnavailable(blockchain)) {
+        return {
+          originalError: error,
+          message: `${blockchain} chain appears to be unavailable: ${errorMessage}`,
+          category: CrossChainErrorCategory.CHAIN_UNAVAILABLE,
+          blockchain,
+          recoverable: true,
+          solution: `Switch to fallback chain: ${fallbackChains[blockchain]}`,
+          retryStrategy: defaultRetryStrategies[CrossChainErrorCategory.CHAIN_UNAVAILABLE],
+          metadata: {
+            ...context.metadata,
+            chainAvailability: this.chainAvailability[blockchain],
+            suggestedFallbackChain: fallbackChains[blockchain]
+          }
+        };
       }
     }
     
