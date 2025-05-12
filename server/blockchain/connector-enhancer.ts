@@ -41,6 +41,12 @@ export class ConnectorEnhancer {
   private chainId: BlockchainType;
   private endpoints: Map<string, string> = new Map();
   private isSimulated: boolean;
+  private maxRetries: number = 3;
+  private retryDelayMs: number = 1000;
+  private timeoutMs: number = 30000;
+  private exponentialBackoff: boolean = true;
+  private cacheTtlMs: number = 60000;
+  private priorityEndpoint: string = 'default';
   
   constructor(connector: BlockchainConnector, chainId: BlockchainType) {
     this.connector = connector;
@@ -75,11 +81,32 @@ export class ConnectorEnhancer {
       return fn(...args);
     }
     
+    // Use the custom retry configuration
+    const retryConfig = {
+      maxRetries: this.maxRetries,
+      delayMs: this.retryDelayMs,
+      exponentialBackoff: this.exponentialBackoff,
+      timeoutMs: this.timeoutMs,
+      priorityEndpoint: this.priorityEndpoint,
+      cacheTtlMs: this.cacheTtlMs
+    };
+    
+    // Merge retry configuration with existing context
+    const enhancedContext = {
+      ...context,
+      retryConfig
+    };
+    
+    // If we have a priority endpoint, use it instead of the default
+    if (this.priorityEndpoint !== 'default' && this.endpoints.has(this.priorityEndpoint)) {
+      enhancedContext.endpoint = this.endpoints.get(this.priorityEndpoint);
+    }
+    
     return edgeCaseHandler.withRetry(
       () => fn(...args),
       this.chainId,
       operationType,
-      context
+      enhancedContext
     );
   }
   
@@ -395,21 +422,122 @@ export class ConnectorEnhancer {
   public getUnderlyingConnector(): BlockchainConnector {
     return this.connector;
   }
+  
+  /**
+   * Set maximum number of retry attempts
+   */
+  public setMaxRetries(maxRetries: number): void {
+    this.maxRetries = maxRetries;
+  }
+  
+  /**
+   * Set retry delay in milliseconds
+   */
+  public setRetryDelay(retryDelayMs: number): void {
+    this.retryDelayMs = retryDelayMs;
+  }
+  
+  /**
+   * Set timeout in milliseconds
+   */
+  public setTimeout(timeoutMs: number): void {
+    this.timeoutMs = timeoutMs;
+  }
+  
+  /**
+   * Set whether to use exponential backoff for retries
+   */
+  public setExponentialBackoff(exponentialBackoff: boolean): void {
+    this.exponentialBackoff = exponentialBackoff;
+  }
+  
+  /**
+   * Set cache TTL in milliseconds
+   */
+  public setCacheTtl(cacheTtlMs: number): void {
+    this.cacheTtlMs = cacheTtlMs;
+  }
+  
+  /**
+   * Set priority endpoint name
+   */
+  public setPriorityEndpoint(endpointName: string): void {
+    if (this.endpoints.has(endpointName)) {
+      this.priorityEndpoint = endpointName;
+    }
+  }
 }
 
 /**
  * Create an enhanced blockchain connector
  */
+/**
+ * Enhancement options for connector
+ */
+export interface EnhancementOptions {
+  maxRetries?: number;
+  retryDelayMs?: number;
+  timeoutMs?: number;
+  exponentialBackoff?: boolean;
+  cacheTtlMs?: number;
+  priorityEndpoint?: string;
+}
+
+/**
+ * Default enhancement options
+ */
+const DEFAULT_ENHANCEMENT_OPTIONS: EnhancementOptions = {
+  maxRetries: 3,
+  retryDelayMs: 1000,
+  timeoutMs: 30000,
+  exponentialBackoff: true,
+  cacheTtlMs: 60000
+};
+
+/**
+ * Enhance a blockchain connector with additional functionality
+ * 
+ * @param connector The base blockchain connector to enhance
+ * @param chainId The blockchain identifier
+ * @param endpoints Optional map of named endpoints
+ * @param options Optional enhancement configuration options
+ * @returns An enhanced connector with additional reliability features
+ */
 export function enhanceConnector(
   connector: BlockchainConnector, 
   chainId: BlockchainType,
-  endpoints: Record<string, string> = {}
+  endpoints: Record<string, string> = {},
+  options?: EnhancementOptions
 ): ConnectorEnhancer {
+  // Create a new enhancer with the connector
   const enhancer = new ConnectorEnhancer(connector, chainId);
   
   // Add endpoints
   for (const [name, url] of Object.entries(endpoints)) {
     enhancer.addEndpoint(name, url);
+  }
+  
+  // Apply custom enhancement options if provided
+  if (options) {
+    // Merge with defaults
+    const mergedOptions = {
+      ...DEFAULT_ENHANCEMENT_OPTIONS,
+      ...options
+    };
+    
+    // Apply enhancements
+    enhancer.setMaxRetries(mergedOptions.maxRetries!);
+    enhancer.setRetryDelay(mergedOptions.retryDelayMs!);
+    enhancer.setTimeout(mergedOptions.timeoutMs!);
+    enhancer.setExponentialBackoff(mergedOptions.exponentialBackoff!);
+    
+    if (mergedOptions.cacheTtlMs) {
+      enhancer.setCacheTtl(mergedOptions.cacheTtlMs);
+    }
+    
+    if (mergedOptions.priorityEndpoint && endpoints[mergedOptions.priorityEndpoint]) {
+      enhancer.setPriorityEndpoint(mergedOptions.priorityEndpoint);
+    }
   }
   
   return enhancer;
