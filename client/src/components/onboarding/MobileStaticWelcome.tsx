@@ -11,10 +11,28 @@ import { useOnboarding } from '@/contexts/onboarding-context';
 const MobileStaticWelcome: React.FC = () => {
   const { completeCurrentStep } = useOnboarding();
   
-  // Handle continue button click
+  // Handle continue button click - now with safer implementation
   const handleContinue = () => {
-    console.log("Mobile continue button clicked");
-    completeCurrentStep();
+    console.log("Mobile continue button clicked - using safer completion");
+    // We will skip directly to the home page instead of going through all onboarding steps
+    // This prevents issues with animations and complex transitions on mobile
+    try {
+      localStorage.setItem('chronosVault.onboardingStep', JSON.stringify('complete'));
+      localStorage.setItem('chronosVault.onboardingCompleted', 'true');
+      localStorage.setItem('chronosVault.firstVisit', 'false');
+      
+      // Let the app know onboarding is now complete
+      completeCurrentStep();
+      
+      // Force home navigation after a brief delay
+      setTimeout(() => {
+        window.location.href = '/';
+      }, 100);
+    } catch (e) {
+      console.error("Error in mobile continue button:", e);
+      // Fallback to regular continue
+      completeCurrentStep();
+    }
   };
   
   return (

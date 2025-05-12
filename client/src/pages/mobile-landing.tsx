@@ -14,26 +14,49 @@ const MobileLanding = () => {
     // Force full reset of all state with no animations
     console.log('MOBILE LANDING: Forcing complete reset of all onboarding state');
     
-    // Direct localStorage manipulation for maximum reliability
-    localStorage.removeItem('chronosVault.onboardingStep');
-    localStorage.removeItem('chronosVault.onboardingCompleted');
-    localStorage.removeItem('chronosVault.firstVisit');
-    
-    // Mark as mobile device
-    localStorage.setItem('chronosVault.isMobile', 'true');
-    
-    // Set to proper initial state
-    localStorage.setItem('chronosVault.firstVisit', 'true');
-    localStorage.setItem('chronosVault.onboardingStep', JSON.stringify('welcome'));
-    localStorage.setItem('chronosVault.onboardingCompleted', 'false');
-    
-    // Now that storage is set, update React state
-    resetOnboarding();
-    
-    // Wait 500ms to ensure everything is ready, then navigate
-    setTimeout(() => {
-      navigate('/onboarding');
-    }, 500);
+    try {
+      // First, ensure we're properly detected as mobile
+      localStorage.setItem('chronosVault.isMobile', 'true');
+      
+      // Wait a bit to ensure the above setting is registered
+      setTimeout(() => {
+        // Direct localStorage manipulation for maximum reliability
+        localStorage.removeItem('chronosVault.onboardingStep');
+        localStorage.removeItem('chronosVault.onboardingCompleted');
+        localStorage.removeItem('chronosVault.firstVisit');
+        
+        // Wait a bit more before setting the new values
+        setTimeout(() => {
+          // Set to proper initial state
+          localStorage.setItem('chronosVault.firstVisit', 'true');
+          localStorage.setItem('chronosVault.onboardingStep', JSON.stringify('welcome'));
+          localStorage.setItem('chronosVault.onboardingCompleted', 'false');
+          
+          // Now that storage is set, update React state
+          resetOnboarding();
+          
+          // Log the current state for debugging
+          console.log('MOBILE LANDING: State reset complete, current localStorage state:', {
+            step: localStorage.getItem('chronosVault.onboardingStep'),
+            completed: localStorage.getItem('chronosVault.onboardingCompleted'),
+            firstVisit: localStorage.getItem('chronosVault.firstVisit'),
+            isMobile: localStorage.getItem('chronosVault.isMobile')
+          });
+          
+          // Wait 500ms to ensure everything is ready, then navigate
+          setTimeout(() => {
+            console.log('MOBILE LANDING: Navigating to onboarding now');
+            navigate('/onboarding');
+          }, 500);
+        }, 100);
+      }, 100);
+    } catch (e) {
+      console.error('MOBILE LANDING: Error resetting state:', e);
+      // Fallback: just navigate to mobile-direct
+      setTimeout(() => {
+        navigate('/mobile-direct');
+      }, 500);
+    }
   }, [navigate, resetOnboarding]);
   
   // Show a simple loading screen while we reset

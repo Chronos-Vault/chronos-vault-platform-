@@ -52,6 +52,15 @@ export default function NotFound() {
               </Button>
             </Link>
             
+            {isMobile && (
+              <Link href="/mobile-direct">
+                <Button className="bg-[#6B00D7] hover:bg-[#6B00D7]/90 text-white rounded-lg px-6 py-2 font-medium transition-all flex items-center">
+                  <Smartphone className="mr-2 h-4 w-4" />
+                  Mobile App
+                </Button>
+              </Link>
+            )}
+            
             <Button 
               variant="outline" 
               className="border-[#6B00D7]/30 text-[#FF5AF7] hover:bg-[#6B00D7]/10 rounded-lg px-6 py-2 font-medium transition-all flex items-center"
@@ -73,17 +82,31 @@ export default function NotFound() {
               
               <div className="flex flex-col gap-2">
                 {isMobile && (
-                  <Button 
-                    variant="outline"
-                    className="w-full justify-between border-[#FF5AF7]/30 bg-[#1A1A1A] hover:bg-[#FF5AF7]/10"
-                    onClick={() => navigate('/mobile')}
-                  >
-                    <span className="flex items-center">
-                      <Smartphone className="mr-2 h-4 w-4 text-[#FF5AF7]" />
-                      Mobile Experience
-                    </span>
-                    <span className="text-xs bg-[#FF5AF7]/20 text-[#FF5AF7] px-2 py-1 rounded">Mobile Only</span>
-                  </Button>
+                  <>
+                    <Button 
+                      variant="outline"
+                      className="w-full justify-between border-[#FF5AF7]/30 bg-[#1A1A1A] hover:bg-[#FF5AF7]/10"
+                      onClick={() => navigate('/mobile-direct')}
+                    >
+                      <span className="flex items-center">
+                        <Smartphone className="mr-2 h-4 w-4 text-[#FF5AF7]" />
+                        Mobile Direct Experience
+                      </span>
+                      <span className="text-xs bg-[#FF5AF7]/20 text-[#FF5AF7] px-2 py-1 rounded">Recommended</span>
+                    </Button>
+                    
+                    <Button 
+                      variant="outline"
+                      className="w-full justify-between border-[#6B00D7]/30 bg-[#1A1A1A] hover:bg-[#6B00D7]/10 mt-2"
+                      onClick={() => navigate('/mobile')}
+                    >
+                      <span className="flex items-center">
+                        <Smartphone className="mr-2 h-4 w-4 text-[#6B00D7]" />
+                        Simple Mobile Landing
+                      </span>
+                      <span className="text-xs bg-[#6B00D7]/20 text-[#6B00D7] px-2 py-1 rounded">Alternative</span>
+                    </Button>
+                  </>
                 )}
                 
                 <Button 

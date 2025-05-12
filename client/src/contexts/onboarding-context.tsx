@@ -43,12 +43,24 @@ export const OnboardingProvider = ({ children }: { children: ReactNode }) => {
   // Detect if we're on a mobile device for optimizations
   const isMobile = typeof window !== 'undefined' ? window.innerWidth < 768 : false;
   
+  // Keep track of whether a mobile-specific route is being used
+  const isUsingMobileDirect = typeof window !== 'undefined' && 
+    (window.location.pathname === '/mobile-direct' || 
+     window.location.pathname === '/md' || 
+     window.location.pathname === '/mobile-app');
+  
   // Handle potential localStorage corruptions through safe initialization
   useEffect(() => {
     // Set mobile flag for optimizations
     if (isMobile) {
       localStorage.setItem('chronosVault.isMobile', 'true');
       console.log('Mobile device detected, optimizing onboarding experience');
+      
+      // IMPORTANT: Don't automatically complete onboarding on mobile anymore
+      // Let each mobile-specific experience handle this appropriately
+      if (isUsingMobileDirect) {
+        console.log('Using mobile-direct experience, deferring onboarding state management');
+      }
     } else {
       localStorage.removeItem('chronosVault.isMobile');
     }
@@ -80,7 +92,7 @@ export const OnboardingProvider = ({ children }: { children: ReactNode }) => {
     } catch (e) {
       console.error('Error validating localStorage:', e);
     }
-  }, [isMobile]);
+  }, [isMobile, isUsingMobileDirect]);
   
   // Track whether this is the user's first visit
   const [isFirstVisit, setIsFirstVisit] = useLocalStorage(FIRST_VISIT_KEY, true);
