@@ -3,18 +3,104 @@ import { useLocation } from 'wouter';
 import VaultTypeSelector, { SpecializedVaultType } from '@/components/vault/vault-type-selector';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
-import { ArrowLeft, ArrowRight } from 'lucide-react';
+import { cn } from '@/lib/utils';
+import { ArrowLeft, ArrowRight, AlertCircle, ChevronRight, Shield } from 'lucide-react';
+
+// Create a simple progress indicator component
+const VaultCreationSteps = ({ currentStep = "select-type" }: { currentStep?: string }) => {
+  const steps = [
+    { id: "select-type", label: "Select Vault Type" },
+    { id: "configure", label: "Configure Vault" },
+    { id: "review", label: "Review Details" },
+    { id: "deploy", label: "Deploy Vault" }
+  ];
+  
+  return (
+    <div className="mb-6">
+      <div className="flex items-center justify-between space-x-2">
+        {steps.map((step, index) => (
+          <React.Fragment key={step.id}>
+            <div className="flex flex-col items-center space-y-2">
+              <div 
+                className={cn(
+                  "w-8 h-8 rounded-full flex items-center justify-center text-xs font-medium",
+                  currentStep === step.id 
+                    ? "bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] text-white" 
+                    : index < steps.findIndex(s => s.id === currentStep)
+                      ? "bg-gradient-to-r from-[#6B00D7]/60 to-[#FF5AF7]/60 text-white"
+                      : "bg-gray-800 text-gray-400"
+                )}
+              >
+                {index < steps.findIndex(s => s.id === currentStep) ? (
+                  <Shield className="h-4 w-4" />
+                ) : (
+                  index + 1
+                )}
+              </div>
+              <span 
+                className={cn(
+                  "text-xs hidden sm:block",
+                  currentStep === step.id 
+                    ? "text-white" 
+                    : index < steps.findIndex(s => s.id === currentStep)
+                      ? "text-gray-300"
+                      : "text-gray-500"
+                )}
+              >
+                {step.label}
+              </span>
+            </div>
+            
+            {index < steps.length - 1 && (
+              <div 
+                className={cn(
+                  "flex-1 h-1 rounded",
+                  index < steps.findIndex(s => s.id === currentStep)
+                    ? "bg-gradient-to-r from-[#6B00D7]/60 to-[#FF5AF7]/60"
+                    : "bg-gray-800"
+                )}
+              />
+            )}
+          </React.Fragment>
+        ))}
+      </div>
+    </div>
+  );
+};
 
 const VaultTypesSelector = () => {
   const [_, navigate] = useLocation();
   const { toast } = useToast();
   const [selectedVaultType, setSelectedVaultType] = useState<SpecializedVaultType>('standard');
+  const [validationError, setValidationError] = useState<string | null>(null);
   
   const handleVaultTypeSelect = (type: SpecializedVaultType) => {
     setSelectedVaultType(type);
+    setValidationError(null);
   };
   
   const handleContinue = () => {
+    // First validate that a vault type is selected
+    if (!selectedVaultType) {
+      setValidationError("Please select a vault type to continue");
+      toast({
+        title: "Selection Required",
+        description: "Please select a vault type to continue",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    // Clear any validation error if we have a valid selection
+    setValidationError(null);
+
+    // Show success toast before redirecting
+    toast({
+      title: `${selectedVaultType === 'standard' ? 'Sovereign Fortress Vault™' : selectedVaultType.split('-').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ')} Selected`,
+      description: "Continuing to vault configuration...",
+      variant: "default",
+    });
+
     // Redirect to the appropriate vault creation page based on the selected type
     if (selectedVaultType === 'multi-signature') {
       // Our new Multi-Signature Vault
@@ -33,21 +119,10 @@ const VaultTypesSelector = () => {
       // AI Intent Inheritance vault
       navigate('/intent-inheritance-vault');
     } else if (selectedVaultType === 'quantum-resistant') {
-      // Give the user a choice to use either page for Quantum-Resistant vault creation
-      toast({
-        title: "Quantum-Resistant Vault Selected",
-        description: "Redirecting to specialized vault creation with cryptocurrency storage options",
-        variant: "default",
-      });
       // Send to the specialized vault creation page for the cryptocurrency options
       navigate(`/specialized-vault-creation?type=${selectedVaultType}`);
     } else if (selectedVaultType === 'diamond-hands') {
       // Investment Discipline Vault
-      toast({
-        title: "Investment Discipline Vault Selected",
-        description: "Redirecting to specialized investment discipline vault creation",
-        variant: "default",
-      });
       navigate('/investment-discipline-vault');
     } else if (
       selectedVaultType === 'geolocation' || 
@@ -61,12 +136,6 @@ const VaultTypesSelector = () => {
     ) {
       // Specialized vaults
       navigate(`/specialized-vault-creation?type=${selectedVaultType}`);
-    } else {
-      toast({
-        title: "Select a Vault Type",
-        description: "Please select a vault type to continue",
-        variant: "destructive",
-      });
     }
   };
   
@@ -96,6 +165,20 @@ const VaultTypesSelector = () => {
       </div>
       
       <div className="bg-black/20 backdrop-blur-sm border border-gray-800 rounded-lg p-4 sm:p-6 mb-8">
+        {/* Progress Indicator */}
+        <VaultCreationSteps />
+        
+        {/* Validation Error Display */}
+        {validationError && (
+          <div className="mb-6 p-3 border border-red-500/50 bg-red-500/10 rounded-md flex items-start">
+            <AlertCircle className="w-5 h-5 text-red-500 mr-2 mt-0.5 flex-shrink-0" />
+            <div className="flex-1">
+              <p className="text-red-500 text-sm font-medium">{validationError}</p>
+              <p className="text-xs text-gray-400 mt-1">Please select a vault type to continue to the next step.</p>
+            </div>
+          </div>
+        )}
+        
         {/* Triple Chain Technology Banner */}
         <div className="p-5 border-2 border-[#6B00D7]/50 rounded-lg bg-gradient-to-r from-[#6B00D7]/10 to-[#FF5AF7]/10 mb-6 relative overflow-hidden">
           <div className="absolute top-0 right-0 bg-gradient-to-bl from-[#FF5AF7]/20 to-transparent w-40 h-40 rounded-bl-full"></div>
@@ -196,13 +279,30 @@ const VaultTypesSelector = () => {
           />
         </div>
         
-        <div className="flex justify-end">
+        <div className="flex justify-between items-center">
+          <div className="text-xs text-gray-400">
+            <span className="text-[#FF5AF7]">*</span> Selection required to continue
+          </div>
           <Button 
             onClick={handleContinue}
-            className="bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] hover:opacity-90"
+            className={cn(
+              "transition-all duration-300 flex items-center",
+              !selectedVaultType 
+                ? "bg-gray-800 text-gray-400 cursor-not-allowed"
+                : "bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] hover:opacity-90 hover:shadow-lg hover:shadow-[#6B00D7]/20"
+            )}
           >
-            Continue with {selectedVaultType === 'standard' ? 'Sovereign Fortress Vault™' : selectedVaultType.split('-').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ') + ' Vault'}
-            <ArrowRight className="ml-2 h-4 w-4" />
+            {selectedVaultType ? (
+              <>
+                Continue with {selectedVaultType === 'standard' ? 'Sovereign Fortress Vault™' : selectedVaultType.split('-').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ') + ' Vault'}
+                <ChevronRight className="ml-2 h-4 w-4" />
+              </>
+            ) : (
+              <>
+                Select a Vault Type to Continue
+                <AlertCircle className="ml-2 h-4 w-4" />
+              </>
+            )}
           </Button>
         </div>
       </div>
