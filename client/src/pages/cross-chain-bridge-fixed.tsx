@@ -231,56 +231,50 @@ export default function CrossChainBridgePage() {
     },
   });
   
-  // Initialize WebSocket connection for real-time bridge status updates
+  // Initialize WebSocket connection for real-time bridge status updates using the WebSocketService
   useEffect(() => {
-    // Get the correct protocol based on whether we're using HTTPS or not
-    const protocol = window.location.protocol === "https:" ? "wss:" : "ws:";
-    const wsUrl = `${protocol}//${window.location.host}/ws`;
-    
-    // Create WebSocket connection
-    const socket = new WebSocket(wsUrl);
-    
-    // Connection opened
-    socket.addEventListener('open', () => {
-      setWsStatus('connected');
+    // Import the WebSocketService
+    import('@/services/websocket-service').then(({ websocketService }) => {
+      // Set initial connection status
+      setWsStatus('connecting');
+      
+      // Connect to the WebSocket server
+      websocketService.connect()
+        .then(() => {
+          setWsStatus('connected');
+        })
+        .catch((error) => {
+          console.error('Failed to connect to WebSocket server:', error);
+          setWsStatus('disconnected');
+        });
       
       // Subscribe to bridge status updates
-      socket.send(JSON.stringify({
-        type: 'SUBSCRIBE_BRIDGE_UPDATES'
-      }));
-    });
-    
-    // Listen for messages
-    socket.addEventListener('message', (event) => {
-      try {
-        const message = JSON.parse(event.data);
-        
-        if (message.type === 'BRIDGE_STATUS_UPDATE') {
-          setBridgeStatuses(message.data.bridges);
+      const subscriberId = 'cross-chain-bridge-page';
+      websocketService.subscribe(
+        subscriberId,
+        ['BRIDGE_STATUS_UPDATE', 'CONNECTED', 'TRANSACTION_CONFIRMED', 'TRANSACTION_FAILED'],
+        (message) => {
+          if (message.type === 'BRIDGE_STATUS_UPDATE') {
+            setBridgeStatuses(message.data.bridges);
+          } else if (message.type === 'CONNECTED') {
+            setWsStatus('connected');
+          } else if (message.type === 'TRANSACTION_CONFIRMED' || message.type === 'TRANSACTION_FAILED') {
+            // Refresh the transactions data
+            toast({
+              title: message.type === 'TRANSACTION_CONFIRMED' ? 'Transaction Confirmed' : 'Transaction Failed',
+              description: `${message.data.chainId}: ${message.data.transactionId.substring(0, 8)}...`,
+              variant: message.type === 'TRANSACTION_CONFIRMED' ? 'default' : 'destructive',
+            });
+          }
         }
-      } catch (error) {
-        console.error('Error parsing WebSocket message:', error);
-      }
+      );
+      
+      // Clean up WebSocket subscription and connection on component unmount
+      return () => {
+        websocketService.unsubscribe(subscriberId);
+      };
     });
-    
-    // Connection closed
-    socket.addEventListener('close', () => {
-      setWsStatus('disconnected');
-    });
-    
-    // Connection error
-    socket.addEventListener('error', (error) => {
-      console.error('WebSocket error:', error);
-      setWsStatus('disconnected');
-    });
-    
-    // Clean up WebSocket connection on component unmount
-    return () => {
-      if (socket.readyState === WebSocket.OPEN) {
-        socket.close();
-      }
-    };
-  }, []);
+  }, [toast]);
   
   // Update display data when API data is received
   useEffect(() => {

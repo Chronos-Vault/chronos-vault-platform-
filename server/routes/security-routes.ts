@@ -6,6 +6,7 @@
 
 import { Router, Request, Response } from 'express';
 import { ChainRole, BlockchainType, SecurityLevel, RecoveryStrategy } from '../../shared/types';
+import { getWebSocketManager } from '../websocket/websocket-manager';
 
 const router = Router();
 

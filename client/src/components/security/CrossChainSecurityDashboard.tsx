@@ -124,11 +124,39 @@ export default function CrossChainSecurityDashboard() {
     // Fetch the initial data
     fetchSecurityStatus();
     
-    // Set up polling to refresh data every 15 seconds
-    const intervalId = setInterval(fetchSecurityStatus, 15000);
-    
-    // Cleanup interval on component unmount
-    return () => clearInterval(intervalId);
+    // Use WebSocketService for real-time updates
+    import('@/services/websocket-service').then(({ websocketService }) => {
+      // Subscribe to security status updates
+      const subscriberId = 'security-dashboard';
+      websocketService.subscribe(
+        subscriberId,
+        ['SECURITY_STATUS_UPDATE', 'VERIFICATION_COMPLETED', 'TRANSACTION_CONFIRMED', 'TRANSACTION_FAILED'],
+        (message) => {
+          if (message.type === 'SECURITY_STATUS_UPDATE') {
+            // Update status with data from WebSocket
+            setStatus(message.data.status);
+            setError(null);
+            setIsLoading(false);
+          } else if (['VERIFICATION_COMPLETED', 'TRANSACTION_CONFIRMED', 'TRANSACTION_FAILED'].includes(message.type)) {
+            // When a verification or transaction event occurs, refresh the data
+            fetchSecurityStatus();
+          }
+        }
+      );
+      
+      // Connect to the WebSocket server if not already connected
+      websocketService.connect().catch(error => {
+        console.error('WebSocket connection error:', error);
+        // Fall back to polling if WebSocket fails
+        const intervalId = setInterval(fetchSecurityStatus, 15000);
+        return () => clearInterval(intervalId);
+      });
+      
+      // Clean up WebSocket subscription on component unmount
+      return () => {
+        websocketService.unsubscribe(subscriberId);
+      };
+    });
   }, []);
 
   // Helper function to get the security level name
