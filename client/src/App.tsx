@@ -115,34 +115,64 @@ function Router() {
       }>
         <Switch>
           <Route path="/" component={Home} />
-          <Route path="/onboarding" component={OnboardingPage} />
           
-          {/* Special routes to handle common URL mistakes - using dedicated component */}
-          <Route path="/resetOnboarding=true" component={ResetOnboardingPage} />
-          <Route path="/resetonboarding=true" component={ResetOnboardingPage} />
-          <Route path="/resetOnboarding" component={ResetOnboardingPage} />
-          <Route path="/resetonboarding" component={ResetOnboardingPage} />
-          <Route path="/reset-onboarding" component={ResetOnboardingPage} />
+          {/* ONBOARDING DISABLED PER USER REQUEST */}
+          <Route path="/onboarding">
+            <Redirect to="/" />
+          </Route>
           
-          {/* Emergency force reset routes - multiple paths for easier access */}
-          <Route path="/force-reset" component={ForceResetPage} />
-          <Route path="/forcereset" component={ForceResetPage} />
-          <Route path="/reset" component={ForceResetPage} />
-          <Route path="/emergency-reset" component={ForceResetPage} />
-          
-          {/* Dedicated mobile reset page - optimized for mobile */}
-          <Route path="/mobile-reset" component={MobileResetPage} />
-          <Route path="/m-reset" component={MobileResetPage} />
-          
-          {/* Special mobile landing page for maximum reliability on mobile */}
-          <Route path="/m" component={MobileLandingPage} />
-          <Route path="/mobile" component={MobileLandingPage} />
-          <Route path="/mobile-landing" component={MobileLandingPage} />
-          
-          {/* New enhanced mobile direct experience */}
-          <Route path="/md" component={MobileDirectPage} />
-          <Route path="/mobile-direct" component={MobileDirectPage} />
-          <Route path="/mobile-app" component={MobileDirectPage} />
+          {/* All onboarding-related routes redirect to home */}
+          <Route path="/resetOnboarding=true">
+            <Redirect to="/" />
+          </Route>
+          <Route path="/resetonboarding=true">
+            <Redirect to="/" />
+          </Route>
+          <Route path="/resetOnboarding">
+            <Redirect to="/" />
+          </Route>
+          <Route path="/resetonboarding">
+            <Redirect to="/" />
+          </Route>
+          <Route path="/reset-onboarding">
+            <Redirect to="/" />
+          </Route>
+          <Route path="/force-reset">
+            <Redirect to="/" />
+          </Route>
+          <Route path="/forcereset">
+            <Redirect to="/" />
+          </Route>
+          <Route path="/reset">
+            <Redirect to="/" />
+          </Route>
+          <Route path="/emergency-reset">
+            <Redirect to="/" />
+          </Route>
+          <Route path="/mobile-reset">
+            <Redirect to="/" />
+          </Route>
+          <Route path="/m-reset">
+            <Redirect to="/" />
+          </Route>
+          <Route path="/m">
+            <Redirect to="/" />
+          </Route>
+          <Route path="/mobile">
+            <Redirect to="/" />
+          </Route>
+          <Route path="/mobile-landing">
+            <Redirect to="/" />
+          </Route>
+          <Route path="/md">
+            <Redirect to="/" />
+          </Route>
+          <Route path="/mobile-direct">
+            <Redirect to="/" />
+          </Route>
+          <Route path="/mobile-app">
+            <Redirect to="/" />
+          </Route>
           
           {/* Important: Route order matters! More specific routes should come before less specific ones */}
           <Route path="/create-vault/cross-chain" component={CreateVault} />
@@ -241,7 +271,7 @@ function App() {
                           <TransactionMonitoringProvider>
                             <OnboardingProvider>
                               <Router />
-                              <OnboardingRedirect />
+                              {/* <OnboardingRedirect /> - Disabled per user request */}
                               <BlockchainErrorDisplay />
                             </OnboardingProvider>
                           </TransactionMonitoringProvider>

@@ -23,6 +23,14 @@ const Home = () => {
   const activeVaults = 10467;
   const blockchains = 4;
 
+  // Mark onboarding as complete to prevent any redirects
+  useEffect(() => {
+    console.log('Home: Disabling onboarding redirects completely');
+    localStorage.setItem('chronosVault.onboardingStep', JSON.stringify('complete'));
+    localStorage.setItem('chronosVault.onboardingCompleted', 'true');
+    localStorage.setItem('chronosVault.firstVisit', 'false');
+  }, []);
+  
   // Handle smooth scrolling for anchor links
   useEffect(() => {
     const handleAnchorClick = (e: MouseEvent) => {
