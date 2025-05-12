@@ -116,12 +116,22 @@ export const OnboardingRedirect = () => {
     }
     
     // Only do first-time redirects and checks on initial load
-    if (isFirstVisit && location !== '/onboarding') {
-      console.log('First visit detected, redirecting to onboarding');
+    if (isFirstVisit && location !== '/onboarding' && location !== '/mobile-direct' && !location.startsWith('/md')) {
+      console.log('First visit detected, redirecting to appropriate experience');
+      
       // Ensure we stay on first visit
       localStorage.setItem('chronosVault.firstVisit', 'true');
-      // Navigate with a slight delay to avoid race conditions
-      setTimeout(() => navigate('/onboarding'), isMobile ? 100 : 50);
+      
+      // If it's a mobile device, use the direct mobile experience instead
+      if (isMobile) {
+        console.log('Mobile device detected, redirecting to mobile-direct experience');
+        // Navigate with a slight delay to avoid race conditions
+        setTimeout(() => navigate('/mobile-direct'), 100);
+      } else {
+        // For desktop, use the regular onboarding
+        console.log('Desktop device detected, redirecting to normal onboarding');
+        setTimeout(() => navigate('/onboarding'), 50);
+      }
       return;
     }
     

@@ -103,6 +103,7 @@ function Router() {
   const ResetOnboardingPage = React.lazy(() => import('./pages/reset-onboarding-page'));
   const ForceResetPage = React.lazy(() => import('./pages/force-reset'));
   const MobileLandingPage = React.lazy(() => import('./pages/mobile-landing'));
+  const MobileDirectPage = React.lazy(() => import('./pages/mobile-direct'));
   
   return (
     <Layout>
@@ -133,6 +134,11 @@ function Router() {
           <Route path="/m" component={MobileLandingPage} />
           <Route path="/mobile" component={MobileLandingPage} />
           <Route path="/mobile-landing" component={MobileLandingPage} />
+          
+          {/* New enhanced mobile direct experience */}
+          <Route path="/md" component={MobileDirectPage} />
+          <Route path="/mobile-direct" component={MobileDirectPage} />
+          <Route path="/mobile-app" component={MobileDirectPage} />
           
           {/* Important: Route order matters! More specific routes should come before less specific ones */}
           <Route path="/create-vault/cross-chain" component={CreateVault} />
