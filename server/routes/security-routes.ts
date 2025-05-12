@@ -209,4 +209,85 @@ function getAlertMessage(severity: string) {
   return options[Math.floor(Math.random() * options.length)];
 }
 
+// Set up a timer to broadcast security status updates via WebSocket
+const BROADCAST_INTERVAL = 10000; // 10 seconds
+
+// Start periodic broadcast of security status updates
+function startSecurityStatusBroadcast() {
+  console.log('Starting security status broadcast service');
+  
+  // Broadcast security status every 10 seconds
+  setInterval(() => {
+    try {
+      // Generate a security status similar to the API endpoint
+      const securityStatus = {
+        chainStatuses: {
+          ETH: {
+            blockchain: 'ETH',
+            isAvailable: true,
+            latency: Math.floor(Math.random() * 400) + 50,
+            lastBlockNumber: 20143587 + Math.floor(Math.random() * 10),
+            lastSyncTimestamp: Date.now() - Math.floor(Math.random() * 15000),
+            error: null
+          },
+          SOL: {
+            blockchain: 'SOL',
+            isAvailable: true,
+            latency: Math.floor(Math.random() * 200) + 20,
+            lastBlockNumber: 234587921 + Math.floor(Math.random() * 100),
+            lastSyncTimestamp: Date.now() - Math.floor(Math.random() * 5000),
+            error: null
+          },
+          TON: {
+            blockchain: 'TON',
+            isAvailable: true,
+            latency: Math.floor(Math.random() * 300) + 30,
+            lastBlockNumber: 32145678 + Math.floor(Math.random() * 20),
+            lastSyncTimestamp: Date.now() - Math.floor(Math.random() * 8000),
+            error: null
+          },
+          BTC: {
+            blockchain: 'BTC',
+            isAvailable: true,
+            latency: Math.floor(Math.random() * 600) + 100,
+            lastBlockNumber: 896305 + Math.floor(Math.random() * 2),
+            lastSyncTimestamp: Date.now() - Math.floor(Math.random() * 20000),
+            error: null
+          }
+        },
+        primaryChain: 'ETH',
+        securityLevel: 2, // Maximum
+        crossChainSyncStatus: {
+          isSynced: true,
+          syncPercentage: 100,
+          lastSyncTime: Date.now() - Math.floor(Math.random() * 60000)
+        },
+        activeFailovers: [
+          {
+            vaultId: 'vault-' + Math.floor(Math.random() * 10000),
+            primaryChain: 'ETH',
+            fallbackChain: 'TON',
+            strategy: Math.floor(Math.random() * 4) + 1,
+            reason: 'Simulated failover for demonstration',
+            timestamp: Date.now() - Math.floor(Math.random() * 3600000)
+          }
+        ],
+        securityAlerts: generateSecurityAlerts()
+      };
+
+      // Broadcast via WebSocket
+      const wsManager = getWebSocketManager();
+      wsManager.broadcast('SECURITY_STATUS_UPDATE', { 
+        status: securityStatus 
+      }, 'security_updates');
+      
+    } catch (error) {
+      console.error('Error broadcasting security status:', error);
+    }
+  }, BROADCAST_INTERVAL);
+}
+
+// Start the security status broadcast when the module is loaded
+startSecurityStatusBroadcast();
+
 export default router;

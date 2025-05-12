@@ -86,7 +86,7 @@ export class WebSocketManager {
     ws.isAlive = true;
     ws.connectedAt = new Date();
     ws.lastActivity = new Date();
-    ws.subscriptions = new Set();
+    ws.subscriptions = new Set(['security_updates']); // Auto-subscribe to security updates
     ws.reconnectAttempts = 0;
     ws.clientAddress = req.socket.remoteAddress;
     
@@ -123,6 +123,10 @@ export class WebSocketManager {
             
           case 'SUBSCRIBE_TRANSACTION_UPDATES':
             client.subscriptions.add('transaction_updates');
+            break;
+            
+          case 'SUBSCRIBE_SECURITY_UPDATES':
+            client.subscriptions.add('security_updates');
             break;
             
           case 'UNSUBSCRIBE':
