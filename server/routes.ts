@@ -28,6 +28,7 @@ import { geolocationService } from './services/geolocation-service';
 import { VerificationStatus } from './blockchain/cross-chain-vault-verification';
 import { WebSocket } from 'ws';
 import { initializeWebSocketManager, getWebSocketManager } from './websocket/websocket-manager';
+import { resetOnboarding } from './api/emergency-reset';
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // Create HTTP server instance
@@ -178,6 +179,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
   
   // Register the API router
   app.use('/api', apiRouter);
+  
+  // Direct emergency reset endpoint for mobile issues
+  app.get('/mobile-reset', resetOnboarding);
+  app.get('/emergency-reset', resetOnboarding);
+  app.get('/m-reset', resetOnboarding);
   
   // Set up Vite for development or serve static files for production
   // We set this up last so API routes take precedence
