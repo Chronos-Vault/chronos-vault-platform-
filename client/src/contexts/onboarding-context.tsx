@@ -62,14 +62,13 @@ export const OnboardingProvider = ({ children }: { children: ReactNode }) => {
       }
     });
     
-    // Force firstVisit to false after initial load
-    if (isFirstVisit) {
-      setTimeout(() => {
-        setIsFirstVisit(false);
-        console.log('First visit flag set to false');
-      }, 500);
+    // CRITICAL FIX: Only set firstVisit to false after onboarding is completed
+    // This ensures that the welcome animation is shown properly
+    if (isFirstVisit && currentStep === 'complete' && hasCompletedOnboarding) {
+      console.log('Onboarding completed, setting firstVisit to false');
+      setIsFirstVisit(false);
     }
-  }, []);
+  }, [isFirstVisit, currentStep, hasCompletedOnboarding]);
   
   // Update localStorage when currentStep changes
   useEffect(() => {
@@ -112,26 +111,38 @@ export const OnboardingProvider = ({ children }: { children: ReactNode }) => {
     setHasCompletedOnboarding(true);
   };
   
-  // Reset onboarding state (for testing)
+  // Reset onboarding state - CRITICAL FIX
   const resetOnboarding = () => {
-    console.log('Resetting onboarding state');
+    console.log('CRITICAL FIX: Resetting onboarding state properly');
     
-    // Clear all related localStorage items directly to ensure complete reset
+    // First, update React state to avoid race conditions
+    setCurrentStep('welcome');
+    setHasCompletedOnboarding(false);
+    setIsFirstVisit(true);
+    
+    // Then clear and reset localStorage values
     try {
+      // Clear existing values
       localStorage.removeItem(STEP_KEY);
       localStorage.removeItem(COMPLETED_KEY);
       localStorage.removeItem(FIRST_VISIT_KEY);
       
-      // Force page reload to ensure clean state
-      window.location.href = '/onboarding';
+      // Explicitly set values to ensure consistency
+      localStorage.setItem(STEP_KEY, JSON.stringify('welcome'));
+      localStorage.setItem(COMPLETED_KEY, 'false');
+      localStorage.setItem(FIRST_VISIT_KEY, 'true');
+      
+      console.log('Reset successful, localStorage values:', {
+        step: localStorage.getItem(STEP_KEY),
+        completed: localStorage.getItem(COMPLETED_KEY),
+        firstVisit: localStorage.getItem(FIRST_VISIT_KEY)
+      });
     } catch (error) {
-      console.error('Error clearing localStorage:', error);
+      console.error('Error during localStorage reset:', error);
     }
     
-    // Also update state
-    setCurrentStep('welcome');
-    setHasCompletedOnboarding(false);
-    setIsFirstVisit(true);
+    // We don't force reload anymore - let React handle the navigation
+    // This prevents the "flash of unstyled content" and provides a smoother UX
   };
   
   return (

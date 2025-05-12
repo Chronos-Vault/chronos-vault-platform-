@@ -3,6 +3,7 @@ import MainHeader from './MainHeader';
 import Footer from './footer';
 import { useLocation } from 'wouter';
 import { useOnboarding } from '@/contexts/onboarding-context';
+import { OnboardingDebugControls } from '@/components/onboarding/DebugControls';
 
 interface LayoutProps {
   children: React.ReactNode;
