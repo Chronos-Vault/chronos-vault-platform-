@@ -90,6 +90,9 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
       </main>
       <Footer />
       
+      {/* Debug controls for onboarding */}
+      <OnboardingDebugControls />
+      
       {/* Emergency reset button in development mode */}
       {isDevelopmentMode && (
         <div 

@@ -99,7 +99,9 @@ function Router() {
   const [_, navigate] = useLocation();
   
   // Import the dedicated reset page (using regular import at the top of file instead)
+  // Import reset pages
   const ResetOnboardingPage = React.lazy(() => import('./pages/reset-onboarding-page'));
+  const ForceResetPage = React.lazy(() => import('./pages/force-reset'));
   
   return (
     <Layout>
@@ -118,6 +120,9 @@ function Router() {
           <Route path="/resetOnboarding" component={ResetOnboardingPage} />
           <Route path="/resetonboarding" component={ResetOnboardingPage} />
           <Route path="/reset-onboarding" component={ResetOnboardingPage} />
+          
+          {/* Emergency force reset route */}
+          <Route path="/force-reset" component={ForceResetPage} />
           
           {/* Important: Route order matters! More specific routes should come before less specific ones */}
           <Route path="/create-vault/cross-chain" component={CreateVault} />
