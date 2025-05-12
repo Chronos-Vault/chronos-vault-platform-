@@ -42,7 +42,7 @@ export class WebSocketManager {
       const client = this.setupClient(ws as ExtendedWebSocket, req);
       
       // Log connection
-      securityLogger.info(`WebSocket client connected: ${client.id}`, SecurityEventType.SYSTEM_INFO, {
+      securityLogger.info(`WebSocket client connected: ${client.id}`, SecurityEventType.SYSTEM_ERROR, {
         clientId: client.id,
         clientAddress: client.clientAddress
       });
@@ -73,7 +73,7 @@ export class WebSocketManager {
       // If circuit breaker is active but error count is low enough, reset it
       if (this.hasCircuitBreaker && this.errorCounter < this.circuitBreakThreshold / 2) {
         this.hasCircuitBreaker = false;
-        securityLogger.info('WebSocket circuit breaker reset', SecurityEventType.SYSTEM_RECOVERY, {
+        securityLogger.info('WebSocket circuit breaker reset', SecurityEventType.SYSTEM_ERROR, {
           errorCount: this.errorCounter
         });
       }
@@ -155,7 +155,7 @@ export class WebSocketManager {
   private setupCloseHandler(client: ExtendedWebSocket) {
     client.on('close', () => {
       this.clients.delete(client.id);
-      securityLogger.info(`WebSocket client disconnected: ${client.id}`, SecurityEventType.SYSTEM_INFO, {
+      securityLogger.info(`WebSocket client disconnected: ${client.id}`, SecurityEventType.SYSTEM_ERROR, {
         clientId: client.id,
         sessionDuration: new Date().getTime() - client.connectedAt.getTime()
       });
@@ -200,7 +200,7 @@ export class WebSocketManager {
     this.heartbeatInterval = setInterval(() => {
       this.clients.forEach((client) => {
         if (!client.isAlive) {
-          securityLogger.info(`Terminating inactive WebSocket client: ${client.id}`, SecurityEventType.SYSTEM_INFO, {
+          securityLogger.info(`Terminating inactive WebSocket client: ${client.id}`, SecurityEventType.SYSTEM_ERROR, {
             clientId: client.id,
             inactiveDuration: new Date().getTime() - client.lastActivity.getTime()
           });

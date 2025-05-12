@@ -26,11 +26,15 @@ import { ConnectorFactory } from './blockchain/connector-factory';
 import { securityLogger, SecurityEventType } from './monitoring/security-logger';
 import { geolocationService } from './services/geolocation-service';
 import { VerificationStatus } from './blockchain/cross-chain-vault-verification';
-import { WebSocketServer, WebSocket } from 'ws';
+import { WebSocket } from 'ws';
+import { initializeWebSocketManager, getWebSocketManager } from './websocket/websocket-manager';
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // Create HTTP server instance
   const httpServer = createServer(app);
+  
+  // Initialize WebSocket manager with enhanced reliability
+  initializeWebSocketManager(httpServer);
   
   // Create API router to handle all API routes
   const apiRouter = Router();
@@ -80,95 +84,37 @@ export async function registerRoutes(app: Express): Promise<Server> {
   const multiChainSyncService = initializeMultiChainSync(connectorFactory);
   apiRouter.use('/multi-chain-sync', multiChainStateSyncRoutes);
   
-  // Initialize WebSocket server for real-time updates
-  const wss = new WebSocketServer({ server: httpServer, path: '/ws' });
-  
-  wss.on('connection', (ws) => {
-    console.log('WebSocket client connected');
-    
-    // Send initial data to the client
-    ws.send(JSON.stringify({
-      type: 'CONNECTED',
-      data: {
-        timestamp: new Date().toISOString(),
-        message: 'Connected to Chronos Vault real-time server'
-      }
-    }));
-    
-    // Handle client messages
-    ws.on('message', (message) => {
-      try {
-        const parsedMessage = JSON.parse(message.toString());
-        console.log('Received message:', parsedMessage);
-        
-        // Handle different message types
-        switch (parsedMessage.type) {
-          case 'PING':
-            ws.send(JSON.stringify({
-              type: 'PONG',
-              data: {
-                timestamp: new Date().toISOString()
-              }
-            }));
-            break;
-          
-          case 'SUBSCRIBE_BRIDGE_UPDATES':
-            // Subscribe the client to bridge status updates
-            ws.bridgeSubscription = true;
-            break;
-          
-          default:
-            console.log('Unknown message type:', parsedMessage.type);
-        }
-      } catch (error) {
-        console.error('Error processing WebSocket message:', error);
-      }
-    });
-    
-    // Handle disconnection
-    ws.on('close', () => {
-      console.log('WebSocket client disconnected');
-    });
-  });
+  // Get WebSocket manager instance
+  const wsManager = getWebSocketManager();
   
   // Broadcast bridge status updates to subscribed clients
   setInterval(() => {
-    const clients = wss.clients;
-    if (clients.size > 0) {
-      const bridgeStatuses = {
-        'ethereum-ton': {
-          status: 'operational',
-          latency: Math.floor(Math.random() * 200 + 50),
-          pendingTransactions: Math.floor(Math.random() * 5),
-          successRate: 99.8
-        },
-        'ethereum-solana': {
-          status: 'operational',
-          latency: Math.floor(Math.random() * 150 + 30),
-          pendingTransactions: Math.floor(Math.random() * 3),
-          successRate: 99.9
-        },
-        'solana-ton': {
-          status: Math.random() > 0.9 ? 'degraded' : 'operational',
-          latency: Math.floor(Math.random() * 300 + 100),
-          pendingTransactions: Math.floor(Math.random() * 10),
-          successRate: 98.5
-        }
-      };
-      
-      clients.forEach(client => {
-        // Check if client is open and has bridgeSubscription property
-        if (client.readyState === 1 && (client as any).bridgeSubscription) {
-          client.send(JSON.stringify({
-            type: 'BRIDGE_STATUS_UPDATE',
-            data: {
-              timestamp: new Date().toISOString(),
-              bridges: bridgeStatuses
-            }
-          }));
-        }
-      });
-    }
+    // Create bridge status data
+    const bridgeStatuses = {
+      'ethereum-ton': {
+        status: 'operational',
+        latency: Math.floor(Math.random() * 200 + 50),
+        pendingTransactions: Math.floor(Math.random() * 5),
+        successRate: 99.8
+      },
+      'ethereum-solana': {
+        status: 'operational',
+        latency: Math.floor(Math.random() * 150 + 30),
+        pendingTransactions: Math.floor(Math.random() * 3),
+        successRate: 99.9
+      },
+      'solana-ton': {
+        status: Math.random() > 0.9 ? 'degraded' : 'operational',
+        latency: Math.floor(Math.random() * 300 + 100),
+        pendingTransactions: Math.floor(Math.random() * 10),
+        successRate: 98.5
+      }
+    };
+    
+    // Broadcast to subscribed clients using the WebSocket manager
+    wsManager.broadcast('BRIDGE_STATUS_UPDATE', {
+      bridges: bridgeStatuses
+    }, 'bridge_updates');
   }, 5000);
   
   // Add event listeners for verification status updates
@@ -180,20 +126,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
       status: result.status
     });
     
-    // Broadcast verification completion to WebSocket clients
-    wss.clients.forEach(client => {
-      if (client.readyState === WebSocket.OPEN) {
-        client.send(JSON.stringify({
-          type: 'VERIFICATION_COMPLETED',
-          data: {
-            timestamp: new Date().toISOString(),
-            vaultId: result.vaultId,
-            isValid: result.isValid,
-            primaryChain: result.primaryChain
-          }
-        }));
-      }
-    });
+    // Broadcast verification completion to WebSocket clients using the WebSocket manager
+    wsManager.broadcast('VERIFICATION_COMPLETED', {
+      vaultId: result.vaultId,
+      isValid: result.isValid,
+      primaryChain: result.primaryChain
+    }, 'transaction_updates');
   });
   
   crossChainVerification.on('verification:transaction:confirmed', (data) => {
@@ -203,20 +141,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
       chainId: data.chainId
     });
     
-    // Broadcast transaction confirmation to WebSocket clients
-    wss.clients.forEach(client => {
-      if (client.readyState === WebSocket.OPEN) {
-        client.send(JSON.stringify({
-          type: 'TRANSACTION_CONFIRMED',
-          data: {
-            timestamp: new Date().toISOString(),
-            transactionId: data.transactionId,
-            vaultId: data.vaultId,
-            chainId: data.chainId
-          }
-        }));
-      }
-    });
+    // Broadcast transaction confirmation to WebSocket clients using the WebSocket manager
+    wsManager.broadcast('TRANSACTION_CONFIRMED', {
+      transactionId: data.transactionId,
+      vaultId: data.vaultId,
+      chainId: data.chainId
+    }, 'transaction_updates');
   });
   
   crossChainVerification.on('verification:transaction:failed', (data) => {
@@ -227,21 +157,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
       error: data.error
     });
     
-    // Broadcast transaction failure to WebSocket clients
-    wss.clients.forEach(client => {
-      if (client.readyState === WebSocket.OPEN) {
-        client.send(JSON.stringify({
-          type: 'TRANSACTION_FAILED',
-          data: {
-            timestamp: new Date().toISOString(),
-            transactionId: data.transactionId,
-            vaultId: data.vaultId,
-            chainId: data.chainId,
-            error: data.error
-          }
-        }));
-      }
-    });
+    // Broadcast transaction failure to WebSocket clients using the WebSocket manager
+    wsManager.broadcast('TRANSACTION_FAILED', {
+      transactionId: data.transactionId,
+      vaultId: data.vaultId,
+      chainId: data.chainId,
+      error: data.error
+    }, 'transaction_updates');
   });
   
   // Simple health check route - lightweight version for quick status checks
@@ -272,6 +194,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
     console.log('Server shutting down...');
     systemHealthMonitor.shutdown();
     incidentResponseSystem.shutdown();
+    
+    // Shutdown the WebSocket manager
+    wsManager.shutdown();
+    
     httpServer.close(() => {
       console.log('Server shutdown complete');
       process.exit(0);
