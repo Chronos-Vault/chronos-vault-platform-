@@ -121,8 +121,12 @@ function Router() {
           <Route path="/resetonboarding" component={ResetOnboardingPage} />
           <Route path="/reset-onboarding" component={ResetOnboardingPage} />
           
-          {/* Emergency force reset route */}
+          {/* Emergency force reset routes - multiple paths for easier access */}
           <Route path="/force-reset" component={ForceResetPage} />
+          <Route path="/forcereset" component={ForceResetPage} />
+          <Route path="/reset" component={ForceResetPage} />
+          <Route path="/emergency-reset" component={ForceResetPage} />
+          <Route path="/mobile-reset" component={ForceResetPage} />
           
           {/* Important: Route order matters! More specific routes should come before less specific ones */}
           <Route path="/create-vault/cross-chain" component={CreateVault} />
