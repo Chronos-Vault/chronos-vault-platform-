@@ -96,11 +96,58 @@ function Redirect({ to }: { to: string }) {
 }
 
 function Router() {
+  const [_, navigate] = useLocation();
+  
+  // Special handler for the common error of using /resetOnboarding=true
+  const handleResetRedirect = () => {
+    console.log('Detected /resetOnboarding=true URL - common error, redirecting to onboarding');
+    
+    // Reset localStorage immediately
+    localStorage.removeItem('chronosVault.onboardingStep');
+    localStorage.removeItem('chronosVault.onboardingCompleted');
+    localStorage.removeItem('chronosVault.firstVisit');
+    
+    // Set firstVisit to true to force welcome animation
+    localStorage.setItem('chronosVault.firstVisit', 'true');
+    
+    // Redirect after a short delay
+    setTimeout(() => navigate('/onboarding'), 100);
+    
+    return (
+      <div className="flex flex-col items-center justify-center min-h-[50vh] p-8">
+        <h1 className="text-2xl font-bold mb-4">Resetting Onboarding</h1>
+        <p className="text-center mb-6">
+          We detected that you're trying to reset the onboarding process.
+          <br />
+          Redirecting you to the welcome message...
+        </p>
+        <div className="h-2 w-64 bg-gray-200 rounded-full overflow-hidden">
+          <div className="h-full bg-primary animate-pulse rounded-full"></div>
+        </div>
+      </div>
+    );
+  };
+  
   return (
     <Layout>
       <Switch>
         <Route path="/" component={Home} />
         <Route path="/onboarding" component={OnboardingPage} />
+        
+        {/* Special routes to handle common URL mistakes */}
+        <Route path="/resetOnboarding=true">
+          {handleResetRedirect}
+        </Route>
+        <Route path="/resetonboarding=true">
+          {handleResetRedirect}
+        </Route>
+        <Route path="/resetOnboarding">
+          {handleResetRedirect}
+        </Route>
+        <Route path="/resetonboarding">
+          {handleResetRedirect}
+        </Route>
+        
         {/* Important: Route order matters! More specific routes should come before less specific ones */}
         <Route path="/create-vault/cross-chain" component={CreateVault} />
         <Route path="/create-vault" component={CreateVault} />

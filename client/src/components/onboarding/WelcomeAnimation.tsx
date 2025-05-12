@@ -2,11 +2,27 @@ import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { useOnboarding } from '@/contexts/onboarding-context';
 import { Button } from '@/components/ui/button';
-import { ArrowRight } from 'lucide-react';
+import { ArrowRight, Info } from 'lucide-react';
 
 export const WelcomeAnimation = () => {
   const { completeCurrentStep } = useOnboarding();
   const [animationComplete, setAnimationComplete] = useState(false);
+  const [displayStatus, setDisplayStatus] = useState<'loading' | 'visible' | 'error'>('loading');
+  
+  // Flag to track if this is the first time the component has loaded
+  useEffect(() => {
+    // Force localStorage to record this as the first visit
+    // This ensures the welcome animation will always be shown
+    try {
+      localStorage.setItem('chronosVault.firstVisit', 'true');
+      localStorage.setItem('chronosVault.onboardingStep', 'welcome');
+      localStorage.removeItem('chronosVault.onboardingCompleted');
+      setDisplayStatus('visible');
+    } catch (error) {
+      console.error('Error setting localStorage values for welcome animation', error);
+      setDisplayStatus('error');
+    }
+  }, []);
   
   // Start animation sequence when component mounts
   useEffect(() => {
@@ -26,6 +42,40 @@ export const WelcomeAnimation = () => {
     completeCurrentStep();
   };
   
+  // If we're still loading or have an error, show a placeholder
+  if (displayStatus === 'loading') {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="w-12 h-12 rounded-full border-4 border-primary border-t-transparent animate-spin"></div>
+      </div>
+    );
+  }
+  
+  // If we have an error, show an error message with retry button
+  if (displayStatus === 'error') {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-screen p-4">
+        <div className="rounded-full bg-red-100 p-3 mb-4">
+          <Info className="w-8 h-8 text-red-600" />
+        </div>
+        <h2 className="text-2xl font-bold mb-2">Welcome Animation Error</h2>
+        <p className="text-center mb-6 max-w-md">
+          There was a problem loading the welcome animation. This could be due to browser storage limitations.
+        </p>
+        <Button 
+          className="bg-primary hover:bg-primary/90"
+          onClick={() => {
+            // Skip to next step
+            completeCurrentStep();
+          }}
+        >
+          Continue Anyway
+        </Button>
+      </div>
+    );
+  }
+  
+  // The main welcome animation 
   return (
     <div className="relative flex flex-col items-center justify-center min-h-screen overflow-hidden bg-gradient-to-b from-black to-gray-900 px-4 py-6">
       {/* Background gradient elements */}
@@ -131,6 +181,21 @@ export const WelcomeAnimation = () => {
           Skip intro
         </button>
       </motion.div>
+      
+      {/* Reset button (only visible in dev mode) */}
+      {localStorage.getItem('chronosVault.devMode') === 'true' && (
+        <button 
+          className="absolute bottom-4 left-4 text-xs text-white/40 hover:text-white/80 bg-red-600/20 hover:bg-red-600/40 px-2 py-1 rounded"
+          onClick={() => {
+            localStorage.removeItem('chronosVault.onboardingStep');
+            localStorage.removeItem('chronosVault.onboardingCompleted');
+            localStorage.setItem('chronosVault.firstVisit', 'true');
+            window.location.reload();
+          }}
+        >
+          Reset Welcome
+        </button>
+      )}
     </div>
   );
 };

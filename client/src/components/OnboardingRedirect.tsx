@@ -11,6 +11,28 @@ export const OnboardingRedirect = () => {
   const { hasCompletedOnboarding, currentStep, resetOnboarding, isFirstVisit } = useOnboarding();
   const [location, navigate] = useLocation();
   
+  // Handle common error patterns in URL
+  useEffect(() => {
+    // Fix common errors with reset URL parameter
+    if (location === '/resetOnboarding=true' || 
+        location === '/resetonboarding=true' ||
+        location === '/resetOnboarding' || 
+        location === '/resetonboarding') {
+      console.log('Detected incorrect reset URL format, redirecting to correct format');
+      
+      // Reset localStorage directly - this covers edge cases where the context might not reset properly
+      localStorage.removeItem('chronosVault.onboardingStep');
+      localStorage.removeItem('chronosVault.onboardingCompleted');
+      localStorage.removeItem('chronosVault.firstVisit');
+      localStorage.setItem('chronosVault.firstVisit', 'true');
+      
+      // Navigate to onboarding page
+      navigate('/onboarding');
+      return;
+    }
+  }, [location, navigate]);
+  
+  // Primary onboarding redirect logic
   useEffect(() => {
     // Debug logging
     console.log('OnboardingRedirect effect running with:', {
@@ -25,11 +47,22 @@ export const OnboardingRedirect = () => {
       }
     });
     
-    // Force reset onboarding if URL contains ?resetOnboarding=true
+    // Force reset onboarding if URL contains ?resetOnboarding=true (correct format)
     if (window.location.search.includes('resetOnboarding=true')) {
       console.log('Forcing onboarding reset due to URL parameter');
+      
+      // Reset localStorage directly for reliability
+      localStorage.removeItem('chronosVault.onboardingStep');
+      localStorage.removeItem('chronosVault.onboardingCompleted');
+      localStorage.removeItem('chronosVault.firstVisit');
+      localStorage.setItem('chronosVault.firstVisit', 'true');
+      
+      // Now call the context method to synchronize state
       resetOnboarding();
-      return; // Exit early as resetOnboarding will trigger a page reload
+      
+      // Navigate to onboarding page
+      navigate('/onboarding');
+      return;
     }
     
     // If this is the first visit and user is not on onboarding page, redirect them
@@ -53,6 +86,10 @@ export const OnboardingRedirect = () => {
       return;
     }
     
+  }, [location, hasCompletedOnboarding, currentStep, navigate, resetOnboarding, isFirstVisit]);
+  
+  // Add dev mode reset button
+  useEffect(() => {
     // Add a dev mode reset button to the header if in development mode
     const isDevelopmentMode = localStorage.getItem('chronosVault.devMode') === 'true';
     if (isDevelopmentMode) {
@@ -72,13 +109,26 @@ export const OnboardingRedirect = () => {
           resetButton.style.borderRadius = '4px';
           resetButton.style.padding = '4px 8px';
           resetButton.style.fontSize = '10px';
-          resetButton.onclick = resetOnboarding;
+          resetButton.onclick = () => {
+            console.log('Manual reset triggered from dev button');
+            
+            // Reset localStorage directly
+            localStorage.removeItem('chronosVault.onboardingStep');
+            localStorage.removeItem('chronosVault.onboardingCompleted');
+            localStorage.removeItem('chronosVault.firstVisit');
+            localStorage.setItem('chronosVault.firstVisit', 'true');
+            
+            // Use context method to synchronize state
+            resetOnboarding();
+            
+            // Navigate to onboarding
+            navigate('/onboarding');
+          };
           header.appendChild(resetButton);
         }
       }
     }
-    
-  }, [location, hasCompletedOnboarding, currentStep, navigate, resetOnboarding, isFirstVisit]);
+  }, [navigate, resetOnboarding]);
   
   // This is a logical component, not a visual one
   return null;
