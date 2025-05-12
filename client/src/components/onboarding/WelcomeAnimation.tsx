@@ -42,25 +42,57 @@ export const WelcomeAnimation = () => {
     completeCurrentStep();
   };
   
-  // If we're still loading or have an error, show a placeholder
-  if (displayStatus === 'loading') {
-    // MOBILE FIX: After 2 seconds, force visible state even if loading hasn't completed
-    useEffect(() => {
-      const timer = setTimeout(() => {
+  // More aggressive mobile fixes - Force the animation to display after multiple short timeouts
+  useEffect(() => {
+    // Schedule multiple attempts to force the animation to display on mobile
+    const timeouts = [
+      // First attempt - 500ms
+      setTimeout(() => {
         if (displayStatus === 'loading') {
-          console.log('Mobile fix: Forcing welcome animation to visible state after timeout');
+          console.log('Mobile fix 1: First attempt to force animation display');
           setDisplayStatus('visible');
         }
-      }, 2000);
+      }, 500),
       
-      return () => clearTimeout(timer);
-    }, [displayStatus]);
+      // Second attempt - 1.5s
+      setTimeout(() => {
+        if (displayStatus !== 'visible') {
+          console.log('Mobile fix 2: Second attempt to force animation display');
+          setDisplayStatus('visible');
+        }
+      }, 1500),
+      
+      // Final fallback - 3s
+      setTimeout(() => {
+        console.log('Mobile fix 3: Final fallback to ensure animation display');
+        setDisplayStatus('visible');
+      }, 3000)
+    ];
     
+    // Clear all timeouts on unmount
+    return () => timeouts.forEach(t => clearTimeout(t));
+  }, []);
+  
+  // If we're still loading or have an error, show a placeholder
+  if (displayStatus === 'loading') {    
     return (
       <div className="flex items-center justify-center min-h-screen p-4">
         <div className="flex flex-col items-center">
           <div className="w-12 h-12 rounded-full border-4 border-primary border-t-transparent animate-spin mb-4"></div>
           <p className="text-sm text-white/70">Loading welcome experience...</p>
+          
+          {/* Emergency bypass button for mobile users */}
+          {typeof window !== 'undefined' && window.innerWidth < 768 && (
+            <button 
+              className="mt-6 bg-purple-600/50 text-white px-4 py-2 rounded-md text-sm"
+              onClick={() => {
+                console.log('Emergency bypass clicked');
+                setDisplayStatus('visible');
+              }}
+            >
+              Tap to continue
+            </button>
+          )}
         </div>
       </div>
     );
@@ -94,31 +126,95 @@ export const WelcomeAnimation = () => {
   // Add detection for mobile devices for optimizations
   const isMobile = typeof window !== 'undefined' ? window.innerWidth < 768 : false;
   
+  // Special rendering for mobile (ultra simplified to ensure it works)
+  if (isMobile) {
+    return (
+      <div className="relative flex flex-col items-center justify-center min-h-screen overflow-hidden bg-gradient-to-b from-black to-gray-900 px-4 py-6">
+        {/* Static background for mobile */}
+        <div className="absolute inset-0 bg-gradient-to-b from-purple-900/10 to-black/80"></div>
+        
+        {/* Logo - static for mobile */}
+        <div className="relative z-10 mb-6 border-4 border-primary w-28 h-28 rounded-full bg-gradient-to-br from-primary to-secondary flex items-center justify-center">
+          <div className="w-14 h-14 text-white flex items-center justify-center">
+            <svg
+              viewBox="0 0 24 24"
+              className="w-full h-full"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z"
+                fill="currentColor"
+              />
+              <path
+                d="M12.5 7H11v6l5.25 3.15.75-1.23-4.5-2.67z"
+                fill="currentColor"
+              />
+            </svg>
+          </div>
+        </div>
+        
+        {/* Title - static for mobile */}
+        <h1 className="relative z-10 text-3xl font-bold text-white mb-3 text-center">
+          Chronos Vault
+        </h1>
+        
+        {/* Subtitle - static for mobile */}
+        <p className="relative z-10 text-base text-white/80 mb-8 text-center max-w-md px-2">
+          Secure your digital future with time-locked blockchain vaults
+        </p>
+        
+        {/* Continue button - immediately visible on mobile */}
+        <div className="relative z-10">
+          <Button
+            size="default"
+            className="bg-gradient-to-r from-primary to-secondary hover:from-primary/90 hover:to-secondary/90 text-white px-6 py-5 text-base"
+            onClick={handleContinue}
+          >
+            Begin Journey <ArrowRight className="ml-2 h-4 w-4" />
+          </Button>
+        </div>
+        
+        {/* Skip button - immediately visible on mobile */}
+        <div className="mt-4 relative z-10">
+          <button 
+            className="text-white/60 hover:text-white text-sm underline" 
+            onClick={() => {
+              console.log("Skip onboarding clicked");
+              completeCurrentStep();
+            }}
+          >
+            Skip intro
+          </button>
+        </div>
+        
+        {/* Debug button - only in dev mode */}
+        {localStorage.getItem('chronosVault.devMode') === 'true' && (
+          <div className="fixed top-2 right-2 z-50 bg-red-600/30 p-1 rounded text-white text-xs">
+            <p>Mobile Mode</p>
+          </div>
+        )}
+      </div>
+    );
+  }
+  
+  // Desktop welcome animation
   return (
     <div className="relative flex flex-col items-center justify-center min-h-screen overflow-hidden bg-gradient-to-b from-black to-gray-900 px-4 py-6">
-      {/* Background gradient elements - simplified for mobile */}
-      {!isMobile && (
-        <>
-          <motion.div
-            className="absolute w-full h-full bg-gradient-radial from-purple-900/20 to-transparent"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 0.3 }}
-            transition={{ duration: 2, ease: "easeOut" }}
-          />
-          
-          <motion.div
-            className="absolute bottom-0 w-full h-1/3 bg-gradient-to-t from-purple-900/30 to-transparent"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 0.5 }}
-            transition={{ duration: 2, delay: 0.5, ease: "easeOut" }}
-          />
-        </>
-      )}
+      {/* Background gradient elements */}
+      <motion.div
+        className="absolute w-full h-full bg-gradient-radial from-purple-900/20 to-transparent"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 0.3 }}
+        transition={{ duration: 2, ease: "easeOut" }}
+      />
       
-      {/* Static background for mobile */}
-      {isMobile && (
-        <div className="absolute inset-0 bg-gradient-to-b from-purple-900/10 to-black/80"></div>
-      )}
+      <motion.div
+        className="absolute bottom-0 w-full h-1/3 bg-gradient-to-t from-purple-900/30 to-transparent"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 0.5 }}
+        transition={{ duration: 2, delay: 0.5, ease: "easeOut" }}
+      />
       
       {/* Logo animation - simplified for mobile */}
       <motion.div

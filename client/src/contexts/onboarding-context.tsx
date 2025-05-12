@@ -40,6 +40,48 @@ const ONBOARDING_STEPS: OnboardingStep[] = [
 ];
 
 export const OnboardingProvider = ({ children }: { children: ReactNode }) => {
+  // Detect if we're on a mobile device for optimizations
+  const isMobile = typeof window !== 'undefined' ? window.innerWidth < 768 : false;
+  
+  // Handle potential localStorage corruptions through safe initialization
+  useEffect(() => {
+    // Set mobile flag for optimizations
+    if (isMobile) {
+      localStorage.setItem('chronosVault.isMobile', 'true');
+      console.log('Mobile device detected, optimizing onboarding experience');
+    } else {
+      localStorage.removeItem('chronosVault.isMobile');
+    }
+    
+    // Check for corrupted localStorage values and fix them
+    try {
+      // Validate firstVisit flag
+      const firstVisit = localStorage.getItem(FIRST_VISIT_KEY);
+      if (firstVisit !== 'true' && firstVisit !== 'false' && firstVisit !== null) {
+        console.warn('Corrupted firstVisit flag detected, resetting:', firstVisit);
+        localStorage.setItem(FIRST_VISIT_KEY, 'true');
+      }
+      
+      // Validate onboardingCompleted flag
+      const completed = localStorage.getItem(COMPLETED_KEY);
+      if (completed !== 'true' && completed !== 'false' && completed !== null) {
+        console.warn('Corrupted completed flag detected, resetting:', completed);
+        localStorage.setItem(COMPLETED_KEY, 'false');
+      }
+      
+      // Validate onboardingStep
+      try {
+        const step = localStorage.getItem(STEP_KEY);
+        if (step) JSON.parse(step);
+      } catch (e) {
+        console.warn('Corrupted step detected, resetting');
+        localStorage.setItem(STEP_KEY, JSON.stringify('welcome'));
+      }
+    } catch (e) {
+      console.error('Error validating localStorage:', e);
+    }
+  }, [isMobile]);
+  
   // Track whether this is the user's first visit
   const [isFirstVisit, setIsFirstVisit] = useLocalStorage(FIRST_VISIT_KEY, true);
   
@@ -57,6 +99,7 @@ export const OnboardingProvider = ({ children }: { children: ReactNode }) => {
       currentStep,
       hasCompletedOnboarding,
       isFirstVisit,
+      isMobile,
       localStorage: {
         step: localStorage.getItem(STEP_KEY),
         completed: localStorage.getItem(COMPLETED_KEY),
