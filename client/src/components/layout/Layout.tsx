@@ -36,12 +36,27 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
   useEffect(() => {
     if (window.location.search.includes('resetOnboarding=true')) {
       console.log('Forcing onboarding reset due to URL parameter');
+      
+      // Clear localStorage values
       localStorage.removeItem('chronosVault.onboardingStep');
       localStorage.removeItem('chronosVault.onboardingCompleted'); 
       localStorage.removeItem('chronosVault.firstVisit');
       
-      // Force redirect to onboarding page
-      window.location.href = '/onboarding';
+      // Set fresh values to ensure React state updates properly
+      localStorage.setItem('chronosVault.onboardingStep', JSON.stringify('welcome'));
+      localStorage.setItem('chronosVault.onboardingCompleted', 'false');
+      localStorage.setItem('chronosVault.firstVisit', 'true');
+      
+      // IMPORTANT FIX: Only redirect if not already on onboarding page
+      const currentPath = window.location.pathname;
+      if (currentPath !== '/onboarding' && !currentPath.includes('mobile-direct')) {
+        console.log('Redirecting to onboarding page');
+        window.location.href = '/onboarding';
+      } else {
+        console.log('Already on onboarding page, reloading instead of redirecting');
+        // Force a reload to pick up the new localStorage values
+        setTimeout(() => window.location.reload(), 100);
+      }
     }
   }, []); // Empty dependency array means this runs once on mount
   
