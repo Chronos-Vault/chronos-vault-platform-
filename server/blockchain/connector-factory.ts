@@ -386,4 +386,105 @@ export class ConnectorFactory {
     
     return record;
   }
+  
+  /**
+   * Get a connector with a specific endpoint for fallback/recovery purposes
+   * 
+   * @param chainId The blockchain identifier
+   * @param endpoint The specific endpoint URL to use
+   * @returns A blockchain connector configured to use the specified endpoint
+   */
+  getConnectorWithEndpoint(chainId: string, endpoint: string): BlockchainConnector | null {
+    try {
+      // Normalize chainId to lowercase
+      const normalizedChainId = chainId.toLowerCase();
+      
+      // Create a new connector instance
+      let connector: BlockchainConnector;
+      
+      // Use simulation if configured for this chain
+      if (config.shouldSimulateBlockchain(normalizedChainId as any)) {
+        connector = this.createConnector(normalizedChainId);
+        securityLogger.info(`Using simulated connector with alternative endpoint for ${normalizedChainId}`, {
+          chainId: normalizedChainId,
+          endpoint,
+          isSimulated: true
+        });
+        
+        return connector;
+      }
+      
+      // Create a real connector with the alternative endpoint
+      switch (normalizedChainId) {
+        case 'ethereum':
+          // For Ethereum, create a new connector with the specific endpoint
+          const ethConnector = new EthereumConnector(
+            config.blockchainConfig.ethereum.isTestnet,
+            endpoint
+          );
+          connector = ethConnector;
+          break;
+        
+        case 'solana':
+          // For Solana, create a new connector with the specific endpoint
+          const solConnector = new SolanaConnector(
+            config.blockchainConfig.solana.isTestnet,
+            endpoint
+          );
+          connector = solConnector;
+          break;
+        
+        case 'ton':
+          // For TON, create a new connector with the specific endpoint
+          const tonConnector = new TonConnector(
+            config.blockchainConfig.ton.isTestnet,
+            endpoint
+          );
+          connector = tonConnector;
+          break;
+        
+        case 'bitcoin':
+          // For Bitcoin, create a new connector with the specific endpoint
+          const btcConnector = new BitcoinConnector(
+            config.blockchainConfig.bitcoin.isTestnet,
+            endpoint
+          );
+          connector = btcConnector;
+          break;
+        
+        default:
+          securityLogger.error(`Unsupported blockchain for alternative endpoint: ${normalizedChainId}`);
+          return null;
+      }
+      
+      securityLogger.info(`Created connector with alternative endpoint for ${normalizedChainId}`, {
+        chainId: normalizedChainId,
+        endpoint
+      });
+      
+      // Add reliability enhancements to the connector
+      // For alternative endpoints, use specialized settings
+      const enhancedConnector = enhanceConnector(
+        connector,
+        normalizedChainId as BlockchainType,
+        { default: endpoint, fallback: endpoint },
+        {
+          maxRetries: 2,          // Reduced retries for alternative endpoints
+          retryDelayMs: 500,      // Faster initial retry
+          timeoutMs: 10000,       // Shorter timeout
+          exponentialBackoff: false // Linear backoff for alternative endpoints
+        }
+      );
+      
+      return enhancedConnector;
+    } catch (error) {
+      securityLogger.error(`Failed to create connector with alternative endpoint for ${chainId}`, {
+        chainId,
+        endpoint,
+        error
+      });
+      
+      return null;
+    }
+  }
 }

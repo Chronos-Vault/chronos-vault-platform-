@@ -549,6 +549,158 @@ class CrossChainVaultVerification extends EventEmitter {
   }
   
   /**
+   * Verify a vault on a specific blockchain with enhanced recovery mechanisms
+   */
+  private async verifyOnChainWithRecovery(
+    vaultId: string, 
+    chainId: BlockchainType,
+    existingRetryCount: number = 0
+  ): Promise<SecondaryVerification> {
+    // First attempt normal verification
+    try {
+      return await this.verifyOnChain(vaultId, chainId);
+    } catch (error) {
+      // Process the error and determine recovery strategy
+      const crossChainError = crossChainErrorHandler.handle(error, {
+        category: CrossChainErrorCategory.VERIFICATION_FAILURE,
+        blockchain: chainId,
+        operation: 'verifyVault',
+        vaultId,
+        retryCount: existingRetryCount
+      });
+      
+      // Check if we should attempt recovery
+      if (crossChainErrorHandler.shouldAttemptRecovery(crossChainError)) {
+        const retryCount = existingRetryCount + 1;
+        
+        securityLogger.warn(`Attempting recovery for secondary chain verification`, {
+          vaultId,
+          chainId,
+          recoveryAttempt: retryCount,
+          errorMessage: crossChainError.message
+        });
+        
+        // Implement exponential backoff for retries
+        const delayMs = Math.min(1000 * Math.pow(2, retryCount - 1), 15000);
+        await new Promise(resolve => setTimeout(resolve, delayMs));
+        
+        try {
+          // Retry with the same chain
+          return await this.verifyOnChain(vaultId, chainId);
+        } catch (retryError) {
+          // Check if we should try an alternative endpoint
+          if (crossChainError.retryStrategy?.alternativeEndpoint) {
+            securityLogger.warn(`Trying alternative endpoint for ${chainId}`, {
+              vaultId,
+              chainId,
+              alternativeEndpoint: crossChainError.retryStrategy.alternativeEndpoint
+            });
+            
+            try {
+              // Use connector factory to get connector with alternative endpoint
+              const connector = this.connectorFactory.getConnectorWithEndpoint(
+                chainId, 
+                crossChainError.retryStrategy.alternativeEndpoint
+              );
+              
+              if (connector) {
+                // Try verification with alternative endpoint
+                if (config.shouldSimulateBlockchain(chainId)) {
+                  // Simulate verification for the alternative endpoint
+                  const transactionId = `simulated_alt_verification_${chainId}_${vaultId}_${Date.now()}`;
+                  const signature = `sig_alt_${chainId}_${Date.now()}_${Math.random().toString(36).substring(2, 10)}`;
+                  
+                  return {
+                    chainId,
+                    status: VerificationStatus.COMPLETED,
+                    isValid: true,
+                    timestamp: new Date(),
+                    transactionId,
+                    signature
+                  };
+                }
+                
+                // Perform actual verification with the alternative endpoint
+                const altVerificationResult = await connector.verifyVaultIntegrity(vaultId);
+                
+                return {
+                  chainId,
+                  status: VerificationStatus.COMPLETED,
+                  isValid: altVerificationResult.isValid,
+                  timestamp: new Date(),
+                  transactionId: altVerificationResult.transactionHash || undefined,
+                  signature: altVerificationResult.signatures?.[0] || undefined
+                };
+              }
+            } catch (alternativeError) {
+              // Alternative endpoint also failed
+              securityLogger.error(`Alternative endpoint for ${chainId} also failed`, {
+                vaultId,
+                chainId,
+                error: alternativeError
+              });
+            }
+          }
+          
+          // Check if we should try a fallback chain
+          const fallbackChain = crossChainErrorHandler.getRecommendedFallbackChain(chainId);
+          if (fallbackChain) {
+            securityLogger.warn(`Trying fallback chain ${fallbackChain} for ${chainId}`, {
+              vaultId,
+              originalChain: chainId,
+              fallbackChain
+            });
+            
+            try {
+              // Use the fallback chain for verification
+              const fallbackVerification = await this.verifyOnChain(vaultId, fallbackChain);
+              
+              // Mark this as a partial verification with fallback chain
+              return {
+                chainId,
+                status: VerificationStatus.PARTIAL,
+                isValid: fallbackVerification.isValid,
+                timestamp: new Date(),
+                transactionId: fallbackVerification.transactionId,
+                signature: fallbackVerification.signature,
+                error: `Used fallback chain ${fallbackChain} due to ${chainId} unavailability`
+              };
+            } catch (fallbackError) {
+              // Both original and fallback chains failed
+              securityLogger.error(`Both original and fallback chains failed for verification`, {
+                vaultId,
+                originalChain: chainId,
+                fallbackChain,
+                originalError: error.message,
+                fallbackError: fallbackError.message
+              });
+            }
+          }
+          
+          // If all attempts failed, return a special partial verification status
+          // This indicates that the verification might be valid but couldn't be fully confirmed
+          return {
+            chainId,
+            status: VerificationStatus.PARTIAL,
+            isValid: false,
+            timestamp: new Date(),
+            error: `Chain verification failed after ${retryCount} recovery attempts: ${crossChainError.message}`
+          };
+        }
+      } else {
+        // Not recoverable, return standard failed verification
+        return {
+          chainId,
+          status: VerificationStatus.FAILED,
+          isValid: false,
+          timestamp: new Date(),
+          error: crossChainError.message
+        };
+      }
+    }
+  }
+
+  /**
    * Queue verification for later
    */
   public scheduleVerification(
