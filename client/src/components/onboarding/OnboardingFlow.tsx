@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useOnboarding } from '@/contexts/onboarding-context';
 import { WelcomeAnimation } from './WelcomeAnimation';
 import { ConceptIntroduction } from './ConceptIntroduction';
@@ -11,7 +11,35 @@ import WalletConnection from './WalletConnection';
  * onboarding step based on current progress.
  */
 export const OnboardingFlow = () => {
-  const { currentStep, progress } = useOnboarding();
+  const { currentStep, progress, resetOnboarding } = useOnboarding();
+  const [forceWelcome, setForceWelcome] = useState(false);
+  
+  // Check if welcome should be forced on first render
+  useEffect(() => {
+    // Validate localStorage state
+    const step = localStorage.getItem('chronosVault.onboardingStep');
+    const completed = localStorage.getItem('chronosVault.onboardingCompleted');
+    
+    // Log debug information
+    console.log('OnboardingFlow mounted with:', {
+      currentStep,
+      localStorage: {
+        step,
+        completed
+      }
+    });
+    
+    // If there's an inconsistency, force welcome screen
+    if (!step || step === 'null' || step === 'undefined') {
+      console.log('No step found in localStorage, forcing welcome animation');
+      setForceWelcome(true);
+      
+      // Reset localStorage values
+      localStorage.removeItem('chronosVault.onboardingStep');
+      localStorage.removeItem('chronosVault.onboardingCompleted');
+      localStorage.setItem('chronosVault.firstVisit', 'true');
+    }
+  }, []);
   
   // Scroll to top when step changes
   useEffect(() => {
@@ -20,6 +48,12 @@ export const OnboardingFlow = () => {
   
   // Render the appropriate step component
   const renderCurrentStep = () => {
+    // Always show welcome if force welcome is true
+    if (forceWelcome) {
+      return <WelcomeAnimation />;
+    }
+    
+    // Otherwise show the current step
     switch (currentStep) {
       case 'welcome':
         return <WelcomeAnimation />;
@@ -35,6 +69,8 @@ export const OnboardingFlow = () => {
         // When complete, automatically redirect to home (handled by useEffect in OnboardingRedirect.tsx)
         return null;
       default:
+        // If we have an invalid step, reset to welcome
+        console.log('Invalid step detected, resetting to welcome');
         return <WelcomeAnimation />;
     }
   };
@@ -62,6 +98,16 @@ export const OnboardingFlow = () => {
       <div className="flex-1 flex flex-col">
         {renderCurrentStep()}
       </div>
+      
+      {/* Debug reset button - only visible in dev mode */}
+      {localStorage.getItem('chronosVault.devMode') === 'true' && (
+        <button 
+          className="fixed top-16 right-3 z-50 bg-red-500 text-white text-xs rounded px-2 py-1"
+          onClick={() => resetOnboarding()}
+        >
+          Reset Flow
+        </button>
+      )}
     </div>
   );
 };
