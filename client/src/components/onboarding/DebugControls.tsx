@@ -1,87 +1,115 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { useOnboarding } from '@/contexts/onboarding-context';
 import { useLocation } from 'wouter';
 
 /**
- * Debug controls for resetting and testing the onboarding flow
- * Only displayed in development mode
+ * Debug controls panel for onboarding
+ * Only visible in development mode
  */
-export const OnboardingDebugControls = () => {
-  const { resetOnboarding } = useOnboarding();
+export const OnboardingDebugControls: React.FC = () => {
+  const [isExpanded, setIsExpanded] = useState(false);
+  const { 
+    resetOnboarding, 
+    currentStep, 
+    setCurrentStep, 
+    hasCompletedOnboarding,
+    isFirstVisit,
+    completeOnboarding
+  } = useOnboarding();
   const [_, navigate] = useLocation();
-  const [debugVisible, setDebugVisible] = useState(false);
-  const isDevelopmentMode = localStorage.getItem('chronosVault.devMode') === 'true';
   
-  if (!isDevelopmentMode) {
-    return null;
-  }
+  // Only show in development mode
+  const isDevelopmentMode = localStorage.getItem('chronosVault.devMode') === 'true';
+  if (!isDevelopmentMode) return null;
+  
+  // Get device type for better positioning
+  const isMobile = typeof window !== 'undefined' ? window.innerWidth < 768 : false;
+  
+  const handleReset = () => {
+    console.log('Debug: Resetting onboarding...');
+    resetOnboarding();
+    localStorage.setItem('chronosVault.firstVisit', 'true');
+    navigate('/onboarding');
+  };
+  
+  const handleDirectStep = (step: string) => {
+    console.log(`Debug: Setting step to ${step}`);
+    setCurrentStep(step);
+    navigate('/onboarding');
+  };
+  
+  const handleComplete = () => {
+    console.log('Debug: Marking onboarding as completed');
+    completeOnboarding();
+    navigate('/');
+  };
   
   return (
-    <div className="fixed top-20 right-4 z-50">
-      <button
-        className="bg-yellow-500 hover:bg-yellow-600 text-white text-xs px-2 py-1 rounded shadow"
-        onClick={() => setDebugVisible(!debugVisible)}
-      >
-        {debugVisible ? 'Hide Debug' : 'Show Debug'}
-      </button>
+    <div className={`fixed ${isMobile ? 'bottom-16' : 'bottom-4'} left-4 z-50 transition-all duration-300 
+      ${isExpanded ? (isMobile ? 'h-60' : 'h-auto') : 'h-8'} 
+      ${isMobile ? 'w-[calc(100%-2rem)]' : 'w-64'} 
+      bg-black/80 border border-purple-500/30 rounded-md overflow-hidden text-xs`}>
       
-      {debugVisible && (
-        <div className="mt-2 bg-black/80 backdrop-blur-sm p-3 rounded shadow border border-yellow-500 w-64">
-          <h3 className="text-white font-bold text-sm mb-2">Onboarding Debug</h3>
+      {/* Header bar */}
+      <div 
+        className="flex items-center justify-between bg-purple-900/50 px-2 py-1 cursor-pointer"
+        onClick={() => setIsExpanded(!isExpanded)}
+      >
+        <span className="text-white">🛠 Onboarding Debug Controls</span>
+        <span className="text-white">{isExpanded ? '▼' : '▲'}</span>
+      </div>
+      
+      {isExpanded && (
+        <div className="p-2 text-white space-y-3">
+          {/* Current state */}
+          <div className="space-y-1">
+            <p><span className="text-gray-400">Current step:</span> {currentStep}</p>
+            <p><span className="text-gray-400">First visit:</span> {isFirstVisit ? 'Yes' : 'No'}</p>
+            <p><span className="text-gray-400">Completed:</span> {hasCompletedOnboarding ? 'Yes' : 'No'}</p>
+          </div>
           
-          <div className="space-y-2">
+          {/* Buttons */}
+          <div className="flex flex-wrap gap-2">
             <button 
-              className="w-full bg-red-600 hover:bg-red-700 text-white text-xs p-1 rounded"
-              onClick={() => {
-                console.log('MANUAL HARD RESET');
-                
-                // Clear localStorage directly
-                localStorage.removeItem('chronosVault.onboardingStep');
-                localStorage.removeItem('chronosVault.onboardingCompleted');
-                localStorage.removeItem('chronosVault.firstVisit');
-                
-                // Set firstVisit flag
-                localStorage.setItem('chronosVault.firstVisit', 'true');
-                localStorage.setItem('chronosVault.onboardingStep', JSON.stringify('welcome'));
-                
-                // Use context method
-                resetOnboarding();
-                
-                // Navigate with delay
-                setTimeout(() => navigate('/onboarding'), 100);
-              }}
+              className="px-2 py-1 bg-red-600/50 hover:bg-red-600 rounded text-white"
+              onClick={handleReset}
             >
-              Hard Reset Onboarding
+              Reset All
             </button>
             
             <button 
-              className="w-full bg-blue-600 hover:bg-blue-700 text-white text-xs p-1 rounded"
-              onClick={() => {
-                navigate('/reset-onboarding');
-              }}
+              className="px-2 py-1 bg-green-600/50 hover:bg-green-600 rounded text-white"
+              onClick={handleComplete}
             >
-              Go to Reset Page
+              Complete
             </button>
-            
-            <div className="text-xs text-white/70 mt-2 space-y-1">
-              <div>
-                <span className="text-white font-bold">firstVisit:</span>{' '}
-                {localStorage.getItem('chronosVault.firstVisit') || 'not set'}
-              </div>
-              <div>
-                <span className="text-white font-bold">step:</span>{' '}
-                {localStorage.getItem('chronosVault.onboardingStep') || 'not set'}
-              </div>
-              <div>
-                <span className="text-white font-bold">completed:</span>{' '}
-                {localStorage.getItem('chronosVault.onboardingCompleted') || 'not set'}
-              </div>
-            </div>
+          </div>
+          
+          {/* Step buttons */}
+          <div className="flex flex-wrap gap-1">
+            <p className="w-full text-gray-400">Go to step:</p>
+            {['welcome', 'intro', 'security', 'vaultSelect', 'complete'].map(step => (
+              <button 
+                key={step}
+                className={`px-2 py-1 rounded ${currentStep === step ? 'bg-blue-600' : 'bg-blue-600/30 hover:bg-blue-600/60'}`}
+                onClick={() => handleDirectStep(step)}
+              >
+                {step}
+              </button>
+            ))}
+          </div>
+          
+          {/* Emergency button */}
+          <div className="border-t border-gray-700 pt-2">
+            <button
+              className="w-full px-2 py-1 bg-gradient-to-r from-red-600 to-orange-600 rounded font-medium text-white"
+              onClick={() => navigate('/force-reset')}
+            >
+              EMERGENCY RESET
+            </button>
           </div>
         </div>
       )}
     </div>
   );
 };
-
-export default OnboardingDebugControls;

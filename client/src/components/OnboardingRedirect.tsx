@@ -8,10 +8,14 @@ import { useOnboarding } from '@/contexts/onboarding-context';
  * when onboarding is complete.
  * 
  * IMPORTANT FIX - SIMPLIFIED IMPLEMENTATION TO STOP INFINITE LOOPS
+ * NOW WITH MOBILE OPTIMIZATIONS
  */
 export const OnboardingRedirect = () => {
   const { hasCompletedOnboarding, currentStep, resetOnboarding, isFirstVisit } = useOnboarding();
   const [location, navigate] = useLocation();
+  
+  // Detect if we're on a mobile device for optimizations
+  const isMobile = typeof window !== 'undefined' ? window.innerWidth < 768 : false;
   
   // One-time initialization effect - this runs only once on component mount
   useEffect(() => {
@@ -20,6 +24,7 @@ export const OnboardingRedirect = () => {
       location,
       currentStep,
       isFirstVisit,
+      isMobile,
       hasCompletedOnboarding,
       localStorage: {
         step: localStorage.getItem('chronosVault.onboardingStep'),
@@ -28,6 +33,14 @@ export const OnboardingRedirect = () => {
         devMode: localStorage.getItem('chronosVault.devMode')
       }
     });
+    
+    // Set mobile flag for optimizations
+    if (isMobile) {
+      localStorage.setItem('chronosVault.isMobile', 'true');
+      console.log('Mobile device detected, optimizing onboarding experience');
+    } else {
+      localStorage.removeItem('chronosVault.isMobile');
+    }
     
     // SPECIAL CASE: URL Parameter Reset - Highest Priority
     // This handles ?resetOnboarding=true in the URL
@@ -39,8 +52,9 @@ export const OnboardingRedirect = () => {
     
     // SPECIAL CASE: Manual path reset - High Priority
     // This handles paths like /resetOnboarding or /reset-onboarding
-    if (location.startsWith('/reset')) {
-      console.log('FULL RESET: /reset path detected:', location);
+    // Also handle /force-reset path
+    if (location.startsWith('/reset') || location === '/force-reset') {
+      console.log('FULL RESET: Reset path detected:', location);
       // We don't need to navigate since the reset page will handle that
       return;
     }
@@ -51,7 +65,7 @@ export const OnboardingRedirect = () => {
       // Ensure we stay on first visit
       localStorage.setItem('chronosVault.firstVisit', 'true');
       // Navigate with a slight delay to avoid race conditions
-      setTimeout(() => navigate('/onboarding'), 50);
+      setTimeout(() => navigate('/onboarding'), isMobile ? 100 : 50);
       return;
     }
     

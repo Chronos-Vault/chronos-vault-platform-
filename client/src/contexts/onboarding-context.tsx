@@ -12,7 +12,9 @@ type OnboardingStep =
 
 interface OnboardingContextType {
   currentStep: OnboardingStep;
+  setCurrentStep: (step: OnboardingStep) => void;  // Added for debug controls
   completeCurrentStep: () => void;
+  completeOnboarding: () => void;  // Added for debug controls
   skipToEnd: () => void;
   resetOnboarding: () => void;
   progress: number;
