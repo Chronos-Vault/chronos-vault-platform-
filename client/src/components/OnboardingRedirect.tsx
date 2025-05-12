@@ -42,6 +42,42 @@ export const OnboardingRedirect = () => {
       localStorage.removeItem('chronosVault.isMobile');
     }
     
+    // First time visitor detection and fixes
+    try {
+      // Check if firstVisit flag is missing, corrupt, or not defined properly
+      const firstVisitFlag = localStorage.getItem('chronosVault.firstVisit');
+      const onboardingStep = localStorage.getItem('chronosVault.onboardingStep');
+      const completedFlag = localStorage.getItem('chronosVault.onboardingCompleted');
+      
+      // AUTO-FIX: If first time or any localStorage state is corrupt or missing
+      if (!firstVisitFlag || 
+          !onboardingStep ||
+          onboardingStep === 'null' || 
+          onboardingStep === 'undefined' ||
+          typeof JSON.parse(onboardingStep) !== 'string' || 
+          !completedFlag) {
+        
+        console.log('AUTO-FIX: Missing or corrupt onboarding state detected, fixing and redirecting to onboarding');
+        
+        // Properly set everything for first visit
+        localStorage.setItem('chronosVault.firstVisit', 'true');
+        localStorage.setItem('chronosVault.onboardingStep', JSON.stringify('welcome'));
+        localStorage.setItem('chronosVault.onboardingCompleted', 'false');
+        
+        // Use the reset onboarding function to ensure context is updated
+        resetOnboarding();
+        
+        // Force redirect to onboarding after a very short delay
+        setTimeout(() => navigate('/onboarding'), 50);
+        return;
+      }
+    } catch (e) {
+      // If any error occurs, assume it's a first visit and reset
+      console.error('Error checking onboarding state, resetting:', e);
+      performFullReset();
+      return;
+    }
+    
     // SPECIAL CASE: URL Parameter Reset - Highest Priority
     // This handles ?resetOnboarding=true in the URL
     if (window.location.search.includes('resetOnboarding=true')) {

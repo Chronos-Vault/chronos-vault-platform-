@@ -784,6 +784,31 @@
   width: 6px;
 }
 
+/* Special CSS to help with mobile optimization */
+@media (max-width: 767px) {
+  /* Simplified animations for mobile */
+  .mobile-friendly {
+    animation: none !important;
+    transform: none !important;
+    transition: opacity 0.3s ease !important;
+  }
+  
+  /* Larger touch targets for mobile */
+  button, 
+  a, 
+  .clickable, 
+  [role="button"] {
+    min-height: 44px;
+    min-width: 44px;
+  }
+  
+  /* Reduce motion for better performance */
+  * {
+    animation-duration: 0.5s !important;
+    transition-duration: 0.5s !important;
+  }
+}
+
 ::-webkit-scrollbar-track {
   background: #2A2A2A;
 }
