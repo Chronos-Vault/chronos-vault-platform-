@@ -97,6 +97,18 @@ export default function NotFound() {
                     
                     <Button 
                       variant="outline"
+                      className="w-full justify-between border-[#FF5AF7]/30 bg-[#1A1A1A] hover:bg-[#FF5AF7]/10 mt-2"
+                      onClick={() => navigate('/mobile-reset')}
+                    >
+                      <span className="flex items-center">
+                        <RotateCcw className="mr-2 h-4 w-4 text-[#FF5AF7]" />
+                        Mobile Reset Page
+                      </span>
+                      <span className="text-xs bg-[#FF5AF7]/20 text-[#FF5AF7] px-2 py-1 rounded">Emergency Fix</span>
+                    </Button>
+                    
+                    <Button 
+                      variant="outline"
                       className="w-full justify-between border-[#6B00D7]/30 bg-[#1A1A1A] hover:bg-[#6B00D7]/10 mt-2"
                       onClick={() => navigate('/mobile')}
                     >

@@ -104,6 +104,7 @@ function Router() {
   const ForceResetPage = React.lazy(() => import('./pages/force-reset'));
   const MobileLandingPage = React.lazy(() => import('./pages/mobile-landing'));
   const MobileDirectPage = React.lazy(() => import('./pages/mobile-direct'));
+  const MobileResetPage = React.lazy(() => import('./pages/mobile-reset'));
   
   return (
     <Layout>
@@ -128,7 +129,10 @@ function Router() {
           <Route path="/forcereset" component={ForceResetPage} />
           <Route path="/reset" component={ForceResetPage} />
           <Route path="/emergency-reset" component={ForceResetPage} />
-          <Route path="/mobile-reset" component={ForceResetPage} />
+          
+          {/* Dedicated mobile reset page - optimized for mobile */}
+          <Route path="/mobile-reset" component={MobileResetPage} />
+          <Route path="/m-reset" component={MobileResetPage} />
           
           {/* Special mobile landing page for maximum reliability on mobile */}
           <Route path="/m" component={MobileLandingPage} />
