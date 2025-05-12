@@ -7,6 +7,7 @@ import { useMutation } from "@tanstack/react-query";
 import { apiRequest } from "@/lib/queryClient";
 import { insertVaultSchema } from "@shared/schema";
 import { useToast } from "@/hooks/use-toast";
+import { cn } from "@/lib/utils";
 import { FileUpload } from "@/components/attachments/file-upload";
 import { EnhancedMediaUploader } from "@/components/attachments/enhanced-media-uploader";
 import VaultTypeSelector, { SpecializedVaultType } from "@/components/vault/vault-type-selector";
@@ -1870,16 +1871,24 @@ export function CreateVaultForm({
                     <Button 
                       type="submit" 
                       disabled={mutation.isPending || isBlockchainDeploying}
-                      className="bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] text-white"
+                      className={cn(
+                        "relative",
+                        Object.keys(form.formState.errors).length > 0
+                          ? "bg-red-800 hover:bg-red-700 text-white"
+                          : "bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] text-white"
+                      )}
                     >
+                      {Object.keys(form.formState.errors).length > 0 && (
+                        <AlertCircle className="absolute top-1/2 transform -translate-y-1/2 left-2 h-4 w-4 text-red-300" />
+                      )}
+                      
                       {mutation.isPending || isBlockchainDeploying ? (
                         <div className="flex items-center">
-                          <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                          </svg>
+                          <Loader2 className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" />
                           {deploymentStatus || "Creating Vault..."}
                         </div>
+                      ) : Object.keys(form.formState.errors).length > 0 ? (
+                        <span className="pl-5">Fix Errors</span>
                       ) : (
                         <div className="flex items-center">
                           Create Vault
