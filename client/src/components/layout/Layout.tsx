@@ -65,18 +65,45 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
     if (isDevelopmentMode) {
       window.resetOnboarding = () => {
         console.log('Emergency onboarding reset triggered');
+        
+        // Clear localStorage values
         localStorage.removeItem('chronosVault.onboardingStep');
         localStorage.removeItem('chronosVault.onboardingCompleted');
         localStorage.removeItem('chronosVault.firstVisit');
-        window.location.href = '/onboarding';
+        
+        // Set fresh values to ensure React state updates properly
+        localStorage.setItem('chronosVault.onboardingStep', JSON.stringify('welcome'));
+        localStorage.setItem('chronosVault.onboardingCompleted', 'false');
+        localStorage.setItem('chronosVault.firstVisit', 'true');
+        
+        // Use same path checking logic to prevent redirect loops
+        const currentPath = window.location.pathname;
+        if (currentPath !== '/onboarding' && !currentPath.includes('mobile-direct')) {
+          console.log('Redirecting to onboarding page');
+          window.location.href = '/onboarding';
+        } else {
+          console.log('Already on onboarding page, reloading instead of redirecting');
+          window.location.reload();
+        }
       };
       
       window.forceFirstVisit = () => {
         console.log('Forcing first visit flag');
+        
+        // Clear and set localStorage with proper values
         localStorage.setItem('chronosVault.firstVisit', 'true');
-        localStorage.setItem('chronosVault.onboardingStep', 'welcome');
+        localStorage.setItem('chronosVault.onboardingStep', JSON.stringify('welcome'));
         localStorage.removeItem('chronosVault.onboardingCompleted');
-        window.location.href = '/onboarding';
+        
+        // Use same path checking logic to prevent redirect loops
+        const currentPath = window.location.pathname;
+        if (currentPath !== '/onboarding' && !currentPath.includes('mobile-direct')) {
+          console.log('Redirecting to onboarding page');
+          window.location.href = '/onboarding';
+        } else {
+          console.log('Already on onboarding page, reloading instead of redirecting');
+          window.location.reload();
+        }
       };
       
       console.log('Added emergency reset functions:');
