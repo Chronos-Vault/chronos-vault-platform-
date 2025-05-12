@@ -98,129 +98,101 @@ function Redirect({ to }: { to: string }) {
 function Router() {
   const [_, navigate] = useLocation();
   
-  // Special handler for the common error of using /resetOnboarding=true
-  const handleResetRedirect = () => {
-    console.log('Detected /resetOnboarding=true URL - common error, redirecting to onboarding');
-    
-    // Reset localStorage immediately
-    localStorage.removeItem('chronosVault.onboardingStep');
-    localStorage.removeItem('chronosVault.onboardingCompleted');
-    localStorage.removeItem('chronosVault.firstVisit');
-    
-    // Set firstVisit to true to force welcome animation
-    localStorage.setItem('chronosVault.firstVisit', 'true');
-    
-    // Redirect after a short delay
-    setTimeout(() => navigate('/onboarding'), 100);
-    
-    return (
-      <div className="flex flex-col items-center justify-center min-h-[50vh] p-8">
-        <h1 className="text-2xl font-bold mb-4">Resetting Onboarding</h1>
-        <p className="text-center mb-6">
-          We detected that you're trying to reset the onboarding process.
-          <br />
-          Redirecting you to the welcome message...
-        </p>
-        <div className="h-2 w-64 bg-gray-200 rounded-full overflow-hidden">
-          <div className="h-full bg-primary animate-pulse rounded-full"></div>
-        </div>
-      </div>
-    );
-  };
+  // Import the dedicated reset page (using regular import at the top of file instead)
+  const ResetOnboardingPage = React.lazy(() => import('./pages/reset-onboarding-page'));
   
   return (
     <Layout>
-      <Switch>
-        <Route path="/" component={Home} />
-        <Route path="/onboarding" component={OnboardingPage} />
-        
-        {/* Special routes to handle common URL mistakes */}
-        <Route path="/resetOnboarding=true">
-          {handleResetRedirect}
-        </Route>
-        <Route path="/resetonboarding=true">
-          {handleResetRedirect}
-        </Route>
-        <Route path="/resetOnboarding">
-          {handleResetRedirect}
-        </Route>
-        <Route path="/resetonboarding">
-          {handleResetRedirect}
-        </Route>
-        
-        {/* Important: Route order matters! More specific routes should come before less specific ones */}
-        <Route path="/create-vault/cross-chain" component={CreateVault} />
-        <Route path="/create-vault" component={CreateVault} />
-        <Route path="/create-vault-enhanced" component={CreateVaultEnhancedPage} />
-        <Route path="/vault-types" component={VaultTypesSelector} />
-        <Route path="/advanced-vault" component={AdvancedVaultCreationPage} />
-        <Route path="/advanced-vault-new" component={AdvancedVaultCreationNewPage} />
-        <Route path="/specialized-vault" component={SpecializedVaultCreationPage} />
-        <Route path="/specialized-vault-creation" component={SpecializedVaultCreationPage} />
-        <Route path="/my-vaults" component={MyVaults} />
-        <Route path="/vault/:id" component={VaultDetails} />
-        <Route path="/about" component={About} />
-        <Route path="/bitcoin-halving" component={BitcoinHalvingPage} />
-        <Route path="/bitcoin-halving-vault" component={BitcoinHalvingVaultPage} />
-        <Route path="/roadmap" component={RoadmapPage} />
-        <Route path="/cvt-token" component={CVTTokenPage} />
-        <Route path="/cvt-utility" component={CVTUtilityPage} />
-        <Route path="/token-vaults" component={TokenVaultsPage} />
-        <Route path="/multi-signature-vault-new" component={MultiSignatureVaultPage} />
-        <Route path="/cross-chain" component={CrossChainPage} />
-        <Route path="/cross-chain-vault" component={CrossChainVaultPage} />
-        <Route path="/cross-chain-security" component={CrossChainSecurityPage} />
-        <Route path="/cross-chain-atomic-swap" component={CrossChainAtomicSwapPage} />
-        <Route path="/cross-chain-vs-atomic-swap" component={CrossChainVsAtomicSwapPage} />
-        <Route path="/cross-chain-bridge" component={CrossChainBridgePage} />
-        <Route path="/transaction-verification" component={TransactionVerificationPage} />
-        <Route path="/cross-chain-monitor" component={CrossChainMonitorPage} />
-        <Route path="/intent-inheritance-vault" component={IntentInheritanceVault} />
-        <Route path="/ton-integration" component={TONIntegrationPage} />
-        <Route path="/solana-integration" component={SolanaIntegrationPage} />
-        <Route path="/ethereum-integration" component={EthereumIntegrationPage} />
-        <Route path="/gift-crypto" component={GiftCryptoPage} />
-        <Route path="/revolutionary-features" component={RevolutionaryFeaturesPage} />
-        <Route path="/documentation" component={DocumentationPage} />
-        <Route path="/technical-specification" component={TechnicalSpecificationPage} />
-        <Route path="/cvt-tokenomics" component={CVTTokenomicsPage} />
-        <Route path="/whitepaper" component={WhitepaperPage} />
-        <Route path="/project-whitepaper" component={ProjectWhitepaperPage} />
-        <Route path="/privacy-dashboard" component={PrivacyDashboardPage} />
-        <Route path="/security-testing" component={SecurityTestingPage} />
-        <Route path="/security" component={SecurityPage} />
-        <Route path="/security-dashboard" component={SecurityDashboardPage} />
-        <Route path="/security-verification-demo" component={SecurityVerificationDemo} />
-        <Route path="/triple-chain-security-demo" component={TripleChainSecurityDemo} />
-        <Route path="/vault-explorer" component={VaultExplorer} />
-        {/* Development routes hidden from navigation */}
-        <Route path="/test-contract" component={TestContractPage} />
-        <Route path="/wallet-manager" component={WalletManagerPage} />
-        <Route path="/premium-features" component={PremiumFeaturesPage} />
-        <Route path="/premium-payment/:vaultId?" component={PremiumPaymentPage} />
-        <Route path="/cvt-payment/:vaultId?" component={CVTPaymentPage} />
-        <Route path="/subscription" component={SubscriptionPage} />
-        <Route path="/admin/technical-dashboard" component={TechnicalDashboardPage} />
-        <Route path="/storage" component={StoragePage} />
-        <Route path="/transaction-monitor" component={TransactionMonitorPage} />
-        <Route path="/audit-test" component={SmartContractAuditTest} />
-        <Route path="/cross-chain-test" component={CrossChainTestPage} />
-        <Route path="/zk-privacy-demo" component={ZkPrivacyDemoPage} />
-        <Route path="/quantum-vault" component={QuantumVaultPage} />
-        <Route path="/quantum-vault/:id" component={QuantumVaultPage} />
-        <Route path="/investment-discipline-vault" component={InvestmentDisciplineVaultPage} />
-        <Route path="/biometric-vault" component={BiometricVaultPage} />
-        <Route path="/zero-knowledge-verification" component={ZeroKnowledgeVerificationPage} />
-        <Route path="/multi-chain-sync" component={MultiChainSyncPage} />
-        <Route path="/geo-vaults" component={GeoVaultPage} />
-        <Route path="/geo-vaults/:id" component={GeoVaultPage} />
-        <Route path="/geo-vaults/create" component={GeoVaultPage} />
-        <Route path="/geo-vault" component={GeoVaultPage} />
-        <Route path="/faq" component={FAQPage} />
-        <Route path="/smart-contracts" component={SmartContractsPage} />
+      <React.Suspense fallback={
+        <div className="flex items-center justify-center min-h-screen">
+          <div className="w-12 h-12 rounded-full border-4 border-primary border-t-transparent animate-spin"></div>
+        </div>
+      }>
+        <Switch>
+          <Route path="/" component={Home} />
+          <Route path="/onboarding" component={OnboardingPage} />
+          
+          {/* Special routes to handle common URL mistakes - using dedicated component */}
+          <Route path="/resetOnboarding=true" component={ResetOnboardingPage} />
+          <Route path="/resetonboarding=true" component={ResetOnboardingPage} />
+          <Route path="/resetOnboarding" component={ResetOnboardingPage} />
+          <Route path="/resetonboarding" component={ResetOnboardingPage} />
+          <Route path="/reset-onboarding" component={ResetOnboardingPage} />
+          
+          {/* Important: Route order matters! More specific routes should come before less specific ones */}
+          <Route path="/create-vault/cross-chain" component={CreateVault} />
+          <Route path="/create-vault" component={CreateVault} />
+          <Route path="/create-vault-enhanced" component={CreateVaultEnhancedPage} />
+          <Route path="/vault-types" component={VaultTypesSelector} />
+          <Route path="/advanced-vault" component={AdvancedVaultCreationPage} />
+          <Route path="/advanced-vault-new" component={AdvancedVaultCreationNewPage} />
+          <Route path="/specialized-vault" component={SpecializedVaultCreationPage} />
+          <Route path="/specialized-vault-creation" component={SpecializedVaultCreationPage} />
+          <Route path="/my-vaults" component={MyVaults} />
+          <Route path="/vault/:id" component={VaultDetails} />
+          <Route path="/about" component={About} />
+          <Route path="/bitcoin-halving" component={BitcoinHalvingPage} />
+          <Route path="/bitcoin-halving-vault" component={BitcoinHalvingVaultPage} />
+          <Route path="/roadmap" component={RoadmapPage} />
+          <Route path="/cvt-token" component={CVTTokenPage} />
+          <Route path="/cvt-utility" component={CVTUtilityPage} />
+          <Route path="/token-vaults" component={TokenVaultsPage} />
+          <Route path="/multi-signature-vault-new" component={MultiSignatureVaultPage} />
+          <Route path="/cross-chain" component={CrossChainPage} />
+          <Route path="/cross-chain-vault" component={CrossChainVaultPage} />
+          <Route path="/cross-chain-security" component={CrossChainSecurityPage} />
+          <Route path="/cross-chain-atomic-swap" component={CrossChainAtomicSwapPage} />
+          <Route path="/cross-chain-vs-atomic-swap" component={CrossChainVsAtomicSwapPage} />
+          <Route path="/cross-chain-bridge" component={CrossChainBridgePage} />
+          <Route path="/transaction-verification" component={TransactionVerificationPage} />
+          <Route path="/cross-chain-monitor" component={CrossChainMonitorPage} />
+          <Route path="/intent-inheritance-vault" component={IntentInheritanceVault} />
+          <Route path="/ton-integration" component={TONIntegrationPage} />
+          <Route path="/solana-integration" component={SolanaIntegrationPage} />
+          <Route path="/ethereum-integration" component={EthereumIntegrationPage} />
+          <Route path="/gift-crypto" component={GiftCryptoPage} />
+          <Route path="/revolutionary-features" component={RevolutionaryFeaturesPage} />
+          <Route path="/documentation" component={DocumentationPage} />
+          <Route path="/technical-specification" component={TechnicalSpecificationPage} />
+          <Route path="/cvt-tokenomics" component={CVTTokenomicsPage} />
+          <Route path="/whitepaper" component={WhitepaperPage} />
+          <Route path="/project-whitepaper" component={ProjectWhitepaperPage} />
+          <Route path="/privacy-dashboard" component={PrivacyDashboardPage} />
+          <Route path="/security-testing" component={SecurityTestingPage} />
+          <Route path="/security" component={SecurityPage} />
+          <Route path="/security-dashboard" component={SecurityDashboardPage} />
+          <Route path="/security-verification-demo" component={SecurityVerificationDemo} />
+          <Route path="/triple-chain-security-demo" component={TripleChainSecurityDemo} />
+          <Route path="/vault-explorer" component={VaultExplorer} />
+          {/* Development routes hidden from navigation */}
+          <Route path="/test-contract" component={TestContractPage} />
+          <Route path="/wallet-manager" component={WalletManagerPage} />
+          <Route path="/premium-features" component={PremiumFeaturesPage} />
+          <Route path="/premium-payment/:vaultId?" component={PremiumPaymentPage} />
+          <Route path="/cvt-payment/:vaultId?" component={CVTPaymentPage} />
+          <Route path="/subscription" component={SubscriptionPage} />
+          <Route path="/admin/technical-dashboard" component={TechnicalDashboardPage} />
+          <Route path="/storage" component={StoragePage} />
+          <Route path="/transaction-monitor" component={TransactionMonitorPage} />
+          <Route path="/audit-test" component={SmartContractAuditTest} />
+          <Route path="/cross-chain-test" component={CrossChainTestPage} />
+          <Route path="/zk-privacy-demo" component={ZkPrivacyDemoPage} />
+          <Route path="/quantum-vault" component={QuantumVaultPage} />
+          <Route path="/quantum-vault/:id" component={QuantumVaultPage} />
+          <Route path="/investment-discipline-vault" component={InvestmentDisciplineVaultPage} />
+          <Route path="/biometric-vault" component={BiometricVaultPage} />
+          <Route path="/zero-knowledge-verification" component={ZeroKnowledgeVerificationPage} />
+          <Route path="/multi-chain-sync" component={MultiChainSyncPage} />
+          <Route path="/geo-vaults" component={GeoVaultPage} />
+          <Route path="/geo-vaults/:id" component={GeoVaultPage} />
+          <Route path="/geo-vaults/create" component={GeoVaultPage} />
+          <Route path="/geo-vault" component={GeoVaultPage} />
+          <Route path="/faq" component={FAQPage} />
+          <Route path="/smart-contracts" component={SmartContractsPage} />
 
-        <Route component={NotFound} />
-      </Switch>
+          <Route component={NotFound} />
+        </Switch>
+      </React.Suspense>
       <Toaster />
     </Layout>
   );
