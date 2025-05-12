@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { useOnboarding } from '@/contexts/onboarding-context';
 import { WelcomeAnimation } from './WelcomeAnimation';
 import { ConceptIntroduction } from './ConceptIntroduction';
@@ -13,33 +13,42 @@ import WalletConnection from './WalletConnection';
 export const OnboardingFlow = () => {
   const { currentStep, progress, resetOnboarding } = useOnboarding();
   const [forceWelcome, setForceWelcome] = useState(false);
+  const isInitialMount = useRef(true);
   
-  // Check if welcome should be forced on first render
+  // Check if welcome should be forced, but only on first render
   useEffect(() => {
-    // Validate localStorage state
-    const step = localStorage.getItem('chronosVault.onboardingStep');
-    const completed = localStorage.getItem('chronosVault.onboardingCompleted');
-    
-    // Log debug information
-    console.log('OnboardingFlow mounted with:', {
-      currentStep,
-      localStorage: {
-        step,
-        completed
-      }
-    });
-    
-    // If there's an inconsistency, force welcome screen
-    if (!step || step === 'null' || step === 'undefined') {
-      console.log('No step found in localStorage, forcing welcome animation');
-      setForceWelcome(true);
+    if (isInitialMount.current) {
+      isInitialMount.current = false;
       
-      // Reset localStorage values
-      localStorage.removeItem('chronosVault.onboardingStep');
-      localStorage.removeItem('chronosVault.onboardingCompleted');
-      localStorage.setItem('chronosVault.firstVisit', 'true');
+      // Validate localStorage state
+      const step = localStorage.getItem('chronosVault.onboardingStep');
+      const completed = localStorage.getItem('chronosVault.onboardingCompleted');
+      
+      // Log debug information
+      console.log('OnboardingFlow mounted with:', {
+        currentStep,
+        localStorage: {
+          step,
+          completed
+        }
+      });
+      
+      // If there's an inconsistency, force welcome screen
+      if (!step || step === 'null' || step === 'undefined') {
+        console.log('No step found in localStorage, forcing welcome animation');
+        setForceWelcome(true);
+        
+        // Only set localStorage values once to avoid infinite loops
+        try {
+          localStorage.removeItem('chronosVault.onboardingStep');
+          localStorage.removeItem('chronosVault.onboardingCompleted');
+          localStorage.setItem('chronosVault.firstVisit', 'true');
+        } catch (error) {
+          console.error('Error setting localStorage values:', error);
+        }
+      }
     }
-  }, []);
+  }, []); // Empty dependency array ensures this only runs once
   
   // Scroll to top when step changes
   useEffect(() => {
@@ -53,7 +62,7 @@ export const OnboardingFlow = () => {
       return <WelcomeAnimation />;
     }
     
-    // Otherwise show the current step
+    // Otherwise show the current step based on enum value
     switch (currentStep) {
       case 'welcome':
         return <WelcomeAnimation />;
@@ -69,8 +78,8 @@ export const OnboardingFlow = () => {
         // When complete, automatically redirect to home (handled by useEffect in OnboardingRedirect.tsx)
         return null;
       default:
-        // If we have an invalid step, reset to welcome
-        console.log('Invalid step detected, resetting to welcome');
+        // For safety, return welcome animation for any other value
+        console.log('Invalid step detected, showing welcome animation:', currentStep);
         return <WelcomeAnimation />;
     }
   };
@@ -90,7 +99,7 @@ export const OnboardingFlow = () => {
       <div className="fixed top-2 right-3 z-50 bg-background/60 backdrop-blur-sm text-xs rounded-full px-2 py-1 border border-border shadow-sm">
         <span className="text-muted-foreground font-medium">
           Step {currentStep !== 'complete' ? 
-            ['welcome', 'concepts', 'personalization', 'blockchain-explainer', 'wallet-connection'].indexOf(currentStep) + 1 : 5} of 5
+            Math.max(1, ['welcome', 'concepts', 'personalization', 'blockchain-explainer', 'wallet-connection'].indexOf(currentStep) + 1) : 5} of 5
         </span>
       </div>
       
@@ -99,11 +108,15 @@ export const OnboardingFlow = () => {
         {renderCurrentStep()}
       </div>
       
-      {/* Debug reset button - only visible in dev mode */}
-      {localStorage.getItem('chronosVault.devMode') === 'true' && (
+      {/* Emergency reset button - only for development */}
+      {typeof window !== 'undefined' && localStorage.getItem('chronosVault.devMode') === 'true' && (
         <button 
-          className="fixed top-16 right-3 z-50 bg-red-500 text-white text-xs rounded px-2 py-1"
-          onClick={() => resetOnboarding()}
+          className="fixed top-16 right-3 z-50 bg-red-500 text-white text-xs rounded px-2 py-1 opacity-70 hover:opacity-100"
+          onClick={(e) => {
+            e.preventDefault();
+            console.log('Manual reset triggered');
+            resetOnboarding();
+          }}
         >
           Reset Flow
         </button>
