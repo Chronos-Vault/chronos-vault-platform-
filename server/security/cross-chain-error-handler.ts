@@ -586,6 +586,147 @@ class CrossChainErrorHandler {
         return undefined;
     }
   }
+
+  /**
+   * Update chain availability status
+   */
+  public updateChainAvailability(chain: BlockchainType, isAvailable: boolean): void {
+    const status = this.chainAvailability[chain];
+    status.lastCheck = Date.now();
+    
+    if (isAvailable) {
+      // Reset failure count on successful connection
+      status.isAvailable = true;
+      status.consecutiveFailures = 0;
+      securityLogger.info(`Chain ${chain} is now available`, { chain });
+    } else {
+      // Increment failure count
+      status.consecutiveFailures++;
+      
+      // Mark as unavailable after 3 consecutive failures
+      if (status.consecutiveFailures >= 3) {
+        const wasAvailable = status.isAvailable;
+        status.isAvailable = false;
+        
+        if (wasAvailable) {
+          securityLogger.warn(`Chain ${chain} is now marked as unavailable after ${status.consecutiveFailures} consecutive failures`, { 
+            chain, 
+            consecutiveFailures: status.consecutiveFailures,
+            timeSinceLastSuccess: Date.now() - status.lastCheck
+          });
+        }
+      }
+    }
+  }
+
+  /**
+   * Check if a chain is potentially unavailable based on consecutive failures
+   */
+  private isChainPotentiallyUnavailable(chain: BlockchainType): boolean {
+    const status = this.chainAvailability[chain];
+    return status.consecutiveFailures >= 3;
+  }
+
+  /**
+   * Get recommended fallback chain
+   */
+  public getRecommendedFallbackChain(primaryChain: BlockchainType): BlockchainType | undefined {
+    // If primary chain is available, no fallback needed
+    if (this.chainAvailability[primaryChain].isAvailable) {
+      return undefined;
+    }
+    
+    // Get the configured fallback chain
+    const fallbackChain = fallbackChains[primaryChain];
+    
+    // If fallback is also unavailable, try to find any available chain
+    if (!this.chainAvailability[fallbackChain].isAvailable) {
+      for (const chain of Object.keys(this.chainAvailability) as BlockchainType[]) {
+        if (this.chainAvailability[chain].isAvailable && chain !== primaryChain) {
+          return chain;
+        }
+      }
+      
+      // If all chains are unavailable, return the configured fallback anyway
+      return fallbackChain;
+    }
+    
+    return fallbackChain;
+  }
+
+  /**
+   * Determine if partial verification should be accepted
+   * This method helps decide whether to accept a partial verification result
+   * when some chains are unavailable
+   */
+  public shouldAcceptPartialVerification(
+    primaryChain: BlockchainType,
+    availableChains: BlockchainType[],
+    requiredChainsCount: number
+  ): { shouldAccept: boolean; reason: string } {
+    // If primary chain is unavailable, we typically shouldn't accept
+    if (!this.chainAvailability[primaryChain].isAvailable) {
+      return { 
+        shouldAccept: false, 
+        reason: `Primary chain ${primaryChain} is unavailable` 
+      };
+    }
+    
+    // Count how many chains are available
+    const availableChainCount = availableChains.filter(
+      chain => this.chainAvailability[chain].isAvailable
+    ).length;
+    
+    // If we have enough chains available, accept the partial verification
+    if (availableChainCount >= requiredChainsCount) {
+      return { 
+        shouldAccept: true, 
+        reason: `${availableChainCount} chains available, ${requiredChainsCount} required` 
+      };
+    }
+    
+    // Otherwise, reject
+    return { 
+      shouldAccept: false, 
+      reason: `Only ${availableChainCount} chains available, ${requiredChainsCount} required` 
+    };
+  }
+
+  /**
+   * Check if the error is recoverable and we should try again
+   */
+  public shouldAttemptRecovery(error: CrossChainError): boolean {
+    // Skip recovery attempts if explicitly marked as non-recoverable
+    if (!error.recoverable) {
+      return false;
+    }
+    
+    // Check if we have a retry strategy
+    if (!error.retryStrategy) {
+      return false;
+    }
+    
+    // Check if we've already tried too many times
+    const retryCount = error.metadata?.retryCount || 0;
+    if (retryCount >= error.retryStrategy.maxRetries) {
+      return false;
+    }
+    
+    // For chain unavailability errors, check if recovery makes sense
+    if (error.category === CrossChainErrorCategory.CHAIN_UNAVAILABLE && error.blockchain) {
+      const status = this.chainAvailability[error.blockchain];
+      
+      // If we've already tried recovery multiple times, don't try again
+      if (status.recoveryAttempts >= 3) {
+        return false;
+      }
+      
+      // Increment recovery attempts
+      status.recoveryAttempts++;
+    }
+    
+    return true;
+  }
   
   /**
    * Calculate appropriate retry delay based on retry count and strategy

@@ -105,7 +105,7 @@ class CrossChainVaultVerification extends EventEmitter {
   }
   
   /**
-   * Verify a vault across multiple blockchains
+   * Verify a vault across multiple blockchains with enhanced error recovery
    */
   public async verifyVault(
     vaultId: string,
@@ -150,23 +150,112 @@ class CrossChainVaultVerification extends EventEmitter {
         secondaryVerifications: {},
         timestamp: new Date(),
         transactionIds: [],
-        signatures: []
+        signatures: [],
+        metadata: {
+          verificationAttempt: 1,
+          recoveryAttempts: 0,
+          atomicCommitPhase: 'started'
+        }
       };
       
       // Store in cache immediately to prevent duplicate verifications
       this.verificationCache.set(cacheKey, verificationResult);
       
-      // Primary chain verification
-      const primaryVerification = await this.verifyOnChain(vaultId, primaryChain);
+      // PHASE 1: Primary Chain Verification
+      verificationResult.metadata.atomicCommitPhase = 'primary_verification';
+      this.verificationCache.set(cacheKey, verificationResult);
       
-      if (!primaryVerification.isValid) {
+      // Primary chain verification with retry on failure
+      let primaryVerification: SecondaryVerification;
+      let primaryVerificationError: any = null;
+      
+      try {
+        primaryVerification = await this.verifyOnChain(vaultId, primaryChain);
+      } catch (error) {
+        primaryVerificationError = error;
+        
+        // Try to recover from primary chain verification error
+        const crossChainError = crossChainErrorHandler.handle(error, {
+          category: CrossChainErrorCategory.VERIFICATION_FAILURE,
+          blockchain: primaryChain,
+          vaultId,
+          retryCount: verificationResult.metadata.recoveryAttempts
+        });
+        
+        // Check if we should attempt recovery
+        if (crossChainErrorHandler.shouldAttemptRecovery(crossChainError)) {
+          verificationResult.metadata.recoveryAttempts++;
+          securityLogger.warn(`Attempting recovery for primary chain verification`, {
+            vaultId,
+            primaryChain,
+            recoveryAttempt: verificationResult.metadata.recoveryAttempts,
+            errorMessage: crossChainError.message
+          });
+          
+          // Update cache to reflect recovery attempt
+          this.verificationCache.set(cacheKey, verificationResult);
+          
+          // Retry primary verification with exponential backoff
+          const delayMs = Math.min(1000 * Math.pow(2, verificationResult.metadata.recoveryAttempts - 1), 30000);
+          await new Promise(resolve => setTimeout(resolve, delayMs));
+          
+          try {
+            primaryVerification = await this.verifyOnChain(vaultId, primaryChain);
+            primaryVerificationError = null;
+          } catch (retryError) {
+            primaryVerificationError = retryError;
+            
+            // Check if fallback chain should be used
+            const fallbackChain = crossChainErrorHandler.getRecommendedFallbackChain(primaryChain);
+            if (fallbackChain) {
+              securityLogger.warn(`Using fallback chain ${fallbackChain} for primary verification`, {
+                vaultId,
+                originalChain: primaryChain,
+                fallbackChain
+              });
+              
+              try {
+                primaryVerification = await this.verifyOnChain(vaultId, fallbackChain);
+                primaryVerificationError = null;
+                
+                // Update verification result to reflect fallback chain usage
+                verificationResult.metadata.usedFallbackChain = fallbackChain;
+                verificationResult.metadata.originalPrimaryChain = primaryChain;
+                
+                // Adjust chains to verify to include fallback chain
+                if (!secondaryChains.includes(fallbackChain)) {
+                  secondaryChains = secondaryChains.filter(c => c !== primaryChain);
+                  secondaryChains.push(fallbackChain);
+                }
+              } catch (fallbackError) {
+                // Both primary and fallback verifications failed
+                primaryVerificationError = fallbackError;
+                securityLogger.error(`Both primary and fallback chain verifications failed`, {
+                  vaultId,
+                  primaryChain,
+                  fallbackChain,
+                  primaryError: error.message,
+                  fallbackError: fallbackError.message
+                });
+              }
+            }
+          }
+        }
+      }
+
+      // Check if primary verification failed after all recovery attempts
+      if (primaryVerificationError || !primaryVerification.isValid) {
         verificationResult.status = VerificationStatus.FAILED;
         verificationResult.isValid = false;
+        verificationResult.metadata.failureReason = primaryVerificationError 
+          ? primaryVerificationError.message 
+          : 'Primary verification invalid';
         
         securityLogger.error(`Primary chain verification failed for vault ${vaultId}`, {
           vaultId,
           primaryChain,
-          error: primaryVerification.error
+          error: primaryVerificationError || primaryVerification.error,
+          recoveryAttempts: verificationResult.metadata.recoveryAttempts
         });
         
         this.verificationCache.set(cacheKey, verificationResult);
@@ -182,17 +271,21 @@ class CrossChainVaultVerification extends EventEmitter {
         verificationResult.signatures.push(primaryVerification.signature);
       }
       
-      // Secondary chain verifications (if required by verification level)
+      // PHASE 2: Secondary Chain Verifications (if required by verification level)
       if (level !== VerificationLevel.BASIC) {
-        // In parallel, verify on secondary chains
+        verificationResult.metadata.atomicCommitPhase = 'secondary_verification';
+        this.verificationCache.set(cacheKey, verificationResult);
+        
+        // Enhanced parallel verification with individual chain error handling
         const secondaryVerificationPromises = secondaryChains
           .filter(chain => chainsToVerify.includes(chain))
-          .map(chain => this.verifyOnChain(vaultId, chain));
+          .map(chain => this.verifyOnChainWithRecovery(vaultId, chain, verificationResult.metadata.recoveryAttempts || 0));
         
         const secondaryResults = await Promise.allSettled(secondaryVerificationPromises);
         
-        // Process secondary results
+        // Process secondary results with advanced recovery handling
         let validSecondaryCount = 0;
+        let partialSecondaryCount = 0;
         
         for (let i = 0; i < secondaryResults.length; i++) {
           const chain = secondaryChains[i];
@@ -213,6 +306,9 @@ class CrossChainVaultVerification extends EventEmitter {
               if (verification.signature) {
                 verificationResult.signatures.push(verification.signature);
               }
+            } else if (verification.status === VerificationStatus.PARTIAL) {
+              // Track partial verifications separately
+              partialSecondaryCount++;
             }
           } else {
             // Handle rejected promise
@@ -233,29 +329,83 @@ class CrossChainVaultVerification extends EventEmitter {
           }
         }
         
-        // Determine overall verification status
-        if (level === VerificationLevel.STANDARD && validSecondaryCount >= 1) {
-          // Standard level requires one valid secondary verification
-          verificationResult.isValid = true;
-          verificationResult.status = VerificationStatus.COMPLETED;
-        } else if (level === VerificationLevel.ADVANCED && validSecondaryCount >= 2) {
-          // Advanced level requires at least two valid secondary verifications
-          verificationResult.isValid = true;
-          verificationResult.status = VerificationStatus.COMPLETED;
-        } else if (validSecondaryCount > 0) {
-          // Some secondary verifications passed, but not enough
-          verificationResult.isValid = false;
-          verificationResult.status = VerificationStatus.PARTIAL;
-        } else {
-          // No secondary verifications passed
-          verificationResult.isValid = false;
-          verificationResult.status = VerificationStatus.FAILED;
+        // PHASE 3: Determine overall verification status with partial verification support
+        verificationResult.metadata.atomicCommitPhase = 'consensus_determination';
+        verificationResult.metadata.validSecondaryCount = validSecondaryCount;
+        verificationResult.metadata.partialSecondaryCount = partialSecondaryCount;
+        
+        if (level === VerificationLevel.STANDARD) {
+          // Standard level requires at least one valid secondary verification
+          if (validSecondaryCount >= 1) {
+            verificationResult.isValid = true;
+            verificationResult.status = VerificationStatus.COMPLETED;
+          } else if (validSecondaryCount === 0 && partialSecondaryCount >= 1) {
+            // Partial verification might be acceptable if the primary chain is valid
+            const partialDecision = crossChainErrorHandler.shouldAcceptPartialVerification(
+              primaryChain, 
+              Object.keys(verificationResult.secondaryVerifications) as BlockchainType[],
+              1
+            );
+            
+            if (partialDecision.shouldAccept) {
+              verificationResult.isValid = true;
+              verificationResult.status = VerificationStatus.PARTIAL;
+              verificationResult.metadata.acceptedPartialVerification = true;
+              verificationResult.metadata.partialVerificationReason = partialDecision.reason;
+            } else {
+              verificationResult.isValid = false;
+              verificationResult.status = VerificationStatus.PARTIAL;
+              verificationResult.metadata.acceptedPartialVerification = false;
+              verificationResult.metadata.partialVerificationReason = partialDecision.reason;
+            }
+          } else {
+            // No valid or partial secondary verifications
+            verificationResult.isValid = false;
+            verificationResult.status = VerificationStatus.FAILED;
+          }
+        } else if (level === VerificationLevel.ADVANCED) {
+          // Advanced level normally requires at least two valid secondary verifications
+          if (validSecondaryCount >= 2) {
+            verificationResult.isValid = true;
+            verificationResult.status = VerificationStatus.COMPLETED;
+          } else if (validSecondaryCount + partialSecondaryCount >= 2) {
+            // Consider accepting partial verifications for high availability
+            const partialDecision = crossChainErrorHandler.shouldAcceptPartialVerification(
+              primaryChain, 
+              Object.keys(verificationResult.secondaryVerifications) as BlockchainType[],
+              2
+            );
+            
+            if (partialDecision.shouldAccept) {
+              verificationResult.isValid = true;
+              verificationResult.status = VerificationStatus.PARTIAL;
+              verificationResult.metadata.acceptedPartialVerification = true;
+              verificationResult.metadata.partialVerificationReason = partialDecision.reason;
+            } else {
+              verificationResult.isValid = false;
+              verificationResult.status = VerificationStatus.PARTIAL;
+              verificationResult.metadata.acceptedPartialVerification = false;
+              verificationResult.metadata.partialVerificationReason = partialDecision.reason;
+            }
+          } else if (validSecondaryCount > 0) {
+            // Some valid secondary verifications but not enough
+            verificationResult.isValid = false;
+            verificationResult.status = VerificationStatus.PARTIAL;
+          } else {
+            // No valid secondary verifications
+            verificationResult.isValid = false;
+            verificationResult.status = VerificationStatus.FAILED;
+          }
         }
       } else {
         // Basic verification only requires primary chain
         verificationResult.isValid = true;
         verificationResult.status = VerificationStatus.COMPLETED;
       }
+      
+      // PHASE 4: Finalization
+      verificationResult.metadata.atomicCommitPhase = 'completed';
+      verificationResult.metadata.completedAt = new Date().toISOString();
       
       // Update cache with final result
       this.verificationCache.set(cacheKey, verificationResult);
@@ -291,7 +441,8 @@ class CrossChainVaultVerification extends EventEmitter {
         signatures: [],
         metadata: {
           error: crossChainError.message,
-          category: crossChainError.category
+          category: crossChainError.category,
+          atomicCommitPhase: 'error'
         }
       };
       
