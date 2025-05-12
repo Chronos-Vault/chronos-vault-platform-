@@ -102,6 +102,7 @@ function Router() {
   // Import reset pages
   const ResetOnboardingPage = React.lazy(() => import('./pages/reset-onboarding-page'));
   const ForceResetPage = React.lazy(() => import('./pages/force-reset'));
+  const MobileLandingPage = React.lazy(() => import('./pages/mobile-landing'));
   
   return (
     <Layout>
@@ -127,6 +128,11 @@ function Router() {
           <Route path="/reset" component={ForceResetPage} />
           <Route path="/emergency-reset" component={ForceResetPage} />
           <Route path="/mobile-reset" component={ForceResetPage} />
+          
+          {/* Special mobile landing page for maximum reliability on mobile */}
+          <Route path="/m" component={MobileLandingPage} />
+          <Route path="/mobile" component={MobileLandingPage} />
+          <Route path="/mobile-landing" component={MobileLandingPage} />
           
           {/* Important: Route order matters! More specific routes should come before less specific ones */}
           <Route path="/create-vault/cross-chain" component={CreateVault} />

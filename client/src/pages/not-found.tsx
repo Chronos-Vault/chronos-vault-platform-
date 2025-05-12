@@ -1,12 +1,27 @@
 import { Card, CardContent } from "@/components/ui/card";
-import { AlertCircle, RefreshCcw, Home, RotateCcw } from "lucide-react";
+import { AlertCircle, RefreshCcw, Home, RotateCcw, Smartphone } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Link, useLocation } from "wouter";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 export default function NotFound() {
   const [_, navigate] = useLocation();
   const [isEmergencyVisible, setIsEmergencyVisible] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
+  
+  // Detect if we're on a mobile device
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    
+    // Initial check
+    checkMobile();
+    
+    // Re-check on resize
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
   
   // Function to toggle emergency options
   const toggleEmergencyOptions = () => {
@@ -57,6 +72,20 @@ export default function NotFound() {
               </p>
               
               <div className="flex flex-col gap-2">
+                {isMobile && (
+                  <Button 
+                    variant="outline"
+                    className="w-full justify-between border-[#FF5AF7]/30 bg-[#1A1A1A] hover:bg-[#FF5AF7]/10"
+                    onClick={() => navigate('/mobile')}
+                  >
+                    <span className="flex items-center">
+                      <Smartphone className="mr-2 h-4 w-4 text-[#FF5AF7]" />
+                      Mobile Experience
+                    </span>
+                    <span className="text-xs bg-[#FF5AF7]/20 text-[#FF5AF7] px-2 py-1 rounded">Mobile Only</span>
+                  </Button>
+                )}
+                
                 <Button 
                   variant="outline"
                   className="w-full justify-between border-[#FF5AF7]/30 bg-[#1A1A1A] hover:bg-[#FF5AF7]/10"
