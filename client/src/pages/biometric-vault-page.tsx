@@ -94,7 +94,7 @@ const BiometricVaultPage: React.FC = () => {
                 </div>
                 <CardDescription>
                   Create a secure vault with fingerprint or facial recognition authentication.
-                  This vault type provides an additional layer of security for your digital assets.
+                  This vault type provides an additional layer of security for your digital assets using WebAuthn standards.
                 </CardDescription>
               </CardHeader>
               
