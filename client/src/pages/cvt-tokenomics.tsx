@@ -80,6 +80,60 @@ const TimeLockedReleaseChart = () => {
   );
 };
 
+// Supply Projection Chart Component
+const SupplyProjectionChart = () => {
+  // Supply projection data according to CVT tokenomics specification
+  const supplyProjections = [
+    { year: 4, supply: 13153000, burned: 497000, color: "#FF5AF7" },
+    { year: 8, supply: 15771000, burned: 1554000, color: "#6B00D7" },
+    { year: 12, supply: 16345500, burned: 2817000, color: "#14F195" },
+    { year: 16, supply: 15956250, burned: 4125000, color: "#6B73FF" },
+    { year: 21, supply: 15279375, burned: 5720625, color: "#0098EA" },
+    { year: 30, supply: 12530000, burned: 8470000, color: "#FF5AF7" }
+  ];
+  
+  return (
+    <div className="h-96 w-full rounded-xl overflow-hidden bg-[#0A0A0A] border border-[#6B00D7]/20 p-6">
+      <div className="flex flex-col h-full justify-center">
+        <h3 className="text-center text-xl font-bold mb-6">Supply Projection (Conservative Estimate)</h3>
+        <div className="grid grid-cols-1 gap-4">
+          {supplyProjections.map((projection) => (
+            <div key={projection.year} className="flex items-center space-x-4">
+              <div className="w-16 text-right font-bold">Year {projection.year}</div>
+              <div className="flex-1">
+                <div className="flex items-center space-x-3">
+                  <div className="flex-1 h-8 bg-black/30 rounded-lg relative overflow-hidden">
+                    <div 
+                      className="h-full absolute top-0 left-0 rounded-lg"
+                      style={{ 
+                        width: `${(projection.supply / 21000000) * 100}%`, 
+                        backgroundColor: projection.color 
+                      }}
+                    />
+                    <div className="absolute inset-0 flex items-center pl-3">
+                      <span className="text-xs font-medium text-white">
+                        {projection.supply.toLocaleString()} CVT
+                      </span>
+                    </div>
+                  </div>
+                  <div className="text-xs">
+                    <span className="text-red-400">
+                      -{projection.burned.toLocaleString()} burned
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+        <div className="mt-4 text-sm text-center text-gray-400">
+          Deflationary mechanism: ~2% of circulating supply burned annually
+        </div>
+      </div>
+    </div>
+  );
+};
+
 // Staking Tiers Chart Component (2D)
 const StakingTiersChart = () => {
   // Staking tier data
@@ -366,6 +420,35 @@ const CVTTokenomicsPage = () => {
                         <p className="text-gray-300 text-sm">
                           CVT's fixed supply of 21,000,000 tokens ensures scarcity and long-term value appreciation.
                           The token follows a deflationary model with regular burn events from fee collection.
+                        </p>
+                      </div>
+                      
+                      <h3 className="text-2xl font-bold mt-10 mb-6 bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] inline-block text-transparent bg-clip-text">
+                        Time-Locked Token Release Schedule
+                      </h3>
+                      
+                      {/* Time-Locked Token Release Chart */}
+                      <TimeLockedReleaseChart />
+                      
+                      <div className="mt-6 text-center">
+                        <p className="text-gray-300 text-sm">
+                          70% of the total CVT supply (14,700,000 tokens) is time-locked with a strategic release schedule
+                          over 21 years, ensuring long-term protocol sustainability and value accrual for token holders.
+                        </p>
+                      </div>
+                      
+                      <h3 className="text-2xl font-bold mt-10 mb-6 bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] inline-block text-transparent bg-clip-text">
+                        Supply Projection Over Time
+                      </h3>
+                      
+                      {/* Supply Projection Chart */}
+                      <SupplyProjectionChart />
+                      
+                      <div className="mt-6 text-center">
+                        <p className="text-gray-300 text-sm">
+                          CVT implements a deflationary tokenomics model with automated token burns. 
+                          Approximately 2% of circulating supply is burned annually, reducing inflation 
+                          and increasing scarcity over time.
                         </p>
                       </div>
                     </div>
