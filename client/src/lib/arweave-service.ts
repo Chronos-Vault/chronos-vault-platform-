@@ -65,7 +65,11 @@ class ArweaveService {
       throw new Error("Arweave service not initialized");
     }
     
-    const balance = await this.bundlr.getBalance(await this.bundlr.address);
+    const address = await this.bundlr.address;
+    if (!address) {
+      throw new Error("Failed to get wallet address");
+    }
+    const balance = await this.bundlr.getBalance(address);
     return this.bundlr.utils.unitConverter(balance).toString();
   }
 

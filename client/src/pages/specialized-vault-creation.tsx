@@ -368,7 +368,18 @@ function SpecializedVaultCreation() {
         ...blockchainConfig,
         securityLevel: securityLevelValue,
         crossChainEnabled: selectedVaultType === SpecializedVaultType.CROSS_CHAIN || contractIntegrationType === 'multi-chain',
-        privacyEnabled: true
+        privacyEnabled: true,
+        // Include media attachments if there are any
+        mediaAttachments: mediaAttachments.length > 0 ? mediaAttachments.map(file => ({
+          id: file.id,
+          name: file.name,
+          type: file.type,
+          size: file.size,
+          contentType: file.contentType,
+          url: file.url,
+          thumbnailUrl: file.thumbnailUrl,
+          uploadedAt: file.uploadedAt
+        })) : []
       };
       
       // First create the main vault
