@@ -31,7 +31,7 @@ const About = () => {
             </p>
             
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Link href="/create-vault">
+              <Link href="/vault-types">
                 <Button className="cta-button bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] px-8 py-6 rounded-lg font-poppins font-medium text-white shadow-lg hover:shadow-xl hover:shadow-[#6B00D7]/20 transition-all">
                   Start Creating Your Vault
                   <ArrowRight className="ml-2 h-5 w-5" />
