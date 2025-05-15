@@ -80,9 +80,13 @@ import ZkPrivacyDemoPage from "@/pages/zk-privacy-demo";
 import QuantumVaultPage from "@/pages/quantum-vault";
 import InvestmentDisciplineVaultPage from "@/pages/investment-discipline-vault";
 import BiometricVaultPage from "@/pages/biometric-vault-page";
+import BiometricVaultDocPage from "@/pages/biometric-vault"; // New documentation page
 import ZeroKnowledgeVerificationPage from "@/pages/zero-knowledge-verification-page";
 import MultiChainSyncPage from "@/pages/multi-chain-sync-page";
 import GeoVaultPage from "@/pages/geo-vault-page";
+import GeoVaultDocPage from "@/pages/geo-vault"; // New documentation page
+import CrossChainVaultDocPage from "@/pages/cross-chain-vault"; // New documentation page
+import MemoryVaultPage from "@/pages/specialized-vault-memory"; // New documentation page
 import FAQPage from "@/pages/faq";
 import SmartContractsPage from "@/pages/smart-contracts";
 import SmartContractVaultPage from "@/pages/smart-contract-vault";
@@ -203,8 +207,9 @@ function Router() {
           <Route path="/cvt-utility" component={CVTUtilityPage} />
           <Route path="/token-vaults" component={TokenVaultsPage} />
           <Route path="/multi-signature-vault-new" component={MultiSignatureVaultPage} />
+          <Route path="/multi-signature-vault" component={MultiSignatureVaultPage} />
           <Route path="/cross-chain" component={CrossChainPage} />
-          <Route path="/cross-chain-vault" component={CrossChainVaultPage} />
+          <Route path="/cross-chain-vault" component={CrossChainVaultDocPage} />
           <Route path="/cross-chain-security" component={CrossChainSecurityPage} />
           <Route path="/cross-chain-atomic-swap" component={CrossChainAtomicSwapPage} />
           <Route path="/cross-chain-vs-atomic-swap" component={CrossChainVsAtomicSwapPage} />
@@ -245,13 +250,16 @@ function Router() {
           <Route path="/quantum-vault" component={QuantumVaultPage} />
           <Route path="/quantum-vault/:id" component={QuantumVaultPage} />
           <Route path="/investment-discipline-vault" component={InvestmentDisciplineVaultPage} />
-          <Route path="/biometric-vault" component={BiometricVaultPage} />
+          <Route path="/biometric-vault" component={BiometricVaultDocPage} />
+          <Route path="/biometric-vault-page" component={BiometricVaultPage} />
           <Route path="/zero-knowledge-verification" component={ZeroKnowledgeVerificationPage} />
           <Route path="/multi-chain-sync" component={MultiChainSyncPage} />
           <Route path="/geo-vaults" component={GeoVaultPage} />
           <Route path="/geo-vaults/:id" component={GeoVaultPage} />
           <Route path="/geo-vaults/create" component={GeoVaultPage} />
-          <Route path="/geo-vault" component={GeoVaultPage} />
+          <Route path="/geo-vault" component={GeoVaultDocPage} />
+          <Route path="/geo-vault-page" component={GeoVaultPage} />
+          <Route path="/specialized-vault-memory" component={MemoryVaultPage} />
           <Route path="/faq" component={FAQPage} />
           <Route path="/smart-contracts" component={SmartContractsPage} />
           <Route path="/smart-contract-vault" component={SmartContractVaultPage} />

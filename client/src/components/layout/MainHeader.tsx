@@ -195,11 +195,11 @@ const MainHeader = () => {
       items: [
         { name: "Vault School Hub", href: "/vault-school", icon: "🏫", highlight: true, isNew: true },
         { name: "Smart Contract", href: "/smart-contract-vault", icon: "📘", highlight: true, isNew: true },
-        { name: "Multi-Signature", href: "/multi-signature-vault-new", icon: "🔒" },
-        { name: "Biometric", href: "/biometric-vault", icon: "📱" },
-        { name: "Cross-Chain", href: "/cross-chain-vault", icon: "🧩" },
-        { name: "Geo-Location", href: "/geo-vault", icon: "🌎" },
-        { name: "Time-Lock Memory", href: "/specialized-vault-memory", icon: "⏰" },
+        { name: "Multi-Signature", href: "/multi-signature-vault-new", icon: "🔒", highlight: true },
+        { name: "Biometric", href: "/biometric-vault", icon: "📱", highlight: true },
+        { name: "Cross-Chain", href: "/cross-chain-vault", icon: "🧩", highlight: true },
+        { name: "Geo-Location", href: "/geo-vault", icon: "🌎", highlight: true },
+        { name: "Time-Lock Memory", href: "/specialized-vault-memory", icon: "⏰", highlight: true },
         { name: "Investment", href: "/investment-discipline-vault", icon: "💎" }
       ]
     }
@@ -332,6 +332,14 @@ const MainHeader = () => {
                   <NavigationMenuContent>
                     <ul className="grid w-[400px] gap-2 p-4 bg-[#1A1A1A] border border-[#333] shadow-xl">
                       <ListItem
+                        href="/vault-school"
+                        title="🏫 Vault School Hub"
+                        highlight={true}
+                        isNew={true}
+                      >
+                        Comprehensive documentation for all vault types
+                      </ListItem>
+                      <ListItem
                         href="/smart-contract-vault"
                         title="📘 Smart Contract Vault"
                         highlight={true}
@@ -364,7 +372,7 @@ const MainHeader = () => {
                         Access controlled by physical location requirements
                       </ListItem>
                       <ListItem 
-                        href="/specialized-vault?type=memory-vault" 
+                        href="/specialized-vault-memory" 
                         title="⏰ Time-Lock Memory Vault"
                       >
                         Store digital assets with multimedia memories
