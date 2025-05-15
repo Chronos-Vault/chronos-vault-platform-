@@ -10,6 +10,14 @@ class ArweaveService {
   private bundlr: WebBundlr | null = null;
   private initialized = false;
   private initializing = false;
+  
+  /**
+   * Check if the service is initialized
+   * @returns True if initialized, false otherwise
+   */
+  isInitialized(): boolean {
+    return this.initialized;
+  }
 
   /**
    * Initialize the Bundlr client with the user's wallet

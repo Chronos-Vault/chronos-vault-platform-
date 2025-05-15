@@ -163,7 +163,7 @@ const MainHeader = () => {
       items: [
         { name: "CVT Token", href: "/cvt-token", icon: "🪙" },
         { name: "CVT Utility", href: "/cvt-utility", icon: "⚡", highlight: true },
-        { name: "Tokenomics", href: "/tokenomics", icon: "📊" },
+        { name: "Tokenomics", href: "/cvt-tokenomics", icon: "📊" },
         { name: "Whitepaper", href: "/whitepaper", icon: "📑" },
         { name: "Technical Spec", href: "/technical-specification", icon: "🔧", highlight: true },
         { name: "Smart Contracts", href: "/smart-contracts", icon: "📜" },
@@ -333,7 +333,7 @@ const MainHeader = () => {
                         Token use cases and benefits
                       </ListItem>
                       <ListItem 
-                        href="/tokenomics" 
+                        href="/cvt-tokenomics" 
                         title="📊 Tokenomics"
                       >
                         Token distribution and economics
