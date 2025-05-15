@@ -368,103 +368,41 @@ const VaultTypeCard: React.FC<VaultTypeCardProps> = ({
   complexityLevel = 2,
   features = []
 }) => {
-  const [rotate, setRotate] = React.useState({ x: 0, y: 0 });
-  const [isHovered, setIsHovered] = React.useState(false);
-  
-  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
-    if (!isHovered && !isSelected) return;
-    
-    const card = e.currentTarget;
-    const rect = card.getBoundingClientRect();
-    const x = e.clientX - rect.left;
-    const y = e.clientY - rect.top;
-    
-    const centerX = rect.width / 2;
-    const centerY = rect.height / 2;
-    
-    const rotateX = (y - centerY) / 25;
-    const rotateY = (centerX - x) / 25;
-    
-    setRotate({ x: rotateX, y: rotateY });
-  };
-  
-  const resetRotation = () => {
-    setRotate({ x: 0, y: 0 });
-    setIsHovered(false);
-  };
-  
   return (
-    <div 
-      className="perspective-1000 transform-gpu h-full"
-      onMouseMove={handleMouseMove}
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={resetRotation}
-    >
+    <div className="h-full">
       <div 
         className={`
-          p-3 sm:p-4 rounded-lg cursor-pointer transition-all duration-300 h-full flex flex-col
-          ${isHovered || isSelected ? 'shadow-xl' : 'shadow'}
+          p-4 rounded-lg cursor-pointer transition-all duration-200 h-full flex flex-col
+          ${isSelected ? 'shadow-lg' : 'shadow'} 
           ${isSelected 
-            ? 'bg-gradient-to-b from-black/60 to-black/40 border-2' 
-            : 'bg-gradient-to-b from-black/40 to-black/20 hover:bg-black/30 border border-gray-800 hover:border-gray-700'
+            ? 'bg-black/60 border-2' 
+            : 'bg-black/40 hover:bg-black/50 border border-gray-800 hover:border-gray-700'
           }
         `}
         style={{
           borderColor: isSelected ? color : undefined,
-          boxShadow: isSelected ? `0 0 20px ${color}40` : undefined,
-          transform: `rotateX(${rotate.x}deg) rotateY(${rotate.y}deg)`,
-          transition: isHovered ? 'transform 0.1s ease-out, box-shadow 0.3s ease, background 0.3s ease, border-color 0.3s ease' : 'transform 0.5s ease-out, box-shadow 0.3s ease, background 0.3s ease, border-color 0.3s ease',
+          boxShadow: isSelected ? `0 0 15px ${color}30` : undefined,
         }}
         onClick={onClick}
       >
-        {/* Holographic overlay effect */}
-        <div className={`absolute inset-0 holographic-overlay rounded-lg pointer-events-none ${isSelected ? 'opacity-30' : ''}`} />
-        
-        {/* Security beams - only visible when selected */}
-        {isSelected && (
-          <div className="absolute inset-0 overflow-hidden rounded-lg pointer-events-none">
-            <div className="absolute inset-0 opacity-20">
-              {Array.from({ length: securityLevel }).map((_, i) => (
-                <div 
-                  key={i}
-                  className="absolute inset-0 rounded-full blur-3xl"
-                  style={{
-                    backgroundColor: color,
-                    opacity: 0.05 + (i * 0.02),
-                    transform: `scale(${0.6 + (i * 0.1)})`,
-                    animation: `pulse ${3 + i}s infinite ease-in-out`,
-                  }}
-                />
-              ))}
-            </div>
-          </div>
-        )}
-        
-        {/* Content */}
-        <div className="relative z-10">
-          <div className="flex items-center mb-3 flex-col sm:flex-row text-center sm:text-left">
+        <div className="flex flex-col h-full">
+          <div className="flex items-center mb-2 flex-col sm:flex-row text-center sm:text-left">
             <div 
-              className={`w-11 h-11 rounded-full flex items-center justify-center mb-2 sm:mb-0 sm:mr-3 text-xl
+              className={`w-10 h-10 rounded-full flex items-center justify-center mb-2 sm:mb-0 sm:mr-3 text-xl
                 ${isSelected 
-                  ? 'bg-gradient-to-br from-black/50 to-black/20 backdrop-blur-sm border border-white/10' 
-                  : 'bg-black/50'
+                  ? 'bg-black/70 border border-white/20' 
+                  : 'bg-black/60'
                 }
               `}
               style={{
-                boxShadow: isSelected ? `0 0 10px ${color}80` : `0 0 5px ${color}40`,
-                background: isSelected 
-                  ? `radial-gradient(circle, ${color}40 0%, ${color}10 70%, transparent 100%)`
-                  : `radial-gradient(circle, ${color}30 0%, ${color}05 70%, transparent 100%)`
+                boxShadow: isSelected ? `0 0 10px ${color}30` : undefined,
+                borderColor: isSelected ? color : undefined
               }}
             >
               {icon}
             </div>
             <h3 
               className={`font-semibold text-sm sm:text-base ${isSelected ? 'text-white' : 'text-gray-200'}`}
-              style={{ 
-                color: isSelected ? 'white' : undefined,
-                textShadow: isSelected ? `0 0 8px ${color}80` : undefined 
-              }}
             >
               {title}
             </h3>
@@ -472,99 +410,94 @@ const VaultTypeCard: React.FC<VaultTypeCardProps> = ({
           
           <p className="text-xs text-gray-400 text-center sm:text-left mb-3">{description}</p>
           
-          {/* Technology Badges */}
+          {/* Key Technologies */}
           <div className="flex flex-wrap justify-center sm:justify-start gap-1 mb-3">
             <span 
-              className="text-[9px] sm:text-[10px] px-1.5 py-0.5 rounded-full bg-[#6B00D7]/10 border border-[#6B00D7]/30"
+              className="text-[10px] px-2 py-0.5 rounded-full bg-[#6B00D7]/10 border border-[#6B00D7]/30"
               style={{ color: '#8B00D7' }}
             >
               Triple-Chain
             </span>
             <span 
-              className="text-[9px] sm:text-[10px] px-1.5 py-0.5 rounded-full bg-[#FF5AF7]/10 border border-[#FF5AF7]/30"
+              className="text-[10px] px-2 py-0.5 rounded-full bg-[#FF5AF7]/10 border border-[#FF5AF7]/30"
               style={{ color: '#FF5AF7' }}
             >
-              Cross-Chain
+              Zero-Knowledge
             </span>
-            <span 
-              className="text-[9px] sm:text-[10px] px-1.5 py-0.5 rounded-full bg-[#00D7C3]/10 border border-[#00D7C3]/30"
-              style={{ color: '#00D7C3' }}
-            >
-              Multi-Payment
-            </span>
+            {securityLevel >= 4 && (
+              <span 
+                className="text-[10px] px-2 py-0.5 rounded-full bg-[#00D7C3]/10 border border-[#00D7C3]/30"
+                style={{ color: '#00D7C3' }}
+              >
+                Advanced Security
+              </span>
+            )}
+            {securityLevel >= 5 && (
+              <span 
+                className="text-[10px] px-2 py-0.5 rounded-full bg-[#FFD700]/10 border border-[#FFD700]/30"
+                style={{ color: '#FFD700' }}
+              >
+                Quantum-Resistant
+              </span>
+            )}
           </div>
           
-          {/* Security & Complexity indicators with larger bars */}
+          {/* Security & Complexity Levels */}
           <div className="grid grid-cols-2 gap-3 mb-3">
             <div className="flex flex-col">
               <div className="flex justify-between items-center mb-1">
-                <span className="text-[10px] sm:text-xs text-gray-500">Security</span>
+                <span className="text-[10px] sm:text-xs text-gray-400">Security</span>
                 <span className="text-[10px] sm:text-xs" style={{ color }}>{securityLevel}/5</span>
               </div>
               <div className="flex h-2 bg-gray-900 rounded overflow-hidden">
-                <div 
-                  className="h-full rounded"
-                  style={{ 
+                <div
+                  className="h-full"
+                  style={{
                     width: `${(securityLevel / 5) * 100}%`,
-                    background: `linear-gradient(90deg, ${color}60, ${color})`,
-                    boxShadow: isSelected ? `0 0 8px ${color}80` : undefined
+                    backgroundColor: color,
+                    opacity: 0.7
                   }}
                 />
               </div>
             </div>
-            
             <div className="flex flex-col">
               <div className="flex justify-between items-center mb-1">
-                <span className="text-[10px] sm:text-xs text-gray-500">Complexity</span>
-                <span className="text-[10px] sm:text-xs text-gray-400">{complexityLevel}/5</span>
+                <span className="text-[10px] sm:text-xs text-gray-400">Complexity</span>
+                <span className="text-[10px] sm:text-xs text-amber-500">{complexityLevel}/5</span>
               </div>
               <div className="flex h-2 bg-gray-900 rounded overflow-hidden">
-                <div 
-                  className="h-full rounded bg-gray-500"
-                  style={{ 
+                <div
+                  className="h-full bg-amber-500"
+                  style={{
                     width: `${(complexityLevel / 5) * 100}%`,
-                    opacity: isSelected ? 0.9 : 0.6
+                    opacity: 0.7
                   }}
                 />
               </div>
             </div>
           </div>
           
-          {/* Features List */}
-          {(isSelected || isHovered) && features.length > 0 && (
-            <div 
-              className={`
-                mt-3 pt-3 border-t border-gray-800 ${isSelected ? 'opacity-100' : 'opacity-0'} transition-opacity duration-300
-                ${isHovered && !isSelected ? 'opacity-100' : ''}
-              `}
-            >
-              <p className="text-[10px] sm:text-xs font-medium text-gray-300 mb-2">
-                <span className="inline-block mr-1 w-2 h-2 rounded-full" style={{ backgroundColor: color }}></span>
-                Key Features:
-              </p>
-              <ul className="text-[9px] sm:text-[10px] text-gray-400 grid grid-cols-1 sm:grid-cols-2 gap-x-2 gap-y-1">
-                {features.slice(0, 6).map((feature, index) => (
-                  <li key={index} className="flex items-start">
-                    <span style={{ color }} className="mr-1 flex-shrink-0">•</span>
-                    <span className="flex-1">{feature}</span>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          )}
+          {/* Key Features */}
+          <div className="mt-3 flex-grow">
+            <h4 className="text-xs font-semibold text-gray-300 mb-1.5">Key Features:</h4>
+            <ul className="space-y-1.5">
+              {features.map((feature, i) => (
+                <li key={i} className="flex items-start">
+                  <div 
+                    className="w-2 h-2 rounded-full mt-1 mr-2 flex-shrink-0" 
+                    style={{ backgroundColor: color }}
+                  />
+                  <p className="text-[11px] text-gray-400 leading-tight">{feature}</p>
+                </li>
+              ))}
+            </ul>
+          </div>
           
-          {/* Bottom action indicator - only on selected */}
+          {/* Selected indicator */}
           {isSelected && (
-            <div className="mt-3 pt-3 border-t border-gray-800 text-center">
-              <span 
-                className="inline-block text-[10px] font-medium px-3 py-1 rounded-full"
-                style={{ 
-                  background: `linear-gradient(90deg, ${color}20, ${color}50, ${color}20)`,
-                  color: 'white',
-                  textShadow: `0 0 4px ${color}`,
-                  boxShadow: `0 0 10px ${color}50`
-                }}
-              >
+            <div className="mt-3 flex justify-center">
+              <span className="text-xs bg-black/50 text-white px-3 py-1 rounded-full border border-white/10 flex items-center">
+                <div className="w-1.5 h-1.5 rounded-full bg-green-500 mr-1.5 animate-pulse" />
                 Selected
               </span>
             </div>
