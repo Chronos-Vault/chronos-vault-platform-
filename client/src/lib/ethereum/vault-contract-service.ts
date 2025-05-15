@@ -23,7 +23,7 @@ const NETWORK_CONFIG = {
   mainnet: {
     chainId: 1,
     name: 'Ethereum Mainnet',
-    rpcUrl: process.env.ETHEREUM_RPC_URL || 'https://eth-mainnet.public.blastapi.io',
+    rpcUrl: import.meta.env.VITE_ETHEREUM_RPC_URL || 'https://eth-mainnet.public.blastapi.io',
     explorerUrl: 'https://etherscan.io',
     vaultFactoryAddress: '0x0000000000000000000000000000000000000000' // Replace with real address when deployed
   },
