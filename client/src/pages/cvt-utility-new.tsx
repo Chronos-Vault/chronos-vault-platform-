@@ -434,7 +434,7 @@ const CVTUtilityPage = () => {
                     <div 
                       key={vault.id} 
                       className={`relative ${canAfford ? 'cursor-pointer' : 'cursor-not-allowed'} group`}
-                      onClick={() => canAfford && setLocation(`/create-vault?type=${vault.id}`)}
+                      onClick={() => canAfford && setLocation(`/vault-types?type=${vault.id}`)}
                     >
                       <div className={`absolute -inset-0.5 bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] rounded-xl ${canAfford ? 'opacity-70' : 'opacity-20'} blur-sm group-hover:opacity-100 transition-all duration-300`}></div>
                       

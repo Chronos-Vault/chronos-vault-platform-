@@ -189,7 +189,7 @@ export default function RevolutionaryFeatures() {
                 
                 <Button
                   className="w-full sm:w-auto bg-gradient-to-r from-[#FF5AF7] to-blue-500 hover:from-[#FF46E8] hover:to-blue-600 text-white font-bold rounded-lg px-6 py-3 shadow-glow hover:shadow-lg hover:shadow-[#FF5AF7]/40 transition-all"
-                  onClick={() => setLocation("/create-vault")}
+                  onClick={() => setLocation("/vault-types")}
                 >
                   Try Atomic Swaps
                 </Button>

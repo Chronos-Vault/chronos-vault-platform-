@@ -424,7 +424,7 @@ const CVTUtilityPage = () => {
                         {canAfford ? (
                           <Button 
                             className="w-full bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7]" 
-                            onClick={() => setLocation(`/create-vault?type=${vault.id}`)}
+                            onClick={() => setLocation(`/vault-types?type=${vault.id}`)}
                           >
                             Create {vault.name}
                           </Button>
