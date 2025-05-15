@@ -67,7 +67,7 @@ export default function RevolutionaryFeatures() {
                 
                 <Button
                   className="w-full sm:w-auto bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] hover:from-[#5500AB] hover:to-[#FF46E8] text-white font-bold rounded-lg px-6 py-3 shadow-glow hover:shadow-lg hover:shadow-[#FF5AF7]/40 transition-all"
-                  onClick={() => setLocation("/create-vault")}
+                  onClick={() => setLocation("/vault-types")}
                 >
                   Experience Triple-Chain Security
                 </Button>

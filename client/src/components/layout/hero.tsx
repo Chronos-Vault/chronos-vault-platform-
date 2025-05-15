@@ -204,7 +204,7 @@ export function Hero() {
               {/* Subtle glow on hover */}
               <div className="absolute inset-0 bg-gradient-to-r from-[#6B00D7]/0 via-[#6B00D7]/10 to-[#6B00D7]/0 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
               
-              <Link href={isAuthenticated ? "/create-vault" : "/#how-it-works"}>
+              <Link href={isAuthenticated ? "/vault-types" : "/#how-it-works"}>
                 {isAuthenticated ? "Create New Vault" : "How It Works"}
               </Link>
             </Button>
