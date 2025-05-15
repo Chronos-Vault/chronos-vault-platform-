@@ -21,7 +21,7 @@ const VaultCard = ({ vault, variant = "legacy", showDetails = true }: VaultCardP
   const [isHovered, setIsHovered] = useState(false);
   
   // Parse metadata if it exists
-  const metadata = vault.metadata ? JSON.parse(vault.metadata) : {};
+  const metadata = vault.metadata ? JSON.parse(vault.metadata as string) : {};
   const securityLevel = vault.securityLevel || metadata.securityLevel || 3;
   const specializedType = metadata.specializedType || variant;
   const crossChainEnabled = vault.crossChainEnabled || metadata.crossChainEnabled || false;
@@ -172,7 +172,7 @@ const VaultCard = ({ vault, variant = "legacy", showDetails = true }: VaultCardP
           
           {/* Type badge */}
           <div className="absolute top-3 left-3 bg-black/30 backdrop-blur-sm rounded-full px-2 py-1 border border-white/10">
-            <span className="text-xs font-medium text-white">{specializedType.split('-').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ')}</span>
+            <span className="text-xs font-medium text-white">{specializedType.split('-').map((word: string) => word.charAt(0).toUpperCase() + word.slice(1)).join(' ')}</span>
           </div>
           
           <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-[#1A1A1A] to-transparent h-20"></div>

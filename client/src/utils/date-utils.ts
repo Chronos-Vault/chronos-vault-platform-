@@ -165,3 +165,44 @@ export function isValidEthereumAddress(address: string): boolean {
 export function formatNumber(num: number): string {
   return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 }
+
+/**
+ * Format the time left until a target date in a human-readable format
+ * @param endDate The target date
+ * @returns Formatted time string (e.g., "2 days 3 hours", "10 months")
+ */
+export function formatTimeLeft(endDate: Date | string): string {
+  const end = typeof endDate === 'string' ? new Date(endDate) : endDate;
+  const now = new Date();
+  
+  // If the date is in the past, return "Unlocked"
+  if (end <= now) {
+    return "Unlocked";
+  }
+  
+  // Calculate the difference in milliseconds
+  const diff = end.getTime() - now.getTime();
+  
+  // Convert to various time units
+  const seconds = Math.floor(diff / 1000);
+  const minutes = Math.floor(seconds / 60);
+  const hours = Math.floor(minutes / 60);
+  const days = Math.floor(hours / 24);
+  const months = Math.floor(days / 30);
+  const years = Math.floor(days / 365);
+  
+  // Format based on the largest appropriate unit
+  if (years > 0) {
+    return `${years} ${years === 1 ? 'year' : 'years'}${months % 12 > 0 ? ` ${months % 12} ${months % 12 === 1 ? 'month' : 'months'}` : ''}`;
+  } else if (months > 0) {
+    return `${months} ${months === 1 ? 'month' : 'months'}${days % 30 > 0 ? ` ${days % 30} ${days % 30 === 1 ? 'day' : 'days'}` : ''}`;
+  } else if (days > 0) {
+    return `${days} ${days === 1 ? 'day' : 'days'}${hours % 24 > 0 ? ` ${hours % 24} ${hours % 24 === 1 ? 'hour' : 'hours'}` : ''}`;
+  } else if (hours > 0) {
+    return `${hours} ${hours === 1 ? 'hour' : 'hours'}${minutes % 60 > 0 ? ` ${minutes % 60} ${minutes % 60 === 1 ? 'min' : 'mins'}` : ''}`;
+  } else if (minutes > 0) {
+    return `${minutes} ${minutes === 1 ? 'minute' : 'minutes'}`;
+  } else {
+    return `${seconds} ${seconds === 1 ? 'second' : 'seconds'}`;
+  }
+}
