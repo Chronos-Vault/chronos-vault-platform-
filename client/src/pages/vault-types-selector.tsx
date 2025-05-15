@@ -316,8 +316,7 @@ const VaultTypesSelector = () => {
   );
 };
 
-function VaultTypesSelectorPage() {
+// Export the component as the default export
+export default function VaultTypesSelectorPage() {
   return <VaultTypesSelector />;
 }
-
-export default VaultTypesSelectorPage;
