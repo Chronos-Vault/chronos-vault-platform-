@@ -398,7 +398,7 @@ function SpecializedVaultCreation() {
           toast({
             title: "Warning",
             description: `Vault created but geolocation features could not be set up: ${geoError.message}`,
-            variant: "warning",
+            variant: "destructive",
           });
         }
       }
@@ -1198,6 +1198,18 @@ function SpecializedVaultCreation() {
     }
   };
   
+  // Helper function to map numeric steps to step IDs for the progress component
+  const getStepId = (stepNumber: number): string => {
+    switch(stepNumber) {
+      case 1: return "wallet";
+      case 2: return "details";
+      case 3: return "security";
+      case 4: return "assets";
+      case 5: return "review";
+      default: return "details";
+    }
+  };
+  
   const renderStepContent = () => {
     switch (step) {
       case 1: // Vault Type Selection
@@ -1469,17 +1481,13 @@ function SpecializedVaultCreation() {
       </div>
       
       <div className="bg-[#121212] rounded-lg border border-gray-800 p-6">
-        <div className="flex items-center space-x-2 mb-6">
-          {[1, 2, 3, 4].map((i) => (
-            <React.Fragment key={i}>
-              <div className={`h-8 w-8 rounded-full flex items-center justify-center ${step >= i ? 'bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] text-white' : 'bg-gray-800 text-gray-400'}`}>
-                {i}
-              </div>
-              {i < 4 && (
-                <div key={`separator-${i}`} className={`h-1 w-10 ${step > i ? 'bg-[#FF5AF7]' : 'bg-gray-700'}`}></div>
-              )}
-            </React.Fragment>
-          ))}
+        {/* Standardized Progress Indicator */}
+        <div className="mb-6">
+          <VaultCreationProgress 
+            steps={getDefaultVaultCreationSteps(getStepId(step))}
+            currentStepId={getStepId(step)}
+            variant="horizontal"
+          />
         </div>
         
         <div className="min-h-[500px]">
