@@ -83,6 +83,120 @@ const TimeLockedReleaseChart = () => {
   );
 };
 
+// Token Release Summary Card Component
+const TokenReleaseSummaryCard = () => {
+  // Token release schedule data with detailed breakdown
+  const releaseData = [
+    { 
+      period: "Initial",
+      year: 0,
+      initialCirculation: 6300000,
+      newlyReleased: 0,
+      totalBurned: 0,
+      totalCirculating: 6300000,
+      notes: "Initial circulation includes Private Sale (5%), Ecosystem Fund (15%), and Team & Advisors (10%)"
+    },
+    { 
+      period: "Year 4",
+      year: 4,
+      initialCirculation: 6300000,
+      newlyReleased: 7350000,
+      totalBurned: 497000,
+      totalCirculating: 13153000,
+      notes: "First major token unlock - 50% of time-locked tokens released"
+    },
+    { 
+      period: "Year 8",
+      year: 8,
+      initialCirculation: 13153000,
+      newlyReleased: 3675000,
+      totalBurned: 1554000,
+      totalCirculating: 15771000,
+      notes: "Second token unlock - 25% of time-locked tokens released"
+    },
+    { 
+      period: "Year 12",
+      year: 12,
+      initialCirculation: 15771000,
+      newlyReleased: 1837500,
+      totalBurned: 2817000,
+      totalCirculating: 16345500,
+      notes: "Third token unlock - 12.5% of time-locked tokens released"
+    },
+    { 
+      period: "Year 16",
+      year: 16,
+      initialCirculation: 16345500,
+      newlyReleased: 918750,
+      totalBurned: 4125000,
+      totalCirculating: 15956250,
+      notes: "Fourth token unlock - 6.25% of time-locked tokens released"
+    },
+    { 
+      period: "Year 21",
+      year: 21,
+      initialCirculation: 15956250,
+      newlyReleased: 918750,
+      totalBurned: 5720625,
+      totalCirculating: 15279375,
+      notes: "Final token unlock - remaining 6.25% of time-locked tokens released"
+    }
+  ];
+  
+  return (
+    <div className="w-full rounded-xl overflow-hidden bg-[#0A0A0A] border border-[#6B00D7]/20 p-4 md:p-6">
+      <h3 className="text-center text-xl font-bold mb-4 md:mb-6">CVT Token Supply Releases</h3>
+      
+      <div className="overflow-x-auto">
+        <table className="w-full text-sm">
+          <thead>
+            <tr className="border-b border-[#6B00D7]/30">
+              <th className="text-left py-2 px-2">Period</th>
+              <th className="text-right py-2 px-2">Released</th>
+              <th className="text-right py-2 px-2 text-red-400 hidden md:table-cell">Burned</th>
+              <th className="text-right py-2 px-2">Circulating</th>
+            </tr>
+          </thead>
+          <tbody>
+            {releaseData.map((data, index) => (
+              <tr 
+                key={index} 
+                className={`border-b border-[#6B00D7]/10 ${index === 0 ? 'bg-[#6B00D7]/10' : ''}`}
+              >
+                <td className="py-3 px-2">
+                  <div className="font-medium">{data.period}</div>
+                  <div className="text-xs text-gray-400 mt-1 hidden md:block">{data.notes}</div>
+                </td>
+                <td className="text-right py-3 px-2">
+                  {data.newlyReleased > 0 ? (
+                    <div className="font-medium text-[#FF5AF7]">+{data.newlyReleased.toLocaleString()}</div>
+                  ) : (
+                    <div className="font-medium">-</div>
+                  )}
+                </td>
+                <td className="text-right py-3 px-2 text-red-400 hidden md:table-cell">
+                  {data.totalBurned > 0 ? (
+                    <div>-{data.totalBurned.toLocaleString()}</div>
+                  ) : (
+                    <div>-</div>
+                  )}
+                </td>
+                <td className="text-right py-3 px-2 font-medium">
+                  {data.totalCirculating.toLocaleString()}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+      
+      <div className="mt-4 text-xs md:text-sm text-center text-gray-400">
+        Initial circulation: 6.3M CVT (30%) | Time-locked: 14.7M CVT (70%) | Total fixed supply: 21M CVT
+      </div>
+    </div>
+  );
+};
+
 // Supply Projection Chart Component
 const SupplyProjectionChart = () => {
   // Supply projection data according to CVT tokenomics specification
@@ -437,6 +551,20 @@ const CVTTokenomicsPage = () => {
                         <p className="text-gray-300 text-sm">
                           70% of the total CVT supply (14,700,000 tokens) is time-locked with a strategic release schedule
                           over 21 years, ensuring long-term protocol sustainability and value accrual for token holders.
+                        </p>
+                      </div>
+                      
+                      <h3 className="text-2xl font-bold mt-10 mb-6 bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] inline-block text-transparent bg-clip-text">
+                        Token Release Math
+                      </h3>
+                      
+                      {/* Token Release Summary Card */}
+                      <TokenReleaseSummaryCard />
+                      
+                      <div className="mt-6 text-center">
+                        <p className="text-gray-300 text-sm">
+                          The table shows exact token numbers at each milestone, including new releases
+                          from the time-locked allocation and the cumulative effect of token burns.
                         </p>
                       </div>
                       
