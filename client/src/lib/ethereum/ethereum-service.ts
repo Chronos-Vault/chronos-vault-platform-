@@ -118,7 +118,7 @@ class EthereumService {
   constructor() {
     try {
       // Check for development environment
-      this.isDevelopmentMode = process.env.NODE_ENV === 'development' || 
+      this.isDevelopmentMode = import.meta.env.DEV || 
                               window.location.hostname.includes('replit') ||
                               window.location.hostname === 'localhost';
       

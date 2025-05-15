@@ -100,7 +100,7 @@ class SolanaService {
   
   constructor() {
     // Check for development environment
-    this.devModeEnabled = process.env.NODE_ENV === 'development' || 
+    this.devModeEnabled = import.meta.env.DEV || 
                         window.location.hostname.includes('replit') ||
                         window.location.hostname === 'localhost';
     

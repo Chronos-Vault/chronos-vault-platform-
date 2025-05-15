@@ -67,7 +67,7 @@ class TonCompilerService {
       console.error('FunC compilation error:', error);
       
       // Fallback to using pre-compiled code for testing
-      if (process.env.NODE_ENV !== 'production') {
+      if (import.meta.env.DEV) {
         console.warn('Using mock compiled code for development');
         return {
           success: true,
