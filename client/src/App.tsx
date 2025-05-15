@@ -87,7 +87,6 @@ import GeoVaultPage from "@/pages/geo-vault-page";
 import GeoVaultDocPage from "@/pages/geo-vault"; // New documentation page
 import CrossChainVaultDocPage from "@/pages/cross-chain-vault"; // New documentation page
 import MemoryVaultPage from "@/pages/specialized-vault-memory"; // New documentation page
-import MemoryVaultDocumentationPage from "@/pages/specialized-vault-memory-documentation"; // Complete documentation
 import InvestmentDisciplineVaultDocPage from "@/pages/investment-discipline-vault-doc"; // New documentation page
 import MultiSignatureVaultDocPage from "@/pages/multi-signature-vault-doc"; // New documentation page
 import FAQPage from "@/pages/faq";
@@ -266,7 +265,7 @@ function Router() {
           <Route path="/geo-vault" component={GeoVaultDocPage} />
           <Route path="/geo-vault-page" component={GeoVaultPage} />
           <Route path="/specialized-vault-memory" component={MemoryVaultPage} />
-          <Route path="/specialized-vault-memory/documentation" component={MemoryVaultDocumentationPage} />
+
           <Route path="/faq" component={FAQPage} />
           <Route path="/smart-contracts" component={SmartContractsPage} />
           <Route path="/smart-contract-vault" component={SmartContractVaultPage} />

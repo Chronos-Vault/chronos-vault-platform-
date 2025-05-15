@@ -454,20 +454,122 @@ const MemoryVaultPage = () => {
         </div>
       </div>
 
+      {/* Additional Documentation Sections */}
+      <div className="mb-12">
+        <h2 className="text-2xl font-bold text-white mb-6 border-b border-[#333] pb-2">
+          Creating Your Memory Vault
+        </h2>
+        
+        <div className="space-y-6">
+          <div className="bg-[#242424] border border-[#333] rounded-lg p-6">
+            <h3 className="text-xl font-semibold text-white mb-4">Step 1: Vault Setup</h3>
+            <p className="text-gray-300 mb-4">
+              Begin by selecting "Memory Vault" from the specialized vault options. You'll need to:
+            </p>
+            <ul className="space-y-2 text-gray-300">
+              <li className="flex items-start">
+                <span className="text-[#FF5AF7] mr-2">1.</span>
+                <span>Name your vault to help identify it later</span>
+              </li>
+              <li className="flex items-start">
+                <span className="text-[#FF5AF7] mr-2">2.</span>
+                <span>Add a description explaining the purpose of this memory collection</span>
+              </li>
+              <li className="flex items-start">
+                <span className="text-[#FF5AF7] mr-2">3.</span>
+                <span>Select the primary blockchain for the vault (Ethereum, Solana, or TON)</span>
+              </li>
+              <li className="flex items-start">
+                <span className="text-[#FF5AF7] mr-2">4.</span>
+                <span>Choose the security level for your vault</span>
+              </li>
+            </ul>
+          </div>
+          
+          <div className="bg-[#242424] border border-[#333] rounded-lg p-6">
+            <h3 className="text-xl font-semibold text-white mb-4">Step 2: Define Unlocking Conditions</h3>
+            <p className="text-gray-300 mb-4">
+              Configure when and how your memory vault will be accessible:
+            </p>
+            <ul className="space-y-2 text-gray-300">
+              <li className="flex items-start">
+                <span className="text-[#FF5AF7] mr-2">1.</span>
+                <span>Set the primary unlock date (calendar date and time)</span>
+              </li>
+              <li className="flex items-start">
+                <span className="text-[#FF5AF7] mr-2">2.</span>
+                <span>Optionally configure alternative unlocking conditions</span>
+              </li>
+              <li className="flex items-start">
+                <span className="text-[#FF5AF7] mr-2">3.</span>
+                <span>Enable or disable the countdown display feature</span>
+              </li>
+              <li className="flex items-start">
+                <span className="text-[#FF5AF7] mr-2">4.</span>
+                <span>Configure notification preferences for beneficiaries</span>
+              </li>
+            </ul>
+          </div>
+          
+          <div className="bg-[#242424] border border-[#333] rounded-lg p-6">
+            <h3 className="text-xl font-semibold text-white mb-4">Step 3: Add Digital Assets</h3>
+            <p className="text-gray-300 mb-4">
+              Include any cryptocurrencies or tokens you want to store:
+            </p>
+            <ul className="space-y-2 text-gray-300">
+              <li className="flex items-start">
+                <span className="text-[#FF5AF7] mr-2">1.</span>
+                <span>Select the cryptocurrencies to include from your connected wallets</span>
+              </li>
+              <li className="flex items-start">
+                <span className="text-[#FF5AF7] mr-2">2.</span>
+                <span>Specify the amount for each asset</span>
+              </li>
+              <li className="flex items-start">
+                <span className="text-[#FF5AF7] mr-2">3.</span>
+                <span>Add any NFTs you want to include in the time capsule</span>
+              </li>
+              <li className="flex items-start">
+                <span className="text-[#FF5AF7] mr-2">4.</span>
+                <span>Review and confirm the transaction fees</span>
+              </li>
+            </ul>
+          </div>
+          
+          <div className="bg-[#242424] border border-[#333] rounded-lg p-6">
+            <h3 className="text-xl font-semibold text-white mb-4">Step 4: Upload Multimedia Content</h3>
+            <p className="text-gray-300 mb-4">
+              This is where your memory vault becomes truly personal:
+            </p>
+            <ul className="space-y-2 text-gray-300">
+              <li className="flex items-start">
+                <span className="text-[#FF5AF7] mr-2">1.</span>
+                <span>Upload photos from your device (up to 50 per vault)</span>
+              </li>
+              <li className="flex items-start">
+                <span className="text-[#FF5AF7] mr-2">2.</span>
+                <span>Add videos that capture important moments (up to 10 per vault)</span>
+              </li>
+              <li className="flex items-start">
+                <span className="text-[#FF5AF7] mr-2">3.</span>
+                <span>Organize content into collections if desired</span>
+              </li>
+              <li className="flex items-start">
+                <span className="text-[#FF5AF7] mr-2">4.</span>
+                <span>Add captions and descriptions to provide context</span>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
       {/* CTA Section */}
       <div className="text-center">
-        <div className="flex flex-col md:flex-row justify-center gap-4 mb-6">
-          <Link to="/specialized-vault-memory/documentation">
-            <Button variant="outline" className="border-[#6B00D7] text-[#6B00D7] hover:bg-[#6B00D7]/10 px-6 py-5 h-auto text-base rounded-xl">
-              View Complete Documentation
-            </Button>
-          </Link>
-          <Link to="/vault-types-selector">
-            <Button className="bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] hover:from-[#7B10E7] hover:to-[#FF6AF7] text-white px-6 py-5 h-auto text-base rounded-xl shadow-lg shadow-[#6B00D7]/30 transition-all hover:shadow-xl hover:shadow-[#6B00D7]/40">
-              Create Memory Vault
-            </Button>
-          </Link>
-        </div>
+        <Link to="/vault-types-selector">
+          <Button className="bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] hover:from-[#7B10E7] hover:to-[#FF6AF7] text-white px-8 py-6 h-auto text-lg rounded-xl shadow-lg shadow-[#6B00D7]/30 transition-all hover:shadow-xl hover:shadow-[#6B00D7]/40">
+            Create Memory Vault
+          </Button>
+        </Link>
         <p className="text-gray-400 mt-4">
           Combine your digital assets with treasured memories in a time-locked vault
         </p>
