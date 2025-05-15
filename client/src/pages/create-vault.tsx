@@ -446,6 +446,68 @@ const CreateVault = () => {
               setVaultType(type);
             }}
           />
+          
+          {/* Media Attachments Section */}
+          <Card className="mb-6 overflow-hidden bg-black/20 backdrop-blur-sm border border-gray-800">
+            <CardContent className="p-6">
+              <div className="mb-4">
+                <h3 className="text-lg font-medium text-white mb-2">
+                  Media Attachments
+                </h3>
+                <p className="text-sm text-gray-400">
+                  Add images, videos, documents, or other files to be permanently stored with your vault on Arweave network.
+                </p>
+              </div>
+              
+              {/* Display current media attachments */}
+              {mediaAttachments.length > 0 && (
+                <div className="mb-4">
+                  <MediaAttachmentsPreview 
+                    mediaAttachments={mediaAttachments}
+                    onRemove={handleRemoveMedia}
+                    showRemove={true}
+                  />
+                </div>
+              )}
+              
+              {/* Arweave Connection Button */}
+              {!arweaveService.isInitialized() && (
+                <div className="mb-4">
+                  <Button
+                    onClick={handleInitArweave}
+                    disabled={isArweaveInitializing || !isWalletConnected(BlockchainType.ETHEREUM)}
+                    className="bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] hover:opacity-90 text-white shadow-lg mb-4"
+                  >
+                    {isArweaveInitializing ? (
+                      <>
+                        <div className="animate-spin h-4 w-4 mr-2 border-2 border-white border-t-transparent rounded-full" />
+                        Connecting to Arweave...
+                      </>
+                    ) : (
+                      <>
+                        Connect to Arweave Storage
+                      </>
+                    )}
+                  </Button>
+                  <p className="text-xs text-gray-400">
+                    <span className="text-yellow-400">Note:</span> Arweave connection is required for permanent storage of media attachments. Connect your Ethereum wallet first.
+                  </p>
+                </div>
+              )}
+              
+              {/* Media Uploader */}
+              {arweaveService.isInitialized() && (
+                <MediaUploader
+                  onUploadComplete={handleMediaUpload}
+                  maxFiles={10}
+                  acceptedFileTypes="image/*,video/*,application/pdf,text/*"
+                  maxSizeMB={50}
+                  uploadedFiles={mediaAttachments}
+                  className="border border-gray-700 rounded-lg p-4"
+                />
+              )}
+            </CardContent>
+          </Card>
         </div>
       </div>
     </section>
