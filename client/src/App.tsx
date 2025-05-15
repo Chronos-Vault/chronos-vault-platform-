@@ -85,6 +85,7 @@ import MultiChainSyncPage from "@/pages/multi-chain-sync-page";
 import GeoVaultPage from "@/pages/geo-vault-page";
 import FAQPage from "@/pages/faq";
 import SmartContractsPage from "@/pages/smart-contracts";
+import SmartContractVaultPage from "@/pages/smart-contract-vault";
 
 
 // Redirect component for wouter
