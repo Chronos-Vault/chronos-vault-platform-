@@ -516,7 +516,7 @@ const MainHeader = () => {
                 <Button 
                   variant="outline" 
                   size="icon" 
-                  className="md:hidden p-2 rounded-xl bg-[#1A1A1A]/80 backdrop-blur-sm border border-[#333333] hover:border-[#6B00D7] transition-all"
+                  className="md:hidden p-2 rounded-full bg-[#1A1A1A]/80 backdrop-blur-sm border border-[#333333] hover:border-[#6B00D7] transition-all"
                 >
                   <Menu className="h-6 w-6 text-white" />
                 </Button>
@@ -556,7 +556,7 @@ const MainHeader = () => {
                       {mobileCategoryMenu.map((category) => (
                         <div key={category.id} className="space-y-3">
                           <div className="flex items-center gap-2 pl-2 pr-3 border-b border-[#6B00D7]/30 pb-2">
-                            <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-gradient-to-br from-[#6B00D7]/50 to-[#FF5AF7]/30 shadow-inner shadow-[#6B00D7]/20">
+                            <div className="flex items-center justify-center w-8 h-8 rounded-full bg-gradient-to-br from-[#6B00D7]/50 to-[#FF5AF7]/30 shadow-inner shadow-[#6B00D7]/20">
                               <span className="text-lg">{category.icon}</span>
                             </div>
                             <h3 className="text-[#FF5AF7] font-medium tracking-wide">{category.title}</h3>
