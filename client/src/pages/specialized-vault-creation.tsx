@@ -14,6 +14,7 @@ import { useToast } from '@/hooks/use-toast';
 import { apiRequest } from '@/lib/queryClient';
 // Import both type and const from the component
 import VaultTypeSelector, { SpecializedVaultType } from '@/components/vault/vault-type-selector';
+import { VaultCreationProgress, getDefaultVaultCreationSteps } from '@/components/vault/create-vault-progress';
 
 function SpecializedVaultCreation() {
   const [_, navigate] = useLocation();

@@ -5,8 +5,7 @@ import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
 import { cn } from '@/lib/utils';
 import { ArrowLeft, ArrowRight, AlertCircle, ChevronRight, Shield } from 'lucide-react';
-
-import { VaultCreationProgress, getDefaultVaultCreationSteps } from '@/components/vault/create-vault-progress';
+import { VaultCreationProgress, getDefaultVaultCreationSteps, Step } from '@/components/vault/create-vault-progress';
 
 const VaultTypesSelector = () => {
   const [_, navigate] = useLocation();
@@ -106,20 +105,22 @@ const VaultTypesSelector = () => {
       
       <div className="bg-black/20 backdrop-blur-sm border border-gray-800 rounded-lg p-4 sm:p-6 mb-8">
         {/* Progress Indicator */}
-        <VaultCreationProgress 
-          steps={[
-            {
-              id: "select-type",
-              name: "Select Vault Type",
-              description: "Choose the best vault for your needs",
-              status: "current",
-              icon: <Shield className="h-5 w-5" />
-            },
-            ...getDefaultVaultCreationSteps("wallet").slice(0, 5)
-          ]} 
-          currentStepId="select-type"
-          variant="horizontal"
-        />
+        <div className="mb-6">
+          <VaultCreationProgress 
+            steps={[
+              {
+                id: "select-type",
+                name: "Select Vault Type",
+                description: "Choose the best vault for your needs",
+                status: "current",
+                icon: <Shield className="h-5 w-5" />
+              },
+              ...getDefaultVaultCreationSteps("wallet").slice(1)
+            ]} 
+            currentStepId="select-type"
+            variant="horizontal"
+          />
+        </div>
         
         {/* Validation Error Display */}
         {validationError && (
