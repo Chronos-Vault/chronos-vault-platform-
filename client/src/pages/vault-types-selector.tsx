@@ -109,12 +109,12 @@ const VaultTypesSelector = () => {
       // New dedicated Biometric Vault page
       navigate('/biometric-vault');
     } else if (selectedVaultType === 'cross-chain') {
-      // Cross-Chain Vault - use path-based approach for better URL semantics
-      navigate(`/create-vault/cross-chain`);
+      // Cross-Chain Vault - specialized URL for cross-chain vaults
+      navigate(`/cross-chain-vault`);
     } else if (selectedVaultType === 'standard' || 
         selectedVaultType === 'time-lock') {
       // Basic and Advanced Security vaults
-      navigate(`/create-vault?type=${selectedVaultType}`);
+      navigate(`/specialized-vault?type=${selectedVaultType}`);
     } else if (selectedVaultType === 'ai-intent-inheritance') {
       // AI Intent Inheritance vault
       navigate('/intent-inheritance-vault');

@@ -175,9 +175,15 @@ function Router() {
           </Route>
           
           {/* Important: Route order matters! More specific routes should come before less specific ones */}
-          <Route path="/create-vault/cross-chain" component={CreateVault} />
-          <Route path="/create-vault" component={CreateVault} />
-          <Route path="/create-vault-enhanced" component={CreateVaultEnhancedPage} />
+          <Route path="/create-vault/cross-chain">
+            <Redirect to="/vault-types" />
+          </Route>
+          <Route path="/create-vault">
+            <Redirect to="/vault-types" />
+          </Route>
+          <Route path="/create-vault-enhanced">
+            <Redirect to="/vault-types" />
+          </Route>
           <Route path="/vault-types" component={VaultTypesSelector} />
           <Route path="/advanced-vault" component={AdvancedVaultCreationPage} />
           <Route path="/advanced-vault-new" component={AdvancedVaultCreationNewPage} />
