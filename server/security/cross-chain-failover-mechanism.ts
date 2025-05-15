@@ -56,23 +56,23 @@ export interface ChainRolesConfig {
 
 // Default chain roles following Triple-Chain Security design
 const DEFAULT_CHAIN_ROLES: ChainRolesConfig = {
-  'ETH': { 
+  'TON': { 
     role: ChainRole.PRIMARY, 
     priority: 1, 
+    minConfirmations: 16,
+    fallbackChain: 'ETH'
+  },
+  'ETH': { 
+    role: ChainRole.VALIDATION, 
+    priority: 2, 
     minConfirmations: 12,
-    fallbackChain: 'TON'
+    fallbackChain: 'SOL'
   },
   'SOL': { 
     role: ChainRole.MONITORING, 
-    priority: 2, 
-    minConfirmations: 32,
-    fallbackChain: 'ETH'
-  },
-  'TON': { 
-    role: ChainRole.RECOVERY, 
     priority: 3, 
-    minConfirmations: 16,
-    fallbackChain: 'SOL'
+    minConfirmations: 32,
+    fallbackChain: 'BTC'
   },
   'BTC': { 
     role: ChainRole.FALLBACK, 

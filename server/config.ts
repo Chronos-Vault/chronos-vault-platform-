@@ -304,20 +304,20 @@ const crossChainVerificationConfig = {
   
   // Chain priorities and roles in verification
   chainRoles: {
-    ethereum: {
+    ton: {
       role: 'primary',
       priority: 1,
-      description: 'Primary ownership and access control'
+      description: 'Primary vault creation, management and time-lock operations'
     },
-    solana: {
+    ethereum: {
       role: 'validation',
       priority: 2,
-      description: 'High-speed monitoring and validation'
+      description: 'Security verification and ownership validation'
     },
-    ton: {
-      role: 'backup',
+    solana: {
+      role: 'monitoring',
       priority: 3,
-      description: 'Backup and recovery operations'
+      description: 'High-speed monitoring and rapid validation'
     },
     bitcoin: {
       role: 'timestamp',
@@ -336,9 +336,9 @@ const crossChainVerificationConfig = {
   
   // Fallback chains if primary verification fails
   fallbackChains: {
-    ethereum: 'solana',
-    solana: 'ton',
     ton: 'ethereum',
+    ethereum: 'solana',
+    solana: 'bitcoin',
     bitcoin: 'ethereum'
   },
   
