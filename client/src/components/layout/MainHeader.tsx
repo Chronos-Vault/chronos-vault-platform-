@@ -187,6 +187,21 @@ const MainHeader = () => {
         { name: "FAQ", href: "/faq", icon: "❓" },
         { name: "About", href: "/about", icon: "ℹ️" }
       ]
+    },
+    {
+      id: "vault-school",
+      title: "Vault School",
+      icon: "🎓",
+      items: [
+        { name: "Vault School Hub", href: "/vault-school", icon: "🏫", highlight: true, isNew: true },
+        { name: "Smart Contract", href: "/smart-contract-vault", icon: "📘", highlight: true, isNew: true },
+        { name: "Multi-Signature", href: "/multi-signature-vault-new", icon: "🔒" },
+        { name: "Biometric", href: "/biometric-vault", icon: "📱" },
+        { name: "Cross-Chain", href: "/cross-chain-vault", icon: "🧩" },
+        { name: "Geo-Location", href: "/geo-vault", icon: "🌎" },
+        { name: "Time-Lock Memory", href: "/specialized-vault-memory", icon: "⏰" },
+        { name: "Investment", href: "/investment-discipline-vault", icon: "💎" }
+      ]
     }
   ];
 
@@ -552,8 +567,8 @@ const MainHeader = () => {
                             <h3 className="text-[#FF5AF7] font-medium tracking-wide">{category.title}</h3>
                           </div>
                           
-                          {/* For Resources category with many links, use a grid layout */}
-                          {category.id === "resources" ? (
+                          {/* For Resources or Vault School categories with many links, use a grid layout */}
+                          {(category.id === "resources" || category.id === "vault-school") ? (
                             <div className="grid grid-cols-2 gap-2 pl-1">
                               {category.items.map((link) => (
                                 <SheetClose key={link.name} asChild>
