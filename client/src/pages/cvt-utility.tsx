@@ -253,7 +253,7 @@ const CVTUtilityPage = () => {
                           <div 
                             key={index} 
                             className={`bg-black border-[3px] ${canAfford ? 'border-[#6B00D7]' : 'border-gray-800'} rounded-2xl overflow-hidden relative group hover:shadow-xl hover:shadow-[#6B00D7]/30 transition-all duration-300 ${canAfford ? 'cursor-pointer' : 'cursor-not-allowed'}`}
-                            onClick={() => canAfford && setLocation('/create-vault')}
+                            onClick={() => canAfford && setLocation('/vault-types')}
                           >
                             {/* Glow effect behind the card */}
                             {canAfford && (

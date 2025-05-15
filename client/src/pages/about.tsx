@@ -640,7 +640,7 @@ const About = () => {
               </div>
               
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                <Link href="/create-vault">
+                <Link href="/vault-types">
                   <Button className="cta-button bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] px-8 py-4 rounded-lg font-poppins font-medium text-white shadow-lg hover:shadow-xl hover:shadow-[#6B00D7]/20 transition-all">
                     Create Your First Vault
                   </Button>
