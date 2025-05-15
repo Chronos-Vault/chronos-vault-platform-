@@ -131,7 +131,21 @@ const MainHeader = () => {
         { name: "Vault Explorer", href: "/my-vaults", icon: "📚" },
       ]
     },
-
+    {
+      id: "vault-school",
+      title: "Vault School Hub",
+      icon: "🎓",
+      items: [
+        { name: "Vault School Hub", href: "/vault-school", icon: "🏫", highlight: true, isNew: true },
+        { name: "Smart Contract Vault", href: "/smart-contract-vault", icon: "📘", highlight: true },
+        { name: "Multi-Signature Vault", href: "/multi-signature-vault-new", icon: "🔒" },
+        { name: "Biometric Vault", href: "/biometric-vault", icon: "📱" },
+        { name: "Cross-Chain Vault", href: "/cross-chain-vault", icon: "🧩" },
+        { name: "Geo-Location Vault", href: "/geo-vault", icon: "🌎" },
+        { name: "Time-Lock Memory Vault", href: "/specialized-vault-memory", icon: "⏰" },
+        { name: "Investment Vault", href: "/investment-discipline-vault", icon: "💎" },
+      ]
+    },
     {
       id: "features",
       title: "Features",
