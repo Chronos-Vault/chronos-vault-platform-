@@ -253,6 +253,7 @@ function Router() {
           <Route path="/geo-vault" component={GeoVaultPage} />
           <Route path="/faq" component={FAQPage} />
           <Route path="/smart-contracts" component={SmartContractsPage} />
+          <Route path="/smart-contract-vault" component={SmartContractVaultPage} />
 
           <Route component={NotFound} />
         </Switch>

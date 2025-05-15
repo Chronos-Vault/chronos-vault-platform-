@@ -130,7 +130,7 @@ export default function SmartContractVault() {
         <Container>
           <PageHeader
             heading="Smart Contract Vault™"
-            subheading="Industry-leading ERC-4626 compliant tokenized vault with Triple-Chain Security™"
+            description="Industry-leading ERC-4626 compliant tokenized vault with Triple-Chain Security™"
           />
 
           <Tabs defaultValue="overview" className="mt-8" onValueChange={setActiveTab}>
