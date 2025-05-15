@@ -225,59 +225,57 @@ const VaultTypesSelector = () => {
             </ul>
           </div>
           
-          {/* Advanced Security Technologies */}
-          <div className="mt-4 p-5 border border-[#6B00D7]/30 rounded-lg bg-gradient-to-b from-[#1A1A1A] to-black/60">
-            <h3 className="text-xl font-bold bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] bg-clip-text text-transparent">
+          {/* Security Features */}
+          <div className="mt-6 flex items-center space-x-2">
+            <div className="w-8 h-8 rounded-full bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] flex items-center justify-center">
+              <Shield className="h-4 w-4 text-white" />
+            </div>
+            <h3 className="text-lg font-semibold bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] bg-clip-text text-transparent">
               Advanced Security Technologies
             </h3>
-            <p className="text-sm text-gray-400 mt-1 mb-4">
-              Our revolutionary security features protect your assets across multiple blockchains
-            </p>
-            
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-4">
-              {/* Triple-Chain Security Architecture */}
-              <div className="p-4 border border-[#6B00D7]/30 rounded-lg bg-gradient-to-r from-[#6B00D7]/10 to-transparent relative overflow-hidden group">
-                <div className="absolute inset-0 bg-gradient-to-r from-[#6B00D7]/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-                <div className="flex items-start">
-                  <div className="flex-shrink-0 w-10 h-10 rounded-full bg-[#6B00D7]/10 border border-[#6B00D7]/30 flex items-center justify-center mr-3">
-                    <Shield className="h-5 w-5 text-[#6B00D7]" />
-                  </div>
-                  <div>
-                    <h4 className="text-white font-medium mb-1">Triple-Chain Security Architecture</h4>
-                    <p className="text-xs text-gray-400">
-                      Distributes your vault security across Ethereum, Solana, and TON blockchains for unbreakable protection.
-                    </p>
-                    <div className="mt-2 inline-flex items-center text-[10px] px-2 py-0.5 rounded-full bg-[#6B00D7]/20 text-[#6B00D7] border border-[#6B00D7]/30">
-                      <Check className="h-3 w-3 mr-1" /> Recommended for all vaults
-                    </div>
-                  </div>
-                </div>
+          </div>
+          <p className="mt-2 text-sm text-gray-400 ml-10">
+            Our revolutionary security features protect your assets across multiple blockchains
+          </p>
+          
+          <div className="ml-10 mt-3 space-y-3">
+            {/* Triple-Chain Security */}
+            <div className="flex items-center">
+              <div className="flex-shrink-0 w-5 h-5 bg-[#6B00D7]/20 rounded-full flex items-center justify-center mr-2">
+                <Check className="h-3 w-3 text-[#6B00D7]" />
               </div>
-              
-              {/* Sovereign Fortress Security */}
-              <div className="p-4 border border-[#FF5AF7]/30 rounded-lg bg-gradient-to-r from-[#FF5AF7]/10 to-transparent relative overflow-hidden group">
-                <div className="absolute inset-0 bg-gradient-to-r from-[#FF5AF7]/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-                <div className="flex items-start">
-                  <div className="flex-shrink-0 w-10 h-10 rounded-full bg-[#FF5AF7]/10 border border-[#FF5AF7]/30 flex items-center justify-center mr-3">
-                    <Star className="h-5 w-5 text-[#FF5AF7]" />
-                  </div>
-                  <div>
-                    <h4 className="text-white font-medium mb-1">Sovereign Fortress™ Security</h4>
-                    <p className="text-xs text-gray-400">
-                      Configure quantum-resistant security protocols for your vault with military-grade encryption.
-                    </p>
-                    
-                    <Link href="/security-protocols" className="mt-2 inline-flex items-center text-[10px] group/link">
-                      <span className="bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] bg-clip-text text-transparent font-medium">
-                        Configure security levels
-                      </span>
-                      <ChevronRight className="h-3 w-3 text-[#FF5AF7] ml-1 group-hover/link:translate-x-0.5 transition-transform" />
-                    </Link>
-                  </div>
-                </div>
+              <div className="flex-1">
+                <span className="text-white text-sm font-medium">Triple-Chain Security Architecture:</span>
+                <span className="text-gray-400 text-sm ml-1">Distributes security across Ethereum, Solana, and TON</span>
+              </div>
+              <div className="bg-[#6B00D7]/10 text-[#6B00D7] text-xs px-2 py-0.5 rounded border border-[#6B00D7]/20">
+                Default
               </div>
             </div>
+            
+            {/* Fortress Security */}
+            <div className="flex items-center">
+              <div className="flex-shrink-0 w-5 h-5 bg-[#FF5AF7]/20 rounded-full flex items-center justify-center mr-2">
+                <Star className="h-3 w-3 text-[#FF5AF7]" />
+              </div>
+              <div className="flex-1">
+                <span className="text-white text-sm font-medium">Sovereign Fortress™ Security:</span>
+                <span className="text-gray-400 text-sm ml-1">Military-grade quantum-resistant encryption</span>
+              </div>
+              <Link href="/security-protocols">
+                <Button 
+                  variant="outline" 
+                  size="sm"
+                  className="h-7 text-xs group bg-black/30 border-[#FF5AF7]/30 hover:border-[#FF5AF7]/100"
+                >
+                  <span className="bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] bg-clip-text text-transparent">Configure</span>
+                  <ChevronRight className="ml-1 h-3 w-3 text-[#FF5AF7] group-hover:translate-x-0.5 transition-transform" />
+                </Button>
+              </Link>
+            </div>
           </div>
+          
+          <div className="mt-4 border-t border-gray-800 pt-4"></div>
         </div>
         
         <div className="flex justify-between items-center">
