@@ -87,6 +87,7 @@ import GeoVaultPage from "@/pages/geo-vault-page";
 import GeoVaultDocPage from "@/pages/geo-vault"; // New documentation page
 import CrossChainVaultDocPage from "@/pages/cross-chain-vault"; // New documentation page
 import MemoryVaultPage from "@/pages/specialized-vault-memory"; // New documentation page
+import InvestmentDisciplineVaultDocPage from "@/pages/investment-discipline-vault-doc"; // New documentation page
 import FAQPage from "@/pages/faq";
 import SmartContractsPage from "@/pages/smart-contracts";
 import SmartContractVaultPage from "@/pages/smart-contract-vault";
@@ -249,7 +250,8 @@ function Router() {
           <Route path="/zk-privacy-demo" component={ZkPrivacyDemoPage} />
           <Route path="/quantum-vault" component={QuantumVaultPage} />
           <Route path="/quantum-vault/:id" component={QuantumVaultPage} />
-          <Route path="/investment-discipline-vault" component={InvestmentDisciplineVaultPage} />
+          <Route path="/investment-discipline-vault" component={InvestmentDisciplineVaultDocPage} />
+          <Route path="/investment-discipline-vault-page" component={InvestmentDisciplineVaultPage} />
           <Route path="/biometric-vault" component={BiometricVaultDocPage} />
           <Route path="/biometric-vault-page" component={BiometricVaultPage} />
           <Route path="/zero-knowledge-verification" component={ZeroKnowledgeVerificationPage} />
