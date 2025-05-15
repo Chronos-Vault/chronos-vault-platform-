@@ -29,6 +29,19 @@ function SpecializedVaultCreation() {
   const [selectedBlockchain, setSelectedBlockchain] = useState<BlockchainType>(BlockchainType.TON);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   
+  // Handle media attachments upload
+  const handleMediaUploadComplete = (files: UploadedMedia[]) => {
+    setMediaAttachments(files);
+    
+    // Show toast notification with files count
+    if (files.length > 0) {
+      toast({
+        title: "Media Attachments",
+        description: `${files.length} file(s) added to your vault`,
+      });
+    }
+  };
+  
   // Effect to automatically proceed to next step when a vault type is selected
   useEffect(() => {
     if (selectedVaultType !== SpecializedVaultType.STANDARD && step === 1) {
@@ -1363,13 +1376,49 @@ function SpecializedVaultCreation() {
           </div>
         );
         
-      case 4: // Review & Create
+      case 4: // Asset Confirmation & Media Attachments
         return (
           <div className="space-y-6">
             <div>
-              <h2 className="text-2xl font-semibold mb-4">Review & Create Vault</h2>
-              <p className="text-gray-400 mb-6">Review your vault details before finalizing creation.</p>
+              <h2 className="text-2xl font-semibold mb-4">Asset Confirmation</h2>
+              <p className="text-gray-400 mb-6">Confirm your assets and add media attachments to your vault.</p>
             </div>
+            
+            {/* Media Uploader Section */}
+            <div className="bg-gray-900/50 border border-gray-700 rounded-lg p-6">
+              <h3 className="text-xl font-semibold text-white mb-3">Media Attachments</h3>
+              <p className="text-gray-400 mb-4">Add files, images, videos, and documents to your vault</p>
+              
+              <MediaUploader 
+                onUploadComplete={handleMediaUploadComplete}
+                uploadedFiles={mediaAttachments}
+                maxFiles={10}
+                maxSizeMB={50}
+              />
+            </div>
+            
+            {/* Media Attachments Summary Section */}
+            {mediaAttachments.length > 0 && (
+              <div className="bg-gray-900/50 border border-gray-700 rounded-lg p-6 mb-4">
+                <h3 className="text-lg font-semibold text-white mb-3">Media Attachments Summary</h3>
+                <div className="space-y-2">
+                  <div className="flex justify-between border-b border-gray-800 pb-2">
+                    <span className="text-gray-400">Files Attached</span>
+                    <span className="text-white font-medium">{mediaAttachments.length} file(s)</span>
+                  </div>
+                  <div className="flex justify-between border-b border-gray-800 pb-2">
+                    <span className="text-gray-400">Total Size</span>
+                    <span className="text-white font-medium">
+                      {(mediaAttachments.reduce((total, file) => total + file.size, 0) / (1024 * 1024)).toFixed(2)} MB
+                    </span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-gray-400">Storage Network</span>
+                    <span className="text-[#FF5AF7] font-medium">Arweave (Permanent)</span>
+                  </div>
+                </div>
+              </div>
+            )}
             
             <div className="bg-gray-900/50 border border-gray-700 rounded-lg p-6 space-y-4">
               <div className="flex items-center space-x-3">
