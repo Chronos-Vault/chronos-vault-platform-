@@ -40,6 +40,15 @@ const Header = () => {
       { name: "🛡️ Security Dashboard", href: "/cross-chain-security" },
       { name: "📚 Vault Explorer", href: "/my-vaults" }
     ]},
+    { name: "Vault School", href: "#", icon: "🎓", children: [
+      { name: "📘 Smart Contract Vault", href: "/smart-contract-vault", highlight: true, isNew: true },
+      { name: "🔒 Multi-Signature Vault", href: "/multi-signature-vault-new" },
+      { name: "📱 Biometric Vault", href: "/biometric-vault" }, 
+      { name: "🧩 Cross-Chain Vault", href: "/cross-chain-vault" },
+      { name: "🌎 Geo-Location Vault", href: "/geo-vault" },
+      { name: "⏰ Time-Lock Memory Vault", href: "/specialized-vault?type=memory-vault" },
+      { name: "💎 Investment Discipline Vault", href: "/investment-discipline-vault" }
+    ]},
     { name: "Security", href: "/security-verification-demo", icon: "🔒" },
     { name: "CVT Token", href: "/cvt-token", icon: "🪙" },
     { name: "Docs", href: "/documentation", icon: "📄" },
@@ -68,6 +77,20 @@ const Header = () => {
         { name: "Atomic Swaps", href: "/cross-chain-atomic-swap", icon: "⚛️" },
         { name: "Security Dashboard", href: "/cross-chain-security", icon: "🛡️" },
         { name: "Vault Explorer", href: "/my-vaults", icon: "📚" },
+      ]
+    },
+    {
+      id: "vault-school",
+      title: "Vault School",
+      icon: "🎓",
+      items: [
+        { name: "Smart Contract Vault", href: "/smart-contract-vault", icon: "📘", isNew: true, highlight: true },
+        { name: "Multi-Signature Vault", href: "/multi-signature-vault-new", icon: "🔒" },
+        { name: "Biometric Vault", href: "/biometric-vault", icon: "📱" },
+        { name: "Cross-Chain Vault", href: "/cross-chain-vault", icon: "🧩" },
+        { name: "Geo-Location Vault", href: "/geo-vault", icon: "🌎" },
+        { name: "Time-Lock Memory Vault", href: "/specialized-vault?type=memory-vault", icon: "⏰" },
+        { name: "Investment Vault", href: "/investment-discipline-vault", icon: "💎" },
       ]
     },
     {

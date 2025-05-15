@@ -48,6 +48,10 @@ const Footer = ({ className = '' }: { className?: string }) => {
           <div>
             <h3 className="font-poppins font-semibold text-xl mb-5 text-white">Products</h3>
             <ul className="space-y-4">
+              <li><Link href="/smart-contract-vault" className="text-gray-300 hover:text-[#FF5AF7] transition-all font-poppins font-light hover:translate-x-1 inline-flex relative group">
+                Smart Contract Vault
+                <span className="absolute -top-1 -right-8 bg-[#FF5AF7] text-white text-[8px] px-1.5 py-0.5 rounded-full font-bold tracking-wider shadow-md shadow-[#FF5AF7]/30 animate-pulse">NEW</span>
+              </Link></li>
               <li><Link href="/multi-signature-vault" className="text-gray-300 hover:text-[#FF5AF7] transition-all font-poppins font-light hover:translate-x-1 inline-flex">Multi-Signature Vault</Link></li>
               <li><Link href="/cross-chain-vault" className="text-gray-300 hover:text-[#FF5AF7] transition-all font-poppins font-light hover:translate-x-1 inline-flex">Cross-Chain Vault</Link></li>
               <li><Link href="/token-vaults" className="text-gray-300 hover:text-[#FF5AF7] transition-all font-poppins font-light hover:translate-x-1 inline-flex">Token Vaults</Link></li>
