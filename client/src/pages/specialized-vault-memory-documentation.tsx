@@ -1,8 +1,8 @@
 import { Button } from "@/components/ui/button";
 import { Link } from "wouter";
-import { ArrowLeft, Check, Shield, Clock, Image, Video, MessageSquare, Calendar } from "lucide-react";
+import { ArrowLeft, Check, Shield, Clock, Image, Video, MessageSquare, Calendar, FileText, LockKeyhole, Database, Globe } from "lucide-react";
 
-const MemoryVaultPage = () => {
+const MemoryVaultDocumentationPage = () => {
   return (
     <div className="container mx-auto px-4 py-12">
       {/* Header Section */}
@@ -19,7 +19,7 @@ const MemoryVaultPage = () => {
             <Clock className="h-6 w-6 text-white" />
           </div>
           <h1 className="text-3xl md:text-4xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7]">
-            Time-Lock Memory Vault
+            Time-Lock Memory Vault: Complete Documentation
           </h1>
         </div>
         
@@ -307,28 +307,28 @@ const MemoryVaultPage = () => {
               <div className="h-10 w-10 rounded-full bg-[#6B00D7]/20 flex items-center justify-center mr-4">
                 <Video className="h-5 w-5 text-[#FF5AF7]" />
               </div>
-              <h3 className="text-lg font-semibold text-white">Video Archive</h3>
+              <h3 className="text-lg font-semibold text-white">Video Memory Storage</h3>
             </div>
             <ul className="space-y-2 text-gray-300 text-sm">
               <li className="flex items-start">
                 <span className="text-[#FF5AF7] mr-2">•</span>
-                <span>Storage for HD video content (up to 500MB per video)</span>
+                <span>Support for HD and 4K video content (up to 1GB per video)</span>
               </li>
               <li className="flex items-start">
                 <span className="text-[#FF5AF7] mr-2">•</span>
-                <span>Support for multiple video formats with automatic transcoding</span>
+                <span>Automatic format conversion for long-term accessibility</span>
               </li>
               <li className="flex items-start">
                 <span className="text-[#FF5AF7] mr-2">•</span>
-                <span>Video preview thumbnails and chapter markers</span>
+                <span>Thumbnail generation for vault preview (blurred until unlock)</span>
               </li>
               <li className="flex items-start">
                 <span className="text-[#FF5AF7] mr-2">•</span>
-                <span>Audio track preservation with multi-language support</span>
+                <span>Optional transcription of spoken content for searchability</span>
               </li>
               <li className="flex items-start">
                 <span className="text-[#FF5AF7] mr-2">•</span>
-                <span>Decentralized video storage with multiple redundancy layers</span>
+                <span>Embedded metadata for context preservation</span>
               </li>
             </ul>
           </div>
@@ -338,28 +338,28 @@ const MemoryVaultPage = () => {
               <div className="h-10 w-10 rounded-full bg-[#6B00D7]/20 flex items-center justify-center mr-4">
                 <MessageSquare className="h-5 w-5 text-[#FF5AF7]" />
               </div>
-              <h3 className="text-lg font-semibold text-white">Personal Messages</h3>
+              <h3 className="text-lg font-semibold text-white">Message Capsules</h3>
             </div>
             <ul className="space-y-2 text-gray-300 text-sm">
               <li className="flex items-start">
                 <span className="text-[#FF5AF7] mr-2">•</span>
-                <span>Rich text editor with formatting, embedded images, and links</span>
+                <span>Rich text formatting with support for multiple languages</span>
               </li>
               <li className="flex items-start">
                 <span className="text-[#FF5AF7] mr-2">•</span>
-                <span>Voice message recordings with transcription</span>
+                <span>Ability to schedule multiple messages with different unlock dates</span>
               </li>
               <li className="flex items-start">
                 <span className="text-[#FF5AF7] mr-2">•</span>
-                <span>Scheduled sequential message reveals (one per day, week, etc.)</span>
+                <span>Support for embedded links and references to enclosed media</span>
               </li>
               <li className="flex items-start">
                 <span className="text-[#FF5AF7] mr-2">•</span>
-                <span>Custom themes and presentation styles for messages</span>
+                <span>Option to include voice recordings alongside text</span>
               </li>
               <li className="flex items-start">
                 <span className="text-[#FF5AF7] mr-2">•</span>
-                <span>Interactive elements like quizzes, games, or treasure hunts</span>
+                <span>Templates for specific occasions (birthdays, anniversaries, etc.)</span>
               </li>
             </ul>
           </div>
@@ -367,107 +367,317 @@ const MemoryVaultPage = () => {
           <div className="bg-[#1A1A1A] border border-[#333] rounded-lg p-6">
             <div className="flex items-center mb-4">
               <div className="h-10 w-10 rounded-full bg-[#6B00D7]/20 flex items-center justify-center mr-4">
-                <Calendar className="h-5 w-5 text-[#FF5AF7]" />
+                <FileText className="h-5 w-5 text-[#FF5AF7]" />
               </div>
-              <h3 className="text-lg font-semibold text-white">Timeline & Presentation</h3>
+              <h3 className="text-lg font-semibold text-white">Document Preservation</h3>
             </div>
             <ul className="space-y-2 text-gray-300 text-sm">
               <li className="flex items-start">
                 <span className="text-[#FF5AF7] mr-2">•</span>
-                <span>Chronological organization of all content with interactive timeline</span>
+                <span>Support for multiple document formats including PDF, Word, and plain text</span>
               </li>
               <li className="flex items-start">
                 <span className="text-[#FF5AF7] mr-2">•</span>
-                <span>Immersive slideshow presentation mode with music</span>
+                <span>Long-term format verification and migration services</span>
               </li>
               <li className="flex items-start">
                 <span className="text-[#FF5AF7] mr-2">•</span>
-                <span>Customizable themes for visual presentation</span>
+                <span>Cryptographic proof of document authenticity and timestamp</span>
               </li>
               <li className="flex items-start">
                 <span className="text-[#FF5AF7] mr-2">•</span>
-                <span>Downloadable archive of all content for local storage</span>
+                <span>Document indexing for search functionality upon unlocking</span>
               </li>
               <li className="flex items-start">
                 <span className="text-[#FF5AF7] mr-2">•</span>
-                <span>Shareable links for specific items (with permissions controls)</span>
+                <span>Optional PDF/A conversion for maximum long-term compatibility</span>
               </li>
             </ul>
           </div>
         </div>
       </div>
 
-      {/* Use Cases Section */}
+      {/* Advanced Features Section */}
       <div className="mb-12">
         <h2 className="text-2xl font-bold text-white mb-6 border-b border-[#333] pb-2">
-          Ideal Use Cases
+          Advanced Features
         </h2>
         
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          <div className="bg-gradient-to-br from-[#242424] to-[#1E1E1E] border border-[#333] rounded-lg p-6">
-            <h3 className="text-lg font-semibold text-white mb-3">Family Legacy</h3>
-            <p className="text-gray-300 text-sm">
-              Create a time capsule for children or grandchildren with family photos, videos, 
-              personal messages, and financial assets that unlocks when they reach a certain age.
-            </p>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="bg-[#1A1A1A] border border-[#333] rounded-lg p-6">
+            <div className="flex items-center mb-4">
+              <div className="h-10 w-10 rounded-full bg-[#6B00D7]/20 flex items-center justify-center mr-4">
+                <LockKeyhole className="h-5 w-5 text-[#FF5AF7]" />
+              </div>
+              <h3 className="text-lg font-semibold text-white">Enhanced Security Options</h3>
+            </div>
+            <ul className="space-y-2 text-gray-300 text-sm">
+              <li className="flex items-start">
+                <span className="text-[#FF5AF7] mr-2">•</span>
+                <span>Quantum-resistant encryption available for ultra-long timeframes</span>
+              </li>
+              <li className="flex items-start">
+                <span className="text-[#FF5AF7] mr-2">•</span>
+                <span>Multi-signature options for release approval</span>
+              </li>
+              <li className="flex items-start">
+                <span className="text-[#FF5AF7] mr-2">•</span>
+                <span>Inheritance verification protocol for beneficiaries</span>
+              </li>
+              <li className="flex items-start">
+                <span className="text-[#FF5AF7] mr-2">•</span>
+                <span>Option to require additional verification upon unlock</span>
+              </li>
+            </ul>
           </div>
           
-          <div className="bg-gradient-to-br from-[#242424] to-[#1E1E1E] border border-[#333] rounded-lg p-6">
-            <h3 className="text-lg font-semibold text-white mb-3">Milestone Celebrations</h3>
-            <p className="text-gray-300 text-sm">
-              Create a special gift that unlocks on a significant future date like a 
-              25th wedding anniversary, graduation, or other important milestone.
-            </p>
+          <div className="bg-[#1A1A1A] border border-[#333] rounded-lg p-6">
+            <div className="flex items-center mb-4">
+              <div className="h-10 w-10 rounded-full bg-[#6B00D7]/20 flex items-center justify-center mr-4">
+                <Database className="h-5 w-5 text-[#FF5AF7]" />
+              </div>
+              <h3 className="text-lg font-semibold text-white">Storage Redundancy</h3>
+            </div>
+            <ul className="space-y-2 text-gray-300 text-sm">
+              <li className="flex items-start">
+                <span className="text-[#FF5AF7] mr-2">•</span>
+                <span>Triple-chain storage verification across Ethereum, Solana and TON</span>
+              </li>
+              <li className="flex items-start">
+                <span className="text-[#FF5AF7] mr-2">•</span>
+                <span>Automatic integrity checks and repair protocols</span>
+              </li>
+              <li className="flex items-start">
+                <span className="text-[#FF5AF7] mr-2">•</span>
+                <span>Geographic distribution of content across multiple server regions</span>
+              </li>
+              <li className="flex items-start">
+                <span className="text-[#FF5AF7] mr-2">•</span>
+                <span>Format migration service for technological obsolescence prevention</span>
+              </li>
+            </ul>
           </div>
           
-          <div className="bg-gradient-to-br from-[#242424] to-[#1E1E1E] border border-[#333] rounded-lg p-6">
-            <h3 className="text-lg font-semibold text-white mb-3">Future Messages</h3>
-            <p className="text-gray-300 text-sm">
-              Send messages to your future self or loved ones, paired with investment assets 
-              that grow over time until the unlock date arrives.
+          <div className="bg-[#1A1A1A] border border-[#333] rounded-lg p-6">
+            <div className="flex items-center mb-4">
+              <div className="h-10 w-10 rounded-full bg-[#6B00D7]/20 flex items-center justify-center mr-4">
+                <Globe className="h-5 w-5 text-[#FF5AF7]" />
+              </div>
+              <h3 className="text-lg font-semibold text-white">Special Unlocking Options</h3>
+            </div>
+            <ul className="space-y-2 text-gray-300 text-sm">
+              <li className="flex items-start">
+                <span className="text-[#FF5AF7] mr-2">•</span>
+                <span>Blockchain milestone unlocking (e.g., Bitcoin halving event)</span>
+              </li>
+              <li className="flex items-start">
+                <span className="text-[#FF5AF7] mr-2">•</span>
+                <span>Age-based unlocking for gifts to minors</span>
+              </li>
+              <li className="flex items-start">
+                <span className="text-[#FF5AF7] mr-2">•</span>
+                <span>Geolocation-based requirements for unlocking</span>
+              </li>
+              <li className="flex items-start">
+                <span className="text-[#FF5AF7] mr-2">•</span>
+                <span>Partial unlocking schedule with phased content release</span>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      {/* Creating Your Memory Vault Section */}
+      <div className="mb-12">
+        <h2 className="text-2xl font-bold text-white mb-6 border-b border-[#333] pb-2">
+          Creating Your Memory Vault: A Step-by-Step Guide
+        </h2>
+        
+        <div className="space-y-6">
+          <div className="bg-[#242424] border border-[#333] rounded-lg p-6">
+            <h3 className="text-xl font-semibold text-white mb-4">Step 1: Vault Setup</h3>
+            <p className="text-gray-300 mb-4">
+              Begin by selecting "Memory Vault" from the specialized vault options. You'll need to:
             </p>
+            <ul className="space-y-2 text-gray-300">
+              <li className="flex items-start">
+                <span className="text-[#FF5AF7] mr-2">1.</span>
+                <span>Name your vault to help identify it later</span>
+              </li>
+              <li className="flex items-start">
+                <span className="text-[#FF5AF7] mr-2">2.</span>
+                <span>Add a description explaining the purpose of this memory collection</span>
+              </li>
+              <li className="flex items-start">
+                <span className="text-[#FF5AF7] mr-2">3.</span>
+                <span>Select the primary blockchain for the vault (Ethereum, Solana, or TON)</span>
+              </li>
+              <li className="flex items-start">
+                <span className="text-[#FF5AF7] mr-2">4.</span>
+                <span>Choose the security level for your vault</span>
+              </li>
+            </ul>
           </div>
           
-          <div className="bg-gradient-to-br from-[#242424] to-[#1E1E1E] border border-[#333] rounded-lg p-6">
-            <h3 className="text-lg font-semibold text-white mb-3">Memorial Planning</h3>
-            <p className="text-gray-300 text-sm">
-              Create a personal memorial with videos, photos, and messages to be shared 
-              with loved ones after your passing, along with digital asset inheritance.
+          <div className="bg-[#242424] border border-[#333] rounded-lg p-6">
+            <h3 className="text-xl font-semibold text-white mb-4">Step 2: Define Unlocking Conditions</h3>
+            <p className="text-gray-300 mb-4">
+              Configure when and how your memory vault will be accessible:
             </p>
+            <ul className="space-y-2 text-gray-300">
+              <li className="flex items-start">
+                <span className="text-[#FF5AF7] mr-2">1.</span>
+                <span>Set the primary unlock date (calendar date and time)</span>
+              </li>
+              <li className="flex items-start">
+                <span className="text-[#FF5AF7] mr-2">2.</span>
+                <span>Optionally configure alternative unlocking conditions</span>
+              </li>
+              <li className="flex items-start">
+                <span className="text-[#FF5AF7] mr-2">3.</span>
+                <span>Enable or disable the countdown display feature</span>
+              </li>
+              <li className="flex items-start">
+                <span className="text-[#FF5AF7] mr-2">4.</span>
+                <span>Configure notification preferences for beneficiaries</span>
+              </li>
+            </ul>
           </div>
           
-          <div className="bg-gradient-to-br from-[#242424] to-[#1E1E1E] border border-[#333] rounded-lg p-6">
-            <h3 className="text-lg font-semibold text-white mb-3">Historical Documentation</h3>
-            <p className="text-gray-300 text-sm">
-              Document current events, personal experiences, or family history to be 
-              preserved and revealed at a future date for educational or historical purposes.
+          <div className="bg-[#242424] border border-[#333] rounded-lg p-6">
+            <h3 className="text-xl font-semibold text-white mb-4">Step 3: Add Digital Assets</h3>
+            <p className="text-gray-300 mb-4">
+              Include any cryptocurrencies or tokens you want to store:
             </p>
+            <ul className="space-y-2 text-gray-300">
+              <li className="flex items-start">
+                <span className="text-[#FF5AF7] mr-2">1.</span>
+                <span>Select the cryptocurrencies to include from your connected wallets</span>
+              </li>
+              <li className="flex items-start">
+                <span className="text-[#FF5AF7] mr-2">2.</span>
+                <span>Specify the amount for each asset</span>
+              </li>
+              <li className="flex items-start">
+                <span className="text-[#FF5AF7] mr-2">3.</span>
+                <span>Add any NFTs you want to include in the time capsule</span>
+              </li>
+              <li className="flex items-start">
+                <span className="text-[#FF5AF7] mr-2">4.</span>
+                <span>Review and confirm the transaction fees</span>
+              </li>
+            </ul>
           </div>
           
-          <div className="bg-gradient-to-br from-[#242424] to-[#1E1E1E] border border-[#333] rounded-lg p-6">
-            <h3 className="text-lg font-semibold text-white mb-3">Surprise Gifting</h3>
-            <p className="text-gray-300 text-sm">
-              Create time-locked surprise gifts with personal messages and assets that 
-              reveal themselves on birthdays, holidays, or other special occasions.
+          <div className="bg-[#242424] border border-[#333] rounded-lg p-6">
+            <h3 className="text-xl font-semibold text-white mb-4">Step 4: Upload Multimedia Content</h3>
+            <p className="text-gray-300 mb-4">
+              This is where your memory vault becomes truly personal:
             </p>
+            <ul className="space-y-2 text-gray-300">
+              <li className="flex items-start">
+                <span className="text-[#FF5AF7] mr-2">1.</span>
+                <span>Upload photos from your device (up to 50 per vault)</span>
+              </li>
+              <li className="flex items-start">
+                <span className="text-[#FF5AF7] mr-2">2.</span>
+                <span>Add videos that capture important moments (up to 10 per vault)</span>
+              </li>
+              <li className="flex items-start">
+                <span className="text-[#FF5AF7] mr-2">3.</span>
+                <span>Organize content into collections if desired</span>
+              </li>
+              <li className="flex items-start">
+                <span className="text-[#FF5AF7] mr-2">4.</span>
+                <span>Add captions and descriptions to provide context</span>
+              </li>
+            </ul>
+          </div>
+          
+          <div className="bg-[#242424] border border-[#333] rounded-lg p-6">
+            <h3 className="text-xl font-semibold text-white mb-4">Step 5: Compose Personal Messages</h3>
+            <p className="text-gray-300 mb-4">
+              Share your thoughts, emotions and wishes:
+            </p>
+            <ul className="space-y-2 text-gray-300">
+              <li className="flex items-start">
+                <span className="text-[#FF5AF7] mr-2">1.</span>
+                <span>Write one or more personal messages to include in the vault</span>
+              </li>
+              <li className="flex items-start">
+                <span className="text-[#FF5AF7] mr-2">2.</span>
+                <span>Add voice recordings if desired for a more personal touch</span>
+              </li>
+              <li className="flex items-start">
+                <span className="text-[#FF5AF7] mr-2">3.</span>
+                <span>Use the formatting tools to structure your message</span>
+              </li>
+              <li className="flex items-start">
+                <span className="text-[#FF5AF7] mr-2">4.</span>
+                <span>Preview how messages will appear when unlocked</span>
+              </li>
+            </ul>
+          </div>
+          
+          <div className="bg-[#242424] border border-[#333] rounded-lg p-6">
+            <h3 className="text-xl font-semibold text-white mb-4">Step 6: Assign Beneficiaries</h3>
+            <p className="text-gray-300 mb-4">
+              Determine who will have access when the vault unlocks:
+            </p>
+            <ul className="space-y-2 text-gray-300">
+              <li className="flex items-start">
+                <span className="text-[#FF5AF7] mr-2">1.</span>
+                <span>Add wallet addresses of intended recipients</span>
+              </li>
+              <li className="flex items-start">
+                <span className="text-[#FF5AF7] mr-2">2.</span>
+                <span>Optionally enable email notifications (requires verification)</span>
+              </li>
+              <li className="flex items-start">
+                <span className="text-[#FF5AF7] mr-2">3.</span>
+                <span>Set permissions for each beneficiary</span>
+              </li>
+              <li className="flex items-start">
+                <span className="text-[#FF5AF7] mr-2">4.</span>
+                <span>Configure backup access methods if needed</span>
+              </li>
+            </ul>
+          </div>
+          
+          <div className="bg-[#242424] border border-[#333] rounded-lg p-6">
+            <h3 className="text-xl font-semibold text-white mb-4">Step 7: Review and Finalize</h3>
+            <p className="text-gray-300 mb-4">
+              Complete the creation of your memory vault:
+            </p>
+            <ul className="space-y-2 text-gray-300">
+              <li className="flex items-start">
+                <span className="text-[#FF5AF7] mr-2">1.</span>
+                <span>Review all vault details including content and unlock conditions</span>
+              </li>
+              <li className="flex items-start">
+                <span className="text-[#FF5AF7] mr-2">2.</span>
+                <span>Confirm storage fees for multimedia content</span>
+              </li>
+              <li className="flex items-start">
+                <span className="text-[#FF5AF7] mr-2">3.</span>
+                <span>Sign the transaction with your wallet</span>
+              </li>
+              <li className="flex items-start">
+                <span className="text-[#FF5AF7] mr-2">4.</span>
+                <span>Receive confirmation and vault access details</span>
+              </li>
+            </ul>
           </div>
         </div>
       </div>
 
       {/* CTA Section */}
       <div className="text-center">
-        <div className="flex flex-col md:flex-row justify-center gap-4 mb-6">
-          <Link to="/specialized-vault-memory/documentation">
-            <Button variant="outline" className="border-[#6B00D7] text-[#6B00D7] hover:bg-[#6B00D7]/10 px-6 py-5 h-auto text-base rounded-xl">
-              View Complete Documentation
-            </Button>
-          </Link>
-          <Link to="/vault-types-selector">
-            <Button className="bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] hover:from-[#7B10E7] hover:to-[#FF6AF7] text-white px-6 py-5 h-auto text-base rounded-xl shadow-lg shadow-[#6B00D7]/30 transition-all hover:shadow-xl hover:shadow-[#6B00D7]/40">
-              Create Memory Vault
-            </Button>
-          </Link>
-        </div>
+        <Link to="/vault-types-selector">
+          <Button className="bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] hover:from-[#7B10E7] hover:to-[#FF6AF7] text-white px-8 py-6 h-auto text-lg rounded-xl shadow-lg shadow-[#6B00D7]/30 transition-all hover:shadow-xl hover:shadow-[#6B00D7]/40">
+            Create Memory Vault
+          </Button>
+        </Link>
         <p className="text-gray-400 mt-4">
           Combine your digital assets with treasured memories in a time-locked vault
         </p>
@@ -476,4 +686,4 @@ const MemoryVaultPage = () => {
   );
 };
 
-export default MemoryVaultPage;
+export default MemoryVaultDocumentationPage;
