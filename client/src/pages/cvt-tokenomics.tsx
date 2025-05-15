@@ -53,26 +53,29 @@ const TimeLockedReleaseChart = () => {
   ];
 
   return (
-    <div className="h-96 w-full rounded-xl overflow-hidden bg-[#0A0A0A] border border-[#6B00D7]/20 p-6">
+    <div className="h-auto min-h-80 w-full rounded-xl overflow-hidden bg-[#0A0A0A] border border-[#6B00D7]/20 p-4 md:p-6">
       <div className="flex flex-col h-full justify-center">
-        <h3 className="text-center text-xl font-bold mb-6">Time-Locked Token Release Schedule</h3>
-        <div className="grid grid-cols-1 gap-4">
+        <h3 className="text-center text-xl font-bold mb-4 md:mb-6">Time-Locked Release Schedule</h3>
+        <div className="grid grid-cols-1 gap-3">
           {releaseSchedule.map((release) => (
-            <div key={release.year} className="flex items-center space-x-4">
-              <div className="w-16 text-right font-bold">Year {release.year}</div>
+            <div key={release.year} className="flex flex-col md:flex-row md:items-center space-y-1 md:space-y-0 md:space-x-3">
+              <div className="text-center md:text-right md:w-16 font-bold">Year {release.year}</div>
               <div className="flex-1 h-10 bg-black/30 rounded-lg relative overflow-hidden">
                 <div 
                   className="h-full absolute top-0 left-0 rounded-lg"
                   style={{ width: `${release.percentage}%`, backgroundColor: release.color }}
                 />
-                <div className="absolute inset-0 flex items-center pl-4">
-                  <span className="text-sm font-medium text-white">{release.amount.toLocaleString()} CVT ({release.percentage}%)</span>
+                <div className="absolute inset-0 flex items-center px-3">
+                  <span className="text-xs md:text-sm font-medium text-white">
+                    {release.amount.toLocaleString()} CVT 
+                    <span className="ml-1 opacity-80">({release.percentage}%)</span>
+                  </span>
                 </div>
               </div>
             </div>
           ))}
         </div>
-        <div className="mt-4 text-sm text-center text-gray-400">
+        <div className="mt-4 text-xs md:text-sm text-center text-gray-400">
           Total Time-Locked Tokens: 14,700,000 CVT (70% of Total Supply)
         </div>
       </div>
@@ -93,15 +96,15 @@ const SupplyProjectionChart = () => {
   ];
   
   return (
-    <div className="h-96 w-full rounded-xl overflow-hidden bg-[#0A0A0A] border border-[#6B00D7]/20 p-6">
+    <div className="h-auto min-h-80 w-full rounded-xl overflow-hidden bg-[#0A0A0A] border border-[#6B00D7]/20 p-4 md:p-6">
       <div className="flex flex-col h-full justify-center">
-        <h3 className="text-center text-xl font-bold mb-6">Supply Projection (Conservative Estimate)</h3>
-        <div className="grid grid-cols-1 gap-4">
+        <h3 className="text-center text-xl font-bold mb-4 md:mb-6">Supply Projection</h3>
+        <div className="grid grid-cols-1 gap-3">
           {supplyProjections.map((projection) => (
-            <div key={projection.year} className="flex items-center space-x-4">
-              <div className="w-16 text-right font-bold">Year {projection.year}</div>
+            <div key={projection.year} className="flex flex-col md:flex-row md:items-center space-y-1 md:space-y-0 md:space-x-3">
+              <div className="text-center md:text-right md:w-16 font-bold">Year {projection.year}</div>
               <div className="flex-1">
-                <div className="flex items-center space-x-3">
+                <div className="flex flex-col md:flex-row space-y-1 md:space-y-0 md:items-center md:space-x-3">
                   <div className="flex-1 h-8 bg-black/30 rounded-lg relative overflow-hidden">
                     <div 
                       className="h-full absolute top-0 left-0 rounded-lg"
@@ -116,7 +119,7 @@ const SupplyProjectionChart = () => {
                       </span>
                     </div>
                   </div>
-                  <div className="text-xs">
+                  <div className="text-xs text-right md:text-left md:min-w-24">
                     <span className="text-red-400">
                       -{projection.burned.toLocaleString()} burned
                     </span>
@@ -126,7 +129,7 @@ const SupplyProjectionChart = () => {
             </div>
           ))}
         </div>
-        <div className="mt-4 text-sm text-center text-gray-400">
+        <div className="mt-4 text-xs md:text-sm text-center text-gray-400">
           Deflationary mechanism: ~2% of circulating supply burned annually
         </div>
       </div>
