@@ -15,6 +15,7 @@ import { apiRequest } from '@/lib/queryClient';
 // Import both type and const from the component
 import VaultTypeSelector, { SpecializedVaultType } from '@/components/vault/vault-type-selector';
 import { VaultCreationProgress, getDefaultVaultCreationSteps } from '@/components/vault/create-vault-progress';
+import { MediaUploader, UploadedMedia } from '@/components/vault/media-uploader';
 
 function SpecializedVaultCreation() {
   const [_, navigate] = useLocation();
@@ -44,6 +45,7 @@ function SpecializedVaultCreation() {
   const [vaultDescription, setVaultDescription] = useState<string>('');
   const [assetAmount, setAssetAmount] = useState<string>('');
   const [unlockDate, setUnlockDate] = useState<string>('');
+  const [mediaAttachments, setMediaAttachments] = useState<UploadedMedia[]>([]);
   
   // Quantum-Progressive vault specific state
   const [selectedCryptoAsset, setSelectedCryptoAsset] = useState<string>('BTC');
