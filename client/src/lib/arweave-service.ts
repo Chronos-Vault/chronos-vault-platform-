@@ -1,5 +1,6 @@
 import { WebBundlr } from '@bundlr-network/client';
 import { UploadedMedia, MediaType } from '@/components/vault/media-uploader';
+import { Buffer } from 'buffer';
 
 /**
  * ArweaveService provides functionality for uploading files to the Arweave network
@@ -100,11 +101,12 @@ class ArweaveService {
       // Combine user-provided tags with standard tags
       const allTags = [...standardTags, ...tags];
       
-      // Get file data as arrayBuffer
-      const fileData = await file.arrayBuffer();
+      // Get file data as arrayBuffer and convert to Buffer
+      const arrayBuffer = await file.arrayBuffer();
+      const buffer = Buffer.from(arrayBuffer);
       
       // Upload the file to Arweave
-      const response = await this.bundlr.upload(fileData, {
+      const response = await this.bundlr.upload(buffer, {
         tags: allTags
       });
       
