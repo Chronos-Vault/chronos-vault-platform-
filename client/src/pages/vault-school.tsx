@@ -80,7 +80,7 @@ const vaultTypes = [
     id: "time-lock-memory",
     name: "Time-Lock Memory Vault",
     icon: "⏰",
-    href: "/specialized-vault?type=memory-vault",
+    href: "/specialized-vault-memory",
     description: "Store digital assets together with multimedia memories",
     features: [
       "Combined asset and media time-lock",
