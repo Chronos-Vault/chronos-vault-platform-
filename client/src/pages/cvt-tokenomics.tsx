@@ -41,6 +41,45 @@ const TokenDistributionChart = () => {
   );
 };
 
+// Time-Locked Token Release Chart Component
+const TimeLockedReleaseChart = () => {
+  // Time-locked token release data according to CVT tokenomics specification
+  const releaseSchedule = [
+    { year: 4, amount: 7350000, percentage: 50, color: "#FF5AF7" },
+    { year: 8, amount: 3675000, percentage: 25, color: "#6B00D7" },
+    { year: 12, amount: 1837500, percentage: 12.5, color: "#14F195" },
+    { year: 16, amount: 918750, percentage: 6.25, color: "#6B73FF" },
+    { year: 21, amount: 918750, percentage: 6.25, color: "#0098EA" }
+  ];
+
+  return (
+    <div className="h-96 w-full rounded-xl overflow-hidden bg-[#0A0A0A] border border-[#6B00D7]/20 p-6">
+      <div className="flex flex-col h-full justify-center">
+        <h3 className="text-center text-xl font-bold mb-6">Time-Locked Token Release Schedule</h3>
+        <div className="grid grid-cols-1 gap-4">
+          {releaseSchedule.map((release) => (
+            <div key={release.year} className="flex items-center space-x-4">
+              <div className="w-16 text-right font-bold">Year {release.year}</div>
+              <div className="flex-1 h-10 bg-black/30 rounded-lg relative overflow-hidden">
+                <div 
+                  className="h-full absolute top-0 left-0 rounded-lg"
+                  style={{ width: `${release.percentage}%`, backgroundColor: release.color }}
+                />
+                <div className="absolute inset-0 flex items-center pl-4">
+                  <span className="text-sm font-medium text-white">{release.amount.toLocaleString()} CVT ({release.percentage}%)</span>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+        <div className="mt-4 text-sm text-center text-gray-400">
+          Total Time-Locked Tokens: 14,700,000 CVT (70% of Total Supply)
+        </div>
+      </div>
+    </div>
+  );
+};
+
 // Staking Tiers Chart Component (2D)
 const StakingTiersChart = () => {
   // Staking tier data
