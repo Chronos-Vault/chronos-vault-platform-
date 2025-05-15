@@ -344,6 +344,10 @@ const crossChainVerificationConfig = {
   
   // Alternative endpoints for each blockchain (for resilience)
   alternativeEndpoints: {
+    ton: [
+      'https://toncenter.com/api/v2/jsonRPC',
+      'https://ton.access.orbs.network/api/v2/jsonRPC'
+    ],
     ethereum: [
       'https://mainnet.infura.io/v3/your-backup-key',
       'https://eth-mainnet.alchemyapi.io/v2/your-backup-key'
@@ -351,10 +355,6 @@ const crossChainVerificationConfig = {
     solana: [
       'https://solana-api.projectserum.com',
       'https://api.mainnet-beta.solana.com'
-    ],
-    ton: [
-      'https://toncenter.com/api/v2/jsonRPC',
-      'https://ton.access.orbs.network/api/v2/jsonRPC'
     ],
     bitcoin: [
       'https://btc1.trezor.io/api/v2',

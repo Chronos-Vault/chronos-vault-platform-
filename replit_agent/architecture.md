@@ -37,11 +37,11 @@ Chronos Vault employs a client-server architecture with the following key compon
 
 The platform implements a Triple-Chain Security model:
 
-1. **Ethereum Layer**: Primary blockchain for ownership records and access control
-2. **Solana Layer**: High-frequency monitoring and rapid validation
-3. **TON Layer**: Backup security system and emergency recovery operations
+1. **TON Layer**: Primary blockchain for vault creation, management and time-lock operations
+2. **Ethereum Layer**: Security verification and ownership validation
+3. **Solana Layer**: High-frequency monitoring and rapid validation
 
-This multi-chain approach ensures assets are secured by three independent blockchain networks, preventing single points of failure.
+This multi-chain approach ensures assets are secured by three independent blockchain networks, preventing single points of failure. TON was selected as the primary chain due to its lower gas fees, faster transaction speed, better scalability, and native time-based operations.
 
 ## 3. Key Components
 
@@ -86,10 +86,10 @@ Key database tables:
 
 ### 3.4 Blockchain Integration
 
-- **TON**: Primary blockchain using TON Connect SDK
-- **Ethereum**: Integration via ethers.js
-- **Solana**: Integration via @solana/web3.js
-- **Cross-Chain**: Custom bridge implementations
+- **TON**: Primary blockchain using TON Connect SDK, handling vault creation and time-lock operations
+- **Ethereum**: Validation layer via ethers.js, providing security verification and ownership validation
+- **Solana**: Monitoring layer via @solana/web3.js, enabling high-frequency monitoring
+- **Cross-Chain**: Custom bridge implementations for inter-chain security verification
 
 Key blockchain features:
 - Smart contracts for vault creation and management

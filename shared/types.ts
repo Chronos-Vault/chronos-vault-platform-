@@ -22,6 +22,7 @@ export enum RecoveryStrategy {
 
 export enum ChainRole {
   PRIMARY = 'PRIMARY',
+  VALIDATION = 'VALIDATION',
   MONITORING = 'MONITORING',
   RECOVERY = 'RECOVERY',
   FALLBACK = 'FALLBACK'
