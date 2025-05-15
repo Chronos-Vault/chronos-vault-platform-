@@ -224,37 +224,30 @@ const VaultTypesSelector = () => {
               <li>• Owner & Beneficiary Controls</li>
             </ul>
           </div>
-        </div>
-        
-        <div className="mb-6">
-          <VaultTypeSelector 
-            selectedType={selectedVaultType} 
-            onChange={handleVaultTypeSelect} 
-          />
-        </div>
-        
-        {/* Security Configuration Banner */}
-        <div className="mb-6 p-4 border border-[#FF5AF7]/30 rounded-lg bg-gradient-to-r from-black/40 to-[#6B00D7]/10">
-          <div className="flex flex-col md:flex-row justify-between items-center">
-            <div className="flex items-center mb-4 md:mb-0">
-              <div className="flex-shrink-0 w-12 h-12 rounded-full bg-[#FF5AF7]/10 border border-[#FF5AF7]/20 flex items-center justify-center mr-4">
-                <Star className="h-6 w-6 text-[#FF5AF7]" />
+          
+          {/* Security Configuration Banner */}
+          <div className="mt-4 p-4 border border-[#FF5AF7]/30 rounded-lg bg-gradient-to-r from-black/40 to-[#6B00D7]/10">
+            <div className="flex flex-col md:flex-row justify-between items-center">
+              <div className="flex items-center mb-4 md:mb-0">
+                <div className="flex-shrink-0 w-12 h-12 rounded-full bg-[#FF5AF7]/10 border border-[#FF5AF7]/20 flex items-center justify-center mr-4">
+                  <Star className="h-6 w-6 text-[#FF5AF7]" />
+                </div>
+                <div>
+                  <h3 className="text-[#FF5AF7] font-medium text-lg">Sovereign Fortress™ Security</h3>
+                  <p className="text-sm text-gray-400">Configure quantum-resistant security protocols for your vault</p>
+                </div>
               </div>
-              <div>
-                <h3 className="text-[#FF5AF7] font-medium text-lg">Sovereign Fortress™ Security</h3>
-                <p className="text-sm text-gray-400">Configure quantum-resistant security protocols for your vault</p>
-              </div>
+              <Link href="/security-protocols">
+                <Button 
+                  variant="outline" 
+                  className="group border-[#FF5AF7] border-opacity-30 hover:border-opacity-100 bg-black/20 hover:bg-black/40 transition-all"
+                >
+                  <LockKeyhole className="mr-2 h-4 w-4 text-[#FF5AF7] group-hover:animate-pulse" />
+                  <span className="bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] bg-clip-text text-transparent">Configure Security</span>
+                  <ChevronRight className="ml-2 h-4 w-4 text-[#FF5AF7] group-hover:translate-x-1 transition-transform" />
+                </Button>
+              </Link>
             </div>
-            <Link href="/security-protocols">
-              <Button 
-                variant="outline" 
-                className="group border-[#FF5AF7] border-opacity-30 hover:border-opacity-100 bg-black/20 hover:bg-black/40 transition-all"
-              >
-                <LockKeyhole className="mr-2 h-4 w-4 text-[#FF5AF7] group-hover:animate-pulse" />
-                <span className="bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] bg-clip-text text-transparent">Configure Security</span>
-                <ChevronRight className="ml-2 h-4 w-4 text-[#FF5AF7] group-hover:translate-x-1 transition-transform" />
-              </Button>
-            </Link>
           </div>
         </div>
         
@@ -289,6 +282,8 @@ const VaultTypesSelector = () => {
   );
 };
 
-export default function VaultTypesSelectorPage() {
+function VaultTypesSelectorPage() {
   return <VaultTypesSelector />;
 }
+
+export default VaultTypesSelectorPage;
