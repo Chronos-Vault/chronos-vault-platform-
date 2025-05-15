@@ -27,6 +27,7 @@ import AdvancedVaultCreationPage from "@/pages/advanced-vault-creation";
 import AdvancedVaultCreationNewPage from "@/pages/advanced-vault-creation-new";
 import VaultTypesSelector from "@/pages/vault-types-selector";
 import SpecializedVaultCreationPage from "@/pages/specialized-vault-creation";
+import SecurityProtocolsPage from "@/pages/security-protocols";
 import MultiSignatureVaultPage from "@/pages/multi-signature-vault-page";
 import IntentInheritanceVault from "@/pages/intent-inheritance-vault";
 import MyVaults from "@/pages/my-vaults";
@@ -185,6 +186,7 @@ function Router() {
             <Redirect to="/vault-types" />
           </Route>
           <Route path="/vault-types" component={VaultTypesSelector} />
+          <Route path="/security-protocols" component={SecurityProtocolsPage} />
           <Route path="/advanced-vault" component={AdvancedVaultCreationPage} />
           <Route path="/advanced-vault-new" component={AdvancedVaultCreationNewPage} />
           <Route path="/specialized-vault" component={SpecializedVaultCreationPage} />
