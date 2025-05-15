@@ -92,6 +92,7 @@ import MultiSignatureVaultDocPage from "@/pages/multi-signature-vault-doc"; // N
 import FAQPage from "@/pages/faq";
 import SmartContractsPage from "@/pages/smart-contracts";
 import SmartContractVaultPage from "@/pages/smart-contract-vault";
+import CreateSmartContractVaultPage from "@/pages/create-smart-contract-vault";
 import VaultSchoolPage from "@/pages/vault-school";
 
 
@@ -269,6 +270,7 @@ function Router() {
           <Route path="/faq" component={FAQPage} />
           <Route path="/smart-contracts" component={SmartContractsPage} />
           <Route path="/smart-contract-vault" component={SmartContractVaultPage} />
+          <Route path="/create-smart-contract-vault" component={CreateSmartContractVaultPage} />
           <Route path="/vault-school" component={VaultSchoolPage} />
 
           <Route component={NotFound} />

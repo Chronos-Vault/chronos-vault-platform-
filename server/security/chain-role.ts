@@ -22,10 +22,17 @@ export interface ChainConfiguration {
 
 // Default chain configuration based on Triple-Chain Security architecture
 export const DEFAULT_CHAIN_CONFIGURATION: Record<string, ChainConfiguration> = {
-  ethereum: {
-    chain: 'ethereum',
+  ton: {
+    chain: 'ton',
     role: ChainRole.PRIMARY,
     priority: 1,
+    isActive: true,
+    endpoints: ['https://toncenter.com/api/v2/jsonRPC']
+  },
+  ethereum: {
+    chain: 'ethereum',
+    role: ChainRole.RECOVERY,
+    priority: 3,
     isActive: true,
     endpoints: process.env.ETHEREUM_RPC_URL ? [process.env.ETHEREUM_RPC_URL] : []
   },
@@ -35,13 +42,6 @@ export const DEFAULT_CHAIN_CONFIGURATION: Record<string, ChainConfiguration> = {
     priority: 2,
     isActive: true,
     endpoints: process.env.SOLANA_RPC_URL ? [process.env.SOLANA_RPC_URL] : []
-  },
-  ton: {
-    chain: 'ton',
-    role: ChainRole.RECOVERY,
-    priority: 3,
-    isActive: true,
-    endpoints: ['https://toncenter.com/api/v2/jsonRPC']
   },
   bitcoin: {
     chain: 'bitcoin',
