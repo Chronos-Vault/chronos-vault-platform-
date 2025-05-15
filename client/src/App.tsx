@@ -210,6 +210,7 @@ function Router() {
           <Route path="/token-vaults" component={TokenVaultsPage} />
           <Route path="/multi-signature-vault-new" component={MultiSignatureVaultDocPage} />
           <Route path="/multi-signature-vault" component={MultiSignatureVaultDocPage} />
+          <Route path="/multi-signature-vault-doc" component={MultiSignatureVaultDocPage} />
           <Route path="/multi-signature-vault-page" component={MultiSignatureVaultPage} />
           <Route path="/cross-chain" component={CrossChainPage} />
           <Route path="/cross-chain-vault" component={CrossChainVaultDocPage} />
