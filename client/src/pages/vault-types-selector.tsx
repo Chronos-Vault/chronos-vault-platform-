@@ -6,67 +6,7 @@ import { useToast } from '@/hooks/use-toast';
 import { cn } from '@/lib/utils';
 import { ArrowLeft, ArrowRight, AlertCircle, ChevronRight, Shield } from 'lucide-react';
 
-// Create a simple progress indicator component
-const VaultCreationSteps = ({ currentStep = "select-type" }: { currentStep?: string }) => {
-  const steps = [
-    { id: "select-type", label: "Select Vault Type" },
-    { id: "configure", label: "Configure Vault" },
-    { id: "review", label: "Review Details" },
-    { id: "deploy", label: "Deploy Vault" }
-  ];
-  
-  return (
-    <div className="mb-6">
-      <div className="flex items-center justify-between space-x-2">
-        {steps.map((step, index) => (
-          <React.Fragment key={step.id}>
-            <div className="flex flex-col items-center space-y-2">
-              <div 
-                className={cn(
-                  "w-8 h-8 rounded-full flex items-center justify-center text-xs font-medium",
-                  currentStep === step.id 
-                    ? "bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] text-white" 
-                    : index < steps.findIndex(s => s.id === currentStep)
-                      ? "bg-gradient-to-r from-[#6B00D7]/60 to-[#FF5AF7]/60 text-white"
-                      : "bg-gray-800 text-gray-400"
-                )}
-              >
-                {index < steps.findIndex(s => s.id === currentStep) ? (
-                  <Shield className="h-4 w-4" />
-                ) : (
-                  index + 1
-                )}
-              </div>
-              <span 
-                className={cn(
-                  "text-xs hidden sm:block",
-                  currentStep === step.id 
-                    ? "text-white" 
-                    : index < steps.findIndex(s => s.id === currentStep)
-                      ? "text-gray-300"
-                      : "text-gray-500"
-                )}
-              >
-                {step.label}
-              </span>
-            </div>
-            
-            {index < steps.length - 1 && (
-              <div 
-                className={cn(
-                  "flex-1 h-1 rounded",
-                  index < steps.findIndex(s => s.id === currentStep)
-                    ? "bg-gradient-to-r from-[#6B00D7]/60 to-[#FF5AF7]/60"
-                    : "bg-gray-800"
-                )}
-              />
-            )}
-          </React.Fragment>
-        ))}
-      </div>
-    </div>
-  );
-};
+import { VaultCreationProgress, getDefaultVaultCreationSteps } from '@/components/vault/create-vault-progress';
 
 const VaultTypesSelector = () => {
   const [_, navigate] = useLocation();
@@ -166,7 +106,20 @@ const VaultTypesSelector = () => {
       
       <div className="bg-black/20 backdrop-blur-sm border border-gray-800 rounded-lg p-4 sm:p-6 mb-8">
         {/* Progress Indicator */}
-        <VaultCreationSteps />
+        <VaultCreationProgress 
+          steps={[
+            {
+              id: "select-type",
+              name: "Select Vault Type",
+              description: "Choose the best vault for your needs",
+              status: "current",
+              icon: <Shield className="h-5 w-5" />
+            },
+            ...getDefaultVaultCreationSteps("wallet").slice(0, 5)
+          ]} 
+          currentStepId="select-type"
+          variant="horizontal"
+        />
         
         {/* Validation Error Display */}
         {validationError && (
