@@ -86,6 +86,7 @@ import GeoVaultPage from "@/pages/geo-vault-page";
 import FAQPage from "@/pages/faq";
 import SmartContractsPage from "@/pages/smart-contracts";
 import SmartContractVaultPage from "@/pages/smart-contract-vault";
+import VaultSchoolPage from "@/pages/vault-school";
 
 
 // Redirect component for wouter
@@ -254,6 +255,7 @@ function Router() {
           <Route path="/faq" component={FAQPage} />
           <Route path="/smart-contracts" component={SmartContractsPage} />
           <Route path="/smart-contract-vault" component={SmartContractVaultPage} />
+          <Route path="/vault-school" component={VaultSchoolPage} />
 
           <Route component={NotFound} />
         </Switch>
