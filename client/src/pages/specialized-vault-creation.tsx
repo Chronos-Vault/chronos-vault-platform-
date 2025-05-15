@@ -42,6 +42,26 @@ function SpecializedVaultCreation() {
     }
   };
   
+  // Effect to process URL parameters and initialize the component
+  useEffect(() => {
+    // Get URL query parameters
+    const params = new URLSearchParams(window.location.search);
+    const typeParam = params.get('type');
+    
+    // If type parameter exists, set the vault type
+    if (typeParam) {
+      // Validate if it's a valid vault type
+      const validType = Object.values(SpecializedVaultType).includes(typeParam as SpecializedVaultType);
+      if (validType) {
+        setSelectedVaultType(typeParam as SpecializedVaultType);
+        // If it's the standard vault, stay on step 1, otherwise proceed to step 2
+        if (typeParam !== SpecializedVaultType.STANDARD) {
+          setStep(2);
+        }
+      }
+    }
+  }, []);
+  
   // Effect to automatically proceed to next step when a vault type is selected
   useEffect(() => {
     if (selectedVaultType !== SpecializedVaultType.STANDARD && step === 1) {
@@ -480,6 +500,88 @@ function SpecializedVaultCreation() {
   // Specialized config for different vault types
   const renderSpecializedConfig = () => {
     switch (selectedVaultType) {
+      case SpecializedVaultType.STANDARD:
+        return (
+          <div className="space-y-4 mt-6 p-4 border border-[#6B00D7]/30 rounded-lg bg-gray-900/50">
+            <h3 className="text-[#6B00D7] font-medium">Sovereign Fortress Vault™ Configuration</h3>
+            <div className="space-y-4">
+              <div className="bg-black/20 p-4 rounded-lg">
+                <div className="flex items-center">
+                  <div className="bg-[#6B00D7]/20 p-3 rounded-full mr-3">
+                    <i className="ri-shield-star-line text-[#6B00D7] text-xl"></i>
+                  </div>
+                  <div>
+                    <h4 className="text-white font-medium">Premium Features Included</h4>
+                    <p className="text-sm text-gray-400">All security technologies combined in one vault</p>
+                  </div>
+                </div>
+              </div>
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="bg-black/20 p-4 rounded-lg space-y-3">
+                  <h4 className="text-white font-medium">Security Technologies</h4>
+                  <div className="space-y-2">
+                    <div className="flex items-center p-2 bg-black/20 rounded-md">
+                      <div className="h-4 w-4 bg-[#6B00D7]/20 flex items-center justify-center rounded mr-2">
+                        <i className="ri-check-line text-[#6B00D7] text-xs"></i>
+                      </div>
+                      <span className="text-sm text-gray-300">Triple-Chain Security Architecture</span>
+                    </div>
+                    <div className="flex items-center p-2 bg-black/20 rounded-md">
+                      <div className="h-4 w-4 bg-[#6B00D7]/20 flex items-center justify-center rounded mr-2">
+                        <i className="ri-check-line text-[#6B00D7] text-xs"></i>
+                      </div>
+                      <span className="text-sm text-gray-300">Post-Quantum Cryptography</span>
+                    </div>
+                    <div className="flex items-center p-2 bg-black/20 rounded-md">
+                      <div className="h-4 w-4 bg-[#6B00D7]/20 flex items-center justify-center rounded mr-2">
+                        <i className="ri-check-line text-[#6B00D7] text-xs"></i>
+                      </div>
+                      <span className="text-sm text-gray-300">AI Behavioral Analysis</span>
+                    </div>
+                    <div className="flex items-center p-2 bg-black/20 rounded-md">
+                      <div className="h-4 w-4 bg-[#6B00D7]/20 flex items-center justify-center rounded mr-2">
+                        <i className="ri-check-line text-[#6B00D7] text-xs"></i>
+                      </div>
+                      <span className="text-sm text-gray-300">Zero-Knowledge Privacy</span>
+                    </div>
+                  </div>
+                </div>
+                
+                <div className="bg-black/20 p-4 rounded-lg space-y-3">
+                  <h4 className="text-white font-medium">Premium Features</h4>
+                  <div className="space-y-2">
+                    <div className="flex items-center p-2 bg-black/20 rounded-md">
+                      <div className="h-4 w-4 bg-[#6B00D7]/20 flex items-center justify-center rounded mr-2">
+                        <i className="ri-check-line text-[#6B00D7] text-xs"></i>
+                      </div>
+                      <span className="text-sm text-gray-300">Cross-Chain Asset Protection</span>
+                    </div>
+                    <div className="flex items-center p-2 bg-black/20 rounded-md">
+                      <div className="h-4 w-4 bg-[#6B00D7]/20 flex items-center justify-center rounded mr-2">
+                        <i className="ri-check-line text-[#6B00D7] text-xs"></i>
+                      </div>
+                      <span className="text-sm text-gray-300">Advanced Recovery Options</span>
+                    </div>
+                    <div className="flex items-center p-2 bg-black/20 rounded-md">
+                      <div className="h-4 w-4 bg-[#6B00D7]/20 flex items-center justify-center rounded mr-2">
+                        <i className="ri-check-line text-[#6B00D7] text-xs"></i>
+                      </div>
+                      <span className="text-sm text-gray-300">Priority Transaction Processing</span>
+                    </div>
+                    <div className="flex items-center p-2 bg-black/20 rounded-md">
+                      <div className="h-4 w-4 bg-[#6B00D7]/20 flex items-center justify-center rounded mr-2">
+                        <i className="ri-check-line text-[#6B00D7] text-xs"></i>
+                      </div>
+                      <span className="text-sm text-gray-300">Unlimited Media Attachments</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        );
+      
       case SpecializedVaultType.MULTI_SIGNATURE:
         return (
           <div className="space-y-4 mt-6 p-4 border border-[#FF5AF7]/30 rounded-lg bg-gray-900/50">
