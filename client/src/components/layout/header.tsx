@@ -41,7 +41,7 @@ const Header = () => {
       { name: "📚 Vault Explorer", href: "/my-vaults" }
     ]},
     { name: "Vault School", href: "#", icon: "🎓", children: [
-      { name: "📘 Smart Contract Vault", href: "/smart-contract-vault", highlight: true, isNew: true },
+      { name: "📘 Smart Contract Vault", href: "/smart-contract-vault", highlight: true },
       { name: "🔒 Multi-Signature Vault", href: "/multi-signature-vault-new" },
       { name: "📱 Biometric Vault", href: "/biometric-vault" }, 
       { name: "🧩 Cross-Chain Vault", href: "/cross-chain-vault" },
@@ -84,7 +84,7 @@ const Header = () => {
       title: "Vault School",
       icon: "🎓",
       items: [
-        { name: "Smart Contract Vault", href: "/smart-contract-vault", icon: "📘", isNew: true, highlight: true },
+        { name: "Smart Contract Vault", href: "/smart-contract-vault", icon: "📘", highlight: true },
         { name: "Multi-Signature Vault", href: "/multi-signature-vault-new", icon: "🔒" },
         { name: "Biometric Vault", href: "/biometric-vault", icon: "📱" },
         { name: "Cross-Chain Vault", href: "/cross-chain-vault", icon: "🧩" },
