@@ -225,17 +225,14 @@ const VaultTypesSelector = () => {
             </ul>
           </div>
           
-          {/* Vault Type Selection Section */}
-          <div className="col-span-1 md:col-span-3 mt-6 mb-4">
-            <h2 className="text-xl font-semibold text-white mb-3">Select Your Vault Type</h2>
-            <p className="text-gray-300 text-sm mb-4">
-              Explore our 16 specialized vault types with unique features and security levels
-            </p>
-          </div>
         </div>
         
-        {/* Render the VaultTypeSelector component */}
-        <div className="mb-6">
+        <div className="mt-8 mb-6">
+          <h2 className="text-xl font-semibold text-white mb-3">Select Your Vault Type</h2>
+          <p className="text-gray-300 text-sm mb-6">
+            Explore our 16 specialized vault types with unique features and security levels
+          </p>
+          
           <VaultTypeSelector 
             selectedType={selectedVaultType} 
             onChange={handleVaultTypeSelect} 
