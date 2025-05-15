@@ -456,7 +456,7 @@ const MemoryVaultPage = () => {
 
       {/* CTA Section */}
       <div className="text-center">
-        <Link href="/vault-types">
+        <Link href="/vault-types-selector">
           <Button className="bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] hover:from-[#7B10E7] hover:to-[#FF6AF7] text-white px-8 py-6 h-auto text-lg rounded-xl shadow-lg shadow-[#6B00D7]/30 transition-all hover:shadow-xl hover:shadow-[#6B00D7]/40">
             Create Memory Vault
           </Button>
