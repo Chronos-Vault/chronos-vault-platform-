@@ -88,6 +88,7 @@ import GeoVaultDocPage from "@/pages/geo-vault"; // New documentation page
 import CrossChainVaultDocPage from "@/pages/cross-chain-vault"; // New documentation page
 import MemoryVaultPage from "@/pages/specialized-vault-memory"; // New documentation page
 import InvestmentDisciplineVaultDocPage from "@/pages/investment-discipline-vault-doc"; // New documentation page
+import MultiSignatureVaultDocPage from "@/pages/multi-signature-vault-doc"; // New documentation page
 import FAQPage from "@/pages/faq";
 import SmartContractsPage from "@/pages/smart-contracts";
 import SmartContractVaultPage from "@/pages/smart-contract-vault";
@@ -207,8 +208,9 @@ function Router() {
           <Route path="/cvt-token" component={CVTTokenPage} />
           <Route path="/cvt-utility" component={CVTUtilityPage} />
           <Route path="/token-vaults" component={TokenVaultsPage} />
-          <Route path="/multi-signature-vault-new" component={MultiSignatureVaultPage} />
-          <Route path="/multi-signature-vault" component={MultiSignatureVaultPage} />
+          <Route path="/multi-signature-vault-new" component={MultiSignatureVaultDocPage} />
+          <Route path="/multi-signature-vault" component={MultiSignatureVaultDocPage} />
+          <Route path="/multi-signature-vault-page" component={MultiSignatureVaultPage} />
           <Route path="/cross-chain" component={CrossChainPage} />
           <Route path="/cross-chain-vault" component={CrossChainVaultDocPage} />
           <Route path="/cross-chain-security" component={CrossChainSecurityPage} />
