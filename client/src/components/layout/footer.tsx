@@ -64,10 +64,12 @@ const Footer = ({ className = '' }: { className?: string }) => {
           <div>
             <h3 className="font-poppins font-semibold text-xl mb-5 text-white">Resources</h3>
             <ul className="space-y-4">
-              <li><Link href="/vault-school" className="text-gray-300 hover:text-[#FF5AF7] transition-all font-poppins font-light hover:translate-x-1 inline-flex relative group">
-                Vault School
-                <span className="absolute -top-1 -right-8 bg-[#FF5AF7] text-white text-[8px] px-1.5 py-0.5 rounded-full font-bold tracking-wider shadow-md shadow-[#FF5AF7]/30 animate-pulse">NEW</span>
-              </Link></li>
+              <li className="flex items-center">
+                <Link href="/vault-school" className="text-gray-300 hover:text-[#FF5AF7] transition-all font-poppins font-light hover:translate-x-1 inline-flex">
+                  Vault School
+                </Link>
+                <span className="ml-2 bg-[#FF5AF7] text-white text-[8px] px-1.5 py-0.5 rounded-full font-bold tracking-wider shadow-md shadow-[#FF5AF7]/30 animate-pulse">NEW</span>
+              </li>
               <li><Link href="/documentation" className="text-gray-300 hover:text-[#FF5AF7] transition-all font-poppins font-light hover:translate-x-1 inline-flex">Documentation</Link></li>
               <li><Link href="/technical-specification" className="text-gray-300 hover:text-[#FF5AF7] transition-all font-poppins font-light hover:translate-x-1 inline-flex">Technical Specs</Link></li>
               <li><Link href="/project-whitepaper" className="text-gray-300 hover:text-[#FF5AF7] transition-all font-poppins font-light hover:translate-x-1 inline-flex">Project Whitepaper</Link></li>
