@@ -7,7 +7,7 @@ const MemoryVaultPage = () => {
     <div className="container mx-auto px-4 py-12">
       {/* Header Section */}
       <div className="mb-12">
-        <Link href="/vault-school">
+        <Link to="/vault-school">
           <Button variant="ghost" className="mb-6 hover:bg-[#6B00D7]/10">
             <ArrowLeft className="mr-2 h-4 w-4" />
             Back to Vault School
@@ -456,7 +456,7 @@ const MemoryVaultPage = () => {
 
       {/* CTA Section */}
       <div className="text-center">
-        <Link href="/vault-types-selector">
+        <Link to="/vault-types-selector">
           <Button className="bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] hover:from-[#7B10E7] hover:to-[#FF6AF7] text-white px-8 py-6 h-auto text-lg rounded-xl shadow-lg shadow-[#6B00D7]/30 transition-all hover:shadow-xl hover:shadow-[#6B00D7]/40">
             Create Memory Vault
           </Button>
