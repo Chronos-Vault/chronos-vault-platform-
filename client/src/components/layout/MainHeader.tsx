@@ -136,12 +136,13 @@ const MainHeader = () => {
       title: "Vault School",
       icon: "🎓",
       items: [
+        { name: "Vault School Hub", href: "/vault-school", icon: "🏫", highlight: true, isNew: true },
         { name: "Smart Contract Vault", href: "/smart-contract-vault", icon: "📘", highlight: true, isNew: true },
         { name: "Multi-Signature Vault", href: "/multi-signature-vault-new", icon: "🔒" },
         { name: "Biometric Vault", href: "/biometric-vault", icon: "📱" },
         { name: "Cross-Chain Vault", href: "/cross-chain-vault", icon: "🧩" },
         { name: "Geo-Location Vault", href: "/geo-vault", icon: "🌎" },
-        { name: "Time-Lock Memory Vault", href: "/specialized-vault?type=memory-vault", icon: "⏰" },
+        { name: "Time-Lock Memory Vault", href: "/specialized-vault-memory", icon: "⏰" },
         { name: "Investment Vault", href: "/investment-discipline-vault", icon: "💎" },
       ]
     },
@@ -188,21 +189,7 @@ const MainHeader = () => {
         { name: "About", href: "/about", icon: "ℹ️" }
       ]
     },
-    {
-      id: "vault-school",
-      title: "Vault School",
-      icon: "🎓",
-      items: [
-        { name: "Vault School Hub", href: "/vault-school", icon: "🏫", highlight: true, isNew: true },
-        { name: "Smart Contract", href: "/smart-contract-vault", icon: "📘", highlight: true, isNew: true },
-        { name: "Multi-Signature", href: "/multi-signature-vault-new", icon: "🔒", highlight: true },
-        { name: "Biometric", href: "/biometric-vault", icon: "📱", highlight: true },
-        { name: "Cross-Chain", href: "/cross-chain-vault", icon: "🧩", highlight: true },
-        { name: "Geo-Location", href: "/geo-vault", icon: "🌎", highlight: true },
-        { name: "Time-Lock Memory", href: "/specialized-vault-memory", icon: "⏰", highlight: true },
-        { name: "Investment", href: "/investment-discipline-vault", icon: "💎" }
-      ]
-    }
+
   ];
 
   return (
