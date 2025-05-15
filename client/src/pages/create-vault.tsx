@@ -4,10 +4,13 @@ import { useMultiChain, BlockchainType } from "@/contexts/multi-chain-context";
 import { useTon } from "@/contexts/ton-context";
 import { CreateVaultForm } from "@/components/vault/create-vault-form";
 import VaultTypeSelector, { SpecializedVaultType } from "@/components/vault/vault-type-selector";
+import { MediaUploader, UploadedMedia } from "@/components/vault/media-uploader";
+import MediaAttachmentsPreview from "@/components/vault/media-attachments-preview";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, Shield, Clock, File, KeyRound, Users } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { arweaveService } from "@/lib/arweave-service";
 
 const CreateVault = () => {
   const [_, navigate] = useLocation();
@@ -19,6 +22,8 @@ const CreateVault = () => {
   const [selectedBlockchain, setSelectedBlockchain] = useState(BlockchainType.TON);
   const [isConnectingWallet, setIsConnectingWallet] = useState(false);
   const [showSpecializedTypes, setShowSpecializedTypes] = useState(false);
+  const [mediaAttachments, setMediaAttachments] = useState<UploadedMedia[]>([]);
+  const [isArweaveInitializing, setIsArweaveInitializing] = useState(false);
   
   useEffect(() => {
     // Parse query params
@@ -108,6 +113,56 @@ const CreateVault = () => {
     } finally {
       setIsConnectingWallet(false);
     }
+  };
+  
+  // Initialize Arweave connection for media uploads
+  const handleInitArweave = async () => {
+    setIsArweaveInitializing(true);
+    try {
+      // For demonstration, we'll use the Ethereum wallet as the provider
+      // In production, you would use the appropriate provider based on selectedBlockchain
+      const provider = window.ethereum;
+      
+      if (!provider) {
+        throw new Error("No Ethereum provider found. Please install Metamask.");
+      }
+      
+      const success = await arweaveService.initialize(provider);
+      
+      if (success) {
+        toast({
+          title: "Arweave Connected",
+          description: "Successfully connected to Arweave for permanent storage",
+        });
+      } else {
+        throw new Error("Failed to initialize Arweave connection");
+      }
+    } catch (error: any) {
+      toast({
+        title: "Arweave Connection Failed",
+        description: error.message || "Failed to connect to Arweave",
+        variant: "destructive",
+      });
+    } finally {
+      setIsArweaveInitializing(false);
+    }
+  };
+  
+  // Handle media uploads
+  const handleMediaUpload = (files: UploadedMedia[]) => {
+    setMediaAttachments(files);
+    
+    toast({
+      title: "Media Added",
+      description: `${files.length} file(s) added to vault`,
+    });
+  };
+  
+  // Handle removal of media items
+  const handleRemoveMedia = (mediaToRemove: UploadedMedia) => {
+    setMediaAttachments(current => 
+      current.filter(media => media.id !== mediaToRemove.id)
+    );
   };
   
   return (
