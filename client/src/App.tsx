@@ -127,6 +127,10 @@ function App() {
           <Route path="/ton-specific-vault" component={TonSpecificVault} />
           <Route path="/sovereign-fortress-vault" component={SovereignFortressVault} />
           
+          {/* Vault Detail Pages */}
+          <Route path="/vault/:id" component={VaultDetails} />
+          <Route path="/quantum-vault/:id" component={QuantumVault} />
+          
           {/* Documentation Pages */}
           <Route path="/whitepaper" component={Whitepaper} />
           <Route path="/project-whitepaper" component={ProjectWhitepaper} />
