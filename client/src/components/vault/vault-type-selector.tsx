@@ -477,17 +477,17 @@ const VaultTypeCard: React.FC<VaultTypeCardProps> = ({
         {/* Key Features */}
         <div className="mt-auto w-full">
           <h4 className="text-xs font-semibold text-gray-300 mb-2 text-center">Key Features:</h4>
-          <ul className="space-y-2 w-[80%] mx-auto">
+          <div className="flex flex-col items-center">
             {features.slice(0, 4).map((feature, i) => (
-              <li key={i} className="flex items-start">
-                <div 
-                  className="w-2 h-2 rounded-full mt-1 mr-2 flex-shrink-0" 
+              <div key={i} className="flex items-center mb-1.5 w-full px-4">
+                <span 
+                  className="w-2 h-2 rounded-full mr-2 flex-shrink-0" 
                   style={{ backgroundColor: color }}
                 />
-                <p className="text-[11px] text-gray-400 leading-tight text-left">{feature}</p>
-              </li>
+                <span className="text-[11px] text-gray-400">{feature}</span>
+              </div>
             ))}
-          </ul>
+          </div>
         </div>
         
         {/* Selected indicator */}
