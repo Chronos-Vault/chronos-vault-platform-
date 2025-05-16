@@ -2,27 +2,30 @@
  * Cross-Chain Bridge Page
  * 
  * This page provides the interface for cross-chain transfers and atomic swaps.
+ * Direct implementation with no redirects.
  */
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { Link } from 'wouter';
 import { useQuery, useMutation } from '@tanstack/react-query';
 import { crossChainBridgeService } from '@/services/CrossChainBridgeService';
 import { useBlockchain, type ChainType } from '@/hooks/use-blockchain';
 import { useToast } from "@/hooks/use-toast";
 import WalletConnect, { WalletInfo } from '@/components/wallet/WalletConnect';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from '@/components/ui/badge';
-import { AlertCircle, ChevronRight, ArrowLeftRight, RefreshCw, CheckCircle, XCircle, Clock } from 'lucide-react';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
+import { AlertCircle, ChevronRight, ArrowLeftRight, RefreshCw, CheckCircle, XCircle, Clock, Wallet } from 'lucide-react';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Progress } from '@/components/ui/progress';
 import { useUserTheme } from '@/hooks/use-user-theme';
+import { websocketService } from '@/services/websocket-service';
 
 // PageTitle component as a simple local component
 const PageTitle = ({ 
@@ -77,7 +80,7 @@ const ASSETS = {
 
 export default function CrossChainBridgePage() {
   const { toast } = useToast();
-  const { wallets, connect, disconnect } = useBlockchain();
+  const blockchain = useBlockchain();
   const [activeTab, setActiveTab] = useState<'transfer' | 'swap'>('transfer');
   const [sourceChain, setSourceChain] = useState<ChainType>('ethereum');
   const [targetChain, setTargetChain] = useState<ChainType>('ton');
@@ -91,19 +94,35 @@ export default function CrossChainBridgePage() {
   const [bridgeHistory, setBridgeHistory] = useState<any[]>([]);
   const [showSuccessAnimation, setShowSuccessAnimation] = useState(false);
   const { isDarkMode } = useUserTheme();
+  const [walletError, setWalletError] = useState<string | null>(null);
   
   // Wallet dialog state for our integrated connector
   const [walletDialogOpen, setWalletDialogOpen] = useState(false);
   const [selectedChainForConnect, setSelectedChainForConnect] = useState<ChainType>('ton');
   
+  // Get access to connected wallets
+  const wallets = blockchain.connectedWallet ? { [blockchain.activeChain as ChainType]: blockchain.connectedWallet } : {};
+
   // Handle wallet connection through our integrated connector
   const handleWalletConnected = (chain: ChainType, walletInfo: WalletInfo) => {
-    // Update wallet info in the blockchain context
-    connect(chain);
-    toast({
-      title: 'Wallet Connected',
-      description: `Successfully connected to ${walletInfo.name}`,
-    });
+    setWalletError(null);
+    
+    try {
+      // Update wallet info in the blockchain context
+      blockchain.connect(chain);
+      toast({
+        title: 'Wallet Connected',
+        description: `Successfully connected to ${walletInfo.name}`,
+      });
+    } catch (error) {
+      console.error("Error connecting wallet:", error);
+      setWalletError("Failed to connect wallet. Please try again.");
+      toast({
+        title: 'Connection Failed',
+        description: 'There was a problem connecting to your wallet.',
+        variant: 'destructive',
+      });
+    }
   };
 
   // Quote price for cryptocurrency
@@ -155,26 +174,39 @@ export default function CrossChainBridgePage() {
   // Transfer funds mutation
   const transferMutation = useMutation({
     mutationFn: async () => {
-      const wallet = wallets[sourceChain];
-      
-      if (!wallet || !wallet.isConnected) {
+      // Check if the wallet is connected for the source chain
+      if (!blockchain.isConnected) {
         throw new Error(`Please connect your ${sourceChain} wallet first`);
       }
       
-      return await crossChainBridgeService.transfer({
+      if (blockchain.activeChain !== sourceChain) {
+        throw new Error(`Please switch to ${sourceChain} wallet to perform this transfer`);
+      }
+      
+      const wallet = blockchain.connectedWallet;
+      if (!wallet || !wallet.address) {
+        throw new Error(`Unable to access ${sourceChain} wallet. Please reconnect.`);
+      }
+      
+      // Validate amount
+      if (!amount || isNaN(parseFloat(amount)) || parseFloat(amount) <= 0) {
+        throw new Error('Please enter a valid transfer amount');
+      }
+      
+      // Use transferAsset from the service for the actual transfer
+      return await crossChainBridgeService.transferAsset({
         sourceChain,
         targetChain,
-        sourceAsset,
-        targetAsset,
         amount: parseFloat(amount),
-        sender: wallet.address,
-        recipient: recipientAddress || wallet.address,
+        assetType: sourceAsset,
+        senderAddress: wallet.address,
+        recipientAddress: recipientAddress || wallet.address,
       });
     },
-    onSuccess: (txHash) => {
+    onSuccess: (txId) => {
       toast({
         title: 'Transfer Initiated',
-        description: `Transaction hash: ${txHash.slice(0, 10)}...`,
+        description: `Transaction ID: ${txId.slice(0, 10)}...`,
         variant: 'default',
       });
       
@@ -182,10 +214,23 @@ export default function CrossChainBridgePage() {
       setShowSuccessAnimation(true);
       setTimeout(() => setShowSuccessAnimation(false), 3000);
       
+      // Add to bridge history
+      setBridgeHistory(prev => [{
+        id: txId,
+        sourceChain,
+        targetChain,
+        sourceAsset,
+        targetAsset,
+        amount: parseFloat(amount),
+        status: 'pending',
+        timestamp: new Date().toISOString()
+      }, ...prev]);
+      
       // Reset form
       resetForm();
     },
     onError: (error: Error) => {
+      console.error('Transfer error:', error);
       toast({
         title: 'Transfer Failed',
         description: error.message,
