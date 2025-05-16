@@ -300,9 +300,42 @@ const VaultTypesPage = () => {
   };
   
   const handleContinue = () => {
-    // Use the specialized vault creation with the selected vault type
-    // This will invoke all the specialized vault features that were developed
-    navigate(`/specialized-vault-creation?type=${selectedVaultType}`);
+    // Special handling for AI Intent Inheritance vault
+    if (selectedVaultType === 'ai-intent-inheritance') {
+      navigate('/intent-inheritance-vault');
+      return;
+    }
+    
+    // Special handling for other specific vault types with dedicated pages
+    switch (selectedVaultType) {
+      case 'biometric':
+        navigate('/biometric-vault');
+        break;
+      case 'geolocation':
+        navigate('/geo-vault');
+        break;
+      case 'smart-contract':
+        navigate('/smart-contract-vault');
+        break;
+      case 'multi-signature':
+        navigate('/multi-signature-vault');
+        break;
+      case 'memory-vault':
+        navigate('/specialized-vault-memory');
+        break;
+      case 'diamond-hands':
+        navigate('/investment-discipline-vault');
+        break;
+      case 'cross-chain':
+        navigate('/cross-chain-vault');
+        break;
+      case 'quantum-resistant':
+        navigate('/quantum-vault');
+        break;
+      default:
+        // For other vault types, use the general specialized vault creation page
+        navigate(`/specialized-vault-creation?type=${selectedVaultType}`);
+    }
   };
   
   const selectedVault = VAULT_TYPES.find(vault => vault.id === selectedVaultType);
