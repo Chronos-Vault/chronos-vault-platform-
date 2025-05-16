@@ -21,7 +21,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from '@/components/ui/badge';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
-import { AlertCircle, ChevronRight, ArrowLeftRight, RefreshCw, CheckCircle, XCircle, Clock } from 'lucide-react';
+import { AlertCircle, ChevronRight, ArrowLeftRight, RefreshCw, CheckCircle, XCircle, Clock, Loader2, ClockIcon, ArrowRight } from 'lucide-react';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Progress } from '@/components/ui/progress';
@@ -660,7 +660,7 @@ export default function CrossChainBridgePage() {
                 <div className="p-8 text-center">
                   <div className="relative mx-auto w-20 h-20 mb-4">
                     <div className="absolute inset-0 rounded-full bg-gradient-to-r from-purple-500/10 to-pink-500/10"></div>
-                    <History className="h-10 w-10 text-purple-500/50 absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2" />
+                    <ClockIcon className="h-10 w-10 text-purple-500/50 absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2" />
                   </div>
                   <p className="text-sm text-muted-foreground">No transactions yet</p>
                   <p className="text-xs text-muted-foreground/70 mt-1">
