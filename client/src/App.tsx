@@ -11,6 +11,8 @@ import Documentation from './pages/documentation';
 import Faq from './pages/faq';
 import NotFound from './pages/not-found';
 import TestVaultCards from './pages/test-vault-cards';
+import FinalVaultTest from './pages/final-vault-test';
+import SimpleCardTest from './pages/simple-card-test';
 
 // Vault Creation Pages
 import CreateVault from './pages/create-vault';
@@ -160,6 +162,8 @@ function App() {
           <Route path="/triple-chain-security-demo" component={TripleChainSecurityDemo} />
           <Route path="/zk-privacy-demo" component={ZkPrivacyDemo} />
           <Route path="/test-vault-cards" component={TestVaultCards} />
+          <Route path="/final-vault-test" component={FinalVaultTest} />
+          <Route path="/simple-card-test" component={SimpleCardTest} />
           
           {/* Token & Payment Pages */}
           <Route path="/staking" component={CvtStaking} />
