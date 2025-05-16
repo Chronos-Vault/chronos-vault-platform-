@@ -11,7 +11,7 @@ import {
   navigationMenuTriggerStyle,
 } from "@/components/ui/navigation-menu";
 import { cn } from '@/lib/utils';
-import { Briefcase, Bridge, CoinsIcon, LockIcon } from 'lucide-react';
+import { Briefcase, GitBranchIcon, CoinsIcon, LockIcon } from 'lucide-react';
 
 export function Navbar() {
   const [location] = useLocation();
@@ -49,7 +49,7 @@ export function Navbar() {
                     <ListItem 
                       href="/bridge" 
                       title="Cross-Chain Bridge" 
-                      icon={<Bridge className="h-4 w-4" />}
+                      icon={<GitBranchIcon className="h-4 w-4" />}
                     >
                       Transfer assets between TON, Ethereum, and Solana 
                     </ListItem>
