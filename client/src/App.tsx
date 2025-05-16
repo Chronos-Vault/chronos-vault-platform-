@@ -10,6 +10,7 @@ import About from './pages/about';
 import Documentation from './pages/documentation';
 import Faq from './pages/faq';
 import NotFound from './pages/not-found';
+import TestVaultCards from './pages/test-vault-cards';
 
 // Vault Creation Pages
 import CreateVault from './pages/create-vault';
