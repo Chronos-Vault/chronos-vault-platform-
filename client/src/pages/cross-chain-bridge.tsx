@@ -1,829 +1,597 @@
-/**
- * Cross-Chain Bridge Page
- * 
- * This page provides the interface for cross-chain transfers and atomic swaps.
- */
+import { useEffect, useState } from 'react';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import * as z from 'zod';
+import { useQuery } from '@tanstack/react-query';
+import { Loader2, ArrowRightLeft, AlertCircle, Info } from 'lucide-react';
 
-import { useState, useEffect } from 'react';
-import { Link } from 'wouter';
-import { useQuery, useMutation } from '@tanstack/react-query';
-import { crossChainBridgeService } from '@/services/CrossChainBridgeService';
-import { useBlockchain, type ChainType } from '@/hooks/use-blockchain';
-import { useToast } from "@/hooks/use-toast";
-import WalletConnect, { WalletInfo } from '@/components/wallet/WalletConnect';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Badge } from '@/components/ui/badge';
-import { AlertCircle, ChevronRight, ArrowLeftRight, RefreshCw, CheckCircle, XCircle, Clock } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
+import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
+import { Input } from '@/components/ui/input';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { useToast } from '@/hooks/use-toast';
+import { ChainType, useBlockchain } from '@/hooks/use-blockchain';
+import WalletConnect from '@/components/wallet/WalletConnect';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-import { Skeleton } from '@/components/ui/skeleton';
+import { Separator } from '@/components/ui/separator';
+import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
+import tonBridgeService from '@/services/TonBridgeService';
+import cvtTokenService, { StakingTier } from '@/services/CVTTokenService';
 
-// PageTitle component as a simple local component
-const PageTitle = ({ 
-  title, 
-  subtitle, 
-  gradientText, 
-  className = '' 
-}: { 
-  title: string; 
-  subtitle?: string; 
-  gradientText?: string;
-  className?: string;
-}) => (
-  <div className={`mb-6 ${className}`}>
-    <h1 className="text-3xl font-bold tracking-tight">
-      {title} {' '}
-      {gradientText && (
-        <span className="bg-gradient-to-r from-pink-500 to-purple-600 bg-clip-text text-transparent">
-          {gradientText}
-        </span>
-      )}
-    </h1>
-    {subtitle && <p className="text-muted-foreground mt-1">{subtitle}</p>}
-  </div>
-);
+// Form validation schema
+const bridgeFormSchema = z.object({
+  sourceChain: z.enum(['ton', 'ethereum', 'solana', 'bitcoin']),
+  targetChain: z.enum(['ton', 'ethereum', 'solana', 'bitcoin']),
+  amount: z.number().positive().min(0.001, { message: "Amount must be at least 0.001" }),
+  token: z.string(),
+  recipientAddress: z.string().min(10, { message: "Please enter a valid recipient address" }),
+  slippage: z.number().min(0.1).max(5).optional(),
+});
 
-// Assets configuration for each chain
-const ASSETS = {
-  ethereum: [
-    { symbol: 'ETH', name: 'Ethereum', decimals: 18 },
-    { symbol: 'USDT', name: 'Tether', decimals: 6 },
-    { symbol: 'USDC', name: 'USD Coin', decimals: 6 },
-    { symbol: 'DAI', name: 'Dai', decimals: 18 },
-    { symbol: 'WBTC', name: 'Wrapped Bitcoin', decimals: 8 },
-  ],
-  solana: [
-    { symbol: 'SOL', name: 'Solana', decimals: 9 },
-    { symbol: 'USDC', name: 'USD Coin (Solana)', decimals: 6 },
-    { symbol: 'RAY', name: 'Raydium', decimals: 6 },
-    { symbol: 'SRM', name: 'Serum', decimals: 6 },
-  ],
-  ton: [
-    { symbol: 'TON', name: 'Toncoin', decimals: 9 },
-    { symbol: 'JETTON', name: 'Jetton', decimals: 9 },
-    { symbol: 'CVT', name: 'Chronos Vault Token', decimals: 9 },
-  ],
-  bitcoin: [
-    { symbol: 'BTC', name: 'Bitcoin', decimals: 8 },
-    { symbol: 'WBTC', name: 'Wrapped Bitcoin', decimals: 8 },
-  ],
-};
+type BridgeFormValues = z.infer<typeof bridgeFormSchema>;
 
 export default function CrossChainBridgePage() {
   const { toast } = useToast();
-  const { wallets, connect, disconnect } = useBlockchain();
-  const [activeTab, setActiveTab] = useState<'transfer' | 'swap'>('transfer');
-  const [sourceChain, setSourceChain] = useState<ChainType>('ethereum');
-  const [targetChain, setTargetChain] = useState<ChainType>('ton');
-  const [sourceAsset, setSourceAsset] = useState('ETH');
-  const [targetAsset, setTargetAsset] = useState('TON');
-  const [amount, setAmount] = useState('');
-  const [recipientAddress, setRecipientAddress] = useState('');
-  const [swapAmount, setSwapAmount] = useState('');
-  const [swapReceiveAmount, setSwapReceiveAmount] = useState('');
-  const [wsStatus, setWsStatus] = useState<'connecting' | 'connected' | 'disconnected'>('disconnected');
-  const [bridgeHistory, setBridgeHistory] = useState<any[]>([]);
-  const [showSuccessAnimation, setShowSuccessAnimation] = useState(false);
+  const { connectedWallet, activeChain, connect, disconnect } = useBlockchain();
   
-  // Wallet dialog state for our integrated connector
-  const [walletDialogOpen, setWalletDialogOpen] = useState(false);
-  const [selectedChainForConnect, setSelectedChainForConnect] = useState<ChainType>('ton');
+  const [sourceChain, setSourceChain] = useState<ChainType>(activeChain || 'ton');
+  const [targetChain, setTargetChain] = useState<ChainType>(activeChain === 'ton' ? 'ethereum' : 'ton');
+  const [quote, setQuote] = useState<any>(null);
+  const [pendingTx, setPendingTx] = useState<string | null>(null);
+  const [txStatus, setTxStatus] = useState<any>(null);
   
-  // Handle wallet connection through our integrated connector
-  const handleWalletConnected = (chain: ChainType, walletInfo: WalletInfo) => {
-    // Update wallet info in the blockchain context
-    connect(chain);
-    toast({
-      title: 'Wallet Connected',
-      description: `Successfully connected to ${walletInfo.name}`,
-    });
-  };
-
-  // Quote price for cryptocurrency
-  const { data: priceQuote, isLoading: isQuoteLoading } = useQuery({
-    queryKey: ['/api/bridge/quote', sourceChain, targetChain, sourceAsset, targetAsset, amount],
-    queryFn: () => crossChainBridgeService.getQuote(sourceChain, targetChain, sourceAsset, targetAsset, amount),
-    enabled: !!amount && parseFloat(amount) > 0,
+  // Form definition
+  const form = useForm<BridgeFormValues>({
+    resolver: zodResolver(bridgeFormSchema),
+    defaultValues: {
+      sourceChain: sourceChain,
+      targetChain: targetChain,
+      amount: 0,
+      token: '',
+      recipientAddress: '',
+      slippage: 1.0,
+    },
   });
-
-  // Fetch swap rates 
-  const { data: swapRates, isLoading: isSwapRatesLoading } = useQuery({
-    queryKey: ['/api/bridge/swap-rates', sourceChain, targetChain, sourceAsset, targetAsset],
-    queryFn: () => crossChainBridgeService.getSwapRates(sourceChain, targetChain, sourceAsset, targetAsset),
-  });
-
-  // Calculate swap receive amount based on input
+  
+  // Reset form when connected wallet changes
   useEffect(() => {
-    if (swapRates && swapAmount) {
-      const amount = parseFloat(swapAmount);
-      if (!isNaN(amount) && amount > 0) {
-        const receiveAmount = amount * swapRates.rate;
-        setSwapReceiveAmount(receiveAmount.toFixed(6));
-      } else {
-        setSwapReceiveAmount('');
+    if (connectedWallet) {
+      form.setValue('recipientAddress', connectedWallet.address);
+      
+      if (activeChain) {
+        setSourceChain(activeChain);
+        setTargetChain(activeChain === 'ton' ? 'ethereum' : 'ton');
+        form.setValue('sourceChain', activeChain);
+        form.setValue('targetChain', activeChain === 'ton' ? 'ethereum' : 'ton');
       }
     }
-  }, [swapRates, swapAmount]);
-
-  // Swap chains function
-  const handleSwapChains = () => {
-    const tempChain = sourceChain;
-    const tempAsset = sourceAsset;
-    
-    setSourceChain(targetChain);
-    setSourceAsset(targetAsset);
-    setTargetChain(tempChain);
-    setTargetAsset(tempAsset);
-    
-    // Clear input values
-    setAmount('');
-  };
-
-  // Reset form after successful transaction
-  const resetForm = () => {
-    setAmount('');
-    setRecipientAddress('');
-  };
-
-  // Transfer funds mutation
-  const transferMutation = useMutation({
-    mutationFn: async () => {
-      const wallet = wallets[sourceChain];
-      
-      if (!wallet || !wallet.isConnected) {
-        throw new Error(`Please connect your ${sourceChain} wallet first`);
-      }
-      
-      return await crossChainBridgeService.transfer({
-        sourceChain,
-        targetChain,
-        sourceAsset,
-        targetAsset,
-        amount: parseFloat(amount),
-        sender: wallet.address,
-        recipient: recipientAddress || wallet.address,
-      });
-    },
-    onSuccess: (txHash) => {
-      toast({
-        title: 'Transfer Initiated',
-        description: `Transaction hash: ${txHash.slice(0, 10)}...`,
-        variant: 'default',
-      });
-      
-      // Show success animation
-      setShowSuccessAnimation(true);
-      setTimeout(() => setShowSuccessAnimation(false), 3000);
-      
-      // Reset form
-      resetForm();
-    },
-    onError: (error: Error) => {
-      toast({
-        title: 'Transfer Failed',
-        description: error.message,
-        variant: 'destructive',
-      });
-    },
-  });
-
-  // Create atomic swap mutation
-  const createSwapMutation = useMutation({
-    mutationFn: async () => {
-      const initiatorWallet = wallets[sourceChain];
-      const responderWallet = wallets[targetChain];
-      
-      if (!initiatorWallet || !initiatorWallet.isConnected) {
-        throw new Error(`Please connect your ${sourceChain} wallet first`);
-      }
-      
-      if (!responderWallet || !responderWallet.isConnected) {
-        throw new Error(`Please connect your ${targetChain} wallet first`);
-      }
-      
-      return await crossChainBridgeService.createAtomicSwap({
-        initiatorChain: sourceChain,
-        responderChain: targetChain,
-        initiatorAsset: sourceAsset,
-        responderAsset: targetAsset,
-        initiatorAmount: parseFloat(swapAmount),
-        responderAmount: parseFloat(swapReceiveAmount),
-        initiatorAddress: initiatorWallet.address,
-        responderAddress: responderWallet.address,
-        timelock: 7200, // 2 hours
-      });
-    },
-    onSuccess: (swapId) => {
-      toast({
-        title: 'Atomic Swap Created',
-        description: `Swap ID: ${swapId}`,
-        variant: 'default',
-      });
-      
-      // Reset form
-      setSwapAmount('');
-      setSwapReceiveAmount('');
-    },
-    onError: (error: Error) => {
-      toast({
-        title: 'Swap Creation Failed',
-        description: error.message,
-        variant: 'destructive',
-      });
-    },
+  }, [connectedWallet, activeChain, form]);
+  
+  // Get supported tokens for source chain
+  const { data: sourceTokens, isLoading: isLoadingSourceTokens } = useQuery({
+    queryKey: ['bridgeTokens', sourceChain],
+    queryFn: () => tonBridgeService.getSupportedTokens(sourceChain),
+    enabled: !!sourceChain,
   });
   
-  // Initialize WebSocket connection for real-time bridge status updates using the WebSocketService
-  useEffect(() => {
-    // Import the WebSocketService
-    import('@/services/websocket-service').then(({ websocketService }) => {
-      // Set initial connection status
-      setWsStatus('connecting');
+  // Get supported tokens for target chain
+  const { data: targetTokens, isLoading: isLoadingTargetTokens } = useQuery({
+    queryKey: ['bridgeTokens', targetChain],
+    queryFn: () => tonBridgeService.getSupportedTokens(targetChain),
+    enabled: !!targetChain,
+  });
+  
+  // Get fee discount based on CVT staking
+  const { data: feeDiscount, isLoading: isLoadingFeeDiscount } = useQuery({
+    queryKey: ['feeDiscount', connectedWallet?.address],
+    queryFn: () => connectedWallet?.address ? tonBridgeService.getFeeDiscount(connectedWallet.address) : Promise.resolve({ discountPercent: 0, tier: 'None', stakedAmount: 0 }),
+    enabled: !!connectedWallet?.address,
+  });
+  
+  // Handle source chain change
+  const handleSourceChainChange = (value: ChainType) => {
+    setSourceChain(value);
+    form.setValue('sourceChain', value);
+    
+    // Ensure source and target chains are different
+    if (value === targetChain) {
+      const newTargetChain = value === 'ton' ? 'ethereum' : 'ton';
+      setTargetChain(newTargetChain);
+      form.setValue('targetChain', newTargetChain);
+    }
+    
+    // Reset token selection
+    form.setValue('token', '');
+  };
+  
+  // Handle target chain change
+  const handleTargetChainChange = (value: ChainType) => {
+    setTargetChain(value);
+    form.setValue('targetChain', value);
+    
+    // Ensure source and target chains are different
+    if (value === sourceChain) {
+      const newSourceChain = value === 'ton' ? 'ethereum' : 'ton';
+      setSourceChain(newSourceChain);
+      form.setValue('sourceChain', newSourceChain);
+    }
+  };
+  
+  // Handle form submission
+  const onSubmit = async (values: BridgeFormValues) => {
+    if (!connectedWallet) {
+      toast({
+        title: "Wallet not connected",
+        description: "Please connect your wallet to continue",
+        variant: "destructive",
+      });
+      return;
+    }
+    
+    try {
+      const txHash = await tonBridgeService.bridgeAssets({
+        sourceChain: values.sourceChain,
+        targetChain: values.targetChain,
+        amount: values.amount,
+        tokenAddress: sourceTokens?.find(t => t.symbol === values.token)?.address,
+        recipientAddress: values.recipientAddress,
+        slippage: values.slippage,
+      });
       
-      // Connect to the WebSocket server
-      websocketService.connect()
-        .then(() => {
-          setWsStatus('connected');
-        })
-        .catch((error) => {
-          console.error('Failed to connect to WebSocket server:', error);
-          setWsStatus('disconnected');
-        });
+      toast({
+        title: "Bridge transaction initiated",
+        description: `Transaction hash: ${txHash}`,
+      });
       
-      // Subscribe to bridge status updates
-      websocketService.subscribeToBridgeUpdates((data) => {
-        if (data.type === 'BRIDGE_TX_STATUS') {
-          toast({
-            title: `Bridge Update: ${data.status}`,
-            description: data.message,
-          });
+      setPendingTx(txHash);
+      
+      // Poll for transaction status
+      const statusInterval = setInterval(async () => {
+        try {
+          const status = await tonBridgeService.getTransactionStatus(txHash);
+          setTxStatus(status);
+          
+          if (status.status === 'completed' || status.status === 'failed') {
+            clearInterval(statusInterval);
+            
+            toast({
+              title: status.status === 'completed' ? "Bridge successful" : "Bridge failed",
+              description: status.status === 'completed' 
+                ? `Assets transferred to ${values.targetChain}`
+                : "There was an issue with the bridge operation",
+              variant: status.status === 'completed' ? "default" : "destructive",
+            });
+          }
+        } catch (error) {
+          console.error("Error checking transaction status:", error);
+          clearInterval(statusInterval);
         }
-      });
+      }, 5000);
       
-      // Subscribe to transaction updates
-      websocketService.subscribeToTransactionUpdates((data) => {
-        // Add transaction to history
-        setBridgeHistory((prev) => [...prev, data]);
+    } catch (error) {
+      console.error("Bridge error:", error);
+      toast({
+        title: "Bridge error",
+        description: error instanceof Error ? error.message : "Unknown error occurred",
+        variant: "destructive",
       });
-      
-      // Cleanup function
-      return () => {
-        websocketService.disconnect();
-      };
-    });
-  }, [toast]);
-
-  // Convert progress to percentage
-  const getProgressPercentage = (value: number) => {
-    return Math.min(Math.max(value * 100, 0), 100);
+    }
   };
   
-  return (
-    <div className="container py-6 max-w-7xl mx-auto">
-      <PageTitle 
-        title="Cross-Chain Bridge" 
-        gradientText="& Atomic Swaps" 
-        subtitle="Transfer assets and create swaps across multiple blockchains."
-      />
+  // Get a quote when amount and tokens are selected
+  useEffect(() => {
+    const getQuote = async () => {
+      const amount = form.getValues('amount');
+      const token = form.getValues('token');
       
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Main content */}
-        <div className="lg:col-span-2">
-          <Card>
-            <CardHeader>
-              <div className="flex items-center justify-between">
-                <CardTitle>Bridge Operations</CardTitle>
-                <div className="flex items-center gap-2">
-                  <Badge variant={wsStatus === 'connected' ? 'success' : wsStatus === 'connecting' ? 'outline' : 'destructive'}>
-                    {wsStatus === 'connected' ? 'Bridge Online' : wsStatus === 'connecting' ? 'Connecting...' : 'Bridge Offline'}
-                  </Badge>
-                </div>
-              </div>
-              <CardDescription>
-                Securely move assets across different blockchain networks
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <Tabs defaultValue="transfer" onValueChange={(val) => setActiveTab(val as 'transfer' | 'swap')}>
-                <TabsList className="grid w-full grid-cols-2">
-                  <TabsTrigger value="transfer">Asset Transfer</TabsTrigger>
-                  <TabsTrigger value="swap">Atomic Swap</TabsTrigger>
-                </TabsList>
-                
-                <TabsContent value="transfer" className="space-y-4 pt-4">
-                  <div className="space-y-6">
-                    {/* Source Chain */}
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <div>
-                        <Label htmlFor="sourceChain">Source Chain</Label>
-                        <Select
-                          value={sourceChain}
-                          onValueChange={(value) => {
-                            setSourceChain(value as ChainType);
-                            // Update source asset to first asset of the selected chain
-                            setSourceAsset(ASSETS[value as ChainType][0].symbol);
-                          }}
-                        >
-                          <SelectTrigger>
-                            <SelectValue placeholder="Select source chain" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="ethereum">Ethereum</SelectItem>
-                            <SelectItem value="solana">Solana</SelectItem>
-                            <SelectItem value="ton">TON</SelectItem>
-                            <SelectItem value="bitcoin">Bitcoin</SelectItem>
-                          </SelectContent>
-                        </Select>
-                        
-                        {!wallets[sourceChain]?.isConnected && (
-                          <Button 
-                            variant="outline" 
-                            size="sm" 
-                            className="mt-2 w-full"
-                            onClick={() => {
-                              setSelectedChainForConnect(sourceChain);
-                              setWalletDialogOpen(true);
-                            }}
-                          >
-                            Connect {sourceChain.toUpperCase()} Wallet
-                          </Button>
-                        )}
-                      </div>
-                      
-                      <div>
-                        <Label htmlFor="sourceAsset">Source Asset</Label>
-                        <Select
-                          value={sourceAsset}
-                          onValueChange={setSourceAsset}
-                        >
-                          <SelectTrigger>
-                            <SelectValue placeholder="Select source asset" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            {ASSETS[sourceChain].map((asset) => (
-                              <SelectItem key={asset.symbol} value={asset.symbol}>
-                                {asset.symbol} - {asset.name}
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-                      </div>
-                    </div>
-                    
-                    {/* Swap Button */}
-                    <div className="flex justify-center">
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        onClick={handleSwapChains}
-                        className="rounded-full bg-muted/50 hover:bg-muted"
-                      >
-                        <ArrowLeftRight className="h-5 w-5" />
-                        <span className="sr-only">Swap chains</span>
-                      </Button>
-                    </div>
-                    
-                    {/* Target Chain */}
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <div>
-                        <Label htmlFor="targetChain">Target Chain</Label>
-                        <Select
-                          value={targetChain}
-                          onValueChange={(value) => {
-                            setTargetChain(value as ChainType);
-                            // Update target asset to first asset of the selected chain
-                            setTargetAsset(ASSETS[value as ChainType][0].symbol);
-                          }}
-                        >
-                          <SelectTrigger>
-                            <SelectValue placeholder="Select target chain" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="ethereum">Ethereum</SelectItem>
-                            <SelectItem value="solana">Solana</SelectItem>
-                            <SelectItem value="ton">TON</SelectItem>
-                            <SelectItem value="bitcoin">Bitcoin</SelectItem>
-                          </SelectContent>
-                        </Select>
-                      </div>
-                      
-                      <div>
-                        <Label htmlFor="targetAsset">Target Asset</Label>
-                        <Select
-                          value={targetAsset}
-                          onValueChange={setTargetAsset}
-                        >
-                          <SelectTrigger>
-                            <SelectValue placeholder="Select target asset" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            {ASSETS[targetChain].map((asset) => (
-                              <SelectItem key={asset.symbol} value={asset.symbol}>
-                                {asset.symbol} - {asset.name}
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-                      </div>
-                    </div>
-                    
-                    {/* Amount */}
-                    <div>
-                      <Label htmlFor="amount">Amount to Transfer</Label>
-                      <Input
-                        id="amount"
-                        type="number"
-                        placeholder="0.0"
-                        value={amount}
-                        onChange={(e) => setAmount(e.target.value)}
-                      />
-                    </div>
-                    
-                    {/* Recipient Address */}
-                    <div>
-                      <Label htmlFor="recipientAddress">
-                        Recipient Address <span className="text-xs text-muted-foreground">(Optional - defaults to your address)</span>
-                      </Label>
-                      <Input
-                        id="recipientAddress"
-                        placeholder={`${targetChain.toUpperCase()} address`}
-                        value={recipientAddress}
-                        onChange={(e) => setRecipientAddress(e.target.value)}
-                      />
-                    </div>
-                    
-                    {/* Fee & Quote */}
-                    {amount && parseFloat(amount) > 0 && (
-                      <div className="p-4 border rounded-lg">
-                        <h4 className="font-medium mb-2">Transfer Summary</h4>
-                        <div className="space-y-2">
-                          <div className="flex justify-between">
-                            <span>You send:</span>
-                            <span className="font-medium">{amount} {sourceAsset}</span>
-                          </div>
-                          <div className="flex justify-between">
-                            <span>Recipient gets:</span>
-                            {isQuoteLoading ? (
-                              <Skeleton className="h-5 w-24" />
-                            ) : (
-                              <span className="font-medium">
-                                {priceQuote?.amount.toFixed(6)} {targetAsset}
-                              </span>
-                            )}
-                          </div>
-                          <div className="flex justify-between">
-                            <span>Bridge fee:</span>
-                            {isQuoteLoading ? (
-                              <Skeleton className="h-5 w-24" />
-                            ) : (
-                              <span className="font-medium">
-                                {priceQuote?.fee.toFixed(6)} {sourceAsset}
-                              </span>
-                            )}
-                          </div>
-                          <div className="flex justify-between">
-                            <span>Estimated completion:</span>
-                            <span className="font-medium">~{priceQuote?.estimatedTime || "10-15"} mins</span>
-                          </div>
-                        </div>
-                      </div>
-                    )}
-                    
-                    {/* Transfer Button */}
-                    <Button 
-                      className="w-full" 
-                      onClick={() => transferMutation.mutate()}
-                      disabled={transferMutation.isPending || !wallets[sourceChain]?.isConnected}
-                    >
-                      {transferMutation.isPending ? (
-                        <>
-                          <RefreshCw className="mr-2 h-4 w-4 animate-spin" />
-                          Processing...
-                        </>
-                      ) : (
-                        'Transfer Assets'
-                      )}
-                    </Button>
-                    
-                    {/* Warning for unconnected wallet */}
-                    {!wallets[sourceChain]?.isConnected && (
-                      <Alert variant="destructive">
-                        <AlertCircle className="h-4 w-4" />
-                        <AlertTitle>Wallet not connected</AlertTitle>
-                        <AlertDescription>
-                          Please connect your {sourceChain} wallet to transfer assets.
-                        </AlertDescription>
-                      </Alert>
-                    )}
-                  </div>
-                </TabsContent>
-                
-                <TabsContent value="swap" className="space-y-4 pt-4">
-                  <div className="space-y-6">
-                    {/* Source Chain */}
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <div>
-                        <Label htmlFor="sourceChainSwap">You Send</Label>
-                        <Select
-                          value={sourceChain}
-                          onValueChange={(value) => {
-                            setSourceChain(value as ChainType);
-                            setSourceAsset(ASSETS[value as ChainType][0].symbol);
-                          }}
-                        >
-                          <SelectTrigger>
-                            <SelectValue placeholder="Select chain" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="ethereum">Ethereum</SelectItem>
-                            <SelectItem value="solana">Solana</SelectItem>
-                            <SelectItem value="ton">TON</SelectItem>
-                            <SelectItem value="bitcoin">Bitcoin</SelectItem>
-                          </SelectContent>
-                        </Select>
-                        
-                        {!wallets[sourceChain]?.isConnected && (
-                          <Button 
-                            variant="outline" 
-                            size="sm" 
-                            className="mt-2 w-full"
-                            onClick={() => {
-                              setSelectedChainForConnect(sourceChain);
-                              setWalletDialogOpen(true);
-                            }}
-                          >
-                            Connect {sourceChain.toUpperCase()} Wallet
-                          </Button>
-                        )}
-                      </div>
-                      
-                      <div>
-                        <div className="flex justify-between">
-                          <Label htmlFor="swapAmount">Amount</Label>
-                          {wallets[sourceChain]?.isConnected && (
-                            <span className="text-xs text-muted-foreground">
-                              Balance: {wallets[sourceChain]?.balance || "0.0"}
-                            </span>
-                          )}
-                        </div>
-                        <div className="flex items-center space-x-2">
-                          <Select
-                            value={sourceAsset}
-                            onValueChange={setSourceAsset}
-                          >
-                            <SelectTrigger className="w-32">
-                              <SelectValue placeholder="Asset" />
-                            </SelectTrigger>
-                            <SelectContent>
-                              {ASSETS[sourceChain].map((asset) => (
-                                <SelectItem key={asset.symbol} value={asset.symbol}>
-                                  {asset.symbol}
-                                </SelectItem>
-                              ))}
-                            </SelectContent>
-                          </Select>
-                          <Input
-                            id="swapAmount"
-                            type="number"
-                            placeholder="0.0"
-                            value={swapAmount}
-                            onChange={(e) => setSwapAmount(e.target.value)}
-                          />
-                        </div>
-                      </div>
-                    </div>
-                    
-                    {/* Swap Button */}
-                    <div className="flex justify-center">
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        onClick={handleSwapChains}
-                        className="rounded-full bg-muted/50 hover:bg-muted"
-                      >
-                        <ArrowLeftRight className="h-5 w-5" />
-                        <span className="sr-only">Swap chains</span>
-                      </Button>
-                    </div>
-                    
-                    {/* Target Chain */}
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <div>
-                        <Label htmlFor="targetChainSwap">You Receive</Label>
-                        <Select
-                          value={targetChain}
-                          onValueChange={(value) => {
-                            setTargetChain(value as ChainType);
-                            setTargetAsset(ASSETS[value as ChainType][0].symbol);
-                          }}
-                        >
-                          <SelectTrigger>
-                            <SelectValue placeholder="Select chain" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="ethereum">Ethereum</SelectItem>
-                            <SelectItem value="solana">Solana</SelectItem>
-                            <SelectItem value="ton">TON</SelectItem>
-                            <SelectItem value="bitcoin">Bitcoin</SelectItem>
-                          </SelectContent>
-                        </Select>
-                        
-                        {!wallets[targetChain]?.isConnected && (
-                          <Button 
-                            variant="outline" 
-                            size="sm" 
-                            className="mt-2 w-full"
-                            onClick={() => {
-                              setSelectedChainForConnect(targetChain);
-                              setWalletDialogOpen(true);
-                            }}
-                          >
-                            Connect {targetChain.toUpperCase()} Wallet
-                          </Button>
-                        )}
-                      </div>
-                      
-                      <div>
-                        <Label htmlFor="swapReceiveAmount">Estimated Amount</Label>
-                        <div className="flex items-center space-x-2">
-                          <Select
-                            value={targetAsset}
-                            onValueChange={setTargetAsset}
-                          >
-                            <SelectTrigger className="w-32">
-                              <SelectValue placeholder="Asset" />
-                            </SelectTrigger>
-                            <SelectContent>
-                              {ASSETS[targetChain].map((asset) => (
-                                <SelectItem key={asset.symbol} value={asset.symbol}>
-                                  {asset.symbol}
-                                </SelectItem>
-                              ))}
-                            </SelectContent>
-                          </Select>
-                          <Input
-                            id="swapReceiveAmount"
-                            type="number"
-                            placeholder="0.0"
-                            value={swapReceiveAmount}
-                            readOnly
-                          />
-                        </div>
-                      </div>
-                    </div>
-                    
-                    {/* Exchange Rate */}
-                    {swapRates && (
-                      <div className="p-4 border rounded-lg">
-                        <h4 className="font-medium mb-2">Swap Details</h4>
-                        <div className="space-y-2">
-                          <div className="flex justify-between">
-                            <span>Exchange rate:</span>
-                            <span className="font-medium">
-                              1 {sourceAsset} = {swapRates.rate.toFixed(6)} {targetAsset}
-                            </span>
-                          </div>
-                          <div className="flex justify-between">
-                            <span>Network fee:</span>
-                            <span className="font-medium">
-                              ~{swapRates.networkFee} {sourceAsset}
-                            </span>
-                          </div>
-                          <div className="flex justify-between">
-                            <span>Time lock:</span>
-                            <span className="font-medium">2 hours</span>
-                          </div>
-                        </div>
-                      </div>
-                    )}
-                    
-                    {/* Create Swap Button */}
-                    <Button 
-                      className="w-full" 
-                      onClick={() => createSwapMutation.mutate()}
-                      disabled={
-                        createSwapMutation.isPending || 
-                        !swapAmount || 
-                        !wallets[sourceChain]?.isConnected || 
-                        !wallets[targetChain]?.isConnected
-                      }
-                    >
-                      {createSwapMutation.isPending ? (
-                        <>
-                          <RefreshCw className="mr-2 h-4 w-4 animate-spin" />
-                          Creating Swap...
-                        </>
-                      ) : (
-                        'Create Atomic Swap'
-                      )}
-                    </Button>
-                    
-                    {/* Warning for unconnected wallets */}
-                    {(!wallets[sourceChain]?.isConnected || !wallets[targetChain]?.isConnected) && (
-                      <Alert variant="destructive">
-                        <AlertCircle className="h-4 w-4" />
-                        <AlertTitle>Wallet not connected</AlertTitle>
-                        <AlertDescription>
-                          Please connect both {sourceChain} and {targetChain} wallets to create an atomic swap.
-                        </AlertDescription>
-                      </Alert>
-                    )}
-                  </div>
-                </TabsContent>
-              </Tabs>
-            </CardContent>
-          </Card>
-        </div>
-        
-        {/* Side content */}
-        <div>
-          <Card>
-            <CardHeader>
-              <CardTitle>Recent Transfers</CardTitle>
-              <CardDescription>Your latest bridge transactions</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
-                {bridgeHistory.length === 0 ? (
-                  <div className="text-center py-8 text-muted-foreground">
-                    <Clock className="mx-auto h-12 w-12 mb-3 opacity-20" />
-                    <p>No transaction history yet</p>
-                    <p className="text-sm">Transfers will appear here</p>
-                  </div>
-                ) : (
-                  bridgeHistory.map((tx, index) => (
-                    <div key={index} className="p-4 border rounded-lg space-y-2">
-                      <div className="flex justify-between">
-                        <span className="font-medium">{tx.sourceChain} → {tx.targetChain}</span>
-                        <Badge variant={
-                          tx.status === 'completed' ? 'success' : 
-                          tx.status === 'failed' ? 'destructive' : 'outline'
-                        }>
-                          {tx.status === 'completed' ? (
-                            <CheckCircle className="h-3 w-3 mr-1" />
-                          ) : tx.status === 'failed' ? (
-                            <XCircle className="h-3 w-3 mr-1" />
-                          ) : (
-                            <Clock className="h-3 w-3 mr-1" />
-                          )}
-                          {tx.status}
-                        </Badge>
-                      </div>
-                      <div className="flex justify-between text-sm">
-                        <span>{tx.amount} {tx.sourceAsset}</span>
-                        <span>→</span>
-                        <span>{tx.targetAmount} {tx.targetAsset}</span>
-                      </div>
-                      <Progress value={getProgressPercentage(tx.progress)} className="h-1" />
-                      <div className="text-xs text-muted-foreground">
-                        {tx.txHash && `Tx: ${tx.txHash.slice(0, 8)}...${tx.txHash.slice(-8)}`}
-                      </div>
-                    </div>
-                  ))
-                )}
-              </div>
-              
-              <div className="mt-6 space-y-2">
-                <h4 className="font-medium mb-2">Resources</h4>
-                <Link href="/bridge-faq">
-                  <Button variant="outline" className="w-full justify-start">
-                    <ChevronRight className="mr-2 h-4 w-4" />
-                    Bridge FAQ
-                  </Button>
-                </Link>
-                
-                <Link href="/cross-chain-atomic-swap">
-                  <Button variant="outline" className="w-full justify-start">
-                    <ChevronRight className="mr-2 h-4 w-4" />
-                    Learn About Atomic Swaps
-                  </Button>
-                </Link>
-                
-                <Link href="/cross-chain-security">
-                  <Button variant="outline" className="w-full justify-start">
-                    <ChevronRight className="mr-2 h-4 w-4" />
-                    Bridge Security
-                  </Button>
-                </Link>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
+      if (amount > 0 && token && sourceChain && targetChain) {
+        try {
+          const tokenObj = sourceTokens?.find(t => t.symbol === token);
+          const quoteResult = await tonBridgeService.getQuote(
+            sourceChain,
+            targetChain,
+            amount,
+            tokenObj?.address
+          );
+          setQuote(quoteResult);
+        } catch (error) {
+          console.error("Error getting quote:", error);
+        }
+      }
+    };
+    
+    getQuote();
+  }, [form.watch('amount'), form.watch('token'), sourceChain, targetChain, sourceTokens]);
+  
+  // UI for transaction status
+  const renderTransactionStatus = () => {
+    if (!pendingTx || !txStatus) return null;
+    
+    return (
+      <Card className="mt-6">
+        <CardHeader>
+          <CardTitle>Bridge Transaction Status</CardTitle>
+          <CardDescription>
+            Transaction Hash: {pendingTx}
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="flex items-center justify-between mb-2">
+            <div className="font-semibold capitalize">{txStatus.status}</div>
+            <Badge variant={
+              txStatus.status === 'completed' ? "success" : 
+              txStatus.status === 'failed' ? "destructive" : 
+              "secondary"
+            }>
+              {txStatus.status}
+            </Badge>
+          </div>
+          <Progress value={txStatus.progress * 100} className="h-2" />
+          
+          {txStatus.targetTxHash && (
+            <div className="mt-4 p-3 bg-secondary/30 rounded-md">
+              <div className="text-sm font-medium mb-1">Target Transaction:</div>
+              <div className="text-sm font-mono break-all">{txStatus.targetTxHash}</div>
+            </div>
+          )}
+        </CardContent>
+      </Card>
+    );
+  };
+  
+  // Render the bridge page
+  return (
+    <div className="container max-w-4xl py-8">
+      <div className="mb-8 text-center">
+        <h1 className="text-4xl font-bold bg-gradient-to-r from-purple-600 to-pink-500 text-transparent bg-clip-text mb-2">
+          Cross-Chain Bridge
+        </h1>
+        <p className="text-muted-foreground">
+          Securely transfer assets between TON, Ethereum, and Solana blockchains
+        </p>
       </div>
       
-      {/* Integrated Wallet Connection Dialog */}
-      <WalletConnect
-        isOpen={walletDialogOpen}
-        onClose={() => setWalletDialogOpen(false)}
-        initialChain={selectedChainForConnect}
-        onWalletConnected={handleWalletConnected}
-      />
+      {!connectedWallet ? (
+        <Card className="border border-purple-800/20">
+          <CardHeader>
+            <CardTitle>Connect Wallet</CardTitle>
+            <CardDescription>
+              Connect your wallet to use the cross-chain bridge
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <WalletConnect />
+          </CardContent>
+        </Card>
+      ) : (
+        <div>
+          <Tabs defaultValue="bridge" className="w-full">
+            <TabsList className="grid w-full grid-cols-2">
+              <TabsTrigger value="bridge">Bridge Assets</TabsTrigger>
+              <TabsTrigger value="history">Transaction History</TabsTrigger>
+            </TabsList>
+            
+            <TabsContent value="bridge">
+              <Card className="border border-purple-800/20">
+                <CardHeader>
+                  <div className="flex justify-between items-center">
+                    <div>
+                      <CardTitle>Bridge Assets</CardTitle>
+                      <CardDescription>
+                        Transfer assets across different blockchains
+                      </CardDescription>
+                    </div>
+                    
+                    {feeDiscount && feeDiscount.discountPercent > 0 && (
+                      <Badge variant="outline" className="bg-gradient-to-r from-purple-600/10 to-pink-500/10 border-purple-600/30">
+                        {feeDiscount.tier} - {feeDiscount.discountPercent}% Fee Discount
+                      </Badge>
+                    )}
+                  </div>
+                </CardHeader>
+                
+                <CardContent>
+                  <Form {...form}>
+                    <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+                      <div className="grid grid-cols-2 gap-6">
+                        <FormField
+                          control={form.control}
+                          name="sourceChain"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>Source Chain</FormLabel>
+                              <Select
+                                onValueChange={(value) => handleSourceChainChange(value as ChainType)}
+                                defaultValue={field.value}
+                              >
+                                <FormControl>
+                                  <SelectTrigger>
+                                    <SelectValue placeholder="Select source chain" />
+                                  </SelectTrigger>
+                                </FormControl>
+                                <SelectContent>
+                                  <SelectItem value="ton">TON</SelectItem>
+                                  <SelectItem value="ethereum">Ethereum</SelectItem>
+                                  <SelectItem value="solana">Solana</SelectItem>
+                                </SelectContent>
+                              </Select>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                        
+                        <FormField
+                          control={form.control}
+                          name="targetChain"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>Target Chain</FormLabel>
+                              <Select
+                                onValueChange={(value) => handleTargetChainChange(value as ChainType)}
+                                defaultValue={field.value}
+                              >
+                                <FormControl>
+                                  <SelectTrigger>
+                                    <SelectValue placeholder="Select target chain" />
+                                  </SelectTrigger>
+                                </FormControl>
+                                <SelectContent>
+                                  <SelectItem value="ton">TON</SelectItem>
+                                  <SelectItem value="ethereum">Ethereum</SelectItem>
+                                  <SelectItem value="solana">Solana</SelectItem>
+                                </SelectContent>
+                              </Select>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                      </div>
+                      
+                      <div className="flex justify-center">
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          size="icon"
+                          onClick={() => {
+                            const currentSource = form.getValues('sourceChain');
+                            const currentTarget = form.getValues('targetChain');
+                            
+                            setSourceChain(currentTarget);
+                            setTargetChain(currentSource);
+                            
+                            form.setValue('sourceChain', currentTarget);
+                            form.setValue('targetChain', currentSource);
+                            form.setValue('token', '');
+                          }}
+                        >
+                          <ArrowRightLeft className="h-5 w-5" />
+                        </Button>
+                      </div>
+                      
+                      <div className="grid grid-cols-2 gap-6">
+                        <FormField
+                          control={form.control}
+                          name="token"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>Token</FormLabel>
+                              <Select
+                                onValueChange={field.onChange}
+                                defaultValue={field.value}
+                              >
+                                <FormControl>
+                                  <SelectTrigger>
+                                    <SelectValue placeholder="Select token" />
+                                  </SelectTrigger>
+                                </FormControl>
+                                <SelectContent>
+                                  {isLoadingSourceTokens ? (
+                                    <div className="flex items-center justify-center p-2">
+                                      <Loader2 className="h-4 w-4 animate-spin" />
+                                    </div>
+                                  ) : (
+                                    sourceTokens?.map((token) => (
+                                      <SelectItem key={token.symbol} value={token.symbol}>
+                                        {token.symbol} - {token.name}
+                                      </SelectItem>
+                                    ))
+                                  )}
+                                </SelectContent>
+                              </Select>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                        
+                        <FormField
+                          control={form.control}
+                          name="amount"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>Amount</FormLabel>
+                              <FormControl>
+                                <Input
+                                  type="number"
+                                  step="0.000001"
+                                  placeholder="0.0"
+                                  onChange={(e) => {
+                                    const value = parseFloat(e.target.value);
+                                    field.onChange(isNaN(value) ? 0 : value);
+                                  }}
+                                />
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                      </div>
+                      
+                      <FormField
+                        control={form.control}
+                        name="recipientAddress"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Recipient Address</FormLabel>
+                            <FormControl>
+                              <Input placeholder="Enter recipient address" {...field} />
+                            </FormControl>
+                            <FormDescription>
+                              Address on the target chain to receive the bridged assets
+                            </FormDescription>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                      
+                      <FormField
+                        control={form.control}
+                        name="slippage"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Slippage Tolerance (%)</FormLabel>
+                            <FormControl>
+                              <Input
+                                type="number"
+                                step="0.1"
+                                placeholder="1.0"
+                                defaultValue={1.0}
+                                onChange={(e) => {
+                                  const value = parseFloat(e.target.value);
+                                  field.onChange(isNaN(value) ? 1.0 : value);
+                                }}
+                              />
+                            </FormControl>
+                            <FormDescription>
+                              Maximum allowed slippage during the bridge operation
+                            </FormDescription>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                      
+                      {quote && (
+                        <div className="p-4 border rounded-lg bg-card/50">
+                          <h3 className="font-medium mb-2">Bridge Quote</h3>
+                          <div className="grid grid-cols-2 gap-2 text-sm">
+                            <div className="text-muted-foreground">You send:</div>
+                            <div className="font-medium text-right">{quote.sourceAmount} {form.getValues('token')}</div>
+                            
+                            <div className="text-muted-foreground">You receive (estimated):</div>
+                            <div className="font-medium text-right">{quote.targetAmount.toFixed(6)} {form.getValues('token')}</div>
+                            
+                            <div className="text-muted-foreground">Fee:</div>
+                            <div className="font-medium text-right">
+                              {feeDiscount && feeDiscount.discountPercent > 0 ? (
+                                <span>
+                                  <span className="line-through text-muted-foreground mr-1">{quote.fee.toFixed(6)}</span>
+                                  {(quote.fee * (1 - feeDiscount.discountPercent / 100)).toFixed(6)} {form.getValues('token')}
+                                </span>
+                              ) : (
+                                <span>{quote.fee.toFixed(6)} {form.getValues('token')}</span>
+                              )}
+                            </div>
+                            
+                            <div className="text-muted-foreground">Exchange rate:</div>
+                            <div className="font-medium text-right">1 {form.getValues('token')} = {quote.exchangeRate.toFixed(6)} {form.getValues('token')}</div>
+                            
+                            <div className="text-muted-foreground">Estimated time:</div>
+                            <div className="font-medium text-right">{quote.estimatedTime} minutes</div>
+                          </div>
+                        </div>
+                      )}
+                      
+                      <Button type="submit" className="w-full bg-gradient-to-r from-purple-600 to-pink-500 hover:opacity-90">
+                        Bridge Assets
+                      </Button>
+                    </form>
+                  </Form>
+                </CardContent>
+                
+                <CardFooter className="flex flex-col border-t pt-6">
+                  <Alert variant="default" className="bg-secondary/30 border-primary/20">
+                    <Info className="h-4 w-4" />
+                    <AlertTitle>About Cross-Chain Bridging</AlertTitle>
+                    <AlertDescription>
+                      Bridges allow you to transfer assets between different blockchains. The process typically takes 5-30 minutes depending on the chains involved.
+                    </AlertDescription>
+                  </Alert>
+                  
+                  {feeDiscount && feeDiscount.tier !== 'None' && (
+                    <div className="mt-4 text-sm text-muted-foreground">
+                      <span className="font-medium text-primary">CVT {feeDiscount.tier}:</span> You are receiving a {feeDiscount.discountPercent}% discount on bridge fees by staking {feeDiscount.stakedAmount.toLocaleString()} CVT tokens.
+                    </div>
+                  )}
+                </CardFooter>
+              </Card>
+              
+              {renderTransactionStatus()}
+            </TabsContent>
+            
+            <TabsContent value="history">
+              <Card className="border border-purple-800/20">
+                <CardHeader>
+                  <CardTitle>Transaction History</CardTitle>
+                  <CardDescription>
+                    Your recent cross-chain bridge transactions
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="text-center py-8 text-muted-foreground">
+                    <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-primary/10">
+                      <Info className="h-6 w-6 text-primary" />
+                    </div>
+                    <h3 className="mb-1 text-lg font-medium">No transactions yet</h3>
+                    <p className="text-sm">
+                      Your cross-chain bridge transaction history will appear here
+                    </p>
+                  </div>
+                </CardContent>
+              </Card>
+            </TabsContent>
+          </Tabs>
+        </div>
+      )}
+      
+      <Separator className="my-8" />
+      
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <Card className="border border-purple-800/20">
+          <CardHeader className="pb-3">
+            <CardTitle className="text-lg">Low Fees</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p className="text-sm text-muted-foreground">
+              Benefit from TON's high performance and low gas fees when bridging assets
+            </p>
+          </CardContent>
+        </Card>
+        
+        <Card className="border border-purple-800/20">
+          <CardHeader className="pb-3">
+            <CardTitle className="text-lg">CVT Staking Benefits</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p className="text-sm text-muted-foreground">
+              Stake CVT tokens to receive up to 100% discount on all bridge fees
+            </p>
+          </CardContent>
+        </Card>
+        
+        <Card className="border border-purple-800/20">
+          <CardHeader className="pb-3">
+            <CardTitle className="text-lg">Multi-Chain Security</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p className="text-sm text-muted-foreground">
+              Your assets are protected by our Triple-Chain Security Architecture
+            </p>
+          </CardContent>
+        </Card>
+      </div>
     </div>
   );
 }
