@@ -30,7 +30,8 @@ import {
 import { cn } from "@/lib/utils";
 import { Menu, X, Settings, Bug } from "lucide-react";
 import CrossChainWalletSelector from "@/components/auth/cross-chain-wallet-selector";
-import { BitcoinWalletConnector } from "@/components/bitcoin/bitcoin-wallet-connector";
+// Temporarily remove Bitcoin connector to fix the provider error
+// import { BitcoinWalletConnector } from "@/components/bitcoin/bitcoin-wallet-connector";
 import { useAuthContext } from "@/contexts/auth-context";
 import { useDevMode } from "@/contexts/dev-mode-context";
 import React from "react";
@@ -507,7 +508,7 @@ const MainHeader = () => {
                 </DropdownMenu>
               )}
               <CrossChainWalletSelector />
-              <BitcoinWalletConnector />
+              {/* <BitcoinWalletConnector /> */}
             </div>
 
             {/* Mobile Menu */}
@@ -667,7 +668,7 @@ const MainHeader = () => {
                         </div>
                         <div className="grid grid-cols-2 gap-2">
                           <CrossChainWalletSelector className="mobile-version" />
-                          <BitcoinWalletConnector className="mobile-version" />
+                          {/* <BitcoinWalletConnector className="mobile-version" /> */}
                         </div>
                       </div>
 

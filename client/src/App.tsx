@@ -5,13 +5,13 @@ import CreateTonVaultPage from './pages/create-ton-vault';
 import CrossChainBridgePage from './pages/cross-chain-bridge';
 import CvtStakingPage from './pages/cvt-staking';
 import { Toaster } from '@/components/ui/toaster';
-import Navbar from './components/layout/Navbar';
+import MainHeader from './components/layout/MainHeader';
 import Footer from './components/layout/footer';
 
 function App() {
   return (
     <div className="min-h-screen bg-background flex flex-col">
-      <Navbar />
+      <MainHeader />
       <main className="flex-1">
         <Switch>
           <Route path="/" component={HomePage} />
