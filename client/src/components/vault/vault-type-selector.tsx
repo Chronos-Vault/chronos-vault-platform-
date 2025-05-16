@@ -479,7 +479,7 @@ const VaultTypeCard: React.FC<VaultTypeCardProps> = ({
           <h4 className="text-xs font-semibold text-gray-300 mb-2 text-center">Key Features:</h4>
           <ul className="space-y-1.5">
             {features.slice(0, 4).map((feature, i) => (
-              <li key={i} className="flex items-center justify-center">
+              <li key={i} className="flex items-center">
                 <div 
                   className="w-2 h-2 rounded-full mr-2 flex-shrink-0" 
                   style={{ backgroundColor: color }}
