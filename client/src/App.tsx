@@ -4,26 +4,9 @@ import MainHeader from './components/layout/MainHeader';
 import Footer from './components/layout/footer';
 import React from 'react';
 
-// Import ALL pages to ensure they are available
+// Base pages
 import Home from './pages/home';
 import NotFound from './pages/not-found';
-import Documentation from './pages/documentation';
-import CrossChainBridge from './pages/cross-chain-bridge';
-import CreateTonVault from './pages/create-ton-vault';
-import CvtStaking from './pages/cvt-staking';
-import About from './pages/about';
-import BiometricVault from './pages/biometric-vault';
-import CrossChainVault from './pages/cross-chain-vault';
-import GeoVault from './pages/geo-vault';
-import SpecializedVaultMemory from './pages/specialized-vault-memory';
-import InvestmentDisciplineVault from './pages/investment-discipline-vault';
-import VaultSchool from './pages/vault-school';
-import MultiSignatureVault from './pages/multi-signature-vault';
-import SmartContractVault from './pages/smart-contract-vault';
-import MyVaults from './pages/my-vaults';
-import Whitepaper from './pages/whitepaper';
-import AuditTest from './pages/audit-test';
-import Faq from './pages/faq';
 
 function App() {
   return (
@@ -33,31 +16,12 @@ function App() {
         <Switch>
           <Route path="/" component={Home} />
           
-          {/* Core navigation pages */}
-          <Route path="/documentation" component={Documentation} />
-          <Route path="/bridge" component={CrossChainBridge} />
-          <Route path="/cross-chain-bridge" component={CrossChainBridge} />
-          <Route path="/create-vault" component={CreateTonVault} />
-          <Route path="/staking" component={CvtStaking} />
+          {/* DYNAMICALLY LOAD ALL PAGES BY URL */}
+          <Route path="/:pagePath+">
+            {(params) => <DynamicPageLoader pagePath={params.pagePath} />}
+          </Route>
           
-          {/* Vault types */}
-          <Route path="/biometric-vault" component={BiometricVault} />
-          <Route path="/cross-chain-vault" component={CrossChainVault} />
-          <Route path="/geo-vault" component={GeoVault} />
-          <Route path="/specialized-vault-memory" component={SpecializedVaultMemory} />
-          <Route path="/investment-discipline-vault" component={InvestmentDisciplineVault} />
-          <Route path="/smart-contract-vault" component={SmartContractVault} />
-          <Route path="/multi-signature-vault" component={MultiSignatureVault} />
-          
-          {/* Other pages */}
-          <Route path="/about" component={About} />
-          <Route path="/vault-school" component={VaultSchool} />
-          <Route path="/my-vaults" component={MyVaults} />
-          <Route path="/whitepaper" component={Whitepaper} />
-          <Route path="/audit-test" component={AuditTest} />
-          <Route path="/faq" component={Faq} />
-          
-          {/* 404 handler - MUST be last */}
+          {/* 404 handler - Must be last */}
           <Route component={NotFound} />
         </Switch>
       </main>
@@ -66,5 +30,65 @@ function App() {
     </div>
   );
 }
+
+// This component dynamically loads pages based on URL paths
+const DynamicPageLoader = ({ pagePath }: { pagePath: string }) => {
+  const [Component, setComponent] = React.useState<React.ComponentType | null>(null);
+  const [loading, setLoading] = React.useState(true);
+  const [error, setError] = React.useState(false);
+
+  React.useEffect(() => {
+    // Map common route aliases
+    const routeMap: Record<string, string> = {
+      'bridge': 'cross-chain-bridge',
+    };
+
+    const loadComponent = async () => {
+      setLoading(true);
+      setError(false);
+      
+      try {
+        // Get the mapped path or use the original
+        const mappedPath = routeMap[pagePath] || pagePath;
+        
+        // Use dynamic import to load the component
+        const module = await import(`./pages/${mappedPath}`);
+        setComponent(() => module.default);
+        setLoading(false);
+      } catch (err) {
+        console.error(`Error loading page for path /${pagePath}:`, err);
+        
+        // Try with legacy naming conventions
+        try {
+          // Try alternate formats like "page-name-page.tsx" if "page-name.tsx" fails
+          const altPath = `${pagePath}-page`;
+          const module = await import(`./pages/${altPath}`);
+          setComponent(() => module.default);
+          setLoading(false);
+        } catch (altErr) {
+          console.error(`Error loading alternate path /${pagePath}-page:`, altErr);
+          setError(true);
+          setLoading(false);
+        }
+      }
+    };
+
+    loadComponent();
+  }, [pagePath]);
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center min-h-[60vh]">
+        <div className="animate-spin h-12 w-12 border-4 border-purple-600 rounded-full border-t-transparent"></div>
+      </div>
+    );
+  }
+
+  if (error || !Component) {
+    return <NotFound />;
+  }
+
+  return <Component />;
+};
 
 export default App;
