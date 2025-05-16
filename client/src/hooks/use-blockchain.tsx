@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, ReactNode } from 'react';
+import React, { createContext, useContext, useState } from 'react';
 
 export type ChainType = 'ton' | 'ethereum' | 'solana' | 'bitcoin';
 
@@ -27,18 +27,11 @@ const defaultContext: BlockchainContextType = {
 
 const BlockchainContext = createContext<BlockchainContextType>(defaultContext);
 
-interface BlockchainProviderProps {
-  children: ReactNode;
-}
-
-export function BlockchainProvider({ children }: BlockchainProviderProps) {
+export function BlockchainProvider({ children }: { children: React.ReactNode }) {
   const [connectedWallet, setConnectedWallet] = useState<WalletInfo | null>(null);
 
   const connect = async (chain: ChainType, wallet: string): Promise<boolean> => {
     try {
-      // This would normally involve connecting to the actual blockchain
-      // For now, we'll simulate a successful connection with mock data
-      
       // Generate a mock address based on the chain and wallet
       let mockAddress = '';
       switch (chain) {

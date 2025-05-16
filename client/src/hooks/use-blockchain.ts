@@ -78,7 +78,11 @@ export function BlockchainProvider({ children }: { children: React.ReactNode }) 
     activeChain: connectedWallet?.chain || null,
   };
 
-  return BlockchainContext.Provider({ value, children });
+  return (
+    <BlockchainContext.Provider value={value}>
+      {children}
+    </BlockchainContext.Provider>
+  );
 }
 
 export const useBlockchain = () => useContext(BlockchainContext);
