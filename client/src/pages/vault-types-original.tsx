@@ -284,8 +284,14 @@ const PremiumFeatures = () => {
   );
 };
 
+interface VaultCardProps {
+  vault: typeof VAULT_TYPES[0];
+  isSelected: boolean;
+  onSelect: () => void;
+}
+
 // Vault card component
-const VaultCard = ({ vault, isSelected, onSelect }) => {
+const VaultCard = ({ vault, isSelected, onSelect }: VaultCardProps) => {
   return (
     <motion.div 
       className={`p-5 rounded-lg cursor-pointer border ${
@@ -308,7 +314,7 @@ const VaultCard = ({ vault, isSelected, onSelect }) => {
       </div>
       
       <div className="flex flex-wrap gap-1.5 mb-3">
-        {vault.tags.map((tag, i) => (
+        {vault.tags.map((tag: string, i: number) => (
           <span 
             key={i}
             className={`text-xs px-2 py-0.5 rounded-full ${
@@ -359,7 +365,7 @@ const VaultCard = ({ vault, isSelected, onSelect }) => {
       
       <h4 className="text-xs font-semibold text-gray-300 mb-2">Key Features:</h4>
       <ul className="grid grid-cols-1 gap-1.5">
-        {vault.features.slice(0, 4).map((feature, i) => (
+        {vault.features.slice(0, 4).map((feature: string, i: number) => (
           <li key={i} className="flex items-start">
             <span className="inline-block w-2 h-2 rounded-full mt-1.5 mr-2" style={{ backgroundColor: vault.color }}></span>
             <span className="text-xs text-gray-300">{feature}</span>
@@ -563,8 +569,8 @@ export default function VaultTypesOriginal() {
                 </div>
                 <span className="text-sm text-gray-300">CVT Token</span>
               </div>
-              <span className={`text-xs px-2 py-1 rounded-full ${cvtToken?.userBalance ? 'bg-green-900/30 text-green-400' : 'bg-gray-900/30 text-gray-400'}`}>
-                {cvtToken?.userBalance ? `${cvtToken.userBalance} CVT` : 'Not Required'}
+              <span className={`text-xs px-2 py-1 rounded-full ${parseFloat(cvtToken?.tokenBalance || '0') > 0 ? 'bg-green-900/30 text-green-400' : 'bg-gray-900/30 text-gray-400'}`}>
+                {parseFloat(cvtToken?.tokenBalance || '0') > 0 ? `${cvtToken?.tokenBalance} CVT` : 'Not Required'}
               </span>
             </div>
           </div>
