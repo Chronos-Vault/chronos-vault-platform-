@@ -221,13 +221,22 @@ const MyVaults = () => {
                 Manage your time-locked vaults across multiple blockchains
               </p>
             </div>
-            <Button
-              className="mt-4 md:mt-0 bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] hover:from-[#5500AB] hover:to-[#FF46E8] text-white"
-              onClick={() => setLocation("/vault-types")}
-            >
-              <PlusCircle className="h-4 w-4 mr-2" />
-              Create New Vault
-            </Button>
+            <div className="flex gap-3 mt-4 md:mt-0">
+              <Button
+                variant="outline"
+                className="border-[#6B00D7] text-[#FF5AF7] hover:bg-[#6B00D7]/10"
+                onClick={() => setLocation("/vault-explorer")}
+              >
+                Go to Explorer
+              </Button>
+              <Button
+                className="bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] hover:from-[#5500AB] hover:to-[#FF46E8] text-white"
+                onClick={() => setLocation("/vault-types")}
+              >
+                <PlusCircle className="h-4 w-4 mr-2" />
+                Create New Vault
+              </Button>
+            </div>
           </div>
           
           {!isAnyWalletConnected ? (
