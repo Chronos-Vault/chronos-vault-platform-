@@ -159,6 +159,7 @@ function App() {
           <Route path="/transaction-verification" component={TransactionVerification} />
           <Route path="/triple-chain-security-demo" component={TripleChainSecurityDemo} />
           <Route path="/zk-privacy-demo" component={ZkPrivacyDemo} />
+          <Route path="/test-vault-cards" component={TestVaultCards} />
           
           {/* Token & Payment Pages */}
           <Route path="/staking" component={CvtStaking} />
