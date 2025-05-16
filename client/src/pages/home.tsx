@@ -112,7 +112,7 @@ const Home = () => {
                 <div className="absolute -inset-1 bg-gradient-to-r from-[#6B00D7] via-[#FF5AF7] to-[#6B00D7] rounded-full blur opacity-70 group-hover:opacity-100 transition duration-1000 group-hover:duration-200 animate-gradient-x"></div>
                 
                 <Button 
-                  onClick={() => setLocation('/specialized-vault-creation')} 
+                  onClick={() => setLocation('/vault-types')} 
                   className="relative px-12 py-5 bg-black text-white text-xl font-bold rounded-full transition-all duration-300 hover:bg-black/50 hover:scale-105 shadow-[0_0_20px_rgba(107,0,215,0.7)]"
                 >
                   Create Your Vault
