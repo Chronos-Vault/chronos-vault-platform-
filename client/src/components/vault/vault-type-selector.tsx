@@ -386,9 +386,9 @@ const VaultTypeCard: React.FC<VaultTypeCardProps> = ({
         onClick={onClick}
       >
         <div className="flex flex-col h-full">
-          <div className="flex items-center mb-2 flex-col sm:flex-row text-center sm:text-left">
+          <div className="flex items-center mb-2 flex-col text-center">
             <div 
-              className={`w-10 h-10 rounded-full flex items-center justify-center mb-2 sm:mb-0 sm:mr-3 text-xl
+              className={`w-10 h-10 rounded-full flex items-center justify-center mb-2 text-xl
                 ${isSelected 
                   ? 'bg-black/70 border border-white/20' 
                   : 'bg-black/60'
@@ -408,7 +408,7 @@ const VaultTypeCard: React.FC<VaultTypeCardProps> = ({
             </h3>
           </div>
           
-          <p className="text-xs text-gray-400 text-center sm:text-left mb-3">{description}</p>
+          <p className="text-xs text-gray-400 text-center mb-3">{description}</p>
           
           {/* Key Technologies */}
           <div className="flex flex-wrap justify-center gap-1 mb-3">
@@ -443,10 +443,10 @@ const VaultTypeCard: React.FC<VaultTypeCardProps> = ({
           </div>
           
           {/* Security & Complexity Levels */}
-          <div className="grid grid-cols-2 gap-3 mb-3">
+          <div className="grid grid-cols-2 gap-3 mb-3 text-center">
             <div className="flex flex-col">
-              <div className="flex justify-between items-center mb-1">
-                <span className="text-[10px] sm:text-xs text-gray-400">Security</span>
+              <div className="flex justify-center items-center mb-1">
+                <span className="text-[10px] sm:text-xs text-gray-400 mr-1">Security</span>
                 <span className="text-[10px] sm:text-xs" style={{ color }}>{securityLevel}/5</span>
               </div>
               <div className="flex h-2 bg-gray-900 rounded overflow-hidden">
@@ -461,8 +461,8 @@ const VaultTypeCard: React.FC<VaultTypeCardProps> = ({
               </div>
             </div>
             <div className="flex flex-col">
-              <div className="flex justify-between items-center mb-1">
-                <span className="text-[10px] sm:text-xs text-gray-400">Complexity</span>
+              <div className="flex justify-center items-center mb-1">
+                <span className="text-[10px] sm:text-xs text-gray-400 mr-1">Complexity</span>
                 <span className="text-[10px] sm:text-xs text-amber-500">{complexityLevel}/5</span>
               </div>
               <div className="flex h-2 bg-gray-900 rounded overflow-hidden">
@@ -478,13 +478,13 @@ const VaultTypeCard: React.FC<VaultTypeCardProps> = ({
           </div>
           
           {/* Key Features */}
-          <div className="mt-3 flex-grow">
+          <div className="mt-3 flex-grow text-center">
             <h4 className="text-xs font-semibold text-gray-300 mb-1.5">Key Features:</h4>
             <ul className="space-y-1.5">
               {features.map((feature, i) => (
-                <li key={i} className="flex items-start">
+                <li key={i} className="flex items-center justify-center">
                   <div 
-                    className="w-2 h-2 rounded-full mt-1 mr-2 flex-shrink-0" 
+                    className="w-2 h-2 rounded-full mt-0.5 mr-2 flex-shrink-0" 
                     style={{ backgroundColor: color }}
                   />
                   <p className="text-[11px] text-gray-400 leading-tight">{feature}</p>
