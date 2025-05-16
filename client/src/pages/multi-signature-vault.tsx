@@ -659,8 +659,8 @@ const MultiSignatureVaultPage = () => {
           
           {/* Advanced Security Matrix */}
           <Card className="border-[#6B00D7]/30 bg-gradient-to-br from-[#131313] to-[#1A1A1A] shadow-xl mb-10">
-            <CardHeader>
-              <CardTitle className="text-2xl font-poppins flex items-center">
+            <CardHeader className="text-center">
+              <CardTitle className="text-2xl font-poppins flex items-center justify-center">
                 <Shield className="mr-2 h-6 w-6 text-[#6B00D7]" />
                 Advanced Security Matrix
               </CardTitle>
@@ -670,32 +670,71 @@ const MultiSignatureVaultPage = () => {
             </CardHeader>
             
             <CardContent>
-              <div className="mb-6">
-                <div className="flex justify-between items-center mb-2">
-                  <h3 className="text-lg font-medium">Security Score</h3>
+              <div className="mb-8 text-center">
+                <div className="mb-4">
+                  <h3 className="text-xl font-medium mb-3">Security Score</h3>
+                  <div className="relative inline-flex items-center justify-center">
+                    <div className="w-32 h-32 rounded-full flex items-center justify-center bg-gradient-to-r from-[#131313] to-[#1D1D1D] border-4 border-[#333]">
+                      <div className={`w-28 h-28 rounded-full flex items-center justify-center text-2xl font-bold 
+                        ${securityScore >= 90 
+                          ? "bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] text-white" 
+                          : securityScore >= 80 
+                            ? "bg-[#6B00D7]/20 text-[#FF5AF7]" 
+                            : "bg-[#2D2D2D] text-gray-300"}`}
+                      >
+                        {securityScore}
+                      </div>
+                    </div>
+                    <div className="absolute top-0 left-0 w-full h-full">
+                      <svg width="100%" height="100%" viewBox="0 0 100 100" className="rotate-90">
+                        <circle 
+                          cx="50" cy="50" r="46" 
+                          fill="none" 
+                          stroke="#333" 
+                          strokeWidth="6"
+                        />
+                        <circle 
+                          cx="50" cy="50" r="46" 
+                          fill="none" 
+                          stroke={securityScore >= 90 ? "#FF5AF7" : securityScore >= 80 ? "#6B00D7" : "#555"} 
+                          strokeWidth="6" 
+                          strokeDasharray={`${securityScore * 2.9}, 1000`} 
+                        />
+                      </svg>
+                    </div>
+                  </div>
+                </div>
+                <div className="max-w-lg mx-auto">
                   <Badge 
                     variant={securityScore >= 90 ? "default" : "outline"}
-                    className={securityScore >= 90 ? "bg-green-600" : "border-yellow-600 text-yellow-600"}
+                    className={`mx-auto ${securityScore >= 90 
+                      ? "bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7]" 
+                      : securityScore >= 80 
+                        ? "border-[#6B00D7] text-[#6B00D7]" 
+                        : "border-yellow-600 text-yellow-600"}`}
                   >
-                    {securityScore}/100
+                    {securityScore >= 90 
+                      ? "Fortress Grade Security" 
+                      : securityScore >= 80 
+                        ? "Enhanced Security" 
+                        : "Standard Security"}
                   </Badge>
+                  <p className="text-sm text-gray-300 mt-3">
+                    {securityScore < 70 
+                      ? "Your vault has basic security. Enable more premium features for enhanced protection." 
+                      : securityScore < 90 
+                        ? "Your vault has strong security. Add a few more features for maximum protection." 
+                        : "Your vault has military-grade security with triple-chain protection."}
+                  </p>
                 </div>
-                <Progress value={securityScore} className="h-2" />
-                <p className="text-xs text-gray-400 mt-1">
-                  {securityScore < 70 
-                    ? "Your vault has basic security. Consider enabling more features." 
-                    : securityScore < 90 
-                      ? "Your vault has good security. Add a few more features for maximum protection." 
-                      : "Your vault has excellent security with state-of-the-art protection."}
-                </p>
               </div>
               
-              <div className="mb-8">
-                <h3 className="text-lg font-medium mb-4">Encryption Level</h3>
+              <div className="mb-8 text-center">
+                <h3 className="text-xl font-medium mb-4">Triple-Chain Security</h3>
                 <RadioGroup 
                   defaultValue={encryptionLevel} 
                   onValueChange={(value) => setEncryptionLevel(value as EncryptionLevel)}
-                  className="grid grid-cols-1 md:grid-cols-2 gap-4"
+                  className="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-3xl mx-auto"
                 >
                   <div className="flex items-start space-x-2">
                     <RadioGroupItem value="standard" id="standard" className="mt-1" />
@@ -740,133 +779,190 @@ const MultiSignatureVaultPage = () => {
                 </RadioGroup>
               </div>
               
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-                <div>
-                  <h3 className="text-lg font-medium mb-4">Security Features</h3>
-                  <div className="space-y-4">
-                    {securityFeatures.map(feature => (
-                      <div key={feature.id} className="flex items-start justify-between">
-                        <div className="flex-1">
-                          <div className="flex items-center">
-                            <h4 className="font-medium">{feature.name}</h4>
-                            {feature.premium && (
-                              <Badge variant="outline" className="ml-2 border-[#FF5AF7] text-[#FF5AF7] text-xs">Premium</Badge>
-                            )}
+              <div className="mb-8 text-center">
+                <h3 className="text-xl font-medium mb-4">Zero-Knowledge Security</h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto">
+                  <div>
+                    <h4 className="text-lg font-medium mb-4 border-b border-[#6B00D7]/20 pb-2">Security Features</h4>
+                    <div className="space-y-4">
+                      {securityFeatures.map(feature => (
+                        <div key={feature.id} className="flex items-start justify-between bg-[#1A1A1A]/50 p-3 rounded-lg shadow-inner">
+                          <div className="flex-1 text-left">
+                            <div className="flex items-center">
+                              <h4 className="font-medium">{feature.name}</h4>
+                              {feature.premium && (
+                                <Badge variant="outline" className="ml-2 border-[#FF5AF7] text-[#FF5AF7] text-xs">Premium</Badge>
+                              )}
+                            </div>
+                            <p className="text-sm text-gray-400">{feature.description}</p>
                           </div>
-                          <p className="text-sm text-gray-400">{feature.description}</p>
+                          <Switch 
+                            checked={feature.enabled}
+                            onCheckedChange={() => toggleSecurityFeature(feature.id)}
+                            className="mt-1"
+                          />
                         </div>
-                        <Switch 
-                          checked={feature.enabled}
-                          onCheckedChange={() => toggleSecurityFeature(feature.id)}
-                        />
-                      </div>
-                    ))}
+                      ))}
+                    </div>
                   </div>
-                </div>
-                
-                <div>
-                  <h3 className="text-lg font-medium mb-4">Recovery Options</h3>
-                  <div className="space-y-4">
-                    {recoveryOptions.map(option => (
-                      <div key={option.id} className="flex items-start justify-between">
-                        <div className="flex-1">
-                          <div className="flex items-center">
-                            <h4 className="font-medium">{option.name}</h4>
-                            <Badge 
-                              variant="outline" 
-                              className="ml-2 border-green-500 text-green-500 text-xs"
-                            >
-                              Level {option.securityLevel}
-                            </Badge>
+                  
+                  <div>
+                    <h4 className="text-lg font-medium mb-4 border-b border-[#6B00D7]/20 pb-2">Recovery Options</h4>
+                    <div className="space-y-4">
+                      {recoveryOptions.map(option => (
+                        <div key={option.id} className="flex items-start justify-between bg-[#1A1A1A]/50 p-3 rounded-lg shadow-inner">
+                          <div className="flex-1 text-left">
+                            <div className="flex items-center">
+                              <h4 className="font-medium">{option.name}</h4>
+                              <Badge 
+                                variant="outline" 
+                                className="ml-2 border-green-500 text-green-500 text-xs"
+                              >
+                                Level {option.securityLevel}
+                              </Badge>
+                            </div>
+                            <p className="text-sm text-gray-400">{option.description}</p>
                           </div>
-                          <p className="text-sm text-gray-400">{option.description}</p>
+                          <Switch 
+                            checked={option.enabled}
+                            onCheckedChange={() => toggleRecoveryOption(option.id)}
+                            className="mt-1"
+                          />
                         </div>
-                        <Switch 
-                          checked={option.enabled}
-                          onCheckedChange={() => toggleRecoveryOption(option.id)}
-                        />
-                      </div>
-                    ))}
+                      ))}
+                    </div>
                   </div>
                 </div>
               </div>
               
-              <div className="mb-8">
-                <h3 className="text-lg font-medium mb-4">Cross-Chain Verification</h3>
-                <div className="flex items-start justify-between mb-4">
-                  <div>
-                    <div className="flex items-center">
-                      <h4 className="font-medium">Triple-Chain Security™</h4>
-                      <Badge 
-                        variant="outline" 
-                        className="ml-2 border-[#6B00D7] text-[#6B00D7] text-xs"
-                      >
-                        Recommended
-                      </Badge>
+              <div className="mb-8 text-center">
+                <h3 className="text-xl font-medium mb-4">Advanced Security</h3>
+                <div className="max-w-3xl mx-auto bg-[#1A1A1A]/50 p-4 rounded-lg shadow-inner mb-4">
+                  <div className="flex items-start justify-between">
+                    <div className="text-left">
+                      <div className="flex items-center">
+                        <h4 className="font-medium">Triple-Chain Security™</h4>
+                        <Badge 
+                          variant="outline" 
+                          className="ml-2 border-[#6B00D7] text-[#6B00D7] text-xs"
+                        >
+                          Recommended
+                        </Badge>
+                      </div>
+                      <p className="text-sm text-gray-400">Secure your vault across multiple blockchains for enhanced protection</p>
                     </div>
-                    <p className="text-sm text-gray-400">Secure your vault across multiple blockchains for enhanced protection</p>
+                    <Switch 
+                      checked={crossChainVerification}
+                      onCheckedChange={() => setCrossChainVerification(!crossChainVerification)}
+                    />
                   </div>
-                  <Switch 
-                    checked={crossChainVerification}
-                    onCheckedChange={() => setCrossChainVerification(!crossChainVerification)}
-                  />
                 </div>
                 
                 {crossChainVerification && (
-                  <div className="pl-6 border-l-2 border-[#6B00D7]/30 ml-2">
-                    <p className="text-sm text-gray-400 mb-2">Select verification chains:</p>
-                    <div className="grid grid-cols-2 gap-2">
+                  <div className="max-w-2xl mx-auto bg-[#0F0F0F] p-5 rounded-xl border border-[#6B00D7]/20 shadow-md">
+                    <p className="text-sm text-gray-300 mb-4 font-medium">Select verification chains for triple-chain protection:</p>
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
                       {Object.values(BlockchainType)
                         .filter(chain => chain !== activeBlockchain) // Don't show the primary chain
-                        .map(chain => (
-                          <div key={chain} className="flex items-center space-x-2">
-                            <Checkbox 
-                              id={`chain-${chain}`}
-                              checked={verificationChains.includes(chain)}
-                              onCheckedChange={(checked: boolean) => {
-                                if (checked) {
-                                  setVerificationChains([...verificationChains, chain]);
-                                } else {
+                        .map(chain => {
+                          const isSelected = verificationChains.includes(chain);
+                          return (
+                            <div 
+                              key={chain} 
+                              className={`flex items-center p-3 border rounded-lg cursor-pointer transition-all duration-300 ${
+                                isSelected 
+                                  ? 'border-[#6B00D7] bg-[#6B00D7]/10' 
+                                  : 'border-gray-700 bg-[#1A1A1A] hover:border-gray-500'
+                              }`}
+                              onClick={() => {
+                                if (isSelected) {
                                   setVerificationChains(verificationChains.filter(c => c !== chain));
+                                } else {
+                                  setVerificationChains([...verificationChains, chain]);
                                 }
                               }}
-                            />
-                            <Label htmlFor={`chain-${chain}`}>{chain}</Label>
-                          </div>
-                        ))
-                      }
+                            >
+                              <Checkbox 
+                                id={`chain-${chain}`}
+                                checked={isSelected}
+                                className="mr-2"
+                                onCheckedChange={(checked: boolean) => {
+                                  if (checked) {
+                                    setVerificationChains([...verificationChains, chain]);
+                                  } else {
+                                    setVerificationChains(verificationChains.filter(c => c !== chain));
+                                  }
+                                }}
+                              />
+                              <div>
+                                <Label 
+                                  htmlFor={`chain-${chain}`}
+                                  className={`font-medium ${isSelected ? 'text-[#FF5AF7]' : 'text-gray-300'}`}
+                                >
+                                  {chain}
+                                </Label>
+                                <p className="text-xs text-gray-500">
+                                  {chain === BlockchainType.TON && "Fast, low gas fees"}
+                                  {chain === BlockchainType.ETHEREUM && "Secure, widely adopted"}
+                                  {chain === BlockchainType.SOLANA && "High-speed monitoring"}
+                                  {chain === BlockchainType.BITCOIN && "Ultra-secure, trusted"}
+                                </p>
+                              </div>
+                            </div>
+                          );
+                        })}
+                    </div>
+                    <div className="mt-4 text-center">
+                      <Badge 
+                        variant="outline" 
+                        className="mx-auto bg-[#6B00D7]/10 border-[#6B00D7] text-[#6B00D7]"
+                      >
+                        {verificationChains.length}/3 chains selected
+                      </Badge>
+                      <p className="text-xs text-gray-400 mt-2">
+                        We recommend selecting at least 2 chains for optimum security
+                      </p>
                     </div>
                   </div>
                 )}
               </div>
               
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div>
-                  <Label htmlFor="execution-delay">Transaction Execution Delay (hours)</Label>
-                  <Input 
-                    id="execution-delay"
-                    type="number"
-                    value={executionDelay}
-                    onChange={(e) => setExecutionDelay(parseInt(e.target.value) || 24)}
-                    min={1}
-                    max={72}
-                    className="mt-1 bg-[#1A1A1A] border-[#6B00D7]/20"
-                  />
-                  <p className="text-xs text-gray-500 mt-1">Time delay before executing approved transactions</p>
-                </div>
-                
-                <div>
-                  <Label htmlFor="vote-threshold">Approval Threshold (%)</Label>
-                  <Input 
-                    id="vote-threshold"
-                    type="number"
-                    value={voteThreshold}
-                    onChange={(e) => setVoteThreshold(parseInt(e.target.value) || 60)}
-                    min={50}
-                    max={100}
-                    className="mt-1 bg-[#1A1A1A] border-[#6B00D7]/20"
-                  />
-                  <p className="text-xs text-gray-500 mt-1">Percentage of weighted votes required for approval</p>
+              <div className="mb-8 text-center">
+                <h3 className="text-xl font-medium mb-4">Execution Parameters</h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-3xl mx-auto">
+                  <div className="bg-[#1A1A1A]/50 p-4 rounded-lg shadow-inner">
+                    <Label htmlFor="execution-delay" className="text-[#FF5AF7]">Transaction Execution Delay (hours)</Label>
+                    <div className="flex items-center mt-2">
+                      <Clock className="h-5 w-5 mr-2 text-[#6B00D7]/60" />
+                      <Input 
+                        id="execution-delay"
+                        type="number"
+                        value={executionDelay}
+                        onChange={(e) => setExecutionDelay(parseInt(e.target.value) || 24)}
+                        min={1}
+                        max={72}
+                        className="bg-[#0F0F0F] border-[#6B00D7]/20"
+                      />
+                    </div>
+                    <p className="text-xs text-gray-400 mt-2">Time delay before executing approved transactions for security</p>
+                  </div>
+                  
+                  <div className="bg-[#1A1A1A]/50 p-4 rounded-lg shadow-inner">
+                    <Label htmlFor="vote-threshold" className="text-[#FF5AF7]">Approval Threshold (%)</Label>
+                    <div className="flex items-center mt-2">
+                      <Users className="h-5 w-5 mr-2 text-[#6B00D7]/60" />
+                      <Input 
+                        id="vote-threshold"
+                        type="number"
+                        value={voteThreshold}
+                        onChange={(e) => setVoteThreshold(parseInt(e.target.value) || 60)}
+                        min={50}
+                        max={100}
+                        className="bg-[#0F0F0F] border-[#6B00D7]/20"
+                      />
+                    </div>
+                    <p className="text-xs text-gray-400 mt-2">Percentage of weighted votes required for transaction approval</p>
+                  </div>
                 </div>
               </div>
             </CardContent>
@@ -874,8 +970,8 @@ const MultiSignatureVaultPage = () => {
           
           {/* CVT Staking Benefits */}
           <Card className="border-[#FF5AF7]/30 bg-gradient-to-br from-[#131313] to-[#1A1A1A] shadow-xl mb-10">
-            <CardHeader>
-              <CardTitle className="text-2xl font-poppins flex items-center">
+            <CardHeader className="text-center">
+              <CardTitle className="text-2xl font-poppins flex items-center justify-center">
                 <Zap className="mr-2 h-6 w-6 text-[#FF5AF7]" />
                 CVT Token Benefits
               </CardTitle>
