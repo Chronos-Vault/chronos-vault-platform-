@@ -474,21 +474,14 @@ const VaultTypeCard: React.FC<VaultTypeCardProps> = ({
           </div>
         </div>
         
-        {/* Key Features - Simple Grid Layout */}
+        {/* Key Features - Exact Copy from Original */}
         <div className="mt-auto w-full">
-          <h4 className="text-xs font-semibold text-gray-300 mb-3 text-center">Key Features:</h4>
-          <ul className="list-none text-center px-0 mx-auto">
+          <h4 className="text-xs font-semibold text-gray-300 mb-2">Key Features:</h4>
+          <ul className="grid grid-cols-1 gap-1.5">
             {features.slice(0, 4).map((feature, i) => (
-              <li key={i} className="mb-2 text-center mx-auto w-full">
-                <span className="inline-block w-2 h-2 rounded-full mr-2 align-middle" 
-                  style={{ backgroundColor: color }}>
-                </span>
-                <span 
-                  className="inline-block text-[11px] align-middle" 
-                  style={{ color }}
-                >
-                  {feature}
-                </span>
+              <li key={i} className="flex items-start">
+                <span className="inline-block w-2 h-2 rounded-full mt-1.5 mr-2" style={{ backgroundColor: color }}></span>
+                <span className="text-[11px]" style={{ color }}>{feature}</span>
               </li>
             ))}
           </ul>
