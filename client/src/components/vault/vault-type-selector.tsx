@@ -474,28 +474,19 @@ const VaultTypeCard: React.FC<VaultTypeCardProps> = ({
           </div>
         </div>
         
-        {/* Key Features - Table Layout for Consistent Centering */}
+        {/* Key Features with Center Alignment */}
         <div className="mt-auto w-full">
           <h4 className="text-xs font-semibold text-gray-300 mb-3 text-center">Key Features:</h4>
-          <table className="w-full border-separate border-spacing-0">
-            <tbody>
-              {features.slice(0, 4).map((feature, i) => (
-                <tr key={i}>
-                  <td className="w-1/2 text-right pr-2 pb-2">
-                    <div 
-                      className="w-2 h-2 rounded-full inline-block" 
-                      style={{ backgroundColor: color }}
-                    />
-                  </td>
-                  <td className="w-1/2 text-left pl-1 pb-2">
-                    <span className="text-[11px] inline-block" style={{ color: color }}>
-                      {feature}
-                    </span>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+          <div className="w-full flex flex-col">
+            {features.slice(0, 4).map((feature, i) => (
+              <div key={i} className="mb-2.5 flex items-center justify-center">
+                <div className="w-2 h-2 rounded-full mr-2" style={{ backgroundColor: color }}></div>
+                <div className="text-[11px] text-center" style={{ color }}>
+                  {feature}
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
         
         {/* Selected indicator */}
