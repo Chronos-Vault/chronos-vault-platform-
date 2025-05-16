@@ -38,6 +38,7 @@ import CrossChainVault from './pages/cross-chain-vault';
 import IntentInheritanceVault from './pages/intent-inheritance-vault';
 import QuantumVault from './pages/quantum-vault';
 import TonSpecificVault from './pages/ton-specific-vault';
+import SovereignFortressVault from './pages/sovereign-fortress-vault';
 
 // Documentation Pages
 import Whitepaper from './pages/whitepaper';
