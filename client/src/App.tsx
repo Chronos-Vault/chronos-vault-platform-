@@ -43,7 +43,7 @@ import CrossChainVaultPage from "@/pages/cross-chain-vault";
 import CrossChainSecurityPage from "@/pages/cross-chain-security";
 import CrossChainAtomicSwapPage from "@/pages/cross-chain-atomic-swap";
 import CrossChainVsAtomicSwapPage from "@/pages/cross-chain-vs-atomic-swap";
-import CrossChainBridgePage from "@/pages/cross-chain-bridge";
+import CrossChainBridgePage from "@/pages/ton-wallet-cross-chain-bridge";
 import TransactionVerificationPage from "@/pages/transaction-verification";
 import CrossChainMonitorPage from "@/pages/cross-chain-monitor";
 import TONIntegrationPage from "@/pages/ton-integration";
