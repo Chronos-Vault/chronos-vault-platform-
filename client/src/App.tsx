@@ -89,6 +89,8 @@ import CrossChainVaultDocPage from "@/pages/cross-chain-vault"; // New documenta
 import MemoryVaultPage from "@/pages/specialized-vault-memory"; // New documentation page
 import InvestmentDisciplineVaultDocPage from "@/pages/investment-discipline-vault-doc"; // New documentation page
 import MultiSignatureVaultDocPage from "@/pages/multi-signature-vault-doc"; // New documentation page
+import ConnectTonPage from "@/pages/connect-ton"; // New TON wallet connection page
+import TonSpecificVaultPage from "@/pages/ton-specific-vault"; // New TON-specific vault page
 import FAQPage from "@/pages/faq";
 import SmartContractsPage from "@/pages/smart-contracts";
 import SmartContractVaultPage from "@/pages/smart-contract-vault";
@@ -223,6 +225,8 @@ function Router() {
           <Route path="/cross-chain-monitor" component={CrossChainMonitorPage} />
           <Route path="/intent-inheritance-vault" component={IntentInheritanceVault} />
           <Route path="/ton-integration" component={TONIntegrationPage} />
+          <Route path="/connect-ton" component={ConnectTonPage} />
+          <Route path="/ton-vault" component={TonSpecificVaultPage} />
           <Route path="/solana-integration" component={SolanaIntegrationPage} />
           <Route path="/ethereum-integration" component={EthereumIntegrationPage} />
           <Route path="/gift-crypto" component={GiftCryptoPage} />

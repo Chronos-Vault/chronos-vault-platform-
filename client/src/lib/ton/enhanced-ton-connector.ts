@@ -1,5 +1,64 @@
 import { TonConnectUI, WalletInfoInjected, WalletInfoRemote } from '@tonconnect/ui';
-import { CHAIN_TON, addError, clearChainErrors } from '../utils/error-handler';
+
+// Chain identifiers
+export const CHAIN_TON = 'TON';
+export const CHAIN_ETHEREUM = 'ETHEREUM';
+export const CHAIN_SOLANA = 'SOLANA';
+export const CHAIN_BITCOIN = 'BITCOIN';
+
+// Error types
+export interface ChainError {
+  chain: string;
+  message: string;
+  critical: boolean;
+  timestamp?: number;
+  errorCode?: string;
+}
+
+// In-memory store for chain errors
+const errorStore: Record<string, ChainError[]> = {
+  [CHAIN_TON]: [],
+  [CHAIN_ETHEREUM]: [],
+  [CHAIN_SOLANA]: [],
+  [CHAIN_BITCOIN]: [],
+};
+
+/**
+ * Add an error to the chain-specific error store
+ */
+export function addError(error: ChainError): void {
+  if (!error.chain || !errorStore[error.chain]) {
+    console.error('Attempted to add error for unknown chain:', error);
+    return;
+  }
+  
+  errorStore[error.chain].push({
+    ...error,
+    timestamp: error.timestamp || Date.now(),
+  });
+  
+  // Limit number of errors stored (keep most recent)
+  const maxErrors = 10;
+  if (errorStore[error.chain].length > maxErrors) {
+    errorStore[error.chain] = errorStore[error.chain].slice(-maxErrors);
+  }
+  
+  // Log critical errors to console
+  if (error.critical) {
+    console.error(`Critical ${error.chain} error:`, error.message);
+  }
+}
+
+/**
+ * Clear all errors for a specific chain
+ */
+export function clearChainErrors(chain: string): void {
+  if (!chain || !errorStore[chain]) {
+    return;
+  }
+  
+  errorStore[chain] = [];
+}
 
 export enum TonWalletType {
   TONKEEPER = 'tonkeeper',
