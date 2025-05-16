@@ -2,45 +2,15 @@ import { Route, Switch } from 'wouter';
 import { Toaster } from '@/components/ui/toaster';
 import MainHeader from './components/layout/MainHeader';
 import Footer from './components/layout/footer';
-
 import Home from './pages/home';
 import NotFound from './pages/not-found';
+import React from 'react';
 
-// Directly import all page components we need
+// Directly import key pages
 import Documentation from './pages/documentation';
 import CrossChainBridge from './pages/cross-chain-bridge';
 import CreateTonVault from './pages/create-ton-vault';
 import CvtStaking from './pages/cvt-staking';
-import About from './pages/about';
-import BiometricVault from './pages/biometric-vault';
-import CrossChainVault from './pages/cross-chain-vault';
-import GeoVault from './pages/geo-vault';
-import SpecializedVaultMemory from './pages/specialized-vault-memory';
-import InvestmentDisciplineVault from './pages/investment-discipline-vault';
-import VaultSchool from './pages/vault-school';
-import MultiSignatureVault from './pages/multi-signature-vault';
-import MultiSignatureVaultNew from './pages/multi-signature-vault-new';
-import CrossChainMonitor from './pages/cross-chain-monitor';
-import TransactionMonitor from './pages/transaction-monitor';
-import TransactionVerification from './pages/transaction-verification';
-import CrossChainAtomicSwap from './pages/cross-chain-atomic-swap';
-import CrossChainVsAtomicSwap from './pages/cross-chain-vs-atomic-swap';
-import CrossChainSecurity from './pages/cross-chain-security';
-import SecurityVerificationDemo from './pages/security-verification-demo';
-import MyVaults from './pages/my-vaults';
-import CvtToken from './pages/cvt-token';
-import CvtUtility from './pages/cvt-utility';
-import CvtTokenomics from './pages/cvt-tokenomics';
-import BitcoinHalving from './pages/bitcoin-halving';
-import GiftCrypto from './pages/gift-crypto';
-import TokenVaults from './pages/token-vaults';
-import Whitepaper from './pages/whitepaper';
-import TechnicalSpecification from './pages/technical-specification';
-import SmartContracts from './pages/smart-contracts';
-import Roadmap from './pages/roadmap';
-import AuditTest from './pages/audit-test';
-import Faq from './pages/faq';
-import SmartContractVault from './pages/smart-contract-vault';
 
 function App() {
   return (
@@ -54,37 +24,34 @@ function App() {
           <Route path="/cross-chain-bridge" component={CrossChainBridge} />
           <Route path="/create-vault" component={CreateTonVault} />
           <Route path="/staking" component={CvtStaking} />
-          <Route path="/about" component={About} />
-          <Route path="/vault-school" component={VaultSchool} />
-          <Route path="/smart-contract-vault" component={SmartContractVault} />
-          <Route path="/biometric-vault" component={BiometricVault} />
-          <Route path="/cross-chain-vault" component={CrossChainVault} />
-          <Route path="/geo-vault" component={GeoVault} />
-          <Route path="/specialized-vault-memory" component={SpecializedVaultMemory} />
-          <Route path="/investment-discipline-vault" component={InvestmentDisciplineVault} />
-          <Route path="/multi-signature-vault" component={MultiSignatureVault} />
-          <Route path="/multi-signature-vault-new" component={MultiSignatureVaultNew} />
-          <Route path="/cross-chain-monitor" component={CrossChainMonitor} />
-          <Route path="/transaction-monitor" component={TransactionMonitor} />
-          <Route path="/transaction-verification" component={TransactionVerification} />
-          <Route path="/cross-chain-atomic-swap" component={CrossChainAtomicSwap} />
-          <Route path="/cross-chain-vs-atomic-swap" component={CrossChainVsAtomicSwap} />
-          <Route path="/cross-chain-security" component={CrossChainSecurity} />
-          <Route path="/security-verification-demo" component={SecurityVerificationDemo} />
-          <Route path="/my-vaults" component={MyVaults} />
-          <Route path="/cvt-token" component={CvtToken} />
-          <Route path="/cvt-utility" component={CvtUtility} />
-          <Route path="/cvt-tokenomics" component={CvtTokenomics} />
-          <Route path="/bitcoin-halving" component={BitcoinHalving} />
-          <Route path="/gift-crypto" component={GiftCrypto} />
-          <Route path="/token-vaults" component={TokenVaults} />
-          <Route path="/whitepaper" component={Whitepaper} />
-          <Route path="/technical-specification" component={TechnicalSpecification} />
-          <Route path="/smart-contracts" component={SmartContracts} />
-          <Route path="/roadmap" component={Roadmap} />
-          <Route path="/audit-test" component={AuditTest} />
-          <Route path="/faq" component={Faq} />
-          <Route component={NotFound} />
+          
+          {/* Catch-all placeholder for other routes */}
+          <Route path="/:rest*">
+            {(params) => {
+              const pagePath = params.rest || '';
+              const formattedTitle = pagePath
+                .split('-')
+                .map((word: string) => word.charAt(0).toUpperCase() + word.slice(1))
+                .join(' ');
+              
+              return (
+                <div className="container mx-auto px-4 py-16">
+                  <div className="bg-gradient-to-r from-[#6B00D7]/10 to-[#FF5AF7]/10 p-12 rounded-2xl shadow-lg border border-purple-500/20">
+                    <h1 className="text-4xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] mb-6">
+                      {formattedTitle || 'Page Not Found'}
+                    </h1>
+                    <p className="text-xl text-gray-200 mb-8">
+                      Our engineers are currently working on this page. It will be available soon.
+                    </p>
+                    <div className="flex items-center gap-4 text-gray-300">
+                      <div className="animate-pulse w-4 h-4 rounded-full bg-[#FF5AF7]"></div>
+                      <span>Secure connection established</span>
+                    </div>
+                  </div>
+                </div>
+              );
+            }}
+          </Route>
         </Switch>
       </main>
       <Footer />
