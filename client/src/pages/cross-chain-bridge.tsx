@@ -90,7 +90,6 @@ export default function CrossChainBridgePage() {
   const [wsStatus, setWsStatus] = useState<'connecting' | 'connected' | 'disconnected'>('disconnected');
   const [bridgeHistory, setBridgeHistory] = useState<any[]>([]);
   const [showSuccessAnimation, setShowSuccessAnimation] = useState(false);
-  const { isDarkMode } = useUserTheme();
   
   // Wallet dialog state for our integrated connector
   const [walletDialogOpen, setWalletDialogOpen] = useState(false);
