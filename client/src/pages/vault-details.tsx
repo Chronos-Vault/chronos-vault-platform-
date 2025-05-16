@@ -85,20 +85,63 @@ const VaultDetails = () => {
     const loadVault = async () => {
       setIsLoading(true);
       try {
-        // Simulate API call delay
-        await new Promise(resolve => setTimeout(resolve, 1000));
-        
+        // Get vault ID from URL parameters
         const vaultId = params.id;
         
-        if (vaultId && sampleVaults[vaultId]) {
-          setVault(sampleVaults[vaultId]);
-        } else {
+        if (!vaultId) {
           toast({
-            title: "Vault not found",
-            description: "The requested vault could not be found.",
+            title: "Invalid vault",
+            description: "No vault ID provided.",
             variant: "destructive",
           });
           navigate("/my-vaults");
+          return;
+        }
+        
+        // First try to load from API
+        try {
+          const response = await fetch(`/api/vault/${vaultId}`);
+          
+          if (response.ok) {
+            const data = await response.json();
+            if (data.success && data.vault) {
+              setVault(data.vault);
+              return;
+            }
+          }
+          
+          // Try alternative endpoint if first one fails
+          const altResponse = await fetch(`/api/vaults/${vaultId}`);
+          
+          if (altResponse.ok) {
+            const altData = await altResponse.json();
+            if (altData.success && altData.vault) {
+              setVault(altData.vault);
+              return;
+            }
+          }
+          
+          // Fall back to sample data if both API calls fail
+          if (sampleVaults[vaultId]) {
+            console.log("Using sample vault data");
+            setVault(sampleVaults[vaultId]);
+          } else {
+            throw new Error("Vault not found in API or sample data");
+          }
+        } catch (apiError) {
+          console.error("Error fetching vault data:", apiError);
+          
+          // Check sample data as last resort
+          if (vaultId && sampleVaults[vaultId]) {
+            setVault(sampleVaults[vaultId]);
+          } else {
+            toast({
+              title: "Vault not found",
+              description: "The requested vault could not be found.",
+              variant: "destructive",
+            });
+            navigate("/my-vaults");
+          }
         }
       } catch (error) {
         console.error("Error loading vault:", error);
@@ -107,13 +150,14 @@ const VaultDetails = () => {
           description: "There was an error loading the vault details. Please try again later.",
           variant: "destructive",
         });
+        navigate("/my-vaults");
       } finally {
         setIsLoading(false);
       }
     };
 
     loadVault();
-  }, [params.id]);
+  }, [params.id, navigate, toast]);
 
   // Format blockchain name
   const formatBlockchainName = (blockchain: BlockchainType): string => {

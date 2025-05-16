@@ -6,6 +6,18 @@
 import { Request, Response, Router } from 'express';
 import { z } from 'zod';
 
+// Vault types enum
+export enum VaultType {
+  STANDARD = 'standard',
+  TIME_LOCK = 'time-lock',
+  MEMORY = 'memory',
+  QUANTUM_PROGRESSIVE = 'quantum-progressive',
+  MULTI_SIG = 'multi-signature',
+  INHERITANCE = 'inheritance',
+  BITCOIN_HALVING = 'bitcoin-halving',
+  GEOLOCATION = 'geolocation'
+}
+
 const router = Router();
 
 // In-memory storage for vaults during development
@@ -72,18 +84,6 @@ let vaults: any[] = [
     }
   }
 ];
-
-// Vault types enum
-export enum VaultType {
-  STANDARD = 'standard',
-  TIME_LOCK = 'time-lock',
-  MEMORY = 'memory',
-  QUANTUM_PROGRESSIVE = 'quantum-progressive',
-  MULTI_SIG = 'multi-signature',
-  INHERITANCE = 'inheritance',
-  BITCOIN_HALVING = 'bitcoin-halving',
-  GEOLOCATION = 'geolocation'
-}
 
 // Vault creation schema
 const createVaultSchema = z.object({
@@ -294,7 +294,59 @@ router.get('/:id', (req: Request, res: Response) => {
   const vault = vaults.find(v => v.id === req.params.id);
   
   if (!vault) {
-    return res.status(404).json({ success: false, error: 'Vault not found' });
+    // Check for standard vaults
+    const standardVaults = [
+      {
+        id: "1",
+        name: "Savings Vault",
+        description: "Long-term savings for future planning with advanced security measures applied. This vault uses triple-chain validation.",
+        blockchain: "ton", // Use string instead of enum for serialization
+        unlockTime: Date.now() + 180 * 24 * 60 * 60 * 1000,
+        amount: "15.75",
+        recipient: "EQAbc123...",
+        isLocked: true,
+        securityLevel: "enhanced",
+        createdAt: Date.now() - 30 * 24 * 60 * 60 * 1000,
+        contractAddress: "EQD5xS7dQNM5mZu5hn_qDsHjUeJRVGbQYSCsB6MsJMP2zKqL",
+        txHash: "97c17cd1afd8a5663c04fc93192b351dab6a88afd7c7ac847e9e457fc5fd034c"
+      },
+      {
+        id: "2",
+        name: "Education Fund",
+        description: "College savings for my children that will unlock in 3 years. This vault is protected by enhanced security measures.",
+        blockchain: "ton",
+        unlockTime: Date.now() + 365 * 3 * 24 * 60 * 60 * 1000,
+        amount: "50.0",
+        recipient: "EQAbc123...",
+        isLocked: true,
+        securityLevel: "maximum",
+        createdAt: Date.now() - 60 * 24 * 60 * 60 * 1000,
+        contractAddress: "EQCT239WSjM_w4pcwSZmp9VvZ-fDnLNMnYpKwZIYhQHVBvuR",
+        txHash: "ae8c5e37e9bf2c28e19f8f9adeabd1e01f3d7d49322bd9d5a6128e081622845c"
+      },
+      {
+        id: "3",
+        name: "Retirement Test",
+        description: "Small test vault for retirement planning. This vault has already been unlocked and funds can be withdrawn.",
+        blockchain: "ethereum",
+        unlockTime: Date.now() - 5 * 24 * 60 * 60 * 1000,
+        amount: "0.05",
+        recipient: "0x1234...",
+        isLocked: false,
+        securityLevel: "standard",
+        createdAt: Date.now() - 35 * 24 * 60 * 60 * 1000,
+        contractAddress: "0x742d35Cc6634C0532925a3b844Bc454e4438f44e",
+        txHash: "0xe6c5378a4e1a0c7fd5219fa70a0903db8ed1d4a67be5f6d83fb2fb11a5214943"
+      }
+    ];
+    
+    const standardVault = standardVaults.find(v => v.id === req.params.id);
+    
+    if (!standardVault) {
+      return res.status(404).json({ success: false, error: 'Vault not found' });
+    }
+    
+    return res.json({ success: true, vault: standardVault });
   }
   
   res.json({ success: true, vault });
