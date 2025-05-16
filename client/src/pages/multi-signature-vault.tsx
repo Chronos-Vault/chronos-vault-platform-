@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useLocation } from 'wouter';
 import { useMultiChain, BlockchainType } from '@/contexts/multi-chain-context';
 import { 
-  Users, ArrowLeft, Shield, Lock, Wallet, AlertTriangle, Loader2, 
+  Users, ArrowLeft, Shield, ShieldCheck, Lock, Wallet, AlertTriangle, Loader2, 
   CheckCircle2, Globe, Key, FileKey, Database, Fingerprint, Crown,
   Clock, Shuffle, Zap, CircleCheck, CreditCard, Layers
 } from 'lucide-react';
@@ -365,6 +365,19 @@ const MultiSignatureVaultPage = () => {
       return;
     }
 
+    // Check if verification chains are connected for cross-chain verification
+    if (crossChainVerification && verificationChains.length > 0) {
+      const unconnectedChains = verificationChains.filter(chain => !isWalletConnected(chain));
+      if (unconnectedChains.length > 0) {
+        toast({
+          title: "Verification Chain Not Connected",
+          description: `Please connect ${unconnectedChains.join(', ')} wallet(s) for cross-chain verification`,
+          variant: "destructive",
+        });
+        return;
+      }
+    }
+
     setIsCreating(true);
     try {
       // Get current wallet address
@@ -387,6 +400,37 @@ const MultiSignatureVaultPage = () => {
         throw new Error("Could not determine owner address");
       }
 
+      // Build enhanced security metadata 
+      const securityMetadata = {
+        multiSigConfig: {
+          ...multiSigConfig,
+          requireGeolocation: securityFeatures.find(f => f.id === 'geo-restriction')?.enabled || false,
+          requireBiometrics: securityFeatures.find(f => f.id === 'biometric-verification')?.enabled || false,
+          crossChainVerification: crossChainVerification,
+          verificationChains: verificationChains,
+          delayedExecution: securityFeatures.find(f => f.id === 'delayed-execution')?.enabled || false,
+          executionDelay: executionDelay,
+          encryptionLevel: encryptionLevel
+        },
+        securityFeatures: securityFeatures.filter(f => f.enabled).map(f => f.id),
+        recoveryOptions: recoveryOptions.filter(r => r.enabled).map(r => r.id),
+        securityScore: securityScore,
+        securityLevel: securityScore >= 90 ? "fortress" : 
+                     securityScore >= 80 ? "quantum-resistant" : 
+                     securityScore >= 70 ? "enhanced" : "standard",
+        premium: securityFeatures.some(f => f.enabled && f.premium),
+        crossChainAddresses: {
+          ethereum: walletInfo.ethereum.address,
+          solana: walletInfo.solana.address,
+          ton: walletInfo.ton.address,
+          bitcoin: '1BitcoinPlaceholderAddress', // Placeholder
+        },
+        cvtDiscount: cvtStakingDiscount,
+        cvtStaked: cvtToken.stakedAmount,
+        creationTimestamp: new Date().toISOString(),
+        feePaid: estimatedGasFee
+      };
+
       // Create the vault via API
       const response = await apiRequest("POST", "/api/vaults", {
         name: vaultName,
@@ -395,11 +439,9 @@ const MultiSignatureVaultPage = () => {
         assetType: activeBlockchain,
         assetAmount,
         timeLockPeriod: multiSigConfig.timeLimit * 3600, // Convert hours to seconds
-        metadata: JSON.stringify({
-          multiSigConfig,
-          securityLevel: "high",
-        }),
+        metadata: JSON.stringify(securityMetadata),
         multisigEnabled: true,
+        crossChainEnabled: crossChainVerification,
         ethereumContractAddress: activeBlockchain === BlockchainType.ETHEREUM ? ownerAddress : undefined,
         solanaContractAddress: activeBlockchain === BlockchainType.SOLANA ? ownerAddress : undefined, 
         tonContractAddress: activeBlockchain === BlockchainType.TON ? ownerAddress : undefined,
@@ -409,9 +451,19 @@ const MultiSignatureVaultPage = () => {
       const result = await response.json();
 
       if (response.ok) {
+        // Calculate security tier for display
+        let securityTier = "Standard";
+        if (securityScore >= 90) securityTier = "Fortress";
+        else if (securityScore >= 80) securityTier = "Quantum-Resistant";
+        else if (securityScore >= 70) securityTier = "Enhanced";
+        
+        // Calculate features for display
+        const enabledFeatures = securityFeatures.filter(f => f.enabled).length;
+        const premiumFeatures = securityFeatures.filter(f => f.enabled && f.premium).length;
+        
         toast({
-          title: "Multi-Signature Vault Created",
-          description: `Successfully created vault with ${multiSigConfig.signers.length} signers and threshold of ${multiSigConfig.threshold}`,
+          title: "Ultimate Multi-Signature Vault Created",
+          description: `Created vault with ${multiSigConfig.signers.length} signers, ${securityTier} security, and ${enabledFeatures} advanced features`,
         });
         
         // Navigate to the vault details or list
@@ -891,15 +943,32 @@ const MultiSignatureVaultPage = () => {
             <Button
               onClick={handleCreateMultiSigVault}
               disabled={isCreating || !isWalletConnected(activeBlockchain) || !multiSigConfig || !vaultName}
-              className="bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] hover:from-[#7B10E7] hover:to-[#FF6AF7] text-white"
+              className={`text-white ${securityScore >= 90 
+                ? "bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] hover:from-[#7B10E7] hover:to-[#FF6AF7]" 
+                : securityScore >= 80 
+                ? "bg-[#6B00D7] hover:bg-[#7B10E7]" 
+                : "bg-gradient-to-r from-[#6B00D7] to-[#8B20E7] hover:from-[#7B10E7] hover:to-[#9B30F7]"}`}
             >
               {isCreating ? (
                 <>
-                  <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                  Creating Vault...
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Creating Ultimate Vault...
                 </>
               ) : (
-                "Create Multi-Signature Vault"
+                <>
+                  {securityScore >= 90 ? (
+                    <Shield className="mr-2 h-4 w-4" />
+                  ) : securityScore >= 80 ? (
+                    <ShieldCheck className="mr-2 h-4 w-4" />
+                  ) : (
+                    <Lock className="mr-2 h-4 w-4" />
+                  )}
+                  {securityScore >= 90 
+                    ? "Create Fortress Vault" 
+                    : securityScore >= 80 
+                    ? "Create Enhanced Vault" 
+                    : "Create Multi-Signature Vault"}
+                </>
               )}
             </Button>
           </div>
