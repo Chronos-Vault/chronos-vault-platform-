@@ -385,8 +385,8 @@ const VaultTypeCard: React.FC<VaultTypeCardProps> = ({
         }}
         onClick={onClick}
       >
-        <div className="flex flex-col h-full">
-          <div className="flex items-center mb-2 flex-col text-center">
+        <div className="flex flex-col h-full text-center">
+          <div className="flex items-center mb-2 flex-col">
             <div 
               className={`w-10 h-10 rounded-full flex items-center justify-center mb-2 text-xl
                 ${isSelected 
@@ -402,7 +402,7 @@ const VaultTypeCard: React.FC<VaultTypeCardProps> = ({
               {icon}
             </div>
             <h3 
-              className={`font-semibold text-sm sm:text-base ${isSelected ? 'text-white' : 'text-gray-200'}`}
+              className={`font-semibold text-sm sm:text-base text-center ${isSelected ? 'text-white' : 'text-gray-200'}`}
             >
               {title}
             </h3>
