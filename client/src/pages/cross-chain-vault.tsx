@@ -103,8 +103,9 @@ const CrossChainVaultPage = () => {
               </div>
               <p className="text-gray-300 text-sm">
                 Each blockchain in our Triple-Chain Security™ architecture plays a specific role:
-                Ethereum manages ownership, Solana provides high-speed monitoring, and TON handles
-                backup and recovery operations. Bitcoin can be added for additional timestamping.
+                TON serves as the primary chain for vault creation and management, Ethereum provides
+                security verification, and Solana handles high-speed monitoring. Bitcoin can be added 
+                for additional timestamping.
               </p>
             </div>
             
@@ -138,11 +139,11 @@ const CrossChainVaultPage = () => {
             <ul className="space-y-2 text-gray-300 mb-4">
               <li className="flex items-start">
                 <span className="text-[#FF5AF7] mr-2">•</span>
-                <span>Primary vault contract is deployed on Ethereum</span>
+                <span>Primary vault contract is deployed on TON</span>
               </li>
               <li className="flex items-start">
                 <span className="text-[#FF5AF7] mr-2">•</span>
-                <span>Verification contracts are deployed on Solana and TON</span>
+                <span>Verification contracts are deployed on Ethereum and Solana</span>
               </li>
               <li className="flex items-start">
                 <span className="text-[#FF5AF7] mr-2">•</span>
