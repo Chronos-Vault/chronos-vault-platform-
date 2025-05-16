@@ -300,6 +300,8 @@ const VaultTypesPage = () => {
   };
   
   const handleContinue = () => {
+    // Use the specialized vault creation with the selected vault type
+    // This will invoke all the specialized vault features that were developed
     navigate(`/specialized-vault-creation?type=${selectedVaultType}`);
   };
   
