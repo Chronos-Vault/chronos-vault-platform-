@@ -10,7 +10,7 @@ import { useQuery, useMutation } from '@tanstack/react-query';
 import { crossChainBridgeService } from '@/services/CrossChainBridgeService';
 import { useBlockchain, type ChainType } from '@/hooks/use-blockchain';
 import { useToast } from "@/hooks/use-toast";
-import IntegratedWalletConnector, { WalletInfo } from '@/components/wallet/IntegratedWalletConnector';
+import WalletConnect, { WalletInfo } from '@/components/wallet/WalletConnect';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -88,6 +88,8 @@ const ASSETS = {
 };
 
 export default function CrossChainBridgePage() {
+  const [walletDialogOpen, setWalletDialogOpen] = useState(false);
+  const [selectedChainForConnect, setSelectedChainForConnect] = useState<ChainType>('ton');
   const { toast } = useToast();
   const [activeTab, setActiveTab] = useState<'transfer' | 'swap'>('transfer');
   const [sourceChain, setSourceChain] = useState<ChainType>('ethereum');
