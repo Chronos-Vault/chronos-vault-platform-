@@ -401,7 +401,7 @@ export default function VaultTypesOriginal() {
   };
   
   const handleContinue = () => {
-    // Direct navigation to the specialized vault pages
+    // Direct navigation to the specialized vault pages with their custom features
     if (selectedVaultType === 'ai-intent-inheritance') {
       navigate('/intent-inheritance-vault');
     } else if (selectedVaultType === 'cross-chain') {
@@ -418,8 +418,24 @@ export default function VaultTypesOriginal() {
       navigate('/investment-discipline-vault');
     } else if (selectedVaultType === 'quantum-resistant') {
       navigate('/quantum-vault');
+    } else if (selectedVaultType === 'smart-contract') {
+      navigate('/smart-contract-vault');
+    } else if (selectedVaultType === 'dynamic') {
+      navigate('/advanced-vault-creation?type=dynamic');
+    } else if (selectedVaultType === 'nft-powered') {
+      navigate('/specialized-vault-creation?type=nft-powered');
+    } else if (selectedVaultType === 'unique') {
+      navigate('/specialized-vault-creation?type=unique&security=enhanced');
+    } else if (selectedVaultType === 'composite-vault') {
+      navigate('/cross-chain-vault?mode=fragmented');
+    } else if (selectedVaultType === 'geo-temporal') {
+      navigate('/geo-vault?temporal=true');
+    } else if (selectedVaultType === 'sovereign-fortress') {
+      navigate('/specialized-vault-creation?type=sovereign-fortress&security=maximum');
+    } else if (selectedVaultType === 'time-lock') {
+      navigate('/specialized-vault-creation?type=time-lock&advanced=true');
     } else {
-      // Use create-vault-enhanced which already has the TON integration
+      // Use create-vault-enhanced as fallback which has the TON integration
       navigate(`/create-vault-enhanced?type=${selectedVaultType}`);
     }
   };
