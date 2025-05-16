@@ -1,12 +1,31 @@
-import { Route, Switch } from 'wouter';
+import { Route, Switch, Link } from 'wouter';
 import { Toaster } from '@/components/ui/toaster';
 import MainHeader from './components/layout/MainHeader';
 import Footer from './components/layout/footer';
 import React from 'react';
 
-// Base pages
+// Import all pages directly
 import Home from './pages/home';
 import NotFound from './pages/not-found';
+import Documentation from './pages/documentation';
+import About from './pages/about';
+import Faq from './pages/faq';
+import CrossChainBridge from './pages/cross-chain-bridge';
+import CreateVault from './pages/create-vault';
+import CreateTonVault from './pages/create-ton-vault';
+import CvtStaking from './pages/cvt-staking';
+import BiometricVault from './pages/biometric-vault';
+import CrossChainVault from './pages/cross-chain-vault';
+import GeoVault from './pages/geo-vault';
+import SpecializedVaultMemory from './pages/specialized-vault-memory';
+import InvestmentDisciplineVault from './pages/investment-discipline-vault';
+import SmartContractVault from './pages/smart-contract-vault';
+import MultiSignatureVault from './pages/multi-signature-vault';
+import MultiSignatureVaultNew from './pages/multi-signature-vault-new';
+import VaultSchool from './pages/vault-school';
+import MyVaults from './pages/my-vaults';
+import Whitepaper from './pages/whitepaper';
+import AuditTest from './pages/audit-test';
 
 function App() {
   return (
@@ -15,13 +34,26 @@ function App() {
       <main className="flex-1">
         <Switch>
           <Route path="/" component={Home} />
-          
-          {/* DYNAMICALLY LOAD ALL PAGES BY URL */}
-          <Route path="/:pagePath+">
-            {(params) => <DynamicPageLoader pagePath={params.pagePath} />}
-          </Route>
-          
-          {/* 404 handler - Must be last */}
+          <Route path="/documentation" component={Documentation} />
+          <Route path="/about" component={About} />
+          <Route path="/faq" component={Faq} />
+          <Route path="/bridge" component={CrossChainBridge} />
+          <Route path="/cross-chain-bridge" component={CrossChainBridge} />
+          <Route path="/create-vault" component={CreateVault} />
+          <Route path="/create-ton-vault" component={CreateTonVault} />
+          <Route path="/staking" component={CvtStaking} />
+          <Route path="/biometric-vault" component={BiometricVault} />
+          <Route path="/cross-chain-vault" component={CrossChainVault} />
+          <Route path="/geo-vault" component={GeoVault} />
+          <Route path="/specialized-vault-memory" component={SpecializedVaultMemory} />
+          <Route path="/investment-discipline-vault" component={InvestmentDisciplineVault} />
+          <Route path="/smart-contract-vault" component={SmartContractVault} />
+          <Route path="/multi-signature-vault" component={MultiSignatureVault} />
+          <Route path="/multi-signature-vault-new" component={MultiSignatureVaultNew} />
+          <Route path="/vault-school" component={VaultSchool} />
+          <Route path="/my-vaults" component={MyVaults} />
+          <Route path="/whitepaper" component={Whitepaper} />
+          <Route path="/audit-test" component={AuditTest} />
           <Route component={NotFound} />
         </Switch>
       </main>
@@ -30,65 +62,5 @@ function App() {
     </div>
   );
 }
-
-// This component dynamically loads pages based on URL paths
-const DynamicPageLoader = ({ pagePath }: { pagePath: string }) => {
-  const [Component, setComponent] = React.useState<React.ComponentType | null>(null);
-  const [loading, setLoading] = React.useState(true);
-  const [error, setError] = React.useState(false);
-
-  React.useEffect(() => {
-    // Map common route aliases
-    const routeMap: Record<string, string> = {
-      'bridge': 'cross-chain-bridge',
-    };
-
-    const loadComponent = async () => {
-      setLoading(true);
-      setError(false);
-      
-      try {
-        // Get the mapped path or use the original
-        const mappedPath = routeMap[pagePath] || pagePath;
-        
-        // Use dynamic import to load the component
-        const module = await import(`./pages/${mappedPath}`);
-        setComponent(() => module.default);
-        setLoading(false);
-      } catch (err) {
-        console.error(`Error loading page for path /${pagePath}:`, err);
-        
-        // Try with legacy naming conventions
-        try {
-          // Try alternate formats like "page-name-page.tsx" if "page-name.tsx" fails
-          const altPath = `${pagePath}-page`;
-          const module = await import(`./pages/${altPath}`);
-          setComponent(() => module.default);
-          setLoading(false);
-        } catch (altErr) {
-          console.error(`Error loading alternate path /${pagePath}-page:`, altErr);
-          setError(true);
-          setLoading(false);
-        }
-      }
-    };
-
-    loadComponent();
-  }, [pagePath]);
-
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center min-h-[60vh]">
-        <div className="animate-spin h-12 w-12 border-4 border-purple-600 rounded-full border-t-transparent"></div>
-      </div>
-    );
-  }
-
-  if (error || !Component) {
-    return <NotFound />;
-  }
-
-  return <Component />;
-};
 
 export default App;
