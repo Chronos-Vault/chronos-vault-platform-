@@ -50,24 +50,24 @@ export const MultiChainMetaphor = () => {
   // The chains in our triple-chain architecture
   const chains = [
     { 
-      name: 'Ethereum', 
+      name: 'TON', 
       role: 'Primary Vault Contract', 
+      icon: <TonIcon />, 
+      color: 'cyan',
+      verified: verificationStage >= 1 
+    },
+    { 
+      name: 'Ethereum', 
+      role: 'Security Verification', 
       icon: <EthereumIcon />, 
       color: 'blue',
-      verified: verificationStage >= 1 
+      verified: verificationStage >= 2 
     },
     { 
       name: 'Solana', 
       role: 'Real-time Monitoring', 
       icon: <SolanaIcon />, 
       color: 'purple',
-      verified: verificationStage >= 2 
-    },
-    { 
-      name: 'TON', 
-      role: 'Emergency Recovery', 
-      icon: <TonIcon />, 
-      color: 'cyan',
       verified: verificationStage >= 3 
     }
   ];

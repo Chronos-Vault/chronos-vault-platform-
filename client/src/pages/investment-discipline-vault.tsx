@@ -73,7 +73,7 @@ function InvestmentDisciplineVault() {
   const [vaultName, setVaultName] = useState<string>('');
   const [assetType, setAssetType] = useState<string>('BTC');
   const [initialAmount, setInitialAmount] = useState<string>('');
-  const [selectedBlockchain, setSelectedBlockchain] = useState<BlockchainType>(BlockchainType.ETHEREUM);
+  const [selectedBlockchain, setSelectedBlockchain] = useState<BlockchainType>(BlockchainType.TON);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   
   // Sentiment analysis data
