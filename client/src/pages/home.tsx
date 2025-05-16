@@ -1,7 +1,7 @@
 import { Link } from 'wouter';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import { LockIcon, ArrowRightIcon, CoinsIcon, GitBranchIcon } from 'lucide-react';
+import { LockIcon, ArrowRightIcon, CoinsIcon } from 'lucide-react';
 
 export default function HomePage() {
   return (

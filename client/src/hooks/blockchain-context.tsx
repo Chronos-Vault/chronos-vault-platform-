@@ -1,4 +1,4 @@
-import { createContext, useContext, useState } from 'react';
+import React, { createContext, useContext, useState, ReactNode } from 'react';
 
 export type ChainType = 'ton' | 'ethereum' | 'solana' | 'bitcoin';
 
@@ -27,7 +27,11 @@ const defaultContext: BlockchainContextType = {
 
 const BlockchainContext = createContext<BlockchainContextType>(defaultContext);
 
-export function BlockchainProvider({ children }: { children: React.ReactNode }) {
+interface BlockchainProviderProps {
+  children: ReactNode;
+}
+
+export function BlockchainProvider({ children }: BlockchainProviderProps) {
   const [connectedWallet, setConnectedWallet] = useState<WalletInfo | null>(null);
 
   const connect = async (chain: ChainType, wallet: string): Promise<boolean> => {
@@ -70,15 +74,19 @@ export function BlockchainProvider({ children }: { children: React.ReactNode }) 
     setConnectedWallet(null);
   };
 
-  const value = {
-    connect,
-    disconnect,
-    isConnected: !!connectedWallet,
-    connectedWallet,
-    activeChain: connectedWallet?.chain || null,
-  };
-
-  return BlockchainContext.Provider({ value, children });
+  return (
+    <BlockchainContext.Provider 
+      value={{
+        connect,
+        disconnect,
+        isConnected: !!connectedWallet,
+        connectedWallet,
+        activeChain: connectedWallet?.chain || null,
+      }}
+    >
+      {children}
+    </BlockchainContext.Provider>
+  );
 }
 
 export const useBlockchain = () => useContext(BlockchainContext);
