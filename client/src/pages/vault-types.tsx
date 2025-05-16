@@ -592,19 +592,19 @@ const VaultCard: React.FC<VaultCardProps> = ({ vault, isSelected, onSelect }) =>
             </div>
           </div>
           
-          {/* Key Features */}
+          {/* Key Features with Center Alignment */}
           <div className="mt-auto">
             {isSelected && (
               <div>
-                <h4 className="text-xs font-semibold text-gray-300 mb-1.5">Key Features:</h4>
-                <ul className="text-[10px] text-gray-400 space-y-1">
+                <h4 className="text-xs font-semibold text-gray-300 mb-3 text-center">Key Features:</h4>
+                <div className="flex flex-col items-center">
                   {vault.features.slice(0, 4).map((feature: string, i: number) => (
-                    <li key={i} className="flex items-start">
-                      <span className="text-green-400 mr-1.5 pt-0.5">•</span>
-                      <span>{feature}</span>
-                    </li>
+                    <div key={i} className="mb-2 flex items-center justify-center">
+                      <span className="inline-block w-2 h-2 rounded-full mr-2" style={{ backgroundColor: vault.color }}></span>
+                      <span className="text-[11px]" style={{ color: vault.color }}>{feature}</span>
+                    </div>
                   ))}
-                </ul>
+                </div>
               </div>
             )}
           </div>
