@@ -411,7 +411,7 @@ const VaultTypeCard: React.FC<VaultTypeCardProps> = ({
           <p className="text-xs text-gray-400 text-center sm:text-left mb-3">{description}</p>
           
           {/* Key Technologies */}
-          <div className="flex flex-wrap justify-center sm:justify-start gap-1 mb-3">
+          <div className="flex flex-wrap justify-center gap-1 mb-3">
             <span 
               className="text-[10px] px-2 py-0.5 rounded-full bg-[#6B00D7]/10 border border-[#6B00D7]/30"
               style={{ color: '#8B00D7' }}
