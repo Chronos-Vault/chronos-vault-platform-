@@ -17,6 +17,8 @@ import { MultiChainProvider } from "@/contexts/multi-chain-context";
 import { EthereumProvider } from "@/contexts/ethereum-context";
 import { TonProvider } from "@/contexts/ton-context";
 import { SolanaProvider } from "@/contexts/solana-context";
+import { BitcoinProvider } from "@/contexts/bitcoin-context";
+import { TransactionMonitoringProvider } from "@/contexts/transaction-monitoring-context";
 
 // Create a properly nested provider structure
 // We need to move the BlockchainErrorDisplay after all blockchain providers
@@ -32,14 +34,18 @@ createRoot(document.getElementById("root")!).render(
                 <EthereumProvider>
                   <SolanaProvider>
                     <TonProvider>
-                      <MultiChainProvider>
-                        <WalletProvider>
-                          <CVTTokenProvider>
-                            <App />
-                            <Toaster />
-                          </CVTTokenProvider>
-                        </WalletProvider>
-                      </MultiChainProvider>
+                      <BitcoinProvider>
+                        <MultiChainProvider>
+                          <WalletProvider>
+                            <CVTTokenProvider>
+                              <TransactionMonitoringProvider>
+                                <App />
+                                <Toaster />
+                              </TransactionMonitoringProvider>
+                            </CVTTokenProvider>
+                          </WalletProvider>
+                        </MultiChainProvider>
+                      </BitcoinProvider>
                     </TonProvider>
                   </SolanaProvider>
                 </EthereumProvider>
