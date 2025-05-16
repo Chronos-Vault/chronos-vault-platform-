@@ -2,23 +2,31 @@ import React from 'react';
 
 interface PageHeaderProps {
   title: string;
-  subtitle?: string;
-  actions?: React.ReactNode;
+  description?: string;
+  gradientText?: string;
+  className?: string;
 }
 
-export function PageHeader({ title, subtitle, actions }: PageHeaderProps) {
+export function PageHeader({ 
+  title, 
+  description, 
+  gradientText, 
+  className = '' 
+}: PageHeaderProps) {
   return (
-    <div className="py-6 md:py-8 mb-6 border-b border-muted flex flex-col md:flex-row justify-between items-start md:items-center">
-      <div>
-        <h1 className="text-2xl md:text-3xl font-bold tracking-tight">{title}</h1>
-        {subtitle && (
-          <p className="mt-1 text-muted-foreground">{subtitle}</p>
+    <div className={`mb-6 ${className}`}>
+      <h1 className="text-3xl font-bold tracking-tight">
+        {title}
+        {gradientText && (
+          <span className="bg-gradient-to-r from-purple-600 to-pink-500 bg-clip-text text-transparent">
+            {' '}{gradientText}
+          </span>
         )}
-      </div>
-      {actions && (
-        <div className="mt-4 md:mt-0 flex gap-2">
-          {actions}
-        </div>
+      </h1>
+      {description && (
+        <p className="mt-2 text-lg text-muted-foreground">
+          {description}
+        </p>
       )}
     </div>
   );
