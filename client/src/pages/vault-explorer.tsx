@@ -1,3 +1,8 @@
+/**
+ * Vault Explorer Page
+ * 
+ * A comprehensive explorer to view and verify vaults across multiple blockchains
+ */
 import React, { useState, useEffect } from 'react';
 import { 
   Card, 
@@ -13,6 +18,7 @@ import { Label } from '@/components/ui/label';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Separator } from '@/components/ui/separator';
 import { Badge } from '@/components/ui/badge';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { 
   Search,
   BarChart,
@@ -27,12 +33,19 @@ import {
   Lock,
   Unlock,
   HelpCircle,
-  AlertCircle
+  AlertCircle,
+  Download,
+  ArrowUpDown,
+  Info,
+  RefreshCw,
+  Wallet
 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { BlockchainType, VaultInfo, VaultStatus, ExplorerStats, SecurityLevel } from '@shared/schema';
-import { useChainExplorer } from '../hooks/use-chain-explorer';
+import { useChainExplorer } from '@/hooks/use-chain-explorer';
 import { useQuery } from '@tanstack/react-query';
+import { useLocation, Link } from 'wouter';
+import { useWallet } from '@/contexts/wallet-context';
 
 /**
  * Helper function to get color for vault status
@@ -71,7 +84,7 @@ const getBlockchainColor = (blockchain: BlockchainType): string => {
 /**
  * Helper function to format dates
  */
-const formatDate = (date: Date | null): string => {
+const formatDate = (date: Date | string | null): string => {
   if (!date) return 'N/A';
   
   // Handle date string format from API
@@ -161,6 +174,7 @@ const SecurityLevelBadge = ({ level }: { level: SecurityLevel }) => {
  */
 const VaultCard = ({ vault, showExplorer = true }: { vault: VaultInfo, showExplorer?: boolean }) => {
   const chainExplorer = useChainExplorer(vault.blockchain, true);
+  const [location, navigate] = useLocation();
 
   return (
     <Card className="overflow-hidden border border-white/5 bg-black/30 backdrop-blur-xl transition-all hover:border-[#6B00D7]/30 hover:shadow-md hover:shadow-[#6B00D7]/5">
@@ -177,7 +191,9 @@ const VaultCard = ({ vault, showExplorer = true }: { vault: VaultInfo, showExplo
           </div>
           <SecurityLevelBadge level={vault.securityLevel} />
         </div>
-        <CardTitle className="mt-2">{vault.name}</CardTitle>
+        <CardTitle className="mt-2 cursor-pointer hover:text-[#FF5AF7] transition-colors" onClick={() => navigate(`/vault/${vault.id}`)}>
+          {vault.name}
+        </CardTitle>
         <CardDescription>
           ID: {vault.id}
         </CardDescription>
@@ -200,8 +216,17 @@ const VaultCard = ({ vault, showExplorer = true }: { vault: VaultInfo, showExplo
           <span className="text-xs">{formatDate(vault.createdAt)}</span>
         </div>
       </CardContent>
-      {showExplorer && vault.txHash && (
-        <CardFooter className="pt-4 pb-3 flex justify-end">
+      <CardFooter className="pt-4 pb-3 flex justify-between">
+        <Button 
+          variant="ghost" 
+          size="sm" 
+          className="text-[#6B00D7] hover:text-[#FF5AF7] text-xs"
+          onClick={() => navigate(`/vault/${vault.id}`)}
+        >
+          View Details
+        </Button>
+        
+        {showExplorer && vault.txHash && (
           <a 
             href={chainExplorer.getTransactionUrl(vault.txHash)} 
             target="_blank" 
@@ -210,8 +235,8 @@ const VaultCard = ({ vault, showExplorer = true }: { vault: VaultInfo, showExplo
           >
             View on {chainExplorer.name} <ExternalLink className="h-3 w-3" />
           </a>
-        </CardFooter>
-      )}
+        )}
+      </CardFooter>
     </Card>
   );
 };
@@ -251,6 +276,7 @@ const VaultExplorer = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [activeBlockchain, setActiveBlockchain] = useState<BlockchainType | 'ALL'>('ALL');
   const [activeTab, setActiveTab] = useState('all');
+  const { isConnected, connect } = useWallet();
 
   // Define response types for API endpoints
   type ApiResponse<T> = {
@@ -268,20 +294,20 @@ const VaultExplorer = () => {
 
   // Fetch recent vaults
   const { data: recentVaultsData, isLoading: recentVaultsLoading } = useQuery<ApiResponse<VaultInfo[]>>({
-    queryKey: ['/api/vaults/recent'],
+    queryKey: ['/api/explorer/recent'],
     retry: 1
   });
 
   // Fetch blockchain-specific vaults
   const { data: blockchainVaultsData, isLoading: blockchainVaultsLoading } = useQuery<ApiResponse<VaultInfo[]>>({
-    queryKey: ['/api/vaults/blockchain', activeBlockchain],
+    queryKey: ['/api/explorer/blockchain', activeBlockchain],
     enabled: activeBlockchain !== 'ALL',
     retry: 1
   });
 
   // Fetch search results
   const { data: searchResultsData, isLoading: searchResultsLoading, refetch: refetchSearch } = useQuery<ApiResponse<VaultInfo[]>>({
-    queryKey: ['/api/vaults/search', searchQuery],
+    queryKey: ['/api/explorer/search'],
     enabled: false,
     retry: 1
   });
@@ -338,8 +364,29 @@ const VaultExplorer = () => {
           </p>
         </div>
 
+        {/* Connect Wallet Button */}
+        {!isConnected && (
+          <div className="mt-6 mb-4">
+            <Card className="border border-yellow-500/20 bg-yellow-500/5">
+              <CardContent className="flex items-center justify-between p-4">
+                <div className="flex items-center gap-2">
+                  <Info className="h-5 w-5 text-yellow-500" />
+                  <p className="text-yellow-400">Connect your wallet to verify ownership and access your vaults</p>
+                </div>
+                <Button 
+                  onClick={() => connect('TON')} 
+                  className="bg-[#6B00D7] hover:bg-[#6B00D7]/90 text-white"
+                >
+                  <Wallet className="mr-2 h-4 w-4" />
+                  Connect Wallet
+                </Button>
+              </CardContent>
+            </Card>
+          </div>
+        )}
+
         {/* Search and Filter */}
-        <div className="mt-8 mb-6">
+        <div className="mt-6 mb-6">
           <Card className="border border-white/5 bg-black/30 backdrop-blur-xl overflow-hidden">
             <CardContent className="pt-6">
               <form onSubmit={handleSearch} className="flex gap-3">
@@ -409,7 +456,26 @@ const VaultExplorer = () => {
 
           {/* Recent Vaults Tab */}
           <TabsContent value="all" className="py-4">
-            <h3 className="text-xl font-bold mb-4">Recent Vaults</h3>
+            <div className="flex justify-between items-center mb-4">
+              <h3 className="text-xl font-bold">Recent Vaults</h3>
+              <div className="flex gap-2">
+                <Select defaultValue="created">
+                  <SelectTrigger className="w-[180px]">
+                    <SelectValue placeholder="Sort by" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="created">Created (newest)</SelectItem>
+                    <SelectItem value="unlock">Unlock Date</SelectItem>
+                    <SelectItem value="value">Value (highest)</SelectItem>
+                    <SelectItem value="security">Security Level</SelectItem>
+                  </SelectContent>
+                </Select>
+                <Button variant="outline" size="icon" className="h-10 w-10" title="Refresh">
+                  <RefreshCw className="h-4 w-4" />
+                </Button>
+              </div>
+            </div>
+            
             {isLoading ? (
               <div className="flex items-center justify-center h-64">
                 <div className="animate-spin w-8 h-8 border-2 border-[#6B00D7] border-t-transparent rounded-full" />
@@ -447,92 +513,30 @@ const VaultExplorer = () => {
               <Button 
                 variant={activeBlockchain === 'ETH' ? 'default' : 'outline'} 
                 onClick={() => setActiveBlockchain('ETH')}
-                className="flex items-center gap-2"
+                className="flex items-center gap-2 text-blue-500"
               >
-                <span className="text-blue-500 font-bold">Ξ</span>
+                <span className="font-bold">Ξ</span>
                 Ethereum
               </Button>
               <Button 
                 variant={activeBlockchain === 'SOL' ? 'default' : 'outline'} 
                 onClick={() => setActiveBlockchain('SOL')}
-                className="flex items-center gap-2"
+                className="flex items-center gap-2 text-purple-500"
               >
-                <span className="text-purple-500 font-bold">◎</span>
+                <span className="font-bold">◎</span>
                 Solana
               </Button>
               <Button 
                 variant={activeBlockchain === 'TON' ? 'default' : 'outline'} 
                 onClick={() => setActiveBlockchain('TON')}
-                className="flex items-center gap-2"
+                className="flex items-center gap-2 text-teal-500"
               >
-                <span className="text-teal-500 font-bold">💎</span>
+                <span className="font-bold">💎</span>
                 TON
               </Button>
             </div>
-
-            {activeBlockchain === 'ALL' ? (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mt-8">
-                <Card className="overflow-hidden border border-white/5 bg-black/30 backdrop-blur-xl">
-                  <CardHeader>
-                    <div className="flex items-center justify-between">
-                      <CardTitle className="text-lg">Ethereum Vaults</CardTitle>
-                      <span className="text-blue-500 font-bold text-2xl">Ξ</span>
-                    </div>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="text-3xl font-bold mb-2">{stats.byChain.ETH}</div>
-                    <div className="text-sm text-gray-400 mb-4">Total Value: {stats.totalValue.ETH}</div>
-                    <Button 
-                      variant="outline" 
-                      className="w-full border-blue-500/20 text-blue-500 hover:bg-blue-500/10"
-                      onClick={() => setActiveBlockchain('ETH')}
-                    >
-                      View Ethereum Vaults
-                    </Button>
-                  </CardContent>
-                </Card>
-
-                <Card className="overflow-hidden border border-white/5 bg-black/30 backdrop-blur-xl">
-                  <CardHeader>
-                    <div className="flex items-center justify-between">
-                      <CardTitle className="text-lg">Solana Vaults</CardTitle>
-                      <span className="text-purple-500 font-bold text-2xl">◎</span>
-                    </div>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="text-3xl font-bold mb-2">{stats.byChain.SOL}</div>
-                    <div className="text-sm text-gray-400 mb-4">Total Value: {stats.totalValue.SOL}</div>
-                    <Button 
-                      variant="outline" 
-                      className="w-full border-purple-500/20 text-purple-500 hover:bg-purple-500/10"
-                      onClick={() => setActiveBlockchain('SOL')}
-                    >
-                      View Solana Vaults
-                    </Button>
-                  </CardContent>
-                </Card>
-
-                <Card className="overflow-hidden border border-white/5 bg-black/30 backdrop-blur-xl">
-                  <CardHeader>
-                    <div className="flex items-center justify-between">
-                      <CardTitle className="text-lg">TON Vaults</CardTitle>
-                      <span className="text-teal-500 font-bold text-2xl">💎</span>
-                    </div>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="text-3xl font-bold mb-2">{stats.byChain.TON}</div>
-                    <div className="text-sm text-gray-400 mb-4">Total Value: {stats.totalValue.TON}</div>
-                    <Button 
-                      variant="outline" 
-                      className="w-full border-teal-500/20 text-teal-500 hover:bg-teal-500/10"
-                      onClick={() => setActiveBlockchain('TON')}
-                    >
-                      View TON Vaults
-                    </Button>
-                  </CardContent>
-                </Card>
-              </div>
-            ) : isLoading ? (
+            
+            {isLoading ? (
               <div className="flex items-center justify-center h-64">
                 <div className="animate-spin w-8 h-8 border-2 border-[#6B00D7] border-t-transparent rounded-full" />
               </div>
@@ -547,7 +551,7 @@ const VaultExplorer = () => {
                 <AlertCircle className="h-12 w-12 text-gray-400 mb-4" />
                 <h3 className="text-xl font-bold">No Vaults Found</h3>
                 <p className="text-gray-400 max-w-md mt-2">
-                  There are no vaults to display for the selected blockchain.
+                  No vaults found for the selected blockchain. Try another blockchain or use the search function.
                 </p>
               </div>
             )}
@@ -557,15 +561,15 @@ const VaultExplorer = () => {
           <TabsContent value="search" className="py-4">
             <h3 className="text-xl font-bold mb-4">Search Results</h3>
             
-            {searchQuery.trim() === '' ? (
-              <div className="flex flex-col items-center justify-center h-64 text-center">
-                <Search className="h-12 w-12 text-gray-400 mb-4" />
-                <h3 className="text-xl font-bold">Search for Vaults</h3>
-                <p className="text-gray-400 max-w-md mt-2">
-                  Use the search bar above to find vaults by Vault ID, wallet address, or transaction hash.
+            {searchQuery && (
+              <div className="mb-4">
+                <p className="text-sm text-gray-400">
+                  Showing results for: <span className="font-medium text-white">{searchQuery}</span>
                 </p>
               </div>
-            ) : isLoading ? (
+            )}
+            
+            {isLoading ? (
               <div className="flex items-center justify-center h-64">
                 <div className="animate-spin w-8 h-8 border-2 border-[#6B00D7] border-t-transparent rounded-full" />
               </div>
@@ -578,9 +582,9 @@ const VaultExplorer = () => {
             ) : (
               <div className="flex flex-col items-center justify-center h-64 text-center">
                 <AlertCircle className="h-12 w-12 text-gray-400 mb-4" />
-                <h3 className="text-xl font-bold">No Results Found</h3>
+                <h3 className="text-xl font-bold">No Results</h3>
                 <p className="text-gray-400 max-w-md mt-2">
-                  No vaults found matching your search query. Please try a different search term.
+                  No vaults match your search criteria. Try using a different vault ID, address, or transaction hash.
                 </p>
               </div>
             )}
@@ -612,6 +616,12 @@ const VaultExplorer = () => {
               <h4 className="font-bold mb-1">Verifying Transactions</h4>
               <p className="text-sm text-gray-400">
                 Each vault card includes a link to view the transaction on the appropriate blockchain explorer.
+              </p>
+            </div>
+            <div>
+              <h4 className="font-bold mb-1">Cross-Chain Verification</h4>
+              <p className="text-sm text-gray-400">
+                For vaults with cross-chain security, you can verify the status on multiple blockchains from the vault details page.
               </p>
             </div>
           </CardContent>

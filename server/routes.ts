@@ -20,6 +20,7 @@ import biometricRoutes from './routes/biometric-routes';
 import zeroKnowledgeRoutes from './api/zero-knowledge-routes';
 import geoVaultRoutes from './api/geo-vault-routes';
 import bridgeRoutes from './api/bridge-routes';
+import { explorerRouter } from './api/explorer-routes';
 import { systemHealthMonitor } from './monitoring/system-health-monitor';
 import { incidentResponseSystem } from './monitoring/incident-response';
 import { ConnectorFactory } from './blockchain/connector-factory';
@@ -76,6 +77,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
   
   // Register cross-chain bridge routes
   apiRouter.use('/bridge', bridgeRoutes);
+  
+  // Register vault explorer routes
+  apiRouter.use('/explorer', explorerRouter);
   
   // Initialize and register chain-agnostic verification routes
   const chainAgnosticVerifier = initializeChainAgnosticVerification(connectorFactory);

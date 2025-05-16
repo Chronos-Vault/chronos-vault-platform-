@@ -1,3 +1,8 @@
+/**
+ * Chain Explorer Hook
+ * 
+ * Provides blockchain explorer utilities for different chains
+ */
 import { useCallback } from 'react';
 import { BlockchainType } from '@shared/schema';
 
@@ -15,108 +20,112 @@ export type ChainExplorer = {
 /**
  * Chain explorer configuration for Ethereum, Solana, and TON
  */
-const explorers: Record<BlockchainType, Record<'mainnet' | 'testnet', ChainExplorer>> = {
+const explorers: Record<BlockchainType, ChainExplorer> = {
   ETH: {
-    mainnet: {
-      name: 'Etherscan',
-      logo: '/assets/logos/etherscan.svg',
-      baseUrl: 'https://etherscan.io',
-      getAddressUrl: (address: string) => `https://etherscan.io/address/${address}`,
-      getTransactionUrl: (txHash: string) => `https://etherscan.io/tx/${txHash}`,
-      getTokenUrl: (tokenAddress: string) => `https://etherscan.io/token/${tokenAddress}`,
-      getBlockUrl: (blockNumber: string | number) => `https://etherscan.io/block/${blockNumber}`,
-      formatAddress: (address: string) => address.length > 10 ? `${address.substring(0, 6)}...${address.substring(address.length - 4)}` : address,
-    },
-    testnet: {
-      name: 'Sepolia Etherscan',
-      logo: '/assets/logos/etherscan.svg',
-      baseUrl: 'https://sepolia.etherscan.io',
-      getAddressUrl: (address: string) => `https://sepolia.etherscan.io/address/${address}`,
-      getTransactionUrl: (txHash: string) => `https://sepolia.etherscan.io/tx/${txHash}`,
-      getTokenUrl: (tokenAddress: string) => `https://sepolia.etherscan.io/token/${tokenAddress}`,
-      getBlockUrl: (blockNumber: string | number) => `https://sepolia.etherscan.io/block/${blockNumber}`,
-      formatAddress: (address: string) => address.length > 10 ? `${address.substring(0, 6)}...${address.substring(address.length - 4)}` : address,
+    name: 'Etherscan',
+    logo: '/blockchain/etherscan.svg',
+    baseUrl: 'https://sepolia.etherscan.io',
+    getAddressUrl: (address) => `https://sepolia.etherscan.io/address/${address}`,
+    getTransactionUrl: (txHash) => `https://sepolia.etherscan.io/tx/${txHash}`,
+    getTokenUrl: (tokenAddress) => `https://sepolia.etherscan.io/token/${tokenAddress}`,
+    getBlockUrl: (blockNumber) => `https://sepolia.etherscan.io/block/${blockNumber}`,
+    formatAddress: (address) => {
+      if (!address) return '';
+      if (address.length <= 13) return address;
+      return `${address.slice(0, 6)}...${address.slice(-4)}`;
     }
   },
   SOL: {
-    mainnet: {
-      name: 'Solscan',
-      logo: '/assets/logos/solscan.svg',
-      baseUrl: 'https://solscan.io',
-      getAddressUrl: (address: string) => `https://solscan.io/account/${address}`,
-      getTransactionUrl: (txHash: string) => `https://solscan.io/tx/${txHash}`,
-      getTokenUrl: (tokenAddress: string) => `https://solscan.io/token/${tokenAddress}`,
-      getBlockUrl: (blockNumber: string | number) => `https://solscan.io/block/${blockNumber}`,
-      formatAddress: (address: string) => address.length > 10 ? `${address.substring(0, 6)}...${address.substring(address.length - 4)}` : address,
-    },
-    testnet: {
-      name: 'Solscan (Devnet)',
-      logo: '/assets/logos/solscan.svg',
-      baseUrl: 'https://solscan.io',
-      getAddressUrl: (address: string) => `https://solscan.io/account/${address}?cluster=devnet`,
-      getTransactionUrl: (txHash: string) => `https://solscan.io/tx/${txHash}?cluster=devnet`,
-      getTokenUrl: (tokenAddress: string) => `https://solscan.io/token/${tokenAddress}?cluster=devnet`,
-      getBlockUrl: (blockNumber: string | number) => `https://solscan.io/block/${blockNumber}?cluster=devnet`,
-      formatAddress: (address: string) => address.length > 10 ? `${address.substring(0, 6)}...${address.substring(address.length - 4)}` : address,
+    name: 'Solana Explorer',
+    logo: '/blockchain/solana-explorer.svg',
+    baseUrl: 'https://explorer.solana.com',
+    getAddressUrl: (address) => `https://explorer.solana.com/address/${address}?cluster=devnet`,
+    getTransactionUrl: (txHash) => `https://explorer.solana.com/tx/${txHash}?cluster=devnet`,
+    getTokenUrl: (tokenAddress) => `https://explorer.solana.com/address/${tokenAddress}?cluster=devnet`,
+    getBlockUrl: (blockNumber) => `https://explorer.solana.com/block/${blockNumber}?cluster=devnet`,
+    formatAddress: (address) => {
+      if (!address) return '';
+      if (address.length <= 13) return address;
+      return `${address.slice(0, 6)}...${address.slice(-4)}`;
     }
   },
   TON: {
-    mainnet: {
-      name: 'TON Explorer',
-      logo: '/assets/logos/ton-explorer.svg',
-      baseUrl: 'https://tonscan.org',
-      getAddressUrl: (address: string) => `https://tonscan.org/address/${address}`,
-      getTransactionUrl: (txHash: string) => `https://tonscan.org/tx/${txHash}`,
-      getTokenUrl: (tokenAddress: string) => `https://tonscan.org/jetton/${tokenAddress}`,
-      getBlockUrl: (blockNumber: string | number) => `https://tonscan.org/block/${blockNumber}`,
-      formatAddress: (address: string) => address.length > 10 ? `${address.substring(0, 6)}...${address.substring(address.length - 4)}` : address,
-    },
-    testnet: {
-      name: 'TON Testnet Explorer',
-      logo: '/assets/logos/ton-explorer.svg',
-      baseUrl: 'https://testnet.tonscan.org',
-      getAddressUrl: (address: string) => `https://testnet.tonscan.org/address/${address}`,
-      getTransactionUrl: (txHash: string) => `https://testnet.tonscan.org/tx/${txHash}`,
-      getTokenUrl: (tokenAddress: string) => `https://testnet.tonscan.org/jetton/${tokenAddress}`,
-      getBlockUrl: (blockNumber: string | number) => `https://testnet.tonscan.org/block/${blockNumber}`,
-      formatAddress: (address: string) => address.length > 10 ? `${address.substring(0, 6)}...${address.substring(address.length - 4)}` : address,
+    name: 'TONscan',
+    logo: '/blockchain/tonscan.svg',
+    baseUrl: 'https://testnet.tonscan.org',
+    getAddressUrl: (address) => `https://testnet.tonscan.org/address/${address}`,
+    getTransactionUrl: (txHash) => `https://testnet.tonscan.org/tx/${txHash}`,
+    getTokenUrl: (tokenAddress) => `https://testnet.tonscan.org/jetton/${tokenAddress}`,
+    getBlockUrl: (blockNumber) => `https://testnet.tonscan.org/block/${blockNumber}`,
+    formatAddress: (address) => {
+      if (!address) return '';
+      if (address.length <= 13) return address;
+      return `${address.slice(0, 6)}...${address.slice(-4)}`;
     }
   }
 };
 
 /**
- * Hook for interacting with blockchain explorers
+ * Hook to get explorer utilities for a specific blockchain
  */
-export const useChainExplorer = (blockchain: BlockchainType, useTestnet = true) => {
-  const network = useTestnet ? 'testnet' : 'mainnet';
-  const explorer = explorers[blockchain][network];
-
-  const getExplorerLink = useCallback((type: 'address' | 'transaction' | 'token' | 'block', value: string | number) => {
-    switch (type) {
-      case 'address':
-        return explorer.getAddressUrl(value.toString());
-      case 'transaction':
-        return explorer.getTransactionUrl(value.toString());
-      case 'token':
-        return explorer.getTokenUrl(value.toString());
-      case 'block':
-        return explorer.getBlockUrl(value);
-      default:
-        return '';
+export const useChainExplorer = (blockchain: BlockchainType, useProdUrls = false): ChainExplorer => {
+  // Generate production URLs if requested
+  const getProductionExplorer = useCallback((chain: BlockchainType): ChainExplorer => {
+    const explorer = { ...explorers[chain] };
+    
+    switch (chain) {
+      case 'ETH':
+        explorer.baseUrl = 'https://etherscan.io';
+        explorer.getAddressUrl = (address) => `https://etherscan.io/address/${address}`;
+        explorer.getTransactionUrl = (txHash) => `https://etherscan.io/tx/${txHash}`;
+        explorer.getTokenUrl = (tokenAddress) => `https://etherscan.io/token/${tokenAddress}`;
+        explorer.getBlockUrl = (blockNumber) => `https://etherscan.io/block/${blockNumber}`;
+        break;
+      case 'SOL':
+        explorer.baseUrl = 'https://explorer.solana.com';
+        explorer.getAddressUrl = (address) => `https://explorer.solana.com/address/${address}`;
+        explorer.getTransactionUrl = (txHash) => `https://explorer.solana.com/tx/${txHash}`;
+        explorer.getTokenUrl = (tokenAddress) => `https://explorer.solana.com/address/${tokenAddress}`;
+        explorer.getBlockUrl = (blockNumber) => `https://explorer.solana.com/block/${blockNumber}`;
+        break;
+      case 'TON':
+        explorer.baseUrl = 'https://tonscan.org';
+        explorer.getAddressUrl = (address) => `https://tonscan.org/address/${address}`;
+        explorer.getTransactionUrl = (txHash) => `https://tonscan.org/tx/${txHash}`;
+        explorer.getTokenUrl = (tokenAddress) => `https://tonscan.org/jetton/${tokenAddress}`;
+        explorer.getBlockUrl = (blockNumber) => `https://tonscan.org/block/${blockNumber}`;
+        break;
     }
-  }, [explorer]);
-
-  const formatAddress = useCallback((address: string) => {
-    return explorer.formatAddress(address);
-  }, [explorer]);
-
-  return {
-    ...explorer,
-    getExplorerLink,
-    formatAddress,
-    getAddressUrl: explorer.getAddressUrl,
-    getTransactionUrl: explorer.getTransactionUrl,
-    getTokenUrl: explorer.getTokenUrl,
-    getBlockUrl: explorer.getBlockUrl
-  };
+    
+    return explorer;
+  }, []);
+  
+  // Return either the test or production explorer based on the flag
+  return useProdUrls ? getProductionExplorer(blockchain) : explorers[blockchain];
 };
+
+/**
+ * Utility to get explorer URL for a specific blockchain entity
+ */
+export const getExplorerUrl = (
+  blockchain: BlockchainType,
+  type: 'address' | 'transaction' | 'token' | 'block',
+  value: string | number
+): string => {
+  const explorer = explorers[blockchain];
+  
+  switch (type) {
+    case 'address':
+      return explorer.getAddressUrl(value.toString());
+    case 'transaction':
+      return explorer.getTransactionUrl(value.toString());
+    case 'token':
+      return explorer.getTokenUrl(value.toString());
+    case 'block':
+      return explorer.getBlockUrl(value);
+    default:
+      return explorer.baseUrl;
+  }
+};
+
+export default useChainExplorer;
