@@ -16,6 +16,8 @@ interface SolanaContextType {
   walletInfo: SolanaWalletInfo | null;
   connectionStatus: SolanaConnectionStatus;
   availableWallets: SolanaWallet[];
+  walletAddress: string;
+  publicKey?: string;
   connect: (walletName?: string) => Promise<boolean>;
   disconnect: () => Promise<boolean>;
   sendSOL: (toAddress: string, amount: string) => Promise<SolanaTransactionResponse>;

@@ -30,6 +30,7 @@ interface EthereumContextType {
   connectionStatus: EthereumConnectionStatus;
   availableNetworks: { id: string; name: string; chainId: number }[];
   currentNetwork: EthereumNetwork;
+  walletAddress: string;
   
   // Methods
   connect: () => Promise<boolean>;

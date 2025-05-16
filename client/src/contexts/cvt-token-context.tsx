@@ -70,6 +70,9 @@ interface CVTTokenContextType {
   // State
   isLoading: boolean;
   refreshBalances: () => Promise<void>;
+  
+  // Staked amount for premium vaults
+  stakedAmount: number;
 }
 
 // Create the context
