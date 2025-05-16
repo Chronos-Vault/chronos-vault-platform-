@@ -4,7 +4,7 @@ import CreateTonVaultPage from './pages/create-ton-vault';
 import CvtStakingPage from './pages/cvt-staking';
 import HomePage from './pages/home';
 import NotFoundPage from './pages/not-found';
-import { BlockchainProvider } from './hooks/blockchain';
+import { BlockchainProvider } from './hooks/use-blockchain';
 import { Toaster } from '@/components/ui/toaster';
 import Navbar from './components/layout/Navbar';
 
