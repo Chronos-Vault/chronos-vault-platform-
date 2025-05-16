@@ -1345,6 +1345,21 @@ function InvestmentDisciplineVault() {
               <CardContent>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                   <div 
+                    className={`p-4 rounded-lg cursor-pointer border transition-colors ${selectedBlockchain === BlockchainType.TON ? 'border-[#0098EA] bg-[#0098EA]/10' : 'border-gray-700 bg-black/20 hover:bg-black/30'}`}
+                    onClick={() => handleBlockchainSelect(BlockchainType.TON)}
+                  >
+                    <div className="flex items-center">
+                      <div className="bg-[#0098EA]/20 p-2 rounded-full mr-2">
+                        <i className="ri-currency-fill text-[#0098EA]"></i>
+                      </div>
+                      <div>
+                        <h4 className="text-sm font-medium text-white">TON</h4>
+                        <p className="text-xs text-gray-400">Primary vault operations</p>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div 
                     className={`p-4 rounded-lg cursor-pointer border transition-colors ${selectedBlockchain === BlockchainType.ETHEREUM ? 'border-[#627EEA] bg-[#627EEA]/10' : 'border-gray-700 bg-black/20 hover:bg-black/30'}`}
                     onClick={() => handleBlockchainSelect(BlockchainType.ETHEREUM)}
                   >
@@ -1354,7 +1369,7 @@ function InvestmentDisciplineVault() {
                       </div>
                       <div>
                         <h4 className="text-sm font-medium text-white">Ethereum</h4>
-                        <p className="text-xs text-gray-400">Main ownership records</p>
+                        <p className="text-xs text-gray-400">Validation layer</p>
                       </div>
                     </div>
                   </div>
@@ -1370,21 +1385,6 @@ function InvestmentDisciplineVault() {
                       <div>
                         <h4 className="text-sm font-medium text-white">Solana</h4>
                         <p className="text-xs text-gray-400">High-speed monitoring</p>
-                      </div>
-                    </div>
-                  </div>
-                  
-                  <div 
-                    className={`p-4 rounded-lg cursor-pointer border transition-colors ${selectedBlockchain === BlockchainType.TON ? 'border-[#0098EA] bg-[#0098EA]/10' : 'border-gray-700 bg-black/20 hover:bg-black/30'}`}
-                    onClick={() => handleBlockchainSelect(BlockchainType.TON)}
-                  >
-                    <div className="flex items-center">
-                      <div className="bg-[#0098EA]/20 p-2 rounded-full mr-2">
-                        <i className="ri-currency-fill text-[#0098EA]"></i>
-                      </div>
-                      <div>
-                        <h4 className="text-sm font-medium text-white">TON</h4>
-                        <p className="text-xs text-gray-400">Backup & recovery</p>
                       </div>
                     </div>
                   </div>
