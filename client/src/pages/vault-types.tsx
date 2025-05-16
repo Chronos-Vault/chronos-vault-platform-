@@ -300,41 +300,16 @@ const VaultTypesPage = () => {
   };
   
   const handleContinue = () => {
-    // Special handling for AI Intent Inheritance vault
+    // Direct navigation to the enhanced vault system with the selected type
     if (selectedVaultType === 'ai-intent-inheritance') {
       navigate('/intent-inheritance-vault');
-      return;
-    }
-    
-    // Special handling for other specific vault types with dedicated pages
-    switch (selectedVaultType) {
-      case 'biometric':
-        navigate('/biometric-vault');
-        break;
-      case 'geolocation':
-        navigate('/geo-vault');
-        break;
-      case 'smart-contract':
-        navigate('/smart-contract-vault');
-        break;
-      case 'multi-signature':
-        navigate('/multi-signature-vault');
-        break;
-      case 'memory-vault':
-        navigate('/specialized-vault-memory');
-        break;
-      case 'diamond-hands':
-        navigate('/investment-discipline-vault');
-        break;
-      case 'cross-chain':
-        navigate('/cross-chain-vault');
-        break;
-      case 'quantum-resistant':
-        navigate('/quantum-vault');
-        break;
-      default:
-        // For other vault types, use the general specialized vault creation page
-        navigate(`/specialized-vault-creation?type=${selectedVaultType}`);
+    } else if (selectedVaultType === 'cross-chain') {
+      navigate('/cross-chain-vault');
+    } else if (selectedVaultType === 'multi-signature') {
+      navigate('/multi-signature-vault');
+    } else {
+      // Use create-vault-enhanced which already has the TON integration
+      navigate(`/create-vault-enhanced?type=${selectedVaultType}`);
     }
   };
   
