@@ -239,22 +239,54 @@ export default function CrossChainBridgePage() {
 
   return (
     <div className="container py-8 max-w-5xl">
-      <PageTitle 
-        title="Cross-Chain"
-        gradientText="Bridge"
-        subtitle="Transfer assets securely between Ethereum, Solana, TON, and Bitcoin networks"
-      />
+      <div className="mb-8">
+        <div className="relative">
+          <PageTitle 
+            title="Cross-Chain"
+            gradientText="Bridge"
+            subtitle="Transfer assets securely between Ethereum, Solana, TON, and Bitcoin networks"
+          />
+          <div className="absolute -top-10 -right-10 -z-10 h-40 w-40 bg-gradient-to-br from-purple-600/30 to-pink-500/30 rounded-full blur-3xl"></div>
+          <div className="absolute -bottom-10 -left-10 -z-10 h-40 w-40 bg-gradient-to-tr from-blue-600/20 to-purple-600/20 rounded-full blur-3xl"></div>
+        </div>
+        <div className="mt-6 p-4 border border-border bg-card rounded-lg shadow-sm">
+          <div className="flex flex-wrap items-center gap-4 text-sm">
+            <div className="flex items-center gap-2">
+              <div className="h-2.5 w-2.5 rounded-full bg-green-500"></div>
+              <span>Triple-Chain Security</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <div className="h-2.5 w-2.5 rounded-full bg-blue-500"></div>
+              <span>Zero-Knowledge Transfers</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <div className="h-2.5 w-2.5 rounded-full bg-purple-500"></div>
+              <span>Quantum-Resistant Encryption</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <div className="h-2.5 w-2.5 rounded-full bg-pink-500"></div>
+              <span>Cross-Chain Verification</span>
+            </div>
+          </div>
+        </div>
+      </div>
       
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <div className="md:col-span-2">
-          <Card>
-            <CardHeader>
-              <CardTitle>Transfer Assets</CardTitle>
-              <CardDescription>
-                Move your assets securely between blockchain networks
+          <Card className="relative overflow-hidden border-purple-500/20">
+            <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-b from-purple-600/10 to-pink-500/10 rounded-bl-full"></div>
+            <div className="absolute bottom-0 left-0 w-24 h-24 bg-gradient-to-t from-blue-600/10 to-purple-600/10 rounded-tr-full"></div>
+            
+            <CardHeader className="pb-3 relative z-10">
+              <div className="flex items-center gap-2">
+                <div className="h-6 w-1 bg-gradient-to-b from-purple-500 to-pink-500 rounded-full"></div>
+                <CardTitle className="text-xl font-bold">Transfer Assets</CardTitle>
+              </div>
+              <CardDescription className="mt-1">
+                Move your assets securely between blockchain networks with Triple-Chain verification
               </CardDescription>
             </CardHeader>
-            <CardContent>
+            <CardContent className="relative z-10">
               <Tabs value={activeTab} onValueChange={(value) => setActiveTab(value as 'transfer' | 'swap')}>
                 <TabsList className="grid w-full grid-cols-2">
                   <TabsTrigger value="transfer">Transfer</TabsTrigger>
@@ -429,124 +461,211 @@ export default function CrossChainBridgePage() {
         </div>
         
         <div>
-          <Card className="mb-4">
-            <CardHeader className="pb-2">
-              <CardTitle className="text-lg">Bridge Status</CardTitle>
+          <Card className="mb-4 overflow-hidden relative border-purple-500/20">
+            <div className="absolute -right-4 -top-4 w-16 h-16 bg-gradient-radial from-purple-600/20 to-transparent rounded-full"></div>
+            <div className="absolute -left-4 -bottom-4 w-16 h-16 bg-gradient-radial from-pink-500/20 to-transparent rounded-full"></div>
+            
+            <CardHeader className="pb-2 relative z-10">
+              <div className="flex items-center gap-2">
+                <div className="h-4 w-1 bg-gradient-to-b from-purple-500 to-pink-500 rounded-full"></div>
+                <CardTitle className="text-lg font-medium">Bridge Status</CardTitle>
+              </div>
             </CardHeader>
-            <CardContent>
+            <CardContent className="relative z-10">
               {isStatusLoading ? (
-                <Skeleton className="h-12 w-full" />
+                <div className="space-y-3">
+                  <Skeleton className="h-6 w-full" />
+                  <Skeleton className="h-6 w-4/5" />
+                  <Skeleton className="h-6 w-3/4" />
+                  <Skeleton className="h-6 w-5/6" />
+                </div>
               ) : bridgeStatus ? (
-                <div className="space-y-2">
+                <div className="space-y-3">
                   <div className="flex items-center justify-between">
-                    <span className="text-sm font-medium">Status:</span>
+                    <span className="text-sm font-medium text-muted-foreground">Status:</span>
                     <Badge 
-                      variant={bridgeStatus.status === 'operational' ? 'default' : 
-                              bridgeStatus.status === 'degraded' ? 'outline' : 'destructive'}
+                      className={
+                        bridgeStatus.status === 'operational' 
+                          ? 'bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700' 
+                          : bridgeStatus.status === 'degraded' 
+                            ? 'bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700' 
+                            : 'bg-gradient-to-r from-red-500 to-rose-600 hover:from-red-600 hover:to-rose-700'
+                      }
                     >
                       {bridgeStatus.status.toUpperCase()}
                     </Badge>
                   </div>
                   
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm font-medium">Latency:</span>
-                    <span className="text-sm">{bridgeStatus.latency.toFixed(0)}ms</span>
+                  <div className="space-y-1">
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm font-medium text-muted-foreground">Latency:</span>
+                      <span className="text-sm font-medium">{bridgeStatus.latency.toFixed(0)}ms</span>
+                    </div>
+                    <Progress 
+                      value={100 - Math.min(bridgeStatus.latency / 10, 100)}
+                      className="h-1.5" 
+                    />
+                  </div>
+                  
+                  <div className="space-y-1">
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm font-medium text-muted-foreground">Success Rate:</span>
+                      <span className="text-sm font-medium">{(bridgeStatus.successRate * 100).toFixed(1)}%</span>
+                    </div>
+                    <Progress 
+                      value={bridgeStatus.successRate * 100}
+                      className="h-1.5" 
+                    />
                   </div>
                   
                   <div className="flex items-center justify-between">
-                    <span className="text-sm font-medium">Success Rate:</span>
-                    <span className="text-sm">{(bridgeStatus.successRate * 100).toFixed(1)}%</span>
+                    <span className="text-sm font-medium text-muted-foreground">Pending Transactions:</span>
+                    <div className="flex items-center">
+                      <span className="text-sm font-medium">{bridgeStatus.pendingTransactions}</span>
+                      {bridgeStatus.pendingTransactions > 0 && (
+                        <div className="ml-2 h-2 w-2 rounded-full bg-amber-500 animate-pulse"></div>
+                      )}
+                    </div>
                   </div>
                   
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm font-medium">Pending Transactions:</span>
-                    <span className="text-sm">{bridgeStatus.pendingTransactions}</span>
-                  </div>
-                  
-                  <div className="mt-2">
+                  <div className="mt-3">
                     <Button 
-                      variant="outline" 
+                      variant="secondary" 
                       size="sm" 
-                      className="w-full"
+                      className="w-full group bg-gradient-to-r from-purple-500/10 to-pink-500/10 hover:from-purple-500/20 hover:to-pink-500/20"
                       onClick={() => initializeBridgeMutation.mutate()}
                       disabled={initializeBridgeMutation.isPending}
                     >
                       {initializeBridgeMutation.isPending ? (
                         <>
-                          <RefreshCw className="mr-2 h-3 w-3 animate-spin" />
-                          Initializing...
+                          <RefreshCw className="mr-2 h-3 w-3 animate-spin text-purple-500" />
+                          <span className="bg-clip-text text-transparent bg-gradient-to-r from-purple-500 to-pink-500">Initializing...</span>
                         </>
                       ) : (
-                        <>Refresh Connection</>
+                        <>
+                          <RefreshCw className="mr-2 h-3 w-3 text-purple-500 group-hover:rotate-180 transition-transform duration-700" />
+                          <span className="bg-clip-text text-transparent bg-gradient-to-r from-purple-500 to-pink-500">Refresh Connection</span>
+                        </>
                       )}
                     </Button>
                   </div>
                 </div>
               ) : (
                 <div className="text-center p-4">
-                  <AlertCircle className="h-8 w-8 text-muted-foreground mb-2 mx-auto" />
+                  <div className="relative mx-auto w-16 h-16 mb-3">
+                    <div className="absolute inset-0 rounded-full bg-gradient-to-r from-purple-500/20 to-pink-500/20 animate-pulse"></div>
+                    <AlertCircle className="h-8 w-8 text-purple-500 absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2" />
+                  </div>
                   <p className="text-sm text-muted-foreground">No bridge status available</p>
                   <Button 
-                    variant="outline" 
+                    variant="secondary" 
                     size="sm" 
-                    className="w-full mt-4"
+                    className="w-full mt-4 bg-gradient-to-r from-purple-500/10 to-pink-500/10 hover:from-purple-500/20 hover:to-pink-500/20"
                     onClick={() => initializeBridgeMutation.mutate()}
                     disabled={initializeBridgeMutation.isPending}
                   >
-                    Initialize Bridge
+                    {initializeBridgeMutation.isPending ? (
+                      <>
+                        <RefreshCw className="mr-2 h-3 w-3 animate-spin text-purple-500" />
+                        <span className="bg-clip-text text-transparent bg-gradient-to-r from-purple-500 to-pink-500">Initializing...</span>
+                      </>
+                    ) : (
+                      <span className="bg-clip-text text-transparent bg-gradient-to-r from-purple-500 to-pink-500">Initialize Bridge</span>
+                    )}
                   </Button>
                 </div>
               )}
             </CardContent>
           </Card>
           
-          <Card className="mb-4">
-            <CardHeader className="pb-2">
-              <CardTitle className="text-lg">Wallet Status</CardTitle>
+          <Card className="mb-4 overflow-hidden relative border-purple-500/20">
+            <div className="absolute -right-4 -top-4 w-16 h-16 bg-gradient-radial from-purple-600/20 to-transparent rounded-full"></div>
+            <div className="absolute -left-4 -bottom-4 w-16 h-16 bg-gradient-radial from-pink-500/20 to-transparent rounded-full"></div>
+            
+            <CardHeader className="pb-2 relative z-10">
+              <div className="flex items-center gap-2">
+                <div className="h-4 w-1 bg-gradient-to-b from-purple-500 to-pink-500 rounded-full"></div>
+                <CardTitle className="text-lg font-medium">Wallet Status</CardTitle>
+              </div>
             </CardHeader>
-            <CardContent>
+            <CardContent className="relative z-10">
               <WalletConnect />
             </CardContent>
           </Card>
           
-          <Card>
-            <CardHeader className="pb-2">
-              <CardTitle className="text-lg">Recent Transactions</CardTitle>
+          <Card className="overflow-hidden relative border-purple-500/20">
+            <div className="absolute -right-4 -top-4 w-16 h-16 bg-gradient-radial from-purple-600/20 to-transparent rounded-full"></div>
+            <div className="absolute -left-4 -bottom-4 w-16 h-16 bg-gradient-radial from-pink-500/20 to-transparent rounded-full"></div>
+            
+            <CardHeader className="pb-2 relative z-10">
+              <div className="flex items-center gap-2">
+                <div className="h-4 w-1 bg-gradient-to-b from-purple-500 to-pink-500 rounded-full"></div>
+                <CardTitle className="text-lg font-medium">Recent Transactions</CardTitle>
+              </div>
             </CardHeader>
-            <CardContent className="p-0">
+            <CardContent className="p-0 relative z-10">
               {isTransactionsLoading ? (
                 <div className="p-6 space-y-3">
                   <Skeleton className="h-12 w-full" />
                   <Skeleton className="h-12 w-full" />
                 </div>
               ) : transactions && transactions.length > 0 ? (
-                <div className="divide-y divide-border">
+                <div className="divide-y divide-border/20">
                   {transactions.slice(0, 5).map((tx) => (
-                    <div key={tx.id} className="p-4">
-                      <div className="flex justify-between items-center mb-1">
-                        <div className="font-medium text-sm">
-                          {tx.sourceChain} → {tx.targetChain}
+                    <div 
+                      key={tx.id} 
+                      className="p-4 bg-gradient-to-r from-transparent to-purple-950/5 hover:from-transparent hover:to-purple-950/10 transition-colors"
+                    >
+                      <div className="flex justify-between items-center mb-2">
+                        <div className="flex items-center gap-2">
+                          <div className="relative h-6 w-6 flex items-center justify-center">
+                            <div className="absolute inset-0 rounded-full bg-gradient-to-r from-purple-500/10 to-pink-500/10"></div>
+                            <ArrowRight className="h-3 w-3 text-purple-500" />
+                          </div>
+                          <div className="font-medium text-sm">
+                            <span className="text-purple-400">{tx.sourceChain}</span>
+                            <span className="mx-1">→</span>
+                            <span className="text-pink-400">{tx.targetChain}</span>
+                          </div>
                         </div>
                         <Badge 
-                          variant={
-                            tx.status === BridgeTransactionStatus.COMPLETED ? 'default' :
-                            tx.status === BridgeTransactionStatus.FAILED ? 'destructive' : 'outline'
+                          className={
+                            tx.status === BridgeTransactionStatus.COMPLETED 
+                              ? 'bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700' 
+                              : tx.status === BridgeTransactionStatus.FAILED 
+                                ? 'bg-gradient-to-r from-red-500 to-rose-600 hover:from-red-600 hover:to-rose-700'
+                                : 'bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700'
                           }
-                          className="text-xs"
                         >
+                          {tx.status === BridgeTransactionStatus.PENDING && (
+                            <Loader2 className="mr-1 h-2.5 w-2.5 animate-spin" />
+                          )}
                           {tx.status}
                         </Badge>
                       </div>
-                      <div className="text-xs text-muted-foreground flex justify-between">
-                        <span>{tx.amount} {tx.assetType}</span>
-                        <span>{new Date(tx.timestamp).toLocaleString()}</span>
+                      <div className="flex justify-between items-center text-xs">
+                        <div className="font-medium">
+                          <span className="text-primary">{tx.amount}</span>
+                          <span className="ml-1 text-muted-foreground">{tx.assetType}</span>
+                        </div>
+                        <div className="text-muted-foreground flex items-center gap-1">
+                          <Clock className="h-3 w-3" />
+                          <span>{new Date(tx.timestamp).toLocaleString()}</span>
+                        </div>
                       </div>
                     </div>
                   ))}
                 </div>
               ) : (
-                <div className="p-6 text-center text-muted-foreground">
-                  No recent transactions
+                <div className="p-8 text-center">
+                  <div className="relative mx-auto w-20 h-20 mb-4">
+                    <div className="absolute inset-0 rounded-full bg-gradient-to-r from-purple-500/10 to-pink-500/10"></div>
+                    <History className="h-10 w-10 text-purple-500/50 absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2" />
+                  </div>
+                  <p className="text-sm text-muted-foreground">No transactions yet</p>
+                  <p className="text-xs text-muted-foreground/70 mt-1">
+                    Completed transfers will appear here
+                  </p>
                 </div>
               )}
             </CardContent>
