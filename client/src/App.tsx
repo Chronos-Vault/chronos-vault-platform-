@@ -4,7 +4,7 @@ import Footer from './components/layout/footer';
 import React from 'react';
 import { BlockchainErrorDisplay } from "@/contexts/blockchain-error-boundary";
 
-// Import pages with most direct imports to ensure they load properly
+// Import pages using the correct filenames found in the pages directory
 import Home from './pages/home';
 import About from './pages/about';
 import Documentation from './pages/documentation';
