@@ -2,15 +2,28 @@ import { Route, Switch } from 'wouter';
 import { Toaster } from '@/components/ui/toaster';
 import MainHeader from './components/layout/MainHeader';
 import Footer from './components/layout/footer';
-import Home from './pages/home';
-import NotFound from './pages/not-found';
 import React from 'react';
 
-// Directly import key pages
+// Import ALL pages to ensure they are available
+import Home from './pages/home';
+import NotFound from './pages/not-found';
 import Documentation from './pages/documentation';
 import CrossChainBridge from './pages/cross-chain-bridge';
 import CreateTonVault from './pages/create-ton-vault';
 import CvtStaking from './pages/cvt-staking';
+import About from './pages/about';
+import BiometricVault from './pages/biometric-vault';
+import CrossChainVault from './pages/cross-chain-vault';
+import GeoVault from './pages/geo-vault';
+import SpecializedVaultMemory from './pages/specialized-vault-memory';
+import InvestmentDisciplineVault from './pages/investment-discipline-vault';
+import VaultSchool from './pages/vault-school';
+import MultiSignatureVault from './pages/multi-signature-vault';
+import SmartContractVault from './pages/smart-contract-vault';
+import MyVaults from './pages/my-vaults';
+import Whitepaper from './pages/whitepaper';
+import AuditTest from './pages/audit-test';
+import Faq from './pages/faq';
 
 function App() {
   return (
@@ -19,39 +32,33 @@ function App() {
       <main className="flex-1">
         <Switch>
           <Route path="/" component={Home} />
+          
+          {/* Core navigation pages */}
           <Route path="/documentation" component={Documentation} />
           <Route path="/bridge" component={CrossChainBridge} />
           <Route path="/cross-chain-bridge" component={CrossChainBridge} />
           <Route path="/create-vault" component={CreateTonVault} />
           <Route path="/staking" component={CvtStaking} />
           
-          {/* Catch-all placeholder for other routes */}
-          <Route path="/:rest*">
-            {(params) => {
-              const pagePath = params.rest || '';
-              const formattedTitle = pagePath
-                .split('-')
-                .map((word: string) => word.charAt(0).toUpperCase() + word.slice(1))
-                .join(' ');
-              
-              return (
-                <div className="container mx-auto px-4 py-16">
-                  <div className="bg-gradient-to-r from-[#6B00D7]/10 to-[#FF5AF7]/10 p-12 rounded-2xl shadow-lg border border-purple-500/20">
-                    <h1 className="text-4xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] mb-6">
-                      {formattedTitle || 'Page Not Found'}
-                    </h1>
-                    <p className="text-xl text-gray-200 mb-8">
-                      Our engineers are currently working on this page. It will be available soon.
-                    </p>
-                    <div className="flex items-center gap-4 text-gray-300">
-                      <div className="animate-pulse w-4 h-4 rounded-full bg-[#FF5AF7]"></div>
-                      <span>Secure connection established</span>
-                    </div>
-                  </div>
-                </div>
-              );
-            }}
-          </Route>
+          {/* Vault types */}
+          <Route path="/biometric-vault" component={BiometricVault} />
+          <Route path="/cross-chain-vault" component={CrossChainVault} />
+          <Route path="/geo-vault" component={GeoVault} />
+          <Route path="/specialized-vault-memory" component={SpecializedVaultMemory} />
+          <Route path="/investment-discipline-vault" component={InvestmentDisciplineVault} />
+          <Route path="/smart-contract-vault" component={SmartContractVault} />
+          <Route path="/multi-signature-vault" component={MultiSignatureVault} />
+          
+          {/* Other pages */}
+          <Route path="/about" component={About} />
+          <Route path="/vault-school" component={VaultSchool} />
+          <Route path="/my-vaults" component={MyVaults} />
+          <Route path="/whitepaper" component={Whitepaper} />
+          <Route path="/audit-test" component={AuditTest} />
+          <Route path="/faq" component={Faq} />
+          
+          {/* 404 handler - MUST be last */}
+          <Route component={NotFound} />
         </Switch>
       </main>
       <Footer />
