@@ -16,6 +16,7 @@ import CreateVault from './pages/create-vault';
 import CreateTonVault from './pages/create-ton-vault';
 import CreateVaultEnhanced from './pages/create-vault-enhanced';
 import SpecializedVaultCreation from './pages/specialized-vault-creation';
+import AdvancedVaultCreationPage from './pages/advanced-vault-creation';
 
 // Vault Management Pages
 import MyVaults from './pages/my-vaults';
@@ -97,6 +98,7 @@ function App() {
           <Route path="/create-ton-vault" component={CreateTonVault} />
           <Route path="/create-vault-enhanced" component={CreateVaultEnhanced} />
           <Route path="/specialized-vault-creation" component={SpecializedVaultCreation} />
+          <Route path="/advanced-vault-creation" component={AdvancedVaultCreationPage} />
           
           {/* Vault Management Pages */}
           <Route path="/my-vaults" component={MyVaults} />
