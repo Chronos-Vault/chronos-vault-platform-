@@ -13,6 +13,10 @@ import { DevModeProvider } from "@/contexts/dev-mode-context";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { WalletProvider } from "@/contexts/wallet-context";
 import { CVTTokenProvider } from "@/contexts/cvt-token-context";
+import { MultiChainProvider } from "@/contexts/multi-chain-context";
+import { EthereumProvider } from "@/contexts/ethereum-context";
+import { TonProvider } from "@/contexts/ton-context";
+import { SolanaProvider } from "@/contexts/solana-context";
 
 // Create a properly nested provider structure
 // We need to move the BlockchainErrorDisplay after all blockchain providers
@@ -25,12 +29,20 @@ createRoot(document.getElementById("root")!).render(
           <BlockchainErrorProvider>
             <DevModeProvider>
               <AuthProvider>
-                <WalletProvider>
-                  <CVTTokenProvider>
-                    <App />
-                    <Toaster />
-                  </CVTTokenProvider>
-                </WalletProvider>
+                <EthereumProvider>
+                  <SolanaProvider>
+                    <TonProvider>
+                      <MultiChainProvider>
+                        <WalletProvider>
+                          <CVTTokenProvider>
+                            <App />
+                            <Toaster />
+                          </CVTTokenProvider>
+                        </WalletProvider>
+                      </MultiChainProvider>
+                    </TonProvider>
+                  </SolanaProvider>
+                </EthereumProvider>
               </AuthProvider>
             </DevModeProvider>
           </BlockchainErrorProvider>
