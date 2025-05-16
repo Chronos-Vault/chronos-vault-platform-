@@ -63,7 +63,7 @@ export default function CrossChainSecurityPage() {
               </CardHeader>
               <CardContent>
                 <p className="text-gray-400 font-light leading-relaxed">
-                  Ethereum provides primary security and ownership records, Solana delivers high-speed transaction monitoring, while TON ensures backup and recovery mechanisms.
+                  TON provides primary vault operations, Ethereum delivers validation and security verification, while Solana ensures high-frequency monitoring and rapid transaction validation.
                 </p>
               </CardContent>
             </Card>

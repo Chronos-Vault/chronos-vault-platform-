@@ -43,8 +43,8 @@ export default function TripleChainExplainer() {
             <div className="absolute top-0 right-0 w-32 h-32 bg-purple-600/20 rounded-full -mr-16 -mt-16 group-hover:bg-purple-600/30"></div>
             
             <Lock className="h-10 w-10 text-purple-500 mb-3" />
-            <h3 className="text-xl font-bold mb-2">Secondary Chain</h3>
-            <p className="text-sm text-muted-foreground">Ethereum blockchain provides independent verification of vault integrity</p>
+            <h3 className="text-xl font-bold mb-2">Validation Chain</h3>
+            <p className="text-sm text-muted-foreground">Ethereum blockchain provides validation and security verification for vault integrity</p>
             
             <div className="mt-4 flex items-center text-xs text-purple-300">
               <CheckCircle className="h-3 w-3 mr-1" />
@@ -57,8 +57,8 @@ export default function TripleChainExplainer() {
             <div className="absolute top-0 right-0 w-32 h-32 bg-purple-600/20 rounded-full -mr-16 -mt-16 group-hover:bg-purple-600/30"></div>
             
             <Shield className="h-10 w-10 text-purple-500 mb-3" />
-            <h3 className="text-xl font-bold mb-2">Tertiary Chain</h3>
-            <p className="text-sm text-muted-foreground">Solana blockchain provides high-speed monitoring and rapid validation</p>
+            <h3 className="text-xl font-bold mb-2">Monitoring Chain</h3>
+            <p className="text-sm text-muted-foreground">Solana blockchain provides high-frequency monitoring and rapid validation</p>
             
             <div className="mt-4 flex items-center text-xs text-purple-300">
               <CheckCircle className="h-3 w-3 mr-1" />
@@ -128,13 +128,13 @@ export default function TripleChainExplainer() {
                   You request to unlock your vault when the time-lock expires
                 </li>
                 <li>
-                  The unlock request is verified independently on the TON blockchain
+                  The primary unlock operation is processed on the TON blockchain
                 </li>
                 <li>
-                  A secondary verification occurs on the Ethereum blockchain
+                  Security verification is performed on the Ethereum blockchain
                 </li>
                 <li>
-                  A tertiary verification occurs on the Solana blockchain
+                  Continuous monitoring and rapid validation occurs on the Solana blockchain
                 </li>
                 <li>
                   All three verifications are cross-checked for consistency
