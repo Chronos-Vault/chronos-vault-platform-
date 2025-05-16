@@ -101,7 +101,7 @@ export default function CrossChainBridgePage() {
     wallet.status[sourceChain] === 'connected';
 
   // Get source wallet address if connected
-  const sourceWalletAddress = isSourceWalletConnected
+  const sourceWalletAddress = isSourceWalletConnected && wallet.connectedWallets[sourceChain]
     ? wallet.connectedWallets[sourceChain].address
     : '';
 
@@ -205,17 +205,44 @@ export default function CrossChainBridgePage() {
     },
   });
 
+  // Initialize the bridge between chains
+  const initializeBridgeMutation = useMutation({
+    mutationFn: async () => {
+      return await crossChainBridgeService.initializeBridge(sourceChain, targetChain);
+    },
+    onSuccess: () => {
+      toast({
+        title: 'Bridge Initialized',
+        description: `Connection established between ${sourceChain} and ${targetChain}`,
+      });
+    },
+    onError: (error: Error) => {
+      toast({
+        title: 'Bridge Initialization Failed',
+        description: error.message,
+        variant: 'destructive',
+      });
+    },
+  });
+
   // Connect wallet handler
   const handleConnectWallet = () => {
-    setShowWalletDialog(true);
+    blockchain.connect(sourceChain);
   };
+
+  // Initialize the bridge when chains change
+  useEffect(() => {
+    if (isSourceWalletConnected) {
+      initializeBridgeMutation.mutate();
+    }
+  }, [sourceChain, targetChain, isSourceWalletConnected]);
 
   return (
     <div className="container py-8 max-w-5xl">
       <PageTitle 
         title="Cross-Chain"
         gradientText="Bridge"
-        subtitle="Transfer assets between Ethereum, Solana, TON, and Bitcoin networks"
+        subtitle="Transfer assets securely between Ethereum, Solana, TON, and Bitcoin networks"
       />
       
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -402,6 +429,77 @@ export default function CrossChainBridgePage() {
         </div>
         
         <div>
+          <Card className="mb-4">
+            <CardHeader className="pb-2">
+              <CardTitle className="text-lg">Bridge Status</CardTitle>
+            </CardHeader>
+            <CardContent>
+              {isStatusLoading ? (
+                <Skeleton className="h-12 w-full" />
+              ) : bridgeStatus ? (
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm font-medium">Status:</span>
+                    <Badge 
+                      variant={bridgeStatus.status === 'operational' ? 'default' : 
+                              bridgeStatus.status === 'degraded' ? 'outline' : 'destructive'}
+                    >
+                      {bridgeStatus.status.toUpperCase()}
+                    </Badge>
+                  </div>
+                  
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm font-medium">Latency:</span>
+                    <span className="text-sm">{bridgeStatus.latency.toFixed(0)}ms</span>
+                  </div>
+                  
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm font-medium">Success Rate:</span>
+                    <span className="text-sm">{(bridgeStatus.successRate * 100).toFixed(1)}%</span>
+                  </div>
+                  
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm font-medium">Pending Transactions:</span>
+                    <span className="text-sm">{bridgeStatus.pendingTransactions}</span>
+                  </div>
+                  
+                  <div className="mt-2">
+                    <Button 
+                      variant="outline" 
+                      size="sm" 
+                      className="w-full"
+                      onClick={() => initializeBridgeMutation.mutate()}
+                      disabled={initializeBridgeMutation.isPending}
+                    >
+                      {initializeBridgeMutation.isPending ? (
+                        <>
+                          <RefreshCw className="mr-2 h-3 w-3 animate-spin" />
+                          Initializing...
+                        </>
+                      ) : (
+                        <>Refresh Connection</>
+                      )}
+                    </Button>
+                  </div>
+                </div>
+              ) : (
+                <div className="text-center p-4">
+                  <AlertCircle className="h-8 w-8 text-muted-foreground mb-2 mx-auto" />
+                  <p className="text-sm text-muted-foreground">No bridge status available</p>
+                  <Button 
+                    variant="outline" 
+                    size="sm" 
+                    className="w-full mt-4"
+                    onClick={() => initializeBridgeMutation.mutate()}
+                    disabled={initializeBridgeMutation.isPending}
+                  >
+                    Initialize Bridge
+                  </Button>
+                </div>
+              )}
+            </CardContent>
+          </Card>
+          
           <Card className="mb-4">
             <CardHeader className="pb-2">
               <CardTitle className="text-lg">Wallet Status</CardTitle>
