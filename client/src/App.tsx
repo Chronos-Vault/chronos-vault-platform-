@@ -22,7 +22,7 @@ import AdvancedVaultCreationPage from './pages/advanced-vault-creation';
 import MyVaults from './pages/my-vaults';
 import VaultSchool from './pages/vault-school';
 import VaultTypesSelector from './pages/vault-types-selector';
-import VaultTypes from './pages/vault-types';
+import VaultTypes from './pages/vault-types-new';
 import VaultDetails from './pages/vault-details';
 import VaultExplorer from './pages/vault-explorer';
 
