@@ -168,6 +168,8 @@ export function SolanaProvider({ children }: SolanaProviderProps) {
     walletInfo,
     connectionStatus,
     availableWallets,
+    walletAddress: walletInfo?.address || '',
+    publicKey: walletInfo?.publicKey,
     connect,
     disconnect,
     sendSOL,

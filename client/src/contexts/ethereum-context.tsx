@@ -233,6 +233,7 @@ export const EthereumProvider: React.FC<EthereumProviderProps> = ({ children }) 
     connectionStatus: getConnectionStatus(),
     availableNetworks,
     currentNetwork,
+    walletAddress: getWalletInfo()?.address || '',
     connect,
     disconnect,
     sendETH,

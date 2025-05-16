@@ -431,7 +431,7 @@ export default function VaultTypesOriginal() {
     } else if (selectedVaultType === 'geo-temporal') {
       navigate('/geo-vault?temporal=true');
     } else if (selectedVaultType === 'sovereign-fortress') {
-      navigate('/specialized-vault-creation?type=sovereign-fortress&security=maximum');
+      navigate('/sovereign-fortress-vault');
     } else if (selectedVaultType === 'time-lock') {
       navigate('/specialized-vault-creation?type=time-lock&advanced=true');
     } else {

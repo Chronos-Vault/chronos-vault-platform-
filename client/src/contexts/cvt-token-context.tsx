@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { useAuthContext } from '@/contexts/auth-context';
 import { useMultiChain } from '@/contexts/multi-chain-context';
-import { ChainId } from '@/lib/contract-interfaces';
+import { CHAIN_IDS } from '@/lib/contract-interfaces';
 import { 
   cvtTokenService,
   calculateStakingRewards,
@@ -418,6 +418,7 @@ export function CVTTokenProvider({ children }: CVTTokenProviderProps) {
     bitcoinHalvingRewards,
     stakeTokens,
     unstakeTokens,
+    stakedAmount: parseFloat(stakedBalance) || 0,
     calculateRewards,
     estimateHalvingRewards,
     getTierBenefits,
