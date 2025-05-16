@@ -6,12 +6,14 @@ import HomePage from './pages/home';
 import NotFoundPage from './pages/not-found';
 import { BlockchainProvider } from './hooks/use-blockchain';
 import { Toaster } from '@/components/ui/toaster';
+import Navbar from './components/layout/Navbar';
 
 function App() {
   return (
     <BlockchainProvider>
-      <div className="min-h-screen bg-background">
-        <main>
+      <div className="min-h-screen bg-background flex flex-col">
+        <Navbar />
+        <main className="flex-1">
           <Switch>
             <Route path="/" component={HomePage} />
             <Route path="/bridge" component={CrossChainBridgePage} />

@@ -17,13 +17,15 @@ export interface BlockchainContextType {
   activeChain: ChainType | null;
 }
 
-const BlockchainContext = createContext<BlockchainContextType>({
+const defaultContext: BlockchainContextType = {
   connect: async () => false,
   disconnect: () => {},
   isConnected: false,
   connectedWallet: null,
   activeChain: null,
-});
+};
+
+const BlockchainContext = createContext<BlockchainContextType>(defaultContext);
 
 export const BlockchainProvider = ({ children }: { children: React.ReactNode }) => {
   const [connectedWallet, setConnectedWallet] = useState<WalletInfo | null>(null);
