@@ -24,14 +24,14 @@ createRoot(document.getElementById("root")!).render(
         <TooltipProvider>
           <BlockchainErrorProvider>
             <DevModeProvider>
-              <WalletProvider>
-                <CVTTokenProvider>
-                  <AuthProvider>
+              <AuthProvider>
+                <WalletProvider>
+                  <CVTTokenProvider>
                     <App />
                     <Toaster />
-                  </AuthProvider>
-                </CVTTokenProvider>
-              </WalletProvider>
+                  </CVTTokenProvider>
+                </WalletProvider>
+              </AuthProvider>
             </DevModeProvider>
           </BlockchainErrorProvider>
         </TooltipProvider>
