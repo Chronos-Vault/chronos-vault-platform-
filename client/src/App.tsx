@@ -4,30 +4,30 @@ import Footer from './components/layout/footer';
 import React from 'react';
 import { BlockchainErrorDisplay } from "@/contexts/blockchain-error-boundary";
 
-// Core Pages - Verified
+// Core Pages - Verified with exact file names
 import Home from './pages/home';
 import About from './pages/about';
 import Faq from './pages/faq';
 import NotFound from './pages/not-found';
 import Documentation from './pages/documentation';
 
-// Vault Creation Pages - Verified
-import CreateVault from './pages/create-vault';
+// Vault Creation Pages - Using exact file names
+import CreateVault from './pages/create-vault-working';
 import CreateTonVault from './pages/create-ton-vault';
 import VaultSchool from './pages/vault-school';
 import MyVaults from './pages/my-vaults';
 import Whitepaper from './pages/whitepaper';
 
-// Cross Chain Pages - Verified
+// Cross Chain Pages - Using exact file names
 import CrossChainBridge from './pages/cross-chain-bridge';
 import CrossChainVault from './pages/cross-chain-vault';
 
-// Token Pages - Verified
+// Token Pages - Using exact file names
 import CvtStaking from './pages/cvt-staking';
 import CvtTokenomics from './pages/cvt-tokenomics';
 import CvtUtility from './pages/cvt-utility';
 
-// Specialized Vault Pages - Verified
+// Specialized Vault Pages - Using exact file names
 import BiometricVault from './pages/biometric-vault';
 import GeoVault from './pages/geo-vault';
 import SmartContractVault from './pages/smart-contract-vault';
@@ -36,7 +36,7 @@ import SpecializedVaultMemory from './pages/specialized-vault-memory';
 import InvestmentDisciplineVault from './pages/investment-discipline-vault';
 import TonSpecificVault from './pages/ton-specific-vault';
 
-// Security Pages - Verified
+// Security Pages - Using exact file names
 import SecurityProtocols from './pages/security-protocols';
 import CrossChainSecurity from './pages/cross-chain-security';
 import SecurityVerificationDemo from './pages/security-verification-demo';
