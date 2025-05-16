@@ -467,7 +467,23 @@ const VaultTypesPage = () => {
   );
 };
 
-const VaultCard = ({ vault, isSelected, onSelect }) => {
+interface VaultCardProps {
+  vault: {
+    id: string;
+    title: string;
+    description: string;
+    icon: string;
+    color: string;
+    securityLevel: number;
+    complexityLevel: number;
+    features: string[];
+    tags: string[];
+  };
+  isSelected: boolean;
+  onSelect: () => void;
+}
+
+const VaultCard: React.FC<VaultCardProps> = ({ vault, isSelected, onSelect }) => {
   return (
     <div
       className={`rounded-lg cursor-pointer transition-all duration-200 h-full flex flex-col
@@ -518,7 +534,7 @@ const VaultCard = ({ vault, isSelected, onSelect }) => {
           
           {/* Key Technologies */}
           <div className="flex flex-wrap gap-1 mb-3">
-            {vault.tags.map((tag, i) => (
+            {vault.tags.map((tag: string, i: number) => (
               <span 
                 key={i}
                 className="text-[10px] px-2 py-0.5 rounded-full bg-[#6B00D7]/10 border border-[#6B00D7]/30"
@@ -572,7 +588,7 @@ const VaultCard = ({ vault, isSelected, onSelect }) => {
               <div>
                 <h4 className="text-xs font-semibold text-gray-300 mb-1.5">Key Features:</h4>
                 <ul className="text-[10px] text-gray-400 space-y-1">
-                  {vault.features.slice(0, 4).map((feature, i) => (
+                  {vault.features.slice(0, 4).map((feature: string, i: number) => (
                     <li key={i} className="flex items-start">
                       <span className="text-green-400 mr-1.5 pt-0.5">•</span>
                       <span>{feature}</span>
