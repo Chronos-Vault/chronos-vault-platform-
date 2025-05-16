@@ -348,7 +348,7 @@ export default function SecurityVerificationDemo() {
                             <CheckCircle2 className="h-4 w-4 text-white" />
                           </div>
                           <p className="text-sm">
-                            <span className="font-medium">Specialized Chain Roles:</span> Ethereum provides robust ownership verification, Solana enables high-frequency monitoring, and TON creates a reliable backup layer.
+                            <span className="font-medium">Specialized Chain Roles:</span> TON serves as the primary chain for vault operations, Ethereum provides security validation, and Solana enables high-frequency monitoring.
                           </p>
                         </div>
                         

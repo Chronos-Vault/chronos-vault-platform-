@@ -171,12 +171,12 @@ const CrossChainVaultPage = () => {
             </p>
             <ul className="space-y-2 text-gray-300 mb-4">
               <li className="flex items-start">
-                <div className="flex-shrink-0 h-6 w-6 rounded-full bg-blue-900/30 text-blue-400 flex items-center justify-center mr-2 mt-0.5">
-                  <span className="text-sm font-bold">E</span>
+                <div className="flex-shrink-0 h-6 w-6 rounded-full bg-cyan-900/30 text-cyan-400 flex items-center justify-center mr-2 mt-0.5">
+                  <span className="text-sm font-bold">T</span>
                 </div>
                 <div>
-                  <span className="font-medium text-blue-400">Ethereum Layer (Primary)</span>
-                  <p className="mt-0.5">Manages asset ownership records and primary access control</p>
+                  <span className="font-medium text-cyan-400">TON Layer (Primary)</span>
+                  <p className="mt-0.5">Manages primary vault operations and asset management</p>
                 </div>
               </li>
               <li className="flex items-start mt-3">
@@ -189,12 +189,12 @@ const CrossChainVaultPage = () => {
                 </div>
               </li>
               <li className="flex items-start mt-3">
-                <div className="flex-shrink-0 h-6 w-6 rounded-full bg-purple-900/30 text-purple-400 flex items-center justify-center mr-2 mt-0.5">
-                  <span className="text-sm font-bold">T</span>
+                <div className="flex-shrink-0 h-6 w-6 rounded-full bg-blue-900/30 text-blue-400 flex items-center justify-center mr-2 mt-0.5">
+                  <span className="text-sm font-bold">E</span>
                 </div>
                 <div>
-                  <span className="font-medium text-purple-400">TON Layer (Backup)</span>
-                  <p className="mt-0.5">Handles backup security system and emergency recovery operations</p>
+                  <span className="font-medium text-blue-400">Ethereum Layer (Validation)</span>
+                  <p className="mt-0.5">Provides secondary validation and security verification</p>
                 </div>
               </li>
               <li className="flex items-start mt-3">
