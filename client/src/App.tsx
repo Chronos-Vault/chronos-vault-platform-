@@ -5,33 +5,23 @@ import { Toaster } from '@/components/ui/toaster';
 import MainHeader from './components/layout/MainHeader';
 import Footer from './components/layout/footer';
 
+// Direct imports to avoid any issues with lazy loading
+import CrossChainBridgePage from './pages/cross-chain-bridge';
+import CvtStakingPage from './pages/cvt-staking';
+import CreateTonVaultPage from './pages/create-ton-vault';
+
 function App() {
   return (
     <div className="min-h-screen bg-background flex flex-col">
       <MainHeader />
       <main className="flex-1">
         <Switch>
-          {/* Main pages */}
           <Route path="/" component={Home} />
-          
-          {/* Let's dynamically load all other page routes */}
-          <Route path="/:page*">
-            {(params) => {
-              const page = params.page;
-              
-              // Only show homepage for root path
-              if (!page) return <Home />;
-              
-              try {
-                // Try to dynamically load the requested page component
-                const PageComponent = require(`./pages/${page}`).default;
-                return <PageComponent />;
-              } catch (error) {
-                // If page doesn't exist, show the NotFound component
-                return <NotFound />;
-              }
-            }}
-          </Route>
+          <Route path="/bridge" component={CrossChainBridgePage} />
+          <Route path="/cross-chain-bridge" component={CrossChainBridgePage} />
+          <Route path="/create-vault" component={CreateTonVaultPage} />
+          <Route path="/staking" component={CvtStakingPage} />
+          <Route component={NotFound} />
         </Switch>
       </main>
       <Footer />
