@@ -22,7 +22,7 @@ import { AlertCircle, ChevronRight, ArrowLeftRight, RefreshCw, CheckCircle, XCir
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Progress } from '@/components/ui/progress';
-
+import { useUserTheme } from '@/hooks/use-user-theme';
 
 // PageTitle component as a simple local component
 const PageTitle = ({ 
