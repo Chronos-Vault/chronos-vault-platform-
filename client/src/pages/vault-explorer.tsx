@@ -45,7 +45,7 @@ import { BlockchainType, VaultInfo, VaultStatus, ExplorerStats, SecurityLevel } 
 import { useChainExplorer } from '@/hooks/use-chain-explorer';
 import { useQuery } from '@tanstack/react-query';
 import { useLocation, Link } from 'wouter';
-import { useWallet } from '@/contexts/wallet-context';
+import { useBlockchain } from '@/hooks/use-blockchain';
 
 /**
  * Helper function to get color for vault status
@@ -276,7 +276,8 @@ const VaultExplorer = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [activeBlockchain, setActiveBlockchain] = useState<BlockchainType | 'ALL'>('ALL');
   const [activeTab, setActiveTab] = useState('all');
-  const { isConnected, connect } = useWallet();
+  const blockchain = useBlockchain();
+  const isConnected = blockchain.isConnected;
 
   // Define response types for API endpoints
   type ApiResponse<T> = {
@@ -374,7 +375,7 @@ const VaultExplorer = () => {
                   <p className="text-yellow-400">Connect your wallet to verify ownership and access your vaults</p>
                 </div>
                 <Button 
-                  onClick={() => connect('TON')} 
+                  onClick={() => blockchain.connect('ton')} 
                   className="bg-[#6B00D7] hover:bg-[#6B00D7]/90 text-white"
                 >
                   <Wallet className="mr-2 h-4 w-4" />
