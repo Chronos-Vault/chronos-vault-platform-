@@ -11,7 +11,7 @@ import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, For
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useToast } from '@/hooks/use-toast';
-import { ChainType, useBlockchain } from '@/hooks/use-blockchain';
+import { ChainType } from '@/contexts/wallet-context';
 import WalletConnect from '@/components/wallet/WalletConnect';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Separator } from '@/components/ui/separator';
@@ -36,7 +36,11 @@ type BridgeFormValues = z.infer<typeof bridgeFormSchema>;
 
 export default function CrossChainBridgePage() {
   const { toast } = useToast();
-  const { connectedWallet, activeChain, connect, disconnect } = useBlockchain();
+  // Temporarily set mock data since we removed the hook
+  const connectedWallet = null;
+  const activeChain = null;
+  const connect = async () => false;
+  const disconnect = () => {};
   
   const [sourceChain, setSourceChain] = useState<ChainType>(activeChain || 'ton');
   const [targetChain, setTargetChain] = useState<ChainType>(activeChain === 'ton' ? 'ethereum' : 'ton');

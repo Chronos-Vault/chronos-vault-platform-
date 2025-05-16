@@ -22,7 +22,7 @@ import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Slider } from '@/components/ui/slider';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useToast } from '@/hooks/use-toast';
-import { useBlockchain } from '@/hooks/use-blockchain';
+import { useWallet } from '@/contexts/wallet-context';
 import WalletConnect from '@/components/wallet/WalletConnect';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Badge } from '@/components/ui/badge';
@@ -42,7 +42,7 @@ type StakingFormValues = z.infer<typeof stakingFormSchema>;
 
 export default function CVTStakingPage() {
   const { toast } = useToast();
-  const { connectedWallet } = useBlockchain();
+  const { connectedWallet } = useWallet();
   
   const [isStaking, setIsStaking] = useState(false);
   const [hasStaked, setHasStaked] = useState(false);

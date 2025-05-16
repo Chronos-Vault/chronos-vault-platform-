@@ -1,88 +1,49 @@
-import { createContext, useContext, useState } from 'react';
+/**
+ * useBlockchain Hook
+ * 
+ * This hook provides a unified interface for connecting to and interacting with
+ * different blockchain wallets (Ethereum, Solana, TON, and Bitcoin).
+ * It acts as a compatibility layer to ensure old code works with the new wallet-context.
+ */
 
-export type ChainType = 'ton' | 'ethereum' | 'solana' | 'bitcoin';
+import { useWallet, ChainType, ConnectedWallet } from '@/contexts/wallet-context';
 
-export interface WalletInfo {
-  address: string;
-  chain: ChainType;
-  wallet: string;
-  balance?: number;
-}
+// Re-export the ChainType for compatibility
+export type { ChainType };
 
-export interface BlockchainContextType {
-  connect: (chain: ChainType, wallet: string) => Promise<boolean>;
-  disconnect: () => void;
-  isConnected: boolean;
-  connectedWallet: WalletInfo | null;
-  activeChain: ChainType | null;
-}
-
-const defaultContext: BlockchainContextType = {
-  connect: async () => false,
-  disconnect: () => {},
-  isConnected: false,
-  connectedWallet: null,
-  activeChain: null,
-};
-
-const BlockchainContext = createContext<BlockchainContextType>(defaultContext);
-
-export function BlockchainProvider({ children }: { children: React.ReactNode }) {
-  const [connectedWallet, setConnectedWallet] = useState<WalletInfo | null>(null);
-
-  const connect = async (chain: ChainType, wallet: string): Promise<boolean> => {
-    try {
-      // This would normally involve connecting to the actual blockchain
-      // For now, we'll simulate a successful connection with mock data
-      
-      // Generate a mock address based on the chain and wallet
-      let mockAddress = '';
-      switch (chain) {
-        case 'ton':
-          mockAddress = 'EQAvDfYmkVV2zFXzC0Hs2e2RGWJyMXHpnMTXH4jnI2W3AwLb';
-          break;
-        case 'ethereum':
-          mockAddress = '0x1234567890123456789012345678901234567890';
-          break;
-        case 'solana':
-          mockAddress = 'AKzB7dUMp5YUVJ5YuTN1Y5AD3rf1YtDGaPKw1MQH8ikR';
-          break;
-        case 'bitcoin':
-          mockAddress = 'bc1qar0srrr7xfkvy5l643lydnw9re59gtzzwf5mdq';
-          break;
+export function useBlockchain() {
+  const wallet = useWallet();
+  
+  // Get the currently active wallet if one exists
+  const activeWallet = wallet.activeChain ? wallet.connectedWallets[wallet.activeChain] : null;
+  
+  // Create the simplified API that the rest of the application expects
+  return {
+    // Current wallet state
+    connectedWallet: activeWallet,
+    activeChain: wallet.activeChain,
+    
+    // Connection status helpers
+    isConnecting: wallet.activeChain ? wallet.status[wallet.activeChain] === 'connecting' : false,
+    isConnected: wallet.activeChain ? wallet.status[wallet.activeChain] === 'connected' : false,
+    
+    // Simplified connection methods (automatically use active chain if none specified)
+    connect: async (chain?: ChainType) => wallet.connect(chain || 'ton'),
+    disconnect: async () => {
+      if (wallet.activeChain) {
+        return wallet.disconnect(wallet.activeChain);
       }
-      
-      setConnectedWallet({
-        address: mockAddress,
-        chain,
-        wallet,
-        balance: Math.floor(Math.random() * 1000) / 100,
-      });
-      
-      return true;
-    } catch (error) {
-      console.error('Failed to connect wallet:', error);
-      return false;
-    }
+    },
+    
+    // Pass through all the other methods
+    sendTransaction: wallet.sendTransaction,
+    signMessage: wallet.signMessage,
+    createVault: wallet.createVault,
+    depositToVault: wallet.depositToVault,
+    withdrawFromVault: wallet.withdrawFromVault,
+    verifyCrossChain: wallet.verifyCrossChain,
+    isDevelopmentMode: wallet.isDevelopmentMode,
+    toggleDevelopmentMode: wallet.toggleDevelopmentMode,
+    recentTransactions: wallet.recentTransactions
   };
-
-  const disconnect = () => {
-    setConnectedWallet(null);
-  };
-
-  const value = {
-    connect,
-    disconnect,
-    isConnected: !!connectedWallet,
-    connectedWallet,
-    activeChain: connectedWallet?.chain || null,
-  };
-
-  return (
-    <BlockchainContext.Provider value={value}>
-      {children}
-    </BlockchainContext.Provider>
-  );
 }
-
-export const useBlockchain = () => useContext(BlockchainContext);

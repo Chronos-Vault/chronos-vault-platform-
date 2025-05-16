@@ -11,6 +11,8 @@ import { Toaster } from "@/components/ui/toaster";
 import { BlockchainErrorProvider, BlockchainErrorDisplay } from "@/contexts/blockchain-error-boundary";
 import { DevModeProvider } from "@/contexts/dev-mode-context";
 import { TooltipProvider } from "@/components/ui/tooltip";
+import { WalletProvider } from "@/contexts/wallet-context";
+import { CVTTokenProvider } from "@/contexts/cvt-token-context";
 
 // Create a properly nested provider structure
 // We need to move the BlockchainErrorDisplay after all blockchain providers
@@ -22,10 +24,14 @@ createRoot(document.getElementById("root")!).render(
         <TooltipProvider>
           <BlockchainErrorProvider>
             <DevModeProvider>
-              <AuthProvider>
-                <App />
-                <Toaster />
-              </AuthProvider>
+              <WalletProvider>
+                <CVTTokenProvider>
+                  <AuthProvider>
+                    <App />
+                    <Toaster />
+                  </AuthProvider>
+                </CVTTokenProvider>
+              </WalletProvider>
             </DevModeProvider>
           </BlockchainErrorProvider>
         </TooltipProvider>
