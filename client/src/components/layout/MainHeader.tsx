@@ -114,7 +114,7 @@ const MainHeader = () => {
       icon: "🏠",
       items: [
         { name: "Home", href: "/", icon: "🏠" },
-        { name: "Vaults", href: "/vault-types", icon: "🔐" },
+        { name: "Vaults", href: "/advanced-vault-creation", icon: "🔐" },
       ]
     },
     {
@@ -220,10 +220,10 @@ const MainHeader = () => {
                     className={cn(
                       navigationMenuTriggerStyle(),
                       "bg-transparent text-gray-300 hover:text-white hover:bg-[#6B00D7]/10",
-                      location === "/vault-types" ? "text-white bg-[#6B00D7]/20" : ""
+                      location === "/advanced-vault-creation" ? "text-white bg-[#6B00D7]/20" : ""
                     )}
                   >
-                    <Link href="/vault-types">
+                    <Link href="/advanced-vault-creation">
                       <span className="inline-flex items-center gap-1.5">
                         <span className="text-base">🔐</span> Vaults
                       </span>
