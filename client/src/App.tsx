@@ -84,6 +84,7 @@ import ZkPrivacyDemo from './pages/zk-privacy-demo';
 import CvtStaking from './pages/cvt-staking';
 import CvtPayment from './pages/cvt-payment';
 import CvtToken from './pages/cvt-token';
+import TokenVaults from './pages/token-vaults';
 import PremiumFeatures from './pages/premium-features';
 import PremiumPayment from './pages/premium-payment';
 import Subscription from './pages/subscription';
@@ -179,6 +180,7 @@ function App() {
           <Route path="/staking" component={CvtStaking} />
           <Route path="/cvt-payment" component={CvtPayment} />
           <Route path="/cvt-token" component={CvtToken} />
+          <Route path="/token-vaults" component={TokenVaults} />
           <Route path="/premium-features" component={PremiumFeatures} />
           <Route path="/premium-payment" component={PremiumPayment} />
           <Route path="/subscription" component={Subscription} />
