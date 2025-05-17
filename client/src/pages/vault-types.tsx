@@ -1128,10 +1128,9 @@ const VaultTypesPage = () => {
               <motion.div 
                 className="bg-black/40 backdrop-blur-sm rounded-xl p-4 border border-blue-900/40 relative overflow-hidden group"
                 whileHover={{ y: -5, boxShadow: "0 10px 25px -5px rgba(33, 150, 243, 0.3)" }}
-                transition={{ duration: 0.3 }}
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: 0.4 }}
+                transition={{ duration: 0.5, delay: 0.4, ease: "easeOut" }}
               >
                 <div className="absolute -top-10 -right-10 w-20 h-20 bg-blue-600 rounded-full opacity-20 blur-xl group-hover:opacity-40 transition-opacity"></div>
                 <div className="flex items-center mb-2">
@@ -1146,10 +1145,9 @@ const VaultTypesPage = () => {
               <motion.div 
                 className="bg-black/40 backdrop-blur-sm rounded-xl p-4 border border-amber-900/40 relative overflow-hidden group"
                 whileHover={{ y: -5, boxShadow: "0 10px 25px -5px rgba(255, 193, 7, 0.3)" }}
-                transition={{ duration: 0.3 }}
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: 0.5 }}
+                transition={{ duration: 0.5, delay: 0.5, ease: "easeOut" }}
               >
                 <div className="absolute -top-10 -right-10 w-20 h-20 bg-amber-600 rounded-full opacity-20 blur-xl group-hover:opacity-40 transition-opacity"></div>
                 <div className="flex items-center mb-2">
@@ -1544,7 +1542,7 @@ const VaultTypesPage = () => {
         {/* Vault Categories */}
         <div className="mb-8">
           <h2 className="text-xl font-bold mb-4 flex items-center">
-            <ShieldCheck className="h-5 w-5 mr-2" />
+            <Shield className="h-5 w-5 mr-2" />
             <span>Vault Categories</span>
           </h2>
 
@@ -1657,7 +1655,7 @@ const VaultTypesPage = () => {
             
             <h2 className="text-2xl font-bold mb-2 flex items-center">
               <div className="w-10 h-10 rounded-lg bg-purple-900/40 flex items-center justify-center mr-3">
-                <ShieldCheck className="h-6 w-6 text-purple-400" />
+                <Shield className="h-6 w-6 text-purple-400" />
               </div>
               <span className="bg-clip-text text-transparent bg-gradient-to-r from-purple-400 to-pink-500">
                 Revolutionary Triple-Chain Security System
