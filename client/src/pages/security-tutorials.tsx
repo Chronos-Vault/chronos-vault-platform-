@@ -592,11 +592,11 @@ const SecurityTutorials = () => {
                   </div>
                 </div>
               </CardContent>
-              <CardFooter>
+              <CardFooter className="border-t border-[#333] pt-4">
                 <Button 
                   variant="outline" 
                   onClick={() => navigate('/multi-signature-vault')}
-                  className="mt-4"
+                  className="mt-4 border-[#333] text-gray-300 hover:bg-[#6B00D7]/10 hover:text-white"
                 >
                   Multi-Signature Vault Options
                 </Button>
