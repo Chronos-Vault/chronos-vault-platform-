@@ -30,7 +30,7 @@ import VaultSchool from './pages/vault-school';
 import VaultTypesSelector from './pages/vault-types-selector';
 import VaultTypesSelectorNew from './pages/vault-types-selector-new';
 import VaultSelectionShowcase from './pages/vault-selection-showcase';
-import VaultTypes from './pages/vault-types-original';
+import VaultTypes from './pages/vault-types';
 import VaultDetails from './pages/vault-details';
 import VaultExplorer from './pages/vault-explorer';
 
@@ -138,13 +138,13 @@ function App() {
           {/* Vault Management Pages */}
           <Route path="/my-vaults" component={MyVaults} />
           <Route path="/vault-school" component={VaultSchool} />
-          <Route path="/vault-types-selector" component={VaultSelectionShowcase} />
-          <Route path="/vault-types" component={VaultSelectionShowcase} />
+          <Route path="/vault-types-selector" component={VaultTypesSelectorNew} />
+          <Route path="/vault-types" component={VaultTypesSelectorNew} />
           <Route path="/vault-details" component={VaultDetails} />
           <Route path="/vault-explorer" component={VaultExplorer} />
           <Route path="/explorer" component={VaultExplorer} />
           <Route path="/vault-selection" component={VaultSelectionShowcase} />
-          <Route path="/create-vault-selector" component={VaultSelectionShowcase} />
+          <Route path="/create-vault-selector" component={VaultTypesSelectorNew} />
           
           {/* Standard Vault Types */}
           <Route path="/biometric-vault" component={BiometricVault} />
