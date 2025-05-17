@@ -254,17 +254,17 @@ const SecurityDocumentation = () => {
                     <div className="flex items-center justify-between">
                       <div className="flex items-center">
                         <div className="min-w-0 flex-1">
-                          <h4 className="text-md font-medium text-indigo-600">Verification Methods</h4>
-                          <p className="text-sm text-gray-500">Secondary authentication when unusual activity detected</p>
+                          <h4 className="text-md font-medium text-[#FF5AF7]">Verification Methods</h4>
+                          <p className="text-sm text-gray-400">Secondary authentication when unusual activity detected</p>
                         </div>
                       </div>
                       <div>
-                        <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
+                        <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-[#111] text-[#50E3C2] border border-[#333]">
                           Multiple Options
                         </span>
                       </div>
                     </div>
-                    <div className="mt-2 text-sm text-gray-700">
+                    <div className="mt-2 text-sm text-gray-300">
                       <p>Options: Hardware wallet, multi-signature, time-delay release, biometric</p>
                     </div>
                   </div>
@@ -274,17 +274,17 @@ const SecurityDocumentation = () => {
                     <div className="flex items-center justify-between">
                       <div className="flex items-center">
                         <div className="min-w-0 flex-1">
-                          <h4 className="text-md font-medium text-indigo-600">Learning Mode</h4>
-                          <p className="text-sm text-gray-500">Determines how quickly the system adapts to new patterns</p>
+                          <h4 className="text-md font-medium text-[#FF5AF7]">Learning Mode</h4>
+                          <p className="text-sm text-gray-400">Determines how quickly the system adapts to new patterns</p>
                         </div>
                       </div>
                       <div>
-                        <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
+                        <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-[#111] text-[#50E3C2] border border-[#333]">
                           Adjustable
                         </span>
                       </div>
                     </div>
-                    <div className="mt-2 text-sm text-gray-700">
+                    <div className="mt-2 text-sm text-gray-300">
                       <p>Options: Conservative (slow adaptation), Balanced (default), Rapid (quick learning)</p>
                     </div>
                   </div>
@@ -294,17 +294,17 @@ const SecurityDocumentation = () => {
                     <div className="flex items-center justify-between">
                       <div className="flex items-center">
                         <div className="min-w-0 flex-1">
-                          <h4 className="text-md font-medium text-indigo-600">Whitelist Management</h4>
-                          <p className="text-sm text-gray-500">Addresses and transaction types to exclude from monitoring</p>
+                          <h4 className="text-md font-medium text-[#FF5AF7]">Whitelist Management</h4>
+                          <p className="text-sm text-gray-400">Addresses and transaction types to exclude from monitoring</p>
                         </div>
                       </div>
                       <div>
-                        <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
+                        <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-[#111] text-[#50E3C2] border border-[#333]">
                           Customizable
                         </span>
                       </div>
                     </div>
-                    <div className="mt-2 text-sm text-gray-700">
+                    <div className="mt-2 text-sm text-gray-300">
                       <p>Maximum 50 addresses per vault, with optional time-limited entries</p>
                     </div>
                   </div>
@@ -314,11 +314,15 @@ const SecurityDocumentation = () => {
           </div>
 
           <div className="flex justify-between">
-            <Button variant="outline" onClick={() => navigate('/security-tutorials')}>
+            <Button 
+              variant="outline" 
+              onClick={() => navigate('/security-tutorials')}
+              className="border-[#333] text-gray-300 hover:bg-[#6B00D7]/10 hover:text-white"
+            >
               View User Tutorials
             </Button>
             <Button 
-              className="bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] hover:opacity-90"
+              className="bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] hover:opacity-90 text-white"
               onClick={() => navigate('/behavioral-authentication')}
             >
               Go to Behavioral Authentication
@@ -329,21 +333,21 @@ const SecurityDocumentation = () => {
 
       {/* Quantum-Resistant Cryptography Documentation */}
       <div id="quantum-section" className="mb-16 scroll-mt-16">
-        <div className="border-b border-gray-200 pb-4 mb-8">
+        <div className="border-b border-[#333] pb-4 mb-8">
           <div className="flex items-center">
-            <KeySquareIcon className="w-8 h-8 mr-3 text-blue-600" />
-            <h2 className="text-2xl font-bold">Quantum-Resistant Cryptography Documentation</h2>
+            <KeySquareIcon className="w-8 h-8 mr-3 text-[#FF5AF7]" />
+            <h2 className="text-2xl font-bold text-white">Quantum-Resistant Cryptography Documentation</h2>
           </div>
-          <p className="text-gray-600 mt-2">
+          <p className="text-gray-400 mt-2">
             Technical specifications for our post-quantum encryption implementation
           </p>
         </div>
 
         <div className="space-y-8">
           <div>
-            <h3 className="text-xl font-semibold mb-4">Cryptographic Framework</h3>
-            <div className="bg-white shadow rounded-lg p-6 border border-gray-200">
-              <p className="text-gray-700 mb-4">
+            <h3 className="text-xl font-semibold mb-4 text-[#FF5AF7]">Cryptographic Framework</h3>
+            <div className="bg-[#1A1A1A] shadow-lg rounded-lg p-6 border border-[#333]">
+              <p className="text-gray-300 mb-4">
                 Our Quantum-Resistant Cryptography implementation uses a combination of lattice-based 
                 cryptography and multivariate polynomial schemes to protect against threats from 
                 both conventional and quantum computing attacks.
