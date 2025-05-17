@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useLocation } from 'wouter';
+import { useLocation, Link } from 'wouter';
 import VaultTypeSelector, { SpecializedVaultType } from '@/components/vault/vault-type-selector';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
@@ -8,6 +8,8 @@ import {
   LockKeyhole, Check, Sparkles, Cpu, Braces, Fingerprint, Clock, BarChart4 as BarChart
 } from 'lucide-react';
 import { VaultCreationProgress, getDefaultVaultCreationSteps } from '@/components/vault/create-vault-progress';
+import GlowingBackground from '../components/effects/glowing-background';
+import { cn } from '@/lib/utils';
 
 const VaultTypesSelector = () => {
   const [_, navigate] = useLocation();
@@ -195,13 +197,43 @@ const VaultTypesSelector = () => {
       </div>
       
       {/* Main Content Area with Glowing Background */}
-      <GlowingBackground 
-        className="rounded-xl overflow-hidden mb-8 backdrop-blur-md p-6"
-        primaryColor="#6B00D7"
-        secondaryColor="#FF5AF7"
-        intensity="medium"
-        animate={true}
+      <div 
+        className={`relative overflow-hidden rounded-xl mb-8 backdrop-blur-md p-6`}
       >
+        {/* Background with subtle grid pattern */}
+        <div className="absolute inset-0 bg-black bg-opacity-70"></div>
+        <div className="absolute inset-0 bg-grid-pattern opacity-10"></div>
+        
+        {/* Glowing orbs based on active category */}
+        <div
+          className="absolute top-0 left-1/4 w-64 h-64 rounded-full blur-3xl animate-float-slow"
+          style={{ 
+            background: vaultCategories.find(cat => cat.id === activeCategory)?.color || "#6B00D7", 
+            opacity: 0.15 
+          }}
+        ></div>
+        
+        <div
+          className="absolute bottom-1/4 right-1/3 w-80 h-80 rounded-full blur-3xl animate-float-slow animation-delay-2000"
+          style={{ 
+            background: vaultCategories.find(cat => cat.id === activeCategory)?.color || "#6B00D7", 
+            opacity: 0.15 
+          }}
+        ></div>
+        
+        {/* Animated scan line */}
+        <div className="absolute inset-0 overflow-hidden">
+          <div className="absolute inset-0 animate-scan-vertical">
+            <div className="h-px w-full" 
+              style={{ 
+                background: `linear-gradient(90deg, transparent 0%, ${vaultCategories.find(cat => cat.id === activeCategory)?.color || "#6B00D7"}40 50%, transparent 100%)` 
+              }}
+            ></div>
+          </div>
+        </div>
+        
+        {/* Content */}
+        <div className="relative z-10">
         {/* Progress Indicator */}
         <div className="mb-6">
           <VaultCreationProgress 
@@ -459,7 +491,8 @@ const VaultTypesSelector = () => {
             )}
           </Button>
         </div>
-      </GlowingBackground>
+        </div>
+      </div>
     </div>
   );
 };
