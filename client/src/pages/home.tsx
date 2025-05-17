@@ -120,6 +120,20 @@ const Home = () => {
                 </Button>
               </div>
               
+              {/* Cross-Chain Operations Button with premium effect */}
+              <div className="relative group">
+                {/* Button glow effect with different colors */}
+                <div className="absolute -inset-1 bg-gradient-to-r from-[#FF5AF7] via-[#6B00D7] to-[#FF5AF7] rounded-full blur opacity-70 group-hover:opacity-100 transition duration-1000 group-hover:duration-200 animate-gradient-x"></div>
+                
+                <Button 
+                  onClick={() => setLocation('/cross-chain-operations')} 
+                  className="relative px-12 py-5 bg-black text-white text-xl font-bold rounded-full transition-all duration-300 hover:bg-black/50 hover:scale-105 shadow-[0_0_20px_rgba(255,90,247,0.7)]"
+                >
+                  Cross-Chain Operations
+                  <ArrowRight className="inline-block ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                </Button>
+              </div>
+              
               {/* Explore Vaults Button with alternative premium effect */}
               <div className="relative group">
                 {/* Button subtle glow effect */}
