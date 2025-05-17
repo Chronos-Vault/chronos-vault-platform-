@@ -1531,6 +1531,17 @@ const VaultTypesPage = () => {
                         <div className="h-full bg-green-500 rounded-full" style={{ width: '98%' }}></div>
                       </div>
                       <div className="text-xs text-gray-400 mt-2 text-right italic">Based on 2,487 deployments</div>
+                      
+                      {/* Create Vault Button */}
+                      <div className="mt-6">
+                        <Button
+                          onClick={() => window.location.href = '/create-vault'}
+                          className="w-full bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white font-medium py-2.5 rounded-lg shadow-lg hover:shadow-xl transition-all duration-200 flex items-center justify-center gap-2"
+                        >
+                          <KeyRound className="h-4 w-4" />
+                          Create This Vault
+                        </Button>
+                      </div>
                     </div>
                   </motion.div>
                 </div>
@@ -1546,14 +1557,14 @@ const VaultTypesPage = () => {
             <span>Vault Categories</span>
           </h2>
 
-          <div className="flex items-center space-x-2 pb-4 overflow-x-auto scrollbar-thin scrollbar-track-transparent scrollbar-thumb-purple-900/50">
+          <div className="flex items-center gap-2 pb-4 overflow-x-auto scrollbar-thin scrollbar-track-transparent scrollbar-thumb-purple-900/50 px-1 -mx-1 py-2 snap-x">
             {Object.entries(vaultCategories).map(([key, category]) => (
               <motion.button
                 key={key}
                 onClick={() => setActiveCategory(key)}
-                className={`flex items-center space-x-2 px-4 py-2 rounded-full whitespace-nowrap transition-all ${
+                className={`flex items-center gap-2 px-3 py-2 sm:px-4 rounded-full whitespace-nowrap transition-all flex-shrink-0 snap-start ${
                   activeCategory === key 
-                    ? 'bg-white/10 text-white' 
+                    ? 'bg-white/10 text-white shadow-lg shadow-purple-900/20' 
                     : 'bg-black/40 text-gray-400 hover:bg-white/5'
                 }`}
                 style={{ 
@@ -1563,9 +1574,9 @@ const VaultTypesPage = () => {
                 whileHover={{ scale: 1.03 }}
                 whileTap={{ scale: 0.98 }}
               >
-                <span className="text-lg">{category.icon}</span>
-                <span>{category.title}</span>
-                <span className="bg-black/30 px-2 py-0.5 rounded-full text-xs">
+                <span className="text-lg" style={{ color: activeCategory === key ? category.color : 'inherit' }}>{category.icon}</span>
+                <span className="text-sm sm:text-base">{category.title}</span>
+                <span className="bg-black/30 px-2 py-0.5 rounded-full text-xs min-w-[1.5rem] text-center">
                   {category.vaults.length}
                 </span>
               </motion.button>
@@ -1654,17 +1665,21 @@ const VaultTypesPage = () => {
             </div>
             
             <h2 className="text-2xl font-bold mb-2 flex items-center">
-              <div className="w-10 h-10 rounded-lg bg-purple-900/40 flex items-center justify-center mr-3">
-                <Shield className="h-6 w-6 text-purple-400" />
+              <div className="flex items-center justify-center w-10 h-10 rounded-lg bg-gradient-to-br from-purple-600 to-blue-600 mr-3">
+                <div className="relative">
+                  <Zap className="h-5 w-5 text-white absolute top-0 left-0 transform -translate-x-1 -translate-y-1" />
+                  <Shield className="h-5 w-5 text-white" />
+                  <RefreshCw className="h-4 w-4 text-white absolute bottom-0 right-0 transform translate-x-1 translate-y-1" />
+                </div>
               </div>
               <span className="bg-clip-text text-transparent bg-gradient-to-r from-purple-400 to-pink-500">
-                Revolutionary Triple-Chain Security System
+                Sovereign Fortress Vault
               </span>
             </h2>
             
             <p className="text-gray-300 mb-8 ml-13 max-w-3xl">
-              Our groundbreaking security architecture distributes verification across Ethereum, TON, and Solana blockchains,
-              creating an unprecedented security paradigm that remains robust even if multiple chains are compromised.
+              Ultimate all-in-one vault with supreme security flexibility. Triple-Chain redundancy across Ethereum, 
+              TON, and Solana with quantum-resistant encryption and zero-knowledge proofs for unmatched protection.
             </p>
             
             {/* Blockchain Security Component */}
