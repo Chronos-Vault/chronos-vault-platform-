@@ -151,6 +151,7 @@ const MainHeader = () => {
       icon: "🎓",
       items: [
         { name: "Vault School Hub", href: "/vault-school", icon: "🏫", highlight: true },
+        { name: "Military-Grade Security", href: "/military-grade-security", icon: "🛡️", highlight: true, isNew: true },
         { name: "Security Tutorials", href: "/security-tutorials", icon: "📚", highlight: true, isNew: true },
         { name: "Security Video Guides", href: "/security-tutorials-video", icon: "🎬", highlight: true, isNew: true },
         { name: "Technical Security Docs", href: "/security-documentation", icon: "📑", highlight: true, isNew: true },
@@ -399,6 +400,14 @@ const MainHeader = () => {
                         highlight={true}
                       >
                         Comprehensive documentation for all vault types
+                      </ListItem>
+                      <ListItem
+                        href="/military-grade-security"
+                        title="🛡️ Military-Grade Security"
+                        highlight={true}
+                        isNew={true}
+                      >
+                        Triple-Chain Security™ system architecture and implementation
                       </ListItem>
                       <ListItem
                         href="/security-tutorials"
