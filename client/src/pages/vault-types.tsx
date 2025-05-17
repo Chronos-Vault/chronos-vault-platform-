@@ -569,8 +569,200 @@ const VaultTypesPage = () => {
               </Button>
             </div>
             
+            {/* Cross-Chain Distributed Storage Interactive Visualization */}
+            <motion.div
+              className="w-full mb-8 bg-black/40 backdrop-blur-sm rounded-xl p-6 border border-indigo-900/30 overflow-hidden relative"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6 }}
+            >
+              <div className="absolute inset-0 overflow-hidden">
+                <div className="absolute top-0 left-0 w-full h-full bg-[radial-gradient(circle_at_40%_40%,rgba(87,70,175,0.15),transparent_60%)]"></div>
+                <div className="absolute top-0 left-0 w-full h-full bg-[radial-gradient(circle_at_60%_60%,rgba(255,90,247,0.1),transparent_60%)]"></div>
+                
+                {/* Animated particles */}
+                <div className="absolute top-[40%] left-[30%] h-2 w-2 rounded-full bg-purple-500/70 animate-ping-slow"></div>
+                <div className="absolute top-[60%] left-[60%] h-2 w-2 rounded-full bg-blue-500/70 animate-ping-slow animation-delay-1000"></div>
+                <div className="absolute top-[30%] left-[70%] h-2 w-2 rounded-full bg-green-500/70 animate-ping-slow animation-delay-2000"></div>
+              </div>
+              
+              <div className="relative z-10">
+                <div className="flex items-center mb-4">
+                  <div className="flex -space-x-2 mr-4">
+                    <div className="w-10 h-10 rounded-full bg-purple-900/80 flex items-center justify-center border-2 border-purple-700">
+                      <img src="https://cryptologos.cc/logos/ethereum-eth-logo.svg" alt="ETH" className="h-5 w-5" />
+                    </div>
+                    <div className="w-10 h-10 rounded-full bg-blue-900/80 flex items-center justify-center border-2 border-blue-700">
+                      <img src="https://ton.org/download/ton_symbol.svg" alt="TON" className="h-5 w-5" />
+                    </div>
+                    <div className="w-10 h-10 rounded-full bg-green-900/80 flex items-center justify-center border-2 border-green-700">
+                      <img src="https://cryptologos.cc/logos/solana-sol-logo.svg" alt="Solana" className="h-5 w-5" />
+                    </div>
+                  </div>
+                  <div>
+                    <h3 className="text-xl font-bold text-white">Cross-Chain Distributed Storage</h3>
+                    <p className="text-gray-300">Revolutionary technology for unparalleled data security and redundancy</p>
+                  </div>
+                </div>
+                
+                <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
+                  {/* Left side: Blockchain network */}
+                  <div className="col-span-1 lg:col-span-2">
+                    <div className="relative h-60 bg-black/30 rounded-lg border border-gray-800 overflow-hidden">
+                      {/* Network visualization */}
+                      <svg className="absolute inset-0 w-full h-full" viewBox="0 0 400 240">
+                        {/* Connection lines */}
+                        <line x1="110" y1="60" x2="290" y2="60" stroke="url(#purpleGradient)" strokeWidth="2" strokeDasharray="6,4" className="animate-dash-medium" />
+                        <line x1="110" y1="120" x2="290" y2="120" stroke="url(#blueGradient)" strokeWidth="2" strokeDasharray="6,4" className="animate-dash-medium animation-delay-700" />
+                        <line x1="110" y1="180" x2="290" y2="180" stroke="url(#greenGradient)" strokeWidth="2" strokeDasharray="6,4" className="animate-dash-medium animation-delay-1500" />
+                        
+                        {/* Cross connections */}
+                        <line x1="110" y1="60" x2="290" y2="120" stroke="url(#purpleBlueGradient)" strokeWidth="1" strokeDasharray="3,3" className="animate-dash-slow" />
+                        <line x1="110" y1="120" x2="290" y2="180" stroke="url(#blueGreenGradient)" strokeWidth="1" strokeDasharray="3,3" className="animate-dash-slow animation-delay-500" />
+                        <line x1="110" y1="180" x2="290" y2="60" stroke="url(#greenPurpleGradient)" strokeWidth="1" strokeDasharray="3,3" className="animate-dash-slow animation-delay-1000" />
+                        
+                        {/* Gradients */}
+                        <defs>
+                          <linearGradient id="purpleGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                            <stop offset="0%" stopColor="#7B31FF" />
+                            <stop offset="100%" stopColor="#C561F6" />
+                          </linearGradient>
+                          <linearGradient id="blueGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                            <stop offset="0%" stopColor="#2962FF" />
+                            <stop offset="100%" stopColor="#56CCF2" />
+                          </linearGradient>
+                          <linearGradient id="greenGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                            <stop offset="0%" stopColor="#00E676" />
+                            <stop offset="100%" stopColor="#69F0AE" />
+                          </linearGradient>
+                          <linearGradient id="purpleBlueGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                            <stop offset="0%" stopColor="#7B31FF" />
+                            <stop offset="100%" stopColor="#2962FF" />
+                          </linearGradient>
+                          <linearGradient id="blueGreenGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                            <stop offset="0%" stopColor="#2962FF" />
+                            <stop offset="100%" stopColor="#00E676" />
+                          </linearGradient>
+                          <linearGradient id="greenPurpleGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                            <stop offset="0%" stopColor="#00E676" />
+                            <stop offset="100%" stopColor="#7B31FF" />
+                          </linearGradient>
+                        </defs>
+                        
+                        {/* Chain nodes - Left side (You) */}
+                        <g>
+                          <circle cx="110" cy="60" r="10" fill="#0D0A1F" stroke="#7B31FF" strokeWidth="2" />
+                          <text x="80" y="60" textAnchor="end" dominantBaseline="middle" fill="white" fontSize="12">Your Device</text>
+                          <circle cx="110" cy="60" r="4" fill="#7B31FF" className="animate-ping-slow" />
+                        </g>
+                        
+                        <g>
+                          <circle cx="110" cy="120" r="10" fill="#0D0A1F" stroke="#2962FF" strokeWidth="2" />
+                          <text x="80" y="120" textAnchor="end" dominantBaseline="middle" fill="white" fontSize="12">Your Device</text>
+                          <circle cx="110" cy="120" r="4" fill="#2962FF" className="animate-ping-slow animation-delay-400" />
+                        </g>
+                        
+                        <g>
+                          <circle cx="110" cy="180" r="10" fill="#0D0A1F" stroke="#00E676" strokeWidth="2" />
+                          <text x="80" y="180" textAnchor="end" dominantBaseline="middle" fill="white" fontSize="12">Your Device</text>
+                          <circle cx="110" cy="180" r="4" fill="#00E676" className="animate-ping-slow animation-delay-800" />
+                        </g>
+                        
+                        {/* Chain nodes - Right side (Blockchain) */}
+                        <g>
+                          <circle cx="290" cy="60" r="12" fill="#0D0A1F" stroke="#7B31FF" strokeWidth="2" />
+                          <image href="https://cryptologos.cc/logos/ethereum-eth-logo.svg" x="282" y="52" height="16" width="16" />
+                          <text x="320" y="60" textAnchor="start" dominantBaseline="middle" fill="white" fontSize="12">Ethereum</text>
+                          <circle cx="290" cy="60" r="16" fill="none" stroke="#7B31FF" strokeWidth="1" opacity="0.6" className="animate-ripple" />
+                        </g>
+                        
+                        <g>
+                          <circle cx="290" cy="120" r="12" fill="#0D0A1F" stroke="#2962FF" strokeWidth="2" />
+                          <image href="https://ton.org/download/ton_symbol.svg" x="282" y="112" height="16" width="16" />
+                          <text x="320" y="120" textAnchor="start" dominantBaseline="middle" fill="white" fontSize="12">TON</text>
+                          <circle cx="290" cy="120" r="16" fill="none" stroke="#2962FF" strokeWidth="1" opacity="0.6" className="animate-ripple animation-delay-500" />
+                        </g>
+                        
+                        <g>
+                          <circle cx="290" cy="180" r="12" fill="#0D0A1F" stroke="#00E676" strokeWidth="2" />
+                          <image href="https://cryptologos.cc/logos/solana-sol-logo.svg" x="282" y="172" height="16" width="16" />
+                          <text x="320" y="180" textAnchor="start" dominantBaseline="middle" fill="white" fontSize="12">Solana</text>
+                          <circle cx="290" cy="180" r="16" fill="none" stroke="#00E676" strokeWidth="1" opacity="0.6" className="animate-ripple animation-delay-1000" />
+                        </g>
+                        
+                        {/* Data packets */}
+                        <circle cx="150" cy="60" r="3" fill="#7B31FF" className="animate-move-right" />
+                        <circle cx="200" cy="120" r="3" fill="#2962FF" className="animate-move-right animation-delay-700" />
+                        <circle cx="250" cy="180" r="3" fill="#00E676" className="animate-move-right animation-delay-1400" />
+                      </svg>
+                      
+                      {/* Label overlay */}
+                      <div className="absolute top-3 left-3 bg-black/60 px-3 py-1 rounded-lg text-xs font-medium text-white backdrop-blur-sm">
+                        Live Cross-Chain Network
+                      </div>
+                    </div>
+                  </div>
+                  
+                  {/* Right side: Benefits */}
+                  <div className="col-span-1 lg:col-span-2 grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <motion.div 
+                      className="bg-black/30 rounded-lg p-3 border border-indigo-900/30"
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ duration: 0.4, delay: 0.1 }}
+                    >
+                      <div className="w-8 h-8 rounded-lg bg-purple-900/40 flex items-center justify-center mb-2">
+                        <Shield className="h-4 w-4 text-purple-400" />
+                      </div>
+                      <h4 className="font-medium text-white mb-1">Distributed Storage</h4>
+                      <p className="text-xs text-gray-400">Data is sharded across Ethereum, TON, and Solana for maximum redundancy and security</p>
+                    </motion.div>
+                    
+                    <motion.div 
+                      className="bg-black/30 rounded-lg p-3 border border-indigo-900/30"
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ duration: 0.4, delay: 0.2 }}
+                    >
+                      <div className="w-8 h-8 rounded-lg bg-blue-900/40 flex items-center justify-center mb-2">
+                        <RefreshCw className="h-4 w-4 text-blue-400" />
+                      </div>
+                      <h4 className="font-medium text-white mb-1">Self-Healing Vaults</h4>
+                      <p className="text-xs text-gray-400">Intelligent recovery protocols automatically rebuild data if any chain becomes compromised</p>
+                    </motion.div>
+                    
+                    <motion.div 
+                      className="bg-black/30 rounded-lg p-3 border border-indigo-900/30"
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ duration: 0.4, delay: 0.3 }}
+                    >
+                      <div className="w-8 h-8 rounded-lg bg-green-900/40 flex items-center justify-center mb-2">
+                        <KeyRound className="h-4 w-4 text-green-400" />
+                      </div>
+                      <h4 className="font-medium text-white mb-1">Multi-Chain Verification</h4>
+                      <p className="text-xs text-gray-400">Access requires cryptographic verification from multiple blockchains simultaneously</p>
+                    </motion.div>
+                    
+                    <motion.div 
+                      className="bg-black/30 rounded-lg p-3 border border-indigo-900/30"
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ duration: 0.4, delay: 0.4 }}
+                    >
+                      <div className="w-8 h-8 rounded-lg bg-amber-900/40 flex items-center justify-center mb-2">
+                        <Zap className="h-4 w-4 text-amber-400" />
+                      </div>
+                      <h4 className="font-medium text-white mb-1">Chain-Agnostic Recovery</h4>
+                      <p className="text-xs text-gray-400">Access your assets even if one or more blockchains experience downtime or attacks</p>
+                    </motion.div>
+                  </div>
+                </div>
+              </div>
+            </motion.div>
+            
             {/* Premium Feature Cards */}
-            <div className="grid grid-cols-1 md:grid-cols-3 xl:grid-cols-5 gap-4 mt-6">
+            <div className="grid grid-cols-1 md:grid-cols-3 xl:grid-cols-5 gap-4">
               <motion.div 
                 className="bg-black/40 backdrop-blur-sm rounded-xl p-4 border border-purple-900/40 relative overflow-hidden group"
                 whileHover={{ y: -5, boxShadow: "0 10px 25px -5px rgba(107, 0, 215, 0.3)" }}
