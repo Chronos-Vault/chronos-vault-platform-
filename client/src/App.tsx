@@ -37,6 +37,7 @@ import MultiSignatureVault from './pages/multi-signature-vault';
 import MultiSignatureVaultNew from './pages/multi-signature-vault-new';
 import SpecializedVaultMemory from './pages/specialized-vault-memory';
 import InvestmentDisciplineVault from './pages/investment-discipline-vault';
+import InvestmentDisciplineVaultDoc from './pages/investment-discipline-vault-doc';
 import BitcoinHalvingVault from './pages/bitcoin-halving-vault';
 import CrossChainVault from './pages/cross-chain-vault';
 import IntentInheritanceVault from './pages/intent-inheritance-vault';
@@ -129,7 +130,7 @@ function App() {
           <Route path="/multi-signature-vault" component={MultiSignatureVault} />
           <Route path="/multi-signature-vault-new" component={MultiSignatureVaultNew} />
           <Route path="/specialized-vault-memory" component={SpecializedVaultMemory} />
-          <Route path="/investment-discipline-vault" component={InvestmentDisciplineVault} />
+          <Route path="/investment-discipline-vault" component={InvestmentDisciplineVaultDoc} />
           <Route path="/bitcoin-halving-vault" component={BitcoinHalvingVault} />
           <Route path="/cross-chain-vault" component={CrossChainVault} />
           <Route path="/intent-inheritance-vault" component={IntentInheritanceVault} />
