@@ -135,6 +135,17 @@ const MainHeader = () => {
       ]
     },
     {
+      id: "security",
+      title: "Security Features",
+      icon: "🔒",
+      items: [
+        { name: "Cross-Chain Security", href: "/security-verification", icon: "🔐", highlight: true },
+        { name: "Behavioral Authentication", href: "/behavioral-authentication", icon: "🧠", highlight: true, isNew: true },
+        { name: "Quantum-Resistant", href: "/behavioral-authentication?tab=quantum", icon: "🛡️", highlight: true, isNew: true },
+        { name: "Social Recovery", href: "/behavioral-authentication?tab=social", icon: "👪", highlight: true, isNew: true },
+      ]
+    },
+    {
       id: "vault-school",
       title: "Vault School Hub",
       icon: "🎓",
@@ -154,13 +165,6 @@ const MainHeader = () => {
       title: "Features",
       icon: "✨",
       items: [
-        { name: "Security Features", type: "submenu", items: [
-            { name: "Cross-Chain Security", href: "/security-verification", icon: "🔒", highlight: true },
-            { name: "Behavioral Authentication", href: "/behavioral-authentication", icon: "🧠", highlight: true },
-            { name: "Quantum-Resistant", href: "/behavioral-authentication?tab=quantum", icon: "🛡️", highlight: true },
-            { name: "Social Recovery", href: "/behavioral-authentication?tab=social", icon: "👪", highlight: true },
-          ]
-        },
         { name: "Multi-Signature", href: "/multi-signature-vault", icon: "👥" },
         { name: "Bitcoin Halving", href: "/bitcoin-halving", icon: "₿" },
         { name: "Gift Crypto", href: "/gift-crypto", icon: "🎁", highlight: true },
