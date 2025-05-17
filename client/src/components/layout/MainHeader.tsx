@@ -154,7 +154,7 @@ const MainHeader = () => {
       title: "Features",
       icon: "✨",
       items: [
-        { name: "Security", href: "/security-verification-demo", icon: "🔒", highlight: true },
+        { name: "Security", href: "/security-verification", icon: "🔒", highlight: true },
         { name: "Multi-Signature", href: "/multi-signature-vault", icon: "👥" },
         { name: "Bitcoin Halving", href: "/bitcoin-halving", icon: "₿" },
         { name: "Gift Crypto", href: "/gift-crypto", icon: "🎁", highlight: true },
@@ -442,10 +442,10 @@ const MainHeader = () => {
                     className={cn(
                       navigationMenuTriggerStyle(),
                       "bg-transparent text-gray-300 hover:text-white hover:bg-[#6B00D7]/10",
-                      location === "/security-verification-demo" ? "text-white bg-[#6B00D7]/20" : ""
+                      location === "/security-verification" ? "text-white bg-[#6B00D7]/20" : ""
                     )}
                   >
-                    <Link href="/security-verification-demo">
+                    <Link href="/security-verification">
                       <span className="inline-flex items-center gap-1.5">
                         <span className="text-base">🔒</span> Security
                       </span>
