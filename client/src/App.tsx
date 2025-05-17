@@ -69,6 +69,7 @@ import CrossChainBridgeFixed from './pages/fixed-cross-chain-bridge';
 import TonWalletCrossChainBridge from './pages/ton-wallet-cross-chain-bridge';
 import CrossChainMonitor from './pages/cross-chain-monitor';
 import CrossChainMetricsPage from './pages/cross-chain-metrics';
+import CrossChainOperationsPage from './pages/cross-chain-operations';
 import CrossChainSecurity from './pages/cross-chain-security';
 import CrossChainAtomicSwap from './pages/cross-chain-atomic-swap';
 import CrossChainVsCrosschainAtomicSwap from './pages/cross-chain-vs-atomic-swap';
@@ -167,6 +168,7 @@ function App() {
           <Route path="/ton-wallet-cross-chain-bridge" component={TonWalletCrossChainBridge} />
           <Route path="/cross-chain-monitor" component={CrossChainMonitor} />
           <Route path="/cross-chain-metrics" component={CrossChainMetricsPage} />
+          <Route path="/cross-chain-operations" component={CrossChainOperationsPage} />
           <Route path="/cross-chain-security" component={CrossChainSecurity} />
           <Route path="/cross-chain-atomic-swap" component={CrossChainAtomicSwap} />
           <Route path="/cross-chain-vs-atomic-swap" component={CrossChainVsCrosschainAtomicSwap} />
