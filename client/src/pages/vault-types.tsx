@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useLocation } from 'wouter';
 import { Button } from '@/components/ui/button';
-import { ArrowLeft, ArrowRight, Check, ShieldCheck, Sparkles, Clock, Shield, Lock } from 'lucide-react';
+import { ArrowLeft, ArrowRight, Check, CheckCircle, Sparkles, Clock, Shield, Lock, User, RefreshCw, KeyRound, Zap } from 'lucide-react';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import { motion } from 'framer-motion';
 
