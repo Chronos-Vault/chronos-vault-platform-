@@ -23,39 +23,54 @@ const SecurityTutorialsVideo = () => {
       <PageHeader 
         title="Security Feature Video Guides"
         subtitle="Watch comprehensive tutorials on our advanced security features"
-        icon={<PlayCircleIcon className="w-10 h-10 text-primary" />}
+        icon={<PlayCircleIcon className="w-10 h-10 text-[#FF5AF7]" />}
       />
 
       <Tabs defaultValue="behavioral" className="w-full mt-8">
-        <TabsList className="grid w-full grid-cols-3">
-          <TabsTrigger value="behavioral">Behavioral Authentication</TabsTrigger>
-          <TabsTrigger value="quantum">Quantum-Resistant Cryptography</TabsTrigger>
-          <TabsTrigger value="social">Social Recovery</TabsTrigger>
+        <TabsList className="grid w-full grid-cols-3 bg-[#1A1A1A] border border-[#333] rounded-lg overflow-hidden p-0.5">
+          <TabsTrigger 
+            value="behavioral" 
+            className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-[#6B00D7] data-[state=active]:to-[#FF5AF7] data-[state=active]:text-white"
+          >
+            Behavioral Authentication
+          </TabsTrigger>
+          <TabsTrigger 
+            value="quantum"
+            className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-[#6B00D7] data-[state=active]:to-[#FF5AF7] data-[state=active]:text-white"
+          >
+            Quantum-Resistant Cryptography
+          </TabsTrigger>
+          <TabsTrigger 
+            value="social"
+            className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-[#6B00D7] data-[state=active]:to-[#FF5AF7] data-[state=active]:text-white"
+          >
+            Social Recovery
+          </TabsTrigger>
         </TabsList>
 
         {/* Behavioral Authentication Videos */}
         <TabsContent value="behavioral">
           <div className="grid gap-6 mt-8">
-            <Card>
+            <Card className="bg-[#1A1A1A] border border-[#333] shadow-xl">
               <CardHeader>
-                <CardTitle className="text-2xl">Behavioral Authentication Overview</CardTitle>
-                <CardDescription>
+                <CardTitle className="text-2xl text-white">Behavioral Authentication Overview</CardTitle>
+                <CardDescription className="text-gray-400">
                   A comprehensive introduction to how behavioral authentication protects your assets
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                <div className="aspect-video bg-gray-800 rounded-lg flex items-center justify-center">
+                <div className="aspect-video bg-[#111] rounded-lg flex items-center justify-center border border-[#333]">
                   {/* This would be replaced with an actual video player in production */}
                   <div className="text-center p-10">
-                    <PlayCircleIcon className="w-20 h-20 text-gray-200 mx-auto mb-4" />
+                    <PlayCircleIcon className="w-20 h-20 text-[#FF5AF7] mx-auto mb-4 opacity-70 hover:opacity-100 transition-opacity cursor-pointer" />
                     <p className="text-gray-200 text-lg">Video Tutorial: Introduction to Behavioral Authentication</p>
-                    <p className="text-gray-400 mt-2">Duration: 4:32</p>
+                    <p className="text-gray-500 mt-2">Duration: 4:32</p>
                   </div>
                 </div>
                 
                 <div className="mt-6">
-                  <h3 className="text-xl font-semibold">What You'll Learn</h3>
-                  <ul className="list-disc pl-6 mt-2 text-gray-700 space-y-1">
+                  <h3 className="text-xl font-semibold text-[#FF5AF7]">What You'll Learn</h3>
+                  <ul className="list-disc pl-6 mt-2 text-gray-400 space-y-1">
                     <li>How the system learns your transaction patterns</li>
                     <li>Setting up and training your behavioral profile</li>
                     <li>Understanding security notifications and approvals</li>
@@ -63,36 +78,36 @@ const SecurityTutorialsVideo = () => {
                   </ul>
                 </div>
               </CardContent>
-              <CardFooter className="flex justify-between">
-                <Button variant="outline">
+              <CardFooter className="flex justify-between border-t border-[#333] pt-4">
+                <Button variant="outline" className="border-[#333] text-gray-300 hover:bg-[#6B00D7]/10 hover:text-white">
                   <DownloadIcon className="mr-2 h-4 w-4" /> Download Transcript
                 </Button>
-                <Button onClick={() => navigate('/behavioral-authentication')}>
+                <Button onClick={() => navigate('/behavioral-authentication')} className="bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] hover:opacity-90 text-white">
                   Try It Yourself <ChevronRightIcon className="ml-2 h-4 w-4" />
                 </Button>
               </CardFooter>
             </Card>
             
-            <Card>
+            <Card className="bg-[#1A1A1A] border border-[#333] shadow-xl">
               <CardHeader>
-                <CardTitle className="text-2xl">Configuring Behavioral Authentication</CardTitle>
-                <CardDescription>
+                <CardTitle className="text-2xl text-white">Configuring Behavioral Authentication</CardTitle>
+                <CardDescription className="text-gray-400">
                   Step-by-step guide to setting up and customizing your security preferences
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                <div className="aspect-video bg-gray-800 rounded-lg flex items-center justify-center">
+                <div className="aspect-video bg-[#111] rounded-lg flex items-center justify-center border border-[#333]">
                   {/* This would be replaced with an actual video player in production */}
                   <div className="text-center p-10">
-                    <PlayCircleIcon className="w-20 h-20 text-gray-200 mx-auto mb-4" />
+                    <PlayCircleIcon className="w-20 h-20 text-[#FF5AF7] mx-auto mb-4 opacity-70 hover:opacity-100 transition-opacity cursor-pointer" />
                     <p className="text-gray-200 text-lg">Video Tutorial: Setting Up Behavioral Authentication</p>
-                    <p className="text-gray-400 mt-2">Duration: 6:15</p>
+                    <p className="text-gray-500 mt-2">Duration: 6:15</p>
                   </div>
                 </div>
                 
                 <div className="mt-6">
-                  <h3 className="text-xl font-semibold">Tutorial Contents</h3>
-                  <ul className="list-disc pl-6 mt-2 text-gray-700 space-y-1">
+                  <h3 className="text-xl font-semibold text-[#FF5AF7]">Tutorial Contents</h3>
+                  <ul className="list-disc pl-6 mt-2 text-gray-400 space-y-1">
                     <li>Accessing security settings and enabling the feature</li>
                     <li>Configuring sensitivity levels and alert thresholds</li>
                     <li>Setting up secondary verification methods</li>
@@ -100,11 +115,11 @@ const SecurityTutorialsVideo = () => {
                   </ul>
                 </div>
               </CardContent>
-              <CardFooter className="flex justify-between">
-                <Button variant="outline">
+              <CardFooter className="flex justify-between border-t border-[#333] pt-4">
+                <Button variant="outline" className="border-[#333] text-gray-300 hover:bg-[#6B00D7]/10 hover:text-white">
                   <DownloadIcon className="mr-2 h-4 w-4" /> Download Tutorial PDF
                 </Button>
-                <Button onClick={() => navigate('/security-tutorials')}>
+                <Button onClick={() => navigate('/security-tutorials')} className="bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] hover:opacity-90 text-white">
                   Written Instructions <ChevronRightIcon className="ml-2 h-4 w-4" />
                 </Button>
               </CardFooter>
@@ -115,26 +130,26 @@ const SecurityTutorialsVideo = () => {
         {/* Quantum-Resistant Cryptography Videos */}
         <TabsContent value="quantum">
           <div className="grid gap-6 mt-8">
-            <Card>
+            <Card className="bg-[#1A1A1A] border border-[#333] shadow-xl">
               <CardHeader>
-                <CardTitle className="text-2xl">Quantum Computing Threats Explained</CardTitle>
-                <CardDescription>
+                <CardTitle className="text-2xl text-white">Quantum Computing Threats Explained</CardTitle>
+                <CardDescription className="text-gray-400">
                   Understanding why quantum resistance is crucial for long-term asset security
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                <div className="aspect-video bg-gray-800 rounded-lg flex items-center justify-center">
+                <div className="aspect-video bg-[#111] rounded-lg flex items-center justify-center border border-[#333]">
                   {/* This would be replaced with an actual video player in production */}
                   <div className="text-center p-10">
-                    <PlayCircleIcon className="w-20 h-20 text-gray-200 mx-auto mb-4" />
+                    <PlayCircleIcon className="w-20 h-20 text-[#FF5AF7] mx-auto mb-4 opacity-70 hover:opacity-100 transition-opacity cursor-pointer" />
                     <p className="text-gray-200 text-lg">Video: Quantum Computing & Blockchain Security</p>
-                    <p className="text-gray-400 mt-2">Duration: 7:48</p>
+                    <p className="text-gray-500 mt-2">Duration: 7:48</p>
                   </div>
                 </div>
                 
                 <div className="mt-6">
-                  <h3 className="text-xl font-semibold">Video Content</h3>
-                  <ul className="list-disc pl-6 mt-2 text-gray-700 space-y-1">
+                  <h3 className="text-xl font-semibold text-[#FF5AF7]">Video Content</h3>
+                  <ul className="list-disc pl-6 mt-2 text-gray-400 space-y-1">
                     <li>How quantum computers threaten current cryptography</li>
                     <li>Timeline of quantum computing development</li>
                     <li>Impact on blockchain security and encryption</li>
@@ -142,36 +157,36 @@ const SecurityTutorialsVideo = () => {
                   </ul>
                 </div>
               </CardContent>
-              <CardFooter className="flex justify-between">
-                <Button variant="outline">
+              <CardFooter className="flex justify-between border-t border-[#333] pt-4">
+                <Button variant="outline" className="border-[#333] text-gray-300 hover:bg-[#6B00D7]/10 hover:text-white">
                   <DownloadIcon className="mr-2 h-4 w-4" /> Download Whitepaper
                 </Button>
-                <Button onClick={() => navigate('/behavioral-authentication?tab=quantum')}>
+                <Button onClick={() => navigate('/behavioral-authentication?tab=quantum')} className="bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] hover:opacity-90 text-white">
                   Explore Quantum Protection <ChevronRightIcon className="ml-2 h-4 w-4" />
                 </Button>
               </CardFooter>
             </Card>
             
-            <Card>
+            <Card className="bg-[#1A1A1A] border border-[#333] shadow-xl">
               <CardHeader>
-                <CardTitle className="text-2xl">Implementing Quantum-Resistant Vault Security</CardTitle>
-                <CardDescription>
+                <CardTitle className="text-2xl text-white">Implementing Quantum-Resistant Vault Security</CardTitle>
+                <CardDescription className="text-gray-400">
                   How to activate and manage quantum-resistant protection for your assets
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                <div className="aspect-video bg-gray-800 rounded-lg flex items-center justify-center">
+                <div className="aspect-video bg-[#111] rounded-lg flex items-center justify-center border border-[#333]">
                   {/* This would be replaced with an actual video player in production */}
                   <div className="text-center p-10">
-                    <PlayCircleIcon className="w-20 h-20 text-gray-200 mx-auto mb-4" />
+                    <PlayCircleIcon className="w-20 h-20 text-[#FF5AF7] mx-auto mb-4 opacity-70 hover:opacity-100 transition-opacity cursor-pointer" />
                     <p className="text-gray-200 text-lg">Video Tutorial: Setting Up Quantum Protection</p>
-                    <p className="text-gray-400 mt-2">Duration: 5:22</p>
+                    <p className="text-gray-500 mt-2">Duration: 5:22</p>
                   </div>
                 </div>
                 
                 <div className="mt-6">
-                  <h3 className="text-xl font-semibold">Tutorial Contents</h3>
-                  <ul className="list-disc pl-6 mt-2 text-gray-700 space-y-1">
+                  <h3 className="text-xl font-semibold text-[#FF5AF7]">Tutorial Contents</h3>
+                  <ul className="list-disc pl-6 mt-2 text-gray-400 space-y-1">
                     <li>Enabling quantum-resistant encryption for your vault</li>
                     <li>Choosing appropriate security levels based on asset value</li>
                     <li>Setting up key rotation schedules</li>
@@ -179,11 +194,11 @@ const SecurityTutorialsVideo = () => {
                   </ul>
                 </div>
               </CardContent>
-              <CardFooter className="flex justify-between">
-                <Button variant="outline">
+              <CardFooter className="flex justify-between border-t border-[#333] pt-4">
+                <Button variant="outline" className="border-[#333] text-gray-300 hover:bg-[#6B00D7]/10 hover:text-white">
                   <InfoIcon className="mr-2 h-4 w-4" /> Technical Specifications
                 </Button>
-                <Button onClick={() => navigate('/security-tutorials')}>
+                <Button onClick={() => navigate('/security-tutorials')} className="bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] hover:opacity-90 text-white">
                   Written Guide <ChevronRightIcon className="ml-2 h-4 w-4" />
                 </Button>
               </CardFooter>
@@ -194,26 +209,26 @@ const SecurityTutorialsVideo = () => {
         {/* Social Recovery Videos */}
         <TabsContent value="social">
           <div className="grid gap-6 mt-8">
-            <Card>
+            <Card className="bg-[#1A1A1A] border border-[#333] shadow-xl">
               <CardHeader>
-                <CardTitle className="text-2xl">Social Recovery System Introduction</CardTitle>
-                <CardDescription>
+                <CardTitle className="text-2xl text-white">Social Recovery System Introduction</CardTitle>
+                <CardDescription className="text-gray-400">
                   Understanding the guardian-based approach to secure asset recovery
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                <div className="aspect-video bg-gray-800 rounded-lg flex items-center justify-center">
+                <div className="aspect-video bg-[#111] rounded-lg flex items-center justify-center border border-[#333]">
                   {/* This would be replaced with an actual video player in production */}
                   <div className="text-center p-10">
-                    <PlayCircleIcon className="w-20 h-20 text-gray-200 mx-auto mb-4" />
+                    <PlayCircleIcon className="w-20 h-20 text-[#FF5AF7] mx-auto mb-4 opacity-70 hover:opacity-100 transition-opacity cursor-pointer" />
                     <p className="text-gray-200 text-lg">Video: Social Recovery Explained</p>
-                    <p className="text-gray-400 mt-2">Duration: 6:05</p>
+                    <p className="text-gray-500 mt-2">Duration: 6:05</p>
                   </div>
                 </div>
                 
                 <div className="mt-6">
-                  <h3 className="text-xl font-semibold">What You'll Learn</h3>
-                  <ul className="list-disc pl-6 mt-2 text-gray-700 space-y-1">
+                  <h3 className="text-xl font-semibold text-[#FF5AF7]">What You'll Learn</h3>
+                  <ul className="list-disc pl-6 mt-2 text-gray-400 space-y-1">
                     <li>Benefits of a social recovery system over seed phrases</li>
                     <li>How tiered guardian authority works</li>
                     <li>Understanding time-locked recovery mechanisms</li>
@@ -221,36 +236,36 @@ const SecurityTutorialsVideo = () => {
                   </ul>
                 </div>
               </CardContent>
-              <CardFooter className="flex justify-between">
-                <Button variant="outline">
+              <CardFooter className="flex justify-between border-t border-[#333] pt-4">
+                <Button variant="outline" className="border-[#333] text-gray-300 hover:bg-[#6B00D7]/10 hover:text-white">
                   <DownloadIcon className="mr-2 h-4 w-4" /> Download Transcript
                 </Button>
-                <Button onClick={() => navigate('/behavioral-authentication?tab=social')}>
+                <Button onClick={() => navigate('/behavioral-authentication?tab=social')} className="bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] hover:opacity-90 text-white">
                   Explore Social Recovery <ChevronRightIcon className="ml-2 h-4 w-4" />
                 </Button>
               </CardFooter>
             </Card>
             
-            <Card>
+            <Card className="bg-[#1A1A1A] border border-[#333] shadow-xl">
               <CardHeader>
-                <CardTitle className="text-2xl">Setting Up Your Guardian Network</CardTitle>
-                <CardDescription>
+                <CardTitle className="text-2xl text-white">Setting Up Your Guardian Network</CardTitle>
+                <CardDescription className="text-gray-400">
                   Complete walkthrough of configuring your social recovery system
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                <div className="aspect-video bg-gray-800 rounded-lg flex items-center justify-center">
+                <div className="aspect-video bg-[#111] rounded-lg flex items-center justify-center border border-[#333]">
                   {/* This would be replaced with an actual video player in production */}
                   <div className="text-center p-10">
-                    <PlayCircleIcon className="w-20 h-20 text-gray-200 mx-auto mb-4" />
+                    <PlayCircleIcon className="w-20 h-20 text-[#FF5AF7] mx-auto mb-4 opacity-70 hover:opacity-100 transition-opacity cursor-pointer" />
                     <p className="text-gray-200 text-lg">Video Tutorial: Creating Your Guardian Network</p>
-                    <p className="text-gray-400 mt-2">Duration: 8:40</p>
+                    <p className="text-gray-500 mt-2">Duration: 8:40</p>
                   </div>
                 </div>
                 
                 <div className="mt-6">
-                  <h3 className="text-xl font-semibold">Tutorial Contents</h3>
-                  <ul className="list-disc pl-6 mt-2 text-gray-700 space-y-1">
+                  <h3 className="text-xl font-semibold text-[#FF5AF7]">Tutorial Contents</h3>
+                  <ul className="list-disc pl-6 mt-2 text-gray-400 space-y-1">
                     <li>Selecting appropriate guardians for your recovery network</li>
                     <li>Assigning guardian roles and authority levels</li>
                     <li>Setting verification thresholds and time-lock periods</li>
@@ -259,11 +274,11 @@ const SecurityTutorialsVideo = () => {
                   </ul>
                 </div>
               </CardContent>
-              <CardFooter className="flex justify-between">
-                <Button variant="outline">
+              <CardFooter className="flex justify-between border-t border-[#333] pt-4">
+                <Button variant="outline" className="border-[#333] text-gray-300 hover:bg-[#6B00D7]/10 hover:text-white">
                   <DownloadIcon className="mr-2 h-4 w-4" /> Download Setup Guide
                 </Button>
-                <Button onClick={() => navigate('/multi-signature-vault')}>
+                <Button onClick={() => navigate('/multi-signature-vault')} className="bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] hover:opacity-90 text-white">
                   Related: Multi-Signature Vault <ChevronRightIcon className="ml-2 h-4 w-4" />
                 </Button>
               </CardFooter>
