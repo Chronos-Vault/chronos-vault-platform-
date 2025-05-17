@@ -85,6 +85,7 @@ import CvtToken from './pages/cvt-token';
 import PremiumFeatures from './pages/premium-features';
 import PremiumPayment from './pages/premium-payment';
 import Subscription from './pages/subscription';
+import GiftCrypto from './pages/gift-crypto';
 
 function App() {
   return (
@@ -179,6 +180,7 @@ function App() {
           <Route path="/premium-features" component={PremiumFeatures} />
           <Route path="/premium-payment" component={PremiumPayment} />
           <Route path="/subscription" component={Subscription} />
+          <Route path="/gift-crypto" component={GiftCrypto} />
           
           {/* 404 - must be last */}
           <Route component={NotFound} />
