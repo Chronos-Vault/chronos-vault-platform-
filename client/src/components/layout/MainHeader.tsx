@@ -330,6 +330,51 @@ const MainHeader = () => {
                 <NavigationMenuItem>
                   <NavigationMenuTrigger className="bg-transparent text-gray-300 hover:text-white hover:bg-[#6B00D7]/10">
                     <span className="inline-flex items-center gap-1.5">
+                      <span className="text-base">✨</span> Features
+                    </span>
+                  </NavigationMenuTrigger>
+                  <NavigationMenuContent>
+                    <ul className="grid w-[400px] gap-2 p-4 bg-[#1A1A1A] border border-[#333] shadow-xl">
+                      <ListItem
+                        href="/security-verification-demo"
+                        title="🔒 Security"
+                        highlight={true}
+                      >
+                        Learn about our advanced security protocols and verification system
+                      </ListItem>
+                      <ListItem
+                        href="/multi-signature-vault"
+                        title="👥 Multi-Signature"
+                      >
+                        Enhanced security requiring multiple approvals for access
+                      </ListItem>
+                      <ListItem 
+                        href="/bitcoin-halving" 
+                        title="₿ Bitcoin Halving"
+                      >
+                        Specialized vaults aligned with Bitcoin halving events
+                      </ListItem>
+                      <ListItem 
+                        href="/gift-crypto" 
+                        title="🎁 Gift Crypto"
+                        highlight={true}
+                      >
+                        Create and send crypto gift vaults to friends and family
+                      </ListItem>
+                      <ListItem 
+                        href="/token-vaults" 
+                        title="🏦 Token Vaults"
+                        highlight={true}
+                      >
+                        Specialized vaults for token management and staking
+                      </ListItem>
+                    </ul>
+                  </NavigationMenuContent>
+                </NavigationMenuItem>
+
+                <NavigationMenuItem>
+                  <NavigationMenuTrigger className="bg-transparent text-gray-300 hover:text-white hover:bg-[#6B00D7]/10">
+                    <span className="inline-flex items-center gap-1.5">
                       <span className="text-base">🎓</span> Vault School
                     </span>
                   </NavigationMenuTrigger>
