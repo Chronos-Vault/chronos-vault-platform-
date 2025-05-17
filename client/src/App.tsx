@@ -134,7 +134,8 @@ function App() {
           <Route path="/multi-signature-vault" component={MultiSignatureVault} />
           <Route path="/multi-signature-vault-new" component={MultiSignatureVaultNew} />
           <Route path="/specialized-vault-memory" component={SpecializedVaultMemory} />
-          <Route path="/investment-discipline-vault" component={InvestmentDisciplineVaultDoc} />
+          <Route path="/investment-discipline-vault" component={InvestmentDisciplineVault} />
+          <Route path="/investment-discipline-vault-doc" component={InvestmentDisciplineVaultDoc} />
           <Route path="/bitcoin-halving-vault" component={BitcoinHalvingVault} />
           <Route path="/cross-chain-vault" component={CrossChainVault} />
           <Route path="/intent-inheritance-vault" component={IntentInheritanceVault} />
