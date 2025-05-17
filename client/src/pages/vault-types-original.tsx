@@ -183,6 +183,39 @@ const VAULT_TYPES = [
     securityLevel: 4,
     complexityLevel: 3,
     tags: ["Triple-Chain", "Zero-Knowledge", "Advanced Security"]
+  },
+  {
+    id: "ai-investment",
+    name: "AI-Assisted Investment Vault",
+    description: "AI-powered market analysis for optimal trading",
+    icon: "🤖",
+    color: "#00E676",
+    features: ["AI market trend analysis", "Smart trading suggestions", "Customizable investment strategies", "Automated risk assessment"],
+    securityLevel: 5,
+    complexityLevel: 4,
+    tags: ["Triple-Chain", "Zero-Knowledge", "Advanced Security", "AI-Powered"]
+  },
+  {
+    id: "milestone-based",
+    name: "Milestone-Based Release Vault",
+    description: "Unlocks assets when you achieve personal goals",
+    icon: "🏆",
+    color: "#FF9800",
+    features: ["Achievement-based unlocking", "Progressive asset release", "Customizable goal verification", "Reward system integration"],
+    securityLevel: 4,
+    complexityLevel: 3,
+    tags: ["Triple-Chain", "Zero-Knowledge", "Advanced Security"]
+  },
+  {
+    id: "family-heritage",
+    name: "Family Heritage Vault",
+    description: "Secure generational wealth transfer with education",
+    icon: "👪",
+    color: "#E040FB",
+    features: ["Multi-generational planning", "Educational content integration", "Gradual inheritance mechanism", "Family governance protocols"],
+    securityLevel: 5,
+    complexityLevel: 4,
+    tags: ["Triple-Chain", "Zero-Knowledge", "Advanced Security", "Quantum-Resistant"]
   }
 ];
 
