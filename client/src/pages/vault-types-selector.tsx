@@ -1,17 +1,98 @@
-import React, { useState } from 'react';
-import { useLocation, Link } from 'wouter';
+import React, { useState, useEffect } from 'react';
+import { useLocation } from 'wouter';
 import VaultTypeSelector, { SpecializedVaultType } from '@/components/vault/vault-type-selector';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
-import { cn } from '@/lib/utils';
-import { ArrowLeft, ArrowRight, AlertCircle, ChevronRight, Shield, Star, LockKeyhole, Check } from 'lucide-react';
-import { VaultCreationProgress, getDefaultVaultCreationSteps, Step } from '@/components/vault/create-vault-progress';
+import { 
+  ArrowLeft, ArrowRight, AlertCircle, ChevronRight, Shield, Star, 
+  LockKeyhole, Check, Sparkles, Cpu, Braces, Fingerprint, Clock, BarChart4 as BarChart
+} from 'lucide-react';
+import { VaultCreationProgress, getDefaultVaultCreationSteps } from '@/components/vault/create-vault-progress';
 
 const VaultTypesSelector = () => {
   const [_, navigate] = useLocation();
   const { toast } = useToast();
   const [selectedVaultType, setSelectedVaultType] = useState<SpecializedVaultType>('standard');
   const [validationError, setValidationError] = useState<string | null>(null);
+  const [activeCategory, setActiveCategory] = useState<string>('innovative');
+  const [showAnimation, setShowAnimation] = useState<boolean>(false);
+  
+  useEffect(() => {
+    // Start animations after component mounts
+    const timer = setTimeout(() => {
+      setShowAnimation(true);
+    }, 100);
+    
+    return () => clearTimeout(timer);
+  }, []);
+  
+  const vaultCategories = [
+    {
+      id: "innovative",
+      name: "Innovative Smart Vaults",
+      color: "#00E676",
+      icon: <Sparkles className="h-5 w-5 text-[#00E676]" />,
+      description: "Cutting-edge vaults with advanced AI and smart technology integration",
+      vaultTypes: ["AI-Assisted Investment", "AI Intent Inheritance", "Milestone-Based Release", "Family Heritage"]
+    },
+    {
+      id: "asset-management",
+      name: "Asset & Investment Management",
+      color: "#3F51FF",
+      icon: <BarChart className="h-5 w-5 text-[#3F51FF]" />,
+      description: "Specialized vaults for optimal investment strategies and asset protection",
+      vaultTypes: ["Investment Discipline", "Cross-Chain Verification", "Fragment Vault", "Quantum-Resistant"]
+    },
+    {
+      id: "specialized",
+      name: "Specialized Purpose Vaults",
+      color: "#FF5AF7",
+      icon: <Cpu className="h-5 w-5 text-[#FF5AF7]" />,
+      description: "Vaults designed for specific use cases and unique requirements",
+      vaultTypes: ["Memory Vault", "Geolocation Vault", "Smart Contract Vault", "NFT-Powered Vault"]
+    },
+    {
+      id: "advanced-security",
+      name: "Advanced Security Vaults",
+      color: "#9E00FF",
+      icon: <Shield className="h-5 w-5 text-[#9E00FF]" />,
+      description: "Enhanced protection with multiple verification layers and distributed security",
+      vaultTypes: ["Multi-Signature Vault", "Biometric Vault", "Unique Security Vault", "Dynamic Vault"]
+    },
+    {
+      id: "basic-time",
+      name: "Basic Time Vaults",
+      color: "#00D7C3",
+      icon: <Clock className="h-5 w-5 text-[#00D7C3]" />,
+      description: "Simple and reliable time-locked storage with essential security features",
+      vaultTypes: ["Advanced Time-Lock Vault", "Sovereign Fortress Vault™"]
+    }
+  ];
+  
+  const handleCategorySelect = (categoryId: string) => {
+    setActiveCategory(categoryId);
+    
+    // Set default vault type for the category
+    switch(categoryId) {
+      case 'innovative':
+        setSelectedVaultType('ai-investment');
+        break;
+      case 'asset-management':
+        setSelectedVaultType('diamond-hands');
+        break;
+      case 'specialized':
+        setSelectedVaultType('memory-vault');
+        break;
+      case 'advanced-security':
+        setSelectedVaultType('multi-signature');
+        break;
+      case 'basic-time':
+        setSelectedVaultType('time-lock');
+        break;
+      default:
+        setSelectedVaultType('standard');
+    }
+  };
   
   const handleVaultTypeSelect = (type: SpecializedVaultType) => {
     setSelectedVaultType(type);
@@ -92,27 +173,35 @@ const VaultTypesSelector = () => {
   };
   
   return (
-    <div className="container mx-auto p-4 sm:p-6 max-w-7xl">
-      <div className="mb-6 flex flex-col sm:flex-row sm:items-center justify-between">
-        <div>
-          <h1 className="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] text-transparent bg-clip-text">
-            Choose Your Vault Type
+    <div className="container mx-auto p-4 sm:p-6 max-w-7xl perspective-1200">
+      {/* Animated Header with 3D Text Effect */}
+      <div className="mb-8 flex flex-col sm:flex-row sm:items-center justify-between">
+        <div className={`transform-style-3d ${showAnimation ? 'animate-fade-in-up' : ''}`}>
+          <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold bg-gradient-to-r from-[#6B00D7] via-[#BB86FC] to-[#FF5AF7] bg-300% animate-text-shine text-transparent bg-clip-text title-3d-animated">
+            Vault Selection
           </h1>
-          <p className="text-gray-400 mt-1">
-            Select the type of vault that best fits your security needs
+          <p className="text-gray-300 mt-2 text-lg">
+            Choose from our <span className="text-[#FF5AF7] font-semibold">19 specialized vault solutions</span> with unmatched security
           </p>
         </div>
         <Button 
-          variant="ghost" 
-          className="flex items-center text-gray-400 hover:text-white mt-2 sm:mt-0"
+          variant="outline" 
+          className="flex items-center bg-black/30 backdrop-blur-sm border-gray-700 hover:border-gray-500 hover:bg-black/40 mt-4 sm:mt-0 transition-all duration-300"
           onClick={handleBack}
         >
           <ArrowLeft className="mr-2 h-4 w-4" />
-          Back to My Vaults
+          Back to Dashboard
         </Button>
       </div>
       
-      <div className="relative z-10 mb-8">
+      {/* Main Content Area with Glowing Background */}
+      <GlowingBackground 
+        className="rounded-xl overflow-hidden mb-8 backdrop-blur-md p-6"
+        primaryColor="#6B00D7"
+        secondaryColor="#FF5AF7"
+        intensity="medium"
+        animate={true}
+      >
         {/* Progress Indicator */}
         <div className="mb-6">
           <VaultCreationProgress 
@@ -370,7 +459,7 @@ const VaultTypesSelector = () => {
             )}
           </Button>
         </div>
-      </div>
+      </GlowingBackground>
     </div>
   );
 };

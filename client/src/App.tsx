@@ -28,6 +28,7 @@ import AdvancedVaultCreationPage from './pages/advanced-vault-creation';
 import MyVaults from './pages/my-vaults';
 import VaultSchool from './pages/vault-school';
 import VaultTypesSelector from './pages/vault-types-selector';
+import VaultTypesSelectorNew from './pages/vault-types-selector-new';
 import VaultTypes from './pages/vault-types-original';
 import VaultDetails from './pages/vault-details';
 import VaultExplorer from './pages/vault-explorer';
@@ -136,7 +137,7 @@ function App() {
           {/* Vault Management Pages */}
           <Route path="/my-vaults" component={MyVaults} />
           <Route path="/vault-school" component={VaultSchool} />
-          <Route path="/vault-types-selector" component={VaultTypesSelector} />
+          <Route path="/vault-types-selector" component={VaultTypesSelectorNew} />
           <Route path="/vault-types" component={VaultTypes} />
           <Route path="/vault-details" component={VaultDetails} />
           <Route path="/vault-explorer" component={VaultExplorer} />
