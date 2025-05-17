@@ -32,6 +32,7 @@ import VaultExplorer from './pages/vault-explorer';
 // Standard Vault Types
 import BiometricVault from './pages/biometric-vault';
 import GeoVault from './pages/geo-vault';
+import GeoVaultDocPage from './pages/geo-vault-doc';
 import SmartContractVault from './pages/smart-contract-vault';
 import MultiSignatureVault from './pages/multi-signature-vault';
 import MultiSignatureVaultNew from './pages/multi-signature-vault-new';
@@ -125,7 +126,7 @@ function App() {
           
           {/* Standard Vault Types */}
           <Route path="/biometric-vault" component={BiometricVault} />
-          <Route path="/geo-vault" component={GeoVault} />
+          <Route path="/geo-vault" component={GeoVaultDocPage} />
           <Route path="/smart-contract-vault" component={SmartContractVault} />
           <Route path="/multi-signature-vault" component={MultiSignatureVault} />
           <Route path="/multi-signature-vault-new" component={MultiSignatureVaultNew} />
