@@ -73,6 +73,7 @@ import CrossChainOperationsPage from './pages/cross-chain-operations';
 import CrossChainSecurity from './pages/cross-chain-security';
 import CrossChainAtomicSwap from './pages/cross-chain-atomic-swap';
 import CrossChainVsCrosschainAtomicSwap from './pages/cross-chain-vs-atomic-swap';
+import CrossChainFeeMonitorPage from './pages/cross-chain-fee-monitor';
 
 // Wallet Integration Pages
 import ConnectTon from './pages/connect-ton';
@@ -173,6 +174,7 @@ function App() {
           <Route path="/cross-chain-security" component={CrossChainSecurity} />
           <Route path="/cross-chain-atomic-swap" component={CrossChainAtomicSwap} />
           <Route path="/cross-chain-vs-atomic-swap" component={CrossChainVsCrosschainAtomicSwap} />
+          <Route path="/cross-chain-fee-monitor" component={CrossChainFeeMonitorPage} />
           
           {/* Wallet Integration Pages */}
           <Route path="/connect-ton" component={ConnectTon} />
