@@ -49,6 +49,8 @@ import Whitepaper from './pages/whitepaper';
 import ProjectWhitepaper from './pages/project-whitepaper';
 import SecurityProtocols from './pages/security-protocols';
 import CvtTokenomics from './pages/cvt-tokenomics';
+import Roadmap from './pages/roadmap';
+import Team from './pages/team';
 // Bitcoin Halving Pages
 import BitcoinHalvingPage from './pages/bitcoin-halving';
 import CvtUtility from './pages/cvt-utility';
@@ -143,6 +145,8 @@ function App() {
           <Route path="/project-whitepaper" component={ProjectWhitepaper} />
           <Route path="/security-protocols" component={SecurityProtocols} />
           <Route path="/cvt-tokenomics" component={CvtTokenomics} />
+          <Route path="/roadmap" component={Roadmap} />
+          <Route path="/team" component={Team} />
           <Route path="/cvt-utility" component={CvtUtility} />
           <Route path="/cvt-utility-new" component={CvtUtilityNew} />
           <Route path="/revolutionary-features" component={RevolutionaryFeatures} />
