@@ -7,7 +7,19 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 export default function BehavioralAuthenticationPage() {
-  const [_, navigate] = useLocation();
+  const [location, navigate] = useLocation();
+  
+  // Parse the URL to get the tab from query parameters
+  const getDefaultTab = () => {
+    if (typeof window !== 'undefined') {
+      const url = new URL(window.location.href);
+      const tab = url.searchParams.get('tab');
+      if (tab === 'quantum' || tab === 'social') {
+        return tab;
+      }
+    }
+    return 'behavioral';
+  };
 
   return (
     <div className="container mx-auto py-8 px-4 max-w-7xl">
@@ -23,7 +35,7 @@ export default function BehavioralAuthenticationPage() {
       </div>
 
       <div className="mb-8">
-        <Tabs defaultValue="behavioral" className="w-full">
+        <Tabs defaultValue={getDefaultTab()} className="w-full">
           <TabsList className="grid w-full grid-cols-3 bg-[#1A1A1A] border border-[#333] rounded-lg overflow-hidden p-0.5">
             <TabsTrigger 
               value="behavioral" 

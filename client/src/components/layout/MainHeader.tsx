@@ -154,9 +154,7 @@ const MainHeader = () => {
       title: "Features",
       icon: "✨",
       items: [
-        { 
-          name: "Security Features", 
-          subItems: [
+        { name: "Security Features", type: "submenu", items: [
             { name: "Cross-Chain Security", href: "/security-verification", icon: "🔒", highlight: true },
             { name: "Behavioral Authentication", href: "/behavioral-authentication", icon: "🧠", highlight: true },
             { name: "Quantum-Resistant", href: "/behavioral-authentication?tab=quantum", icon: "🛡️", highlight: true },
@@ -445,6 +443,49 @@ const MainHeader = () => {
                 </NavigationMenuItem>
 
 
+
+                <NavigationMenuItem>
+                  <NavigationMenuTrigger className="bg-transparent text-gray-300 hover:text-white hover:bg-[#6B00D7]/10">
+                    <span className="inline-flex items-center gap-1.5">
+                      <span className="text-base">🔒</span> Security Features
+                    </span>
+                  </NavigationMenuTrigger>
+                  <NavigationMenuContent>
+                    <ul className="grid w-[400px] gap-2 p-4 bg-[#1A1A1A] border border-[#333] shadow-xl">
+                      <ListItem 
+                        href="/security-verification" 
+                        title="🔐 Cross-Chain Security"
+                        highlight={true}
+                      >
+                        Advanced cross-chain verification security
+                      </ListItem>
+                      <ListItem 
+                        href="/behavioral-authentication" 
+                        title="🧠 Behavioral Authentication"
+                        highlight={true}
+                        isNew={true}
+                      >
+                        AI-powered security that learns your patterns
+                      </ListItem>
+                      <ListItem 
+                        href="/behavioral-authentication?tab=quantum" 
+                        title="🛡️ Quantum-Resistant"
+                        highlight={true}
+                        isNew={true}
+                      >
+                        Future-proof encryption against quantum computing
+                      </ListItem>
+                      <ListItem 
+                        href="/behavioral-authentication?tab=social" 
+                        title="👪 Social Recovery"
+                        highlight={true}
+                        isNew={true}
+                      >
+                        Tiered recovery with trusted contacts
+                      </ListItem>
+                    </ul>
+                  </NavigationMenuContent>
+                </NavigationMenuItem>
 
                 <NavigationMenuItem>
                   <NavigationMenuTrigger className="bg-transparent text-gray-300 hover:text-white hover:bg-[#6B00D7]/10">
