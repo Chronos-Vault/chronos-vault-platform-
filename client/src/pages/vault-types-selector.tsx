@@ -8,8 +8,8 @@ import {
   LockKeyhole, Check, Sparkles, Cpu, Braces, Fingerprint, Clock, BarChart4 as BarChart
 } from 'lucide-react';
 import { VaultCreationProgress, getDefaultVaultCreationSteps } from '@/components/vault/create-vault-progress';
-import GlowingBackground from '../components/effects/glowing-background';
 import { cn } from '@/lib/utils';
+import '../styles/animate-gradient.css';
 
 const VaultTypesSelector = () => {
   const [_, navigate] = useLocation();
@@ -173,331 +173,369 @@ const VaultTypesSelector = () => {
   const handleBack = () => {
     navigate('/my-vaults');
   };
+
+  // Get current category color
+  const getCategoryColor = (opacity = 1) => {
+    const category = vaultCategories.find(cat => cat.id === activeCategory);
+    return category ? `${category.color}${Math.round(opacity * 255).toString(16).padStart(2, '0')}` : '#6B00D7';
+  };
   
   return (
-    <div className="container mx-auto p-4 sm:p-6 max-w-7xl perspective-1200">
-      {/* Animated Header with 3D Text Effect */}
-      <div className="mb-8 flex flex-col sm:flex-row sm:items-center justify-between">
-        <div className={`transform-style-3d ${showAnimation ? 'animate-fade-in-up' : ''}`}>
-          <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold bg-gradient-to-r from-[#6B00D7] via-[#BB86FC] to-[#FF5AF7] bg-300% animate-text-shine text-transparent bg-clip-text title-3d-animated">
-            Vault Selection
-          </h1>
-          <p className="text-gray-300 mt-2 text-lg">
-            Choose from our <span className="text-[#FF5AF7] font-semibold">19 specialized vault solutions</span> with unmatched security
-          </p>
-        </div>
-        <Button 
-          variant="outline" 
-          className="flex items-center bg-black/30 backdrop-blur-sm border-gray-700 hover:border-gray-500 hover:bg-black/40 mt-4 sm:mt-0 transition-all duration-300"
-          onClick={handleBack}
-        >
-          <ArrowLeft className="mr-2 h-4 w-4" />
-          Back to Dashboard
-        </Button>
-      </div>
-      
-      {/* Main Content Area with Glowing Background */}
-      <div 
-        className={`relative overflow-hidden rounded-xl mb-8 backdrop-blur-md p-6`}
-      >
-        {/* Background with subtle grid pattern */}
-        <div className="absolute inset-0 bg-black bg-opacity-70"></div>
+    <div className="min-h-screen bg-gradient-to-br from-black via-[#150526] to-black">
+      {/* Animated background elements */}
+      <div className="fixed inset-0 overflow-hidden pointer-events-none">
+        {/* Animated grid pattern */}
         <div className="absolute inset-0 bg-grid-pattern opacity-10"></div>
         
-        {/* Glowing orbs based on active category */}
-        <div
-          className="absolute top-0 left-1/4 w-64 h-64 rounded-full blur-3xl animate-float-slow"
-          style={{ 
-            background: vaultCategories.find(cat => cat.id === activeCategory)?.color || "#6B00D7", 
-            opacity: 0.15 
-          }}
+        {/* Floating orbs with dynamic colors */}
+        <div 
+          className="absolute top-1/4 left-1/4 w-64 h-64 rounded-full blur-3xl animate-float-slow"
+          style={{ background: getCategoryColor(0.2) }}
         ></div>
-        
-        <div
-          className="absolute bottom-1/4 right-1/3 w-80 h-80 rounded-full blur-3xl animate-float-slow animation-delay-2000"
-          style={{ 
-            background: vaultCategories.find(cat => cat.id === activeCategory)?.color || "#6B00D7", 
-            opacity: 0.15 
-          }}
+        <div 
+          className="absolute bottom-1/4 right-1/4 w-96 h-96 rounded-full blur-3xl animate-float-slow animation-delay-2000"
+          style={{ background: getCategoryColor(0.15) }}
+        ></div>
+        <div 
+          className="absolute top-3/4 right-1/3 w-40 h-40 rounded-full blur-3xl animate-float-slow animation-delay-1000"
+          style={{ background: getCategoryColor(0.25) }}
         ></div>
         
         {/* Animated scan line */}
         <div className="absolute inset-0 overflow-hidden">
           <div className="absolute inset-0 animate-scan-vertical">
-            <div className="h-px w-full" 
-              style={{ 
-                background: `linear-gradient(90deg, transparent 0%, ${vaultCategories.find(cat => cat.id === activeCategory)?.color || "#6B00D7"}40 50%, transparent 100%)` 
-              }}
+            <div 
+              className="h-px w-full"
+              style={{ background: `linear-gradient(90deg, transparent, ${getCategoryColor(0.4)}, transparent)` }}
             ></div>
           </div>
         </div>
-        
-        {/* Content */}
-        <div className="relative z-10">
-        {/* Progress Indicator */}
-        <div className="mb-6">
-          <VaultCreationProgress 
-            steps={[
-              {
-                id: "select-type",
-                name: "Select Vault Type",
-                description: "Choose the best vault for your needs",
-                status: "current",
-                icon: <Shield className="h-5 w-5" />
-              },
-              ...getDefaultVaultCreationSteps("wallet").slice(1)
-            ]} 
-            currentStepId="select-type"
-            variant="horizontal"
-          />
-        </div>
-        
-        {/* Validation Error Display */}
-        {validationError && (
-          <div className="mb-6 p-3 border border-red-500/50 bg-red-500/10 rounded-md flex items-start">
-            <AlertCircle className="w-5 h-5 text-red-500 mr-2 mt-0.5 flex-shrink-0" />
-            <div className="flex-1">
-              <p className="text-red-500 text-sm font-medium">{validationError}</p>
-              <p className="text-xs text-gray-400 mt-1">Please select a vault type to continue to the next step.</p>
-            </div>
-          </div>
-        )}
-        
-        {/* Triple Chain Technology Banner */}
-        <div className="p-5 border-2 border-[#6B00D7]/50 rounded-lg bg-gradient-to-r from-[#6B00D7]/10 to-[#FF5AF7]/10 mb-6 relative overflow-hidden">
-          <div className="absolute top-0 right-0 bg-gradient-to-bl from-[#FF5AF7]/20 to-transparent w-40 h-40 rounded-bl-full"></div>
-          
-          <h2 className="text-xl font-semibold text-white mb-3">All Vaults Include Premium Features</h2>
-          <p className="text-gray-300 text-sm mb-4 max-w-3xl">
-            Every vault type includes our revolutionary technologies, making Chronos Vault the most secure solution in the world - accessible to everyone, with no blockchain knowledge required.
-          </p>
-          
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div className="bg-black/40 border border-[#6B00D7]/40 p-4 rounded-lg flex items-start">
-              <div className="p-2 bg-gradient-to-r from-[#6B00D7]/20 to-[#FF5AF7]/20 rounded-full mr-3 flex-shrink-0">
-                <svg className="h-5 w-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
-                </svg>
-              </div>
-              <div>
-                <h3 className="font-medium text-base text-white">Triple-Chain Security</h3>
-                <p className="text-xs text-gray-300 mt-1">Distributes security across Ethereum, Solana, and TON for unmatched protection</p>
-              </div>
-            </div>
-            
-            <div className="bg-black/40 border border-[#6B00D7]/40 p-4 rounded-lg flex items-start">
-              <div className="p-2 bg-gradient-to-r from-[#6B00D7]/20 to-[#FF5AF7]/20 rounded-full mr-3 flex-shrink-0">
-                <svg className="h-5 w-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
-                </svg>
-              </div>
-              <div>
-                <h3 className="font-medium text-base text-white">Cross-Chain Compatibility</h3>
-                <p className="text-xs text-gray-300 mt-1">Store and access your assets across multiple blockchain networks</p>
-              </div>
-            </div>
-            
-            <div className="bg-black/40 border border-[#6B00D7]/40 p-4 rounded-lg flex items-start">
-              <div className="p-2 bg-gradient-to-r from-[#6B00D7]/20 to-[#FF5AF7]/20 rounded-full mr-3 flex-shrink-0">
-                <svg className="h-5 w-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
-              </div>
-              <div>
-                <h3 className="font-medium text-base text-white">Flexible Payment Options</h3>
-                <p className="text-xs text-gray-300 mt-1">Pay with CVT tokens, TON, ETH, SOL, or BTC with staking discounts</p>
-              </div>
-            </div>
-          </div>
-        </div>
+      </div>
 
-        <h2 className="text-lg font-medium text-gray-200 mb-4">Vault Categories</h2>
-        
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-          {/* Specialized Vaults */}
-          <div className="p-4 border border-[#FF5AF7]/30 rounded-lg bg-gradient-to-b from-[#FF5AF7]/10 to-transparent">
-            <h3 className="text-[#FF5AF7] font-medium text-lg mb-2">Specialized Vaults</h3>
-            <p className="text-sm text-gray-400 mb-2">
-              Advanced vault types with unique security features and specialized functionality
+      {/* Main Content */}
+      <div className="container mx-auto p-4 sm:p-6 max-w-7xl relative z-10">
+        {/* Animated Header with 3D Text Effect */}
+        <div className="mb-8 flex flex-col sm:flex-row sm:items-center justify-between">
+          <div className={`transform ${showAnimation ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'} transition-all duration-700`}>
+            <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-[#6B00D7] via-[#BB86FC] to-[#FF5AF7]">
+              Vault Selection
+            </h1>
+            <p className="text-gray-300 mt-2 text-lg">
+              Choose from our <span className="font-semibold" style={{ color: getCategoryColor() }}>19 specialized vault solutions</span> with unmatched security
             </p>
-            <ul className="text-xs text-gray-300 space-y-1">
-              <li>• AI Intent Inheritance</li>
-              <li>• Geolocation Access Control</li>
-              <li>• Smart Contract Automation</li>
-              <li>• NFT-Powered Access</li>
-              <li>• Dynamic Security Adaptation</li>
-            </ul>
-          </div>
-          
-          {/* Advanced Security Vaults */}
-          <div className="p-4 border border-[#6B00D7]/30 rounded-lg bg-gradient-to-b from-[#6B00D7]/10 to-transparent">
-            <h3 className="text-[#6B00D7] font-medium text-lg mb-2">Advanced Security</h3>
-            <p className="text-sm text-gray-400 mb-2">
-              Enhanced protection with multiple verification layers and distributed security
-            </p>
-            <ul className="text-xs text-gray-300 space-y-1">
-              <li>• Multi-Signature Authorization</li>
-              <li>• Biometric Verification</li>
-              <li>• Cross-Chain Security</li>
-              <li>• Quantum-Resistant Encryption</li>
-            </ul>
-          </div>
-          
-          {/* Basic Time Vaults */}
-          <div className="p-4 border border-[#00D7C3]/30 rounded-lg bg-gradient-to-b from-[#00D7C3]/10 to-transparent">
-            <h3 className="text-[#00D7C3] font-medium text-lg mb-2">Basic Time Vaults</h3>
-            <p className="text-sm text-gray-400 mb-2">
-              Simple and reliable time-locked storage with essential security features
-            </p>
-            <ul className="text-xs text-gray-300 space-y-1">
-              <li>• Standard Time-Lock Vault</li>
-              <li>• Advanced Time Scheduling</li>
-              <li>• Owner & Beneficiary Controls</li>
-            </ul>
-          </div>
-        </div>
-        
-        {/* New Innovative Vaults Section */}
-        <div className="p-4 border-2 border-[#00E676]/30 rounded-lg bg-gradient-to-r from-[#00E676]/10 to-black/40 mb-6">
-          <div className="flex items-center mb-3">
-            <div className="bg-[#00E676]/20 p-2 rounded-full mr-3">
-              <span className="text-xl">🔥</span>
-            </div>
-            <h3 className="text-[#00E676] font-bold text-lg">New Innovative Vaults</h3>
-            <span className="ml-3 bg-[#00E676]/20 text-[#00E676] text-xs font-medium px-2 py-1 rounded-full">JUST ADDED</span>
-          </div>
-          
-          <p className="text-sm text-gray-300 mb-4 ml-12">
-            Experience our latest cutting-edge vault technologies - available exclusively on Chronos Vault
-          </p>
-          
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div className="bg-black/40 border border-[#00E676]/30 p-4 rounded-lg hover:border-[#00E676] transition-all cursor-pointer" onClick={() => handleVaultTypeSelect('ai-investment')}>
-              <div className="flex items-center mb-2">
-                <div className="bg-[#00E676]/20 p-2 rounded-full mr-3">
-                  <span className="text-xl">🤖</span>
-                </div>
-                <h4 className="text-white font-medium">AI-Assisted Investment</h4>
-              </div>
-              <p className="text-xs text-gray-400">
-                AI-powered market analysis for optimal entry and exit points
-              </p>
-            </div>
-            
-            <div className="bg-black/40 border border-[#FF9800]/30 p-4 rounded-lg hover:border-[#FF9800] transition-all cursor-pointer" onClick={() => handleVaultTypeSelect('milestone-based')}>
-              <div className="flex items-center mb-2">
-                <div className="bg-[#FF9800]/20 p-2 rounded-full mr-3">
-                  <span className="text-xl">🏆</span>
-                </div>
-                <h4 className="text-white font-medium">Milestone-Based Release</h4>
-              </div>
-              <p className="text-xs text-gray-400">
-                Unlocks assets when specific personal achievements are completed
-              </p>
-            </div>
-            
-            <div className="bg-black/40 border border-[#E040FB]/30 p-4 rounded-lg hover:border-[#E040FB] transition-all cursor-pointer" onClick={() => handleVaultTypeSelect('family-heritage')}>
-              <div className="flex items-center mb-2">
-                <div className="bg-[#E040FB]/20 p-2 rounded-full mr-3">
-                  <span className="text-xl">👪</span>
-                </div>
-                <h4 className="text-white font-medium">Family Heritage Vault</h4>
-              </div>
-              <p className="text-xs text-gray-400">
-                Generational wealth transfer with integrated education modules
-              </p>
-            </div>
-          </div>
-        </div>
-        
-        <div className="mt-8 mb-6">
-          <h2 className="text-xl font-semibold text-white mb-3">Select Your Vault Type</h2>
-          <p className="text-gray-300 text-sm mb-6">
-            Explore our 16 specialized vault types with unique features and security levels
-          </p>
-          
-          <VaultTypeSelector 
-            selectedType={selectedVaultType} 
-            onChange={handleVaultTypeSelect} 
-          />
-          
-          {/* Security Configuration Banner */}
-          <div className="mt-4 p-4 border border-[#FF5AF7]/30 rounded-lg bg-gradient-to-r from-black/40 to-[#6B00D7]/10">
-            <div className="flex flex-col md:flex-row justify-between items-center">
-              <div className="flex items-center mb-4 md:mb-0">
-                <div className="flex-shrink-0 w-12 h-12 rounded-full bg-[#FF5AF7]/10 border border-[#FF5AF7]/20 flex items-center justify-center mr-4">
-                  <Star className="h-6 w-6 text-[#FF5AF7]" />
-                </div>
-                <div>
-                  <h3 className="text-[#FF5AF7] font-medium text-lg">Sovereign Fortress™ Security</h3>
-                  <p className="text-sm text-gray-400">Configure quantum-resistant security protocols for your vault</p>
-                </div>
-              </div>
-              <Link href="/security-protocols">
-                <Button 
-                  variant="outline" 
-                  className="group border-[#FF5AF7] border-opacity-30 hover:border-opacity-100 bg-black/20 hover:bg-black/40 transition-all"
-                >
-                  <LockKeyhole className="mr-2 h-4 w-4 text-[#FF5AF7] group-hover:animate-pulse" />
-                  <span className="bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] bg-clip-text text-transparent">Configure Security</span>
-                  <ChevronRight className="ml-2 h-4 w-4 text-[#FF5AF7] group-hover:translate-x-1 transition-transform" />
-                </Button>
-              </Link>
-            </div>
-          </div>
-          
-          {/* Triple-Chain Security Banner */}
-          <div className="mt-4 p-4 border border-[#6B00D7]/30 rounded-lg bg-gradient-to-r from-black/40 to-[#6B00D7]/10">
-            <div className="flex flex-col md:flex-row justify-between items-center">
-              <div className="flex items-center mb-4 md:mb-0">
-                <div className="flex-shrink-0 w-12 h-12 rounded-full bg-[#6B00D7]/10 border border-[#6B00D7]/20 flex items-center justify-center mr-4">
-                  <Shield className="h-6 w-6 text-[#6B00D7]" />
-                </div>
-                <div>
-                  <h3 className="text-[#6B00D7] font-medium text-lg">Triple-Chain Security Architecture</h3>
-                  <p className="text-sm text-gray-400">Distributes your vault security across Ethereum, Solana, and TON blockchains</p>
-                </div>
-              </div>
-              <div className="bg-[#6B00D7]/10 text-[#6B00D7] text-sm px-3 py-1 rounded-full border border-[#6B00D7]/20 flex items-center">
-                <Check className="mr-1 h-4 w-4" /> Default for all vaults
-              </div>
-            </div>
-          </div>
-        </div>
-        
-        <div className="flex justify-between items-center">
-          <div className="text-xs text-gray-400">
-            <span className="text-[#FF5AF7]">*</span> Selection required to continue
           </div>
           <Button 
-            onClick={handleContinue}
-            className={cn(
-              "transition-all duration-300 flex items-center",
-              !selectedVaultType 
-                ? "bg-gray-800 text-gray-400 cursor-not-allowed"
-                : "bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] hover:opacity-90 hover:shadow-lg hover:shadow-[#6B00D7]/20"
-            )}
+            variant="outline" 
+            className="flex items-center bg-black/30 backdrop-blur-sm border-gray-700 hover:border-gray-500 hover:bg-black/40 mt-4 sm:mt-0 transition-all duration-300"
+            onClick={handleBack}
           >
-            {selectedVaultType ? (
-              <>
-                Continue with {selectedVaultType === 'standard' ? 'Sovereign Fortress Vault™' : selectedVaultType.split('-').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ') + ' Vault'}
-                <ChevronRight className="ml-2 h-4 w-4" />
-              </>
-            ) : (
-              <>
-                Select a Vault Type to Continue
-                <AlertCircle className="ml-2 h-4 w-4" />
-              </>
-            )}
+            <ArrowLeft className="mr-2 h-4 w-4" />
+            Back to Dashboard
           </Button>
         </div>
+        
+        {/* Category Selector */}
+        <div className="grid grid-cols-1 md:grid-cols-5 gap-4 mb-8">
+          {vaultCategories.map((category, index) => (
+            <div
+              key={category.id}
+              className={`p-4 rounded-lg cursor-pointer transition-all duration-300 backdrop-blur-sm relative overflow-hidden ${
+                activeCategory === category.id
+                  ? 'bg-black/30 ring-2 shadow-lg'
+                  : 'bg-black/20 border border-gray-800 hover:border-gray-700 hover:bg-black/25'
+              }`}
+              style={{
+                boxShadow: activeCategory === category.id ? `0 0 15px ${category.color}40` : 'none',
+                borderColor: activeCategory === category.id ? category.color : undefined,
+                ringColor: category.color
+              }}
+              onClick={() => handleCategorySelect(category.id)}
+            >
+              {/* Background glow effect */}
+              {activeCategory === category.id && (
+                <div 
+                  className="absolute inset-0 animate-pulse-glow" 
+                  style={{ 
+                    background: `radial-gradient(circle at center, ${category.color}30 0%, transparent 70%)`
+                  }}
+                ></div>
+              )}
+              
+              <div className="flex flex-col items-center text-center relative z-10">
+                <div 
+                  className={`w-12 h-12 rounded-full flex items-center justify-center mb-3 transition-transform duration-300 ${
+                    activeCategory === category.id ? 'scale-110' : ''
+                  }`}
+                  style={{ 
+                    background: `${category.color}20`, 
+                    boxShadow: activeCategory === category.id ? `0 0 10px ${category.color}40` : 'none'
+                  }}
+                >
+                  <div style={{ color: category.color }}>{category.icon}</div>
+                </div>
+                
+                <h3 
+                  className="text-base font-medium mb-1"
+                  style={{ color: activeCategory === category.id ? category.color : 'white' }}
+                >
+                  {category.name}
+                </h3>
+                
+                <p className="text-xs text-gray-400 hidden md:block">{category.description}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+        
+        {/* Main content area with backdrop and glow */}
+        <div 
+          className="rounded-xl backdrop-blur-md bg-black/20 p-6 border relative overflow-hidden transition-colors duration-500"
+          style={{ borderColor: `${getCategoryColor(0.3)}` }}
+        >
+          {/* Glow effect based on active category */}
+          <div 
+            className="absolute inset-0 opacity-10"
+            style={{ 
+              background: `radial-gradient(circle at 30% 30%, ${getCategoryColor()}, transparent 70%)`
+            }}
+          ></div>
+          
+          {/* Content */}
+          <div className="relative z-10">
+            {/* Progress Indicator */}
+            <div className="mb-6">
+              <VaultCreationProgress 
+                steps={[
+                  {
+                    id: "select-type",
+                    name: "Select Vault Type",
+                    description: "Choose the best vault for your needs",
+                    status: "current",
+                    icon: <Shield className="h-5 w-5" />
+                  },
+                  ...getDefaultVaultCreationSteps("wallet").slice(1)
+                ]} 
+                currentStepId="select-type"
+                variant="horizontal"
+              />
+            </div>
+            
+            {/* Validation Error Display */}
+            {validationError && (
+              <div className="mb-6 p-3 border border-red-500/50 bg-red-500/10 rounded-md flex items-start">
+                <AlertCircle className="w-5 h-5 text-red-500 mr-2 mt-0.5 flex-shrink-0" />
+                <div className="flex-1">
+                  <p className="text-red-500 text-sm font-medium">{validationError}</p>
+                  <p className="text-xs text-gray-400 mt-1">Please select a vault type to continue to the next step.</p>
+                </div>
+              </div>
+            )}
+            
+            {/* Triple Chain Technology Banner */}
+            <div className="p-5 border-2 rounded-lg mb-6 relative overflow-hidden transition-colors duration-500"
+                style={{ 
+                  borderColor: `${getCategoryColor(0.5)}`,
+                  background: `linear-gradient(to right, ${getCategoryColor(0.1)}, transparent)`
+                }}>
+              <div className="absolute top-0 right-0 w-40 h-40 rounded-bl-full"
+                   style={{ background: `linear-gradient(to bottom left, ${getCategoryColor(0.2)}, transparent)` }}></div>
+              
+              <h2 className="text-xl font-semibold text-white mb-3">All Vaults Include Premium Features</h2>
+              <p className="text-gray-300 text-sm mb-4 max-w-3xl">
+                Every vault type includes our revolutionary technologies, making Chronos Vault the most secure solution in the world - accessible to everyone, with no blockchain knowledge required.
+              </p>
+              
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div className="bg-black/40 border p-4 rounded-lg flex items-start transition-colors duration-500"
+                     style={{ borderColor: `${getCategoryColor(0.4)}` }}>
+                  <div className="p-2 rounded-full mr-3 flex-shrink-0 transition-colors duration-500"
+                       style={{ background: `linear-gradient(to right, ${getCategoryColor(0.2)}, ${getCategoryColor(0.2)})` }}>
+                    <svg className="h-5 w-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                    </svg>
+                  </div>
+                  <div>
+                    <h3 className="font-medium text-base text-white">Triple-Chain Security</h3>
+                    <p className="text-xs text-gray-300 mt-1">Distributes security across Ethereum, Solana, and TON for unmatched protection</p>
+                  </div>
+                </div>
+                
+                <div className="bg-black/40 border p-4 rounded-lg flex items-start transition-colors duration-500"
+                     style={{ borderColor: `${getCategoryColor(0.4)}` }}>
+                  <div className="p-2 rounded-full mr-3 flex-shrink-0 transition-colors duration-500"
+                       style={{ background: `linear-gradient(to right, ${getCategoryColor(0.2)}, ${getCategoryColor(0.2)})` }}>
+                    <svg className="h-5 w-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
+                    </svg>
+                  </div>
+                  <div>
+                    <h3 className="font-medium text-base text-white">Cross-Chain Compatibility</h3>
+                    <p className="text-xs text-gray-300 mt-1">Store and access your assets across multiple blockchain networks</p>
+                  </div>
+                </div>
+                
+                <div className="bg-black/40 border p-4 rounded-lg flex items-start transition-colors duration-500"
+                     style={{ borderColor: `${getCategoryColor(0.4)}` }}>
+                  <div className="p-2 rounded-full mr-3 flex-shrink-0 transition-colors duration-500"
+                       style={{ background: `linear-gradient(to right, ${getCategoryColor(0.2)}, ${getCategoryColor(0.2)})` }}>
+                    <svg className="h-5 w-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                  </div>
+                  <div>
+                    <h3 className="font-medium text-base text-white">Flexible Payment Options</h3>
+                    <p className="text-xs text-gray-300 mt-1">Pay with CVT tokens, TON, ETH, SOL, or BTC with staking discounts</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Vault Selection */}
+            <div className="space-y-6">
+              <h2 className="text-lg font-medium text-white">Select Your Vault Type</h2>
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <VaultTypeSelector 
+                  vaultTypes={['standard', 'time-lock', 'multi-signature', 'cross-chain', 'ai-investment', 'milestone-based', 'family-heritage']}
+                  selectedType={selectedVaultType}
+                  onSelect={handleVaultTypeSelect}
+                  categoryColor={getCategoryColor()}
+                  activeCategory={activeCategory}
+                />
+                
+                <div className="bg-black/40 border-2 rounded-lg p-5 h-full flex flex-col transition-colors duration-500"
+                     style={{ borderColor: `${getCategoryColor(0.3)}` }}>
+                  <h3 className="text-lg font-medium text-white mb-4">Selected Vault Benefits</h3>
+                  
+                  <div className="flex flex-col space-y-3 flex-grow">
+                    {selectedVaultType === 'time-lock' && (
+                      <>
+                        <p className="text-gray-300 text-sm">The Time-Lock Vault is our most secure basic vault option, perfect for time-sensitive assets:</p>
+                        <ul className="space-y-2 mt-2">
+                          <li className="flex items-start">
+                            <Check className="h-5 w-5 text-green-500 mr-2 mt-0.5 flex-shrink-0" />
+                            <span className="text-sm text-gray-200">Triple-chain military-grade security protocol</span>
+                          </li>
+                          <li className="flex items-start">
+                            <Check className="h-5 w-5 text-green-500 mr-2 mt-0.5 flex-shrink-0" />
+                            <span className="text-sm text-gray-200">Time-based unlocking with precise scheduling</span>
+                          </li>
+                          <li className="flex items-start">
+                            <Check className="h-5 w-5 text-green-500 mr-2 mt-0.5 flex-shrink-0" />
+                            <span className="text-sm text-gray-200">Emergency access protocols with security verification</span>
+                          </li>
+                          <li className="flex items-start">
+                            <Check className="h-5 w-5 text-green-500 mr-2 mt-0.5 flex-shrink-0" />
+                            <span className="text-sm text-gray-200">Support for multiple digital asset types</span>
+                          </li>
+                        </ul>
+                      </>
+                    )}
+                    
+                    {selectedVaultType === 'multi-signature' && (
+                      <>
+                        <p className="text-gray-300 text-sm">The Multi-Signature Vault distributes control among trusted parties:</p>
+                        <ul className="space-y-2 mt-2">
+                          <li className="flex items-start">
+                            <Check className="h-5 w-5 text-green-500 mr-2 mt-0.5 flex-shrink-0" />
+                            <span className="text-sm text-gray-200">Require multiple approvals for any vault action</span>
+                          </li>
+                          <li className="flex items-start">
+                            <Check className="h-5 w-5 text-green-500 mr-2 mt-0.5 flex-shrink-0" />
+                            <span className="text-sm text-gray-200">Customizable quorum settings (e.g., 2-of-3, 3-of-5)</span>
+                          </li>
+                          <li className="flex items-start">
+                            <Check className="h-5 w-5 text-green-500 mr-2 mt-0.5 flex-shrink-0" />
+                            <span className="text-sm text-gray-200">Ideal for business, family, or team asset control</span>
+                          </li>
+                          <li className="flex items-start">
+                            <Check className="h-5 w-5 text-green-500 mr-2 mt-0.5 flex-shrink-0" />
+                            <span className="text-sm text-gray-200">Create complex approval hierarchies</span>
+                          </li>
+                        </ul>
+                      </>
+                    )}
+                    
+                    {selectedVaultType === 'ai-investment' && (
+                      <>
+                        <p className="text-gray-300 text-sm">The AI-Assisted Investment Vault optimizes your investment strategy:</p>
+                        <ul className="space-y-2 mt-2">
+                          <li className="flex items-start">
+                            <Check className="h-5 w-5 text-green-500 mr-2 mt-0.5 flex-shrink-0" />
+                            <span className="text-sm text-gray-200">Advanced AI analytics for optimal investment timing</span>
+                          </li>
+                          <li className="flex items-start">
+                            <Check className="h-5 w-5 text-green-500 mr-2 mt-0.5 flex-shrink-0" />
+                            <span className="text-sm text-gray-200">Smart portfolio diversification recommendations</span>
+                          </li>
+                          <li className="flex items-start">
+                            <Check className="h-5 w-5 text-green-500 mr-2 mt-0.5 flex-shrink-0" />
+                            <span className="text-sm text-gray-200">Market sentiment analysis and prediction</span>
+                          </li>
+                          <li className="flex items-start">
+                            <Check className="h-5 w-5 text-green-500 mr-2 mt-0.5 flex-shrink-0" />
+                            <span className="text-sm text-gray-200">Customizable risk tolerance and investment goals</span>
+                          </li>
+                        </ul>
+                      </>
+                    )}
+                    
+                    {/* Default content for other vault types */}
+                    {(selectedVaultType !== 'time-lock' && selectedVaultType !== 'multi-signature' && selectedVaultType !== 'ai-investment') && (
+                      <>
+                        <p className="text-gray-300 text-sm">This specialized vault type includes our premium security features:</p>
+                        <ul className="space-y-2 mt-2">
+                          <li className="flex items-start">
+                            <Check className="h-5 w-5 text-green-500 mr-2 mt-0.5 flex-shrink-0" />
+                            <span className="text-sm text-gray-200">Triple-chain military-grade security protocol</span>
+                          </li>
+                          <li className="flex items-start">
+                            <Check className="h-5 w-5 text-green-500 mr-2 mt-0.5 flex-shrink-0" />
+                            <span className="text-sm text-gray-200">Zero-knowledge proof privacy protection</span>
+                          </li>
+                          <li className="flex items-start">
+                            <Check className="h-5 w-5 text-green-500 mr-2 mt-0.5 flex-shrink-0" />
+                            <span className="text-sm text-gray-200">Specialized features tailored to your needs</span>
+                          </li>
+                          <li className="flex items-start">
+                            <Check className="h-5 w-5 text-green-500 mr-2 mt-0.5 flex-shrink-0" />
+                            <span className="text-sm text-gray-200">Advanced recovery and backup options</span>
+                          </li>
+                        </ul>
+                      </>
+                    )}
+                  </div>
+                  
+                  <div className="mt-auto pt-4">
+                    <Button
+                      className="w-full mt-4 transition-colors duration-300 border-0"
+                      style={{ 
+                        background: `linear-gradient(135deg, ${getCategoryColor(0.8)}, ${getCategoryColor()})`,
+                        boxShadow: `0 4px 12px ${getCategoryColor(0.4)}`
+                      }}
+                      onClick={handleContinue}
+                    >
+                      Continue to Setup
+                      <ArrowRight className="ml-2 h-4 w-4" />
+                    </Button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        {/* Footer - Specialized Features Section */}
+        <div className="mt-8 flex justify-center">
+          <Link to="/vault-selection-showcase" className="text-gray-400 hover:text-white text-sm flex items-center transition-colors duration-300">
+            <Star className="h-4 w-4 mr-1" />
+            Explore our showcase of all 19 vault types
+            <ChevronRight className="h-4 w-4 ml-1" />
+          </Link>
         </div>
       </div>
     </div>
   );
 };
 
-// Export the component as the default export
-export default function VaultTypesSelectorPage() {
-  return <VaultTypesSelector />;
-}
+export default VaultTypesSelector;
