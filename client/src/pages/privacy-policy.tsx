@@ -208,7 +208,7 @@ const PrivacyPolicyPage = () => {
               </div>
               
               <p className="mt-4">
-                To exercise these rights, please contact our privacy team at privacy@chronosvault.io.
+                To exercise these rights, please contact our privacy team at chronosvault@chronosvault.org.
               </p>
             </section>
             
@@ -227,7 +227,7 @@ const PrivacyPolicyPage = () => {
               <h2 className="text-2xl font-bold text-white mb-4">Contact Us</h2>
               <p>
                 If you have any questions about this privacy policy or our data practices, please contact us at:
-                privacy@chronosvault.io
+                chronosvault@chronosvault.org
               </p>
             </section>
           </div>

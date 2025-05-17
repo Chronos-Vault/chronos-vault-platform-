@@ -218,7 +218,7 @@ const CookiePolicyPage = () => {
               <h2 className="text-2xl font-bold text-white mb-4">Contact Us</h2>
               <p>
                 If you have any questions about our use of cookies or other technologies, please email us at: 
-                privacy@chronosvault.io
+                chronosvault@chronosvault.org
               </p>
             </section>
           </div>

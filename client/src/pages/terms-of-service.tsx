@@ -245,7 +245,7 @@ const TermsOfServicePage = () => {
             <section>
               <h2 className="text-2xl font-bold text-white mb-4">8. Contact Us</h2>
               <p>
-                If you have any questions about these Terms, please contact us at: terms@chronosvault.io
+                If you have any questions about these Terms, please contact us at: chronosvault@chronosvault.org
               </p>
             </section>
           </div>
