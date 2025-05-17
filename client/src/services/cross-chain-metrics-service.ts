@@ -63,7 +63,7 @@ class CrossChainMetricsService {
   private cacheValidityPeriod = 60 * 1000; // 60 seconds in milliseconds
   
   // Default/fallback metrics for development/testing
-  private defaultMetrics: Record<BlockchainType, ChainMetrics> = {
+  private defaultMetrics = {
     [BlockchainType.ETHEREUM]: {
       chainId: BlockchainType.ETHEREUM,
       chainName: 'Ethereum',
@@ -92,6 +92,16 @@ class CrossChainMetricsService {
       securityScore: 85,
       congestionLevel: 20,
       performanceScore: 90,
+      lastUpdated: new Date()
+    },
+    [BlockchainType.BITCOIN]: {
+      chainId: BlockchainType.BITCOIN,
+      chainName: 'Bitcoin',
+      transactionFee: 5.25,
+      averageBlockTime: 600, // 10 minutes
+      securityScore: 98,
+      congestionLevel: 65,
+      performanceScore: 60,
       lastUpdated: new Date()
     }
   };
@@ -151,6 +161,10 @@ class CrossChainMetricsService {
         case BlockchainType.TON:
           metrics = await this.fetchTonMetrics();
           break;
+        case BlockchainType.BITCOIN:
+          // For Bitcoin, we'll just use the default metrics for now
+          metrics = this.defaultMetrics[chainType];
+          break;
         default:
           throw new Error(`Unsupported blockchain type: ${chainType}`);
       }
@@ -180,7 +194,8 @@ class CrossChainMetricsService {
     const supportedChains = [
       BlockchainType.ETHEREUM,
       BlockchainType.SOLANA,
-      BlockchainType.TON
+      BlockchainType.TON,
+      BlockchainType.BITCOIN
     ];
     
     const metricsPromises = supportedChains.map(chain => this.getChainMetrics(chain));
