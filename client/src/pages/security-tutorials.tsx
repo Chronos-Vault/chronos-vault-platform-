@@ -344,54 +344,54 @@ const SecurityTutorials = () => {
               </CardContent>
             </Card>
 
-            <Card>
+            <Card className="bg-[#1A1A1A] border border-[#333] shadow-xl">
               <CardHeader>
-                <CardTitle className="text-2xl">Best Practices for Quantum-Resistant Security</CardTitle>
-                <CardDescription>
+                <CardTitle className="text-2xl text-white">Best Practices for Quantum-Resistant Security</CardTitle>
+                <CardDescription className="text-gray-400">
                   Optimizing your protection against quantum computing threats
                 </CardDescription>
               </CardHeader>
               <CardContent>
                 <div className="space-y-6">
-                  <div className="border-b pb-4">
-                    <h3 className="text-lg font-semibold mb-2">Regular Security Audits</h3>
-                    <p className="text-gray-700">
+                  <div className="border-b border-[#333] pb-4">
+                    <h3 className="text-lg font-semibold mb-2 text-[#FF5AF7]">Regular Security Audits</h3>
+                    <p className="text-gray-400">
                       Schedule quarterly reviews of your quantum security settings to ensure they align with the latest 
                       advancements in quantum computing. Our dashboard provides recommendations based on current 
                       technological developments.
                     </p>
                   </div>
                   
-                  <div className="border-b pb-4">
-                    <h3 className="text-lg font-semibold mb-2">Layered Security Approach</h3>
-                    <p className="text-gray-700">
+                  <div className="border-b border-[#333] pb-4">
+                    <h3 className="text-lg font-semibold mb-2 text-[#FF5AF7]">Layered Security Approach</h3>
+                    <p className="text-gray-400">
                       Combine quantum-resistant protection with other security features like multi-signature 
                       authorization and behavioral authentication for comprehensive protection.
                     </p>
                   </div>
                   
-                  <div className="border-b pb-4">
-                    <h3 className="text-lg font-semibold mb-2">Offline Backup Strategy</h3>
-                    <p className="text-gray-700">
+                  <div className="border-b border-[#333] pb-4">
+                    <h3 className="text-lg font-semibold mb-2 text-[#FF5AF7]">Offline Backup Strategy</h3>
+                    <p className="text-gray-400">
                       Store quantum-resistant recovery keys in multiple secure offline locations. Consider using 
                       physical security devices specifically designed for post-quantum key storage.
                     </p>
                   </div>
                   
                   <div>
-                    <h3 className="text-lg font-semibold mb-2">Stay Informed</h3>
-                    <p className="text-gray-700">
+                    <h3 className="text-lg font-semibold mb-2 text-[#FF5AF7]">Stay Informed</h3>
+                    <p className="text-gray-400">
                       Subscribe to our security bulletins to receive updates on quantum computing advancements and 
                       how they affect your protection. We provide automatic security upgrades as standards evolve.
                     </p>
                   </div>
                 </div>
               </CardContent>
-              <CardFooter>
+              <CardFooter className="border-t border-[#333] pt-4">
                 <Button 
                   variant="outline" 
                   onClick={() => navigate('/security-verification')}
-                  className="mt-4"
+                  className="mt-4 border-[#333] text-gray-300 hover:bg-[#6B00D7]/10 hover:text-white"
                 >
                   View Security Health Dashboard
                 </Button>
@@ -403,31 +403,31 @@ const SecurityTutorials = () => {
         {/* Social Recovery */}
         <TabsContent value="social">
           <div className="grid gap-6 mt-8">
-            <Card>
+            <Card className="bg-[#1A1A1A] border border-[#333] shadow-xl">
               <CardHeader>
-                <CardTitle className="text-2xl">Social Recovery System Overview</CardTitle>
-                <CardDescription>
+                <CardTitle className="text-2xl text-white">Social Recovery System Overview</CardTitle>
+                <CardDescription className="text-gray-400">
                   How our guardian-based recovery system ensures you never lose access to your assets
                 </CardDescription>
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
-                  <p className="text-gray-700">
+                  <p className="text-gray-400">
                     Social Recovery provides a secure way to regain access to your vault if you lose your primary access 
                     method. Instead of relying on a single recovery method, it distributes recovery authority among 
                     trusted contacts (guardians) that you designate.
                   </p>
                   
-                  <h3 className="text-xl font-semibold mt-6">Key Features</h3>
+                  <h3 className="text-xl font-semibold mt-6 text-[#FF5AF7]">Key Features</h3>
                   
                   <div className="space-y-4 mt-4">
                     <div className="flex items-start">
-                      <div className="bg-primary/10 p-2 rounded-full mr-4">
-                        <UsersIcon className="w-6 h-6 text-primary" />
+                      <div className="bg-[#111] p-2 rounded-full mr-4 border border-[#333]">
+                        <UsersIcon className="w-6 h-6 text-[#FF5AF7]" />
                       </div>
                       <div>
-                        <h4 className="text-lg font-medium">Tiered Recovery System</h4>
-                        <p className="text-gray-600">
+                        <h4 className="text-lg font-medium text-white">Tiered Recovery System</h4>
+                        <p className="text-gray-400">
                           Designate different guardians with varying levels of recovery authority, from initiating 
                           the recovery process to providing final approval.
                         </p>
@@ -435,12 +435,12 @@ const SecurityTutorials = () => {
                     </div>
                     
                     <div className="flex items-start">
-                      <div className="bg-primary/10 p-2 rounded-full mr-4">
-                        <UsersIcon className="w-6 h-6 text-primary" />
+                      <div className="bg-[#111] p-2 rounded-full mr-4 border border-[#333]">
+                        <UsersIcon className="w-6 h-6 text-[#FF5AF7]" />
                       </div>
                       <div>
-                        <h4 className="text-lg font-medium">Time-Locked Recovery</h4>
-                        <p className="text-gray-600">
+                        <h4 className="text-lg font-medium text-white">Time-Locked Recovery</h4>
+                        <p className="text-gray-400">
                           Recovery requests can be configured with a waiting period, giving you time to cancel 
                           if the request was unauthorized.
                         </p>
@@ -462,10 +462,10 @@ const SecurityTutorials = () => {
                   </div>
                 </div>
               </CardContent>
-              <CardFooter>
+              <CardFooter className="border-t border-[#333] pt-4">
                 <Button 
                   onClick={() => navigate('/behavioral-authentication?tab=social')}
-                  className="mt-4 bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] hover:opacity-90"
+                  className="mt-4 bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] hover:opacity-90 text-white"
                 >
                   Go to Social Recovery Dashboard
                 </Button>
