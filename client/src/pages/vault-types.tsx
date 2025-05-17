@@ -546,94 +546,359 @@ const VaultTypesPage = () => {
           </Button>
         </div>
         
-        {/* Highlighted Vault */}
-        <div className="mb-12">
-          <h2 className="text-xl font-bold mb-4 flex items-center">
-            <Sparkles className="h-5 w-5 mr-2" style={{ color: selectedVault.color }} />
-            <span>Featured Vault: <span style={{ color: selectedVault.color }}>{selectedVault.title}</span></span>
-          </h2>
-          
-          <div className="rounded-xl bg-black/40 backdrop-blur-sm p-6 border border-gray-800">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              <div className="md:col-span-2">
-                <div className="flex items-center mb-4">
-                  <div className="text-4xl mr-4">{selectedVault.icon}</div>
-                  <div>
-                    <h3 className="text-2xl font-bold" style={{ color: selectedVault.color }}>{selectedVault.title}</h3>
-                    <p className="text-gray-400">{selectedVault.description}</p>
-                  </div>
+        {/* Featured Vault - Enhanced 3D Interactive Showcase */}
+        <div className="mb-16">
+          <motion.div 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.7 }}
+          >
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="text-2xl font-bold flex items-center">
+                <div className="relative mr-3">
+                  <Sparkles className="h-6 w-6 absolute animate-pulse" style={{ color: selectedVault.color }} />
+                  <Sparkles className="h-6 w-6" style={{ color: selectedVault.color }} />
                 </div>
-                
-                <div className="mb-6">
-                  <h4 className="text-lg font-semibold mb-2">Key Features</h4>
-                  <ul className="grid grid-cols-1 md:grid-cols-2 gap-2">
-                    {selectedVault.features.map((feature, idx) => (
-                      <li key={idx} className="flex items-start">
-                        <Check className="h-5 w-5 mr-2 shrink-0" style={{ color: selectedVault.color }} />
-                        <span>{feature}</span>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-                
-                <div className="flex flex-wrap gap-2">
-                  {selectedVault.tags.map(tag => (
-                    <span 
-                      key={tag} 
-                      className="inline-block px-3 py-1 rounded-full text-sm"
-                      style={{ backgroundColor: `${selectedVault.color}20` }}
-                    >
-                      {tag}
-                    </span>
-                  ))}
-                </div>
-              </div>
+                <span className="bg-clip-text text-transparent bg-gradient-to-r from-white to-gray-400">
+                  Featured Vault: <span style={{ color: selectedVault.color }}>{selectedVault.title}</span>
+                </span>
+              </h2>
               
-              <div className="flex flex-col justify-between bg-black/30 rounded-xl p-6 border border-gray-800">
-                <div>
-                  <h4 className="text-lg font-semibold mb-4">Security Profile</h4>
-                  
-                  <div className="mb-6">
-                    <div className="flex justify-between mb-1">
-                      <span className="text-sm">Security Level</span>
-                      <span className="text-sm font-bold">{selectedVault.securityLevel}/5</span>
-                    </div>
-                    <div className="w-full h-2 bg-gray-800 rounded-full overflow-hidden">
-                      <div 
-                        className="h-full rounded-full"
-                        style={{ 
-                          width: `${(selectedVault.securityLevel / 5) * 100}%`,
-                          backgroundColor: selectedVault.color
-                        }}
-                      ></div>
-                    </div>
-                  </div>
-                  
-                  <div className="mb-6">
-                    <div className="flex justify-between mb-1">
-                      <span className="text-sm">Complexity</span>
-                      <span className="text-sm font-bold">{selectedVault.complexityLevel}/5</span>
-                    </div>
-                    <div className="w-full h-2 bg-gray-800 rounded-full overflow-hidden">
-                      <div 
-                        className="h-full rounded-full bg-gray-400"
-                        style={{ width: `${(selectedVault.complexityLevel / 5) * 100}%` }}
-                      ></div>
-                    </div>
-                  </div>
-                </div>
-                
-                <Button 
-                  className="mt-4 w-full"
-                  style={{ backgroundColor: selectedVault.color }}
-                  onClick={() => navigate(`/create-vault?type=${selectedVault.id}`)}
-                >
-                  Configure {selectedVault.title}
-                  <ArrowRight className="ml-2 h-4 w-4" />
-                </Button>
+              <div className="flex space-x-1">
+                {featuredVaults.map((vault, index) => (
+                  <motion.button
+                    key={vault.id}
+                    className={`w-2.5 h-2.5 rounded-full transition-all ${
+                      selected === vault.id ? 'w-8' : 'bg-gray-600'
+                    }`}
+                    style={{ 
+                      backgroundColor: selected === vault.id ? vault.color : undefined,
+                      boxShadow: selected === vault.id ? `0 0 12px ${vault.color}` : undefined
+                    }}
+                    onClick={() => setSelected(vault.id)}
+                    whileHover={{ scale: 1.2 }}
+                    whileTap={{ scale: 0.9 }}
+                  />
+                ))}
               </div>
             </div>
-          </div>
+            
+            <motion.div 
+              className="rounded-xl bg-gradient-to-br from-black/80 to-black/40 backdrop-blur-lg p-8 relative overflow-hidden border border-gray-800"
+              animate={{ 
+                boxShadow: `0 0 30px ${selectedVault.color}20`,
+                borderColor: `${selectedVault.color}40` 
+              }}
+              transition={{ duration: 0.5 }}
+              key={selectedVault.id}
+            >
+              {/* Animated Background Elements */}
+              <div className="absolute inset-0 pointer-events-none overflow-hidden">
+                <div className="absolute w-full h-full bg-grid-pattern opacity-5"></div>
+                
+                {/* Animated Glow Effects */}
+                <motion.div 
+                  className="absolute -top-20 -right-20 w-64 h-64 rounded-full blur-3xl"
+                  style={{ backgroundColor: `${selectedVault.color}15` }}
+                  animate={{
+                    scale: [1, 1.2, 1],
+                    opacity: [0.3, 0.5, 0.3],
+                  }}
+                  transition={{ 
+                    duration: 8,
+                    repeat: Infinity,
+                    repeatType: "reverse"
+                  }}
+                />
+                
+                <motion.div 
+                  className="absolute -bottom-32 -left-32 w-96 h-96 rounded-full blur-3xl"
+                  style={{ backgroundColor: `${selectedVault.color}10` }}
+                  animate={{
+                    scale: [1, 1.1, 1],
+                    opacity: [0.2, 0.4, 0.2],
+                  }}
+                  transition={{ 
+                    duration: 10,
+                    delay: 1,
+                    repeat: Infinity,
+                    repeatType: "reverse"
+                  }}
+                />
+                
+                {/* Scan Lines */}
+                <div className="absolute left-0 top-0 w-full h-full opacity-5">
+                  <div className="absolute left-0 top-0 w-full h-px bg-gradient-to-r from-transparent via-white to-transparent animate-scan-horizontal"></div>
+                  <div className="absolute left-0 top-0 h-full w-px bg-gradient-to-b from-transparent via-white to-transparent animate-scan-vertical"></div>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-12 gap-10 relative z-10">
+                {/* Left Column: Vault Info */}
+                <div className="md:col-span-7">
+                  <motion.div 
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.5 }}
+                    key={selectedVault.id}
+                    className="h-full flex flex-col"
+                  >
+                    <div className="flex items-center mb-6">
+                      <div 
+                        className="text-5xl mr-5 p-4 rounded-2xl relative"
+                        style={{ backgroundColor: `${selectedVault.color}20` }}
+                      >
+                        <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-black/10 to-black/40 backdrop-blur-sm"></div>
+                        <div className="relative z-10">{selectedVault.icon}</div>
+                        
+                        {/* Corner glows */}
+                        <div className="absolute top-0 left-0 w-2 h-2 rounded-full" style={{ backgroundColor: selectedVault.color }}></div>
+                        <div className="absolute top-0 right-0 w-2 h-2 rounded-full" style={{ backgroundColor: selectedVault.color }}></div>
+                        <div className="absolute bottom-0 left-0 w-2 h-2 rounded-full" style={{ backgroundColor: selectedVault.color }}></div>
+                        <div className="absolute bottom-0 right-0 w-2 h-2 rounded-full" style={{ backgroundColor: selectedVault.color }}></div>
+                      </div>
+                      <div>
+                        <h3 className="text-3xl font-bold tracking-tight" style={{ color: selectedVault.color }}>{selectedVault.title}</h3>
+                        <p className="text-gray-300 mt-1 text-lg">{selectedVault.description}</p>
+                      </div>
+                    </div>
+                    
+                    {/* Tags with animations */}
+                    <div className="flex flex-wrap gap-2 mb-6">
+                      {selectedVault.tags.map((tag, idx) => (
+                        <motion.span 
+                          key={tag} 
+                          className="inline-block px-4 py-2 rounded-full text-sm font-medium"
+                          style={{ 
+                            backgroundColor: `${selectedVault.color}20`,
+                            border: `1px solid ${selectedVault.color}40`
+                          }}
+                          initial={{ opacity: 0, scale: 0.8 }}
+                          animate={{ opacity: 1, scale: 1 }}
+                          transition={{ duration: 0.3, delay: idx * 0.1 }}
+                          whileHover={{ 
+                            scale: 1.05, 
+                            backgroundColor: `${selectedVault.color}30` 
+                          }}
+                        >
+                          {tag}
+                        </motion.span>
+                      ))}
+                    </div>
+                    
+                    {/* Key Features Section */}
+                    <div className="mb-6 flex-grow">
+                      <h4 className="text-lg font-semibold mb-4 flex items-center">
+                        <div className="w-8 h-8 rounded-lg bg-black/40 flex items-center justify-center mr-3 border border-gray-800">
+                          <Check className="h-5 w-5" style={{ color: selectedVault.color }} />
+                        </div>
+                        <span>Key Security Features</span>
+                      </h4>
+                      
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        {selectedVault.features.map((feature, idx) => (
+                          <motion.div 
+                            key={idx} 
+                            className="flex items-start p-3 rounded-xl bg-black/30 border border-gray-800"
+                            initial={{ opacity: 0, x: -20 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            transition={{ duration: 0.4, delay: idx * 0.1 }}
+                            whileHover={{ 
+                              y: -5,
+                              boxShadow: `0 8px 20px -5px ${selectedVault.color}20`
+                            }}
+                          >
+                            <div 
+                              className="h-10 w-10 rounded-lg flex items-center justify-center mr-3 shrink-0"
+                              style={{ backgroundColor: `${selectedVault.color}20` }}
+                            >
+                              <Check className="h-5 w-5" style={{ color: selectedVault.color }} />
+                            </div>
+                            <div>
+                              <div className="font-medium leading-tight">{feature}</div>
+                              <div className="text-xs text-gray-400 mt-1">
+                                {/* Feature-specific description */}
+                                {feature.includes("Multi-Layered") && "Combines multiple security protocols for defense in depth"}
+                                {feature.includes("Quantum") && "Resistant to attacks from future quantum computers"}
+                                {feature.includes("Triple-Chain") && "Distributed verification across Ethereum, TON, and Solana"}
+                                {feature.includes("Disaster") && "Rapid recovery from any security compromise"}
+                                {feature.includes("Hardware") && "Secure key generation with hardware authentication"}
+                                {feature.includes("Advanced") && "Enhanced security protocols for transaction signing"}
+                                {feature.includes("Biometric") && "Integrated biometric validation options"}
+                                {feature.includes("verification") && "Multi-factor cryptographic verification"}
+                                {feature.includes("Fingerprint") && "Secure biometric identity verification"}
+                                {feature.includes("Facial") && "Advanced facial recognition algorithms"}
+                                {feature.includes("Multi-factor") && "Multiple security requirements for access"}
+                                {feature.includes("Tamper") && "Detects and prevents unauthorized access attempts"}
+                              </div>
+                            </div>
+                          </motion.div>
+                        ))}
+                      </div>
+                    </div>
+                    
+                    {/* Deploy Button */}
+                    <motion.div 
+                      className="mt-auto"
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ duration: 0.5, delay: 0.5 }}
+                    >
+                      <Button 
+                        className="w-full py-6 text-lg font-bold relative overflow-hidden group"
+                        style={{ 
+                          backgroundColor: selectedVault.color,
+                          boxShadow: `0 8px 20px -5px ${selectedVault.color}40`
+                        }}
+                        onClick={() => navigate(`/create-vault?type=${selectedVault.id}`)}
+                      >
+                        <span className="relative z-10 flex items-center justify-center">
+                          Deploy {selectedVault.title}
+                          <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
+                        </span>
+                        
+                        {/* Button shine effect */}
+                        <div className="absolute top-0 -inset-full h-full w-1/2 z-5 block transform -skew-x-12 bg-gradient-to-r from-transparent to-white opacity-20 group-hover:animate-shine" />
+                      </Button>
+                    </motion.div>
+                  </motion.div>
+                </div>
+                
+                {/* Right Column: Security Metrics */}
+                <div className="md:col-span-5">
+                  <motion.div 
+                    className="h-full bg-black/30 backdrop-blur-sm rounded-2xl p-6 border border-gray-800 flex flex-col"
+                    initial={{ opacity: 0, x: 20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ duration: 0.5 }}
+                    key={`${selectedVault.id}-metrics`}
+                  >
+                    <h4 className="text-xl font-semibold mb-6">Security Intelligence</h4>
+                    
+                    {/* Security level radial progress */}
+                    <div className="flex items-center justify-between mb-8">
+                      <div className="relative w-28 h-28">
+                        <svg className="w-full h-full" viewBox="0 0 100 100">
+                          <circle 
+                            className="text-gray-800" 
+                            strokeWidth="10" 
+                            stroke="currentColor" 
+                            fill="transparent" 
+                            r="40" 
+                            cx="50" 
+                            cy="50" 
+                          />
+                          <circle 
+                            className="transition-all duration-500 ease-in-out" 
+                            strokeWidth="10" 
+                            strokeDasharray={`${2 * Math.PI * 40 * (selectedVault.securityLevel/5)} ${2 * Math.PI * 40 * (1-selectedVault.securityLevel/5)}`}
+                            strokeDashoffset="0"
+                            strokeLinecap="round" 
+                            stroke={selectedVault.color} 
+                            fill="transparent"
+                            r="40" 
+                            cx="50" 
+                            cy="50" 
+                          />
+                        </svg>
+                        <div className="absolute inset-0 flex items-center justify-center">
+                          <div className="text-3xl font-bold">{selectedVault.securityLevel}</div>
+                        </div>
+                      </div>
+                      
+                      <div className="flex-1 ml-6">
+                        <h5 className="text-xl font-bold mb-1" style={{ color: selectedVault.color }}>Security Rating</h5>
+                        <p className="text-gray-400 mb-3 text-sm">Protection against advanced threats</p>
+                        <div className="flex items-center">
+                          {Array(5).fill(0).map((_, i) => (
+                            <div 
+                              key={i} 
+                              className="w-8 h-2 rounded-full mr-1" 
+                              style={{ backgroundColor: i < selectedVault.securityLevel ? selectedVault.color : 'rgba(30,30,30,0.5)' }}
+                            />
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+                    
+                    {/* Complexity bar */}
+                    <div className="mb-8">
+                      <div className="flex justify-between mb-2">
+                        <span className="font-medium">Complexity</span>
+                        <div className="flex items-center">
+                          <span className="text-sm font-bold mr-2">{selectedVault.complexityLevel}/5</span>
+                          <div className="text-sm px-2 py-0.5 rounded bg-gray-800">
+                            {selectedVault.complexityLevel <= 2 ? 'Easy' : 
+                             selectedVault.complexityLevel <= 3 ? 'Moderate' : 
+                             selectedVault.complexityLevel <= 4 ? 'Advanced' : 'Expert'}
+                          </div>
+                        </div>
+                      </div>
+                      <div className="w-full h-3 bg-gray-800 rounded-full overflow-hidden">
+                        <motion.div 
+                          className="h-full rounded-full"
+                          style={{ backgroundColor: selectedVault.color }}
+                          initial={{ width: 0 }}
+                          animate={{ width: `${(selectedVault.complexityLevel / 5) * 100}%` }}
+                          transition={{ duration: 0.8, delay: 0.1 }}
+                        />
+                      </div>
+                    </div>
+                    
+                    {/* Blockchain support metrics */}
+                    <div className="grid grid-cols-3 gap-3 mb-8">
+                      <div className="bg-black/40 rounded-xl p-3 text-center border border-gray-800">
+                        <img src="https://cryptologos.cc/logos/ethereum-eth-logo.svg" alt="Ethereum" className="h-8 mx-auto mb-2" />
+                        <div className="text-xs font-medium">Ethereum</div>
+                        <div className="text-xs text-green-500">Active</div>
+                      </div>
+                      
+                      <div className="bg-black/40 rounded-xl p-3 text-center border border-gray-800">
+                        <img src="https://ton.org/download/ton_symbol.svg" alt="TON" className="h-8 mx-auto mb-2" />
+                        <div className="text-xs font-medium">TON</div>
+                        <div className="text-xs text-green-500">Active</div>
+                      </div>
+                      
+                      <div className="bg-black/40 rounded-xl p-3 text-center border border-gray-800">
+                        <img src="https://cryptologos.cc/logos/solana-sol-logo.svg" alt="Solana" className="h-8 mx-auto mb-2" />
+                        <div className="text-xs font-medium">Solana</div>
+                        <div className="text-xs text-green-500">Active</div>
+                      </div>
+                    </div>
+                    
+                    {/* Featured stats */}
+                    <div className="grid grid-cols-2 gap-4 mb-8">
+                      <div className="bg-black/40 rounded-xl p-4 border border-gray-800">
+                        <div className="text-lg font-bold" style={{ color: selectedVault.color }}>
+                          {selectedVault.securityLevel === 5 ? "Military-grade" : "Advanced"}
+                        </div>
+                        <div className="text-sm text-gray-400">Security Protocol</div>
+                      </div>
+                      
+                      <div className="bg-black/40 rounded-xl p-4 border border-gray-800">
+                        <div className="text-lg font-bold" style={{ color: selectedVault.color }}>
+                          {selectedVault.tags.includes('Zero-Knowledge') ? "Complete" : "Standard"}
+                        </div>
+                        <div className="text-sm text-gray-400">Privacy Level</div>
+                      </div>
+                    </div>
+                    
+                    {/* User satisfaction */}
+                    <div className="mt-auto">
+                      <div className="flex justify-between mb-2">
+                        <span className="font-medium">User Satisfaction</span>
+                        <span className="font-bold">98%</span>
+                      </div>
+                      <div className="w-full h-2 bg-gray-800 rounded-full overflow-hidden">
+                        <div className="h-full bg-green-500 rounded-full" style={{ width: '98%' }}></div>
+                      </div>
+                      <div className="text-xs text-gray-400 mt-2 text-right italic">Based on 2,487 deployments</div>
+                    </div>
+                  </motion.div>
+                </div>
+              </div>
+            </motion.div>
+          </motion.div>
         </div>
         
         {/* Vault Categories */}
