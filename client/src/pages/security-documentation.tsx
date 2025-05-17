@@ -352,15 +352,126 @@ const SecurityDocumentation = () => {
                 cryptography and multivariate polynomial schemes to protect against threats from 
                 both conventional and quantum computing attacks.
               </p>
+              
+              <div className="mt-8">
+                <h4 className="text-lg font-semibold mb-4 text-white">Security Parameters</h4>
+                <div className="overflow-x-auto">
+                  <table className="min-w-full divide-y divide-[#333]">
+                    <thead className="bg-[#111]">
+                      <tr>
+                        <th scope="col" className="px-4 py-3 text-left text-xs font-medium text-[#FF5AF7] uppercase tracking-wider">Security Level</th>
+                        <th scope="col" className="px-4 py-3 text-left text-xs font-medium text-[#FF5AF7] uppercase tracking-wider">Kyber Parameter Set</th>
+                        <th scope="col" className="px-4 py-3 text-left text-xs font-medium text-[#FF5AF7] uppercase tracking-wider">Dilithium Parameter Set</th>
+                        <th scope="col" className="px-4 py-3 text-left text-xs font-medium text-[#FF5AF7] uppercase tracking-wider">Estimated Security (Bits)</th>
+                        <th scope="col" className="px-4 py-3 text-left text-xs font-medium text-[#FF5AF7] uppercase tracking-wider">Recommended Use Case</th>
+                      </tr>
+                    </thead>
+                    <tbody className="bg-[#1A1A1A] divide-y divide-[#333]">
+                      <tr>
+                        <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-300">Standard</td>
+                        <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-300">Kyber-512</td>
+                        <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-300">Dilithium-2</td>
+                        <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-300">128</td>
+                        <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-300">Personal vaults, moderate value</td>
+                      </tr>
+                      <tr>
+                        <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-300">Enhanced</td>
+                        <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-300">Kyber-768</td>
+                        <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-300">Dilithium-3</td>
+                        <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-300">192</td>
+                        <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-300">Business vaults, high value</td>
+                      </tr>
+                      <tr>
+                        <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-300">Maximum</td>
+                        <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-300">Kyber-1024</td>
+                        <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-300">Dilithium-5</td>
+                        <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-300">256</td>
+                        <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-300">Enterprise vaults, critical assets</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
 
+              <div className="mt-8">
+                <h4 className="text-lg font-semibold mb-4 text-white">Implementation Architecture</h4>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                  <div className="bg-[#111] rounded-lg p-4 border border-[#333]">
+                    <h5 className="font-medium text-[#FF5AF7] mb-2">Client-Side Components</h5>
+                    <ul className="space-y-2 text-gray-300 text-sm">
+                      <li className="flex items-center">
+                        <span className="inline-block w-2 h-2 rounded-full bg-[#50E3C2] mr-2"></span>
+                        WebAssembly cryptographic module
+                      </li>
+                      <li className="flex items-center">
+                        <span className="inline-block w-2 h-2 rounded-full bg-[#50E3C2] mr-2"></span>
+                        Secure key encapsulation
+                      </li>
+                      <li className="flex items-center">
+                        <span className="inline-block w-2 h-2 rounded-full bg-[#50E3C2] mr-2"></span>
+                        Hardware wallet integration
+                      </li>
+                      <li className="flex items-center">
+                        <span className="inline-block w-2 h-2 rounded-full bg-[#50E3C2] mr-2"></span>
+                        Local parameter verification
+                      </li>
+                    </ul>
+                  </div>
+                  
+                  <div className="bg-[#111] rounded-lg p-4 border border-[#333]">
+                    <h5 className="font-medium text-[#FF5AF7] mb-2">Blockchain Integration</h5>
+                    <ul className="space-y-2 text-gray-300 text-sm">
+                      <li className="flex items-center">
+                        <span className="inline-block w-2 h-2 rounded-full bg-[#50E3C2] mr-2"></span>
+                        Quantum-resistant transaction signing
+                      </li>
+                      <li className="flex items-center">
+                        <span className="inline-block w-2 h-2 rounded-full bg-[#50E3C2] mr-2"></span>
+                        Cross-chain verification protocols
+                      </li>
+                      <li className="flex items-center">
+                        <span className="inline-block w-2 h-2 rounded-full bg-[#50E3C2] mr-2"></span>
+                        Smart contract quantum resistance
+                      </li>
+                      <li className="flex items-center">
+                        <span className="inline-block w-2 h-2 rounded-full bg-[#50E3C2] mr-2"></span>
+                        Chain-specific adapters
+                      </li>
+                    </ul>
+                  </div>
+                  
+                  <div className="bg-[#111] rounded-lg p-4 border border-[#333]">
+                    <h5 className="font-medium text-[#FF5AF7] mb-2">Server-Side Components</h5>
+                    <ul className="space-y-2 text-gray-300 text-sm">
+                      <li className="flex items-center">
+                        <span className="inline-block w-2 h-2 rounded-full bg-[#50E3C2] mr-2"></span>
+                        Parameter distribution service
+                      </li>
+                      <li className="flex items-center">
+                        <span className="inline-block w-2 h-2 rounded-full bg-[#50E3C2] mr-2"></span>
+                        Cryptographic state monitoring
+                      </li>
+                      <li className="flex items-center">
+                        <span className="inline-block w-2 h-2 rounded-full bg-[#50E3C2] mr-2"></span>
+                        Key rotation orchestration
+                      </li>
+                      <li className="flex items-center">
+                        <span className="inline-block w-2 h-2 rounded-full bg-[#50E3C2] mr-2"></span>
+                        Quantum threat monitoring
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+              
               <div className="mt-6 space-y-4">
                 <div className="flex items-start">
-                  <div className="bg-blue-100 rounded-full p-2 mr-4">
-                    <KeySquareIcon className="w-5 h-5 text-blue-600" />
+                  <div className="bg-[#111] rounded-full p-2 mr-4 border border-[#333]">
+                    <KeySquareIcon className="w-5 h-5 text-[#FF5AF7]" />
                   </div>
                   <div>
-                    <h4 className="font-medium">Primary Algorithms</h4>
-                    <p className="text-gray-600 text-sm">
+                    <h4 className="font-medium text-white">Primary Algorithms</h4>
+                    <p className="text-gray-400 text-sm">
                       CRYSTALS-Kyber (key encapsulation) and CRYSTALS-Dilithium (digital signatures), 
                       both NIST Post-Quantum Cryptography standardization finalists.
                     </p>
@@ -810,33 +921,49 @@ const SecurityDocumentation = () => {
         </div>
       </div>
 
-      <div className="mt-10 bg-gradient-to-r from-violet-50 to-fuchsia-50 border border-violet-200 rounded-lg p-6">
-        <h2 className="text-2xl font-bold text-gray-900">Additional Resources</h2>
-        <p className="text-gray-700 mt-2">
-          Explore our comprehensive security documentation, tutorials, and interactive guides to help
-          you get the most out of Chronos Vault's advanced security features.
+      <div className="mt-10 bg-gradient-to-r from-[#1A1A1A] to-[#111] border border-[#333] rounded-lg p-6 shadow-xl">
+        <h2 className="text-2xl font-bold bg-gradient-to-r from-white via-[#FF5AF7] to-[#6B00D7] bg-clip-text text-transparent">Additional Learning Resources</h2>
+        <p className="text-gray-400 mt-2">
+          Explore our complete library of security tutorials, technical documentation, and interactive guides to get 
+          the most out of Chronos Vault's advanced security features.
         </p>
         <div className="mt-6 grid grid-cols-1 md:grid-cols-3 gap-4">
-          <Button 
-            variant="outline" 
-            onClick={() => navigate('/security-tutorials')}
-            className="border-violet-300 hover:bg-violet-100"
-          >
-            User Tutorials
-          </Button>
-          <Button 
-            variant="outline" 
-            onClick={() => navigate('/security-tutorials-video')}
-            className="border-blue-300 hover:bg-blue-100"
-          >
-            Video Guides
-          </Button>
-          <Button 
-            onClick={() => navigate('/security-verification')}
-            className="bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] hover:opacity-90"
-          >
-            Security Dashboard
-          </Button>
+          <div className="bg-[#111] p-4 rounded-lg border border-[#333] hover:border-[#FF5AF7] transition-colors">
+            <h5 className="font-medium text-[#FF5AF7] mb-2">Video Tutorials</h5>
+            <p className="text-gray-400 text-sm mb-3">Visual guides demonstrating security setup and usage</p>
+            <Button 
+              variant="outline" 
+              size="sm"
+              className="w-full border-[#333] text-gray-300 hover:bg-[#6B00D7]/10 hover:text-white"
+              onClick={() => navigate('/security-tutorials-video')}
+            >
+              Watch Now
+            </Button>
+          </div>
+          <div className="bg-[#111] p-4 rounded-lg border border-[#333] hover:border-[#FF5AF7] transition-colors">
+            <h5 className="font-medium text-[#FF5AF7] mb-2">Step-by-Step Guides</h5>
+            <p className="text-gray-400 text-sm mb-3">Detailed instructions for security optimization</p>
+            <Button 
+              variant="outline" 
+              size="sm"
+              className="w-full border-[#333] text-gray-300 hover:bg-[#6B00D7]/10 hover:text-white"
+              onClick={() => navigate('/security-tutorials')}
+            >
+              View Guides
+            </Button>
+          </div>
+          <div className="bg-[#111] p-4 rounded-lg border border-[#333] hover:border-[#FF5AF7] transition-colors">
+            <h5 className="font-medium text-[#FF5AF7] mb-2">Security Dashboard</h5>
+            <p className="text-gray-400 text-sm mb-3">Manage and monitor your vault security settings</p>
+            <Button 
+              variant="outline" 
+              size="sm"
+              className="w-full bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] hover:opacity-90 text-white border-0"
+              onClick={() => navigate('/security-verification')}
+            >
+              Go to Dashboard
+            </Button>
+          </div>
         </div>
       </div>
     </div>
