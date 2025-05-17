@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useLocation } from 'wouter';
 import { Button } from '@/components/ui/button';
-import { ArrowLeft, ArrowRight, Check, CheckCircle, Sparkles, Clock, Shield, Lock, User, RefreshCw, KeyRound, Zap } from 'lucide-react';
+import { ArrowLeft, ArrowRight, Check, CheckCircle, Sparkles, Clock, Shield, Lock, User, RefreshCw, KeyRound, Zap, ShieldCheck } from 'lucide-react';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import { motion } from 'framer-motion';
 
@@ -1077,10 +1077,9 @@ const VaultTypesPage = () => {
               <motion.div 
                 className="bg-black/40 backdrop-blur-sm rounded-xl p-4 border border-purple-900/40 relative overflow-hidden group"
                 whileHover={{ y: -5, boxShadow: "0 10px 25px -5px rgba(107, 0, 215, 0.3)" }}
-                transition={{ duration: 0.3 }}
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: 0.1 }}
+                transition={{ duration: 0.5, delay: 0.1, ease: "easeOut" }}
               >
                 <div className="absolute -top-10 -right-10 w-20 h-20 bg-purple-600 rounded-full opacity-20 blur-xl group-hover:opacity-40 transition-opacity"></div>
                 <div className="flex items-center mb-2">
@@ -1095,10 +1094,9 @@ const VaultTypesPage = () => {
               <motion.div 
                 className="bg-black/40 backdrop-blur-sm rounded-xl p-4 border border-pink-900/40 relative overflow-hidden group"
                 whileHover={{ y: -5, boxShadow: "0 10px 25px -5px rgba(255, 90, 247, 0.3)" }}
-                transition={{ duration: 0.3 }}
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: 0.2 }}
+                transition={{ duration: 0.5, delay: 0.2, ease: "easeOut" }}
               >
                 <div className="absolute -top-10 -right-10 w-20 h-20 bg-pink-600 rounded-full opacity-20 blur-xl group-hover:opacity-40 transition-opacity"></div>
                 <div className="flex items-center mb-2">
@@ -1113,10 +1111,9 @@ const VaultTypesPage = () => {
               <motion.div 
                 className="bg-black/40 backdrop-blur-sm rounded-xl p-4 border border-green-900/40 relative overflow-hidden group"
                 whileHover={{ y: -5, boxShadow: "0 10px 25px -5px rgba(0, 230, 118, 0.3)" }}
-                transition={{ duration: 0.3 }}
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: 0.3 }}
+                transition={{ duration: 0.5, delay: 0.3, ease: "easeOut" }}
               >
                 <div className="absolute -top-10 -right-10 w-20 h-20 bg-green-600 rounded-full opacity-20 blur-xl group-hover:opacity-40 transition-opacity"></div>
                 <div className="flex items-center mb-2">
