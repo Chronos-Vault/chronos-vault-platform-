@@ -175,7 +175,7 @@ class CrossChainMetricsService {
       
       return metrics;
     } catch (error) {
-      console.error(`Error fetching metrics for ${BlockchainType[chainType]}:`, error);
+      console.error(`Error fetching metrics for ${chainType}:`, error);
       
       // If we have cached data, return it even if expired
       if (this.metricsCache.has(chainType)) {

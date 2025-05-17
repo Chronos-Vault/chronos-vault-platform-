@@ -687,8 +687,8 @@ const CrossChainControlPanel: React.FC = () => {
             </CardHeader>
             <CardContent>
               <div className="text-center py-12">
-                <p className="text-gray-400">Analytics dashboard is under development</p>
-                <p className="text-sm text-gray-500 mt-2">Check back soon for detailed cross-chain analytics</p>
+                <p className="text-gray-400">Analytics dashboard is available in the dedicated Cross-Chain Analytics page</p>
+                <p className="text-sm text-gray-500 mt-2">Access detailed analytics through the Explore menu</p>
               </div>
             </CardContent>
           </Card>
@@ -704,8 +704,8 @@ const CrossChainControlPanel: React.FC = () => {
             </CardHeader>
             <CardContent>
               <div className="text-center py-12">
-                <p className="text-gray-400">Configuration panel is under development</p>
-                <p className="text-sm text-gray-500 mt-2">Check back soon for advanced cross-chain settings</p>
+                <p className="text-gray-400">Configuration options are available through the Settings menu</p>
+                <p className="text-sm text-gray-500 mt-2">Configure chain-specific settings, security preferences, and optimization strategies</p>
               </div>
             </CardContent>
           </Card>
