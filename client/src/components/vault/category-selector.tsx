@@ -1,75 +1,74 @@
 import React from 'react';
+import { Motion } from '../../components/ui/motion';
 
-interface VaultCategory {
+export interface VaultCategory {
   id: string;
   name: string;
   description: string;
-  color: string;
   icon: React.ReactNode;
-  vaultTypes: string[];
+  color: string;
 }
 
 interface CategorySelectorProps {
   categories: VaultCategory[];
-  activeCategory: string | null;
-  onSelectCategory: (categoryId: string) => void;
+  activeCategory: string;
+  onCategorySelect: (categoryId: string) => void;
 }
 
 const CategorySelector: React.FC<CategorySelectorProps> = ({
   categories,
   activeCategory,
-  onSelectCategory
+  onCategorySelect,
 }) => {
   return (
-    <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-6">
-      {categories.map((category) => (
-        <div
+    <div className="grid grid-cols-1 md:grid-cols-5 gap-4 mb-8">
+      {categories.map((category, index) => (
+        <Motion.div
           key={category.id}
-          className={`group relative p-5 border-2 rounded-xl overflow-hidden transition-all duration-500 cursor-pointer transform-gpu hover:-translate-y-1 ${
+          className={`relative overflow-hidden rounded-lg cursor-pointer transition-all duration-300 ${
             activeCategory === category.id
-              ? 'animate-float'
-              : 'hover:shadow-lg'
+              ? 'ring-2 ring-opacity-70 shadow-lg'
+              : 'hover:shadow-md'
           }`}
           style={{
-            background: `linear-gradient(135deg, ${category.color}10 0%, rgba(0,0,0,0.4) 100%)`,
-            borderColor: activeCategory === category.id ? category.color : `${category.color}30`,
-            boxShadow: activeCategory === category.id ? `0 10px 25px ${category.color}20` : 'none'
+            background: `linear-gradient(135deg, ${category.color}15 0%, rgba(0,0,0,0.6) 100%)`,
+            borderColor: activeCategory === category.id ? category.color : 'transparent',
+            ringColor: category.color,
           }}
-          onClick={() => onSelectCategory(category.id)}
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.4, delay: index * 0.1 }}
+          onClick={() => onCategorySelect(category.id)}
         >
-          <div className="absolute inset-0 bg-gradient-to-br from-black/10 via-black/0 to-black/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-          <div className="absolute top-0 right-0 w-32 h-32 rounded-full blur-2xl transform translate-x-10 translate-y-10" style={{background: `${category.color}10`}}></div>
-          
-          <div className="flex items-center mb-3">
-            <div className="p-3 rounded-full mr-3" style={{background: `${category.color}15`}}>
-              {category.icon}
-            </div>
-            <h3 
-              className="text-lg font-bold relative z-10 transition-colors duration-300"
+          {/* Glow effect on active */}
+          {activeCategory === category.id && (
+            <div 
+              className="absolute inset-0 animate-pulse-glow" 
               style={{ 
-                color: category.color,
-                textShadow: activeCategory === category.id ? `0 0 10px ${category.color}80` : 'none'
+                background: `radial-gradient(circle at center, ${category.color}30 0%, transparent 70%)`,
+                opacity: 0.5
               }}
+            />
+          )}
+          
+          <div className="relative z-10 p-4 flex flex-col items-center text-center">
+            <div 
+              className="w-10 h-10 rounded-full flex items-center justify-center mb-3"
+              style={{ background: `${category.color}20` }}
+            >
+              <div style={{ color: category.color }}>{category.icon}</div>
+            </div>
+            
+            <h3 
+              className="text-base font-medium mb-1"
+              style={{ color: activeCategory === category.id ? category.color : 'white' }}
             >
               {category.name}
             </h3>
+            
+            <p className="text-xs text-gray-400 hidden md:block">{category.description}</p>
           </div>
-          
-          <div className="h-0.5 w-12 rounded-full mb-3" style={{ background: category.color }}></div>
-          
-          <p className="text-sm text-gray-300 mb-3 relative z-10 group-hover:text-white transition-colors">
-            {category.description}
-          </p>
-          
-          <ul className="text-xs text-gray-400 space-y-2 relative z-10">
-            {category.vaultTypes.map((vault, idx) => (
-              <li key={idx} className={`flex items-center transition-colors duration-300 ${activeCategory === category.id ? `text-${category.color.replace('#', '')}/90` : `group-hover:text-${category.color.replace('#', '')}/90`}`}>
-                <div className="w-2 h-2 rounded-full mr-2" style={{ background: category.color }}></div>
-                {vault}
-              </li>
-            ))}
-          </ul>
-        </div>
+        </Motion.div>
       ))}
     </div>
   );

@@ -1,83 +1,57 @@
 import React from 'react';
 
 interface GlowingBackgroundProps {
-  children: React.ReactNode;
-  className?: string;
-  primaryColor?: string;
-  secondaryColor?: string;
+  color?: string;
   intensity?: 'low' | 'medium' | 'high';
   animate?: boolean;
-  pattern?: 'dots' | 'grid' | 'none';
+  children?: React.ReactNode;
+  className?: string;
 }
 
 const GlowingBackground: React.FC<GlowingBackgroundProps> = ({
-  children,
-  className = '',
-  primaryColor = '#6B00D7',
-  secondaryColor = '#FF5AF7',
+  color = '#6B00D7',
   intensity = 'medium',
   animate = true,
-  pattern = 'grid'
+  children,
+  className = '',
 }) => {
-  // Calculate opacity based on intensity
-  const getOpacity = (base: number) => {
+  // Map intensity to opacity values
+  const getIntensityValue = () => {
     switch (intensity) {
-      case 'low': return base * 0.5;
-      case 'high': return base * 1.5;
-      default: return base;
-    }
-  };
-
-  // Generate pattern class
-  const getPatternClass = () => {
-    switch (pattern) {
-      case 'dots': return 'bg-dots-pattern';
-      case 'grid': return 'bg-grid-pattern';
-      default: return '';
+      case 'low': return '0.08';
+      case 'high': return '0.25';
+      default: return '0.15';
     }
   };
 
   return (
-    <div className={`relative overflow-hidden rounded-xl ${className}`}>
-      {/* Animated background gradients */}
-      <div className="absolute inset-0 overflow-hidden">
-        {/* Primary glow */}
-        <div 
-          className={`absolute top-0 right-0 w-96 h-96 rounded-full blur-3xl transform translate-x-1/3 -translate-y-1/3 ${animate ? 'animate-pulse-slow' : ''}`}
-          style={{ 
-            background: primaryColor,
-            opacity: getOpacity(0.15)
-          }}
-        />
-        
-        {/* Secondary glow */}
-        <div 
-          className={`absolute bottom-0 left-0 w-96 h-96 rounded-full blur-3xl transform -translate-x-1/3 translate-y-1/3 ${animate ? 'animate-pulse-slow animation-delay-1000' : ''}`}
-          style={{ 
-            background: secondaryColor,
-            opacity: getOpacity(0.15)
-          }}
-        />
-
-        {/* Central accent */}
-        <div 
-          className={`absolute top-1/2 left-1/2 w-64 h-64 rounded-full blur-3xl transform -translate-x-1/2 -translate-y-1/2 ${animate ? 'animate-pulse-slow animation-delay-2000' : ''}`}
-          style={{ 
-            background: `linear-gradient(135deg, ${primaryColor}, ${secondaryColor})`,
-            opacity: getOpacity(0.1)
-          }}
-        />
-        
-        {/* Pattern overlay */}
-        {pattern !== 'none' && (
-          <div className={`absolute inset-0 ${getPatternClass()} opacity-10`}></div>
-        )}
-      </div>
-
-      {/* Actual content */}
-      <div className="relative z-10">
-        {children}
-      </div>
+    <div className={`relative overflow-hidden ${className}`}>
+      {/* Background with subtle grid pattern */}
+      <div className="absolute inset-0 bg-black bg-opacity-70"></div>
+      <div className="absolute inset-0 bg-grid-pattern opacity-10"></div>
+      
+      {/* Glowing orbs */}
+      <div
+        className={`absolute top-0 left-1/4 w-64 h-64 rounded-full blur-3xl ${animate ? 'animate-float-slow' : ''}`}
+        style={{ background: `${color}`, opacity: getIntensityValue() }}
+      ></div>
+      
+      <div
+        className={`absolute bottom-1/4 right-1/3 w-80 h-80 rounded-full blur-3xl ${animate ? 'animate-float-slow animation-delay-2000' : ''}`}
+        style={{ background: `${color}`, opacity: getIntensityValue() }}
+      ></div>
+      
+      {/* Animated scan line - only if animate is true */}
+      {animate && (
+        <div className="absolute inset-0 overflow-hidden">
+          <div className="absolute inset-0 animate-scan-vertical">
+            <div className="h-px w-full" style={{ background: `linear-gradient(90deg, transparent 0%, ${color}40 50%, transparent 100%)` }}></div>
+          </div>
+        </div>
+      )}
+      
+      {/* Content */}
+      <div className="relative z-10">{children}</div>
     </div>
   );
 };
