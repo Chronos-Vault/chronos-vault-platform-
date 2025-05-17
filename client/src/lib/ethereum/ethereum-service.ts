@@ -238,6 +238,19 @@ class EthereumService {
     // Using the private property, avoiding recursion
     return !!this.signer && !!this.address && this._isConnected === true;
   }
+  
+  /**
+   * Check if the Ethereum service is connected to the network
+   * This is used by the security dashboard to check service status
+   * @returns boolean indicating if the service is connected to the network
+   */
+  isServiceConnected(): boolean {
+    // In development mode, always return true
+    if (this.isDevelopmentMode) {
+      return true;
+    }
+    return this._isConnected;
+  }
 
   /**
    * Get connection state

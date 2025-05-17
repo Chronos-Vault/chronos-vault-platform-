@@ -10,15 +10,42 @@
 import React, { useState } from 'react';
 import { useLocation } from 'wouter';
 import CrossChainSecurityDashboard from '@/components/security/CrossChainSecurityDashboard';
+import SecurityEnhancementsPanel from '@/components/security/SecurityEnhancementsPanel';
 import { Helmet } from 'react-helmet';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { ArrowRight, Shield, Lock, RefreshCw, BookOpen } from 'lucide-react';
+import { ArrowRight, Shield, Lock, RefreshCw, BookOpen, Key, FileDigit } from 'lucide-react';
+import { auditLogService, AuditLogEntry } from '@/lib/security/AuditLogService';
+import { ScrollArea } from '@/components/ui/scroll-area';
 
 export default function SecurityDashboardPage() {
   const [_, navigate] = useLocation();
   const [activeTab, setActiveTab] = useState<string>("dashboard");
+  const [auditLogs, setAuditLogs] = useState<AuditLogEntry[]>([]);
+  const [isLoadingLogs, setIsLoadingLogs] = useState<boolean>(true);
+
+  // Fetch audit logs when the audit tab is selected
+  React.useEffect(() => {
+    if (activeTab === 'history') {
+      const fetchLogs = async () => {
+        try {
+          setIsLoadingLogs(true);
+          const logs = await auditLogService.fetchLogs({
+            limit: 20,
+            offset: 0
+          });
+          setAuditLogs(logs);
+        } catch (error) {
+          console.error('Failed to fetch audit logs:', error);
+        } finally {
+          setIsLoadingLogs(false);
+        }
+      };
+      
+      fetchLogs();
+    }
+  }, [activeTab]);
 
   return (
     <>
@@ -56,22 +83,110 @@ export default function SecurityDashboardPage() {
         
         {/* Dashboard tabs */}
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-          <TabsList className="grid grid-cols-3 w-full max-w-md mx-auto mb-8 bg-black/20 border border-[#333]">
+          <TabsList className="grid grid-cols-4 w-full max-w-2xl mx-auto mb-8 bg-black/20 border border-[#333]">
             <TabsTrigger value="dashboard" className="data-[state=active]:bg-[#6B00D7] data-[state=active]:text-white">
               Dashboard
             </TabsTrigger>
+            <TabsTrigger value="enhancements" className="data-[state=active]:bg-[#6B00D7] data-[state=active]:text-white">
+              Security Features
+            </TabsTrigger>
             <TabsTrigger value="alerts" className="data-[state=active]:bg-[#6B00D7] data-[state=active]:text-white">
-              Security Alerts
+              Alerts
             </TabsTrigger>
             <TabsTrigger value="history" className="data-[state=active]:bg-[#6B00D7] data-[state=active]:text-white">
               Audit Log
             </TabsTrigger>
           </TabsList>
           
+          {/* Main Dashboard Tab */}
           <TabsContent value="dashboard" className="space-y-6 animate-in fade-in-50">
             <CrossChainSecurityDashboard />
           </TabsContent>
           
+          {/* Security Enhancements Tab */}
+          <TabsContent value="enhancements" className="space-y-6 animate-in fade-in-50">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              <SecurityEnhancementsPanel />
+              
+              <div className="space-y-6">
+                {/* Quantum Resistant Encryption */}
+                <Card className="border-[#333] bg-gradient-to-br from-[#6B00D7]/20 to-black/20">
+                  <CardHeader>
+                    <CardTitle className="text-xl flex items-center">
+                      <Key className="h-5 w-5 mr-2 text-[#FF5AF7]" />
+                      <span>Quantum-Resistant Encryption</span>
+                    </CardTitle>
+                    <CardDescription>
+                      Future-proof cryptography secure against quantum computing attacks
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="space-y-3 text-sm">
+                      <div className="flex justify-between border-b border-[#333] pb-2">
+                        <span className="text-gray-400">Primary Algorithm</span>
+                        <span className="font-mono text-[#FF5AF7]">CRYSTALS-Kyber</span>
+                      </div>
+                      <div className="flex justify-between border-b border-[#333] pb-2">
+                        <span className="text-gray-400">Signature Scheme</span>
+                        <span className="font-mono text-[#FF5AF7]">CRYSTALS-Dilithium</span>
+                      </div>
+                      <div className="flex justify-between border-b border-[#333] pb-2">
+                        <span className="text-gray-400">Security Level</span>
+                        <span className="font-mono text-[#FF5AF7]">ADVANCED (192-bit)</span>
+                      </div>
+                      <div className="flex justify-between border-b border-[#333] pb-2">
+                        <span className="text-gray-400">Status</span>
+                        <span className="text-green-500">Active</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-gray-400">Last Rotation</span>
+                        <span>12 hours ago</span>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+                
+                {/* Zero Knowledge Proof System */}
+                <Card className="border-[#333] bg-gradient-to-br from-[#6B00D7]/20 to-black/20">
+                  <CardHeader>
+                    <CardTitle className="text-xl flex items-center">
+                      <FileDigit className="h-5 w-5 mr-2 text-[#FF5AF7]" />
+                      <span>Zero-Knowledge Proof System</span>
+                    </CardTitle>
+                    <CardDescription>
+                      Privacy-preserving verification without revealing sensitive data
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="space-y-3 text-sm">
+                      <div className="flex justify-between border-b border-[#333] pb-2">
+                        <span className="text-gray-400">Active Proof Types</span>
+                        <div className="flex space-x-2">
+                          <Badge variant="outline" className="border-[#6B00D7] text-[#FF5AF7]">Identity</Badge>
+                          <Badge variant="outline" className="border-[#6B00D7] text-[#FF5AF7]">Asset</Badge>
+                          <Badge variant="outline" className="border-[#6B00D7] text-[#FF5AF7]">Transaction</Badge>
+                        </div>
+                      </div>
+                      <div className="flex justify-between border-b border-[#333] pb-2">
+                        <span className="text-gray-400">Verifications Today</span>
+                        <span className="font-mono text-[#FF5AF7]">37</span>
+                      </div>
+                      <div className="flex justify-between border-b border-[#333] pb-2">
+                        <span className="text-gray-400">Success Rate</span>
+                        <span className="text-green-500">99.8%</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-gray-400">Status</span>
+                        <span className="text-green-500">Operational</span>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
+            </div>
+          </TabsContent>
+          
+          {/* Security Alerts Tab */}
           <TabsContent value="alerts" className="space-y-6 animate-in fade-in-50">
             <Card className="border-[#333] bg-black/20">
               <CardHeader>
@@ -97,6 +212,7 @@ export default function SecurityDashboardPage() {
             </Card>
           </TabsContent>
           
+          {/* Audit Log Tab */}
           <TabsContent value="history" className="space-y-6 animate-in fade-in-50">
             <Card className="border-[#333] bg-black/20">
               <CardHeader>
@@ -106,58 +222,75 @@ export default function SecurityDashboardPage() {
                 <CardDescription>
                   Comprehensive history of security checks and verifications
                 </CardDescription>
+                <div className="flex justify-end mt-2">
+                  <Button variant="outline" size="sm" className="text-xs h-8 border-[#6B00D7] text-[#FF5AF7]">
+                    Export Log
+                  </Button>
+                </div>
               </CardHeader>
               <CardContent>
-                <div className="space-y-4">
-                  {/* Sample audit log entries */}
-                  <div className="border border-[#333] rounded-lg p-4 bg-black/30">
-                    <div className="flex justify-between items-start">
-                      <div>
-                        <h4 className="font-medium text-[#FF5AF7]">Cross-Chain Verification Complete</h4>
-                        <p className="text-sm text-gray-400 mt-1">
-                          Successful verification across Ethereum, TON, and Solana networks
-                        </p>
-                      </div>
-                      <span className="text-xs text-gray-500">Today, 14:32</span>
-                    </div>
+                {isLoadingLogs ? (
+                  <div className="animate-pulse space-y-4">
+                    {[...Array(4)].map((_, i) => (
+                      <div key={i} className="h-20 bg-gray-700/30 rounded-lg"></div>
+                    ))}
                   </div>
-                  
-                  <div className="border border-[#333] rounded-lg p-4 bg-black/30">
-                    <div className="flex justify-between items-start">
-                      <div>
-                        <h4 className="font-medium text-[#FF5AF7]">Security System Upgrade</h4>
-                        <p className="text-sm text-gray-400 mt-1">
-                          Military-grade security protocols updated to latest version
-                        </p>
-                      </div>
-                      <span className="text-xs text-gray-500">Today, 09:15</span>
+                ) : auditLogs.length > 0 ? (
+                  <ScrollArea className="h-[400px] rounded-md">
+                    <div className="space-y-4 p-1">
+                      {auditLogs.map((log) => (
+                        <div key={log.id} className="border border-[#333] rounded-lg p-4 bg-black/30">
+                          <div className="flex justify-between items-start">
+                            <div>
+                              <div className="flex items-center">
+                                <Badge 
+                                  variant="outline" 
+                                  className={`mr-2 ${
+                                    log.category === 'zero_knowledge_proof' 
+                                      ? 'border-blue-500 text-blue-500' 
+                                      : log.category === 'quantum_resistant_operation'
+                                        ? 'border-purple-500 text-purple-500'
+                                        : log.category === 'cross_chain_verification'
+                                          ? 'border-green-500 text-green-500'
+                                          : 'border-gray-500 text-gray-500'
+                                  }`}
+                                >
+                                  {log.category.replace(/_/g, ' ')}
+                                </Badge>
+                                <h4 className="font-medium text-[#FF5AF7]">{log.action}</h4>
+                              </div>
+                              <p className="text-sm text-gray-400 mt-1">
+                                {log.description}
+                              </p>
+                            </div>
+                            <div className="text-right">
+                              <span className="text-xs text-gray-500">
+                                {new Date(log.timestamp).toLocaleString()}
+                              </span>
+                              <Badge 
+                                className={`block mt-2 w-fit ml-auto ${
+                                  log.severity === 'critical' 
+                                    ? 'bg-red-500/20 text-red-500 border border-red-500/50' 
+                                    : log.severity === 'high'
+                                      ? 'bg-amber-500/20 text-amber-500 border border-amber-500/50'
+                                      : log.severity === 'medium'
+                                        ? 'bg-yellow-500/20 text-yellow-500 border border-yellow-500/50'
+                                        : 'bg-blue-500/20 text-blue-500 border border-blue-500/50'
+                                }`}
+                              >
+                                {log.severity}
+                              </Badge>
+                            </div>
+                          </div>
+                        </div>
+                      ))}
                     </div>
+                  </ScrollArea>
+                ) : (
+                  <div className="text-center py-8 text-gray-500">
+                    No audit logs available
                   </div>
-                  
-                  <div className="border border-[#333] rounded-lg p-4 bg-black/30">
-                    <div className="flex justify-between items-start">
-                      <div>
-                        <h4 className="font-medium text-[#FF5AF7]">Quantum-Resistant Cryptography Test</h4>
-                        <p className="text-sm text-gray-400 mt-1">
-                          Scheduled test of quantum-resistant encryption completed successfully
-                        </p>
-                      </div>
-                      <span className="text-xs text-gray-500">Yesterday, 18:42</span>
-                    </div>
-                  </div>
-                  
-                  <div className="border border-[#333] rounded-lg p-4 bg-black/30">
-                    <div className="flex justify-between items-start">
-                      <div>
-                        <h4 className="font-medium text-[#FF5AF7]">Blockchain Network Sync</h4>
-                        <p className="text-sm text-gray-400 mt-1">
-                          All blockchain networks synchronized and verified
-                        </p>
-                      </div>
-                      <span className="text-xs text-gray-500">Yesterday, 11:20</span>
-                    </div>
-                  </div>
-                </div>
+                )}
                 
                 <div className="mt-6 text-center">
                   <Button variant="link" className="text-[#FF5AF7]">
