@@ -32,19 +32,19 @@ const SecurityDocumentation = () => {
       <PageHeader 
         title="Security Feature Documentation"
         subtitle="Technical specifications and detailed implementation guides"
-        icon={<FileTextIcon className="w-10 h-10 text-primary" />}
+        icon={<FileTextIcon className="w-10 h-10 text-[#FF5AF7]" />}
       />
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-        <Card className="bg-gradient-to-br from-violet-50 to-fuchsia-50 border-violet-200">
+        <Card className="bg-gradient-to-br from-[#1A1A1A] to-[#111] border border-[#333] shadow-xl">
           <CardHeader className="pb-2">
-            <CardTitle className="flex items-center">
-              <ShieldCheckIcon className="w-5 h-5 mr-2 text-violet-600" />
+            <CardTitle className="flex items-center text-white">
+              <ShieldCheckIcon className="w-5 h-5 mr-2 text-[#FF5AF7]" />
               Behavioral Authentication
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <p className="text-sm text-gray-700">
+            <p className="text-sm text-gray-400">
               AI-powered pattern recognition for transaction security
             </p>
           </CardContent>
@@ -53,22 +53,22 @@ const SecurityDocumentation = () => {
               variant="outline" 
               size="sm"
               onClick={() => document.getElementById('behavioral-section')?.scrollIntoView({ behavior: 'smooth' })}
-              className="w-full border-violet-300 hover:bg-violet-100"
+              className="w-full border-[#333] text-gray-300 hover:bg-[#6B00D7]/10 hover:text-white"
             >
               View Documentation
             </Button>
           </CardFooter>
         </Card>
 
-        <Card className="bg-gradient-to-br from-blue-50 to-cyan-50 border-blue-200">
+        <Card className="bg-gradient-to-br from-[#1A1A1A] to-[#111] border border-[#333] shadow-xl">
           <CardHeader className="pb-2">
-            <CardTitle className="flex items-center">
-              <KeySquareIcon className="w-5 h-5 mr-2 text-blue-600" />
+            <CardTitle className="flex items-center text-white">
+              <KeySquareIcon className="w-5 h-5 mr-2 text-[#FF5AF7]" />
               Quantum-Resistant Cryptography
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <p className="text-sm text-gray-700">
+            <p className="text-sm text-gray-400">
               Post-quantum encryption for future-proof asset protection
             </p>
           </CardContent>
@@ -77,22 +77,22 @@ const SecurityDocumentation = () => {
               variant="outline" 
               size="sm"
               onClick={() => document.getElementById('quantum-section')?.scrollIntoView({ behavior: 'smooth' })}
-              className="w-full border-blue-300 hover:bg-blue-100"
+              className="w-full border-[#333] text-gray-300 hover:bg-[#6B00D7]/10 hover:text-white"
             >
               View Documentation
             </Button>
           </CardFooter>
         </Card>
 
-        <Card className="bg-gradient-to-br from-emerald-50 to-teal-50 border-emerald-200">
+        <Card className="bg-gradient-to-br from-[#1A1A1A] to-[#111] border border-[#333] shadow-xl">
           <CardHeader className="pb-2">
-            <CardTitle className="flex items-center">
-              <UsersIcon className="w-5 h-5 mr-2 text-emerald-600" />
+            <CardTitle className="flex items-center text-white">
+              <UsersIcon className="w-5 h-5 mr-2 text-[#FF5AF7]" />
               Social Recovery
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <p className="text-sm text-gray-700">
+            <p className="text-sm text-gray-400">
               Advanced guardian-based asset recovery system
             </p>
           </CardContent>
@@ -101,7 +101,7 @@ const SecurityDocumentation = () => {
               variant="outline" 
               size="sm"
               onClick={() => document.getElementById('social-section')?.scrollIntoView({ behavior: 'smooth' })}
-              className="w-full border-emerald-300 hover:bg-emerald-100"
+              className="w-full border-[#333] text-gray-300 hover:bg-[#6B00D7]/10 hover:text-white"
             >
               View Documentation
             </Button>
@@ -111,21 +111,21 @@ const SecurityDocumentation = () => {
 
       {/* Behavioral Authentication Documentation */}
       <div id="behavioral-section" className="mb-16 scroll-mt-16">
-        <div className="border-b border-gray-200 pb-4 mb-8">
+        <div className="border-b border-[#333] pb-4 mb-8">
           <div className="flex items-center">
-            <ShieldCheckIcon className="w-8 h-8 mr-3 text-violet-600" />
-            <h2 className="text-2xl font-bold">Behavioral Authentication Documentation</h2>
+            <ShieldCheckIcon className="w-8 h-8 mr-3 text-[#FF5AF7]" />
+            <h2 className="text-2xl font-bold text-white">Behavioral Authentication Documentation</h2>
           </div>
-          <p className="text-gray-600 mt-2">
+          <p className="text-gray-400 mt-2">
             Complete technical implementation of our AI-powered transaction security system
           </p>
         </div>
 
         <div className="space-y-8">
           <div>
-            <h3 className="text-xl font-semibold mb-4">Technical Overview</h3>
-            <div className="bg-white shadow rounded-lg p-6 border border-gray-200">
-              <p className="text-gray-700 mb-4">
+            <h3 className="text-xl font-semibold mb-4 text-[#FF5AF7]">Technical Overview</h3>
+            <div className="bg-[#1A1A1A] shadow-lg rounded-lg p-6 border border-[#333]">
+              <p className="text-gray-300 mb-4">
                 Behavioral Authentication uses machine learning algorithms to establish a baseline of normal 
                 transaction patterns for each user. This pattern recognition serves as a dynamic 
                 security layer that complements traditional authentication methods.
@@ -133,12 +133,12 @@ const SecurityDocumentation = () => {
 
               <div className="mt-6 space-y-4">
                 <div className="flex items-start">
-                  <div className="bg-violet-100 rounded-full p-2 mr-4">
-                    <ShieldCheckIcon className="w-5 h-5 text-violet-600" />
+                  <div className="bg-[#111] rounded-full p-2 mr-4 border border-[#333]">
+                    <ShieldCheckIcon className="w-5 h-5 text-[#FF5AF7]" />
                   </div>
                   <div>
-                    <h4 className="font-medium">Protocol Stack</h4>
-                    <p className="text-gray-600 text-sm">
+                    <h4 className="font-medium text-white">Protocol Stack</h4>
+                    <p className="text-gray-400 text-sm">
                       Zero-Knowledge ML Analysis → Pattern Recognition Engine → 
                       Anomaly Detection System → Multi-Factor Authentication Trigger
                     </p>
@@ -146,12 +146,12 @@ const SecurityDocumentation = () => {
                 </div>
 
                 <div className="flex items-start">
-                  <div className="bg-violet-100 rounded-full p-2 mr-4">
-                    <ShieldCheckIcon className="w-5 h-5 text-violet-600" />
+                  <div className="bg-[#111] rounded-full p-2 mr-4 border border-[#333]">
+                    <ShieldCheckIcon className="w-5 h-5 text-[#FF5AF7]" />
                   </div>
                   <div>
-                    <h4 className="font-medium">Data Processing</h4>
-                    <p className="text-gray-600 text-sm">
+                    <h4 className="font-medium text-white">Data Processing</h4>
+                    <p className="text-gray-400 text-sm">
                       All behavioral data is processed using homomorphic encryption techniques, 
                       allowing pattern analysis without exposing raw transaction details.
                     </p>
@@ -159,12 +159,12 @@ const SecurityDocumentation = () => {
                 </div>
 
                 <div className="flex items-start">
-                  <div className="bg-violet-100 rounded-full p-2 mr-4">
-                    <ShieldCheckIcon className="w-5 h-5 text-violet-600" />
+                  <div className="bg-[#111] rounded-full p-2 mr-4 border border-[#333]">
+                    <ShieldCheckIcon className="w-5 h-5 text-[#FF5AF7]" />
                   </div>
                   <div>
-                    <h4 className="font-medium">Training Period</h4>
-                    <p className="text-gray-600 text-sm">
+                    <h4 className="font-medium text-white">Training Period</h4>
+                    <p className="text-gray-400 text-sm">
                       Initial model training requires 7-14 days of transaction activity, 
                       with continuous refinement over time to improve accuracy.
                     </p>
@@ -175,49 +175,49 @@ const SecurityDocumentation = () => {
           </div>
 
           <div>
-            <h3 className="text-xl font-semibold mb-4">Implementation Requirements</h3>
-            <div className="bg-white shadow rounded-lg p-6 border border-gray-200">
+            <h3 className="text-xl font-semibold mb-4 text-[#FF5AF7]">Implementation Requirements</h3>
+            <div className="bg-[#1A1A1A] shadow-lg rounded-lg p-6 border border-[#333]">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
-                  <h4 className="font-semibold mb-2">Client-Side Requirements</h4>
+                  <h4 className="font-semibold mb-2 text-white">Client-Side Requirements</h4>
                   <ul className="space-y-2">
                     <li className="flex items-center">
-                      <CheckCircleIcon className="w-5 h-5 text-green-500 mr-2 flex-shrink-0" />
-                      <span className="text-gray-700 text-sm">Modern browser with WebAssembly support</span>
+                      <CheckCircleIcon className="w-5 h-5 text-[#50E3C2] mr-2 flex-shrink-0" />
+                      <span className="text-gray-300 text-sm">Modern browser with WebAssembly support</span>
                     </li>
                     <li className="flex items-center">
-                      <CheckCircleIcon className="w-5 h-5 text-green-500 mr-2 flex-shrink-0" />
-                      <span className="text-gray-700 text-sm">Secure local storage for pattern caching</span>
+                      <CheckCircleIcon className="w-5 h-5 text-[#50E3C2] mr-2 flex-shrink-0" />
+                      <span className="text-gray-300 text-sm">Secure local storage for pattern caching</span>
                     </li>
                     <li className="flex items-center">
-                      <CheckCircleIcon className="w-5 h-5 text-green-500 mr-2 flex-shrink-0" />
-                      <span className="text-gray-700 text-sm">At least one secondary verification method</span>
+                      <CheckCircleIcon className="w-5 h-5 text-[#50E3C2] mr-2 flex-shrink-0" />
+                      <span className="text-gray-300 text-sm">At least one secondary verification method</span>
                     </li>
                     <li className="flex items-center">
-                      <AlertCircleIcon className="w-5 h-5 text-amber-500 mr-2 flex-shrink-0" />
-                      <span className="text-gray-700 text-sm">Compatible hardware wallet (recommended)</span>
+                      <AlertCircleIcon className="w-5 h-5 text-amber-400 mr-2 flex-shrink-0" />
+                      <span className="text-gray-300 text-sm">Compatible hardware wallet (recommended)</span>
                     </li>
                   </ul>
                 </div>
 
                 <div>
-                  <h4 className="font-semibold mb-2">Server-Side Requirements</h4>
+                  <h4 className="font-semibold mb-2 text-white">Server-Side Requirements</h4>
                   <ul className="space-y-2">
                     <li className="flex items-center">
-                      <CheckCircleIcon className="w-5 h-5 text-green-500 mr-2 flex-shrink-0" />
-                      <span className="text-gray-700 text-sm">Isolated ML processing environment</span>
+                      <CheckCircleIcon className="w-5 h-5 text-[#50E3C2] mr-2 flex-shrink-0" />
+                      <span className="text-gray-300 text-sm">Isolated ML processing environment</span>
                     </li>
                     <li className="flex items-center">
-                      <CheckCircleIcon className="w-5 h-5 text-green-500 mr-2 flex-shrink-0" />
-                      <span className="text-gray-700 text-sm">Secure encrypted model storage</span>
+                      <CheckCircleIcon className="w-5 h-5 text-[#50E3C2] mr-2 flex-shrink-0" />
+                      <span className="text-gray-300 text-sm">Secure encrypted model storage</span>
                     </li>
                     <li className="flex items-center">
-                      <CheckCircleIcon className="w-5 h-5 text-green-500 mr-2 flex-shrink-0" />
-                      <span className="text-gray-700 text-sm">Real-time analytics capability</span>
+                      <CheckCircleIcon className="w-5 h-5 text-[#50E3C2] mr-2 flex-shrink-0" />
+                      <span className="text-gray-300 text-sm">Real-time analytics capability</span>
                     </li>
                     <li className="flex items-center">
-                      <CheckCircleIcon className="w-5 h-5 text-green-500 mr-2 flex-shrink-0" />
-                      <span className="text-gray-700 text-sm">Audit logging for all security challenges</span>
+                      <CheckCircleIcon className="w-5 h-5 text-[#50E3C2] mr-2 flex-shrink-0" />
+                      <span className="text-gray-300 text-sm">Audit logging for all security challenges</span>
                     </li>
                   </ul>
                 </div>
@@ -226,25 +226,25 @@ const SecurityDocumentation = () => {
           </div>
 
           <div>
-            <h3 className="text-xl font-semibold mb-4">Configuration Options</h3>
-            <div className="bg-white shadow overflow-hidden sm:rounded-md border border-gray-200">
-              <ul className="divide-y divide-gray-200">
+            <h3 className="text-xl font-semibold mb-4 text-[#FF5AF7]">Configuration Options</h3>
+            <div className="bg-[#1A1A1A] shadow-lg overflow-hidden sm:rounded-lg border border-[#333]">
+              <ul className="divide-y divide-[#333]">
                 <li>
                   <div className="px-4 py-5 sm:px-6">
                     <div className="flex items-center justify-between">
                       <div className="flex items-center">
                         <div className="min-w-0 flex-1">
-                          <h4 className="text-md font-medium text-indigo-600">Sensitivity Level</h4>
-                          <p className="text-sm text-gray-500">Determines threshold for flagging unusual transactions</p>
+                          <h4 className="text-md font-medium text-[#FF5AF7]">Sensitivity Level</h4>
+                          <p className="text-sm text-gray-400">Determines threshold for flagging unusual transactions</p>
                         </div>
                       </div>
                       <div>
-                        <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
+                        <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-[#111] text-[#50E3C2] border border-[#333]">
                           Adjustable
                         </span>
                       </div>
                     </div>
-                    <div className="mt-2 text-sm text-gray-700">
+                    <div className="mt-2 text-sm text-gray-300">
                       <p>Options: Low (flag only very unusual), Medium (default), High (strict security)</p>
                     </div>
                   </div>

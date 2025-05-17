@@ -284,26 +284,26 @@ const SecurityTutorialsVideo = () => {
               </CardFooter>
             </Card>
             
-            <Card>
+            <Card className="bg-[#1A1A1A] border border-[#333] shadow-xl">
               <CardHeader>
-                <CardTitle className="text-2xl">Recovery Process Demonstration</CardTitle>
-                <CardDescription>
+                <CardTitle className="text-2xl text-white">Recovery Process Demonstration</CardTitle>
+                <CardDescription className="text-gray-400">
                   Watch a complete demonstration of the recovery process from start to finish
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                <div className="aspect-video bg-gray-800 rounded-lg flex items-center justify-center">
+                <div className="aspect-video bg-[#111] rounded-lg flex items-center justify-center border border-[#333]">
                   {/* This would be replaced with an actual video player in production */}
                   <div className="text-center p-10">
-                    <PlayCircleIcon className="w-20 h-20 text-gray-200 mx-auto mb-4" />
+                    <PlayCircleIcon className="w-20 h-20 text-[#FF5AF7] mx-auto mb-4 opacity-70 hover:opacity-100 transition-opacity cursor-pointer" />
                     <p className="text-gray-200 text-lg">Video Demo: Complete Recovery Process</p>
-                    <p className="text-gray-400 mt-2">Duration: 10:15</p>
+                    <p className="text-gray-500 mt-2">Duration: 10:15</p>
                   </div>
                 </div>
                 
                 <div className="mt-6">
-                  <h3 className="text-xl font-semibold">Demonstration Includes</h3>
-                  <ul className="list-disc pl-6 mt-2 text-gray-700 space-y-1">
+                  <h3 className="text-xl font-semibold text-[#FF5AF7]">Demonstration Includes</h3>
+                  <ul className="list-disc pl-6 mt-2 text-gray-400 space-y-1">
                     <li>Initiating a recovery request from a new device</li>
                     <li>Guardian notification and verification process</li>
                     <li>Time-lock waiting period and security checks</li>
@@ -312,11 +312,11 @@ const SecurityTutorialsVideo = () => {
                   </ul>
                 </div>
               </CardContent>
-              <CardFooter className="flex justify-between">
-                <Button variant="outline">
+              <CardFooter className="flex justify-between border-t border-[#333] pt-4">
+                <Button variant="outline" className="border-[#333] text-gray-300 hover:bg-[#6B00D7]/10 hover:text-white">
                   <DownloadIcon className="mr-2 h-4 w-4" /> Recovery Checklist
                 </Button>
-                <Button onClick={() => navigate('/security-verification')}>
+                <Button onClick={() => navigate('/security-verification')} className="bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] hover:opacity-90 text-white">
                   Security Verification Center <ChevronRightIcon className="ml-2 h-4 w-4" />
                 </Button>
               </CardFooter>
