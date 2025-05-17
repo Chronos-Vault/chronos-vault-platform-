@@ -226,21 +226,21 @@ const SecurityTutorials = () => {
         {/* Quantum-Resistant Cryptography */}
         <TabsContent value="quantum">
           <div className="grid gap-6 mt-8">
-            <Card>
+            <Card className="bg-[#1A1A1A] border border-[#333] shadow-xl">
               <CardHeader>
-                <CardTitle className="text-2xl">Understanding Quantum-Resistant Cryptography</CardTitle>
-                <CardDescription>
+                <CardTitle className="text-2xl text-white">Understanding Quantum-Resistant Cryptography</CardTitle>
+                <CardDescription className="text-gray-400">
                   How our post-quantum cryptographic systems protect your assets from future threats
                 </CardDescription>
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
-                  <p className="text-gray-700">
+                  <p className="text-gray-400">
                     Quantum-Resistant Cryptography uses advanced mathematical algorithms that are designed to withstand
                     attacks from quantum computers, which could potentially break traditional encryption methods.
                   </p>
                   
-                  <h3 className="text-xl font-semibold mt-6">Core Technologies</h3>
+                  <h3 className="text-xl font-semibold mt-6 text-[#FF5AF7]">Core Technologies</h3>
                   
                   <div className="space-y-4 mt-4">
                     <div className="flex items-start">
