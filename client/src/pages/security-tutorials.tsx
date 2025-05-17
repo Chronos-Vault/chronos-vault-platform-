@@ -23,44 +23,59 @@ const SecurityTutorials = () => {
       <PageHeader 
         title="Security Feature Tutorials"
         subtitle="Learn how to use our advanced security features to protect your digital assets"
-        icon={<BookOpenIcon className="w-10 h-10 text-primary" />}
+        icon={<BookOpenIcon className="w-10 h-10 text-[#FF5AF7]" />}
       />
 
       <Tabs defaultValue="behavioral" className="w-full mt-8">
-        <TabsList className="grid w-full grid-cols-3">
-          <TabsTrigger value="behavioral">Behavioral Authentication</TabsTrigger>
-          <TabsTrigger value="quantum">Quantum-Resistant Cryptography</TabsTrigger>
-          <TabsTrigger value="social">Social Recovery</TabsTrigger>
+        <TabsList className="grid w-full grid-cols-3 bg-[#1A1A1A] border border-[#333] rounded-lg overflow-hidden p-0.5">
+          <TabsTrigger 
+            value="behavioral" 
+            className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-[#6B00D7] data-[state=active]:to-[#FF5AF7] data-[state=active]:text-white"
+          >
+            Behavioral Authentication
+          </TabsTrigger>
+          <TabsTrigger 
+            value="quantum"
+            className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-[#6B00D7] data-[state=active]:to-[#FF5AF7] data-[state=active]:text-white"
+          >
+            Quantum-Resistant Cryptography
+          </TabsTrigger>
+          <TabsTrigger 
+            value="social"
+            className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-[#6B00D7] data-[state=active]:to-[#FF5AF7] data-[state=active]:text-white"
+          >
+            Social Recovery
+          </TabsTrigger>
         </TabsList>
 
         {/* Behavioral Authentication */}
         <TabsContent value="behavioral">
           <div className="grid gap-6 mt-8">
-            <Card>
+            <Card className="bg-[#1A1A1A] border border-[#333] shadow-xl">
               <CardHeader>
-                <CardTitle className="text-2xl">What is Behavioral Authentication?</CardTitle>
-                <CardDescription>
+                <CardTitle className="text-2xl text-white">What is Behavioral Authentication?</CardTitle>
+                <CardDescription className="text-gray-400">
                   Understand how our AI-powered system protects your assets by learning your transaction patterns
                 </CardDescription>
               </CardHeader>
-              <CardContent>
+              <CardContent className="text-gray-300">
                 <div className="space-y-4">
-                  <p className="text-gray-700">
+                  <p className="text-gray-300">
                     Behavioral Authentication is an advanced security feature that uses machine learning algorithms to
                     analyze your transaction patterns, creating a unique behavioral fingerprint that helps identify
                     unusual activity.
                   </p>
                   
-                  <h3 className="text-xl font-semibold mt-6">How It Works</h3>
+                  <h3 className="text-xl font-semibold mt-6 text-[#FF5AF7]">How It Works</h3>
                   
                   <div className="space-y-4 mt-4">
                     <div className="flex items-start">
-                      <div className="bg-primary/10 p-2 rounded-full mr-4">
-                        <ShieldCheckIcon className="w-6 h-6 text-primary" />
+                      <div className="bg-[#6B00D7]/20 p-2 rounded-full mr-4">
+                        <ShieldCheckIcon className="w-6 h-6 text-[#FF5AF7]" />
                       </div>
                       <div>
-                        <h4 className="text-lg font-medium">Pattern Recognition</h4>
-                        <p className="text-gray-600">
+                        <h4 className="text-lg font-medium text-white">Pattern Recognition</h4>
+                        <p className="text-gray-400">
                           The system learns from your normal transaction behaviors including timing, amounts, 
                           frequencies, and blockchain destinations.
                         </p>
@@ -68,12 +83,12 @@ const SecurityTutorials = () => {
                     </div>
                     
                     <div className="flex items-start">
-                      <div className="bg-primary/10 p-2 rounded-full mr-4">
-                        <ShieldCheckIcon className="w-6 h-6 text-primary" />
+                      <div className="bg-[#6B00D7]/20 p-2 rounded-full mr-4">
+                        <ShieldCheckIcon className="w-6 h-6 text-[#FF5AF7]" />
                       </div>
                       <div>
-                        <h4 className="text-lg font-medium">Real-time Detection</h4>
-                        <p className="text-gray-600">
+                        <h4 className="text-lg font-medium text-white">Real-time Detection</h4>
+                        <p className="text-gray-400">
                           When a transaction deviates from your established patterns, the system requires additional
                           verification to ensure it's truly you.
                         </p>
@@ -81,12 +96,12 @@ const SecurityTutorials = () => {
                     </div>
                     
                     <div className="flex items-start">
-                      <div className="bg-primary/10 p-2 rounded-full mr-4">
-                        <ShieldCheckIcon className="w-6 h-6 text-primary" />
+                      <div className="bg-[#6B00D7]/20 p-2 rounded-full mr-4">
+                        <ShieldCheckIcon className="w-6 h-6 text-[#FF5AF7]" />
                       </div>
                       <div>
-                        <h4 className="text-lg font-medium">Privacy-Preserving</h4>
-                        <p className="text-gray-600">
+                        <h4 className="text-lg font-medium text-white">Privacy-Preserving</h4>
+                        <p className="text-gray-400">
                           Your behavioral data is processed using zero-knowledge techniques, ensuring your privacy
                           is maintained while still providing robust security.
                         </p>
@@ -95,7 +110,7 @@ const SecurityTutorials = () => {
                   </div>
                 </div>
               </CardContent>
-              <CardFooter>
+              <CardFooter className="border-t border-[#333]">
                 <Button 
                   onClick={() => navigate('/behavioral-authentication')}
                   className="mt-4 bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] hover:opacity-90"
@@ -105,42 +120,42 @@ const SecurityTutorials = () => {
               </CardFooter>
             </Card>
             
-            <Card>
+            <Card className="bg-[#1A1A1A] border border-[#333] shadow-xl">
               <CardHeader>
-                <CardTitle className="text-2xl">Getting Started with Behavioral Authentication</CardTitle>
-                <CardDescription>
+                <CardTitle className="text-2xl text-white">Getting Started with Behavioral Authentication</CardTitle>
+                <CardDescription className="text-gray-400">
                   Simple steps to activate and use behavioral authentication for your vaults
                 </CardDescription>
               </CardHeader>
-              <CardContent>
+              <CardContent className="text-gray-300">
                 <div className="space-y-6">
-                  <div className="bg-gray-50 p-4 rounded-lg border border-gray-200">
-                    <h3 className="text-lg font-semibold mb-2">Step 1: Enable the Feature</h3>
-                    <p className="text-gray-700">
+                  <div className="bg-[#111] p-4 rounded-lg border border-[#333]">
+                    <h3 className="text-lg font-semibold mb-2 text-[#FF5AF7]">Step 1: Enable the Feature</h3>
+                    <p className="text-gray-400">
                       Navigate to your vault settings and enable "Behavioral Authentication". You'll need to confirm 
                       this action with your wallet signature.
                     </p>
                   </div>
                   
-                  <div className="bg-gray-50 p-4 rounded-lg border border-gray-200">
-                    <h3 className="text-lg font-semibold mb-2">Step 2: Training Period</h3>
-                    <p className="text-gray-700">
+                  <div className="bg-[#111] p-4 rounded-lg border border-[#333]">
+                    <h3 className="text-lg font-semibold mb-2 text-[#FF5AF7]">Step 2: Training Period</h3>
+                    <p className="text-gray-400">
                       The system needs to learn your normal behavior. During the first 7-14 days, perform your usual 
                       transactions. The system will analyze these to establish your baseline patterns.
                     </p>
                   </div>
                   
-                  <div className="bg-gray-50 p-4 rounded-lg border border-gray-200">
-                    <h3 className="text-lg font-semibold mb-2">Step 3: Set Verification Preferences</h3>
-                    <p className="text-gray-700">
+                  <div className="bg-[#111] p-4 rounded-lg border border-[#333]">
+                    <h3 className="text-lg font-semibold mb-2 text-[#FF5AF7]">Step 3: Set Verification Preferences</h3>
+                    <p className="text-gray-400">
                       Choose your preferred secondary verification methods when unusual activity is detected:
                       hardware wallet, multi-signature approval, or time-delay release.
                     </p>
                   </div>
                   
-                  <div className="bg-gray-50 p-4 rounded-lg border border-gray-200">
-                    <h3 className="text-lg font-semibold mb-2">Step 4: Regular Review</h3>
-                    <p className="text-gray-700">
+                  <div className="bg-[#111] p-4 rounded-lg border border-[#333]">
+                    <h3 className="text-lg font-semibold mb-2 text-[#FF5AF7]">Step 4: Regular Review</h3>
+                    <p className="text-gray-400">
                       Periodically check your Behavioral Authentication dashboard to see detected patterns 
                       and any security notifications. You can adjust sensitivity levels as needed.
                     </p>
@@ -149,14 +164,14 @@ const SecurityTutorials = () => {
               </CardContent>
             </Card>
 
-            <Card>
+            <Card className="bg-[#1A1A1A] border border-[#333] shadow-xl">
               <CardHeader>
-                <CardTitle className="text-2xl">Troubleshooting Behavioral Authentication</CardTitle>
-                <CardDescription>
+                <CardTitle className="text-2xl text-white">Troubleshooting Behavioral Authentication</CardTitle>
+                <CardDescription className="text-gray-400">
                   Common issues and how to resolve them
                 </CardDescription>
               </CardHeader>
-              <CardContent>
+              <CardContent className="text-gray-300">
                 <div className="space-y-6">
                   <div className="border-b pb-4">
                     <h3 className="text-lg font-semibold mb-2">Too Many Security Challenges</h3>
