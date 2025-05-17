@@ -122,7 +122,8 @@ const MainHeader = () => {
       title: "Explore",
       icon: "🔍",
       items: [
-        { name: "Cross-Chain Monitor", href: "/cross-chain-monitor", icon: "📊", highlight: true, isNew: true },
+        { name: "Cross-Chain Monitor", href: "/cross-chain-monitor", icon: "📊", highlight: true },
+        { name: "Cross-Chain Metrics", href: "/cross-chain-metrics", icon: "📊", highlight: true, isNew: true },
         { name: "Transaction Monitor", href: "/transaction-monitor", icon: "📈" },
         { name: "Transaction Verification", href: "/transaction-verification", icon: "📝" },
         { name: "Cross-Chain Bridge", href: "/cross-chain-bridge", icon: "🔄" },
@@ -243,9 +244,16 @@ const MainHeader = () => {
                         href="/cross-chain-monitor"
                         title="📊 Cross-Chain Monitor"
                         highlight={true}
-                        isNew={true}
                       >
                         Comprehensive monitoring dashboard for all blockchain networks
+                      </ListItem>
+                      <ListItem
+                        href="/cross-chain-metrics"
+                        title="📈 Cross-Chain Metrics"
+                        highlight={true}
+                        isNew={true}
+                      >
+                        Real-time analytics and optimization across blockchains
                       </ListItem>
                       <ListItem 
                         href="/transaction-verification" 
