@@ -30,6 +30,7 @@ import { VerificationStatus } from './blockchain/cross-chain-vault-verification'
 import { WebSocket } from 'ws';
 import { initializeWebSocketManager, getWebSocketManager } from './websocket/websocket-manager';
 import { resetOnboarding } from './api/emergency-reset';
+import { registerCrossChainOperationsRoutes } from './api/cross-chain-operations-routes';
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // Create HTTP server instance
@@ -77,6 +78,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
   
   // Register cross-chain bridge routes
   apiRouter.use('/bridge', bridgeRoutes);
+  
+  // Register cross-chain operations routes
+  registerCrossChainOperationsRoutes(apiRouter);
   
   // Register vault explorer routes
   apiRouter.use('/explorer', explorerRouter);
