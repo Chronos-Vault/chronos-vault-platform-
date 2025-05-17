@@ -1,6 +1,6 @@
 import React from 'react';
 import { useLocation } from 'wouter';
-import { ArrowLeft, Brain, Zap, Lock, Shield } from 'lucide-react';
+import { ArrowLeft, Brain, Zap, Lock, Shield, KeySquare, ServerCrash } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { BehavioralAuthentication } from '@/components/security/BehavioralAuthentication';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -208,21 +208,61 @@ export default function BehavioralAuthenticationPage() {
                 </div>
               </div>
               
-              <Card className="bg-[#1A1A1A] border-[#333] p-6 flex flex-col items-center justify-center h-[300px] text-center">
-                <div className="h-16 w-16 rounded-full bg-gradient-to-br from-[#6B00D7]/20 to-[#FF5AF7]/20 flex items-center justify-center mb-4">
-                  <Lock className="h-7 w-7 text-[#FF5AF7]" />
-                </div>
-                <h3 className="text-xl font-semibold mb-2">Coming Soon</h3>
-                <p className="text-gray-400 max-w-md">
-                  Our enhanced social recovery system will allow you to designate different trusted contacts with varying levels of recovery authority. This tiered approach provides flexible security options for vault recovery.
-                </p>
+              <div className="grid gap-6 md:grid-cols-3">
+                <Card className="bg-[#1A1A1A] border-[#333]">
+                  <CardHeader className="pb-2">
+                    <div className="h-10 w-10 rounded-full bg-[#6B00D7]/20 flex items-center justify-center mb-2">
+                      <Lock className="h-5 w-5 text-[#FF5AF7]" />
+                    </div>
+                    <CardTitle className="text-lg">Tiered Recovery</CardTitle>
+                    <CardDescription>
+                      Multi-level guardian system
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent className="text-sm text-gray-400">
+                    Designate different trusted contacts with varying levels of recovery authority, creating a secure and flexible recovery system.
+                  </CardContent>
+                </Card>
+                
+                <Card className="bg-[#1A1A1A] border-[#333]">
+                  <CardHeader className="pb-2">
+                    <div className="h-10 w-10 rounded-full bg-[#6B00D7]/20 flex items-center justify-center mb-2">
+                      <Shield className="h-5 w-5 text-[#FF5AF7]" />
+                    </div>
+                    <CardTitle className="text-lg">Time-Locked Recovery</CardTitle>
+                    <CardDescription>
+                      Enforced waiting periods for security
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent className="text-sm text-gray-400">
+                    Recovery attempts require a waiting period with notifications, giving you time to cancel unauthorized recovery attempts.
+                  </CardContent>
+                </Card>
+                
+                <Card className="bg-[#1A1A1A] border-[#333]">
+                  <CardHeader className="pb-2">
+                    <div className="h-10 w-10 rounded-full bg-[#6B00D7]/20 flex items-center justify-center mb-2">
+                      <Zap className="h-5 w-5 text-[#FF5AF7]" />
+                    </div>
+                    <CardTitle className="text-lg">Cross-Chain Recovery</CardTitle>
+                    <CardDescription>
+                      Multi-blockchain guardian verification
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent className="text-sm text-gray-400">
+                    Guardians can verify recovery requests using any supported blockchain, adding flexibility and redundancy to the recovery process.
+                  </CardContent>
+                </Card>
+              </div>
+              
+              <div className="mt-8">
                 <Button 
-                  className="mt-6 bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] hover:opacity-90"
+                  className="bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] hover:opacity-90"
                   onClick={() => navigate('/multi-signature-vault')}
                 >
                   View Multi-Signature Features
                 </Button>
-              </Card>
+              </div>
             </div>
           </TabsContent>
         </Tabs>
