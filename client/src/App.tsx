@@ -144,6 +144,7 @@ function App() {
           <Route path="/vault-explorer" component={VaultExplorer} />
           <Route path="/explorer" component={VaultExplorer} />
           <Route path="/vault-selection" component={VaultSelectionShowcase} />
+          <Route path="/create-vault-selector" component={VaultSelectionShowcase} />
           
           {/* Standard Vault Types */}
           <Route path="/biometric-vault" component={BiometricVault} />
