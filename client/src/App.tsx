@@ -49,6 +49,11 @@ import QuantumVault from './pages/quantum-vault';
 import TonSpecificVault from './pages/ton-specific-vault';
 import SovereignFortressVault from './pages/sovereign-fortress-vault';
 
+// New Innovative Vault Types
+import AIInvestmentVault from './pages/vault-types/ai-investment-vault';
+import MilestoneBasedVault from './pages/vault-types/milestone-based-vault';
+import FamilyHeritageVault from './pages/vault-types/family-heritage-vault';
+
 // Documentation Pages
 import Whitepaper from './pages/whitepaper';
 import ProjectWhitepaper from './pages/project-whitepaper';
@@ -152,6 +157,11 @@ function App() {
           <Route path="/quantum-vault" component={QuantumVault} />
           <Route path="/ton-specific-vault" component={TonSpecificVault} />
           <Route path="/sovereign-fortress-vault" component={SovereignFortressVault} />
+          
+          {/* New Innovative Vault Types */}
+          <Route path="/ai-investment-vault" component={AIInvestmentVault} />
+          <Route path="/milestone-based-vault" component={MilestoneBasedVault} />
+          <Route path="/family-heritage-vault" component={FamilyHeritageVault} />
           
           {/* Vault Detail Pages */}
           <Route path="/vault/:id" component={VaultDetails} />
