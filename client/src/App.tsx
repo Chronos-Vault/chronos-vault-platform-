@@ -62,6 +62,9 @@ import CvtUtility from './pages/cvt-utility';
 import CvtUtilityNew from './pages/cvt-utility-new';
 import RevolutionaryFeatures from './pages/revolutionary-features';
 import SmartContracts from './pages/smart-contracts';
+import SecurityTutorials from './pages/security-tutorials';
+import SecurityTutorialsVideo from './pages/security-tutorials-video';
+import SecurityDocumentation from './pages/security-documentation';
 
 // Cross-Chain Pages
 import CrossChainBridge from './pages/cross-chain-bridge';
@@ -156,6 +159,9 @@ function App() {
           <Route path="/whitepaper" component={Whitepaper} />
           <Route path="/project-whitepaper" component={ProjectWhitepaper} />
           <Route path="/security-protocols" component={SecurityProtocols} />
+          <Route path="/security-tutorials" component={SecurityTutorials} />
+          <Route path="/security-tutorials-video" component={SecurityTutorialsVideo} />
+          <Route path="/security-documentation" component={SecurityDocumentation} />
           <Route path="/cvt-tokenomics" component={CvtTokenomics} />
           <Route path="/roadmap" component={Roadmap} />
           <Route path="/team" component={Team} />

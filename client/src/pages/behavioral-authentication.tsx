@@ -1,6 +1,6 @@
 import React from 'react';
 import { useLocation } from 'wouter';
-import { ArrowLeft, Brain, Zap, Lock, Shield, KeySquare, ServerCrash } from 'lucide-react';
+import { ArrowLeft, Brain, Zap, Lock, Shield, KeySquare, ServerCrash, BookOpen, FileText, PlayCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { BehavioralAuthentication } from '@/components/security/BehavioralAuthentication';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -23,7 +23,7 @@ export default function BehavioralAuthenticationPage() {
 
   return (
     <div className="container mx-auto py-8 px-4 max-w-7xl">
-      <div className="flex items-center justify-between mb-8">
+      <div className="flex items-center justify-between mb-6">
         <div className="flex items-center gap-2">
           <Button variant="ghost" size="icon" onClick={() => navigate('/dashboard')}>
             <ArrowLeft className="h-5 w-5" />
@@ -31,6 +31,40 @@ export default function BehavioralAuthenticationPage() {
           <h1 className="text-2xl font-bold bg-gradient-to-r from-white via-[#FF5AF7] to-[#6B00D7] bg-clip-text text-transparent">
             Advanced Security Features
           </h1>
+        </div>
+        <div className="hidden md:flex gap-2">
+          <Button variant="outline" size="sm" onClick={() => navigate('/security-tutorials')} className="flex gap-1">
+            <BookOpen className="h-4 w-4" />
+            Tutorials
+          </Button>
+          <Button variant="outline" size="sm" onClick={() => navigate('/security-tutorials-video')} className="flex gap-1">
+            <PlayCircle className="h-4 w-4" />
+            Video Guides
+          </Button>
+          <Button variant="outline" size="sm" onClick={() => navigate('/security-documentation')} className="flex gap-1">
+            <FileText className="h-4 w-4" />
+            Documentation
+          </Button>
+        </div>
+      </div>
+      
+      <div className="bg-gradient-to-r from-gray-900 to-gray-800 border border-gray-700 rounded-lg p-4 mb-8">
+        <p className="text-sm text-gray-300">
+          Learn more about our advanced security features with our comprehensive guides and documentation.
+          Visit <span className="text-[#FF5AF7] font-medium">Tutorials</span> for step-by-step instructions,
+          <span className="text-[#FF5AF7] font-medium"> Video Guides</span> for visual walkthroughs, or
+          <span className="text-[#FF5AF7] font-medium"> Documentation</span> for technical details.
+        </p>
+        <div className="flex mt-3 md:hidden gap-2">
+          <Button variant="outline" size="sm" onClick={() => navigate('/security-tutorials')} className="text-xs">
+            Tutorials
+          </Button>
+          <Button variant="outline" size="sm" onClick={() => navigate('/security-tutorials-video')} className="text-xs">
+            Video Guides
+          </Button>
+          <Button variant="outline" size="sm" onClick={() => navigate('/security-documentation')} className="text-xs">
+            Documentation
+          </Button>
         </div>
       </div>
 
