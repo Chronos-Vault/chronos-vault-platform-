@@ -861,46 +861,46 @@ const SecurityDocumentation = () => {
 
                 <div className="relative">
                   <div className="absolute inset-0 flex items-center" aria-hidden="true">
-                    <div className="w-full border-t border-gray-300"></div>
+                    <div className="w-full border-t border-[#333]"></div>
                   </div>
                   <div className="relative flex justify-center">
-                    <span className="px-3 bg-white text-lg font-medium text-gray-900">Phase 3: Recovery Completion</span>
+                    <span className="px-3 bg-[#111] text-lg font-medium text-[#FF5AF7] border border-[#333] rounded-full">Phase 3: Recovery Completion</span>
                   </div>
                 </div>
                 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div>
-                    <h4 className="text-md font-semibold mb-2">Final Actions</h4>
+                    <h4 className="text-md font-semibold mb-2 text-white">Final Actions</h4>
                     <ul className="space-y-2">
                       <li className="flex items-start">
-                        <span className="bg-green-100 text-green-800 font-medium rounded-full w-5 h-5 flex items-center justify-center mr-2 mt-0.5">1</span>
-                        <span className="text-gray-700 text-sm">Time-lock period completes without cancellation</span>
+                        <span className="bg-[#111] text-[#50E3C2] font-medium rounded-full w-5 h-5 flex items-center justify-center mr-2 mt-0.5 border border-[#333]">1</span>
+                        <span className="text-gray-300 text-sm">Time-lock period completes without cancellation</span>
                       </li>
                       <li className="flex items-start">
-                        <span className="bg-green-100 text-green-800 font-medium rounded-full w-5 h-5 flex items-center justify-center mr-2 mt-0.5">2</span>
-                        <span className="text-gray-700 text-sm">User completes final identity verification</span>
+                        <span className="bg-[#111] text-[#50E3C2] font-medium rounded-full w-5 h-5 flex items-center justify-center mr-2 mt-0.5 border border-[#333]">2</span>
+                        <span className="text-gray-300 text-sm">User completes final identity verification</span>
                       </li>
                       <li className="flex items-start">
-                        <span className="bg-green-100 text-green-800 font-medium rounded-full w-5 h-5 flex items-center justify-center mr-2 mt-0.5">3</span>
-                        <span className="text-gray-700 text-sm">New device establishes secure connection to vault</span>
+                        <span className="bg-[#111] text-[#50E3C2] font-medium rounded-full w-5 h-5 flex items-center justify-center mr-2 mt-0.5 border border-[#333]">3</span>
+                        <span className="text-gray-300 text-sm">New device establishes secure connection to vault</span>
                       </li>
                     </ul>
                   </div>
                   
                   <div>
-                    <h4 className="text-md font-semibold mb-2">System Completion</h4>
+                    <h4 className="text-md font-semibold mb-2 text-white">System Completion</h4>
                     <ul className="space-y-2">
                       <li className="flex items-start">
-                        <span className="bg-blue-100 text-blue-800 font-medium rounded-full w-5 h-5 flex items-center justify-center mr-2 mt-0.5">1</span>
-                        <span className="text-gray-700 text-sm">Reconstructs vault access credentials using guardian signatures</span>
+                        <span className="bg-[#111] text-[#FF5AF7] font-medium rounded-full w-5 h-5 flex items-center justify-center mr-2 mt-0.5 border border-[#333]">1</span>
+                        <span className="text-gray-300 text-sm">Reconstructs vault access credentials using guardian signatures</span>
                       </li>
                       <li className="flex items-start">
-                        <span className="bg-blue-100 text-blue-800 font-medium rounded-full w-5 h-5 flex items-center justify-center mr-2 mt-0.5">2</span>
-                        <span className="text-gray-700 text-sm">Grants appropriate access level based on verification strength</span>
+                        <span className="bg-[#111] text-[#FF5AF7] font-medium rounded-full w-5 h-5 flex items-center justify-center mr-2 mt-0.5 border border-[#333]">2</span>
+                        <span className="text-gray-300 text-sm">Grants appropriate access level based on verification strength</span>
                       </li>
                       <li className="flex items-start">
-                        <span className="bg-blue-100 text-blue-800 font-medium rounded-full w-5 h-5 flex items-center justify-center mr-2 mt-0.5">3</span>
-                        <span className="text-gray-700 text-sm">Records recovery in immutable audit log across all supported chains</span>
+                        <span className="bg-[#111] text-[#FF5AF7] font-medium rounded-full w-5 h-5 flex items-center justify-center mr-2 mt-0.5 border border-[#333]">3</span>
+                        <span className="text-gray-300 text-sm">Records recovery in immutable audit log across all supported chains</span>
                       </li>
                     </ul>
                   </div>
