@@ -78,7 +78,7 @@ const MilitaryGradeSecurity = () => {
           <div className="bg-[#111] p-5 rounded-lg border border-[#333]">
             <div className="flex items-center mb-4">
               <div className="bg-[#1a1a1a] p-2 rounded-lg mr-3">
-                <ShieldCheckIcon className="h-6 w-6 text-[#FF5AF7]" />
+                <ShieldCheck className="h-6 w-6 text-[#FF5AF7]" />
               </div>
               <h3 className="text-lg font-semibold text-white">Layer 3: Fallback Security</h3>
             </div>
@@ -184,7 +184,7 @@ const MilitaryGradeSecurity = () => {
                 <div className="space-y-6">
                   <div className="flex items-start border-b border-[#333] pb-4">
                     <div className="bg-[#111] p-2 rounded-full mr-4 border border-[#333]">
-                      <ServerIcon className="w-6 h-6 text-[#FF5AF7]" />
+                      <Server className="w-6 h-6 text-[#FF5AF7]" />
                     </div>
                     <div>
                       <h4 className="text-lg font-medium text-white">Distributed Node Network</h4>
@@ -198,7 +198,7 @@ const MilitaryGradeSecurity = () => {
                   
                   <div className="flex items-start border-b border-[#333] pb-4">
                     <div className="bg-[#111] p-2 rounded-full mr-4 border border-[#333]">
-                      <KeyIcon className="w-6 h-6 text-[#FF5AF7]" />
+                      <Key className="w-6 h-6 text-[#FF5AF7]" />
                     </div>
                     <div>
                       <h4 className="text-lg font-medium text-white">Hardware Security Modules</h4>
@@ -212,7 +212,7 @@ const MilitaryGradeSecurity = () => {
                   
                   <div className="flex items-start border-b border-[#333] pb-4">
                     <div className="bg-[#111] p-2 rounded-full mr-4 border border-[#333]">
-                      <ShieldIcon className="w-6 h-6 text-[#FF5AF7]" />
+                      <Shield className="w-6 h-6 text-[#FF5AF7]" />
                     </div>
                     <div>
                       <h4 className="text-lg font-medium text-white">Secure Enclave Processing</h4>
@@ -226,7 +226,7 @@ const MilitaryGradeSecurity = () => {
                   
                   <div className="flex items-start">
                     <div className="bg-[#111] p-2 rounded-full mr-4 border border-[#333]">
-                      <LayersIcon className="w-6 h-6 text-[#FF5AF7]" />
+                      <Layers className="w-6 h-6 text-[#FF5AF7]" />
                     </div>
                     <div>
                       <h4 className="text-lg font-medium text-white">Multi-Layer Network Security</h4>
@@ -405,7 +405,7 @@ const MilitaryGradeSecurity = () => {
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
                     <div className="bg-[#111] p-4 rounded-lg border border-[#333]">
                       <h3 className="text-lg font-semibold mb-3 text-[#FF5AF7] flex items-center">
-                        <ZapIcon className="w-5 h-5 mr-2" /> Client Implementation
+                        <Zap className="w-5 h-5 mr-2" /> Client Implementation
                       </h3>
                       <ul className="list-disc pl-6 space-y-2">
                         <li>WebAssembly cryptographic modules for client-side operations</li>
@@ -418,7 +418,7 @@ const MilitaryGradeSecurity = () => {
                     
                     <div className="bg-[#111] p-4 rounded-lg border border-[#333]">
                       <h3 className="text-lg font-semibold mb-3 text-[#FF5AF7] flex items-center">
-                        <ServerIcon className="w-5 h-5 mr-2" /> Server Infrastructure
+                        <Server className="w-5 h-5 mr-2" /> Server Infrastructure
                       </h3>
                       <ul className="list-disc pl-6 space-y-2">
                         <li>Hardened server environments with security-focused configurations</li>
@@ -431,7 +431,7 @@ const MilitaryGradeSecurity = () => {
                     
                     <div className="bg-[#111] p-4 rounded-lg border border-[#333]">
                       <h3 className="text-lg font-semibold mb-3 text-[#FF5AF7] flex items-center">
-                        <LayersIcon className="w-5 h-5 mr-2" /> Blockchain Integration
+                        <Layers className="w-5 h-5 mr-2" /> Blockchain Integration
                       </h3>
                       <ul className="list-disc pl-6 space-y-2">
                         <li>Ethereum smart contracts for primary security governance</li>
@@ -444,7 +444,7 @@ const MilitaryGradeSecurity = () => {
                     
                     <div className="bg-[#111] p-4 rounded-lg border border-[#333]">
                       <h3 className="text-lg font-semibold mb-3 text-[#FF5AF7] flex items-center">
-                        <ShieldIcon className="w-5 h-5 mr-2" /> Security Operations
+                        <Shield className="w-5 h-5 mr-2" /> Security Operations
                       </h3>
                       <ul className="list-disc pl-6 space-y-2">
                         <li>Automated security auditing with continuous verification</li>
@@ -531,7 +531,7 @@ const MilitaryGradeSecurity = () => {
                 <div className="space-y-6">
                   <div className="border-b border-[#333] pb-4">
                     <div className="flex items-start mb-2">
-                      <AlertTriangleIcon className="w-5 h-5 text-[#FF5AF7] mt-1 mr-2 shrink-0" />
+                      <AlertTriangle className="w-5 h-5 text-[#FF5AF7] mt-1 mr-2 shrink-0" />
                       <h3 className="text-lg font-semibold text-[#FF5AF7]">Quantum Computing Attacks</h3>
                     </div>
                     <p className="text-gray-400">
@@ -543,7 +543,7 @@ const MilitaryGradeSecurity = () => {
                   
                   <div className="border-b border-[#333] pb-4">
                     <div className="flex items-start mb-2">
-                      <AlertTriangleIcon className="w-5 h-5 text-[#FF5AF7] mt-1 mr-2 shrink-0" />
+                      <AlertTriangle className="w-5 h-5 text-[#FF5AF7] mt-1 mr-2 shrink-0" />
                       <h3 className="text-lg font-semibold text-[#FF5AF7]">51% Consensus Attacks</h3>
                     </div>
                     <p className="text-gray-400">
@@ -555,7 +555,7 @@ const MilitaryGradeSecurity = () => {
                   
                   <div className="border-b border-[#333] pb-4">
                     <div className="flex items-start mb-2">
-                      <AlertTriangleIcon className="w-5 h-5 text-[#FF5AF7] mt-1 mr-2 shrink-0" />
+                      <AlertTriangle className="w-5 h-5 text-[#FF5AF7] mt-1 mr-2 shrink-0" />
                       <h3 className="text-lg font-semibold text-[#FF5AF7]">Smart Contract Vulnerabilities</h3>
                     </div>
                     <p className="text-gray-400">
@@ -567,7 +567,7 @@ const MilitaryGradeSecurity = () => {
                   
                   <div>
                     <div className="flex items-start mb-2">
-                      <AlertTriangleIcon className="w-5 h-5 text-[#FF5AF7] mt-1 mr-2 shrink-0" />
+                      <AlertTriangle className="w-5 h-5 text-[#FF5AF7] mt-1 mr-2 shrink-0" />
                       <h3 className="text-lg font-semibold text-[#FF5AF7]">Advanced Persistent Threats</h3>
                     </div>
                     <p className="text-gray-400">
@@ -605,7 +605,7 @@ const MilitaryGradeSecurity = () => {
             Security Verification Center
           </Button>
           <Button onClick={() => navigate('/security-tutorials')} className="bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] hover:opacity-90 text-white">
-            Security Tutorial Guides <ChevronRightIcon className="ml-2 h-4 w-4" />
+            Security Tutorial Guides <ChevronRight className="ml-2 h-4 w-4" />
           </Button>
         </div>
       </div>
