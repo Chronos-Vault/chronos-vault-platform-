@@ -10,6 +10,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Badge } from '@/components/ui/badge';
 import { Shield, Lock, FileDigit, Activity, CheckCircle } from 'lucide-react';
 import { Progress } from '@/components/ui/progress';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { zkProofSystem } from '@/lib/security/ZeroKnowledgeProofSystem';
 import { quantumResistantEncryption } from '@/lib/security/QuantumResistantEncryption';
 import { auditLogService, AuditLogEntry } from '@/lib/security/AuditLogService';

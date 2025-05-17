@@ -15,6 +15,7 @@ import { Helmet } from 'react-helmet';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
 import { ArrowRight, Shield, Lock, RefreshCw, BookOpen, Key, FileDigit } from 'lucide-react';
 import { auditLogService, AuditLogEntry } from '@/lib/security/AuditLogService';
 import { ScrollArea } from '@/components/ui/scroll-area';
