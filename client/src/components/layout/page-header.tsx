@@ -6,6 +6,8 @@ import { ChevronLeft, Plus } from 'lucide-react';
 interface PageHeaderProps {
   title: string;
   description?: string;
+  subtitle?: string;  // Added for tutorial pages
+  icon?: ReactNode;   // Added for tutorial pages
   actions?: ReactNode;
   backButton?: boolean;
   backTo?: string;
@@ -18,6 +20,8 @@ interface PageHeaderProps {
 const PageHeader: React.FC<PageHeaderProps> = ({
   title,
   description,
+  subtitle,
+  icon,
   actions,
   backButton = false,
   backTo = '',
@@ -50,7 +54,13 @@ const PageHeader: React.FC<PageHeaderProps> = ({
               <ChevronLeft className="mr-1 h-4 w-4" /> Back
             </Button>
           )}
-          <h1 className="text-2xl md:text-3xl font-bold">{title}</h1>
+          <div className="flex items-center gap-3">
+            {icon && <div className="flex-shrink-0">{icon}</div>}
+            <h1 className="text-2xl md:text-3xl font-bold">{title}</h1>
+          </div>
+          {subtitle && (
+            <p className="text-muted-foreground text-lg font-medium">{subtitle}</p>
+          )}
           {description && (
             <p className="text-muted-foreground text-sm md:text-base">{description}</p>
           )}
