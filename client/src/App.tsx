@@ -29,6 +29,7 @@ import MyVaults from './pages/my-vaults';
 import VaultSchool from './pages/vault-school';
 import VaultTypesSelector from './pages/vault-types-selector';
 import VaultTypesSelectorNew from './pages/vault-types-selector-new';
+import VaultSelectionShowcase from './pages/vault-selection-showcase';
 import VaultTypes from './pages/vault-types-original';
 import VaultDetails from './pages/vault-details';
 import VaultExplorer from './pages/vault-explorer';
@@ -142,6 +143,7 @@ function App() {
           <Route path="/vault-details" component={VaultDetails} />
           <Route path="/vault-explorer" component={VaultExplorer} />
           <Route path="/explorer" component={VaultExplorer} />
+          <Route path="/vault-selection" component={VaultSelectionShowcase} />
           
           {/* Standard Vault Types */}
           <Route path="/biometric-vault" component={BiometricVault} />
