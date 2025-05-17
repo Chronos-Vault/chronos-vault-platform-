@@ -63,6 +63,15 @@ const VaultTypesSelector = () => {
     } else if (selectedVaultType === 'diamond-hands') {
       // Investment Discipline Vault
       navigate('/investment-discipline-vault');
+    } else if (selectedVaultType === 'ai-investment') {
+      // AI-Assisted Investment Vault
+      navigate('/ai-investment-vault');
+    } else if (selectedVaultType === 'milestone-based') {
+      // Milestone-Based Release Vault
+      navigate('/milestone-based-vault');
+    } else if (selectedVaultType === 'family-heritage') {
+      // Family Heritage Vault
+      navigate('/family-heritage-vault');
     } else if (
       selectedVaultType === 'geolocation' || 
       selectedVaultType === 'smart-contract' || 

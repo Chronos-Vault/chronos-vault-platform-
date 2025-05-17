@@ -3,7 +3,7 @@ import { useLocation } from 'wouter';
 import { Helmet } from 'react-helmet';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
-import { ArrowLeft, UsersRound, Graduation, HeartHandshake, Shield, BookOpen } from 'lucide-react';
+import { ArrowLeft, UsersRound, GraduationCap, HeartHandshake, Shield, BookOpen } from 'lucide-react';
 
 export default function FamilyHeritageVaultPage() {
   const [_, navigate] = useLocation();
@@ -64,7 +64,7 @@ export default function FamilyHeritageVaultPage() {
                   
                   <div className="flex items-start space-x-4">
                     <div className="bg-[#E040FB]/20 p-3 rounded-full">
-                      <Graduation className="h-6 w-6 text-[#E040FB]" />
+                      <GraduationCap className="h-6 w-6 text-[#E040FB]" />
                     </div>
                     <div>
                       <h3 className="text-lg font-semibold text-white mb-2">Educational Integration</h3>

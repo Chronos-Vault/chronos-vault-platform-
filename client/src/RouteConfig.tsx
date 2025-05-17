@@ -27,6 +27,9 @@ import MultiSignatureVaultPage from './pages/multi-signature-vault';
 import MultiSignatureVaultNewPage from './pages/multi-signature-vault-new';
 import SpecializedVaultMemoryPage from './pages/specialized-vault-memory';
 import InvestmentDisciplineVaultPage from './pages/investment-discipline-vault';
+import AIInvestmentVaultPage from './pages/vault-types/ai-investment-vault';
+import MilestoneBasedVaultPage from './pages/vault-types/milestone-based-vault';
+import FamilyHeritageVaultPage from './pages/vault-types/family-heritage-vault';
 
 // Create Vault pages
 import CreateVaultPage from './pages/create-vault';
@@ -74,6 +77,9 @@ const routes: RouteConfig[] = [
   { path: '/multi-signature-vault-new', component: MultiSignatureVaultNewPage, title: 'Advanced Multi-Signature Vault' },
   { path: '/specialized-vault-memory', component: SpecializedVaultMemoryPage, title: 'Memory Vault' },
   { path: '/investment-discipline-vault', component: InvestmentDisciplineVaultPage, title: 'Investment Discipline Vault' },
+  { path: '/ai-investment-vault', component: AIInvestmentVaultPage, title: 'AI-Assisted Investment Vault' },
+  { path: '/milestone-based-vault', component: MilestoneBasedVaultPage, title: 'Milestone-Based Release Vault' },
+  { path: '/family-heritage-vault', component: FamilyHeritageVaultPage, title: 'Family Heritage Vault' },
   
   // Create Vault pages
   { path: '/create-vault', component: CreateVaultPage, title: 'Create Vault' },
@@ -81,6 +87,9 @@ const routes: RouteConfig[] = [
   { path: '/create-vault-enhanced', component: CreateVaultEnhancedPage, title: 'Enhanced Vault Creation' },
   { path: '/create-vault-new', component: CreateVaultNewPage, title: 'New Vault Creation' },
   { path: '/create-smart-contract-vault', component: CreateSmartContractVaultPage, title: 'Create Smart Contract Vault' },
+  { path: '/create-vault/ai-investment', component: CreateVaultPage, title: 'Create AI-Assisted Investment Vault' },
+  { path: '/create-vault/milestone-based', component: CreateVaultPage, title: 'Create Milestone-Based Release Vault' },
+  { path: '/create-vault/family-heritage', component: CreateVaultPage, title: 'Create Family Heritage Vault' },
 ];
 
 // Function to get component by path
