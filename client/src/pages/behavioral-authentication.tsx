@@ -136,21 +136,61 @@ export default function BehavioralAuthenticationPage() {
                 </div>
               </div>
               
-              <Card className="bg-[#1A1A1A] border-[#333] p-6 flex flex-col items-center justify-center h-[300px] text-center">
-                <div className="h-16 w-16 rounded-full bg-gradient-to-br from-[#6B00D7]/20 to-[#FF5AF7]/20 flex items-center justify-center mb-4">
-                  <Shield className="h-7 w-7 text-[#FF5AF7]" />
-                </div>
-                <h3 className="text-xl font-semibold mb-2">Coming Soon</h3>
-                <p className="text-gray-400 max-w-md">
-                  Our quantum-resistant cryptography module is currently in development and will be available in the next platform update. This innovative feature will protect your vaults against future quantum computing threats.
-                </p>
+              <div className="grid gap-6 md:grid-cols-3">
+                <Card className="bg-[#1A1A1A] border-[#333]">
+                  <CardHeader className="pb-2">
+                    <div className="h-10 w-10 rounded-full bg-[#6B00D7]/20 flex items-center justify-center mb-2">
+                      <Shield className="h-5 w-5 text-[#FF5AF7]" />
+                    </div>
+                    <CardTitle className="text-lg">Lattice-Based Encryption</CardTitle>
+                    <CardDescription>
+                      Post-quantum cryptographic algorithms
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent className="text-sm text-gray-400">
+                    Our implementation uses lattice-based encryption, which is resistant to attacks from both classical and quantum computers, ensuring your vaults remain secure.
+                  </CardContent>
+                </Card>
+                
+                <Card className="bg-[#1A1A1A] border-[#333]">
+                  <CardHeader className="pb-2">
+                    <div className="h-10 w-10 rounded-full bg-[#6B00D7]/20 flex items-center justify-center mb-2">
+                      <KeySquare className="h-5 w-5 text-[#FF5AF7]" />
+                    </div>
+                    <CardTitle className="text-lg">Dynamic Key Rotation</CardTitle>
+                    <CardDescription>
+                      Automatic cryptographic key management
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent className="text-sm text-gray-400">
+                    Keys are automatically rotated using quantum-resistant algorithms, maintaining security even as quantum computing advances.
+                  </CardContent>
+                </Card>
+                
+                <Card className="bg-[#1A1A1A] border-[#333]">
+                  <CardHeader className="pb-2">
+                    <div className="h-10 w-10 rounded-full bg-[#6B00D7]/20 flex items-center justify-center mb-2">
+                      <ServerCrash className="h-5 w-5 text-[#FF5AF7]" />
+                    </div>
+                    <CardTitle className="text-lg">Future-Proof Security</CardTitle>
+                    <CardDescription>
+                      Adaptive protection against evolving threats
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent className="text-sm text-gray-400">
+                    Our system constantly monitors cryptographic advances and automatically upgrades security protocols to counter emerging quantum computing capabilities.
+                  </CardContent>
+                </Card>
+              </div>
+              
+              <div className="mt-8">
                 <Button 
-                  className="mt-6 bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] hover:opacity-90"
+                  className="bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] hover:opacity-90"
                   onClick={() => navigate('/security-verification')}
                 >
-                  View Current Security Features
+                  View All Security Features
                 </Button>
-              </Card>
+              </div>
             </div>
           </TabsContent>
           
