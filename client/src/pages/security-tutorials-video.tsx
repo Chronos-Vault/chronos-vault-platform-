@@ -325,20 +325,20 @@ const SecurityTutorialsVideo = () => {
         </TabsContent>
       </Tabs>
 
-      <div className="mt-10 bg-gray-50 border border-gray-200 rounded-lg p-6">
-        <h2 className="text-2xl font-bold text-gray-900">Additional Learning Resources</h2>
-        <p className="text-gray-700 mt-2">
+      <div className="mt-10 bg-gradient-to-r from-[#1A1A1A] to-[#111] border border-[#333] rounded-lg p-6 shadow-xl">
+        <h2 className="text-2xl font-bold bg-gradient-to-r from-white via-[#FF5AF7] to-[#6B00D7] bg-clip-text text-transparent">Additional Learning Resources</h2>
+        <p className="text-gray-400 mt-2">
           Explore our complete library of security tutorials, technical documentation, and interactive guides
           to get the most out of Chronos Vault's advanced security features.
         </p>
         <div className="mt-6 flex flex-wrap gap-4">
-          <Button variant="outline" onClick={() => navigate('/security-tutorials')}>
+          <Button variant="outline" onClick={() => navigate('/security-tutorials')} className="border-[#333] text-gray-300 hover:bg-[#6B00D7]/10 hover:text-white">
             Text-Based Tutorials
           </Button>
-          <Button variant="outline" onClick={() => navigate('/security-verification')}>
+          <Button variant="outline" onClick={() => navigate('/security-verification')} className="border-[#333] text-gray-300 hover:bg-[#6B00D7]/10 hover:text-white">
             Security Health Dashboard
           </Button>
-          <Button onClick={() => navigate('/premium-features')}>
+          <Button onClick={() => navigate('/premium-features')} className="bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] hover:opacity-90 text-white">
             Premium Security Features <ChevronRightIcon className="ml-2 h-4 w-4" />
           </Button>
         </div>
