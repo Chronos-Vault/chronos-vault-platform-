@@ -337,10 +337,10 @@ const MainHeader = () => {
                     <ul className="grid w-[400px] gap-2 p-4 bg-[#1A1A1A] border border-[#333] shadow-xl">
                       <ListItem
                         href="/security-verification"
-                        title="🔒 Security"
+                        title="🔒 Cross-Chain Security"
                         highlight={true}
                       >
-                        Learn about our advanced security protocols and verification system
+                        Advanced security protocols and cross-chain verification system
                       </ListItem>
                       <ListItem
                         href="/multi-signature-vault"
@@ -436,22 +436,7 @@ const MainHeader = () => {
                   </NavigationMenuContent>
                 </NavigationMenuItem>
 
-                <NavigationMenuItem>
-                  <NavigationMenuLink 
-                    asChild
-                    className={cn(
-                      navigationMenuTriggerStyle(),
-                      "bg-transparent text-gray-300 hover:text-white hover:bg-[#6B00D7]/10",
-                      location === "/security-verification" ? "text-white bg-[#6B00D7]/20" : ""
-                    )}
-                  >
-                    <Link href="/security-verification">
-                      <span className="inline-flex items-center gap-1.5">
-                        <span className="text-base">🔒</span> Security
-                      </span>
-                    </Link>
-                  </NavigationMenuLink>
-                </NavigationMenuItem>
+
 
                 <NavigationMenuItem>
                   <NavigationMenuTrigger className="bg-transparent text-gray-300 hover:text-white hover:bg-[#6B00D7]/10">
