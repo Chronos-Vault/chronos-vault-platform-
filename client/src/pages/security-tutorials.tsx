@@ -448,12 +448,12 @@ const SecurityTutorials = () => {
                     </div>
                     
                     <div className="flex items-start">
-                      <div className="bg-primary/10 p-2 rounded-full mr-4">
-                        <UsersIcon className="w-6 h-6 text-primary" />
+                      <div className="bg-[#111] p-2 rounded-full mr-4 border border-[#333]">
+                        <UsersIcon className="w-6 h-6 text-[#FF5AF7]" />
                       </div>
                       <div>
-                        <h4 className="text-lg font-medium">Cross-Chain Recovery</h4>
-                        <p className="text-gray-600">
+                        <h4 className="text-lg font-medium text-white">Cross-Chain Recovery</h4>
+                        <p className="text-gray-400">
                           Guardians can verify recovery requests using any supported blockchain, adding flexibility 
                           and redundancy to the recovery process.
                         </p>
@@ -472,21 +472,21 @@ const SecurityTutorials = () => {
               </CardFooter>
             </Card>
             
-            <Card>
+            <Card className="bg-[#1A1A1A] border border-[#333] shadow-xl">
               <CardHeader>
-                <CardTitle className="text-2xl">Setting Up Your Guardian Network</CardTitle>
-                <CardDescription>
+                <CardTitle className="text-2xl text-white">Setting Up Your Guardian Network</CardTitle>
+                <CardDescription className="text-gray-400">
                   Steps to configure a robust social recovery system for your vault
                 </CardDescription>
               </CardHeader>
               <CardContent>
                 <div className="space-y-6">
-                  <div className="bg-gray-50 p-4 rounded-lg border border-gray-200">
-                    <h3 className="text-lg font-semibold mb-2">Step 1: Select Your Guardians</h3>
-                    <p className="text-gray-700">
+                  <div className="bg-[#111] p-4 rounded-lg border border-[#333]">
+                    <h3 className="text-lg font-semibold mb-2 text-[#FF5AF7]">Step 1: Select Your Guardians</h3>
+                    <p className="text-gray-400">
                       Choose trusted individuals or institutions to serve as your recovery guardians. Consider their:
                     </p>
-                    <ul className="list-disc pl-6 text-gray-700 mt-2">
+                    <ul className="list-disc pl-6 text-gray-400 mt-2">
                       <li>Technical proficiency with blockchain technology</li>
                       <li>Availability in emergency situations</li>
                       <li>Geographic distribution (avoid selecting guardians all from one location)</li>
@@ -534,45 +534,45 @@ const SecurityTutorials = () => {
               </CardContent>
             </Card>
 
-            <Card>
+            <Card className="bg-[#1A1A1A] border border-[#333] shadow-xl">
               <CardHeader>
-                <CardTitle className="text-2xl">Guardian Management Best Practices</CardTitle>
-                <CardDescription>
+                <CardTitle className="text-2xl text-white">Guardian Management Best Practices</CardTitle>
+                <CardDescription className="text-gray-400">
                   Maintaining a robust and responsive guardian network
                 </CardDescription>
               </CardHeader>
               <CardContent>
                 <div className="space-y-6">
-                  <div className="border-b pb-4">
-                    <h3 className="text-lg font-semibold mb-2">Regular Guardian Testing</h3>
-                    <p className="text-gray-700">
+                  <div className="border-b border-[#333] pb-4">
+                    <h3 className="text-lg font-semibold mb-2 text-[#FF5AF7]">Regular Guardian Testing</h3>
+                    <p className="text-gray-400">
                       Conduct biannual test recovery procedures to ensure your guardians:
                     </p>
-                    <ul className="list-disc pl-6 text-gray-700 mt-2">
+                    <ul className="list-disc pl-6 text-gray-400 mt-2">
                       <li>Still have access to their approval methods</li>
                       <li>Remember their role in your recovery process</li>
                       <li>Can respond within your expected timeframe</li>
                     </ul>
                   </div>
                   
-                  <div className="border-b pb-4">
-                    <h3 className="text-lg font-semibold mb-2">Guardian Rotation Schedule</h3>
-                    <p className="text-gray-700">
+                  <div className="border-b border-[#333] pb-4">
+                    <h3 className="text-lg font-semibold mb-2 text-[#FF5AF7]">Guardian Rotation Schedule</h3>
+                    <p className="text-gray-400">
                       Review and update your guardian network annually:
                     </p>
-                    <ul className="list-disc pl-6 text-gray-700 mt-2">
+                    <ul className="list-disc pl-6 text-gray-400 mt-2">
                       <li>Replace guardians you've lost contact with</li>
                       <li>Adjust authority levels based on changing relationships</li>
                       <li>Add new guardians to strengthen network redundancy</li>
                     </ul>
                   </div>
                   
-                  <div className="border-b pb-4">
-                    <h3 className="text-lg font-semibold mb-2">Guardian Communication Protocol</h3>
-                    <p className="text-gray-700">
+                  <div className="border-b border-[#333] pb-4">
+                    <h3 className="text-lg font-semibold mb-2 text-[#FF5AF7]">Guardian Communication Protocol</h3>
+                    <p className="text-gray-400">
                       Establish a secure method to communicate with guardians during a recovery process:
                     </p>
-                    <ul className="list-disc pl-6 text-gray-700 mt-2">
+                    <ul className="list-disc pl-6 text-gray-400 mt-2">
                       <li>Use pre-arranged verification questions to confirm identities</li>
                       <li>Consider encrypted communication channels </li>
                       <li>Establish emergency contact alternatives if primary methods fail</li>
@@ -580,11 +580,11 @@ const SecurityTutorials = () => {
                   </div>
                   
                   <div>
-                    <h3 className="text-lg font-semibold mb-2">Documentary Evidence</h3>
-                    <p className="text-gray-700">
+                    <h3 className="text-lg font-semibold mb-2 text-[#FF5AF7]">Documentary Evidence</h3>
+                    <p className="text-gray-400">
                       Maintain proper documentation of your social recovery setup:
                     </p>
-                    <ul className="list-disc pl-6 text-gray-700 mt-2">
+                    <ul className="list-disc pl-6 text-gray-400 mt-2">
                       <li>Store written instructions for guardians in a secure location</li>
                       <li>Consider legal documentation (especially for high-value vaults)</li>
                       <li>Document any changes to your guardian network with timestamps</li>
