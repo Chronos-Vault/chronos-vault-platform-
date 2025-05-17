@@ -155,6 +155,7 @@ const MainHeader = () => {
       icon: "✨",
       items: [
         { name: "Cross-Chain Security", href: "/security-verification", icon: "🔒", highlight: true },
+        { name: "Behavioral Authentication", href: "/behavioral-authentication", icon: "🧠", highlight: true },
         { name: "Multi-Signature", href: "/multi-signature-vault", icon: "👥" },
         { name: "Bitcoin Halving", href: "/bitcoin-halving", icon: "₿" },
         { name: "Gift Crypto", href: "/gift-crypto", icon: "🎁", highlight: true },
