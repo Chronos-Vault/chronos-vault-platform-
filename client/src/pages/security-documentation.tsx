@@ -646,21 +646,23 @@ const SecurityDocumentation = () => {
 
       {/* Social Recovery Documentation */}
       <div id="social-section" className="mb-16 scroll-mt-16">
-        <div className="border-b border-gray-200 pb-4 mb-8">
+        <div className="border-b border-[#333] pb-4 mb-8">
           <div className="flex items-center">
-            <UsersIcon className="w-8 h-8 mr-3 text-emerald-600" />
-            <h2 className="text-2xl font-bold">Social Recovery Documentation</h2>
+            <div className="p-2 rounded-full bg-[#111] border border-[#333]">
+              <UsersIcon className="w-6 h-6 text-[#FF5AF7]" />
+            </div>
+            <h2 className="text-2xl font-bold ml-3 bg-gradient-to-r from-white via-[#FF5AF7] to-[#6B00D7] bg-clip-text text-transparent">Social Recovery Documentation</h2>
           </div>
-          <p className="text-gray-600 mt-2">
+          <p className="text-gray-400 mt-2">
             Technical implementation details for our tiered guardian recovery system
           </p>
         </div>
 
         <div className="space-y-8">
           <div>
-            <h3 className="text-xl font-semibold mb-4">Recovery Framework</h3>
-            <div className="bg-white shadow rounded-lg p-6 border border-gray-200">
-              <p className="text-gray-700 mb-4">
+            <h3 className="text-xl font-semibold mb-4 text-white">Recovery Framework</h3>
+            <div className="bg-gradient-to-r from-[#1A1A1A] to-[#111] shadow-xl rounded-lg p-6 border border-[#333]">
+              <p className="text-gray-300 mb-4">
                 Our Social Recovery system uses a Shamir's Secret Sharing variant with threshold 
                 cryptography to distribute recovery authority across a trusted guardian network,
                 providing secure asset recovery without single points of failure.
@@ -668,12 +670,12 @@ const SecurityDocumentation = () => {
 
               <div className="mt-6 space-y-4">
                 <div className="flex items-start">
-                  <div className="bg-emerald-100 rounded-full p-2 mr-4">
-                    <UsersIcon className="w-5 h-5 text-emerald-600" />
+                  <div className="bg-[#111] rounded-full p-2 mr-4 border border-[#333]">
+                    <UsersIcon className="w-5 h-5 text-[#FF5AF7]" />
                   </div>
                   <div>
-                    <h4 className="font-medium">Guardian Management</h4>
-                    <p className="text-gray-600 text-sm">
+                    <h4 className="font-medium text-white">Guardian Management</h4>
+                    <p className="text-gray-400 text-sm">
                       Supports designation of up to 15 guardians with tiered authority levels,
                       using threshold signatures to authorize recovery procedures.
                     </p>
@@ -681,12 +683,12 @@ const SecurityDocumentation = () => {
                 </div>
 
                 <div className="flex items-start">
-                  <div className="bg-emerald-100 rounded-full p-2 mr-4">
-                    <UsersIcon className="w-5 h-5 text-emerald-600" />
+                  <div className="bg-[#111] rounded-full p-2 mr-4 border border-[#333]">
+                    <UsersIcon className="w-5 h-5 text-[#FF5AF7]" />
                   </div>
                   <div>
-                    <h4 className="font-medium">Time-Lock Mechanism</h4>
-                    <p className="text-gray-600 text-sm">
+                    <h4 className="font-medium text-white">Time-Lock Mechanism</h4>
+                    <p className="text-gray-400 text-sm">
                       Recovery requests implement time-locked procedures with configurable waiting periods
                       and escalation paths for emergency access.
                     </p>
@@ -694,12 +696,12 @@ const SecurityDocumentation = () => {
                 </div>
 
                 <div className="flex items-start">
-                  <div className="bg-emerald-100 rounded-full p-2 mr-4">
-                    <UsersIcon className="w-5 h-5 text-emerald-600" />
+                  <div className="bg-[#111] rounded-full p-2 mr-4 border border-[#333]">
+                    <UsersIcon className="w-5 h-5 text-[#FF5AF7]" />
                   </div>
                   <div>
-                    <h4 className="font-medium">Multi-Chain Verification</h4>
-                    <p className="text-gray-600 text-sm">
+                    <h4 className="font-medium text-white">Multi-Chain Verification</h4>
+                    <p className="text-gray-400 text-sm">
                       Guardian verification can occur across supported blockchains (Ethereum, Solana, TON, Bitcoin),
                       providing redundancy and flexibility during recovery.
                     </p>
