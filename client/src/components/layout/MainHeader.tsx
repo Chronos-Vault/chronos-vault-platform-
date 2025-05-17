@@ -150,7 +150,10 @@ const MainHeader = () => {
       title: "Vault School Hub",
       icon: "🎓",
       items: [
-        { name: "Vault School Hub", href: "/vault-school", icon: "🏫", highlight: true, isNew: true },
+        { name: "Vault School Hub", href: "/vault-school", icon: "🏫", highlight: true },
+        { name: "Security Tutorials", href: "/security-tutorials", icon: "📚", highlight: true, isNew: true },
+        { name: "Security Video Guides", href: "/security-tutorials-video", icon: "🎬", highlight: true, isNew: true },
+        { name: "Technical Security Docs", href: "/security-documentation", icon: "📑", highlight: true, isNew: true },
         { name: "Smart Contract Vault", href: "/smart-contract-vault", icon: "📘", highlight: true },
         { name: "Multi-Signature Vault", href: "/multi-signature-vault-new", icon: "🔒" },
         { name: "Biometric Vault", href: "/biometric-vault", icon: "📱" },
@@ -394,9 +397,32 @@ const MainHeader = () => {
                         href="/vault-school"
                         title="🏫 Vault School Hub"
                         highlight={true}
-                        isNew={true}
                       >
                         Comprehensive documentation for all vault types
+                      </ListItem>
+                      <ListItem
+                        href="/security-tutorials"
+                        title="📚 Security Tutorials"
+                        highlight={true}
+                        isNew={true}
+                      >
+                        Step-by-step guides for advanced security features
+                      </ListItem>
+                      <ListItem
+                        href="/security-tutorials-video"
+                        title="🎬 Security Video Guides"
+                        highlight={true}
+                        isNew={true}
+                      >
+                        Video tutorials for security features
+                      </ListItem>
+                      <ListItem
+                        href="/security-documentation"
+                        title="📑 Technical Security Docs"
+                        highlight={true}
+                        isNew={true}
+                      >
+                        Detailed technical specifications for security features
                       </ListItem>
                       <ListItem
                         href="/smart-contract-vault"
