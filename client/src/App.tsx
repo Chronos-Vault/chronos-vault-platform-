@@ -34,6 +34,7 @@ import BiometricVault from './pages/biometric-vault';
 import GeoVault from './pages/geo-vault';
 import SmartContractVault from './pages/smart-contract-vault';
 import MultiSignatureVault from './pages/multi-signature-vault';
+import MultiSignatureVaultNew from './pages/multi-signature-vault-new';
 import SpecializedVaultMemory from './pages/specialized-vault-memory';
 import InvestmentDisciplineVault from './pages/investment-discipline-vault';
 import BitcoinHalvingVault from './pages/bitcoin-halving-vault';
@@ -119,6 +120,7 @@ function App() {
           <Route path="/geo-vault" component={GeoVault} />
           <Route path="/smart-contract-vault" component={SmartContractVault} />
           <Route path="/multi-signature-vault" component={MultiSignatureVault} />
+          <Route path="/multi-signature-vault-new" component={MultiSignatureVaultNew} />
           <Route path="/specialized-vault-memory" component={SpecializedVaultMemory} />
           <Route path="/investment-discipline-vault" component={InvestmentDisciplineVault} />
           <Route path="/bitcoin-halving-vault" component={BitcoinHalvingVault} />
