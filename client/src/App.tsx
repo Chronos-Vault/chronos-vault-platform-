@@ -82,6 +82,7 @@ import TonIntegration from './pages/ton-integration';
 
 // Security & Technical Pages
 import SecurityVerificationDemo from './pages/security-verification-demo';
+import SecurityVerification from './pages/security-verification';
 import SecurityPage from './pages/security-page';
 import TechnicalSpecification from './pages/technical-specification';
 import TransactionMonitor from './pages/transaction-monitor';
@@ -181,6 +182,7 @@ function App() {
           
           {/* Security & Technical Pages */}
           <Route path="/security-verification-demo" component={SecurityVerificationDemo} />
+          <Route path="/security-verification" component={SecurityVerification} />
           <Route path="/security-page" component={SecurityPage} />
           <Route path="/technical-specification" component={TechnicalSpecification} />
           <Route path="/transaction-monitor" component={TransactionMonitor} />

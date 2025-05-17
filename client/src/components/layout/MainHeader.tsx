@@ -336,7 +336,7 @@ const MainHeader = () => {
                   <NavigationMenuContent>
                     <ul className="grid w-[400px] gap-2 p-4 bg-[#1A1A1A] border border-[#333] shadow-xl">
                       <ListItem
-                        href="/security-verification-demo"
+                        href="/security-verification"
                         title="🔒 Security"
                         highlight={true}
                       >
