@@ -173,24 +173,24 @@ const SecurityTutorials = () => {
               </CardHeader>
               <CardContent className="text-gray-300">
                 <div className="space-y-6">
-                  <div className="border-b pb-4">
-                    <h3 className="text-lg font-semibold mb-2">Too Many Security Challenges</h3>
-                    <p className="text-gray-700 mb-2">
+                  <div className="border-b border-[#333] pb-4">
+                    <h3 className="text-lg font-semibold mb-2 text-[#FF5AF7]">Too Many Security Challenges</h3>
+                    <p className="text-gray-400 mb-2">
                       If you're getting too many verification requests for legitimate transactions:
                     </p>
-                    <ul className="list-disc pl-6 text-gray-700">
+                    <ul className="list-disc pl-6 text-gray-400">
                       <li>Decrease the sensitivity level in your security settings</li>
                       <li>Ensure your training period included diverse transaction types</li>
                       <li>Add common transaction destinations to your whitelist</li>
                     </ul>
                   </div>
                   
-                  <div className="border-b pb-4">
-                    <h3 className="text-lg font-semibold mb-2">System Not Detecting Unusual Activity</h3>
-                    <p className="text-gray-700 mb-2">
+                  <div className="border-b border-[#333] pb-4">
+                    <h3 className="text-lg font-semibold mb-2 text-[#FF5AF7]">System Not Detecting Unusual Activity</h3>
+                    <p className="text-gray-400 mb-2">
                       If you're concerned the system isn't providing enough security:
                     </p>
-                    <ul className="list-disc pl-6 text-gray-700">
+                    <ul className="list-disc pl-6 text-gray-400">
                       <li>Increase the sensitivity level in your security settings</li>
                       <li>Ensure you've completed the full training period</li>
                       <li>Add additional security layers like multi-signature approval</li>
@@ -198,11 +198,11 @@ const SecurityTutorials = () => {
                   </div>
                   
                   <div>
-                    <h3 className="text-lg font-semibold mb-2">Locked Out of Your Vault</h3>
-                    <p className="text-gray-700 mb-2">
+                    <h3 className="text-lg font-semibold mb-2 text-[#FF5AF7]">Locked Out of Your Vault</h3>
+                    <p className="text-gray-400 mb-2">
                       If behavioral analysis has temporarily restricted your access:
                     </p>
-                    <ul className="list-disc pl-6 text-gray-700">
+                    <ul className="list-disc pl-6 text-gray-400">
                       <li>Complete the secondary verification process you've configured</li>
                       <li>Use your social recovery option if you've set one up</li>
                       <li>Contact support with your backup verification codes</li>
@@ -210,11 +210,11 @@ const SecurityTutorials = () => {
                   </div>
                 </div>
               </CardContent>
-              <CardFooter>
+              <CardFooter className="border-t border-[#333]">
                 <Button 
                   variant="outline" 
                   onClick={() => navigate('/security-verification')}
-                  className="mt-4"
+                  className="mt-4 border-[#6B00D7] text-[#FF5AF7] hover:bg-[#6B00D7]/10"
                 >
                   View Security Verification Options
                 </Button>
@@ -606,20 +606,20 @@ const SecurityTutorials = () => {
         </TabsContent>
       </Tabs>
 
-      <div className="mt-10 bg-gray-50 border border-gray-200 rounded-lg p-6">
-        <h2 className="text-2xl font-bold text-gray-900">Need More Help?</h2>
-        <p className="text-gray-700 mt-2">
+      <div className="mt-10 bg-gradient-to-r from-[#1A1A1A] to-[#111] border border-[#333] rounded-lg p-6 shadow-xl">
+        <h2 className="text-2xl font-bold bg-gradient-to-r from-white via-[#FF5AF7] to-[#6B00D7] bg-clip-text text-transparent">Need More Help?</h2>
+        <p className="text-gray-400 mt-2">
           If you have specific questions about any of our security features or need assistance setting them up, 
           our support team is here to help.
         </p>
         <div className="mt-6 flex flex-wrap gap-4">
-          <Button variant="outline" onClick={() => navigate('/faq')}>
+          <Button variant="outline" onClick={() => navigate('/faq')} className="border-[#333] text-gray-300 hover:bg-[#6B00D7]/10 hover:text-white">
             View FAQ
           </Button>
-          <Button variant="outline" onClick={() => navigate('/security-protocols')}>
+          <Button variant="outline" onClick={() => navigate('/security-protocols')} className="border-[#333] text-gray-300 hover:bg-[#6B00D7]/10 hover:text-white">
             Security Protocols Overview
           </Button>
-          <Button onClick={() => navigate('/security-verification')}>
+          <Button onClick={() => navigate('/security-verification')} className="bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] hover:opacity-90 text-white">
             Security Verification Center <ChevronRightIcon className="ml-2 h-4 w-4" />
           </Button>
         </div>
