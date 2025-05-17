@@ -221,25 +221,39 @@ const VAULT_TYPES = [
 
 const VAULT_CATEGORIES = [
   {
+    id: "innovative",
+    name: "Innovative Smart Vaults",
+    color: "#00E676",
+    description: "Cutting-edge vaults with advanced AI and smart technology integration",
+    vaultTypes: ["ai-investment", "ai-intent-inheritance", "milestone-based", "family-heritage"]
+  },
+  {
+    id: "asset-management",
+    name: "Asset & Investment Management",
+    color: "#3F51FF",
+    description: "Specialized vaults for optimal investment strategies and asset protection",
+    vaultTypes: ["diamond-hands", "cross-chain", "composite-vault", "quantum-resistant"]
+  },
+  {
     id: "specialized",
-    name: "Specialized Vaults",
+    name: "Specialized Purpose Vaults",
     color: "#FF5AF7",
-    description: "Advanced vault types with unique security features and specialized functionality",
-    vaultTypes: ["ai-intent-inheritance", "geolocation", "smart-contract", "nft-powered", "dynamic"]
+    description: "Vaults designed for specific use cases and unique requirements",
+    vaultTypes: ["memory-vault", "geolocation", "smart-contract", "nft-powered", "geo-temporal"]
   },
   {
     id: "advanced-security",
-    name: "Advanced Security",
+    name: "Advanced Security Vaults",
     color: "#9E00FF",
     description: "Enhanced protection with multiple verification layers and distributed security",
-    vaultTypes: ["multi-signature", "biometric", "cross-chain"]
+    vaultTypes: ["multi-signature", "biometric", "unique", "dynamic"]
   },
   {
     id: "basic-time",
     name: "Basic Time Vaults",
     color: "#00D7C3",
     description: "Simple and reliable time-locked storage with essential security features",
-    vaultTypes: ["time-lock", "sovereign-fortress", "diamond-hands"]
+    vaultTypes: ["time-lock", "sovereign-fortress"]
   }
 ];
 
