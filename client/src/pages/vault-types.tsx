@@ -515,7 +515,156 @@ const VaultTypesPage = () => {
       
       {/* Main Content */}
       <div className="container mx-auto px-4 pt-8 relative z-10">
-        {/* Page Header */}
+        {/* Revolutionary Premium Features Banner */}
+        <motion.div
+          className="w-full mb-10 overflow-hidden rounded-2xl relative"
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8 }}
+        >
+          <div className="absolute inset-0 bg-gradient-to-br from-purple-900/30 via-black/70 to-blue-900/30 z-0"></div>
+          
+          {/* Animated Background Elements */}
+          <div className="absolute inset-0 overflow-hidden z-0">
+            {/* Grid Pattern */}
+            <div className="absolute inset-0 bg-grid-pattern opacity-10"></div>
+            
+            {/* Blockchain Network Visualization */}
+            <svg className="absolute inset-0 w-full h-full opacity-10" viewBox="0 0 1000 300">
+              {/* Network Nodes */}
+              <circle cx="300" cy="75" r="6" fill="#6B00D7" className="animate-pulse"></circle>
+              <circle cx="500" cy="200" r="6" fill="#FF5AF7" className="animate-pulse animation-delay-700"></circle>
+              <circle cx="700" cy="100" r="6" fill="#00E676" className="animate-pulse animation-delay-1500"></circle>
+              
+              {/* Network Connections */}
+              <line x1="300" y1="75" x2="500" y2="200" stroke="#6B00D7" strokeWidth="1" strokeDasharray="5,5" className="animate-dash"></line>
+              <line x1="500" y1="200" x2="700" y2="100" stroke="#FF5AF7" strokeWidth="1" strokeDasharray="5,5" className="animate-dash animation-delay-700"></line>
+              <line x1="700" y1="100" x2="300" y2="75" stroke="#00E676" strokeWidth="1" strokeDasharray="5,5" className="animate-dash animation-delay-1500"></line>
+            </svg>
+            
+            {/* Glowing orbs */}
+            <div className="absolute top-1/4 left-1/4 w-40 h-40 rounded-full bg-purple-600/10 blur-3xl animate-float-slow"></div>
+            <div className="absolute bottom-10 right-1/4 w-64 h-64 rounded-full bg-pink-600/10 blur-3xl animate-float-slow animation-delay-2000"></div>
+          </div>
+          
+          <div className="relative z-10 p-8 md:p-10">
+            <div className="flex flex-col md:flex-row items-start md:items-center justify-between">
+              <div>
+                <h1 className="text-3xl md:text-4xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-white via-purple-200 to-white">
+                  Revolutionary Vault Technology
+                </h1>
+                <p className="text-gray-300 mt-2 text-lg max-w-2xl">
+                  All vaults include our premium Triple-Chain security with Zero-Knowledge protocols & Quantum-Resistant encryption
+                </p>
+              </div>
+              
+              <Button
+                variant="ghost"
+                size="sm"
+                className="text-gray-300 hover:text-white mt-4 md:mt-0"
+                onClick={() => navigate('/my-vaults')}
+              >
+                <ArrowLeft className="mr-2 h-4 w-4" />
+                Back to My Vaults
+              </Button>
+            </div>
+            
+            {/* Premium Feature Cards */}
+            <div className="grid grid-cols-1 md:grid-cols-3 xl:grid-cols-5 gap-4 mt-6">
+              <motion.div 
+                className="bg-black/40 backdrop-blur-sm rounded-xl p-4 border border-purple-900/40 relative overflow-hidden group"
+                whileHover={{ y: -5, boxShadow: "0 10px 25px -5px rgba(107, 0, 215, 0.3)" }}
+                transition={{ duration: 0.3 }}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: 0.1 }}
+              >
+                <div className="absolute -top-10 -right-10 w-20 h-20 bg-purple-600 rounded-full opacity-20 blur-xl group-hover:opacity-40 transition-opacity"></div>
+                <div className="flex items-center mb-2">
+                  <div className="w-8 h-8 rounded-lg bg-purple-900/40 flex items-center justify-center mr-3">
+                    <img src="https://cryptologos.cc/logos/ethereum-eth-logo.svg" alt="ETH" className="h-5 w-5" />
+                  </div>
+                  <h3 className="font-bold text-white">Triple-Chain</h3>
+                </div>
+                <p className="text-xs text-gray-400">Distributed verification across Ethereum, TON & Solana for maximum security</p>
+              </motion.div>
+              
+              <motion.div 
+                className="bg-black/40 backdrop-blur-sm rounded-xl p-4 border border-pink-900/40 relative overflow-hidden group"
+                whileHover={{ y: -5, boxShadow: "0 10px 25px -5px rgba(255, 90, 247, 0.3)" }}
+                transition={{ duration: 0.3 }}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: 0.2 }}
+              >
+                <div className="absolute -top-10 -right-10 w-20 h-20 bg-pink-600 rounded-full opacity-20 blur-xl group-hover:opacity-40 transition-opacity"></div>
+                <div className="flex items-center mb-2">
+                  <div className="w-8 h-8 rounded-lg bg-pink-900/40 flex items-center justify-center mr-3">
+                    <Shield className="h-4 w-4 text-pink-400" />
+                  </div>
+                  <h3 className="font-bold text-white">Zero-Knowledge</h3>
+                </div>
+                <p className="text-xs text-gray-400">Advanced ZK proofs provide complete privacy without revealing sensitive data</p>
+              </motion.div>
+              
+              <motion.div 
+                className="bg-black/40 backdrop-blur-sm rounded-xl p-4 border border-green-900/40 relative overflow-hidden group"
+                whileHover={{ y: -5, boxShadow: "0 10px 25px -5px rgba(0, 230, 118, 0.3)" }}
+                transition={{ duration: 0.3 }}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: 0.3 }}
+              >
+                <div className="absolute -top-10 -right-10 w-20 h-20 bg-green-600 rounded-full opacity-20 blur-xl group-hover:opacity-40 transition-opacity"></div>
+                <div className="flex items-center mb-2">
+                  <div className="w-8 h-8 rounded-lg bg-green-900/40 flex items-center justify-center mr-3">
+                    <Lock className="h-4 w-4 text-green-400" />
+                  </div>
+                  <h3 className="font-bold text-white">Quantum-Resistant</h3>
+                </div>
+                <p className="text-xs text-gray-400">Future-proof lattice-based cryptography secure against quantum computer attacks</p>
+              </motion.div>
+              
+              <motion.div 
+                className="bg-black/40 backdrop-blur-sm rounded-xl p-4 border border-blue-900/40 relative overflow-hidden group"
+                whileHover={{ y: -5, boxShadow: "0 10px 25px -5px rgba(33, 150, 243, 0.3)" }}
+                transition={{ duration: 0.3 }}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: 0.4 }}
+              >
+                <div className="absolute -top-10 -right-10 w-20 h-20 bg-blue-600 rounded-full opacity-20 blur-xl group-hover:opacity-40 transition-opacity"></div>
+                <div className="flex items-center mb-2">
+                  <div className="w-8 h-8 rounded-lg bg-blue-900/40 flex items-center justify-center mr-3">
+                    <Clock className="h-4 w-4 text-blue-400" />
+                  </div>
+                  <h3 className="font-bold text-white">Time-Lock Tech</h3>
+                </div>
+                <p className="text-xs text-gray-400">Advanced temporal security layers with blockchain-verified time oracle protocols</p>
+              </motion.div>
+              
+              <motion.div 
+                className="bg-black/40 backdrop-blur-sm rounded-xl p-4 border border-amber-900/40 relative overflow-hidden group"
+                whileHover={{ y: -5, boxShadow: "0 10px 25px -5px rgba(255, 193, 7, 0.3)" }}
+                transition={{ duration: 0.3 }}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: 0.5 }}
+              >
+                <div className="absolute -top-10 -right-10 w-20 h-20 bg-amber-600 rounded-full opacity-20 blur-xl group-hover:opacity-40 transition-opacity"></div>
+                <div className="flex items-center mb-2">
+                  <div className="w-8 h-8 rounded-lg bg-amber-900/40 flex items-center justify-center mr-3">
+                    <Sparkles className="h-4 w-4 text-amber-400" />
+                  </div>
+                  <h3 className="font-bold text-white">Military-Grade</h3>
+                </div>
+                <p className="text-xs text-gray-400">Security protocols that meet or exceed US Department of Defense standards</p>
+              </motion.div>
+            </div>
+          </div>
+        </motion.div>
+        
+        {/* Page Header - Choose Your Vault */}
         <div className="flex items-center justify-between mb-8">
           <div>
             <motion.h1 
@@ -535,15 +684,6 @@ const VaultTypesPage = () => {
               Select from 19 specialized vault solutions with unparalleled security
             </motion.p>
           </div>
-          <Button
-            variant="ghost"
-            size="sm"
-            className="text-gray-400 hover:text-white"
-            onClick={() => navigate('/my-vaults')}
-          >
-            <ArrowLeft className="mr-2 h-4 w-4" />
-            Back to My Vaults
-          </Button>
         </div>
         
         {/* Featured Vault - Enhanced 3D Interactive Showcase */}
