@@ -3,6 +3,9 @@ import MainHeader from './components/layout/MainHeader';
 import Footer from './components/layout/footer';
 import React from 'react';
 import { BlockchainErrorDisplay } from "@/contexts/blockchain-error-boundary";
+import PrivacyPolicyPage from './pages/privacy-policy';
+import TermsOfServicePage from './pages/terms-of-service';
+import CookiePolicyPage from './pages/cookie-policy';
 
 // Core Pages
 import Home from './pages/home';
@@ -194,6 +197,9 @@ function App() {
           <Route path="/gift-crypto" component={GiftCrypto} />
           <Route path="/bitcoin-halving" component={BitcoinHalvingPage} />
           <Route path="/storage" component={StoragePage} />
+          <Route path="/privacy-policy" component={PrivacyPolicyPage} />
+          <Route path="/terms-of-service" component={TermsOfServicePage} />
+          <Route path="/cookie-policy" component={CookiePolicyPage} />
           
           {/* 404 - must be last */}
           <Route component={NotFound} />

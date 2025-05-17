@@ -104,9 +104,9 @@ const Footer = ({ className = '' }: { className?: string }) => {
           </div>
           
           <div className="flex space-x-8 mt-6 md:mt-0">
-            <a href="#" className="text-gray-300 hover:text-[#FF5AF7] font-poppins font-light transition-all hover:translate-y-[-2px]">Privacy Policy</a>
-            <a href="#" className="text-gray-300 hover:text-[#FF5AF7] font-poppins font-light transition-all hover:translate-y-[-2px]">Terms of Service</a>
-            <a href="#" className="text-gray-300 hover:text-[#FF5AF7] font-poppins font-light transition-all hover:translate-y-[-2px]">Cookie Policy</a>
+            <Link href="/privacy-policy" className="text-gray-300 hover:text-[#FF5AF7] font-poppins font-light transition-all hover:translate-y-[-2px]">Privacy Policy</Link>
+            <Link href="/terms-of-service" className="text-gray-300 hover:text-[#FF5AF7] font-poppins font-light transition-all hover:translate-y-[-2px]">Terms of Service</Link>
+            <Link href="/cookie-policy" className="text-gray-300 hover:text-[#FF5AF7] font-poppins font-light transition-all hover:translate-y-[-2px]">Cookie Policy</Link>
             <Link href="/storage" className="text-gray-300 hover:text-[#FF5AF7] font-poppins font-light transition-all hover:translate-y-[-2px]">Storage</Link>
             <Link href="/vault-school" className="text-gray-300 hover:text-[#FF5AF7] font-poppins font-light transition-all hover:translate-y-[-2px]">Vault School Hub</Link>
           </div>
