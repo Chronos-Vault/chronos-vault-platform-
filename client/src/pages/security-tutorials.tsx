@@ -244,12 +244,12 @@ const SecurityTutorials = () => {
                   
                   <div className="space-y-4 mt-4">
                     <div className="flex items-start">
-                      <div className="bg-primary/10 p-2 rounded-full mr-4">
-                        <KeySquareIcon className="w-6 h-6 text-primary" />
+                      <div className="bg-[#111] p-2 rounded-full mr-4 border border-[#333]">
+                        <KeySquareIcon className="w-6 h-6 text-[#FF5AF7]" />
                       </div>
                       <div>
-                        <h4 className="text-lg font-medium">Lattice-Based Cryptography</h4>
-                        <p className="text-gray-600">
+                        <h4 className="text-lg font-medium text-white">Lattice-Based Cryptography</h4>
+                        <p className="text-gray-400">
                           Our system uses lattice-based algorithms which rely on the hardness of certain mathematical
                           problems that even quantum computers find difficult to solve.
                         </p>
@@ -257,12 +257,12 @@ const SecurityTutorials = () => {
                     </div>
                     
                     <div className="flex items-start">
-                      <div className="bg-primary/10 p-2 rounded-full mr-4">
-                        <KeySquareIcon className="w-6 h-6 text-primary" />
+                      <div className="bg-[#111] p-2 rounded-full mr-4 border border-[#333]">
+                        <KeySquareIcon className="w-6 h-6 text-[#FF5AF7]" />
                       </div>
                       <div>
-                        <h4 className="text-lg font-medium">Dynamic Key Rotation</h4>
-                        <p className="text-gray-600">
+                        <h4 className="text-lg font-medium text-white">Dynamic Key Rotation</h4>
+                        <p className="text-gray-400">
                           The system automatically rotates cryptographic keys according to a schedule, limiting the
                           window of opportunity for any potential attacker.
                         </p>
@@ -270,12 +270,12 @@ const SecurityTutorials = () => {
                     </div>
                     
                     <div className="flex items-start">
-                      <div className="bg-primary/10 p-2 rounded-full mr-4">
-                        <KeySquareIcon className="w-6 h-6 text-primary" />
+                      <div className="bg-[#111] p-2 rounded-full mr-4 border border-[#333]">
+                        <KeySquareIcon className="w-6 h-6 text-[#FF5AF7]" />
                       </div>
                       <div>
-                        <h4 className="text-lg font-medium">Progressive Security Strength</h4>
-                        <p className="text-gray-600">
+                        <h4 className="text-lg font-medium text-white">Progressive Security Strength</h4>
+                        <p className="text-gray-400">
                           Our implementation gradually upgrades encryption standards as quantum computing advances,
                           ensuring your assets remain protected against emerging threats.
                         </p>
@@ -294,48 +294,48 @@ const SecurityTutorials = () => {
               </CardFooter>
             </Card>
             
-            <Card>
+            <Card className="bg-[#1A1A1A] border border-[#333] shadow-xl">
               <CardHeader>
-                <CardTitle className="text-2xl">Setting Up Quantum-Resistant Protection</CardTitle>
-                <CardDescription>
+                <CardTitle className="text-2xl text-white">Setting Up Quantum-Resistant Protection</CardTitle>
+                <CardDescription className="text-gray-400">
                   How to enable and configure quantum-resistant security for your vaults
                 </CardDescription>
               </CardHeader>
               <CardContent>
                 <div className="space-y-6">
-                  <div className="bg-gray-50 p-4 rounded-lg border border-gray-200">
-                    <h3 className="text-lg font-semibold mb-2">Step 1: Enable Quantum Protection</h3>
-                    <p className="text-gray-700">
+                  <div className="bg-[#111] p-4 rounded-lg border border-[#333]">
+                    <h3 className="text-lg font-semibold mb-2 text-[#FF5AF7]">Step 1: Enable Quantum Protection</h3>
+                    <p className="text-gray-400">
                       In your vault creation process or vault settings, select the "Quantum-Resistant Security" 
                       option. This will apply post-quantum algorithms to your vault's encryption layer.
                     </p>
                   </div>
                   
-                  <div className="bg-gray-50 p-4 rounded-lg border border-gray-200">
-                    <h3 className="text-lg font-semibold mb-2">Step 2: Choose Security Level</h3>
-                    <p className="text-gray-700">
+                  <div className="bg-[#111] p-4 rounded-lg border border-[#333]">
+                    <h3 className="text-lg font-semibold mb-2 text-[#FF5AF7]">Step 2: Choose Security Level</h3>
+                    <p className="text-gray-400">
                       Select your desired security strength level. Higher levels provide more protection but may 
                       require slightly more processing time for transactions.
                     </p>
-                    <ul className="list-disc pl-6 text-gray-700 mt-2">
-                      <li><strong>Standard:</strong> Suitable for most users, balancing security and performance</li>
-                      <li><strong>Enhanced:</strong> Higher security parameters for sensitive assets</li>
-                      <li><strong>Maximum:</strong> Highest security level for critical assets</li>
+                    <ul className="list-disc pl-6 text-gray-400 mt-2">
+                      <li><strong className="text-white">Standard:</strong> Suitable for most users, balancing security and performance</li>
+                      <li><strong className="text-white">Enhanced:</strong> Higher security parameters for sensitive assets</li>
+                      <li><strong className="text-white">Maximum:</strong> Highest security level for critical assets</li>
                     </ul>
                   </div>
                   
-                  <div className="bg-gray-50 p-4 rounded-lg border border-gray-200">
-                    <h3 className="text-lg font-semibold mb-2">Step 3: Key Rotation Schedule</h3>
-                    <p className="text-gray-700">
+                  <div className="bg-[#111] p-4 rounded-lg border border-[#333]">
+                    <h3 className="text-lg font-semibold mb-2 text-[#FF5AF7]">Step 3: Key Rotation Schedule</h3>
+                    <p className="text-gray-400">
                       Set a schedule for automatic key rotation. Options range from monthly to yearly rotations, 
                       with more frequent rotations providing better security at the cost of requiring you to 
                       re-authenticate more often.
                     </p>
                   </div>
                   
-                  <div className="bg-gray-50 p-4 rounded-lg border border-gray-200">
-                    <h3 className="text-lg font-semibold mb-2">Step 4: Backup Your Recovery Data</h3>
-                    <p className="text-gray-700">
+                  <div className="bg-[#111] p-4 rounded-lg border border-[#333]">
+                    <h3 className="text-lg font-semibold mb-2 text-[#FF5AF7]">Step 4: Backup Your Recovery Data</h3>
+                    <p className="text-gray-400">
                       After enabling quantum-resistant protection, you'll receive a special recovery key. Store this 
                       securely offline, as it's essential for accessing your vault if standard methods fail.
                     </p>
@@ -494,37 +494,37 @@ const SecurityTutorials = () => {
                     </ul>
                   </div>
                   
-                  <div className="bg-gray-50 p-4 rounded-lg border border-gray-200">
-                    <h3 className="text-lg font-semibold mb-2">Step 2: Assign Guardian Roles</h3>
-                    <p className="text-gray-700">
+                  <div className="bg-[#111] p-4 rounded-lg border border-[#333]">
+                    <h3 className="text-lg font-semibold mb-2 text-[#FF5AF7]">Step 2: Assign Guardian Roles</h3>
+                    <p className="text-gray-400">
                       Define the authority level for each guardian:
                     </p>
-                    <ul className="list-disc pl-6 text-gray-700 mt-2">
-                      <li><strong>Primary Guardians:</strong> Can initiate and approve recovery processes</li>
-                      <li><strong>Verification Guardians:</strong> Must verify recovery requests but cannot initiate them</li>
-                      <li><strong>Limited Guardians:</strong> Can only approve specific transaction types or asset amounts</li>
+                    <ul className="list-disc pl-6 text-gray-400 mt-2">
+                      <li><strong className="text-white">Primary Guardians:</strong> Can initiate and approve recovery processes</li>
+                      <li><strong className="text-white">Verification Guardians:</strong> Must verify recovery requests but cannot initiate them</li>
+                      <li><strong className="text-white">Limited Guardians:</strong> Can only approve specific transaction types or asset amounts</li>
                     </ul>
                   </div>
                   
-                  <div className="bg-gray-50 p-4 rounded-lg border border-gray-200">
-                    <h3 className="text-lg font-semibold mb-2">Step 3: Configure Recovery Thresholds</h3>
-                    <p className="text-gray-700">
+                  <div className="bg-[#111] p-4 rounded-lg border border-[#333]">
+                    <h3 className="text-lg font-semibold mb-2 text-[#FF5AF7]">Step 3: Configure Recovery Thresholds</h3>
+                    <p className="text-gray-400">
                       Set the minimum number of guardian approvals needed to complete a recovery:
                     </p>
-                    <ul className="list-disc pl-6 text-gray-700 mt-2">
+                    <ul className="list-disc pl-6 text-gray-400 mt-2">
                       <li>For standard recovery: typically requires approval from at least 3 guardians or 60% of your network</li>
                       <li>For emergency recovery (faster but with transaction limits): typically requires 2 guardians</li>
                       <li>For full vault recovery (all assets): typically requires all primary guardians plus 50% of verification guardians</li>
                     </ul>
                   </div>
                   
-                  <div className="bg-gray-50 p-4 rounded-lg border border-gray-200">
-                    <h3 className="text-lg font-semibold mb-2">Step 4: Establish Time-Lock Parameters</h3>
-                    <p className="text-gray-700">
+                  <div className="bg-[#111] p-4 rounded-lg border border-[#333]">
+                    <h3 className="text-lg font-semibold mb-2 text-[#FF5AF7]">Step 4: Establish Time-Lock Parameters</h3>
+                    <p className="text-gray-400">
                       Configure the waiting period before a recovery request is processed. This gives you time to
                       cancel the recovery if it was initiated fraudulently.
                     </p>
-                    <ul className="list-disc pl-6 text-gray-700 mt-2">
+                    <ul className="list-disc pl-6 text-gray-400 mt-2">
                       <li>Standard waiting period: 3-7 days</li>
                       <li>Expedited recovery (requires more guardians): 24-48 hours</li>
                       <li>Emergency access (limited functionality): 4-12 hours</li>
