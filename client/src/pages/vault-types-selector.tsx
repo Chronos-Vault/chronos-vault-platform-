@@ -112,7 +112,7 @@ const VaultTypesSelector = () => {
         </Button>
       </div>
       
-      <div className="bg-black/20 backdrop-blur-sm border border-gray-800 rounded-lg p-4 sm:p-6 mb-8">
+      <div className="relative z-10 mb-8">
         {/* Progress Indicator */}
         <div className="mb-6">
           <VaultCreationProgress 
