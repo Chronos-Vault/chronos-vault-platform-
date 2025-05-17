@@ -98,6 +98,54 @@
   transition: opacity 0.3s ease;
 }
 
+/* Additional animations for the vault selector */
+@keyframes glow-pulse-3d {
+  0% {
+    box-shadow: 0 0 15px rgba(107, 0, 215, 0.2);
+    transform: translateZ(0px);
+  }
+  50% {
+    box-shadow: 0 0 30px rgba(107, 0, 215, 0.4);
+    transform: translateZ(10px);
+  }
+  100% {
+    box-shadow: 0 0 15px rgba(107, 0, 215, 0.2);
+    transform: translateZ(0px);
+  }
+}
+
+.animate-glow-pulse-3d {
+  animation: glow-pulse-3d 3s ease-in-out infinite;
+}
+
+.perspective-1200 {
+  perspective: 1200px;
+}
+
+.transform-style-3d {
+  transform-style: preserve-3d;
+}
+
+.hover-card-3d:hover {
+  transform: translateZ(20px) rotateX(2deg) rotateY(5deg);
+}
+
+@keyframes card-float {
+  0% {
+    transform: translateY(0px) translateZ(0px);
+  }
+  50% {
+    transform: translateY(-15px) translateZ(10px);
+  }
+  100% {
+    transform: translateY(0px) translateZ(0px);
+  }
+}
+
+.animate-card-float {
+  animation: card-float 4s ease-in-out infinite;
+}
+
 @layer utilities {
   .animate-gradient-slow {
     background-size: 200% 200%;

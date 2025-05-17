@@ -1,0 +1,59 @@
+@keyframes gradient-shift {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+.animate-gradient-shift {
+  animation: gradient-shift 15s ease infinite;
+  background-size: 200% 200%;
+}
+
+/* 3D Perspective Card Transforms */
+.perspective-900 {
+  perspective: 900px;
+}
+
+.hover-3d:hover {
+  transform: rotateX(5deg) rotateY(5deg);
+}
+
+/* Glow Pulse Animation */
+@keyframes glow-pulse {
+  0% {
+    box-shadow: 0 0 15px rgba(107, 0, 215, 0.2);
+  }
+  50% {
+    box-shadow: 0 0 30px rgba(107, 0, 215, 0.4);
+  }
+  100% {
+    box-shadow: 0 0 15px rgba(107, 0, 215, 0.2);
+  }
+}
+
+.animate-glow-pulse {
+  animation: glow-pulse 3s ease-in-out infinite;
+}
+
+/* Floating Animation */
+@keyframes float {
+  0% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+  100% {
+    transform: translateY(0px);
+  }
+}
+
+.animate-float {
+  animation: float 5s ease-in-out infinite;
+}
