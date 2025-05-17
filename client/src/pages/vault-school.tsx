@@ -117,10 +117,28 @@ const VaultSchoolPage = () => {
         <h1 className="text-4xl md:text-5xl font-bold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7]">
           Vault School
         </h1>
-        <p className="text-xl text-gray-300 max-w-3xl mx-auto">
+        <p className="text-xl text-gray-300 max-w-3xl mx-auto mb-6">
           Welcome to Vault School - your comprehensive resource to learn about Chronos Vault's
           specialized vault types, their features, and technical implementations.
         </p>
+        
+        <div className="max-w-4xl mx-auto bg-gradient-to-r from-[#1A1A1A] to-[#111] border border-[#333] rounded-lg p-5 shadow-xl mb-8">
+          <div className="flex items-center mb-3">
+            <span className="text-3xl mr-3">🛡️</span>
+            <h2 className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-white via-[#FF5AF7] to-[#6B00D7]">
+              Military-Grade Security System
+            </h2>
+          </div>
+          <p className="text-gray-300 mb-4">
+            All vault types are protected by our revolutionary Triple-Chain Security™ architecture that distributes 
+            security operations across Ethereum, TON, and Solana networks for unparalleled protection.
+          </p>
+          <Link href="/military-grade-security">
+            <Button className="bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] hover:opacity-90 text-white">
+              Explore Security Architecture
+            </Button>
+          </Link>
+        </div>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
