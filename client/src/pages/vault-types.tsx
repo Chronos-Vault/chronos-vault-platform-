@@ -441,10 +441,57 @@ const SecurityFeatureCard = ({ title, description, icon, color }) => (
 // Main component
 const VaultTypesPage = () => {
   const [selected, setSelected] = useState(VAULT_TYPES[0].id);
+  const [activeCategory, setActiveCategory] = useState('all');
   const [, navigate] = useLocation();
   
   const selectedVault = VAULT_TYPES.find(v => v.id === selected) || VAULT_TYPES[0];
   const featuredVaults = [VAULT_TYPES[0], VAULT_TYPES[1], VAULT_TYPES[11], VAULT_TYPES[13]];
+  
+  // Organize vaults into categories
+  const vaultCategories = {
+    all: {
+      title: 'All Vaults',
+      color: '#6B00D7',
+      icon: '🏰',
+      vaults: VAULT_TYPES
+    },
+    premium: {
+      title: 'Sovereign Premium',
+      color: '#FF5AF7',
+      icon: '👑',
+      vaults: VAULT_TYPES.filter(v => v.securityLevel === 5)
+    },
+    security: {
+      title: 'Advanced Security',
+      color: '#4CAF50',
+      icon: '🛡️',
+      vaults: VAULT_TYPES.filter(v => 
+        v.tags.includes('Zero-Knowledge') || 
+        v.tags.includes('Quantum-Resistant'))
+    },
+    investment: {
+      title: 'Investment Solutions',
+      color: '#00BCD4',
+      icon: '💎',
+      vaults: VAULT_TYPES.filter(v => 
+        v.id.includes('investment') || 
+        v.id === 'milestone' || 
+        v.id === 'family-heritage' ||
+        v.id === 'ai-assisted')
+    },
+    inheritance: {
+      title: 'Legacy & Inheritance',
+      color: '#795548',
+      icon: '👪',
+      vaults: VAULT_TYPES.filter(v => 
+        v.id === 'family-heritage' ||
+        v.id === 'time-locked-memory' ||
+        v.id === 'ai-intent')
+    }
+  };
+  
+  // Get the current category vaults
+  const currentVaults = vaultCategories[activeCategory].vaults;
   
   return (
     <div className="min-h-screen bg-gradient-to-br from-black via-[#1C0533] to-black text-white pb-16">
@@ -589,53 +636,283 @@ const VaultTypesPage = () => {
           </div>
         </div>
         
-        {/* All Vault Types Section */}
-        <div className="mb-12">
+        {/* Vault Categories */}
+        <div className="mb-8">
           <h2 className="text-xl font-bold mb-4 flex items-center">
             <ShieldCheck className="h-5 w-5 mr-2" />
-            <span>All Vault Types</span>
+            <span>Vault Categories</span>
           </h2>
+
+          <div className="flex items-center space-x-2 pb-4 overflow-x-auto scrollbar-thin scrollbar-track-transparent scrollbar-thumb-purple-900/50">
+            {Object.entries(vaultCategories).map(([key, category]) => (
+              <motion.button
+                key={key}
+                onClick={() => setActiveCategory(key)}
+                className={`flex items-center space-x-2 px-4 py-2 rounded-full whitespace-nowrap transition-all ${
+                  activeCategory === key 
+                    ? 'bg-white/10 text-white' 
+                    : 'bg-black/40 text-gray-400 hover:bg-white/5'
+                }`}
+                style={{ 
+                  borderWidth: '1px',
+                  borderColor: activeCategory === key ? category.color : 'transparent'
+                }}
+                whileHover={{ scale: 1.03 }}
+                whileTap={{ scale: 0.98 }}
+              >
+                <span className="text-lg">{category.icon}</span>
+                <span>{category.title}</span>
+                <span className="bg-black/30 px-2 py-0.5 rounded-full text-xs">
+                  {category.vaults.length}
+                </span>
+              </motion.button>
+            ))}
+          </div>
           
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-            {VAULT_TYPES.map(vault => (
-              <VaultCard 
+          {/* Category Description Banner */}
+          <motion.div 
+            className="mb-6 bg-black/40 backdrop-blur-sm border border-gray-800 rounded-xl p-4 flex items-center"
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            key={activeCategory} // Re-animate when changing category
+          >
+            <div className="text-3xl mr-4">{vaultCategories[activeCategory].icon}</div>
+            <div>
+              <h3 className="text-xl font-semibold" style={{ color: vaultCategories[activeCategory].color }}>
+                {vaultCategories[activeCategory].title}
+              </h3>
+              <p className="text-gray-400">
+                {activeCategory === 'all' && 'All 19 specialized vaults with military-grade security for any need'}
+                {activeCategory === 'premium' && 'Our premium vaults with maximum security ratings for the highest-value assets'}
+                {activeCategory === 'security' && 'Advanced security vaults with zero-knowledge protocols and quantum resistance'}
+                {activeCategory === 'investment' && 'Specialized investment solutions to protect and optimize your portfolio'}
+                {activeCategory === 'inheritance' && 'Legacy planning vaults with inheritance and multimedia capabilities'}
+              </p>
+            </div>
+          </motion.div>
+          
+          {/* Vault Grid with Animation */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-6">
+            {currentVaults.map((vault, index) => (
+              <motion.div
                 key={vault.id}
-                vault={vault}
-                selected={selected === vault.id}
-                onClick={() => setSelected(vault.id)}
-              />
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ 
+                  duration: 0.4, 
+                  delay: index * 0.05, // Staggered animation
+                  ease: [0.25, 0.1, 0.25, 1.0]
+                }}
+              >
+                <VaultCard 
+                  vault={vault}
+                  selected={selected === vault.id}
+                  onClick={() => setSelected(vault.id)}
+                />
+              </motion.div>
             ))}
           </div>
         </div>
         
-        {/* Triple Chain Security Description */}
+        {/* Triple Chain Security Description - Enhanced World-Class Design */}
         <div className="mb-12">
-          <h2 className="text-xl font-bold mb-4">Triple-Chain Security System</h2>
-          <p className="text-gray-400 mb-6">
-            Our revolutionary security system provides distributed verification across Ethereum, TON, and Solana blockchains, 
-            ensuring maximum protection even if multiple chains are compromised.
-          </p>
-          
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <SecurityFeatureCard 
-              title="Zero-Knowledge Proofs"
-              description="Cryptographic verification without revealing sensitive data ensures complete privacy."
-              icon={<Shield className="text-[#FF5AF7]" />}
-              color="#FF5AF7"
-            />
-            <SecurityFeatureCard 
-              title="Quantum-Resistant Encryption"
-              description="Future-proof security that withstands attacks from quantum computers."
-              icon={<Lock className="text-[#00E676]" />}
-              color="#00E676"
-            />
-            <SecurityFeatureCard 
-              title="Time-Locked Security"
-              description="Temporal security layers that require specific time periods to unlock."
-              icon={<Clock className="text-[#2196F3]" />}
-              color="#2196F3"
-            />
-          </div>
+          <motion.div 
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.7, delay: 0.2 }}
+            className="rounded-xl bg-black/40 backdrop-blur-md border border-purple-900/40 p-8 relative overflow-hidden"
+          >
+            {/* Animated Background Effects */}
+            <div className="absolute inset-0 overflow-hidden opacity-20">
+              <div className="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-purple-500 to-transparent animate-scan-horizontal"></div>
+              <div className="absolute top-0 left-0 h-full w-px bg-gradient-to-b from-transparent via-purple-500 to-transparent animate-scan-vertical"></div>
+              <div className="absolute bottom-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-purple-500 to-transparent animate-scan-horizontal animation-delay-1000"></div>
+              <div className="absolute top-0 right-0 h-full w-px bg-gradient-to-b from-transparent via-purple-500 to-transparent animate-scan-vertical animation-delay-1000"></div>
+              
+              {/* Chain Network Visualization */}
+              <div className="absolute inset-0 opacity-30">
+                <svg width="100%" height="100%" className="absolute">
+                  <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+                    <path d="M 40 0 L 0 0 0 40" fill="none" stroke="rgba(107, 0, 215, 0.2)" strokeWidth="1"/>
+                  </pattern>
+                  <rect width="100%" height="100%" fill="url(#grid)" />
+                  
+                  {/* Network Nodes */}
+                  <circle cx="20%" cy="30%" r="5" fill="rgba(255, 90, 247, 0.6)" className="animate-pulse"/>
+                  <circle cx="50%" cy="70%" r="5" fill="rgba(0, 230, 118, 0.6)" className="animate-pulse animation-delay-700"/>
+                  <circle cx="80%" cy="20%" r="5" fill="rgba(33, 150, 243, 0.6)" className="animate-pulse animation-delay-1500"/>
+                  
+                  {/* Network Connections */}
+                  <line x1="20%" y1="30%" x2="50%" y2="70%" stroke="rgba(255, 90, 247, 0.6)" strokeWidth="1" strokeDasharray="5,5" className="animate-dash"/>
+                  <line x1="50%" y1="70%" x2="80%" y2="20%" stroke="rgba(0, 230, 118, 0.6)" strokeWidth="1" strokeDasharray="5,5" className="animate-dash animation-delay-700"/>
+                  <line x1="80%" y1="20%" x2="20%" y2="30%" stroke="rgba(33, 150, 243, 0.6)" strokeWidth="1" strokeDasharray="5,5" className="animate-dash animation-delay-1500"/>
+                </svg>
+              </div>
+            </div>
+            
+            <h2 className="text-2xl font-bold mb-2 flex items-center">
+              <div className="w-10 h-10 rounded-lg bg-purple-900/40 flex items-center justify-center mr-3">
+                <ShieldCheck className="h-6 w-6 text-purple-400" />
+              </div>
+              <span className="bg-clip-text text-transparent bg-gradient-to-r from-purple-400 to-pink-500">
+                Revolutionary Triple-Chain Security System
+              </span>
+            </h2>
+            
+            <p className="text-gray-300 mb-8 ml-13 max-w-3xl">
+              Our groundbreaking security architecture distributes verification across Ethereum, TON, and Solana blockchains,
+              creating an unprecedented security paradigm that remains robust even if multiple chains are compromised.
+            </p>
+            
+            {/* Blockchain Security Component */}
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-8">
+              {/* Ethereum Security */}
+              <motion.div 
+                className="bg-gradient-to-br from-black/60 to-purple-900/10 backdrop-blur-md border border-gray-800 rounded-xl p-5 relative overflow-hidden"
+                whileHover={{ y: -5, boxShadow: "0 10px 25px -5px rgba(107, 0, 215, 0.3)" }}
+                transition={{ duration: 0.3 }}
+              >
+                <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-purple-600 to-transparent"></div>
+                <div className="absolute -top-10 -right-10 w-20 h-20 bg-purple-600 rounded-full opacity-20 blur-xl"></div>
+                
+                <div className="flex items-center">
+                  <img src="https://cryptologos.cc/logos/ethereum-eth-logo.svg" alt="Ethereum" className="w-10 h-10 mr-4" />
+                  <h3 className="text-xl font-bold text-white">Ethereum Chain</h3>
+                </div>
+                
+                <ul className="mt-4 space-y-2">
+                  <li className="flex items-start">
+                    <Check className="h-5 w-5 mr-2 text-purple-400 shrink-0" />
+                    <span className="text-sm">Smart contract verification layer</span>
+                  </li>
+                  <li className="flex items-start">
+                    <Check className="h-5 w-5 mr-2 text-purple-400 shrink-0" />
+                    <span className="text-sm">Multi-signature consensus protocols</span>
+                  </li>
+                  <li className="flex items-start">
+                    <Check className="h-5 w-5 mr-2 text-purple-400 shrink-0" />
+                    <span className="text-sm">EVM-based ZK verification logic</span>
+                  </li>
+                </ul>
+              </motion.div>
+              
+              {/* TON Security */}
+              <motion.div 
+                className="bg-gradient-to-br from-black/60 to-pink-900/10 backdrop-blur-md border border-gray-800 rounded-xl p-5 relative overflow-hidden"
+                whileHover={{ y: -5, boxShadow: "0 10px 25px -5px rgba(255, 90, 247, 0.3)" }}
+                transition={{ duration: 0.3 }}
+              >
+                <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-pink-600 to-transparent"></div>
+                <div className="absolute -top-10 -right-10 w-20 h-20 bg-pink-600 rounded-full opacity-20 blur-xl"></div>
+                
+                <div className="flex items-center">
+                  <img src="https://ton.org/download/ton_symbol.svg" alt="TON" className="w-10 h-10 mr-4" />
+                  <h3 className="text-xl font-bold text-white">TON Chain</h3>
+                </div>
+                
+                <ul className="mt-4 space-y-2">
+                  <li className="flex items-start">
+                    <Check className="h-5 w-5 mr-2 text-pink-400 shrink-0" />
+                    <span className="text-sm">High-performance transaction processing</span>
+                  </li>
+                  <li className="flex items-start">
+                    <Check className="h-5 w-5 mr-2 text-pink-400 shrink-0" />
+                    <span className="text-sm">Fault-tolerant data replication</span>
+                  </li>
+                  <li className="flex items-start">
+                    <Check className="h-5 w-5 mr-2 text-pink-400 shrink-0" />
+                    <span className="text-sm">Advanced workchain isolation</span>
+                  </li>
+                </ul>
+              </motion.div>
+              
+              {/* Solana Security */}
+              <motion.div 
+                className="bg-gradient-to-br from-black/60 to-blue-900/10 backdrop-blur-md border border-gray-800 rounded-xl p-5 relative overflow-hidden"
+                whileHover={{ y: -5, boxShadow: "0 10px 25px -5px rgba(0, 123, 255, 0.3)" }}
+                transition={{ duration: 0.3 }}
+              >
+                <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-blue-600 to-transparent"></div>
+                <div className="absolute -top-10 -right-10 w-20 h-20 bg-blue-600 rounded-full opacity-20 blur-xl"></div>
+                
+                <div className="flex items-center">
+                  <img src="https://cryptologos.cc/logos/solana-sol-logo.svg" alt="Solana" className="w-10 h-10 mr-4" />
+                  <h3 className="text-xl font-bold text-white">Solana Chain</h3>
+                </div>
+                
+                <ul className="mt-4 space-y-2">
+                  <li className="flex items-start">
+                    <Check className="h-5 w-5 mr-2 text-blue-400 shrink-0" />
+                    <span className="text-sm">High-throughput verification pipeline</span>
+                  </li>
+                  <li className="flex items-start">
+                    <Check className="h-5 w-5 mr-2 text-blue-400 shrink-0" />
+                    <span className="text-sm">Proof-of-History temporal verification</span>
+                  </li>
+                  <li className="flex items-start">
+                    <Check className="h-5 w-5 mr-2 text-blue-400 shrink-0" />
+                    <span className="text-sm">Parallel transaction execution</span>
+                  </li>
+                </ul>
+              </motion.div>
+            </div>
+            
+            {/* Security Technology Cards */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <div className="relative group">
+                <div className="absolute -inset-0.5 bg-gradient-to-r from-pink-600 to-purple-600 rounded-lg blur opacity-30 group-hover:opacity-80 transition duration-300"></div>
+                <SecurityFeatureCard 
+                  title="Zero-Knowledge Proofs"
+                  description="Our ZK system provides cryptographic verification without revealing sensitive data for complete transaction privacy across all chains."
+                  icon={<Shield className="text-[#FF5AF7]" />}
+                  color="#FF5AF7"
+                />
+              </div>
+              
+              <div className="relative group">
+                <div className="absolute -inset-0.5 bg-gradient-to-r from-green-600 to-teal-600 rounded-lg blur opacity-30 group-hover:opacity-80 transition duration-300"></div>
+                <SecurityFeatureCard 
+                  title="Quantum-Resistant Encryption"
+                  description="Future-proof lattice-based cryptography provides protection against attacks from advanced quantum computers."
+                  icon={<Lock className="text-[#00E676]" />}
+                  color="#00E676"
+                />
+              </div>
+              
+              <div className="relative group">
+                <div className="absolute -inset-0.5 bg-gradient-to-r from-blue-600 to-cyan-600 rounded-lg blur opacity-30 group-hover:opacity-80 transition duration-300"></div>
+                <SecurityFeatureCard 
+                  title="Time-Locked Security"
+                  description="Advanced temporal security layers using blockchain-verified time oracles for precise time-based access protocols."
+                  icon={<Clock className="text-[#2196F3]" />}
+                  color="#2196F3"
+                />
+              </div>
+            </div>
+            
+            {/* Cross-Chain Security Stats */}
+            <div className="mt-10 grid grid-cols-2 md:grid-cols-4 gap-6">
+              <div className="bg-black/30 rounded-lg p-4 text-center">
+                <div className="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-purple-400 to-pink-500">99.9997%</div>
+                <div className="text-sm text-gray-400 mt-1">Uptime Guarantee</div>
+              </div>
+              
+              <div className="bg-black/30 rounded-lg p-4 text-center">
+                <div className="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-green-400 to-teal-500">3-Chain</div>
+                <div className="text-sm text-gray-400 mt-1">Verification System</div>
+              </div>
+              
+              <div className="bg-black/30 rounded-lg p-4 text-center">
+                <div className="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-cyan-500">Military</div>
+                <div className="text-sm text-gray-400 mt-1">Grade Encryption</div>
+              </div>
+              
+              <div className="bg-black/30 rounded-lg p-4 text-center">
+                <div className="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-yellow-400 to-orange-500">24/7/365</div>
+                <div className="text-sm text-gray-400 mt-1">Security Monitoring</div>
+              </div>
+            </div>
+          </motion.div>
         </div>
       </div>
     </div>
