@@ -49,6 +49,8 @@ import Whitepaper from './pages/whitepaper';
 import ProjectWhitepaper from './pages/project-whitepaper';
 import SecurityProtocols from './pages/security-protocols';
 import CvtTokenomics from './pages/cvt-tokenomics';
+// Bitcoin Halving Pages
+import BitcoinHalvingPage from './pages/bitcoin-halving';
 import CvtUtility from './pages/cvt-utility';
 import CvtUtilityNew from './pages/cvt-utility-new';
 import RevolutionaryFeatures from './pages/revolutionary-features';
@@ -181,6 +183,7 @@ function App() {
           <Route path="/premium-payment" component={PremiumPayment} />
           <Route path="/subscription" component={Subscription} />
           <Route path="/gift-crypto" component={GiftCrypto} />
+          <Route path="/bitcoin-halving" component={BitcoinHalvingPage} />
           
           {/* 404 - must be last */}
           <Route component={NotFound} />
