@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
 import { useLocation } from 'wouter';
 import { Button } from '@/components/ui/button';
-import { ArrowLeft, ArrowRight, Check, ShieldCheck, Sparkles, Clock } from 'lucide-react';
+import { ArrowLeft, ArrowRight, Check, ShieldCheck, Sparkles, Clock, Shield, Lock } from 'lucide-react';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
-import { SpecializedVaultType } from '@/components/vault/vault-type-selector';
 import { motion } from 'framer-motion';
 
+// Define all our vault types with full details
 const VAULT_TYPES = [
   {
     id: 'standard',
@@ -19,10 +19,7 @@ const VAULT_TYPES = [
       "Adaptive Multi-Layered Security",
       "Quantum-Resistant Encryption",
       "Triple-Chain Protection System",
-      "Instant Disaster Recovery",
-      "Flexible Access Control Systems",
-      "Customizable Security Protocols",
-      "Intuitive Ownership Management" 
+      "Instant Disaster Recovery"
     ],
     tags: ['Triple-Chain', 'Zero-Knowledge', 'Advanced Security', 'Quantum-Resistant']
   },
@@ -40,14 +37,14 @@ const VAULT_TYPES = [
       "Advanced transaction signing",
       "Biometric security options"
     ],
-    tags: ['Triple-Chain', 'Zero-Knowledge', 'Advanced Security', 'Quantum-Resistant']
+    tags: ['Triple-Chain', 'Zero-Knowledge', 'Advanced Security']
   },
   {
     id: 'biometric',
-    title: 'Biometric',
+    title: 'Biometric Vault',
     description: 'Secure with fingerprint or facial recognition',
     icon: '👆',
-    color: '#00D7C3',
+    color: '#3F51B5',
     securityLevel: 4,
     complexityLevel: 2,
     features: [
@@ -56,37 +53,37 @@ const VAULT_TYPES = [
       "Multi-factor authentication",
       "Tamper-proof security"
     ],
-    tags: ['Triple-Chain', 'Zero-Knowledge', 'Advanced Security']
+    tags: ['Advanced Security']
   },
   {
     id: 'time-lock',
     title: 'Advanced Time-Lock',
     description: 'Schedule complex time-based unlocking',
     icon: '⏱️',
-    color: '#D76B00',
+    color: '#FF9800',
     securityLevel: 4,
     complexityLevel: 3,
     features: [
-      "Scheduled unlocking periods", 
+      "Scheduled unlocking periods",
       "Multiple time conditions",
       "Calendar-based scheduling",
-      "Emergency override options" 
+      "Emergency override options"
     ],
     tags: ['Triple-Chain', 'Zero-Knowledge', 'Advanced Security']
   },
   {
-    id: 'geolocation',
-    title: 'Geolocation',
+    id: 'geo-location',
+    title: 'Geolocation Vault',
     description: 'Access only from specific locations',
     icon: '📍',
-    color: '#00D74B',
+    color: '#4CAF50',
     securityLevel: 4,
     complexityLevel: 3,
     features: [
-      "Location-based access", 
+      "Location-based access",
       "Multiple safe zones",
       "GPS verification",
-      "Travel permissions" 
+      "Travel permissions"
     ],
     tags: ['Triple-Chain', 'Zero-Knowledge', 'Advanced Security']
   },
@@ -95,103 +92,103 @@ const VAULT_TYPES = [
     title: 'Cross-Chain Verification',
     description: 'Verify assets across multiple blockchains',
     icon: '⛓️',
-    color: '#8B00D7',
+    color: '#2196F3',
     securityLevel: 5,
     complexityLevel: 4,
     features: [
-      "Triple-Chain Security", 
+      "Triple-Chain Security",
       "Cross-chain verification protocols",
       "Multi-network validation",
-      "Unified security monitoring" 
+      "Unified security monitoring"
     ],
-    tags: ['Triple-Chain', 'Zero-Knowledge', 'Advanced Security', 'Quantum-Resistant']
+    tags: ['Triple-Chain', 'Zero-Knowledge', 'Advanced Security']
   },
   {
     id: 'smart-contract',
-    title: 'Smart Contract',
+    title: 'Smart Contract Vault',
     description: 'Automated rules and conditions',
     icon: '📜',
-    color: '#5271FF',
+    color: '#673AB7',
     securityLevel: 4,
     complexityLevel: 5,
     features: [
-      "Conditional access rules", 
+      "Conditional access rules",
       "Automated actions",
       "Event-based triggers",
-      "Custom logic implementation" 
+      "Custom logic implementation"
     ],
-    tags: ['Triple-Chain', 'Zero-Knowledge', 'Advanced Security']
+    tags: ['Advanced Security']
   },
   {
     id: 'dynamic',
-    title: 'Dynamic',
+    title: 'Dynamic Vault',
     description: 'Adapt to market or user behavior',
     icon: '📊',
-    color: '#FF5151',
+    color: '#009688',
     securityLevel: 4,
     complexityLevel: 5,
     features: [
-      "Behavioral adaptability", 
+      "Behavioral adaptability",
       "Market response strategies",
       "Self-adjusting security",
-      "Custom security settings" 
+      "Custom security settings"
     ],
-    tags: ['Triple-Chain', 'Zero-Knowledge', 'Advanced Security']
+    tags: ['Advanced Security']
   },
   {
     id: 'nft-powered',
-    title: 'NFT-Powered',
+    title: 'NFT-Powered Vault',
     description: 'Use NFTs as access keys to your vault',
     icon: '🖼️',
-    color: '#CE19FF',
+    color: '#9C27B0',
     securityLevel: 4,
     complexityLevel: 3,
     features: [
-      "NFT access verification", 
+      "NFT access verification",
       "Transferable vault access",
       "Digital collectible integration",
-      "NFT-based permissions" 
+      "NFT-based permissions"
+    ],
+    tags: ['Triple-Chain', 'Advanced Security']
+  },
+  {
+    id: 'unique-security',
+    title: 'Unique Security Vault',
+    description: 'Enhanced security with custom protocols',
+    icon: '🛡️',
+    color: '#F44336',
+    securityLevel: 5,
+    complexityLevel: 4,
+    features: [
+      "Zero-Knowledge Privacy Layer",
+      "Military-grade encryption",
+      "Quantum-resistant protocols",
+      "Custom security combinations"
     ],
     tags: ['Triple-Chain', 'Zero-Knowledge', 'Advanced Security']
   },
   {
-    id: 'unique',
-    title: 'Unique Security',
-    description: 'Enhanced security with custom protocols',
-    icon: '🛡️',
-    color: '#fca103',
-    securityLevel: 5,
-    complexityLevel: 4,
-    features: [
-      "Zero-Knowledge Privacy Layer", 
-      "Military-grade encryption",
-      "Quantum-resistant protocols",
-      "Custom security combinations" 
-    ],
-    tags: ['Triple-Chain', 'Zero-Knowledge', 'Advanced Security', 'Quantum-Resistant']
-  },
-  {
-    id: 'ai-intent-inheritance',
-    title: 'AI Intent Inheritance',
+    id: 'ai-intent',
+    title: 'AI Intent Inheritance Vault',
     description: 'Natural language inheritance planning',
     icon: '🧠',
-    color: '#9E00FF',
+    color: '#00BCD4',
     securityLevel: 5,
     complexityLevel: 3,
     features: [
-      "Express intent in plain language", 
+      "Express intent in plain language",
       "AI-powered smart contract generation",
       "Conditional inheritance rules",
       "Adaptable to complex real-world scenarios"
     ],
-    tags: ['Triple-Chain', 'Zero-Knowledge', 'Advanced Security', 'Quantum-Resistant']
+    tags: ['Triple-Chain', 'Zero-Knowledge', 'Advanced Security']
   },
   {
-    id: 'memory-vault',
+    id: 'time-locked-memory',
     title: 'Time-Locked Memory Vault',
     description: 'Digital assets with multimedia memories',
     icon: '📦',
-    color: '#FF3A8C',
+    color: '#CDDC39',
     securityLevel: 4,
     complexityLevel: 3,
     features: [
@@ -204,10 +201,10 @@ const VAULT_TYPES = [
   },
   {
     id: 'quantum-resistant',
-    title: 'Quantum-Resistant',
+    title: 'Quantum-Resistant Vault',
     description: 'Progressive security that scales with value',
-    icon: '🔐',
-    color: '#00B8FF',
+    icon: '🔒',
+    color: '#9C27B0',
     securityLevel: 5,
     complexityLevel: 4,
     features: [
@@ -219,11 +216,11 @@ const VAULT_TYPES = [
     tags: ['Triple-Chain', 'Zero-Knowledge', 'Advanced Security', 'Quantum-Resistant']
   },
   {
-    id: 'composite-vault',
+    id: 'cross-chain-fragment',
     title: 'Cross-Chain Fragment Vault',
     description: 'Splits your assets across multiple blockchains',
     icon: '🧩',
-    color: '#00E5A0',
+    color: '#3F51B5',
     securityLevel: 5,
     complexityLevel: 5,
     features: [
@@ -232,14 +229,14 @@ const VAULT_TYPES = [
       "Fragmented recovery system",
       "Protection from single-chain failures"
     ],
-    tags: ['Triple-Chain', 'Zero-Knowledge', 'Advanced Security', 'Quantum-Resistant']
+    tags: ['Triple-Chain', 'Zero-Knowledge', 'Advanced Security']
   },
   {
-    id: 'geo-temporal',
+    id: 'location-time',
     title: 'Location-Time Restricted Vault',
     description: 'Access only at specific locations during set times',
     icon: '🌎',
-    color: '#47A0FF',
+    color: '#4CAF50',
     securityLevel: 5,
     complexityLevel: 4,
     features: [
@@ -248,14 +245,14 @@ const VAULT_TYPES = [
       "Scheduled access periods",
       "Perfect for location-sensitive business assets"
     ],
-    tags: ['Triple-Chain', 'Zero-Knowledge', 'Advanced Security', 'Quantum-Resistant']
+    tags: ['Triple-Chain', 'Zero-Knowledge', 'Advanced Security']
   },
   {
-    id: 'diamond-hands',
+    id: 'investment-discipline',
     title: 'Investment Discipline Vault',
     description: 'Prevents emotional selling during market volatility',
     icon: '💎',
-    color: '#3F51FF',
+    color: '#2196F3',
     securityLevel: 4,
     complexityLevel: 3,
     features: [
@@ -265,350 +262,379 @@ const VAULT_TYPES = [
       "Protection from panic-selling"
     ],
     tags: ['Triple-Chain', 'Zero-Knowledge', 'Advanced Security']
+  },
+  {
+    id: 'ai-assisted',
+    title: 'AI-Assisted Investment Vault',
+    description: 'AI-powered market analysis for optimal trading',
+    icon: '🤖',
+    color: '#00BCD4',
+    securityLevel: 5,
+    complexityLevel: 4,
+    features: [
+      "AI market trend analysis",
+      "Smart trading suggestions",
+      "Customizable investment strategies",
+      "Automated risk assessment"
+    ],
+    tags: ['Triple-Chain', 'Zero-Knowledge', 'Advanced Security', 'AI-Powered']
+  },
+  {
+    id: 'milestone',
+    title: 'Milestone-Based Release Vault',
+    description: 'Unlocks assets when you achieve personal goals',
+    icon: '🏆',
+    color: '#FF9800',
+    securityLevel: 4,
+    complexityLevel: 3,
+    features: [
+      "Achievement-based unlocking",
+      "Progressive asset release",
+      "Customizable goal verification",
+      "Reward system integration"
+    ],
+    tags: ['Triple-Chain', 'Zero-Knowledge', 'Advanced Security']
+  },
+  {
+    id: 'family-heritage',
+    title: 'Family Heritage Vault',
+    description: 'Secure generational wealth transfer with education',
+    icon: '👪',
+    color: '#795548',
+    securityLevel: 5,
+    complexityLevel: 4,
+    features: [
+      "Multi-generational planning",
+      "Educational content integration",
+      "Gradual inheritance mechanism",
+      "Family governance protocols"
+    ],
+    tags: ['Triple-Chain', 'Zero-Knowledge', 'Advanced Security', 'Quantum-Resistant']
   }
 ];
 
-// Define vault categories
-const VAULT_CATEGORIES = [
-  {
-    id: 'specialized',
-    name: 'Specialized Vaults',
-    description: 'Advanced vault types with unique security features and specialized functionality',
-    vaultTypes: ['ai-intent-inheritance', 'geolocation', 'smart-contract', 'nft-powered', 'dynamic']
-  },
-  {
-    id: 'security',
-    name: 'Advanced Security',
-    description: 'Enhanced protection with multiple verification layers and distributed security',
-    vaultTypes: ['multi-signature', 'biometric', 'cross-chain']
-  },
-  {
-    id: 'time',
-    name: 'Basic Time Vaults',
-    description: 'Simple and reliable time-locked storage with essential security features',
-    vaultTypes: ['standard', 'time-lock']
-  }
-];
-
-const VaultTypesPage = () => {
-  const [_, navigate] = useLocation();
-  const [selectedVaultType, setSelectedVaultType] = useState('standard');
-  const [activeTab, setActiveTab] = useState('all');
-  
-  const handleVaultSelect = (id: string) => {
-    setSelectedVaultType(id);
-  };
-  
-  const handleContinue = () => {
-    // Direct navigation to the enhanced vault system with the selected type
-    if (selectedVaultType === 'ai-intent-inheritance') {
-      navigate('/intent-inheritance-vault');
-    } else if (selectedVaultType === 'cross-chain') {
-      navigate('/cross-chain-vault');
-    } else if (selectedVaultType === 'multi-signature') {
-      navigate('/multi-signature-vault');
-    } else {
-      // Use create-vault-enhanced which already has the TON integration
-      navigate(`/create-vault-enhanced?type=${selectedVaultType}`);
-    }
-  };
-  
-  const selectedVault = VAULT_TYPES.find(vault => vault.id === selectedVaultType);
+// VaultCard component for displaying vault information
+const VaultCard = ({ vault, selected, onClick }) => {
+  const { title, description, icon, color, securityLevel, complexityLevel, features, tags } = vault;
   
   return (
-    <div className="container mx-auto py-8 px-4">
-      <div className="mx-auto max-w-7xl">
-        <div className="text-center mb-8">
-          <h1 className="text-3xl md:text-4xl font-bold mb-2">Choose Your Vault Type</h1>
-          <p className="text-lg text-gray-400">Select the type of vault that best fits your security needs</p>
+    <motion.div 
+      className={`relative rounded-xl p-6 transition-all duration-300 cursor-pointer ${
+        selected ? 'bg-white/10 border-2' : 'bg-black/40 border border-gray-800 hover:bg-white/5'
+      }`}
+      style={{ borderColor: selected ? color : undefined }}
+      onClick={onClick}
+      whileHover={{ y: -5 }}
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.3 }}
+    >
+      {/* Icon and Title */}
+      <div className="flex items-start mb-3">
+        <div className="text-2xl mr-3">{icon}</div>
+        <div>
+          <h3 className="text-lg font-bold text-white">{title}</h3>
+          <div className="text-sm opacity-60">{description}</div>
         </div>
-        
-        <div className="mb-8">
-          <Button 
-            variant="ghost" 
-            onClick={() => navigate('/my-vaults')}
-            className="text-gray-400 hover:text-white flex items-center gap-1 mb-6"
-          >
-            <ArrowLeft className="h-4 w-4" />
-            Back to My Vaults
-          </Button>
-          
-          <div className="bg-black/30 border border-gray-800 rounded-lg p-6 mb-8">
-            <h2 className="text-xl font-semibold mb-2">All Vaults Include Premium Features</h2>
-            <p className="text-gray-400 mb-4">
-              Every vault type includes our revolutionary technologies, making Chronos Vault 
-              the most secure solution in the world - accessible to everyone, with no blockchain 
-              knowledge required.
-            </p>
-            
-            <div className="grid md:grid-cols-3 gap-6 mt-6">
-              <div className="bg-black/40 border border-[#6B00D7]/30 rounded-lg p-4">
-                <div className="flex items-center mb-2">
-                  <div className="bg-[#6B00D7]/20 w-10 h-10 rounded-full flex items-center justify-center mr-3">
-                    <ShieldCheck className="h-5 w-5 text-[#6B00D7]" />
-                  </div>
-                  <h3 className="font-semibold text-[#6B00D7]/90">Triple-Chain Security</h3>
-                </div>
-                <p className="text-gray-400 text-sm">
-                  Distributes security across Ethereum, Solana, and TON for unmatched protection
-                </p>
-              </div>
-              
-              <div className="bg-black/40 border border-[#FF5AF7]/30 rounded-lg p-4">
-                <div className="flex items-center mb-2">
-                  <div className="bg-[#FF5AF7]/20 w-10 h-10 rounded-full flex items-center justify-center mr-3">
-                    <Sparkles className="h-5 w-5 text-[#FF5AF7]" />
-                  </div>
-                  <h3 className="font-semibold text-[#FF5AF7]/90">Cross-Chain Compatibility</h3>
-                </div>
-                <p className="text-gray-400 text-sm">
-                  Store and access your assets across multiple blockchain networks
-                </p>
-              </div>
-              
-              <div className="bg-black/40 border border-[#00D7C3]/30 rounded-lg p-4">
-                <div className="flex items-center mb-2">
-                  <div className="bg-[#00D7C3]/20 w-10 h-10 rounded-full flex items-center justify-center mr-3">
-                    <Clock className="h-5 w-5 text-[#00D7C3]" />
-                  </div>
-                  <h3 className="font-semibold text-[#00D7C3]/90">Flexible Payment Options</h3>
-                </div>
-                <p className="text-gray-400 text-sm">
-                  Pay with CVT tokens, TON, ETH, SOL, or BTC with staking discounts
-                </p>
-              </div>
-            </div>
-          </div>
-          
-          <h2 className="text-2xl font-bold mb-4">Vault Categories</h2>
-          
-          <Tabs value={activeTab} onValueChange={setActiveTab} className="mb-8">
-            <TabsList className="bg-black/40 border border-gray-800 mb-4">
-              <TabsTrigger value="all" className="data-[state=active]:bg-[#6B00D7]/20 data-[state=active]:text-white">
-                All Vaults
-              </TabsTrigger>
-              {VAULT_CATEGORIES.map(category => (
-                <TabsTrigger 
-                  key={category.id} 
-                  value={category.id}
-                  className="data-[state=active]:bg-[#6B00D7]/20 data-[state=active]:text-white"
-                >
-                  {category.name}
-                </TabsTrigger>
-              ))}
-            </TabsList>
-            
-            {VAULT_CATEGORIES.map(category => (
-              <TabsContent key={category.id} value={category.id} className="mb-6">
-                <div className="bg-black/30 border border-gray-800 rounded-lg p-4 mb-6">
-                  <h3 className="text-xl font-semibold mb-2">{category.name}</h3>
-                  <p className="text-gray-400">{category.description}</p>
-                  
-                  <div className="mt-4 space-y-2">
-                    {category.vaultTypes.map(vaultId => {
-                      const vault = VAULT_TYPES.find(v => v.id === vaultId);
-                      if (!vault) return null;
-                      return (
-                        <div key={vaultId} className="flex items-center">
-                          <span className="mr-2 text-lg">{vault.icon}</span>
-                          <span className="font-medium">{vault.title}</span>
-                        </div>
-                      );
-                    })}
-                  </div>
-                </div>
-              </TabsContent>
-            ))}
-          </Tabs>
-          
-          <h2 className="text-2xl font-bold mb-4">Select Your Vault Type</h2>
-          <p className="text-gray-400 mb-6">Explore our 16 specialized vault types with unique features and security levels</p>
-        </div>
-        
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mb-8">
-          {VAULT_TYPES.map(vault => (
-            <VaultCard 
-              key={vault.id}
-              vault={vault}
-              isSelected={selectedVaultType === vault.id}
-              onSelect={() => handleVaultSelect(vault.id)}
-            />
-          ))}
-        </div>
-        
-        {selectedVault && (
-          <motion.div 
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="bg-black/50 border border-[#6B00D7]/30 rounded-lg p-6 mb-8"
-          >
-            <h3 className="text-xl font-semibold mb-2 text-[#6B00D7]">Sovereign Fortress™ Security</h3>
-            <p className="text-gray-400 mb-4">Configure quantum-resistant security protocols for your vault</p>
-            
-            <div className="bg-black/40 border border-gray-800 rounded-lg p-4 mb-6">
-              <div className="flex items-center mb-2">
-                <div className="bg-[#6B00D7]/20 w-10 h-10 rounded-full flex items-center justify-center mr-3">
-                  <ShieldCheck className="h-5 w-5 text-[#6B00D7]" />
-                </div>
-                <div>
-                  <h4 className="font-semibold">Triple-Chain Security Architecture</h4>
-                  <p className="text-sm text-gray-400">Distributes your vault security across Ethereum, Solana, and TON blockchains</p>
-                </div>
-              </div>
-              <div className="flex items-center text-green-400 ml-12">
-                <Check className="h-4 w-4 mr-1" />
-                <span className="text-sm">Default for all vaults</span>
-              </div>
-            </div>
-            
-            <div className="text-center">
-              <p className="text-red-400 text-sm mb-4">* Selection required to continue</p>
-              <Button
-                onClick={handleContinue}
-                className="bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] text-white hover:from-[#6B00D7]/90 hover:to-[#FF5AF7]/90 px-8 py-2"
-              >
-                Continue with {selectedVault.title}
-              </Button>
-            </div>
-          </motion.div>
-        )}
       </div>
-    </div>
+      
+      {/* Security & Complexity Meters */}
+      <div className="flex justify-between mb-4">
+        <div className="w-1/2 pr-2">
+          <div className="text-xs uppercase tracking-wider opacity-60 mb-1">Security</div>
+          <div className="flex items-center">
+            {Array(5).fill(0).map((_, i) => (
+              <div 
+                key={i} 
+                className="w-4 h-1 rounded-full mr-1" 
+                style={{ 
+                  backgroundColor: i < securityLevel 
+                    ? color
+                    : 'rgba(255,255,255,0.1)'
+                }}
+              />
+            ))}
+            <span className="text-xs ml-1">{securityLevel}/5</span>
+          </div>
+        </div>
+        <div className="w-1/2 pl-2">
+          <div className="text-xs uppercase tracking-wider opacity-60 mb-1">Complexity</div>
+          <div className="flex items-center">
+            {Array(5).fill(0).map((_, i) => (
+              <div 
+                key={i} 
+                className="w-4 h-1 rounded-full mr-1" 
+                style={{ 
+                  backgroundColor: i < complexityLevel 
+                    ? 'rgba(255,255,255,0.5)'
+                    : 'rgba(255,255,255,0.1)'
+                }}
+              />
+            ))}
+            <span className="text-xs ml-1">{complexityLevel}/5</span>
+          </div>
+        </div>
+      </div>
+      
+      {/* Tags */}
+      <div className="flex flex-wrap gap-2 mb-3">
+        {tags.map(tag => (
+          <span 
+            key={tag} 
+            className="inline-block px-2 py-1 text-xs rounded-md"
+            style={{ backgroundColor: `${color}20` }}
+          >
+            {tag}
+          </span>
+        ))}
+      </div>
+      
+      {/* Features */}
+      {selected && (
+        <motion.div 
+          className="mt-4"
+          initial={{ opacity: 0, height: 0 }}
+          animate={{ opacity: 1, height: 'auto' }}
+          transition={{ duration: 0.3 }}
+        >
+          <div className="text-xs uppercase tracking-wider opacity-60 mb-2">Key Features</div>
+          <ul className="space-y-1">
+            {features.map((feature, idx) => (
+              <li key={idx} className="flex items-start text-sm">
+                <Check className="h-4 w-4 mr-2 mt-0.5" style={{ color }} />
+                {feature}
+              </li>
+            ))}
+          </ul>
+        </motion.div>
+      )}
+      
+      {/* Selected indicator */}
+      {selected && (
+        <div 
+          className="absolute -right-2 -top-2 w-5 h-5 rounded-full flex items-center justify-center"
+          style={{ backgroundColor: color }}
+        >
+          <Check className="h-3 w-3 text-black" />
+        </div>
+      )}
+    </motion.div>
   );
 };
 
-interface VaultCardProps {
-  vault: {
-    id: string;
-    title: string;
-    description: string;
-    icon: string;
-    color: string;
-    securityLevel: number;
-    complexityLevel: number;
-    features: string[];
-    tags: string[];
-  };
-  isSelected: boolean;
-  onSelect: () => void;
-}
+// Security Feature Card
+const SecurityFeatureCard = ({ title, description, icon, color }) => (
+  <div className="bg-black/30 backdrop-blur-sm border border-gray-800 rounded-xl p-6 transition-all hover:border-gray-700">
+    <div className="flex items-center mb-3">
+      <div 
+        className="w-10 h-10 rounded-lg flex items-center justify-center mr-3"
+        style={{ backgroundColor: `${color}20` }}
+      >
+        {icon}
+      </div>
+      <h3 className="text-lg font-bold">{title}</h3>
+    </div>
+    <p className="text-gray-400">{description}</p>
+  </div>
+);
 
-const VaultCard: React.FC<VaultCardProps> = ({ vault, isSelected, onSelect }) => {
+// Main component
+const VaultTypesPage = () => {
+  const [selected, setSelected] = useState(VAULT_TYPES[0].id);
+  const [, navigate] = useLocation();
+  
+  const selectedVault = VAULT_TYPES.find(v => v.id === selected) || VAULT_TYPES[0];
+  const featuredVaults = [VAULT_TYPES[0], VAULT_TYPES[1], VAULT_TYPES[11], VAULT_TYPES[13]];
+  
   return (
-    <div
-      className={`rounded-lg cursor-pointer transition-all duration-200 h-full flex flex-col
-        ${isSelected ? 'shadow-lg' : 'shadow'} 
-        ${isSelected 
-          ? 'bg-black/60 border-2' 
-          : 'bg-black/40 hover:bg-black/50 border border-gray-800 hover:border-gray-700'
-        }
-      `}
-      style={{
-        borderColor: isSelected ? vault.color : undefined,
-        boxShadow: isSelected ? `0 0 15px ${vault.color}30` : undefined,
-      }}
-      onClick={onSelect}
-    >
-      <div className="p-4">
-        <div className="flex flex-col">
-          <div className="flex justify-between items-center mb-3">
-            <div 
-              className={`w-10 h-10 rounded-full flex items-center justify-center text-xl
-                ${isSelected 
-                  ? 'bg-black/70 border border-white/20' 
-                  : 'bg-black/60'
-                }
-              `}
-              style={{
-                boxShadow: isSelected ? `0 0 10px ${vault.color}30` : undefined,
-                borderColor: isSelected ? vault.color : undefined
-              }}
-            >
-              {vault.icon}
-            </div>
-            
-            {isSelected && (
-              <div className="w-6 h-6 flex items-center justify-center rounded-full bg-[#6B00D7]/20 border border-[#6B00D7]/50">
-                <Check className="h-3 w-3 text-[#6B00D7]" />
-              </div>
-            )}
+    <div className="min-h-screen bg-gradient-to-br from-black via-[#1C0533] to-black text-white pb-16">
+      {/* Animated Background Elements */}
+      <div className="fixed inset-0 pointer-events-none overflow-hidden">
+        {/* Grid Pattern */}
+        <div className="absolute inset-0 bg-grid-pattern opacity-10"></div>
+        
+        {/* Floating Orbs */}
+        <div className="absolute top-1/4 left-1/4 w-64 h-64 rounded-full bg-[#6B00D7]/10 blur-3xl animate-float-slow"></div>
+        <div className="absolute bottom-1/4 right-1/4 w-96 h-96 rounded-full bg-[#FF5AF7]/10 blur-3xl animate-float-slow animation-delay-2000"></div>
+        <div className="absolute top-3/4 right-1/3 w-40 h-40 rounded-full bg-[#00E676]/10 blur-3xl animate-float-slow animation-delay-1000"></div>
+        
+        {/* Animated Scan Line */}
+        <div className="absolute inset-0 overflow-hidden">
+          <div className="absolute inset-0 animate-scan-vertical">
+            <div className="h-px w-full bg-gradient-to-r from-transparent via-[#6B00D7]/40 to-transparent"></div>
           </div>
-          
-          <h3 
-            className={`font-semibold text-base ${isSelected ? 'text-white' : 'text-gray-200'} mb-1`}
+        </div>
+      </div>
+      
+      {/* Main Content */}
+      <div className="container mx-auto px-4 pt-8 relative z-10">
+        {/* Page Header */}
+        <div className="flex items-center justify-between mb-8">
+          <div>
+            <motion.h1 
+              className="text-3xl md:text-4xl font-bold"
+              initial={{ opacity: 0, y: -20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5 }}
+            >
+              Choose Your <span style={{ color: selectedVault.color }}>Vault</span>
+            </motion.h1>
+            <motion.p 
+              className="text-gray-400 mt-2"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.5, delay: 0.2 }}
+            >
+              Select from 19 specialized vault solutions with unparalleled security
+            </motion.p>
+          </div>
+          <Button
+            variant="ghost"
+            size="sm"
+            className="text-gray-400 hover:text-white"
+            onClick={() => navigate('/my-vaults')}
           >
-            {vault.title}
-          </h3>
+            <ArrowLeft className="mr-2 h-4 w-4" />
+            Back to My Vaults
+          </Button>
+        </div>
+        
+        {/* Highlighted Vault */}
+        <div className="mb-12">
+          <h2 className="text-xl font-bold mb-4 flex items-center">
+            <Sparkles className="h-5 w-5 mr-2" style={{ color: selectedVault.color }} />
+            <span>Featured Vault: <span style={{ color: selectedVault.color }}>{selectedVault.title}</span></span>
+          </h2>
           
-          <p className="text-xs text-gray-400 mb-3">{vault.description}</p>
+          <div className="rounded-xl bg-black/40 backdrop-blur-sm p-6 border border-gray-800">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <div className="md:col-span-2">
+                <div className="flex items-center mb-4">
+                  <div className="text-4xl mr-4">{selectedVault.icon}</div>
+                  <div>
+                    <h3 className="text-2xl font-bold" style={{ color: selectedVault.color }}>{selectedVault.title}</h3>
+                    <p className="text-gray-400">{selectedVault.description}</p>
+                  </div>
+                </div>
+                
+                <div className="mb-6">
+                  <h4 className="text-lg font-semibold mb-2">Key Features</h4>
+                  <ul className="grid grid-cols-1 md:grid-cols-2 gap-2">
+                    {selectedVault.features.map((feature, idx) => (
+                      <li key={idx} className="flex items-start">
+                        <Check className="h-5 w-5 mr-2 shrink-0" style={{ color: selectedVault.color }} />
+                        <span>{feature}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+                
+                <div className="flex flex-wrap gap-2">
+                  {selectedVault.tags.map(tag => (
+                    <span 
+                      key={tag} 
+                      className="inline-block px-3 py-1 rounded-full text-sm"
+                      style={{ backgroundColor: `${selectedVault.color}20` }}
+                    >
+                      {tag}
+                    </span>
+                  ))}
+                </div>
+              </div>
+              
+              <div className="flex flex-col justify-between bg-black/30 rounded-xl p-6 border border-gray-800">
+                <div>
+                  <h4 className="text-lg font-semibold mb-4">Security Profile</h4>
+                  
+                  <div className="mb-6">
+                    <div className="flex justify-between mb-1">
+                      <span className="text-sm">Security Level</span>
+                      <span className="text-sm font-bold">{selectedVault.securityLevel}/5</span>
+                    </div>
+                    <div className="w-full h-2 bg-gray-800 rounded-full overflow-hidden">
+                      <div 
+                        className="h-full rounded-full"
+                        style={{ 
+                          width: `${(selectedVault.securityLevel / 5) * 100}%`,
+                          backgroundColor: selectedVault.color
+                        }}
+                      ></div>
+                    </div>
+                  </div>
+                  
+                  <div className="mb-6">
+                    <div className="flex justify-between mb-1">
+                      <span className="text-sm">Complexity</span>
+                      <span className="text-sm font-bold">{selectedVault.complexityLevel}/5</span>
+                    </div>
+                    <div className="w-full h-2 bg-gray-800 rounded-full overflow-hidden">
+                      <div 
+                        className="h-full rounded-full bg-gray-400"
+                        style={{ width: `${(selectedVault.complexityLevel / 5) * 100}%` }}
+                      ></div>
+                    </div>
+                  </div>
+                </div>
+                
+                <Button 
+                  className="mt-4 w-full"
+                  style={{ backgroundColor: selectedVault.color }}
+                  onClick={() => navigate(`/create-vault?type=${selectedVault.id}`)}
+                >
+                  Configure {selectedVault.title}
+                  <ArrowRight className="ml-2 h-4 w-4" />
+                </Button>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        {/* All Vault Types Section */}
+        <div className="mb-12">
+          <h2 className="text-xl font-bold mb-4 flex items-center">
+            <ShieldCheck className="h-5 w-5 mr-2" />
+            <span>All Vault Types</span>
+          </h2>
           
-          {/* Key Technologies */}
-          <div className="flex flex-wrap gap-1 mb-3">
-            {vault.tags.map((tag: string, i: number) => (
-              <span 
-                key={i}
-                className="text-[10px] px-2 py-0.5 rounded-full bg-[#6B00D7]/10 border border-[#6B00D7]/30"
-                style={{ color: tag === 'Zero-Knowledge' ? '#FF5AF7' : 
-                        tag === 'Advanced Security' ? '#00D7C3' : 
-                        tag === 'Quantum-Resistant' ? '#FFD700' : '#8B00D7' }}
-              >
-                {tag}
-              </span>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+            {VAULT_TYPES.map(vault => (
+              <VaultCard 
+                key={vault.id}
+                vault={vault}
+                selected={selected === vault.id}
+                onClick={() => setSelected(vault.id)}
+              />
             ))}
           </div>
+        </div>
+        
+        {/* Triple Chain Security Description */}
+        <div className="mb-12">
+          <h2 className="text-xl font-bold mb-4">Triple-Chain Security System</h2>
+          <p className="text-gray-400 mb-6">
+            Our revolutionary security system provides distributed verification across Ethereum, TON, and Solana blockchains, 
+            ensuring maximum protection even if multiple chains are compromised.
+          </p>
           
-          {/* Security & Complexity Levels */}
-          <div className="grid grid-cols-2 gap-3 mb-3">
-            <div className="flex flex-col">
-              <div className="flex justify-between items-center mb-1">
-                <span className="text-[10px] text-gray-400">Security</span>
-                <span className="text-[10px]" style={{ color: vault.color }}>{vault.securityLevel}/5</span>
-              </div>
-              <div className="flex h-1.5 bg-gray-900 rounded overflow-hidden">
-                <div
-                  className="h-full"
-                  style={{
-                    width: `${(vault.securityLevel / 5) * 100}%`,
-                    backgroundColor: vault.color,
-                    opacity: 0.7
-                  }}
-                />
-              </div>
-            </div>
-            <div className="flex flex-col">
-              <div className="flex justify-between items-center mb-1">
-                <span className="text-[10px] text-gray-400">Complexity</span>
-                <span className="text-[10px] text-amber-500">{vault.complexityLevel}/5</span>
-              </div>
-              <div className="flex h-1.5 bg-gray-900 rounded overflow-hidden">
-                <div
-                  className="h-full bg-amber-500"
-                  style={{
-                    width: `${(vault.complexityLevel / 5) * 100}%`,
-                    opacity: 0.7
-                  }}
-                />
-              </div>
-            </div>
-          </div>
-          
-          {/* Key Features with Strong Center Alignment */}
-          <div className="mt-auto w-full text-center">
-            {isSelected && (
-              <div className="w-full text-center">
-                <h4 className="text-xs font-semibold text-gray-300 mb-3 text-center">Key Features:</h4>
-                <ul className="list-none p-0 flex flex-col items-center justify-center w-full">
-                  {vault.features.slice(0, 4).map((feature: string, i: number) => (
-                    <li key={i} className="flex items-center justify-center mb-2 text-center w-full">
-                      <div className="flex items-center justify-center">
-                        <div className="w-2 h-2 rounded-full mr-2" style={{ backgroundColor: vault.color }}></div>
-                        <span className="text-[11px]" style={{ color: vault.color }}>{feature}</span>
-                      </div>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            )}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <SecurityFeatureCard 
+              title="Zero-Knowledge Proofs"
+              description="Cryptographic verification without revealing sensitive data ensures complete privacy."
+              icon={<Shield className="text-[#FF5AF7]" />}
+              color="#FF5AF7"
+            />
+            <SecurityFeatureCard 
+              title="Quantum-Resistant Encryption"
+              description="Future-proof security that withstands attacks from quantum computers."
+              icon={<Lock className="text-[#00E676]" />}
+              color="#00E676"
+            />
+            <SecurityFeatureCard 
+              title="Time-Locked Security"
+              description="Temporal security layers that require specific time periods to unlock."
+              icon={<Clock className="text-[#2196F3]" />}
+              color="#2196F3"
+            />
           </div>
         </div>
       </div>
