@@ -91,6 +91,7 @@ import PremiumFeatures from './pages/premium-features';
 import PremiumPayment from './pages/premium-payment';
 import Subscription from './pages/subscription';
 import GiftCrypto from './pages/gift-crypto';
+import StoragePage from './pages/storage-page';
 
 function App() {
   return (
@@ -190,6 +191,7 @@ function App() {
           <Route path="/subscription" component={Subscription} />
           <Route path="/gift-crypto" component={GiftCrypto} />
           <Route path="/bitcoin-halving" component={BitcoinHalvingPage} />
+          <Route path="/storage" component={StoragePage} />
           
           {/* 404 - must be last */}
           <Route component={NotFound} />
