@@ -712,49 +712,49 @@ const SecurityDocumentation = () => {
           </div>
 
           <div>
-            <h3 className="text-xl font-semibold mb-4">Guardian Tier System</h3>
+            <h3 className="text-xl font-semibold mb-4 text-white">Guardian Tier System</h3>
             <div className="overflow-x-auto">
-              <table className="min-w-full divide-y divide-gray-200 border border-gray-200 rounded-lg">
-                <thead className="bg-gray-50">
+              <table className="min-w-full divide-y divide-[#333] border border-[#333] rounded-lg">
+                <thead className="bg-[#111]">
                   <tr>
-                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-[#FF5AF7] uppercase tracking-wider">
                       Guardian Tier
                     </th>
-                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-[#FF5AF7] uppercase tracking-wider">
                       Authority Level
                     </th>
-                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-[#FF5AF7] uppercase tracking-wider">
                       Recovery Capabilities
                     </th>
-                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-[#FF5AF7] uppercase tracking-wider">
                       Minimum Required
                     </th>
                   </tr>
                 </thead>
-                <tbody className="bg-white divide-y divide-gray-200">
+                <tbody className="bg-[#1A1A1A] divide-y divide-[#333]">
                   <tr>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">Primary Guardian</td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">Highest</td>
-                    <td className="px-6 py-4 text-sm text-gray-700">
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-white">Primary Guardian</td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-400">Highest</td>
+                    <td className="px-6 py-4 text-sm text-gray-400">
                       Initiate recovery, approve recovery, override time-locks in emergency situations
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">At least 1</td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-400">At least 1</td>
                   </tr>
                   <tr>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">Verification Guardian</td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">Medium</td>
-                    <td className="px-6 py-4 text-sm text-gray-700">
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-white">Verification Guardian</td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-400">Medium</td>
+                    <td className="px-6 py-4 text-sm text-gray-400">
                       Approve recovery requests, verify identity, confirm recovery parameters
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">At least 2</td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-400">At least 2</td>
                   </tr>
                   <tr>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">Limited Guardian</td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">Basic</td>
-                    <td className="px-6 py-4 text-sm text-gray-700">
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-white">Limited Guardian</td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-400">Basic</td>
+                    <td className="px-6 py-4 text-sm text-gray-400">
                       Provide secondary verification, approve specific recovery types or asset thresholds
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">Optional</td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-400">Optional</td>
                   </tr>
                 </tbody>
               </table>
@@ -762,51 +762,51 @@ const SecurityDocumentation = () => {
           </div>
 
           <div>
-            <h3 className="text-xl font-semibold mb-4">Recovery Process Flow</h3>
-            <div className="bg-white shadow rounded-lg p-6 border border-gray-200">
+            <h3 className="text-xl font-semibold mb-4 text-white">Recovery Process Flow</h3>
+            <div className="bg-gradient-to-r from-[#1A1A1A] to-[#111] shadow-xl rounded-lg p-6 border border-[#333]">
               <div className="space-y-8">
                 <div className="relative">
                   <div className="absolute inset-0 flex items-center" aria-hidden="true">
-                    <div className="w-full border-t border-gray-300"></div>
+                    <div className="w-full border-t border-[#333]"></div>
                   </div>
                   <div className="relative flex justify-center">
-                    <span className="px-3 bg-white text-lg font-medium text-gray-900">Phase 1: Initiation</span>
+                    <span className="px-3 bg-[#111] text-lg font-medium text-[#FF5AF7] border border-[#333] rounded-full">Phase 1: Initiation</span>
                   </div>
                 </div>
                 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div>
-                    <h4 className="text-md font-semibold mb-2">User Actions</h4>
+                    <h4 className="text-md font-semibold mb-2 text-white">User Actions</h4>
                     <ul className="space-y-2">
                       <li className="flex items-start">
-                        <span className="bg-green-100 text-green-800 font-medium rounded-full w-5 h-5 flex items-center justify-center mr-2 mt-0.5">1</span>
-                        <span className="text-gray-700 text-sm">Initiates recovery from new device with identity verification</span>
+                        <span className="bg-[#111] text-[#50E3C2] font-medium rounded-full w-5 h-5 flex items-center justify-center mr-2 mt-0.5 border border-[#333]">1</span>
+                        <span className="text-gray-300 text-sm">Initiates recovery from new device with identity verification</span>
                       </li>
                       <li className="flex items-start">
-                        <span className="bg-green-100 text-green-800 font-medium rounded-full w-5 h-5 flex items-center justify-center mr-2 mt-0.5">2</span>
-                        <span className="text-gray-700 text-sm">Provides basic identity confirmation details</span>
+                        <span className="bg-[#111] text-[#50E3C2] font-medium rounded-full w-5 h-5 flex items-center justify-center mr-2 mt-0.5 border border-[#333]">2</span>
+                        <span className="text-gray-300 text-sm">Provides basic identity confirmation details</span>
                       </li>
                       <li className="flex items-start">
-                        <span className="bg-green-100 text-green-800 font-medium rounded-full w-5 h-5 flex items-center justify-center mr-2 mt-0.5">3</span>
-                        <span className="text-gray-700 text-sm">Selects recovery type and assets to recover</span>
+                        <span className="bg-[#111] text-[#50E3C2] font-medium rounded-full w-5 h-5 flex items-center justify-center mr-2 mt-0.5 border border-[#333]">3</span>
+                        <span className="text-gray-300 text-sm">Selects recovery type and assets to recover</span>
                       </li>
                     </ul>
                   </div>
                   
                   <div>
-                    <h4 className="text-md font-semibold mb-2">System Actions</h4>
+                    <h4 className="text-md font-semibold mb-2 text-white">System Actions</h4>
                     <ul className="space-y-2">
                       <li className="flex items-start">
-                        <span className="bg-blue-100 text-blue-800 font-medium rounded-full w-5 h-5 flex items-center justify-center mr-2 mt-0.5">1</span>
-                        <span className="text-gray-700 text-sm">Verifies initiation against anti-fraud parameters</span>
+                        <span className="bg-[#111] text-[#FF5AF7] font-medium rounded-full w-5 h-5 flex items-center justify-center mr-2 mt-0.5 border border-[#333]">1</span>
+                        <span className="text-gray-300 text-sm">Verifies initiation against anti-fraud parameters</span>
                       </li>
                       <li className="flex items-start">
-                        <span className="bg-blue-100 text-blue-800 font-medium rounded-full w-5 h-5 flex items-center justify-center mr-2 mt-0.5">2</span>
-                        <span className="text-gray-700 text-sm">Generates recovery request with unique identifier</span>
+                        <span className="bg-[#111] text-[#FF5AF7] font-medium rounded-full w-5 h-5 flex items-center justify-center mr-2 mt-0.5 border border-[#333]">2</span>
+                        <span className="text-gray-300 text-sm">Generates recovery request with unique identifier</span>
                       </li>
                       <li className="flex items-start">
-                        <span className="bg-blue-100 text-blue-800 font-medium rounded-full w-5 h-5 flex items-center justify-center mr-2 mt-0.5">3</span>
-                        <span className="text-gray-700 text-sm">Notifies primary guardians of recovery request</span>
+                        <span className="bg-[#111] text-[#FF5AF7] font-medium rounded-full w-5 h-5 flex items-center justify-center mr-2 mt-0.5 border border-[#333]">3</span>
+                        <span className="text-gray-300 text-sm">Notifies primary guardians of recovery request</span>
                       </li>
                     </ul>
                   </div>
@@ -814,28 +814,28 @@ const SecurityDocumentation = () => {
 
                 <div className="relative">
                   <div className="absolute inset-0 flex items-center" aria-hidden="true">
-                    <div className="w-full border-t border-gray-300"></div>
+                    <div className="w-full border-t border-[#333]"></div>
                   </div>
                   <div className="relative flex justify-center">
-                    <span className="px-3 bg-white text-lg font-medium text-gray-900">Phase 2: Guardian Verification</span>
+                    <span className="px-3 bg-[#111] text-lg font-medium text-[#FF5AF7] border border-[#333] rounded-full">Phase 2: Guardian Verification</span>
                   </div>
                 </div>
                 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div>
-                    <h4 className="text-md font-semibold mb-2">Guardian Actions</h4>
+                    <h4 className="text-md font-semibold mb-2 text-white">Guardian Actions</h4>
                     <ul className="space-y-2">
                       <li className="flex items-start">
-                        <span className="bg-green-100 text-green-800 font-medium rounded-full w-5 h-5 flex items-center justify-center mr-2 mt-0.5">1</span>
-                        <span className="text-gray-700 text-sm">Primary guardian confirms recovery initiation</span>
+                        <span className="bg-[#111] text-[#50E3C2] font-medium rounded-full w-5 h-5 flex items-center justify-center mr-2 mt-0.5 border border-[#333]">1</span>
+                        <span className="text-gray-300 text-sm">Primary guardian confirms recovery initiation</span>
                       </li>
                       <li className="flex items-start">
-                        <span className="bg-green-100 text-green-800 font-medium rounded-full w-5 h-5 flex items-center justify-center mr-2 mt-0.5">2</span>
-                        <span className="text-gray-700 text-sm">Verification guardians approve request through their preferred chain</span>
+                        <span className="bg-[#111] text-[#50E3C2] font-medium rounded-full w-5 h-5 flex items-center justify-center mr-2 mt-0.5 border border-[#333]">2</span>
+                        <span className="text-gray-300 text-sm">Verification guardians approve request through their preferred chain</span>
                       </li>
                       <li className="flex items-start">
-                        <span className="bg-green-100 text-green-800 font-medium rounded-full w-5 h-5 flex items-center justify-center mr-2 mt-0.5">3</span>
-                        <span className="text-gray-700 text-sm">Required threshold of guardians provide signatures</span>
+                        <span className="bg-[#111] text-[#50E3C2] font-medium rounded-full w-5 h-5 flex items-center justify-center mr-2 mt-0.5 border border-[#333]">3</span>
+                        <span className="text-gray-300 text-sm">Required threshold of guardians provide signatures</span>
                       </li>
                     </ul>
                   </div>
