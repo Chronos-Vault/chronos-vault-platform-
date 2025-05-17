@@ -74,6 +74,7 @@ import CrossChainSecurity from './pages/cross-chain-security';
 import CrossChainAtomicSwap from './pages/cross-chain-atomic-swap';
 import CrossChainVsCrosschainAtomicSwap from './pages/cross-chain-vs-atomic-swap';
 import CrossChainFeeMonitorPage from './pages/cross-chain-fee-monitor';
+import BehavioralAuthenticationPage from './pages/behavioral-authentication';
 
 // Wallet Integration Pages
 import ConnectTon from './pages/connect-ton';
@@ -191,6 +192,7 @@ function App() {
           <Route path="/transaction-verification" component={TransactionVerification} />
           <Route path="/triple-chain-security-demo" component={TripleChainSecurityDemo} />
           <Route path="/zk-privacy-demo" component={ZkPrivacyDemo} />
+          <Route path="/behavioral-authentication" component={BehavioralAuthenticationPage} />
           <Route path="/test-vault-cards" component={TestVaultCards} />
           <Route path="/final-vault-test" component={FinalVaultTest} />
           <Route path="/simple-card-test" component={SimpleCardTest} />
