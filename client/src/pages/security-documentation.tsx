@@ -841,19 +841,19 @@ const SecurityDocumentation = () => {
                   </div>
                   
                   <div>
-                    <h4 className="text-md font-semibold mb-2">System Actions</h4>
+                    <h4 className="text-md font-semibold mb-2 text-white">System Actions</h4>
                     <ul className="space-y-2">
                       <li className="flex items-start">
-                        <span className="bg-blue-100 text-blue-800 font-medium rounded-full w-5 h-5 flex items-center justify-center mr-2 mt-0.5">1</span>
-                        <span className="text-gray-700 text-sm">Validates guardian signatures across all chains</span>
+                        <span className="bg-[#111] text-[#FF5AF7] font-medium rounded-full w-5 h-5 flex items-center justify-center mr-2 mt-0.5 border border-[#333]">1</span>
+                        <span className="text-gray-300 text-sm">Validates guardian signatures across all chains</span>
                       </li>
                       <li className="flex items-start">
-                        <span className="bg-blue-100 text-blue-800 font-medium rounded-full w-5 h-5 flex items-center justify-center mr-2 mt-0.5">2</span>
-                        <span className="text-gray-700 text-sm">Initiates time-lock waiting period based on vault configuration</span>
+                        <span className="bg-[#111] text-[#FF5AF7] font-medium rounded-full w-5 h-5 flex items-center justify-center mr-2 mt-0.5 border border-[#333]">2</span>
+                        <span className="text-gray-300 text-sm">Initiates time-lock waiting period based on vault configuration</span>
                       </li>
                       <li className="flex items-start">
-                        <span className="bg-blue-100 text-blue-800 font-medium rounded-full w-5 h-5 flex items-center justify-center mr-2 mt-0.5">3</span>
-                        <span className="text-gray-700 text-sm">Sends notification to original account about pending recovery</span>
+                        <span className="bg-[#111] text-[#FF5AF7] font-medium rounded-full w-5 h-5 flex items-center justify-center mr-2 mt-0.5 border border-[#333]">3</span>
+                        <span className="text-gray-300 text-sm">Sends notification to original account about pending recovery</span>
                       </li>
                     </ul>
                   </div>
