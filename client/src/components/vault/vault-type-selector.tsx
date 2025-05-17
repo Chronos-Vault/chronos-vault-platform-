@@ -17,7 +17,10 @@ export type SpecializedVaultType =
   | 'quantum-resistant'
   | 'composite-vault'
   | 'geo-temporal'
-  | 'diamond-hands';
+  | 'diamond-hands'
+  | 'ai-investment'
+  | 'milestone-based'
+  | 'family-heritage';
 
 // Create an object with the values as a namespace
 export const SpecializedVaultType = {
@@ -36,7 +39,10 @@ export const SpecializedVaultType = {
   QUANTUM_RESISTANT: 'quantum-resistant' as SpecializedVaultType,
   COMPOSITE_VAULT: 'composite-vault' as SpecializedVaultType,
   GEO_TEMPORAL: 'geo-temporal' as SpecializedVaultType,
-  DIAMOND_HANDS: 'diamond-hands' as SpecializedVaultType
+  DIAMOND_HANDS: 'diamond-hands' as SpecializedVaultType,
+  AI_INVESTMENT: 'ai-investment' as SpecializedVaultType,
+  MILESTONE_BASED: 'milestone-based' as SpecializedVaultType,
+  FAMILY_HERITAGE: 'family-heritage' as SpecializedVaultType
 };
 
 interface VaultTypeProps {
@@ -338,6 +344,61 @@ const VaultTypeSelector: React.FC<VaultTypeProps> = ({ selectedType, onChange })
           "Market event-based triggers",
           "Time-locked investment periods",
           "Protection from panic-selling"
+        ]}
+      />
+
+      {/* New Innovative Vault Types */}
+      <VaultTypeCard 
+        type="ai-investment"
+        title="AI-Assisted Investment Vault"
+        description="AI-powered market analysis for optimal trading"
+        icon="🤖"
+        color="#00E676"
+        isSelected={selectedType === 'ai-investment'}
+        onClick={() => onChange('ai-investment')}
+        securityLevel={5}
+        complexityLevel={4}
+        features={[
+          "AI market trend analysis",
+          "Smart trading suggestions",
+          "Customizable investment strategies",
+          "Automated risk assessment"
+        ]}
+      />
+
+      <VaultTypeCard 
+        type="milestone-based"
+        title="Milestone-Based Release Vault"
+        description="Unlocks assets when you achieve personal goals"
+        icon="🏆"
+        color="#FF9800"
+        isSelected={selectedType === 'milestone-based'}
+        onClick={() => onChange('milestone-based')}
+        securityLevel={4}
+        complexityLevel={3}
+        features={[
+          "Achievement-based unlocking",
+          "Progressive asset release",
+          "Customizable goal verification",
+          "Reward system integration"
+        ]}
+      />
+
+      <VaultTypeCard 
+        type="family-heritage"
+        title="Family Heritage Vault"
+        description="Secure generational wealth transfer with education"
+        icon="👪"
+        color="#E040FB"
+        isSelected={selectedType === 'family-heritage'}
+        onClick={() => onChange('family-heritage')}
+        securityLevel={5}
+        complexityLevel={4}
+        features={[
+          "Multi-generational planning",
+          "Educational content integration",
+          "Gradual inheritance mechanism",
+          "Family governance protocols"
         ]}
       />
     </div>
