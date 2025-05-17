@@ -218,6 +218,7 @@ const VaultTypesSelector = () => {
               <li>• Multi-Signature Authorization</li>
               <li>• Biometric Verification</li>
               <li>• Cross-Chain Security</li>
+              <li>• Quantum-Resistant Encryption</li>
             </ul>
           </div>
           
@@ -233,7 +234,59 @@ const VaultTypesSelector = () => {
               <li>• Owner & Beneficiary Controls</li>
             </ul>
           </div>
+        </div>
+        
+        {/* New Innovative Vaults Section */}
+        <div className="p-4 border-2 border-[#00E676]/30 rounded-lg bg-gradient-to-r from-[#00E676]/10 to-black/40 mb-6">
+          <div className="flex items-center mb-3">
+            <div className="bg-[#00E676]/20 p-2 rounded-full mr-3">
+              <span className="text-xl">🔥</span>
+            </div>
+            <h3 className="text-[#00E676] font-bold text-lg">New Innovative Vaults</h3>
+            <span className="ml-3 bg-[#00E676]/20 text-[#00E676] text-xs font-medium px-2 py-1 rounded-full">JUST ADDED</span>
+          </div>
           
+          <p className="text-sm text-gray-300 mb-4 ml-12">
+            Experience our latest cutting-edge vault technologies - available exclusively on Chronos Vault
+          </p>
+          
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div className="bg-black/40 border border-[#00E676]/30 p-4 rounded-lg hover:border-[#00E676] transition-all cursor-pointer" onClick={() => handleVaultTypeSelect('ai-investment')}>
+              <div className="flex items-center mb-2">
+                <div className="bg-[#00E676]/20 p-2 rounded-full mr-3">
+                  <span className="text-xl">🤖</span>
+                </div>
+                <h4 className="text-white font-medium">AI-Assisted Investment</h4>
+              </div>
+              <p className="text-xs text-gray-400">
+                AI-powered market analysis for optimal entry and exit points
+              </p>
+            </div>
+            
+            <div className="bg-black/40 border border-[#FF9800]/30 p-4 rounded-lg hover:border-[#FF9800] transition-all cursor-pointer" onClick={() => handleVaultTypeSelect('milestone-based')}>
+              <div className="flex items-center mb-2">
+                <div className="bg-[#FF9800]/20 p-2 rounded-full mr-3">
+                  <span className="text-xl">🏆</span>
+                </div>
+                <h4 className="text-white font-medium">Milestone-Based Release</h4>
+              </div>
+              <p className="text-xs text-gray-400">
+                Unlocks assets when specific personal achievements are completed
+              </p>
+            </div>
+            
+            <div className="bg-black/40 border border-[#E040FB]/30 p-4 rounded-lg hover:border-[#E040FB] transition-all cursor-pointer" onClick={() => handleVaultTypeSelect('family-heritage')}>
+              <div className="flex items-center mb-2">
+                <div className="bg-[#E040FB]/20 p-2 rounded-full mr-3">
+                  <span className="text-xl">👪</span>
+                </div>
+                <h4 className="text-white font-medium">Family Heritage Vault</h4>
+              </div>
+              <p className="text-xs text-gray-400">
+                Generational wealth transfer with integrated education modules
+              </p>
+            </div>
+          </div>
         </div>
         
         <div className="mt-8 mb-6">
