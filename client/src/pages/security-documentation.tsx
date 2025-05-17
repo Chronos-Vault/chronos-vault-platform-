@@ -508,49 +508,49 @@ const SecurityDocumentation = () => {
           </div>
 
           <div>
-            <h3 className="text-xl font-semibold mb-4">Security Parameters</h3>
+            <h3 className="text-xl font-semibold mb-4 text-[#FF5AF7]">Security Parameters</h3>
             <div className="overflow-x-auto">
-              <table className="min-w-full divide-y divide-gray-200 border border-gray-200 rounded-lg">
-                <thead className="bg-gray-50">
+              <table className="min-w-full divide-y divide-[#333] border border-[#333] rounded-lg">
+                <thead className="bg-[#111]">
                   <tr>
-                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-[#FF5AF7] uppercase tracking-wider">
                       Security Level
                     </th>
-                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-[#FF5AF7] uppercase tracking-wider">
                       Kyber Parameter Set
                     </th>
-                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-[#FF5AF7] uppercase tracking-wider">
                       Dilithium Parameter Set
                     </th>
-                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-[#FF5AF7] uppercase tracking-wider">
                       Estimated Security (Bits)
                     </th>
-                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-[#FF5AF7] uppercase tracking-wider">
                       Recommended Use Case
                     </th>
                   </tr>
                 </thead>
-                <tbody className="bg-white divide-y divide-gray-200">
+                <tbody className="bg-[#1A1A1A] divide-y divide-[#333]">
                   <tr>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">Standard</td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">Kyber-512</td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">Dilithium-2</td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">128</td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">Personal vaults, moderate value</td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-300">Standard</td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-300">Kyber-512</td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-300">Dilithium-2</td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-300">128</td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-300">Personal vaults, moderate value</td>
                   </tr>
                   <tr>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">Enhanced</td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">Kyber-768</td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">Dilithium-3</td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">192</td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">Business vaults, high value</td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-300">Enhanced</td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-300">Kyber-768</td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-300">Dilithium-3</td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-300">192</td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-300">Business vaults, high value</td>
                   </tr>
                   <tr>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">Maximum</td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">Kyber-1024</td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">Dilithium-5</td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">256</td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">Enterprise vaults, critical assets</td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-300">Maximum</td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-300">Kyber-1024</td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-300">Dilithium-5</td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-300">256</td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-300">Enterprise vaults, critical assets</td>
                   </tr>
                 </tbody>
               </table>
@@ -558,71 +558,71 @@ const SecurityDocumentation = () => {
           </div>
 
           <div>
-            <h3 className="text-xl font-semibold mb-4">Implementation Architecture</h3>
-            <div className="bg-white shadow rounded-lg p-6 border border-gray-200">
+            <h3 className="text-xl font-semibold mb-4 text-[#FF5AF7]">Implementation Architecture</h3>
+            <div className="bg-[#1A1A1A] shadow rounded-lg p-6 border border-[#333]">
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <div className="border rounded-lg p-4 bg-gray-50">
-                  <h4 className="font-medium text-center mb-2 text-blue-600">Client-Side Components</h4>
+                <div className="border border-[#333] rounded-lg p-4 bg-[#111]">
+                  <h4 className="font-medium text-center mb-2 text-[#FF5AF7]">Client-Side Components</h4>
                   <ul className="space-y-2">
                     <li className="flex items-center">
-                      <CheckCircleIcon className="w-4 h-4 text-green-500 mr-2 flex-shrink-0" />
-                      <span className="text-gray-700 text-sm">WebAssembly cryptographic module</span>
+                      <CheckCircleIcon className="w-4 h-4 text-[#50E3C2] mr-2 flex-shrink-0" />
+                      <span className="text-gray-300 text-sm">WebAssembly cryptographic module</span>
                     </li>
                     <li className="flex items-center">
-                      <CheckCircleIcon className="w-4 h-4 text-green-500 mr-2 flex-shrink-0" />
-                      <span className="text-gray-700 text-sm">Secure key encapsulation</span>
+                      <CheckCircleIcon className="w-4 h-4 text-[#50E3C2] mr-2 flex-shrink-0" />
+                      <span className="text-gray-300 text-sm">Secure key encapsulation</span>
                     </li>
                     <li className="flex items-center">
-                      <CheckCircleIcon className="w-4 h-4 text-green-500 mr-2 flex-shrink-0" />
-                      <span className="text-gray-700 text-sm">Hardware wallet integration</span>
+                      <CheckCircleIcon className="w-4 h-4 text-[#50E3C2] mr-2 flex-shrink-0" />
+                      <span className="text-gray-300 text-sm">Hardware wallet integration</span>
                     </li>
                     <li className="flex items-center">
-                      <CheckCircleIcon className="w-4 h-4 text-green-500 mr-2 flex-shrink-0" />
-                      <span className="text-gray-700 text-sm">Local parameter verification</span>
+                      <CheckCircleIcon className="w-4 h-4 text-[#50E3C2] mr-2 flex-shrink-0" />
+                      <span className="text-gray-300 text-sm">Local parameter verification</span>
                     </li>
                   </ul>
                 </div>
 
-                <div className="border rounded-lg p-4 bg-gray-50">
-                  <h4 className="font-medium text-center mb-2 text-blue-600">Blockchain Integration</h4>
+                <div className="border border-[#333] rounded-lg p-4 bg-[#111]">
+                  <h4 className="font-medium text-center mb-2 text-[#FF5AF7]">Blockchain Integration</h4>
                   <ul className="space-y-2">
                     <li className="flex items-center">
-                      <CheckCircleIcon className="w-4 h-4 text-green-500 mr-2 flex-shrink-0" />
-                      <span className="text-gray-700 text-sm">Quantum-resistant transaction signing</span>
+                      <CheckCircleIcon className="w-4 h-4 text-[#50E3C2] mr-2 flex-shrink-0" />
+                      <span className="text-gray-300 text-sm">Quantum-resistant transaction signing</span>
                     </li>
                     <li className="flex items-center">
-                      <CheckCircleIcon className="w-4 h-4 text-green-500 mr-2 flex-shrink-0" />
-                      <span className="text-gray-700 text-sm">Cross-chain verification protocols</span>
+                      <CheckCircleIcon className="w-4 h-4 text-[#50E3C2] mr-2 flex-shrink-0" />
+                      <span className="text-gray-300 text-sm">Cross-chain verification protocols</span>
                     </li>
                     <li className="flex items-center">
-                      <CheckCircleIcon className="w-4 h-4 text-green-500 mr-2 flex-shrink-0" />
-                      <span className="text-gray-700 text-sm">Smart contract quantum resistance</span>
+                      <CheckCircleIcon className="w-4 h-4 text-[#50E3C2] mr-2 flex-shrink-0" />
+                      <span className="text-gray-300 text-sm">Smart contract quantum resistance</span>
                     </li>
                     <li className="flex items-center">
                       <AlertCircleIcon className="w-4 h-4 text-amber-500 mr-2 flex-shrink-0" />
-                      <span className="text-gray-700 text-sm">Chain-specific adapters</span>
+                      <span className="text-gray-300 text-sm">Chain-specific adapters</span>
                     </li>
                   </ul>
                 </div>
 
-                <div className="border rounded-lg p-4 bg-gray-50">
-                  <h4 className="font-medium text-center mb-2 text-blue-600">Server-Side Components</h4>
+                <div className="border border-[#333] rounded-lg p-4 bg-[#111]">
+                  <h4 className="font-medium text-center mb-2 text-[#FF5AF7]">Server-Side Components</h4>
                   <ul className="space-y-2">
                     <li className="flex items-center">
-                      <CheckCircleIcon className="w-4 h-4 text-green-500 mr-2 flex-shrink-0" />
-                      <span className="text-gray-700 text-sm">Parameter distribution service</span>
+                      <CheckCircleIcon className="w-4 h-4 text-[#50E3C2] mr-2 flex-shrink-0" />
+                      <span className="text-gray-300 text-sm">Parameter distribution service</span>
                     </li>
                     <li className="flex items-center">
-                      <CheckCircleIcon className="w-4 h-4 text-green-500 mr-2 flex-shrink-0" />
-                      <span className="text-gray-700 text-sm">Cryptographic state monitoring</span>
+                      <CheckCircleIcon className="w-4 h-4 text-[#50E3C2] mr-2 flex-shrink-0" />
+                      <span className="text-gray-300 text-sm">Cryptographic state monitoring</span>
                     </li>
                     <li className="flex items-center">
-                      <CheckCircleIcon className="w-4 h-4 text-green-500 mr-2 flex-shrink-0" />
-                      <span className="text-gray-700 text-sm">Key rotation orchestration</span>
+                      <CheckCircleIcon className="w-4 h-4 text-[#50E3C2] mr-2 flex-shrink-0" />
+                      <span className="text-gray-300 text-sm">Key rotation orchestration</span>
                     </li>
                     <li className="flex items-center">
-                      <CheckCircleIcon className="w-4 h-4 text-green-500 mr-2 flex-shrink-0" />
-                      <span className="text-gray-700 text-sm">Quantum threat monitoring</span>
+                      <CheckCircleIcon className="w-4 h-4 text-[#50E3C2] mr-2 flex-shrink-0" />
+                      <span className="text-gray-300 text-sm">Quantum threat monitoring</span>
                     </li>
                   </ul>
                 </div>
