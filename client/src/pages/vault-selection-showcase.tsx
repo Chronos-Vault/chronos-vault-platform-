@@ -10,10 +10,10 @@ const VaultSelectionShowcase = () => {
         {/* Animated grid pattern */}
         <div className="absolute inset-0 bg-grid-pattern opacity-10"></div>
         
-        {/* Floating orbs */}
-        <div className="absolute top-1/4 left-1/4 w-64 h-64 rounded-full bg-[#6B00D7]/10 blur-3xl animate-float"></div>
-        <div className="absolute bottom-1/4 right-1/4 w-96 h-96 rounded-full bg-[#FF5AF7]/10 blur-3xl animate-float animation-delay-2000"></div>
-        <div className="absolute top-3/4 right-1/3 w-40 h-40 rounded-full bg-[#00E676]/10 blur-3xl animate-float animation-delay-1000"></div>
+        {/* Floating orbs - slowed down animations */}
+        <div className="absolute top-1/4 left-1/4 w-64 h-64 rounded-full bg-[#6B00D7]/10 blur-3xl animate-float-slow"></div>
+        <div className="absolute bottom-1/4 right-1/4 w-96 h-96 rounded-full bg-[#FF5AF7]/10 blur-3xl animate-float-slow animation-delay-2000"></div>
+        <div className="absolute top-3/4 right-1/3 w-40 h-40 rounded-full bg-[#00E676]/10 blur-3xl animate-float-slow animation-delay-1000"></div>
         
         {/* Animated scan line */}
         <div className="absolute inset-0 overflow-hidden">

@@ -324,7 +324,7 @@ const VaultTypesSelectorNew = () => {
                 key={category.id}
                 className={`group relative p-5 border-2 rounded-xl overflow-hidden transition-all duration-500 cursor-pointer transform-gpu hover:-translate-y-1 ${
                   activeCategory === category.id
-                    ? 'animate-float'
+                    ? 'animate-float-slow'
                     : 'hover:shadow-lg'
                 }`}
                 style={{
