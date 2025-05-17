@@ -479,12 +479,12 @@ const SecurityDocumentation = () => {
                 </div>
 
                 <div className="flex items-start">
-                  <div className="bg-blue-100 rounded-full p-2 mr-4">
-                    <KeySquareIcon className="w-5 h-5 text-blue-600" />
+                  <div className="bg-[#111] rounded-full p-2 mr-4 border border-[#333]">
+                    <KeySquareIcon className="w-5 h-5 text-[#FF5AF7]" />
                   </div>
                   <div>
-                    <h4 className="font-medium">Hybrid Approach</h4>
-                    <p className="text-gray-600 text-sm">
+                    <h4 className="font-medium text-white">Hybrid Approach</h4>
+                    <p className="text-gray-400 text-sm">
                       Implements dual encryption layers using both traditional elliptic curve and 
                       post-quantum algorithms for maximum security during the transition period.
                     </p>
@@ -492,12 +492,12 @@ const SecurityDocumentation = () => {
                 </div>
 
                 <div className="flex items-start">
-                  <div className="bg-blue-100 rounded-full p-2 mr-4">
-                    <KeySquareIcon className="w-5 h-5 text-blue-600" />
+                  <div className="bg-[#111] rounded-full p-2 mr-4 border border-[#333]">
+                    <KeySquareIcon className="w-5 h-5 text-[#FF5AF7]" />
                   </div>
                   <div>
-                    <h4 className="font-medium">Key Rotation System</h4>
-                    <p className="text-gray-600 text-sm">
+                    <h4 className="font-medium text-white">Key Rotation System</h4>
+                    <p className="text-gray-400 text-sm">
                       Automatic key rotation based on configurable schedule (default: quarterly), 
                       with emergency rotation capability in response to cryptographic vulnerabilities.
                     </p>
