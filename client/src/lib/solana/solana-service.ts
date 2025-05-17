@@ -101,8 +101,9 @@ class SolanaService {
   constructor() {
     // Check for development environment
     this.devModeEnabled = (typeof import.meta.env !== 'undefined' && import.meta.env.DEV) || 
-                        (typeof window !== 'undefined' && window.location && window.location.hostname.includes('replit')) ||
-                        (typeof window !== 'undefined' && window.location && window.location.hostname === 'localhost');
+                        (typeof window !== 'undefined' && window.location && window.location.hostname && 
+                         (window.location.hostname.includes('replit') || window.location.hostname === 'localhost')) || 
+                        process.env.NODE_ENV === 'development';
     
     // Initialize endpoints
     this.initializeEndpoints();

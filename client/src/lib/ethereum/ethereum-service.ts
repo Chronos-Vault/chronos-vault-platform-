@@ -118,9 +118,10 @@ class EthereumService {
   constructor() {
     try {
       // Check for development environment
-      this.isDevelopmentMode = (typeof import.meta.env !== 'undefined' && import.meta.env.DEV) || 
-                              (typeof window !== 'undefined' && window.location && window.location.hostname.includes('replit')) ||
-                              window.location.hostname === 'localhost';
+      this.isDevelopmentMode = !!((typeof import.meta.env !== 'undefined' && import.meta.env.DEV) || 
+                              (typeof window !== 'undefined' && window.location && window.location.hostname && 
+                               (window.location.hostname.includes('replit') || window.location.hostname === 'localhost')) ||
+                              process.env.NODE_ENV === 'development');
       
       // Check for MetaMask or other browser wallets
       if (typeof window !== 'undefined' && window.ethereum) {
