@@ -167,10 +167,14 @@ function App() {
           {/* Vault Creation Routes */}
           <Route path="/create-vault/standard" component={CreateVaultEnhanced} />
           <Route path="/create-vault/multi-signature" component={MultiSignatureVault} />
+          <Route path="/create-vault/multi-sig" component={MultiSignatureVault} />
           <Route path="/create-vault/biometric" component={EnhancedBiometricVault} />
           <Route path="/create-vault/geo" component={GeoVaultDocPage} />
+          <Route path="/create-vault/geo-location" component={GeoVaultDocPage} />
           <Route path="/create-vault/smart-contract" component={SmartContractVault} />
+          <Route path="/create-vault/smart" component={SmartContractVault} />
           <Route path="/create-vault/inheritance" component={IntentInheritanceVault} />
+          <Route path="/create-vault/family-vault" component={IntentInheritanceVault} />
           <Route path="/create-vault/dynamic" component={CreateVaultEnhanced} />
           <Route path="/create-vault/nft-powered" component={CreateVaultEnhanced} />
           <Route path="/create-vault/unique-security" component={CreateVaultEnhanced} />
