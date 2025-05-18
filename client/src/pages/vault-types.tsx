@@ -637,7 +637,7 @@ const VaultTypesPage = () => {
           </div>
           
           <div className="relative z-10 p-8 md:p-10">
-            {/* Premium Vault Header Section */}
+            {/* Modern Header with Back Button */}
             <div className="flex flex-col md:flex-row items-start md:items-center justify-between mb-6">
               <div>
                 <div className="flex items-center gap-3 mb-3">
@@ -648,12 +648,9 @@ const VaultTypesPage = () => {
                     </div>
                   </div>
                   <h1 className="text-3xl md:text-4xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-white via-purple-200 to-white">
-                    All Vaults Include Premium Features
+                    Select Your Vault
                   </h1>
                 </div>
-                <p className="text-gray-300 mt-2 text-lg max-w-3xl leading-relaxed">
-                  Every vault includes our revolutionary cross-chain technology, making Chronos Vault the most secure solution in the world — accessible to everyone, with no blockchain knowledge required.
-                </p>
               </div>
               
               <Button
@@ -1162,27 +1159,77 @@ const VaultTypesPage = () => {
           </div>
         </motion.div>
         
-        {/* Page Header - Choose Your Vault */}
-        <div className="flex items-center justify-between mb-8">
-          <div>
-            <motion.h1 
-              className="text-3xl md:text-4xl font-bold"
-              initial={{ opacity: 0, y: -20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5 }}
-            >
-              Choose Your <span style={{ color: selectedVault.color }}>Vault</span>
-            </motion.h1>
-            <motion.p 
-              className="text-gray-400 mt-2"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ duration: 0.5, delay: 0.2 }}
-            >
-              Select from 19 specialized vault solutions with unparalleled security
-            </motion.p>
+        {/* Enhanced Cross-Chain Visualization */}
+        <motion.div 
+          className="w-full mb-8 rounded-xl overflow-hidden"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6 }}
+        >
+          <div className="relative bg-black/30 backdrop-blur-md border border-purple-500/20 rounded-xl p-4 overflow-hidden">
+            {/* Blockchain Network Visualization */}
+            <div className="absolute inset-0 overflow-hidden">
+              <svg className="absolute inset-0 w-full h-full opacity-15" viewBox="0 0 1000 120">
+                {/* Network Core */}
+                <circle cx="500" cy="60" r="10" fill="url(#coreGradient)" className="animate-pulse-slow"></circle>
+                <circle cx="500" cy="60" r="20" fill="none" stroke="url(#coreStrokeGradient)" strokeWidth="1" strokeDasharray="5,5" className="animate-spin-slow"></circle>
+                
+                {/* Network Nodes */}
+                <circle cx="300" cy="40" r="7" fill="url(#ethGradient)" className="animate-pulse"></circle>
+                <circle cx="700" cy="40" r="7" fill="url(#solGradient)" className="animate-pulse animation-delay-700"></circle>
+                <circle cx="400" cy="90" r="7" fill="url(#tonGradient)" className="animate-pulse animation-delay-1400"></circle>
+                <circle cx="600" cy="90" r="7" fill="url(#btcGradient)" className="animate-pulse animation-delay-2100"></circle>
+                
+                {/* Connection Lines */}
+                <path d="M500,60 L300,40" stroke="url(#purpleLineGradient)" strokeWidth="1.5" strokeDasharray="4,4" className="animate-dash-offset"></path>
+                <path d="M500,60 L700,40" stroke="url(#greenLineGradient)" strokeWidth="1.5" strokeDasharray="4,4" className="animate-dash-offset animation-delay-700"></path>
+                <path d="M500,60 L400,90" stroke="url(#blueLineGradient)" strokeWidth="1.5" strokeDasharray="4,4" className="animate-dash-offset animation-delay-1400"></path>
+                <path d="M500,60 L600,90" stroke="url(#amberLineGradient)" strokeWidth="1.5" strokeDasharray="4,4" className="animate-dash-offset animation-delay-2100"></path>
+                
+                {/* Data Transfer Packets */}
+                <circle cx="0" cy="0" r="3" fill="#FFFFFF" className="animate-data-packet1">
+                  <animateMotion path="M300,40 L500,60" dur="2s" repeatCount="indefinite" />
+                </circle>
+                <circle cx="0" cy="0" r="3" fill="#FFFFFF" className="animate-data-packet2">
+                  <animateMotion path="M700,40 L500,60" dur="3s" repeatCount="indefinite" />
+                </circle>
+                <circle cx="0" cy="0" r="3" fill="#FFFFFF" className="animate-data-packet3">
+                  <animateMotion path="M400,90 L500,60" dur="2.5s" repeatCount="indefinite" />
+                </circle>
+                <circle cx="0" cy="0" r="3" fill="#FFFFFF" className="animate-data-packet4">
+                  <animateMotion path="M600,90 L500,60" dur="3.5s" repeatCount="indefinite" />
+                </circle>
+              </svg>
+            </div>
+            
+            {/* Chain Information */}
+            <div className="flex flex-wrap justify-between items-center gap-4 relative z-10">
+              <div className="flex items-center gap-4">
+                <div className="flex -space-x-2">
+                  <div className="w-9 h-9 rounded-full bg-gradient-to-br from-purple-900 to-purple-600 flex items-center justify-center border border-purple-500 relative z-30">
+                    <img src="https://cryptologos.cc/logos/ethereum-eth-logo.svg" alt="ETH" className="h-4 w-4" />
+                  </div>
+                  <div className="w-9 h-9 rounded-full bg-gradient-to-br from-blue-900 to-blue-600 flex items-center justify-center border border-blue-500 relative z-20">
+                    <img src="https://cryptologos.cc/logos/toncoin-ton-logo.svg" alt="TON" className="h-4 w-4" />
+                  </div>
+                  <div className="w-9 h-9 rounded-full bg-gradient-to-br from-green-900 to-green-600 flex items-center justify-center border border-green-500 relative z-10">
+                    <img src="https://cryptologos.cc/logos/solana-sol-logo.svg" alt="Solana" className="h-4 w-4" />
+                  </div>
+                </div>
+                <div className="hidden md:block">
+                  <p className="text-xs text-gray-300">Cross-chain optimization with advanced security protocols</p>
+                </div>
+              </div>
+              
+              <div className="flex gap-2">
+                <div className="bg-black/40 backdrop-blur-md border border-purple-500/30 rounded-lg p-1.5 px-3 text-xs flex items-center gap-1.5">
+                  <Shield className="h-3.5 w-3.5 text-purple-400" />
+                  <span className="text-gray-300">Military-Grade Security</span>
+                </div>
+              </div>
+            </div>
           </div>
-        </div>
+        </motion.div>
         
         {/* Featured Vault - Enhanced 3D Interactive Showcase */}
         <div className="mb-16">
