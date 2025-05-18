@@ -1809,10 +1809,7 @@ const VaultTypesPage = () => {
                 <div className="text-sm text-gray-400 mt-1">Grade Encryption</div>
               </div>
               
-              <div className="bg-black/30 rounded-lg p-4 text-center">
-                <div className="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-yellow-400 to-orange-500">24/7/365</div>
-                <div className="text-sm text-gray-400 mt-1">Security Monitoring</div>
-              </div>
+
             </div>
           </motion.div>
         </div>
