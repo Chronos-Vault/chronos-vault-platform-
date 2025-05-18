@@ -1629,26 +1629,35 @@ const VaultTypesPage = () => {
             <span>Vault Categories</span>
           </h2>
 
-          {/* Mobile Category Tab Menu */}
-          <div className="md:hidden">
-            <Tabs defaultValue={activeCategory} value={activeCategory} onValueChange={setActiveCategory} className="w-full mb-4">
-              <TabsList className="w-full grid grid-cols-3 bg-black/20 p-1 gap-1">
-                {Object.entries(vaultCategories).map(([key, category]) => (
-                  <TabsTrigger 
-                    key={key} 
-                    value={key}
-                    className="data-[state=active]:bg-white/10 data-[state=active]:text-white h-12 px-1"
-                    style={{ 
-                      borderColor: category.color,
-                      borderWidth: activeCategory === key ? '1px' : '0px'
-                    }}
-                  >
-                    <span className="mr-1">{category.icon}</span>
-                    <span className="text-xs">{category.title.split(' ')[0]}</span>
-                  </TabsTrigger>
-                ))}
-              </TabsList>
-            </Tabs>
+          {/* Mobile Optimized Category Selector */}
+          <div className="md:hidden mb-4">
+            {/* Simple Dropdown Selector for Mobile */}
+            <select 
+              className="w-full bg-black/30 text-white p-3 rounded-lg border border-purple-500/30 mb-2"
+              value={activeCategory}
+              onChange={(e) => setActiveCategory(e.target.value)}
+            >
+              {Object.entries(vaultCategories).map(([key, category]) => (
+                <option key={key} value={key}>
+                  {category.icon} {category.title} ({category.vaults.length})
+                </option>
+              ))}
+            </select>
+            
+            {/* Active Category Indicator */}
+            <div 
+              className="w-full p-3 rounded-lg flex items-center"
+              style={{ 
+                backgroundColor: `${vaultCategories[activeCategory].color}20`,
+                borderLeft: `4px solid ${vaultCategories[activeCategory].color}`
+              }}
+            >
+              <span className="text-2xl mr-3">{vaultCategories[activeCategory].icon}</span>
+              <div>
+                <h3 className="font-bold text-white">{vaultCategories[activeCategory].title}</h3>
+                <p className="text-xs text-white/70">{vaultCategories[activeCategory].vaults.length} vault types</p>
+              </div>
+            </div>
           </div>
           
           {/* Desktop Category Selector */}
