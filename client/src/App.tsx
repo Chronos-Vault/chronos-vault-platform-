@@ -41,6 +41,7 @@ import GeoVault from './pages/geo-vault';
 import GeoVaultDocPage from './pages/geo-vault-doc';
 import GeoLocationVault from './pages/geo-location-vault';
 import SmartContractVault from './pages/smart-contract-vault';
+import EnhancedSmartContractVault from './pages/enhanced-smart-contract-vault';
 import MultiSignatureVault from './pages/multi-signature-vault';
 import MultiSignatureVaultNew from './pages/multi-signature-vault-new';
 import SpecializedVaultMemory from './pages/specialized-vault-memory';
@@ -173,7 +174,7 @@ function App() {
           <Route path="/create-vault/geo" component={GeoVaultDocPage} />
           <Route path="/create-vault/geo-location" component={GeoLocationVault} />
           <Route path="/create-vault/smart-contract" component={SmartContractVault} />
-          <Route path="/create-vault/smart" component={SmartContractVault} />
+          <Route path="/create-vault/smart" component={EnhancedSmartContractVault} />
           <Route path="/create-vault/inheritance" component={IntentInheritanceVault} />
           <Route path="/create-vault/family-vault" component={IntentInheritanceVault} />
           <Route path="/create-vault/dynamic" component={CreateVaultEnhanced} />
