@@ -2,15 +2,25 @@ import React from 'react';
 import MainHeader from './MainHeader';
 import Footer from './footer';
 
-interface DocumentationLayoutProps {
+export interface DocumentationLayoutProps {
   children: React.ReactNode;
+  title?: string;
+  description?: string;
+  icon?: string;
+  cta?: React.ReactNode;
 }
 
 /**
  * A simplified layout component for documentation pages
  * that doesn't require onboarding context
  */
-const DocumentationLayout: React.FC<DocumentationLayoutProps> = ({ children }) => {
+const DocumentationLayout: React.FC<DocumentationLayoutProps> = ({ 
+  children, 
+  title, 
+  description, 
+  icon, 
+  cta 
+}) => {
   return (
     <div className="min-h-screen flex flex-col">
       {/* We're using the standard MainHeader here, 
@@ -19,7 +29,19 @@ const DocumentationLayout: React.FC<DocumentationLayoutProps> = ({ children }) =
         <MainHeader />
       </div>
       <main className="flex-1">
-        {children}
+        {(title || description) && (
+          <div className="bg-card px-4 pt-20 pb-12 border-b">
+            <div className="container mx-auto max-w-6xl">
+              {icon && <div className="text-4xl mb-4">{icon}</div>}
+              {title && <h1 className="text-4xl font-bold tracking-tight mb-4">{title}</h1>}
+              {description && <p className="text-xl text-muted-foreground max-w-3xl">{description}</p>}
+              {cta}
+            </div>
+          </div>
+        )}
+        <div className="container mx-auto max-w-6xl px-4 py-8">
+          {children}
+        </div>
       </main>
       <Footer />
     </div>

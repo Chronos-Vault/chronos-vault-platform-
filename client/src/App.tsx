@@ -72,6 +72,7 @@ import NFTPoweredVaultDocumentation from './pages/documentation/nft-powered-vaul
 import InvestmentDisciplineVaultDocumentation from './pages/documentation/investment-discipline-vault-new';
 import QuantumResistantVaultDocumentation from './pages/documentation/quantum-resistant-vault';
 import UniqueSecurityVaultDocumentation from './pages/documentation/unique-security-vault';
+import InheritancePlanningVaultDocumentation from './pages/documentation/inheritance-planning-vault';
 import NFTPoweredVault from './pages/nft-powered-vault';
 import QuantumResistantVault from './pages/quantum-resistant-vault';
 import SovereignFortressVault from './pages/sovereign-fortress-vault';
@@ -189,6 +190,7 @@ function App() {
           <Route path="/bitcoin-halving-vault" component={BitcoinHalvingVault} />
           <Route path="/cross-chain-vault" component={CrossChainVault} />
           <Route path="/intent-inheritance-vault" component={IntentInheritanceVault} />
+          <Route path="/inheritance-planning-vault" component={IntentInheritanceVault} />
           <Route path="/quantum-vault" component={QuantumVault} />
           <Route path="/ton-specific-vault" component={TonSpecificVault} />
           <Route path="/location-time-vault" component={LocationTimeVault} />
@@ -262,6 +264,7 @@ function App() {
           <Route path="/documentation/investment-discipline-vault" component={InvestmentDisciplineVaultDocumentation} />
           <Route path="/documentation/quantum-resistant-vault" component={QuantumResistantVaultDocumentation} />
           <Route path="/documentation/unique-security-vault" component={UniqueSecurityVaultDocumentation} />
+          <Route path="/documentation/inheritance-planning-vault" component={InheritancePlanningVaultDocumentation} />
           <Route path="/cvt-tokenomics" component={CvtTokenomics} />
           <Route path="/roadmap" component={Roadmap} />
           <Route path="/team" component={Team} />
