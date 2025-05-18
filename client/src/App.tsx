@@ -56,7 +56,7 @@ import MilestoneBasedVaultPage from './pages/vault-types/milestone-based-vault';
 import MilestoneBasedVaultForm from './pages/milestone-based-vault-form';
 import FamilyHeritageVaultPage from './pages/vault-types/family-heritage-vault';
 import FamilyHeritageVaultForm from './pages/family-heritage-vault-form';
-import DynamicVaultForm from './pages/dynamic-vault-form';
+import DynamicVaultForm from './pages/dynamic-vault-form-rebuilt';
 import DynamicVaultPage from './pages/vault-types/dynamic-vault';
 import DynamicVaultLink from './pages/dynamic-vault-link';
 import IntentInheritanceVault from './pages/intent-inheritance-vault';
