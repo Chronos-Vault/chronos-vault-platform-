@@ -1629,30 +1629,32 @@ const VaultTypesPage = () => {
             <span>Vault Categories</span>
           </h2>
 
-          <div className="flex items-center gap-2 pb-4 overflow-x-auto scrollbar-thin scrollbar-track-transparent scrollbar-thumb-purple-900/50 px-1 -mx-1 py-2 snap-x">
-            {Object.entries(vaultCategories).map(([key, category]) => (
-              <motion.button
-                key={key}
-                onClick={() => setActiveCategory(key)}
-                className={`flex items-center gap-2 px-3 py-2 sm:px-4 rounded-full whitespace-nowrap transition-all flex-shrink-0 snap-start ${
-                  activeCategory === key 
-                    ? 'bg-white/10 text-white shadow-lg shadow-purple-900/20' 
-                    : 'bg-black/40 text-gray-400 hover:bg-white/5'
-                }`}
-                style={{ 
-                  borderWidth: '1px',
-                  borderColor: activeCategory === key ? category.color : 'transparent'
-                }}
-                whileHover={{ scale: 1.03 }}
-                whileTap={{ scale: 0.98 }}
-              >
-                <span className="text-lg" style={{ color: activeCategory === key ? category.color : 'inherit' }}>{category.icon}</span>
-                <span className="text-sm sm:text-base">{category.title}</span>
-                <span className="bg-black/30 px-2 py-0.5 rounded-full text-xs min-w-[1.5rem] text-center">
-                  {category.vaults.length}
-                </span>
-              </motion.button>
-            ))}
+          <div className="mb-2 md:mb-0 overflow-visible">
+            <div className="flex flex-wrap md:flex-nowrap items-center gap-2 pb-4 overflow-x-auto scrollbar-thin scrollbar-track-transparent scrollbar-thumb-purple-900/50 px-1 -mx-1 py-2 snap-x">
+              {Object.entries(vaultCategories).map(([key, category]) => (
+                <motion.button
+                  key={key}
+                  onClick={() => setActiveCategory(key)}
+                  className={`flex items-center gap-2 px-3 py-2 sm:px-4 rounded-full whitespace-nowrap transition-all flex-shrink-0 snap-start min-w-fit ${
+                    activeCategory === key 
+                      ? 'bg-white/10 text-white shadow-lg shadow-purple-900/20' 
+                      : 'bg-black/40 text-gray-400 hover:bg-white/5'
+                  }`}
+                  style={{ 
+                    borderWidth: '1px',
+                    borderColor: activeCategory === key ? category.color : 'transparent'
+                  }}
+                  whileHover={{ scale: 1.03 }}
+                  whileTap={{ scale: 0.98 }}
+                >
+                  <span className="text-lg" style={{ color: activeCategory === key ? category.color : 'inherit' }}>{category.icon}</span>
+                  <span className="text-sm sm:text-base">{category.title}</span>
+                  <span className="bg-black/30 px-2 py-0.5 rounded-full text-xs min-w-[1.5rem] text-center">
+                    {category.vaults.length}
+                  </span>
+                </motion.button>
+              ))}
+            </div>
           </div>
           
           {/* Category Description Banner */}
