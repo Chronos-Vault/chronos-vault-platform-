@@ -5,6 +5,11 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Fix for header duplication in documentation pages */
+.doc-only-header {
+  display: none;
+}
+
 /* Enhanced 3D effects and animations for vault cards */
 .perspective-1000 {
   perspective: 1000px;
