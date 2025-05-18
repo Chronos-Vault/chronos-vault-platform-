@@ -161,7 +161,7 @@ const vaultTypes = [
     id: "time-lock-memory",
     name: "Time-Lock Memory Vault",
     icon: "⏰",
-    href: "/specialized-vault-memory",
+    href: "/documentation/time-locked-memory-vault",
     description: "Store digital assets together with multimedia memories",
     features: [
       "Combined asset and media time-lock",
@@ -170,6 +170,7 @@ const vaultTypes = [
       "Scheduled message delivery",
       "Memorial & legacy planning features",
     ],
+    isNew: true,
     category: "legacy",
   },
   {
