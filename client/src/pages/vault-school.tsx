@@ -69,7 +69,7 @@ const vaultTypes = [
     id: "multi-signature",
     name: "Multi-Signature Vault",
     icon: "🔒",
-    href: "/multi-signature-vault-doc",
+    href: "/multi-signature-vault",
     description: "Enhanced security requiring multiple approvals for asset access",
     features: [
       "Configurable M-of-N signature requirements",
@@ -84,7 +84,7 @@ const vaultTypes = [
     id: "biometric",
     name: "Biometric Vault",
     icon: "📱",
-    href: "/biometric-vault",
+    href: "/specialized-vault-creation?vault=biometric",
     description: "Secure vaults with advanced biometric authentication mechanisms",
     features: [
       "Fingerprint, face, and voice recognition support",
@@ -130,7 +130,7 @@ const vaultTypes = [
     id: "geo-location",
     name: "Geo-Location Vault",
     icon: "🌎",
-    href: "/geo-vault",
+    href: "/specialized-vault-creation?vault=geo-location",
     description: "Access controlled by physical location requirements",
     features: [
       "GPS and location-based authentication",
@@ -271,7 +271,7 @@ const vaultTypes = [
     id: "unique-security",
     name: "Unique Security Vault",
     icon: "🛡️",
-    href: "/unique-security-vault",
+    href: "/specialized-vault-creation?vault=unique-security",
     description: "Customizable vault with user-defined security parameters and verification methods",
     features: [
       "Build-your-own security model",
