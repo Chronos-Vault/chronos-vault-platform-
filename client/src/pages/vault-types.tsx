@@ -1,7 +1,18 @@
 import React, { useState } from 'react';
 import { useLocation } from 'wouter';
 import { Button } from '@/components/ui/button';
-import { ArrowLeft, ArrowRight, Check } from 'lucide-react';
+import { 
+  ArrowLeft, 
+  ArrowRight, 
+  Check, 
+  Shield, 
+  User, 
+  Lock, 
+  Clock, 
+  Sparkles, 
+  CheckCircle, 
+  KeyRound 
+} from 'lucide-react';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import { motion } from 'framer-motion';
 
@@ -1275,7 +1286,7 @@ const VaultTypesPage = () => {
               </h2>
               
               <div className="flex space-x-1">
-                {featuredVaults.map((vault, index) => (
+                {VAULT_TYPES.slice(0, 3).map((vault, index) => (
                   <motion.button
                     key={vault.id}
                     className={`w-2.5 h-2.5 rounded-full transition-all ${
