@@ -1668,38 +1668,7 @@ const VaultTypesPage = () => {
             
 
             
-            {/* Security Technology Cards */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              <div className="relative group">
-                <div className="absolute -inset-0.5 bg-gradient-to-r from-pink-600 to-purple-600 rounded-lg blur opacity-30 group-hover:opacity-80 transition duration-300"></div>
-                <SecurityFeatureCard 
-                  title="Zero-Knowledge Proofs"
-                  description="Our ZK system provides cryptographic verification without revealing sensitive data for complete transaction privacy across all chains."
-                  icon={<Shield className="text-[#FF5AF7]" />}
-                  color="#FF5AF7"
-                />
-              </div>
-              
-              <div className="relative group">
-                <div className="absolute -inset-0.5 bg-gradient-to-r from-green-600 to-teal-600 rounded-lg blur opacity-30 group-hover:opacity-80 transition duration-300"></div>
-                <SecurityFeatureCard 
-                  title="Quantum-Resistant Encryption"
-                  description="Future-proof lattice-based cryptography provides protection against attacks from advanced quantum computers."
-                  icon={<Lock className="text-[#00E676]" />}
-                  color="#00E676"
-                />
-              </div>
-              
-              <div className="relative group">
-                <div className="absolute -inset-0.5 bg-gradient-to-r from-blue-600 to-cyan-600 rounded-lg blur opacity-30 group-hover:opacity-80 transition duration-300"></div>
-                <SecurityFeatureCard 
-                  title="Time-Locked Security"
-                  description="Advanced temporal security layers using blockchain-verified time oracles for precise time-based access protocols."
-                  icon={<Clock className="text-[#2196F3]" />}
-                  color="#2196F3"
-                />
-              </div>
-            </div>
+
             
 
           </motion.div>
