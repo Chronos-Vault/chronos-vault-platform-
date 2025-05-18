@@ -114,7 +114,7 @@ const vaultTypes = [
     id: "cross-chain-fragment",
     name: "Cross-Chain Fragment Vault",
     icon: "🔗",
-    href: "/cross-chain-fragment-vault",
+    href: "/specialized-vault-creation?vault=cross-chain-fragment",
     description: "Fragments your assets across multiple chains for enhanced security",
     features: [
       "Automatic asset fragmentation across chains",
