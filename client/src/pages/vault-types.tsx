@@ -1630,7 +1630,7 @@ const VaultTypesPage = () => {
           </h2>
 
           <div className="overflow-hidden bg-black/20 rounded-xl p-2 border border-purple-500/10">
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:flex lg:flex-row gap-3 lg:overflow-x-auto lg:scrollbar-thin lg:scrollbar-track-transparent lg:scrollbar-thumb-purple-900/50 lg:snap-x">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 lg:flex lg:flex-row lg:flex-nowrap lg:overflow-x-auto lg:scrollbar-thin lg:scrollbar-track-transparent lg:scrollbar-thumb-purple-900/50 lg:snap-x">
               {Object.entries(vaultCategories).map(([key, category]) => (
                 <motion.button
                   key={key}
@@ -1644,14 +1644,15 @@ const VaultTypesPage = () => {
                     borderWidth: '1px',
                     borderColor: activeCategory === key ? category.color : 'transparent',
                     minHeight: '3.5rem',
-                    height: 'auto'
+                    height: 'auto',
+                    width: '100%'
                   }}
                   whileHover={{ scale: 1.03 }}
                   whileTap={{ scale: 0.98 }}
                 >
                   <div className="flex items-center gap-2">
                     <span className="text-lg" style={{ color: activeCategory === key ? category.color : 'inherit' }}>{category.icon}</span>
-                    <span className="text-sm">{category.title}</span>
+                    <span className="text-sm truncate">{category.title}</span>
                   </div>
                   <span className="bg-black/30 px-2 py-0.5 rounded-full text-xs min-w-[1.5rem] text-center flex-shrink-0">
                     {category.vaults.length}
