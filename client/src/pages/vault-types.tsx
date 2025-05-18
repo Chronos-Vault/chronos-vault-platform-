@@ -1629,39 +1629,37 @@ const VaultTypesPage = () => {
             <span>Vault Categories</span>
           </h2>
 
-          {/* Simple Mobile Category List with Header Bar */}
+          {/* Simplified Mobile Dropdown for Categories */}
           <div className="md:hidden mb-4">
-            <div className="mb-2 p-3 border-b border-purple-500/30 flex items-center justify-between">
-              <h3 className="text-white font-medium">Current Category:</h3>
-              <div className="flex items-center">
-                <span className="text-lg mr-2" style={{ color: vaultCategories[activeCategory].color }}>
-                  {vaultCategories[activeCategory].icon}
-                </span>
-                <span className="text-white">{vaultCategories[activeCategory].title}</span>
-              </div>
-            </div>
-            
-            {/* Simple Vertical Button List */}
-            <div className="flex flex-col gap-2">
-              {Object.entries(vaultCategories).map(([key, category]) => (
-                <button
-                  key={key}
-                  onClick={() => setActiveCategory(key)}
-                  className={`w-full text-left px-3 py-2 rounded-lg border flex items-center justify-between ${
-                    activeCategory === key 
-                      ? 'bg-black/40 border-purple-500/30 text-white' 
-                      : 'bg-black/20 border-transparent text-gray-400'
-                  }`}
-                >
-                  <div className="flex items-center">
-                    <span className="text-lg mr-2" style={{ color: category.color }}>{category.icon}</span>
-                    <span>{category.title}</span>
-                  </div>
-                  <span className="bg-black/30 px-2 py-0.5 rounded-full text-xs min-w-[1.5rem] text-center">
-                    {category.vaults.length}
+            <div className="bg-black/40 rounded-lg border border-purple-500/30 p-4">
+              <label className="block text-white text-sm mb-2">Select Vault Category</label>
+              <select
+                className="w-full bg-black/60 text-white border border-gray-700 rounded-lg p-3 mb-2"
+                value={activeCategory}
+                onChange={(e) => setActiveCategory(e.target.value)}
+              >
+                {Object.entries(vaultCategories).map(([key, category]) => (
+                  <option key={key} value={key}>
+                    {category.title} ({category.vaults.length})
+                  </option>
+                ))}
+              </select>
+              
+              {/* Selected Category Display */}
+              <div className="mt-3 p-3 rounded-lg bg-black/30 flex items-center">
+                <div className="w-10 h-10 rounded-full flex items-center justify-center mr-3" 
+                  style={{backgroundColor: `${vaultCategories[activeCategory].color}20`}}>
+                  <span className="text-2xl" style={{color: vaultCategories[activeCategory].color}}>
+                    {vaultCategories[activeCategory].icon}
                   </span>
-                </button>
-              ))}
+                </div>
+                <div>
+                  <h3 className="font-bold" style={{color: vaultCategories[activeCategory].color}}>
+                    {vaultCategories[activeCategory].title}
+                  </h3>
+                  <p className="text-xs text-gray-400">{vaultCategories[activeCategory].vaults.length} vault types available</p>
+                </div>
+              </div>
             </div>
           </div>
           
