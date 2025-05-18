@@ -569,61 +569,71 @@ const VaultTypesPage = () => {
           </Button>
         </div>
         
-        {/* Sovereign Fortress Vault Featured Card - Moved above categories but not overlapping */}
+        {/* Triple-Chain Security Feature - Focused on our vault system */}
         <div className="mb-8">
           <div className="bg-gradient-to-r from-purple-900/40 to-indigo-900/40 border border-purple-500/30 rounded-xl p-4 shadow-lg relative overflow-hidden">
-            <div className="flex items-start mb-3">
-              <div className="text-4xl mr-4">👑</div>
-              <div>
-                <h2 className="text-xl font-bold text-white mb-1">Sovereign Fortress Vault™</h2>
-                <p className="text-purple-200 text-sm">Ultimate all-in-one vault with supreme security & flexibility</p>
+            <div className="flex flex-col sm:flex-row">
+              <div className="w-full sm:w-1/2 mb-3 sm:mb-0">
+                <h2 className="text-xl font-bold text-white mb-1 flex items-center">
+                  <span className="h-8 w-8 flex items-center justify-center rounded-full bg-purple-800 mr-2">⛓️</span>
+                  Triple-Chain Security
+                </h2>
+                <p className="text-purple-200 text-sm mb-2">Secures your assets across Ethereum, TON and Solana for unparalleled protection</p>
               </div>
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-              <div className="backdrop-blur-sm bg-purple-900/20 rounded-lg p-3 border border-purple-500/20">
-                <div className="font-semibold mb-1">Triple-Chain Security</div>
-                <p className="text-xs text-gray-300">Secures your assets across Ethereum, TON and Solana for unparalleled protection</p>
-              </div>
-              <div className="backdrop-blur-sm bg-purple-900/20 rounded-lg p-3 border border-purple-500/20">
-                <div className="font-semibold mb-1">AI-Powered Intelligence</div>
-                <p className="text-xs text-gray-300">Smart security protocols that adapt to threats in real-time</p>
+              <div className="w-full sm:w-1/2">
+                <h2 className="text-xl font-bold text-white mb-1 flex items-center">
+                  <span className="h-8 w-8 flex items-center justify-center rounded-full bg-indigo-800 mr-2">🧠</span>
+                  AI-Powered Intelligence
+                </h2>
+                <p className="text-purple-200 text-sm">Smart security protocols that adapt to threats in real-time</p>
               </div>
             </div>
           </div>
         </div>
         
-        {/* Category Tabs */}
-        <Tabs defaultValue="all" value={activeCategory} onValueChange={setActiveCategory} className="mb-8">
-          <TabsList className="w-full grid grid-cols-2 md:grid-cols-6 bg-black/20 p-1">
+        {/* Category Tabs - Better mobile layout */}
+        <Tabs defaultValue="all" value={activeCategory} onValueChange={setActiveCategory} className="mb-6">
+          <TabsList className="w-full grid grid-cols-3 md:grid-cols-6 bg-black/20 p-1 gap-1">
             {Object.entries(vaultCategories).map(([key, category]) => (
               <TabsTrigger 
                 key={key} 
                 value={key}
-                className="data-[state=active]:bg-white/10 data-[state=active]:text-white"
+                className="data-[state=active]:bg-white/10 data-[state=active]:text-white h-12 px-1 sm:px-3"
+                style={{ 
+                  borderColor: category.color,
+                  borderWidth: activeCategory === key ? '1px' : '0px'
+                }}
               >
                 {category.component ? (
                   <span className="mr-1">{category.component}</span>
                 ) : (
                   <span className="mr-1">{category.icon}</span>
                 )}
-                <span className="hidden sm:inline">{category.title}</span>
-                <span className="sm:hidden">{category.title.split(' ')[0]}</span>
+                <span className="hidden sm:inline text-xs sm:text-sm">{category.title}</span>
+                <span className="sm:hidden text-xs">{category.title.split(' ')[0]}</span>
               </TabsTrigger>
             ))}
           </TabsList>
         </Tabs>
         
-        {/* Category Description */}
-        <div className="mb-6 bg-black/20 backdrop-blur-sm p-3 rounded-xl border border-gray-800">
-          <h2 className="text-lg font-bold flex items-center" style={{ color: vaultCategories[activeCategory as keyof typeof vaultCategories].color }}>
-            {vaultCategories[activeCategory as keyof typeof vaultCategories].component ? (
-              <span className="mr-2">{vaultCategories[activeCategory as keyof typeof vaultCategories].component}</span>
-            ) : (
-              <span className="mr-2">{vaultCategories[activeCategory as keyof typeof vaultCategories].icon}</span>
-            )}
-            {vaultCategories[activeCategory as keyof typeof vaultCategories].title}
-          </h2>
-          <p className="text-gray-300 text-sm">
+        {/* Category Description - More mobile friendly */}
+        <div className="mb-4 bg-black/20 backdrop-blur-sm p-3 rounded-xl border border-gray-800" 
+          style={{ borderColor: `${vaultCategories[activeCategory as keyof typeof vaultCategories].color}40` }}>
+          <div className="flex items-center mb-1">
+            <span className="flex-shrink-0 h-6 w-6 flex items-center justify-center rounded-full mr-2" 
+                style={{ backgroundColor: `${vaultCategories[activeCategory as keyof typeof vaultCategories].color}40` }}>
+              {vaultCategories[activeCategory as keyof typeof vaultCategories].component ? (
+                vaultCategories[activeCategory as keyof typeof vaultCategories].component
+              ) : (
+                <span>{vaultCategories[activeCategory as keyof typeof vaultCategories].icon}</span>
+              )}
+            </span>
+            <h2 className="text-base sm:text-lg font-bold" 
+                style={{ color: vaultCategories[activeCategory as keyof typeof vaultCategories].color }}>
+              {vaultCategories[activeCategory as keyof typeof vaultCategories].title}
+            </h2>
+          </div>
+          <p className="text-gray-300 text-xs sm:text-sm">
             {activeCategory === 'all' ? 
               `Showing all ${currentVaults.length} vault types available in Chronos Vault platform. Browse categories for specialized solutions.` : 
               vaultCategories[activeCategory as keyof typeof vaultCategories].vaults.length === 0 ? 
@@ -633,8 +643,8 @@ const VaultTypesPage = () => {
           </p>
         </div>
         
-        {/* Vault Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {/* Vault Grid - Improved mobile layout */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-5">
           {currentVaults.map((vault, index) => (
             <VaultCard
               key={vault.id}
@@ -645,16 +655,65 @@ const VaultTypesPage = () => {
           ))}
         </div>
         
-        {/* Create Vault Button - Moved to the bottom */}
-        <div className="bg-black/40 backdrop-blur-sm p-4 mt-12 text-center rounded-xl border border-purple-500/20">
-          <p className="text-gray-300 mb-3">Ready to secure your assets?</p>
-          <Button 
-            className="w-full md:w-auto bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white font-bold py-2 px-6 rounded-lg shadow-lg"
-            onClick={() => navigate(`/create-vault/${selected}`)}
+        {/* Selected Vault Details */}
+        {selectedVault && (
+          <motion.div 
+            className="mt-6 bg-black/40 backdrop-blur-sm p-3 sm:p-4 rounded-xl border"
+            style={{ borderColor: `${selectedVault.color}40` }}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.3 }}
+            key={selectedVault.id}
           >
-            Create {selectedVault.title} <ArrowRight className="ml-2 h-4 w-4" />
-          </Button>
-        </div>
+            <div className="flex items-center mb-3">
+              <span className="text-2xl mr-3">{selectedVault.icon}</span>
+              <div>
+                <h2 className="text-xl font-bold text-white">{selectedVault.title}</h2>
+                <p className="text-sm text-gray-300">{selectedVault.description}</p>
+              </div>
+            </div>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+              <div>
+                <div className="text-xs uppercase tracking-wider opacity-60 mb-1">Security Features</div>
+                <ul className="space-y-1">
+                  {selectedVault.features.slice(0, 2).map((feature, idx) => (
+                    <li key={idx} className="flex items-start text-xs sm:text-sm">
+                      <Check className="h-4 w-4 text-green-500 mt-0.5 mr-1.5 flex-shrink-0" />
+                      <span>{feature}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+              
+              <div>
+                <div className="text-xs uppercase tracking-wider opacity-60 mb-1">Technology</div>
+                <div className="flex flex-wrap gap-1.5 mt-1">
+                  {selectedVault.tags.slice(0, 3).map((tag: string) => (
+                    <span 
+                      key={tag} 
+                      className="inline-block px-2 py-0.5 text-xs rounded-full border"
+                      style={{ 
+                        backgroundColor: `${selectedVault.color}10`,
+                        borderColor: `${selectedVault.color}40`
+                      }}
+                    >
+                      {tag}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            </div>
+            
+            {/* Create Vault Button */}
+            <Button 
+              className="w-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white font-bold py-2 px-4 rounded-lg shadow-lg mt-2"
+              onClick={() => navigate(`/create-vault/${selected}`)}
+            >
+              Create {selectedVault.title} <ArrowRight className="ml-2 h-4 w-4" />
+            </Button>
+          </motion.div>
+        )}
       </div>
     </div>
   );
