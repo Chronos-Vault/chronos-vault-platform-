@@ -226,7 +226,7 @@ const vaultTypes = [
     id: "nft-powered",
     name: "NFT-Powered Vault",
     icon: "🖼️",
-    href: "/nft-powered-vault",
+    href: "/documentation/nft-powered-vault",
     description: "Vaults secured by ownership of specific NFTs as access keys",
     features: [
       "NFT-based access control",
@@ -236,6 +236,7 @@ const vaultTypes = [
       "Cross-chain NFT recognition",
     ],
     isNew: true,
+    highlight: true,
     category: "blockchain",
   },
   {
