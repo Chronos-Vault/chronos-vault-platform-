@@ -57,6 +57,7 @@ import MilestoneBasedVaultForm from './pages/milestone-based-vault-form';
 import FamilyHeritageVaultPage from './pages/vault-types/family-heritage-vault';
 import FamilyHeritageVaultForm from './pages/family-heritage-vault-form';
 import DynamicVaultForm from './pages/dynamic-vault-form';
+import DynamicVaultPage from './pages/vault-types/dynamic-vault';
 import IntentInheritanceVault from './pages/intent-inheritance-vault';
 import EnhancedBiometricVault from './pages/enhanced-biometric-vault';
 import QuantumVault from './pages/quantum-vault';
@@ -195,6 +196,7 @@ function App() {
           <Route path="/create-vault/milestone" component={MilestoneBasedVaultForm} />
           <Route path="/create-vault/family-heritage-doc" component={FamilyHeritageVaultPage} />
           <Route path="/create-vault/family-heritage" component={FamilyHeritageVaultForm} />
+          <Route path="/create-vault/dynamic-doc" component={DynamicVaultPage} />
           <Route path="/create-vault/dynamic" component={DynamicVaultForm} />
           <Route path="/create-vault/investment" component={InvestmentDisciplineVault} />
           <Route path="/create-vault/investment-discipline" component={InvestmentDisciplineVault} />
