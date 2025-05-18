@@ -73,6 +73,7 @@ import InvestmentDisciplineVaultDocumentation from './pages/documentation/invest
 import QuantumResistantVaultDocumentation from './pages/documentation/quantum-resistant-vault';
 import UniqueSecurityVaultDocumentation from './pages/documentation/unique-security-vault';
 import InheritancePlanningVaultDocumentation from './pages/documentation/inheritance-planning-vault';
+import PaymentChannelVaultDocumentation from './pages/documentation/payment-channel-vault';
 import NFTPoweredVault from './pages/nft-powered-vault';
 import QuantumResistantVault from './pages/quantum-resistant-vault';
 import SovereignFortressVault from './pages/sovereign-fortress-vault';
@@ -265,6 +266,7 @@ function App() {
           <Route path="/documentation/quantum-resistant-vault" component={QuantumResistantVaultDocumentation} />
           <Route path="/documentation/unique-security-vault" component={UniqueSecurityVaultDocumentation} />
           <Route path="/documentation/inheritance-planning-vault" component={InheritancePlanningVaultDocumentation} />
+          <Route path="/documentation/payment-channel-vault" component={PaymentChannelVaultDocumentation} />
           <Route path="/cvt-tokenomics" component={CvtTokenomics} />
           <Route path="/roadmap" component={Roadmap} />
           <Route path="/team" component={Team} />
