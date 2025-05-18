@@ -42,6 +42,9 @@ const Footer = ({ className = '' }: { className?: string }) => {
               <a href="https://t.me/chronosvaultnetwork" target="_blank" rel="noopener noreferrer" className="w-12 h-12 rounded-full bg-[#6B00D7]/10 flex items-center justify-center text-[#FF5AF7] hover:text-white border border-[#6B00D7]/30 hover:border-[#FF5AF7] hover:shadow-lg hover:shadow-[#FF5AF7]/20 transition-all">
                 <i className="ri-telegram-line text-xl"></i>
               </a>
+              <a href="https://medium.com/@chronosvault" target="_blank" rel="noopener noreferrer" className="w-12 h-12 rounded-full bg-[#6B00D7]/10 flex items-center justify-center text-[#FF5AF7] hover:text-white border border-[#6B00D7]/30 hover:border-[#FF5AF7] hover:shadow-lg hover:shadow-[#FF5AF7]/20 transition-all">
+                <i className="ri-medium-line text-xl"></i>
+              </a>
             </div>
           </div>
           
