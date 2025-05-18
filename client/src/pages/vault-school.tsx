@@ -259,6 +259,23 @@ const vaultTypes = [
     category: "investment",
   },
   {
+    id: "milestone-based",
+    name: "Milestone-Based Release Vault",
+    icon: "🏆",
+    href: "/documentation/milestone-based-vault",
+    description: "Unlocks assets when you achieve personal goals",
+    features: [
+      "Goal-based unlocking system",
+      "Achievement verification methods",
+      "Progressive release mechanisms",
+      "Personal development integration",
+      "Multi-party verification options",
+    ],
+    isNew: true,
+    highlight: true,
+    category: "personal",
+  },
+  {
     id: "ai-assisted-investment",
     name: "AI-Assisted Investment Vault",
     icon: "🤖",
