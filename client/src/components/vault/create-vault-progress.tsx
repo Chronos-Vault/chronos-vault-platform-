@@ -23,7 +23,8 @@ export const VaultCreationProgress: React.FC<VaultCreationProgressProps> = ({
   steps,
   currentStepId,
   variant = "vertical",
-  className
+  className,
+  ...rest
 }) => {
   if (variant === "horizontal") {
     return (
