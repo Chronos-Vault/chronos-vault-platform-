@@ -319,7 +319,7 @@ const vaultTypes = [
     id: "dynamic-vault",
     name: "Dynamic Security Vault",
     icon: "🔄",
-    href: "/dynamic-vault-form",
+    href: "/documentation/dynamic-security-vault",
     description: "Adaptable vault with customizable security parameters and realtime risk adaptation",
     features: [
       "Dynamic security level adjustment",
@@ -335,7 +335,7 @@ const vaultTypes = [
     id: "payment-channel",
     name: "Payment Channel Vault",
     icon: "💸",
-    href: "/payment-channel-vault",
+    href: "/documentation/payment-channel-vault",
     description: "Optimized for high-frequency transactions with instant settlement",
     features: [
       "Off-chain transaction capabilities",
