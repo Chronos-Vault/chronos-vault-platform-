@@ -1629,36 +1629,50 @@ const VaultTypesPage = () => {
             <span>Vault Categories</span>
           </h2>
 
-          {/* Simplified Mobile Dropdown for Categories */}
+          {/* Super Simple Mobile Dropdown for Categories */}
           <div className="md:hidden mb-4">
-            <div className="bg-black/40 rounded-lg border border-purple-500/30 p-4">
-              <label className="block text-white text-sm mb-2">Select Vault Category</label>
-              <select
-                className="w-full bg-black/60 text-white border border-gray-700 rounded-lg p-3 mb-2"
-                value={activeCategory}
-                onChange={(e) => setActiveCategory(e.target.value)}
-              >
-                {Object.entries(vaultCategories).map(([key, category]) => (
-                  <option key={key} value={key}>
-                    {category.title} ({category.vaults.length})
-                  </option>
-                ))}
-              </select>
+            <div className="bg-black/40 rounded-md border border-purple-500/30 p-4">
+              <label className="block text-white text-sm mb-2 font-semibold">Choose Vault Category:</label>
               
-              {/* Selected Category Display */}
-              <div className="mt-3 p-3 rounded-lg bg-black/30 flex items-center">
-                <div className="w-10 h-10 rounded-full flex items-center justify-center mr-3" 
-                  style={{backgroundColor: `${vaultCategories[activeCategory].color}20`}}>
-                  <span className="text-2xl" style={{color: vaultCategories[activeCategory].color}}>
-                    {vaultCategories[activeCategory].icon}
-                  </span>
-                </div>
-                <div>
-                  <h3 className="font-bold" style={{color: vaultCategories[activeCategory].color}}>
-                    {vaultCategories[activeCategory].title}
-                  </h3>
-                  <p className="text-xs text-gray-400">{vaultCategories[activeCategory].vaults.length} vault types available</p>
-                </div>
+              {/* Simplified Category Selection Buttons */}
+              <div className="grid grid-cols-1 gap-2 mb-2">
+                <button
+                  onClick={() => setActiveCategory('all')}
+                  className={`w-full p-2 rounded border ${activeCategory === 'all' ? 'bg-white/10 border-purple-500' : 'bg-black/40 border-gray-800'}`}
+                >
+                  All Vaults
+                </button>
+                <button
+                  onClick={() => setActiveCategory('premium')}
+                  className={`w-full p-2 rounded border ${activeCategory === 'premium' ? 'bg-white/10 border-purple-500' : 'bg-black/40 border-gray-800'}`}
+                >
+                  Premium Vaults
+                </button>
+                <button
+                  onClick={() => setActiveCategory('security')}
+                  className={`w-full p-2 rounded border ${activeCategory === 'security' ? 'bg-white/10 border-purple-500' : 'bg-black/40 border-gray-800'}`}
+                >
+                  Security Vaults
+                </button>
+                <button
+                  onClick={() => setActiveCategory('investment')}
+                  className={`w-full p-2 rounded border ${activeCategory === 'investment' ? 'bg-white/10 border-purple-500' : 'bg-black/40 border-gray-800'}`}
+                >
+                  Investment Vaults
+                </button>
+                <button
+                  onClick={() => setActiveCategory('inheritance')}
+                  className={`w-full p-2 rounded border ${activeCategory === 'inheritance' ? 'bg-white/10 border-purple-500' : 'bg-black/40 border-gray-800'}`}
+                >
+                  Inheritance Vaults
+                </button>
+              </div>
+              
+              {/* Active Category Indicator */}
+              <div className="mt-2 p-2 rounded bg-black/20 text-center border-t border-purple-500/20">
+                <p className="text-white text-sm">
+                  Showing <span className="font-bold">{vaultCategories[activeCategory].title}</span> ({vaultCategories[activeCategory].vaults.length})
+                </p>
               </div>
             </div>
           </div>
