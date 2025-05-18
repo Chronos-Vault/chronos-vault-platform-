@@ -191,6 +191,7 @@ function App() {
           <Route path="/intent-inheritance-vault" component={IntentInheritanceVault} />
           <Route path="/quantum-vault" component={QuantumVault} />
           <Route path="/ton-specific-vault" component={TonSpecificVault} />
+          <Route path="/location-time-vault" component={LocationTimeVault} />
           {/* Sovereign Fortress Vault accessible through create-vault/standard */}
           
           {/* Vault Creation Routes */}
