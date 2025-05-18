@@ -539,6 +539,85 @@ const VaultTypesPage = () => {
             Back to My Vaults
           </Button>
         </div>
+        
+        {/* Triple-Chain Security Feature Card */}
+        <div className="bg-black/40 backdrop-blur-sm border border-purple-500/20 rounded-xl mb-8 p-6 pt-5 overflow-hidden">
+          <div className="flex flex-col md:flex-row gap-4 items-start md:items-center">
+            <div className="flex -space-x-2">
+              {/* ETH Circle */}
+              <div className="w-14 h-14 rounded-full bg-gradient-to-br from-purple-900 to-purple-600 flex items-center justify-center border-2 border-purple-500 relative z-30 shadow-lg shadow-purple-900/30">
+                <div className="absolute inset-0 rounded-full bg-purple-600/20 animate-ping-slow opacity-60"></div>
+                <img src="https://cryptologos.cc/logos/ethereum-eth-logo.svg" alt="ETH" className="h-7 w-7" />
+              </div>
+              
+              {/* TON Circle */}
+              <div className="w-14 h-14 rounded-full bg-gradient-to-br from-blue-900 to-blue-600 flex items-center justify-center border-2 border-blue-500 relative z-20 shadow-lg shadow-blue-900/30">
+                <div className="absolute inset-0 rounded-full bg-blue-600/20 animate-ping-slow opacity-60 animation-delay-700"></div>
+                <img src="https://cryptologos.cc/logos/toncoin-ton-logo.svg" alt="TON" className="h-7 w-7" />
+              </div>
+              
+              {/* Solana Circle */}
+              <div className="w-14 h-14 rounded-full bg-gradient-to-br from-green-900 to-green-600 flex items-center justify-center border-2 border-green-500 relative z-10 shadow-lg shadow-green-900/30">
+                <div className="absolute inset-0 rounded-full bg-green-600/20 animate-ping-slow opacity-60 animation-delay-1400"></div>
+                <img src="https://cryptologos.cc/logos/solana-sol-logo.svg" alt="Solana" className="h-7 w-7" />
+              </div>
+            </div>
+            
+            <div className="flex-1">
+              <h3 className="font-bold text-xl md:text-2xl bg-clip-text text-transparent bg-gradient-to-r from-purple-400 via-blue-400 to-green-400">
+                Triple-Chain Vault Security
+              </h3>
+              <p className="text-gray-300 mt-1">
+                Store, secure, and access your assets across <span className="text-purple-400">Ethereum</span>, <span className="text-blue-400">TON</span>, and <span className="text-green-400">Solana</span> simultaneously
+              </p>
+            </div>
+          </div>
+          
+          {/* Simplified Network Visualization at the bottom */}
+          <div className="mt-5 relative h-32 w-full overflow-hidden rounded-lg bg-black/30">
+            <div className="absolute inset-0">
+              {/* Simple network visualization */}
+              <svg className="absolute w-full h-full" viewBox="0 0 400 100">
+                {/* Center node */}
+                <circle cx="200" cy="50" r="8" fill="#7c3aed" className="animate-pulse-slow"></circle>
+                
+                {/* Connection nodes */}
+                <circle cx="100" cy="30" r="5" fill="#7c3aed" className="animate-pulse"></circle>
+                <circle cx="300" cy="40" r="5" fill="#3b82f6" className="animate-pulse animation-delay-700"></circle>
+                <circle cx="200" cy="80" r="5" fill="#10b981" className="animate-pulse animation-delay-1400"></circle>
+                
+                {/* Connection lines */}
+                <path d="M200,50 L100,30" stroke="#7c3aed" strokeWidth="1" strokeDasharray="2,2" className="animate-dash-offset"></path>
+                <path d="M200,50 L300,40" stroke="#3b82f6" strokeWidth="1" strokeDasharray="2,2" className="animate-dash-offset animation-delay-700"></path>
+                <path d="M200,50 L200,80" stroke="#10b981" strokeWidth="1" strokeDasharray="2,2" className="animate-dash-offset animation-delay-1400"></path>
+                
+                {/* Data packets */}
+                <circle cx="0" cy="0" r="2" fill="#fff">
+                  <animateMotion path="M100,30 L200,50" dur="2s" repeatCount="indefinite" />
+                </circle>
+                <circle cx="0" cy="0" r="2" fill="#fff">
+                  <animateMotion path="M300,40 L200,50" dur="3s" repeatCount="indefinite" />
+                </circle>
+                <circle cx="0" cy="0" r="2" fill="#fff">
+                  <animateMotion path="M200,80 L200,50" dur="2.5s" repeatCount="indefinite" />
+                </circle>
+              </svg>
+            </div>
+          </div>
+          
+          {/* Create Vault Button with backdrop */}
+          <div className="mt-4 relative">
+            <div className="bg-black/30 backdrop-blur-sm rounded-xl p-3 text-center">
+              <p className="text-gray-300 mb-3">Ready to secure your assets?</p>
+              <Button 
+                className="w-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white font-bold py-2 px-6 rounded-lg shadow-lg"
+                onClick={() => setSelectedVault('standard')}
+              >
+                Create Sovereign Fortress Vault™ <ArrowRight className="ml-2 h-4 w-4" />
+              </Button>
+            </div>
+          </div>
+        </div>
         {/* Revolutionary Premium Features Banner - Ultimate Cross-Chain Experience */}
         <motion.div
           className="w-full mb-10 overflow-hidden rounded-2xl relative"
