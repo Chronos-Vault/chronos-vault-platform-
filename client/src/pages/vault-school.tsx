@@ -191,26 +191,12 @@ const vaultTypes = [
     highlight: true,
     category: "legacy",
   },
-  {
-    id: "investment-discipline",
-    name: "Investment Discipline Vault",
-    icon: "💎",
-    href: "/investment-discipline-vault",
-    description: "Strategy-based vaults for maintaining investment discipline",
-    features: [
-      "Diamond Hands (HODL) strategy with time locks",
-      "Profit-Taking automation with price targets",
-      "DCA Exit strategy implementation",
-      "Bitcoin Halving cycle alignment",
-      "Rule-based investment execution",
-    ],
-    category: "investment",
-  },
+
   {
     id: "investment-discipline-advanced",
     name: "Investment Discipline Vault",
     icon: "📈",
-    href: "/documentation/investment-discipline-vault",
+    href: "/investment-discipline-vault",
     description: "Sophisticated investment strategy enforcement with behavioral safeguards",
     features: [
       "Strategy enforcement through time locks",
@@ -227,7 +213,7 @@ const vaultTypes = [
     id: "nft-powered",
     name: "NFT-Powered Vault",
     icon: "🖼️",
-    href: "/documentation/nft-powered-vault",
+    href: "/nft-powered-vault",
     description: "Vaults secured by ownership of specific NFTs as access keys",
     features: [
       "NFT-based access control",
@@ -324,7 +310,7 @@ const vaultTypes = [
     id: "dynamic-vault",
     name: "Dynamic Security Vault",
     icon: "🔄",
-    href: "/documentation/dynamic-security-vault",
+    href: "/dynamic-vault",
     description: "Adaptable vault with customizable security parameters and realtime risk adaptation",
     features: [
       "Dynamic security level adjustment",
@@ -340,7 +326,7 @@ const vaultTypes = [
     id: "payment-channel",
     name: "Payment Channel Vault",
     icon: "💸",
-    href: "/documentation/payment-channel-vault",
+    href: "/payment-channel-vault",
     description: "Optimized for high-frequency transactions with instant settlement",
     features: [
       "Off-chain transaction capabilities",
