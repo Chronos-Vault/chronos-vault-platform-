@@ -1629,13 +1629,13 @@ const VaultTypesPage = () => {
             <span>Vault Categories</span>
           </h2>
 
-          <div className="mb-2 md:mb-0 overflow-visible">
-            <div className="flex flex-wrap md:flex-nowrap items-center gap-2 pb-4 overflow-x-auto scrollbar-thin scrollbar-track-transparent scrollbar-thumb-purple-900/50 px-1 -mx-1 py-2 snap-x">
+          <div className="overflow-hidden bg-black/20 rounded-xl p-2 border border-purple-500/10">
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:flex md:flex-row gap-2 md:overflow-x-auto md:scrollbar-thin md:scrollbar-track-transparent md:scrollbar-thumb-purple-900/50 md:snap-x">
               {Object.entries(vaultCategories).map(([key, category]) => (
                 <motion.button
                   key={key}
                   onClick={() => setActiveCategory(key)}
-                  className={`flex items-center gap-2 px-3 py-2 sm:px-4 rounded-full whitespace-nowrap transition-all flex-shrink-0 snap-start min-w-fit ${
+                  className={`flex items-center gap-2 px-3 py-2 sm:px-4 rounded-lg md:rounded-full whitespace-nowrap transition-all flex-shrink-0 md:snap-start ${
                     activeCategory === key 
                       ? 'bg-white/10 text-white shadow-lg shadow-purple-900/20' 
                       : 'bg-black/40 text-gray-400 hover:bg-white/5'
