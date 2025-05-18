@@ -516,23 +516,25 @@ const VaultSchoolPage = () => {
         
         {/* Category tabs */}
         <Tabs defaultValue="all" value={selectedCategory} onValueChange={setSelectedCategory} className="mb-10">
-          <TabsList className="w-full mb-8 bg-[#1A1A1A] p-1 rounded-lg border border-[#333] overflow-x-auto flex flex-nowrap" style={{maxWidth: "100%"}}>
-            {Object.entries(categories).map(([key, category]) => (
-              <TabsTrigger 
-                key={key} 
-                value={key}
-                className="flex-shrink-0 data-[state=active]:bg-gradient-to-r data-[state=active]:from-[#6B00D7] data-[state=active]:to-[#FF5AF7] data-[state=active]:text-white rounded-md py-2 px-4 min-w-[120px]"
-              >
-                <div className="flex items-center">
-                  <div className="mr-2">{category.icon}</div>
-                  <div>
-                    {category.name}
-                    <Badge className="ml-2 bg-[#333] text-xs">{categoryCounts[key]}</Badge>
+          <div className="overflow-x-auto pb-2">
+            <TabsList className="w-full mb-8 bg-[#1A1A1A] p-1 rounded-lg border border-[#333] flex flex-nowrap min-w-max">
+              {Object.entries(categories).map(([key, category]) => (
+                <TabsTrigger 
+                  key={key} 
+                  value={key}
+                  className="flex-shrink-0 data-[state=active]:bg-gradient-to-r data-[state=active]:from-[#6B00D7] data-[state=active]:to-[#FF5AF7] data-[state=active]:text-white rounded-md py-2 px-4 min-w-[120px]"
+                >
+                  <div className="flex items-center">
+                    <div className="mr-2">{category.icon}</div>
+                    <div>
+                      {category.name}
+                      <Badge className="ml-2 bg-[#333] text-xs">{categoryCounts[key]}</Badge>
+                    </div>
                   </div>
-                </div>
-              </TabsTrigger>
-            ))}
-          </TabsList>
+                </TabsTrigger>
+              ))}
+            </TabsList>
+          </div>
           
           {(Object.keys(categories) as Array<keyof typeof categories>).map((categoryKey) => (
             <TabsContent key={categoryKey} value={categoryKey} className="mt-0">
