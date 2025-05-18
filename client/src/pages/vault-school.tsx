@@ -259,6 +259,23 @@ const vaultTypes = [
     category: "investment",
   },
   {
+    id: "family-heritage",
+    name: "Family Heritage Vault",
+    icon: "👪",
+    href: "/documentation/family-heritage-vault",
+    description: "Secure generational wealth transfer with education",
+    features: [
+      "Structured inheritance planning",
+      "Financial education integration",
+      "Values and legacy preservation",
+      "Family business continuity",
+      "Multi-generational governance",
+    ],
+    isNew: true,
+    highlight: true,
+    category: "inheritance",
+  },
+  {
     id: "milestone-based",
     name: "Milestone-Based Release Vault",
     icon: "🏆",
