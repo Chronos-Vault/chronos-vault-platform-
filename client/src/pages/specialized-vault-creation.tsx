@@ -1706,11 +1706,46 @@ function SpecializedVaultCreation() {
   );
 };
 
-// This is a wrapper component to handle any Replit metadata props
+// This component now redirects to the central vault-types hub
 function SpecializedVaultCreationPage() {
+  const [, navigate] = useLocation();
+  
+  // Redirect users to the central vault-types hub
+  useEffect(() => {
+    // Add a small delay for a smoother transition
+    const redirectTimer = setTimeout(() => {
+      navigate('/vault-types');
+    }, 300);
+    
+    return () => clearTimeout(redirectTimer);
+  }, [navigate]);
+  
   return (
-    <div className="specialized-vault-creation-wrapper">
-      <SpecializedVaultCreation />
+    <div className="container mx-auto px-4 py-12">
+      <div className="flex flex-col items-center justify-center min-h-[50vh]">
+        <div className="text-center max-w-md">
+          <div className="mb-6 flex justify-center">
+            <div className="w-16 h-16 rounded-full bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] flex items-center justify-center animate-pulse">
+              <svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M12 4.75V6.25" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"></path>
+                <path d="M17.127 6.873L16.073 7.927" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"></path>
+                <path d="M19.25 12H17.75" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"></path>
+                <path d="M17.127 17.127L16.073 16.073" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"></path>
+                <path d="M12 19.25V17.75" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"></path>
+                <path d="M6.873 17.127L7.927 16.073" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"></path>
+                <path d="M4.75 12H6.25" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"></path>
+                <path d="M6.873 6.873L7.927 7.927" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"></path>
+                <circle cx="12" cy="12" r="3" stroke="white" strokeWidth="1.5"></circle>
+              </svg>
+            </div>
+          </div>
+          <h2 className="text-2xl font-bold text-white mb-3">Redirecting to Vault Selection Hub</h2>
+          <p className="text-gray-400 mb-6">Our specialized vault creation is now available through our central vault selection system.</p>
+          <div className="h-1.5 bg-gray-800 rounded-full overflow-hidden">
+            <div className="h-full bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] w-3/4 animate-pulse"></div>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }
