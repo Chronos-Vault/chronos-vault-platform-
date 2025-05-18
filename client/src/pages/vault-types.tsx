@@ -1664,23 +1664,7 @@ const VaultTypesPage = () => {
               </div>
             </div>
             
-            <h2 className="text-2xl font-bold mb-2 flex items-center">
-              <div className="flex items-center justify-center w-10 h-10 rounded-lg bg-gradient-to-br from-purple-600 to-blue-600 mr-3">
-                <div className="relative">
-                  <Zap className="h-5 w-5 text-white absolute top-0 left-0 transform -translate-x-1 -translate-y-1" />
-                  <Shield className="h-5 w-5 text-white" />
-                  <RefreshCw className="h-4 w-4 text-white absolute bottom-0 right-0 transform translate-x-1 translate-y-1" />
-                </div>
-              </div>
-              <span className="bg-clip-text text-transparent bg-gradient-to-r from-purple-400 to-pink-500">
-                Sovereign Fortress Vault
-              </span>
-            </h2>
-            
-            <p className="text-gray-300 mb-8 ml-13 max-w-3xl">
-              Ultimate all-in-one vault with supreme security flexibility. Triple-Chain redundancy across Ethereum, 
-              TON, and Solana with quantum-resistant encryption and zero-knowledge proofs for unmatched protection.
-            </p>
+
             
             {/* Blockchain Security Component */}
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-8">
