@@ -4,35 +4,42 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Separator } from "@/components/ui/separator";
-import Layout from "@/components/layout/Layout";
+import DocumentationLayout from "@/components/layout/DocumentationLayout";
 import { 
   Clock, 
-  Image, 
-  File, 
   Shield, 
-  Heart, 
-  Gift, 
-  Calendar, 
+  Lock, 
+  Image, 
   FileText, 
+  MessageSquare, 
+  Video, 
+  Music, 
+  CheckCircle, 
+  Calendar, 
+  AlertTriangle, 
+  File, 
   Code, 
-  HelpCircle 
+  HelpCircle,
+  Heart,
+  Gift,
+  Camera
 } from "lucide-react";
 
 const TimeLockedMemoryVaultDocumentation = () => {
   return (
-    <Layout>
+    <DocumentationLayout>
       <div className="container mx-auto py-10 px-4 max-w-6xl">
         <div className="flex flex-col md:flex-row justify-between items-start mb-8">
           <div>
-            <h1 className="text-4xl font-extrabold tracking-tight mb-2 bg-clip-text text-transparent bg-gradient-to-r from-pink-500 to-orange-500">
+            <h1 className="text-4xl font-extrabold tracking-tight mb-2 bg-clip-text text-transparent bg-gradient-to-r from-amber-500 to-red-500">
               Time-Locked Memory Vault
             </h1>
             <p className="text-xl text-muted-foreground mb-4">
-              Preserve cherished memories and digital legacies for future access
+              Preserve meaningful moments with timed release multimedia capsules
             </p>
           </div>
           <div className="mt-4 md:mt-0">
-            <Button asChild className="bg-gradient-to-r from-pink-500 to-orange-500 hover:from-pink-600 hover:to-orange-600">
+            <Button asChild className="bg-gradient-to-r from-amber-500 to-red-500 hover:from-amber-600 hover:to-red-600">
               <Link href="/vault-types">View All Vault Types</Link>
             </Button>
           </div>
@@ -42,7 +49,7 @@ const TimeLockedMemoryVaultDocumentation = () => {
           <TabsList className="grid grid-cols-5 w-full mb-8">
             <TabsTrigger value="overview">Overview</TabsTrigger>
             <TabsTrigger value="features">Features</TabsTrigger>
-            <TabsTrigger value="creation">Creation Guide</TabsTrigger>
+            <TabsTrigger value="security">Security</TabsTrigger>
             <TabsTrigger value="technical">Technical</TabsTrigger>
             <TabsTrigger value="faq">FAQ</TabsTrigger>
           </TabsList>
@@ -51,42 +58,42 @@ const TimeLockedMemoryVaultDocumentation = () => {
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
-                  <Clock className="h-6 w-6 text-pink-500" />
-                  What is a Time-Locked Memory Vault?
+                  <Clock className="h-6 w-6 text-amber-500" />
+                  Emotional Time Capsules
                 </CardTitle>
                 <CardDescription>
-                  Explore the concept of digital time capsules for your most precious memories
+                  Create meaningful digital capsules that release at precisely defined future moments
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
-                <div className="rounded-lg bg-gradient-to-r from-pink-50 to-orange-50 p-6 border border-pink-100 dark:from-pink-950/20 dark:to-orange-950/20 dark:border-pink-900/50">
+                <div className="rounded-lg bg-gradient-to-r from-amber-50 to-red-50 p-6 border border-amber-100 dark:from-amber-950/20 dark:to-red-950/20 dark:border-amber-900/50">
                   <p className="text-lg mb-4">
-                    Time-Locked Memory Vaults are specialized digital time capsules designed to preserve and protect cherished memories, important life moments, and personal messages for future access by yourself or designated recipients.
+                    The Time-Locked Memory Vault is a specialized vault type that combines digital assets with multimedia content into emotionally intelligent time capsules. These vaults are designed to preserve and enhance personal or collective memories with precise time-locked release mechanisms.
                   </p>
                   
-                  <h3 className="text-xl font-semibold mb-2 text-pink-700 dark:text-pink-400">Core Concept</h3>
+                  <h3 className="text-xl font-semibold mb-2 text-amber-700 dark:text-amber-400">Emotional Intelligence in Memory Preservation</h3>
                   <p className="mb-4">
-                    These vaults combine secure blockchain technology with multimedia content storage to create time-locked capsules that can only be accessed after a predetermined date or trigger event. Unlike standard digital storage, these vaults provide tamper-proof preservation with emotional resonance, allowing you to create lasting digital legacies.
+                    Unlike traditional digital storage, the Time-Locked Memory Vault is designed with emotional intelligence at its core. It recognizes that memories are not merely data to be stored, but emotionally significant moments that should be preserved in context. The vault allows you to combine various types of media—photos, videos, audio recordings, written reflections, and even cryptocurrency assets—into coherent memory packages that tell complete stories and convey authentic emotional experiences.
                   </p>
                   
-                  <h3 className="text-xl font-semibold mb-2 text-pink-700 dark:text-pink-400">Emotional Technology</h3>
+                  <h3 className="text-xl font-semibold mb-2 text-amber-700 dark:text-amber-400">Chronological and Conditional Release</h3>
                   <p className="mb-4">
-                    Time-Locked Memory Vaults represent a significant evolution in how we preserve important life moments. By combining advanced security with a focus on emotional significance, these vaults transform digital content into meaningful time capsules that connect past and future moments in a personal, secure way.
+                    What sets the Memory Vault apart is its sophisticated time-release mechanisms. You can schedule memory packages to be accessible at specific future dates or upon certain conditions being met. This creates powerful emotional experiences when memories are revealed at meaningful moments—anniversaries, birthdays, graduations, or other milestone events—enhancing their impact and allowing you to send messages through time to yourself, loved ones, or even future generations.
                   </p>
                   
-                  <h3 className="text-xl font-semibold mb-2 text-pink-700 dark:text-pink-400">Applications</h3>
+                  <h3 className="text-xl font-semibold mb-2 text-amber-700 dark:text-amber-400">Contextual Preservation</h3>
                   <p>
-                    These specialized vaults are perfect for preserving wedding memories for milestone anniversaries, recording messages for children's future birthdays, documenting personal growth journeys, preserving family histories and traditions, creating surprise milestone gifts, and establishing digital legacies that connect generations.
+                    The vault employs advanced contextual preservation technology, ensuring that future recipients can fully understand and appreciate memories in their original context, no matter how much time has passed. This includes metadata preservation, cultural references explanation, relationship mapping, and even emotional context indicators that help future viewers understand not just what was captured, but why it mattered.
                   </p>
                 </div>
               </CardContent>
               <CardFooter className="justify-between border-t p-4">
                 <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                  <Heart className="h-4 w-4" />
-                  Preserve moments that matter for exactly when they're needed
+                  <CheckCircle className="h-4 w-4" />
+                  Send meaningful memories to your future self or loved ones
                 </div>
                 <Button variant="outline" asChild>
-                  <Link href="/time-locked-memory-vault-new">Create Memory Vault</Link>
+                  <Link href="/time-locked-memory-vault">Create Memory Vault</Link>
                 </Button>
               </CardFooter>
             </Card>
@@ -96,188 +103,211 @@ const TimeLockedMemoryVaultDocumentation = () => {
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
-                  <Gift className="h-6 w-6 text-pink-500" />
-                  Key Features of Time-Locked Memory Vaults
+                  <CheckCircle className="h-6 w-6 text-amber-500" />
+                  Key Features
                 </CardTitle>
                 <CardDescription>
-                  Discover the unique capabilities that make these vaults special
+                  Explore the unique capabilities of Time-Locked Memory Vaults
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-6">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div className="rounded-lg border bg-card shadow p-6">
                     <div className="flex items-center gap-3 mb-4">
-                      <Clock className="h-8 w-8 text-pink-500" />
-                      <h3 className="text-xl font-semibold">Precision Time Locking</h3>
+                      <Calendar className="h-8 w-8 text-amber-500" />
+                      <h3 className="text-xl font-semibold">Precision Time-Release Control</h3>
                     </div>
                     <p>
-                      Set specific future dates and times for vault unlocking with to-the-minute precision. You can schedule access for birthdays, anniversaries, graduations, or any significant future milestone. The blockchain-based timing mechanism ensures tamper-proof accuracy.
+                      Schedule memories to be unlocked at precise dates and times with millisecond accuracy. Set up one-time reveals for special occasions, recurring releases for annual celebrations, or sequential unveilings that tell a story over time. Create nested time-locks where unlocking one memory reveals another set of time-locked content, creating layered emotional journeys that unfold exactly according to your design.
                     </p>
                   </div>
                   
                   <div className="rounded-lg border bg-card shadow p-6">
                     <div className="flex items-center gap-3 mb-4">
-                      <Image className="h-8 w-8 text-pink-500" />
-                      <h3 className="text-xl font-semibold">Multimedia Memory Storage</h3>
+                      <Image className="h-8 w-8 text-amber-500" />
+                      <h3 className="text-xl font-semibold">Rich Multimedia Integration</h3>
                     </div>
                     <p>
-                      Store a rich collection of personal multimedia content including high-resolution photos, HD videos, audio recordings, written messages, and interactive elements. Advanced compression techniques maintain quality while proprietary preservation algorithms prevent format obsolescence.
+                      Combine multiple media types into cohesive memory packages that capture experiences in their full richness. Store high-resolution images, videos, audio recordings, written text, and even interactive 3D content. The system provides automatic format conversion ensuring that content remains accessible regardless of future technology changes, while AI enhancement tools can restore and improve aged digital media.
                     </p>
                   </div>
                   
                   <div className="rounded-lg border bg-card shadow p-6">
                     <div className="flex items-center gap-3 mb-4">
-                      <Calendar className="h-8 w-8 text-pink-500" />
-                      <h3 className="text-xl font-semibold">Event-Based Triggers</h3>
+                      <Heart className="h-8 w-8 text-amber-500" />
+                      <h3 className="text-xl font-semibold">Emotional Context Preservation</h3>
                     </div>
                     <p>
-                      Beyond simple date-based unlocking, vaults can be configured to open based on specific life events through a secure verification system. This allows for creating messages that will be delivered at significant life transitions like graduations, marriages, or other milestones.
+                      Add emotional context to your memories through sentiment tagging, mood indicators, and relationship mappings. Record voice notes explaining the significance of moments, or attach written reflections that capture what can't be seen in photos. The vault's emotional intelligence engine helps categorize and enhance memories based on their emotional significance, ensuring that future viewers understand not just what happened, but how it felt.
                     </p>
                   </div>
                   
                   <div className="rounded-lg border bg-card shadow p-6">
                     <div className="flex items-center gap-3 mb-4">
-                      <Shield className="h-8 w-8 text-pink-500" />
-                      <h3 className="text-xl font-semibold">Recipient Authentication</h3>
+                      <Gift className="h-8 w-8 text-amber-500" />
+                      <h3 className="text-xl font-semibold">Gifting and Inheritance Systems</h3>
                     </div>
                     <p>
-                      Designate specific recipients with secure authentication methods to ensure your memories reach only their intended audience. Multi-factor verification options include biometric confirmation, knowledge-based questions, and secure digital identifiers for maximum security.
+                      Create memory vaults as gifts for loved ones, scheduled for delivery on special occasions. Set up inheritance protocols to ensure your most precious memories and digital assets are passed on to future generations exactly as you intend. The advanced identity verification system ensures that only intended recipients can access gifted memories, while flexible permission systems allow you to define exactly who can view, comment on, or add to memory collections.
                     </p>
                   </div>
                   
                   <div className="rounded-lg border bg-card shadow p-6">
                     <div className="flex items-center gap-3 mb-4">
-                      <Heart className="h-8 w-8 text-pink-500" />
-                      <h3 className="text-xl font-semibold">Emotional Impact Design</h3>
+                      <Camera className="h-8 w-8 text-amber-500" />
+                      <h3 className="text-xl font-semibold">Smart Capture Integration</h3>
                     </div>
                     <p>
-                      Custom unlock experiences create emotionally resonant moments. Choose from cinematic reveal animations, personalized interfaces, and thematic presentations that enhance the emotional significance of the content. Background music, visual themes, and personalized messages create a meaningful experience.
+                      Connect the memory vault to smart capture devices like wearable cameras, voice recorders, or IoT sensors to automatically collect meaningful moments without disrupting the experience. Configure intelligent capture rules based on location, time, or detected activities. The system's contextual awareness can identify potentially significant moments and suggest capture opportunities, ensuring that meaningful memories are never missed.
                     </p>
                   </div>
                   
                   <div className="rounded-lg border bg-card shadow p-6">
                     <div className="flex items-center gap-3 mb-4">
-                      <File className="h-8 w-8 text-pink-500" />
-                      <h3 className="text-xl font-semibold">Legacy Preservation</h3>
+                      <MessageSquare className="h-8 w-8 text-amber-500" />
+                      <h3 className="text-xl font-semibold">Collaborative Memory Building</h3>
                     </div>
                     <p>
-                      Advanced digital preservation techniques ensure your memories remain accessible despite technological changes. Content is maintained in modern formats through automatic migration algorithms, and the distributed blockchain storage provides redundancy to prevent data loss over decades.
+                      Create shared vaults for family events, group trips, or community milestones where multiple contributors can add their perspectives and media. Set contribution permissions individually, allowing some participants to add only certain types of content or during specific timeframes. The vault's collaborative tools help integrate diverse perspectives into coherent narratives while preserving individual viewpoints.
                     </p>
+                  </div>
+                </div>
+                
+                <div className="mt-8 p-6 border rounded-lg bg-amber-50 dark:bg-amber-950/20">
+                  <h3 className="text-xl font-semibold mb-4 flex items-center gap-2 text-amber-700 dark:text-amber-400">
+                    <FileText className="h-5 w-5" />
+                    Complementary Memory Technologies
+                  </h3>
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div className="p-3 bg-white dark:bg-black/20 rounded-lg shadow-sm">
+                      <p className="text-sm font-medium">Neural Memory Linking</p>
+                      <p className="text-xs text-muted-foreground mt-1">Connect related memories across time and context</p>
+                    </div>
+                    <div className="p-3 bg-white dark:bg-black/20 rounded-lg shadow-sm">
+                      <p className="text-sm font-medium">Sensory Enhancement</p>
+                      <p className="text-xs text-muted-foreground mt-1">Add scent, texture, and ambient profiles</p>
+                    </div>
+                    <div className="p-3 bg-white dark:bg-black/20 rounded-lg shadow-sm">
+                      <p className="text-sm font-medium">Cultural Context Engine</p>
+                      <p className="text-xs text-muted-foreground mt-1">Preserve references that might be lost to time</p>
+                    </div>
+                    <div className="p-3 bg-white dark:bg-black/20 rounded-lg shadow-sm">
+                      <p className="text-sm font-medium">Geographic Anchoring</p>
+                      <p className="text-xs text-muted-foreground mt-1">Tie memories to physical locations</p>
+                    </div>
+                    <div className="p-3 bg-white dark:bg-black/20 rounded-lg shadow-sm">
+                      <p className="text-sm font-medium">Memory Projection</p>
+                      <p className="text-xs text-muted-foreground mt-1">Create immersive holographic displays</p>
+                    </div>
+                    <div className="p-3 bg-white dark:bg-black/20 rounded-lg shadow-sm">
+                      <p className="text-sm font-medium">Emotional Analysis</p>
+                      <p className="text-xs text-muted-foreground mt-1">AI-powered sentiment understanding</p>
+                    </div>
                   </div>
                 </div>
               </CardContent>
             </Card>
           </TabsContent>
 
-          <TabsContent value="creation">
+          <TabsContent value="security">
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
-                  <FileText className="h-6 w-6 text-pink-500" />
-                  Memory Vault Creation Guide
+                  <Shield className="h-6 w-6 text-amber-500" />
+                  Security Architecture
                 </CardTitle>
                 <CardDescription>
-                  Step-by-step process for creating meaningful time capsules
+                  How we protect your most precious memories for generations
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-6">
                 <div className="space-y-4">
-                  <h3 className="text-xl font-semibold text-pink-700 dark:text-pink-400">Creating Your Memory Vault</h3>
+                  <h3 className="text-xl font-semibold text-amber-700 dark:text-amber-400">Security Philosophy</h3>
+                  <p className="text-muted-foreground">
+                    The Time-Locked Memory Vault is designed with the understanding that memories are among our most precious possessions. Our security architecture focuses on three core principles: preservation longevity, emotional integrity, and controlled accessibility. This multi-layered approach ensures that your memories remain intact, authentic, and accessible only under the exact conditions you specify—whether that's next year or for generations to come.
+                  </p>
                   
-                  <div className="rounded-lg border p-6 space-y-6">
-                    <div className="space-y-2">
-                      <div className="flex items-center gap-3">
-                        <div className="flex items-center justify-center w-8 h-8 rounded-full bg-pink-100 text-pink-800 dark:bg-pink-900 dark:text-pink-300 font-semibold">1</div>
-                        <h4 className="text-lg font-medium">Choose Your Memory Theme</h4>
+                  <div className="rounded-lg border p-4 bg-slate-50 dark:bg-slate-900 mb-6">
+                    <h4 className="font-medium mb-2 flex items-center">
+                      <Lock className="h-4 w-4 mr-2 text-amber-500" />
+                      Multi-Century Data Preservation
+                    </h4>
+                    <p className="text-sm text-muted-foreground mb-4">
+                      Memory vaults utilize revolutionary data preservation technology designed to maintain integrity across centuries:
+                    </p>
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
+                      <div className="bg-white dark:bg-black/20 p-3 rounded border">
+                        <span className="text-amber-500 font-semibold block mb-1">Triple-Chain Redundancy</span>
+                        Your memory data is distributed across Ethereum, Solana, and TON blockchains simultaneously, with cross-chain verification ensuring integrity.
                       </div>
-                      <p className="text-muted-foreground ml-11">
-                        Begin by selecting the primary purpose and emotional theme of your memory vault. Options include celebration vaults, legacy messages, milestone records, future gifts, personal journals, and family history archives. Your selection will customize the interface and preservation options.
-                      </p>
-                    </div>
-                    
-                    <div className="space-y-2">
-                      <div className="flex items-center gap-3">
-                        <div className="flex items-center justify-center w-8 h-8 rounded-full bg-pink-100 text-pink-800 dark:bg-pink-900 dark:text-pink-300 font-semibold">2</div>
-                        <h4 className="text-lg font-medium">Upload Your Content</h4>
+                      <div className="bg-white dark:bg-black/20 p-3 rounded border">
+                        <span className="text-amber-500 font-semibold block mb-1">Format-Adaptive Storage</span>
+                        Memory content is automatically converted and updated as file formats evolve, ensuring continued accessibility regardless of technological change.
                       </div>
-                      <p className="text-muted-foreground ml-11">
-                        Add your memories through our intuitive media uploader that supports photos, videos, audio recordings, documents, and written messages. Our system automatically optimizes your content for long-term preservation while maintaining quality. You can organize content into sections and add descriptive context.
-                      </p>
-                      <div className="ml-11 grid grid-cols-1 md:grid-cols-3 gap-3 mt-3">
-                        <div className="border rounded-lg p-3 text-center text-sm text-muted-foreground">
-                          <Image className="h-5 w-5 mx-auto mb-1" />
-                          Photos up to 50MB each
-                        </div>
-                        <div className="border rounded-lg p-3 text-center text-sm text-muted-foreground">
-                          <File className="h-5 w-5 mx-auto mb-1" />
-                          Videos up to 2GB each
-                        </div>
-                        <div className="border rounded-lg p-3 text-center text-sm text-muted-foreground">
-                          <File className="h-5 w-5 mx-auto mb-1" />
-                          Documents and audio
-                        </div>
+                      <div className="bg-white dark:bg-black/20 p-3 rounded border">
+                        <span className="text-amber-500 font-semibold block mb-1">Quantum-Resistant Encryption</span>
+                        Advanced encryption protocols are resistant to quantum computing attacks, safeguarding memories against future decryption attempts.
                       </div>
                     </div>
-                    
-                    <div className="space-y-2">
-                      <div className="flex items-center gap-3">
-                        <div className="flex items-center justify-center w-8 h-8 rounded-full bg-pink-100 text-pink-800 dark:bg-pink-900 dark:text-pink-300 font-semibold">3</div>
-                        <h4 className="text-lg font-medium">Set Your Time Lock Parameters</h4>
+                  </div>
+                  
+                  <div className="rounded-lg border p-4 bg-slate-50 dark:bg-slate-900 mb-6">
+                    <h4 className="font-medium mb-2 flex items-center">
+                      <Calendar className="h-4 w-4 mr-2 text-amber-500" />
+                      Temporal Security Framework
+                    </h4>
+                    <p className="text-sm text-muted-foreground mb-4">
+                      The core feature of time-locked release is protected by multiple security mechanisms:
+                    </p>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+                      <div className="bg-white dark:bg-black/20 p-3 rounded border">
+                        <span className="text-amber-500 font-semibold block mb-1">Decentralized Time Verification</span>
+                        Time-lock enforcement is distributed across blockchain nodes, with consensus mechanisms preventing tampering with release schedules.
                       </div>
-                      <p className="text-muted-foreground ml-11">
-                        Configure when and how your vault will unlock. Options include specific calendar dates, time intervals (e.g., "20 years from now"), event-based triggers with verification methods, recurring date access (like annual birthday messages), and multi-phase unlocking for content that reveals gradually over time.
-                      </p>
+                      <div className="bg-white dark:bg-black/20 p-3 rounded border">
+                        <span className="text-amber-500 font-semibold block mb-1">Temporal Smart Contracts</span>
+                        Custom smart contracts execute precisely at predefined moments, orchestrating content reveal with cryptographic precision.
+                      </div>
+                      <div className="bg-white dark:bg-black/20 p-3 rounded border">
+                        <span className="text-amber-500 font-semibold block mb-1">Emergency Override Protocols</span>
+                        Optional override mechanisms can be configured requiring multiple trusted parties to approve early access in extraordinary circumstances.
+                      </div>
+                      <div className="bg-white dark:bg-black/20 p-3 rounded border">
+                        <span className="text-amber-500 font-semibold block mb-1">Time Drift Compensation</span>
+                        Specialized algorithms account for time standard evolutions across decades, ensuring releases occur at the true intended moment.
+                      </div>
                     </div>
-                    
-                    <div className="space-y-2">
-                      <div className="flex items-center gap-3">
-                        <div className="flex items-center justify-center w-8 h-8 rounded-full bg-pink-100 text-pink-800 dark:bg-pink-900 dark:text-pink-300 font-semibold">4</div>
-                        <h4 className="text-lg font-medium">Designate Recipients and Access Controls</h4>
+                  </div>
+                  
+                  <div className="rounded-lg border p-4 bg-slate-50 dark:bg-slate-900">
+                    <h4 className="font-medium mb-2 flex items-center">
+                      <AlertTriangle className="h-4 w-4 mr-2 text-amber-500" />
+                      Access Control and Authentication
+                    </h4>
+                    <p className="text-sm text-muted-foreground mb-4">
+                      Ensuring that only the intended recipients can access memories at the intended time:
+                    </p>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+                      <div className="bg-white dark:bg-black/20 p-3 rounded border">
+                        <span className="text-amber-500 font-semibold block mb-1">Multi-Factor Biometric Verification</span>
+                        Access can require fingerprint, facial recognition, and/or voice verification matching pre-stored patterns of intended recipients.
                       </div>
-                      <p className="text-muted-foreground ml-11">
-                        Specify who can access your vault when it unlocks. Options range from personal access only, to designated individuals with secure verification methods, to family groups with hierarchical access permissions. You can also set viewing limitations, download permissions, and sharing capabilities.
-                      </p>
-                    </div>
-                    
-                    <div className="space-y-2">
-                      <div className="flex items-center gap-3">
-                        <div className="flex items-center justify-center w-8 h-8 rounded-full bg-pink-100 text-pink-800 dark:bg-pink-900 dark:text-pink-300 font-semibold">5</div>
-                        <h4 className="text-lg font-medium">Customize the Unlock Experience</h4>
+                      <div className="bg-white dark:bg-black/20 p-3 rounded border">
+                        <span className="text-amber-500 font-semibold block mb-1">Social Recovery System</span>
+                        Authorized access can be restored through a consensus of pre-designated trusted contacts if primary access methods are lost.
                       </div>
-                      <p className="text-muted-foreground ml-11">
-                        Design how your memories will be presented when the vault unlocks. Select from cinematic reveal animations, personalized welcome messages, custom layouts, background music, and thematic visual elements. These elements combine to create an emotionally resonant experience for recipients.
-                      </p>
-                    </div>
-                    
-                    <div className="space-y-2">
-                      <div className="flex items-center gap-3">
-                        <div className="flex items-center justify-center w-8 h-8 rounded-full bg-pink-100 text-pink-800 dark:bg-pink-900 dark:text-pink-300 font-semibold">6</div>
-                        <h4 className="text-lg font-medium">Preservation and Security Settings</h4>
+                      <div className="bg-white dark:bg-black/20 p-3 rounded border">
+                        <span className="text-amber-500 font-semibold block mb-1">Legacy Planning Integration</span>
+                        Comprehensive inheritance frameworks ensure memories pass to intended recipients even generations later.
                       </div>
-                      <p className="text-muted-foreground ml-11">
-                        Configure advanced preservation options including format migration preferences, redundancy levels, and decentralized storage allocation. Set security parameters like access notification preferences, authentication requirements, and optional backup access methods for emergency situations.
-                      </p>
-                    </div>
-                    
-                    <div className="space-y-2">
-                      <div className="flex items-center gap-3">
-                        <div className="flex items-center justify-center w-8 h-8 rounded-full bg-pink-100 text-pink-800 dark:bg-pink-900 dark:text-pink-300 font-semibold">7</div>
-                        <h4 className="text-lg font-medium">Complete Your Vault Creation</h4>
+                      <div className="bg-white dark:bg-black/20 p-3 rounded border">
+                        <span className="text-amber-500 font-semibold block mb-1">Hierarchical Permission System</span>
+                        Granular controls over who can view, manage, or contribute to memories, with permission rules that evolve over time.
                       </div>
-                      <p className="text-muted-foreground ml-11">
-                        Review all settings, preview the unlock experience, and confirm your vault creation. Your content will be securely encrypted, fragmented, and distributed across our blockchain network, creating a tamper-proof time capsule that will preserve your memories exactly as you intended until the designated unlock time.
-                      </p>
                     </div>
                   </div>
                 </div>
               </CardContent>
-              <CardFooter className="border-t p-4">
-                <div className="w-full">
-                  <Button className="w-full bg-gradient-to-r from-pink-500 to-orange-500 hover:from-pink-600 hover:to-orange-600" asChild>
-                    <Link href="/time-locked-memory-vault-new">Create Your Memory Vault Now</Link>
-                  </Button>
-                </div>
-              </CardFooter>
             </Card>
           </TabsContent>
 
@@ -285,124 +315,122 @@ const TimeLockedMemoryVaultDocumentation = () => {
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
-                  <Code className="h-6 w-6 text-pink-500" />
+                  <Code className="h-6 w-6 text-amber-500" />
                   Technical Specifications
                 </CardTitle>
                 <CardDescription>
-                  Under-the-hood details of the memory preservation technology
+                  Detailed technical information about Time-Locked Memory Vaults
                 </CardDescription>
               </CardHeader>
               <CardContent>
                 <div className="space-y-6">
-                  <div className="rounded-lg border-2 border-dashed border-muted-foreground/20 p-6">
-                    <h3 className="text-xl font-semibold mb-4 text-pink-700 dark:text-pink-400">Memory Preservation Architecture</h3>
-                    <p className="mb-4">
-                      Time-Locked Memory Vaults utilize a specialized technical architecture designed for long-term digital preservation with emotional integrity, combining advanced cryptography with distributed storage systems.
-                    </p>
-                    
-                    <h4 className="text-lg font-medium mb-2">Storage and Preservation</h4>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-                      <div className="bg-slate-100 dark:bg-slate-800 rounded-lg p-4">
-                        <h5 className="font-medium mb-2">Content Processing Pipeline</h5>
-                        <ul className="text-sm space-y-1 text-muted-foreground">
-                          <li>Advanced media compression with preservation focus</li>
-                          <li>Perceptual hashing for content integrity verification</li>
-                          <li>Format-neutral storage with automatic migration capability</li>
-                          <li>Contextual metadata embedding for relational preservation</li>
+                  <div className="rounded-lg border p-4">
+                    <h3 className="text-lg font-medium mb-3 text-amber-600">Media Storage Architecture</h3>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+                      <div>
+                        <h4 className="font-medium mb-2">Storage Distribution</h4>
+                        <ul className="list-disc pl-5 space-y-1 text-muted-foreground">
+                          <li>Decentralized Storage Protocol (DSP) for large media files</li>
+                          <li>Content-addressable system with cryptographic hash validation</li>
+                          <li>Triple redundancy across geographical regions</li>
+                          <li>Automatic replication to new storage nodes as technology evolves</li>
+                          <li>Zero-knowledge data arrangement for privacy preservation</li>
                         </ul>
                       </div>
-                      <div className="bg-slate-100 dark:bg-slate-800 rounded-lg p-4">
-                        <h5 className="font-medium mb-2">Distributed Storage System</h5>
-                        <ul className="text-sm space-y-1 text-muted-foreground">
-                          <li>Content fragmentation across multiple blockchain networks</li>
-                          <li>Geographic redundancy with 99.99999% durability rating</li>
-                          <li>Self-healing storage with automatic corruption detection</li>
-                          <li>Content-addressed storage for immutable references</li>
+                      <div>
+                        <h4 className="font-medium mb-2">Media Format Support</h4>
+                        <ul className="list-disc pl-5 space-y-1 text-muted-foreground">
+                          <li>Images: JPEG, PNG, HEIF, RAW, WebP (up to 200 MP)</li>
+                          <li>Video: MP4, MOV, MKV, up to 8K resolution with HDR</li>
+                          <li>Audio: WAV, MP3, FLAC, AAC with lossless encoding</li>
+                          <li>Documents: PDF, DOCX, Markdown with rich formatting</li>
+                          <li>3D/AR: GLB, USDZ, Reality components for spatial viewing</li>
                         </ul>
                       </div>
-                    </div>
-                    
-                    <h4 className="text-lg font-medium mb-2">Time-Locking Mechanism</h4>
-                    <div className="bg-slate-100 dark:bg-slate-800 rounded-lg p-4 mb-6">
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div>
-                          <h5 className="font-medium mb-2">Core Time Verification</h5>
-                          <ul className="text-sm space-y-1 text-muted-foreground">
-                            <li>Blockchain timestamp attestation across multiple networks</li>
-                            <li>Threshold-based distributed time oracle integration</li>
-                            <li>Time-Locked Encryption using verifiable delay functions</li>
-                            <li>Temporal consensus mechanism requiring multi-chain verification</li>
-                          </ul>
-                        </div>
-                        <div>
-                          <h5 className="font-medium mb-2">Trigger Implementation</h5>
-                          <ul className="text-sm space-y-1 text-muted-foreground">
-                            <li>Event oracle integration for real-world trigger verification</li>
-                            <li>Multi-signature confirmation for subjective event verification</li>
-                            <li>Recursive unlock scheduling for graduated content release</li>
-                            <li>Conditional logic trees for complex unlock scenarios</li>
-                          </ul>
-                        </div>
-                      </div>
-                    </div>
-                    
-                    <h4 className="text-lg font-medium mb-2">Emotional Technology Components</h4>
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-                      <div className="border rounded-lg p-4">
-                        <h5 className="font-medium mb-2">Contextual Presentation Engine</h5>
-                        <p className="text-sm text-muted-foreground">
-                          Dynamic rendering system that presents content with emotional context preservation, including relationship-aware content sequencing and environmental adaptability for optimal emotional impact.
-                        </p>
-                      </div>
-                      <div className="border rounded-lg p-4">
-                        <h5 className="font-medium mb-2">Narrative Construction System</h5>
-                        <p className="text-sm text-muted-foreground">
-                          AI-assisted organization of multimedia elements into coherent emotional narratives, maintaining creator intent while optimizing for emotional resonance regardless of future viewing context.
-                        </p>
-                      </div>
-                      <div className="border rounded-lg p-4">
-                        <h5 className="font-medium mb-2">Temporal Context Preservation</h5>
-                        <p className="text-sm text-muted-foreground">
-                          Advanced metadata systems that maintain the cultural, technological, and personal context of created memories, ensuring future viewers understand the significance regardless of temporal distance.
-                        </p>
-                      </div>
-                    </div>
-                    
-                    <h4 className="text-lg font-medium mb-2">Security Implementation</h4>
-                    <div className="overflow-x-auto">
-                      <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
-                        <thead className="bg-gray-100 dark:bg-gray-800">
-                          <tr>
-                            <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Security Layer</th>
-                            <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Implementation</th>
-                            <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Purpose</th>
-                          </tr>
-                        </thead>
-                        <tbody className="bg-white dark:bg-gray-900 divide-y divide-gray-200 dark:divide-gray-800">
-                          <tr>
-                            <td className="px-4 py-2 text-sm">Encryption</td>
-                            <td className="px-4 py-2 text-sm">Quantum-resistant hybrid encryption (AES-256 + NTRU)</td>
-                            <td className="px-4 py-2 text-sm">Long-term content protection against advanced decryption attempts</td>
-                          </tr>
-                          <tr>
-                            <td className="px-4 py-2 text-sm">Access Control</td>
-                            <td className="px-4 py-2 text-sm">Multi-factor authentication with biometric options</td>
-                            <td className="px-4 py-2 text-sm">Recipient verification ensuring only intended viewers access content</td>
-                          </tr>
-                          <tr>
-                            <td className="px-4 py-2 text-sm">Integrity</td>
-                            <td className="px-4 py-2 text-sm">Cross-chain merkle proofs with continual verification</td>
-                            <td className="px-4 py-2 text-sm">Tamper detection and proof of non-modification over time</td>
-                          </tr>
-                          <tr>
-                            <td className="px-4 py-2 text-sm">Persistence</td>
-                            <td className="px-4 py-2 text-sm">Multi-network distribution with redundancy factor of 7</td>
-                            <td className="px-4 py-2 text-sm">Protection against network failures or blockchain obsolescence</td>
-                          </tr>
-                        </tbody>
-                      </table>
                     </div>
                   </div>
+                  
+                  <div className="rounded-lg border p-4">
+                    <h3 className="text-lg font-medium mb-3 text-amber-600">Time-Lock Mechanism</h3>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+                      <div>
+                        <h4 className="font-medium mb-2">Temporal Security Protocol</h4>
+                        <ul className="list-disc pl-5 space-y-1 text-muted-foreground">
+                          <li>Decentralized timestamp verification across multiple chains</li>
+                          <li>Custom time-lock smart contracts with timed cryptographic keys</li>
+                          <li>Verifiable Delay Functions (VDFs) preventing early computation</li>
+                          <li>Chronological assertion proofs validated by consensus</li>
+                          <li>Temporal oracle integration with atomic clock synchronization</li>
+                        </ul>
+                      </div>
+                      <div>
+                        <h4 className="font-medium mb-2">Release Trigger Types</h4>
+                        <ul className="list-disc pl-5 space-y-1 text-muted-foreground">
+                          <li>Fixed datetime triggers accurate to millisecond precision</li>
+                          <li>Relative time triggers (e.g., X years after deposit)</li>
+                          <li>Conditional triggers based on verifiable external events</li>
+                          <li>Sequence triggers requiring pattern completion</li>
+                          <li>Multi-party consensus triggers requiring specific approvals</li>
+                        </ul>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div className="rounded-lg border p-4">
+                    <h3 className="text-lg font-medium mb-3 text-amber-600">Emotional Intelligence System</h3>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+                      <div>
+                        <h4 className="font-medium mb-2">Contextual Analysis Engine</h4>
+                        <ul className="list-disc pl-5 space-y-1 text-muted-foreground">
+                          <li>Sentiment analysis with multilayer perceptron classification</li>
+                          <li>Advanced facial emotion recognition for photos and videos</li>
+                          <li>Voice tone analysis for emotional context in audio</li>
+                          <li>Relationship mapping using graph database architecture</li>
+                          <li>Cultural reference preservation with historical context API</li>
+                        </ul>
+                      </div>
+                      <div>
+                        <h4 className="font-medium mb-2">Memory Enhancement Pipeline</h4>
+                        <ul className="list-disc pl-5 space-y-1 text-muted-foreground">
+                          <li>AI-powered media restoration and enhancement</li>
+                          <li>Scene understanding for contextual metadata generation</li>
+                          <li>Automated transcription and translation services</li>
+                          <li>Memory association suggestions through neural connections</li>
+                          <li>Timeline integration and chronological anchoring</li>
+                        </ul>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div className="rounded-lg border p-4">
+                    <h3 className="text-lg font-medium mb-3 text-amber-600">Integration Capabilities</h3>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+                      <div>
+                        <h4 className="font-medium mb-2">API and Service Connections</h4>
+                        <ul className="list-disc pl-5 space-y-1 text-muted-foreground">
+                          <li>RESTful API with GraphQL support for external applications</li>
+                          <li>OAuth integration with major social and cloud services</li>
+                          <li>Web3 wallet connections across multiple blockchains</li>
+                          <li>IoT device integration protocols for smart capture</li>
+                          <li>Webhook support for event-driven integration workflows</li>
+                        </ul>
+                      </div>
+                      <div>
+                        <h4 className="font-medium mb-2">Delivery Methods</h4>
+                        <ul className="list-disc pl-5 space-y-1 text-muted-foreground">
+                          <li>Mobile push notifications with biometric unlock</li>
+                          <li>Email with secure authentication links</li>
+                          <li>Dedicated viewing portal with immersive display options</li>
+                          <li>AR/VR compatible format for spatial experience</li>
+                          <li>Physical media generation options (books, prints, etc.)</li>
+                        </ul>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <p className="text-sm text-muted-foreground mt-4">
+                    The Time-Locked Memory Vault uses a composite architecture that combines blockchain-based integrity and time verification with distributed decentralized storage to create a system optimized for both security and emotional resonance. All components are designed for century-scale operations, with multiple redundancies and format-migration pathways ensuring continued accessibility.
+                  </p>
                 </div>
               </CardContent>
             </Card>
@@ -412,7 +440,7 @@ const TimeLockedMemoryVaultDocumentation = () => {
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
-                  <HelpCircle className="h-6 w-6 text-pink-500" />
+                  <HelpCircle className="h-6 w-6 text-amber-500" />
                   Frequently Asked Questions
                 </CardTitle>
                 <CardDescription>
@@ -421,38 +449,88 @@ const TimeLockedMemoryVaultDocumentation = () => {
               </CardHeader>
               <CardContent>
                 <div className="space-y-6">
-                  <div className="border-b pb-4">
-                    <h3 className="text-lg font-medium mb-2">How long can I lock memories for?</h3>
+                  <div>
+                    <h3 className="text-lg font-medium mb-2">What happens if I want to access my memories before the scheduled release date?</h3>
                     <p className="text-muted-foreground">
-                      Time-Locked Memory Vaults support lock periods ranging from 1 day to 100 years. Our specialized long-term preservation technology ensures that content remains accessible and technologically compatible regardless of how far in the future you set your unlock date. For extremely long timeframes (25+ years), we recommend our Legacy tier with enhanced preservation protocols.
-                    </p>
-                  </div>
-                  
-                  <div className="border-b pb-4">
-                    <h3 className="text-lg font-medium mb-2">What happens if the intended recipient isn't available when the vault unlocks?</h3>
-                    <p className="text-muted-foreground">
-                      You can configure backup recipient options and contingency plans during vault creation. Options include delayed secondary releases, alternative recipient hierarchies, and custodial access provisions. For family legacy vaults, we recommend setting up a family access tree that designates alternative recipients if primary ones aren't available. The system sends multiple notifications before and after unlock dates.
-                    </p>
-                  </div>
-                  
-                  <div className="border-b pb-4">
-                    <h3 className="text-lg font-medium mb-2">Can I add content to a vault after I've created it?</h3>
-                    <p className="text-muted-foreground">
-                      Yes, most vault types allow for additions until their lock date activates. Our Standard and Premium vaults support "time-window additions" where you can designate a period during which new content can be added before final locking. Memorial and Legacy vaults feature "contribution periods" where designated family members can add memories to collective vaults before permanent sealing.
-                    </p>
-                  </div>
-                  
-                  <div className="border-b pb-4">
-                    <h3 className="text-lg font-medium mb-2">How secure are the memories stored in these vaults?</h3>
-                    <p className="text-muted-foreground">
-                      Time-Locked Memory Vaults implement multiple layers of security. All content is encrypted using quantum-resistant algorithms before being fragmented and distributed across multiple blockchain networks. This approach eliminates single points of failure while providing mathematical guarantees against unauthorized access. Our system undergoes regular security audits and penetration testing by independent third parties, maintaining bank-grade security standards with emotional content preservation specialization.
+                      Time-Locked Memory Vaults are designed to enforce the release schedule you set when creating the vault. However, we recognize that circumstances change. You have several options:
+                      <br /><br />
+                      <strong>Creator Override:</strong> As the vault creator, you can choose to include a personal override option when setting up your vault. This requires enhanced security verification to prevent impulsive access.
+                      <br /><br />
+                      <strong>Emergency Access Protocol:</strong> When creating vaults intended for very long-term storage (5+ years), you can designate trusted contacts who can collectively approve early access in exceptional circumstances.
+                      <br /><br />
+                      <strong>Partial Preview System:</strong> Some vault configurations allow setting up a "preview mode" that provides limited access to select content while maintaining the time-lock on the full experience.
+                      <br /><br />
+                      Remember that the purpose of time-locking is often to create a more powerful emotional experience at the intended moment, so consider carefully before bypassing this mechanism.
                     </p>
                   </div>
                   
                   <div>
-                    <h3 className="text-lg font-medium mb-2">How do I ensure media formats will still be accessible in the distant future?</h3>
+                    <h3 className="text-lg font-medium mb-2">How can I ensure my digital memories will still be accessible decades from now as technology changes?</h3>
                     <p className="text-muted-foreground">
-                      Our proprietary Format Evolution Protocol automatically migrates your content to maintain compatibility with current viewing technologies. Content is stored in format-neutral representations with periodic validation and transformation as needed. For long-term vaults (10+ years), we implement advanced format prediction models and maintain original bitstreams alongside evolved formats. This ensures that regardless of how technology changes, your memories remain accessible with their original quality and emotional integrity intact.
+                      This is one of our core design considerations, addressed through several systems:
+                      <br /><br />
+                      <strong>Format-Adaptive Storage:</strong> Our platform automatically migrates your content to new formats as technology evolves, ensuring compatibility with future viewing systems.
+                      <br /><br />
+                      <strong>Blockchain Permanence:</strong> Core metadata and access controls are stored on multiple blockchains, creating a permanent record that survives even if our company somehow ceased to exist.
+                      <br /><br />
+                      <strong>Decentralized Storage:</strong> Your actual memory content is stored in decentralized systems with multiple redundancies across geographic regions.
+                      <br /><br />
+                      <strong>Physical Backup Options:</strong> For our most premium storage tiers, we also offer physical backup options including archival-grade microfilm that can last 500+ years without degradation.
+                      <br /><br />
+                      <strong>Open Access Protocol:</strong> We maintain an open-source access protocol that would allow your data to be retrieved even if our specific interfaces were no longer available.
+                    </p>
+                  </div>
+                  
+                  <div>
+                    <h3 className="text-lg font-medium mb-2">How private are the memories stored in these vaults?</h3>
+                    <p className="text-muted-foreground">
+                      Privacy is paramount in our system design:
+                      <br /><br />
+                      <strong>End-to-End Encryption:</strong> All memory content is encrypted before leaving your device, and only decrypted when accessed by authorized recipients.
+                      <br /><br />
+                      <strong>Zero-Knowledge Storage:</strong> Our systems store your content in a way that even our administrators cannot access the contents.
+                      <br /><br />
+                      <strong>Granular Permission Control:</strong> You define exactly who can access each memory package, with options ranging from strictly personal to specific individuals to public sharing.
+                      <br /><br />
+                      <strong>Authentication Options:</strong> Multiple verification methods are available for accessing sensitive memories, including biometric requirements, multi-factor authentication, and social verification.
+                      <br /><br />
+                      <strong>Viewing Analytics Control:</strong> You control whether and how recipient interaction with your memories is tracked, with options for complete anonymity.
+                    </p>
+                  </div>
+                  
+                  <div>
+                    <h3 className="text-lg font-medium mb-2">What types of content can I include in a Memory Vault?</h3>
+                    <p className="text-muted-foreground">
+                      Memory Vaults support an extensive range of content types:
+                      <br /><br />
+                      <strong>Media Types:</strong> Photos, videos, audio recordings, written text, documents, and 3D/AR content.
+                      <br /><br />
+                      <strong>Digital Assets:</strong> Cryptocurrencies, NFTs, digital collectibles, and other blockchain assets can be included alongside memories.
+                      <br /><br />
+                      <strong>Interactive Elements:</strong> Quizzes, choice-based narratives, games, and other interactive elements can be incorporated.
+                      <br /><br />
+                      <strong>Contextual Data:</strong> Location information, weather data, social context, news headlines, and other metadata can be preserved to enhance memories.
+                      <br /><br />
+                      <strong>Physical Item Records:</strong> You can include detailed 3D scans of physical items, allowing future viewing of objects in virtual space even if the physical items are no longer available.
+                    </p>
+                  </div>
+                  
+                  <div>
+                    <h3 className="text-lg font-medium mb-2">What are the most popular uses for Time-Locked Memory Vaults?</h3>
+                    <p className="text-muted-foreground">
+                      Our users create Memory Vaults for many meaningful purposes:
+                      <br /><br />
+                      <strong>Future Self Messages:</strong> Send messages, advice, and reflections to your future self at milestone ages or significant dates.
+                      <br /><br />
+                      <strong>Child Growth Capsules:</strong> Parents create vaults that release memories and messages to children at key life stages (graduation, wedding, birth of their own children).
+                      <br /><br />
+                      <strong>Relationship Milestones:</strong> Couples create anniversary vaults that release new content each year to celebrate their journey together.
+                      <br /><br />
+                      <strong>Family Legacy:</strong> Multi-generational vaults that preserve family history, stories, and wisdom for descendants decades or centuries into the future.
+                      <br /><br />
+                      <strong>Educational Time-Release:</strong> Teachers and mentors create content that unlocks progressively as students advance in their learning journey.
+                      <br /><br />
+                      <strong>Group Experience Archives:</strong> Friend groups, teams, and communities create collaborative vaults that preserve shared experiences and release memories at reunions.
                     </p>
                   </div>
                 </div>
@@ -460,14 +538,14 @@ const TimeLockedMemoryVaultDocumentation = () => {
               <CardFooter className="border-t p-4">
                 <div className="w-full">
                   <p className="text-sm text-muted-foreground mb-4">
-                    Have more questions about Time-Locked Memory Vaults? Our support team is available to help with any inquiries about creating your perfect digital time capsule.
+                    Have more questions about preserving your most precious memories with a Time-Locked Memory Vault? Our team is available to provide personalized guidance on creating the perfect emotional time capsule.
                   </p>
                   <div className="flex flex-col sm:flex-row gap-4">
                     <Button variant="outline" className="flex-1">
                       Contact Support
                     </Button>
-                    <Button className="bg-gradient-to-r from-pink-500 to-orange-500 hover:from-pink-600 hover:to-orange-600 flex-1" asChild>
-                      <Link href="/time-locked-memory-vault-new">Create Memory Vault</Link>
+                    <Button className="bg-gradient-to-r from-amber-500 to-red-500 hover:from-amber-600 hover:to-red-600 flex-1" asChild>
+                      <Link href="/time-locked-memory-vault">Create Memory Vault</Link>
                     </Button>
                   </div>
                 </div>
@@ -476,7 +554,7 @@ const TimeLockedMemoryVaultDocumentation = () => {
           </TabsContent>
         </Tabs>
       </div>
-    </Layout>
+    </DocumentationLayout>
   );
 };
 

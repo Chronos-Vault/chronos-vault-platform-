@@ -4,36 +4,40 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Separator } from "@/components/ui/separator";
-import Layout from "@/components/layout/Layout";
+import DocumentationLayout from "@/components/layout/DocumentationLayout";
 import { 
   MapPin, 
   Shield, 
   Lock, 
   Globe, 
-  Compass, 
-  Map, 
+  Navigation, 
   CheckCircle, 
   AlertTriangle, 
   FileText, 
   Code, 
-  HelpCircle 
+  HelpCircle,
+  Map,
+  Compass,
+  Building,
+  Landmark,
+  ArrowUpRight
 } from "lucide-react";
 
 const GeoLocationVaultDocumentation = () => {
   return (
-    <Layout>
+    <DocumentationLayout>
       <div className="container mx-auto py-10 px-4 max-w-6xl">
         <div className="flex flex-col md:flex-row justify-between items-start mb-8">
           <div>
-            <h1 className="text-4xl font-extrabold tracking-tight mb-2 bg-clip-text text-transparent bg-gradient-to-r from-blue-500 to-emerald-500">
+            <h1 className="text-4xl font-extrabold tracking-tight mb-2 bg-clip-text text-transparent bg-gradient-to-r from-green-500 to-blue-500">
               Geo-Location Vault
             </h1>
             <p className="text-xl text-muted-foreground mb-4">
-              Advanced security through location-based authentication and verification
+              Advanced vault security with location-based authentication
             </p>
           </div>
           <div className="mt-4 md:mt-0">
-            <Button asChild className="bg-gradient-to-r from-blue-500 to-emerald-500 hover:from-blue-600 hover:to-emerald-600">
+            <Button asChild className="bg-gradient-to-r from-green-500 to-blue-500 hover:from-green-600 hover:to-blue-600">
               <Link href="/vault-types">View All Vault Types</Link>
             </Button>
           </div>
@@ -52,39 +56,39 @@ const GeoLocationVaultDocumentation = () => {
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
-                  <MapPin className="h-6 w-6 text-blue-500" />
+                  <MapPin className="h-6 w-6 text-green-500" />
                   Location-Based Security
                 </CardTitle>
                 <CardDescription>
-                  Explore the innovative vault that uses physical location as an authentication factor
+                  Discover how physical location enhances your digital asset security
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
-                <div className="rounded-lg bg-gradient-to-r from-blue-50 to-emerald-50 p-6 border border-blue-100 dark:from-blue-950/20 dark:to-emerald-950/20 dark:border-blue-900/50">
+                <div className="rounded-lg bg-gradient-to-r from-green-50 to-blue-50 p-6 border border-green-100 dark:from-green-950/20 dark:to-blue-950/20 dark:border-green-900/50">
                   <p className="text-lg mb-4">
-                    The Geo-Location Vault introduces a revolutionary security dimension: physical presence verification. By incorporating geographic location as a critical authentication factor, this vault provides a new layer of security that goes beyond digital credentials.
+                    The Geo-Location Vault represents a revolutionary approach to blockchain security by adding a powerful physical dimension to digital asset protection. By incorporating precise location verification into the authentication process, this specialized vault type ensures that access requires both digital credentials and physical presence at predetermined secure locations.
                   </p>
                   
-                  <h3 className="text-xl font-semibold mb-2 text-blue-700 dark:text-blue-400">Physical Security Layer</h3>
+                  <h3 className="text-xl font-semibold mb-2 text-green-700 dark:text-green-400">Physical Security Layer</h3>
                   <p className="mb-4">
-                    Unlike conventional security measures that rely solely on what you know (passwords) or what you have (devices), the Geo-Location Vault adds where you are as a fundamental security component. This creates a powerful multi-factor authentication system that significantly increases protection against unauthorized access attempts.
+                    Unlike traditional digital-only security systems that can be compromised from anywhere in the world, the Geo-Location Vault adds a physical security layer that drastically reduces the attack surface. This means that even if a malicious actor somehow obtained your digital credentials, they would still need to be physically present at your designated secure location(s) to gain access to your assets.
                   </p>
                   
-                  <h3 className="text-xl font-semibold mb-2 text-blue-700 dark:text-blue-400">Configurable Geographic Requirements</h3>
+                  <h3 className="text-xl font-semibold mb-2 text-green-700 dark:text-green-400">Flexible Location Management</h3>
                   <p className="mb-4">
-                    The vault can be configured with various location-based access controls, including precise coordinates, geofenced areas, or even multiple approved locations. These controls can be combined with traditional time-based restrictions to create sophisticated access policies tailored to your specific security requirements.
+                    The vault offers unprecedented flexibility in how you configure location-based security. You can designate multiple secure locations around the world, set location-specific access levels determining what can be managed from each place, create temporary access locations for business travel, and even establish geofenced boundaries of various sizes—from precise coordinate points to expansive regional access zones.
                   </p>
                   
-                  <h3 className="text-xl font-semibold mb-2 text-blue-700 dark:text-blue-400">Privacy-Preserving Implementation</h3>
+                  <h3 className="text-xl font-semibold mb-2 text-green-700 dark:text-green-400">Multi-Modal Verification</h3>
                   <p>
-                    Despite its reliance on location data, the Geo-Location Vault is designed with privacy as a priority. Our implementation uses Zero-Knowledge Proofs to verify location without storing or exposing precise coordinates. This approach ensures your privacy is maintained while still benefiting from enhanced location-based security.
+                    Location verification utilizes multiple independent technologies, making it resistant to spoofing or manipulation. The system combines GPS signals, cellular tower triangulation, Wi-Fi positioning, and even physical beacon verification in high-security implementations. This multi-modal approach ensures that your location data is accurate and tamper-proof, forming a robust foundation for your asset security.
                   </p>
                 </div>
               </CardContent>
               <CardFooter className="justify-between border-t p-4">
                 <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                  <MapPin className="h-4 w-4" />
-                  Location authentication provides physical security barriers
+                  <CheckCircle className="h-4 w-4" />
+                  Add a physical security layer to your digital assets
                 </div>
                 <Button variant="outline" asChild>
                   <Link href="/geo-location-vault">Create Geo-Location Vault</Link>
@@ -97,105 +101,105 @@ const GeoLocationVaultDocumentation = () => {
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
-                  <CheckCircle className="h-6 w-6 text-blue-500" />
+                  <CheckCircle className="h-6 w-6 text-green-500" />
                   Key Features
                 </CardTitle>
                 <CardDescription>
-                  Explore the advanced capabilities of Geo-Location Vaults
+                  Explore the unique capabilities of Geo-Location Vaults
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-6">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div className="rounded-lg border bg-card shadow p-6">
                     <div className="flex items-center gap-3 mb-4">
-                      <MapPin className="h-8 w-8 text-blue-500" />
-                      <h3 className="text-xl font-semibold">Geographic Authentication</h3>
+                      <Map className="h-8 w-8 text-green-500" />
+                      <h3 className="text-xl font-semibold">Multi-Location Security Framework</h3>
                     </div>
                     <p>
-                      Adds physical location as a mandatory authentication factor, requiring users to be in specific geographic areas to access the vault. This creates a powerful security barrier that cannot be bypassed through digital means alone, significantly enhancing protection against remote attacks.
+                      Configure multiple secure locations worldwide with customized security parameters for each. Designate primary locations (such as your home or office) for full access, secondary locations with limited permissions, and temporary access points for travel. Each location can have its own radius of trust, verification requirements, and access privileges, creating a personalized global security network that adapts to your lifestyle while maintaining robust protection.
                     </p>
                   </div>
                   
                   <div className="rounded-lg border bg-card shadow p-6">
                     <div className="flex items-center gap-3 mb-4">
-                      <Globe className="h-8 w-8 text-blue-500" />
-                      <h3 className="text-xl font-semibold">Configurable Geofencing</h3>
+                      <Shield className="h-8 w-8 text-green-500" />
+                      <h3 className="text-xl font-semibold">Anti-Spoofing Technology</h3>
                     </div>
                     <p>
-                      Define precise geographic boundaries for vault access with customizable geofence parameters. Options include circular areas with adjustable radii, polygon-based regions for complex boundaries, and even altitude parameters for multi-dimensional restrictions. The system supports multiple approved locations for flexibility.
+                      Advanced anti-spoofing measures protect against location falsification attempts. The system employs multi-signal verification that cross-references independent location data sources including GPS, cellular networks, Wi-Fi positioning, and IP geolocation. For maximum security deployments, optional physical beacon verification or secure element GPS can be enabled, creating an authentication system that's virtually impossible to deceive.
                     </p>
                   </div>
                   
                   <div className="rounded-lg border bg-card shadow p-6">
                     <div className="flex items-center gap-3 mb-4">
-                      <Lock className="h-8 w-8 text-blue-500" />
-                      <h3 className="text-xl font-semibold">Privacy-Preserving Verification</h3>
+                      <Building className="h-8 w-8 text-green-500" />
+                      <h3 className="text-xl font-semibold">Indoor Precision Mapping</h3>
                     </div>
                     <p>
-                      Innovative Zero-Knowledge Proof implementation that verifies location requirements without revealing exact coordinates. This advanced approach allows the system to confirm you're within an approved area without storing or transmitting your precise location, protecting your privacy while maintaining security.
+                      Unlike standard GPS that loses accuracy indoors, our proprietary Indoor Precision Mapping technology maintains location verification inside buildings. This system combines Wi-Fi fingerprinting, Bluetooth beacon triangulation, and inertial navigation to create accurate indoor positioning. Designate specific rooms or areas within buildings as secure access points, ensuring that even in GPS-limited environments, your location-based security remains intact.
                     </p>
                   </div>
                   
                   <div className="rounded-lg border bg-card shadow p-6">
                     <div className="flex items-center gap-3 mb-4">
-                      <Compass className="h-8 w-8 text-blue-500" />
-                      <h3 className="text-xl font-semibold">Multi-Location Support</h3>
+                      <Globe className="h-8 w-8 text-green-500" />
+                      <h3 className="text-xl font-semibold">Geofenced Transaction Controls</h3>
                     </div>
                     <p>
-                      Configure multiple approved locations with different security levels and access permissions. This allows for a hierarchical location structure where primary locations might provide full access while secondary locations offer limited functionality, creating a flexible system adaptable to various scenarios.
+                      Implement location-specific transaction policies that vary based on where access occurs. Set different withdrawal limits, transaction approval requirements, or authorized asset types for different locations. For example, configure office locations to allow only specific business-related transactions, while home locations permit full access. This creates contextually appropriate security that adapts to the purpose and security level of each physical environment.
                     </p>
                   </div>
                   
                   <div className="rounded-lg border bg-card shadow p-6">
                     <div className="flex items-center gap-3 mb-4">
-                      <Shield className="h-8 w-8 text-blue-500" />
-                      <h3 className="text-xl font-semibold">Location-Restricted Transactions</h3>
+                      <Compass className="h-8 w-8 text-green-500" />
+                      <h3 className="text-xl font-semibold">Travel Mode Security</h3>
                     </div>
                     <p>
-                      Certain high-value transactions can be restricted to specific locations, adding an additional layer of security for sensitive operations. This feature allows you to designate "safe zones" where critical transactions can be executed, mitigating risks associated with compromised credentials.
+                      Maintain security while traveling through the intelligent Travel Mode system. Pre-authorize travel routes with temporary access points along your journey, set time-limited access for business trips, or enable emergency access protocols for unexpected location changes. The Traveler Verification System adds additional authentication requirements when accessing from new locations, balancing convenience with robust security for mobile lifestyles.
                     </p>
                   </div>
                   
                   <div className="rounded-lg border bg-card shadow p-6">
                     <div className="flex items-center gap-3 mb-4">
-                      <Map className="h-8 w-8 text-blue-500" />
-                      <h3 className="text-xl font-semibold">Temporal-Spatial Controls</h3>
+                      <Landmark className="h-8 w-8 text-green-500" />
+                      <h3 className="text-xl font-semibold">Institutional-Grade Location Verification</h3>
                     </div>
                     <p>
-                      Combine location requirements with time-based restrictions to create sophisticated access policies. This allows for scenarios such as limiting access to business hours at office locations or creating time-limited access windows for specific geographic areas, enhancing security through multi-dimensional constraints.
+                      For institutional clients, our system supports advanced secure location configurations. Designate specific secure facilities like headquarters or certified banking locations as the only valid access points for sensitive operations. Implement organization-wide geo-security policies with hierarchical access zones, secure room designation, and comprehensive audit logging of all location-based access attempts across your enterprise.
                     </p>
                   </div>
                 </div>
                 
-                <div className="mt-8 p-6 border rounded-lg bg-blue-50 dark:bg-blue-950/20">
-                  <h3 className="text-xl font-semibold mb-4 flex items-center gap-2 text-blue-700 dark:text-blue-400">
-                    <CheckCircle className="h-5 w-5" />
-                    Additional Security Capabilities
+                <div className="mt-8 p-6 border rounded-lg bg-green-50 dark:bg-green-950/20">
+                  <h3 className="text-xl font-semibold mb-4 flex items-center gap-2 text-green-700 dark:text-green-400">
+                    <ArrowUpRight className="h-5 w-5" />
+                    Advanced Location Integration Options
                   </h3>
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                     <div className="p-3 bg-white dark:bg-black/20 rounded-lg shadow-sm">
-                      <p className="text-sm font-medium">Emergency Access Override</p>
-                      <p className="text-xs text-muted-foreground mt-1">Configurable emergency access protocols independent of location</p>
+                      <p className="text-sm font-medium">Secure Facility Integration</p>
+                      <p className="text-xs text-muted-foreground mt-1">Connect with enterprise security systems</p>
                     </div>
                     <div className="p-3 bg-white dark:bg-black/20 rounded-lg shadow-sm">
-                      <p className="text-sm font-medium">Location Change Alerts</p>
-                      <p className="text-xs text-muted-foreground mt-1">Notifications for access attempts from new locations</p>
+                      <p className="text-sm font-medium">Biometric Geo-Pairing</p>
+                      <p className="text-xs text-muted-foreground mt-1">Link biometrics with location verification</p>
                     </div>
                     <div className="p-3 bg-white dark:bg-black/20 rounded-lg shadow-sm">
-                      <p className="text-sm font-medium">Spoofing Detection</p>
-                      <p className="text-xs text-muted-foreground mt-1">Advanced mechanisms to prevent location spoofing</p>
+                      <p className="text-sm font-medium">Physical Security Tokens</p>
+                      <p className="text-xs text-muted-foreground mt-1">Location-aware hardware authentication</p>
                     </div>
                     <div className="p-3 bg-white dark:bg-black/20 rounded-lg shadow-sm">
-                      <p className="text-sm font-medium">Travel Mode</p>
-                      <p className="text-xs text-muted-foreground mt-1">Temporary location requirement suspension for travel</p>
+                      <p className="text-sm font-medium">Multi-Party Location Consensus</p>
+                      <p className="text-xs text-muted-foreground mt-1">Require multiple authorized users in the same location</p>
                     </div>
                     <div className="p-3 bg-white dark:bg-black/20 rounded-lg shadow-sm">
-                      <p className="text-sm font-medium">Audit Logging</p>
-                      <p className="text-xs text-muted-foreground mt-1">Comprehensive records of location-verified access</p>
+                      <p className="text-sm font-medium">Satellite-Verified Positioning</p>
+                      <p className="text-xs text-muted-foreground mt-1">Military-grade location confirmation</p>
                     </div>
                     <div className="p-3 bg-white dark:bg-black/20 rounded-lg shadow-sm">
-                      <p className="text-sm font-medium">Backup Authentication</p>
-                      <p className="text-xs text-muted-foreground mt-1">Alternative methods when location verification is unavailable</p>
+                      <p className="text-sm font-medium">Dead Drop Protocol</p>
+                      <p className="text-xs text-muted-foreground mt-1">One-time location-based access points</p>
                     </div>
                   </div>
                 </div>
@@ -207,129 +211,97 @@ const GeoLocationVaultDocumentation = () => {
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
-                  <Shield className="h-6 w-6 text-blue-500" />
+                  <Shield className="h-6 w-6 text-green-500" />
                   Security Architecture
                 </CardTitle>
                 <CardDescription>
-                  How location-based security is implemented and protected
+                  The technical foundations of location-based authentication
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-6">
                 <div className="space-y-4">
-                  <h3 className="text-xl font-semibold text-blue-700 dark:text-blue-400">Multi-Layered Location Verification</h3>
+                  <h3 className="text-xl font-semibold text-green-700 dark:text-green-400">Security Philosophy</h3>
                   <p className="text-muted-foreground">
-                    The Geo-Location Vault implements multiple independent verification methods to ensure the authenticity of location data, creating a system resistant to spoofing or manipulation.
+                    The Geo-Location Vault is built on the principle that truly robust security must bridge digital and physical realities. While cryptographic security is powerful, it exists purely in the digital realm. By integrating precise physical location requirements, we create a security system that requires an attacker to overcome both digital barriers and the challenge of physical presence—dramatically reducing the threat surface and creating a defense system that's greater than the sum of its parts.
                   </p>
                   
                   <div className="rounded-lg border p-4 bg-slate-50 dark:bg-slate-900 mb-6">
                     <h4 className="font-medium mb-2 flex items-center">
-                      <Shield className="h-4 w-4 mr-2 text-blue-500" />
-                      Location Verification Technologies
+                      <Lock className="h-4 w-4 mr-2 text-green-500" />
+                      Location Verification Architecture
                     </h4>
                     <p className="text-sm text-muted-foreground mb-4">
-                      Multiple technologies are used in combination to verify location with high confidence:
+                      Our multi-layered location verification system ensures accuracy and prevents spoofing:
                     </p>
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
                       <div className="bg-white dark:bg-black/20 p-3 rounded border">
-                        <span className="font-medium text-blue-700 dark:text-blue-400">GPS Verification</span>
-                        <ul className="mt-1 space-y-1 text-muted-foreground">
-                          <li>• Precise coordinate matching</li>
-                          <li>• GNSS constellation verification</li>
-                          <li>• Signal strength analysis</li>
-                        </ul>
+                        <span className="text-green-500 font-semibold block mb-1">Primary Location Data</span>
+                        GNSS (GPS, GLONASS, Galileo, BeiDou) signals are cross-referenced for precise global positioning with redundancy against signal jamming or interference.
                       </div>
                       <div className="bg-white dark:bg-black/20 p-3 rounded border">
-                        <span className="font-medium text-blue-700 dark:text-blue-400">Network Triangulation</span>
-                        <ul className="mt-1 space-y-1 text-muted-foreground">
-                          <li>• Cell tower identification</li>
-                          <li>• WiFi network fingerprinting</li>
-                          <li>• Network latency measurement</li>
-                        </ul>
+                        <span className="text-green-500 font-semibold block mb-1">Secondary Verification</span>
+                        Cellular tower triangulation and Wi-Fi positioning provide backup verification that's more difficult to spoof than GPS alone.
                       </div>
                       <div className="bg-white dark:bg-black/20 p-3 rounded border">
-                        <span className="font-medium text-blue-700 dark:text-blue-400">Blockchain Attestation</span>
-                        <ul className="mt-1 space-y-1 text-muted-foreground">
-                          <li>• Secure location attestation</li>
-                          <li>• Cryptographic time-stamping</li>
-                          <li>• Multi-chain verification</li>
-                        </ul>
+                        <span className="text-green-500 font-semibold block mb-1">Tertiary Confirmation</span>
+                        IP geolocation and network routing characteristics add a third layer of verification that must align with primary and secondary data.
                       </div>
                     </div>
                   </div>
                   
                   <div className="rounded-lg border p-4 bg-slate-50 dark:bg-slate-900 mb-6">
                     <h4 className="font-medium mb-2 flex items-center">
-                      <Lock className="h-4 w-4 mr-2 text-blue-500" />
-                      Privacy-Preserving Implementation
+                      <Navigation className="h-4 w-4 mr-2 text-green-500" />
+                      Anti-Spoofing Protection
                     </h4>
                     <p className="text-sm text-muted-foreground mb-4">
-                      Our system verifies location without compromising privacy through these advanced mechanisms:
+                      Sophisticated measures to detect and prevent location falsification:
                     </p>
-                    <ul className="space-y-2 text-sm text-muted-foreground">
-                      <li className="flex items-start">
-                        <span className="bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300 rounded-full w-5 h-5 flex items-center justify-center text-xs mr-2 mt-0.5">1</span>
-                        <span><strong>Zero-Knowledge Location Proofs</strong> - Allow verification that you're within an approved area without revealing your exact coordinates. The system checks if you're inside a geographic boundary without knowing precisely where in that boundary you are located.</span>
-                      </li>
-                      <li className="flex items-start">
-                        <span className="bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300 rounded-full w-5 h-5 flex items-center justify-center text-xs mr-2 mt-0.5">2</span>
-                        <span><strong>On-Device Verification</strong> - Location calculations are performed locally on your device whenever possible, with only the verification result (not the raw location data) transmitted to the network for authentication.</span>
-                      </li>
-                      <li className="flex items-start">
-                        <span className="bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300 rounded-full w-5 h-5 flex items-center justify-center text-xs mr-2 mt-0.5">3</span>
-                        <span><strong>Homomorphic Encryption</strong> - Enables calculations on encrypted location data without decrypting it, allowing verification while keeping the underlying coordinates protected and private.</span>
-                      </li>
-                    </ul>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+                      <div className="bg-white dark:bg-black/20 p-3 rounded border">
+                        <span className="text-green-500 font-semibold block mb-1">Signal Integrity Analysis</span>
+                        Real-time analysis of GPS signal characteristics detects inconsistencies that indicate spoofing attempts or replay attacks.
+                      </div>
+                      <div className="bg-white dark:bg-black/20 p-3 rounded border">
+                        <span className="text-green-500 font-semibold block mb-1">Environmental Consistency Checks</span>
+                        Ambient environmental data (barometric pressure, ambient light, magnetic field) is cross-referenced with expected values for the reported location.
+                      </div>
+                      <div className="bg-white dark:bg-black/20 p-3 rounded border">
+                        <span className="text-green-500 font-semibold block mb-1">Motion Pattern Verification</span>
+                        Device micromovement patterns are analyzed to distinguish between real-world positioning and synthetic location data.
+                      </div>
+                      <div className="bg-white dark:bg-black/20 p-3 rounded border">
+                        <span className="text-green-500 font-semibold block mb-1">Temporal Consistency Monitoring</span>
+                        Location changes are analyzed for physically possible travel speeds and patterns, flagging impossibly rapid location changes.
+                      </div>
+                    </div>
                   </div>
                   
                   <div className="rounded-lg border p-4 bg-slate-50 dark:bg-slate-900">
                     <h4 className="font-medium mb-2 flex items-center">
-                      <AlertTriangle className="h-4 w-4 mr-2 text-blue-500" />
-                      Anti-Spoofing Measures
+                      <AlertTriangle className="h-4 w-4 mr-2 text-green-500" />
+                      Cryptographic Location Attestation
                     </h4>
                     <p className="text-sm text-muted-foreground mb-4">
-                      Comprehensive protections against location spoofing attempts:
+                      Securing the location data transmission and verification process:
                     </p>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <div className="border rounded-lg p-3">
-                        <h5 className="font-medium text-sm mb-1">Device Integrity Verification</h5>
-                        <p className="text-xs text-muted-foreground">
-                          Checks for rooted/jailbroken devices and mock location settings, with detection of developer mode and GPS spoofing applications that might be used to fake location data.
-                        </p>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+                      <div className="bg-white dark:bg-black/20 p-3 rounded border">
+                        <span className="text-green-500 font-semibold block mb-1">Secure Element Integration</span>
+                        Premium security implementations utilize device secure elements (where available) to cryptographically sign location data, preventing tampering.
                       </div>
-                      <div className="border rounded-lg p-3">
-                        <h5 className="font-medium text-sm mb-1">Movement Pattern Analysis</h5>
-                        <p className="text-xs text-muted-foreground">
-                          Algorithms analyze natural movement patterns versus suspicious location jumps, with machine learning models that identify unnatural location changes characteristic of spoofing.
-                        </p>
+                      <div className="bg-white dark:bg-black/20 p-3 rounded border">
+                        <span className="text-green-500 font-semibold block mb-1">Zero-Knowledge Location Proofs</span>
+                        Cryptographic proofs verify presence within a designated area without revealing exact coordinates, preserving privacy.
                       </div>
-                      <div className="border rounded-lg p-3">
-                        <h5 className="font-medium text-sm mb-1">Multi-Source Correlation</h5>
-                        <p className="text-xs text-muted-foreground">
-                          Cross-verification of location data from multiple sources (GPS, cell networks, WiFi), flagging inconsistencies that may indicate manipulation attempts.
-                        </p>
+                      <div className="bg-white dark:bg-black/20 p-3 rounded border">
+                        <span className="text-green-500 font-semibold block mb-1">Location Attestation Consensus</span>
+                        Cross-chain verification of location proofs creates an immutable record of authenticated location data.
                       </div>
-                      <div className="border rounded-lg p-3">
-                        <h5 className="font-medium text-sm mb-1">Environmental Sensors</h5>
-                        <p className="text-xs text-muted-foreground">
-                          Utilization of additional device sensors (barometer, ambient light, magnetic field) to verify location consistency with expected environmental conditions.
-                        </p>
+                      <div className="bg-white dark:bg-black/20 p-3 rounded border">
+                        <span className="text-green-500 font-semibold block mb-1">End-to-End Encrypted Transmission</span>
+                        All location data is end-to-end encrypted during transmission with perfect forward secrecy, preventing man-in-the-middle interception.
                       </div>
-                    </div>
-                  </div>
-                  
-                  <h3 className="text-xl font-semibold text-blue-700 dark:text-blue-400 mt-6">Fallback Security Measures</h3>
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    <div className="border rounded-lg p-4 text-center">
-                      <p className="font-medium">Multi-Factor Authentication</p>
-                      <p className="text-sm text-muted-foreground">Alternative verification when location unavailable</p>
-                    </div>
-                    <div className="border rounded-lg p-4 text-center">
-                      <p className="font-medium">Time-Delayed Access</p>
-                      <p className="text-sm text-muted-foreground">Enforced waiting periods for non-verified locations</p>
-                    </div>
-                    <div className="border rounded-lg p-4 text-center">
-                      <p className="font-medium">Trusted Contact Approval</p>
-                      <p className="text-sm text-muted-foreground">Secondary verification through trusted contacts</p>
                     </div>
                   </div>
                 </div>
@@ -341,152 +313,122 @@ const GeoLocationVaultDocumentation = () => {
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
-                  <Code className="h-6 w-6 text-blue-500" />
+                  <Code className="h-6 w-6 text-green-500" />
                   Technical Specifications
                 </CardTitle>
                 <CardDescription>
-                  Advanced implementation details for technical users
+                  Detailed technical information about Geo-Location Vaults
                 </CardDescription>
               </CardHeader>
               <CardContent>
                 <div className="space-y-6">
-                  <div className="rounded-lg border-2 border-dashed border-muted-foreground/20 p-6">
-                    <h3 className="text-xl font-semibold mb-4 text-blue-700 dark:text-blue-400">Location Verification Framework</h3>
-                    <p className="mb-6">
-                      The Geo-Location Vault implements a sophisticated verification system that combines multiple technologies to ensure reliable and secure location authentication while preserving user privacy and providing robust anti-spoofing protection.
-                    </p>
-                    
-                    <h4 className="text-lg font-medium mb-2">Core Components</h4>
-                    <div className="bg-slate-100 dark:bg-slate-800 rounded-lg p-4 mb-6">
-                      <h5 className="font-medium mb-2">Location Verification Stack</h5>
-                      <div className="overflow-x-auto">
-                        <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
-                          <thead className="bg-gray-100 dark:bg-gray-800">
-                            <tr>
-                              <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Component</th>
-                              <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Technology</th>
-                              <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Implementation</th>
-                              <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Primary Function</th>
-                            </tr>
-                          </thead>
-                          <tbody className="bg-white dark:bg-gray-900 divide-y divide-gray-200 dark:divide-gray-800">
-                            <tr>
-                              <td className="px-4 py-2 text-sm">Location Proof Generator</td>
-                              <td className="px-4 py-2 text-sm">Zero-Knowledge Proofs</td>
-                              <td className="px-4 py-2 text-sm">Bulletproofs / zk-SNARKs</td>
-                              <td className="px-4 py-2 text-sm">Privacy-preserving location verification</td>
-                            </tr>
-                            <tr>
-                              <td className="px-4 py-2 text-sm">Geofence Manager</td>
-                              <td className="px-4 py-2 text-sm">GeoJSON / WKT</td>
-                              <td className="px-4 py-2 text-sm">Turf.js / PostGIS</td>
-                              <td className="px-4 py-2 text-sm">Geographic boundary definition and verification</td>
-                            </tr>
-                            <tr>
-                              <td className="px-4 py-2 text-sm">Blockchain Attestation</td>
-                              <td className="px-4 py-2 text-sm">Smart Contracts</td>
-                              <td className="px-4 py-2 text-sm">EVM / TON / Solana</td>
-                              <td className="px-4 py-2 text-sm">Immutable location verification records</td>
-                            </tr>
-                            <tr>
-                              <td className="px-4 py-2 text-sm">Anti-Spoofing Engine</td>
-                              <td className="px-4 py-2 text-sm">ML-Based Detection</td>
-                              <td className="px-4 py-2 text-sm">TensorFlow / PyTorch</td>
-                              <td className="px-4 py-2 text-sm">Detection of falsified location data</td>
-                            </tr>
-                          </tbody>
-                        </table>
-                      </div>
-                    </div>
-                    
-                    <h4 className="text-lg font-medium mb-2">Privacy Technology</h4>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-                      <div className="bg-slate-100 dark:bg-slate-800 rounded-lg p-4">
-                        <h5 className="font-medium mb-2">Zero-Knowledge Location Proof</h5>
-                        <ul className="text-sm space-y-1 text-muted-foreground">
-                          <li><span className="font-mono text-xs bg-slate-200 dark:bg-slate-700 px-1 rounded">zkLoc</span> - Proprietary protocol for location verification</li>
-                          <li><span className="font-mono text-xs bg-slate-200 dark:bg-slate-700 px-1 rounded">Point-in-Polygon</span> - ZK proof for geofence containment</li>
-                          <li><span className="font-mono text-xs bg-slate-200 dark:bg-slate-700 px-1 rounded">Bulletproofs</span> - Efficient zero-knowledge range proofs</li>
-                          <li><span className="font-mono text-xs bg-slate-200 dark:bg-slate-700 px-1 rounded">Homomorphic Encryption</span> - Computing on encrypted coordinates</li>
-                          <li><span className="font-mono text-xs bg-slate-200 dark:bg-slate-700 px-1 rounded">Secure MPC</span> - Multi-party computation for verification</li>
+                  <div className="rounded-lg border p-4">
+                    <h3 className="text-lg font-medium mb-3 text-green-600">Location Verification System</h3>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+                      <div>
+                        <h4 className="font-medium mb-2">GNSS Processing</h4>
+                        <ul className="list-disc pl-5 space-y-1 text-muted-foreground">
+                          <li>Multi-constellation support (GPS, GLONASS, Galileo, BeiDou)</li>
+                          <li>Dual-frequency receiver compatibility for enhanced accuracy</li>
+                          <li>SBAS augmentation integration for sub-meter precision</li>
+                          <li>Spoofing detection via signal consistency analysis</li>
+                          <li>Raw measurement access for enhanced verification (compatible devices)</li>
                         </ul>
                       </div>
-                      <div className="bg-slate-100 dark:bg-slate-800 rounded-lg p-4">
-                        <h5 className="font-medium mb-2">Blockchain Integration</h5>
-                        <ul className="text-sm space-y-1 text-muted-foreground">
-                          <li><span className="font-mono text-xs bg-slate-200 dark:bg-slate-700 px-1 rounded">ProofStore</span> - On-chain storage of verification proofs</li>
-                          <li><span className="font-mono text-xs bg-slate-200 dark:bg-slate-700 px-1 rounded">Verifier Contracts</span> - Smart contracts for proof validation</li>
-                          <li><span className="font-mono text-xs bg-slate-200 dark:bg-slate-700 px-1 rounded">CrossChainVerify</span> - Multi-chain verification protocol</li>
-                          <li><span className="font-mono text-xs bg-slate-200 dark:bg-slate-700 px-1 rounded">Merkle Trees</span> - Efficient proof aggregation</li>
-                          <li><span className="font-mono text-xs bg-slate-200 dark:bg-slate-700 px-1 rounded">SpoofResistant™</span> - Blockchain-based replay protection</li>
+                      <div>
+                        <h4 className="font-medium mb-2">Secondary Location Technologies</h4>
+                        <ul className="list-disc pl-5 space-y-1 text-muted-foreground">
+                          <li>Cellular: Multi-carrier tower triangulation with signal strength analysis</li>
+                          <li>Wi-Fi: BSSID fingerprinting with historical database comparison</li>
+                          <li>Bluetooth: Proximity beacon detection with validation</li>
+                          <li>NFC: Optional fixed-location tag verification for high-security zones</li>
+                          <li>IP Geolocation: Enhanced routing analysis to detect tunneling</li>
                         </ul>
-                      </div>
-                    </div>
-                    
-                    <h4 className="text-lg font-medium mb-2">Geofencing Capabilities</h4>
-                    <div className="bg-slate-100 dark:bg-slate-800 rounded-lg p-4 mb-6">
-                      <p className="text-sm text-muted-foreground mb-3">
-                        The system supports advanced geospatial definitions with various boundary types:
-                      </p>
-                      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
-                        <div className="border rounded-lg p-3 bg-white dark:bg-gray-900">
-                          <h6 className="font-medium mb-1">Circular Geofences</h6>
-                          <ul className="space-y-1 text-muted-foreground">
-                            <li>• Radius: 10m to 1000km</li>
-                            <li>• Precision: ±5 meters</li>
-                            <li>• Center point + radius definition</li>
-                            <li>• Automatic earth curvature adjustment</li>
-                          </ul>
-                        </div>
-                        <div className="border rounded-lg p-3 bg-white dark:bg-gray-900">
-                          <h6 className="font-medium mb-1">Polygon Geofences</h6>
-                          <ul className="space-y-1 text-muted-foreground">
-                            <li>• Up to 1000 vertices</li>
-                            <li>• Support for holes/exclusions</li>
-                            <li>• GeoJSON/WKT format support</li>
-                            <li>• Complex boundary definitions</li>
-                          </ul>
-                        </div>
-                        <div className="border rounded-lg p-3 bg-white dark:bg-gray-900">
-                          <h6 className="font-medium mb-1">3D Geofences</h6>
-                          <ul className="space-y-1 text-muted-foreground">
-                            <li>• Altitude bounds: -500m to 10000m</li>
-                            <li>• Building/floor level precision</li>
-                            <li>• Barometric pressure correlation</li>
-                            <li>• Vertical accuracy ±2 meters</li>
-                          </ul>
-                        </div>
-                      </div>
-                    </div>
-                    
-                    <h4 className="text-lg font-medium mb-2">Anti-Spoofing Technology</h4>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <div className="border rounded-lg p-4">
-                        <h5 className="font-medium mb-1">Device Integrity Verification</h5>
-                        <p className="text-sm text-muted-foreground">
-                          Advanced runtime device environment detection utilizing SafetyNet Attestation API (Android), DeviceCheck (iOS), and custom integrity verification modules. Detects rooted/jailbroken devices, emulators, and location spoofing applications with 99.7% accuracy.
-                        </p>
-                      </div>
-                      <div className="border rounded-lg p-4">
-                        <h5 className="font-medium mb-1">Sensor Fusion Analysis</h5>
-                        <p className="text-sm text-muted-foreground">
-                          Combines data from multiple device sensors (GPS, accelerometer, gyroscope, magnetometer, barometer) to create a holistic environmental fingerprint that validates location claims. Uses proprietary algorithms to detect inconsistencies in sensor data that would indicate spoofing.
-                        </p>
-                      </div>
-                      <div className="border rounded-lg p-4">
-                        <h5 className="font-medium mb-1">Network Triangulation</h5>
-                        <p className="text-sm text-muted-foreground">
-                          Secondary location verification through cell tower and WiFi network data. Creates network fingerprints of locations and compares them against historical data and expected signatures for claimed locations. Detects VPN and proxy usage that might obscure true location.
-                        </p>
-                      </div>
-                      <div className="border rounded-lg p-4">
-                        <h5 className="font-medium mb-1">Behavioral Analysis Engine</h5>
-                        <p className="text-sm text-muted-foreground">
-                          Machine learning system that establishes baseline movement patterns and identifies anomalous location changes. The model evolves over time, becoming more accurate with increased usage while maintaining strict privacy guardrails on collected data.
-                        </p>
                       </div>
                     </div>
                   </div>
+                  
+                  <div className="rounded-lg border p-4">
+                    <h3 className="text-lg font-medium mb-3 text-green-600">Geofencing Engine</h3>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+                      <div>
+                        <h4 className="font-medium mb-2">Boundary Definition Types</h4>
+                        <ul className="list-disc pl-5 space-y-1 text-muted-foreground">
+                          <li>Circular: Simple radius-based boundaries (50m-5km)</li>
+                          <li>Polygon: Custom-shaped areas with up to 64 vertices</li>
+                          <li>Building: Structure-specific boundaries with floor separation</li>
+                          <li>Hybrid: Combined boundaries with logical operations (AND/OR/NOT)</li>
+                          <li>3D: Full volumetric boundaries with altitude constraints</li>
+                        </ul>
+                      </div>
+                      <div>
+                        <h4 className="font-medium mb-2">Boundary Security Features</h4>
+                        <ul className="list-disc pl-5 space-y-1 text-muted-foreground">
+                          <li>Dynamic boundary adjustment based on signal quality</li>
+                          <li>Time-constrained boundaries for temporary access windows</li>
+                          <li>Fuzzing capability for privacy-enhanced location validation</li>
+                          <li>Progressive authentication with nested boundary layers</li>
+                          <li>Confidence scoring with customizable threshold requirements</li>
+                        </ul>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div className="rounded-lg border p-4">
+                    <h3 className="text-lg font-medium mb-3 text-green-600">Blockchain Integration</h3>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+                      <div>
+                        <h4 className="font-medium mb-2">Location Attestation Protocol</h4>
+                        <ul className="list-disc pl-5 space-y-1 text-muted-foreground">
+                          <li>Cross-chain location verification with Triple Chain security</li>
+                          <li>Verifiable random challenges to prevent pre-computed responses</li>
+                          <li>Timelocked proof-of-location attestations</li>
+                          <li>Zero-knowledge proofs for privacy-preserving verification</li>
+                          <li>Multi-signature location confirmation for institutional security</li>
+                        </ul>
+                      </div>
+                      <div>
+                        <h4 className="font-medium mb-2">Smart Contract Integration</h4>
+                        <ul className="list-disc pl-5 space-y-1 text-muted-foreground">
+                          <li>Location-conditional transaction execution</li>
+                          <li>Geographic access control permissions framework</li>
+                          <li>Location-based signature requirements</li>
+                          <li>Physical presence oracle services</li>
+                          <li>Spatiotemporal access logs with immutable audit trail</li>
+                        </ul>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div className="rounded-lg border p-4">
+                    <h3 className="text-lg font-medium mb-3 text-green-600">Performance Specifications</h3>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+                      <div>
+                        <h4 className="font-medium mb-2">Accuracy & Precision</h4>
+                        <ul className="list-disc pl-5 space-y-1 text-muted-foreground">
+                          <li>Standard precision: 10-15 meters (outdoor)</li>
+                          <li>Enhanced precision: 3-5 meters (with multi-constellation GNSS)</li>
+                          <li>Premium precision: Sub-meter (with SBAS augmentation)</li>
+                          <li>Indoor precision: 2-8 meters (varies with infrastructure)</li>
+                          <li>Verification latency: 1-3 seconds (typical conditions)</li>
+                        </ul>
+                      </div>
+                      <div>
+                        <h4 className="font-medium mb-2">System Requirements</h4>
+                        <ul className="list-disc pl-5 space-y-1 text-muted-foreground">
+                          <li>Mobile: iOS 14+ or Android 9+ with location services</li>
+                          <li>Desktop: Chrome 85+, Firefox 80+, Edge 85+ with location API support</li>
+                          <li>Data usage: 5-15KB per verification (excluding blockchain tx)</li>
+                          <li>Battery impact: Minimal (~1% per hour) in standard mode</li>
+                          <li>Network: Requires cellular or Wi-Fi connection for verification</li>
+                        </ul>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <p className="text-sm text-muted-foreground mt-4">
+                    The Geo-Location Vault employs a sophisticated combination of positioning technologies, cryptographic verification mechanisms, and cross-chain integration to create a security system that relies on the immutable fact of physical presence. This approach fundamentally changes the security paradigm by requiring attackers to overcome not just digital barriers but physical ones as well.
+                  </p>
                 </div>
               </CardContent>
             </Card>
@@ -496,7 +438,7 @@ const GeoLocationVaultDocumentation = () => {
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
-                  <HelpCircle className="h-6 w-6 text-blue-500" />
+                  <HelpCircle className="h-6 w-6 text-green-500" />
                   Frequently Asked Questions
                 </CardTitle>
                 <CardDescription>
@@ -505,38 +447,84 @@ const GeoLocationVaultDocumentation = () => {
               </CardHeader>
               <CardContent>
                 <div className="space-y-6">
-                  <div className="border-b pb-4">
-                    <h3 className="text-lg font-medium mb-2">How accurate is the location verification?</h3>
+                  <div>
+                    <h3 className="text-lg font-medium mb-2">What happens if I need to access my vault while traveling or away from my designated secure locations?</h3>
                     <p className="text-muted-foreground">
-                      The Geo-Location Vault uses multi-source location verification with typical accuracy of 5-10 meters in urban areas with good GPS reception. In areas with poor GPS coverage, network-based location methods provide backup verification with accuracy of approximately 50-100 meters. You can configure your geofence boundaries with these accuracy considerations in mind, typically setting a minimum radius of 50 meters for high-reliability verification. The system will notify you during setup if your specified boundaries are smaller than recommended for reliable operation.
-                    </p>
-                  </div>
-                  
-                  <div className="border-b pb-4">
-                    <h3 className="text-lg font-medium mb-2">What happens if I travel and need to access my vault from a new location?</h3>
-                    <p className="text-muted-foreground">
-                      The Geo-Location Vault includes several options for travel scenarios. You can enable "Travel Mode" before your journey, which temporarily suspends location requirements for a predetermined period. Alternatively, you can add multiple approved locations to your vault configuration. For unexpected travel needs, the vault includes fallback authentication methods that require additional verification steps (such as multi-factor authentication and time delays) to grant access from non-approved locations. You can also designate trusted contacts who can approve temporary access from new locations.
-                    </p>
-                  </div>
-                  
-                  <div className="border-b pb-4">
-                    <h3 className="text-lg font-medium mb-2">How does the vault protect my location privacy?</h3>
-                    <p className="text-muted-foreground">
-                      Privacy is a core design principle of the Geo-Location Vault. The system uses Zero-Knowledge Proofs that allow verification that you're within an approved location without revealing your exact coordinates. Your precise location data never leaves your device - instead, cryptographic proofs are generated locally that confirm you meet the geographic requirements without disclosing details. Additionally, location verification records stored on the blockchain contain only encrypted verification results, not actual location data. For multi-user vaults, individual member locations remain private even from other vault members.
-                    </p>
-                  </div>
-                  
-                  <div className="border-b pb-4">
-                    <h3 className="text-lg font-medium mb-2">Can location requirements be combined with other security measures?</h3>
-                    <p className="text-muted-foreground">
-                      Yes, the Geo-Location Vault is designed to work as part of a comprehensive security strategy. Location verification can be combined with traditional authentication methods (passwords, biometrics), multi-signature requirements, time-lock features, and other security mechanisms. This allows for sophisticated security policies such as requiring fewer signatures when members are in approved locations or enabling immediate transactions from trusted locations while enforcing time delays from other locations. These combinations can be customized to create a security profile that precisely matches your risk tolerance and usage requirements.
+                      We've designed the Geo-Location Vault with flexibility for mobile lifestyles:
+                      <br /><br />
+                      <strong>Travel Mode:</strong> Before departing, you can enable Travel Mode which lets you pre-authorize temporary access locations for your journey's duration. This is ideal for planned business trips or vacations.
+                      <br /><br />
+                      <strong>Enhanced Verification Option:</strong> For unexpected location changes, you can opt to use Enhanced Verification, which allows access from unauthorized locations but requires additional authentication factors (such as biometrics, hardware keys, or multi-party approval).
+                      <br /><br />
+                      <strong>Location Hierarchy:</strong> Many users configure a tiered approach where critical operations require primary location access, while view-only or limited functionality is available from secondary locations.
+                      <br /><br />
+                      <strong>Emergency Access Protocol:</strong> You can configure an emergency override system requiring multiple trusted contacts to authorize access during unexpected circumstances.
                     </p>
                   </div>
                   
                   <div>
-                    <h3 className="text-lg font-medium mb-2">What measures protect against location spoofing?</h3>
+                    <h3 className="text-lg font-medium mb-2">How accurate is the location verification, and will it work reliably indoors?</h3>
                     <p className="text-muted-foreground">
-                      The vault implements multiple layers of anti-spoofing protection. Device integrity verification detects rooted or jailbroken devices and mock location settings. Multi-source verification cross-validates location claims using GPS, cell networks, and WiFi data. Movement pattern analysis identifies suspicious location changes that don't match natural movement patterns. Environmental sensor correlation checks that other sensor readings (barometric pressure, ambient light, etc.) match expected values for the claimed location. Additionally, blockchain-based replay protection prevents reuse of valid location proofs. These systems work together to create a highly spoof-resistant verification system with continuous security updates to address new spoofing techniques.
+                      Location accuracy varies based on environmental factors and the verification level you choose:
+                      <br /><br />
+                      <strong>Outdoor Accuracy:</strong> Standard implementation achieves 10-15 meter accuracy in open areas, with premium implementations reaching sub-meter precision using SBAS augmentation and multi-constellation GNSS.
+                      <br /><br />
+                      <strong>Indoor Performance:</strong> Our Indoor Precision Mapping technology maintains 2-8 meter accuracy inside buildings using Wi-Fi fingerprinting, Bluetooth beacons, and inertial navigation. For enterprise implementations, dedicated indoor positioning beacons can improve this to 1-2 meters.
+                      <br /><br />
+                      <strong>Reliability Features:</strong> The system is designed with degradation tolerance, automatically adjusting boundary sizes based on signal quality to prevent false rejections while maintaining security. For critical applications, you can enable beacon verification for guaranteed indoor accuracy.
+                      <br /><br />
+                      <strong>Configurable Precision:</strong> You can customize the required precision level for different locations, allowing broader boundaries for areas with challenging signal environments while maintaining strict boundaries where signals are reliable.
+                    </p>
+                  </div>
+                  
+                  <div>
+                    <h3 className="text-lg font-medium mb-2">What privacy protections are in place for my location data?</h3>
+                    <p className="text-muted-foreground">
+                      Privacy is a core design consideration:
+                      <br /><br />
+                      <strong>Zero-Knowledge Verification:</strong> Our standard implementation uses zero-knowledge proofs that verify you're within the authorized boundary without revealing your exact coordinates.
+                      <br /><br />
+                      <strong>Local Processing:</strong> Location verification calculations happen on your device, with only cryptographic attestations (not raw coordinates) transmitted to the blockchain.
+                      <br /><br />
+                      <strong>No Location Tracking:</strong> The system verifies location only at the moment of vault access, not continuously, eliminating movement tracking.
+                      <br /><br />
+                      <strong>Encrypted Transmission:</strong> All location attestation data is end-to-end encrypted during transmission with perfect forward secrecy.
+                      <br /><br />
+                      <strong>Geographic Fuzzing:</strong> For users with heightened privacy concerns, optional geographic fuzzing adds controlled randomness to verification boundaries, making it impossible to determine exact access locations from blockchain records.
+                    </p>
+                  </div>
+                  
+                  <div>
+                    <h3 className="text-lg font-medium mb-2">Can location verification be spoofed or fooled?</h3>
+                    <p className="text-muted-foreground">
+                      We've implemented multiple anti-spoofing measures:
+                      <br /><br />
+                      <strong>Multi-Signal Verification:</strong> By cross-referencing independent location sources (GPS, cellular, Wi-Fi, IP routing), spoofing one signal source is insufficient.
+                      <br /><br />
+                      <strong>Signal Analysis:</strong> The system analyzes raw signal characteristics to detect inconsistencies that indicate spoofing attempts.
+                      <br /><br />
+                      <strong>Environmental Context:</strong> Verification can include ambient environmental data (magnetic fields, barometric pressure, ambient sound) that's difficult to simulate remotely.
+                      <br /><br />
+                      <strong>Hardware Security:</strong> Premium implementations utilize secure element chips in modern devices to cryptographically sign location data at the hardware level.
+                      <br /><br />
+                      <strong>Physical Beacons:</strong> For maximum security requirements (such as institutional vaults), physical beacon verification can be added which requires proximity to tamper-resistant physical devices.
+                    </p>
+                  </div>
+                  
+                  <div>
+                    <h3 className="text-lg font-medium mb-2">Can I share access to my Geo-Location Vault with family members or trusted associates?</h3>
+                    <p className="text-muted-foreground">
+                      Yes, the vault supports sophisticated sharing options:
+                      <br /><br />
+                      <strong>Multi-User Configuration:</strong> You can authorize multiple users for your vault, each with their own location requirements.
+                      <br /><br />
+                      <strong>Permission Granularity:</strong> Each authorized user can have customized permissions defining exactly what operations they can perform and from which locations.
+                      <br /><br />
+                      <strong>Co-Location Requirements:</strong> For maximum security, you can require multiple authorized users to be physically present in the same location simultaneously for critical operations.
+                      <br /><br />
+                      <strong>Temporary Access:</strong> Grant time-limited access to other users that automatically expires after a predetermined period.
+                      <br /><br />
+                      <strong>Activity Monitoring:</strong> All access attempts are logged with location attestation, providing complete visibility into who accessed the vault, when, and from where.
                     </p>
                   </div>
                 </div>
@@ -544,13 +532,13 @@ const GeoLocationVaultDocumentation = () => {
               <CardFooter className="border-t p-4">
                 <div className="w-full">
                   <p className="text-sm text-muted-foreground mb-4">
-                    Have more questions about our location-based security vaults? Our team is available to provide detailed information and assist with customizing your vault configuration.
+                    Have more questions about securing your digital assets with location-based authentication? Our team can provide personalized guidance on configuring the perfect Geo-Location Vault for your security needs.
                   </p>
                   <div className="flex flex-col sm:flex-row gap-4">
                     <Button variant="outline" className="flex-1">
                       Contact Support
                     </Button>
-                    <Button className="bg-gradient-to-r from-blue-500 to-emerald-500 hover:from-blue-600 hover:to-emerald-600 flex-1" asChild>
+                    <Button className="bg-gradient-to-r from-green-500 to-blue-500 hover:from-green-600 hover:to-blue-600 flex-1" asChild>
                       <Link href="/geo-location-vault">Create Geo-Location Vault</Link>
                     </Button>
                   </div>
@@ -560,7 +548,7 @@ const GeoLocationVaultDocumentation = () => {
           </TabsContent>
         </Tabs>
       </div>
-    </Layout>
+    </DocumentationLayout>
   );
 };
 
