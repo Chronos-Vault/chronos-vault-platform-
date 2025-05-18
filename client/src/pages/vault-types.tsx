@@ -1792,25 +1792,7 @@ const VaultTypesPage = () => {
               </div>
             </div>
             
-            {/* Cross-Chain Security Stats */}
-            <div className="mt-10 grid grid-cols-2 md:grid-cols-4 gap-6">
-              <div className="bg-black/30 rounded-lg p-4 text-center">
-                <div className="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-purple-400 to-pink-500">99.9997%</div>
-                <div className="text-sm text-gray-400 mt-1">Uptime Guarantee</div>
-              </div>
-              
-              <div className="bg-black/30 rounded-lg p-4 text-center">
-                <div className="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-green-400 to-teal-500">3-Chain</div>
-                <div className="text-sm text-gray-400 mt-1">Verification System</div>
-              </div>
-              
-              <div className="bg-black/30 rounded-lg p-4 text-center">
-                <div className="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-cyan-500">Military</div>
-                <div className="text-sm text-gray-400 mt-1">Grade Encryption</div>
-              </div>
-              
 
-            </div>
           </motion.div>
         </div>
       </div>
