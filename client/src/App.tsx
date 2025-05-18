@@ -163,6 +163,21 @@ function App() {
           <Route path="/ton-specific-vault" component={TonSpecificVault} />
           <Route path="/sovereign-fortress-vault" component={SovereignFortressVault} />
           
+          {/* Vault Creation Routes */}
+          <Route path="/create-vault/standard" component={CreateVaultEnhanced} />
+          <Route path="/create-vault/multi-signature" component={MultiSignatureVault} />
+          <Route path="/create-vault/geo" component={GeoVaultDocPage} />
+          <Route path="/create-vault/smart-contract" component={SmartContractVault} />
+          <Route path="/create-vault/inheritance" component={IntentInheritanceVault} />
+          <Route path="/create-vault/dynamic" component={CreateVaultEnhanced} />
+          <Route path="/create-vault/nft-powered" component={CreateVaultEnhanced} />
+          <Route path="/create-vault/unique-security" component={CreateVaultEnhanced} />
+          <Route path="/create-vault/ai-intent" component={IntentInheritanceVault} />
+          <Route path="/create-vault/time-locked-memory" component={SpecializedVaultMemory} />
+          <Route path="/create-vault/standard-crypto" component={CreateVault} />
+          <Route path="/create-vault/milestone" component={CreateVaultEnhanced} />
+          <Route path="/create-vault/family-heritage" component={IntentInheritanceVault} />
+          
           {/* New Innovative Vault Types */}
           <Route path="/ai-investment-vault" component={AIInvestmentVault} />
           <Route path="/milestone-based-vault" component={MilestoneBasedVault} />
