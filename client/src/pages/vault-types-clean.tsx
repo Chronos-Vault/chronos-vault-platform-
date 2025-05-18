@@ -616,8 +616,8 @@ const VaultTypesPage = () => {
           </TabsList>
         </Tabs>
         
-        {/* Category Description - More mobile friendly */}
-        <div className="mb-4 bg-black/20 backdrop-blur-sm p-3 rounded-xl border border-gray-800" 
+        {/* Category Description - Completely redesigned for mobile */}
+        <div className="mb-4 bg-black/20 backdrop-blur-sm p-3 rounded-xl border border-gray-800 static" 
           style={{ borderColor: `${vaultCategories[activeCategory as keyof typeof vaultCategories].color}40` }}>
           <div className="flex items-center mb-1">
             <span className="flex-shrink-0 h-6 w-6 flex items-center justify-center rounded-full mr-2" 
