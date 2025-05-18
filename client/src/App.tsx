@@ -75,6 +75,7 @@ import UniqueSecurityVaultDocumentation from './pages/documentation/unique-secur
 import InheritancePlanningVaultDocumentation from './pages/documentation/inheritance-planning-vault';
 import PaymentChannelVaultDocumentation from './pages/documentation/payment-channel-vault';
 import BitcoinHalvingVaultDocumentation from './pages/documentation/bitcoin-halving-vault';
+import AIIntentInheritanceVaultDocumentation from './pages/documentation/ai-intent-inheritance-vault';
 import NFTPoweredVault from './pages/nft-powered-vault';
 import QuantumResistantVault from './pages/quantum-resistant-vault';
 import SovereignFortressVault from './pages/sovereign-fortress-vault';
@@ -211,7 +212,7 @@ function App() {
           <Route path="/create-vault/family-vault" component={IntentInheritanceVault} />
           <Route path="/create-vault/enhanced" component={CreateVaultEnhanced} />
           {/* Removed duplicate unique-security route, using the newer implementation below */}
-          <Route path="/create-vault/ai-intent" component={IntentInheritanceVault} />
+          <Route path="/create-vault/ai-intent" component={AIIntentInheritanceVaultDocumentation} />
           <Route path="/create-vault/time-locked-memory" component={TimeLockedMemoryVaultDocumentation} />
           <Route path="/create-vault/standard-crypto" component={CreateVault} />
           <Route path="/create-vault/milestone-doc" component={MilestoneBasedVaultPage} />
@@ -269,6 +270,7 @@ function App() {
           <Route path="/documentation/inheritance-planning-vault" component={InheritancePlanningVaultDocumentation} />
           <Route path="/documentation/payment-channel-vault" component={PaymentChannelVaultDocumentation} />
           <Route path="/documentation/bitcoin-halving-vault" component={BitcoinHalvingVaultDocumentation} />
+          <Route path="/documentation/ai-intent-inheritance-vault" component={AIIntentInheritanceVaultDocumentation} />
           <Route path="/cvt-tokenomics" component={CvtTokenomics} />
           <Route path="/roadmap" component={Roadmap} />
           <Route path="/team" component={Team} />

@@ -259,6 +259,23 @@ const vaultTypes = [
     category: "investment",
   },
   {
+    id: "ai-intent-inheritance",
+    name: "AI Intent Inheritance Vault",
+    icon: "🧠",
+    href: "/documentation/ai-intent-inheritance-vault",
+    description: "Natural language inheritance planning with advanced intent recognition",
+    features: [
+      "Natural language intent processing",
+      "Relationship-based beneficiary system",
+      "Legal compliance translation",
+      "Personal legacy preservation",
+      "AI-mediated contingencies",
+    ],
+    isNew: true,
+    highlight: true,
+    category: "inheritance",
+  },
+  {
     id: "unique-security",
     name: "Unique Security Vault",
     icon: "🛡️",
