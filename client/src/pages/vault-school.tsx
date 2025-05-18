@@ -196,7 +196,7 @@ const vaultTypes = [
     id: "investment-discipline-advanced",
     name: "Investment Discipline Vault",
     icon: "📈",
-    href: "/investment-discipline-vault",
+    href: "/documentation/investment-discipline-vault",
     description: "Sophisticated investment strategy enforcement with behavioral safeguards",
     features: [
       "Strategy enforcement through time locks",
@@ -213,7 +213,7 @@ const vaultTypes = [
     id: "nft-powered",
     name: "NFT-Powered Vault",
     icon: "🖼️",
-    href: "/nft-powered-vault",
+    href: "/documentation/nft-powered-vault",
     description: "Vaults secured by ownership of specific NFTs as access keys",
     features: [
       "NFT-based access control",
@@ -310,7 +310,7 @@ const vaultTypes = [
     id: "dynamic-vault",
     name: "Dynamic Security Vault",
     icon: "🔄",
-    href: "/dynamic-vault",
+    href: "/documentation/dynamic-security-vault",
     description: "Adaptable vault with customizable security parameters and realtime risk adaptation",
     features: [
       "Dynamic security level adjustment",
@@ -326,7 +326,7 @@ const vaultTypes = [
     id: "payment-channel",
     name: "Payment Channel Vault",
     icon: "💸",
-    href: "/payment-channel-vault",
+    href: "/documentation/payment-channel-vault",
     description: "Optimized for high-frequency transactions with instant settlement",
     features: [
       "Off-chain transaction capabilities",
