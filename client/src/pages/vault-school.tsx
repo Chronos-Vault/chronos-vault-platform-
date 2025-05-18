@@ -247,7 +247,7 @@ const vaultTypes = [
     id: "bitcoin-halving",
     name: "Bitcoin Halving Vault",
     icon: "₿",
-    href: "/bitcoin-halving-vault",
+    href: "/documentation/bitcoin-halving-vault",
     description: "Bitcoin-specific vault optimized for halving cycle investment strategy",
     features: [
       "Halving cycle-based time locks",
