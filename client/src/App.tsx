@@ -48,6 +48,7 @@ import InvestmentDisciplineVaultDoc from './pages/investment-discipline-vault-do
 import BitcoinHalvingVault from './pages/bitcoin-halving-vault';
 import CrossChainVault from './pages/cross-chain-vault';
 import IntentInheritanceVault from './pages/intent-inheritance-vault';
+import EnhancedBiometricVault from './pages/enhanced-biometric-vault';
 import QuantumVault from './pages/quantum-vault';
 import TonSpecificVault from './pages/ton-specific-vault';
 import SovereignFortressVault from './pages/sovereign-fortress-vault';
@@ -166,7 +167,7 @@ function App() {
           {/* Vault Creation Routes */}
           <Route path="/create-vault/standard" component={CreateVaultEnhanced} />
           <Route path="/create-vault/multi-signature" component={MultiSignatureVault} />
-          <Route path="/create-vault/biometric" component={BiometricVault} />
+          <Route path="/create-vault/biometric" component={EnhancedBiometricVault} />
           <Route path="/create-vault/geo" component={GeoVaultDocPage} />
           <Route path="/create-vault/smart-contract" component={SmartContractVault} />
           <Route path="/create-vault/inheritance" component={IntentInheritanceVault} />
