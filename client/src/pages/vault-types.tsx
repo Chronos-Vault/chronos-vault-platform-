@@ -1629,7 +1629,7 @@ const VaultTypesPage = () => {
         </div>
         
       </div>
-      {/* Create This Vault Button */}
+      {/* Professional Create Vault Button */}
       {selected && (
         <motion.div 
           className="fixed bottom-8 left-0 right-0 z-50 flex justify-center"
@@ -1637,15 +1637,20 @@ const VaultTypesPage = () => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.3 }}
         >
-          <button 
-            onClick={() => navigate(`/create-vault/${selected}`)}
-            className="flex items-center gap-2 px-8 py-4 bg-gradient-to-r from-purple-600 to-pink-600 rounded-full text-white font-bold shadow-lg shadow-purple-600/30 hover:shadow-purple-600/50 hover:-translate-y-1 transition-all"
-          >
-            <span className="text-xl">Create This Vault</span>
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M5 12h14M12 5l7 7-7 7"/>
-            </svg>
-          </button>
+          <div className="bg-black/60 backdrop-blur-md border border-purple-700/30 rounded-xl p-4 shadow-xl">
+            <div className="text-center mb-2">
+              <span className="text-gray-300 text-sm">Ready to secure your assets?</span>
+            </div>
+            <button 
+              onClick={() => navigate(`/create-vault/${selected}`)}
+              className="flex items-center gap-3 px-8 py-4 bg-gradient-to-r from-purple-600 to-pink-600 rounded-lg text-white font-bold shadow-lg shadow-purple-600/30 hover:shadow-purple-600/50 hover:-translate-y-1 transition-all"
+            >
+              <span className="text-lg">Create {VAULT_TYPES.find(v => v.id === selected)?.title || 'Vault'}</span>
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M5 12h14M12 5l7 7-7 7"/>
+              </svg>
+            </button>
+          </div>
         </motion.div>
       )}
     </div>
