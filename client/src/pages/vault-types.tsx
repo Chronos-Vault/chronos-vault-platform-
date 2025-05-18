@@ -1696,13 +1696,8 @@ const VaultTypesPage = () => {
             </div>
           </div>
           
-          {/* Category Description Banner */}
-          <motion.div 
-            className="mb-6 bg-black/40 backdrop-blur-sm border border-gray-800 rounded-xl p-4 flex items-center"
-            initial={{ opacity: 0, y: -10 }}
-            animate={{ opacity: 1, y: 0 }}
-            key={activeCategory} // Re-animate when changing category
-          >
+          {/* Category Description Banner - Static Version Without Animation */}
+          <div className="mb-6 bg-black/40 backdrop-blur-sm border border-gray-800 rounded-xl p-4 flex items-center">
             <div className="text-3xl mr-4">{vaultCategories[activeCategory].icon}</div>
             <div>
               <h3 className="text-xl font-semibold" style={{ color: vaultCategories[activeCategory].color }}>
@@ -1716,7 +1711,7 @@ const VaultTypesPage = () => {
                 {activeCategory === 'inheritance' && 'Legacy planning vaults with inheritance and multimedia capabilities'}
               </p>
             </div>
-          </motion.div>
+          </div>
           
           {/* Vault Grid with Animation */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-6">
