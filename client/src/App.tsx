@@ -71,6 +71,7 @@ import IntentInheritanceVault from './pages/intent-inheritance-vault';
 import EnhancedBiometricVault from './pages/enhanced-biometric-vault';
 import QuantumVault from './pages/quantum-vault';
 import TonSpecificVault from './pages/ton-specific-vault';
+import LocationTimeVault from './pages/location-time-vault';
 
 // New Innovative Vault Types
 import AIInvestmentVault from './pages/vault-types/ai-investment-vault';
@@ -221,6 +222,7 @@ function App() {
           <Route path="/create-vault/nft-powered" component={NFTPoweredVault} />
           <Route path="/create-vault/quantum-resistant" component={QuantumResistantVault} />
           <Route path="/create-vault/standard" component={SovereignFortressVault} />
+          <Route path="/create-vault/location-time" component={LocationTimeVault} />
           
           {/* New Innovative Vault Types */}
           <Route path="/ai-investment-vault" component={AIInvestmentVault} />
