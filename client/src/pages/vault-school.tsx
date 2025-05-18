@@ -531,7 +531,7 @@ const VaultSchoolPage = () => {
             ))}
           </TabsList>
           
-          {Object.keys(categories).map((categoryKey) => (
+          {(Object.keys(categories) as Array<keyof typeof categories>).map((categoryKey) => (
             <TabsContent key={categoryKey} value={categoryKey} className="mt-0">
               <div className="mb-6">
                 <div className={`h-1 w-full rounded ${categories[categoryKey].color} mb-4`}></div>

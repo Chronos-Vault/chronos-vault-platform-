@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Separator } from "@/components/ui/separator";
-import Layout from "@/components/layout/Layout";
+import DocumentationLayout from "@/components/layout/DocumentationLayout";
 import { 
   Lock, 
   Shield, 
@@ -25,7 +25,7 @@ import {
 
 const QuantumResistantVaultDocumentation = () => {
   return (
-    <Layout>
+    <DocumentationLayout>
       <div className="container mx-auto py-10 px-4 max-w-6xl">
         <div className="flex flex-col md:flex-row justify-between items-start mb-8">
           <div>
@@ -631,7 +631,7 @@ const QuantumResistantVaultDocumentation = () => {
           </TabsContent>
         </Tabs>
       </div>
-    </Layout>
+    </DocumentationLayout>
   );
 };
 
