@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useLocation } from 'wouter';
 import { Button } from '@/components/ui/button';
-import { ArrowLeft, ArrowRight, Check, ChevronUp, ChevronDown } from 'lucide-react';
+import { ArrowLeft, ArrowRight, Check, ChevronUp, ChevronDown, Shield, Brain, Clock, Target, BanknoteIcon } from 'lucide-react';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import { motion, AnimatePresence } from 'framer-motion';
 
@@ -426,7 +426,48 @@ const VaultCard = ({ vault, selected, onClick }: { vault: any; selected: boolean
 const VaultTypesPage = () => {
   const [selected, setSelected] = useState(VAULT_TYPES[0].id);
   const [activeCategory, setActiveCategory] = useState('all');
+  const [showSovereignInfo, setShowSovereignInfo] = useState(false);
   const [, navigate] = useLocation();
+  
+  // Track category selections to maintain state when switching tabs
+  const [categorySelections, setCategorySelections] = useState({
+    all: 'standard',
+    innovative: 'ai-intent',
+    investment: 'investment-discipline',
+    specialized: 'time-locked-memory',
+    security: 'multi-signature',
+    basic: 'time-lock'
+  });
+  
+  // Update selection tracking when vault is selected
+  useEffect(() => {
+    setCategorySelections(prev => ({
+      ...prev,
+      [activeCategory]: selected
+    }));
+  }, [selected]);
+  
+  // Update selected vault when changing categories
+  useEffect(() => {
+    const categorySelection = categorySelections[activeCategory as keyof typeof categorySelections];
+    // Verify the selection exists in the current category
+    const vaultExists = vaultCategories[activeCategory as keyof typeof vaultCategories].vaults
+      .some(v => v.id === categorySelection);
+    
+    if (vaultExists) {
+      setSelected(categorySelection);
+    } else {
+      // If not, select the first vault in the category
+      const firstVaultInCategory = vaultCategories[activeCategory as keyof typeof vaultCategories].vaults[0];
+      if (firstVaultInCategory) {
+        setSelected(firstVaultInCategory.id);
+        setCategorySelections(prev => ({
+          ...prev,
+          [activeCategory]: firstVaultInCategory.id
+        }));
+      }
+    }
+  }, [activeCategory]);
   
   const selectedVault = VAULT_TYPES.find(v => v.id === selected) || VAULT_TYPES[0];
   
@@ -436,12 +477,14 @@ const VaultTypesPage = () => {
       title: 'All Vaults',
       color: '#6B00D7',
       icon: '🏰',
+      component: <BanknoteIcon className="h-4 w-4" />,
       vaults: VAULT_TYPES
     },
     innovative: {
       title: 'Innovative Smart Vaults',
       color: '#00E676',
       icon: '🧠',
+      component: <Brain className="h-4 w-4" />,
       vaults: VAULT_TYPES.filter(v => 
         v.id === 'ai-intent' || 
         v.id === 'ai-assisted' || 
@@ -453,6 +496,7 @@ const VaultTypesPage = () => {
       title: 'Asset & Investment',
       color: '#00BCD4',
       icon: '💎',
+      component: <BanknoteIcon className="h-4 w-4" />,
       vaults: VAULT_TYPES.filter(v => 
         v.id === 'investment-discipline' || 
         v.id === 'ai-assisted' ||
@@ -463,6 +507,7 @@ const VaultTypesPage = () => {
       title: 'Specialized Purpose',
       color: '#FF9800',
       icon: '🎯',
+      component: <Target className="h-4 w-4" />,
       vaults: VAULT_TYPES.filter(v => 
         v.id === 'time-locked-memory' ||
         v.id === 'nft-powered' ||
@@ -473,6 +518,7 @@ const VaultTypesPage = () => {
       title: 'Advanced Security',
       color: '#F44336',
       icon: '🛡️',
+      component: <Shield className="h-4 w-4" />,
       vaults: VAULT_TYPES.filter(v => 
         v.tags.includes('Zero-Knowledge') || 
         v.tags.includes('Quantum-Resistant') ||
@@ -480,6 +526,15 @@ const VaultTypesPage = () => {
         v.id === 'biometric' ||
         v.id === 'geo-location' ||
         v.id === 'unique-security')
+    },
+    basic: {
+      title: 'Basic Time Vaults',
+      color: '#9C27B0',
+      icon: '⏱️',
+      component: <Clock className="h-4 w-4" />,
+      vaults: VAULT_TYPES.filter(v => 
+        v.id === 'time-lock' ||
+        v.id === 'standard')
     }
   };
   
@@ -514,21 +569,69 @@ const VaultTypesPage = () => {
           </Button>
         </div>
         
+        {/* Sovereign Fortress Vault Featured Card - Moved above categories but not overlapping */}
+        <div className="mb-8">
+          <div className="bg-gradient-to-r from-purple-900/40 to-indigo-900/40 border border-purple-500/30 rounded-xl p-4 shadow-lg relative overflow-hidden">
+            <div className="flex items-start mb-3">
+              <div className="text-4xl mr-4">👑</div>
+              <div>
+                <h2 className="text-xl font-bold text-white mb-1">Sovereign Fortress Vault™</h2>
+                <p className="text-purple-200 text-sm">Ultimate all-in-one vault with supreme security & flexibility</p>
+              </div>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+              <div className="backdrop-blur-sm bg-purple-900/20 rounded-lg p-3 border border-purple-500/20">
+                <div className="font-semibold mb-1">Triple-Chain Security</div>
+                <p className="text-xs text-gray-300">Secures your assets across Ethereum, TON and Solana for unparalleled protection</p>
+              </div>
+              <div className="backdrop-blur-sm bg-purple-900/20 rounded-lg p-3 border border-purple-500/20">
+                <div className="font-semibold mb-1">AI-Powered Intelligence</div>
+                <p className="text-xs text-gray-300">Smart security protocols that adapt to threats in real-time</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        
         {/* Category Tabs */}
         <Tabs defaultValue="all" value={activeCategory} onValueChange={setActiveCategory} className="mb-8">
-          <TabsList className="w-full grid grid-cols-2 md:grid-cols-5 bg-black/20 p-1">
+          <TabsList className="w-full grid grid-cols-2 md:grid-cols-6 bg-black/20 p-1">
             {Object.entries(vaultCategories).map(([key, category]) => (
               <TabsTrigger 
                 key={key} 
                 value={key}
                 className="data-[state=active]:bg-white/10 data-[state=active]:text-white"
               >
-                <span className="mr-2">{category.icon}</span>
-                {category.title}
+                {category.component ? (
+                  <span className="mr-1">{category.component}</span>
+                ) : (
+                  <span className="mr-1">{category.icon}</span>
+                )}
+                <span className="hidden sm:inline">{category.title}</span>
+                <span className="sm:hidden">{category.title.split(' ')[0]}</span>
               </TabsTrigger>
             ))}
           </TabsList>
         </Tabs>
+        
+        {/* Category Description */}
+        <div className="mb-6 bg-black/20 backdrop-blur-sm p-3 rounded-xl border border-gray-800">
+          <h2 className="text-lg font-bold flex items-center" style={{ color: vaultCategories[activeCategory as keyof typeof vaultCategories].color }}>
+            {vaultCategories[activeCategory as keyof typeof vaultCategories].component ? (
+              <span className="mr-2">{vaultCategories[activeCategory as keyof typeof vaultCategories].component}</span>
+            ) : (
+              <span className="mr-2">{vaultCategories[activeCategory as keyof typeof vaultCategories].icon}</span>
+            )}
+            {vaultCategories[activeCategory as keyof typeof vaultCategories].title}
+          </h2>
+          <p className="text-gray-300 text-sm">
+            {activeCategory === 'all' ? 
+              `Showing all ${currentVaults.length} vault types available in Chronos Vault platform. Browse categories for specialized solutions.` : 
+              vaultCategories[activeCategory as keyof typeof vaultCategories].vaults.length === 0 ? 
+                'No vaults found in this category.' : 
+                `Showing ${vaultCategories[activeCategory as keyof typeof vaultCategories].vaults.length} vault types optimized for ${vaultCategories[activeCategory as keyof typeof vaultCategories].title.toLowerCase()}.`
+            }
+          </p>
+        </div>
         
         {/* Vault Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
