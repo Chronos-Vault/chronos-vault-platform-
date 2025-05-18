@@ -1637,29 +1637,25 @@ const VaultTypesPage = () => {
             className="rounded-xl bg-black/40 backdrop-blur-md border border-purple-900/40 p-8 relative overflow-hidden"
           >
             {/* Animated Background Effects */}
+            {/* Simplified Background - Performance Optimized */}
             <div className="absolute inset-0 overflow-hidden opacity-20">
-              <div className="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-purple-500 to-transparent animate-scan-horizontal"></div>
-              <div className="absolute top-0 left-0 h-full w-px bg-gradient-to-b from-transparent via-purple-500 to-transparent animate-scan-vertical"></div>
-              <div className="absolute bottom-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-purple-500 to-transparent animate-scan-horizontal animation-delay-1000"></div>
-              <div className="absolute top-0 right-0 h-full w-px bg-gradient-to-b from-transparent via-purple-500 to-transparent animate-scan-vertical animation-delay-1000"></div>
+              <div className="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-purple-500 to-transparent"></div>
+              <div className="absolute top-0 left-0 h-full w-px bg-gradient-to-b from-transparent via-purple-500 to-transparent"></div>
+              <div className="absolute bottom-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-purple-500 to-transparent"></div>
+              <div className="absolute top-0 right-0 h-full w-px bg-gradient-to-b from-transparent via-purple-500 to-transparent"></div>
               
-              {/* Chain Network Visualization */}
+              {/* Simplified Network Visualization - Performance Optimized */}
               <div className="absolute inset-0 opacity-30">
                 <svg width="100%" height="100%" className="absolute">
-                  <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
-                    <path d="M 40 0 L 0 0 0 40" fill="none" stroke="rgba(107, 0, 215, 0.2)" strokeWidth="1"/>
-                  </pattern>
-                  <rect width="100%" height="100%" fill="url(#grid)" />
+                  {/* Network Nodes - Static for better performance */}
+                  <circle cx="20%" cy="30%" r="5" fill="rgba(255, 90, 247, 0.6)" />
+                  <circle cx="50%" cy="70%" r="5" fill="rgba(0, 230, 118, 0.6)" />
+                  <circle cx="80%" cy="20%" r="5" fill="rgba(33, 150, 243, 0.6)" />
                   
-                  {/* Network Nodes */}
-                  <circle cx="20%" cy="30%" r="5" fill="rgba(255, 90, 247, 0.6)" className="animate-pulse"/>
-                  <circle cx="50%" cy="70%" r="5" fill="rgba(0, 230, 118, 0.6)" className="animate-pulse animation-delay-700"/>
-                  <circle cx="80%" cy="20%" r="5" fill="rgba(33, 150, 243, 0.6)" className="animate-pulse animation-delay-1500"/>
-                  
-                  {/* Network Connections */}
-                  <line x1="20%" y1="30%" x2="50%" y2="70%" stroke="rgba(255, 90, 247, 0.6)" strokeWidth="1" strokeDasharray="5,5" className="animate-dash"/>
-                  <line x1="50%" y1="70%" x2="80%" y2="20%" stroke="rgba(0, 230, 118, 0.6)" strokeWidth="1" strokeDasharray="5,5" className="animate-dash animation-delay-700"/>
-                  <line x1="80%" y1="20%" x2="20%" y2="30%" stroke="rgba(33, 150, 243, 0.6)" strokeWidth="1" strokeDasharray="5,5" className="animate-dash animation-delay-1500"/>
+                  {/* Network Connections - Static for better performance */}
+                  <line x1="20%" y1="30%" x2="50%" y2="70%" stroke="rgba(255, 90, 247, 0.6)" strokeWidth="1" strokeDasharray="5,5" />
+                  <line x1="50%" y1="70%" x2="80%" y2="20%" stroke="rgba(0, 230, 118, 0.6)" strokeWidth="1" strokeDasharray="5,5" />
+                  <line x1="80%" y1="20%" x2="20%" y2="30%" stroke="rgba(33, 150, 243, 0.6)" strokeWidth="1" strokeDasharray="5,5" />
                 </svg>
               </div>
             </div>
@@ -1674,6 +1670,25 @@ const VaultTypesPage = () => {
           </motion.div>
         </div>
       </div>
+      {/* Create This Vault Button */}
+      {selected && (
+        <motion.div 
+          className="fixed bottom-8 left-0 right-0 z-50 flex justify-center"
+          initial={{ opacity: 0, y: 50 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.3 }}
+        >
+          <button 
+            onClick={() => navigate(`/create-vault/${selected}`)}
+            className="flex items-center gap-2 px-8 py-4 bg-gradient-to-r from-purple-600 to-pink-600 rounded-full text-white font-bold shadow-lg shadow-purple-600/30 hover:shadow-purple-600/50 hover:-translate-y-1 transition-all"
+          >
+            <span className="text-xl">Create This Vault</span>
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M5 12h14M12 5l7 7-7 7"/>
+            </svg>
+          </button>
+        </motion.div>
+      )}
     </div>
   );
 };
