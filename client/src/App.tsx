@@ -173,8 +173,8 @@ function App() {
           <Route path="/create-vault/biometric" component={EnhancedBiometricVault} />
           <Route path="/create-vault/geo" component={GeoVaultDocPage} />
           <Route path="/create-vault/geo-location" component={GeoLocationVault} />
-          <Route path="/create-vault/smart-contract" component={SmartContractVault} />
-          <Route path="/create-vault/smart" component={EnhancedSmartContractVault} />
+          <Route path="/create-vault/smart-contract-doc" component={SmartContractVault} />
+          <Route path="/create-vault/smart-contract" component={EnhancedSmartContractVault} />
           <Route path="/create-vault/inheritance" component={IntentInheritanceVault} />
           <Route path="/create-vault/family-vault" component={IntentInheritanceVault} />
           <Route path="/create-vault/dynamic" component={CreateVaultEnhanced} />
