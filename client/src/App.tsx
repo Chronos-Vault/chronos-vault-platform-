@@ -50,6 +50,8 @@ import InvestmentDisciplineVaultDoc from './pages/investment-discipline-vault-do
 import BitcoinHalvingVault from './pages/bitcoin-halving-vault';
 import CrossChainVault from './pages/cross-chain-vault';
 import CrossChainVaultForm from './pages/cross-chain-vault-form';
+import AIInvestmentVaultPage from './pages/vault-types/ai-investment-vault';
+import AIAssistedInvestmentVault from './pages/ai-assisted-investment-vault';
 import IntentInheritanceVault from './pages/intent-inheritance-vault';
 import EnhancedBiometricVault from './pages/enhanced-biometric-vault';
 import QuantumVault from './pages/quantum-vault';
@@ -190,6 +192,8 @@ function App() {
           <Route path="/create-vault/investment-discipline" component={InvestmentDisciplineVault} />
           <Route path="/create-vault/cross-chain-doc" component={CrossChainVault} />
           <Route path="/create-vault/cross-chain" component={CrossChainVaultForm} />
+          <Route path="/create-vault/ai-assisted-doc" component={AIInvestmentVaultPage} />
+          <Route path="/create-vault/ai-assisted" component={AIAssistedInvestmentVault} />
           <Route path="/create-vault/quantum" component={QuantumVault} />
           <Route path="/create-vault/ton-specific" component={TonSpecificVault} />
           
