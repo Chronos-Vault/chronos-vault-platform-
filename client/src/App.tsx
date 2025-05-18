@@ -69,7 +69,7 @@ import SovereignFortressVaultDocumentation from './pages/documentation/sovereign
 import GeoLocationVaultDocumentation from './pages/documentation/geo-location-vault';
 import LocationTimeVaultDocumentation from './pages/documentation/location-time-vault';
 import NFTPoweredVaultDocumentation from './pages/documentation/nft-powered-vault';
-import InvestmentDisciplineVaultDocumentation from './pages/documentation/investment-discipline-vault';
+import InvestmentDisciplineVaultDocumentation from './pages/documentation/investment-discipline-vault-new';
 import QuantumResistantVaultDocumentation from './pages/documentation/quantum-resistant-vault';
 import NFTPoweredVault from './pages/nft-powered-vault';
 import QuantumResistantVault from './pages/quantum-resistant-vault';
