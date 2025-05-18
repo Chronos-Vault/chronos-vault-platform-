@@ -244,7 +244,7 @@ const vaultTypes = [
     id: "quantum-resistant",
     name: "Quantum-Resistant Vault",
     icon: "🔐",
-    href: "/quantum-resistant-vault",
+    href: "/documentation/quantum-resistant-vault",
     description: "Future-proof vault using post-quantum cryptographic algorithms",
     features: [
       "Post-quantum cryptographic security",
@@ -254,6 +254,7 @@ const vaultTypes = [
       "Forward security guarantees",
     ],
     isNew: true,
+    highlight: true,
     category: "security",
   },
   {
