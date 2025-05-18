@@ -1,6 +1,50 @@
+import { useState } from "react";
 import { Link } from "wouter";
 import { Button } from "@/components/ui/button";
-import { ChevronRight } from "lucide-react";
+import { ChevronRight, Filter, BookOpen, Shield, Coins, Clock, Crown, Code } from "lucide-react";
+import { motion } from "framer-motion";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Badge } from "@/components/ui/badge";
+
+// Category definitions
+const categories = {
+  all: {
+    name: "All Vaults",
+    description: "Explore our complete collection of specialized vault types",
+    icon: <BookOpen className="w-5 h-5" />,
+    color: "bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7]",
+  },
+  security: {
+    name: "Security Vaults",
+    description: "Vaults with advanced security features and authentication methods",
+    icon: <Shield className="w-5 h-5" />,
+    color: "bg-gradient-to-r from-[#6B00D7] to-[#3B82F6]",
+  },
+  blockchain: {
+    name: "Blockchain Vaults",
+    description: "Vaults leveraging multi-chain and smart contract technologies",
+    icon: <Code className="w-5 h-5" />,
+    color: "bg-gradient-to-r from-[#3B82F6] to-[#06B6D4]",
+  },
+  investment: {
+    name: "Investment Strategy Vaults",
+    description: "Vaults designed to enforce investment discipline and strategies",
+    icon: <Coins className="w-5 h-5" />,
+    color: "bg-gradient-to-r from-[#10B981] to-[#6EE7B7]",
+  },
+  legacy: {
+    name: "Legacy & Inheritance Vaults",
+    description: "Vaults for estate planning and preserving digital memories",
+    icon: <Clock className="w-5 h-5" />,
+    color: "bg-gradient-to-r from-[#F59E0B] to-[#FBBF24]",
+  },
+  premium: {
+    name: "Premium Vaults",
+    description: "Our most advanced all-in-one vault solutions",
+    icon: <Crown className="w-5 h-5" />,
+    color: "bg-gradient-to-r from-[#FF5AF7] to-[#FFB86C]",
+  },
+};
 
 // Vault types with their details
 const vaultTypes = [
@@ -17,8 +61,9 @@ const vaultTypes = [
       "Cross-chain verification of ownership",
       "Programmable time-lock mechanisms",
     ],
-    isNew: true,
+    isNew: false,
     highlight: true,
+    category: "blockchain",
   },
   {
     id: "multi-signature",
@@ -33,6 +78,7 @@ const vaultTypes = [
       "Social recovery options",
       "Hierarchical approval workflows",
     ],
+    category: "security",
   },
   {
     id: "biometric",
@@ -47,6 +93,7 @@ const vaultTypes = [
       "Multi-factor identity confirmation",
       "Offline verification capabilities",
     ],
+    category: "security",
   },
   {
     id: "cross-chain",
@@ -61,6 +108,23 @@ const vaultTypes = [
       "Blockchain agnostic asset management",
       "Fallback chain redundancy",
     ],
+    category: "blockchain",
+  },
+  {
+    id: "cross-chain-fragment",
+    name: "Cross-Chain Fragment Vault",
+    icon: "🔗",
+    href: "/cross-chain-fragment-vault",
+    description: "Fragments your assets across multiple chains for enhanced security",
+    features: [
+      "Automatic asset fragmentation across chains",
+      "Triple-chain verification for access",
+      "Recovery mechanism with multi-sig backup",
+      "Full or partial fragment recovery options",
+      "Chain-specific security optimization",
+    ],
+    isNew: true,
+    category: "blockchain",
   },
   {
     id: "geo-location",
@@ -75,6 +139,23 @@ const vaultTypes = [
       "Privacy-preserving location verification",
       "Customizable location parameters",
     ],
+    category: "security",
+  },
+  {
+    id: "location-time",
+    name: "Location-Time Vault",
+    icon: "🗺️",
+    href: "/location-time-vault",
+    description: "Advanced vault with both geographic and temporal access requirements",
+    features: [
+      "Combined time-lock and location verification",
+      "Programmable geo-temporal schedules",
+      "Customizable geographic boundaries",
+      "Time-window based access controls",
+      "Emergency override protocols",
+    ],
+    isNew: true,
+    category: "security",
   },
   {
     id: "time-lock-memory",
@@ -89,6 +170,24 @@ const vaultTypes = [
       "Scheduled message delivery",
       "Memorial & legacy planning features",
     ],
+    category: "legacy",
+  },
+  {
+    id: "time-locked-new",
+    name: "Advanced Time-Lock Memory Vault",
+    icon: "🕰️",
+    href: "/time-locked-memory-vault-new",
+    description: "Next-generation vault for preserving memories and assets with customizable time triggers",
+    features: [
+      "Enhanced multimedia preservation",
+      "Event-based unlocking mechanisms",
+      "Multiple time-lock schedules",
+      "Beneficiary management system",
+      "Advanced encryption for privacy",
+    ],
+    isNew: true,
+    highlight: true,
+    category: "legacy",
   },
   {
     id: "investment-discipline",
@@ -103,6 +202,149 @@ const vaultTypes = [
       "Bitcoin Halving cycle alignment",
       "Rule-based investment execution",
     ],
+    category: "investment",
+  },
+  {
+    id: "investment-discipline-advanced",
+    name: "Advanced Investment Discipline Vault",
+    icon: "📈",
+    href: "/investment-discipline-vault-advanced",
+    description: "Sophisticated investment strategy enforcement with AI-powered optimization",
+    features: [
+      "AI-powered strategy optimization",
+      "Market condition responsive rules",
+      "Multi-asset correlation analysis",
+      "Customizable investment horizons",
+      "Strategy backtesting capabilities",
+    ],
+    isNew: true,
+    category: "investment",
+  },
+  {
+    id: "nft-powered",
+    name: "NFT-Powered Vault",
+    icon: "🖼️",
+    href: "/nft-powered-vault",
+    description: "Vaults secured by ownership of specific NFTs as access keys",
+    features: [
+      "NFT-based access control",
+      "Transferable vault ownership",
+      "Multi-NFT authentication options",
+      "Composable security with collections",
+      "Cross-chain NFT recognition",
+    ],
+    isNew: true,
+    category: "blockchain",
+  },
+  {
+    id: "quantum-resistant",
+    name: "Quantum-Resistant Vault",
+    icon: "🔐",
+    href: "/quantum-resistant-vault",
+    description: "Future-proof vault using post-quantum cryptographic algorithms",
+    features: [
+      "Post-quantum cryptographic security",
+      "Lattice-based encryption",
+      "Hash-based signature schemes",
+      "Isogeny-based key exchange",
+      "Forward security guarantees",
+    ],
+    isNew: true,
+    category: "security",
+  },
+  {
+    id: "bitcoin-halving",
+    name: "Bitcoin Halving Vault",
+    icon: "₿",
+    href: "/bitcoin-halving-vault",
+    description: "Bitcoin-specific vault optimized for halving cycle investment strategy",
+    features: [
+      "Halving cycle-based time locks",
+      "BTC price target automation",
+      "Historical cycle analysis tools",
+      "Automatic profit taking at cycle peaks",
+      "Cold storage security integration",
+    ],
+    category: "investment",
+  },
+  {
+    id: "unique-security",
+    name: "Unique Security Vault",
+    icon: "🛡️",
+    href: "/unique-security-vault",
+    description: "Customizable vault with user-defined security parameters and verification methods",
+    features: [
+      "Build-your-own security model",
+      "Multiple verification layer options",
+      "Security score optimization",
+      "Risk assessment tools",
+      "Custom recovery procedures",
+    ],
+    isNew: true,
+    category: "security",
+  },
+  {
+    id: "sovereign-fortress",
+    name: "Sovereign Fortress Vault™",
+    icon: "🏰",
+    href: "/sovereign-fortress-vault",
+    description: "The ultimate all-in-one vault with supreme security and flexibility",
+    features: [
+      "Triple-Chain Verification Protocol",
+      "Quantum-resistant encryption layer",
+      "Multiple access control options",
+      "Advanced recovery mechanisms",
+      "Comprehensive security dashboard",
+    ],
+    isNew: true,
+    highlight: true,
+    category: "premium",
+  },
+  {
+    id: "inheritance-planning",
+    name: "Inheritance Planning Vault",
+    icon: "🌳",
+    href: "/inheritance-planning-vault",
+    description: "Secure estate planning with conditional access for beneficiaries",
+    features: [
+      "Beneficiary management system",
+      "Scheduled asset distribution",
+      "Conditional release mechanisms",
+      "Legal documentation storage",
+      "Multi-jurisdictional compliance",
+    ],
+    category: "legacy",
+  },
+  {
+    id: "dynamic-vault",
+    name: "Dynamic Security Vault",
+    icon: "🔄",
+    href: "/dynamic-vault-form",
+    description: "Adaptable vault with customizable security parameters and realtime risk adaptation",
+    features: [
+      "Dynamic security level adjustment",
+      "Behavior pattern analysis",
+      "Threat-responsive security measures",
+      "Security measure rotation",
+      "Continuous security optimization",
+    ],
+    isNew: true,
+    category: "security",
+  },
+  {
+    id: "payment-channel",
+    name: "Payment Channel Vault",
+    icon: "💸",
+    href: "/payment-channel-vault",
+    description: "Optimized for high-frequency transactions with instant settlement",
+    features: [
+      "Off-chain transaction capabilities",
+      "Batched settlement options",
+      "Payment streaming functionality",
+      "Low-latency operations",
+      "Conditional payment release",
+    ],
+    category: "blockchain",
   },
 ];
 
