@@ -166,22 +166,22 @@ function App() {
           {/* Vault Creation Routes */}
           <Route path="/create-vault/standard" component={CreateVaultEnhanced} />
           <Route path="/create-vault/multi-signature" component={MultiSignatureVault} />
-          <Route path="/create-vault/biometric" component={BiometricVault} />
-          <Route path="/create-vault/geo" component={GeoVaultDocPage} />
-          <Route path="/create-vault/smart-contract" component={SmartContractVault} />
-          <Route path="/create-vault/inheritance" component={IntentInheritanceVault} />
+          <Route path="/create-vault/biometric" component={CreateVaultEnhanced} />
+          <Route path="/create-vault/geo" component={CreateVaultEnhanced} />
+          <Route path="/create-vault/smart-contract" component={CreateVaultEnhanced} />
+          <Route path="/create-vault/inheritance" component={CreateVaultEnhanced} />
           <Route path="/create-vault/dynamic" component={CreateVaultEnhanced} />
           <Route path="/create-vault/nft-powered" component={CreateVaultEnhanced} />
           <Route path="/create-vault/unique-security" component={CreateVaultEnhanced} />
-          <Route path="/create-vault/ai-intent" component={IntentInheritanceVault} />
-          <Route path="/create-vault/time-locked-memory" component={SpecializedVaultMemory} />
-          <Route path="/create-vault/standard-crypto" component={CreateVault} />
+          <Route path="/create-vault/ai-intent" component={CreateVaultEnhanced} />
+          <Route path="/create-vault/time-locked-memory" component={CreateVaultEnhanced} />
+          <Route path="/create-vault/standard-crypto" component={CreateVaultEnhanced} />
           <Route path="/create-vault/milestone" component={CreateVaultEnhanced} />
-          <Route path="/create-vault/family-heritage" component={IntentInheritanceVault} />
-          <Route path="/create-vault/investment" component={InvestmentDisciplineVault} />
-          <Route path="/create-vault/cross-chain" component={CrossChainVault} />
-          <Route path="/create-vault/quantum" component={QuantumVault} />
-          <Route path="/create-vault/ton-specific" component={TonSpecificVault} />
+          <Route path="/create-vault/family-heritage" component={CreateVaultEnhanced} />
+          <Route path="/create-vault/investment" component={CreateVaultEnhanced} />
+          <Route path="/create-vault/cross-chain" component={CreateVaultEnhanced} />
+          <Route path="/create-vault/quantum" component={CreateVaultEnhanced} />
+          <Route path="/create-vault/ton-specific" component={CreateVaultEnhanced} />
           
           {/* New Innovative Vault Types */}
           <Route path="/ai-investment-vault" component={AIInvestmentVault} />
