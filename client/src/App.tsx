@@ -59,6 +59,7 @@ import FamilyHeritageVaultForm from './pages/family-heritage-vault-form';
 import DynamicVaultForm from './pages/dynamic-vault-form';
 import DynamicVaultPage from './pages/vault-types/dynamic-vault';
 import TimeLockVault from './pages/time-lock-vault';
+import CrossChainFragmentVault from './pages/cross-chain-fragment-vault';
 import DynamicVaultLink from './pages/dynamic-vault-link';
 import IntentInheritanceVault from './pages/intent-inheritance-vault';
 import EnhancedBiometricVault from './pages/enhanced-biometric-vault';
@@ -210,6 +211,7 @@ function App() {
           <Route path="/create-vault/quantum" component={QuantumVault} />
           <Route path="/create-vault/ton-specific" component={TonSpecificVault} />
           <Route path="/create-vault/time-lock" component={TimeLockVault} />
+          <Route path="/create-vault/cross-chain-fragment" component={CrossChainFragmentVault} />
           
           {/* New Innovative Vault Types */}
           <Route path="/ai-investment-vault" component={AIInvestmentVault} />
