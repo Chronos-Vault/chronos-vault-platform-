@@ -178,10 +178,10 @@ function App() {
           <Route path="/intent-inheritance-vault" component={IntentInheritanceVault} />
           <Route path="/quantum-vault" component={QuantumVault} />
           <Route path="/ton-specific-vault" component={TonSpecificVault} />
-          <Route path="/sovereign-fortress-vault" component={SovereignFortressVault} />
+          {/* Sovereign Fortress Vault accessible through create-vault/standard */}
           
           {/* Vault Creation Routes */}
-          <Route path="/create-vault/standard" component={CreateVaultEnhanced} />
+          <Route path="/create-vault/standard-enhanced" component={CreateVaultEnhanced} />
           <Route path="/create-vault/multi-signature" component={MultiSignatureVault} />
           <Route path="/create-vault/multi-sig" component={MultiSignatureVault} />
           <Route path="/create-vault/biometric" component={EnhancedBiometricVault} />
