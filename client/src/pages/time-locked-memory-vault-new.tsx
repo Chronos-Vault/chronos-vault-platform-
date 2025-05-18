@@ -18,7 +18,7 @@ import {
   Network,
   Diamond,
   Layers,
-  Server as ServerStack,
+  Server,
   HardDrive,
   Timer
 } from "lucide-react";
@@ -757,13 +757,13 @@ export default function TimeLockedMemoryVault() {
                       <div className="p-3 rounded-lg bg-[#252525]/50 border border-[#333] text-xs">
                         <div className="flex gap-2 items-center mb-2">
                           {storageRedundancy === 'standard' && (
-                            <ServerStack className="h-4 w-4 text-blue-400" />
+                            <Server className="h-4 w-4 text-blue-400" />
                           )}
                           {storageRedundancy === 'enhanced' && (
-                            <ServerStack className="h-4 w-4 text-indigo-400" />
+                            <Server className="h-4 w-4 text-indigo-400" />
                           )}
                           {storageRedundancy === 'maximum' && (
-                            <ServerStack className="h-4 w-4 text-[#FF5AF7]" />
+                            <Server className="h-4 w-4 text-[#FF5AF7]" />
                           )}
                           <span className="font-medium text-gray-200">
                             {storageRedundancy === 'standard' && 'Standard Protection'}
