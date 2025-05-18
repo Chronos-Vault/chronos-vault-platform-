@@ -211,7 +211,7 @@ function App() {
           <Route path="/create-vault/enhanced" component={CreateVaultEnhanced} />
           {/* Removed duplicate unique-security route, using the newer implementation below */}
           <Route path="/create-vault/ai-intent" component={IntentInheritanceVault} />
-          <Route path="/create-vault/time-locked-memory" component={TimeLockedMemoryVault} />
+          <Route path="/create-vault/time-locked-memory" component={TimeLockedMemoryVaultDocumentation} />
           <Route path="/create-vault/standard-crypto" component={CreateVault} />
           <Route path="/create-vault/milestone-doc" component={MilestoneBasedVaultPage} />
           <Route path="/create-vault/milestone" component={MilestoneBasedVaultForm} />
