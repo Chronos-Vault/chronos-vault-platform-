@@ -68,6 +68,7 @@ import TimeLockedMemoryVaultDocumentation from './pages/documentation/time-locke
 import SovereignFortressVaultDocumentation from './pages/documentation/sovereign-fortress-vault';
 import GeoLocationVaultDocumentation from './pages/documentation/geo-location-vault';
 import NFTPoweredVaultDocumentation from './pages/documentation/nft-powered-vault';
+import InvestmentDisciplineVaultDocumentation from './pages/documentation/investment-discipline-vault';
 import NFTPoweredVault from './pages/nft-powered-vault';
 import QuantumResistantVault from './pages/quantum-resistant-vault';
 import SovereignFortressVault from './pages/sovereign-fortress-vault';
@@ -253,6 +254,7 @@ function App() {
           <Route path="/documentation/sovereign-fortress-vault" component={SovereignFortressVaultDocumentation} />
           <Route path="/documentation/geo-location-vault" component={GeoLocationVaultDocumentation} />
           <Route path="/documentation/nft-powered-vault" component={NFTPoweredVaultDocumentation} />
+          <Route path="/documentation/investment-discipline-vault" component={InvestmentDisciplineVaultDocumentation} />
           <Route path="/cvt-tokenomics" component={CvtTokenomics} />
           <Route path="/roadmap" component={Roadmap} />
           <Route path="/team" component={Team} />
