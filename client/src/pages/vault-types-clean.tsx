@@ -1,9 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useLocation } from 'wouter';
 import { Button } from '@/components/ui/button';
-import { ArrowLeft, ArrowRight, Check } from 'lucide-react';
+import { ArrowLeft, ArrowRight, Check, ChevronUp, ChevronDown } from 'lucide-react';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 
 // Define all our vault types with full details
 const VAULT_TYPES = [
@@ -134,6 +134,166 @@ const VAULT_TYPES = [
       "Custom security settings"
     ],
     tags: ['Advanced Security']
+  },
+  {
+    id: 'nft-powered',
+    title: 'NFT-Powered Vault',
+    description: 'Use NFTs as access keys to your vault',
+    icon: '🖼️',
+    color: '#9C27B0',
+    securityLevel: 4,
+    complexityLevel: 3,
+    features: [
+      "NFT access verification",
+      "Transferable vault access",
+      "Digital collectible integration",
+      "NFT-based permissions"
+    ],
+    tags: ['Triple-Chain', 'Advanced Security']
+  },
+  {
+    id: 'unique-security',
+    title: 'Unique Security Vault',
+    description: 'Enhanced security with custom protocols',
+    icon: '🛡️',
+    color: '#F44336',
+    securityLevel: 5,
+    complexityLevel: 4,
+    features: [
+      "Zero-Knowledge Privacy Layer",
+      "Military-grade encryption",
+      "Quantum-resistant protocols",
+      "Custom security combinations"
+    ],
+    tags: ['Triple-Chain', 'Zero-Knowledge', 'Advanced Security']
+  },
+  {
+    id: 'ai-intent',
+    title: 'AI Intent Inheritance Vault',
+    description: 'Natural language inheritance planning',
+    icon: '🧠',
+    color: '#00BCD4',
+    securityLevel: 5,
+    complexityLevel: 3,
+    features: [
+      "Express intent in plain language",
+      "AI-powered smart contract generation",
+      "Conditional inheritance rules",
+      "Adaptable to complex real-world scenarios"
+    ],
+    tags: ['Triple-Chain', 'Zero-Knowledge', 'Advanced Security', 'AI-Powered']
+  },
+  {
+    id: 'time-locked-memory',
+    title: 'Time-Locked Memory Vault',
+    description: 'Digital assets with multimedia memories',
+    icon: '📦',
+    color: '#CDDC39',
+    securityLevel: 4,
+    complexityLevel: 3,
+    features: [
+      "Combined assets and personal media",
+      "Photos, videos and messages storage",
+      "Synchronized unlocking on future date",
+      "Perfect for gifts and personal time capsules"
+    ],
+    tags: ['Triple-Chain', 'Zero-Knowledge', 'Advanced Security']
+  },
+  {
+    id: 'quantum-resistant',
+    title: 'Quantum-Resistant Vault',
+    description: 'Progressive security that scales with value',
+    icon: '🔒',
+    color: '#9C27B0',
+    securityLevel: 5,
+    complexityLevel: 4,
+    features: [
+      "Auto-scaling security tiers",
+      "Post-quantum cryptography",
+      "Value-based security enforcement",
+      "Adaptive security protocols"
+    ],
+    tags: ['Triple-Chain', 'Zero-Knowledge', 'Advanced Security', 'Quantum-Resistant']
+  },
+  {
+    id: 'cross-chain-fragment',
+    title: 'Cross-Chain Fragment Vault',
+    description: 'Splits your assets across multiple blockchains',
+    icon: '🧩',
+    color: '#3F51B5',
+    securityLevel: 5,
+    complexityLevel: 5,
+    features: [
+      "Asset splitting across chains",
+      "Multiple blockchain storage",
+      "Fragmented recovery system",
+      "Protection from single-chain failures"
+    ],
+    tags: ['Triple-Chain', 'Zero-Knowledge', 'Advanced Security']
+  },
+  {
+    id: 'location-time',
+    title: 'Location-Time Restricted Vault',
+    description: 'Access only at specific locations during set times',
+    icon: '🌎',
+    color: '#4CAF50',
+    securityLevel: 5,
+    complexityLevel: 4,
+    features: [
+      "Dual verification: location + time window",
+      "Physical presence requirement",
+      "Scheduled access periods",
+      "Perfect for location-sensitive business assets"
+    ],
+    tags: ['Triple-Chain', 'Zero-Knowledge', 'Advanced Security']
+  },
+  {
+    id: 'investment-discipline',
+    title: 'Investment Discipline Vault',
+    description: 'Prevents emotional selling during market volatility',
+    icon: '💎',
+    color: '#2196F3',
+    securityLevel: 4,
+    complexityLevel: 3,
+    features: [
+      "Programmable exit conditions",
+      "Market event-based triggers",
+      "Time-locked investment periods",
+      "Protection from panic-selling"
+    ],
+    tags: ['Triple-Chain', 'Zero-Knowledge', 'Advanced Security']
+  },
+  {
+    id: 'ai-assisted',
+    title: 'AI-Assisted Investment Vault',
+    description: 'AI-powered market analysis for optimal trading',
+    icon: '🤖',
+    color: '#00BCD4',
+    securityLevel: 5,
+    complexityLevel: 4,
+    features: [
+      "AI market trend analysis",
+      "Smart trading suggestions",
+      "Customizable investment strategies",
+      "Automated risk assessment"
+    ],
+    tags: ['Triple-Chain', 'Zero-Knowledge', 'Advanced Security', 'AI-Powered']
+  },
+  {
+    id: 'milestone',
+    title: 'Milestone-Based Release Vault',
+    description: 'Unlocks assets when you achieve personal goals',
+    icon: '🏆',
+    color: '#FF9800',
+    securityLevel: 4,
+    complexityLevel: 3,
+    features: [
+      "Achievement-based unlocking",
+      "Progressive asset release",
+      "Customizable goal verification",
+      "Reward system integration"
+    ],
+    tags: ['Triple-Chain', 'Zero-Knowledge', 'Advanced Security']
   },
   {
     id: 'family-heritage',
@@ -278,34 +438,48 @@ const VaultTypesPage = () => {
       icon: '🏰',
       vaults: VAULT_TYPES
     },
-    premium: {
-      title: 'Sovereign Premium',
-      color: '#FF5AF7',
-      icon: '👑',
-      vaults: VAULT_TYPES.filter(v => v.securityLevel === 5)
-    },
-    security: {
-      title: 'Advanced Security',
-      color: '#4CAF50',
-      icon: '🛡️',
+    innovative: {
+      title: 'Innovative Smart Vaults',
+      color: '#00E676',
+      icon: '🧠',
       vaults: VAULT_TYPES.filter(v => 
-        v.tags.includes('Zero-Knowledge') || 
-        v.tags.includes('Quantum-Resistant'))
+        v.id === 'ai-intent' || 
+        v.id === 'ai-assisted' || 
+        v.id === 'dynamic' || 
+        v.id === 'smart-contract' ||
+        v.id === 'quantum-resistant')
     },
     investment: {
-      title: 'Investment Solutions',
+      title: 'Asset & Investment',
       color: '#00BCD4',
       icon: '💎',
       vaults: VAULT_TYPES.filter(v => 
-        v.id === 'dynamic' || 
-        v.id === 'smart-contract')
+        v.id === 'investment-discipline' || 
+        v.id === 'ai-assisted' ||
+        v.id === 'milestone' ||
+        v.id === 'cross-chain-fragment')
     },
-    inheritance: {
-      title: 'Legacy & Inheritance',
-      color: '#795548',
-      icon: '👪',
+    specialized: {
+      title: 'Specialized Purpose',
+      color: '#FF9800',
+      icon: '🎯',
       vaults: VAULT_TYPES.filter(v => 
-        v.id === 'family-heritage')
+        v.id === 'time-locked-memory' ||
+        v.id === 'nft-powered' ||
+        v.id === 'milestone' ||
+        v.id === 'location-time')
+    },
+    security: {
+      title: 'Advanced Security',
+      color: '#F44336',
+      icon: '🛡️',
+      vaults: VAULT_TYPES.filter(v => 
+        v.tags.includes('Zero-Knowledge') || 
+        v.tags.includes('Quantum-Resistant') ||
+        v.id === 'multi-signature' ||
+        v.id === 'biometric' ||
+        v.id === 'geo-location' ||
+        v.id === 'unique-security')
     }
   };
   
