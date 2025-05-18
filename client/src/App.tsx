@@ -45,7 +45,7 @@ import EnhancedSmartContractVault from './pages/enhanced-smart-contract-vault';
 import MultiSignatureVault from './pages/multi-signature-vault';
 import MultiSignatureVaultNew from './pages/multi-signature-vault-new';
 import SpecializedVaultMemory from './pages/specialized-vault-memory';
-import TimeLockedMemoryVault from './pages/time-locked-memory-vault';
+import TimeLockedMemoryVault from './pages/time-locked-memory-vault-new';
 import InvestmentDisciplineVault from './pages/investment-discipline-vault';
 import InvestmentDisciplineVaultAdvanced from './pages/investment-discipline-vault-advanced';
 import UniqueSecurityVault from './pages/unique-security-vault';

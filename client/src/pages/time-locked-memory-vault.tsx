@@ -1,7 +1,41 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
-import { Link } from "wouter";
-import { ArrowLeft, Check, Shield, Clock, Image, Video, MessageSquare, Calendar, Save, Upload, Lock, Users, Globe, Bell, Key } from "lucide-react";
+import { Link, useLocation } from "wouter";
+import { 
+  ArrowLeft, 
+  Check, 
+  Shield, 
+  Clock, 
+  Image, 
+  Video, 
+  MessageSquare, 
+  Calendar, 
+  Save, 
+  Upload, 
+  Lock, 
+  Users, 
+  Globe, 
+  Bell, 
+  Key,
+  ArrowRight,
+  Zap,
+  Sparkles,
+  ShieldCheck,
+  FileSymlink,
+  Network,
+  Brain,
+  Diamond,
+  Gem,
+  Layers,
+  AlertTriangle,
+  Fingerprint,
+  HardDrive,
+  Timer,
+  ChevronDown,
+  Wallet,
+  FlaskConical
+} from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -12,47 +46,228 @@ import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Badge } from "@/components/ui/badge";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { Progress } from "@/components/ui/progress";
+import { Separator } from "@/components/ui/separator";
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { useToast } from "@/hooks/use-toast";
 import { useTon } from "@/contexts/ton-context";
 import { useEthereum } from "@/contexts/ethereum-context";
 import { useSolana } from "@/contexts/solana-context";
+import { cn } from "@/lib/utils";
 
-const TimeLockedMemoryVault = () => {
+// Animation variants
+const fadeIn = {
+  hidden: { opacity: 0 },
+  visible: { opacity: 1, transition: { duration: 0.6 } }
+};
+
+const slideIn = {
+  hidden: { x: 20, opacity: 0 },
+  visible: { x: 0, opacity: 1, transition: { duration: 0.5 } }
+};
+
+const staggerContainer = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.1,
+      delayChildren: 0.2
+    }
+  }
+};
+
+type MediaItem = {
+  id: string;
+  name: string;
+  size: string;
+  type: "image" | "video";
+  status: "uploading" | "encrypted" | "stored";
+  progress: number;
+};
+
+type UnlockMethod = "date" | "event" | "milestone" | "hybrid";
+type RecoveryMethod = "social" | "geo" | "multi" | "quantum" | "customRecovery";
+type StorageRedundancy = "standard" | "enhanced" | "maximum";
+
+export default function TimeLockedMemoryVault() {
   const { toast } = useToast();
   const ton = useTon();
   const ethereum = useEthereum();
   const solana = useSolana();
+  const [location, setLocation] = useLocation();
   
   // UI State
   const [activeTab, setActiveTab] = useState<string>("basic");
   const [step, setStep] = useState<number>(1);
-  const [uploadedImages, setUploadedImages] = useState<number>(0);
-  const [uploadedVideos, setUploadedVideos] = useState<number>(0);
   const [isProcessing, setIsProcessing] = useState<boolean>(false);
+  const [securityAnalysisComplete, setSecurityAnalysisComplete] = useState<boolean>(false);
+  const [showAdvancedOptions, setShowAdvancedOptions] = useState<boolean>(false);
   
-  // Vault Configuration
+  // Vault Base Configuration
   const [vaultName, setVaultName] = useState<string>("");
   const [vaultDescription, setVaultDescription] = useState<string>("");
   const [primaryBlockchain, setPrimaryBlockchain] = useState<string>("ethereum");
-  const [unlockDate, setUnlockDate] = useState<string>("");
-  const [unlockEvent, setUnlockEvent] = useState<string>("date");
-  const [beneficiaries, setBeneficiaries] = useState<string[]>([]);
-  const [beneficiaryInput, setBeneficiaryInput] = useState<string>("");
-  const [personalMessage, setPersonalMessage] = useState<string>("");
-  const [storageLevel, setStorageLevel] = useState<number>(50);
-  const [enableBackup, setEnableBackup] = useState<boolean>(true);
-  const [recoveryOption, setRecoveryOption] = useState<string>("social");
-  const [recoveryThreshold, setRecoveryThreshold] = useState<number>(2);
+  const [secondaryChains, setSecondaryChains] = useState<string[]>(["solana"]);
   
-  // Progress
+  // Time Lock Configuration
+  const [unlockDate, setUnlockDate] = useState<string>("");
+  const [unlockMethod, setUnlockMethod] = useState<UnlockMethod>("date");
+  const [unlockEvents, setUnlockEvents] = useState<string[]>([]);
+  const [timeWindow, setTimeWindow] = useState<number>(24); // Hours
+  const [earlyAccessFee, setEarlyAccessFee] = useState<number>(0);
+  const [timeExtensionEnabled, setTimeExtensionEnabled] = useState<boolean>(false);
+  
+  // Beneficiaries and Permissions
+  const [beneficiaries, setBeneficiaries] = useState<
+    Array<{
+      id: string;
+      address: string;
+      type: "wallet" | "email";
+      permissions: Array<"view" | "extract" | "modify" | "delete">;
+      notificationMethod: "onchain" | "email" | "both";
+    }>
+  >([]);
+  const [beneficiaryInput, setBeneficiaryInput] = useState<string>("");
+  const [beneficiaryType, setBeneficiaryType] = useState<"wallet" | "email">("wallet");
+  const [selectedPermissions, setSelectedPermissions] = useState<Array<"view" | "extract" | "modify" | "delete">>(["view", "extract"]);
+  
+  // Media Content
+  const [mediaItems, setMediaItems] = useState<MediaItem[]>([]);
+  const [personalMessage, setPersonalMessage] = useState<string>("");
+  const [messageEncryption, setMessageEncryption] = useState<"standard" | "quantum">("standard");
+  const [messageExpiry, setMessageExpiry] = useState<"never" | "with-vault" | "custom">("with-vault");
+  
+  // Storage Configuration
+  const [storageRedundancy, setStorageRedundancy] = useState<StorageRedundancy>("enhanced");
+  const [enableCrossChainBackup, setEnableCrossChainBackup] = useState<boolean>(true);
+  const [permanentStorage, setPermanentStorage] = useState<boolean>(true);
+  const [selectedStorageProviders, setSelectedStorageProviders] = useState<string[]>(["arweave", "ipfs"]);
+  
+  // Recovery Configuration
+  const [recoveryMethod, setRecoveryMethod] = useState<RecoveryMethod>("social");
+  const [recoveryThreshold, setRecoveryThreshold] = useState<number>(2);
+  const [recoveryContacts, setRecoveryContacts] = useState<string[]>([]);
+  const [recoveryGeolocations, setRecoveryGeolocations] = useState<string[]>([]);
+  const [quantumRecoveryKey, setQuantumRecoveryKey] = useState<string>("");
+  
+  // Security & Analytics
   const [securityScore, setSecurityScore] = useState<number>(0);
-  const [encryptionStatus, setEncryptionStatus] = useState<string>("pending");
+  const [encryptionStrength, setEncryptionStrength] = useState<"standard" | "enhanced" | "quantum">("enhanced");
+  const [memoryVaultAnalytics, setMemoryVaultAnalytics] = useState<{
+    storageRequirement: number;
+    estimatedLifespan: number;
+    vulnerabilityScore: number;
+    backupRedundancy: number;
+    privacyScore: number;
+  }>({
+    storageRequirement: 0,
+    estimatedLifespan: 50,
+    vulnerabilityScore: 0,
+    backupRedundancy: 0,
+    privacyScore: 0
+  });
+  const [processingProgress, setProcessingProgress] = useState<number>(0);
 
+  // Helper functions
+  const generateId = () => Math.random().toString(36).substring(2, 9);
+  
+  // Initialize security score calculation
+  useEffect(() => {
+    calculateSecurityScore();
+  }, [
+    primaryBlockchain, 
+    secondaryChains, 
+    unlockMethod, 
+    beneficiaries, 
+    storageRedundancy, 
+    recoveryMethod,
+    encryptionStrength,
+    permanentStorage,
+    selectedStorageProviders
+  ]);
+  
+  // Calculate overall security and analytics scores
+  const calculateSecurityScore = () => {
+    // Base score
+    let score = 60;
+    
+    // Blockchain factors
+    if (primaryBlockchain === "ethereum") score += 5;
+    if (primaryBlockchain === "ton") score += 6;
+    if (secondaryChains.length > 0) score += secondaryChains.length * 3;
+    
+    // Time lock factors
+    if (unlockMethod === "hybrid") score += 8;
+    else if (unlockMethod === "milestone") score += 6;
+    else if (unlockMethod === "event") score += 4;
+    
+    // Content security
+    if (encryptionStrength === "quantum") score += 10;
+    else if (encryptionStrength === "enhanced") score += 6;
+    
+    // Storage factors
+    if (storageRedundancy === "maximum") score += 8;
+    else if (storageRedundancy === "enhanced") score += 5;
+    if (permanentStorage) score += 4;
+    if (selectedStorageProviders.includes("arweave")) score += 3;
+    
+    // Recovery factors
+    if (recoveryMethod === "quantum") score += 9;
+    else if (recoveryMethod === "multi") score += 7;
+    else if (recoveryMethod === "geo") score += 5;
+    else if (recoveryMethod === "social") score += 4;
+    
+    // Beneficiary security
+    if (beneficiaries.length > 0) {
+      const restrictedAccess = beneficiaries.filter(b => 
+        !b.permissions.includes("modify") && !b.permissions.includes("delete")
+      ).length;
+      
+      score += (restrictedAccess / beneficiaries.length) * 4;
+    }
+    
+    // Cap the score at 100
+    score = Math.min(100, Math.round(score));
+    setSecurityScore(score);
+    
+    // Update analytics based on security configuration
+    setMemoryVaultAnalytics({
+      storageRequirement: mediaItems.length * 25 + (personalMessage ? 1 : 0),
+      estimatedLifespan: permanentStorage ? 99 : (storageRedundancy === "maximum" ? 75 : 50),
+      vulnerabilityScore: Math.max(5, 100 - score),
+      backupRedundancy: selectedStorageProviders.length * 25 + (enableCrossChainBackup ? 25 : 0),
+      privacyScore: encryptionStrength === "quantum" ? 95 : encryptionStrength === "enhanced" ? 80 : 70
+    });
+    
+    if (!securityAnalysisComplete && score > 0) {
+      setSecurityAnalysisComplete(true);
+    }
+  };
+  
   // Step navigation
   const nextStep = () => {
     if (step < 6) {
       setStep(step + 1);
       window.scrollTo(0, 0);
+      
+      // Simulate processing when advancing to final step
+      if (step === 5) {
+        setIsProcessing(true);
+        setProcessingProgress(0);
+        
+        const interval = setInterval(() => {
+          setProcessingProgress(prev => {
+            if (prev >= 100) {
+              clearInterval(interval);
+              setIsProcessing(false);
+              return 100;
+            }
+            return prev + 5;
+          });
+        }, 150);
+      }
     }
   };
 
@@ -61,6 +276,236 @@ const TimeLockedMemoryVault = () => {
       setStep(step - 1);
       window.scrollTo(0, 0);
     }
+  };
+  
+  // Add a new media item
+  const handleMediaUpload = (type: 'image' | 'video') => {
+    setIsProcessing(true);
+    
+    // Simulate upload and encryption process
+    setTimeout(() => {
+      const newItem: MediaItem = {
+        id: generateId(),
+        name: type === 'image' ? `memory_image_${mediaItems.length + 1}.jpg` : `memory_video_${mediaItems.length + 1}.mp4`,
+        size: type === 'image' ? `${Math.floor(Math.random() * 9) + 1}MB` : `${Math.floor(Math.random() * 90) + 10}MB`,
+        type,
+        status: 'uploading',
+        progress: 0
+      };
+      
+      setMediaItems(prev => [...prev, newItem]);
+      
+      // Simulate encryption process
+      const encryptionInterval = setInterval(() => {
+        setMediaItems(prev => {
+          const updatedItems = [...prev];
+          const itemIndex = updatedItems.findIndex(item => item.id === newItem.id);
+          
+          if (itemIndex !== -1) {
+            const item = updatedItems[itemIndex];
+            
+            if (item.progress < 100) {
+              updatedItems[itemIndex] = {
+                ...item,
+                progress: item.progress + 10,
+                status: item.progress + 10 >= 100 ? 'encrypted' : 'uploading'
+              };
+            } else {
+              clearInterval(encryptionInterval);
+              setTimeout(() => {
+                setMediaItems(prev => {
+                  const finalItems = [...prev];
+                  const finalIndex = finalItems.findIndex(item => item.id === newItem.id);
+                  
+                  if (finalIndex !== -1) {
+                    finalItems[finalIndex] = {
+                      ...finalItems[finalIndex],
+                      status: 'stored'
+                    };
+                  }
+                  
+                  return finalItems;
+                });
+              }, 1000);
+            }
+          }
+          
+          return updatedItems;
+        });
+      }, 300);
+      
+      setIsProcessing(false);
+      
+      toast({
+        title: `${type.charAt(0).toUpperCase() + type.slice(1)} Upload Started`,
+        description: "File is being encrypted and stored securely.",
+      });
+    }, 800);
+  };
+
+  // Add a beneficiary
+  const addBeneficiary = () => {
+    if (beneficiaryInput && beneficiaries.findIndex(b => b.address === beneficiaryInput) === -1) {
+      const newBeneficiary = {
+        id: generateId(),
+        address: beneficiaryInput,
+        type: beneficiaryType,
+        permissions: selectedPermissions,
+        notificationMethod: "both" as const
+      };
+      
+      setBeneficiaries(prev => [...prev, newBeneficiary]);
+      setBeneficiaryInput("");
+      
+      toast({
+        title: "Beneficiary Added",
+        description: `${beneficiaryType === "wallet" ? "Wallet" : "Email"} added with ${selectedPermissions.length} permission(s).`,
+      });
+    }
+  };
+
+  // Remove a beneficiary
+  const removeBeneficiary = (id: string) => {
+    setBeneficiaries(prev => prev.filter(b => b.id !== id));
+  };
+  
+  // Get a human-readable security level
+  const getSecurityLevel = () => {
+    if (securityScore >= 90) return "Maximum";
+    if (securityScore >= 80) return "Fortress";
+    if (securityScore >= 70) return "Advanced";
+    if (securityScore >= 60) return "Enhanced";
+    if (securityScore >= 40) return "Standard";
+    return "Basic";
+  };
+  
+  // Security level color
+  const getSecurityColor = () => {
+    if (securityScore >= 90) return "text-emerald-400";
+    if (securityScore >= 80) return "text-[#FF5AF7]";
+    if (securityScore >= 70) return "text-indigo-400";
+    if (securityScore >= 60) return "text-blue-400";
+    if (securityScore >= 40) return "text-yellow-400";
+    return "text-red-400";
+  };
+  
+  // Create the final vault
+  const createVault = () => {
+    setIsProcessing(true);
+    
+    // Simulate vault creation process with progress
+    setProcessingProgress(0);
+    
+    const interval = setInterval(() => {
+      setProcessingProgress(prev => {
+        if (prev >= 100) {
+          clearInterval(interval);
+          setTimeout(() => {
+            setIsProcessing(false);
+            
+            toast({
+              title: "Memory Vault Created Successfully",
+              description: "Your time-locked memories are now securely stored in the vault.",
+            });
+            
+            // Navigate to success or dashboard page
+            // setLocation("/dashboard");
+          }, 500);
+          return 100;
+        }
+        return prev + 5;
+      });
+    }, 150);
+  };
+  
+  // Component to display the step indicator
+  const StepIndicator = ({ currentStep }: { currentStep: number }) => {
+    const steps = [
+      { name: "Vault Basics", icon: <Sparkles className="h-4 w-4" /> },
+      { name: "Time Lock", icon: <Clock className="h-4 w-4" /> },
+      { name: "Memories", icon: <Image className="h-4 w-4" /> },
+      { name: "Access", icon: <Users className="h-4 w-4" /> },
+      { name: "Security", icon: <Shield className="h-4 w-4" /> },
+      { name: "Review", icon: <Check className="h-4 w-4" /> }
+    ];
+    
+    return (
+      <div className="mb-8">
+        <div className="flex items-center justify-between">
+          {steps.map((step, index) => (
+            <div key={index} className="flex flex-col items-center">
+              <div 
+                className={`w-10 h-10 rounded-full flex items-center justify-center ${
+                  index + 1 === currentStep 
+                    ? "bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] text-white"
+                    : index + 1 < currentStep
+                      ? "bg-[#6B00D7]/20 text-[#FF5AF7]" 
+                      : "bg-[#242424] text-gray-500"
+                }`}
+              >
+                {index + 1 < currentStep ? (
+                  <Check className="h-5 w-5" />
+                ) : (
+                  step.icon
+                )}
+              </div>
+              <span className={`text-xs mt-2 ${
+                index + 1 === currentStep 
+                  ? "text-[#FF5AF7]"
+                  : index + 1 < currentStep
+                    ? "text-gray-300" 
+                    : "text-gray-500"
+              }`}>
+                {step.name}
+              </span>
+            </div>
+          ))}
+        </div>
+        <div className="w-full bg-[#242424] h-1 mt-4 rounded-full overflow-hidden">
+          <motion.div 
+            className="bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] h-full"
+            initial={{ width: 0 }}
+            animate={{ width: `${(currentStep / steps.length) * 100}%` }}
+            transition={{ duration: 0.5 }}
+          />
+        </div>
+      </div>
+    );
+  };
+  
+  // Component to display security badge
+  const SecurityBadge = ({ score }: { score: number }) => {
+    return (
+      <div className="flex items-center gap-1">
+        <div className={`px-2 py-0.5 rounded text-xs font-semibold ${
+          score >= 80 
+            ? "bg-[#6B00D7]/20 text-[#FF5AF7]" 
+            : score >= 60 
+              ? "bg-blue-500/20 text-blue-400" 
+              : "bg-yellow-500/20 text-yellow-400"
+        }`}>
+          {getSecurityLevel()} Security
+        </div>
+        <div className="flex items-center gap-1 text-xs text-gray-400">
+          <Shield className="h-3 w-3" />
+          {score}/100
+        </div>
+      </div>
+    );
+  };
+  
+  // Component to display the security score meter
+  const SecurityMeter = ({ score }: { score: number }) => {
+    return (
+      <div className="relative h-2 w-full bg-[#242424] rounded-full overflow-hidden">
+        <motion.div 
+          className="absolute inset-0 h-full bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] rounded-full"
+          initial={{ width: 0 }}
+          animate={{ width: `${score}%` }}
+          transition={{ duration: 0.8, ease: "easeOut" }}
+        />
+      </div>
+    );
   };
 
   // Handle blockchain selection 
@@ -75,7 +520,7 @@ const TimeLockedMemoryVault = () => {
     if (chain === "solana") newScore = 72;
     
     // Bonus for enabling cross-chain backup
-    if (enableBackup) newScore += 15;
+    if (enableCrossChainBackup) newScore += 15;
     
     setSecurityScore(newScore);
     
@@ -85,103 +530,80 @@ const TimeLockedMemoryVault = () => {
     });
   };
 
-  // Add beneficiary
-  const addBeneficiary = () => {
-    if (beneficiaryInput && !beneficiaries.includes(beneficiaryInput)) {
-      setBeneficiaries([...beneficiaries, beneficiaryInput]);
-      setBeneficiaryInput("");
-      
-      toast({
-        title: "Beneficiary Added",
-        description: "The beneficiary has been added to the vault access list.",
-      });
-    }
-  };
-
-  // Remove beneficiary
-  const removeBeneficiary = (index: number) => {
-    const newBeneficiaries = [...beneficiaries];
-    newBeneficiaries.splice(index, 1);
-    setBeneficiaries(newBeneficiaries);
-  };
-
-  // Simulate media upload
-  const handleMediaUpload = (type: 'image' | 'video') => {
-    setIsProcessing(true);
-    
-    setTimeout(() => {
-      if (type === 'image') {
-        setUploadedImages(uploadedImages + 1);
-      } else {
-        setUploadedVideos(uploadedVideos + 1);
-      }
-      setIsProcessing(false);
-      
-      toast({
-        title: `${type.charAt(0).toUpperCase() + type.slice(1)} Uploaded`,
-        description: "Your file has been encrypted and securely stored.",
-      });
-    }, 1500);
-  };
-
-  // Security levels
-  const getSecurityLevel = () => {
-    if (securityScore >= 90) return "Maximum";
-    if (securityScore >= 75) return "Advanced";
-    if (securityScore >= 60) return "Enhanced";
-    if (securityScore >= 40) return "Standard";
-    return "Basic";
-  };
-
-  // Final vault creation
-  const createVault = () => {
-    setIsProcessing(true);
-    
-    setTimeout(() => {
-      setIsProcessing(false);
-      
-      toast({
-        title: "Memory Vault Created Successfully",
-        description: "Your time-locked memory vault has been created and your assets are now securely stored.",
-      });
-    }, 2500);
-  };
-
   return (
-    <div className="container mx-auto px-4 py-12">
-      {/* Header Section */}
-      <div className="mb-8">
-        <Link href="/vault-school">
-          <Button variant="ghost" className="mb-6 hover:bg-[#6B00D7]/10">
-            <ArrowLeft className="mr-2 h-4 w-4" />
-            Back to Vault School
-          </Button>
-        </Link>
+    <motion.div 
+      className="min-h-screen bg-[#131313] pb-20"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.5 }}
+    >
+      {/* Header Section with 3D-like gradient background */}
+      <div className="relative overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-br from-[#6B00D7]/30 to-[#131313] z-0"></div>
+        <div 
+          className="absolute inset-0 opacity-20 z-0"
+          style={{ 
+            backgroundImage: 'radial-gradient(circle at 30% 30%, rgba(255, 90, 247, 0.4) 0%, transparent 25%), radial-gradient(circle at 80% 60%, rgba(107, 0, 215, 0.4) 0%, transparent 40%)'
+          }}
+        ></div>
+        
+        <div className="container mx-auto px-4 py-6 md:py-12 relative z-10">
+          <Link href="/vault-school">
+            <Button variant="ghost" className="mb-6 hover:bg-[#6B00D7]/10 text-gray-300">
+              <ArrowLeft className="mr-2 h-4 w-4" />
+              Back to Vault School
+            </Button>
+          </Link>
 
-        <div className="flex items-center mb-4">
-          <div className="h-12 w-12 rounded-full bg-gradient-to-br from-[#6B00D7] to-[#FF5AF7] flex items-center justify-center shadow-lg shadow-[#6B00D7]/30 mr-4">
-            <Clock className="h-6 w-6 text-white" />
+          <div className="flex flex-col md:flex-row md:items-center mb-6 md:mb-10">
+            <motion.div 
+              className="h-16 w-16 rounded-xl bg-gradient-to-br from-[#6B00D7] to-[#FF5AF7] flex items-center justify-center shadow-lg shadow-[#6B00D7]/30 mr-4 mb-4 md:mb-0"
+              initial={{ scale: 0.8, rotate: -10 }}
+              animate={{ scale: 1, rotate: 0 }}
+              transition={{ duration: 0.6, ease: "easeOut" }}
+            >
+              <Clock className="h-8 w-8 text-white" />
+            </motion.div>
+            <div>
+              <motion.h1 
+                className="text-3xl md:text-5xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] tracking-tight"
+                initial={{ y: 20, opacity: 0 }}
+                animate={{ y: 0, opacity: 1 }}
+                transition={{ duration: 0.5, delay: 0.2 }}
+              >
+                Time-Locked Memory Vault
+              </motion.h1>
+              <motion.p 
+                className="text-lg md:text-xl text-gray-300 max-w-3xl mt-2"
+                initial={{ y: 20, opacity: 0 }}
+                animate={{ y: 0, opacity: 1 }}
+                transition={{ duration: 0.5, delay: 0.3 }}
+              >
+                Create a quantum-secure vault that binds digital assets with precious memories, time-locked until the moment of your choosing.
+              </motion.p>
+            </div>
           </div>
-          <h1 className="text-3xl md:text-4xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7]">
-            Time-Locked Memory Vault
-          </h1>
-        </div>
-        
-        <p className="text-xl text-gray-300 max-w-3xl mb-6">
-          Create a specialized vault that combines digital assets with multimedia memories, securely time-locked until a future date.
-        </p>
-        
-        {/* Step Indicator */}
-        <div className="w-full bg-[#1A1A1A] h-2 rounded-full mb-8">
-          <div 
-            className="bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] h-2 rounded-full transition-all duration-300"
-            style={{ width: `${(step / 6) * 100}%` }}
-          ></div>
+          
+          {/* Security Badge */}
+          {securityAnalysisComplete && (
+            <motion.div 
+              className="mb-6"
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.5, delay: 0.4 }}
+            >
+              <SecurityBadge score={securityScore} />
+            </motion.div>
+          )}
+          
+          {/* Step Indicator */}
+          <StepIndicator currentStep={step} />
         </div>
       </div>
 
-      {/* Vault Creation Form */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+      {/* Main Content Section */}
+      <div className="container mx-auto px-4 relative z-10">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         <div className="lg:col-span-2">
           {/* Step 1: Basic Information */}
           {step === 1 && (
