@@ -45,6 +45,7 @@ import EnhancedSmartContractVault from './pages/enhanced-smart-contract-vault';
 import MultiSignatureVault from './pages/multi-signature-vault';
 import MultiSignatureVaultNew from './pages/multi-signature-vault-new';
 import SpecializedVaultMemory from './pages/specialized-vault-memory';
+import TimeLockedMemoryVault from './pages/time-locked-memory-vault';
 import InvestmentDisciplineVault from './pages/investment-discipline-vault';
 import InvestmentDisciplineVaultAdvanced from './pages/investment-discipline-vault-advanced';
 import UniqueSecurityVault from './pages/unique-security-vault';
@@ -196,7 +197,7 @@ function App() {
           <Route path="/create-vault/enhanced" component={CreateVaultEnhanced} />
           {/* Removed duplicate unique-security route, using the newer implementation below */}
           <Route path="/create-vault/ai-intent" component={IntentInheritanceVault} />
-          <Route path="/create-vault/time-locked-memory" component={SpecializedVaultMemory} />
+          <Route path="/create-vault/time-locked-memory" component={TimeLockedMemoryVault} />
           <Route path="/create-vault/standard-crypto" component={CreateVault} />
           <Route path="/create-vault/milestone-doc" component={MilestoneBasedVaultPage} />
           <Route path="/create-vault/milestone" component={MilestoneBasedVaultForm} />
