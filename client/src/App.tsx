@@ -241,6 +241,8 @@ function App() {
           <Route path="/security-tutorials-video" component={SecurityTutorialsVideo} />
           <Route path="/security-documentation" component={SecurityDocumentation} />
           <Route path="/military-grade-security" component={MilitaryGradeSecurity} />
+          <Route path="/documentation/multi-signature-vault" component={() => import('./pages/documentation/multi-signature-vault').then(module => module.default)} />
+          <Route path="/documentation/dynamic-security-vault" component={() => import('./pages/documentation/dynamic-security-vault').then(module => module.default)} />
           <Route path="/cvt-tokenomics" component={CvtTokenomics} />
           <Route path="/roadmap" component={Roadmap} />
           <Route path="/team" component={Team} />
