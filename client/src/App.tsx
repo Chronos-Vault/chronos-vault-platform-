@@ -52,6 +52,8 @@ import CrossChainVault from './pages/cross-chain-vault';
 import CrossChainVaultForm from './pages/cross-chain-vault-form';
 import AIInvestmentVaultPage from './pages/vault-types/ai-investment-vault';
 import AIAssistedInvestmentVault from './pages/ai-assisted-investment-vault';
+import MilestoneBasedVaultPage from './pages/vault-types/milestone-based-vault';
+import MilestoneBasedVaultForm from './pages/milestone-based-vault-form';
 import IntentInheritanceVault from './pages/intent-inheritance-vault';
 import EnhancedBiometricVault from './pages/enhanced-biometric-vault';
 import QuantumVault from './pages/quantum-vault';
@@ -186,7 +188,8 @@ function App() {
           <Route path="/create-vault/ai-intent" component={IntentInheritanceVault} />
           <Route path="/create-vault/time-locked-memory" component={SpecializedVaultMemory} />
           <Route path="/create-vault/standard-crypto" component={CreateVault} />
-          <Route path="/create-vault/milestone" component={MilestoneBasedVault} />
+          <Route path="/create-vault/milestone-doc" component={MilestoneBasedVaultPage} />
+          <Route path="/create-vault/milestone" component={MilestoneBasedVaultForm} />
           <Route path="/create-vault/family-heritage" component={IntentInheritanceVault} />
           <Route path="/create-vault/investment" component={InvestmentDisciplineVault} />
           <Route path="/create-vault/investment-discipline" component={InvestmentDisciplineVault} />
