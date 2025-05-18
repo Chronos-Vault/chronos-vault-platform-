@@ -43,7 +43,7 @@ const VAULT_TYPES = [
     id: 'biometric',
     title: 'Biometric Vault',
     description: 'Secure with fingerprint or facial recognition',
-    icon: '👆',
+    icon: '👁️',
     color: '#3F51B5',
     securityLevel: 4,
     complexityLevel: 2,

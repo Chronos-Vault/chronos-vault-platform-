@@ -166,6 +166,7 @@ function App() {
           {/* Vault Creation Routes */}
           <Route path="/create-vault/standard" component={CreateVaultEnhanced} />
           <Route path="/create-vault/multi-signature" component={MultiSignatureVault} />
+          <Route path="/create-vault/biometric" component={BiometricVault} />
           <Route path="/create-vault/geo" component={GeoVaultDocPage} />
           <Route path="/create-vault/smart-contract" component={SmartContractVault} />
           <Route path="/create-vault/inheritance" component={IntentInheritanceVault} />
@@ -177,6 +178,10 @@ function App() {
           <Route path="/create-vault/standard-crypto" component={CreateVault} />
           <Route path="/create-vault/milestone" component={CreateVaultEnhanced} />
           <Route path="/create-vault/family-heritage" component={IntentInheritanceVault} />
+          <Route path="/create-vault/investment" component={InvestmentDisciplineVault} />
+          <Route path="/create-vault/cross-chain" component={CrossChainVault} />
+          <Route path="/create-vault/quantum" component={QuantumVault} />
+          <Route path="/create-vault/ton-specific" component={TonSpecificVault} />
           
           {/* New Innovative Vault Types */}
           <Route path="/ai-investment-vault" component={AIInvestmentVault} />
