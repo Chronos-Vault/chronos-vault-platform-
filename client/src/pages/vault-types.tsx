@@ -1629,38 +1629,26 @@ const VaultTypesPage = () => {
             <span>Vault Categories</span>
           </h2>
 
-          {/* Mobile-optimized Category Selector (2 rows) */}
-          <div className="block md:hidden overflow-hidden bg-black/20 rounded-xl p-2 border border-purple-500/10">
-            <div className="grid grid-cols-3 gap-2">
-              {Object.entries(vaultCategories).map(([key, category]) => (
-                <motion.button
-                  key={key}
-                  onClick={() => setActiveCategory(key)}
-                  className={`flex flex-col items-center justify-center gap-1 px-1 py-2 rounded-lg transition-all ${
-                    activeCategory === key 
-                      ? 'bg-white/10 text-white shadow-lg shadow-purple-900/20' 
-                      : 'bg-black/40 text-gray-400 hover:bg-white/5'
-                  }`}
-                  style={{ 
-                    borderWidth: '1px',
-                    borderColor: activeCategory === key ? category.color : 'transparent',
-                    minHeight: '4rem'
-                  }}
-                  whileHover={{ scale: 1.03 }}
-                  whileTap={{ scale: 0.98 }}
-                >
-                  <span className="text-2xl mb-1" style={{ color: activeCategory === key ? category.color : 'inherit' }}>
-                    {category.icon}
-                  </span>
-                  <span className="text-[10px] text-center leading-tight">
-                    {category.title.split(' ')[0]}
-                  </span>
-                  <span className="absolute top-1 right-1 bg-black/30 px-1 rounded-full text-[10px] min-w-[16px] text-center">
-                    {category.vaults.length}
-                  </span>
-                </motion.button>
-              ))}
-            </div>
+          {/* Mobile Category Tab Menu */}
+          <div className="md:hidden">
+            <Tabs defaultValue={activeCategory} value={activeCategory} onValueChange={setActiveCategory} className="w-full mb-4">
+              <TabsList className="w-full grid grid-cols-3 bg-black/20 p-1 gap-1">
+                {Object.entries(vaultCategories).map(([key, category]) => (
+                  <TabsTrigger 
+                    key={key} 
+                    value={key}
+                    className="data-[state=active]:bg-white/10 data-[state=active]:text-white h-12 px-1"
+                    style={{ 
+                      borderColor: category.color,
+                      borderWidth: activeCategory === key ? '1px' : '0px'
+                    }}
+                  >
+                    <span className="mr-1">{category.icon}</span>
+                    <span className="text-xs">{category.title.split(' ')[0]}</span>
+                  </TabsTrigger>
+                ))}
+              </TabsList>
+            </Tabs>
           </div>
           
           {/* Desktop Category Selector */}
