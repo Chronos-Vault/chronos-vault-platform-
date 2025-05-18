@@ -292,7 +292,7 @@ class TONService {
     }
 
     try {
-      const account = this.tonConnectUI.wallet?.account;
+      const account = this.tonConnectUI.account;
       if (!account) {
         this.walletInfo = null;
         return;
@@ -326,24 +326,90 @@ class TONService {
    */
   private async fetchTONBalance(address: string): Promise<string> {
     try {
-      // For development mode, just return a mock balance
-      if (import.meta.env.DEV) {
-        return this.getTestnetBalance(address);
-      }
-      
+      // Use TON API to fetch actual balance
       // Use the TON API key from environment variables or the one provided directly
-      const apiKey = import.meta.env.VITE_TON_API_KEY || import.meta.env.TON_API_KEY;
+      const apiKey = import.meta.env.VITE_TON_API_KEY || import.meta.env.TON_API_KEY || '5216ae7e1e4328d7c3e07bc4d32d2694db47f2c5dd20e56872b766b2fdb7fb02';
       
       if (!apiKey) {
         console.warn('No TON API key provided, using simulated balance');
+        return this.getTestnetBalance(address); // Provide a more realistic testnet balance
+      }
+      
+      console.log('Fetching real TON balance from testnet for address:', address);
+      
+      // Enhanced API request with proper error handling and retries
+      // Make API request to TON Center (Testnet endpoint for development)
+      const endpoint = 'https://testnet.toncenter.com/api/v2/getAddressBalance';
+      const maxRetries = 3;
+      let retryCount = 0;
+      let lastError: Error | null = null;
+      
+      while (retryCount < maxRetries) {
+        try {
+          // Build the fetch parameters
+          const fetchParams = new URLSearchParams({
+            address: address,
+          });
+          
+          const response = await fetch(`${endpoint}?${fetchParams.toString()}`, {
+            method: 'GET',
+            headers: {
+              'Content-Type': 'application/json',
+              'X-API-Key': apiKey
+            },
+            // Adding a reasonable timeout to avoid hanging requests
+            signal: AbortSignal.timeout(8000) // 8-second timeout
+          });
+          
+          if (!response.ok) {
+            const errorText = await response.text();
+            throw new Error(`TON API request failed (${response.status}): ${errorText}`);
+          }
+          
+          // Parse and validate the response
+          let data;
+          try {
+            data = await response.json();
+          } catch (jsonError: any) {
+            throw new Error(`Invalid JSON response: ${jsonError.message}`);
+          }
+          
+          if (!data.ok || !data.result) {
+            throw new Error(`Invalid response data: ${JSON.stringify(data)}`);
+          }
+          
+          // Convert nanograms to TON (1 TON = 10^9 nanograms)
+          const balanceInTON = parseInt(data.result) / 1e9;
+          console.log(`Successful balance fetch: ${balanceInTON} TON`);
+          return balanceInTON.toFixed(4).toString();
+          
+        } catch (apiError: any) {
+          lastError = apiError;
+          console.warn(`TON API error (attempt ${retryCount + 1}/${maxRetries}):`, apiError.message);
+          retryCount++;
+          
+          if (retryCount < maxRetries) {
+            // Exponential backoff for retries
+            const backoffMs = Math.min(1000 * Math.pow(2, retryCount), 8000);
+            console.log(`Retrying in ${backoffMs}ms...`);
+            await new Promise(resolve => setTimeout(resolve, backoffMs));
+          }
+        }
+      }
+      
+      // If we get here, all retries failed
+      console.error('All TON API balance fetch attempts failed:', lastError);
+      
+      // Check if we're in development mode to use fallback
+      if (import.meta.env.DEV) {
+        console.warn('Using deterministic balance generator for development');
         return this.getTestnetBalance(address);
       }
       
-      // In a real implementation, we would fetch the actual balance from TON API
-      // For now, return a mock balance to avoid API errors
-      return this.getTestnetBalance(address);
+      // In production, return a safer zero balance
+      return '0';
     } catch (error) {
-      console.error('Error fetching TON balance:', error);
+      console.error('Unexpected error in fetchTONBalance:', error);
       return this.getTestnetBalance(address);
     }
   }
@@ -392,7 +458,7 @@ class TONService {
       await this.tonConnectUI.openModal();
       
       // The actual connection state will be handled by the status change event
-      // so we return true to indicate the process started successfully
+      // For now, we'll just return true to indicate the modal was opened successfully
       return true;
     } catch (error) {
       console.error('Failed to connect TON wallet:', error);
@@ -407,104 +473,155 @@ class TONService {
   async disconnect(): Promise<boolean> {
     try {
       if (!this.tonConnectUI) {
-        console.log('TON Connect UI not available, nothing to disconnect');
-        this.resetConnectionState();
-        return false;
-      }
-      
-      // First check if we're actually connected
-      if (!this.tonConnectUI.connected) {
-        console.log('TON wallet already disconnected');
-        this.resetConnectionState();
+        console.warn('TON Connect UI not initialized, nothing to disconnect');
+        this.connectionStatus = TonConnectionStatus.DISCONNECTED;
+        this.walletInfo = null;
         return true;
       }
       
-      console.log('Attempting to disconnect TON wallet...');
-      
-      try {
-        await this.tonConnectUI.disconnect();
-        console.log('TON wallet disconnected successfully');
-      } catch (disconnectError) {
-        console.error('Error during TON disconnect:', disconnectError);
+      if (!this.tonConnectUI.connected) {
+        console.log('TON wallet already disconnected');
+        this.connectionStatus = TonConnectionStatus.DISCONNECTED;
+        this.walletInfo = null;
+        return true;
       }
       
-      // Reset our internal state
-      this.resetConnectionState();
+      // Disconnect wallet
+      console.log('Disconnecting TON wallet...');
+      await this.tonConnectUI.disconnect();
+      
+      // Update state
+      this.connectionStatus = TonConnectionStatus.DISCONNECTED;
+      this.walletInfo = null;
+      
       return true;
     } catch (error) {
       console.error('Failed to disconnect TON wallet:', error);
       return false;
     }
   }
-  
-  /**
-   * Reset connection state
-   */
-  private resetConnectionState(): void {
-    this.connectionStatus = TonConnectionStatus.DISCONNECTED;
-    this.walletInfo = null;
-  }
-  
-  /**
-   * Get wallet information
-   */
-  getWalletInfo(): TONWalletInfo | null {
-    return this.walletInfo;
-  }
-  
+
   /**
    * Get connection status
    */
   getConnectionStatus(): TonConnectionStatus {
     return this.connectionStatus;
   }
-  
+
   /**
-   * Create a basic vault on TON blockchain
+   * Get wallet info
    */
-  async createBasicVault(params: any): Promise<any> {
+  getWalletInfo(): TONWalletInfo | null {
+    return this.walletInfo;
+  }
+
+  /**
+   * Send TON tokens to another address
+   */
+  async sendTON(recipientAddress: string, amount: string): Promise<any> {
     try {
-      if (!this.isConnected()) {
-        return {
-          success: false,
-          error: 'TON wallet not connected'
-        };
+      if (!this.isConnected() || !this.tonConnectUI) {
+        throw new Error('TON wallet not connected');
       }
       
-      console.log('Creating basic vault on TON blockchain with params:', params);
+      // Convert amount from TON to nanograms (1 TON = 10^9 nanograms)
+      const amountInNano = Math.floor(parseFloat(amount) * 1e9);
       
-      // For development mode, return a mock successful response
+      if (isNaN(amountInNano) || amountInNano <= 0) {
+        throw new Error('Invalid amount');
+      }
+      
+      // Prepare transaction
+      const transaction = {
+        validUntil: Math.floor(Date.now() / 1000) + 600, // Valid for 10 minutes
+        messages: [
+          {
+            address: recipientAddress,
+            amount: amountInNano.toString(),
+            payload: 'Chronos Vault transfer'
+          }
+        ]
+      };
+      
+      // Send transaction
+      console.log('Sending TON transaction...', { recipientAddress, amount, amountInNano });
+      const result = await this.tonConnectUI.sendTransaction(transaction);
+      
+      console.log('TON transaction sent:', result);
+      return {
+        success: true,
+        boc: result.boc
+      };
+    } catch (error: any) {
+      console.error('Failed to send TON:', error);
+      return {
+        success: false,
+        error: error.message || 'Unknown error'
+      };
+    }
+  }
+
+  /**
+   * Create a time-locked vault in TON blockchain
+   */
+  async createVault(unlockTime: number, amount: string, recipient?: string): Promise<any> {
+    try {
+      if (!this.isConnected() || !this.tonConnectUI) {
+        throw new Error('TON wallet not connected');
+      }
+      
+      // Convert amount from TON to nanograms
+      const amountInNano = Math.floor(parseFloat(amount) * 1e9);
+      
+      if (isNaN(amountInNano) || amountInNano <= 0) {
+        throw new Error('Invalid amount');
+      }
+      
+      if (unlockTime <= Date.now() / 1000) {
+        throw new Error('Unlock time must be in the future');
+      }
+      
+      // Format vault parameters
+      const vaultParams = formatTONVaultParams(
+        unlockTime, 
+        recipient || this.walletInfo?.address || '',
+        'Chronos Vault on TON'
+      );
+      
+      // For development mode, simulate vault creation success
       if (import.meta.env.DEV) {
-        // Generate a mock transaction hash and vault address
-        const txHash = `ton_${Math.random().toString(16).substring(2, 10)}`;
-        const vaultAddress = `UQAkIXbCToQ6LowMrDNG2K3ERmMH8m4XB2owWgL0BAB14Jtl`;
+        // Simulate network delay
+        await new Promise(resolve => setTimeout(resolve, 1000));
         
-        console.log(`Mock TON vault created with transaction hash: ${txHash}`);
-        console.log(`Mock vault address: ${vaultAddress}`);
+        // Generate a deterministic but unique vault address based on parameters
+        const simulatedVaultAddress = `0:${Date.now().toString(16)}${Math.floor(Math.random() * 1000000).toString(16)}`;
+        
+        console.log('DEV MODE: Simulated TON vault creation', {
+          unlockTime,
+          amount,
+          recipient,
+          vaultAddress: simulatedVaultAddress
+        });
         
         return {
           success: true,
-          vaultAddress: vaultAddress,
-          transactionHash: txHash
+          vaultAddress: simulatedVaultAddress,
+          transactionHash: `simulation_${Date.now().toString(16)}`,
+          unlockTime
         };
       }
       
-      // In a real implementation, we would:
-      // 1. Format the parameters for the TON smart contract
-      // 2. Prepare the transaction
-      // 3. Send it using the connected wallet
-      // 4. Wait for confirmation and return the result
-      
-      // For now, throw an error to indicate this isn't fully implemented
-      throw new Error('TON vault creation not implemented in production mode');
+      // In production, we would interact with the deployed contract
+      throw new Error('TON vault creation not implemented in production mode yet');
     } catch (error: any) {
       console.error('Failed to create TON vault:', error);
       return {
         success: false,
-        error: error.message || 'Unknown error occurred'
+        error: error.message || 'Unknown error'
       };
     }
   }
 }
 
+// Singleton instance
 export const tonService = TONService.getInstance();
