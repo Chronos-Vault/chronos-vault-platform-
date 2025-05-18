@@ -69,7 +69,7 @@ const vaultTypes = [
     id: "multi-signature",
     name: "Multi-Signature Vault",
     icon: "🔒",
-    href: "/multi-signature-vault",
+    href: "/documentation/multi-signature-vault",
     description: "Enhanced security requiring multiple approvals for asset access",
     features: [
       "Configurable M-of-N signature requirements",
@@ -84,7 +84,7 @@ const vaultTypes = [
     id: "biometric",
     name: "Biometric Vault",
     icon: "📱",
-    href: "/specialized-vault-creation?vault=biometric",
+    href: "/documentation/biometric-vault",
     description: "Secure vaults with advanced biometric authentication mechanisms",
     features: [
       "Fingerprint, face, and voice recognition support",
@@ -114,7 +114,7 @@ const vaultTypes = [
     id: "cross-chain-fragment",
     name: "Cross-Chain Fragment Vault",
     icon: "🔗",
-    href: "/specialized-vault-creation?vault=cross-chain-fragment",
+    href: "/documentation/cross-chain-fragment-vault",
     description: "Fragments your assets across multiple chains for enhanced security",
     features: [
       "Automatic asset fragmentation across chains",
@@ -130,7 +130,7 @@ const vaultTypes = [
     id: "geo-location",
     name: "Geo-Location Vault",
     icon: "🌎",
-    href: "/specialized-vault-creation?vault=geo-location",
+    href: "/documentation/geo-location-vault",
     description: "Access controlled by physical location requirements",
     features: [
       "GPS and location-based authentication",
@@ -271,7 +271,7 @@ const vaultTypes = [
     id: "unique-security",
     name: "Unique Security Vault",
     icon: "🛡️",
-    href: "/specialized-vault-creation?vault=unique-security",
+    href: "/documentation/unique-security-vault",
     description: "Customizable vault with user-defined security parameters and verification methods",
     features: [
       "Build-your-own security model",
@@ -287,7 +287,7 @@ const vaultTypes = [
     id: "sovereign-fortress",
     name: "Sovereign Fortress Vault™",
     icon: "🏰",
-    href: "/sovereign-fortress-vault",
+    href: "/documentation/sovereign-fortress-vault",
     description: "The ultimate all-in-one vault with supreme security and flexibility",
     features: [
       "Triple-Chain Verification Protocol",
