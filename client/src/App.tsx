@@ -62,12 +62,12 @@ import TimeLockVault from './pages/time-lock-vault';
 import CrossChainFragmentVault from './pages/cross-chain-fragment-vault';
 import NFTPoweredVault from './pages/nft-powered-vault';
 import QuantumResistantVault from './pages/quantum-resistant-vault';
+import SovereignFortressVault from './pages/sovereign-fortress-vault';
 import DynamicVaultLink from './pages/dynamic-vault-link';
 import IntentInheritanceVault from './pages/intent-inheritance-vault';
 import EnhancedBiometricVault from './pages/enhanced-biometric-vault';
 import QuantumVault from './pages/quantum-vault';
 import TonSpecificVault from './pages/ton-specific-vault';
-import SovereignFortressVault from './pages/sovereign-fortress-vault';
 
 // New Innovative Vault Types
 import AIInvestmentVault from './pages/vault-types/ai-investment-vault';
@@ -215,6 +215,7 @@ function App() {
           <Route path="/create-vault/cross-chain-fragment" component={CrossChainFragmentVault} />
           <Route path="/create-vault/nft-powered" component={NFTPoweredVault} />
           <Route path="/create-vault/quantum-resistant" component={QuantumResistantVault} />
+          <Route path="/create-vault/standard" component={SovereignFortressVault} />
           
           {/* New Innovative Vault Types */}
           <Route path="/ai-investment-vault" component={AIInvestmentVault} />
