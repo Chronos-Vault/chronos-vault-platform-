@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useLocation } from 'wouter';
 import { Button } from '@/components/ui/button';
-import { ArrowLeft, ArrowRight, Check, CheckCircle, Sparkles, Clock, Shield, Lock, User, RefreshCw, KeyRound, Zap } from 'lucide-react';
+import { ArrowLeft, ArrowRight, Check } from 'lucide-react';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import { motion } from 'framer-motion';
 
@@ -445,7 +445,6 @@ const VaultTypesPage = () => {
   const [, navigate] = useLocation();
   
   const selectedVault = VAULT_TYPES.find(v => v.id === selected) || VAULT_TYPES[0];
-  const featuredVaults = [VAULT_TYPES[0], VAULT_TYPES[1], VAULT_TYPES[11], VAULT_TYPES[13]];
   
   // Organize vaults into categories
   const vaultCategories = {
