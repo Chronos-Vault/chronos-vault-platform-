@@ -65,7 +65,25 @@ import { BlockchainType } from '@/contexts/multi-chain-context';
 import { useTon } from '@/contexts/ton-context';
 import { useEthereum } from '@/contexts/ethereum-context';
 import { useSolana } from '@/contexts/solana-context';
-// import { AdvancedFeaturesDashboard } from '@/components/advanced-features-dashboard';
+// Define interface for SentimentData
+interface SentimentData {
+  score: number;
+  level: string;
+  timestamp: string;
+  sources: string[];
+}
+
+// Define interface for TechnicalIndicator
+interface TechnicalIndicator {
+  id: string;
+  type: string;
+  period: number;
+  secondaryPeriod?: number;
+  signalPeriod?: number;
+  condition: string;
+  value?: number;
+  enabled: boolean;
+}
 // We'll implement these utility functions directly in the component
 // instead of importing from non-existent modules
 
