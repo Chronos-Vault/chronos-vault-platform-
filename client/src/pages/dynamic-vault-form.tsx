@@ -77,7 +77,9 @@ interface BlockchainSettings {
 // Component
 const DynamicVaultForm: React.FC = () => {
   const { toast } = useToast();
-  const [currentTab, setCurrentTab] = useState('basics');
+  const [location, navigate] = useLocation();
+  const [activeTab, setActiveTab] = useState('basics');
+  const [progress, setProgress] = useState(25);
   const [isDeploying, setIsDeploying] = useState(false);
   const [deploymentProgress, setDeploymentProgress] = useState(0);
   const [isSuccess, setIsSuccess] = useState(false);
@@ -85,16 +87,17 @@ const DynamicVaultForm: React.FC = () => {
   
   // Basic vault details
   const [vaultName, setVaultName] = useState('My Dynamic Vault');
-  const [vaultDescription, setVaultDescription] = useState('');
+  const [vaultDescription, setVaultDescription] = useState('A vault that automatically adapts to changing conditions');
   const [defaultSecurityLevel, setDefaultSecurityLevel] = useState<string>('standard');
   const [adaptationSpeed, setAdaptationSpeed] = useState<number>(50);
   const [enableRealTimeMonitoring, setEnableRealTimeMonitoring] = useState<boolean>(true);
   const [allowOwnerOverride, setAllowOwnerOverride] = useState<boolean>(true);
+  const [assetTypes, setAssetTypes] = useState<string[]>(['crypto']);
   
   // Dynamic rules
   const [rules, setRules] = useState<DynamicRule[]>([
     {
-      id: `rule-${Date.now()}`,
+      id: 'rule-1',
       type: 'timeCondition',
       name: 'After Hours Protection',
       condition: 'time is between',
@@ -105,7 +108,7 @@ const DynamicVaultForm: React.FC = () => {
       isActive: true
     }
   ]);
-  const [selectedRuleId, setSelectedRuleId] = useState<string | null>(rules[0]?.id || null);
+  const [selectedRuleId, setSelectedRuleId] = useState<string | null>('rule-1');
   
   // Security Levels
   const [securityLevels, setSecurityLevels] = useState<SecurityLevel[]>([
@@ -165,22 +168,38 @@ const DynamicVaultForm: React.FC = () => {
   ]);
   const [selectedChain, setSelectedChain] = useState<'ethereum' | 'ton' | 'solana' | 'bitcoin'>('ton');
   
-  // Alert settings
-  const [alertThresholds, setAlertThresholds] = useState({
-    securityLevelChange: true,
-    unusualActivity: true,
-    ruleActivation: true,
-    multipleFailedAttempts: true,
-    notificationType: 'email'
-  });
-  
   // Performance metrics
   const [performanceScores, setPerformanceScores] = useState({
-    adaptability: 0,
-    efficiency: 0,
-    securityRating: 0,
-    ruleOptimization: 0
+    adaptability: 75,
+    efficiency: 68,
+    securityRating: 70,
+    ruleOptimization: 80
   });
+  
+  // Helper functions
+  const getSelectedRule = () => rules.find(r => r.id === selectedRuleId) || null;
+  const getSelectedSecurityLevel = () => securityLevels.find(level => level.id === selectedSecurityLevelId) || null;
+  const getSelectedBlockchainSettings = () => blockchainSettings.find(bs => bs.chain === selectedChain) || null;
+  
+  // Update progress based on active tab
+  useEffect(() => {
+    switch(activeTab) {
+      case 'basics':
+        setProgress(25);
+        break;
+      case 'rules':
+        setProgress(50);
+        break;
+      case 'security':
+        setProgress(75);
+        break;
+      case 'review':
+        setProgress(100);
+        break;
+      default:
+        setProgress(25);
+    }
+  }, [activeTab]);
   
   // Calculate performance scores
   useEffect(() => {
@@ -217,10 +236,14 @@ const DynamicVaultForm: React.FC = () => {
     });
   }, [rules, defaultSecurityLevel, adaptationSpeed, enableRealTimeMonitoring]);
   
-  // Helper functions
-  const getSelectedRule = () => rules.find(r => r.id === selectedRuleId) || null;
-  const getSelectedSecurityLevel = () => securityLevels.find(level => level.id === selectedSecurityLevelId) || null;
-  const getSelectedBlockchainSettings = () => blockchainSettings.find(bs => bs.chain === selectedChain) || null;
+  // Handle asset type toggle
+  const handleAssetTypeToggle = (type: string) => {
+    if (assetTypes.includes(type)) {
+      setAssetTypes(assetTypes.filter(t => t !== type));
+    } else {
+      setAssetTypes([...assetTypes, type]);
+    }
+  };
   
   // Rule operations
   const addRule = () => {
@@ -238,7 +261,6 @@ const DynamicVaultForm: React.FC = () => {
     
     setRules([...rules, newRule]);
     setSelectedRuleId(newRule.id);
-    setCurrentTab('rules');
   };
   
   const updateRule = (id: string, updates: Partial<DynamicRule>) => {
@@ -330,7 +352,6 @@ const DynamicVaultForm: React.FC = () => {
     
     const updatedLevel = {
       ...level,
-      requirementCount: level.requirementCount + 1,
       requirements: [
         ...level.requirements,
         { type: 'verification', value: 'email' }
@@ -360,7 +381,7 @@ const DynamicVaultForm: React.FC = () => {
     const updatedRequirements = level.requirements.filter((_, i) => i !== index);
     updateSecurityLevel(levelId, { 
       requirements: updatedRequirements,
-      requirementCount: level.requirementCount - 1
+      requirementCount: Math.min(level.requirementCount, updatedRequirements.length)
     });
   };
   
@@ -447,7 +468,47 @@ const DynamicVaultForm: React.FC = () => {
     updateBlockchainSetting(primaryChain, { fallbackChains: updatedFallbacks });
   };
   
-  // Deploy vault
+  // Form validation and submission
+  const validateForm = (): boolean => {
+    if (!vaultName.trim()) {
+      toast({
+        title: "Vault name required",
+        description: "Please provide a name for your vault",
+        variant: "destructive"
+      });
+      return false;
+    }
+    
+    if (rules.length === 0) {
+      toast({
+        title: "No rules defined",
+        description: "Your dynamic vault needs at least one rule",
+        variant: "destructive"
+      });
+      return false;
+    }
+    
+    if (blockchainSettings.length === 0) {
+      toast({
+        title: "No blockchain configured",
+        description: "Your vault needs at least one blockchain configuration",
+        variant: "destructive"
+      });
+      return false;
+    }
+    
+    if (assetTypes.length === 0) {
+      toast({
+        title: "No asset types selected",
+        description: "Please select at least one asset type",
+        variant: "destructive"
+      });
+      return false;
+    }
+    
+    return true;
+  };
+  
   const deployVault = () => {
     if (!validateForm()) return;
     
@@ -480,617 +541,607 @@ const DynamicVaultForm: React.FC = () => {
     }, 120);
   };
   
-  // Form validation
-  const validateForm = (): boolean => {
-    if (!vaultName.trim()) {
-      toast({
-        title: "Vault name required",
-        description: "Please provide a name for your vault",
-        variant: "destructive"
-      });
-      return false;
-    }
-    
-    if (rules.length === 0) {
-      toast({
-        title: "No rules defined",
-        description: "Your dynamic vault needs at least one rule",
-        variant: "destructive"
-      });
-      return false;
-    }
-    
-    if (blockchainSettings.length === 0) {
-      toast({
-        title: "No blockchain configured",
-        description: "Please configure at least one blockchain",
-        variant: "destructive"
-      });
-      return false;
-    }
-    
-    return true;
-  };
-  
-  // Render helpers
-  const getRuleTypeIcon = (type: string) => {
+  // Rendering helpers
+  const renderRuleTypeLabel = (type: string) => {
     switch(type) {
-      case 'timeCondition': return <Clock className="h-5 w-5" />;
-      case 'marketCondition': return <ChartLine className="h-5 w-5" />;
-      case 'securityLevel': return <Shield className="h-5 w-5" />;
-      case 'userActivity': return <Activity className="h-5 w-5" />;
-      case 'networkState': return <Zap className="h-5 w-5" />;
-      case 'custom': return <Settings2 className="h-5 w-5" />;
-      default: return <Workflow className="h-5 w-5" />;
+      case 'timeCondition': return 'Time-Based';
+      case 'marketCondition': return 'Market Condition';
+      case 'securityLevel': return 'Security Event';
+      case 'userActivity': return 'User Activity';
+      case 'networkState': return 'Network State';
+      case 'custom': return 'Custom';
+      default: return type;
     }
   };
   
-  const getActionDescription = (action: string, value?: string | number) => {
+  const renderActionLabel = (action: string) => {
     switch(action) {
-      case 'increaseSecurityLevel': 
-        return `Increase security to ${value || 'higher level'}`;
-      case 'decreaseSecurityLevel': 
-        return `Decrease security to ${value || 'lower level'}`;
-      case 'notifyUser': 
-        return 'Send notification to user';
-      case 'freezeAssets': 
-        return 'Temporarily freeze assets';
-      case 'adjustAccessRules': 
-        return `Adjust access requirements to ${value || 'specified level'}`;
-      case 'customLogic': 
-        return 'Execute custom logic';
-      default: 
-        return 'Perform action';
+      case 'increaseSecurityLevel': return 'Increase Security Level';
+      case 'decreaseSecurityLevel': return 'Decrease Security Level';
+      case 'notifyUser': return 'Notify User';
+      case 'freezeAssets': return 'Freeze Assets';
+      case 'adjustAccessRules': return 'Adjust Access Rules';
+      case 'customLogic': return 'Custom Logic';
+      default: return action;
     }
   };
   
-  const getChainIcon = (chain: string) => {
-    switch(chain) {
-      case 'ethereum': return '₿';
-      case 'solana': return '◎';
-      case 'ton': return '💎';
-      case 'bitcoin': return '₿';
-      default: return '🔗';
-    }
+  // Reset form
+  const resetForm = () => {
+    setVaultName('My Dynamic Vault');
+    setVaultDescription('A vault that automatically adapts to changing conditions');
+    setDefaultSecurityLevel('standard');
+    setAdaptationSpeed(50);
+    setEnableRealTimeMonitoring(true);
+    setAllowOwnerOverride(true);
+    setAssetTypes(['crypto']);
+    setRules([{
+      id: 'rule-1',
+      type: 'timeCondition',
+      name: 'After Hours Protection',
+      condition: 'time is between',
+      value: '22:00-06:00',
+      action: 'increaseSecurityLevel',
+      actionValue: 'high',
+      priority: 'medium',
+      isActive: true
+    }]);
+    setSelectedRuleId('rule-1');
+    setSecurityLevels([
+      {
+        id: 'standard',
+        name: 'Standard',
+        description: 'Basic security for everyday operations',
+        requirementCount: 1,
+        requirements: [{ type: 'keyCount', value: 1 }]
+      },
+      {
+        id: 'enhanced',
+        name: 'Enhanced',
+        description: 'Added protection for sensitive operations',
+        requirementCount: 2,
+        requirements: [
+          { type: 'keyCount', value: 1 },
+          { type: 'timeDelay', value: 30 }
+        ]
+      },
+      {
+        id: 'maximum',
+        name: 'Maximum',
+        description: 'Highest security for critical assets',
+        requirementCount: 3,
+        requirements: [
+          { type: 'keyCount', value: 2 },
+          { type: 'timeDelay', value: 60 },
+          { type: 'verification', value: 'authenticator' }
+        ]
+      }
+    ]);
+    setSelectedSecurityLevelId('standard');
+    setBlockchainSettings([
+      {
+        chain: 'ton',
+        settings: {
+          recoveryEnabled: true,
+          confirmationsRequired: 3,
+          fallbackChains: ['ethereum'],
+          customVerification: undefined
+        }
+      },
+      {
+        chain: 'ethereum',
+        settings: {
+          recoveryEnabled: true,
+          confirmationsRequired: 12,
+          fallbackChains: [],
+          customVerification: undefined
+        }
+      }
+    ]);
+    setSelectedChain('ton');
+    setActiveTab('basics');
+    setIsSuccess(false);
+    setVaultId('');
   };
   
-  const getSecurityRequirementDescription = (type: string, value: string | number) => {
-    switch(type) {
-      case 'keyCount': 
-        return `${value} key${parseInt(value.toString()) !== 1 ? 's' : ''} required`;
-      case 'verification': 
-        return `${value} verification`;
-      case 'timeDelay': 
-        return `${value} minute delay`;
-      case 'approval': 
-        return `${value} approval required`;
-      case 'passwordLength': 
-        return `Password min length: ${value}`;
-      default: 
-        return `${type}: ${value}`;
-    }
-  };
-  
-  // Success state
   if (isSuccess) {
     return (
-      <div className="container mx-auto px-4 py-12">
-        <motion.div 
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="max-w-2xl mx-auto text-center"
-        >
-          <div className="inline-flex h-24 w-24 items-center justify-center rounded-full bg-[#FF5151]/20 mb-8">
-            <Activity className="h-12 w-12 text-[#FF5151]" />
-          </div>
-          
-          <h1 className="text-3xl font-bold mb-4">Dynamic Vault Deployed!</h1>
-          <p className="text-xl text-gray-300 mb-8">
-            Your dynamic security vault is now live and ready to adapt to changing conditions with {rules.length} active rules.
-          </p>
-          
-          <Card className="bg-[#151515] border-[#333] mb-8">
+      <div className="container mx-auto py-8 px-4">
+        <div className="max-w-4xl mx-auto">
+          <Card className="border-green-200 dark:border-green-900">
             <CardHeader>
-              <CardTitle>Vault Information</CardTitle>
+              <div className="mx-auto bg-green-100 dark:bg-green-900 rounded-full w-16 h-16 flex items-center justify-center mb-4">
+                <Check className="h-8 w-8 text-green-600 dark:text-green-400" />
+              </div>
+              <CardTitle className="text-center text-2xl">Dynamic Vault Created Successfully!</CardTitle>
+              <CardDescription className="text-center">
+                Your dynamic vault has been deployed and is ready to use
+              </CardDescription>
             </CardHeader>
-            <CardContent>
-              <div className="flex items-center justify-between bg-[#1A1A1A] p-3 rounded-md mb-4">
-                <div className="font-mono text-sm text-gray-300">{vaultId}</div>
-                <Button 
-                  variant="ghost" 
-                  size="sm" 
-                  onClick={() => {
-                    navigator.clipboard.writeText(vaultId);
-                    toast({
-                      title: "Vault ID copied",
-                      description: "Vault ID copied to clipboard",
-                    });
-                  }}
-                  className="text-[#FF5151] hover:text-[#FF7171] hover:bg-[#FF5151]/10"
-                >
-                  Copy ID
-                </Button>
+            <CardContent className="space-y-6">
+              <div className="border rounded-lg p-4">
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <p className="text-sm text-gray-500">Vault Name</p>
+                    <p className="font-medium">{vaultName}</p>
+                  </div>
+                  <div>
+                    <p className="text-sm text-gray-500">Vault ID</p>
+                    <p className="font-medium">{vaultId}</p>
+                  </div>
+                  <div>
+                    <p className="text-sm text-gray-500">Default Security</p>
+                    <p className="font-medium capitalize">{defaultSecurityLevel}</p>
+                  </div>
+                  <div>
+                    <p className="text-sm text-gray-500">Active Rules</p>
+                    <p className="font-medium">{rules.filter(r => r.isActive).length}</p>
+                  </div>
+                </div>
               </div>
               
-              <div className="grid grid-cols-2 gap-4 text-sm">
-                <div>
-                  <p className="text-gray-500">Default Security</p>
-                  <p className="text-white font-medium">
-                    {securityLevels.find(l => l.id === defaultSecurityLevel)?.name || 'Standard'}
-                  </p>
-                </div>
-                <div>
-                  <p className="text-gray-500">Primary Blockchain</p>
-                  <p className="text-white font-medium">
-                    {blockchainSettings[0]?.chain.toUpperCase() || 'TON'}
-                  </p>
-                </div>
-                <div>
-                  <p className="text-gray-500">Adaptability Score</p>
-                  <p className="text-white font-medium">{performanceScores.adaptability}/100</p>
-                </div>
-                <div>
-                  <p className="text-gray-500">Security Rating</p>
-                  <p className="text-white font-medium">{performanceScores.securityRating}/100</p>
-                </div>
+              <Alert className="bg-purple-50 dark:bg-purple-950/30 border-purple-200 dark:border-purple-900">
+                <Workflow className="h-4 w-4 text-purple-500" />
+                <AlertTitle className="text-purple-700 dark:text-purple-400">Dynamic Security Active</AlertTitle>
+                <AlertDescription className="text-purple-600 dark:text-purple-300">
+                  Your vault is now monitoring conditions in real-time and will automatically adjust security settings based on your rules.
+                </AlertDescription>
+              </Alert>
+              
+              <div className="flex flex-col gap-2">
+                <Button 
+                  variant="outline" 
+                  onClick={() => navigate('/vaults')}
+                  className="w-full"
+                >
+                  Go to My Vaults
+                </Button>
+                <Button 
+                  onClick={resetForm}
+                  className="w-full bg-purple-600 hover:bg-purple-700"
+                >
+                  Create Another Vault
+                </Button>
               </div>
             </CardContent>
           </Card>
-          
-          <div className="flex flex-col space-y-4 sm:flex-row sm:space-y-0 sm:space-x-4 justify-center">
-            <Link href="/dashboard">
-              <Button 
-                className="bg-gradient-to-r from-[#FF5151] to-[#FF9B51] hover:from-[#FF7171] hover:to-[#FFBB71] text-white px-8 py-6 h-auto text-lg rounded-xl shadow-lg"
-              >
-                Go to Dashboard
-              </Button>
-            </Link>
-            <Button 
-              variant="outline"
-              className="border-[#FF5151]/50 text-[#FF5151] hover:bg-[#FF5151]/10"
-              onClick={() => {
-                setIsSuccess(false);
-                setVaultName('My Dynamic Vault');
-                setVaultDescription('');
-                setDeploymentProgress(0);
-                setVaultId('');
-                setCurrentTab('basics');
-              }}
-            >
-              Create Another Vault
-            </Button>
-          </div>
-        </motion.div>
+        </div>
       </div>
     );
   }
   
   return (
-    <div className="container mx-auto px-4 py-8">
-      {/* Header Section */}
-      <div className="mb-8">
-        <Link href="/vault-types">
-          <Button variant="ghost" className="mb-4 hover:bg-[#FF5151]/10">
-            <ArrowLeft className="mr-2 h-4 w-4" />
-            Back to Vault Types
-          </Button>
-        </Link>
-
-        <div className="flex items-center mb-4">
-          <div className="h-12 w-12 rounded-full bg-gradient-to-br from-[#FF5151] to-[#FF9B51] flex items-center justify-center shadow-lg shadow-[#FF5151]/30 mr-4">
-            <Activity className="h-6 w-6 text-white" />
+    <div className="container mx-auto py-8 px-4">
+      <div className="max-w-4xl mx-auto">
+        <motion.div
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+        >
+          <div className="flex items-center mb-6">
+            <div>
+              <h1 className="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-purple-600 to-indigo-600">
+                Create Dynamic Vault
+              </h1>
+              <p className="text-gray-600 dark:text-gray-400 mt-2">
+                Create a vault with intelligent security rules that adapt to changing conditions and threats
+              </p>
+            </div>
+            <Badge className="ml-auto bg-purple-600">Advanced</Badge>
           </div>
-          <h1 className="text-3xl md:text-4xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-[#FF5151] to-[#FF9B51]">
-            Dynamic Security Vault
-          </h1>
+        </motion.div>
+
+        <div className="mb-8">
+          <Progress value={progress} className="h-2 bg-gray-200 dark:bg-gray-800" />
+          <div className="flex justify-between mt-2 text-sm text-gray-500">
+            <span className={activeTab === 'basics' ? 'font-medium text-purple-600' : ''}>Basic Info</span>
+            <span className={activeTab === 'rules' ? 'font-medium text-purple-600' : ''}>Dynamic Rules</span>
+            <span className={activeTab === 'security' ? 'font-medium text-purple-600' : ''}>Security Settings</span>
+            <span className={activeTab === 'review' ? 'font-medium text-purple-600' : ''}>Review</span>
+          </div>
         </div>
         
-        <p className="text-lg text-gray-300 max-w-3xl">
-          Create a self-adapting vault that dynamically adjusts its security parameters based on real-time conditions, activity patterns, and threat levels.
-        </p>
-        
-        <div className="flex flex-wrap gap-3 mt-4">
-          <Badge variant="secondary" className="bg-[#FF5151]/20 text-[#FF5151] border-[#FF5151]/50">
-            <Activity className="h-3 w-3 mr-1" /> Adaptive Security
-          </Badge>
-          <Badge variant="secondary" className="bg-[#FF9B51]/20 text-[#FF9B51] border-[#FF9B51]/50">
-            <BarChart3 className="h-3 w-3 mr-1" /> Behavioral Analysis
-          </Badge>
-          <Badge variant="secondary" className="bg-[#FF7151]/20 text-[#FF7151] border-[#FF7151]/50">
-            <Shield className="h-3 w-3 mr-1" /> Real-Time Protection
-          </Badge>
-        </div>
-      </div>
-      
-      {/* Main content */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        {/* Left Column - Vault Setup */}
-        <div className="lg:col-span-2">
-          <Tabs 
-            value={currentTab} 
-            onValueChange={setCurrentTab}
-            className="bg-black/30 backdrop-blur-sm rounded-xl border border-gray-800 p-6"
-          >
-            <TabsList className="grid grid-cols-4 mb-8">
-              <TabsTrigger value="basics" className="data-[state=active]:bg-[#FF5151]/30">
-                <div className="flex flex-col items-center py-1">
-                  <Layers className="h-5 w-5 mb-1" />
-                  <span>Basics</span>
-                </div>
-              </TabsTrigger>
-              <TabsTrigger value="rules" className="data-[state=active]:bg-[#FF7151]/30">
-                <div className="flex flex-col items-center py-1">
-                  <Workflow className="h-5 w-5 mb-1" />
-                  <span>Rules</span>
-                </div>
-              </TabsTrigger>
-              <TabsTrigger value="security" className="data-[state=active]:bg-[#FF9B51]/30">
-                <div className="flex flex-col items-center py-1">
-                  <Shield className="h-5 w-5 mb-1" />
-                  <span>Security</span>
-                </div>
-              </TabsTrigger>
-              <TabsTrigger value="blockchain" className="data-[state=active]:bg-[#FFC151]/30">
-                <div className="flex flex-col items-center py-1">
-                  <Layers className="h-5 w-5 mb-1" />
-                  <span>Blockchain</span>
-                </div>
-              </TabsTrigger>
-            </TabsList>
-            
-            <TabsContent value="basics" className="space-y-6">
-              <div className="space-y-4">
-                <h2 className="text-xl font-semibold">Basic Configuration</h2>
-                
-                <div className="space-y-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="vault-name">Vault Name</Label>
-                    <Input 
-                      id="vault-name"
-                      value={vaultName}
-                      onChange={(e) => setVaultName(e.target.value)}
-                      className="bg-black/30 border-gray-700"
-                    />
-                  </div>
-                  
-                  <div className="space-y-2">
-                    <Label htmlFor="vault-description">Description (Optional)</Label>
-                    <Textarea
-                      id="vault-description"
-                      value={vaultDescription}
-                      onChange={(e) => setVaultDescription(e.target.value)}
-                      className="bg-black/30 border-gray-700 min-h-[100px]"
-                      placeholder="Describe the purpose of this dynamic vault"
-                    />
-                  </div>
-                </div>
-                
-                <Separator className="my-6 bg-gray-800" />
-                
-                <div className="space-y-4">
-                  <h2 className="text-xl font-semibold">Default Security Level</h2>
-                  <p className="text-sm text-gray-400">
-                    Choose the base security level for your vault when no rules are active
-                  </p>
-                  
-                  <RadioGroup 
-                    value={defaultSecurityLevel} 
-                    onValueChange={setDefaultSecurityLevel}
-                    className="grid grid-cols-1 sm:grid-cols-3 gap-3 mt-2"
-                  >
-                    {securityLevels.map(level => (
-                      <div 
-                        key={level.id}
-                        className="flex items-center space-x-2 border border-gray-800 rounded-lg p-3 hover:bg-[#FF5151]/5 cursor-pointer"
-                      >
-                        <RadioGroupItem value={level.id} id={`level-${level.id}`} className="text-[#FF5151]" />
-                        <Label htmlFor={`level-${level.id}`} className="cursor-pointer flex-1">
-                          <div className="flex flex-col">
-                            <span className="font-medium">{level.name}</span>
-                            <span className="text-xs text-gray-400">{level.description}</span>
-                          </div>
-                        </Label>
-                      </div>
-                    ))}
-                  </RadioGroup>
-                </div>
-                
-                <Separator className="my-6 bg-gray-800" />
-                
-                <div className="space-y-4">
-                  <h2 className="text-xl font-semibold">Adaptation Settings</h2>
-                  
-                  <div className="space-y-2">
-                    <div className="flex justify-between">
-                      <Label htmlFor="adaptation-speed">Adaptation Speed</Label>
-                      <span>{adaptationSpeed}%</span>
-                    </div>
-                    <Slider
-                      id="adaptation-speed"
-                      min={0}
-                      max={100}
-                      step={5}
-                      value={[adaptationSpeed]}
-                      onValueChange={(value) => setAdaptationSpeed(value[0])}
-                      className="[&>span]:bg-[#FF5151]"
-                    />
-                    <div className="flex justify-between text-xs text-gray-400">
-                      <span>Slower, more gradual</span>
-                      <span>Faster, immediate</span>
-                    </div>
-                  </div>
-                  
-                  <div className="flex items-center justify-between border-b border-gray-800 py-4">
-                    <div>
-                      <Label htmlFor="enable-monitoring" className="cursor-pointer font-medium">
-                        Real-Time Condition Monitoring
-                      </Label>
-                      <p className="text-sm text-gray-400">
-                        Continuously monitor conditions for rule evaluation
-                      </p>
-                    </div>
-                    <Switch 
-                      id="enable-monitoring"
-                      checked={enableRealTimeMonitoring}
-                      onCheckedChange={setEnableRealTimeMonitoring}
-                      className="data-[state=checked]:bg-[#FF5151]"
-                    />
-                  </div>
-                  
-                  <div className="flex items-center justify-between pt-4">
-                    <div>
-                      <Label htmlFor="owner-override" className="cursor-pointer font-medium">
-                        Owner Override
-                      </Label>
-                      <p className="text-sm text-gray-400">
-                        Allow owner to manually override security levels
-                      </p>
-                    </div>
-                    <Switch 
-                      id="owner-override"
-                      checked={allowOwnerOverride}
-                      onCheckedChange={setAllowOwnerOverride}
-                      className="data-[state=checked]:bg-[#FF5151]"
-                    />
-                  </div>
-                </div>
+        {isDeploying ? (
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-center">Deploying Your Dynamic Vault</CardTitle>
+              <CardDescription className="text-center">
+                Please wait while we deploy your vault with the specified configuration
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="flex flex-col items-center">
+              <div className="w-full max-w-md mb-6">
+                <Progress value={deploymentProgress} className="h-2" />
+                <p className="text-right text-sm text-gray-500 mt-1">{deploymentProgress}%</p>
               </div>
               
-              <div className="pt-4 flex justify-end">
-                <Button 
-                  onClick={() => setCurrentTab('rules')}
-                  className="bg-[#FF5151] hover:bg-[#FF7171] text-white"
-                >
-                  Continue to Rules
-                </Button>
-              </div>
-            </TabsContent>
-            
-            <TabsContent value="rules" className="space-y-6">
-              <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                {/* Rules List */}
-                <div className="lg:col-span-1 space-y-4">
-                  <div className="flex items-center justify-between">
-                    <h2 className="text-xl font-semibold">Dynamic Rules</h2>
-                  </div>
-                  
-                  <div className="space-y-2 max-h-[500px] overflow-y-auto pr-2">
-                    {rules.map(rule => (
-                      <div 
-                        key={rule.id}
-                        className={`flex items-center space-x-3 p-3 rounded-md cursor-pointer transition-colors ${
-                          selectedRuleId === rule.id 
-                            ? 'bg-[#FF5151]/20 border border-[#FF5151]/40' 
-                            : 'bg-black/20 border border-gray-800 hover:border-gray-700'
-                        }`}
-                        onClick={() => setSelectedRuleId(rule.id)}
-                      >
-                        <div className="bg-black/30 h-8 w-8 rounded-full flex items-center justify-center flex-shrink-0">
-                          {getRuleTypeIcon(rule.type)}
-                        </div>
-                        <div className="flex-1 min-w-0">
-                          <p className="font-medium truncate">{rule.name}</p>
-                          <div className="flex items-center text-xs text-gray-400">
-                            <span className="truncate">{getActionDescription(rule.action, rule.actionValue)}</span>
-                            {!rule.isActive && (
-                              <Badge variant="outline" className="ml-2 text-gray-500 border-gray-500 px-1.5 py-0">
-                                Disabled
-                              </Badge>
-                            )}
-                          </div>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                  
-                  <Button 
-                    variant="outline" 
-                    className="w-full border-dashed flex items-center justify-center space-x-2 hover:bg-[#FF5151]/5 hover:border-[#FF5151]/30 border-gray-700"
-                    onClick={addRule}
-                  >
-                    <Plus className="h-4 w-4" />
-                    <span>Add Rule</span>
-                  </Button>
+              <div className="space-y-4 w-full max-w-md">
+                <div className="flex items-center gap-3">
+                  <Check className="h-5 w-5 text-green-500" />
+                  <span>Initializing vault structure</span>
                 </div>
-                
-                {/* Rule Editor */}
-                <div className="lg:col-span-2 space-y-4">
-                  {selectedRuleId ? (
-                    <>
-                      <div className="flex items-center justify-between">
-                        <h2 className="text-xl font-semibold">Rule Configuration</h2>
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          onClick={() => deleteRule(selectedRuleId)}
-                          className="h-8 w-8 text-red-500 hover:text-red-400 hover:bg-red-500/10"
-                        >
-                          <Trash2 className="h-4 w-4" />
-                        </Button>
+                <div className="flex items-center gap-3">
+                  <Check className="h-5 w-5 text-green-500" />
+                  <span>Configuring dynamic rule engine</span>
+                </div>
+                <div className="flex items-center gap-3">
+                  {deploymentProgress >= 40 ? (
+                    <Check className="h-5 w-5 text-green-500" />
+                  ) : (
+                    <div className="h-5 w-5 rounded-full border-2 border-gray-300 border-t-purple-600 animate-spin" />
+                  )}
+                  <span>Setting up security levels</span>
+                </div>
+                <div className="flex items-center gap-3">
+                  {deploymentProgress >= 70 ? (
+                    <Check className="h-5 w-5 text-green-500" />
+                  ) : (
+                    <div className="h-5 w-5 rounded-full border-2 border-gray-300 border-t-purple-600 animate-spin opacity-40" />
+                  )}
+                  <span className={deploymentProgress < 70 ? "text-gray-400" : ""}>Configuring blockchain integration</span>
+                </div>
+                <div className="flex items-center gap-3">
+                  {deploymentProgress >= 90 ? (
+                    <Check className="h-5 w-5 text-green-500" />
+                  ) : (
+                    <div className="h-5 w-5 rounded-full border-2 border-gray-300 border-t-purple-600 animate-spin opacity-20" />
+                  )}
+                  <span className={deploymentProgress < 90 ? "text-gray-400" : ""}>Finalizing vault deployment</span>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        ) : (
+          <>
+            <Tabs value={activeTab} onValueChange={setActiveTab}>
+              <TabsList className="grid grid-cols-4 mb-6">
+                <TabsTrigger value="basics">Basic Info</TabsTrigger>
+                <TabsTrigger value="rules">Dynamic Rules</TabsTrigger>
+                <TabsTrigger value="security">Security Settings</TabsTrigger>
+                <TabsTrigger value="review">Review</TabsTrigger>
+              </TabsList>
+              
+              <TabsContent value="basics">
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="flex items-center">
+                      <Settings2 className="mr-2 h-5 w-5 text-purple-500" />
+                      Basic Configuration
+                    </CardTitle>
+                    <CardDescription>
+                      Configure the fundamental settings for your dynamic vault
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent className="space-y-6">
+                    <div className="space-y-4">
+                      <div className="space-y-2">
+                        <Label htmlFor="vault-name">Vault Name</Label>
+                        <Input 
+                          id="vault-name" 
+                          value={vaultName} 
+                          onChange={(e) => setVaultName(e.target.value)} 
+                          placeholder="Enter vault name"
+                        />
                       </div>
                       
-                      {getSelectedRule() && (
-                        <div className="space-y-4">
-                          <div className="space-y-2">
-                            <Label htmlFor="rule-name">Rule Name</Label>
-                            <Input 
-                              id="rule-name"
-                              value={getSelectedRule()!.name}
-                              onChange={(e) => updateRule(selectedRuleId, { name: e.target.value })}
-                              className="bg-black/30 border-gray-700"
-                            />
+                      <div className="space-y-2">
+                        <Label htmlFor="vault-description">Description</Label>
+                        <Textarea 
+                          id="vault-description" 
+                          value={vaultDescription} 
+                          onChange={(e) => setVaultDescription(e.target.value)} 
+                          placeholder="Describe the purpose of this vault"
+                          rows={3}
+                        />
+                      </div>
+                    </div>
+                    
+                    <Separator />
+                    
+                    <div className="space-y-4">
+                      <h3 className="text-lg font-medium">Asset Types</h3>
+                      <div className="grid grid-cols-2 gap-3">
+                        <div className="flex items-start space-x-3">
+                          <Checkbox 
+                            id="asset-crypto" 
+                            checked={assetTypes.includes('crypto')} 
+                            onCheckedChange={() => handleAssetTypeToggle('crypto')} 
+                          />
+                          <div className="space-y-1 leading-none">
+                            <Label htmlFor="asset-crypto">Cryptocurrency</Label>
+                            <p className="text-sm text-gray-500">Digital currencies</p>
                           </div>
-                          
-                          <div className="flex items-center justify-between border-b border-gray-800 pb-4">
-                            <div>
-                              <Label htmlFor="rule-active" className="cursor-pointer font-medium">
-                                Rule Status
-                              </Label>
-                              <p className="text-sm text-gray-400">
-                                Enable or disable this rule
-                              </p>
+                        </div>
+                        <div className="flex items-start space-x-3">
+                          <Checkbox 
+                            id="asset-nft" 
+                            checked={assetTypes.includes('nft')} 
+                            onCheckedChange={() => handleAssetTypeToggle('nft')} 
+                          />
+                          <div className="space-y-1 leading-none">
+                            <Label htmlFor="asset-nft">NFTs</Label>
+                            <p className="text-sm text-gray-500">Non-fungible tokens</p>
+                          </div>
+                        </div>
+                        <div className="flex items-start space-x-3">
+                          <Checkbox 
+                            id="asset-tokens" 
+                            checked={assetTypes.includes('tokens')} 
+                            onCheckedChange={() => handleAssetTypeToggle('tokens')} 
+                          />
+                          <div className="space-y-1 leading-none">
+                            <Label htmlFor="asset-tokens">Tokens</Label>
+                            <p className="text-sm text-gray-500">Utility and security tokens</p>
+                          </div>
+                        </div>
+                        <div className="flex items-start space-x-3">
+                          <Checkbox 
+                            id="asset-documents" 
+                            checked={assetTypes.includes('documents')} 
+                            onCheckedChange={() => handleAssetTypeToggle('documents')} 
+                          />
+                          <div className="space-y-1 leading-none">
+                            <Label htmlFor="asset-documents">Documents</Label>
+                            <p className="text-sm text-gray-500">Digital files and documents</p>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    
+                    <Separator />
+                    
+                    <div className="space-y-4">
+                      <h3 className="text-lg font-medium">Security Configuration</h3>
+                      
+                      <div className="space-y-2">
+                        <Label htmlFor="security-level">Default Security Level</Label>
+                        <Select 
+                          value={defaultSecurityLevel} 
+                          onValueChange={setDefaultSecurityLevel}
+                        >
+                          <SelectTrigger id="security-level">
+                            <SelectValue placeholder="Select default security level" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="standard">Standard</SelectItem>
+                            <SelectItem value="enhanced">Enhanced</SelectItem>
+                            <SelectItem value="maximum">Maximum</SelectItem>
+                            {securityLevels
+                              .filter(level => !['standard', 'enhanced', 'maximum'].includes(level.id))
+                              .map(level => (
+                                <SelectItem key={level.id} value={level.id}>
+                                  {level.name}
+                                </SelectItem>
+                              ))
+                            }
+                          </SelectContent>
+                        </Select>
+                      </div>
+                      
+                      <div className="space-y-2">
+                        <div className="flex justify-between">
+                          <Label htmlFor="adaptation-speed">Adaptation Speed</Label>
+                          <span className="text-sm text-gray-500">{adaptationSpeed}%</span>
+                        </div>
+                        <Slider
+                          id="adaptation-speed"
+                          min={10}
+                          max={90}
+                          step={10}
+                          value={[adaptationSpeed]}
+                          onValueChange={(value) => setAdaptationSpeed(value[0])}
+                          className="cursor-pointer"
+                        />
+                        <div className="flex justify-between text-xs text-gray-500">
+                          <span>Cautious</span>
+                          <span>Balanced</span>
+                          <span>Responsive</span>
+                        </div>
+                      </div>
+                      
+                      <div className="space-y-3">
+                        <div className="flex items-center justify-between">
+                          <div className="space-y-0.5">
+                            <Label htmlFor="real-time-monitoring">Real-Time Monitoring</Label>
+                            <p className="text-sm text-gray-500">Continuously monitor for security threats</p>
+                          </div>
+                          <Switch
+                            id="real-time-monitoring"
+                            checked={enableRealTimeMonitoring}
+                            onCheckedChange={setEnableRealTimeMonitoring}
+                          />
+                        </div>
+                        
+                        <div className="flex items-center justify-between">
+                          <div className="space-y-0.5">
+                            <Label htmlFor="owner-override">Owner Override</Label>
+                            <p className="text-sm text-gray-500">Allow owner to bypass security rules</p>
+                          </div>
+                          <Switch
+                            id="owner-override"
+                            checked={allowOwnerOverride}
+                            onCheckedChange={setAllowOwnerOverride}
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  </CardContent>
+                  <CardFooter className="flex justify-end">
+                    <Button 
+                      onClick={() => setActiveTab('rules')}
+                      className="bg-purple-600 hover:bg-purple-700"
+                    >
+                      Continue <ArrowRight className="ml-2 h-4 w-4" />
+                    </Button>
+                  </CardFooter>
+                </Card>
+              </TabsContent>
+              
+              <TabsContent value="rules">
+                <Card>
+                  <CardHeader>
+                    <div className="flex justify-between items-start">
+                      <div>
+                        <CardTitle className="flex items-center">
+                          <Workflow className="mr-2 h-5 w-5 text-purple-500" />
+                          Dynamic Rule Engine
+                        </CardTitle>
+                        <CardDescription>
+                          Create rules that respond to market conditions, time-based events, and security threats
+                        </CardDescription>
+                      </div>
+                      <Button
+                        onClick={addRule}
+                        size="sm"
+                        className="bg-purple-600 hover:bg-purple-700"
+                      >
+                        <Plus className="mr-2 h-4 w-4" /> Add Rule
+                      </Button>
+                    </div>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="grid md:grid-cols-3 gap-6">
+                      <div className="space-y-4 md:col-span-1 md:border-r pr-4">
+                        <div className="text-sm font-medium text-gray-500">Rule List</div>
+                        {rules.map(rule => (
+                          <Button
+                            key={rule.id}
+                            variant={selectedRuleId === rule.id ? "default" : "outline"}
+                            className={`w-full justify-start text-left h-auto py-3 ${selectedRuleId === rule.id ? 'bg-purple-600 hover:bg-purple-700' : ''}`}
+                            onClick={() => setSelectedRuleId(rule.id)}
+                          >
+                            <div className="flex flex-col items-start">
+                              <div className="font-medium">{rule.name}</div>
+                              <div className="text-xs flex items-center gap-1">
+                                <Badge 
+                                  variant="outline" 
+                                  className={`
+                                    ${rule.priority === 'high' ? 'border-red-500 text-red-500' : 
+                                      rule.priority === 'medium' ? 'border-amber-500 text-amber-500' : 
+                                      'border-blue-500 text-blue-500'}
+                                  `}
+                                >
+                                  {rule.priority.charAt(0).toUpperCase() + rule.priority.slice(1)}
+                                </Badge>
+                                <Badge 
+                                  variant="outline" 
+                                  className={rule.isActive ? 'border-green-500 text-green-500' : 'border-gray-500 text-gray-500'}
+                                >
+                                  {rule.isActive ? 'Active' : 'Inactive'}
+                                </Badge>
+                              </div>
                             </div>
-                            <Switch 
-                              id="rule-active"
-                              checked={getSelectedRule()!.isActive}
-                              onCheckedChange={(isActive) => updateRule(selectedRuleId, { isActive })}
-                              className="data-[state=checked]:bg-[#FF5151]"
-                            />
-                          </div>
-                          
-                          <div className="space-y-3">
-                            <Label>Rule Type</Label>
-                            <RadioGroup 
-                              value={getSelectedRule()!.type} 
-                              onValueChange={(value) => updateRule(selectedRuleId, { 
-                                type: value as DynamicRule['type'] 
-                              })}
-                              className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-2"
-                            >
-                              {[
-                                { id: 'timeCondition', name: 'Time Condition', description: 'Based on time of day or day of week' },
-                                { id: 'marketCondition', name: 'Market Condition', description: 'Based on market data and fluctuations' },
-                                { id: 'securityLevel', name: 'Security Condition', description: 'Based on current security status' },
-                                { id: 'userActivity', name: 'User Activity', description: 'Based on user behavior patterns' },
-                                { id: 'networkState', name: 'Network State', description: 'Based on blockchain network status' },
-                                { id: 'custom', name: 'Custom Logic', description: 'Custom-defined condition' },
-                              ].map(type => (
-                                <div 
-                                  key={type.id}
-                                  className="flex items-center space-x-2 border border-gray-800 rounded-lg p-3 hover:bg-[#FF5151]/5 cursor-pointer"
-                                >
-                                  <RadioGroupItem 
-                                    value={type.id} 
-                                    id={`type-${type.id}`} 
-                                    className="text-[#FF5151]" 
-                                  />
-                                  <Label htmlFor={`type-${type.id}`} className="cursor-pointer flex-1">
-                                    <div className="flex items-center">
-                                      <div className="mr-2">
-                                        {getRuleTypeIcon(type.id)}
-                                      </div>
-                                      <div className="flex flex-col">
-                                        <span className="font-medium">{type.name}</span>
-                                        <span className="text-xs text-gray-400">{type.description}</span>
-                                      </div>
-                                    </div>
-                                  </Label>
-                                </div>
-                              ))}
-                            </RadioGroup>
-                          </div>
-                          
-                          <Separator className="my-4 bg-gray-800" />
-                          
-                          <div className="space-y-4">
-                            <div className="grid grid-cols-2 gap-4">
+                          </Button>
+                        ))}
+                      </div>
+                      
+                      <div className="md:col-span-2">
+                        {getSelectedRule() && (
+                          <div className="space-y-6">
+                            <div className="flex justify-between items-center">
+                              <h3 className="text-lg font-medium">Rule Configuration</h3>
+                              <Button
+                                onClick={() => deleteRule(selectedRuleId!)}
+                                variant="ghost"
+                                size="sm"
+                                className="text-red-500 hover:text-red-700"
+                                disabled={rules.length <= 1}
+                              >
+                                <Trash2 className="h-4 w-4 mr-1" /> Delete
+                              </Button>
+                            </div>
+                            
+                            <div className="space-y-4">
                               <div className="space-y-2">
-                                <Label>Condition</Label>
-                                <Select 
-                                  value={getSelectedRule()!.condition} 
-                                  onValueChange={(value) => updateRule(selectedRuleId, { condition: value })}
-                                >
-                                  <SelectTrigger className="bg-black/30 border-gray-700">
-                                    <SelectValue placeholder="Select condition" />
-                                  </SelectTrigger>
-                                  <SelectContent>
-                                    {getSelectedRule()!.type === 'timeCondition' && (
-                                      <>
-                                        <SelectItem value="time is between">Time is between</SelectItem>
-                                        <SelectItem value="day is">Day is</SelectItem>
-                                        <SelectItem value="after date">After date</SelectItem>
-                                      </>
-                                    )}
-                                    {getSelectedRule()!.type === 'marketCondition' && (
-                                      <>
-                                        <SelectItem value="price drops below">Price drops below</SelectItem>
-                                        <SelectItem value="price increases above">Price increases above</SelectItem>
-                                        <SelectItem value="volatility exceeds">Volatility exceeds</SelectItem>
-                                      </>
-                                    )}
-                                    {getSelectedRule()!.type === 'securityLevel' && (
-                                      <>
-                                        <SelectItem value="threat level is">Threat level is</SelectItem>
-                                        <SelectItem value="failed attempts exceed">Failed attempts exceed</SelectItem>
-                                        <SelectItem value="unusual activity detected">Unusual activity detected</SelectItem>
-                                      </>
-                                    )}
-                                    {getSelectedRule()!.type === 'userActivity' && (
-                                      <>
-                                        <SelectItem value="login from new location">Login from new location</SelectItem>
-                                        <SelectItem value="login at unusual time">Login at unusual time</SelectItem>
-                                        <SelectItem value="transaction volume exceeds">Transaction volume exceeds</SelectItem>
-                                      </>
-                                    )}
-                                    {getSelectedRule()!.type === 'networkState' && (
-                                      <>
-                                        <SelectItem value="network congestion above">Network congestion above</SelectItem>
-                                        <SelectItem value="gas prices exceed">Gas prices exceed</SelectItem>
-                                        <SelectItem value="chain stability below">Chain stability below</SelectItem>
-                                      </>
-                                    )}
-                                    {getSelectedRule()!.type === 'custom' && (
-                                      <>
-                                        <SelectItem value="custom condition">Custom condition</SelectItem>
-                                      </>
-                                    )}
-                                  </SelectContent>
-                                </Select>
+                                <Label htmlFor="rule-name">Rule Name</Label>
+                                <Input 
+                                  id="rule-name" 
+                                  value={getSelectedRule()!.name} 
+                                  onChange={(e) => updateRule(selectedRuleId!, { name: e.target.value })} 
+                                />
+                              </div>
+                              
+                              <div className="grid grid-cols-2 gap-4">
+                                <div className="space-y-2">
+                                  <Label htmlFor="rule-type">Condition Type</Label>
+                                  <Select 
+                                    value={getSelectedRule()!.type} 
+                                    onValueChange={(value: any) => updateRule(selectedRuleId!, { type: value })}
+                                  >
+                                    <SelectTrigger id="rule-type">
+                                      <SelectValue />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                      <SelectItem value="timeCondition">Time-Based</SelectItem>
+                                      <SelectItem value="marketCondition">Market Condition</SelectItem>
+                                      <SelectItem value="securityLevel">Security Event</SelectItem>
+                                      <SelectItem value="userActivity">User Activity</SelectItem>
+                                      <SelectItem value="networkState">Network State</SelectItem>
+                                      <SelectItem value="custom">Custom</SelectItem>
+                                    </SelectContent>
+                                  </Select>
+                                </div>
+                                
+                                <div className="space-y-2">
+                                  <Label htmlFor="rule-priority">Priority</Label>
+                                  <Select 
+                                    value={getSelectedRule()!.priority} 
+                                    onValueChange={(value: any) => updateRule(selectedRuleId!, { priority: value })}
+                                  >
+                                    <SelectTrigger id="rule-priority">
+                                      <SelectValue />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                      <SelectItem value="high">High</SelectItem>
+                                      <SelectItem value="medium">Medium</SelectItem>
+                                      <SelectItem value="low">Low</SelectItem>
+                                    </SelectContent>
+                                  </Select>
+                                </div>
                               </div>
                               
                               <div className="space-y-2">
-                                <Label>Condition Value</Label>
+                                <Label htmlFor="rule-condition">Condition</Label>
                                 <Input 
-                                  value={getSelectedRule()!.value.toString()}
-                                  onChange={(e) => updateRule(selectedRuleId, { value: e.target.value })}
-                                  className="bg-black/30 border-gray-700"
+                                  id="rule-condition" 
+                                  value={getSelectedRule()!.condition} 
+                                  onChange={(e) => updateRule(selectedRuleId!, { condition: e.target.value })} 
                                   placeholder={
-                                    getSelectedRule()!.type === 'timeCondition' ? "e.g., 22:00-06:00" :
-                                    getSelectedRule()!.type === 'marketCondition' ? "e.g., 50000" :
-                                    getSelectedRule()!.type === 'securityLevel' ? "e.g., high" :
-                                    getSelectedRule()!.type === 'userActivity' ? "e.g., 3" :
-                                    getSelectedRule()!.type === 'networkState' ? "e.g., 80%" :
-                                    "e.g., value"
+                                    getSelectedRule()!.type === 'timeCondition' ? 'e.g., time is between' :
+                                    getSelectedRule()!.type === 'marketCondition' ? 'e.g., BTC price drops below' :
+                                    getSelectedRule()!.type === 'securityLevel' ? 'e.g., failed login attempts exceed' :
+                                    getSelectedRule()!.type === 'userActivity' ? 'e.g., login from new location' :
+                                    getSelectedRule()!.type === 'networkState' ? 'e.g., network congestion above' :
+                                    'e.g., custom condition'
                                   }
                                 />
                               </div>
-                            </div>
-                          </div>
-                          
-                          <Separator className="my-4 bg-gray-800" />
-                          
-                          <div className="space-y-4">
-                            <div className="grid grid-cols-2 gap-4">
+                              
                               <div className="space-y-2">
-                                <Label>Action to Take</Label>
-                                <Select 
-                                  value={getSelectedRule()!.action} 
-                                  onValueChange={(value) => updateRule(selectedRuleId, { 
-                                    action: value as DynamicRule['action']
-                                  })}
+                                <Label htmlFor="rule-value">Value</Label>
+                                <Input 
+                                  id="rule-value" 
+                                  value={getSelectedRule()!.value.toString()}
+                                  onChange={(e) => updateRule(selectedRuleId!, { value: e.target.value })} 
+                                  placeholder={
+                                    getSelectedRule()!.type === 'timeCondition' ? 'e.g., 22:00-06:00' :
+                                    getSelectedRule()!.type === 'marketCondition' ? 'e.g., 50000' :
+                                    getSelectedRule()!.type === 'securityLevel' ? 'e.g., 3' :
+                                    getSelectedRule()!.type === 'userActivity' ? 'e.g., any' :
+                                    getSelectedRule()!.type === 'networkState' ? 'e.g., 80%' :
+                                    'e.g., custom value'
+                                  }
+                                />
+                              </div>
+                              
+                              <div className="space-y-2">
+                                <Label htmlFor="rule-action">Action</Label>
+                                <Select
+                                  value={getSelectedRule()!.action}
+                                  onValueChange={(value: any) => updateRule(selectedRuleId!, { action: value })}
                                 >
-                                  <SelectTrigger className="bg-black/30 border-gray-700">
-                                    <SelectValue placeholder="Select action" />
+                                  <SelectTrigger id="rule-action">
+                                    <SelectValue />
                                   </SelectTrigger>
                                   <SelectContent>
                                     <SelectItem value="increaseSecurityLevel">Increase Security Level</SelectItem>
@@ -1098,902 +1149,652 @@ const DynamicVaultForm: React.FC = () => {
                                     <SelectItem value="notifyUser">Notify User</SelectItem>
                                     <SelectItem value="freezeAssets">Freeze Assets</SelectItem>
                                     <SelectItem value="adjustAccessRules">Adjust Access Rules</SelectItem>
-                                    <SelectItem value="customLogic">Execute Custom Logic</SelectItem>
+                                    <SelectItem value="customLogic">Custom Logic</SelectItem>
                                   </SelectContent>
                                 </Select>
                               </div>
                               
-                              {(getSelectedRule()!.action === 'increaseSecurityLevel' || 
-                                getSelectedRule()!.action === 'decreaseSecurityLevel' || 
-                                getSelectedRule()!.action === 'adjustAccessRules') && (
-                                <div className="space-y-2">
-                                  <Label>Security Level</Label>
-                                  <Select 
-                                    value={getSelectedRule()!.actionValue?.toString() || ''} 
-                                    onValueChange={(value) => updateRule(selectedRuleId, { actionValue: value })}
-                                  >
-                                    <SelectTrigger className="bg-black/30 border-gray-700">
-                                      <SelectValue placeholder="Select level" />
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                      {securityLevels.map(level => (
-                                        <SelectItem key={level.id} value={level.id}>{level.name}</SelectItem>
-                                      ))}
-                                    </SelectContent>
-                                  </Select>
-                                </div>
-                              )}
+                              <div className="space-y-2">
+                                <Label htmlFor="rule-action-value">Action Value</Label>
+                                <Input 
+                                  id="rule-action-value" 
+                                  value={getSelectedRule()!.actionValue?.toString() || ''} 
+                                  onChange={(e) => updateRule(selectedRuleId!, { actionValue: e.target.value })} 
+                                  placeholder={
+                                    ['increaseSecurityLevel', 'decreaseSecurityLevel'].includes(getSelectedRule()!.action) ? 'e.g., enhanced, maximum' :
+                                    getSelectedRule()!.action === 'notifyUser' ? 'e.g., message content' :
+                                    getSelectedRule()!.action === 'freezeAssets' ? 'e.g., duration in hours' :
+                                    getSelectedRule()!.action === 'adjustAccessRules' ? 'e.g., rule IDs' :
+                                    getSelectedRule()!.action === 'customLogic' ? 'e.g., custom logic description' :
+                                    'Action value'
+                                  }
+                                />
+                              </div>
                               
-                              {(getSelectedRule()!.action === 'customLogic' || 
-                                getSelectedRule()!.action === 'notifyUser') && (
-                                <div className="space-y-2">
-                                  <Label>Action Details</Label>
-                                  <Input 
-                                    value={getSelectedRule()!.actionValue?.toString() || ''}
-                                    onChange={(e) => updateRule(selectedRuleId, { actionValue: e.target.value })}
-                                    className="bg-black/30 border-gray-700"
-                                    placeholder={
-                                      getSelectedRule()!.action === 'customLogic' ? "Custom script name" :
-                                      getSelectedRule()!.action === 'notifyUser' ? "Notification message" : ""
-                                    }
-                                  />
-                                </div>
-                              )}
+                              <div className="flex items-center space-x-2">
+                                <Switch 
+                                  id="rule-active" 
+                                  checked={getSelectedRule()!.isActive} 
+                                  onCheckedChange={(checked) => updateRule(selectedRuleId!, { isActive: checked })} 
+                                />
+                                <Label htmlFor="rule-active">Rule Active</Label>
+                              </div>
                             </div>
                             
-                            <div className="space-y-2">
-                              <Label>Rule Priority</Label>
-                              <RadioGroup 
-                                value={getSelectedRule()!.priority} 
-                                onValueChange={(value) => updateRule(selectedRuleId, { 
-                                  priority: value as 'high' | 'medium' | 'low'
-                                })}
-                                className="flex space-x-4 mt-2"
-                              >
-                                <div className="flex items-center space-x-2">
-                                  <RadioGroupItem value="high" id="priority-high" className="text-red-500" />
-                                  <Label htmlFor="priority-high" className="cursor-pointer">High</Label>
-                                </div>
-                                <div className="flex items-center space-x-2">
-                                  <RadioGroupItem value="medium" id="priority-medium" className="text-amber-500" />
-                                  <Label htmlFor="priority-medium" className="cursor-pointer">Medium</Label>
-                                </div>
-                                <div className="flex items-center space-x-2">
-                                  <RadioGroupItem value="low" id="priority-low" className="text-green-500" />
-                                  <Label htmlFor="priority-low" className="cursor-pointer">Low</Label>
-                                </div>
-                              </RadioGroup>
-                              <p className="text-xs text-gray-400 mt-1">
-                                Higher priority rules take precedence when multiple rules are activated
-                              </p>
-                            </div>
+                            <Alert className="bg-gray-50 dark:bg-gray-900">
+                              <BarChart3 className="h-4 w-4" />
+                              <AlertTitle>Rule Summary</AlertTitle>
+                              <AlertDescription>
+                                When <span className="font-medium">{getSelectedRule()!.condition}</span> {getSelectedRule()!.value.toString()}, 
+                                the system will {renderActionLabel(getSelectedRule()!.action).toLowerCase()}
+                                {getSelectedRule()!.actionValue ? ` (${getSelectedRule()!.actionValue})` : ''}.
+                              </AlertDescription>
+                            </Alert>
                           </div>
-                        </div>
-                      )}
-                    </>
-                  ) : (
-                    <div className="flex flex-col items-center justify-center h-64 border border-dashed border-gray-700 rounded-md">
-                      <Workflow className="h-10 w-10 text-gray-500 mb-2" />
-                      <p className="text-gray-500">No rule selected</p>
-                      <Button
-                        variant="ghost"
-                        className="mt-4 text-[#FF5151] hover:text-[#FF7171] hover:bg-[#FF5151]/10"
-                        onClick={addRule}
-                      >
-                        Create your first rule
-                      </Button>
+                        )}
+                      </div>
                     </div>
-                  )}
-                </div>
-              </div>
+                  </CardContent>
+                  <CardFooter className="flex justify-between">
+                    <Button 
+                      variant="outline" 
+                      onClick={() => setActiveTab('basics')}
+                    >
+                      <ArrowLeft className="mr-2 h-4 w-4" /> Back
+                    </Button>
+                    <Button 
+                      onClick={() => setActiveTab('security')}
+                      className="bg-purple-600 hover:bg-purple-700"
+                    >
+                      Continue <ArrowRight className="ml-2 h-4 w-4" />
+                    </Button>
+                  </CardFooter>
+                </Card>
+              </TabsContent>
               
-              <div className="pt-4 flex justify-between">
-                <Button 
-                  variant="outline"
-                  onClick={() => setCurrentTab('basics')}
-                >
-                  Back
-                </Button>
-                <Button 
-                  onClick={() => setCurrentTab('security')}
-                  className="bg-[#FF7151] hover:bg-[#FF9171] text-white"
-                >
-                  Continue to Security
-                </Button>
-              </div>
-            </TabsContent>
-            
-            <TabsContent value="security" className="space-y-6">
-              <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                {/* Security Levels List */}
-                <div className="lg:col-span-1 space-y-4">
-                  <div className="flex items-center justify-between">
-                    <h2 className="text-xl font-semibold">Security Levels</h2>
-                  </div>
+              <TabsContent value="security">
+                <Tabs defaultValue="levels">
+                  <TabsList className="grid grid-cols-2 mb-6">
+                    <TabsTrigger value="levels">Security Levels</TabsTrigger>
+                    <TabsTrigger value="blockchain">Blockchain Settings</TabsTrigger>
+                  </TabsList>
                   
-                  <div className="space-y-2 max-h-[500px] overflow-y-auto pr-2">
-                    {securityLevels.map(level => (
-                      <div 
-                        key={level.id}
-                        className={`flex items-center space-x-3 p-3 rounded-md cursor-pointer transition-colors ${
-                          selectedSecurityLevelId === level.id 
-                            ? 'bg-[#FF9B51]/20 border border-[#FF9B51]/40' 
-                            : 'bg-black/20 border border-gray-800 hover:border-gray-700'
-                        }`}
-                        onClick={() => setSelectedSecurityLevelId(level.id)}
-                      >
-                        <div className="bg-black/30 h-8 w-8 rounded-full flex items-center justify-center flex-shrink-0">
-                          <Shield className="h-5 w-5 text-[#FF9B51]" />
+                  <TabsContent value="levels">
+                    <Card>
+                      <CardHeader>
+                        <div className="flex justify-between items-start">
+                          <div>
+                            <CardTitle className="flex items-center">
+                              <Shield className="mr-2 h-5 w-5 text-purple-500" />
+                              Adaptive Security Levels
+                            </CardTitle>
+                            <CardDescription>
+                              Define security levels that your vault can automatically switch between
+                            </CardDescription>
+                          </div>
+                          <Button
+                            onClick={addSecurityLevel}
+                            size="sm"
+                            className="bg-purple-600 hover:bg-purple-700"
+                          >
+                            <Plus className="mr-2 h-4 w-4" /> Add Level
+                          </Button>
                         </div>
-                        <div className="flex-1 min-w-0">
-                          <p className="font-medium truncate">{level.name}</p>
-                          <div className="flex items-center text-xs text-gray-400">
-                            <span className="truncate">{level.requirementCount} requirements</span>
-                            {defaultSecurityLevel === level.id && (
-                              <Badge className="ml-2 bg-[#FF9B51]/20 text-[#FF9B51] px-1.5 py-0">
-                                Default
-                              </Badge>
-                            )}
-                          </div>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                  
-                  <Button 
-                    variant="outline" 
-                    className="w-full border-dashed flex items-center justify-center space-x-2 hover:bg-[#FF9B51]/5 hover:border-[#FF9B51]/30 border-gray-700"
-                    onClick={addSecurityLevel}
-                  >
-                    <Plus className="h-4 w-4" />
-                    <span>Add Level</span>
-                  </Button>
-                </div>
-                
-                {/* Security Level Editor */}
-                <div className="lg:col-span-2 space-y-4">
-                  {selectedSecurityLevelId ? (
-                    <>
-                      <div className="flex items-center justify-between">
-                        <h2 className="text-xl font-semibold">Security Level Configuration</h2>
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          onClick={() => deleteSecurityLevel(selectedSecurityLevelId)}
-                          className="h-8 w-8 text-red-500 hover:text-red-400 hover:bg-red-500/10"
-                          disabled={['standard', 'enhanced', 'maximum'].includes(selectedSecurityLevelId)}
-                        >
-                          <Trash2 className="h-4 w-4" />
-                        </Button>
-                      </div>
-                      
-                      {getSelectedSecurityLevel() && (
-                        <div className="space-y-4">
-                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                            <div className="space-y-2">
-                              <Label htmlFor="level-name">Level Name</Label>
-                              <Input 
-                                id="level-name"
-                                value={getSelectedSecurityLevel()!.name}
-                                onChange={(e) => updateSecurityLevel(selectedSecurityLevelId, { name: e.target.value })}
-                                className="bg-black/30 border-gray-700"
-                                disabled={['standard', 'enhanced', 'maximum'].includes(selectedSecurityLevelId)}
-                              />
-                            </div>
-                            
-                            <div className="space-y-2">
-                              <Label htmlFor="level-description">Description</Label>
-                              <Input 
-                                id="level-description"
-                                value={getSelectedSecurityLevel()!.description}
-                                onChange={(e) => updateSecurityLevel(selectedSecurityLevelId, { description: e.target.value })}
-                                className="bg-black/30 border-gray-700"
-                                disabled={['standard', 'enhanced', 'maximum'].includes(selectedSecurityLevelId)}
-                              />
-                            </div>
+                      </CardHeader>
+                      <CardContent>
+                        <div className="grid md:grid-cols-3 gap-6">
+                          <div className="space-y-4 md:col-span-1 md:border-r pr-4">
+                            <div className="text-sm font-medium text-gray-500">Security Levels</div>
+                            {securityLevels.map(level => (
+                              <Button
+                                key={level.id}
+                                variant={selectedSecurityLevelId === level.id ? "default" : "outline"}
+                                className={`w-full justify-start text-left h-auto py-3 ${selectedSecurityLevelId === level.id ? 'bg-purple-600 hover:bg-purple-700' : ''}`}
+                                onClick={() => setSelectedSecurityLevelId(level.id)}
+                              >
+                                <div className="flex flex-col items-start">
+                                  <div className="font-medium">{level.name}</div>
+                                  <div className="text-xs">
+                                    {level.requirements.length} factors ({level.requirementCount} required)
+                                  </div>
+                                </div>
+                              </Button>
+                            ))}
                           </div>
                           
-                          <div className="flex items-center justify-between border-b border-gray-800 pb-4">
-                            <div>
-                              <Label className="font-medium">Default Level</Label>
-                              <p className="text-sm text-gray-400">
-                                Set as the default security level
-                              </p>
-                            </div>
-                            <Switch 
-                              checked={defaultSecurityLevel === selectedSecurityLevelId}
-                              onCheckedChange={(checked) => {
-                                if (checked) {
-                                  setDefaultSecurityLevel(selectedSecurityLevelId);
-                                }
-                              }}
-                              className="data-[state=checked]:bg-[#FF9B51]"
-                            />
-                          </div>
-                          
-                          <Separator className="my-4 bg-gray-800" />
-                          
-                          <div className="space-y-3">
-                            <div className="flex items-center justify-between">
-                              <h3 className="text-base font-medium">Security Requirements</h3>
-                              <Badge className="bg-[#FF9B51]/20 text-[#FF9B51] border-[#FF9B51]/50 px-2">
-                                {getSelectedSecurityLevel()!.requirements.length} requirements
-                              </Badge>
-                            </div>
-                            
-                            <div className="space-y-3">
-                              {getSelectedSecurityLevel()!.requirements.map((req, index) => (
-                                <div 
-                                  key={index}
-                                  className="flex items-center space-x-3 p-3 bg-black/20 border border-gray-800 rounded-md"
-                                >
-                                  <div className="flex-1 grid grid-cols-2 gap-2">
-                                    <Select 
-                                      value={req.type} 
-                                      onValueChange={(value) => updateRequirement(selectedSecurityLevelId, index, { type: value })}
-                                      disabled={['standard', 'enhanced', 'maximum'].includes(selectedSecurityLevelId)}
-                                    >
-                                      <SelectTrigger className="bg-black/30 border-gray-700 h-9">
-                                        <SelectValue placeholder="Requirement type" />
-                                      </SelectTrigger>
-                                      <SelectContent>
-                                        <SelectItem value="keyCount">Key Count</SelectItem>
-                                        <SelectItem value="verification">Verification</SelectItem>
-                                        <SelectItem value="timeDelay">Time Delay</SelectItem>
-                                        <SelectItem value="approval">Approvals</SelectItem>
-                                        <SelectItem value="passwordLength">Password Length</SelectItem>
-                                      </SelectContent>
-                                    </Select>
-                                    
+                          <div className="md:col-span-2">
+                            {getSelectedSecurityLevel() && (
+                              <div className="space-y-6">
+                                <div className="flex justify-between items-center">
+                                  <h3 className="text-lg font-medium">Level Configuration</h3>
+                                  <Button
+                                    onClick={() => deleteSecurityLevel(selectedSecurityLevelId!)}
+                                    variant="ghost"
+                                    size="sm"
+                                    className="text-red-500 hover:text-red-700"
+                                    disabled={['standard', 'enhanced', 'maximum'].includes(selectedSecurityLevelId!)}
+                                  >
+                                    <Trash2 className="h-4 w-4 mr-1" /> Delete
+                                  </Button>
+                                </div>
+                                
+                                <div className="space-y-4">
+                                  <div className="space-y-2">
+                                    <Label htmlFor="level-name">Level Name</Label>
                                     <Input 
-                                      value={req.value.toString()}
-                                      onChange={(e) => updateRequirement(selectedSecurityLevelId, index, { value: e.target.value })}
-                                      className="bg-black/30 border-gray-700 h-9"
-                                      placeholder={
-                                        req.type === 'keyCount' ? "Number of keys" :
-                                        req.type === 'verification' ? "Verification type" :
-                                        req.type === 'timeDelay' ? "Minutes" :
-                                        req.type === 'approval' ? "Number required" :
-                                        req.type === 'passwordLength' ? "Min characters" : ""
-                                      }
-                                      disabled={['standard', 'enhanced', 'maximum'].includes(selectedSecurityLevelId)}
+                                      id="level-name" 
+                                      value={getSelectedSecurityLevel()!.name} 
+                                      onChange={(e) => updateSecurityLevel(selectedSecurityLevelId!, { name: e.target.value })} 
+                                      disabled={['standard', 'enhanced', 'maximum'].includes(selectedSecurityLevelId!)}
                                     />
                                   </div>
                                   
-                                  <Button
-                                    variant="ghost"
-                                    size="icon"
-                                    onClick={() => removeRequirement(selectedSecurityLevelId, index)}
-                                    className="h-8 w-8 text-red-500 hover:text-red-400 hover:bg-red-500/10 flex-shrink-0"
-                                    disabled={
-                                      ['standard', 'enhanced', 'maximum'].includes(selectedSecurityLevelId) ||
-                                      getSelectedSecurityLevel()!.requirements.length <= 1
-                                    }
-                                  >
-                                    <XCircle className="h-4 w-4" />
-                                  </Button>
+                                  <div className="space-y-2">
+                                    <Label htmlFor="level-description">Description</Label>
+                                    <Textarea 
+                                      id="level-description" 
+                                      value={getSelectedSecurityLevel()!.description} 
+                                      onChange={(e) => updateSecurityLevel(selectedSecurityLevelId!, { description: e.target.value })} 
+                                      disabled={['standard', 'enhanced', 'maximum'].includes(selectedSecurityLevelId!)}
+                                    />
+                                  </div>
+                                  
+                                  <div className="space-y-2">
+                                    <div className="flex justify-between items-center">
+                                      <Label htmlFor="requirement-count">Required Factors</Label>
+                                      <Badge variant="outline">
+                                        {getSelectedSecurityLevel()!.requirementCount} of {getSelectedSecurityLevel()!.requirements.length}
+                                      </Badge>
+                                    </div>
+                                    <Slider
+                                      id="requirement-count"
+                                      min={1}
+                                      max={Math.max(getSelectedSecurityLevel()!.requirements.length, 1)}
+                                      step={1}
+                                      value={[getSelectedSecurityLevel()!.requirementCount]}
+                                      onValueChange={(value) => updateSecurityLevel(selectedSecurityLevelId!, { requirementCount: value[0] })}
+                                      disabled={['standard', 'enhanced', 'maximum'].includes(selectedSecurityLevelId!)}
+                                    />
+                                  </div>
+                                  
+                                  <div className="space-y-3">
+                                    <div className="flex justify-between items-center">
+                                      <Label>Security Requirements</Label>
+                                      <Button
+                                        onClick={() => addRequirement(selectedSecurityLevelId!)}
+                                        variant="outline"
+                                        size="sm"
+                                        disabled={['standard', 'enhanced', 'maximum'].includes(selectedSecurityLevelId!)}
+                                      >
+                                        <Plus className="mr-1 h-3 w-3" /> Add
+                                      </Button>
+                                    </div>
+                                    
+                                    {getSelectedSecurityLevel()!.requirements.map((req, index) => (
+                                      <div key={index} className="flex items-center gap-2 p-3 border rounded-md">
+                                        <Select
+                                          value={req.type}
+                                          onValueChange={(value: any) => updateRequirement(selectedSecurityLevelId!, index, { type: value })}
+                                          disabled={['standard', 'enhanced', 'maximum'].includes(selectedSecurityLevelId!)}
+                                        >
+                                          <SelectTrigger className="w-[150px]">
+                                            <SelectValue />
+                                          </SelectTrigger>
+                                          <SelectContent>
+                                            <SelectItem value="keyCount">Key Count</SelectItem>
+                                            <SelectItem value="verification">Verification</SelectItem>
+                                            <SelectItem value="timeDelay">Time Delay</SelectItem>
+                                            <SelectItem value="approval">Approval</SelectItem>
+                                            <SelectItem value="passwordLength">Password Length</SelectItem>
+                                          </SelectContent>
+                                        </Select>
+                                        
+                                        {req.type === 'verification' ? (
+                                          <Select
+                                            value={req.value.toString()}
+                                            onValueChange={(value) => updateRequirement(selectedSecurityLevelId!, index, { value })}
+                                            disabled={['standard', 'enhanced', 'maximum'].includes(selectedSecurityLevelId!)}
+                                          >
+                                            <SelectTrigger className="flex-1">
+                                              <SelectValue />
+                                            </SelectTrigger>
+                                            <SelectContent>
+                                              <SelectItem value="email">Email</SelectItem>
+                                              <SelectItem value="sms">SMS</SelectItem>
+                                              <SelectItem value="authenticator">Authenticator App</SelectItem>
+                                              <SelectItem value="biometric">Biometric</SelectItem>
+                                            </SelectContent>
+                                          </Select>
+                                        ) : (
+                                          <Input
+                                            type="text"
+                                            value={req.value.toString()}
+                                            onChange={(e) => updateRequirement(selectedSecurityLevelId!, index, { value: e.target.value })}
+                                            className="flex-1"
+                                            disabled={['standard', 'enhanced', 'maximum'].includes(selectedSecurityLevelId!)}
+                                            placeholder={
+                                              req.type === 'keyCount' ? 'Number of keys' :
+                                              req.type === 'timeDelay' ? 'Delay in minutes' :
+                                              req.type === 'approval' ? 'Number of approvers' :
+                                              req.type === 'passwordLength' ? 'Min length' : ''
+                                            }
+                                          />
+                                        )}
+                                        
+                                        <Button
+                                          onClick={() => removeRequirement(selectedSecurityLevelId!, index)}
+                                          variant="ghost"
+                                          size="sm"
+                                          className="p-0 h-8 w-8 text-red-500"
+                                          disabled={['standard', 'enhanced', 'maximum'].includes(selectedSecurityLevelId!) || getSelectedSecurityLevel()!.requirements.length <= 1}
+                                        >
+                                          <XCircle className="h-4 w-4" />
+                                        </Button>
+                                      </div>
+                                    ))}
+                                  </div>
                                 </div>
-                              ))}
-                            </div>
-                            
-                            <Button 
-                              variant="outline" 
-                              size="sm"
-                              className="mt-2 border-dashed border-gray-700 hover:bg-[#FF9B51]/5 hover:border-[#FF9B51]/30 w-full"
-                              onClick={() => addRequirement(selectedSecurityLevelId)}
-                              disabled={['standard', 'enhanced', 'maximum'].includes(selectedSecurityLevelId)}
-                            >
-                              <Plus className="h-3 w-3 mr-1" />
-                              Add Requirement
-                            </Button>
-                          </div>
-                          
-                          <Alert className="mt-4 bg-blue-500/10 border-blue-500/30">
-                            <div className="text-sm text-blue-400">
-                              <p className="font-medium mb-1">Security Level Description</p>
-                              <p>{getSelectedSecurityLevel()!.description}</p>
-                              <ul className="mt-2 list-disc list-inside space-y-1">
-                                {getSelectedSecurityLevel()!.requirements.map((req, index) => (
-                                  <li key={index} className="text-xs">
-                                    {getSecurityRequirementDescription(req.type, req.value)}
-                                  </li>
-                                ))}
-                              </ul>
-                            </div>
-                          </Alert>
-                        </div>
-                      )}
-                    </>
-                  ) : (
-                    <div className="flex flex-col items-center justify-center h-64 border border-dashed border-gray-700 rounded-md">
-                      <Shield className="h-10 w-10 text-gray-500 mb-2" />
-                      <p className="text-gray-500">No security level selected</p>
-                      <Button
-                        variant="ghost"
-                        className="mt-4 text-[#FF9B51] hover:text-[#FFBB71] hover:bg-[#FF9B51]/10"
-                        onClick={() => setSelectedSecurityLevelId('standard')}
-                      >
-                        Select a security level
-                      </Button>
-                    </div>
-                  )}
-                </div>
-              </div>
-              
-              <Separator className="my-6 bg-gray-800" />
-              
-              <div className="space-y-4">
-                <h2 className="text-xl font-semibold">Alert Settings</h2>
-                
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <div className="flex items-center justify-between">
-                      <Label htmlFor="alert-security-change">Security Level Changes</Label>
-                      <Switch 
-                        id="alert-security-change"
-                        checked={alertThresholds.securityLevelChange}
-                        onCheckedChange={(checked) => setAlertThresholds({...alertThresholds, securityLevelChange: checked})}
-                        className="data-[state=checked]:bg-[#FF9B51]"
-                      />
-                    </div>
-                    <p className="text-xs text-gray-400">Alert when vault security level changes</p>
-                  </div>
-                  
-                  <div className="space-y-2">
-                    <div className="flex items-center justify-between">
-                      <Label htmlFor="alert-unusual-activity">Unusual Activity</Label>
-                      <Switch 
-                        id="alert-unusual-activity"
-                        checked={alertThresholds.unusualActivity}
-                        onCheckedChange={(checked) => setAlertThresholds({...alertThresholds, unusualActivity: checked})}
-                        className="data-[state=checked]:bg-[#FF9B51]"
-                      />
-                    </div>
-                    <p className="text-xs text-gray-400">Alert when unusual access patterns are detected</p>
-                  </div>
-                  
-                  <div className="space-y-2">
-                    <div className="flex items-center justify-between">
-                      <Label htmlFor="alert-rule-activation">Rule Activation</Label>
-                      <Switch 
-                        id="alert-rule-activation"
-                        checked={alertThresholds.ruleActivation}
-                        onCheckedChange={(checked) => setAlertThresholds({...alertThresholds, ruleActivation: checked})}
-                        className="data-[state=checked]:bg-[#FF9B51]"
-                      />
-                    </div>
-                    <p className="text-xs text-gray-400">Alert when dynamic rules are triggered</p>
-                  </div>
-                  
-                  <div className="space-y-2">
-                    <div className="flex items-center justify-between">
-                      <Label htmlFor="alert-failed-attempts">Failed Authentication</Label>
-                      <Switch 
-                        id="alert-failed-attempts"
-                        checked={alertThresholds.multipleFailedAttempts}
-                        onCheckedChange={(checked) => setAlertThresholds({...alertThresholds, multipleFailedAttempts: checked})}
-                        className="data-[state=checked]:bg-[#FF9B51]"
-                      />
-                    </div>
-                    <p className="text-xs text-gray-400">Alert after multiple failed authentication attempts</p>
-                  </div>
-                </div>
-                
-                <div className="space-y-2 mt-4">
-                  <Label>Notification Method</Label>
-                  <RadioGroup 
-                    value={alertThresholds.notificationType} 
-                    onValueChange={(value) => setAlertThresholds({...alertThresholds, notificationType: value})}
-                    className="flex space-x-4 mt-2"
-                  >
-                    <div className="flex items-center space-x-2">
-                      <RadioGroupItem value="email" id="notify-email" className="text-[#FF9B51]" />
-                      <Label htmlFor="notify-email" className="cursor-pointer">Email</Label>
-                    </div>
-                    <div className="flex items-center space-x-2">
-                      <RadioGroupItem value="push" id="notify-push" className="text-[#FF9B51]" />
-                      <Label htmlFor="notify-push" className="cursor-pointer">Push Notification</Label>
-                    </div>
-                    <div className="flex items-center space-x-2">
-                      <RadioGroupItem value="both" id="notify-both" className="text-[#FF9B51]" />
-                      <Label htmlFor="notify-both" className="cursor-pointer">Both</Label>
-                    </div>
-                  </RadioGroup>
-                </div>
-              </div>
-              
-              <div className="pt-4 flex justify-between">
-                <Button 
-                  variant="outline"
-                  onClick={() => setCurrentTab('rules')}
-                >
-                  Back
-                </Button>
-                <Button 
-                  onClick={() => setCurrentTab('blockchain')}
-                  className="bg-[#FF9B51] hover:bg-[#FFBB71] text-white"
-                >
-                  Continue to Blockchain
-                </Button>
-              </div>
-            </TabsContent>
-            
-            <TabsContent value="blockchain" className="space-y-6">
-              <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                {/* Blockchain List */}
-                <div className="lg:col-span-1 space-y-4">
-                  <div className="flex items-center justify-between">
-                    <h2 className="text-xl font-semibold">Blockchains</h2>
-                  </div>
-                  
-                  <div className="space-y-2 max-h-[500px] overflow-y-auto pr-2">
-                    {blockchainSettings.map(bs => (
-                      <div 
-                        key={bs.chain}
-                        className={`flex items-center space-x-3 p-3 rounded-md cursor-pointer transition-colors ${
-                          selectedChain === bs.chain 
-                            ? 'bg-[#FFC151]/20 border border-[#FFC151]/40' 
-                            : 'bg-black/20 border border-gray-800 hover:border-gray-700'
-                        }`}
-                        onClick={() => setSelectedChain(bs.chain)}
-                      >
-                        <div className="bg-black/30 h-8 w-8 rounded-full flex items-center justify-center flex-shrink-0">
-                          <span className="font-bold text-[#FFC151]">{getChainIcon(bs.chain)}</span>
-                        </div>
-                        <div className="flex-1 min-w-0">
-                          <p className="font-medium truncate">{bs.chain.toUpperCase()}</p>
-                          <div className="flex items-center text-xs text-gray-400">
-                            <span className="truncate">
-                              {bs.settings.fallbackChains.length 
-                                ? `${bs.settings.fallbackChains.length} fallbacks` 
-                                : 'No fallbacks'}
-                            </span>
-                            {bs.settings.recoveryEnabled && (
-                              <Badge className="ml-2 bg-green-500/20 text-green-500 px-1.5 py-0">
-                                Recovery
-                              </Badge>
+                                
+                                <Alert className="bg-gray-50 dark:bg-gray-900">
+                                  <Shield className="h-4 w-4" />
+                                  <AlertTitle>Security Level Summary</AlertTitle>
+                                  <AlertDescription>
+                                    This level requires {getSelectedSecurityLevel()!.requirementCount} of {getSelectedSecurityLevel()!.requirements.length} security factors to be satisfied.
+                                    {['standard', 'enhanced', 'maximum'].includes(selectedSecurityLevelId!) && 
+                                      " This is a system-defined level and cannot be modified."}
+                                  </AlertDescription>
+                                </Alert>
+                              </div>
                             )}
                           </div>
                         </div>
-                      </div>
-                    ))}
-                  </div>
-                  
-                  <div className="flex flex-wrap gap-2">
-                    {!blockchainSettings.some(bs => bs.chain === 'ethereum') && (
-                      <Button 
-                        variant="outline" 
-                        size="sm"
-                        className="border-dashed border-gray-700 hover:bg-[#FFC151]/5 hover:border-[#FFC151]/30"
-                        onClick={() => addBlockchain('ethereum')}
-                      >
-                        <Plus className="h-3 w-3 mr-1" />
-                        Ethereum
-                      </Button>
-                    )}
-                    
-                    {!blockchainSettings.some(bs => bs.chain === 'ton') && (
-                      <Button 
-                        variant="outline" 
-                        size="sm"
-                        className="border-dashed border-gray-700 hover:bg-[#FFC151]/5 hover:border-[#FFC151]/30"
-                        onClick={() => addBlockchain('ton')}
-                      >
-                        <Plus className="h-3 w-3 mr-1" />
-                        TON
-                      </Button>
-                    )}
-                    
-                    {!blockchainSettings.some(bs => bs.chain === 'solana') && (
-                      <Button 
-                        variant="outline" 
-                        size="sm"
-                        className="border-dashed border-gray-700 hover:bg-[#FFC151]/5 hover:border-[#FFC151]/30"
-                        onClick={() => addBlockchain('solana')}
-                      >
-                        <Plus className="h-3 w-3 mr-1" />
-                        Solana
-                      </Button>
-                    )}
-                    
-                    {!blockchainSettings.some(bs => bs.chain === 'bitcoin') && (
-                      <Button 
-                        variant="outline" 
-                        size="sm"
-                        className="border-dashed border-gray-700 hover:bg-[#FFC151]/5 hover:border-[#FFC151]/30"
-                        onClick={() => addBlockchain('bitcoin')}
-                      >
-                        <Plus className="h-3 w-3 mr-1" />
-                        Bitcoin
-                      </Button>
-                    )}
-                  </div>
-                </div>
-                
-                {/* Blockchain Settings */}
-                <div className="lg:col-span-2 space-y-4">
-                  {getSelectedBlockchainSettings() ? (
-                    <>
-                      <div className="flex items-center justify-between">
-                        <h2 className="text-xl font-semibold">
-                          <span className="mr-2">{getSelectedBlockchainSettings()!.chain.toUpperCase()}</span>
-                          Settings
-                        </h2>
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          onClick={() => removeBlockchain(selectedChain)}
-                          className="h-8 w-8 text-red-500 hover:text-red-400 hover:bg-red-500/10"
-                          disabled={blockchainSettings.length <= 1}
+                      </CardContent>
+                      <CardFooter className="flex justify-between">
+                        <Button 
+                          variant="outline" 
+                          onClick={() => setActiveTab('rules')}
                         >
-                          <Trash2 className="h-4 w-4" />
+                          <ArrowLeft className="mr-2 h-4 w-4" /> Back
                         </Button>
-                      </div>
-                      
-                      <div className="space-y-4">
-                        <div className="flex items-center justify-between border-b border-gray-800 py-4">
+                        <Button 
+                          onClick={() => setActiveTab('review')}
+                          className="bg-purple-600 hover:bg-purple-700"
+                        >
+                          Continue <ArrowRight className="ml-2 h-4 w-4" />
+                        </Button>
+                      </CardFooter>
+                    </Card>
+                  </TabsContent>
+                  
+                  <TabsContent value="blockchain">
+                    <Card>
+                      <CardHeader>
+                        <div className="flex justify-between items-start">
                           <div>
-                            <Label htmlFor="recovery-enabled" className="cursor-pointer font-medium">
-                              Recovery Mechanism
-                            </Label>
-                            <p className="text-sm text-gray-400">
-                              Enable recovery options for this blockchain
-                            </p>
+                            <CardTitle className="flex items-center">
+                              <Layers className="mr-2 h-5 w-5 text-purple-500" />
+                              Multi-Chain Optimization
+                            </CardTitle>
+                            <CardDescription>
+                              Configure optimal blockchain settings for your vault
+                            </CardDescription>
                           </div>
-                          <Switch 
-                            id="recovery-enabled"
-                            checked={getSelectedBlockchainSettings()!.settings.recoveryEnabled}
-                            onCheckedChange={(checked) => updateBlockchainSetting(selectedChain, { recoveryEnabled: checked })}
-                            className="data-[state=checked]:bg-[#FFC151]"
-                          />
+                          <Select
+                            value={selectedChain}
+                            onValueChange={(value: any) => setSelectedChain(value)}
+                          >
+                            <SelectTrigger className="w-[180px]">
+                              <SelectValue placeholder="Select chain" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              {blockchainSettings.map(bs => (
+                                <SelectItem key={bs.chain} value={bs.chain}>
+                                  {bs.chain.toUpperCase()}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
                         </div>
-                        
-                        <div className="space-y-2">
-                          <div className="flex justify-between">
-                            <Label htmlFor="confirmations-required">Confirmations Required</Label>
-                            <span>
-                              {getSelectedBlockchainSettings()!.settings.confirmationsRequired} confirmations
-                            </span>
-                          </div>
-                          <Slider
-                            id="confirmations-required"
-                            min={1}
-                            max={
-                              selectedChain === 'ethereum' ? 24 :
-                              selectedChain === 'ton' ? 10 :
-                              selectedChain === 'solana' ? 64 :
-                              selectedChain === 'bitcoin' ? 12 : 24
-                            }
-                            step={1}
-                            value={[getSelectedBlockchainSettings()!.settings.confirmationsRequired]}
-                            onValueChange={(value) => updateBlockchainSetting(selectedChain, { confirmationsRequired: value[0] })}
-                            className="[&>span]:bg-[#FFC151]"
-                          />
-                          <div className="flex justify-between text-xs text-gray-400">
-                            <span>Faster</span>
-                            <span>More Secure</span>
-                          </div>
-                        </div>
-                        
-                        <Separator className="my-4 bg-gray-800" />
-                        
-                        <div className="space-y-3">
-                          <h3 className="text-base font-medium">Fallback Chains</h3>
-                          <p className="text-sm text-gray-400">
-                            If this chain becomes unavailable, the vault can use fallback chains for recovery
-                          </p>
-                          
-                          <div className="space-y-2 mt-2">
-                            {(['ethereum', 'ton', 'solana', 'bitcoin'] as const).map(chain => {
-                              // Skip the current chain
-                              if (chain === selectedChain) return null;
+                      </CardHeader>
+                      <CardContent className="space-y-6">
+                        {getSelectedBlockchainSettings() && (
+                          <>
+                            <div className="space-y-4">
+                              <div className="flex justify-between items-center">
+                                <h3 className="text-lg font-medium capitalize">{selectedChain} Settings</h3>
+                                <div className="flex gap-2">
+                                  <Button
+                                    onClick={() => removeBlockchain(selectedChain)}
+                                    variant="ghost"
+                                    size="sm"
+                                    className="text-red-500 hover:text-red-700"
+                                    disabled={blockchainSettings.length <= 1}
+                                  >
+                                    <Trash2 className="h-4 w-4 mr-1" /> Remove
+                                  </Button>
+                                </div>
+                              </div>
                               
-                              const isUsed = getSelectedBlockchainSettings()!.settings.fallbackChains.includes(chain);
-                              
-                              return (
-                                <div 
-                                  key={chain}
-                                  className={`flex items-center justify-between p-3 rounded-md border ${
-                                    isUsed 
-                                      ? 'bg-[#FFC151]/10 border-[#FFC151]/30' 
-                                      : 'bg-black/20 border-gray-800'
-                                  }`}
-                                >
-                                  <div className="flex items-center">
-                                    <div className="bg-black/30 h-8 w-8 rounded-full flex items-center justify-center mr-3">
-                                      <span className="font-bold text-[#FFC151]">{getChainIcon(chain)}</span>
-                                    </div>
-                                    <div>
-                                      <p className="font-medium">{chain.toUpperCase()}</p>
-                                      <p className="text-xs text-gray-400">
-                                        {chain === 'ethereum' ? 'EVM-based fallback' :
-                                         chain === 'ton' ? 'TON-based fallback' :
-                                         chain === 'solana' ? 'Solana-based fallback' :
-                                         'Bitcoin-based fallback'}
-                                      </p>
-                                    </div>
-                                  </div>
-                                  
-                                  <Switch 
-                                    checked={isUsed}
-                                    onCheckedChange={() => toggleFallbackChain(selectedChain, chain)}
-                                    className="data-[state=checked]:bg-[#FFC151]"
+                              <div className="grid md:grid-cols-2 gap-4">
+                                <div className="space-y-2">
+                                  <Label htmlFor="confirmations">Required Confirmations</Label>
+                                  <Input
+                                    id="confirmations"
+                                    type="number"
+                                    min="1"
+                                    value={getSelectedBlockchainSettings()!.settings.confirmationsRequired}
+                                    onChange={(e) => updateBlockchainSetting(selectedChain, { 
+                                      confirmationsRequired: parseInt(e.target.value) || 1 
+                                    })}
                                   />
                                 </div>
-                              );
-                            })}
-                          </div>
-                          
-                          {blockchainSettings.length <= 1 && (
-                            <Alert className="mt-2 bg-amber-500/10 border-amber-500/30">
-                              <div className="text-sm text-amber-500">
-                                Add more blockchains to enable fallback chains for recovery
+                                
+                                <div className="flex items-center space-x-2">
+                                  <Switch
+                                    id="recovery-enabled"
+                                    checked={getSelectedBlockchainSettings()!.settings.recoveryEnabled}
+                                    onCheckedChange={(checked) => updateBlockchainSetting(selectedChain, { recoveryEnabled: checked })}
+                                  />
+                                  <div className="space-y-1">
+                                    <Label htmlFor="recovery-enabled">Enable Recovery</Label>
+                                    <p className="text-xs text-gray-500">Allow asset recovery if access is lost</p>
+                                  </div>
+                                </div>
                               </div>
+                              
+                              <div className="space-y-2">
+                                <Label>Available Blockchain Networks</Label>
+                                <div className="grid grid-cols-2 gap-3 mt-2">
+                                  {['ethereum', 'ton', 'solana', 'bitcoin']
+                                    .filter(chain => chain !== selectedChain)
+                                    .map(chain => (
+                                      <div key={chain} className="flex items-center space-x-2">
+                                        <Checkbox
+                                          id={`fallback-${chain}`}
+                                          checked={getSelectedBlockchainSettings()!.settings.fallbackChains.includes(chain as any)}
+                                          onCheckedChange={(checked) => toggleFallbackChain(selectedChain, chain as any)}
+                                        />
+                                        <Label htmlFor={`fallback-${chain}`} className="capitalize">
+                                          {chain} (Fallback)
+                                        </Label>
+                                      </div>
+                                    ))
+                                  }
+                                </div>
+                              </div>
+                              
+                              <div className="space-y-2">
+                                <Label htmlFor="custom-verification">Custom Verification</Label>
+                                <Textarea
+                                  id="custom-verification"
+                                  placeholder="Enter any custom verification requirements"
+                                  value={getSelectedBlockchainSettings()!.settings.customVerification || ''}
+                                  onChange={(e) => updateBlockchainSetting(selectedChain, { customVerification: e.target.value })}
+                                />
+                              </div>
+                            </div>
+                            
+                            <Separator />
+                            
+                            <div className="space-y-4">
+                              <h3 className="text-lg font-medium">Add Blockchain Network</h3>
+                              <div className="flex flex-wrap gap-2">
+                                {['ethereum', 'ton', 'solana', 'bitcoin']
+                                  .filter(chain => !blockchainSettings.some(bs => bs.chain === chain))
+                                  .map(chain => (
+                                    <Button
+                                      key={chain}
+                                      variant="outline"
+                                      onClick={() => addBlockchain(chain as any)}
+                                      className="capitalize"
+                                    >
+                                      <Plus className="mr-1 h-4 w-4" /> {chain}
+                                    </Button>
+                                  ))
+                                }
+                                {['ethereum', 'ton', 'solana', 'bitcoin']
+                                  .filter(chain => !blockchainSettings.some(bs => bs.chain === chain)).length === 0 && (
+                                    <p className="text-sm text-gray-500">All available blockchain networks have been added</p>
+                                  )
+                                }
+                              </div>
+                            </div>
+                            
+                            <Alert className="bg-purple-50 dark:bg-purple-950/30 border-purple-200 dark:border-purple-900">
+                              <Layers className="h-4 w-4 text-purple-500" />
+                              <AlertTitle className="text-purple-700 dark:text-purple-400">Chain Optimization</AlertTitle>
+                              <AlertDescription className="text-purple-600 dark:text-purple-300">
+                                Your vault will automatically optimize blockchain interactions based on network conditions, fees, and congestion. 
+                                If a chain becomes unavailable, the system will use fallback chains you've selected.
+                              </AlertDescription>
                             </Alert>
-                          )}
+                          </>
+                        )}
+                      </CardContent>
+                      <CardFooter className="flex justify-between">
+                        <Button 
+                          variant="outline" 
+                          onClick={() => setActiveTab('rules')}
+                        >
+                          <ArrowLeft className="mr-2 h-4 w-4" /> Back
+                        </Button>
+                        <Button 
+                          onClick={() => setActiveTab('review')}
+                          className="bg-purple-600 hover:bg-purple-700"
+                        >
+                          Continue <ArrowRight className="ml-2 h-4 w-4" />
+                        </Button>
+                      </CardFooter>
+                    </Card>
+                  </TabsContent>
+                </Tabs>
+              </TabsContent>
+              
+              <TabsContent value="review">
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="flex items-center">
+                      <Check className="mr-2 h-5 w-5 text-purple-500" />
+                      Review Configuration
+                    </CardTitle>
+                    <CardDescription>
+                      Review your dynamic vault configuration before deploying
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent className="space-y-6">
+                    <div className="grid md:grid-cols-2 gap-8">
+                      <div className="space-y-6">
+                        <div>
+                          <h3 className="text-lg font-medium mb-3">Basic Information</h3>
+                          <dl className="space-y-2">
+                            <div className="flex justify-between">
+                              <dt className="text-gray-500">Vault Name</dt>
+                              <dd className="font-medium">{vaultName}</dd>
+                            </div>
+                            <div className="flex justify-between">
+                              <dt className="text-gray-500">Security Level</dt>
+                              <dd className="font-medium capitalize">{defaultSecurityLevel}</dd>
+                            </div>
+                            <div className="flex justify-between">
+                              <dt className="text-gray-500">Adaptation Speed</dt>
+                              <dd className="font-medium">{adaptationSpeed}%</dd>
+                            </div>
+                            <div className="flex justify-between">
+                              <dt className="text-gray-500">Real-Time Monitoring</dt>
+                              <dd className="font-medium">{enableRealTimeMonitoring ? 'Enabled' : 'Disabled'}</dd>
+                            </div>
+                            <div className="flex justify-between">
+                              <dt className="text-gray-500">Owner Override</dt>
+                              <dd className="font-medium">{allowOwnerOverride ? 'Enabled' : 'Disabled'}</dd>
+                            </div>
+                          </dl>
                         </div>
                         
-                        <Separator className="my-4 bg-gray-800" />
+                        <div>
+                          <h3 className="text-lg font-medium mb-3">Asset Types</h3>
+                          <div className="flex flex-wrap gap-2">
+                            {assetTypes.length > 0 ? (
+                              assetTypes.map(type => (
+                                <Badge key={type} className="capitalize">{type}</Badge>
+                              ))
+                            ) : (
+                              <p className="text-sm text-gray-500">No asset types selected</p>
+                            )}
+                          </div>
+                        </div>
                         
+                        <div>
+                          <h3 className="text-lg font-medium mb-3">Blockchain Networks</h3>
+                          <ul className="space-y-2">
+                            {blockchainSettings.map(bs => (
+                              <li key={bs.chain} className="flex items-center">
+                                <Badge variant="outline" className="mr-2 capitalize">{bs.chain}</Badge>
+                                <span className="text-sm text-gray-600">
+                                  {bs.settings.confirmationsRequired} confirmations
+                                  {bs.settings.fallbackChains.length > 0 && (
+                                    <>, fallbacks: {bs.settings.fallbackChains.join(', ')}</>
+                                  )}
+                                </span>
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+                      </div>
+                      
+                      <div className="space-y-6">
+                        <div>
+                          <h3 className="text-lg font-medium mb-3">Dynamic Rules</h3>
+                          <ul className="space-y-3">
+                            {rules.map(rule => (
+                              <li key={rule.id} className="border rounded-md p-3">
+                                <div className="flex justify-between items-start mb-2">
+                                  <span className="font-medium">{rule.name}</span>
+                                  <div className="flex gap-1">
+                                    <Badge 
+                                      variant="outline" 
+                                      className={`
+                                        ${rule.priority === 'high' ? 'border-red-500 text-red-500' : 
+                                          rule.priority === 'medium' ? 'border-amber-500 text-amber-500' : 
+                                          'border-blue-500 text-blue-500'}
+                                      `}
+                                    >
+                                      {rule.priority}
+                                    </Badge>
+                                    {rule.isActive ? (
+                                      <Badge variant="outline" className="border-green-500 text-green-500">Active</Badge>
+                                    ) : (
+                                      <Badge variant="outline" className="border-gray-500 text-gray-500">Inactive</Badge>
+                                    )}
+                                  </div>
+                                </div>
+                                <p className="text-sm text-gray-600">
+                                  When <span className="font-medium">{rule.condition} {rule.value.toString()}</span>, 
+                                  {rule.action === 'increaseSecurityLevel' && ` increase security to ${rule.actionValue || 'higher level'}`}
+                                  {rule.action === 'decreaseSecurityLevel' && ` decrease security to ${rule.actionValue || 'lower level'}`}
+                                  {rule.action === 'notifyUser' && ` notify user${rule.actionValue ? ` with message: "${rule.actionValue}"` : ''}`}
+                                  {rule.action === 'freezeAssets' && ` freeze assets${rule.actionValue ? ` for ${rule.actionValue}` : ''}`}
+                                  {rule.action === 'adjustAccessRules' && ` adjust access rules${rule.actionValue ? ` to ${rule.actionValue}` : ''}`}
+                                  {rule.action === 'customLogic' && ` execute custom logic${rule.actionValue ? `: ${rule.actionValue}` : ''}`}
+                                </p>
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+                        
+                        <div>
+                          <h3 className="text-lg font-medium mb-3">Security Levels</h3>
+                          <ul className="space-y-3">
+                            {securityLevels.map(level => (
+                              <li key={level.id} className="border rounded-md p-3">
+                                <div className="flex justify-between mb-1">
+                                  <span className="font-medium">{level.name}</span>
+                                  <Badge variant="outline">
+                                    {level.requirementCount} of {level.requirements.length} required
+                                  </Badge>
+                                </div>
+                                <p className="text-sm text-gray-600 mb-2">{level.description}</p>
+                                <div className="flex flex-wrap gap-2">
+                                  {level.requirements.map((req, index) => (
+                                    <Badge key={index} variant="secondary" className="text-xs">
+                                      {req.type === 'keyCount' && `${req.value} Keys`}
+                                      {req.type === 'verification' && `${req.value} Verification`}
+                                      {req.type === 'timeDelay' && `${req.value} Minute Delay`}
+                                      {req.type === 'approval' && `${req.value} Approvals`}
+                                      {req.type === 'passwordLength' && `${req.value} Char Password`}
+                                    </Badge>
+                                  ))}
+                                </div>
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+                      </div>
+                    </div>
+                    
+                    <Separator />
+                    
+                    <div className="space-y-4">
+                      <h3 className="text-lg font-medium">Performance Metrics</h3>
+                      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                         <div className="space-y-2">
-                          <Label htmlFor="custom-verification">Custom Verification (Optional)</Label>
-                          <Textarea
-                            id="custom-verification"
-                            value={getSelectedBlockchainSettings()!.settings.customVerification || ''}
-                            onChange={(e) => updateBlockchainSetting(selectedChain, { customVerification: e.target.value })}
-                            className="bg-black/30 border-gray-700 min-h-[100px]"
-                            placeholder={`Custom verification logic for ${selectedChain.toUpperCase()} (e.g., specific transaction conditions, custom contract calls)`}
-                          />
+                          <div className="flex justify-between items-center">
+                            <Label>Adaptability</Label>
+                            <span className="text-sm font-medium">{performanceScores.adaptability}%</span>
+                          </div>
+                          <Progress value={performanceScores.adaptability} className="h-2" />
+                        </div>
+                        <div className="space-y-2">
+                          <div className="flex justify-between items-center">
+                            <Label>Efficiency</Label>
+                            <span className="text-sm font-medium">{performanceScores.efficiency}%</span>
+                          </div>
+                          <Progress value={performanceScores.efficiency} className="h-2" />
+                        </div>
+                        <div className="space-y-2">
+                          <div className="flex justify-between items-center">
+                            <Label>Security Rating</Label>
+                            <span className="text-sm font-medium">{performanceScores.securityRating}%</span>
+                          </div>
+                          <Progress value={performanceScores.securityRating} className="h-2" />
+                        </div>
+                        <div className="space-y-2">
+                          <div className="flex justify-between items-center">
+                            <Label>Rule Optimization</Label>
+                            <span className="text-sm font-medium">{performanceScores.ruleOptimization}%</span>
+                          </div>
+                          <Progress value={performanceScores.ruleOptimization} className="h-2" />
                         </div>
                       </div>
-                    </>
-                  ) : (
-                    <div className="flex flex-col items-center justify-center h-64 border border-dashed border-gray-700 rounded-md">
-                      <Layers className="h-10 w-10 text-gray-500 mb-2" />
-                      <p className="text-gray-500">No blockchain selected</p>
-                      <p className="text-xs text-gray-500 mb-4">Configure blockchain settings for your dynamic vault</p>
-                      <div className="flex flex-wrap gap-2 justify-center">
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          className="text-[#FFC151] hover:text-[#FFE171] hover:bg-[#FFC151]/10"
-                          onClick={() => addBlockchain('ton')}
-                        >
-                          <Plus className="h-3 w-3 mr-1" />
-                          Add TON
-                        </Button>
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          className="text-[#FFC151] hover:text-[#FFE171] hover:bg-[#FFC151]/10"
-                          onClick={() => addBlockchain('ethereum')}
-                        >
-                          <Plus className="h-3 w-3 mr-1" />
-                          Add Ethereum
-                        </Button>
-                      </div>
                     </div>
-                  )}
-                </div>
-              </div>
-              
-              <div className="pt-6 space-y-6">
-                {!isDeploying ? (
-                  <Button 
-                    onClick={deployVault}
-                    className="w-full bg-gradient-to-r from-[#FF5151] to-[#FFC151] hover:from-[#FF7171] hover:to-[#FFE171] text-white h-12 text-lg font-semibold"
-                  >
-                    Deploy Dynamic Vault
-                  </Button>
-                ) : (
-                  <div className="space-y-2">
-                    <div className="flex justify-between text-sm">
-                      <span>Deploying Dynamic Vault...</span>
-                      <span>{deploymentProgress}%</span>
-                    </div>
-                    <Progress value={deploymentProgress} className="h-2 [&>div]:bg-gradient-to-r [&>div]:from-[#FF5151] [&>div]:to-[#FFC151]" />
-                    <p className="text-sm text-gray-400">
-                      {deploymentProgress < 30 && "Configuring vault architecture..."}
-                      {deploymentProgress >= 30 && deploymentProgress < 60 && "Setting up dynamic rule engine..."}
-                      {deploymentProgress >= 60 && deploymentProgress < 90 && "Deploying blockchain integrations..."}
-                      {deploymentProgress >= 90 && "Finalizing deployment..."}
-                    </p>
-                  </div>
-                )}
-                
-                <div className="flex justify-between">
-                  <Button 
-                    variant="outline"
-                    onClick={() => setCurrentTab('security')}
-                    disabled={isDeploying}
-                  >
-                    Back
-                  </Button>
-                </div>
-              </div>
-            </TabsContent>
-          </Tabs>
-        </div>
-        
-        {/* Right Column - Info Cards */}
-        <div className="space-y-6">
-          <Card className="bg-black/30 backdrop-blur-sm border-gray-800 overflow-hidden">
-            <div className="h-1 bg-gradient-to-r from-[#FF5151] to-[#FFC151]" />
-            <CardHeader className="pb-2">
-              <CardTitle>Dynamic Performance</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="space-y-3">
-                <div>
-                  <div className="flex justify-between text-sm mb-1">
-                    <span className="text-gray-400">Adaptability</span>
-                    <span className={`font-medium ${
-                      performanceScores.adaptability >= 80 ? 'text-green-500' :
-                      performanceScores.adaptability >= 60 ? 'text-amber-500' :
-                      'text-red-500'
-                    }`}>
-                      {performanceScores.adaptability}%
-                    </span>
-                  </div>
-                  <div className="w-full bg-gray-800 h-2 rounded-full overflow-hidden">
-                    <div 
-                      className={`h-full rounded-full ${
-                        performanceScores.adaptability >= 80 ? 'bg-green-500' :
-                        performanceScores.adaptability >= 60 ? 'bg-amber-500' :
-                        'bg-red-500'
-                      }`}
-                      style={{ width: `${performanceScores.adaptability}%` }}
-                    />
-                  </div>
-                </div>
-                
-                <div>
-                  <div className="flex justify-between text-sm mb-1">
-                    <span className="text-gray-400">Efficiency</span>
-                    <span className={`font-medium ${
-                      performanceScores.efficiency >= 80 ? 'text-green-500' :
-                      performanceScores.efficiency >= 60 ? 'text-amber-500' :
-                      'text-red-500'
-                    }`}>
-                      {performanceScores.efficiency}%
-                    </span>
-                  </div>
-                  <div className="w-full bg-gray-800 h-2 rounded-full overflow-hidden">
-                    <div 
-                      className={`h-full rounded-full ${
-                        performanceScores.efficiency >= 80 ? 'bg-green-500' :
-                        performanceScores.efficiency >= 60 ? 'bg-amber-500' :
-                        'bg-red-500'
-                      }`}
-                      style={{ width: `${performanceScores.efficiency}%` }}
-                    />
-                  </div>
-                </div>
-                
-                <div>
-                  <div className="flex justify-between text-sm mb-1">
-                    <span className="text-gray-400">Security Rating</span>
-                    <span className={`font-medium ${
-                      performanceScores.securityRating >= 80 ? 'text-green-500' :
-                      performanceScores.securityRating >= 60 ? 'text-amber-500' :
-                      'text-red-500'
-                    }`}>
-                      {performanceScores.securityRating}%
-                    </span>
-                  </div>
-                  <div className="w-full bg-gray-800 h-2 rounded-full overflow-hidden">
-                    <div 
-                      className={`h-full rounded-full ${
-                        performanceScores.securityRating >= 80 ? 'bg-green-500' :
-                        performanceScores.securityRating >= 60 ? 'bg-amber-500' :
-                        'bg-red-500'
-                      }`}
-                      style={{ width: `${performanceScores.securityRating}%` }}
-                    />
-                  </div>
-                </div>
-                
-                <div>
-                  <div className="flex justify-between text-sm mb-1">
-                    <span className="text-gray-400">Rule Optimization</span>
-                    <span className={`font-medium ${
-                      performanceScores.ruleOptimization >= 80 ? 'text-green-500' :
-                      performanceScores.ruleOptimization >= 60 ? 'text-amber-500' :
-                      'text-red-500'
-                    }`}>
-                      {performanceScores.ruleOptimization}%
-                    </span>
-                  </div>
-                  <div className="w-full bg-gray-800 h-2 rounded-full overflow-hidden">
-                    <div 
-                      className={`h-full rounded-full ${
-                        performanceScores.ruleOptimization >= 80 ? 'bg-green-500' :
-                        performanceScores.ruleOptimization >= 60 ? 'bg-amber-500' :
-                        'bg-red-500'
-                      }`}
-                      style={{ width: `${performanceScores.ruleOptimization}%` }}
-                    />
-                  </div>
-                </div>
-              </div>
-            </CardContent>
-            <div className="px-6 py-3 bg-black/40 border-t border-gray-800">
-              <div className="text-center">
-                <p className="text-sm text-gray-400">
-                  {rules.length} active rule{rules.length !== 1 ? 's' : ''} • {blockchainSettings.length} blockchain{blockchainSettings.length !== 1 ? 's' : ''}
-                </p>
-              </div>
-            </div>
-          </Card>
-          
-          <Card className="bg-black/30 backdrop-blur-sm border-gray-800 overflow-hidden">
-            <div className="h-1 bg-gradient-to-r from-[#FF5151] to-[#FFC151]" />
-            <CardHeader className="pb-2">
-              <CardTitle>Rule Summary</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-3 max-h-64 overflow-y-auto pr-2">
-              {rules.map(rule => (
-                <div 
-                  key={rule.id}
-                  className="flex items-center p-2 bg-black/20 rounded-md border border-gray-800"
-                >
-                  <div className="bg-black/30 h-7 w-7 rounded-full flex items-center justify-center mr-2 flex-shrink-0">
-                    {getRuleTypeIcon(rule.type)}
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center justify-between">
-                      <p className="font-medium text-sm truncate">{rule.name}</p>
-                      <Badge variant="outline" className={`
-                        text-xs px-1.5 py-0 ml-1 flex-shrink-0
-                        ${rule.priority === 'high' ? 'border-red-500 text-red-500' : 
-                          rule.priority === 'medium' ? 'border-amber-500 text-amber-500' : 
-                          'border-green-500 text-green-500'}
-                      `}>
-                        {rule.priority}
-                      </Badge>
-                    </div>
-                    <p className="text-xs text-gray-400 truncate">
-                      {rule.isActive ? (
-                        <Check className="h-3 w-3 inline text-green-500 mr-1" />
-                      ) : (
-                        <XCircle className="h-3 w-3 inline text-red-500 mr-1" />
-                      )}
-                      {getActionDescription(rule.action, rule.actionValue)}
-                    </p>
-                  </div>
-                </div>
-              ))}
-              
-              {rules.length === 0 && (
-                <div className="text-center py-4 text-gray-500 text-sm">
-                  No rules defined yet. Add rules to enable dynamic behavior.
-                </div>
-              )}
-            </CardContent>
-            <div className="px-6 py-3 bg-black/40 border-t border-gray-800">
-              <Button 
-                variant="ghost" 
-                size="sm" 
-                className="w-full text-[#FF5151] hover:text-[#FF7171] hover:bg-[#FF5151]/10 text-xs"
-                onClick={() => {
-                  setCurrentTab('rules');
-                  addRule();
-                }}
-              >
-                <Plus className="h-3 w-3 mr-1" />
-                Add Rule
-              </Button>
-            </div>
-          </Card>
-          
-          <Alert className="bg-[#FF5151]/10 border-[#FF5151]/30">
-            <Activity className="h-4 w-4 text-[#FF5151]" />
-            <AlertTitle className="text-[#FF5151]">Dynamic Security</AlertTitle>
-            <AlertDescription className="text-gray-300">
-              This vault automatically adapts its security posture based on real-time conditions, providing optimal protection while maintaining convenience.
-            </AlertDescription>
-          </Alert>
-        </div>
+                    
+                    <Alert className="bg-purple-50 dark:bg-purple-950/30 border-purple-200 dark:border-purple-900">
+                      <Workflow className="h-4 w-4 text-purple-500" />
+                      <AlertTitle className="text-purple-700 dark:text-purple-400">Intelligent Security</AlertTitle>
+                      <AlertDescription className="text-purple-600 dark:text-purple-300">
+                        Your Dynamic Vault will continuously monitor conditions and automatically adjust security 
+                        settings to protect your assets. Rules can be modified at any time after creation.
+                      </AlertDescription>
+                    </Alert>
+                  </CardContent>
+                  <CardFooter className="flex justify-between">
+                    <Button 
+                      variant="outline" 
+                      onClick={() => setActiveTab('security')}
+                    >
+                      <ArrowLeft className="mr-2 h-4 w-4" /> Back
+                    </Button>
+                    <Button 
+                      onClick={deployVault}
+                      className="bg-purple-600 hover:bg-purple-700"
+                    >
+                      Deploy Vault <ArrowRight className="ml-2 h-4 w-4" />
+                    </Button>
+                  </CardFooter>
+                </Card>
+              </TabsContent>
+            </Tabs>
+          </>
+        )}
       </div>
     </div>
   );
