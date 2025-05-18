@@ -1629,13 +1629,14 @@ const VaultTypesPage = () => {
             <span>Vault Categories</span>
           </h2>
 
-          <div className="overflow-hidden bg-black/20 rounded-xl p-2 border border-purple-500/10">
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 lg:flex lg:flex-row lg:flex-nowrap lg:overflow-x-auto lg:scrollbar-thin lg:scrollbar-track-transparent lg:scrollbar-thumb-purple-900/50 lg:snap-x">
+          {/* Mobile-optimized Category Selector (2 rows) */}
+          <div className="block md:hidden overflow-hidden bg-black/20 rounded-xl p-2 border border-purple-500/10">
+            <div className="grid grid-cols-3 gap-2">
               {Object.entries(vaultCategories).map(([key, category]) => (
                 <motion.button
                   key={key}
                   onClick={() => setActiveCategory(key)}
-                  className={`flex items-center justify-between gap-1 px-2 py-2 sm:px-3 sm:py-3 rounded-lg lg:rounded-full transition-all ${
+                  className={`flex flex-col items-center justify-center gap-1 px-1 py-2 rounded-lg transition-all ${
                     activeCategory === key 
                       ? 'bg-white/10 text-white shadow-lg shadow-purple-900/20' 
                       : 'bg-black/40 text-gray-400 hover:bg-white/5'
@@ -1643,18 +1644,49 @@ const VaultTypesPage = () => {
                   style={{ 
                     borderWidth: '1px',
                     borderColor: activeCategory === key ? category.color : 'transparent',
-                    minHeight: '3rem',
-                    height: 'auto',
-                    width: '100%'
+                    minHeight: '4rem'
                   }}
                   whileHover={{ scale: 1.03 }}
                   whileTap={{ scale: 0.98 }}
                 >
-                  <div className="flex items-center gap-1.5">
-                    <span className="text-base sm:text-lg" style={{ color: activeCategory === key ? category.color : 'inherit' }}>{category.icon}</span>
-                    <span className="text-xs sm:text-sm truncate max-w-[100px] sm:max-w-none">{category.title}</span>
+                  <span className="text-2xl mb-1" style={{ color: activeCategory === key ? category.color : 'inherit' }}>
+                    {category.icon}
+                  </span>
+                  <span className="text-[10px] text-center leading-tight">
+                    {category.title.split(' ')[0]}
+                  </span>
+                  <span className="absolute top-1 right-1 bg-black/30 px-1 rounded-full text-[10px] min-w-[16px] text-center">
+                    {category.vaults.length}
+                  </span>
+                </motion.button>
+              ))}
+            </div>
+          </div>
+          
+          {/* Desktop Category Selector */}
+          <div className="hidden md:block overflow-hidden bg-black/20 rounded-xl p-2 border border-purple-500/10">
+            <div className="flex flex-row flex-nowrap overflow-x-auto scrollbar-thin scrollbar-track-transparent scrollbar-thumb-purple-900/50 snap-x gap-3">
+              {Object.entries(vaultCategories).map(([key, category]) => (
+                <motion.button
+                  key={key}
+                  onClick={() => setActiveCategory(key)}
+                  className={`flex items-center justify-between gap-2 px-3 py-3 rounded-full flex-shrink-0 transition-all ${
+                    activeCategory === key 
+                      ? 'bg-white/10 text-white shadow-lg shadow-purple-900/20' 
+                      : 'bg-black/40 text-gray-400 hover:bg-white/5'
+                  }`}
+                  style={{ 
+                    borderWidth: '1px',
+                    borderColor: activeCategory === key ? category.color : 'transparent'
+                  }}
+                  whileHover={{ scale: 1.03 }}
+                  whileTap={{ scale: 0.98 }}
+                >
+                  <div className="flex items-center gap-2">
+                    <span className="text-lg" style={{ color: activeCategory === key ? category.color : 'inherit' }}>{category.icon}</span>
+                    <span className="text-sm">{category.title}</span>
                   </div>
-                  <span className="bg-black/30 px-1.5 py-0.5 rounded-full text-xs min-w-[1.2rem] text-center flex-shrink-0">
+                  <span className="bg-black/30 px-2 py-0.5 rounded-full text-xs min-w-[1.5rem] text-center flex-shrink-0">
                     {category.vaults.length}
                   </span>
                 </motion.button>
