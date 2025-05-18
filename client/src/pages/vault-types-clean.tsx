@@ -340,17 +340,6 @@ const VaultTypesPage = () => {
           </Button>
         </div>
         
-        {/* Create Vault Button */}
-        <div className="bg-black/40 backdrop-blur-sm p-4 mb-8 text-center rounded-xl border border-purple-500/20">
-          <p className="text-gray-300 mb-3">Ready to secure your assets?</p>
-          <Button 
-            className="w-full md:w-auto bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white font-bold py-2 px-6 rounded-lg shadow-lg"
-            onClick={() => navigate(`/create-vault/${selected}`)}
-          >
-            Create {selectedVault.title} <ArrowRight className="ml-2 h-4 w-4" />
-          </Button>
-        </div>
-        
         {/* Category Tabs */}
         <Tabs defaultValue="all" value={activeCategory} onValueChange={setActiveCategory} className="mb-8">
           <TabsList className="w-full grid grid-cols-2 md:grid-cols-5 bg-black/20 p-1">
@@ -377,6 +366,17 @@ const VaultTypesPage = () => {
               onClick={() => setSelected(vault.id)}
             />
           ))}
+        </div>
+        
+        {/* Create Vault Button - Moved to the bottom */}
+        <div className="bg-black/40 backdrop-blur-sm p-4 mt-12 text-center rounded-xl border border-purple-500/20">
+          <p className="text-gray-300 mb-3">Ready to secure your assets?</p>
+          <Button 
+            className="w-full md:w-auto bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white font-bold py-2 px-6 rounded-lg shadow-lg"
+            onClick={() => navigate(`/create-vault/${selected}`)}
+          >
+            Create {selectedVault.title} <ArrowRight className="ml-2 h-4 w-4" />
+          </Button>
         </div>
       </div>
     </div>
