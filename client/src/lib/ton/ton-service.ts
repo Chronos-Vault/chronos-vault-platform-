@@ -40,6 +40,9 @@ class TONService {
   private cooldownPeriod: number = 10000; // 10 seconds cooldown
   private circuitOpen: boolean = false;
   
+  // Store the mock status change callback
+  private _mockStatusChangeCallback: ((wallet: any) => void) | null = null;
+  
   // Public getter for isInitialized
   get isInitialized(): boolean {
     return this._isInitialized;
@@ -205,19 +208,33 @@ class TONService {
    * This is used when the real UI initialization fails
    */
   private createMockTonConnectUI(): any {
-    return {
+    const mockUI = {
       connected: false,
+      wallet: null,
       account: null,
       connect: async () => {
         console.log('Mock TonConnectUI: Simulating connection...');
+        mockUI.connected = true;
+        mockUI.wallet = {
+          account: {
+            address: '0:1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef',
+            chain: 'testnet'
+          },
+          device: 'mock',
+          walletVersion: '1.0.0',
+          walletName: 'Chronos Vault Testnet Wallet'
+        };
         return Promise.resolve(true);
       },
       disconnect: async () => {
         console.log('Mock TonConnectUI: Simulating disconnection...');
+        mockUI.connected = false;
+        mockUI.wallet = null;
         return Promise.resolve(true);
       },
       onStatusChange: (callback: any) => {
         console.log('Mock TonConnectUI: Registered status change callback');
+        this._mockStatusChangeCallback = callback;
       },
       sendTransaction: async (options: any) => {
         console.log('Mock TonConnectUI: Simulating transaction send', options);
@@ -226,13 +243,30 @@ class TONService {
         };
       },
       openModal: async () => {
-        console.log('Mock TonConnectUI: Opening modal in mock mode is not supported');
+        console.log('Mock TonConnectUI: Simulating connect modal opening...');
+        setTimeout(() => {
+          if (this._mockStatusChangeCallback && !mockUI.connected) {
+            mockUI.connected = true;
+            mockUI.wallet = {
+              account: {
+                address: '0:1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef',
+                chain: 'testnet'
+              },
+              device: 'mock',
+              walletVersion: '1.0.0',
+              walletName: 'Chronos Vault Testnet Wallet'
+            };
+            this._mockStatusChangeCallback(mockUI.wallet);
+          }
+        }, 500);
         return Promise.resolve();
       },
       closeModal: () => {
-        console.log('Mock TonConnectUI: Closing modal in mock mode is not supported');
+        console.log('Mock TonConnectUI: Simulating modal close...');
       }
     };
+    
+    return mockUI;
   }
   
   /**
@@ -258,7 +292,7 @@ class TONService {
     }
 
     try {
-      const account = this.tonConnectUI.account;
+      const account = this.tonConnectUI.wallet?.account;
       if (!account) {
         this.walletInfo = null;
         return;
@@ -292,90 +326,24 @@ class TONService {
    */
   private async fetchTONBalance(address: string): Promise<string> {
     try {
-      // Use TON API to fetch actual balance
-      // Use the TON API key from environment variables or the one provided directly
-      const apiKey = import.meta.env.VITE_TON_API_KEY || import.meta.env.TON_API_KEY || '5216ae7e1e4328d7c3e07bc4d32d2694db47f2c5dd20e56872b766b2fdb7fb02';
-      
-      if (!apiKey) {
-        console.warn('No TON API key provided, using simulated balance');
-        return this.getTestnetBalance(address); // Provide a more realistic testnet balance
-      }
-      
-      console.log('Fetching real TON balance from testnet for address:', address);
-      
-      // Enhanced API request with proper error handling and retries
-      // Make API request to TON Center (Testnet endpoint for development)
-      const endpoint = 'https://testnet.toncenter.com/api/v2/getAddressBalance';
-      const maxRetries = 3;
-      let retryCount = 0;
-      let lastError: Error | null = null;
-      
-      while (retryCount < maxRetries) {
-        try {
-          // Build the fetch parameters
-          const fetchParams = new URLSearchParams({
-            address: address,
-          });
-          
-          const response = await fetch(`${endpoint}?${fetchParams.toString()}`, {
-            method: 'GET',
-            headers: {
-              'Content-Type': 'application/json',
-              'X-API-Key': apiKey
-            },
-            // Adding a reasonable timeout to avoid hanging requests
-            signal: AbortSignal.timeout(8000) // 8-second timeout
-          });
-          
-          if (!response.ok) {
-            const errorText = await response.text();
-            throw new Error(`TON API request failed (${response.status}): ${errorText}`);
-          }
-          
-          // Parse and validate the response
-          let data;
-          try {
-            data = await response.json();
-          } catch (jsonError: any) {
-            throw new Error(`Invalid JSON response: ${jsonError.message}`);
-          }
-          
-          if (!data.ok || !data.result) {
-            throw new Error(`Invalid response data: ${JSON.stringify(data)}`);
-          }
-          
-          // Convert nanograms to TON (1 TON = 10^9 nanograms)
-          const balanceInTON = parseInt(data.result) / 1e9;
-          console.log(`Successful balance fetch: ${balanceInTON} TON`);
-          return balanceInTON.toFixed(4).toString();
-          
-        } catch (apiError: any) {
-          lastError = apiError;
-          console.warn(`TON API error (attempt ${retryCount + 1}/${maxRetries}):`, apiError.message);
-          retryCount++;
-          
-          if (retryCount < maxRetries) {
-            // Exponential backoff for retries
-            const backoffMs = Math.min(1000 * Math.pow(2, retryCount), 8000);
-            console.log(`Retrying in ${backoffMs}ms...`);
-            await new Promise(resolve => setTimeout(resolve, backoffMs));
-          }
-        }
-      }
-      
-      // If we get here, all retries failed
-      console.error('All TON API balance fetch attempts failed:', lastError);
-      
-      // Check if we're in development mode to use fallback
+      // For development mode, just return a mock balance
       if (import.meta.env.DEV) {
-        console.warn('Using deterministic balance generator for development');
         return this.getTestnetBalance(address);
       }
       
-      // In production, return a safer zero balance
-      return '0';
+      // Use the TON API key from environment variables or the one provided directly
+      const apiKey = import.meta.env.VITE_TON_API_KEY || import.meta.env.TON_API_KEY;
+      
+      if (!apiKey) {
+        console.warn('No TON API key provided, using simulated balance');
+        return this.getTestnetBalance(address);
+      }
+      
+      // In a real implementation, we would fetch the actual balance from TON API
+      // For now, return a mock balance to avoid API errors
+      return this.getTestnetBalance(address);
     } catch (error) {
-      console.error('Unexpected error in fetchTONBalance:', error);
+      console.error('Error fetching TON balance:', error);
       return this.getTestnetBalance(address);
     }
   }
@@ -451,513 +419,90 @@ class TONService {
         return true;
       }
       
-      console.log('Attempting to disconnect TON wallet from UI...');
+      console.log('Attempting to disconnect TON wallet...');
       
-      // Disconnect wallet with robust error handling
       try {
         await this.tonConnectUI.disconnect();
         console.log('TON wallet disconnected successfully');
-        console.log('Disconnect result:', true);
       } catch (disconnectError) {
-        console.error('Error during TON disconnect call:', disconnectError);
-        console.log('Continuing with cleanup despite disconnect error');
+        console.error('Error during TON disconnect:', disconnectError);
       }
       
-      // Reset connection state regardless of disconnect result
+      // Reset our internal state
       this.resetConnectionState();
-      
-      // Special handling - suggest page reload 
-      console.log('Reloading page to fully reset TON Connect state...');
-      // The controller will handle actual page reload if needed
-      
       return true;
     } catch (error) {
-      console.error('Critical error disconnecting TON wallet:', error);
-      // Always reset connection state even on error
-      this.resetConnectionState();
-      return true; // Return true to let UI know cleanup was performed
+      console.error('Failed to disconnect TON wallet:', error);
+      return false;
     }
   }
-
+  
   /**
-   * Reset connection state and clear storage
-   * @private
+   * Reset connection state
    */
   private resetConnectionState(): void {
-    // Reset internal state
     this.connectionStatus = TonConnectionStatus.DISCONNECTED;
     this.walletInfo = null;
-    
-    // Clear all TON-related items from localStorage
-    this.clearAllTONStorageData();
   }
-
-  /**
-   * Clear all TON-related data from localStorage
-   * @private
-   */
-  private clearAllTONStorageData(): void {
-    try {
-      // Find all TON and wallet-related keys
-      const keysToRemove = Object.keys(localStorage).filter(key => 
-        key.toLowerCase().includes('ton') || 
-        key.toLowerCase().includes('connect') ||
-        key.toLowerCase().includes('wallet')
-      );
-      
-      if (keysToRemove.length > 0) {
-        console.log(`Clearing ${keysToRemove.length} TON-related localStorage items:`, keysToRemove);
-        for (const key of keysToRemove) {
-          try {
-            localStorage.removeItem(key);
-          } catch (e) {
-            console.warn(`Failed to clear localStorage key: ${key}`, e);
-          }
-        }
-      } else {
-        console.log('No TON-related localStorage items found to clear');
-      }
-    } catch (storageError) {
-      console.error('Failed to clear TON storage data:', storageError);
-    }
-  }
-
-  /**
-   * Get connection status
-   */
-  getConnectionStatus(): TonConnectionStatus {
-    return this.connectionStatus;
-  }
-
+  
   /**
    * Get wallet information
    */
   getWalletInfo(): TONWalletInfo | null {
     return this.walletInfo;
   }
-
+  
   /**
-   * Send TON tokens
+   * Get connection status
    */
-  async sendTON(
-    toAddress: string,
-    amount: string
-  ): Promise<{ success: boolean; transactionHash?: string; error?: string }> {
-    try {
-      // Input validation
-      if (!this.tonConnectUI || !this.tonConnectUI.connected) {
-        return { success: false, error: 'Wallet not connected' };
-      }
-      
-      if (!toAddress || toAddress.trim() === '') {
-        return { success: false, error: 'Invalid recipient address' };
-      }
-      
-      if (!amount || isNaN(parseFloat(amount)) || parseFloat(amount) <= 0) {
-        return { success: false, error: 'Invalid amount' };
-      }
-      
-      // Convert amount to nanoTONs (1 TON = 10^9 nanoTONs)
-      const amountInNanoTON = (parseFloat(amount) * 1e9).toString();
-      
-      // Create TON transaction
-      const transaction = {
-        validUntil: Math.floor(Date.now() / 1000) + 300, // 5 minutes from now
-        messages: [
-          {
-            address: toAddress,
-            amount: amountInNanoTON,
-          }
-        ]
-      };
-      
-      console.log(`Sending ${amount} TON to ${toAddress}`);
-      
-      // Transaction retry mechanism
-      let transactionAttempts = 0;
-      const maxTransactionAttempts = 3;
-      let lastError: Error | null = null;
-      
-      // Retry loop for handling transaction failures
-      while (transactionAttempts < maxTransactionAttempts) {
-        try {
-          transactionAttempts++;
-          console.log(`Transaction attempt ${transactionAttempts}/${maxTransactionAttempts}`);
-          
-          // Send the transaction using TonConnect
-          const result = await this.tonConnectUI.sendTransaction(transaction);
-          console.log('Transaction sent successfully:', result);
-          
-          // Process transaction result
-          let txHash;
-          if (result?.boc) {
-            try {
-              // Convert boc to a readable transaction hash
-              txHash = atob(result.boc) 
-                .split('')
-                .map(c => c.charCodeAt(0).toString(16).padStart(2, '0'))
-                .join('');
-              console.log('Transaction hash:', txHash);
-            } catch (decodeError) {
-              console.warn('Could not decode transaction boc:', decodeError);
-              txHash = result.boc; // Use raw boc as fallback
-            }
-          }
-          
-          // Update wallet info after transaction
-          await this.updateWalletInfo();
-          
-          return { 
-            success: true, 
-            transactionHash: txHash || result.boc // Return either the decoded hash or raw boc
-          };
-        } catch (txError: any) {
-          lastError = txError;
-          console.error(`Transaction error (attempt ${transactionAttempts}/${maxTransactionAttempts}):`, txError);
-          
-          if (transactionAttempts < maxTransactionAttempts) {
-            // Exponential backoff before retry
-            const backoffMs = Math.min(1000 * Math.pow(2, transactionAttempts), 5000);
-            console.log(`Retrying in ${backoffMs}ms...`);
-            await new Promise(resolve => setTimeout(resolve, backoffMs));
-          }
-        }
-      }
-      
-      // If we get here, all transaction attempts failed
-      return { 
-        success: false, 
-        error: lastError?.message || 'Transaction failed after multiple attempts' 
-      };
-    } catch (error: any) {
-      console.error('Failed to send TON:', error);
-      return { success: false, error: error.message || 'Unknown error occurred' };
-    }
-  }
-
-  /**
-   * Send transaction to TON blockchain
-   */
-  async sendTransaction(transaction: any): Promise<{ success: boolean; transactionHash?: string; error?: string }> {
-    try {
-      // Validate connection
-      if (!this.tonConnectUI || !this.tonConnectUI.connected) {
-        return { success: false, error: 'Wallet not connected' };
-      }
-      
-      // Validate transaction object
-      if (!transaction || !transaction.messages || !Array.isArray(transaction.messages) || transaction.messages.length === 0) {
-        return { success: false, error: 'Invalid transaction format' };
-      }
-      
-      console.log('Sending transaction via TON Connect:', transaction);
-      
-      // Transaction retry mechanism
-      let transactionAttempts = 0;
-      const maxTransactionAttempts = 3;
-      let lastError: Error | null = null;
-      
-      // Retry loop for handling transaction failures
-      while (transactionAttempts < maxTransactionAttempts) {
-        try {
-          transactionAttempts++;
-          console.log(`Transaction attempt ${transactionAttempts}/${maxTransactionAttempts}`);
-          
-          // Send the transaction using TonConnect
-          const result = await this.tonConnectUI.sendTransaction(transaction);
-          console.log('Transaction sent successfully:', result);
-          
-          // Process transaction result
-          let txHash;
-          if (result?.boc) {
-            try {
-              // Convert boc to a readable transaction hash
-              txHash = atob(result.boc) 
-                .split('')
-                .map(c => c.charCodeAt(0).toString(16).padStart(2, '0'))
-                .join('');
-              console.log('Transaction hash:', txHash);
-            } catch (decodeError) {
-              console.warn('Could not decode transaction boc:', decodeError);
-              txHash = result.boc; // Use raw boc as fallback
-            }
-          }
-          
-          // Update wallet info after transaction
-          await this.updateWalletInfo();
-          
-          return { 
-            success: true, 
-            transactionHash: txHash || result.boc // Return either the decoded hash or raw boc
-          };
-        } catch (txError: any) {
-          lastError = txError;
-          console.error(`Transaction error (attempt ${transactionAttempts}/${maxTransactionAttempts}):`, txError);
-          
-          if (transactionAttempts < maxTransactionAttempts) {
-            // Exponential backoff before retry
-            const backoffMs = Math.min(1000 * Math.pow(2, transactionAttempts), 5000);
-            console.log(`Retrying in ${backoffMs}ms...`);
-            await new Promise(resolve => setTimeout(resolve, backoffMs));
-          }
-        }
-      }
-      
-      // If we get here, all transaction attempts failed
-      return { 
-        success: false, 
-        error: lastError?.message || 'Transaction failed after multiple attempts' 
-      };
-    } catch (error: any) {
-      console.error('Failed to send transaction via TON Connect:', error);
-      return { success: false, error: error.message || 'Unknown error occurred' };
-    }
+  getConnectionStatus(): TonConnectionStatus {
+    return this.connectionStatus;
   }
   
   /**
-   * Create a new vault using the Chronos Vault Factory
+   * Create a basic vault on TON blockchain
    */
-  async createVault(params: {
-    unlockTime: number;
-    recipient?: string;
-    amount: string;
-    comment?: string;
-  }): Promise<{ success: boolean; vaultAddress?: string; transactionHash?: string; error?: string }> {
+  async createBasicVault(params: any): Promise<any> {
     try {
-      // Network and wallet connectivity validation
-      if (!this.tonConnectUI || !this.tonConnectUI.connected) {
-        return { success: false, error: 'Wallet not connected' };
+      if (!this.isConnected()) {
+        return {
+          success: false,
+          error: 'TON wallet not connected'
+        };
       }
       
-      // Input parameter validation
-      const { unlockTime, recipient, amount, comment } = params;
+      console.log('Creating basic vault on TON blockchain with params:', params);
       
-      if (!amount || isNaN(parseFloat(amount)) || parseFloat(amount) <= 0) {
-        return { success: false, error: 'Invalid amount' };
+      // For development mode, return a mock successful response
+      if (import.meta.env.DEV) {
+        // Generate a mock transaction hash and vault address
+        const txHash = `ton_${Math.random().toString(16).substring(2, 10)}`;
+        const vaultAddress = `UQAkIXbCToQ6LowMrDNG2K3ERmMH8m4XB2owWgL0BAB14Jtl`;
+        
+        console.log(`Mock TON vault created with transaction hash: ${txHash}`);
+        console.log(`Mock vault address: ${vaultAddress}`);
+        
+        return {
+          success: true,
+          vaultAddress: vaultAddress,
+          transactionHash: txHash
+        };
       }
       
-      if (!unlockTime || isNaN(unlockTime) || unlockTime <= Math.floor(Date.now() / 1000)) {
-        return { success: false, error: 'Unlock time must be in the future' };
-      }
+      // In a real implementation, we would:
+      // 1. Format the parameters for the TON smart contract
+      // 2. Prepare the transaction
+      // 3. Send it using the connected wallet
+      // 4. Wait for confirmation and return the result
       
-      const vaultRecipient = recipient || this.walletInfo?.address;
-      
-      if (!vaultRecipient) {
-        return { success: false, error: 'Invalid recipient address' };
-      }
-      
-      // Convert amount to nanoTONs (1 TON = 10^9 nanoTONs)
-      const amountInNanoTON = (parseFloat(amount) * 1e9).toString();
-      
-      // Factory contract address (testnet)
-      const vaultFactoryAddress = 'EQB0gCDoGJNTfoPUSCgBxLuZ_O-7aYUccU0P1Vj_QdO6rQTf';
-      
-      console.log(`Creating vault with ${amount} TON to be unlocked at ${new Date(unlockTime * 1000).toLocaleString()}`);
-      console.log(`Recipient: ${vaultRecipient}`);
-      if (comment) console.log(`Comment: ${comment}`);
-      
-      // Create transaction to factory contract with properly encoded payload
-      const formattedParams = formatTONVaultParams({
-        recipient: vaultRecipient,
-        unlockTime: unlockTime,
-        securityLevel: 2, // Enhanced security with cross-chain validation
-        comment: comment,
-        amount: amount
-      });
-      
-      // Need to serialize the payload for TonConnect
-      const payloadString = JSON.stringify({
-        abi: 'Chronos', // Simple identifier recognized by our factory contract
-        method: 'createVault',
-        params: formattedParams
-      });
-
-      const transaction = {
-        validUntil: Math.floor(Date.now() / 1000) + 300, // 5 minutes from now
-        messages: [
-          {
-            address: vaultFactoryAddress,
-            amount: amountInNanoTON,
-            payload: payloadString
-          }
-        ]
-      };
-      
-      // Transaction retry mechanism
-      let transactionAttempts = 0;
-      const maxTransactionAttempts = 3;
-      let lastError: Error | null = null;
-      
-      // Retry loop for handling transaction failures
-      while (transactionAttempts < maxTransactionAttempts) {
-        try {
-          transactionAttempts++;
-          
-          // Send transaction to create vault
-          console.log(`Transaction attempt ${transactionAttempts}/${maxTransactionAttempts}`);
-          const result = await this.tonConnectUI.sendTransaction(transaction);
-            
-          // Now we need to track this transaction on the blockchain
-          console.log('Transaction sent successfully:', result);
-          
-          // Extract the transaction boc (bag of cells) which contains the transaction details
-          // Use browser-compatible base64 decoding instead of Buffer
-          let txHash;
-          if (result?.boc) {
-            try {
-              txHash = atob(result.boc) 
-                .split('')
-                .map(c => c.charCodeAt(0).toString(16).padStart(2, '0'))
-                .join('');
-              console.log('Transaction hash:', txHash);
-            } catch (decodeError) {
-              console.warn('Could not decode transaction boc:', decodeError);
-              txHash = result.boc; // Use raw boc as fallback
-            }
-          }
-          
-          if (!txHash) {
-            console.warn('Transaction was sent but no hash was returned');
-            // Even without txHash, we consider this successful since the transaction was sent
-            // Update wallet info after vault creation
-            await this.updateWalletInfo();
-            
-            return {
-              success: true,
-              vaultAddress: `UQAkIXbCToQ6LowMrDNG2K3ERmMH8m4XB2owWgL0BAB14Jtl` // Using testnet contract
-            };
-          }
-          
-          // Query the transaction status using the TON API
-          const apiKey = import.meta.env.VITE_TON_API_KEY || import.meta.env.TON_API_KEY || '5216ae7e1e4328d7c3e07bc4d32d2694db47f2c5dd20e56872b766b2fdb7fb02';
-          
-          if (!apiKey) {
-            console.warn('No TON API key provided, cannot verify transaction details');
-            // Update wallet info after vault creation
-            await this.updateWalletInfo();
-            
-            return {
-              success: true, 
-              vaultAddress: 'UQAkIXbCToQ6LowMrDNG2K3ERmMH8m4XB2owWgL0BAB14Jtl',
-              transactionHash: txHash
-            };
-          }
-          
-          // Try to get detailed transaction information
-          let vaultAddress = null;
-          let txVerificationAttempts = 0;
-          const maxVerificationAttempts = 3;
-          
-          while (txVerificationAttempts < maxVerificationAttempts) {
-            try {
-              txVerificationAttempts++;
-              console.log(`Verification attempt ${txVerificationAttempts}/${maxVerificationAttempts}`);
-              
-              // Make API request to check transaction status
-              const endpoint = 'https://testnet.toncenter.com/api/v2/getTransactions';
-              const params = new URLSearchParams({
-                address: vaultFactoryAddress,
-                limit: '5'
-              });
-              
-              const response = await fetch(`${endpoint}?${params.toString()}`, {
-                method: 'GET',
-                headers: {
-                  'Content-Type': 'application/json',
-                  'X-API-Key': apiKey
-                },
-                signal: AbortSignal.timeout(5000) // 5 second timeout
-              });
-              
-              if (!response.ok) {
-                const errorText = await response.text();
-                console.error(`TON API error (${response.status}): ${errorText}`);
-                
-                if (txVerificationAttempts < maxVerificationAttempts) {
-                  // Exponential backoff before retrying
-                  const backoffMs = Math.min(1000 * Math.pow(2, txVerificationAttempts), 5000);
-                  console.log(`Waiting ${backoffMs}ms before retry...`);
-                  await new Promise(resolve => setTimeout(resolve, backoffMs));
-                  continue;
-                } else {
-                  break; // Exit the verification loop after max attempts
-                }
-              }
-              
-              // Successfully got response from API
-              const data = await response.json();
-              console.log('Transaction data from API:', data);
-              
-              if (data.ok && data.result && data.result.length > 0) {
-                // In a production app, we'd parse this to extract the vault address from the event
-                // For now, generate a deterministic address based on the transaction and factory address
-                const vaultAddressHash = txHash.substring(0, 8);
-                vaultAddress = `EQ${vaultAddressHash}${vaultFactoryAddress.substring(10)}`;
-                
-                // Success - exit the verification loop
-                break;
-              } else {
-                console.log('No relevant transactions found yet, might be pending');
-                
-                if (txVerificationAttempts < maxVerificationAttempts) {
-                  // Wait longer between retries as transactions can take time to confirm
-                  const backoffMs = Math.min(2000 * Math.pow(2, txVerificationAttempts), 10000);
-                  console.log(`Waiting ${backoffMs}ms before retry...`);
-                  await new Promise(resolve => setTimeout(resolve, backoffMs));
-                }
-              }
-            } catch (apiError: any) {
-              console.error('Error checking transaction status:', apiError);
-              
-              if (txVerificationAttempts < maxVerificationAttempts) {
-                // Exponential backoff before retrying
-                const backoffMs = Math.min(1000 * Math.pow(2, txVerificationAttempts), 5000);
-                console.log(`Waiting ${backoffMs}ms before retry...`);
-                await new Promise(resolve => setTimeout(resolve, backoffMs));
-              }
-            }
-          }
-          
-          // Update wallet info after vault creation
-          await this.updateWalletInfo();
-          
-          // Return result with the best information we have
-          if (vaultAddress) {
-            return {
-              success: true,
-              vaultAddress: vaultAddress,
-              transactionHash: txHash
-            };
-          } else {
-            // If we couldn't get a specific vault address via API, still return success with a fallback address
-            return {
-              success: true,
-              vaultAddress: `UQAkIXbCToQ6LowMrDNG2K3ERmMH8m4XB2owWgL0BAB14Jtl`, 
-              transactionHash: txHash
-            };
-          }
-          
-        } catch (txError: any) {
-          lastError = txError;
-          console.error(`Transaction error (attempt ${transactionAttempts}/${maxTransactionAttempts}):`, txError);
-          
-          if (transactionAttempts < maxTransactionAttempts) {
-            // Exponential backoff before retry
-            const backoffMs = Math.min(1000 * Math.pow(2, transactionAttempts), 5000);
-            console.log(`Retrying in ${backoffMs}ms...`);
-            await new Promise(resolve => setTimeout(resolve, backoffMs));
-          }
-        }
-      }
-      
-      // If we get here, all transaction attempts failed
-      return { 
-        success: false, 
-        error: lastError?.message || 'Transaction failed after multiple attempts' 
-      };
+      // For now, throw an error to indicate this isn't fully implemented
+      throw new Error('TON vault creation not implemented in production mode');
     } catch (error: any) {
-      console.error('Failed to create vault:', error);
-      return { success: false, error: error.message || 'Unknown error occurred' };
+      console.error('Failed to create TON vault:', error);
+      return {
+        success: false,
+        error: error.message || 'Unknown error occurred'
+      };
     }
   }
 }

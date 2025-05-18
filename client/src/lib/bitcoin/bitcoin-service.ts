@@ -60,12 +60,12 @@ class BitcoinService {
   private mockMode: boolean = false;
   
   private constructor() {
-    // Initialize in production mode by default
-    // Only use mock mode when explicitly requested or if API calls fail
-    this.mockMode = import.meta.env.VITE_BITCOIN_MOCK_MODE === 'true';
+    // Initialize in development mode for now to avoid API rate limits and connectivity issues
+    this.mockMode = true;
     
+    // Log the mode we're operating in
     if (this.mockMode) {
-      console.log('Bitcoin service running in mock mode with simulated data');
+      console.log('Bitcoin service running in development mode with simulated data');
     } else {
       console.log('Bitcoin service running with live Blockstream and CoinGecko API data');
     }

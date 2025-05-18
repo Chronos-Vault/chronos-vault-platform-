@@ -1,9 +1,9 @@
 {
-  "url": "https://workspace.holycyclop1.repl.co",
+  "url": "https://8e33114e-6bdb-4fc9-a798-e4b7d77b5366-00-23l8s2c5r5iyx.spock.replit.dev",
   "name": "Chronos Vault",
-  "iconUrl": "https://workspace.holycyclop1.repl.co/chronos-vault-logo.png",
-  "termsOfUseUrl": "https://workspace.holycyclop1.repl.co/terms",
-  "privacyPolicyUrl": "https://workspace.holycyclop1.repl.co/privacy",
+  "iconUrl": "https://8e33114e-6bdb-4fc9-a798-e4b7d77b5366-00-23l8s2c5r5iyx.spock.replit.dev/chronos-vault-logo.png",
+  "termsOfUseUrl": "https://8e33114e-6bdb-4fc9-a798-e4b7d77b5366-00-23l8s2c5r5iyx.spock.replit.dev/terms-of-service",
+  "privacyPolicyUrl": "https://8e33114e-6bdb-4fc9-a798-e4b7d77b5366-00-23l8s2c5r5iyx.spock.replit.dev/privacy-policy",
   
   "platform": "web",
   "supportedNetworks": ["mainnet", "testnet"],
