@@ -1630,12 +1630,12 @@ const VaultTypesPage = () => {
           </h2>
 
           <div className="overflow-hidden bg-black/20 rounded-xl p-2 border border-purple-500/10">
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:flex md:flex-row gap-2 md:overflow-x-auto md:scrollbar-thin md:scrollbar-track-transparent md:scrollbar-thumb-purple-900/50 md:snap-x">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:flex lg:flex-row gap-3 lg:overflow-x-auto lg:scrollbar-thin lg:scrollbar-track-transparent lg:scrollbar-thumb-purple-900/50 lg:snap-x">
               {Object.entries(vaultCategories).map(([key, category]) => (
                 <motion.button
                   key={key}
                   onClick={() => setActiveCategory(key)}
-                  className={`flex items-center justify-between gap-2 px-2 py-2 sm:px-3 rounded-lg md:rounded-full transition-all ${
+                  className={`flex items-center justify-between gap-2 px-3 py-3 sm:px-3 rounded-lg lg:rounded-full transition-all ${
                     activeCategory === key 
                       ? 'bg-white/10 text-white shadow-lg shadow-purple-900/20' 
                       : 'bg-black/40 text-gray-400 hover:bg-white/5'
@@ -1643,15 +1643,15 @@ const VaultTypesPage = () => {
                   style={{ 
                     borderWidth: '1px',
                     borderColor: activeCategory === key ? category.color : 'transparent',
-                    minHeight: '3rem',
+                    minHeight: '3.5rem',
                     height: 'auto'
                   }}
                   whileHover={{ scale: 1.03 }}
                   whileTap={{ scale: 0.98 }}
                 >
-                  <div className="flex items-center gap-1">
+                  <div className="flex items-center gap-2">
                     <span className="text-lg" style={{ color: activeCategory === key ? category.color : 'inherit' }}>{category.icon}</span>
-                    <span className="text-sm whitespace-normal">{category.title}</span>
+                    <span className="text-sm">{category.title}</span>
                   </div>
                   <span className="bg-black/30 px-2 py-0.5 rounded-full text-xs min-w-[1.5rem] text-center flex-shrink-0">
                     {category.vaults.length}
