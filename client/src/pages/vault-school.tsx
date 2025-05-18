@@ -259,6 +259,23 @@ const vaultTypes = [
     category: "investment",
   },
   {
+    id: "ai-assisted-investment",
+    name: "AI-Assisted Investment Vault",
+    icon: "🤖",
+    href: "/documentation/ai-assisted-investment-vault",
+    description: "AI-powered market analysis for optimal trading decisions",
+    features: [
+      "Advanced predictive analytics",
+      "Smart portfolio optimization",
+      "Sentiment analysis integration",
+      "AI trading signals",
+      "Secure asset protection",
+    ],
+    isNew: true,
+    highlight: true,
+    category: "investment",
+  },
+  {
     id: "ai-intent-inheritance",
     name: "AI Intent Inheritance Vault",
     icon: "🧠",
