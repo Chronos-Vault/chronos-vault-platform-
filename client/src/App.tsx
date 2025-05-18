@@ -180,6 +180,7 @@ function App() {
           <Route path="/create-vault/milestone" component={MilestoneBasedVault} />
           <Route path="/create-vault/family-heritage" component={IntentInheritanceVault} />
           <Route path="/create-vault/investment" component={InvestmentDisciplineVault} />
+          <Route path="/create-vault/investment-discipline" component={InvestmentDisciplineVault} />
           <Route path="/create-vault/cross-chain" component={CrossChainVault} />
           <Route path="/create-vault/quantum" component={QuantumVault} />
           <Route path="/create-vault/ton-specific" component={TonSpecificVault} />
