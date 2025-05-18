@@ -6,22 +6,21 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Separator } from "@/components/ui/separator";
 import DocumentationLayout from "@/components/layout/DocumentationLayout";
 import { 
-  LineChart, 
+  BarChart, 
   Shield, 
   Lock, 
   TrendingUp, 
-  Calendar, 
-  Bell, 
+  Timer,
   CheckCircle, 
-  Clock, 
-  FileText, 
+  AlertTriangle, 
+  Calendar,
   Code, 
-  HelpCircle, 
-  Tag,
-  Coins,
-  Percent,
+  HelpCircle,
+  LineChart,
   Target,
-  ArrowUpRight
+  Clock,
+  BrainCircuit,
+  HandCoins
 } from "lucide-react";
 
 const InvestmentDisciplineVaultDocumentation = () => {
@@ -30,15 +29,15 @@ const InvestmentDisciplineVaultDocumentation = () => {
       <div className="container mx-auto py-10 px-4 max-w-6xl">
         <div className="flex flex-col md:flex-row justify-between items-start mb-8">
           <div>
-            <h1 className="text-4xl font-extrabold tracking-tight mb-2 bg-clip-text text-transparent bg-gradient-to-r from-emerald-500 to-blue-500">
+            <h1 className="text-4xl font-extrabold tracking-tight mb-2 bg-clip-text text-transparent bg-gradient-to-r from-emerald-500 to-blue-600">
               Investment Discipline Vault
             </h1>
             <p className="text-xl text-muted-foreground mb-4">
-              Maintain unwavering investment strategy through time-locked commitment mechanisms
+              Smart time-locked investing with emotion-resistant mechanisms
             </p>
           </div>
           <div className="mt-4 md:mt-0">
-            <Button asChild className="bg-gradient-to-r from-emerald-500 to-blue-500 hover:from-emerald-600 hover:to-blue-600">
+            <Button asChild className="bg-gradient-to-r from-emerald-500 to-blue-600 hover:from-emerald-600 hover:to-blue-700">
               <Link href="/vault-types">View All Vault Types</Link>
             </Button>
           </div>
@@ -57,42 +56,42 @@ const InvestmentDisciplineVaultDocumentation = () => {
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
-                  <LineChart className="h-6 w-6 text-emerald-500" />
-                  Investment Strategy Enforcement
+                  <BarChart className="h-6 w-6 text-emerald-500" />
+                  Behavioral Finance Protection
                 </CardTitle>
                 <CardDescription>
-                  Discover how time-locked commitment systems can transform your investment outcomes
+                  Overcome the psychological barriers to successful investing
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="rounded-lg bg-gradient-to-r from-emerald-50 to-blue-50 p-6 border border-emerald-100 dark:from-emerald-950/20 dark:to-blue-950/20 dark:border-emerald-900/50">
                   <p className="text-lg mb-4">
-                    The Investment Discipline Vault represents a revolutionary approach to personal investing by addressing the most common challenge investors face: emotional decision-making that compromises long-term strategies. This specialized vault harnesses blockchain technology to create unbreakable commitments to your investment plan.
+                    The Investment Discipline Vault is a specialized blockchain solution designed to solve the most persistent problem in investing: human psychology. By creating a sophisticated time-locked investment framework with conditional release mechanisms, the vault helps investors overcome emotional biases, behavioral inconsistency, and short-term thinking that typically undermine long-term financial success.
                   </p>
                   
-                  <h3 className="text-xl font-semibold mb-2 text-emerald-700 dark:text-emerald-400">The Investment Discipline Problem</h3>
+                  <h3 className="text-xl font-semibold mb-2 text-emerald-700 dark:text-emerald-400">Emotion-Resistant Architecture</h3>
                   <p className="mb-4">
-                    Study after study has shown that investor behavior, not market performance, is the primary determinant of long-term investment outcomes. Market volatility triggers emotional responses that lead to buying at market peaks and selling during downturns—precisely the opposite of optimal investment strategy. Traditional solutions like financial advisors and automated investing only partially address this fundamental challenge.
+                    Unlike conventional investment accounts that provide unrestricted access, the Investment Discipline Vault implements commitment mechanisms that protect investors from their own psychological vulnerabilities. The vault's emotion-resistant architecture creates a powerful barrier against panic selling during market volatility, impulsive portfolio adjustments, and the natural human tendency to chase recent performance—allowing your rational investment plan to work as designed.
                   </p>
                   
-                  <h3 className="text-xl font-semibold mb-2 text-emerald-700 dark:text-emerald-400">The Commitment Solution</h3>
+                  <h3 className="text-xl font-semibold mb-2 text-emerald-700 dark:text-emerald-400">Strategic Time-Locking</h3>
                   <p className="mb-4">
-                    The Investment Discipline Vault transforms investment discipline from a psychological challenge into a technological certainty. By allowing investors to create binding, time-locked commitments to their investment strategies, the vault removes the possibility of emotion-driven decisions during market turbulence. These commitments are enforced through smart contracts that execute precisely according to predefined rules, regardless of market conditions or emotional state.
+                    The core of the vault's effectiveness comes from its sophisticated time-locking mechanisms. You can structure your investments with predefined holding periods that align with your true long-term objectives, create graduated access schedules that allow partial liquidity while maintaining core positions, and implement cooling-off periods that prevent reactionary decisions during market turbulence. These temporal constraints become powerful allies in maintaining investment discipline.
                   </p>
                   
-                  <h3 className="text-xl font-semibold mb-2 text-emerald-700 dark:text-emerald-400">Adaptable Security Architecture</h3>
+                  <h3 className="text-xl font-semibold mb-2 text-emerald-700 dark:text-emerald-400">Rule-Based Investment Execution</h3>
                   <p>
-                    While enforcing commitment, the vault maintains necessary flexibility through contingency planning. Investors can establish predetermined conditions under which modifications are permitted or emergency access is granted. This creates a system that is rigid enough to prevent impulsive decisions but flexible enough to adapt to genuinely changing circumstances or major life events through carefully designed exception protocols.
+                    Beyond basic time-locking, the vault incorporates advanced rule-based execution systems that automate your investment strategy according to predefined parameters. Implement systematic investment plans with automatic periodic purchases, create rules-based rebalancing that maintains your target asset allocation, and design conditional release structures that adapt to market conditions or personal circumstances. This removes the burden of constantly making active decisions and helps maintain consistency.
                   </p>
                 </div>
               </CardContent>
               <CardFooter className="justify-between border-t p-4">
                 <div className="flex items-center gap-2 text-sm text-muted-foreground">
                   <CheckCircle className="h-4 w-4" />
-                  Protect your wealth from your worst investing instincts
+                  Turn psychological barriers into structural advantages
                 </div>
                 <Button variant="outline" asChild>
-                  <Link href="/investment-discipline-vault">Create Investment Vault</Link>
+                  <Link href="/investment-discipline-vault">Create Discipline Vault</Link>
                 </Button>
               </CardFooter>
             </Card>
@@ -106,101 +105,101 @@ const InvestmentDisciplineVaultDocumentation = () => {
                   Key Features
                 </CardTitle>
                 <CardDescription>
-                  Explore the powerful capabilities of Investment Discipline Vaults
+                  Explore the unique capabilities of Investment Discipline Vaults
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-6">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div className="rounded-lg border bg-card shadow p-6">
                     <div className="flex items-center gap-3 mb-4">
-                      <Lock className="h-8 w-8 text-emerald-500" />
-                      <h3 className="text-xl font-semibold">Time-Locked Strategy Commitment</h3>
+                      <Timer className="h-8 w-8 text-emerald-500" />
+                      <h3 className="text-xl font-semibold">Customizable Time-Lock Parameters</h3>
                     </div>
                     <p>
-                      Create binding commitments to your investment strategy that cannot be altered before a predetermined date. Set time horizons from months to decades, ensuring your long-term investment plan remains intact regardless of short-term market volatility or emotional reactions. The system enforces the strategy's parameters through tamper-proof smart contracts that execute with mathematical precision.
+                      Configure time constraints that match your specific investment goals and psychological profile. Create fixed-term locks for core long-term holdings, implement graduated release schedules that provide increasing access over time, set up recurring investment windows that only allow rebalancing at predetermined intervals, and design emergency access protocols with appropriate verification requirements and cooling-off periods. The flexible framework can be tailored to your unique financial plan.
                     </p>
                   </div>
                   
                   <div className="rounded-lg border bg-card shadow p-6">
                     <div className="flex items-center gap-3 mb-4">
                       <Calendar className="h-8 w-8 text-emerald-500" />
-                      <h3 className="text-xl font-semibold">Scheduled Investment Automation</h3>
+                      <h3 className="text-xl font-semibold">Systematic Investment Programs</h3>
                     </div>
                     <p>
-                      Establish automated investment schedules that execute with clockwork precision, regardless of market conditions. Configure dollar-cost averaging strategies with customizable parameters, including frequency (daily/weekly/monthly), amount, and target assets. The system automatically rebalances portfolios according to your predetermined asset allocation, maintaining your strategic vision without requiring constant oversight.
+                      Implement automated investment schedules that ensure disciplined capital deployment regardless of market conditions. Configure dollar-cost averaging programs with customizable frequency and amount parameters, design value-averaging plans that adjust contributions based on portfolio performance, create automated reinvestment systems for dividends and interest, and implement systematic withdrawal schedules for retirement or income-focused strategies.
                     </p>
                   </div>
                   
                   <div className="rounded-lg border bg-card shadow p-6">
                     <div className="flex items-center gap-3 mb-4">
                       <Target className="h-8 w-8 text-emerald-500" />
-                      <h3 className="text-xl font-semibold">Goal-Based Exit Conditions</h3>
+                      <h3 className="text-xl font-semibold">Rule-Based Rebalancing System</h3>
                     </div>
                     <p>
-                      Set specific performance targets as the only conditions under which strategy adjustments are permitted. Establish measurable goals for returns, portfolio value, or timeline milestones that must be met before withdrawal or strategy modification. This prevents emotional decision-making during market volatility while ensuring your investment plan remains aligned with your financial objectives through rule-based exit strategies.
+                      Maintain your target asset allocation without emotional interference through the automated rebalancing engine. Set threshold-based rebalancing rules that trigger when allocations drift beyond specified parameters, implement time-based rebalancing on a fixed schedule, create custom rebalancing logic based on multiple conditions, and design intelligent tax-aware rebalancing that minimizes tax implications while maintaining allocation targets.
                     </p>
                   </div>
                   
                   <div className="rounded-lg border bg-card shadow p-6">
                     <div className="flex items-center gap-3 mb-4">
-                      <Bell className="h-8 w-8 text-emerald-500" />
-                      <h3 className="text-xl font-semibold">Trigger-Based Rebalancing</h3>
+                      <BrainCircuit className="h-8 w-8 text-emerald-500" />
+                      <h3 className="text-xl font-semibold">Behavioral Guardrails</h3>
                     </div>
                     <p>
-                      Configure intelligent portfolio rebalancing that activates only when specific market conditions or allocation drifts occur. Set threshold parameters that automatically trigger rebalancing when asset allocations deviate beyond your comfort zone. These mathematically precise triggers maintain your strategic asset allocation while potentially capturing additional returns through systematic "buy low, sell high" execution during market volatility.
+                      Protect yourself from common behavioral investment mistakes with specialized guardrail mechanisms. Implement circuit breakers that temporarily restrict access during extreme market volatility, create staged confirmation requirements for large transactions, design automatic diversification rules that prevent concentration risk, and configure perspective-enhancing notifications that provide historical context during market events to combat recency bias.
                     </p>
                   </div>
                   
                   <div className="rounded-lg border bg-card shadow p-6">
                     <div className="flex items-center gap-3 mb-4">
-                      <Shield className="h-8 w-8 text-emerald-500" />
-                      <h3 className="text-xl font-semibold">Downside Protection Mechanisms</h3>
+                      <LineChart className="h-8 w-8 text-emerald-500" />
+                      <h3 className="text-xl font-semibold">Goal-Based Portfolio Structures</h3>
                     </div>
                     <p>
-                      Implement sophisticated protective measures that activate only during extreme market conditions. Set parameters for circuit breakers that temporarily pause automated investing during exceptional volatility, establish algorithm-based hedging strategies that deploy during market stress, and configure conditional asset allocation shifts that implement defensive positioning based on quantitative risk metrics rather than emotional responses.
+                      Organize investments according to specific financial objectives with targeted security parameters. Create separate sub-portfolios for different time horizons (short, medium, and long-term goals), implement liability-matching portfolios with customized time-release schedules aligned to future financial needs, design goal-specific investment policies with appropriate risk parameters, and track progress toward each financial objective with dedicated performance metrics.
                     </p>
                   </div>
                   
                   <div className="rounded-lg border bg-card shadow p-6">
                     <div className="flex items-center gap-3 mb-4">
-                      <Clock className="h-8 w-8 text-emerald-500" />
-                      <h3 className="text-xl font-semibold">Delayed Decision Framework</h3>
+                      <HandCoins className="h-8 w-8 text-emerald-500" />
+                      <h3 className="text-xl font-semibold">Conditional Access Framework</h3>
                     </div>
                     <p>
-                      Implement a cooling-off period for any investment decisions that deviate from your predetermined strategy. Configure mandatory reflection periods between the request for a strategy change and its execution, requiring multiple confirmations across time. This creates a structured decision process that neutralizes impulsive reactions while still permitting thoughtful strategy adjustments after sufficient reflection and analysis.
+                      Create sophisticated conditional release structures that adapt to changing circumstances. Define market-condition triggers that modify access rules during significant market events, implement milestone-based unlocking tied to portfolio performance or contribution goals, create life-event exceptions that provide appropriate access for major financial needs, and design multi-signature governance for joint financial relationships or family investments.
                     </p>
                   </div>
                 </div>
                 
                 <div className="mt-8 p-6 border rounded-lg bg-emerald-50 dark:bg-emerald-950/20">
                   <h3 className="text-xl font-semibold mb-4 flex items-center gap-2 text-emerald-700 dark:text-emerald-400">
-                    <ArrowUpRight className="h-5 w-5" />
-                    Performance Enhancement Features
+                    <Clock className="h-5 w-5" />
+                    Custom Strategy Templates
                   </h3>
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                     <div className="p-3 bg-white dark:bg-black/20 rounded-lg shadow-sm">
-                      <p className="text-sm font-medium">Performance Analytics</p>
-                      <p className="text-xs text-muted-foreground mt-1">Detailed tracking against investment goals</p>
+                      <p className="text-sm font-medium">Retirement Optimization</p>
+                      <p className="text-xs text-muted-foreground mt-1">Age-based investment strategy with progressive access</p>
                     </div>
                     <div className="p-3 bg-white dark:bg-black/20 rounded-lg shadow-sm">
-                      <p className="text-sm font-medium">Strategy Backtesting</p>
-                      <p className="text-xs text-muted-foreground mt-1">Historical performance simulation</p>
+                      <p className="text-sm font-medium">Education Funding</p>
+                      <p className="text-xs text-muted-foreground mt-1">Time-targeted strategy for educational expenses</p>
                     </div>
                     <div className="p-3 bg-white dark:bg-black/20 rounded-lg shadow-sm">
-                      <p className="text-sm font-medium">Tax-Optimized Execution</p>
-                      <p className="text-xs text-muted-foreground mt-1">Minimize tax impact of transactions</p>
+                      <p className="text-sm font-medium">Value Investor</p>
+                      <p className="text-xs text-muted-foreground mt-1">Counter-cyclical discipline framework</p>
                     </div>
                     <div className="p-3 bg-white dark:bg-black/20 rounded-lg shadow-sm">
-                      <p className="text-sm font-medium">Multi-Strategy Vaults</p>
-                      <p className="text-xs text-muted-foreground mt-1">Segment investments by time horizon</p>
+                      <p className="text-sm font-medium">Next Generation Legacy</p>
+                      <p className="text-xs text-muted-foreground mt-1">Multi-decade wealth transfer structure</p>
                     </div>
                     <div className="p-3 bg-white dark:bg-black/20 rounded-lg shadow-sm">
-                      <p className="text-sm font-medium">Advisor Integration</p>
-                      <p className="text-xs text-muted-foreground mt-1">Professional oversight with constraints</p>
+                      <p className="text-sm font-medium">Entrepreneur Liquidity</p>
+                      <p className="text-xs text-muted-foreground mt-1">Business exit wealth preservation system</p>
                     </div>
                     <div className="p-3 bg-white dark:bg-black/20 rounded-lg shadow-sm">
-                      <p className="text-sm font-medium">Investment Journaling</p>
-                      <p className="text-xs text-muted-foreground mt-1">Document rationale for future review</p>
+                      <p className="text-sm font-medium">Income Distribution</p>
+                      <p className="text-xs text-muted-foreground mt-1">Sustainable withdrawal framework</p>
                     </div>
                   </div>
                 </div>
@@ -216,129 +215,93 @@ const InvestmentDisciplineVaultDocumentation = () => {
                   Security Architecture
                 </CardTitle>
                 <CardDescription>
-                  How investment discipline is enforced through technological safeguards
+                  How we protect your investment strategy and assets
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-6">
                 <div className="space-y-4">
                   <h3 className="text-xl font-semibold text-emerald-700 dark:text-emerald-400">Security Philosophy</h3>
                   <p className="text-muted-foreground">
-                    The Investment Discipline Vault takes a fundamentally different approach to security than traditional financial services. Rather than primarily protecting assets from external threats, it focuses on protecting your investment strategy from internal psychological vulnerabilities—essentially protecting you from yourself.
+                    The Investment Discipline Vault's security architecture operates on two fundamental levels: protecting your assets from external threats and protecting your strategy from internal psychological vulnerabilities. This dual-layer approach creates a comprehensive security system that addresses both traditional cybersecurity concerns and the unique behavioral challenges of investment management. The vault implements multiple independent security mechanisms that work together to ensure both your assets and your investment discipline remain intact.
                   </p>
                   
                   <div className="rounded-lg border p-4 bg-slate-50 dark:bg-slate-900 mb-6">
                     <h4 className="font-medium mb-2 flex items-center">
                       <Lock className="h-4 w-4 mr-2 text-emerald-500" />
-                      Strategy Enforcement Mechanisms
+                      Asset Security Framework
                     </h4>
                     <p className="text-sm text-muted-foreground mb-4">
-                      The vault's core security systems are designed to enforce your predetermined investment strategy through multiple layers of technological and psychological safeguards:
+                      The fundamental security mechanisms protecting your investment assets:
                     </p>
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
                       <div className="bg-white dark:bg-black/20 p-3 rounded border">
-                        <span className="font-medium text-emerald-700 dark:text-emerald-400">Time-Binding Contracts</span>
-                        <ul className="mt-1 space-y-1 text-muted-foreground">
-                          <li>• Temporal commitment enforcement</li>
-                          <li>• Immutable execution timelines</li>
-                          <li>• Time-based access controls</li>
-                        </ul>
+                        <span className="text-emerald-500 font-semibold block mb-1">Triple Chain Security</span>
+                        All investment positions are secured through cross-chain verification on Ethereum, Solana, and TON networks, ensuring that even if one blockchain were compromised, your assets remain protected.
                       </div>
                       <div className="bg-white dark:bg-black/20 p-3 rounded border">
-                        <span className="font-medium text-emerald-700 dark:text-emerald-400">Multi-Phase Verification</span>
-                        <ul className="mt-1 space-y-1 text-muted-foreground">
-                          <li>• Cooling period enforcement</li>
-                          <li>• Progressive authorization</li>
-                          <li>• Decision consistency validation</li>
-                        </ul>
+                        <span className="text-emerald-500 font-semibold block mb-1">Multi-Signature Authentication</span>
+                        Critical investment operations require authentication through multiple verification factors, creating defense-in-depth that prevents unauthorized access even if individual credentials are compromised.
                       </div>
                       <div className="bg-white dark:bg-black/20 p-3 rounded border">
-                        <span className="font-medium text-emerald-700 dark:text-emerald-400">Algorithmic Guardians</span>
-                        <ul className="mt-1 space-y-1 text-muted-foreground">
-                          <li>• Strategy deviation detection</li>
-                          <li>• Emotional response filtering</li>
-                          <li>• Pattern-based intervention</li>
-                        </ul>
+                        <span className="text-emerald-500 font-semibold block mb-1">Transaction Verification System</span>
+                        All investment transactions undergo multi-stage verification with cryptographic validation across multiple chains, creating an immutable audit trail of all portfolio activities.
                       </div>
                     </div>
                   </div>
                   
                   <div className="rounded-lg border p-4 bg-slate-50 dark:bg-slate-900 mb-6">
                     <h4 className="font-medium mb-2 flex items-center">
-                      <Shield className="h-4 w-4 mr-2 text-emerald-500" />
-                      Behavioral Security Architecture
+                      <Timer className="h-4 w-4 mr-2 text-emerald-500" />
+                      Temporal Security Mechanisms
                     </h4>
                     <p className="text-sm text-muted-foreground mb-4">
-                      The vault implements a comprehensive behavioral security system based on principles of behavioral economics and psychology:
+                      Time-based security features that protect your investment strategy:
                     </p>
-                    <ul className="space-y-2 text-sm text-muted-foreground">
-                      <li className="flex items-start">
-                        <span className="bg-emerald-100 text-emerald-800 dark:bg-emerald-900 dark:text-emerald-300 rounded-full w-5 h-5 flex items-center justify-center text-xs mr-2 mt-0.5">1</span>
-                        <span><strong>Precommitment Protocol</strong> - The vault uses binding precommitment as its primary security mechanism, allowing you to make decisions during periods of rational thinking that cannot be undone during periods of emotional reactivity. This creates a binding contract with your future self.</span>
-                      </li>
-                      <li className="flex items-start">
-                        <span className="bg-emerald-100 text-emerald-800 dark:bg-emerald-900 dark:text-emerald-300 rounded-full w-5 h-5 flex items-center justify-center text-xs mr-2 mt-0.5">2</span>
-                        <span><strong>Friction Engineering</strong> - The system strategically implements "beneficial friction" that makes impulsive changes difficult while facilitating adherence to the predetermined strategy. The more significant the strategy deviation, the greater the friction through layered approval requirements.</span>
-                      </li>
-                      <li className="flex items-start">
-                        <span className="bg-emerald-100 text-emerald-800 dark:bg-emerald-900 dark:text-emerald-300 rounded-full w-5 h-5 flex items-center justify-center text-xs mr-2 mt-0.5">3</span>
-                        <span><strong>Cognitive Debiasing</strong> - When strategy modifications are requested, the system implements debiasing interventions, including mandatory consideration of counterarguments, presentation of relevant historical data, and documentation of decision rationale for future self-assessment.</span>
-                      </li>
-                      <li className="flex items-start">
-                        <span className="bg-emerald-100 text-emerald-800 dark:bg-emerald-900 dark:text-emerald-300 rounded-full w-5 h-5 flex items-center justify-center text-xs mr-2 mt-0.5">4</span>
-                        <span><strong>Contingency Planning</strong> - The vault requires predefined parameters for emergency access or strategy modification during initial setup, forcing consideration of potential future scenarios when in a rational state rather than during emotional market reactions.</span>
-                      </li>
-                    </ul>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+                      <div className="bg-white dark:bg-black/20 p-3 rounded border">
+                        <span className="text-emerald-500 font-semibold block mb-1">Cryptographic Time-Locking</span>
+                        Portfolio access constraints are enforced through advanced cryptographic time-lock puzzles, creating mathematically verifiable temporal security that cannot be circumvented.
+                      </div>
+                      <div className="bg-white dark:bg-black/20 p-3 rounded border">
+                        <span className="text-emerald-500 font-semibold block mb-1">Decentralized Temporal Validation</span>
+                        Time constraints are validated through consensus across multiple independent time sources, preventing manipulation of time-dependent access controls.
+                      </div>
+                      <div className="bg-white dark:bg-black/20 p-3 rounded border">
+                        <span className="text-emerald-500 font-semibold block mb-1">Progressive Access Control</span>
+                        Multi-stage authentication requirements increase proportionally with the significance of investment changes, creating appropriate friction for consequential decisions.
+                      </div>
+                      <div className="bg-white dark:bg-black/20 p-3 rounded border">
+                        <span className="text-emerald-500 font-semibold block mb-1">Temporal Recovery Protocols</span>
+                        Emergency access mechanisms include mandatory time delays with automated notifications, allowing intervention if unauthorized access is attempted.
+                      </div>
+                    </div>
                   </div>
                   
                   <div className="rounded-lg border p-4 bg-slate-50 dark:bg-slate-900">
                     <h4 className="font-medium mb-2 flex items-center">
-                      <Bell className="h-4 w-4 mr-2 text-emerald-500" />
-                      Strategy Deviation Defense System
+                      <AlertTriangle className="h-4 w-4 mr-2 text-emerald-500" />
+                      Behavioral Security System
                     </h4>
                     <p className="text-sm text-muted-foreground mb-4">
-                      The vault employs a multi-layered approach to protect against strategy deviations:
+                      Advanced mechanisms protecting your investment strategy from psychological vulnerabilities:
                     </p>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <div className="border rounded-lg p-3">
-                        <h5 className="font-medium text-sm mb-1">Temporal Firewalls</h5>
-                        <p className="text-xs text-muted-foreground">
-                          Time-based access restrictions that prevent modifications during predefined lockout periods. These can include market volatility-triggered extensions that automatically extend lockout periods during high market turbulence to prevent emotional decision-making precisely when it's most likely to occur.
-                        </p>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+                      <div className="bg-white dark:bg-black/20 p-3 rounded border">
+                        <span className="text-emerald-500 font-semibold block mb-1">Volatility-Adaptive Access Controls</span>
+                        Access restrictions automatically adjust during periods of extreme market volatility, protecting against emotionally-driven decisions during market stress.
                       </div>
-                      <div className="border rounded-lg p-3">
-                        <h5 className="font-medium text-sm mb-1">Multi-Signature Governance</h5>
-                        <p className="text-xs text-muted-foreground">
-                          Optional configuration requiring approval from multiple parties before significant strategy changes can be implemented. This can include trusted advisors, accountability partners, or your future self through time-separated confirmations, creating a distributed decision model that prevents impulsive actions.
-                        </p>
+                      <div className="bg-white dark:bg-black/20 p-3 rounded border">
+                        <span className="text-emerald-500 font-semibold block mb-1">Cognitive Debiasing Protocols</span>
+                        Transaction interfaces implement "cooling off" periods, contextual information displays, and commitment reminders that mitigate common cognitive biases.
                       </div>
-                      <div className="border rounded-lg p-3">
-                        <h5 className="font-medium text-sm mb-1">Decision Quality Analysis</h5>
-                        <p className="text-xs text-muted-foreground">
-                          Automated evaluation of requested changes against historical performance data, current market conditions, and established investment principles. The system can flag potentially harmful decisions with mandatory review periods proportional to the deviation magnitude or estimated long-term impact.
-                        </p>
+                      <div className="bg-white dark:bg-black/20 p-3 rounded border">
+                        <span className="text-emerald-500 font-semibold block mb-1">Strategy Deviation Alerts</span>
+                        Automated monitoring detects and flags potential deviations from your investment policy statement, providing accountability to your stated strategy.
                       </div>
-                      <div className="border rounded-lg p-3">
-                        <h5 className="font-medium text-sm mb-1">Strategy Commitment Reinforcement</h5>
-                        <p className="text-xs text-muted-foreground">
-                          Periodic reaffirmation requirements that present your original investment thesis and objectives before allowing continued access. These reinforcement checkpoints strengthen commitment to long-term strategies by reconnecting you with your initial rationale during periods of potential doubt.
-                        </p>
+                      <div className="bg-white dark:bg-black/20 p-3 rounded border">
+                        <span className="text-emerald-500 font-semibold block mb-1">Psychological Verification Layers</span>
+                        Major portfolio changes require explicit acknowledgment of investment principles and confirmation of alignment with long-term objectives.
                       </div>
-                    </div>
-                  </div>
-                  
-                  <h3 className="text-xl font-semibold text-emerald-700 dark:text-emerald-400 mt-6">Backup Security Mechanisms</h3>
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    <div className="border rounded-lg p-4 text-center">
-                      <p className="font-medium">Emergency Override</p>
-                      <p className="text-sm text-muted-foreground">Predefined conditions for urgent access</p>
-                    </div>
-                    <div className="border rounded-lg p-4 text-center">
-                      <p className="font-medium">Beneficiary Access Protocol</p>
-                      <p className="text-sm text-muted-foreground">Successor access rights and limitations</p>
-                    </div>
-                    <div className="border rounded-lg p-4 text-center">
-                      <p className="font-medium">Strategy Adaptation Framework</p>
-                      <p className="text-sm text-muted-foreground">Controlled evolution of investment rules</p>
                     </div>
                   </div>
                 </div>
@@ -354,148 +317,118 @@ const InvestmentDisciplineVaultDocumentation = () => {
                   Technical Specifications
                 </CardTitle>
                 <CardDescription>
-                  Advanced implementation details for technical users
+                  Detailed technical information about Investment Discipline Vaults
                 </CardDescription>
               </CardHeader>
               <CardContent>
                 <div className="space-y-6">
-                  <div className="rounded-lg border-2 border-dashed border-muted-foreground/20 p-6">
-                    <h3 className="text-xl font-semibold mb-4 text-emerald-700 dark:text-emerald-400">Implementation Architecture</h3>
-                    <p className="mb-6">
-                      The Investment Discipline Vault implements a sophisticated multi-layer architecture that combines behavioral economics, smart contract technology, and automated execution systems to create enforceable investment commitments.
-                    </p>
-                    
-                    <h4 className="text-lg font-medium mb-2">Strategy Enforcement Layer</h4>
-                    <div className="bg-slate-100 dark:bg-slate-800 rounded-lg p-4 mb-6">
-                      <h5 className="font-medium mb-2">Smart Contract Framework</h5>
-                      <div className="overflow-x-auto">
-                        <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
-                          <thead className="bg-gray-100 dark:bg-gray-800">
-                            <tr>
-                              <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Component</th>
-                              <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Implementation</th>
-                              <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Primary Function</th>
-                              <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Blockchain</th>
-                            </tr>
-                          </thead>
-                          <tbody className="bg-white dark:bg-gray-900 divide-y divide-gray-200 dark:divide-gray-800">
-                            <tr>
-                              <td className="px-4 py-2 text-sm">TimeVaultCore</td>
-                              <td className="px-4 py-2 text-sm">Time-based access control</td>
-                              <td className="px-4 py-2 text-sm">Temporal commitment enforcement</td>
-                              <td className="px-4 py-2 text-sm">Ethereum/TON</td>
-                            </tr>
-                            <tr>
-                              <td className="px-4 py-2 text-sm">StrategyExecutor</td>
-                              <td className="px-4 py-2 text-sm">Automated investment execution</td>
-                              <td className="px-4 py-2 text-sm">Transaction scheduling and routing</td>
-                              <td className="px-4 py-2 text-sm">Cross-chain</td>
-                            </tr>
-                            <tr>
-                              <td className="px-4 py-2 text-sm">DecisionFramework</td>
-                              <td className="px-4 py-2 text-sm">Multi-phase verification</td>
-                              <td className="px-4 py-2 text-sm">Strategy modification governance</td>
-                              <td className="px-4 py-2 text-sm">Ethereum</td>
-                            </tr>
-                            <tr>
-                              <td className="px-4 py-2 text-sm">AllocationManager</td>
-                              <td className="px-4 py-2 text-sm">Portfolio rebalancing engine</td>
-                              <td className="px-4 py-2 text-sm">Asset allocation maintenance</td>
-                              <td className="px-4 py-2 text-sm">Solana</td>
-                            </tr>
-                          </tbody>
-                        </table>
-                      </div>
-                    </div>
-                    
-                    <h4 className="text-lg font-medium mb-2">Integration Architecture</h4>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-                      <div className="bg-slate-100 dark:bg-slate-800 rounded-lg p-4">
-                        <h5 className="font-medium mb-2">Exchange Connectivity</h5>
-                        <ul className="text-sm space-y-1 text-muted-foreground">
-                          <li><span className="font-mono text-xs bg-slate-200 dark:bg-slate-700 px-1 rounded">OrderRouter</span> - Multi-exchange order execution</li>
-                          <li><span className="font-mono text-xs bg-slate-200 dark:bg-slate-700 px-1 rounded">LiquidityAggregator</span> - Best execution routing</li>
-                          <li><span className="font-mono text-xs bg-slate-200 dark:bg-slate-700 px-1 rounded">TradeSplitter</span> - Large order optimization</li>
-                          <li><span className="font-mono text-xs bg-slate-200 dark:bg-slate-700 px-1 rounded">PriceOracle</span> - Multi-source price verification</li>
-                          <li><span className="font-mono text-xs bg-slate-200 dark:bg-slate-700 px-1 rounded">SlippageProtector</span> - Transaction safeguard</li>
+                  <div className="rounded-lg border p-4">
+                    <h3 className="text-lg font-medium mb-3 text-emerald-600">Time-Lock Implementation</h3>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+                      <div>
+                        <h4 className="font-medium mb-2">Temporal Security Architecture</h4>
+                        <ul className="list-disc pl-5 space-y-1 text-muted-foreground">
+                          <li>Cryptographic time-lock puzzles with verifiable delay functions</li>
+                          <li>Decentralized timestamp oracle verification across networks</li>
+                          <li>Smart contract time-bound access controls with on-chain validation</li>
+                          <li>Time-verification consensus requiring multi-chain agreement</li>
+                          <li>Temporal policy enforcement through distributed validation</li>
                         </ul>
                       </div>
-                      <div className="bg-slate-100 dark:bg-slate-800 rounded-lg p-4">
-                        <h5 className="font-medium mb-2">Supported Asset Classes</h5>
-                        <ul className="text-sm space-y-1 text-muted-foreground">
-                          <li><span className="font-mono text-xs bg-slate-200 dark:bg-slate-700 px-1 rounded">Cryptocurrencies</span> - Major and altcoins</li>
-                          <li><span className="font-mono text-xs bg-slate-200 dark:bg-slate-700 px-1 rounded">DeFi protocols</span> - Major yield platforms</li>
-                          <li><span className="font-mono text-xs bg-slate-200 dark:bg-slate-700 px-1 rounded">Tokenized stocks</span> - Via synthetic wrappers</li>
-                          <li><span className="font-mono text-xs bg-slate-200 dark:bg-slate-700 px-1 rounded">Tokenized commodities</span> - Gold, silver backing</li>
-                          <li><span className="font-mono text-xs bg-slate-200 dark:bg-slate-700 px-1 rounded">Index tokens</span> - Sector/market exposures</li>
+                      <div>
+                        <h4 className="font-medium mb-2">Time-Lock Configuration Options</h4>
+                        <ul className="list-disc pl-5 space-y-1 text-muted-foreground">
+                          <li>Fixed-term locks: 1 month to 30 years with calendar/block height specification</li>
+                          <li>Graduated release schedules: Progressive unlocking with custom intervals</li>
+                          <li>Conditional time modifiers based on portfolio value or market metrics</li>
+                          <li>Rolling time-locks with automatic renewal capabilities</li>
+                          <li>Mixed-duration frameworks with separate rules by asset class</li>
                         </ul>
-                      </div>
-                    </div>
-                    
-                    <h4 className="text-lg font-medium mb-2">Implementation Details</h4>
-                    <div className="bg-slate-100 dark:bg-slate-800 rounded-lg p-4 mb-6">
-                      <p className="text-sm text-muted-foreground mb-3">
-                        The Investment Discipline Vault includes several advanced technical components:
-                      </p>
-                      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
-                        <div className="border rounded-lg p-3 bg-white dark:bg-gray-900">
-                          <h6 className="font-medium mb-1">Time Oracle System</h6>
-                          <ul className="space-y-1 text-muted-foreground">
-                            <li>• Multi-source time verification</li>
-                            <li>• Tamper-resistant timestamp validation</li>
-                            <li>• Cross-chain time synchronization</li>
-                            <li>• Temporal access control primitives</li>
-                          </ul>
-                        </div>
-                        <div className="border rounded-lg p-3 bg-white dark:bg-gray-900">
-                          <h6 className="font-medium mb-1">Strategy Execution Engine</h6>
-                          <ul className="space-y-1 text-muted-foreground">
-                            <li>• Rule-based transaction scheduler</li>
-                            <li>• Conditional logic evaluation</li>
-                            <li>• Gas-efficient time triggers</li>
-                            <li>• Error-handling with retry logic</li>
-                          </ul>
-                        </div>
-                        <div className="border rounded-lg p-3 bg-white dark:bg-gray-900">
-                          <h6 className="font-medium mb-1">Market Data Integration</h6>
-                          <ul className="space-y-1 text-muted-foreground">
-                            <li>• Price feed aggregation</li>
-                            <li>• On-chain market indicators</li>
-                            <li>• Volatility calculation framework</li>
-                            <li>• Anomaly detection systems</li>
-                          </ul>
-                        </div>
-                      </div>
-                    </div>
-                    
-                    <h4 className="text-lg font-medium mb-2">Advanced Features</h4>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <div className="border rounded-lg p-4">
-                        <h5 className="font-medium mb-1">Strategy Adaptation Framework</h5>
-                        <p className="text-sm text-muted-foreground">
-                          The vault includes a sophisticated governance mechanism for strategy modification that balances commitment with necessary adaptation. It implements a multi-phase approval process with time-separation requirements, objective criteria evaluation, and proportional friction based on deviation magnitude. The system maintains a complete audit trail of all modification requests, approvals, and rejections for retrospective analysis.
-                        </p>
-                      </div>
-                      <div className="border rounded-lg p-4">
-                        <h5 className="font-medium mb-1">Tax-Optimized Execution</h5>
-                        <p className="text-sm text-muted-foreground">
-                          The execution engine incorporates tax-awareness when implementing investment strategies. It can preferentially harvest tax losses when rebalancing, intelligently select specific lots for optimal tax treatment, and execute transactions across multiple accounts to maximize tax efficiency. The system maintains comprehensive transaction records with cost basis tracking for seamless tax reporting and optimization analysis.
-                        </p>
-                      </div>
-                      <div className="border rounded-lg p-4">
-                        <h5 className="font-medium mb-1">Risk-Responsive Allocation</h5>
-                        <p className="text-sm text-muted-foreground">
-                          Advanced vault configurations can implement dynamic risk management through quantitative models. The system continuously evaluates multiple risk metrics and can adjust allocations within predefined bounds based on changing market conditions. These adjustments follow strict mathematical rules rather than emotional responses, with clear guardrails preventing extreme allocation shifts during temporary market events.
-                        </p>
-                      </div>
-                      <div className="border rounded-lg p-4">
-                        <h5 className="font-medium mb-1">Performance Analytics Engine</h5>
-                        <p className="text-sm text-muted-foreground">
-                          The vault includes sophisticated performance tracking that goes beyond simple returns calculations. It implements attribution analysis to identify strategy component performance, risk-adjusted return metrics tracking, and benchmark comparison with statistical significance testing. The system can generate detailed reports highlighting adherence to the original strategy and projections toward long-term goals.
-                        </p>
                       </div>
                     </div>
                   </div>
+                  
+                  <div className="rounded-lg border p-4">
+                    <h3 className="text-lg font-medium mb-3 text-emerald-600">Investment Rule Engine</h3>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+                      <div>
+                        <h4 className="font-medium mb-2">Rule Implementation Framework</h4>
+                        <ul className="list-disc pl-5 space-y-1 text-muted-foreground">
+                          <li>Declarative rule specification with formal verification</li>
+                          <li>Cross-chain rule enforcement with distributed execution</li>
+                          <li>Rule priority hierarchies for conflict resolution</li>
+                          <li>Conditional logic support with complex boolean operations</li>
+                          <li>Temporal rule scheduling with calendar/block triggers</li>
+                        </ul>
+                      </div>
+                      <div>
+                        <h4 className="font-medium mb-2">Rule Types and Parameters</h4>
+                        <ul className="list-disc pl-5 space-y-1 text-muted-foreground">
+                          <li>Automatic investment rules: Amount, frequency, target allocation</li>
+                          <li>Rebalancing rules: Threshold triggers, frequency, priority order</li>
+                          <li>Withdrawal rules: Schedule, amount calculation, source determination</li>
+                          <li>Tax-optimization rules: Lot selection, loss harvesting parameters</li>
+                          <li>Emergency override rules: Condition definition, verification requirements</li>
+                        </ul>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div className="rounded-lg border p-4">
+                    <h3 className="text-lg font-medium mb-3 text-emerald-600">Asset Support and Portfolio Management</h3>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+                      <div>
+                        <h4 className="font-medium mb-2">Supported Asset Types</h4>
+                        <ul className="list-disc pl-5 space-y-1 text-muted-foreground">
+                          <li>Native cryptocurrencies: ETH, SOL, TON, BTC (via wrapped tokens)</li>
+                          <li>Tokens: ERC-20, SPL, TRC-20 with standards compliance verification</li>
+                          <li>DeFi positions: Liquidity provider tokens, yield-bearing assets</li>
+                          <li>Tokenized traditional assets: Tokenized equities, bonds, commodities</li>
+                          <li>NFTs with liquidity profiles and valuation mechanisms</li>
+                        </ul>
+                      </div>
+                      <div>
+                        <h4 className="font-medium mb-2">Portfolio Structures</h4>
+                        <ul className="list-disc pl-5 space-y-1 text-muted-foreground">
+                          <li>Multi-portfolio organization with separate security policies</li>
+                          <li>Goal-based sub-portfolios with specified objectives</li>
+                          <li>Hierarchical asset classification system with custom categories</li>
+                          <li>Asset isolation through separate contract deployments</li>
+                          <li>Cross-portfolio dependency management and constraints</li>
+                        </ul>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div className="rounded-lg border p-4">
+                    <h3 className="text-lg font-medium mb-3 text-emerald-600">Analytics and Reporting System</h3>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+                      <div>
+                        <h4 className="font-medium mb-2">Performance Metrics</h4>
+                        <ul className="list-disc pl-5 space-y-1 text-muted-foreground">
+                          <li>Time-weighted and money-weighted return calculations</li>
+                          <li>Risk-adjusted performance metrics (Sharpe, Sortino ratios)</li>
+                          <li>Benchmark comparisons with custom reference indices</li>
+                          <li>Attribution analysis across asset classes and strategies</li>
+                          <li>Goal progress tracking against targeted objectives</li>
+                        </ul>
+                      </div>
+                      <div>
+                        <h4 className="font-medium mb-2">Behavioral Analytics</h4>
+                        <ul className="list-disc pl-5 space-y-1 text-muted-foreground">
+                          <li>Discipline adherence scoring against stated strategy</li>
+                          <li>Emotional response pattern identification during volatility</li>
+                          <li>Strategy consistency metrics across market cycles</li>
+                          <li>Behavioral bias detection through action pattern analysis</li>
+                          <li>Long-term decision quality assessment frameworks</li>
+                        </ul>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <p className="text-sm text-muted-foreground mt-4">
+                    The Investment Discipline Vault combines sophisticated cryptographic time-locking, cross-chain rule enforcement, and behavioral security mechanisms to create a comprehensive system for maintaining investment discipline. The technical implementation focuses on creating verifiable constraints that protect your long-term strategy while maintaining appropriate flexibility for legitimate financial needs and changing circumstances.
+                  </p>
                 </div>
               </CardContent>
             </Card>
@@ -514,84 +447,78 @@ const InvestmentDisciplineVaultDocumentation = () => {
               </CardHeader>
               <CardContent>
                 <div className="space-y-6">
-                  <div className="border-b pb-4">
-                    <h3 className="text-lg font-medium mb-2">Why would I want to restrict my own access to my investments?</h3>
+                  <div>
+                    <h3 className="text-lg font-medium mb-2">What happens if I need emergency access to my investments?</h3>
                     <p className="text-muted-foreground">
-                      This question gets to the heart of the Investment Discipline Vault's purpose. Decades of research in behavioral finance show that investors are their own worst enemies when it comes to long-term performance. During market downturns, our emotional brains override rational decision-making, leading to selling at market bottoms. During bubbles, we succumb to FOMO and buy at peaks. The Investment Discipline Vault allows your rational self to protect your assets from your emotional self.
+                      The Investment Discipline Vault includes thoughtfully designed emergency access protocols:
                       <br /><br />
-                      Think of it as similar to a retirement account with early withdrawal penalties, but with much more flexibility and customization. You're not permanently restricting access—you're creating rules that enforce your predetermined strategy and prevent impulsive decisions during emotional market periods. Studies consistently show that investors who maintain disciplined strategies significantly outperform those who make frequent emotional adjustments.
-                    </p>
-                  </div>
-                  
-                  <div className="border-b pb-4">
-                    <h3 className="text-lg font-medium mb-2">What happens if I genuinely need to change my investment strategy?</h3>
-                    <p className="text-muted-foreground">
-                      The Investment Discipline Vault is designed to protect against emotional, impulsive changes while still allowing legitimate strategy evolution. The system provides several mechanisms for appropriate modifications:
+                      <strong>Emergency Access Policy:</strong> When setting up your vault, you define what constitutes a legitimate emergency and configure appropriate verification requirements. This creates a predefined framework for exceptional circumstances while preventing impulsive decisions.
                       <br /><br />
-                      <strong>1. Scheduled Review Periods:</strong> When setting up your vault, you can establish regular review windows (quarterly, annually, etc.) when strategy modifications are permitted after a thorough review process.
+                      <strong>Verification Process:</strong> Emergency access typically requires enhanced identity verification, explicit acknowledgment of the policy exception, and often includes a mandatory cooling-off period (typically 24-72 hours) that allows for reflection before significant withdrawals.
                       <br /><br />
-                      <strong>2. Conditional Modification Rules:</strong> You can pre-define specific conditions (market events, personal milestones, etc.) that would trigger the ability to revise your strategy.
+                      <strong>Partial Access Option:</strong> Most users configure their vaults to allow limited emergency access (e.g., up to 20% of assets) with simplified verification, while maintaining stronger protections on the core portfolio.
                       <br /><br />
-                      <strong>3. Multi-Phase Approval:</strong> For significant changes outside scheduled periods, the vault implements a cooling-off system requiring multiple confirmations across time, ensuring changes are deliberate rather than impulsive.
-                      <br /><br />
-                      <strong>4. Emergency Override:</strong> For truly exceptional circumstances, the vault includes an emergency access protocol that requires additional verification steps proportional to the deviation from your original strategy.
-                      <br /><br />
-                      These mechanisms strike a balance between commitment and flexibility, preventing emotional reactions while accommodating legitimate strategy evolution.
-                    </p>
-                  </div>
-                  
-                  <div className="border-b pb-4">
-                    <h3 className="text-lg font-medium mb-2">How does the vault handle market crashes or exceptional circumstances?</h3>
-                    <p className="text-muted-foreground">
-                      The Investment Discipline Vault includes sophisticated contingency planning specifically designed for extreme market events:
-                      <br /><br />
-                      <strong>Circuit Breakers:</strong> You can configure predefined thresholds for market volatility or drawdowns that temporarily pause automated investing or trigger defensive protocols. These are based on quantitative metrics rather than emotion.
-                      <br /><br />
-                      <strong>Downside Protection:</strong> Advanced vault configurations can include automatic implementation of hedging strategies or allocation adjustments when specific risk thresholds are breached.
-                      <br /><br />
-                      <strong>Opportunity Response:</strong> Conversely, you can set rules to automatically increase investment rates during significant market downturns, essentially automating the "be greedy when others are fearful" principle.
-                      <br /><br />
-                      <strong>Modified Access Rules:</strong> The system allows for special governance during exceptional circumstances, potentially enabling a more streamlined modification process while still preventing purely emotional reactions.
-                      <br /><br />
-                      Importantly, these contingency mechanisms are defined in advance during rational planning, not during the emotional turmoil of a market crisis, ensuring responses align with your long-term investment philosophy.
-                    </p>
-                  </div>
-                  
-                  <div className="border-b pb-4">
-                    <h3 className="text-lg font-medium mb-2">What types of investment strategies work best with this vault?</h3>
-                    <p className="text-muted-foreground">
-                      The Investment Discipline Vault works with virtually any coherent investment strategy, but it particularly enhances strategies that benefit from consistent execution and are vulnerable to emotional interference:
-                      <br /><br />
-                      <strong>Dollar-Cost Averaging:</strong> Ideal for enforcing regular investments regardless of market conditions, preventing the tendency to invest more during market euphoria and less during downturns.
-                      <br /><br />
-                      <strong>Strategic Asset Allocation:</strong> Excellent for maintaining target allocations through automated rebalancing, preventing the natural drift toward overweighting recent winners.
-                      <br /><br />
-                      <strong>Value Investing:</strong> Superb for enforcing contrarian buying during market fear, when value strategies typically find their best opportunities but emotional resistance is highest.
-                      <br /><br />
-                      <strong>Momentum Strategies:</strong> Effective for enforcing systematic exit rules, preventing the common tendency to hold winners too long due to attachment.
-                      <br /><br />
-                      <strong>Factor Investing:</strong> Ideal for maintaining exposure to factors (value, quality, etc.) during periods of underperformance when investors typically abandon them before mean reversion.
-                      <br /><br />
-                      The vault is strategy-agnostic but execution-focused, ensuring whatever approach you choose is implemented with discipline and consistency.
+                      <strong>Designated Emergency Fund:</strong> For optimal financial planning, we recommend maintaining a separate, fully liquid emergency fund outside the Discipline Vault for true emergencies, allowing your long-term investments to remain protected by the vault's discipline-enhancing constraints.
                     </p>
                   </div>
                   
                   <div>
-                    <h3 className="text-lg font-medium mb-2">How do I determine the right balance between commitment and flexibility?</h3>
+                    <h3 className="text-lg font-medium mb-2">How does the vault help me maintain investment discipline during market volatility?</h3>
                     <p className="text-muted-foreground">
-                      Finding the optimal balance between unwavering commitment and necessary flexibility is perhaps the most important aspect of configuring your Investment Discipline Vault. Here are key considerations:
+                      The vault implements multiple mechanisms specifically designed for market turbulence:
                       <br /><br />
-                      <strong>Time Horizon Analysis:</strong> Generally, longer-term investments warrant stronger commitment mechanisms. Consider creating multiple vaults with different flexibility levels based on time horizons.
+                      <strong>Volatility-Adaptive Access Controls:</strong> During periods of extreme market volatility (automatically detected through on-chain price oracles), the system can implement enhanced access restrictions that create additional reflection time before allowing significant portfolio changes.
                       <br /><br />
-                      <strong>Personal Psychology Assessment:</strong> Be honest about your own behavioral tendencies. If you have a history of emotional investment decisions, consider stronger commitment features. The vault includes a self-assessment tool to help calibrate this.
+                      <strong>Contextual Decision Framework:</strong> When accessing your vault during volatile periods, the interface presents historical context, your documented investment strategy, and personalized reminders about long-term objectives to counter recency bias and emotional reactions.
                       <br /><br />
-                      <strong>Strategy Maturity:</strong> Well-tested strategies with clear historical performance characteristics typically warrant stronger commitment than newer approaches still being refined.
+                      <strong>Automated Counter-Cyclical Execution:</strong> Many users configure rule-based rebalancing that automatically executes counter-cyclical trades during volatility (buying assets that have declined, selling those that have appreciated), systematically implementing "buy low, sell high" without requiring manual intervention.
                       <br /><br />
-                      <strong>Life Stage Consideration:</strong> Investors closer to requiring access to funds typically need more flexibility than those in accumulation phases.
+                      <strong>Emotional Circuit Breakers:</strong> Optional features include self-imposed "circuit breakers" that temporarily restrict access after significant market movements, allowing emotions to stabilize before making important investment decisions.
+                    </p>
+                  </div>
+                  
+                  <div>
+                    <h3 className="text-lg font-medium mb-2">Can I customize the investment rules and time-locks for different parts of my portfolio?</h3>
+                    <p className="text-muted-foreground">
+                      Yes, the vault supports sophisticated portfolio segmentation:
                       <br /><br />
-                      <strong>Tiered Flexibility:</strong> Consider implementing graduated access controls where smaller strategy adjustments face less friction than major deviations.
+                      <strong>Multi-Portfolio Structure:</strong> You can create multiple sub-portfolios within your vault, each with its own security parameters, time constraints, and investment rules. This allows you to implement different strategies for different financial goals or time horizons.
                       <br /><br />
-                      The vault configuration process includes a detailed questionnaire and simulation tools to help you identify your optimal commitment-flexibility balance.
+                      <strong>Asset-Specific Rules:</strong> Within each portfolio, you can configure different rules for different asset classes or even individual positions. For example, you might implement stronger time-locks on your core long-term holdings while allowing more flexibility with a smaller portion designated for tactical opportunities.
+                      <br /><br />
+                      <strong>Goal-Based Configuration:</strong> The system supports organizing your investments by financial goal (retirement, education, home purchase, etc.), with appropriate time constraints aligned to each goal's time horizon and importance.
+                      <br /><br />
+                      <strong>Progressive Time Structures:</strong> You can implement graduated time-locks where portions of your portfolio become available at different intervals, creating appropriate liquidity while maintaining long-term discipline for core assets.
+                    </p>
+                  </div>
+                  
+                  <div>
+                    <h3 className="text-lg font-medium mb-2">How does the vault handle changing market conditions or shifts in my financial situation?</h3>
+                    <p className="text-muted-foreground">
+                      The vault balances commitment with appropriate flexibility:
+                      <br /><br />
+                      <strong>Strategy Adjustment Windows:</strong> Most users configure periodic "strategy adjustment windows" (e.g., quarterly or annually) when comprehensive portfolio review and strategy updates are permitted, allowing for thoughtful adaptation while preventing frequent impulsive changes.
+                      <br /><br />
+                      <strong>Conditional Modification Rules:</strong> You can implement rules that automatically adjust your investment strategy based on predefined conditions—such as changing asset allocation as you approach retirement, or modifying contribution amounts based on your income.
+                      <br /><br />
+                      <strong>Life Event Exceptions:</strong> The vault supports defining specific life events (career changes, family additions, relocation) that trigger temporary modification permissions, allowing you to adapt your strategy to significant life changes while maintaining protection against purely emotional decisions.
+                      <br /><br />
+                      <strong>Guided Modification Process:</strong> When making strategy adjustments, the system implements a structured decision process that helps ensure changes are well-reasoned and aligned with long-term objectives rather than reactions to short-term market movements.
+                    </p>
+                  </div>
+                  
+                  <div>
+                    <h3 className="text-lg font-medium mb-2">How does the Investment Discipline Vault differ from traditional retirement accounts?</h3>
+                    <p className="text-muted-foreground">
+                      While both encourage long-term investing, there are several key differences:
+                      <br /><br />
+                      <strong>Customizable Constraints:</strong> Unlike retirement accounts with standardized rules, the Discipline Vault allows you to create personalized commitment devices tailored to your specific psychological tendencies, financial goals, and investment strategy.
+                      <br /><br />
+                      <strong>Asset Flexibility:</strong> The vault supports a wide range of digital assets across multiple blockchains, allowing diversification beyond traditional financial instruments, while implementing appropriate discipline for these often-volatile assets.
+                      <br /><br />
+                      <strong>Behavioral Intelligence:</strong> Traditional accounts focus primarily on tax advantages, while the Discipline Vault specifically addresses behavioral challenges with sophisticated mechanisms like volatility-adaptive controls, contextual decision frameworks, and cognitive debiasing protocols.
+                      <br /><br />
+                      <strong>Programmable Investment Policy:</strong> The vault's rule-based execution system allows you to codify your entire investment strategy—including contributions, asset allocation, rebalancing, and withdrawal plans—into programmable logic that executes automatically while protecting against impulsive overrides.
                     </p>
                   </div>
                 </div>
@@ -599,14 +526,14 @@ const InvestmentDisciplineVaultDocumentation = () => {
               <CardFooter className="border-t p-4">
                 <div className="w-full">
                   <p className="text-sm text-muted-foreground mb-4">
-                    Have more questions about using Investment Discipline Vaults to improve your investment outcomes? Our team is available to provide personalized guidance based on your specific financial goals.
+                    Have more questions about enhancing your investment discipline through structured time-locking? Our investment strategy specialists can provide personalized guidance on configuring the optimal vault for your specific financial goals and behavioral tendencies.
                   </p>
                   <div className="flex flex-col sm:flex-row gap-4">
                     <Button variant="outline" className="flex-1">
                       Contact Support
                     </Button>
-                    <Button className="bg-gradient-to-r from-emerald-500 to-blue-500 hover:from-emerald-600 hover:to-blue-600 flex-1" asChild>
-                      <Link href="/investment-discipline-vault">Create Investment Vault</Link>
+                    <Button className="bg-gradient-to-r from-emerald-500 to-blue-600 hover:from-emerald-600 hover:to-blue-700 flex-1" asChild>
+                      <Link href="/investment-discipline-vault">Create Discipline Vault</Link>
                     </Button>
                   </div>
                 </div>

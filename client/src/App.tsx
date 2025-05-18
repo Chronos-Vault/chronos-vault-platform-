@@ -67,6 +67,7 @@ import CrossChainFragmentVaultDocumentation from './pages/documentation/cross-ch
 import TimeLockedMemoryVaultDocumentation from './pages/documentation/time-locked-memory-vault';
 import SovereignFortressVaultDocumentation from './pages/documentation/sovereign-fortress-vault';
 import GeoLocationVaultDocumentation from './pages/documentation/geo-location-vault';
+import LocationTimeVaultDocumentation from './pages/documentation/location-time-vault';
 import NFTPoweredVaultDocumentation from './pages/documentation/nft-powered-vault';
 import InvestmentDisciplineVaultDocumentation from './pages/documentation/investment-discipline-vault';
 import QuantumResistantVaultDocumentation from './pages/documentation/quantum-resistant-vault';
@@ -254,6 +255,7 @@ function App() {
           <Route path="/documentation/time-locked-memory-vault" component={TimeLockedMemoryVaultDocumentation} />
           <Route path="/documentation/sovereign-fortress-vault" component={SovereignFortressVaultDocumentation} />
           <Route path="/documentation/geo-location-vault" component={GeoLocationVaultDocumentation} />
+          <Route path="/documentation/location-time-vault" component={LocationTimeVaultDocumentation} />
           <Route path="/documentation/nft-powered-vault" component={NFTPoweredVaultDocumentation} />
           <Route path="/documentation/investment-discipline-vault" component={InvestmentDisciplineVaultDocumentation} />
           <Route path="/documentation/quantum-resistant-vault" component={QuantumResistantVaultDocumentation} />
