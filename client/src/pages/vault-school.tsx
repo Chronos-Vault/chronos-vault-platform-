@@ -139,6 +139,7 @@ const vaultTypes = [
       "Privacy-preserving location verification",
       "Customizable location parameters",
     ],
+    isNew: true,
     category: "security",
   },
   {
