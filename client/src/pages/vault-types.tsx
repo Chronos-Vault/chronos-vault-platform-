@@ -1629,34 +1629,39 @@ const VaultTypesPage = () => {
             <span>Vault Categories</span>
           </h2>
 
-          {/* Mobile Optimized Category Selector */}
+          {/* Simple Mobile Category List with Header Bar */}
           <div className="md:hidden mb-4">
-            {/* Simple Dropdown Selector for Mobile */}
-            <select 
-              className="w-full bg-black/30 text-white p-3 rounded-lg border border-purple-500/30 mb-2"
-              value={activeCategory}
-              onChange={(e) => setActiveCategory(e.target.value)}
-            >
-              {Object.entries(vaultCategories).map(([key, category]) => (
-                <option key={key} value={key}>
-                  {category.icon} {category.title} ({category.vaults.length})
-                </option>
-              ))}
-            </select>
-            
-            {/* Active Category Indicator */}
-            <div 
-              className="w-full p-3 rounded-lg flex items-center"
-              style={{ 
-                backgroundColor: `${vaultCategories[activeCategory].color}20`,
-                borderLeft: `4px solid ${vaultCategories[activeCategory].color}`
-              }}
-            >
-              <span className="text-2xl mr-3">{vaultCategories[activeCategory].icon}</span>
-              <div>
-                <h3 className="font-bold text-white">{vaultCategories[activeCategory].title}</h3>
-                <p className="text-xs text-white/70">{vaultCategories[activeCategory].vaults.length} vault types</p>
+            <div className="mb-2 p-3 border-b border-purple-500/30 flex items-center justify-between">
+              <h3 className="text-white font-medium">Current Category:</h3>
+              <div className="flex items-center">
+                <span className="text-lg mr-2" style={{ color: vaultCategories[activeCategory].color }}>
+                  {vaultCategories[activeCategory].icon}
+                </span>
+                <span className="text-white">{vaultCategories[activeCategory].title}</span>
               </div>
+            </div>
+            
+            {/* Simple Vertical Button List */}
+            <div className="flex flex-col gap-2">
+              {Object.entries(vaultCategories).map(([key, category]) => (
+                <button
+                  key={key}
+                  onClick={() => setActiveCategory(key)}
+                  className={`w-full text-left px-3 py-2 rounded-lg border flex items-center justify-between ${
+                    activeCategory === key 
+                      ? 'bg-black/40 border-purple-500/30 text-white' 
+                      : 'bg-black/20 border-transparent text-gray-400'
+                  }`}
+                >
+                  <div className="flex items-center">
+                    <span className="text-lg mr-2" style={{ color: category.color }}>{category.icon}</span>
+                    <span>{category.title}</span>
+                  </div>
+                  <span className="bg-black/30 px-2 py-0.5 rounded-full text-xs min-w-[1.5rem] text-center">
+                    {category.vaults.length}
+                  </span>
+                </button>
+              ))}
             </div>
           </div>
           
