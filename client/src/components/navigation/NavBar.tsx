@@ -68,11 +68,11 @@ export const NavBar: React.FC = () => {
             <div className="flex-shrink-0">
               {/* Logo - Matching Footer Style */}
               <Link href="/" className="flex items-center gap-3 group">
-                <div className="h-12 w-12 rounded-full flex items-center justify-center shadow-lg shadow-[#6B00D7]/20 group-hover:shadow-[#FF5AF7]/30 transition-all overflow-hidden border-2 border-white/20">
+                <div className="h-12 w-12 rounded-full flex items-center justify-center shadow-lg shadow-[#6B00D7]/20 group-hover:shadow-[#FF5AF7]/30 transition-all duration-300 overflow-hidden border-2 border-white/20 group-hover:border-[#FF5AF7]/50 transform group-hover:scale-110 relative after:absolute after:inset-0 after:bg-gradient-to-r after:from-[#6B00D7]/0 after:to-[#FF5AF7]/10 after:opacity-0 group-hover:after:opacity-100 after:transition-opacity after:duration-500">
                   <img 
                     src={logoPath} 
                     alt="Chronos Vault Logo" 
-                    className="w-full h-full object-cover" 
+                    className="w-full h-full object-cover transition-all duration-300 group-hover:brightness-110 group-hover:saturate-150 group-hover:animate-pulse" 
                   />
                 </div>
                 <div className="relative">
@@ -136,8 +136,8 @@ export const NavBar: React.FC = () => {
           {/* Sidebar Header */}
           <div className="flex items-center justify-between p-5 border-b border-purple-900/30">
             <div className="flex items-center">
-              <div className="h-14 w-14 rounded-full flex items-center justify-center shadow-lg shadow-[#6B00D7]/30 hover:shadow-[#FF5AF7]/30 transition-all overflow-hidden border-2 border-[#9333EA]/30 mr-3">
-                <img src={logoPath} alt="Chronos Vault Logo" className="w-full h-full object-cover" />
+              <div className="h-14 w-14 rounded-full flex items-center justify-center shadow-lg shadow-[#6B00D7]/30 hover:shadow-[#FF5AF7]/40 transition-all duration-300 overflow-hidden border-2 border-[#9333EA]/30 hover:border-[#FF5AF7]/60 transform hover:scale-105 mr-3 relative after:absolute after:inset-0 after:bg-gradient-to-r after:from-[#6B00D7]/0 after:to-[#FF5AF7]/20 after:opacity-0 hover:after:opacity-100 after:transition-opacity after:duration-500">
+                <img src={logoPath} alt="Chronos Vault Logo" className="w-full h-full object-cover transition-all duration-300 hover:brightness-110 hover:saturate-150 hover:animate-pulse" />
               </div>
               
               <div className="relative">
