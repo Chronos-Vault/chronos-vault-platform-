@@ -265,101 +265,119 @@ const TokenVaultsPage: React.FC = () => {
     { year: 100, totalSupply: 2143000, burnedAmount: 18857000, percentBurned: 89.8 }
   ];
   
-  // Olympic Vault Data
+  // CVT Staking Vault Tiers
   const olympicVaults: OlympicVault[] = [
     {
-      id: 'gold',
-      name: 'Gold Olympic Vault',
-      tier: 'Sovereign',
-      description: 'The most prestigious time-locked CVT vault, opening in Year 4 with exclusive access to platform sovereignty features and enhanced rewards. Limited to 1,000 vaults worldwide.',
-      icon: <Medal className="h-5 w-5" />,
+      id: 'sovereign',
+      name: 'Vault Sovereign',
+      tier: 'Ultimate',
+      description: 'The highest tier of CVT staking vault requiring at least 100,000 CVT. Provides 50% reduction on platform fees, premium AI optimization, unlimited capsules, concierge service, and 10x voting weight.',
+      icon: <Shield className="h-5 w-5" />,
       securityFeatures: [
-        'Triple-chain verification',
-        'Government-grade encryption',
-        'Dedicated security auditing',
-        'Zero-knowledge proof validation',
-        'Inheritance protocol access'
+        'Premium AI optimization',
+        'Unlimited time capsule capacity',
+        'Concierge service',
+        '10x voting power',
+        '1.5x reward multiplier'
       ],
       unlockYear: 4,
       scarcityLevel: 95,
-      colorClass: 'text-yellow-500',
-      gradientClass: 'from-yellow-800/20 to-amber-500/20'
+      colorClass: 'text-purple-500',
+      gradientClass: 'from-purple-800/20 to-fuchsia-500/20'
     },
     {
-      id: 'silver',
-      name: 'Silver Olympic Vault',
+      id: 'architect',
+      name: 'Vault Architect',
       tier: 'Premium',
-      description: 'High-value time-locked vaults activated in Year 8, providing enhanced security features and governance rights. Limited to 5,000 vaults with special cross-chain verification.',
-      icon: <Medal className="h-5 w-5" />,
+      description: 'A premium tier of CVT staking vault requiring at least 10,000 CVT. Provides 30% reduction on platform fees, advanced analytics, AI insights, up to 50 time capsules, and 3x voting weight.',
+      icon: <GanttChart className="h-5 w-5" />,
       securityFeatures: [
-        'Dual-chain verification',
-        'Behavioral authentication',
-        'Portfolio rebalancing',
-        'Enhanced staking rewards',
-        'Governance voting rights'
+        'Advanced analytics',
+        'AI investment insights',
+        'Up to 50 time capsules',
+        '3x voting power',
+        '1.25x reward multiplier'
       ],
       unlockYear: 8,
       scarcityLevel: 85,
-      colorClass: 'text-gray-300',
-      gradientClass: 'from-gray-600/20 to-zinc-300/20'
-    },
-    {
-      id: 'bronze',
-      name: 'Bronze Olympic Vault',
-      tier: 'Advanced',
-      description: 'Advanced time-locked vaults scheduled for Year 12 release, featuring enhanced security and exclusive access to specialized finance tools.',
-      icon: <Medal className="h-5 w-5" />,
-      securityFeatures: [
-        'Multi-signature requirements',
-        'Automated security audits',
-        'Cross-chain asset protection',
-        'Family access controls',
-        'Market monitoring systems'
-      ],
-      unlockYear: 12,
-      scarcityLevel: 75,
-      colorClass: 'text-amber-700',
-      gradientClass: 'from-amber-900/20 to-amber-600/20'
-    }
-  ];
-  
-  // Verification Vault Data
-  const verificationVaults: VerificationVault[] = [
-    {
-      id: 'diamond',
-      name: 'Diamond Verification Vault',
-      tier: 'Exclusive',
-      description: 'State-of-the-art verification vaults with quantum-resistant encryption, scheduled for Year 16 release. Establishes the holder as a trusted verification authority within the network.',
-      icon: <CheckCircle className="h-5 w-5" />,
-      verificationFeatures: [
-        'Quantum-resistant encryption',
-        'Trusted verification authority',
-        'Cross-chain governance rights',
-        'Network security staking',
-        'Advanced analytics access'
-      ],
-      unlockYear: 16,
-      securityLevel: 92,
       colorClass: 'text-blue-400',
       gradientClass: 'from-blue-800/20 to-cyan-500/20'
     },
     {
-      id: 'sovereign',
-      name: 'Sovereign Fortress Vault',
-      tier: 'Ultimate',
-      description: 'The ultimate time-locked vault released in Year 21, representing complete sovereignty over digital assets with military-grade security and verification.',
-      icon: <Key className="h-5 w-5" />,
-      verificationFeatures: [
-        'Military-grade security',
-        'Perpetual inheritance system',
-        'Global jurisdiction protection',
-        'Comprehensive asset protection',
-        'Zero-fee transactions'
+      id: 'guardian',
+      name: 'Vault Guardian',
+      tier: 'Standard',
+      description: 'The entry-level CVT staking vault requiring at least 1,000 CVT. Provides 15% reduction on platform fees, basic portfolio analytics, up to 10 time capsules, and 1x voting weight.',
+      icon: <ShieldCheck className="h-5 w-5" />,
+      securityFeatures: [
+        'Basic portfolio analytics',
+        'Up to 10 time capsules',
+        'Standard voting power',
+        'Platform fee reduction',
+        '1.1x reward multiplier'
       ],
-      unlockYear: 21,
-      securityLevel: 98,
-      colorClass: 'text-purple-500',
-      gradientClass: 'from-purple-900/20 to-fuchsia-600/20'
+      unlockYear: 12,
+      scarcityLevel: 75,
+      colorClass: 'text-green-500',
+      gradientClass: 'from-green-800/20 to-emerald-500/20'
+    }
+  ];
+  
+  // Smart Contract Vault Types
+  const verificationVaults: VerificationVault[] = [
+    {
+      id: 'timelock',
+      name: 'Time-Lock Smart Contract Vault',
+      tier: 'Core',
+      description: 'The foundational smart contract vault that implements the time-lock release mechanism for the 21-year token distribution cycle with military-grade security and multi-chain verification.',
+      icon: <Clock className="h-5 w-5" />,
+      verificationFeatures: [
+        'Time-based token release',
+        'Multi-signature authorization',
+        'Cross-chain verification',
+        'Immutable lock periods',
+        'Transparent execution'
+      ],
+      unlockYear: 4,
+      securityLevel: 96,
+      colorClass: 'text-amber-400',
+      gradientClass: 'from-amber-800/20 to-orange-500/20'
+    },
+    {
+      id: 'buyback',
+      name: 'Buyback and Burn Vault',
+      tier: 'Economic',
+      description: 'An autonomous smart contract system that automatically purchases CVT tokens from public markets and permanently burns them, creating the deflationary mechanism central to CVT tokenomics.',
+      icon: <Flame className="h-5 w-5" />,
+      verificationFeatures: [
+        'Automated token buybacks',
+        'Permanent token burning',
+        'Fee capture system',
+        'Multi-DEX integration',
+        'Supply reduction analytics'
+      ],
+      unlockYear: 1,
+      securityLevel: 94,
+      colorClass: 'text-red-400',
+      gradientClass: 'from-red-900/20 to-orange-600/20'
+    },
+    {
+      id: 'staking',
+      name: 'Advanced Staking Vault',
+      tier: 'Reward',
+      description: 'A sophisticated staking system implementing tier-based multipliers, time-based bonuses, and auto-compounding rewards for CVT holders who contribute to ecosystem security and governance.',
+      icon: <TrendingUp className="h-5 w-5" />,
+      verificationFeatures: [
+        'Tier-based reward multipliers',
+        'Time-based staking bonuses',
+        'Auto-compounding options',
+        'Pool staking capabilities',
+        'Governance power calculation'
+      ],
+      unlockYear: 2,
+      securityLevel: 92,
+      colorClass: 'text-blue-400',
+      gradientClass: 'from-blue-800/20 to-cyan-500/20'
     }
   ];
   
@@ -472,29 +490,40 @@ const TokenVaultsPage: React.FC = () => {
                 </CardDescription>
               </CardHeader>
               <CardContent className="p-6">
-                <div className="relative mb-12">
-                  {/* Timeline Line */}
-                  <div className="absolute top-8 left-0 w-full h-1 bg-purple-900/30 rounded"></div>
+                <div className="relative mb-12 perspective-1000">
+                  {/* Enhanced 3D Timeline with Floating Background */}
+                  <div className="absolute inset-0 bg-gradient-to-b from-purple-900/5 to-fuchsia-900/5 rounded-xl transform-gpu transition-transform duration-1000"></div>
                   
-                  {/* Timeline Points */}
+                  {/* 3D Timeline Line with Glowing Effect */}
+                  <div className="absolute top-8 left-0 w-full h-1.5 bg-gradient-to-r from-purple-600/30 via-fuchsia-500/40 to-purple-600/30 rounded shadow-lg shadow-purple-500/10 transform-gpu hover:shadow-purple-500/20 transition-all duration-700"></div>
+                  
+                  {/* Animated Timeline Points */}
                   <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-6 gap-4">
                     {timeReleaseEvents.map((event, index) => (
-                      <div key={index} className="pt-12 pb-2 px-2 relative">
-                        {/* Timeline Marker */}
-                        <div className="absolute top-6 left-1/2 transform -translate-x-1/2 w-6 h-6 rounded-full 
-                          bg-gradient-to-r from-purple-600 to-fuchsia-600 border-2 border-black z-10 shadow-glow-purple">
+                      <div key={index} className="pt-12 pb-2 px-2 relative perspective-card group/timeline-item">
+                        {/* Enhanced Timeline Marker with Animation */}
+                        <div className="absolute top-6 left-1/2 transform -translate-x-1/2 w-7 h-7 rounded-full 
+                          bg-gradient-to-r from-purple-600 to-fuchsia-600 border-2 border-black z-10 shadow-lg shadow-purple-500/30
+                          animate-pulse-slow hover:scale-110 transition-all duration-700">
+                          <div className="absolute inset-1 rounded-full bg-black opacity-60"></div>
+                          <div className="absolute inset-0 rounded-full bg-gradient-to-r from-purple-600/20 to-fuchsia-600/20 blur-sm"></div>
                         </div>
                         
-                        {/* Year Label */}
-                        <div className="absolute top-14 left-1/2 transform -translate-x-1/2 text-xs font-bold text-purple-400">
+                        {/* Animated Year Label */}
+                        <div className="absolute top-14 left-1/2 transform -translate-x-1/2 text-xs font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-fuchsia-400
+                          group-hover/timeline-item:scale-110 group-hover/timeline-item:text-white transition-all duration-700">
                           Year {event.year}
                         </div>
                         
-                        {/* 3D Event Card with Detailed Information */}
-                        <Card className="relative bg-gradient-to-br from-black/80 to-gray-900/80 border border-purple-900/20 shadow-xl mt-6 transition-all duration-700 transform-gpu hover:scale-105 hover:shadow-purple-500/20 hover:shadow-2xl group">
-                          {/* 3D Effects - Glowing Edges */}
-                          <div className="absolute -inset-0.5 bg-gradient-to-r from-purple-600 to-fuchsia-600 rounded-xl blur opacity-0 group-hover:opacity-10 transition duration-1000"></div>
-                          <div className="absolute -inset-1 bg-gradient-to-r from-purple-600 to-fuchsia-600 rounded-xl blur-md opacity-0 group-hover:opacity-5 transition duration-1000 delay-100"></div>
+                        {/* Immersive 3D Event Card with Advanced Effects */}
+                        <Card className="relative bg-gradient-to-br from-black/80 to-gray-900/80 border border-purple-900/30 
+                          shadow-xl mt-6 transition-all duration-700 transform-gpu 
+                          hover:scale-105 hover:translate-y-[-5px] hover:rotate-y-3
+                          hover:shadow-purple-500/30 hover:shadow-2xl group perspective-card">
+                          {/* 3D Layered Glowing Edges */}
+                          <div className="absolute -inset-0.5 bg-gradient-to-r from-purple-600 to-fuchsia-600 rounded-xl blur opacity-0 group-hover:opacity-15 transition duration-1000"></div>
+                          <div className="absolute -inset-1 bg-gradient-to-r from-fuchsia-600 to-purple-600 rounded-xl blur-md opacity-0 group-hover:opacity-10 transition duration-1000 delay-100"></div>
+                          <div className="absolute -inset-1.5 bg-gradient-to-tr from-purple-600/20 via-fuchsia-500/20 to-purple-600/20 rounded-xl blur-lg opacity-0 group-hover:opacity-5 animate-pulse-slow transition duration-1000 delay-200"></div>
                           
                           <CardHeader className="p-4 relative">
                             <Badge variant="outline" className="bg-purple-900/30 text-purple-300 border-purple-700/50 mb-1 self-start transition-all duration-500 group-hover:bg-purple-900/50">
