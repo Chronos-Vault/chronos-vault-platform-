@@ -26,8 +26,12 @@ import {
   BarChart,
   Bar
 } from "recharts";
+import { chainlinkOracleService, type PriceFeed, type Network } from '@/services/chainlink-oracle-service';
+import { Loader2 } from "lucide-react";
+import OraclePriceFeed from "./oracle-price-feed";
 
-const MOCK_BTC_PRICE_DATA = [
+// Used as fallback when API isn't available
+const HISTORICAL_BTC_PRICE_DATA = [
   { date: "2023-01", price: 23000 },
   { date: "2023-02", price: 25000 },
   { date: "2023-03", price: 28000 },
@@ -96,19 +100,70 @@ const MOCK_MARKET_SENTIMENT = {
 
 export function MarketDataDashboard() {
   const [timeframe, setTimeframe] = useState<string>("1y");
-  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [selectedNetwork, setSelectedNetwork] = useState<Network>("ethereum");
+  const [priceFeeds, setPriceFeeds] = useState<PriceFeed[]>([]);
+  const [chartData, setChartData] = useState(HISTORICAL_BTC_PRICE_DATA);
+  const [error, setError] = useState<string | null>(null);
   
+  // Fetch real price feed data from Chainlink oracles
   useEffect(() => {
-    // In a real application, we would load real data here
+    let isMounted = true;
     setIsLoading(true);
+    setError(null);
     
-    // Simulate an API delay
-    const timeout = setTimeout(() => {
-      setIsLoading(false);
-    }, 800);
+    const fetchPriceData = async () => {
+      try {
+        // Get real-time price feeds from the selected network
+        const feeds = await chainlinkOracleService.getPriceFeeds(selectedNetwork);
+        
+        if (isMounted) {
+          setPriceFeeds(feeds);
+          
+          // Generate chart data from the latest price (combining with historical data)
+          // In a real application, we would have historical data from the blockchain
+          const btcFeed = feeds.find(feed => feed.pair === 'BTC/USD');
+          if (btcFeed) {
+            // Create a new data point using the latest price
+            const latestDataPoint = {
+              date: new Date().toISOString().slice(0, 7), // Format: YYYY-MM
+              price: btcFeed.value
+            };
+            
+            // Add to historical data
+            const newChartData = [...HISTORICAL_BTC_PRICE_DATA];
+            
+            // Replace last point with real-time data or add if it's newer
+            if (newChartData[newChartData.length - 1].date === latestDataPoint.date) {
+              newChartData[newChartData.length - 1] = latestDataPoint;
+            } else {
+              newChartData.push(latestDataPoint);
+            }
+            
+            setChartData(newChartData);
+          }
+          
+          setIsLoading(false);
+        }
+      } catch (err) {
+        console.error("Error fetching price feeds:", err);
+        if (isMounted) {
+          setError("Failed to fetch price data. Using historical data instead.");
+          setIsLoading(false);
+        }
+      }
+    };
     
-    return () => clearTimeout(timeout);
-  }, [timeframe]);
+    fetchPriceData();
+    
+    // Set up a refresh interval (every 30 seconds)
+    const refreshInterval = setInterval(fetchPriceData, 30000);
+    
+    return () => {
+      isMounted = false;
+      clearInterval(refreshInterval);
+    };
+  }, [selectedNetwork, timeframe]);
   
   return (
     <div className="space-y-6">

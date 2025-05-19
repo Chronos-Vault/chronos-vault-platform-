@@ -1,128 +1,76 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
+import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { cn } from "@/lib/utils";
-import { ArrowUpRight, ArrowDownRight, Clock } from "lucide-react";
-import { PriceFeed } from '@/services/chainlink-oracle-service';
+import { Skeleton } from "@/components/ui/skeleton";
+import { ArrowUp, ArrowDown, Clock } from "lucide-react";
+import { type PriceFeed } from '@/services/chainlink-oracle-service';
 
 interface OraclePriceFeedProps {
   feed?: PriceFeed;
   isLoading?: boolean;
-  highlighted?: boolean;
 }
 
-export function OraclePriceFeed({ feed, isLoading = false, highlighted = false }: OraclePriceFeedProps) {
-  // Format timestamp
-  const formatUpdateTime = (timestamp?: number): string => {
-    if (!timestamp) return 'N/A';
-    
-    const date = new Date(timestamp);
-    const now = new Date();
-    const diffMs = now.getTime() - date.getTime();
-    const diffSecs = Math.round(diffMs / 1000);
-    
-    if (diffSecs < 60) return `${diffSecs} seconds ago`;
-    if (diffSecs < 3600) return `${Math.floor(diffSecs / 60)} minutes ago`;
-    if (diffSecs < 86400) return `${Math.floor(diffSecs / 3600)} hours ago`;
-    return `${Math.floor(diffSecs / 86400)} days ago`;
-  };
-  
-  // Format currency with appropriate decimals
-  const formatCurrency = (value?: number, decimals: number = 2): string => {
-    if (value === undefined) return 'N/A';
-    
-    // If value is very large, don't use decimal places
-    if (value > 1000) {
-      return new Intl.NumberFormat('en-US', { 
-        style: 'currency', 
-        currency: 'USD',
-        minimumFractionDigits: 0,
-        maximumFractionDigits: 0
-      }).format(value);
-    }
-    
-    // If value is small, use more decimal places
-    if (value < 1) {
-      return new Intl.NumberFormat('en-US', { 
-        style: 'currency', 
-        currency: 'USD',
-        minimumFractionDigits: 4,
-        maximumFractionDigits: 4
-      }).format(value);
-    }
-    
-    return new Intl.NumberFormat('en-US', { 
-      style: 'currency', 
-      currency: 'USD',
-      minimumFractionDigits: decimals,
-      maximumFractionDigits: decimals
-    }).format(value);
-  };
-
+const OraclePriceFeed: React.FC<OraclePriceFeedProps> = ({ feed, isLoading = false }) => {
   if (isLoading) {
     return (
-      <div className={cn(
-        "border rounded-lg p-4 h-32 flex items-center justify-center",
-        highlighted ? "bg-indigo-900/10 border-indigo-900/50" : "bg-black/30 border-gray-800"
-      )}>
-        <div className="h-6 w-6 border-4 border-t-transparent border-indigo-500 rounded-full animate-spin"></div>
-      </div>
+      <Card className="bg-black/20 border-gray-800">
+        <CardContent className="pt-4 pb-4">
+          <div className="flex justify-between items-center mb-2">
+            <Skeleton className="h-6 w-24" />
+            <Skeleton className="h-5 w-16" />
+          </div>
+          <Skeleton className="h-8 w-full mb-2" />
+          <div className="flex justify-between">
+            <Skeleton className="h-4 w-20" />
+            <Skeleton className="h-4 w-32" />
+          </div>
+        </CardContent>
+      </Card>
     );
   }
 
   if (!feed) {
     return (
-      <div className={cn(
-        "border rounded-lg p-4 h-32 flex flex-col items-center justify-center",
-        highlighted ? "bg-indigo-900/10 border-indigo-900/50" : "bg-black/30 border-gray-800"
-      )}>
-        <p className="text-gray-400">No price feed data available</p>
-        {highlighted && (
-          <p className="text-xs text-gray-500 mt-1">Select a different asset or network</p>
-        )}
-      </div>
+      <Card className="bg-black/20 border-gray-800">
+        <CardContent className="pt-4 pb-4">
+          <div className="flex flex-col items-center justify-center h-24">
+            <p className="text-gray-400">No price data available</p>
+          </div>
+        </CardContent>
+      </Card>
     );
   }
 
-  const isPositive = feed.change24h >= 0;
+  const isPositiveChange = feed.change24h > 0;
+  
+  // Format the timestamp to a readable time
+  const lastUpdated = new Date(feed.lastUpdate).toLocaleTimeString();
 
   return (
-    <div className={cn(
-      "border rounded-lg p-4",
-      highlighted 
-        ? "bg-indigo-900/10 border-indigo-900/30" 
-        : "bg-black/30 border-gray-800"
-    )}>
-      <div className="flex justify-between items-start">
-        <div>
-          <div className="text-sm text-gray-400">{feed.name}</div>
-          <div className="text-2xl font-semibold mt-1">
-            {formatCurrency(feed.value)}
+    <Card className="bg-black/20 border-gray-800 hover:border-[#3F51FF]/50 transition-all">
+      <CardContent className="pt-4 pb-4">
+        <div className="flex justify-between items-center mb-2">
+          <div className="font-medium text-gray-200">{feed.pair}</div>
+          <Badge variant={feed.source === 'chainlink' ? 'default' : 'secondary'} className="bg-[#3F51FF] text-xs">
+            {feed.source === 'chainlink' ? 'Chainlink Oracle' : 'TON Oracle'}
+          </Badge>
+        </div>
+        <div className="text-2xl font-bold mb-2">
+          ${typeof feed.value === 'number' ? feed.value.toLocaleString(undefined, { maximumFractionDigits: 2 }) : feed.value}
+        </div>
+        <div className="flex justify-between text-xs">
+          <div className={`flex items-center ${isPositiveChange ? 'text-green-500' : 'text-red-500'}`}>
+            {isPositiveChange ? <ArrowUp className="h-3 w-3 mr-1" /> : <ArrowDown className="h-3 w-3 mr-1" />}
+            {Math.abs(feed.change24h).toFixed(2)}%
+          </div>
+          <div className="flex items-center text-gray-400">
+            <Clock className="h-3 w-3 mr-1" />
+            Last update: {lastUpdated}
           </div>
         </div>
-        
-        <Badge className={cn(
-          "flex items-center",
-          isPositive ? "bg-green-600 text-white" : "bg-red-600 text-white"
-        )}>
-          {isPositive 
-            ? <ArrowUpRight className="h-3 w-3 mr-1" /> 
-            : <ArrowDownRight className="h-3 w-3 mr-1" />}
-          {Math.abs(feed.change24h).toFixed(2)}%
-        </Badge>
-      </div>
-      
-      <div className="mt-4 flex justify-between items-center text-xs text-gray-500">
-        <div className="flex items-center">
-          <Clock className="h-3 w-3 mr-1" /> 
-          Updated {formatUpdateTime(feed.timestamp)}
-        </div>
-        
-        <div>
-          Network: {feed.network}
-        </div>
-      </div>
-    </div>
+      </CardContent>
+    </Card>
   );
-}
+};
 
 export default OraclePriceFeed;
