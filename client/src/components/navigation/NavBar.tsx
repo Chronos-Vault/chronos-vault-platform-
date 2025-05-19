@@ -63,47 +63,57 @@ export const NavBar: React.FC = () => {
       <header className="bg-black sticky top-0 z-50 border-b border-purple-900/30">
         <div className="container mx-auto px-4 py-3">
           <div className="flex justify-between items-center">
+            {/* Logo Section - Left Side */}
             <div className="flex items-center">
               {/* Menu button only on mobile */}
               <button 
-                className="mr-3 text-purple-400 hover:text-purple-300 transition-colors"
+                className="md:hidden mr-3 text-purple-400 hover:text-purple-300 transition-colors"
                 onClick={() => setSidebarOpen(true)}
                 aria-label="Open menu"
               >
                 <Menu className="w-6 h-6" />
               </button>
               
-              {/* Logo */}
-              <Link href="/" className="flex items-center">
-                <div className="h-12 w-12 rounded-full flex items-center justify-center shadow-lg shadow-[#6B00D7]/30 hover:shadow-[#FF5AF7]/30 transition-all overflow-hidden border-2 border-[#9333EA]/30 mr-2">
+              {/* Logo - Matching Footer Style */}
+              <Link href="/" className="flex items-center gap-3 group">
+                <div className="h-12 w-12 rounded-full flex items-center justify-center shadow-lg shadow-[#6B00D7]/20 group-hover:shadow-[#FF5AF7]/30 transition-all overflow-hidden border-2 border-white/20">
                   <img src="/chronos-logo.jpeg" alt="Chronos Vault Logo" className="w-full h-full object-cover" />
                 </div>
                 <div className="relative">
                   <h1 className="text-xl font-bold">
-                    <span className="bg-clip-text text-transparent bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7]">Chronos</span> 
+                    <span className="bg-clip-text text-transparent bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] group-hover:from-[#FF5AF7] group-hover:to-[#6B00D7] transition-all">Chronos</span> 
                     <span className="text-white">Vault</span>
                   </h1>
-                  <div className="absolute -top-3 right-0 bg-gradient-to-r from-purple-600 to-pink-500 text-[10px] px-1.5 py-0.5 rounded-sm text-white font-bold">
-                    BETA
-                  </div>
+                  <div className="absolute -top-4 -right-4 bg-[#FF5AF7] text-white text-[10px] px-2 py-0.5 rounded-full font-bold tracking-wider shadow-md shadow-[#FF5AF7]/30 animate-pulse">BETA</div>
                 </div>
               </Link>
             </div>
             
-            {/* Right side items */}
-            <div className="flex items-center space-x-3">
-              {/* CVT Token Balance */}
-              <div className="hidden md:flex items-center bg-black/60 rounded-full px-3 py-1.5 text-xs border border-purple-900/30">
-                <div className="w-5 h-5 rounded-full bg-gradient-to-br from-[#6B00D7] to-[#FF5AF7] flex items-center justify-center mr-2">
-                  <span className="text-[10px] font-bold text-white">CVT</span>
-                </div>
-                <span className="text-pink-400">{tokenBalance.toLocaleString()} CVT</span>
+            {/* Right side: Navigation + Status */}
+            <div className="flex items-center">
+              {/* Navigation Menu - Right Side */}
+              <div className="hidden md:flex items-center space-x-6 mr-6">
+                <Link href="/features" className="text-gray-200 hover:text-[#FF5AF7] transition-colors">Features</Link>
+                <Link href="/products" className="text-gray-200 hover:text-[#FF5AF7] transition-colors">Products</Link>
+                <Link href="/pricing" className="text-gray-200 hover:text-[#FF5AF7] transition-colors">Pricing</Link>
+                <Link href="/docs" className="text-gray-200 hover:text-[#FF5AF7] transition-colors">Documentation</Link>
               </div>
-              
-              {/* Network Status */}
-              <div className="hidden md:flex items-center bg-black/60 rounded-full px-3 py-1.5 text-xs border border-purple-900/30">
-                <div className="h-2 w-2 rounded-full bg-green-500 animate-pulse mr-2"></div>
-                <span className="text-green-400">Network Secure</span>
+            
+              {/* Status items */}
+              <div className="flex items-center space-x-3">
+                {/* CVT Token Balance */}
+                <div className="hidden lg:flex items-center bg-black/60 rounded-full px-3 py-1.5 text-xs border border-purple-900/30">
+                  <div className="w-5 h-5 rounded-full bg-gradient-to-br from-[#6B00D7] to-[#FF5AF7] flex items-center justify-center mr-2">
+                    <span className="text-[10px] font-bold text-white">CVT</span>
+                  </div>
+                  <span className="text-pink-400">{tokenBalance.toLocaleString()} CVT</span>
+                </div>
+                
+                {/* Network Status */}
+                <div className="hidden lg:flex items-center bg-black/60 rounded-full px-3 py-1.5 text-xs border border-purple-900/30">
+                  <div className="h-2 w-2 rounded-full bg-green-500 animate-pulse mr-2"></div>
+                  <span className="text-green-400">Network Secure</span>
+                </div>
               </div>
             </div>
           </div>
