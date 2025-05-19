@@ -102,6 +102,7 @@ import BitcoinHalvingPage from '@/pages/bitcoin-halving';
 import SecurityTutorialsVideo from '@/pages/security-tutorials-video';
 import SecurityTutorials from '@/pages/security-tutorials';
 import MilitaryGradeSecurity from '@/pages/military-grade-security';
+import TokenVaultsPage from '@/pages/token-vaults';
 // We already have the QuantumResistantVaultPage imported above
 
 // Token & Payment Pages
@@ -230,7 +231,7 @@ const App: React.FC = () => {
                       <Route path="/cvt-staking" component={CvtStakingPage} />
                       <Route path="/cvt-payment" component={CvtPaymentPage} />
                       <Route path="/subscription" component={SubscriptionPage} />
-                      <Route path="/token-vaults" component={CvtTokenPage} />
+                      <Route path="/token-vaults" component={TokenVaultsPage} />
                       <Route path="/gift-crypto" component={CvtPaymentPage} />
                       
                       {/* Documentation Pages */}
