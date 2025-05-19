@@ -162,8 +162,8 @@ const MainHeader = () => {
       title: "Features",
       icon: "✨",
       items: [
-        { name: "Multi-Signature", href: "/multi-signature-vault", icon: "👥" },
-        { name: "Bitcoin Halving", href: "/bitcoin-halving", icon: "₿" },
+        { name: "Multi-Signature", href: "/documentation/multi-signature-vault", icon: "👥" },
+        { name: "Bitcoin Halving", href: "/documentation/bitcoin-halving-vault", icon: "₿" },
         { name: "Gift Crypto", href: "/gift-crypto", icon: "🎁", highlight: true },
         { name: "Token Vaults", href: "/token-vaults", icon: "🏦", highlight: true },
       ]
@@ -350,13 +350,13 @@ const MainHeader = () => {
                         Advanced security protocols and cross-chain verification system
                       </ListItem>
                       <ListItem
-                        href="/multi-signature-vault"
+                        href="/documentation/multi-signature-vault"
                         title="👥 Multi-Signature"
                       >
                         Enhanced security requiring multiple approvals for access
                       </ListItem>
                       <ListItem 
-                        href="/bitcoin-halving" 
+                        href="/documentation/bitcoin-halving-vault" 
                         title="₿ Bitcoin Halving"
                       >
                         Specialized vaults aligned with Bitcoin halving events
