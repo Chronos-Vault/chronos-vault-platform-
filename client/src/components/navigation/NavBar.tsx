@@ -613,6 +613,15 @@ export const NavBar: React.FC = () => {
             {/* Vault School Hub Section */}
             <SidebarSection icon={<GraduationCap className="h-5 w-5" />} title="Vault School Hub">
               <SidebarItem 
+                icon={<GraduationCap className="h-5 w-5" />} 
+                label="Vault School Hub" 
+                href="/vault-school-hub" 
+                active={location === '/vault-school-hub'}
+                onClick={closeSidebar}
+                isNew={true}
+              />
+              
+              <SidebarItem 
                 icon={<Shield className="h-5 w-5" />} 
                 label="Military Grade Security" 
                 href="/military-grade-security" 
