@@ -68,11 +68,12 @@ export const NavBar: React.FC = () => {
             <div className="flex-shrink-0">
               {/* Logo - Matching Footer Style */}
               <Link href="/" className="flex items-center gap-3 group">
-                <div className="h-12 w-12 rounded-full flex items-center justify-center shadow-lg shadow-[#6B00D7]/20 group-hover:shadow-[#FF5AF7]/30 transition-all duration-300 overflow-hidden border-2 border-white/20 group-hover:border-[#FF5AF7]/50 transform group-hover:scale-110 relative after:absolute after:inset-0 after:bg-gradient-to-r after:from-[#6B00D7]/0 after:to-[#FF5AF7]/10 after:opacity-0 group-hover:after:opacity-100 after:transition-opacity after:duration-500">
+                <div className="h-12 w-12 rounded-full flex items-center justify-center shadow-lg shadow-[#6B00D7]/20 group-hover:shadow-[#FF5AF7]/50 group-hover:shadow-xl transition-all duration-300 overflow-hidden border-2 border-white/20 group-hover:border-[#FF5AF7] transform group-hover:scale-125 relative group-hover:animate-pulse">
+                  <div className="absolute inset-0 bg-gradient-to-r from-[#6B00D7]/30 to-[#FF5AF7]/30 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                   <img 
                     src={logoPath} 
                     alt="Chronos Vault Logo" 
-                    className="w-full h-full object-cover transition-all duration-300 group-hover:brightness-110 group-hover:saturate-150 group-hover:animate-pulse" 
+                    className="w-full h-full object-cover transition-all duration-300 group-hover:brightness-125 group-hover:saturate-200" 
                   />
                 </div>
                 <div className="relative">
@@ -136,8 +137,9 @@ export const NavBar: React.FC = () => {
           {/* Sidebar Header */}
           <div className="flex items-center justify-between p-5 border-b border-purple-900/30">
             <div className="flex items-center">
-              <div className="h-14 w-14 rounded-full flex items-center justify-center shadow-lg shadow-[#6B00D7]/30 hover:shadow-[#FF5AF7]/40 transition-all duration-300 overflow-hidden border-2 border-[#9333EA]/30 hover:border-[#FF5AF7]/60 transform hover:scale-105 mr-3 relative after:absolute after:inset-0 after:bg-gradient-to-r after:from-[#6B00D7]/0 after:to-[#FF5AF7]/20 after:opacity-0 hover:after:opacity-100 after:transition-opacity after:duration-500">
-                <img src={logoPath} alt="Chronos Vault Logo" className="w-full h-full object-cover transition-all duration-300 hover:brightness-110 hover:saturate-150 hover:animate-pulse" />
+              <div className="h-14 w-14 rounded-full flex items-center justify-center shadow-lg shadow-[#6B00D7]/30 hover:shadow-[#FF5AF7]/60 hover:shadow-xl transition-all duration-300 overflow-hidden border-2 border-[#9333EA]/30 hover:border-[#FF5AF7] transform hover:scale-110 mr-3 relative hover:animate-pulse">
+                <div className="absolute inset-0 bg-gradient-to-r from-[#6B00D7]/40 to-[#FF5AF7]/40 opacity-0 hover:opacity-100 transition-opacity duration-300"></div>
+                <img src={logoPath} alt="Chronos Vault Logo" className="w-full h-full object-cover transition-all duration-300 hover:brightness-125 hover:saturate-200" />
               </div>
               
               <div className="relative">
@@ -343,20 +345,22 @@ const SidebarItem: React.FC<SidebarItemProps> = ({
     <Link 
       href={href} 
       onClick={onClick}
-      className={`flex items-center py-2.5 px-3 rounded-lg transition-colors ${
+      className={`flex items-center py-2.5 px-3 rounded-lg transition-all duration-300 group ${
         active 
-          ? 'bg-gradient-to-r from-purple-900/30 to-purple-900/10 text-white' 
-          : 'text-gray-400 hover:text-white hover:bg-purple-900/20'
+          ? 'bg-gradient-to-r from-[#6B00D7]/30 to-[#FF5AF7]/10 text-white shadow-md shadow-[#6B00D7]/10' 
+          : 'text-gray-400 hover:text-white hover:bg-gradient-to-r hover:from-[#6B00D7]/20 hover:to-[#FF5AF7]/5'
       }`}
     >
-      <div className={`h-8 w-8 rounded-full flex items-center justify-center mr-3 ${
-        active ? 'bg-purple-900/50' : 'bg-black/40'
-      }`}>
+      <div className={`h-8 w-8 rounded-full flex items-center justify-center mr-3 transition-all duration-300 ${
+        active 
+          ? 'bg-[#6B00D7]/50 shadow-inner shadow-[#FF5AF7]/20 text-[#FF5AF7]' 
+          : 'bg-black/40 group-hover:bg-[#6B00D7]/30 group-hover:text-[#FF5AF7] text-purple-400'
+      } transform ${active ? 'scale-110' : 'group-hover:scale-110'}`}>
         {icon}
       </div>
-      <span>{label}</span>
+      <span className="transition-all duration-300">{label}</span>
       {isNew && (
-        <div className="ml-2 bg-pink-500 text-[10px] text-white font-bold px-1.5 py-0.5 rounded-sm">
+        <div className="ml-2 bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] text-[10px] text-white font-bold px-1.5 py-0.5 rounded-full shadow-sm shadow-[#FF5AF7]/30 animate-pulse">
           NEW
         </div>
       )}
