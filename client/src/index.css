@@ -5,6 +5,27 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Fix mobile overflow gradient issues */
+.vault-container {
+  position: relative;
+  isolation: isolate;
+  overflow-x: hidden !important;
+  max-width: 100vw !important;
+}
+
+/* Remove background gradient leaks */
+body {
+  overflow-x: hidden !important;
+}
+
+/* Prevent vertical color bars from leaking */
+.bg-gradient-fix {
+  position: relative;
+  overflow: hidden !important;
+  isolation: isolate;
+  z-index: 0;
+}
+
 /* Fix for header duplication in documentation pages */
 .doc-only-header {
   display: none;
