@@ -170,8 +170,12 @@ const App: React.FC = () => {
                       <Route path="/cross-chain-security" component={CrossChainSecurityPage} />
                       <Route path="/security-verification" component={SecurityVerificationPage} />
                       <Route path="/security-verification-demo" component={SecurityVerificationDemoPage} />
-                      <Route path="/behavioral-authentication" component={BehavioralAuthenticationPage} />
-                      <Route path="/behavioral-auth" component={BehavioralAuthenticationPage} />
+                      <Route path="/behavioral-authentication">
+                        {(params) => <BehavioralAuthenticationPage tab="overview" />}
+                      </Route>
+                      <Route path="/behavioral-auth">
+                        {(params) => <BehavioralAuthenticationPage tab="overview" />}
+                      </Route>
                       <Route path="/quantum-resistant" component={QuantumResistantVaultPage} />
                       <Route path="/zero-knowledge-verification" component={ZeroKnowledgeVerificationPage} />
                       <Route path="/zk-privacy-demo" component={ZkPrivacyDemoPage} />
@@ -239,7 +243,9 @@ const App: React.FC = () => {
                       <Route path="/security-video-guides" component={SecurityTutorialsVideo} />
                       <Route path="/security-tutorials" component={SecurityTutorials} />
                       <Route path="/military-grade-security" component={MilitaryGradeSecurity} />
-                      <Route path="/social-recovery" component={BehavioralAuthenticationPage} />
+                      <Route path="/social-recovery">
+                        {(params) => <BehavioralAuthenticationPage tab="social" />}
+                      </Route>
                       <Route path="/quantum-resistant" component={QuantumResistantVaultPage} />
                     </Switch>
                     
