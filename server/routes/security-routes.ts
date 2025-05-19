@@ -5,8 +5,32 @@
  */
 
 import { Router, Request, Response } from 'express';
-import { ChainRole, BlockchainType, SecurityLevel, RecoveryStrategy } from '../../shared/types';
 import { getWebSocketManager } from '../websocket/websocket-manager';
+
+// Define necessary types - can be synced with shared types later
+export type BlockchainType = 'Ethereum' | 'Solana' | 'TON' | 'Bitcoin';
+
+export enum ChainRole {
+  PRIMARY = 'primary',
+  SECONDARY = 'secondary',
+  VERIFICATION = 'verification',
+  FALLBACK = 'fallback'
+}
+
+export enum SecurityLevel {
+  BASIC = 'basic',
+  STANDARD = 'standard',
+  ADVANCED = 'advanced',
+  QUANTUM_RESISTANT = 'quantum_resistant'
+}
+
+export enum RecoveryStrategy {
+  RETRY = 'retry',
+  FALLBACK_CHAIN = 'fallback_chain',
+  MANUAL_RESOLUTION = 'manual_resolution',
+  NOTIFY_USER = 'notify_user',
+  AUTO_RESOLVE = 'auto_resolve'
+}
 
 const router = Router();
 

@@ -1,95 +1,52 @@
-/**
- * Shared Type Definitions
- * 
- * Common types used across the application for consistency
- */
+// Shared types used across the application
 
-export type BlockchainType = 'ETH' | 'SOL' | 'TON' | 'BTC';
+export type BlockchainType = 'Ethereum' | 'Solana' | 'TON' | 'Bitcoin';
 
-export enum SecurityLevel {
-  BASIC = 0,
-  ADVANCED = 1,
-  MAXIMUM = 2
-}
-
-export enum RecoveryStrategy {
-  NONE = 0,
-  SWITCH_PRIMARY = 1,
-  PARTIAL_VERIFICATION = 2,
-  EMERGENCY_PROTOCOL = 3,
-  RETRY = 4
-}
-
+// Define roles for different chains in the system
 export enum ChainRole {
-  PRIMARY = 'PRIMARY',
-  VALIDATION = 'VALIDATION',
-  MONITORING = 'MONITORING',
-  RECOVERY = 'RECOVERY',
-  FALLBACK = 'FALLBACK'
+  PRIMARY = 'primary',
+  SECONDARY = 'secondary',
+  VERIFICATION = 'verification',
+  FALLBACK = 'fallback'
 }
 
-export interface ChainStatus {
-  blockchain: BlockchainType;
-  isAvailable: boolean;
-  latency: number;
-  lastBlockNumber?: number;
-  lastSyncTimestamp: number;
-  error?: string;
+// Define security levels
+export enum SecurityLevel {
+  BASIC = 'basic',
+  STANDARD = 'standard',
+  ADVANCED = 'advanced',
+  QUANTUM_RESISTANT = 'quantum_resistant'
 }
 
-export interface SecurityDashboardStatus {
-  chainStatuses: Record<BlockchainType, ChainStatus>;
-  primaryChain: BlockchainType;
-  securityLevel: SecurityLevel;
-  crossChainSyncStatus: {
-    isSynced: boolean;
-    syncPercentage: number;
-    lastSyncTime: number;
-  };
-  activeFailovers: {
-    vaultId: string;
-    primaryChain: BlockchainType;
-    fallbackChain?: BlockchainType;
-    strategy: RecoveryStrategy;
-    reason: string;
-    timestamp: number;
-  }[];
-  securityAlerts: {
-    id: string;
-    severity: 'low' | 'medium' | 'high' | 'critical';
-    message: string;
-    timestamp: number;
-    resolved: boolean;
-  }[];
+// Define recovery strategies
+export enum RecoveryStrategy {
+  RETRY = 'retry',
+  FALLBACK_CHAIN = 'fallback_chain',
+  MANUAL_RESOLUTION = 'manual_resolution',
+  NOTIFY_USER = 'notify_user',
+  AUTO_RESOLVE = 'auto_resolve'
 }
 
-export interface ChainHealth {
-  role: ChainRole;
-  status: 'healthy' | 'warning' | 'error';
-  blockHeight: number;
-  syncPercentage: number;
-  verifiedTransactions: number;
-  pendingTransactions: number;
-  lastVerifiedBlock: number;
-  latency: number;
-}
-
-export interface SecurityAlert {
-  id: string;
-  severity: 'low' | 'medium' | 'high' | 'critical';
-  message: string;
-  timestamp: number;
-  resolved: boolean;
-  metadata?: Record<string, any>;
-}
-
-export interface FailoverEvent {
-  vaultId: string;
-  primaryChain: BlockchainType;
-  fallbackChain?: BlockchainType;
-  strategy: RecoveryStrategy;
-  reason: string;
-  timestamp: number;
-  success?: boolean;
-  errorMessage?: string;
+// Define error categories for cross-chain operations
+export enum CrossChainErrorCategory {
+  // Network related
+  CONNECTION_FAILURE = 'connection_failure',
+  NETWORK_FAILURE = 'network_failure',
+  RATE_LIMIT_EXCEEDED = 'rate_limit_exceeded',
+  NODE_SYNCING = 'node_syncing',
+  
+  // Transaction related
+  TRANSACTION_FAILURE = 'transaction_failure',
+  VALIDATION_FAILURE = 'validation_failure',
+  
+  // Cross-chain specific
+  CROSS_CHAIN_SYNC_ERROR = 'cross_chain_sync_error',
+  CHAIN_UNAVAILABLE = 'chain_unavailable',
+  VERIFICATION_TIMEOUT = 'verification_timeout',
+  
+  // Security related
+  SECURITY_VIOLATION = 'security_violation',
+  
+  // Fallback
+  UNKNOWN = 'unknown'
 }

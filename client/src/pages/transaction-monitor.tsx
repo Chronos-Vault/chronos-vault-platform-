@@ -93,7 +93,11 @@ const formatAddress = (address: string) => {
   return `${address.substring(0, 6)}...${address.substring(address.length - 4)}`;
 };
 
-const TransactionMonitorPage: React.FC = () => {
+import { withTransactionErrorBoundary, useTransactionErrorHandler } from '../components/error-boundary/TransactionErrorBoundary';
+
+const TransactionMonitorPageContent: React.FC = () => {
+  // Add error handler hook
+  const { handleAsyncError, ErrorDisplay } = useTransactionErrorHandler();
   const { 
     transactions, 
     transactionGroups, 
@@ -193,8 +197,23 @@ const TransactionMonitorPage: React.FC = () => {
     await refreshTransactions();
   };
   
+  // Handle refresh click with error handling
+  const handleRefreshWithErrorHandling = async () => {
+    try {
+      await refreshTransactions();
+    } catch (error) {
+      handleAsyncError(
+        error,
+        CrossChainErrorCategory.CONNECTION_FAILURE,
+        { action: 'refreshTransactions', time: new Date().toISOString() }
+      );
+    }
+  };
+
   return (
     <div className="container mx-auto py-6 relative z-10 bg-gradient-to-b from-[#121212] to-[#19141E]">
+      {/* Display any errors that might occur */}
+      {ErrorDisplay}
       
       <div className="mb-6">
         <h1 className="text-3xl font-bold tracking-tight">Transaction Monitor</h1>
