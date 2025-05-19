@@ -92,6 +92,40 @@ function InvestmentDisciplineVault() {
     }
   );
   
+  // Fetch price feeds on component mount and when blockchain changes
+  useEffect(() => {
+    const fetchPriceFeeds = async () => {
+      setIsPriceFeedLoading(true);
+      setPriceFeedError(null);
+      
+      try {
+        // Map blockchain type to oracle network
+        let network: Network = 'ethereum';
+        if (selectedBlockchain === BlockchainType.ETHEREUM) network = 'ethereum';
+        if (selectedBlockchain === BlockchainType.SOLANA) network = 'solana';
+        if (selectedBlockchain === BlockchainType.TON) network = 'ton';
+        
+        const feeds = await chainlinkOracleService.getPriceFeeds(network);
+        setPriceFeeds(feeds);
+        setSelectedOracleNetwork(network);
+      } catch (err: any) {
+        console.error("Error fetching price feeds:", err);
+        setPriceFeedError("Failed to fetch price data. Using cached values if available.");
+      } finally {
+        setIsPriceFeedLoading(false);
+      }
+    };
+
+    fetchPriceFeeds();
+    
+    // Set up a refresh interval (every 30 seconds)
+    const refreshInterval = setInterval(fetchPriceFeeds, 30000);
+    
+    return () => {
+      clearInterval(refreshInterval);
+    };
+  }, [selectedBlockchain]);
+  
   // Sentiment analysis data
   const [sentimentData, setSentimentData] = useState<SentimentData | undefined>(undefined);
   const [sentimentRecommendations, setSentimentRecommendations] = useState<string[]>([]);
@@ -407,15 +441,25 @@ function InvestmentDisciplineVault() {
       // Calculate asset value for security level determination
       let calculatedAssetValueUSD = 0;
       
-      // Calculate USD value based on asset type
-      if (assetType === 'BTC') {
-        calculatedAssetValueUSD = parseFloat(initialAmount) * 103106; // Current BTC price
-      } else if (assetType === 'ETH') {
-        calculatedAssetValueUSD = parseFloat(initialAmount) * 3481;
-      } else if (assetType === 'SOL') {
-        calculatedAssetValueUSD = parseFloat(initialAmount) * 168;
-      } else if (assetType === 'TON') {
-        calculatedAssetValueUSD = parseFloat(initialAmount) * 7.24;
+      // Calculate USD value based on asset type using real-time price feeds
+      const amount = parseFloat(initialAmount);
+      if (isNaN(amount)) {
+        calculatedAssetValueUSD = 0;
+      } else {
+        // Get price from Chainlink oracle feed if available
+        if (assetType === 'BTC') {
+          const btcFeed = priceFeeds.find(feed => feed.pair === 'BTC/USD');
+          calculatedAssetValueUSD = amount * (btcFeed?.value || 103106); // Fallback to default if feed not available
+        } else if (assetType === 'ETH') {
+          const ethFeed = priceFeeds.find(feed => feed.pair === 'ETH/USD');
+          calculatedAssetValueUSD = amount * (ethFeed?.value || 3481);
+        } else if (assetType === 'SOL') {
+          const solFeed = priceFeeds.find(feed => feed.pair === 'SOL/USD');
+          calculatedAssetValueUSD = amount * (solFeed?.value || 168);
+        } else if (assetType === 'TON') {
+          const tonFeed = priceFeeds.find(feed => feed.pair === 'TON/USD');
+          calculatedAssetValueUSD = amount * (tonFeed?.value || 7.24);
+        }
       }
       
       // Create vault data for API call
@@ -1185,6 +1229,38 @@ function InvestmentDisciplineVault() {
                 </div>
                 
                 <div>
+                  {/* Live Price Feed Display */}
+                  <div className="bg-black/30 rounded-lg p-3 mb-4 border border-gray-800">
+                    <h3 className="text-sm font-medium mb-2 text-gray-300">Live Market Data</h3>
+                    {isPriceFeedLoading ? (
+                      <div className="flex items-center justify-center h-12">
+                        <div className="animate-spin w-5 h-5 border-2 border-[#3F51FF] border-t-transparent rounded-full"></div>
+                        <span className="ml-2 text-sm text-gray-400">Loading price data...</span>
+                      </div>
+                    ) : priceFeedError ? (
+                      <div className="text-sm text-amber-400">
+                        <p>{priceFeedError}</p>
+                      </div>
+                    ) : (
+                      <div className="grid grid-cols-2 gap-3">
+                        {priceFeeds.slice(0, 2).map((feed) => (
+                          <div key={feed.pair} className="bg-black/20 p-2 rounded border border-gray-800">
+                            <div className="flex justify-between items-center text-xs">
+                              <span>{feed.pair}</span>
+                              <span className="text-xs text-gray-400">{feed.network}</span>
+                            </div>
+                            <div className="text-lg font-bold mt-1">${feed.value.toLocaleString(undefined, { maximumFractionDigits: 2 })}</div>
+                            <div className="text-xs mt-1">
+                              <span className={feed.change24h >= 0 ? "text-green-500" : "text-red-500"}>
+                                {feed.change24h >= 0 ? "+" : ""}{feed.change24h.toFixed(2)}%
+                              </span>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                  
                   <Label>Asset Type</Label>
                   <Select 
                     value={assetType} 
