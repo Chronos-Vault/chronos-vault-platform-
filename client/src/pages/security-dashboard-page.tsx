@@ -16,7 +16,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { ArrowRight, Shield, Lock, RefreshCw, BookOpen, Key, FileDigit } from 'lucide-react';
+import { ArrowRight, Shield, Lock, RefreshCw, BookOpen, Key, FileDigit, Smartphone } from 'lucide-react';
 import { auditLogService, AuditLogEntry } from '@/lib/security/AuditLogService';
 import { ScrollArea } from '@/components/ui/scroll-area';
 
@@ -78,6 +78,13 @@ export default function SecurityDashboardPage() {
               className="border-[#6B00D7] text-white hover:bg-[#6B00D7]/10"
             >
               <BookOpen className="mr-2 h-4 w-4" /> Security Documentation
+            </Button>
+            <Button 
+              onClick={() => navigate("/device-management")}
+              variant="outline" 
+              className="border-[#6B00D7] text-white hover:bg-[#6B00D7]/10"
+            >
+              <Smartphone className="mr-2 h-4 w-4" /> Device Management
             </Button>
           </div>
         </div>

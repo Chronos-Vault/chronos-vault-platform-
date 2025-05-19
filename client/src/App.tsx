@@ -138,6 +138,7 @@ import SecurityVerificationDemo from './pages/security-verification-demo';
 import SecurityVerification from './pages/security-verification';
 import SecurityPage from './pages/security-page';
 import SecurityDashboardPage from './pages/security-dashboard-page';
+import DeviceManagementPage from './pages/device-management';
 import TechnicalSpecification from './pages/technical-specification';
 import TransactionMonitor from './pages/transaction-monitor';
 import TransactionVerification from './pages/transaction-verification';
@@ -308,6 +309,7 @@ function App() {
           <Route path="/solana-integration" component={SolanaIntegration} />
           <Route path="/ton-integration" component={TonIntegration} />
           <Route path="/device-recovery" component={DeviceRecovery} />
+          <Route path="/device-management" component={DeviceManagementPage} />
           
           {/* Security & Technical Pages */}
           <Route path="/security-verification-demo" component={SecurityVerificationDemo} />
