@@ -4,7 +4,7 @@ import { Toaster } from '@/components/ui/toaster';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ErrorBoundary } from '@/components/error-boundary/ErrorBoundary';
 import { TransactionErrorProvider } from '@/contexts/transaction-error-context';
-import { NavBar } from '@/components/navigation/NavBar';
+import BasicHeader from '@/components/layout/BasicHeader';
 import Footer from '@/components/layout/footer';
 
 // Main Pages
@@ -111,7 +111,7 @@ const App: React.FC = () => {
       <QueryClientProvider client={queryClient}>
         <TransactionErrorProvider>
           <div className="min-h-screen bg-black text-white">
-            <NavBar />
+            <BasicHeader />
             <div className="pt-2">
               <Switch>
                 {/* Main Pages */}
