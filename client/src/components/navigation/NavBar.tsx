@@ -104,15 +104,229 @@ export const NavBar: React.FC = () => {
             </div>
             
             {/* Right side: Navigation + Status */}
-            <div className="hidden md:flex items-center space-x-4">
-              <Link href="/my-vaults" className="text-gray-200 hover:text-[#FF5AF7] transition-colors">Vaults</Link>
-              <Link href="/cross-chain-monitor" className="text-gray-200 hover:text-[#FF5AF7] transition-colors">Explore</Link>
-              <Link href="/security-dashboard" className="text-gray-200 hover:text-[#FF5AF7] transition-colors">Security</Link>
-              <Link href="/features" className="text-gray-200 hover:text-[#FF5AF7] transition-colors">Features</Link>
-              <Link href="/security-tutorials" className="text-gray-200 hover:text-[#FF5AF7] transition-colors">Vault School</Link>
-              <Link href="/cvt-token" className="text-gray-200 hover:text-[#FF5AF7] transition-colors">CVT Token</Link>
-              <Link href="/docs" className="text-gray-200 hover:text-[#FF5AF7] transition-colors">Resources</Link>
-                
+            <div className="hidden md:flex items-center space-x-2">
+              {/* Vaults Dropdown */}
+              <DropdownMenu>
+                <DropdownMenuTrigger className="text-gray-200 hover:text-[#FF5AF7] transition-colors px-3 py-2 rounded-md hover:bg-black/30 outline-none">
+                  <div className="flex items-center">
+                    Vaults <ChevronRight className="w-4 h-4 ml-1 rotate-90" />
+                  </div>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent className="bg-[#0E0318] border border-purple-900/30 text-gray-200 p-2 rounded-lg shadow-lg shadow-[#6B00D7]/20 min-w-[200px] z-50">
+                  <DropdownMenuItem asChild>
+                    <Link href="/my-vaults" className="px-4 py-2 rounded-md hover:bg-[#6B00D7]/20 flex items-center">
+                      <Layers className="w-4 h-4 mr-2" /> My Vaults
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem asChild>
+                    <Link href="/time-lock-vault" className="px-4 py-2 rounded-md hover:bg-[#6B00D7]/20 flex items-center">
+                      <Clock className="w-4 h-4 mr-2" /> Time Lock Vault
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem asChild>
+                    <Link href="/multi-signature-vault" className="px-4 py-2 rounded-md hover:bg-[#6B00D7]/20 flex items-center">
+                      <Users className="w-4 h-4 mr-2" /> Multi-Signature Vault
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem asChild>
+                    <Link href="/geo-location-vault" className="px-4 py-2 rounded-md hover:bg-[#6B00D7]/20 flex items-center">
+                      <MapPin className="w-4 h-4 mr-2" /> Geo-Location Vault
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem asChild>
+                    <Link href="/quantum-resistant-vault" className="px-4 py-2 rounded-md hover:bg-[#6B00D7]/20 flex items-center">
+                      <Cpu className="w-4 h-4 mr-2" /> Quantum-Resistant Vault
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem asChild>
+                    <Link href="/sovereign-fortress-vault" className="px-4 py-2 rounded-md hover:bg-[#6B00D7]/20 flex items-center">
+                      <Hexagon className="w-4 h-4 mr-2" /> Sovereign Fortress Vault 
+                      <span className="ml-2 bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] text-white text-[10px] px-1.5 rounded-full">NEW</span>
+                    </Link>
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+              
+              {/* Explore Dropdown */}
+              <DropdownMenu>
+                <DropdownMenuTrigger className="text-gray-200 hover:text-[#FF5AF7] transition-colors px-3 py-2 rounded-md hover:bg-black/30 outline-none">
+                  <div className="flex items-center">
+                    Explore <ChevronRight className="w-4 h-4 ml-1 rotate-90" />
+                  </div>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent className="bg-[#0E0318] border border-purple-900/30 text-gray-200 p-2 rounded-lg shadow-lg shadow-[#6B00D7]/20 min-w-[220px] z-50">
+                  <DropdownMenuItem asChild>
+                    <Link href="/cross-chain-monitor" className="px-4 py-2 rounded-md hover:bg-[#6B00D7]/20 flex items-center">
+                      <Database className="w-4 h-4 mr-2" /> Cross-Chain Monitor
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem asChild>
+                    <Link href="/cross-chain-fee-monitor" className="px-4 py-2 rounded-md hover:bg-[#6B00D7]/20 flex items-center">
+                      <Database className="w-4 h-4 mr-2" /> Cross-Chain Metrics
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem asChild>
+                    <Link href="/transaction-monitor" className="px-4 py-2 rounded-md hover:bg-[#6B00D7]/20 flex items-center">
+                      <ListChecks className="w-4 h-4 mr-2" /> Transaction Monitor
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem asChild>
+                    <Link href="/transaction-verification" className="px-4 py-2 rounded-md hover:bg-[#6B00D7]/20 flex items-center">
+                      <ShieldCheck className="w-4 h-4 mr-2" /> Transaction Verification
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem asChild>
+                    <Link href="/cross-chain-bridge" className="px-4 py-2 rounded-md hover:bg-[#6B00D7]/20 flex items-center">
+                      <Combine className="w-4 h-4 mr-2" /> Cross-Chain Bridge
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem asChild>
+                    <Link href="/atomic-swaps" className="px-4 py-2 rounded-md hover:bg-[#6B00D7]/20 flex items-center">
+                      <Atom className="w-4 h-4 mr-2" /> Atomic Swaps
+                    </Link>
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+              
+              {/* Security Dropdown */}
+              <DropdownMenu>
+                <DropdownMenuTrigger className="text-gray-200 hover:text-[#FF5AF7] transition-colors px-3 py-2 rounded-md hover:bg-black/30 outline-none">
+                  <div className="flex items-center">
+                    Security <ChevronRight className="w-4 h-4 ml-1 rotate-90" />
+                  </div>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent className="bg-[#0E0318] border border-purple-900/30 text-gray-200 p-2 rounded-lg shadow-lg shadow-[#6B00D7]/20 min-w-[240px] z-50">
+                  <DropdownMenuItem asChild>
+                    <Link href="/security-dashboard" className="px-4 py-2 rounded-md hover:bg-[#6B00D7]/20 flex items-center">
+                      <ShieldAlert className="w-4 h-4 mr-2" /> Security Dashboard
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem asChild>
+                    <Link href="/cross-chain-security" className="px-4 py-2 rounded-md hover:bg-[#6B00D7]/20 flex items-center">
+                      <LockKeyhole className="w-4 h-4 mr-2" /> Cross-Chain Security
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem asChild>
+                    <Link href="/behavioral-auth" className="px-4 py-2 rounded-md hover:bg-[#6B00D7]/20 flex items-center">
+                      <Fingerprint className="w-4 h-4 mr-2" /> Behavioral Authentication
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem asChild>
+                    <Link href="/quantum-resistant" className="px-4 py-2 rounded-md hover:bg-[#6B00D7]/20 flex items-center">
+                      <KeyRound className="w-4 h-4 mr-2" /> Quantum Resistant
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem asChild>
+                    <Link href="/social-recovery" className="px-4 py-2 rounded-md hover:bg-[#6B00D7]/20 flex items-center">
+                      <Users className="w-4 h-4 mr-2" /> Social Recovery
+                    </Link>
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+              
+              {/* Features Dropdown */}
+              <DropdownMenu>
+                <DropdownMenuTrigger className="text-gray-200 hover:text-[#FF5AF7] transition-colors px-3 py-2 rounded-md hover:bg-black/30 outline-none">
+                  <div className="flex items-center">
+                    Features <ChevronRight className="w-4 h-4 ml-1 rotate-90" />
+                  </div>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent className="bg-[#0E0318] border border-purple-900/30 text-gray-200 p-2 rounded-lg shadow-lg shadow-[#6B00D7]/20 min-w-[200px] z-50">
+                  <DropdownMenuItem asChild>
+                    <Link href="/features" className="px-4 py-2 rounded-md hover:bg-[#6B00D7]/20 flex items-center">
+                      <Globe className="w-4 h-4 mr-2" /> All Features
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem asChild>
+                    <Link href="/bitcoin-halving" className="px-4 py-2 rounded-md hover:bg-[#6B00D7]/20 flex items-center">
+                      <Bitcoin className="w-4 h-4 mr-2" /> Bitcoin Halving
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem asChild>
+                    <Link href="/gift-crypto" className="px-4 py-2 rounded-md hover:bg-[#6B00D7]/20 flex items-center">
+                      <Gift className="w-4 h-4 mr-2" /> Gift Crypto
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem asChild>
+                    <Link href="/token-vaults" className="px-4 py-2 rounded-md hover:bg-[#6B00D7]/20 flex items-center">
+                      <Coins className="w-4 h-4 mr-2" /> Token Vaults
+                    </Link>
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+              
+              {/* Vault School Dropdown */}
+              <DropdownMenu>
+                <DropdownMenuTrigger className="text-gray-200 hover:text-[#FF5AF7] transition-colors px-3 py-2 rounded-md hover:bg-black/30 outline-none">
+                  <div className="flex items-center">
+                    Vault School <ChevronRight className="w-4 h-4 ml-1 rotate-90" />
+                  </div>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent className="bg-[#0E0318] border border-purple-900/30 text-gray-200 p-2 rounded-lg shadow-lg shadow-[#6B00D7]/20 min-w-[220px] z-50">
+                  <DropdownMenuItem asChild>
+                    <Link href="/military-grade-security" className="px-4 py-2 rounded-md hover:bg-[#6B00D7]/20 flex items-center">
+                      <Shield className="w-4 h-4 mr-2" /> Military Grade Security
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem asChild>
+                    <Link href="/security-tutorials" className="px-4 py-2 rounded-md hover:bg-[#6B00D7]/20 flex items-center">
+                      <BookOpen className="w-4 h-4 mr-2" /> Security Tutorials
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem asChild>
+                    <Link href="/security-video-guides" className="px-4 py-2 rounded-md hover:bg-[#6B00D7]/20 flex items-center">
+                      <Video className="w-4 h-4 mr-2" /> Security Video Guides
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem asChild>
+                    <Link href="/technical-security-docs" className="px-4 py-2 rounded-md hover:bg-[#6B00D7]/20 flex items-center">
+                      <FileText className="w-4 h-4 mr-2" /> Technical Security Docs
+                    </Link>
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+              
+              {/* Resources Dropdown */}
+              <DropdownMenu>
+                <DropdownMenuTrigger className="text-gray-200 hover:text-[#FF5AF7] transition-colors px-3 py-2 rounded-md hover:bg-black/30 outline-none">
+                  <div className="flex items-center">
+                    Resources <ChevronRight className="w-4 h-4 ml-1 rotate-90" />
+                  </div>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent className="bg-[#0E0318] border border-purple-900/30 text-gray-200 p-2 rounded-lg shadow-lg shadow-[#6B00D7]/20 min-w-[200px] z-50">
+                  <DropdownMenuItem asChild>
+                    <Link href="/cvt-token" className="px-4 py-2 rounded-md hover:bg-[#6B00D7]/20 flex items-center">
+                      <Coins className="w-4 h-4 mr-2" /> CVT Token
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem asChild>
+                    <Link href="/tokenomics" className="px-4 py-2 rounded-md hover:bg-[#6B00D7]/20 flex items-center">
+                      <BarChart2 className="w-4 h-4 mr-2" /> Tokenomics
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem asChild>
+                    <Link href="/whitepaper" className="px-4 py-2 rounded-md hover:bg-[#6B00D7]/20 flex items-center">
+                      <FileText className="w-4 h-4 mr-2" /> Whitepaper
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem asChild>
+                    <Link href="/docs" className="px-4 py-2 rounded-md hover:bg-[#6B00D7]/20 flex items-center">
+                      <Files className="w-4 h-4 mr-2" /> Docs
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem asChild>
+                    <Link href="/roadmap" className="px-4 py-2 rounded-md hover:bg-[#6B00D7]/20 flex items-center">
+                      <GitPullRequest className="w-4 h-4 mr-2" /> Roadmap
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem asChild>
+                    <Link href="/faq" className="px-4 py-2 rounded-md hover:bg-[#6B00D7]/20 flex items-center">
+                      <HelpCircle className="w-4 h-4 mr-2" /> FAQ
+                    </Link>
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+              
               {/* CVT Token Balance */}
               <div className="hidden lg:flex items-center bg-black/60 rounded-full px-3 py-1.5 text-xs border border-purple-900/30">
                 <div className="w-5 h-5 rounded-full bg-gradient-to-br from-[#6B00D7] to-[#FF5AF7] flex items-center justify-center mr-2">

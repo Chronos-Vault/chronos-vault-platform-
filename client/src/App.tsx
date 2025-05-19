@@ -145,6 +145,7 @@ const App: React.FC = () => {
                       
                       {/* Monitoring & Management */}
                       <Route path="/transaction-monitor" component={TransactionMonitorPage} />
+                      <Route path="/transaction-verification" component={SecurityVerificationPage} />
                       <Route path="/cross-chain-monitor" component={CrossChainMonitorPage} />
                       <Route path="/cross-chain-fee-monitor" component={CrossChainFeesPage} />
                       <Route path="/vault-explorer" component={VaultExplorerPage} />
