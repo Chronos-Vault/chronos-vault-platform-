@@ -280,4 +280,168 @@ describe('ChronosVault Contract (TON)', () => {
       expect(storedMetadata.isPublic).to.equal(metadata.isPublic);
     });
   });
+  
+  describe('Multi-Signature Security', () => {
+    beforeEach(async () => {
+      // Create multiple signatures for testing
+      const signers = await blockchain.createWallets(3);
+      
+      // Register emergency contacts (for multi-sig recovery)
+      for (const signer of signers) {
+        await chronosVault.sendRegisterEmergencyContact(
+          blockchain.sender,
+          { contactAddress: signer.address }
+        );
+      }
+    });
+    
+    it('should set up multi-signature threshold', async () => {
+      // Set threshold to 2 out of the registered contacts
+      await chronosVault.sendSetupMultiSig(
+        blockchain.sender,
+        { threshold: 2 }
+      );
+      
+      // Verify the threshold was set correctly
+      const vaultState = await chronosVault.getVaultState();
+      expect(vaultState.multiSigThreshold).to.equal(2);
+    });
+    
+    it('should unlock vault with sufficient signatures', async () => {
+      // Set a multi-sig threshold of 2
+      await chronosVault.sendSetupMultiSig(
+        blockchain.sender,
+        { threshold: 2 }
+      );
+      
+      // Prepare emergency signatures
+      const emergencyContacts = await chronosVault.getEmergencyContacts();
+      expect(emergencyContacts.length).to.equal(3);
+      
+      // Create emergency signatures from 2 contacts
+      const signatures = [
+        beginCell().storeBuffer(Buffer.from('emergency-signature-1')).endCell(),
+        beginCell().storeBuffer(Buffer.from('emergency-signature-2')).endCell()
+      ];
+      
+      // Perform multi-signature unlock
+      await chronosVault.sendMultiSigEmergencyUnlock(
+        blockchain.sender,
+        { signatures }
+      );
+      
+      // Verify the vault is now unlocked
+      const vaultState = await chronosVault.getVaultState();
+      expect(vaultState.isUnlocked).to.equal(true);
+    });
+    
+    it('should reject unlock with insufficient signatures', async () => {
+      // Set a multi-sig threshold of 3
+      await chronosVault.sendSetupMultiSig(
+        blockchain.sender,
+        { threshold: 3 }
+      );
+      
+      // Create emergency signatures from only 2 contacts (insufficient)
+      const signatures = [
+        beginCell().storeBuffer(Buffer.from('emergency-signature-1')).endCell(),
+        beginCell().storeBuffer(Buffer.from('emergency-signature-2')).endCell()
+      ];
+      
+      // Attempt multi-signature unlock (should fail)
+      const unlockResult = await chronosVault.sendMultiSigEmergencyUnlock(
+        blockchain.sender,
+        { signatures }
+      );
+      
+      // Check for error message in transaction
+      expect(unlockResult.transactions[1].exitCode).to.not.equal(0);
+      
+      // Verify the vault is still locked
+      const vaultState = await chronosVault.getVaultState();
+      expect(vaultState.isUnlocked).to.equal(false);
+    });
+  });
+  
+  describe('Geolocation Restrictions', () => {
+    it('should set geolocation restrictions', async () => {
+      // Create geolocation data with allowed regions
+      const geoData = beginCell()
+        // Region 1: San Francisco area
+        .storeInt(37774900, 32) // lat: 37.7749 * 1,000,000
+        .storeInt(-122419400, 32) // long: -122.4194 * 1,000,000
+        .storeUint(5000000, 32) // radius: 5km * 1,000,000
+        
+        // Region 2: New York area
+        .storeInt(40712800, 32) // lat: 40.7128 * 1,000,000
+        .storeInt(-74006000, 32) // long: -74.0060 * 1,000,000
+        .storeUint(8000000, 32) // radius: 8km * 1,000,000
+        
+        .endCell();
+        
+      // Set the geolocation restrictions
+      await chronosVault.sendSetGeolocationRestrictions(
+        blockchain.sender,
+        { geoData }
+      );
+      
+      // Verify restrictions were set
+      const hasGeoRestrictions = await chronosVault.hasGeolocationRestrictions();
+      expect(hasGeoRestrictions).to.equal(true);
+    });
+    
+    it('should verify access from allowed location', async () => {
+      // Set up geo restrictions first
+      const geoData = beginCell()
+        .storeInt(37774900, 32) // San Francisco latitude
+        .storeInt(-122419400, 32) // San Francisco longitude
+        .storeUint(10000000, 32) // 10km radius
+        .endCell();
+        
+      await chronosVault.sendSetGeolocationRestrictions(
+        blockchain.sender,
+        { geoData }
+      );
+      
+      // Test coordinates inside allowed region
+      const validCoordinates = beginCell()
+        .storeInt(37764900, 32) // Very close to San Francisco
+        .storeInt(-122409400, 32)
+        .endCell();
+        
+      // Check access with valid coordinates
+      const hasAccess = await chronosVault.checkGeographicAccess({
+        coordinates: validCoordinates
+      });
+      
+      expect(hasAccess).to.equal(true);
+    });
+    
+    it('should deny access from restricted location', async () => {
+      // Set up geo restrictions first
+      const geoData = beginCell()
+        .storeInt(37774900, 32) // San Francisco latitude
+        .storeInt(-122419400, 32) // San Francisco longitude
+        .storeUint(10000000, 32) // 10km radius
+        .endCell();
+        
+      await chronosVault.sendSetGeolocationRestrictions(
+        blockchain.sender,
+        { geoData }
+      );
+      
+      // Test coordinates far outside allowed region
+      const invalidCoordinates = beginCell()
+        .storeInt(51507200, 32) // London coordinates
+        .storeInt(-0127800, 32)
+        .endCell();
+        
+      // Check access with invalid coordinates
+      const hasAccess = await chronosVault.checkGeographicAccess({
+        coordinates: invalidCoordinates
+      });
+      
+      expect(hasAccess).to.equal(false);
+    });
+  });
 });
