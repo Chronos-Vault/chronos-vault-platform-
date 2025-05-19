@@ -75,8 +75,15 @@ export const NavBar: React.FC = () => {
               
               {/* Logo */}
               <Link href="/" className="flex items-center">
-                <div className="h-12 w-12 rounded-full flex items-center justify-center shadow-lg shadow-[#6B00D7]/20 hover:shadow-[#FF5AF7]/30 transition-all overflow-hidden border-2 border-white/20 mr-2">
-                  <img src="/IMG_3753.jpeg" alt="Chronos Vault Logo" className="w-full h-full object-cover" />
+                <div className="h-12 w-12 rounded-full bg-gradient-to-br from-[#6B00D7] to-[#8B5CF6] flex items-center justify-center shadow-lg shadow-[#6B00D7]/40 hover:shadow-[#FF5AF7]/30 transition-all overflow-hidden border-2 border-[#9333EA]/30 mr-2 p-0.5">
+                  <div className="w-full h-full rounded-full bg-[#130528] flex items-center justify-center">
+                    <div className="w-7 h-7 relative flex items-center justify-center">
+                      <div className="absolute inset-0 bg-gradient-to-br from-[#9333EA] to-[#FF5AF7] rounded-full opacity-30 animate-pulse"></div>
+                      <svg viewBox="0 0 24 24" className="w-full h-full text-[#FF5AF7]" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M12 2C8.13 2 5 5.13 5 9v7c0 3.87 3.13 7 7 7s7-3.13 7-7V9c0-3.87-3.13-7-7-7zm0 2c2.76 0 5 2.24 5 5v7c0 2.76-2.24 5-5 5s-5-2.24-5-5V9c0-2.76 2.24-5 5-5zm0 2c-1.66 0-3 1.34-3 3v7c0 1.66 1.34 3 3 3s3-1.34 3-3V9c0-1.66-1.34-3-3-3zm0 2c.55 0 1 .45 1 1v7c0 .55-.45 1-1 1s-1-.45-1-1V9c0-.55.45-1 1-1z" fill="currentColor"/>
+                      </svg>
+                    </div>
+                  </div>
                 </div>
                 <div className="relative">
                   <h1 className="text-xl font-bold">
@@ -128,8 +135,15 @@ export const NavBar: React.FC = () => {
           {/* Sidebar Header */}
           <div className="flex items-center justify-between p-5 border-b border-purple-900/30">
             <div className="flex items-center">
-              <div className="h-14 w-14 rounded-full flex items-center justify-center shadow-lg shadow-[#6B00D7]/20 hover:shadow-[#FF5AF7]/30 transition-all overflow-hidden border-2 border-white/20 mr-3">
-                <img src="/IMG_3753.jpeg" alt="Chronos Vault Logo" className="w-full h-full object-cover" />
+              <div className="h-14 w-14 rounded-full bg-gradient-to-br from-[#6B00D7] to-[#8B5CF6] flex items-center justify-center shadow-lg shadow-[#6B00D7]/40 hover:shadow-[#FF5AF7]/30 transition-all overflow-hidden border-2 border-[#9333EA]/30 mr-3 p-0.5">
+                <div className="w-full h-full rounded-full bg-[#130528] flex items-center justify-center">
+                  <div className="w-8 h-8 relative flex items-center justify-center">
+                    <div className="absolute inset-0 bg-gradient-to-br from-[#9333EA] to-[#FF5AF7] rounded-full opacity-30 animate-pulse"></div>
+                    <svg viewBox="0 0 24 24" className="w-full h-full text-[#FF5AF7]" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M12 2C8.13 2 5 5.13 5 9v7c0 3.87 3.13 7 7 7s7-3.13 7-7V9c0-3.87-3.13-7-7-7zm0 2c2.76 0 5 2.24 5 5v7c0 2.76-2.24 5-5 5s-5-2.24-5-5V9c0-2.76 2.24-5 5-5zm0 2c-1.66 0-3 1.34-3 3v7c0 1.66 1.34 3 3 3s3-1.34 3-3V9c0-1.66-1.34-3-3-3zm0 2c.55 0 1 .45 1 1v7c0 .55-.45 1-1 1s-1-.45-1-1V9c0-.55.45-1 1-1z" fill="currentColor"/>
+                    </svg>
+                  </div>
+                </div>
               </div>
               
               <div className="relative">
