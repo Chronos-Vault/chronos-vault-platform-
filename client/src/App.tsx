@@ -25,6 +25,7 @@ import DocumentationPage from '@/pages/documentation';
 import VaultSchoolPage from '@/pages/vault-school';
 import RoadmapPage from '@/pages/roadmap';
 import SmartContractsPage from '@/pages/smart-contracts';
+import TechnicalSpecPage from '@/pages/technical-spec';
 
 // Vault Type Pages
 import VaultTypesPage from '@/pages/vault-types';
@@ -228,7 +229,7 @@ const App: React.FC = () => {
                       <Route path="/docs" component={DocumentationPage} />
                       <Route path="/roadmap" component={RoadmapPage} />
                       <Route path="/smart-contracts" component={SmartContractsPage} />
-                      <Route path="/technical-spec" component={DocumentationPage} />
+                      <Route path="/technical-spec" component={TechnicalSpecPage} />
                       <Route path="/tokenomics" component={CvtTokenomicsPage} />
                       <Route path="/technical-security-docs" component={DocumentationPage} />
                       <Route path="/security-video-guides" component={DocumentationPage} />
