@@ -4,7 +4,12 @@ import {
   Shield, Activity, Home, Layers, Book, Users, Clock, 
   Hexagon, Settings, BarChart3, Globe, KeyRound, 
   MapPin, Fingerprint, Lock, EyeOff, Brain, Landmark, Diamond,
-  Search, ChevronRight, Menu, X, Database, Info, Cpu, Wallet
+  Search, ChevronRight, Menu, X, Database, Info, Cpu, Wallet,
+  Gift, Coins, Bitcoin, ListChecks, ShieldCheck, ShieldAlert,
+  ArrowDownUp, ArrowRightLeft, Atom, Combine, BoxSelect,
+  GraduationCap, Video, BookOpen, FileText, Library,
+  Lightbulb, BarChart2, Code, FileCode, GitPullRequest,
+  HelpCircle, LockKeyhole, Files
 } from 'lucide-react';
 import { useCVTToken } from '@/contexts/cvt-token-context';
 import { useMultiChain } from '@/contexts/multi-chain-context';
@@ -202,17 +207,131 @@ export const NavBar: React.FC = () => {
               />
               
               <SidebarItem 
-                icon={<Database className="h-5 w-5" />} 
+                icon={<ArrowDownUp className="h-5 w-5" />} 
                 label="Cross-Chain Operations" 
-                href="/cross-chain-atomic-swap" 
-                active={location === '/cross-chain-atomic-swap'}
+                href="/cross-chain-operations" 
+                active={location === '/cross-chain-operations'}
                 onClick={closeSidebar}
-                isNew
+              />
+
+              <SidebarItem 
+                icon={<ListChecks className="h-5 w-5" />} 
+                label="Transaction Monitor" 
+                href="/transaction-monitor" 
+                active={location === '/transaction-monitor'}
+                onClick={closeSidebar}
+              />
+
+              <SidebarItem 
+                icon={<ShieldCheck className="h-5 w-5" />} 
+                label="Transaction Verification" 
+                href="/transaction-verification" 
+                active={location === '/transaction-verification'}
+                onClick={closeSidebar}
+              />
+
+              <SidebarItem 
+                icon={<Combine className="h-5 w-5" />} 
+                label="Cross-Chain Bridge" 
+                href="/cross-chain-bridge" 
+                active={location === '/cross-chain-bridge'}
+                onClick={closeSidebar}
+              />
+
+              <SidebarItem 
+                icon={<Atom className="h-5 w-5" />} 
+                label="Atomic Swaps" 
+                href="/atomic-swaps" 
+                active={location === '/atomic-swaps'}
+                onClick={closeSidebar}
+              />
+
+              <SidebarItem 
+                icon={<ArrowRightLeft className="h-5 w-5" />} 
+                label="Bridge vs Swap" 
+                href="/bridge-vs-swap" 
+                active={location === '/bridge-vs-swap'}
+                onClick={closeSidebar}
+              />
+
+              <SidebarItem 
+                icon={<ShieldAlert className="h-5 w-5" />} 
+                label="Security Dashboard" 
+                href="/security-dashboard" 
+                active={location === '/security-dashboard'}
+                onClick={closeSidebar}
+              />
+
+              <SidebarItem 
+                icon={<BoxSelect className="h-5 w-5" />} 
+                label="Vault Explorer" 
+                href="/vault-explorer" 
+                active={location === '/vault-explorer'}
+                onClick={closeSidebar}
               />
             </SidebarSection>
             
-            {/* Security Section */}
-            <SidebarSection icon={<Shield className="h-5 w-5" />} title="Security">
+            {/* Features Section */}
+            <SidebarSection icon={<Globe className="h-5 w-5" />} title="Features">
+              <SidebarItem 
+                icon={<Bitcoin className="h-5 w-5" />} 
+                label="Bitcoin Halving" 
+                href="/bitcoin-halving" 
+                active={location === '/bitcoin-halving'}
+                onClick={closeSidebar}
+              />
+
+              <SidebarItem 
+                icon={<Gift className="h-5 w-5" />} 
+                label="Gift Crypto" 
+                href="/gift-crypto" 
+                active={location === '/gift-crypto'}
+                onClick={closeSidebar}
+              />
+
+              <SidebarItem 
+                icon={<Coins className="h-5 w-5" />} 
+                label="Token Vaults" 
+                href="/token-vaults" 
+                active={location === '/token-vaults'}
+                onClick={closeSidebar}
+              />
+            </SidebarSection>
+
+            {/* Security Features Section */}
+            <SidebarSection icon={<Shield className="h-5 w-5" />} title="Security Features">
+              <SidebarItem 
+                icon={<LockKeyhole className="h-5 w-5" />} 
+                label="Cross-Chain Security" 
+                href="/cross-chain-security" 
+                active={location === '/cross-chain-security'}
+                onClick={closeSidebar}
+              />
+
+              <SidebarItem 
+                icon={<Fingerprint className="h-5 w-5" />} 
+                label="Behavioral Authentication" 
+                href="/behavioral-auth" 
+                active={location === '/behavioral-auth'}
+                onClick={closeSidebar}
+              />
+
+              <SidebarItem 
+                icon={<KeyRound className="h-5 w-5" />} 
+                label="Quantum Resistant" 
+                href="/quantum-resistant" 
+                active={location === '/quantum-resistant'}
+                onClick={closeSidebar}
+              />
+
+              <SidebarItem 
+                icon={<Users className="h-5 w-5" />} 
+                label="Social Recovery" 
+                href="/social-recovery" 
+                active={location === '/social-recovery'}
+                onClick={closeSidebar}
+              />
+
               <SidebarItem 
                 icon={<Lock className="h-5 w-5" />} 
                 label="Zero-Knowledge Verification" 
@@ -271,6 +390,132 @@ export const NavBar: React.FC = () => {
                 active={location === '/sovereign-fortress-vault'}
                 onClick={closeSidebar}
                 isNew
+              />
+            </SidebarSection>
+            
+            {/* Vault School Hub Section */}
+            <SidebarSection icon={<GraduationCap className="h-5 w-5" />} title="Vault School Hub">
+              <SidebarItem 
+                icon={<Shield className="h-5 w-5" />} 
+                label="Military Grade Security" 
+                href="/military-grade-security" 
+                active={location === '/military-grade-security'}
+                onClick={closeSidebar}
+              />
+
+              <SidebarItem 
+                icon={<BookOpen className="h-5 w-5" />} 
+                label="Security Tutorials" 
+                href="/security-tutorials" 
+                active={location === '/security-tutorials'}
+                onClick={closeSidebar}
+              />
+
+              <SidebarItem 
+                icon={<Video className="h-5 w-5" />} 
+                label="Security Video Guides" 
+                href="/security-video-guides" 
+                active={location === '/security-video-guides'}
+                onClick={closeSidebar}
+              />
+
+              <SidebarItem 
+                icon={<FileText className="h-5 w-5" />} 
+                label="Technical Security Docs" 
+                href="/technical-security-docs" 
+                active={location === '/technical-security-docs'}
+                onClick={closeSidebar}
+              />
+            </SidebarSection>
+
+            {/* Resources Section */}
+            <SidebarSection icon={<Library className="h-5 w-5" />} title="Resources">
+              <SidebarItem 
+                icon={<Coins className="h-5 w-5" />} 
+                label="CVT Token" 
+                href="/cvt-token" 
+                active={location === '/cvt-token'}
+                onClick={closeSidebar}
+              />
+
+              <SidebarItem 
+                icon={<Lightbulb className="h-5 w-5" />} 
+                label="CVT Utility" 
+                href="/cvt-utility" 
+                active={location === '/cvt-utility'}
+                onClick={closeSidebar}
+              />
+
+              <SidebarItem 
+                icon={<BarChart2 className="h-5 w-5" />} 
+                label="Tokenomics" 
+                href="/tokenomics" 
+                active={location === '/tokenomics'}
+                onClick={closeSidebar}
+              />
+
+              <SidebarItem 
+                icon={<FileText className="h-5 w-5" />} 
+                label="Whitepaper" 
+                href="/whitepaper" 
+                active={location === '/whitepaper'}
+                onClick={closeSidebar}
+              />
+
+              <SidebarItem 
+                icon={<Code className="h-5 w-5" />} 
+                label="Technical Spec" 
+                href="/technical-spec" 
+                active={location === '/technical-spec'}
+                onClick={closeSidebar}
+              />
+
+              <SidebarItem 
+                icon={<FileCode className="h-5 w-5" />} 
+                label="Smart Contracts" 
+                href="/smart-contracts" 
+                active={location === '/smart-contracts'}
+                onClick={closeSidebar}
+              />
+
+              <SidebarItem 
+                icon={<GitPullRequest className="h-5 w-5" />} 
+                label="Roadmap" 
+                href="/roadmap" 
+                active={location === '/roadmap'}
+                onClick={closeSidebar}
+              />
+
+              <SidebarItem 
+                icon={<Users className="h-5 w-5" />} 
+                label="Team" 
+                href="/team" 
+                active={location === '/team'}
+                onClick={closeSidebar}
+              />
+
+              <SidebarItem 
+                icon={<Files className="h-5 w-5" />} 
+                label="Docs" 
+                href="/docs" 
+                active={location === '/docs'}
+                onClick={closeSidebar}
+              />
+
+              <SidebarItem 
+                icon={<HelpCircle className="h-5 w-5" />} 
+                label="FAQ" 
+                href="/faq" 
+                active={location === '/faq'}
+                onClick={closeSidebar}
+              />
+
+              <SidebarItem 
+                icon={<Info className="h-5 w-5" />} 
+                label="About" 
+                href="/about" 
+                active={location === '/about'}
+                onClick={closeSidebar}
               />
             </SidebarSection>
             
