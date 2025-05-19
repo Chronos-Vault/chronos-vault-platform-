@@ -38,6 +38,7 @@ interface ReleaseVault {
 const TokenVaultsPage: React.FC = () => {
   const [viewMode, setViewMode] = useState<'grid' | 'timeline'>('grid');
   const [expandedVerificationId, setExpandedVerificationId] = useState<string | null>(null);
+  const [expandedReleaseId, setExpandedReleaseId] = useState<string | null>(null);
   
   // Toggle verification details visibility
   const toggleVerificationDetails = (id: string) => {
@@ -45,6 +46,15 @@ const TokenVaultsPage: React.FC = () => {
       setExpandedVerificationId(null);
     } else {
       setExpandedVerificationId(id);
+    }
+  };
+  
+  // Toggle release details visibility
+  const toggleReleaseDetails = (id: string) => {
+    if (expandedReleaseId === id) {
+      setExpandedReleaseId(null);
+    } else {
+      setExpandedReleaseId(id);
     }
   };
 
@@ -92,7 +102,7 @@ const TokenVaultsPage: React.FC = () => {
         ethereum: '0x7A21438Ba88510Cf32E78E736AB440A84FD37Ae9',
         solana: 'GLD5xNvZmYfAHyj2qWe94kzVn56mThL4X37jNgVNc7Uq',
         ton: 'EQCGLdvault-gold-olympic-4y-eHu873BfqMn77rRt58',
-        smartContract: 'GoldOlympicVault v2.1'
+        smartContract: 'SovereignVault v2.1'
       },
       verificationDetails: {
         mechanism: 'Triple-Chain Consensus Protocol',
@@ -120,7 +130,7 @@ const TokenVaultsPage: React.FC = () => {
         ethereum: '0x8B34c1A83b7C5F4dB8a78D9b71e1AbF28Cd24E7D',
         solana: 'SLVRxNHu8dvYPJjZ44wQgUT7YxKeHR9LBmXJGW2FpX4',
         ton: 'EQC-slvr-vault-8year-release-CnH83j4gDzv5Ytzd',
-        smartContract: 'SilverOlympicVault v3.2'
+        smartContract: 'ArchitectVault v3.2'
       },
       verificationDetails: {
         mechanism: 'Dual-Chain Behavioral Authentication',
@@ -148,7 +158,7 @@ const TokenVaultsPage: React.FC = () => {
         ethereum: '0x9C45b1F58Af32D1aBdE7F57BC15Ed6f30BcA2783',
         solana: 'BRZNzxcVQ6wHH3HZ8K9yyFh4MBPSoUnFZ2vBbG5pMfDq',
         ton: 'EQD8vaultbronze-12y-release-Gft7UnpB9FTzv8e4',
-        smartContract: 'BronzeOlympicVault v4.0'
+        smartContract: 'GuardianVault v4.0'
       },
       verificationDetails: {
         mechanism: 'Multi-Signature Cross-Chain Audit Protocol',
@@ -176,7 +186,7 @@ const TokenVaultsPage: React.FC = () => {
         ethereum: '0xAe7D6F21D2B138c92bD36E7C8Eb2B7De45F5F218',
         solana: 'DMNDqR3vYUw4kLVLzLJum5SGNHBzKnxC6dQmQmMQyR38',
         ton: 'EQCDiamond-vault-16year-quantum-8hKBnM4wTztP',
-        smartContract: 'DiamondVerificationVault v5.1'
+        smartContract: 'DiamondVerificationVault™ v5.1'
       },
       verificationDetails: {
         mechanism: 'Quantum-Resistant Lattice Encryption',
@@ -204,7 +214,7 @@ const TokenVaultsPage: React.FC = () => {
         ethereum: '0xFd9A8E5c81B9Fc1D33E56DE8D7f58D79Eb21B3C2',
         solana: 'SVRGNft7Th38b7P9ZwLkR4tDcH6MqxfJh9NLv2qFZDUm',
         ton: 'EQB-sovereign-fortress-final-vault-Z8h4jtPn72F',
-        smartContract: 'SovereignFortressVault v6.0'
+        smartContract: 'SovereignFortressVault™ v6.0'
       },
       verificationDetails: {
         mechanism: 'Military-Grade Triple-Chain Security Protocol',
@@ -276,9 +286,62 @@ const TokenVaultsPage: React.FC = () => {
           <Button 
             variant="secondary" 
             className="w-full bg-purple-900/50 hover:bg-purple-800/70 text-purple-100"
+            onClick={() => toggleReleaseDetails(vault.id)}
           >
-            <Eye className="w-4 h-4 mr-1" /> View Release Details
+            <Eye className="w-4 h-4 mr-1" />
+            {expandedReleaseId === vault.id ? 'Hide Release Details' : 'View Release Details'}
           </Button>
+          
+          {expandedReleaseId === vault.id && (
+            <div className="mt-3 p-3 bg-gray-900/50 rounded-md border border-gray-800 animate-in fade-in">
+              <h4 className="font-medium text-sm text-white mb-2 flex items-center">
+                <Box className="w-4 h-4 mr-1 text-purple-400" />
+                Blockchain Implementation
+              </h4>
+              
+              <div className="space-y-2 mb-3">
+                <div className="bg-black/50 p-2 rounded-md">
+                  <div className="text-xs text-gray-400 mb-1">Smart Contract</div>
+                  <div className="text-xs text-white font-mono">{vault.blockchainDetails.smartContract}</div>
+                </div>
+                
+                <div className="grid grid-cols-3 gap-2 text-xs">
+                  <div className="bg-black/50 p-2 rounded-md">
+                    <div className="text-gray-400 mb-1">Ethereum</div>
+                    <div className="text-xs text-white font-mono truncate" title={vault.blockchainDetails.ethereum}>
+                      {vault.blockchainDetails.ethereum.substring(0, 8)}...
+                    </div>
+                  </div>
+                  
+                  <div className="bg-black/50 p-2 rounded-md">
+                    <div className="text-gray-400 mb-1">Solana</div>
+                    <div className="text-xs text-white font-mono truncate" title={vault.blockchainDetails.solana}>
+                      {vault.blockchainDetails.solana.substring(0, 8)}...
+                    </div>
+                  </div>
+                  
+                  <div className="bg-black/50 p-2 rounded-md">
+                    <div className="text-gray-400 mb-1">TON</div>
+                    <div className="text-xs text-white font-mono truncate" title={vault.blockchainDetails.ton}>
+                      {vault.blockchainDetails.ton.substring(0, 8)}...
+                    </div>
+                  </div>
+                </div>
+              </div>
+              
+              <div className="text-xs text-gray-400 pt-2 border-t border-gray-800 mt-2">
+                <div className="flex items-center gap-1">
+                  <Coins className="h-3 w-3 text-purple-400" />
+                  <span className="text-gray-300">{vault.tokens} released on {vault.releaseDate}</span>
+                </div>
+                <p className="mt-1 text-gray-300">
+                  {vault.status === 'released' 
+                    ? 'This vault has been released and the tokens are now in circulation.' 
+                    : `This vault is currently locked and will be released in ${vault.releaseYear - 2025} years.`}
+                </p>
+              </div>
+            </div>
+          )}
           
           <Button 
             variant="outline" 
@@ -286,7 +349,7 @@ const TokenVaultsPage: React.FC = () => {
             onClick={() => toggleVerificationDetails(vault.id)}
           >
             <ChevronDown className={`w-4 h-4 mr-1 transition-transform duration-300 ${expandedVerificationId === vault.id ? 'rotate-180' : ''}`} /> 
-            Show Verification Details
+            {expandedVerificationId === vault.id ? 'Hide Verification Details' : 'Show Verification Details'}
           </Button>
           
           {expandedVerificationId === vault.id && (
