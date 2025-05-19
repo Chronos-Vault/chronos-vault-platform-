@@ -7,13 +7,13 @@
  */
 
 import { TonClient } from '@tonclient/core';
-// Import the TON client library properly
 import { libNode } from '@tonclient/lib-node';
-import { Address, Cell, toNano } from 'ton-core';
+import { Address } from 'ton-core';
 import { storage } from '../storage';
 import * as schema from '@shared/schema';
 
-// Initialize TON client - handled in constructor instead to avoid initialization errors
+// Initialize TON client before use
+TonClient.useBinaryLibrary(libNode);
 
 interface DeviceVerificationOptions {
   deviceId: string;
@@ -33,9 +33,6 @@ class TONDeviceVerificationService {
     this.isDev = process.env.NODE_ENV !== 'production';
     
     try {
-      // Initialize the TON library
-      TonClient.useBinaryLibrary(libNode);
-      
       // Use testnet in dev mode by default
       const endpoint = networkEndpoint || (this.isDev 
         ? 'https://testnet.toncenter.com/api/v2/jsonRPC'
@@ -54,7 +51,7 @@ class TONDeviceVerificationService {
       console.log('TON Client initialized successfully');
     } catch (error) {
       console.error('Failed to initialize TON client:', error);
-      // Create a dummy client to prevent errors
+      // Create a dummy client to prevent errors in development
       this.client = {} as TonClient;
     }
   }
@@ -365,6 +362,7 @@ class TONDeviceVerificationService {
           }),
           signatureData: '',
           verificationStatus: 'verified',
+          expiresAt: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000), // 1 year expiration
           metadata: {
             action: 'setupMultiSig',
             signerAddresses,
