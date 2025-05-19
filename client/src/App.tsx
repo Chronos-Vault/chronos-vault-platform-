@@ -21,7 +21,7 @@ import CvtTokenomicsPage from '@/pages/cvt-tokenomics';
 import CvtUtilityPage from '@/pages/cvt-utility-new';
 import TermsOfServicePage from '@/pages/terms-of-service';
 import CookiePolicyPage from '@/pages/cookie-policy';
-import DocumentationPage from '@/pages/DocumentationPage';
+import DocumentationPage from '@/pages/documentation';
 import VaultSchoolPage from '@/pages/vault-school';
 
 // Vault Type Pages
