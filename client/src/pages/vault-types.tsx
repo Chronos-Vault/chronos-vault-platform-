@@ -504,14 +504,14 @@ const VaultTypesPage = () => {
   const currentVaults = vaultCategories[activeCategory].vaults;
   
   return (
-    <div className="min-h-screen bg-gradient-to-br from-black via-[#1C0533] to-black text-white pb-16">
-      {/* Simple Background - 3D effects removed */}
+    <div className="min-h-screen bg-gradient-to-br from-[#1F0C3D] via-[#1C0533] to-black text-white pb-16">
+      {/* Background with grid pattern */}
       <div className="fixed inset-0 pointer-events-none overflow-hidden">
         {/* Static Grid Pattern */}
         <div className="absolute inset-0 bg-grid-pattern opacity-10"></div>
         
-        {/* Simple gradient background */}
-        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-[#6B00D7]/40 to-transparent"></div>
+        {/* Deep purple gradient background */}
+        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-[#6B00D7]/30 to-transparent"></div>
       </div>
       
       {/* Main Content */}
