@@ -102,7 +102,7 @@ import BitcoinHalvingPage from '@/pages/bitcoin-halving';
 import SecurityTutorialsVideo from '@/pages/security-tutorials-video';
 import SecurityTutorials from '@/pages/security-tutorials';
 import MilitaryGradeSecurity from '@/pages/military-grade-security';
-import TokenVaultsPage from '@/pages/token-vaults-new';
+import TokenVaultsPage from '@/pages/token-vaults-redesign';
 // We already have the QuantumResistantVaultPage imported above
 
 // Token & Payment Pages
