@@ -68,20 +68,21 @@ export const NavBar: React.FC = () => {
             <div className="flex-shrink-0">
               {/* Logo - Matching Footer Style */}
               <Link href="/" className="flex items-center gap-3 group">
-                <div className="h-12 w-12 rounded-full flex items-center justify-center shadow-lg shadow-[#6B00D7]/20 group-hover:shadow-[#FF5AF7]/50 group-hover:shadow-xl transition-all duration-300 overflow-hidden border-2 border-white/20 group-hover:border-[#FF5AF7] transform group-hover:scale-125 relative group-hover:animate-pulse">
-                  <div className="absolute inset-0 bg-gradient-to-r from-[#6B00D7]/30 to-[#FF5AF7]/30 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                <div className="h-12 w-12 rounded-full flex items-center justify-center shadow-lg shadow-[#6B00D7]/20 group-hover:shadow-[#FF5AF7] group-hover:shadow-xl transition-all duration-500 overflow-hidden border-2 border-white/20 group-hover:border-[#FF5AF7] transform group-hover:scale-125 relative animate-pulse group-hover:animate-none">
+                  <div className="absolute inset-0 bg-gradient-to-r from-[#6B00D7]/30 to-[#FF5AF7]/50 opacity-0 group-hover:opacity-100 transition-all duration-500 animate-ping"></div>
+                  <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-[#FF5AF7]/10 to-transparent opacity-0 group-hover:opacity-100 group-hover:animate-pulse"></div>
                   <img 
                     src={logoPath} 
                     alt="Chronos Vault Logo" 
-                    className="w-full h-full object-cover transition-all duration-300 group-hover:brightness-125 group-hover:saturate-200" 
+                    className="w-full h-full object-cover transition-all duration-500 group-hover:brightness-150 group-hover:saturate-200 group-hover:rotate-6" 
                   />
                 </div>
                 <div className="relative">
-                  <h1 className="text-xl font-bold">
-                    <span className="bg-clip-text text-transparent bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] group-hover:from-[#FF5AF7] group-hover:to-[#6B00D7] transition-all">Chronos</span> 
-                    <span className="text-white">Vault</span>
+                  <h1 className="text-xl font-bold group-hover:scale-105 transition-transform duration-300">
+                    <span className="bg-clip-text text-transparent bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] group-hover:from-[#FF5AF7] group-hover:to-[#6B00D7] transition-all duration-500">Chronos</span> 
+                    <span className="text-white group-hover:text-[#FF5AF7]/90 transition-colors duration-500">Vault</span>
                   </h1>
-                  <div className="absolute -top-4 -right-4 bg-[#FF5AF7] text-white text-[10px] px-2 py-0.5 rounded-full font-bold tracking-wider shadow-md shadow-[#FF5AF7]/30 animate-pulse">BETA</div>
+                  <div className="absolute -top-4 -right-4 bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] text-white text-[10px] px-2 py-0.5 rounded-full font-bold tracking-wider shadow-md shadow-[#FF5AF7]/30 animate-pulse group-hover:shadow-[#FF5AF7]/50 group-hover:shadow-lg transition-all duration-300">BETA</div>
                 </div>
               </Link>
             </div>
@@ -137,17 +138,18 @@ export const NavBar: React.FC = () => {
           {/* Sidebar Header */}
           <div className="flex items-center justify-between p-5 border-b border-purple-900/30">
             <div className="flex items-center">
-              <div className="h-14 w-14 rounded-full flex items-center justify-center shadow-lg shadow-[#6B00D7]/30 hover:shadow-[#FF5AF7]/60 hover:shadow-xl transition-all duration-300 overflow-hidden border-2 border-[#9333EA]/30 hover:border-[#FF5AF7] transform hover:scale-110 mr-3 relative hover:animate-pulse">
-                <div className="absolute inset-0 bg-gradient-to-r from-[#6B00D7]/40 to-[#FF5AF7]/40 opacity-0 hover:opacity-100 transition-opacity duration-300"></div>
-                <img src={logoPath} alt="Chronos Vault Logo" className="w-full h-full object-cover transition-all duration-300 hover:brightness-125 hover:saturate-200" />
+              <div className="h-14 w-14 rounded-full flex items-center justify-center shadow-lg shadow-[#6B00D7]/30 hover:shadow-[#FF5AF7] hover:shadow-xl transition-all duration-500 overflow-hidden border-2 border-[#9333EA]/30 hover:border-[#FF5AF7] transform hover:scale-110 mr-3 relative animate-pulse hover:animate-none">
+                <div className="absolute inset-0 bg-gradient-to-r from-[#6B00D7]/40 to-[#FF5AF7]/60 opacity-0 hover:opacity-100 transition-all duration-500 animate-ping"></div>
+                <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-[#FF5AF7]/20 to-transparent opacity-0 hover:opacity-100 hover:animate-pulse"></div>
+                <img src={logoPath} alt="Chronos Vault Logo" className="w-full h-full object-cover transition-all duration-500 hover:brightness-150 hover:saturate-200 hover:rotate-12" />
               </div>
               
               <div className="relative">
-                <h1 className="text-xl font-bold">
-                  <span className="bg-clip-text text-transparent bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7]">Chronos</span> 
-                  <span className="text-white">Vault</span>
+                <h1 className="text-xl font-bold hover:scale-105 transition-transform duration-300">
+                  <span className="bg-clip-text text-transparent bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] hover:from-[#FF5AF7] hover:to-[#6B00D7] transition-all duration-500">Chronos</span> 
+                  <span className="text-white hover:text-[#FF5AF7]/90 transition-colors duration-500">Vault</span>
                 </h1>
-                <div className="absolute -top-4 -right-4 bg-[#FF5AF7] text-white text-[10px] px-2 py-0.5 rounded-full font-bold tracking-wider shadow-md shadow-[#FF5AF7]/30 animate-pulse">BETA</div>
+                <div className="absolute -top-4 -right-4 bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] text-white text-[10px] px-2 py-0.5 rounded-full font-bold tracking-wider shadow-md shadow-[#FF5AF7]/30 animate-pulse hover:shadow-[#FF5AF7]/50 hover:shadow-lg transition-all duration-300">BETA</div>
               </div>
             </div>
             
