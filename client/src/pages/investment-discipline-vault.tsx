@@ -1308,6 +1308,72 @@ function InvestmentDisciplineVault() {
                       {assetType}
                     </div>
                   </div>
+                  
+                  {/* Display real-time price and calculated value */}
+                  {initialAmount && assetType && !isNaN(parseFloat(initialAmount)) ? (
+                    <div className="mt-3 bg-black/20 p-3 rounded-lg border border-gray-800">
+                      <div className="flex justify-between text-sm">
+                        <span className="text-gray-400">Current Market Value:</span>
+                        <span className="font-medium">
+                          {(() => {
+                            const amount = parseFloat(initialAmount);
+                            let price = 0;
+                            
+                            // Get price from oracle feed
+                            if (assetType === 'BTC') {
+                              const feed = priceFeeds.find(f => f.pair === 'BTC/USD');
+                              price = feed?.value || 103106;
+                            } else if (assetType === 'ETH') {
+                              const feed = priceFeeds.find(f => f.pair === 'ETH/USD');
+                              price = feed?.value || 3481;
+                            } else if (assetType === 'SOL') {
+                              const feed = priceFeeds.find(f => f.pair === 'SOL/USD');
+                              price = feed?.value || 168;
+                            } else if (assetType === 'TON') {
+                              const feed = priceFeeds.find(f => f.pair === 'TON/USD');
+                              price = feed?.value || 7.24;
+                            }
+                            
+                            const totalValue = amount * price;
+                            return `$${totalValue.toLocaleString(undefined, { maximumFractionDigits: 2 })}`;
+                          })()}
+                        </span>
+                      </div>
+                      <div className="flex justify-between text-xs mt-1">
+                        <span className="text-gray-500">Price Source:</span>
+                        <span className="text-gray-500">
+                          {isPriceFeedLoading ? "Loading..." : 
+                           priceFeedError ? "Fallback Data" : 
+                           "Chainlink Oracle"}
+                        </span>
+                      </div>
+                      <div className="flex justify-between text-xs mt-1">
+                        <span className="text-gray-500">Unit Price:</span>
+                        <span className="text-gray-500">
+                          {(() => {
+                            if (isPriceFeedLoading) return "Loading...";
+                            
+                            let price = 0;
+                            if (assetType === 'BTC') {
+                              const feed = priceFeeds.find(f => f.pair === 'BTC/USD');
+                              price = feed?.value || 103106;
+                            } else if (assetType === 'ETH') {
+                              const feed = priceFeeds.find(f => f.pair === 'ETH/USD');
+                              price = feed?.value || 3481;
+                            } else if (assetType === 'SOL') {
+                              const feed = priceFeeds.find(f => f.pair === 'SOL/USD');
+                              price = feed?.value || 168;
+                            } else if (assetType === 'TON') {
+                              const feed = priceFeeds.find(f => f.pair === 'TON/USD');
+                              price = feed?.value || 7.24;
+                            }
+                            
+                            return `$${price.toLocaleString(undefined, { maximumFractionDigits: 2 })}`;
+                          })()}
+                        </span>
+                      </div>
+                    </div>
+                  ) : null}
                 </div>
               </CardContent>
             </Card>
