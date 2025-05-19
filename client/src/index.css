@@ -11,11 +11,18 @@
   isolation: isolate;
   overflow-x: hidden !important;
   max-width: 100vw !important;
+  contain: layout;
 }
 
 /* Remove background gradient leaks */
 body {
   overflow-x: hidden !important;
+  position: relative;
+}
+
+html, body {
+  max-width: 100%;
+  position: relative;
 }
 
 /* Prevent vertical color bars from leaking */
@@ -24,6 +31,26 @@ body {
   overflow: hidden !important;
   isolation: isolate;
   z-index: 0;
+}
+
+/* Mobile-specific fixes for Investment Discipline Vault */
+@media (max-width: 768px) {
+  /* Hide blue and purple vertical lines */
+  .max-w-7xl {
+    position: relative !important;
+    isolation: isolate !important;
+    overflow: hidden !important;
+    contain: layout !important;
+  }
+
+  /* Remove background gradient overlays */
+  .bg-gradient-to-r,
+  .from-\[\#3F51FF\],
+  .to-\[\#8F9FFF\],
+  .from-\[\#3F51FF\]\/10,
+  .to-\[\#6B00D7\]\/5 {
+    background: black !important;
+  }
 }
 
 /* Fix for header duplication in documentation pages */
