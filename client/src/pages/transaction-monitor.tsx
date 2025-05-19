@@ -19,202 +19,157 @@ const StatusBadge = ({ status }: { status: string }) => {
   let color = '';
   let icon = null;
   
-  switch (status) {
-    case 'pending':
-      color = 'bg-amber-500/20 text-amber-500 border-amber-500/50';
-      icon = <Clock className="h-3 w-3 mr-1" />;
-      break;
-    case 'confirming':
-      color = 'bg-blue-500/20 text-blue-500 border-blue-500/50';
-      icon = <RefreshCw className="h-3 w-3 mr-1 animate-spin" />;
-      break;
+  switch (status.toLowerCase()) {
     case 'confirmed':
-      color = 'bg-green-500/20 text-green-500 border-green-500/50';
+      color = 'bg-green-500/10 text-green-500 border-green-500/20';
       icon = <CheckCircle className="h-3 w-3 mr-1" />;
       break;
     case 'failed':
-      color = 'bg-red-500/20 text-red-500 border-red-500/50';
+      color = 'bg-red-500/10 text-red-500 border-red-500/20';
       icon = <XCircle className="h-3 w-3 mr-1" />;
       break;
+    case 'pending':
+      color = 'bg-yellow-500/10 text-yellow-500 border-yellow-500/20';
+      icon = <Clock className="h-3 w-3 mr-1" />;
+      break;
+    case 'verified':
+      color = 'bg-blue-500/10 text-blue-500 border-blue-500/20';
+      icon = <Shield className="h-3 w-3 mr-1" />;
+      break;
     default:
-      color = 'bg-gray-500/20 text-gray-500 border-gray-500/50';
+      color = 'bg-gray-500/10 text-gray-500 border-gray-500/20';
   }
   
   return (
-    <Badge variant="outline" className={`${color} px-2 py-0.5`}>
+    <Badge variant="outline" className={`${color} flex items-center`}>
       {icon}
-      <span className="capitalize">{status}</span>
+      {status}
     </Badge>
   );
 };
 
-// Network badge component
-const NetworkBadge = ({ network }: { network: string }) => {
-  let color = '';
-  
-  switch (network) {
-    case 'Ethereum':
-      color = 'bg-indigo-500/20 text-indigo-500 border-indigo-500/50';
-      break;
-    case 'Solana':
-      color = 'bg-purple-500/20 text-purple-500 border-purple-500/50';
-      break;
-    case 'TON':
-      color = 'bg-blue-500/20 text-blue-500 border-blue-500/50';
-      break;
-    case 'Bitcoin':
-      color = 'bg-amber-500/20 text-amber-500 border-amber-500/50';
-      break;
-    default:
-      color = 'bg-gray-500/20 text-gray-500 border-gray-500/50';
+// Direction badge component
+const DirectionBadge = ({ direction }: { direction: string }) => {
+  if (direction === 'incoming') {
+    return (
+      <Badge variant="outline" className="bg-green-500/10 text-green-500 border-green-500/20 flex items-center">
+        <ArrowDown className="h-3 w-3 mr-1" />
+        Incoming
+      </Badge>
+    );
+  } else {
+    return (
+      <Badge variant="outline" className="bg-blue-500/10 text-blue-500 border-blue-500/20 flex items-center">
+        <ArrowUp className="h-3 w-3 mr-1" />
+        Outgoing
+      </Badge>
+    );
   }
-  
-  return (
-    <Badge variant="outline" className={`${color}`}>
-      {network}
-    </Badge>
-  );
 };
 
-// Format date helper
-const formatDate = (timestamp: number) => {
-  return new Date(timestamp).toLocaleString('en-US', {
-    month: 'short',
-    day: 'numeric',
-    hour: '2-digit',
-    minute: '2-digit',
-  });
+// Format blockchain type to display name
+const formatBlockchainType = (type: string): string => {
+  switch (type.toLowerCase()) {
+    case 'ethereum':
+      return 'Ethereum';
+    case 'solana':
+      return 'Solana';
+    case 'ton':
+      return 'TON';
+    case 'bitcoin':
+      return 'Bitcoin';
+    default:
+      return type;
+  }
 };
 
-// Format address helper
-const formatAddress = (address: string) => {
-  if (!address) return '';
+// Format amount with appropriate decimals
+const formatAmount = (amount: number, blockchain: string): string => {
+  switch (blockchain.toLowerCase()) {
+    case 'ethereum':
+      return amount.toFixed(4) + ' ETH';
+    case 'solana':
+      return amount.toFixed(2) + ' SOL';
+    case 'ton':
+      return amount.toFixed(2) + ' TON';
+    case 'bitcoin':
+      return amount.toFixed(6) + ' BTC';
+    default:
+      return amount.toString();
+  }
+};
+
+// Format timestamp
+const formatTimestamp = (timestamp: number): string => {
+  return new Date(timestamp).toLocaleString();
+};
+
+// Format address to be shorter
+const formatAddress = (address: string): string => {
   if (address.length < 12) return address;
-  return `${address.substring(0, 6)}...${address.substring(address.length - 4)}`;
+  return \`\${address.substring(0, 6)}...\${address.substring(address.length - 4)}\`;
 };
 
-import { withTransactionErrorBoundary, useTransactionErrorHandler } from '../components/error-boundary/TransactionErrorBoundary';
-import { CrossChainErrorCategory } from '../components/ui/error-message';
-
-const TransactionMonitorPageContent: React.FC = () => {
-  // Add error handler hook
-  const { handleAsyncError, ErrorDisplay } = useTransactionErrorHandler();
+const TransactionMonitorPage: React.FC = () => {
   const { 
     transactions, 
     transactionGroups, 
     refreshTransactions,
-    getMonitoringStatus
+    loadingTransactions 
   } = useTransactionMonitoring();
   
-  // Get monitoring status
-  const { isMonitoring, lastUpdated } = getMonitoringStatus();
-  
-  // Set up state for transaction detail view
-  const [selectedTransaction, setSelectedTransaction] = useState<CrossChainTransaction | null>(null);
-  const [selectedGroup, setSelectedGroup] = useState(transactionGroups[0] || null);
-  
-  // Set up filtering state
   const [searchQuery, setSearchQuery] = useState('');
-  const [networkFilter, setNetworkFilter] = useState<string>('all');
-  const [statusFilter, setStatusFilter] = useState<string>('all');
-  const [sortField, setSortField] = useState<string>('timestamp');
-  const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('desc');
+  const [selectedBlockchain, setSelectedBlockchain] = useState<string>('all');
+  const [selectedStatus, setSelectedStatus] = useState<string>('all');
+  const [selectedDirection, setSelectedDirection] = useState<string>('all');
+  const [selectedTransaction, setSelectedTransaction] = useState<CrossChainTransaction | null>(null);
+  const [selectedTab, setSelectedTab] = useState<string>('all');
   
-  // Handle filter change
-  const handleSortChange = (field: string) => {
-    if (sortField === field) {
-      setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc');
-    } else {
-      setSortField(field);
-      setSortDirection('desc');
-    }
-  };
-  
-  // Apply filters and sorting
+  // Filter transactions based on search and filters
   const filteredTransactions = transactions.filter(tx => {
-    // Apply search filter
-    if (searchQuery) {
-      const query = searchQuery.toLowerCase();
-      return (
-        tx.id.toLowerCase().includes(query) ||
-        tx.txHash.toLowerCase().includes(query) ||
-        tx.fromAddress.toLowerCase().includes(query) ||
-        (tx.toAddress && tx.toAddress.toLowerCase().includes(query)) ||
-        (tx.label && tx.label.toLowerCase().includes(query)) ||
-        (tx.type && tx.type.toLowerCase().includes(query))
-      );
-    }
+    const matchesSearch = 
+      tx.txHash.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      tx.fromAddress.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      tx.toAddress.toLowerCase().includes(searchQuery.toLowerCase());
     
-    // Apply network filter
-    if (networkFilter !== 'all' && tx.network !== networkFilter) {
-      return false;
-    }
+    const matchesBlockchain = selectedBlockchain === 'all' || tx.blockchain.toLowerCase() === selectedBlockchain.toLowerCase();
+    const matchesStatus = selectedStatus === 'all' || tx.status.toLowerCase() === selectedStatus.toLowerCase();
+    const matchesDirection = selectedDirection === 'all' || tx.direction.toLowerCase() === selectedDirection.toLowerCase();
     
-    // Apply status filter
-    if (statusFilter !== 'all' && tx.status !== statusFilter) {
-      return false;
-    }
-    
-    return true;
+    return matchesSearch && matchesBlockchain && matchesStatus && matchesDirection;
   });
   
-  // Apply sorting
-  const sortedTransactions = [...filteredTransactions].sort((a, b) => {
-    let compareValue = 0;
-    
-    switch (sortField) {
-      case 'timestamp':
-        compareValue = a.timestamp - b.timestamp;
-        break;
-      case 'network':
-        compareValue = a.network.localeCompare(b.network);
-        break;
-      case 'status':
-        compareValue = a.status.localeCompare(b.status);
-        break;
-      case 'type':
-        compareValue = a.type.localeCompare(b.type);
-        break;
-      default:
-        compareValue = a.timestamp - b.timestamp;
-    }
-    
-    return sortDirection === 'asc' ? compareValue : -compareValue;
-  });
-  
-  // Handle transaction click
-  const handleTransactionClick = (tx: CrossChainTransaction) => {
-    setSelectedTransaction(tx);
-    
-    // Find the group this transaction belongs to
-    const group = transactionGroups.find(g => g.id === tx.correlationId);
-    if (group) {
-      setSelectedGroup(group);
-    }
-  };
-  
-  // Handle refresh click
-  const handleRefresh = async () => {
-    await refreshTransactions();
-  };
-  
-  // Handle refresh click with error handling
-  const handleRefreshWithErrorHandling = async () => {
-    try {
-      await refreshTransactions();
-    } catch (error) {
-      handleAsyncError(
-        error,
-        CrossChainErrorCategory.CONNECTION_FAILURE,
-        { action: 'refreshTransactions', time: new Date().toISOString() }
-      );
+  // Get transactions for selected group in tab view
+  const getTransactionsForTab = (tabId: string) => {
+    if (tabId === 'all') {
+      return filteredTransactions;
+    } else {
+      return transactions.filter(tx => tx.groupId === tabId);
     }
   };
 
+  // Handle row click to select transaction
+  const handleTransactionClick = (tx: CrossChainTransaction) => {
+    setSelectedTransaction(tx);
+  };
+  
+  // Handle tab change
+  const handleTabChange = (value: string) => {
+    setSelectedTab(value);
+    setSelectedTransaction(null);
+  };
+  
+  // Handle refresh button click
+  const handleRefresh = async () => {
+    try {
+      await refreshTransactions();
+    } catch (error) {
+      console.error("Error refreshing transactions:", error);
+    }
+  };
+  
   return (
     <div className="container mx-auto py-6 relative z-10 bg-gradient-to-b from-[#121212] to-[#19141E]">
-      {/* Display any errors that might occur */}
-      {ErrorDisplay}
       
       <div className="mb-6">
         <h1 className="text-3xl font-bold tracking-tight">Transaction Monitor</h1>
@@ -230,239 +185,160 @@ const TransactionMonitorPageContent: React.FC = () => {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div className="lg:col-span-2">
           <Card className="border border-[#6B00D7]/20 bg-gradient-to-b from-[#1A1A1A] to-[#121212] shadow-md">
-            <CardHeader className="pb-2">
-              <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2">
-                <div>
-                  <CardTitle>Transactions</CardTitle>
-                  <CardDescription>
-                    {isMonitoring 
-                      ? `Auto-refreshing every ${getMonitoringStatus().pollingInterval / 1000}s` 
-                      : 'Monitoring paused'}
-                  </CardDescription>
-                </div>
-                <div className="flex flex-col sm:flex-row gap-2 sm:items-center w-full sm:w-auto">
-                  <div className="relative flex-1 sm:flex-none min-w-[200px]">
-                    <Input
-                      placeholder="Search transactions..."
+            <CardHeader className="pb-0">
+              <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                <CardTitle>Transaction List</CardTitle>
+                <div className="flex flex-wrap gap-2">
+                  <div className="relative w-full md:w-auto">
+                    <Search className="h-4 w-4 absolute left-2.5 top-2.5 text-gray-500" />
+                    <Input 
+                      placeholder="Search by hash or address"
+                      className="pl-8 w-full md:w-60 bg-black/20"
                       value={searchQuery}
-                      onChange={(e) => setSearchQuery(e.target.value)}
-                      className="pl-8 bg-[#111]/70 text-sm"
+                      onChange={e => setSearchQuery(e.target.value)}
                     />
-                    <Search className="h-4 w-4 absolute left-2.5 top-2.5 text-muted-foreground" />
                   </div>
-                  
-                  <div className="flex gap-2">
-                    <Select value={networkFilter} onValueChange={setNetworkFilter}>
-                      <SelectTrigger className="w-[130px] h-9 text-xs">
-                        <SelectValue placeholder="Network" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="all">All Networks</SelectItem>
-                        <SelectItem value="Ethereum">Ethereum</SelectItem>
-                        <SelectItem value="Solana">Solana</SelectItem>
-                        <SelectItem value="TON">TON</SelectItem>
-                        <SelectItem value="Bitcoin">Bitcoin</SelectItem>
-                      </SelectContent>
-                    </Select>
-                    
-                    <Select value={statusFilter} onValueChange={setStatusFilter}>
-                      <SelectTrigger className="w-[130px] h-9 text-xs">
-                        <SelectValue placeholder="Status" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="all">All Statuses</SelectItem>
-                        <SelectItem value="pending">Pending</SelectItem>
-                        <SelectItem value="confirming">Confirming</SelectItem>
-                        <SelectItem value="confirmed">Confirmed</SelectItem>
-                        <SelectItem value="failed">Failed</SelectItem>
-                      </SelectContent>
-                    </Select>
-                    
-                    <Button size="sm" variant="outline" onClick={handleRefresh}>
-                      <RefreshCw className="h-4 w-4" />
-                    </Button>
-                  </div>
+                  <Button 
+                    variant="outline" 
+                    size="icon"
+                    className="bg-black/20 border-gray-800"
+                    onClick={handleRefresh}
+                    disabled={loadingTransactions}
+                  >
+                    <RefreshCw className={`h-4 w-4 ${loadingTransactions ? 'animate-spin' : ''}`} />
+                  </Button>
                 </div>
-              </div>
-            </CardHeader>
-            <CardContent>
-              <div className="rounded-md border border-[#333]">
-                <Table>
-                  <TableHeader>
-                    <TableRow className="bg-[#111]/70 hover:bg-[#111]/70">
-                      <TableHead 
-                        className="text-xs w-[60px] cursor-pointer"
-                        onClick={() => handleSortChange('network')}
-                      >
-                        <div className="flex items-center gap-1">
-                          Network
-                          {sortField === 'network' && (
-                            sortDirection === 'asc' ? 
-                            <ArrowUp className="h-3 w-3" /> : 
-                            <ArrowDown className="h-3 w-3" />
-                          )}
-                        </div>
-                      </TableHead>
-                      <TableHead className="text-xs">Addresses</TableHead>
-                      <TableHead 
-                        className="text-xs cursor-pointer"
-                        onClick={() => handleSortChange('type')}
-                      >
-                        <div className="flex items-center gap-1">
-                          Type
-                          {sortField === 'type' && (
-                            sortDirection === 'asc' ? 
-                            <ArrowUp className="h-3 w-3" /> : 
-                            <ArrowDown className="h-3 w-3" />
-                          )}
-                        </div>
-                      </TableHead>
-                      <TableHead 
-                        className="text-xs cursor-pointer"
-                        onClick={() => handleSortChange('timestamp')}
-                      >
-                        <div className="flex items-center gap-1">
-                          Time
-                          {sortField === 'timestamp' && (
-                            sortDirection === 'asc' ? 
-                            <ArrowUp className="h-3 w-3" /> : 
-                            <ArrowDown className="h-3 w-3" />
-                          )}
-                        </div>
-                      </TableHead>
-                      <TableHead 
-                        className="text-xs cursor-pointer"
-                        onClick={() => handleSortChange('status')}
-                      >
-                        <div className="flex items-center gap-1">
-                          Status
-                          {sortField === 'status' && (
-                            sortDirection === 'asc' ? 
-                            <ArrowUp className="h-3 w-3" /> : 
-                            <ArrowDown className="h-3 w-3" />
-                          )}
-                        </div>
-                      </TableHead>
-                      <TableHead className="text-xs w-[70px]">Security</TableHead>
-                      <TableHead className="text-xs w-[70px]"></TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {sortedTransactions.map(tx => (
-                      <TableRow 
-                        key={tx.id} 
-                        className={`hover:bg-[#6B00D7]/5 cursor-pointer ${
-                          selectedTransaction?.id === tx.id ? 'bg-[#6B00D7]/10' : ''
-                        }`}
-                        onClick={() => handleTransactionClick(tx)}
-                      >
-                        <TableCell>
-                          <NetworkBadge network={tx.network} />
-                        </TableCell>
-                        <TableCell>
-                          <div className="flex flex-col">
-                            <div className="flex items-center gap-1 text-xs">
-                              <span className="text-muted-foreground">From:</span>
-                              <span>{formatAddress(tx.fromAddress)}</span>
-                            </div>
-                            {tx.toAddress && (
-                              <div className="flex items-center gap-1 text-xs">
-                                <span className="text-muted-foreground">To:</span>
-                                <span>{formatAddress(tx.toAddress)}</span>
-                              </div>
-                            )}
-                          </div>
-                        </TableCell>
-                        <TableCell>
-                          <div className="text-xs">{tx.label || tx.type.replace('_', ' ')}</div>
-                          {tx.amount && tx.symbol && (
-                            <div className="text-xs text-muted-foreground">{tx.amount} {tx.symbol}</div>
-                          )}
-                        </TableCell>
-                        <TableCell>
-                          <div className="text-xs">{formatDate(tx.timestamp)}</div>
-                          {tx.blockNumber && (
-                            <div className="text-xs text-muted-foreground">Block: {tx.blockNumber}</div>
-                          )}
-                        </TableCell>
-                        <TableCell>
-                          <StatusBadge status={tx.status} />
-                          {tx.verificationStatus !== 'not_required' && (
-                            <div className="mt-1">
-                              <Badge variant="outline" className="px-1 py-0.5 text-xs">
-                                <span className="text-[9px]">
-                                  {tx.verificationStatus === 'verified' ? (
-                                    <span className="text-green-500">Verified</span>
-                                  ) : tx.verificationStatus === 'pending' ? (
-                                    <span className="text-amber-500">Pending</span>
-                                  ) : (
-                                    <span className="text-red-500">Failed</span>
-                                  )}
-                                </span>
-                              </Badge>
-                            </div>
-                          )}
-                        </TableCell>
-                        <TableCell>
-                          <Badge variant="outline" className="bg-[#6B00D7]/10 border-[#6B00D7]/30 text-[#FF5AF7]">
-                            <Shield className="h-3 w-3 mr-1" />
-                            L{tx.securityLevel || 1}
-                          </Badge>
-                        </TableCell>
-                        <TableCell>
-                          <div className="flex justify-end">
-                            <Button 
-                              variant="ghost" 
-                              size="icon" 
-                              className="h-7 w-7"
-                              asChild
-                            >
-                              <a 
-                                href={`https://explorer.blockchain.com/tx/${tx.txHash}`} 
-                                target="_blank" 
-                                rel="noopener noreferrer"
-                                onClick={(e) => e.stopPropagation()}
-                              >
-                                <ExternalLink className="h-4 w-4" />
-                              </a>
-                            </Button>
-                          </div>
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                    
-                    {sortedTransactions.length === 0 && (
-                      <TableRow>
-                        <TableCell colSpan={7} className="h-24 text-center">
-                          <div className="flex flex-col items-center justify-center">
-                            <Search className="h-6 w-6 text-muted-foreground mb-2" />
-                            <p className="text-muted-foreground">No transactions found</p>
-                            <p className="text-xs text-muted-foreground">Try adjusting your filters</p>
-                          </div>
-                        </TableCell>
-                      </TableRow>
-                    )}
-                  </TableBody>
-                </Table>
               </div>
               
-              {lastUpdated && (
-                <div className="text-xs text-muted-foreground mt-2 text-right">
-                  Last updated: {new Date(lastUpdated).toLocaleTimeString()}
-                </div>
-              )}
+              <div className="flex flex-wrap gap-2 mt-4">
+                <Select value={selectedBlockchain} onValueChange={setSelectedBlockchain}>
+                  <SelectTrigger className="w-32 bg-black/20 border-gray-800">
+                    <SelectValue placeholder="Chain" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">All Chains</SelectItem>
+                    <SelectItem value="ethereum">Ethereum</SelectItem>
+                    <SelectItem value="solana">Solana</SelectItem>
+                    <SelectItem value="ton">TON</SelectItem>
+                    <SelectItem value="bitcoin">Bitcoin</SelectItem>
+                  </SelectContent>
+                </Select>
+                
+                <Select value={selectedStatus} onValueChange={setSelectedStatus}>
+                  <SelectTrigger className="w-32 bg-black/20 border-gray-800">
+                    <SelectValue placeholder="Status" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">All Statuses</SelectItem>
+                    <SelectItem value="pending">Pending</SelectItem>
+                    <SelectItem value="confirmed">Confirmed</SelectItem>
+                    <SelectItem value="failed">Failed</SelectItem>
+                    <SelectItem value="verified">Verified</SelectItem>
+                  </SelectContent>
+                </Select>
+                
+                <Select value={selectedDirection} onValueChange={setSelectedDirection}>
+                  <SelectTrigger className="w-32 bg-black/20 border-gray-800">
+                    <SelectValue placeholder="Direction" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">All Directions</SelectItem>
+                    <SelectItem value="incoming">Incoming</SelectItem>
+                    <SelectItem value="outgoing">Outgoing</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            </CardHeader>
+            
+            <CardContent className="pt-4 overflow-hidden">
+              <Tabs value={selectedTab} onValueChange={handleTabChange} className="w-full">
+                <TabsList className="w-full bg-black/20 p-0 h-10 overflow-x-auto flex-nowrap">
+                  <TabsTrigger value="all" className="flex-1">All Transactions</TabsTrigger>
+                  {transactionGroups.map(group => (
+                    <TabsTrigger key={group.id} value={group.id} className="flex-1">
+                      {group.name}
+                    </TabsTrigger>
+                  ))}
+                </TabsList>
+                
+                <TabsContent value={selectedTab} className="mt-2">
+                  <ScrollArea className="h-[460px] pr-4">
+                    <Table>
+                      <TableHeader className="bg-black/10">
+                        <TableRow>
+                          <TableHead>Transaction</TableHead>
+                          <TableHead>Chain</TableHead>
+                          <TableHead>Amount</TableHead>
+                          <TableHead>Status</TableHead>
+                          <TableHead>Direction</TableHead>
+                          <TableHead>Time</TableHead>
+                        </TableRow>
+                      </TableHeader>
+                      <TableBody>
+                        {getTransactionsForTab(selectedTab).length > 0 ? (
+                          getTransactionsForTab(selectedTab).map(tx => (
+                            <TableRow 
+                              key={tx.txHash} 
+                              className={`cursor-pointer hover:bg-[#6B00D7]/10 ${selectedTransaction?.txHash === tx.txHash ? 'bg-[#6B00D7]/20' : ''}`}
+                              onClick={() => handleTransactionClick(tx)}
+                            >
+                              <TableCell>
+                                <div className="font-mono text-xs">
+                                  {formatAddress(tx.txHash)}
+                                </div>
+                              </TableCell>
+                              <TableCell>
+                                {formatBlockchainType(tx.blockchain)}
+                              </TableCell>
+                              <TableCell>
+                                {formatAmount(tx.amount, tx.blockchain)}
+                              </TableCell>
+                              <TableCell>
+                                <StatusBadge status={tx.status} />
+                              </TableCell>
+                              <TableCell>
+                                <DirectionBadge direction={tx.direction} />
+                              </TableCell>
+                              <TableCell className="text-xs">
+                                {formatTimestamp(tx.timestamp)}
+                              </TableCell>
+                            </TableRow>
+                          ))
+                        ) : (
+                          <TableRow>
+                            <TableCell colSpan={6} className="text-center text-muted-foreground py-10">
+                              {loadingTransactions ? (
+                                <div className="flex flex-col items-center">
+                                  <RefreshCw className="h-6 w-6 animate-spin text-[#6B00D7] mb-2" />
+                                  <p>Loading transactions...</p>
+                                </div>
+                              ) : (
+                                <div className="flex flex-col items-center">
+                                  <p>No transactions found</p>
+                                  <Button 
+                                    variant="outline" 
+                                    size="sm" 
+                                    className="mt-2"
+                                    onClick={handleRefresh}
+                                  >
+                                    <RefreshCw className="h-4 w-4 mr-2" />
+                                    Refresh
+                                  </Button>
+                                </div>
+                              )}
+                            </TableCell>
+                          </TableRow>
+                        )}
+                      </TableBody>
+                    </Table>
+                  </ScrollArea>
+                </TabsContent>
+              </Tabs>
             </CardContent>
           </Card>
           
           <div className="mt-6">
-            {selectedGroup && (
-              <TransactionGraphCard
-                transactionGroup={selectedGroup}
-                width={800}
-                height={400}
-                onSelectTransaction={handleTransactionClick}
-              />
-            )}
+            <TransactionGraphCard />
           </div>
         </div>
         
@@ -489,6 +365,4 @@ const TransactionMonitorPageContent: React.FC = () => {
   );
 };
 
-// Wrap the component with the error boundary and export
-const TransactionMonitorPage = withTransactionErrorBoundary(TransactionMonitorPageContent);
 export default TransactionMonitorPage;
