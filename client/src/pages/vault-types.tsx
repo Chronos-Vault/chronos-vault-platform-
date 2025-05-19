@@ -516,24 +516,15 @@ const VaultTypesPage = () => {
       
       {/* Main Content */}
       <div className="container mx-auto px-4 pt-8 relative z-10">
-        {/* Modern Header with Back Button */}
-        <div className="flex items-center justify-between mb-8">
-          <div className="flex items-center gap-3">
-            <div className="relative">
-              <div className="absolute inset-0 rounded-full bg-gradient-to-r from-purple-600 via-pink-600 to-blue-600 blur-sm animate-spin-slow"></div>
-              <div className="relative bg-black p-2 rounded-full border border-purple-500/50">
-                <Lock className="h-5 w-5 text-purple-400" />
-              </div>
-            </div>
-            <h1 className="text-3xl md:text-4xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-white via-purple-200 to-white">
-              Select Your Vault
-            </h1>
-          </div>
+        {/* Simple Header with Back Button */}
+        <div className="flex items-center justify-between mb-6">
+          <h1 className="text-3xl font-bold text-white">
+            Select Your Vault
+          </h1>
           
           <Button
-            variant="ghost"
-            size="sm"
-            className="text-gray-300 hover:text-white border border-gray-800 backdrop-blur-sm bg-black/20"
+            variant="outline"
+            className="text-white hover:text-white border border-[#6B00D7] bg-black/20"
             onClick={() => navigate('/my-vaults')}
           >
             <ArrowLeft className="mr-2 h-4 w-4" />
