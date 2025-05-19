@@ -14,7 +14,7 @@ import {
 import { useCVTToken } from '@/contexts/cvt-token-context';
 import { useMultiChain } from '@/contexts/multi-chain-context';
 import { useAuthContext } from '@/contexts/auth-context';
-import logoPath from '@assets/IMG_3764.jpeg';
+import logoPath from '@assets/IMG_3753.jpeg';
 import { 
   DropdownMenu, 
   DropdownMenuContent, 
@@ -327,13 +327,14 @@ export const NavBar: React.FC = () => {
                 </DropdownMenuContent>
               </DropdownMenu>
               
-              {/* CVT Token Balance */}
-              <div className="hidden lg:flex items-center bg-black/60 rounded-full px-3 py-1.5 text-xs border border-purple-900/30">
-                <div className="w-5 h-5 rounded-full bg-gradient-to-br from-[#6B00D7] to-[#FF5AF7] flex items-center justify-center mr-2">
-                  <span className="text-[10px] font-bold text-white">CVT</span>
-                </div>
-                <span className="text-pink-400">{tokenBalance.toLocaleString()} CVT</span>
-              </div>
+              {/* Connect Wallet Button */}
+              <Button 
+                className="bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] hover:from-[#FF5AF7] hover:to-[#6B00D7] text-white border-none shadow-md shadow-purple-900/20 hover:shadow-purple-900/40 transition-all duration-300"
+                size="sm"
+              >
+                <Wallet className="w-4 h-4 mr-2" />
+                Connect Wallet
+              </Button>
               
               {/* Network Status */}
               <div className="hidden lg:flex items-center bg-black/60 rounded-full px-3 py-1.5 text-xs border border-purple-900/30">
