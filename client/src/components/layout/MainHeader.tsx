@@ -155,13 +155,6 @@ const MainHeader = () => {
         { name: "Security Tutorials", href: "/security-tutorials", icon: "📚", highlight: true, isNew: true },
         { name: "Security Video Guides", href: "/security-tutorials-video", icon: "🎬", highlight: true, isNew: true },
         { name: "Technical Security Docs", href: "/security-documentation", icon: "📑", highlight: true, isNew: true },
-        { name: "Smart Contract Vault", href: "/smart-contract-vault", icon: "📘", highlight: true },
-        { name: "Multi-Signature Vault", href: "/multi-signature-vault-new", icon: "🔒" },
-        { name: "Biometric Vault", href: "/biometric-vault", icon: "📱" },
-        { name: "Cross-Chain Vault", href: "/cross-chain-vault", icon: "🧩" },
-        { name: "Geo-Location Vault", href: "/geo-vault", icon: "🌎" },
-        { name: "Time-Lock Memory Vault", href: "/specialized-vault-memory", icon: "⏰" },
-        { name: "Investment Vault", href: "/investment-discipline-vault", icon: "💎" },
       ]
     },
     {
@@ -432,50 +425,6 @@ const MainHeader = () => {
                         isNew={true}
                       >
                         Detailed technical specifications for security features
-                      </ListItem>
-                      <ListItem
-                        href="/smart-contract-vault"
-                        title="📘 Smart Contract Vault"
-                        highlight={true}
-                        isNew={true}
-                      >
-                        ERC-4626 compliant tokenized vault with cross-chain security
-                      </ListItem>
-                      <ListItem 
-                        href="/multi-signature-vault-new" 
-                        title="🔒 Multi-Signature Vault"
-                      >
-                        Enhanced security requiring multiple approvals for access
-                      </ListItem>
-                      <ListItem 
-                        href="/biometric-vault" 
-                        title="📱 Biometric Vault"
-                      >
-                        Secure vaults with biometric authentication
-                      </ListItem>
-                      <ListItem 
-                        href="/cross-chain-vault" 
-                        title="🧩 Cross-Chain Vault"
-                      >
-                        Assets secured across multiple blockchain networks
-                      </ListItem>
-                      <ListItem 
-                        href="/geo-vault" 
-                        title="🌎 Geo-Location Vault"
-                      >
-                        Access controlled by physical location requirements
-                      </ListItem>
-                      <ListItem 
-                        href="/specialized-vault-memory" 
-                        title="⏰ Time-Lock Memory Vault"
-                      >
-                        Store digital assets with multimedia memories
-                      </ListItem>
-                      <ListItem 
-                        href="/investment-discipline-vault" 
-                        title="💎 Investment Discipline Vault"
-                      >
-                        Strategy-based vaults for investment discipline
                       </ListItem>
                     </ul>
                   </NavigationMenuContent>
