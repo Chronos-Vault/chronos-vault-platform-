@@ -94,6 +94,7 @@ import TonWalletCrossChainBridgePage from '@/pages/ton-wallet-cross-chain-bridge
 import CrossChainVsAtomicSwapPage from '@/pages/cross-chain-vs-atomic-swap';
 import BridgeVsSwapPage from '@/pages/bridge-vs-swap';
 import SecurityDashboardPage from '@/pages/security-dashboard';
+import TripleChainSecurityDashboardPage from '@/pages/security-dashboard-page';
 import BitcoinHalvingPage from '@/pages/bitcoin-halving';
 
 // Token & Payment Pages
@@ -157,7 +158,7 @@ const App: React.FC = () => {
                       <Route path="/device-recovery" component={DeviceRecoveryPage} />
                       
                       {/* Security Pages */}
-                      <Route path="/security-dashboard" component={SecurityDashboardPage} />
+                      <Route path="/security-dashboard" component={TripleChainSecurityDashboardPage} />
                       <Route path="/ton-security" component={TonSecurityPage} />
                       <Route path="/cross-chain-security" component={CrossChainSecurityPage} />
                       <Route path="/security-verification" component={SecurityVerificationPage} />
