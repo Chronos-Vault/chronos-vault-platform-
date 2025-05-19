@@ -879,7 +879,7 @@ function InvestmentDisciplineVault() {
             </div>
             
             {/* Security Tip */}
-            <div className="p-4 bg-gradient-to-r from-[#3F51FF]/10 to-[#6B00D7]/5 rounded-lg border border-[#3F51FF]/30">
+            <div className="p-4 bg-black/20 rounded-lg border border-[#3F51FF]/30 overflow-hidden">
               <div className="flex items-start">
                 <div className="p-2 rounded-full bg-[#3F51FF]/20 mr-3 mt-1">
                   <Shield className="h-4 w-4 text-[#3F51FF]" />
@@ -1695,8 +1695,9 @@ function InvestmentDisciplineVault() {
   };
   
   return (
-    <div className="max-w-7xl mx-auto p-4 sm:p-6">
-      <div className="mb-8">
+    <div className="max-w-7xl mx-auto p-4 sm:p-6 overflow-hidden relative">
+      {/* Main container with overflow hidden to prevent gradient leakage */}
+      <div className="mb-8 relative z-10">
         <div className="flex justify-between items-center">
           <div>
             <h1 className="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-[#3F51FF] to-[#8F9FFF]">
@@ -1722,7 +1723,7 @@ function InvestmentDisciplineVault() {
         </div>
       </div>
       
-      <div className="min-h-[400px]">
+      <div className="min-h-[400px] relative z-10 overflow-hidden">
         {renderStepContent()}
       </div>
       
