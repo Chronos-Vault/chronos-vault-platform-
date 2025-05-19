@@ -83,11 +83,11 @@ export const NavBar: React.FC = () => {
                   />
                 </div>
                 <div className="relative">
-                  <h1 className="text-xl font-bold group-hover:scale-105 transition-transform duration-300">
-                    <span className="bg-clip-text text-transparent bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] group-hover:from-[#FF5AF7] group-hover:to-[#6B00D7] transition-all duration-500">Chronos</span> 
-                    <span className="text-white group-hover:text-[#FF5AF7]/90 transition-colors duration-500">Vault</span>
+                  <h1 className="text-xl font-bold group-hover:scale-105 transition-transform duration-700">
+                    <span className="bg-clip-text text-transparent bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] group-hover:from-[#FF5AF7] group-hover:to-[#6B00D7] transition-all duration-1000">Chronos</span> 
+                    <span className="text-white group-hover:text-[#FF5AF7]/90 transition-colors duration-1000">Vault</span>
                   </h1>
-                  <div className="absolute -top-4 -right-4 bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] text-white text-[10px] px-2 py-0.5 rounded-full font-bold tracking-wider shadow-md shadow-[#FF5AF7]/30 animate-pulse group-hover:shadow-[#FF5AF7]/50 group-hover:shadow-lg transition-all duration-300">BETA</div>
+                  <div className="absolute -top-4 -right-4 bg-gradient-to-r from-[#FF5AF7] to-[#FF5AF7] text-white text-[10px] px-2 py-0.5 rounded-full font-bold tracking-wider shadow-md shadow-[#FF5AF7]/30 animate-pulse group-hover:shadow-[#FF5AF7]/50 group-hover:shadow-lg transition-all duration-700">BETA</div>
                 </div>
               </Link>
             </div>
