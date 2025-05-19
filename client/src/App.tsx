@@ -110,6 +110,7 @@ import CvtStakingPage from '@/pages/cvt-staking';
 import CvtTokenPage from '@/pages/cvt-token';
 import CvtPaymentPage from '@/pages/cvt-payment';
 import SubscriptionPage from '@/pages/subscription';
+import GiftCryptoPage from '@/pages/gift-crypto';
 
 // Create a client for React Query
 const queryClient = new QueryClient({
@@ -232,7 +233,7 @@ const App: React.FC = () => {
                       <Route path="/cvt-payment" component={CvtPaymentPage} />
                       <Route path="/subscription" component={SubscriptionPage} />
                       <Route path="/token-vaults" component={TokenVaultsPage} />
-                      <Route path="/gift-crypto" component={CvtPaymentPage} />
+                      <Route path="/gift-crypto" component={GiftCryptoPage} />
                       
                       {/* Documentation Pages */}
                       <Route path="/docs" component={DocumentationPage} />
