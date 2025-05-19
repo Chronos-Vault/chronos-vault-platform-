@@ -72,9 +72,6 @@ export const NavBar: React.FC = () => {
                     src="/chronos-vault-logo.jpeg" 
                     alt="Chronos Vault Logo" 
                     className="w-full h-full object-cover" 
-                    onError={(e) => {
-                      e.currentTarget.src = "/chronos-logo.jpeg";
-                    }}
                   />
                 </div>
                 <div className="relative">
