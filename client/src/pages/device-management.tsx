@@ -35,7 +35,7 @@ import { useMultiDeviceAuth } from '../hooks/use-multi-device-auth';
 const DeviceManagementPage: React.FC = () => {
   const [, setLocation] = useLocation();
   const { toast } = useToast();
-  const { isAuthenticated, wallet } = useAuthContext();
+  const { isAuthenticated, address } = useAuthContext();
   const { 
     devices, 
     isLoading, 

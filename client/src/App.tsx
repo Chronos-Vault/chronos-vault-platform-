@@ -35,6 +35,7 @@ import VaultTypesClean from './pages/vault-types-clean';
 import VaultDetails from './pages/vault-details';
 import VaultExplorer from './pages/vault-explorer';
 import DeviceRecovery from './pages/device-recovery';
+import DeviceManagementPage from './pages/device-management';
 
 // Standard Vault Types
 import BiometricVault from './pages/biometric-vault';
@@ -138,7 +139,6 @@ import SecurityVerificationDemo from './pages/security-verification-demo';
 import SecurityVerification from './pages/security-verification';
 import SecurityPage from './pages/security-page';
 import SecurityDashboardPage from './pages/security-dashboard-page';
-import DeviceManagementPage from './pages/device-management';
 import TechnicalSpecification from './pages/technical-specification';
 import TransactionMonitor from './pages/transaction-monitor';
 import TransactionVerification from './pages/transaction-verification';

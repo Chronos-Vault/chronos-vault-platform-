@@ -28,7 +28,7 @@ import { useSecurityService } from '@/hooks/use-security-service';
 const DeviceRecoveryFlow: React.FC = () => {
   const [, setLocation] = useLocation();
   const { toast } = useToast();
-  const { isAuthenticated, wallet, connectWallet } = useAuthContext();
+  const { isAuthenticated, address, connectWallet } = useAuthContext();
   const { generateRecoveryProof, verifyRecoverySignature, generateQRPairingCode } = useSecurityService();
   
   const [recoveryMethod, setRecoveryMethod] = useState<'multi-sig' | 'recovery-key' | 'qr-pairing'>('multi-sig');
@@ -98,7 +98,7 @@ const DeviceRecoveryFlow: React.FC = () => {
   const generatePairingQRCode = async () => {
     try {
       // In a real implementation, this would generate a secure, time-limited pairing code
-      const pairingCode = await generateQRPairingCode(wallet?.address || '');
+      const pairingCode = await generateQRPairingCode(address || '');
       setQrCodeData(pairingCode);
       
       // Simulate checking for pairing

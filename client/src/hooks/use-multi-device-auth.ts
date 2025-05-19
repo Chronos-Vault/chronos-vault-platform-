@@ -82,7 +82,7 @@ export function useMultiDeviceAuth() {
   // Register a new device
   const registerDevice = useCallback(async (deviceName: string): Promise<boolean> => {
     if (!address) {
-      console.error('No wallet connected');
+      console.error('No wallet address available');
       return false;
     }
     
@@ -106,7 +106,7 @@ export function useMultiDeviceAuth() {
       console.error('Error registering device:', error);
       return false;
     }
-  }, [wallet, proposeSecurityOperation, signOperation]);
+  }, [address, proposeSecurityOperation, signOperation]);
   
   // Approve a device registration request
   const approveDevice = useCallback(async (operationId: string): Promise<boolean> => {
@@ -156,7 +156,7 @@ export function useMultiDeviceAuth() {
   
   // Revoke access for a device
   const revokeDevice = useCallback(async (deviceId: string): Promise<boolean> => {
-    if (!wallet?.address) {
+    if (!address) {
       console.error('No wallet connected');
       return false;
     }
@@ -165,7 +165,7 @@ export function useMultiDeviceAuth() {
       // Propose a device revocation operation
       const operationId = await proposeSecurityOperation('DEVICE_REVOCATION', {
         deviceId,
-        walletAddress: wallet.address,
+        walletAddress: address,
         timestamp: Date.now()
       });
       
@@ -193,7 +193,7 @@ export function useMultiDeviceAuth() {
       console.error('Error revoking device:', error);
       return false;
     }
-  }, [wallet, devices, proposeSecurityOperation, signOperation, executeOperation]);
+  }, [address, devices, proposeSecurityOperation, signOperation, executeOperation]);
   
   // Helper to get a device ID
   const getDeviceId = (): string => {
