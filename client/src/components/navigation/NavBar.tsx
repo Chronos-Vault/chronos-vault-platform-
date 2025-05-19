@@ -95,7 +95,7 @@ export const NavBar: React.FC = () => {
             {/* Mobile Menu Button - Only on mobile */}
             <div className="md:hidden">
               <button 
-                className="text-purple-400 hover:text-purple-300 transition-colors"
+                className="text-[#FF5AF7] hover:text-[#6B00D7] transition-colors duration-300"
                 onClick={() => setSidebarOpen(true)}
                 aria-label="Open menu"
               >
