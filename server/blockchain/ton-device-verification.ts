@@ -507,6 +507,7 @@ class TONDeviceVerificationService {
           }),
           signatureData: '',
           verificationStatus: 'verified',
+          expiresAt: new Date(Date.now() + 90 * 24 * 60 * 60 * 1000), // 90 days expiration
           metadata: {
             action: 'setupGeolocation',
             restrictions
