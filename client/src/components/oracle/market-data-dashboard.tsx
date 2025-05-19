@@ -178,37 +178,72 @@ export function MarketDataDashboard() {
         <TabsContent value="price" className="mt-4 space-y-4">
           <div className="flex justify-between items-center">
             <h3 className="text-lg font-medium">BTC Price History</h3>
-            <div className="flex space-x-1">
-              <button
-                onClick={() => setTimeframe("1m")}
-                className={`px-2 py-1 text-xs rounded ${timeframe === "1m" ? "bg-[#3F51FF] text-white" : "bg-gray-800"}`}
-              >
-                1M
-              </button>
-              <button
-                onClick={() => setTimeframe("3m")}
-                className={`px-2 py-1 text-xs rounded ${timeframe === "3m" ? "bg-[#3F51FF] text-white" : "bg-gray-800"}`}
-              >
-                3M
-              </button>
-              <button
-                onClick={() => setTimeframe("6m")}
-                className={`px-2 py-1 text-xs rounded ${timeframe === "6m" ? "bg-[#3F51FF] text-white" : "bg-gray-800"}`}
-              >
-                6M
-              </button>
-              <button
-                onClick={() => setTimeframe("1y")}
-                className={`px-2 py-1 text-xs rounded ${timeframe === "1y" ? "bg-[#3F51FF] text-white" : "bg-gray-800"}`}
-              >
-                1Y
-              </button>
-              <button
-                onClick={() => setTimeframe("all")}
-                className={`px-2 py-1 text-xs rounded ${timeframe === "all" ? "bg-[#3F51FF] text-white" : "bg-gray-800"}`}
-              >
-                ALL
-              </button>
+            <div className="flex items-center space-x-3">
+              <div className="flex items-center space-x-2">
+                <span className="text-sm text-gray-400">Network:</span>
+                <select 
+                  value={selectedNetwork}
+                  onChange={(e) => setSelectedNetwork(e.target.value as Network)}
+                  className="bg-gray-800 border border-gray-700 text-sm rounded-lg px-2 py-1"
+                >
+                  <option value="ethereum">Ethereum (Sepolia)</option>
+                  <option value="solana">Solana (Devnet)</option>
+                  <option value="ton">TON (Testnet)</option>
+                </select>
+              </div>
+              <div className="flex space-x-1">
+                <button
+                  onClick={() => setTimeframe("1m")}
+                  className={`px-2 py-1 text-xs rounded ${timeframe === "1m" ? "bg-[#3F51FF] text-white" : "bg-gray-800"}`}
+                >
+                  1M
+                </button>
+                <button
+                  onClick={() => setTimeframe("3m")}
+                  className={`px-2 py-1 text-xs rounded ${timeframe === "3m" ? "bg-[#3F51FF] text-white" : "bg-gray-800"}`}
+                >
+                  3M
+                </button>
+                <button
+                  onClick={() => setTimeframe("6m")}
+                  className={`px-2 py-1 text-xs rounded ${timeframe === "6m" ? "bg-[#3F51FF] text-white" : "bg-gray-800"}`}
+                >
+                  6M
+                </button>
+                <button
+                  onClick={() => setTimeframe("1y")}
+                  className={`px-2 py-1 text-xs rounded ${timeframe === "1y" ? "bg-[#3F51FF] text-white" : "bg-gray-800"}`}
+                >
+                  1Y
+                </button>
+                <button
+                  onClick={() => setTimeframe("all")}
+                  className={`px-2 py-1 text-xs rounded ${timeframe === "all" ? "bg-[#3F51FF] text-white" : "bg-gray-800"}`}
+                >
+                  ALL
+                </button>
+              </div>
+            </div>
+          </div>
+          
+          {/* Live Price Feeds Section */}
+          <div className="mb-6">
+            <h3 className="text-lg font-medium mb-3">Live Price Feeds</h3>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              {isLoading ? (
+                Array(3).fill(0).map((_, index) => (
+                  <OraclePriceFeed key={index} isLoading={true} />
+                ))
+              ) : error ? (
+                <div className="col-span-3 bg-red-500/10 border border-red-500/30 rounded-lg p-4 text-center">
+                  <p className="text-red-400">{error}</p>
+                  <p className="text-gray-400 text-sm mt-1">Showing historical data instead</p>
+                </div>
+              ) : (
+                priceFeeds.slice(0, 3).map(feed => (
+                  <OraclePriceFeed key={feed.pair} feed={feed} />
+                ))
+              )}
             </div>
           </div>
           
@@ -221,7 +256,7 @@ export function MarketDataDashboard() {
                   </div>
                 ) : (
                   <ResponsiveContainer width="100%" height="100%">
-                    <AreaChart data={MOCK_BTC_PRICE_DATA.slice(-12)}>
+                    <AreaChart data={chartData.slice(-12)}>
                       <defs>
                         <linearGradient id="colorPrice" x1="0" y1="0" x2="0" y2="1">
                           <stop offset="5%" stopColor="#3F51FF" stopOpacity={0.3}/>
@@ -259,7 +294,13 @@ export function MarketDataDashboard() {
               <div className="grid grid-cols-4 gap-4 mt-6">
                 <div className="bg-black/40 p-3 rounded-lg">
                   <p className="text-xs text-gray-400">Current Price</p>
-                  <p className="text-xl font-bold">${MOCK_BTC_PRICE_DATA[MOCK_BTC_PRICE_DATA.length - 1].price.toLocaleString()}</p>
+                  <p className="text-xl font-bold">
+                    {isLoading ? (
+                      <span className="animate-pulse">Loading...</span>
+                    ) : (
+                      `$${chartData[chartData.length - 1].price.toLocaleString()}`
+                    )}
+                  </p>
                 </div>
                 <div className="bg-black/40 p-3 rounded-lg">
                   <p className="text-xs text-gray-400">All Time High</p>
@@ -267,7 +308,9 @@ export function MarketDataDashboard() {
                 </div>
                 <div className="bg-black/40 p-3 rounded-lg">
                   <p className="text-xs text-gray-400">30d Change</p>
-                  <p className="text-xl font-bold text-green-500">+21.2%</p>
+                  <p className="text-xl font-bold text-green-500">
+                    {error ? "+0.0%" : "+21.2%"}
+                  </p>
                 </div>
                 <div className="bg-black/40 p-3 rounded-lg">
                   <p className="text-xs text-gray-400">Market Cap</p>

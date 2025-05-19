@@ -51,8 +51,8 @@ const OraclePriceFeed: React.FC<OraclePriceFeedProps> = ({ feed, isLoading = fal
       <CardContent className="pt-4 pb-4">
         <div className="flex justify-between items-center mb-2">
           <div className="font-medium text-gray-200">{feed.pair}</div>
-          <Badge variant={feed.source === 'chainlink' ? 'default' : 'secondary'} className="bg-[#3F51FF] text-xs">
-            {feed.source === 'chainlink' ? 'Chainlink Oracle' : 'TON Oracle'}
+          <Badge className="bg-[#3F51FF] text-xs">
+            {feed.network === 'ton' ? 'TON Oracle' : 'Chainlink Oracle'}
           </Badge>
         </div>
         <div className="text-2xl font-bold mb-2">

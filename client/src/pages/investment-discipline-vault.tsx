@@ -32,6 +32,7 @@ import { useSolana } from '@/contexts/solana-context';
 import { SentimentAnalysis } from '@/components/sentiment/sentiment-analysis';
 import SentimentAlerts from '@/components/sentiment/sentiment-alerts';
 import { SentimentData, sentimentAnalysisService, SentimentLevel } from '@/services/sentiment-analysis-service';
+import { chainlinkOracleService, type PriceFeed, type Network } from '@/services/chainlink-oracle-service';
 import { TechnicalIndicators, TechnicalIndicator } from '@/components/technical/technical-indicators';
 import { MarketDataDashboard } from '@/components/oracle/market-data-dashboard';
 import { PortfolioManagement } from '@/components/portfolio/portfolio-management';
@@ -75,6 +76,21 @@ function InvestmentDisciplineVault() {
   const [initialAmount, setInitialAmount] = useState<string>('');
   const [selectedBlockchain, setSelectedBlockchain] = useState<BlockchainType>(BlockchainType.TON);
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  
+  // Price feed and market data
+  const [priceFeeds, setPriceFeeds] = useState<PriceFeed[]>([]);
+  const [isPriceFeedLoading, setIsPriceFeedLoading] = useState<boolean>(true);
+  const [priceFeedError, setPriceFeedError] = useState<string | null>(null);
+  const [selectedOracleNetwork, setSelectedOracleNetwork] = useState<Network>(
+    () => {
+      switch (selectedBlockchain) {
+        case BlockchainType.ETHEREUM: return 'ethereum';
+        case BlockchainType.SOLANA: return 'solana';
+        case BlockchainType.TON: return 'ton';
+        default: return 'ethereum';
+      }
+    }
+  );
   
   // Sentiment analysis data
   const [sentimentData, setSentimentData] = useState<SentimentData | undefined>(undefined);
