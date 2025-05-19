@@ -34,6 +34,7 @@ import VaultTypes from './pages/vault-types';
 import VaultTypesClean from './pages/vault-types-clean';
 import VaultDetails from './pages/vault-details';
 import VaultExplorer from './pages/vault-explorer';
+import DeviceRecovery from './pages/device-recovery';
 
 // Standard Vault Types
 import BiometricVault from './pages/biometric-vault';
