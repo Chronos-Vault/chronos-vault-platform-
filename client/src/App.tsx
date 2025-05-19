@@ -4,7 +4,10 @@ import { Toaster } from '@/components/ui/toaster';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ErrorBoundary } from '@/components/error-boundary/ErrorBoundary';
 import { TransactionErrorProvider } from '@/contexts/transaction-error-context';
-import BasicHeader from '@/components/layout/BasicHeader';
+import { CVTTokenProvider } from '@/contexts/cvt-token-context';
+import { AuthProvider } from '@/contexts/auth-context';
+import { MultiChainProvider } from '@/contexts/multi-chain-context';
+import { NavBar } from '@/components/navigation/NavBar';
 import Footer from '@/components/layout/footer';
 
 // Main Pages
@@ -110,101 +113,107 @@ const App: React.FC = () => {
     <ErrorBoundary name="App">
       <QueryClientProvider client={queryClient}>
         <TransactionErrorProvider>
-          <div className="min-h-screen bg-black text-white">
-            <BasicHeader />
-            <div className="pt-2">
-              <Switch>
-                {/* Main Pages */}
-                <Route path="/" component={HomePage} />
-                <Route path="/my-vaults" component={MyVaultsPage} />
-                <Route path="/about" component={AboutPage} />
-                <Route path="/faq" component={FaqPage} />
-                <Route path="/team" component={TeamPage} />
-                <Route path="/whitepaper" component={WhitepaperPage} />
-                <Route path="/documentation" component={DocumentationPage} />
-                <Route path="/vault-school" component={VaultSchoolPage} />
-                <Route path="/terms-of-service" component={TermsOfServicePage} />
-                <Route path="/cookie-policy" component={CookiePolicyPage} />
-                
-                {/* Vault Selection & Showcase */}
-                <Route path="/vault-types" component={VaultTypesPage} />
-                <Route path="/vault-selector" component={VaultTypesSelector} />
-                <Route path="/vault-showcase" component={VaultShowcase} />
-                
-                {/* Vault Creation */}
-                <Route path="/create-vault" component={CreateVaultPage} />
-                <Route path="/create-vault-enhanced" component={CreateVaultEnhancedPage} />
-                <Route path="/specialized-vault-creation" component={SpecializedVaultCreationPage} />
-                <Route path="/create-ton-vault" component={CreateTonVaultPage} />
-                
-                {/* Monitoring & Management */}
-                <Route path="/transaction-monitor" component={TransactionMonitorPage} />
-                <Route path="/cross-chain-monitor" component={CrossChainMonitorPage} />
-                <Route path="/cross-chain-fee-monitor" component={CrossChainFeesPage} />
-                <Route path="/vault-explorer" component={VaultExplorerPage} />
-                <Route path="/device-management" component={DeviceManagementPage} />
-                <Route path="/device-recovery" component={DeviceRecoveryPage} />
-                
-                {/* Security Pages */}
-                <Route path="/ton-security" component={TonSecurityPage} />
-                <Route path="/cross-chain-security" component={CrossChainSecurityPage} />
-                <Route path="/security-verification" component={SecurityVerificationPage} />
-                <Route path="/security-verification-demo" component={SecurityVerificationDemoPage} />
-                <Route path="/behavioral-authentication" component={BehavioralAuthenticationPage} />
-                <Route path="/zero-knowledge-verification" component={ZeroKnowledgeVerificationPage} />
-                <Route path="/zk-privacy-demo" component={ZkPrivacyDemoPage} />
-                <Route path="/triple-chain-security-demo" component={TripleChainSecurityDemoPage} />
-                
-                {/* Blockchain Integration */}
-                <Route path="/ethereum-integration" component={EthereumIntegrationPage} />
-                <Route path="/solana-integration" component={SolanaIntegrationPage} />
-                <Route path="/ton-integration" component={TonIntegrationPage} />
-                <Route path="/connect-ton" component={ConnectTonPage} />
-                
-                {/* Basic Vault Types */}
-                <Route path="/time-lock-vault" component={TimeLockVaultPage} />
-                <Route path="/multi-signature-vault" component={MultiSignatureVaultPage} />
-                <Route path="/geo-location-vault" component={GeoLocationVaultPage} />
-                <Route path="/biometric-vault" component={BiometricVaultPage} />
-                <Route path="/smart-contract-vault" component={SmartContractVaultPage} />
-                
-                {/* Advanced Vault Types */}
-                <Route path="/cross-chain-vault" component={CrossChainVaultPage} />
-                <Route path="/cross-chain-fragment-vault" component={CrossChainFragmentVaultPage} />
-                <Route path="/quantum-resistant-vault" component={QuantumResistantVaultPage} />
-                <Route path="/sovereign-fortress-vault" component={SovereignFortressVaultPage} />
-                <Route path="/nft-powered-vault" component={NFTPoweredVaultPage} />
-                <Route path="/unique-security-vault" component={UriqueSecurityVaultPage} />
-                <Route path="/enhanced-biometric-vault" component={EnhancedBiometricVaultPage} />
-                <Route path="/enhanced-smart-contract-vault" component={EnhancedSmartContractVaultPage} />
-                
-                {/* Specialized Vault Types */}
-                <Route path="/ai-assisted-investment-vault" component={AiAssistedInvestmentVaultPage} />
-                <Route path="/intent-inheritance-vault" component={IntentInheritanceVaultPage} />
-                <Route path="/time-locked-memory-vault" component={TimeLockedMemoryVaultPage} />
-                <Route path="/investment-discipline-vault" component={InvestmentDisciplineVaultPage} />
-                <Route path="/dynamic-vault-form" component={DynamicVaultFormPage} />
-                <Route path="/family-heritage-vault-form" component={FamilyHeritageVaultFormPage} />
-                <Route path="/bitcoin-halving-vault" component={BitcoinHalvingVaultPage} />
-                
-                {/* Cross-Chain Features */}
-                <Route path="/cross-chain-bridge" component={CrossChainBridgePage} />
-                <Route path="/cross-chain-atomic-swap" component={CrossChainAtomicSwapPage} />
-                <Route path="/ton-wallet-cross-chain-bridge" component={TonWalletCrossChainBridgePage} />
-                
-                {/* Token & Payment */}
-                <Route path="/cvt-tokenomics" component={CvtTokenomicsPage} />
-                <Route path="/cvt-utility" component={CvtUtilityPage} />
-                <Route path="/cvt-token" component={CvtTokenPage} />
-                <Route path="/cvt-staking" component={CvtStakingPage} />
-                <Route path="/cvt-payment" component={CvtPaymentPage} />
-                <Route path="/subscription" component={SubscriptionPage} />
-              </Switch>
-              
-              <Footer />
-            </div>
-          </div>
-          <Toaster />
+          <AuthProvider>
+            <MultiChainProvider>
+              <CVTTokenProvider>
+                <div className="min-h-screen bg-black text-white">
+                  <NavBar />
+                  <div className="pt-2">
+                    <Switch>
+                      {/* Main Pages */}
+                      <Route path="/" component={HomePage} />
+                      <Route path="/my-vaults" component={MyVaultsPage} />
+                      <Route path="/about" component={AboutPage} />
+                      <Route path="/faq" component={FaqPage} />
+                      <Route path="/team" component={TeamPage} />
+                      <Route path="/whitepaper" component={WhitepaperPage} />
+                      <Route path="/documentation" component={DocumentationPage} />
+                      <Route path="/vault-school" component={VaultSchoolPage} />
+                      <Route path="/terms-of-service" component={TermsOfServicePage} />
+                      <Route path="/cookie-policy" component={CookiePolicyPage} />
+                      
+                      {/* Vault Selection & Showcase */}
+                      <Route path="/vault-types" component={VaultTypesPage} />
+                      <Route path="/vault-selector" component={VaultTypesSelector} />
+                      <Route path="/vault-showcase" component={VaultShowcase} />
+                      
+                      {/* Vault Creation */}
+                      <Route path="/create-vault" component={CreateVaultPage} />
+                      <Route path="/create-vault-enhanced" component={CreateVaultEnhancedPage} />
+                      <Route path="/specialized-vault-creation" component={SpecializedVaultCreationPage} />
+                      <Route path="/create-ton-vault" component={CreateTonVaultPage} />
+                      
+                      {/* Monitoring & Management */}
+                      <Route path="/transaction-monitor" component={TransactionMonitorPage} />
+                      <Route path="/cross-chain-monitor" component={CrossChainMonitorPage} />
+                      <Route path="/cross-chain-fee-monitor" component={CrossChainFeesPage} />
+                      <Route path="/vault-explorer" component={VaultExplorerPage} />
+                      <Route path="/device-management" component={DeviceManagementPage} />
+                      <Route path="/device-recovery" component={DeviceRecoveryPage} />
+                      
+                      {/* Security Pages */}
+                      <Route path="/ton-security" component={TonSecurityPage} />
+                      <Route path="/cross-chain-security" component={CrossChainSecurityPage} />
+                      <Route path="/security-verification" component={SecurityVerificationPage} />
+                      <Route path="/security-verification-demo" component={SecurityVerificationDemoPage} />
+                      <Route path="/behavioral-authentication" component={BehavioralAuthenticationPage} />
+                      <Route path="/zero-knowledge-verification" component={ZeroKnowledgeVerificationPage} />
+                      <Route path="/zk-privacy-demo" component={ZkPrivacyDemoPage} />
+                      <Route path="/triple-chain-security-demo" component={TripleChainSecurityDemoPage} />
+                      
+                      {/* Blockchain Integration */}
+                      <Route path="/ethereum-integration" component={EthereumIntegrationPage} />
+                      <Route path="/solana-integration" component={SolanaIntegrationPage} />
+                      <Route path="/ton-integration" component={TonIntegrationPage} />
+                      <Route path="/connect-ton" component={ConnectTonPage} />
+                      
+                      {/* Basic Vault Types */}
+                      <Route path="/time-lock-vault" component={TimeLockVaultPage} />
+                      <Route path="/multi-signature-vault" component={MultiSignatureVaultPage} />
+                      <Route path="/geo-location-vault" component={GeoLocationVaultPage} />
+                      <Route path="/biometric-vault" component={BiometricVaultPage} />
+                      <Route path="/smart-contract-vault" component={SmartContractVaultPage} />
+                      
+                      {/* Advanced Vault Types */}
+                      <Route path="/cross-chain-vault" component={CrossChainVaultPage} />
+                      <Route path="/cross-chain-fragment-vault" component={CrossChainFragmentVaultPage} />
+                      <Route path="/quantum-resistant-vault" component={QuantumResistantVaultPage} />
+                      <Route path="/sovereign-fortress-vault" component={SovereignFortressVaultPage} />
+                      <Route path="/nft-powered-vault" component={NFTPoweredVaultPage} />
+                      <Route path="/unique-security-vault" component={UriqueSecurityVaultPage} />
+                      <Route path="/enhanced-biometric-vault" component={EnhancedBiometricVaultPage} />
+                      <Route path="/enhanced-smart-contract-vault" component={EnhancedSmartContractVaultPage} />
+                      
+                      {/* Specialized Vault Types */}
+                      <Route path="/ai-assisted-investment-vault" component={AiAssistedInvestmentVaultPage} />
+                      <Route path="/intent-inheritance-vault" component={IntentInheritanceVaultPage} />
+                      <Route path="/time-locked-memory-vault" component={TimeLockedMemoryVaultPage} />
+                      <Route path="/investment-discipline-vault" component={InvestmentDisciplineVaultPage} />
+                      <Route path="/dynamic-vault-form" component={DynamicVaultFormPage} />
+                      <Route path="/family-heritage-vault-form" component={FamilyHeritageVaultFormPage} />
+                      <Route path="/bitcoin-halving-vault" component={BitcoinHalvingVaultPage} />
+                      
+                      {/* Cross-Chain Features */}
+                      <Route path="/cross-chain-bridge" component={CrossChainBridgePage} />
+                      <Route path="/cross-chain-atomic-swap" component={CrossChainAtomicSwapPage} />
+                      <Route path="/ton-wallet-cross-chain-bridge" component={TonWalletCrossChainBridgePage} />
+                      
+                      {/* Token & Payment */}
+                      <Route path="/cvt-tokenomics" component={CvtTokenomicsPage} />
+                      <Route path="/cvt-utility" component={CvtUtilityPage} />
+                      <Route path="/cvt-token" component={CvtTokenPage} />
+                      <Route path="/cvt-staking" component={CvtStakingPage} />
+                      <Route path="/cvt-payment" component={CvtPaymentPage} />
+                      <Route path="/subscription" component={SubscriptionPage} />
+                    </Switch>
+                    
+                    <Footer />
+                  </div>
+                  <Toaster />
+                </div>
+              </CVTTokenProvider>
+            </MultiChainProvider>
+          </AuthProvider>
         </TransactionErrorProvider>
       </QueryClientProvider>
     </ErrorBoundary>
