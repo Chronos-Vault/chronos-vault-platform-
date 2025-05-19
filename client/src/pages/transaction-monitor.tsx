@@ -94,6 +94,7 @@ const formatAddress = (address: string) => {
 };
 
 import { withTransactionErrorBoundary, useTransactionErrorHandler } from '../components/error-boundary/TransactionErrorBoundary';
+import { CrossChainErrorCategory } from '../components/ui/error-message';
 
 const TransactionMonitorPageContent: React.FC = () => {
   // Add error handler hook
@@ -488,4 +489,6 @@ const TransactionMonitorPageContent: React.FC = () => {
   );
 };
 
+// Wrap the component with the error boundary and export
+const TransactionMonitorPage = withTransactionErrorBoundary(TransactionMonitorPageContent);
 export default TransactionMonitorPage;

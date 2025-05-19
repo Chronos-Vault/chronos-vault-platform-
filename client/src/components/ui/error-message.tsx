@@ -1,9 +1,12 @@
-import React from 'react';
-import { AlertTriangle, AlertCircle, RefreshCw, ExternalLink, HelpCircle, ShieldAlert } from 'lucide-react';
+import React, { useState } from 'react';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
-// Import the error categories - temporarily defining here until shared types are properly set up
+import { AlertCircle, XCircle, CheckCircle, Clock, Info, ChevronDown, ChevronUp, RotateCw, ExternalLink } from 'lucide-react';
+import { Badge } from '@/components/ui/badge';
+
+// Export error categories to be used throughout the app
 export enum CrossChainErrorCategory {
   // Network related
   CONNECTION_FAILURE = 'connection_failure',
@@ -27,143 +30,155 @@ export enum CrossChainErrorCategory {
   UNKNOWN = 'unknown'
 }
 
-export interface ErrorMessageProps {
-  title?: string;
+interface ErrorMessageProps {
+  title: string;
   message: string;
-  category?: string;
-  blockchain?: string;
+  category?: CrossChainErrorCategory;
   solution?: string;
-  errorCode?: string;
-  timestamp?: number;
   retry?: () => void;
-  contact?: () => void;
   viewDetails?: boolean;
   details?: any;
 }
 
-export function ErrorMessage({
+export const ErrorMessage: React.FC<ErrorMessageProps> = ({
   title,
   message,
-  category,
-  blockchain,
+  category = CrossChainErrorCategory.UNKNOWN,
   solution,
-  errorCode,
-  timestamp,
   retry,
-  contact,
   viewDetails = false,
   details
-}: ErrorMessageProps) {
-  const [showDetails, setShowDetails] = React.useState(viewDetails);
+}) => {
+  const [isDetailsOpen, setIsDetailsOpen] = useState(false);
 
-  // Select appropriate icon based on error category
+  // Function to get the appropriate icon based on error category
   const getIcon = () => {
-    if (!category) return AlertTriangle;
-
     switch (category) {
       case CrossChainErrorCategory.CONNECTION_FAILURE:
       case CrossChainErrorCategory.NETWORK_FAILURE:
-        return ExternalLink;
-      case CrossChainErrorCategory.TRANSACTION_FAILURE:
-      case CrossChainErrorCategory.VALIDATION_FAILURE:
-        return AlertCircle;
-      case CrossChainErrorCategory.SECURITY_VIOLATION:
-        return ShieldAlert;
-      case CrossChainErrorCategory.CROSS_CHAIN_SYNC_ERROR:
-      case CrossChainErrorCategory.CHAIN_UNAVAILABLE:
-        return RefreshCw;
-      default:
-        return AlertTriangle;
-    }
-  };
-
-  // Get variant based on category severity
-  const getVariant = () => {
-    if (!category) return "destructive";
-
-    switch (category) {
-      case CrossChainErrorCategory.CONNECTION_FAILURE:
-      case CrossChainErrorCategory.NETWORK_FAILURE:
+        return <XCircle className="h-5 w-5 text-red-500" />;
       case CrossChainErrorCategory.RATE_LIMIT_EXCEEDED:
       case CrossChainErrorCategory.NODE_SYNCING:
-        return "default"; // Less severe
+        return <Clock className="h-5 w-5 text-amber-500" />;
       case CrossChainErrorCategory.TRANSACTION_FAILURE:
       case CrossChainErrorCategory.VALIDATION_FAILURE:
-      case CrossChainErrorCategory.VERIFICATION_TIMEOUT:
-        return "destructive"; // More severe
+        return <AlertCircle className="h-5 w-5 text-red-500" />;
       case CrossChainErrorCategory.SECURITY_VIOLATION:
-        return "destructive"; // Most severe
+        return <AlertCircle className="h-5 w-5 text-red-700" />;
       default:
-        return "default";
+        return <Info className="h-5 w-5 text-blue-500" />;
     }
   };
 
-  const Icon = getIcon();
-  const variant = getVariant();
+  // Get text for category badge
+  const getCategoryText = () => {
+    switch (category) {
+      case CrossChainErrorCategory.CONNECTION_FAILURE:
+        return 'Connection Failed';
+      case CrossChainErrorCategory.NETWORK_FAILURE:
+        return 'Network Error';
+      case CrossChainErrorCategory.RATE_LIMIT_EXCEEDED:
+        return 'Rate Limited';
+      case CrossChainErrorCategory.NODE_SYNCING:
+        return 'Node Syncing';
+      case CrossChainErrorCategory.TRANSACTION_FAILURE:
+        return 'Transaction Failed';
+      case CrossChainErrorCategory.VALIDATION_FAILURE:
+        return 'Validation Error';
+      case CrossChainErrorCategory.CROSS_CHAIN_SYNC_ERROR:
+        return 'Cross-Chain Sync Error';
+      case CrossChainErrorCategory.CHAIN_UNAVAILABLE:
+        return 'Chain Unavailable';
+      case CrossChainErrorCategory.VERIFICATION_TIMEOUT:
+        return 'Verification Timeout';
+      case CrossChainErrorCategory.SECURITY_VIOLATION:
+        return 'Security Alert';
+      default:
+        return 'Unknown Error';
+    }
+  };
 
-  // Format error timestamp
-  const formatTimestamp = (timestamp?: number) => {
-    if (!timestamp) return '';
-    return new Date(timestamp).toLocaleString();
+  // Get badge variant based on error severity
+  const getBadgeVariant = () => {
+    switch (category) {
+      case CrossChainErrorCategory.SECURITY_VIOLATION:
+        return 'destructive';
+      case CrossChainErrorCategory.CONNECTION_FAILURE:
+      case CrossChainErrorCategory.NETWORK_FAILURE:
+      case CrossChainErrorCategory.TRANSACTION_FAILURE:
+      case CrossChainErrorCategory.VALIDATION_FAILURE:
+        return 'destructive';
+      case CrossChainErrorCategory.RATE_LIMIT_EXCEEDED:
+      case CrossChainErrorCategory.NODE_SYNCING:
+      case CrossChainErrorCategory.CROSS_CHAIN_SYNC_ERROR:
+      case CrossChainErrorCategory.VERIFICATION_TIMEOUT:
+        return 'warning';
+      case CrossChainErrorCategory.CHAIN_UNAVAILABLE:
+        return 'outline';
+      default:
+        return 'secondary';
+    }
   };
 
   return (
-    <Alert variant={variant} className="mb-4 border-2">
-      <Icon className="h-5 w-5" />
-      <AlertTitle className="ml-2">{title || "Error Encountered"}</AlertTitle>
-      <AlertDescription className="mt-2">
-        <div className="text-sm mt-2">{message}</div>
-        
-        {blockchain && (
-          <div className="text-xs mt-2 flex items-center">
-            <span className="font-semibold mr-1">Blockchain:</span> 
-            <span className="bg-[#1A1A1A] px-2 py-0.5 rounded">{blockchain}</span>
+    <Card className="border border-red-500/20 bg-gradient-to-b from-[#1A1A1A] to-[#121212] shadow-md">
+      <CardHeader className="pb-3">
+        <div className="flex justify-between items-start">
+          <div className="flex items-center">
+            {getIcon()}
+            <CardTitle className="text-xl ml-2">{title}</CardTitle>
           </div>
-        )}
-        
-        {solution && (
-          <div className="text-xs mt-2">
-            <span className="font-semibold">Suggested Action:</span> {solution}
-          </div>
-        )}
-        
-        <div className="flex flex-wrap gap-2 mt-3">
-          {retry && (
-            <Button size="sm" variant="outline" onClick={retry} className="h-8">
-              <RefreshCw className="h-3 w-3 mr-1" />
-              Retry
-            </Button>
-          )}
-          
-          {contact && (
-            <Button size="sm" variant="outline" onClick={contact} className="h-8">
-              <HelpCircle className="h-3 w-3 mr-1" />
-              Get Support
-            </Button>
-          )}
-          
-          {details && (
-            <Collapsible open={showDetails} onOpenChange={setShowDetails} className="w-full mt-2">
-              <CollapsibleTrigger asChild>
-                <Button size="sm" variant="ghost" className="h-8 text-xs">
-                  {showDetails ? "Hide Technical Details" : "Show Technical Details"}
-                </Button>
-              </CollapsibleTrigger>
-              <CollapsibleContent className="mt-2">
-                <div className="text-xs bg-[#121212] p-2 rounded border border-[#333] font-mono overflow-x-auto">
-                  {errorCode && <div className="mb-1"><span className="opacity-70">Error Code:</span> {errorCode}</div>}
-                  {timestamp && <div className="mb-1"><span className="opacity-70">Time:</span> {formatTimestamp(timestamp)}</div>}
-                  {typeof details === 'object' ? (
-                    <pre>{JSON.stringify(details, null, 2)}</pre>
-                  ) : (
-                    <div>{String(details)}</div>
-                  )}
-                </div>
-              </CollapsibleContent>
-            </Collapsible>
-          )}
+          <Badge variant={getBadgeVariant() as any}>{getCategoryText()}</Badge>
         </div>
-      </AlertDescription>
-    </Alert>
+        <CardDescription className="text-gray-400 mt-2">
+          {message}
+        </CardDescription>
+      </CardHeader>
+      <CardContent>
+        {solution && (
+          <Alert variant="default" className="bg-blue-500/10 border-blue-500/20 my-2">
+            <Info className="h-4 w-4 text-blue-500" />
+            <AlertTitle className="text-base font-medium text-white">Solution</AlertTitle>
+            <AlertDescription className="text-gray-300">
+              {solution}
+            </AlertDescription>
+          </Alert>
+        )}
+
+        {viewDetails && details && (
+          <Collapsible
+            open={isDetailsOpen}
+            onOpenChange={setIsDetailsOpen}
+            className="mt-4 border border-gray-800 rounded-md"
+          >
+            <CollapsibleTrigger asChild>
+              <Button variant="ghost" size="sm" className="flex w-full justify-between p-4">
+                <span>Technical Details</span>
+                {isDetailsOpen ? (
+                  <ChevronUp className="h-4 w-4" />
+                ) : (
+                  <ChevronDown className="h-4 w-4" />
+                )}
+              </Button>
+            </CollapsibleTrigger>
+            <CollapsibleContent className="p-4 pt-0 text-xs font-mono bg-black/20 rounded-b-md overflow-auto max-h-48">
+              {typeof details === 'string' ? (
+                <pre>{details}</pre>
+              ) : (
+                <pre>{JSON.stringify(details, null, 2)}</pre>
+              )}
+            </CollapsibleContent>
+          </Collapsible>
+        )}
+      </CardContent>
+      {retry && (
+        <CardFooter className="flex justify-end space-x-2">
+          <Button onClick={retry} size="sm" className="flex items-center">
+            <RotateCw className="h-4 w-4 mr-2" />
+            Try Again
+          </Button>
+        </CardFooter>
+      )}
+    </Card>
   );
-}
+};
