@@ -99,6 +99,9 @@ import BridgeVsSwapPage from '@/pages/bridge-vs-swap';
 import SecurityDashboardPage from '@/pages/security-dashboard';
 import TripleChainSecurityDashboardPage from '@/pages/security-dashboard-page';
 import BitcoinHalvingPage from '@/pages/bitcoin-halving';
+import SecurityTutorialsVideo from '@/pages/security-tutorials-video';
+import SecurityTutorials from '@/pages/security-tutorials';
+import MilitaryGradeSecurity from '@/pages/military-grade-security';
 
 // Token & Payment Pages
 import CvtStakingPage from '@/pages/cvt-staking';
@@ -232,9 +235,9 @@ const App: React.FC = () => {
                       <Route path="/technical-spec" component={TechnicalSpecPage} />
                       <Route path="/tokenomics" component={CvtTokenomicsPage} />
                       <Route path="/technical-security-docs" component={DocumentationPage} />
-                      <Route path="/security-video-guides" component={DocumentationPage} />
-                      <Route path="/security-tutorials" component={DocumentationPage} />
-                      <Route path="/military-grade-security" component={DocumentationPage} />
+                      <Route path="/security-video-guides" component={SecurityTutorialsVideo} />
+                      <Route path="/security-tutorials" component={SecurityTutorials} />
+                      <Route path="/military-grade-security" component={MilitaryGradeSecurity} />
                     </Switch>
                     
                     <Footer />
