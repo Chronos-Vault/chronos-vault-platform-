@@ -12,7 +12,7 @@ import { Progress } from '@/components/ui/progress';
 import { Separator } from '@/components/ui/separator';
 
 import { useAuthContext } from '@/contexts/auth-context';
-import { useSecurityService } from '@/hooks/use-security-service';
+import { useSecurityService } from '@/hooks/use-security-service.tsx';
 
 /**
  * Device Recovery Flow Component

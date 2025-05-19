@@ -21,6 +21,9 @@ export function useAuth() {
 
   // Verify if the user is authenticated
   const isAuthenticated = session?.authenticated === true;
+  
+  // User information (from session or wallet)
+  const user = isAuthenticated ? { address } : undefined;
 
   // Connect wallet
   const connectWallet = async () => {
@@ -129,6 +132,7 @@ export function useAuth() {
 
   return {
     address,
+    user,
     isConnected,
     isAuthenticated,
     isAuthenticating,
