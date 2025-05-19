@@ -154,25 +154,105 @@ describe('ChronosVault Contract (TON)', () => {
     });
     
     it('should verify cross-chain proofs', async () => {
-      // Add a mock proof verification
-      const mockProof = beginCell().storeBuffer(Buffer.from('mock-proof')).endCell();
-      const mockSignature = beginCell().storeBuffer(Buffer.from('mock-signature')).endCell();
+      // Create proper ethereum proof structure
+      const ethBlockHash = '0x1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef';
+      const ethTxHash = '0xabcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890';
+      const vaultId = 12345678; // Match the vault ID in the contract
+      const unlockTime = await chronosVault.getVaultUnlockTime();
       
-      // Submit the proof
-      const verifyResult = await chronosVault.sendVerifyExternalProof(
+      // Build proper ethereum proof according to contract verification logic
+      const ethProofCell = beginCell()
+        .storeUint(BigInt('0x' + ethBlockHash.slice(2)), 256) // Store block hash as uint256
+        .storeUint(BigInt('0x' + ethTxHash.slice(2)), 256) // Store tx hash as uint256
+        .storeUint(vaultId, 64) // vault_id as uint64
+        .storeUint(unlockTime, 64) // unlock_time as uint64
+        .endCell();
+      
+      // Create proper ethereum signature structure
+      const ethSignature = beginCell()
+        .storeBuffer(Buffer.from('valid-ethereum-signature-data'))
+        .endCell();
+      
+      // Submit the ethereum proof
+      const verifyEthResult = await chronosVault.sendVerifyExternalProof(
         blockchain.sender,
         {
           chain: 'ethereum',
-          proof: mockProof,
-          signature: mockSignature
+          proof: ethProofCell,
+          signature: ethSignature
         }
       );
       
-      // Check that verification was processed
-      expect(verifyResult.transactions).to.have.length.greaterThan(1);
+      // Verify the transaction was processed
+      expect(verifyEthResult.transactions).to.have.length.greaterThan(1);
       
-      // In a real scenario, we would check for verification result
-      // but for this test we'll just check transaction execution
+      // Now create a Solana proof with similar structure
+      const solanaSlot = 123456789;
+      const solanaTxId = '0x8888888890abcdef1234567890abcdef1234567890abcdef1234567890abcdef';
+      
+      // Build Solana proof
+      const solProofCell = beginCell()
+        .storeUint(solanaSlot, 64) // Solana slot number
+        .storeUint(BigInt('0x' + solanaTxId.slice(2)), 256) // Store tx id as uint256
+        .storeUint(vaultId, 64) // vault_id as uint64
+        .storeUint(unlockTime, 64) // unlock_time as uint64
+        .endCell();
+      
+      // Create Solana signature
+      const solSignature = beginCell()
+        .storeBuffer(Buffer.from('valid-solana-signature-data'))
+        .endCell();
+      
+      // Submit the Solana proof
+      const verifySolResult = await chronosVault.sendVerifyExternalProof(
+        blockchain.sender,
+        {
+          chain: 'solana',
+          proof: solProofCell,
+          signature: solSignature
+        }
+      );
+      
+      // Verify the transaction was processed
+      expect(verifySolResult.transactions).to.have.length.greaterThan(1);
+      
+      // Verify both chains are now marked as verified
+      const crossChainStatus = await chronosVault.getCrossChainStatus();
+      expect(crossChainStatus.ethereumVerified).to.be.true;
+      expect(crossChainStatus.solanaVerified).to.be.true;
+    });
+    
+    it('should enforce verification threshold based on security level', async () => {
+      // First set security level to maximum (requires all chains)
+      await chronosVault.sendSetSecurityLevel(
+        blockchain.sender,
+        5 // Maximum security level
+      );
+      
+      // Verify the security level was set correctly
+      const state = await chronosVault.getVaultState();
+      expect(state.securityLevel).to.equal(5);
+      
+      // Verify the verification threshold is now 3 (all chains)
+      const crossChainStatus = await chronosVault.getCrossChainStatus();
+      expect(crossChainStatus.verificationThreshold).to.equal(3);
+      
+      // Try enhanced unlock without all verifications (should fail)
+      const mockCoordinates = beginCell().storeBuffer(Buffer.from('37.7749:-122.4194')).endCell();
+      
+      // This should fail because we need all three chains verified
+      const unlockResult = await chronosVault.sendEnhancedUnlock(
+        blockchain.sender,
+        {
+          ethProof: beginCell().storeBuffer(Buffer.from('eth-proof')).endCell(),
+          solProof: beginCell().storeBuffer(Buffer.from('sol-proof')).endCell(),
+          geoCoordinates: mockCoordinates
+        }
+      );
+      
+      // Check that the vault is still locked due to insufficient verifications
+      const updatedState = await chronosVault.getVaultState();
+      expect(updatedState.isUnlocked).to.equal(false);
     });
   });
   
