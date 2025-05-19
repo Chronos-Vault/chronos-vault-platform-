@@ -36,20 +36,34 @@ html, body {
 /* Mobile-specific fixes for Investment Discipline Vault */
 @media (max-width: 768px) {
   /* Hide blue and purple vertical lines */
-  .max-w-7xl {
+  .investment-discipline-vault {
     position: relative !important;
     isolation: isolate !important;
     overflow: hidden !important;
     contain: layout !important;
   }
 
-  /* Remove background gradient overlays */
-  .bg-gradient-to-r,
-  .from-\[\#3F51FF\],
-  .to-\[\#8F9FFF\],
-  .from-\[\#3F51FF\]\/10,
-  .to-\[\#6B00D7\]\/5 {
-    background: black !important;
+  /* Target only the problematic gradient lines on the sides */
+  .investment-discipline-vault:before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: -2px;
+    bottom: 0;
+    width: 2px;
+    background-color: black;
+    z-index: 100;
+  }
+  
+  .investment-discipline-vault:after {
+    content: '';
+    position: fixed;
+    top: 0;
+    right: -2px;
+    bottom: 0;
+    width: 2px;
+    background-color: black;
+    z-index: 100;
   }
 }
 
