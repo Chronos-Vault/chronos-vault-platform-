@@ -17,6 +17,7 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
+import logoPath from '@assets/IMG_3753.jpeg';
 
 /**
  * Main navigation component for the application
@@ -75,19 +76,15 @@ export const NavBar: React.FC = () => {
               
               {/* Logo */}
               <Link href="/" className="flex items-center">
-                <div className="relative mr-2">
-                  <div className="w-10 h-10 rounded-full bg-gradient-to-br from-purple-600 to-pink-500 flex items-center justify-center shadow-[0_0_15px_rgba(168,85,247,0.5)]">
-                    <div className="w-9 h-9 rounded-full bg-black flex items-center justify-center">
-                      <div className="w-7 h-7 rounded-full bg-gradient-to-br from-[#6B00D7] to-[#FF5AF7] flex items-center justify-center">
-                        <Lock className="h-3.5 w-3.5 text-white" />
-                      </div>
-                    </div>
-                  </div>
+                <div className="h-12 w-12 rounded-full flex items-center justify-center shadow-lg shadow-[#6B00D7]/20 hover:shadow-[#FF5AF7]/30 transition-all overflow-hidden border-2 border-white/20 mr-2">
+                  <img src={logoPath} alt="Chronos Vault Logo" className="w-full h-full object-cover" />
                 </div>
-                <div>
-                  <h1 className="text-xl font-bold bg-gradient-to-r from-purple-400 via-purple-300 to-pink-400 text-transparent bg-clip-text">
-                    ChronosVault
+                <div className="relative">
+                  <h1 className="text-xl font-bold">
+                    <span className="bg-clip-text text-transparent bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7]">Chronos</span> 
+                    <span className="text-white">Vault</span>
                   </h1>
+                  <div className="absolute -top-4 -right-4 bg-[#FF5AF7] text-white text-[10px] px-2 py-0.5 rounded-full font-bold tracking-wider shadow-md shadow-[#FF5AF7]/30 animate-pulse">BETA</div>
                 </div>
               </Link>
             </div>
@@ -132,23 +129,16 @@ export const NavBar: React.FC = () => {
           {/* Sidebar Header */}
           <div className="flex items-center justify-between p-5 border-b border-purple-900/30">
             <div className="flex items-center">
-              <div className="relative mr-3">
-                <div className="w-12 h-12 rounded-full bg-gradient-to-br from-purple-600 to-pink-500 flex items-center justify-center shadow-[0_0_10px_rgba(168,85,247,0.4)]">
-                  <div className="w-11 h-11 rounded-full bg-[#0E0318] flex items-center justify-center">
-                    <div className="w-9 h-9 rounded-full bg-gradient-to-br from-[#6B00D7] to-[#FF5AF7] flex items-center justify-center">
-                      <Lock className="h-4 w-4 text-white" />
-                    </div>
-                  </div>
-                </div>
+              <div className="h-14 w-14 rounded-full flex items-center justify-center shadow-lg shadow-[#6B00D7]/20 hover:shadow-[#FF5AF7]/30 transition-all overflow-hidden border-2 border-white/20 mr-3">
+                <img src={logoPath} alt="Chronos Vault Logo" className="w-full h-full object-cover" />
               </div>
               
-              <div>
-                <h1 className="text-xl font-bold bg-gradient-to-r from-purple-400 via-purple-300 to-pink-400 text-transparent bg-clip-text flex items-center">
-                  ChronosVault
-                  <div className="ml-2 bg-pink-500 text-[10px] text-white font-bold px-1.5 py-0.5 rounded-sm">
-                    BETA
-                  </div>
+              <div className="relative">
+                <h1 className="text-xl font-bold">
+                  <span className="bg-clip-text text-transparent bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7]">Chronos</span> 
+                  <span className="text-white">Vault</span>
                 </h1>
+                <div className="absolute -top-4 -right-4 bg-[#FF5AF7] text-white text-[10px] px-2 py-0.5 rounded-full font-bold tracking-wider shadow-md shadow-[#FF5AF7]/30 animate-pulse">BETA</div>
               </div>
             </div>
             
