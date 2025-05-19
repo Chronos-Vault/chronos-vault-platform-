@@ -77,7 +77,7 @@ export const NavBar: React.FC = () => {
               {/* Logo - Matching Footer Style */}
               <Link href="/" className="flex items-center gap-3 group">
                 <div className="h-12 w-12 rounded-full flex items-center justify-center shadow-lg shadow-[#6B00D7]/20 group-hover:shadow-[#FF5AF7]/30 transition-all overflow-hidden border-2 border-white/20">
-                  <img src="/chronos-logo.jpeg" alt="Chronos Vault Logo" className="w-full h-full object-cover" />
+                  <img src="/IMG_3753.jpeg" alt="Chronos Vault Logo" className="w-full h-full object-cover" />
                 </div>
                 <div className="relative">
                   <h1 className="text-xl font-bold">
