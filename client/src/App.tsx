@@ -240,7 +240,7 @@ const App: React.FC = () => {
                       <Route path="/security-tutorials" component={SecurityTutorials} />
                       <Route path="/military-grade-security" component={MilitaryGradeSecurity} />
                       <Route path="/social-recovery" component={BehavioralAuthenticationPage} />
-                      <Route path="/quantum-resistant" component={QuantumResistantPage} />
+                      <Route path="/quantum-resistant" component={QuantumResistantVaultPage} />
                     </Switch>
                     
                     <Footer />
