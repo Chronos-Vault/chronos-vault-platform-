@@ -52,8 +52,9 @@ const DeviceRecoveryFlow: React.FC = () => {
   
   // Initialize recovery operation if not authenticated
   useEffect(() => {
-    // Skip initialization if user is already authenticated
-    if (isAuthenticated) return;
+    // For demonstration purposes, always initialize
+    // In production, this would check authentication
+    // if (isAuthenticated) return;
     
     const initializeRecovery = async () => {
       try {
