@@ -88,29 +88,25 @@ const NavLink: React.FC<NavLinkProps> = ({ to, isActive, icon, children, mobile 
   
   if (mobile) {
     return (
-      <Link href={to}>
-        <a className={`
-          ${baseStyles}
-          ${isActive ? activeStyles : inactiveStyles}
-          px-3 py-1.5 rounded-lg text-xs font-medium
-        `}>
-          {icon}
-          {children}
-        </a>
+      <Link href={to} className={`
+        ${baseStyles}
+        ${isActive ? activeStyles : inactiveStyles}
+        px-3 py-1.5 rounded-lg text-xs font-medium
+      `}>
+        {icon}
+        {children}
       </Link>
     );
   }
   
   return (
-    <Link href={to}>
-      <a className={`
-        ${baseStyles}
-        ${isActive ? activeStyles : inactiveStyles}
-        px-3 py-1.5 rounded-lg text-sm border-b-2
-      `}>
-        {icon}
-        {children}
-      </a>
+    <Link href={to} className={`
+      ${baseStyles}
+      ${isActive ? activeStyles : inactiveStyles}
+      px-3 py-1.5 rounded-lg text-sm border-b-2
+    `}>
+      {icon}
+      {children}
     </Link>
   );
 };
