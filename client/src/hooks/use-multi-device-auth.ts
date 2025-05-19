@@ -1,6 +1,6 @@
 import { useState, useCallback } from 'react';
-import { useAuthContext } from '../context/AuthContext';
-import { useSecurityService } from '../hooks/use-security-service';
+import { useAuthContext } from '@/contexts/auth-context';
+import { useSecurityService } from '@/hooks/use-security-service';
 
 /**
  * Interface for device information
@@ -24,7 +24,7 @@ export function useMultiDeviceAuth() {
   const [isLoading, setIsLoading] = useState(false);
   const [pendingRequests, setPendingRequests] = useState<{id: string, deviceName: string}[]>([]);
   
-  const { wallet } = useAuthContext();
+  const { address } = useAuthContext();
   const { 
     proposeSecurityOperation, 
     signOperation, 
@@ -81,7 +81,7 @@ export function useMultiDeviceAuth() {
   
   // Register a new device
   const registerDevice = useCallback(async (deviceName: string): Promise<boolean> => {
-    if (!wallet?.address) {
+    if (!address) {
       console.error('No wallet connected');
       return false;
     }
@@ -94,7 +94,7 @@ export function useMultiDeviceAuth() {
       const operationId = await proposeSecurityOperation('DEVICE_REGISTRATION', {
         deviceId,
         deviceName,
-        walletAddress: wallet.address,
+        walletAddress: address,
         timestamp: Date.now()
       });
       

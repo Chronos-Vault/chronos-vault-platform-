@@ -29,7 +29,7 @@ import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Separator } from '@/components/ui/separator';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
-import { useAuthContext } from '../context/AuthContext';
+import { useAuthContext } from '@/contexts/auth-context';
 import { useMultiDeviceAuth } from '../hooks/use-multi-device-auth';
 
 const DeviceManagementPage: React.FC = () => {
