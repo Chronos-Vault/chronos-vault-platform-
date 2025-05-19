@@ -71,8 +71,10 @@ export const TransactionErrorAlert: React.FC<TransactionErrorAlertProps> = ({
               className="bg-black/20 hover:bg-black/30"
               onClick={() => {
                 // Open explorer based on blockchain
-                const url = getExplorerUrl(error.txHash, blockchain);
-                if (url) window.open(url, '_blank');
+                if (error.txHash) {
+                  const url = getExplorerUrl(error.txHash, blockchain);
+                  if (url) window.open(url, '_blank');
+                }
               }}
             >
               <ExternalLink className="h-3 w-3 mr-1.5" />

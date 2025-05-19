@@ -3,6 +3,8 @@ import { useTransactionMonitoring } from '@/contexts/transaction-monitoring-cont
 import TransactionStats from '@/components/transactions/TransactionStats';
 import TransactionDetailPanel from '@/components/transactions/TransactionDetailPanel';
 import { TransactionGraphCard } from '@/components/transactions/TransactionGraph';
+import { TransactionErrorHandler } from '@/components/transactions/TransactionErrorHandler';
+import { TransactionErrorDemo } from '@/components/transactions/TransactionErrorDemo';
 import { CrossChainTransaction } from '@shared/transaction-types';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';

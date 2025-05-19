@@ -1,96 +1,85 @@
-import React, { ErrorInfo } from 'react';
-import { ErrorMessage } from '@/components/ui/error-message';
-import { handleError } from '@/lib/error-handling/error-handler';
-import { CrossChainErrorCategory } from '@/components/ui/error-message';
+import React, { Component, ErrorInfo, ReactNode } from 'react';
+import { ErrorMessage, CrossChainErrorCategory } from '@/components/ui/error-message';
 
-interface ErrorBoundaryProps {
-  children: React.ReactNode;
-  fallback?: React.ReactNode;
+interface Props {
+  children: ReactNode;
   name?: string;
+  fallback?: ReactNode;
 }
 
-interface ErrorBoundaryState {
+interface State {
   hasError: boolean;
   error: Error | null;
   errorInfo: ErrorInfo | null;
 }
 
-export class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoundaryState> {
-  constructor(props: ErrorBoundaryProps) {
+/**
+ * Error boundary component that catches JavaScript errors in its child component tree
+ */
+export class ErrorBoundary extends Component<Props, State> {
+  constructor(props: Props) {
     super(props);
     this.state = {
       hasError: false,
       error: null,
-      errorInfo: null,
+      errorInfo: null
     };
   }
 
-  static getDerivedStateFromError(error: Error): ErrorBoundaryState {
+  static getDerivedStateFromError(error: Error): State {
     return {
       hasError: true,
       error,
-      errorInfo: null,
+      errorInfo: null
     };
   }
 
   componentDidCatch(error: Error, errorInfo: ErrorInfo): void {
-    this.setState({
-      error,
-      errorInfo,
-    });
-    
-    // Process the error through our error handler
-    handleError(error, {
-      category: CrossChainErrorCategory.UNKNOWN,
-      details: {
-        component: this.props.name || 'Unknown Component',
-        errorInfo: errorInfo.componentStack,
-      },
-      showToast: true,
-    });
+    console.error(`Error caught by ${this.props.name || 'ErrorBoundary'}:`, error, errorInfo);
+    this.setState({ error, errorInfo });
   }
 
-  render() {
-    if (this.state.hasError) {
-      if (this.props.fallback) {
-        return this.props.fallback;
+  resetError = (): void => {
+    this.setState({
+      hasError: false,
+      error: null,
+      errorInfo: null
+    });
+  };
+
+  render(): ReactNode {
+    const { hasError, error } = this.state;
+    const { children, fallback, name } = this.props;
+
+    if (hasError) {
+      // You can render any custom fallback UI
+      if (fallback) {
+        return fallback;
       }
 
-      // Default error UI
       return (
-        <div className="p-4 max-w-4xl mx-auto">
+        <div className="p-4 border rounded-md shadow-sm my-4 bg-black/40">
+          <h2 className="text-red-500 font-bold mb-2">
+            An error occurred in {name || 'the application'}
+          </h2>
           <ErrorMessage
-            title="Something went wrong"
-            message={this.state.error?.message || "An unexpected error occurred"}
-            category={CrossChainErrorCategory.UNKNOWN}
-            solution="Please try refreshing the page or contact support if the issue persists."
-            retry={() => window.location.reload()}
-            viewDetails={!!this.state.errorInfo}
-            details={this.state.errorInfo?.componentStack || "No additional details available"}
+            title="Unexpected Error"
+            message={error?.message || 'An unknown error occurred'}
+            category={CrossChainErrorCategory.TRANSACTION_FAILURE}
+            onRetry={this.resetError}
           />
+          <div className="mt-4">
+            <button
+              onClick={this.resetError}
+              className="px-3 py-1 bg-purple-700 hover:bg-purple-800 text-white rounded-md text-sm"
+            >
+              Try Again
+            </button>
+          </div>
         </div>
       );
     }
 
-    return this.props.children;
+    return children;
   }
-}
-
-// Higher-order component for easy wrapping of components
-export function withErrorBoundary<P extends object>(
-  Component: React.ComponentType<P>,
-  name?: string,
-  fallback?: React.ReactNode
-): React.FC<P> {
-  const displayName = name || Component.displayName || Component.name || 'Component';
-  
-  const WrappedComponent: React.FC<P> = (props: P) => (
-    <ErrorBoundary name={displayName} fallback={fallback}>
-      <Component {...props} />
-    </ErrorBoundary>
-  );
-  
-  WrappedComponent.displayName = `withErrorBoundary(${displayName})`;
-  
-  return WrappedComponent;
 }

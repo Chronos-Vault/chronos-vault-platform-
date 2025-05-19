@@ -1,207 +1,165 @@
 import { toast } from '@/hooks/use-toast';
 import { CrossChainErrorCategory } from '@/components/ui/error-message';
 
-export type BlockchainType = 'Ethereum' | 'Solana' | 'TON' | 'Bitcoin';
+export type BlockchainType = 'Ethereum' | 'Solana' | 'TON' | 'Bitcoin' | 'Cross-Chain';
 
-export enum ErrorSeverity {
-  INFO = 'info',
-  WARNING = 'warning',
-  ERROR = 'error',
-  CRITICAL = 'critical'
-}
-
-export enum UserErrorType {
-  NETWORK = 'network',
-  AUTHENTICATION = 'authentication',
-  TRANSACTION = 'transaction',
-  VALIDATION = 'validation',
-  SECURITY = 'security',
-  RECOVERY = 'recovery',
-  UNKNOWN = 'unknown'
-}
-
-export interface HandledError {
-  originalError: any;
-  message: string;
+// Define error interface
+export interface HandleErrorResult {
   userMessage: string;
-  category?: CrossChainErrorCategory;
-  blockchain?: BlockchainType;
+  technicalMessage: string;
+  category: CrossChainErrorCategory;
   solution?: string;
-  severity: ErrorSeverity;
-  userErrorType: UserErrorType;
-  errorCode?: string;
-  recoverable: boolean;
-  timestamp: number;
   details?: any;
 }
 
 /**
- * Map technical error categories to user-friendly types
+ * Identifies and categorizes blockchain errors
  */
-function mapCategoryToUserType(category?: CrossChainErrorCategory): UserErrorType {
+export function categorizeBlockchainError(error: any, blockchain?: BlockchainType): CrossChainErrorCategory {
+  const errorString = error.toString().toLowerCase();
+
+  // Security violations
+  if (
+    errorString.includes('suspicious') ||
+    errorString.includes('unauthorized') ||
+    errorString.includes('forbidden') ||
+    errorString.includes('invalid signature') ||
+    errorString.includes('auth') ||
+    errorString.includes('permission')
+  ) {
+    return CrossChainErrorCategory.SECURITY_VIOLATION;
+  }
+
+  // Network failures
+  if (
+    errorString.includes('network') ||
+    errorString.includes('connection') ||
+    errorString.includes('timeout') ||
+    errorString.includes('unreachable') ||
+    errorString.includes('no response') ||
+    errorString.includes('offline')
+  ) {
+    return CrossChainErrorCategory.NETWORK_FAILURE;
+  }
+
+  // Validation failures
+  if (
+    errorString.includes('invalid') ||
+    errorString.includes('validation') ||
+    errorString.includes('format') ||
+    errorString.includes('parameter') ||
+    errorString.includes('argument')
+  ) {
+    return CrossChainErrorCategory.VALIDATION_FAILURE;
+  }
+
+  // Default to transaction failure
+  return CrossChainErrorCategory.TRANSACTION_FAILURE;
+}
+
+/**
+ * Maps blockchain specific error codes to user-friendly messages
+ */
+function getBlockchainSpecificMessage(error: any, blockchain?: BlockchainType): string {
+  // Default message
+  let message = 'An error occurred while processing your transaction.';
+  
+  if (!blockchain) {
+    return message;
+  }
+
+  const errorString = error.toString().toLowerCase();
+  
+  switch (blockchain) {
+    case 'Ethereum':
+      if (errorString.includes('gas')) {
+        return 'Not enough ETH to cover gas fees for this transaction.';
+      } else if (errorString.includes('nonce')) {
+        return 'Transaction nonce issue. You may have another pending transaction.';
+      } else if (errorString.includes('rejected')) {
+        return 'Transaction was rejected by the Ethereum network.';
+      }
+      break;
+      
+    case 'Solana':
+      if (errorString.includes('blockhash')) {
+        return 'Transaction blockhash expired. Please try again.';
+      } else if (errorString.includes('lamport')) {
+        return 'Not enough SOL to complete this transaction.';
+      } else if (errorString.includes('slot')) {
+        return 'Solana network is experiencing high load. Please try again later.';
+      }
+      break;
+      
+    case 'TON':
+      if (errorString.includes('seqno')) {
+        return 'TON transaction sequence number is outdated. Please refresh and try again.';
+      } else if (errorString.includes('funds')) {
+        return 'Not enough TON to complete this transaction.';
+      } else if (errorString.includes('expired')) {
+        return 'TON message expired. Please try again.';
+      }
+      break;
+      
+    case 'Bitcoin':
+      if (errorString.includes('fee')) {
+        return 'Bitcoin transaction fee is too low.';
+      } else if (errorString.includes('utxo')) {
+        return 'Issue with Bitcoin UTXO selection. Try splitting your transaction.';
+      }
+      break;
+      
+    case 'Cross-Chain':
+      if (errorString.includes('bridge')) {
+        return 'Issue with cross-chain bridge. The operation could not be completed.';
+      } else if (errorString.includes('liquidity')) {
+        return 'Insufficient liquidity in the cross-chain pool.';
+      }
+      break;
+  }
+  
+  return message;
+}
+
+/**
+ * Provides recovery solutions for different error categories
+ */
+function getSolutionByCategory(category: CrossChainErrorCategory, blockchain?: BlockchainType): string {
   switch (category) {
-    case CrossChainErrorCategory.CONNECTION_FAILURE:
+    case CrossChainErrorCategory.SECURITY_VIOLATION:
+      return 'Verify your wallet connection and permissions. If this continues, contact support immediately.';
+      
     case CrossChainErrorCategory.NETWORK_FAILURE:
-    case CrossChainErrorCategory.RATE_LIMIT_EXCEEDED:
-    case CrossChainErrorCategory.NODE_SYNCING:
-    case CrossChainErrorCategory.CHAIN_UNAVAILABLE:
-      return UserErrorType.NETWORK;
-    
-    case CrossChainErrorCategory.TRANSACTION_FAILURE:
+      return 'Check your internet connection and try again. The blockchain network may be experiencing congestion.';
+      
     case CrossChainErrorCategory.VALIDATION_FAILURE:
-    case CrossChainErrorCategory.CROSS_CHAIN_SYNC_ERROR:
-    case CrossChainErrorCategory.VERIFICATION_TIMEOUT:
-      return UserErrorType.TRANSACTION;
-      
-    case CrossChainErrorCategory.SECURITY_VIOLATION:
-      return UserErrorType.SECURITY;
-      
-    default:
-      return UserErrorType.UNKNOWN;
-  }
-}
-
-/**
- * Map error categories to severity levels
- */
-function mapCategoryToSeverity(category?: CrossChainErrorCategory): ErrorSeverity {
-  switch (category) {
-    case CrossChainErrorCategory.SECURITY_VIOLATION:
-      return ErrorSeverity.CRITICAL;
+      return 'Double-check all transaction details and try again with valid parameters.';
       
     case CrossChainErrorCategory.TRANSACTION_FAILURE:
-    case CrossChainErrorCategory.VALIDATION_FAILURE:
+      if (blockchain === 'Ethereum') {
+        return 'Try adjusting the gas price or waiting for network congestion to decrease.';
+      } else if (blockchain === 'Solana') {
+        return 'Try again when the Solana network is less congested.';
+      } else if (blockchain === 'TON') {
+        return 'Refresh your wallet state and try again.';
+      } else if (blockchain === 'Bitcoin') {
+        return 'Consider increasing the transaction fee or splitting your transaction.';
+      }
+      return 'Try the operation again or consider adjusting transaction parameters.';
+      
     case CrossChainErrorCategory.CONNECTION_FAILURE:
-    case CrossChainErrorCategory.NETWORK_FAILURE:
-      return ErrorSeverity.ERROR;
-      
-    case CrossChainErrorCategory.RATE_LIMIT_EXCEEDED:
-    case CrossChainErrorCategory.NODE_SYNCING:
-    case CrossChainErrorCategory.CROSS_CHAIN_SYNC_ERROR:
-    case CrossChainErrorCategory.VERIFICATION_TIMEOUT:
-    case CrossChainErrorCategory.CHAIN_UNAVAILABLE:
-      return ErrorSeverity.WARNING;
+      return 'Reconnect your wallet and try again. Make sure your blockchain node is online.';
       
     default:
-      return ErrorSeverity.INFO;
+      return 'Please try again later or contact support if the issue persists.';
   }
 }
 
 /**
- * Process blockchain error into a user-friendly format
+ * Main error handler function for blockchain errors
  */
-export function processBlockchainError(
-  error: any,
-  blockchain?: BlockchainType,
-  category?: CrossChainErrorCategory,
-  solution?: string,
-  details?: any
-): HandledError {
-  const userErrorType = mapCategoryToUserType(category);
-  const severity = mapCategoryToSeverity(category);
-  
-  // Get error message from the error object
-  const errorMessage = error?.message || error?.toString() || 'An unknown error occurred';
-  
-  // Get user-friendly message
-  const userMessage = getUserFriendlyMessage(errorMessage, userErrorType, blockchain);
-  
-  // Generate a unique error code for tracking
-  const errorCode = generateErrorCode(userErrorType, blockchain, category);
-  
-  // Determine if error is recoverable
-  const recoverable = [
-    CrossChainErrorCategory.CONNECTION_FAILURE,
-    CrossChainErrorCategory.NETWORK_FAILURE,
-    CrossChainErrorCategory.RATE_LIMIT_EXCEEDED,
-    CrossChainErrorCategory.NODE_SYNCING,
-    CrossChainErrorCategory.CHAIN_UNAVAILABLE
-  ].includes(category as CrossChainErrorCategory);
-  
-  return {
-    originalError: error,
-    message: errorMessage,
-    userMessage,
-    category,
-    blockchain,
-    solution,
-    severity,
-    userErrorType,
-    errorCode,
-    recoverable,
-    timestamp: Date.now(),
-    details
-  };
-}
-
-/**
- * Generate a unique error code for tracking
- */
-function generateErrorCode(
-  userErrorType: UserErrorType,
-  blockchain?: BlockchainType,
-  category?: CrossChainErrorCategory
-): string {
-  const typeCode = userErrorType.substring(0, 3).toUpperCase();
-  const chainCode = blockchain ? blockchain.substring(0, 3).toUpperCase() : 'GEN';
-  const categoryCode = category ? category.substring(0, 3).toUpperCase() : 'UNK';
-  const timestamp = Date.now().toString().substring(7);
-  
-  return `${typeCode}-${chainCode}-${categoryCode}-${timestamp}`;
-}
-
-/**
- * Get user-friendly error message based on error type
- */
-function getUserFriendlyMessage(
-  errorMessage: string,
-  userErrorType: UserErrorType,
-  blockchain?: BlockchainType
-): string {
-  const chainName = blockchain || 'blockchain';
-  
-  switch (userErrorType) {
-    case UserErrorType.NETWORK:
-      return `Unable to connect to the ${chainName} network. This could be due to network congestion or temporary outage.`;
-      
-    case UserErrorType.TRANSACTION:
-      return `Your transaction on ${chainName} couldn't be completed. This might be due to network issues or insufficient funds.`;
-      
-    case UserErrorType.SECURITY:
-      return `A security concern was detected while interacting with ${chainName}. The operation was halted for your protection.`;
-      
-    case UserErrorType.VALIDATION:
-      return `The information provided for this ${chainName} operation couldn't be validated. Please check your inputs.`;
-      
-    case UserErrorType.AUTHENTICATION:
-      return `Authentication failed for ${chainName}. Please reconnect your wallet or verify your credentials.`;
-      
-    default:
-      // For unknown errors, return a simplified version of the original message
-      const simplifiedMessage = errorMessage
-        .replace(/(\w{63}).*/, '$1...') // Truncate long strings like addresses or hashes
-        .replace(/Error:/i, '')
-        .trim();
-      
-      return `An unexpected error occurred${blockchain ? ` with ${blockchain}` : ''}: ${simplifiedMessage}`;
-  }
-}
-
-/**
- * Display error toast notification
- */
-export function showErrorToast(handledError: HandledError) {
-  toast({
-    title: handledError.userErrorType === UserErrorType.UNKNOWN 
-      ? 'Error' 
-      : `${handledError.userErrorType.charAt(0).toUpperCase() + handledError.userErrorType.slice(1)} Error`,
-    description: handledError.userMessage,
-    variant: 'destructive',
-  });
-}
-
 export function handleError(
-  error: any, 
+  error: any,
   options?: {
     blockchain?: BlockchainType;
     category?: CrossChainErrorCategory;
@@ -209,31 +167,38 @@ export function handleError(
     details?: any;
     showToast?: boolean;
   }
-): HandledError {
-  const { 
-    blockchain, 
-    category = CrossChainErrorCategory.UNKNOWN,
-    solution,
-    details,
-    showToast = false
-  } = options || {};
+): HandleErrorResult {
+  // Get error message
+  const errorMessage = error?.message || error?.toString() || 'Unknown error occurred';
   
-  // Process the error
-  const handledError = processBlockchainError(
-    error,
-    blockchain,
-    category,
-    solution,
-    details
-  );
+  // Determine error category
+  const category = options?.category || categorizeBlockchainError(error, options?.blockchain);
   
-  // Log the error to console for debugging
-  console.error(`[${handledError.errorCode}]`, handledError);
+  // Get user-friendly message
+  const userMessage = getBlockchainSpecificMessage(error, options?.blockchain) || errorMessage;
+  
+  // Get solution
+  const solution = options?.solution || getSolutionByCategory(category, options?.blockchain);
   
   // Show toast notification if requested
-  if (showToast) {
-    showErrorToast(handledError);
+  if (options?.showToast) {
+    toast({
+      title: `${options?.blockchain || 'Transaction'} Error`,
+      description: userMessage,
+      variant: 'destructive',
+    });
   }
   
-  return handledError;
+  // Return structured error information
+  return {
+    userMessage,
+    technicalMessage: errorMessage,
+    category,
+    solution,
+    details: {
+      ...options?.details,
+      originalError: error,
+      timestamp: new Date().toISOString(),
+    },
+  };
 }
