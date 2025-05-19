@@ -5,6 +5,9 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { Separator } from "@/components/ui/separator";
+import { Switch } from "@/components/ui/switch";
+import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
 import { useMultiDeviceAuth } from "@/hooks/use-multi-device-auth";
 import { useAuth } from "@/hooks/use-auth";
@@ -155,10 +158,18 @@ const DeviceManagementPage: React.FC = () => {
         <div className="md:col-span-2">
           <Card>
             <CardHeader>
-              <CardTitle>Your Devices</CardTitle>
-              <CardDescription>
-                Devices that are authorized to access your account
-              </CardDescription>
+              <div className="flex justify-between items-center">
+                <div>
+                  <CardTitle>Your Devices</CardTitle>
+                  <CardDescription>
+                    Devices that are authorized to access your account
+                  </CardDescription>
+                </div>
+                <Button variant="outline" size="sm" className="border-[#6B00D7] text-white hover:bg-[#6B00D7]/10">
+                  <Smartphone className="h-4 w-4 mr-2" />
+                  Add New Device
+                </Button>
+              </div>
             </CardHeader>
             <CardContent>
               {devices.length === 0 ? (
@@ -292,6 +303,49 @@ const DeviceManagementPage: React.FC = () => {
                 <p className="text-sm text-muted-foreground mb-3">
                   Devices that haven't been active for 30 days will be automatically revoked.
                 </p>
+                <div className="flex items-center space-x-2 mt-2">
+                  <Switch id="auto-revoke" defaultChecked />
+                  <Label htmlFor="auto-revoke">Enable auto-revocation</Label>
+                </div>
+              </div>
+              
+              <Separator className="my-4" />
+              
+              <div>
+                <h3 className="font-medium mb-1 flex items-center">
+                  <AlertTriangle className="h-5 w-5 mr-2" />
+                  Suspicious Activity Alerts
+                </h3>
+                <p className="text-sm text-muted-foreground mb-3">
+                  Receive notifications when unusual activity is detected on your account.
+                </p>
+                <div className="flex items-center space-x-2 mt-2">
+                  <Switch id="activity-alerts" defaultChecked />
+                  <Label htmlFor="activity-alerts">Enable suspicious activity alerts</Label>
+                </div>
+              </div>
+              
+              <Separator className="my-4" />
+              
+              <div>
+                <h3 className="font-medium mb-1 flex items-center">
+                  <Fingerprint className="h-5 w-5 mr-2" />
+                  Biometric Authentication
+                </h3>
+                <p className="text-sm text-muted-foreground mb-3">
+                  Use fingerprint, face recognition, or other biometric methods to enhance your device security.
+                </p>
+                <div className="flex items-center space-x-2 mt-2">
+                  <Switch id="biometric-auth" />
+                  <Label htmlFor="biometric-auth">Enable biometric authentication</Label>
+                </div>
+                <Button 
+                  variant="outline" 
+                  size="sm" 
+                  className="mt-4 w-full border-[#6B00D7] text-white hover:bg-[#6B00D7]/10"
+                >
+                  Configure Biometric Settings
+                </Button>
               </div>
             </CardContent>
           </Card>
