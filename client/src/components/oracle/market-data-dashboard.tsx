@@ -98,7 +98,17 @@ const MOCK_MARKET_SENTIMENT = {
   averageFees: "$4.24",
 };
 
-export function MarketDataDashboard() {
+interface MarketDataDashboardProps {
+  defaultAsset?: string;
+  defaultBlockchain?: Network | string;
+  compact?: boolean;
+}
+
+export function MarketDataDashboard({ 
+  defaultAsset, 
+  defaultBlockchain = "ethereum",
+  compact = false
+}: MarketDataDashboardProps) {
   const [timeframe, setTimeframe] = useState<string>("1y");
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [selectedNetwork, setSelectedNetwork] = useState<Network>("ethereum");

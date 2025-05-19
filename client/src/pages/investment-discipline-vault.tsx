@@ -1582,7 +1582,7 @@ function InvestmentDisciplineVault() {
               <CardContent>
                 <MarketDataDashboard
                   defaultAsset={assetType}
-                  defaultBlockchain={selectedBlockchain}
+                  defaultBlockchain={selectedOracleNetwork}
                   compact={true}
                 />
               </CardContent>
