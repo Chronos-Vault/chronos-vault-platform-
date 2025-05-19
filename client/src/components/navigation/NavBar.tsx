@@ -83,7 +83,9 @@ export const NavBar: React.FC = () => {
                     <span className="bg-clip-text text-transparent bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7]">Chronos</span> 
                     <span className="text-white">Vault</span>
                   </h1>
-                  <div className="absolute -top-4 -right-4 bg-[#FF5AF7] text-white text-[10px] px-2 py-0.5 rounded-full font-bold tracking-wider shadow-md shadow-[#FF5AF7]/30 animate-pulse">BETA</div>
+                  <div className="absolute -top-3 right-0 bg-gradient-to-r from-purple-600 to-pink-500 text-[10px] px-1.5 py-0.5 rounded-sm text-white font-bold">
+                    BETA
+                  </div>
                 </div>
               </Link>
             </div>
@@ -103,11 +105,6 @@ export const NavBar: React.FC = () => {
                 <div className="h-2 w-2 rounded-full bg-green-500 animate-pulse mr-2"></div>
                 <span className="text-green-400">Network Secure</span>
               </div>
-              
-              {/* Create Vault Button */}
-              <Link href="/vault-selector" className="bg-gradient-to-r from-purple-600 to-pink-500 hover:from-pink-500 hover:to-purple-600 text-white text-sm font-medium px-4 py-2 rounded-full transition-all duration-300 hover:shadow-[0_0_15px_rgba(168,85,247,0.5)]">
-                Create Vault
-              </Link>
             </div>
           </div>
         </div>
