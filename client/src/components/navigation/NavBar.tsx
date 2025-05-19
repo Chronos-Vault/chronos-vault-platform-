@@ -104,11 +104,14 @@ export const NavBar: React.FC = () => {
             </div>
             
             {/* Right side: Navigation + Status */}
-            <div className="hidden md:flex items-center space-x-6">
+            <div className="hidden md:flex items-center space-x-4">
+              <Link href="/my-vaults" className="text-gray-200 hover:text-[#FF5AF7] transition-colors">Vaults</Link>
+              <Link href="/cross-chain-monitor" className="text-gray-200 hover:text-[#FF5AF7] transition-colors">Explore</Link>
+              <Link href="/security-dashboard" className="text-gray-200 hover:text-[#FF5AF7] transition-colors">Security</Link>
               <Link href="/features" className="text-gray-200 hover:text-[#FF5AF7] transition-colors">Features</Link>
-              <Link href="/products" className="text-gray-200 hover:text-[#FF5AF7] transition-colors">Products</Link>
-              <Link href="/pricing" className="text-gray-200 hover:text-[#FF5AF7] transition-colors">Pricing</Link>
-              <Link href="/docs" className="text-gray-200 hover:text-[#FF5AF7] transition-colors">Documentation</Link>
+              <Link href="/security-tutorials" className="text-gray-200 hover:text-[#FF5AF7] transition-colors">Vault School</Link>
+              <Link href="/cvt-token" className="text-gray-200 hover:text-[#FF5AF7] transition-colors">CVT Token</Link>
+              <Link href="/docs" className="text-gray-200 hover:text-[#FF5AF7] transition-colors">Resources</Link>
                 
               {/* CVT Token Balance */}
               <div className="hidden lg:flex items-center bg-black/60 rounded-full px-3 py-1.5 text-xs border border-purple-900/30">
@@ -349,47 +352,38 @@ export const NavBar: React.FC = () => {
               />
             </SidebarSection>
             
-            {/* Vault Types Section */}
-            <SidebarSection icon={<Hexagon className="h-5 w-5" />} title="Vault Types">
+            {/* Developer Section */}
+            <SidebarSection icon={<Code className="h-5 w-5" />} title="Developer">
               <SidebarItem 
-                icon={<Clock className="h-5 w-5" />} 
-                label="Time Lock Vault" 
-                href="/time-lock-vault" 
-                active={location === '/time-lock-vault'}
+                icon={<FileCode className="h-5 w-5" />} 
+                label="API Documentation" 
+                href="/api-documentation" 
+                active={location === '/api-documentation'}
                 onClick={closeSidebar}
               />
               
               <SidebarItem 
-                icon={<Users className="h-5 w-5" />} 
-                label="Multi-Signature Vault" 
-                href="/multi-signature-vault" 
-                active={location === '/multi-signature-vault'}
-                onClick={closeSidebar}
-              />
-              
-              <SidebarItem 
-                icon={<MapPin className="h-5 w-5" />} 
-                label="Geo-Location Vault" 
-                href="/geo-location-vault" 
-                active={location === '/geo-location-vault'}
+                icon={<GitPullRequest className="h-5 w-5" />} 
+                label="Integration Guide" 
+                href="/integration-guide" 
+                active={location === '/integration-guide'}
                 onClick={closeSidebar}
               />
               
               <SidebarItem 
                 icon={<Cpu className="h-5 w-5" />} 
-                label="Quantum-Resistant Vault" 
-                href="/quantum-resistant-vault" 
-                active={location === '/quantum-resistant-vault'}
+                label="Smart Contract SDK" 
+                href="/smart-contract-sdk" 
+                active={location === '/smart-contract-sdk'}
                 onClick={closeSidebar}
               />
               
               <SidebarItem 
-                icon={<Hexagon className="h-5 w-5" />} 
-                label="Sovereign Fortress Vault" 
-                href="/sovereign-fortress-vault" 
-                active={location === '/sovereign-fortress-vault'}
+                icon={<Code className="h-5 w-5" />} 
+                label="Developer Portal" 
+                href="/developer-portal" 
+                active={location === '/developer-portal'}
                 onClick={closeSidebar}
-                isNew
               />
             </SidebarSection>
             
