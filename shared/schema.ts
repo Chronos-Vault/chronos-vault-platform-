@@ -448,3 +448,167 @@ export interface GeoVaultSettings {
   description?: string;
   metadata?: Record<string, any>;
 }
+
+// Device management schema and types
+export const devices = pgTable("devices", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").notNull(),
+  deviceName: text("device_name").notNull(),
+  deviceId: text("device_id").notNull().unique(),
+  deviceType: text("device_type").notNull(), // mobile, tablet, desktop, hardware
+  operatingSystem: text("operating_system"),
+  browserInfo: text("browser_info"),
+  lastIpAddress: text("last_ip_address"),
+  lastLogin: timestamp("last_login"),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+  updatedAt: timestamp("updated_at"),
+  status: text("status").notNull().default("pending"), // pending, active, revoked, suspended
+  trustScore: integer("trust_score").default(50), // 0-100 indicating level of trust
+  isTrusted: boolean("is_trusted").default(false),
+  isCurrent: boolean("is_current").default(false),
+  publicKey: text("public_key"), // For device cryptographic auth
+  authMethod: text("auth_method").default("password"), // password, biometric, hardware, multisig
+  tonContractAddress: text("ton_contract_address"), // Contract verifying this device
+  metadata: jsonb("metadata"),
+});
+
+// Device authorization logs
+export const deviceAuthLogs = pgTable("device_auth_logs", {
+  id: serial("id").primaryKey(),
+  deviceId: integer("device_id").notNull(),
+  userId: integer("user_id").notNull(),
+  timestamp: timestamp("timestamp").notNull().defaultNow(),
+  action: text("action").notNull(), // login, logout, verify, revoke, recover
+  success: boolean("success").notNull(),
+  ipAddress: text("ip_address"),
+  location: text("location"),
+  failureReason: text("failure_reason"),
+  riskScore: integer("risk_score"), // 0-100 indicating risk level
+  chainVerification: jsonb("chain_verification"), // TON/ETH/SOL verification details
+  metadata: jsonb("metadata"),
+});
+
+// Multi-chain device verifications
+export const deviceVerifications = pgTable("device_verifications", {
+  id: serial("id").primaryKey(),
+  deviceId: integer("device_id").notNull(),
+  blockchain: text("blockchain").notNull(), // ton, ethereum, solana
+  contractAddress: text("contract_address").notNull(),
+  transactionHash: text("transaction_hash").notNull(),
+  timestamp: timestamp("timestamp").notNull().defaultNow(),
+  verificationData: text("verification_data").notNull(), // Cryptographic proof
+  signatureData: text("signature_data").notNull(),
+  verificationStatus: text("verification_status").notNull().default("pending"), // pending, verified, failed, expired
+  expiresAt: timestamp("expires_at"),
+  metadata: jsonb("metadata"),
+});
+
+// Recovery keys for device recovery
+export const recoveryKeys = pgTable("recovery_keys", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").notNull(),
+  keyHash: text("key_hash").notNull(), // Hashed recovery key
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+  expiresAt: timestamp("expires_at"),
+  usedAt: timestamp("used_at"),
+  isUsed: boolean("is_used").default(false),
+  deviceId: integer("device_id"), // Device that was recovered (if any)
+  metadata: jsonb("metadata"),
+});
+
+// Insert schemas for device management
+export const insertDeviceSchema = createInsertSchema(devices)
+  .pick({
+    userId: true,
+    deviceName: true,
+    deviceId: true,
+    deviceType: true,
+    operatingSystem: true,
+    browserInfo: true,
+    lastIpAddress: true,
+    status: true,
+    authMethod: true,
+    publicKey: true,
+    tonContractAddress: true,
+    metadata: true,
+  });
+
+export const insertDeviceAuthLogSchema = createInsertSchema(deviceAuthLogs)
+  .pick({
+    deviceId: true,
+    userId: true,
+    action: true,
+    success: true,
+    ipAddress: true,
+    location: true,
+    failureReason: true,
+    riskScore: true,
+    chainVerification: true,
+    metadata: true,
+  });
+
+export const insertDeviceVerificationSchema = createInsertSchema(deviceVerifications)
+  .pick({
+    deviceId: true,
+    blockchain: true,
+    contractAddress: true,
+    transactionHash: true,
+    verificationData: true,
+    signatureData: true,
+    verificationStatus: true,
+    expiresAt: true,
+    metadata: true,
+  })
+  .extend({
+    // Handle date conversion for expiresAt
+    expiresAt: z.union([z.string(), z.date(), z.null()])
+      .transform(val => {
+        if (val === null) return null;
+        if (val instanceof Date) return val;
+        if (typeof val === 'string') {
+          const date = new Date(val);
+          if (isNaN(date.getTime())) {
+            throw new Error('Invalid date format for expiresAt');
+          }
+          return date;
+        }
+        return new Date();
+      }).nullable(),
+  });
+
+export const insertRecoveryKeySchema = createInsertSchema(recoveryKeys)
+  .pick({
+    userId: true,
+    keyHash: true,
+    expiresAt: true,
+    deviceId: true,
+    metadata: true,
+  })
+  .extend({
+    // Handle date conversion for expiresAt
+    expiresAt: z.union([z.string(), z.date(), z.null()])
+      .transform(val => {
+        if (val === null) return null;
+        if (val instanceof Date) return val;
+        if (typeof val === 'string') {
+          const date = new Date(val);
+          if (isNaN(date.getTime())) {
+            throw new Error('Invalid date format for expiresAt');
+          }
+          return date;
+        }
+        return new Date();
+      }).nullable(),
+  });
+
+export type InsertDevice = z.infer<typeof insertDeviceSchema>;
+export type Device = typeof devices.$inferSelect;
+
+export type InsertDeviceAuthLog = z.infer<typeof insertDeviceAuthLogSchema>;
+export type DeviceAuthLog = typeof deviceAuthLogs.$inferSelect;
+
+export type InsertDeviceVerification = z.infer<typeof insertDeviceVerificationSchema>;
+export type DeviceVerification = typeof deviceVerifications.$inferSelect;
+
+export type InsertRecoveryKey = z.infer<typeof insertRecoveryKeySchema>;
+export type RecoveryKey = typeof recoveryKeys.$inferSelect;

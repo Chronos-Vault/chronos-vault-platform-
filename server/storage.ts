@@ -7,8 +7,14 @@ import {
   crossChainTransactions, type CrossChainTransaction, type InsertCrossChainTransaction,
   securityIncidents, type SecurityIncident, type InsertSecurityIncident,
   signatureRequests, type SignatureRequest, type InsertSignatureRequest,
-  signatures, type Signature, type InsertSignature
+  signatures, type Signature, type InsertSignature,
+  devices, type Device, type InsertDevice,
+  deviceAuthLogs, type DeviceAuthLog, type InsertDeviceAuthLog,
+  deviceVerifications, type DeviceVerification, type InsertDeviceVerification,
+  recoveryKeys, type RecoveryKey, type InsertRecoveryKey
 } from "@shared/schema";
+import { db } from "./db";
+import { eq, and, desc, isNull } from "drizzle-orm";
 
 export interface IStorage {
   // User methods
@@ -76,6 +82,34 @@ export interface IStorage {
   getSignaturesBySigner(signerAddress: string): Promise<Signature[]>;
   createSignature(signature: InsertSignature): Promise<Signature>;
   deleteSignature(id: number): Promise<boolean>;
+  
+  // Device management methods
+  getDevice(id: number): Promise<Device | undefined>;
+  getDeviceByDeviceId(deviceId: string): Promise<Device | undefined>;
+  getDevicesByUser(userId: number): Promise<Device[]>;
+  getDevicesByStatus(status: string): Promise<Device[]>;
+  createDevice(device: InsertDevice): Promise<Device>;
+  updateDevice(id: number, device: Partial<Device>): Promise<Device | undefined>;
+  deleteDevice(id: number): Promise<boolean>;
+  validateDevice(deviceId: string, tonContractAddress: string): Promise<boolean>;
+  
+  // Device authentication logs
+  createDeviceAuthLog(log: InsertDeviceAuthLog): Promise<DeviceAuthLog>;
+  getDeviceAuthLogsByDevice(deviceId: number): Promise<DeviceAuthLog[]>;
+  getDeviceAuthLogsByUser(userId: number): Promise<DeviceAuthLog[]>;
+  getLatestDeviceAuthLogs(userId: number, limit?: number): Promise<DeviceAuthLog[]>;
+  
+  // Device verification (blockchain)
+  getDeviceVerification(id: number): Promise<DeviceVerification | undefined>;
+  getDeviceVerificationsByDevice(deviceId: number): Promise<DeviceVerification[]>;
+  createDeviceVerification(verification: InsertDeviceVerification): Promise<DeviceVerification>;
+  updateDeviceVerificationStatus(id: number, status: string): Promise<DeviceVerification | undefined>;
+  
+  // Recovery keys
+  createRecoveryKey(key: InsertRecoveryKey): Promise<RecoveryKey>;
+  getRecoveryKeyByHash(keyHash: string): Promise<RecoveryKey | undefined>;
+  getRecoveryKeysByUser(userId: number): Promise<RecoveryKey[]>;
+  markRecoveryKeyAsUsed(id: number, deviceId?: number): Promise<RecoveryKey | undefined>;
 }
 
 export class MemStorage implements IStorage {
@@ -527,6 +561,208 @@ import { eq } from "drizzle-orm";
 
 // Database Storage implementation
 export class DatabaseStorage implements IStorage {
+  
+  // Device management methods
+  async getDevice(id: number): Promise<Device | undefined> {
+    const [device] = await db.select().from(devices).where(eq(devices.id, id));
+    return device;
+  }
+
+  async getDeviceByDeviceId(deviceId: string): Promise<Device | undefined> {
+    const [device] = await db.select().from(devices).where(eq(devices.deviceId, deviceId));
+    return device;
+  }
+
+  async getDevicesByUser(userId: number): Promise<Device[]> {
+    return await db.select().from(devices).where(eq(devices.userId, userId));
+  }
+
+  async getDevicesByStatus(status: string): Promise<Device[]> {
+    return await db.select().from(devices).where(eq(devices.status, status));
+  }
+
+  async createDevice(insertDevice: InsertDevice): Promise<Device> {
+    const [device] = await db.insert(devices).values({
+      ...insertDevice,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    }).returning();
+    
+    return device;
+  }
+
+  async updateDevice(id: number, updateData: Partial<Device>): Promise<Device | undefined> {
+    const [device] = await db
+      .update(devices)
+      .set({
+        ...updateData,
+        updatedAt: new Date(),
+      })
+      .where(eq(devices.id, id))
+      .returning();
+    
+    return device;
+  }
+
+  async deleteDevice(id: number): Promise<boolean> {
+    const result = await db.delete(devices).where(eq(devices.id, id));
+    return result.count > 0;
+  }
+  
+  async validateDevice(deviceId: string, tonContractAddress: string): Promise<boolean> {
+    // Check if device exists and has matching TON contract
+    const [device] = await db
+      .select()
+      .from(devices)
+      .where(
+        and(
+          eq(devices.deviceId, deviceId),
+          eq(devices.status, 'active'),
+          eq(devices.tonContractAddress, tonContractAddress)
+        )
+      );
+    
+    if (!device) {
+      return false;
+    }
+    
+    // Create an auth log for the verification attempt
+    await this.createDeviceAuthLog({
+      deviceId: device.id,
+      userId: device.userId,
+      action: 'verify',
+      success: true,
+      chainVerification: {
+        blockchain: 'ton',
+        contractAddress: tonContractAddress,
+        timestamp: new Date().toISOString(),
+        verified: true
+      },
+    });
+    
+    return true;
+  }
+  
+  // Device authentication logs
+  async createDeviceAuthLog(insertLog: InsertDeviceAuthLog): Promise<DeviceAuthLog> {
+    const [log] = await db.insert(deviceAuthLogs).values({
+      ...insertLog,
+      timestamp: new Date(),
+    }).returning();
+    
+    return log;
+  }
+  
+  async getDeviceAuthLogsByDevice(deviceId: number): Promise<DeviceAuthLog[]> {
+    return await db
+      .select()
+      .from(deviceAuthLogs)
+      .where(eq(deviceAuthLogs.deviceId, deviceId))
+      .orderBy(desc(deviceAuthLogs.timestamp));
+  }
+  
+  async getDeviceAuthLogsByUser(userId: number): Promise<DeviceAuthLog[]> {
+    return await db
+      .select()
+      .from(deviceAuthLogs)
+      .where(eq(deviceAuthLogs.userId, userId))
+      .orderBy(desc(deviceAuthLogs.timestamp));
+  }
+  
+  async getLatestDeviceAuthLogs(userId: number, limit: number = 10): Promise<DeviceAuthLog[]> {
+    return await db
+      .select()
+      .from(deviceAuthLogs)
+      .where(eq(deviceAuthLogs.userId, userId))
+      .orderBy(desc(deviceAuthLogs.timestamp))
+      .limit(limit);
+  }
+  
+  // Device verification (blockchain)
+  async getDeviceVerification(id: number): Promise<DeviceVerification | undefined> {
+    const [verification] = await db
+      .select()
+      .from(deviceVerifications)
+      .where(eq(deviceVerifications.id, id));
+    
+    return verification;
+  }
+  
+  async getDeviceVerificationsByDevice(deviceId: number): Promise<DeviceVerification[]> {
+    return await db
+      .select()
+      .from(deviceVerifications)
+      .where(eq(deviceVerifications.deviceId, deviceId))
+      .orderBy(desc(deviceVerifications.timestamp));
+  }
+  
+  async createDeviceVerification(insertVerification: InsertDeviceVerification): Promise<DeviceVerification> {
+    const [verification] = await db
+      .insert(deviceVerifications)
+      .values({
+        ...insertVerification,
+        timestamp: new Date(),
+      })
+      .returning();
+    
+    return verification;
+  }
+  
+  async updateDeviceVerificationStatus(id: number, status: string): Promise<DeviceVerification | undefined> {
+    const [verification] = await db
+      .update(deviceVerifications)
+      .set({
+        verificationStatus: status,
+      })
+      .where(eq(deviceVerifications.id, id))
+      .returning();
+    
+    return verification;
+  }
+  
+  // Recovery keys
+  async createRecoveryKey(insertKey: InsertRecoveryKey): Promise<RecoveryKey> {
+    const [key] = await db
+      .insert(recoveryKeys)
+      .values({
+        ...insertKey,
+        createdAt: new Date(),
+        isUsed: false,
+      })
+      .returning();
+    
+    return key;
+  }
+  
+  async getRecoveryKeyByHash(keyHash: string): Promise<RecoveryKey | undefined> {
+    const [key] = await db
+      .select()
+      .from(recoveryKeys)
+      .where(eq(recoveryKeys.keyHash, keyHash));
+    
+    return key;
+  }
+  
+  async getRecoveryKeysByUser(userId: number): Promise<RecoveryKey[]> {
+    return await db
+      .select()
+      .from(recoveryKeys)
+      .where(eq(recoveryKeys.userId, userId));
+  }
+  
+  async markRecoveryKeyAsUsed(id: number, deviceId?: number): Promise<RecoveryKey | undefined> {
+    const [key] = await db
+      .update(recoveryKeys)
+      .set({
+        isUsed: true,
+        usedAt: new Date(),
+        deviceId: deviceId || null,
+      })
+      .where(eq(recoveryKeys.id, id))
+      .returning();
+    
+    return key;
+  }
   async getUser(id: number): Promise<User | undefined> {
     const [user] = await db.select().from(users).where(eq(users.id, id));
     return user || undefined;

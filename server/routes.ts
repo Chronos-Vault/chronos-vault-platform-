@@ -31,6 +31,7 @@ import { WebSocket } from 'ws';
 import { initializeWebSocketManager, getWebSocketManager } from './websocket/websocket-manager';
 import { resetOnboarding } from './api/emergency-reset';
 import { registerCrossChainOperationsRoutes } from './api/cross-chain-operations-routes';
+import apiRoutes from './routes/index';
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // Create HTTP server instance
@@ -49,6 +50,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
   apiRouter.use('/health', healthRoutes);
   apiRouter.use('/incidents', incidentRoutes);
   apiRouter.use('/payments', paymentRoutes);
+  
+  // Register our new device verification and TON smart contract integration routes
+  apiRouter.use('/', apiRoutes);
   
   // Initialize the blockchain connector factory
   // This would be done in your app initialization
