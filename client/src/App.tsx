@@ -28,7 +28,7 @@ import SmartContractsPage from '@/pages/smart-contracts';
 import TechnicalSpecPage from '@/pages/technical-spec';
 
 // Vault Type Pages
-import VaultTypesPage from '@/pages/vault-types';
+import VaultTypesPage from '@/pages/vault-types-new';
 import VaultTypesSelector from '@/pages/vault-types-selector';
 import VaultShowcase from '@/pages/stunning-vault-showcase';
 
