@@ -22,9 +22,13 @@ import {
   CogIcon, Lock, Smartphone, Brain, MousePointerClick, Loader2
 } from 'lucide-react';
 
-const BehavioralAuthenticationPage = () => {
+// Modified to handle both Route component props and our custom tab prop
+const BehavioralAuthenticationPage = (props: any) => {
+  // Extract the tab prop if it exists, otherwise check for a tab parameter in the route
+  const tabParam = props.tab || (props.params && props.params.tab);
   const [_, navigate] = useLocation();
-  const [activeTab, setActiveTab] = useState('overview');
+  // Use the tab parameter if provided, otherwise default to 'overview'
+  const [activeTab, setActiveTab] = useState(tabParam || 'overview');
   const [isScanning, setIsScanning] = useState(false);
   const [confidenceScore, setConfidenceScore] = useState(0);
   const [simulationComplete, setSimulationComplete] = useState(false);
@@ -196,7 +200,7 @@ const BehavioralAuthenticationPage = () => {
       </p>
       
       <Tabs defaultValue={activeTab} onValueChange={setActiveTab} className="space-y-8">
-        <TabsList className="grid w-full grid-cols-3 bg-[#1A1A1A] border border-[#333] p-1 rounded-lg">
+        <TabsList className="grid w-full grid-cols-4 bg-[#1A1A1A] border border-[#333] p-1 rounded-lg">
           <TabsTrigger value="overview" className="data-[state=active]:bg-[#6B00D7] data-[state=active]:text-white">
             Overview
           </TabsTrigger>
@@ -205,6 +209,9 @@ const BehavioralAuthenticationPage = () => {
           </TabsTrigger>
           <TabsTrigger value="settings" className="data-[state=active]:bg-[#6B00D7] data-[state=active]:text-white">
             Settings
+          </TabsTrigger>
+          <TabsTrigger value="social" className="data-[state=active]:bg-[#6B00D7] data-[state=active]:text-white">
+            Social Recovery
           </TabsTrigger>
         </TabsList>
         
@@ -700,6 +707,120 @@ const BehavioralAuthenticationPage = () => {
               <Button className="w-full bg-[#6B00D7] hover:bg-[#5A00B6] text-white">
                 <Shield className="mr-2 h-4 w-4" />
                 Save Settings
+              </Button>
+            </CardFooter>
+          </Card>
+        </TabsContent>
+        
+        {/* Social Recovery Tab */}
+        <TabsContent value="social" className="space-y-6">
+          <Card className="bg-[#1A1A1A] border-[#333] shadow-xl">
+            <CardHeader>
+              <CardTitle className="text-2xl text-white">Social Recovery System</CardTitle>
+              <CardDescription className="text-gray-400">
+                Recover your vault access through trusted contacts in case of emergency
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              <div className="bg-[#242424] rounded-lg p-4 border border-[#333]">
+                <h3 className="text-white font-medium mb-2">How Social Recovery Works</h3>
+                <p className="text-gray-400">
+                  Social recovery enables you to regain access to your vault through trusted contacts
+                  if you lose your authentication credentials. It's a secure backup system that doesn't 
+                  compromise your vault's security.
+                </p>
+              </div>
+              
+              <div className="space-y-4">
+                <div className="flex items-center justify-between">
+                  <div className="space-y-0.5">
+                    <Label className="text-white">Enable Social Recovery</Label>
+                    <p className="text-xs text-gray-400">Allow trusted contacts to help recover your vault access</p>
+                  </div>
+                  <Switch checked={true} />
+                </div>
+                
+                <Separator className="bg-[#333]" />
+                
+                <div className="space-y-2">
+                  <Label className="text-white">Trusted Contacts</Label>
+                  <div className="space-y-3">
+                    <div className="flex justify-between items-center bg-[#242424] p-3 rounded-lg border border-[#333]">
+                      <div className="flex items-center space-x-3">
+                        <div className="bg-[#333] rounded-full h-10 w-10 flex items-center justify-center">
+                          <span className="text-sm text-white">JD</span>
+                        </div>
+                        <div>
+                          <p className="text-white">John Doe</p>
+                          <p className="text-xs text-gray-400">john.doe@example.com</p>
+                        </div>
+                      </div>
+                      <Button variant="ghost" size="sm" className="text-red-500 hover:text-red-400 hover:bg-[#333]">
+                        Remove
+                      </Button>
+                    </div>
+                    
+                    <div className="flex justify-between items-center bg-[#242424] p-3 rounded-lg border border-[#333]">
+                      <div className="flex items-center space-x-3">
+                        <div className="bg-[#333] rounded-full h-10 w-10 flex items-center justify-center">
+                          <span className="text-sm text-white">AS</span>
+                        </div>
+                        <div>
+                          <p className="text-white">Alice Smith</p>
+                          <p className="text-xs text-gray-400">alice.smith@example.com</p>
+                        </div>
+                      </div>
+                      <Button variant="ghost" size="sm" className="text-red-500 hover:text-red-400 hover:bg-[#333]">
+                        Remove
+                      </Button>
+                    </div>
+                  </div>
+                </div>
+                
+                <Button className="w-full mt-4 border border-dashed border-[#6B00D7] bg-transparent hover:bg-[#6B00D7]/10 text-[#FF5AF7]">
+                  Add Trusted Contact
+                </Button>
+              </div>
+              
+              <div className="bg-[#242424] rounded-lg p-4 border border-[#333]">
+                <h3 className="text-white font-medium mb-2">Recovery Settings</h3>
+                <div className="space-y-4 mt-4">
+                  <div className="space-y-2">
+                    <Label className="text-white">Required Confirmations</Label>
+                    <p className="text-xs text-gray-400">Number of trusted contacts required to approve recovery</p>
+                    <Select defaultValue="2">
+                      <SelectTrigger className="bg-[#333] border-[#444] text-white">
+                        <SelectValue placeholder="Select number" />
+                      </SelectTrigger>
+                      <SelectContent className="bg-[#333] border-[#444] text-white">
+                        <SelectItem value="1">1 contact (least secure)</SelectItem>
+                        <SelectItem value="2">2 contacts (recommended)</SelectItem>
+                        <SelectItem value="3">All contacts (most secure)</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  
+                  <div className="space-y-2">
+                    <Label className="text-white">Recovery Time Delay</Label>
+                    <p className="text-xs text-gray-400">Waiting period before recovery is processed</p>
+                    <Select defaultValue="24h">
+                      <SelectTrigger className="bg-[#333] border-[#444] text-white">
+                        <SelectValue placeholder="Select delay" />
+                      </SelectTrigger>
+                      <SelectContent className="bg-[#333] border-[#444] text-white">
+                        <SelectItem value="12h">12 hours</SelectItem>
+                        <SelectItem value="24h">24 hours (recommended)</SelectItem>
+                        <SelectItem value="48h">48 hours</SelectItem>
+                        <SelectItem value="72h">72 hours</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
+              </div>
+            </CardContent>
+            <CardFooter>
+              <Button className="w-full bg-[#6B00D7] hover:bg-[#5A00B6] text-white">
+                Save Recovery Settings
               </Button>
             </CardFooter>
           </Card>
