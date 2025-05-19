@@ -95,11 +95,13 @@ export const NavBar: React.FC = () => {
             {/* Mobile Menu Button - Only on mobile */}
             <div className="md:hidden">
               <button 
-                className="text-[#FF5AF7] hover:text-[#6B00D7] transition-colors duration-300"
+                className="relative text-[#FF5AF7] hover:text-[#6B00D7] transition-colors duration-300 p-2 rounded-full overflow-hidden group"
                 onClick={() => setSidebarOpen(true)}
                 aria-label="Open menu"
               >
-                <Menu className="w-6 h-6" />
+                <span className="absolute inset-0 bg-gradient-to-r from-[#6B00D7]/10 to-[#FF5AF7]/10 opacity-0 group-hover:opacity-100 rounded-full transition-opacity duration-500"></span>
+                <span className="absolute inset-0 border border-[#FF5AF7]/20 rounded-full group-hover:border-[#FF5AF7]/40 transition-colors duration-500"></span>
+                <Menu className="w-6 h-6 relative z-10" />
               </button>
             </div>
             
