@@ -52,7 +52,7 @@ const TokenVaultsPage: React.FC = () => {
   const releaseVaults: ReleaseVault[] = [
     {
       id: 'genesis',
-      name: 'Genesis Vault',
+      name: 'Genesis Vault™',
       releaseDate: '01/07/2023',
       releaseYear: 2023,
       percentage: '15%',
@@ -79,14 +79,14 @@ const TokenVaultsPage: React.FC = () => {
       }
     },
     {
-      id: 'gold-olympic',
-      name: 'Gold Olympic Vault',
+      id: 'sovereign-vault',
+      name: 'Sovereign Vault™',
       releaseDate: '05/15/2029',
       releaseYear: 2029,
       percentage: '35%',
       tokens: '7,350,000 CVT',
       status: 'locked',
-      description: 'The Gold Olympic Vaults open, unlocking 50% of all time-locked tokens. This major release coincides with platform maturity and transition to DAO governance.',
+      description: 'The Sovereign Vault™ opens, unlocking 50% of all time-locked tokens. This major release coincides with platform maturity and transition to DAO governance.',
       image: '/images/gold-vault.png',
       blockchainDetails: {
         ethereum: '0x7A21438Ba88510Cf32E78E736AB440A84FD37Ae9',
@@ -107,14 +107,14 @@ const TokenVaultsPage: React.FC = () => {
       }
     },
     {
-      id: 'silver-olympic',
-      name: 'Silver Olympic Vault',
+      id: 'architect-vault',
+      name: 'Architect Vault™',
       releaseDate: '05/15/2033',
       releaseYear: 2033,
       percentage: '17.5%',
       tokens: '3,675,000 CVT',
       status: 'locked',
-      description: 'Silver Olympic Vaults activate with 25% of time-locked tokens. Enhanced verification protocols and staking mechanisms provide advanced security and governance rights.',
+      description: 'Architect Vault™ activates with 25% of time-locked tokens. Enhanced verification protocols and staking mechanisms provide advanced security and governance rights.',
       image: '/images/silver-vault.png',
       blockchainDetails: {
         ethereum: '0x8B34c1A83b7C5F4dB8a78D9b71e1AbF28Cd24E7D',
@@ -135,14 +135,14 @@ const TokenVaultsPage: React.FC = () => {
       }
     },
     {
-      id: 'bronze-olympic',
-      name: 'Bronze Olympic Vault',
+      id: 'guardian-vault',
+      name: 'Guardian Vault™',
       releaseDate: '05/15/2037',
       releaseYear: 2037,
       percentage: '8.75%',
       tokens: '1,837,500 CVT',
       status: 'locked',
-      description: 'Bronze Olympic Vaults open with 12.5% of time-locked tokens. Cross-chain verification systems reach full maturity, offering sophisticated portfolio tools.',
+      description: 'Guardian Vault™ opens with 12.5% of time-locked tokens. Cross-chain verification systems reach full maturity, offering sophisticated portfolio tools.',
       image: '/images/bronze-vault.png',
       blockchainDetails: {
         ethereum: '0x9C45b1F58Af32D1aBdE7F57BC15Ed6f30BcA2783',
@@ -164,13 +164,13 @@ const TokenVaultsPage: React.FC = () => {
     },
     {
       id: 'diamond-verification',
-      name: 'Diamond Verification Vault',
+      name: 'Diamond Verification Vault™',
       releaseDate: '05/15/2041',
       releaseYear: 2041,
       percentage: '4.375%',
       tokens: '918,750 CVT',
       status: 'locked',
-      description: 'Diamond Verification Vaults activate with 6.25% of time-locked tokens, introducing quantum-resistant security features and verification authorities.',
+      description: 'Diamond Verification Vault™ activates with 6.25% of time-locked tokens, introducing quantum-resistant security features and verification authorities.',
       image: '/images/diamond-vault.png',
       blockchainDetails: {
         ethereum: '0xAe7D6F21D2B138c92bD36E7C8Eb2B7De45F5F218',
@@ -192,13 +192,13 @@ const TokenVaultsPage: React.FC = () => {
     },
     {
       id: 'sovereign-fortress',
-      name: 'Sovereign Fortress Vault',
+      name: 'Sovereign Fortress Vault™',
       releaseDate: '05/15/2046',
       releaseYear: 2046,
       percentage: '4.375%',
       tokens: '918,750 CVT',
       status: 'locked',
-      description: 'Sovereign Fortress Vaults complete the 21-year cycle with the final 6.25% of time-locked tokens - the ultimate security and sovereignty level.',
+      description: 'Sovereign Fortress Vault™ completes the 21-year cycle with the final 6.25% of time-locked tokens - the ultimate security and sovereignty level.',
       image: '/images/sovereign-vault.png',
       blockchainDetails: {
         ethereum: '0xFd9A8E5c81B9Fc1D33E56DE8D7f58D79Eb21B3C2',
