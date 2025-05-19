@@ -91,6 +91,7 @@ import BitcoinHalvingVaultPage from '@/pages/bitcoin-halving-vault';
 import CrossChainBridgePage from '@/pages/cross-chain-bridge';
 import CrossChainAtomicSwapPage from '@/pages/cross-chain-atomic-swap';
 import TonWalletCrossChainBridgePage from '@/pages/ton-wallet-cross-chain-bridge';
+import CrossChainVsAtomicSwapPage from '@/pages/cross-chain-vs-atomic-swap';
 
 // Token & Payment Pages
 import CvtStakingPage from '@/pages/cvt-staking';
@@ -153,14 +154,17 @@ const App: React.FC = () => {
                       <Route path="/device-recovery" component={DeviceRecoveryPage} />
                       
                       {/* Security Pages */}
+                      <Route path="/security-dashboard" component={SecurityVerificationPage} />
                       <Route path="/ton-security" component={TonSecurityPage} />
                       <Route path="/cross-chain-security" component={CrossChainSecurityPage} />
                       <Route path="/security-verification" component={SecurityVerificationPage} />
                       <Route path="/security-verification-demo" component={SecurityVerificationDemoPage} />
                       <Route path="/behavioral-authentication" component={BehavioralAuthenticationPage} />
+                      <Route path="/behavioral-auth" component={BehavioralAuthenticationPage} />
                       <Route path="/zero-knowledge-verification" component={ZeroKnowledgeVerificationPage} />
                       <Route path="/zk-privacy-demo" component={ZkPrivacyDemoPage} />
                       <Route path="/triple-chain-security-demo" component={TripleChainSecurityDemoPage} />
+                      <Route path="/quantum-resistant" component={QuantumResistantVaultPage} />
                       
                       {/* Blockchain Integration */}
                       <Route path="/ethereum-integration" component={EthereumIntegrationPage} />
@@ -195,9 +199,12 @@ const App: React.FC = () => {
                       <Route path="/bitcoin-halving-vault" component={BitcoinHalvingVaultPage} />
                       
                       {/* Cross-Chain Features */}
+                      <Route path="/cross-chain-operations" component={CrossChainMonitorPage} />
                       <Route path="/cross-chain-bridge" component={CrossChainBridgePage} />
                       <Route path="/cross-chain-atomic-swap" component={CrossChainAtomicSwapPage} />
                       <Route path="/ton-wallet-cross-chain-bridge" component={TonWalletCrossChainBridgePage} />
+                      <Route path="/bridge-vs-swap" component={CrossChainVsAtomicSwapPage} />
+                      <Route path="/atomic-swaps" component={CrossChainAtomicSwapPage} />
                       
                       {/* Token & Payment */}
                       <Route path="/cvt-tokenomics" component={CvtTokenomicsPage} />
@@ -206,6 +213,8 @@ const App: React.FC = () => {
                       <Route path="/cvt-staking" component={CvtStakingPage} />
                       <Route path="/cvt-payment" component={CvtPaymentPage} />
                       <Route path="/subscription" component={SubscriptionPage} />
+                      <Route path="/token-vaults" component={CvtTokenPage} />
+                      <Route path="/gift-crypto" component={CvtPaymentPage} />
                     </Switch>
                     
                     <Footer />
