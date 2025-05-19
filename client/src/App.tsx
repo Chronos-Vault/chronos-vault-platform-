@@ -79,6 +79,7 @@ import AIIntentInheritanceVaultDocumentation from './pages/documentation/ai-inte
 import AIAssistedInvestmentVaultDocumentation from './pages/documentation/ai-assisted-investment-vault';
 import MilestoneBasedVaultDocumentation from './pages/documentation/milestone-based-vault';
 import FamilyHeritageVaultDocumentation from './pages/documentation/family-heritage-vault';
+import GiftCryptoVaultDocumentation from './pages/documentation/gift-crypto-vault-fixed';
 import NFTPoweredVault from './pages/nft-powered-vault';
 import QuantumResistantVault from './pages/quantum-resistant-vault';
 import SovereignFortressVault from './pages/sovereign-fortress-vault';
@@ -278,6 +279,7 @@ function App() {
           <Route path="/documentation/ai-assisted-investment-vault" component={AIAssistedInvestmentVaultDocumentation} />
           <Route path="/documentation/milestone-based-vault" component={MilestoneBasedVaultDocumentation} />
           <Route path="/documentation/family-heritage-vault" component={FamilyHeritageVaultDocumentation} />
+          <Route path="/documentation/gift-crypto-vault" component={GiftCryptoVaultDocumentation} />
           <Route path="/cvt-tokenomics" component={CvtTokenomics} />
           <Route path="/roadmap" component={Roadmap} />
           <Route path="/team" component={Team} />
@@ -328,7 +330,7 @@ function App() {
           <Route path="/premium-features" component={PremiumFeatures} />
           <Route path="/premium-payment" component={PremiumPayment} />
           <Route path="/subscription" component={Subscription} />
-          <Route path="/gift-crypto" component={GiftCrypto} />
+          <Route path="/gift-crypto" component={GiftCryptoVaultDocumentation} />
           <Route path="/bitcoin-halving" component={BitcoinHalvingPage} />
           <Route path="/storage" component={StoragePage} />
           <Route path="/privacy-policy" component={PrivacyPolicyPage} />

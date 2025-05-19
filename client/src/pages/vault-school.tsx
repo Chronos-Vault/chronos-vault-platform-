@@ -276,6 +276,23 @@ const vaultTypes = [
     category: "inheritance",
   },
   {
+    id: "gift-crypto",
+    name: "Gift Crypto Vault",
+    icon: "🎁",
+    href: "/documentation/gift-crypto-vault",
+    description: "Create memorable crypto gifts with time-locked conditions",
+    features: [
+      "Personalized multimedia messages",
+      "Custom time-lock conditions",
+      "Achievement-based unlocking",
+      "Recipient-friendly access",
+      "Cross-chain compatibility",
+    ],
+    isNew: true,
+    highlight: true,
+    category: "personal",
+  },
+  {
     id: "milestone-based",
     name: "Milestone-Based Release Vault",
     icon: "🏆",
