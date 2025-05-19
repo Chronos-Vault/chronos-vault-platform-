@@ -103,6 +103,7 @@ import SecurityTutorialsVideo from '@/pages/security-tutorials-video';
 import SecurityTutorials from '@/pages/security-tutorials';
 import MilitaryGradeSecurity from '@/pages/military-grade-security';
 import TokenVaultsPage from '@/pages/token-vaults-redesign';
+import SecurityDocumentation from '@/pages/security-documentation';
 // We already have the QuantumResistantVaultPage imported above
 
 // Token & Payment Pages
@@ -241,7 +242,7 @@ const App: React.FC = () => {
                       <Route path="/smart-contracts" component={SmartContractsPage} />
                       <Route path="/technical-spec" component={TechnicalSpecPage} />
                       <Route path="/tokenomics" component={CvtTokenomicsPage} />
-                      <Route path="/technical-security-docs" component={DocumentationPage} />
+                      <Route path="/technical-security-docs" component={SecurityDocumentation} />
                       <Route path="/security-video-guides" component={SecurityTutorialsVideo} />
                       <Route path="/security-tutorials" component={SecurityTutorials} />
                       <Route path="/military-grade-security" component={MilitaryGradeSecurity} />
