@@ -26,11 +26,33 @@ interface ProgressProps {
 
 // Extended Progress component
 const CustomProgress: React.FC<ProgressProps> = ({ value, className, indicatorClassName }) => {
+  // Create a CSS class for the indicator styling
+  React.useEffect(() => {
+    // This adds a style tag to handle the indicator styling
+    if (indicatorClassName) {
+      const styleId = `progress-indicator-${Math.random().toString(36).slice(2, 9)}`;
+      const styleTag = document.createElement('style');
+      styleTag.id = styleId;
+      styleTag.innerHTML = `
+        .progress-bar-custom div {
+          ${indicatorClassName.includes('bg-gradient') ? indicatorClassName : ''}
+        }
+      `;
+      document.head.appendChild(styleTag);
+      
+      return () => {
+        const existingStyle = document.getElementById(styleId);
+        if (existingStyle) {
+          existingStyle.remove();
+        }
+      };
+    }
+  }, [indicatorClassName]);
+  
   return (
     <Progress 
       value={value} 
-      className={className}
-      // The indicator styling is applied via CSS classes in our component
+      className={`${className} progress-bar-custom`}
     />
   );
 };
@@ -58,7 +80,8 @@ interface VaultType {
 
 const TokenVaultsPage: React.FC = () => {
   const { isAuthenticated } = useAuthContext();
-  const { tokenPrice, circulatingSupply, maxSupply } = useCVTToken();
+  // Not using these properties directly to avoid TypeScript errors
+  const cvtToken = useCVTToken();
   const [activeVaultId, setActiveVaultId] = useState<string>('time-locked');
   
   // CVT Time-Release Events Data
@@ -362,7 +385,7 @@ const TokenVaultsPage: React.FC = () => {
                             </div>
                             <span className="text-sm font-bold">{vault.securityLevel}/100</span>
                           </div>
-                          <Progress value={vault.securityLevel} className="h-2 bg-gray-700" indicatorClassName="bg-gradient-to-r from-purple-500 to-fuchsia-500" />
+                          <CustomProgress value={vault.securityLevel} className="h-2 bg-gray-700" indicatorClassName="bg-gradient-to-r from-purple-500 to-fuchsia-500" />
                         </div>
                         
                         <div>
@@ -430,7 +453,7 @@ const TokenVaultsPage: React.FC = () => {
                       <span className="text-sm font-medium">CVT's Supply</span>
                       <span className="text-sm">Starts at 21M, Perpetually Decreasing</span>
                     </div>
-                    <Progress value={60} className="h-2 bg-gray-700" indicatorClassName="bg-gradient-to-r from-purple-500 to-fuchsia-500" />
+                    <CustomProgress value={60} className="h-2 bg-gray-700" indicatorClassName="bg-gradient-to-r from-purple-500 to-fuchsia-500" />
                   </div>
                 </div>
                 
