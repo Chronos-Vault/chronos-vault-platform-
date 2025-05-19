@@ -17,7 +17,6 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
-import logoPath from '@assets/IMG_3753.jpeg';
 
 /**
  * Main navigation component for the application
@@ -77,7 +76,7 @@ export const NavBar: React.FC = () => {
               {/* Logo */}
               <Link href="/" className="flex items-center">
                 <div className="h-12 w-12 rounded-full flex items-center justify-center shadow-lg shadow-[#6B00D7]/20 hover:shadow-[#FF5AF7]/30 transition-all overflow-hidden border-2 border-white/20 mr-2">
-                  <img src={logoPath} alt="Chronos Vault Logo" className="w-full h-full object-cover" />
+                  <img src="/IMG_3753.jpeg" alt="Chronos Vault Logo" className="w-full h-full object-cover" />
                 </div>
                 <div className="relative">
                   <h1 className="text-xl font-bold">
@@ -130,7 +129,7 @@ export const NavBar: React.FC = () => {
           <div className="flex items-center justify-between p-5 border-b border-purple-900/30">
             <div className="flex items-center">
               <div className="h-14 w-14 rounded-full flex items-center justify-center shadow-lg shadow-[#6B00D7]/20 hover:shadow-[#FF5AF7]/30 transition-all overflow-hidden border-2 border-white/20 mr-3">
-                <img src={logoPath} alt="Chronos Vault Logo" className="w-full h-full object-cover" />
+                <img src="/IMG_3753.jpeg" alt="Chronos Vault Logo" className="w-full h-full object-cover" />
               </div>
               
               <div className="relative">
