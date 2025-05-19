@@ -307,6 +307,7 @@ function App() {
           <Route path="/ethereum-integration" component={EthereumIntegration} />
           <Route path="/solana-integration" component={SolanaIntegration} />
           <Route path="/ton-integration" component={TonIntegration} />
+          <Route path="/device-recovery" component={DeviceRecovery} />
           
           {/* Security & Technical Pages */}
           <Route path="/security-verification-demo" component={SecurityVerificationDemo} />

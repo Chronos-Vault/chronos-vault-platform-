@@ -56,6 +56,7 @@ run_all_tests() {
 run_ethereum_tests() {
     echo -e "\n${BLUE}Running Ethereum contract tests...${NC}"
     npx hardhat test tests/ethereum/ChronosVault.test.ts
+    npx hardhat test tests/ethereum/MultiSignatureFeature.test.ts
 }
 
 run_ton_tests() {
