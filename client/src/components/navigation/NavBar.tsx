@@ -128,15 +128,15 @@ export const NavBar: React.FC = () => {
       >
         <div 
           ref={sidebarRef}
-          className={`fixed top-0 left-0 h-full w-80 bg-[#0E0318] shadow-[0_0_25px_rgba(107,0,215,0.3)] transition-transform duration-300 ease-out ${
-            sidebarOpen ? 'translate-x-0' : '-translate-x-full'
+          className={`fixed top-0 right-0 h-full w-80 bg-[#0E0318] shadow-[-5px_0_25px_rgba(107,0,215,0.3)] transition-transform duration-300 ease-out ${
+            sidebarOpen ? 'translate-x-0' : 'translate-x-full'
           }`}
         >
           {/* Sidebar Header */}
           <div className="flex items-center justify-between p-5 border-b border-purple-900/30">
             <div className="flex items-center">
               <div className="h-14 w-14 rounded-full flex items-center justify-center shadow-lg shadow-[#6B00D7]/30 hover:shadow-[#FF5AF7]/30 transition-all overflow-hidden border-2 border-[#9333EA]/30 mr-3">
-                <img src="/chronos-logo.jpeg" alt="Chronos Vault Logo" className="w-full h-full object-cover" />
+                <img src="/chronos-vault-logo.jpeg" alt="Chronos Vault Logo" className="w-full h-full object-cover" />
               </div>
               
               <div className="relative">
