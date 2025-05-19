@@ -323,20 +323,32 @@ class ChainlinkOracleService {
    */
   async getPriceFeeds(network: Network = 'ethereum'): Promise<PriceFeed[]> {
     try {
-      // In a real implementation, this would call an API or blockchain
-      // For now, we'll generate sample data or return cached data
-      if (!this.cachedPriceFeeds[network]) {
-        return new Promise((resolve) => {
-          setTimeout(() => {
-            this.cachedPriceFeeds[network] = generatePriceFeeds(network);
-            resolve(this.cachedPriceFeeds[network]);
-          }, 800); // Simulate network delay
-        });
+      // Check cache first to avoid unnecessary network requests
+      if (this.cachedPriceFeeds[network] && 
+          Date.now() - this.cachedPriceFeeds[network][0]?.timestamp < 60000) { // 1 minute cache
+        return this.cachedPriceFeeds[network];
       }
       
-      return this.cachedPriceFeeds[network];
+      // Connect to the appropriate testnet for the requested network
+      switch (network) {
+        case 'ethereum':
+          // Use Ethereum Sepolia testnet
+          return await this.getEthereumTestnetPriceFeeds();
+        case 'solana':
+          // Use Solana Devnet
+          return await this.getSolanaDevnetPriceFeeds();
+        case 'ton':
+          // Use TON testnet
+          return await this.getTONTestnetPriceFeeds();
+        case 'bitcoin':
+          // For Bitcoin, we'll use a different approach since it doesn't have Chainlink feeds
+          return await this.getBitcoinTestnetPriceFeeds();
+        default:
+          // Fallback to Ethereum
+          return await this.getEthereumTestnetPriceFeeds();
+      }
     } catch (error) {
-      console.error("Error fetching price feeds:", error);
+      console.error(`Error fetching ${network} price feeds:`, error);
       throw error;
     }
   }
