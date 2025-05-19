@@ -9,6 +9,7 @@ import {
 import { useCVTToken } from '@/contexts/cvt-token-context';
 import { useMultiChain } from '@/contexts/multi-chain-context';
 import { useAuthContext } from '@/contexts/auth-context';
+import logoPath from '@assets/IMG_3764.jpeg';
 import { 
   DropdownMenu, 
   DropdownMenuContent, 
@@ -69,7 +70,7 @@ export const NavBar: React.FC = () => {
               <Link href="/" className="flex items-center gap-3 group">
                 <div className="h-12 w-12 rounded-full flex items-center justify-center shadow-lg shadow-[#6B00D7]/20 group-hover:shadow-[#FF5AF7]/30 transition-all overflow-hidden border-2 border-white/20">
                   <img 
-                    src="/cv-logo.jpeg" 
+                    src={logoPath} 
                     alt="Chronos Vault Logo" 
                     className="w-full h-full object-cover" 
                   />
@@ -136,7 +137,7 @@ export const NavBar: React.FC = () => {
           <div className="flex items-center justify-between p-5 border-b border-purple-900/30">
             <div className="flex items-center">
               <div className="h-14 w-14 rounded-full flex items-center justify-center shadow-lg shadow-[#6B00D7]/30 hover:shadow-[#FF5AF7]/30 transition-all overflow-hidden border-2 border-[#9333EA]/30 mr-3">
-                <img src="/cv-logo.jpeg" alt="Chronos Vault Logo" className="w-full h-full object-cover" />
+                <img src={logoPath} alt="Chronos Vault Logo" className="w-full h-full object-cover" />
               </div>
               
               <div className="relative">
