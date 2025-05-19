@@ -69,6 +69,17 @@ interface TimeReleaseEvent {
   specialName: string;
   securityFeatures: string[];
   vaultType: string;
+  blockchainDetails: {
+    ethereum: string;
+    solana: string;
+    ton: string;
+    smartContract?: string;
+  };
+  verificationDetails: {
+    mechanism: string;
+    difficulty: number;
+    validators: number;
+  };
 }
 
 interface OlympicVault {
@@ -121,7 +132,18 @@ const TokenVaultsPage: React.FC = () => {
       description: "Initial circulation represents the foundation of the CVT ecosystem, distributed to strategic partners, platform development, and ecosystem fund to kickstart the platform's growth.",
       specialName: "Genesis Distribution",
       securityFeatures: ["Multi-signature requirements", "Transparent allocation", "Vesting schedules"],
-      vaultType: "Foundation Vault"
+      vaultType: "Foundation Vault",
+      blockchainDetails: {
+        ethereum: "0x6F3e7D82526e12051C151AE054F242Cc91e19438",
+        solana: "CvT5oXeA9KFmBpAFRxvg7zdycBcFZv3TBHmNpANmzaQA",
+        ton: "EQBYLdzkDjdjZLtXXgQTgMhpCaKDPfQQUKxpBNKmBiCY5_Y_",
+        smartContract: "TimeLockFoundation v1.0"
+      },
+      verificationDetails: {
+        mechanism: "Multi-Signature Time-Lock Protocol",
+        difficulty: 85,
+        validators: 7
+      }
     },
     { 
       year: 4, 
@@ -131,7 +153,18 @@ const TokenVaultsPage: React.FC = () => {
       description: "The Gold Olympic Vaults open, unlocking 50% of all time-locked tokens. This major release coincides with platform maturity and transition to DAO governance, enabling expanded ecosystem development.",
       specialName: "Gold Olympic Unlock",
       securityFeatures: ["Triple-chain verification", "Government-grade encryption", "Zero-knowledge proof validation"],
-      vaultType: "Gold Olympic Vault"
+      vaultType: "Gold Olympic Vault",
+      blockchainDetails: {
+        ethereum: "0x7A21438Ba88510Cf32E78E736AB440A84FD37Ae9",
+        solana: "GLD5xNvZmYfAHyj2qWe94kzVn56mThL4X37jNgVNc7Uq",
+        ton: "EQCGLdvault-gold-olympic-4y-eHu873BfqMn77rRt58",
+        smartContract: "GoldOlympicVault v2.1"
+      },
+      verificationDetails: {
+        mechanism: "Triple-Chain Consensus Protocol",
+        difficulty: 92,
+        validators: 21
+      }
     },
     { 
       year: 8, 
@@ -141,7 +174,18 @@ const TokenVaultsPage: React.FC = () => {
       description: "Silver Olympic Vaults activate with 25% of time-locked tokens. Enhanced verification protocols and staking mechanisms provide advanced security and governance rights to long-term holders.",
       specialName: "Silver Olympic Revelation",
       securityFeatures: ["Dual-chain verification", "Behavioral authentication", "Enhanced staking rewards"],
-      vaultType: "Silver Olympic Vault"
+      vaultType: "Silver Olympic Vault",
+      blockchainDetails: {
+        ethereum: "0x8B34c1A83b7C5F4dB8a78D9b71e1AbF28Cd24E7D",
+        solana: "SLVRxNHu8dvYPJjZ44wQgUT7YxKeHR9LBmXJGW2FpX4",
+        ton: "EQC-slvr-vault-8year-release-CnH83j4gDzv5Ytzd",
+        smartContract: "SilverOlympicVault v3.2"
+      },
+      verificationDetails: {
+        mechanism: "Dual-Chain Behavioral Authentication",
+        difficulty: 88,
+        validators: 35
+      }
     },
     { 
       year: 12, 
@@ -151,7 +195,18 @@ const TokenVaultsPage: React.FC = () => {
       description: "Bronze Olympic Vaults open with 12.5% of time-locked tokens. Cross-chain verification systems reach full maturity, offering sophisticated portfolio tools and security features.",
       specialName: "Bronze Olympic Emergence",
       securityFeatures: ["Multi-signature requirements", "Automated security audits", "Cross-chain asset protection"],
-      vaultType: "Bronze Olympic Vault"
+      vaultType: "Bronze Olympic Vault",
+      blockchainDetails: {
+        ethereum: "0x9C45b1F58Af32D1aBdE7F57BC15Ed6f30BcA2783",
+        solana: "BRZNzxcVQ6wHH3HZ8K9yyFh4MBPSoUnFZ2vBbG5pMfDq",
+        ton: "EQD8vaultbronze-12y-release-Gft7UnpB9FTzv8e4",
+        smartContract: "BronzeOlympicVault v4.0"
+      },
+      verificationDetails: {
+        mechanism: "Multi-Signature Cross-Chain Audit Protocol",
+        difficulty: 90,
+        validators: 49
+      }
     },
     { 
       year: 16, 
@@ -161,7 +216,18 @@ const TokenVaultsPage: React.FC = () => {
       description: "Diamond Verification Vaults activate with 6.25% of time-locked tokens, introducing quantum-resistant security features and establishing verification authorities within the network.",
       specialName: "Diamond Verification Activation",
       securityFeatures: ["Quantum-resistant encryption", "Trusted verification authority", "Network security staking"],
-      vaultType: "Diamond Verification Vault"
+      vaultType: "Diamond Verification Vault",
+      blockchainDetails: {
+        ethereum: "0xAe7D6F21D2B138c92bD36E7C8Eb2B7De45F5F218",
+        solana: "DMNDqR3vYUw4kLVLzLJum5SGNHBzKnxC6dQmQmMQyR38",
+        ton: "EQCDiamond-vault-16year-quantum-8hKBnM4wTztP",
+        smartContract: "DiamondVerificationVault v5.1"
+      },
+      verificationDetails: {
+        mechanism: "Quantum-Resistant Lattice Encryption",
+        difficulty: 95,
+        validators: 64
+      }
     },
     { 
       year: 21, 
@@ -171,7 +237,18 @@ const TokenVaultsPage: React.FC = () => {
       description: "Sovereign Fortress Vaults complete the 21-year cycle with the final 6.25% of time-locked tokens. These ultimate vaults represent complete sovereignty with military-grade security and verification.",
       specialName: "Sovereign Completion",
       securityFeatures: ["Military-grade security", "Perpetual inheritance system", "Global jurisdiction protection"],
-      vaultType: "Sovereign Fortress Vault"
+      vaultType: "Sovereign Fortress Vault",
+      blockchainDetails: {
+        ethereum: "0xFd9A8E5c81B9Fc1D33E56DE8D7f58D79Eb21B3C2",
+        solana: "SVRGNft7Th38b7P9ZwLkR4tDcH6MqxfJh9NLv2qFZDUm",
+        ton: "EQB-sovereign-fortress-final-vault-Z8h4jtPn72F",
+        smartContract: "SovereignFortressVault v6.0"
+      },
+      verificationDetails: {
+        mechanism: "Military-Grade Triple-Chain Security Protocol",
+        difficulty: 99,
+        validators: 101
+      }
     }
   ];
   
@@ -413,27 +490,110 @@ const TokenVaultsPage: React.FC = () => {
                           Year {event.year}
                         </div>
                         
-                        {/* Event Card */}
-                        <Card className="bg-gradient-to-br from-black/80 to-gray-900/80 border border-purple-900/20 shadow-xl mt-6">
-                          <CardHeader className="p-4">
-                            <Badge variant="outline" className="bg-purple-900/30 text-purple-300 border-purple-700/50 mb-1 self-start">
+                        {/* 3D Event Card with Detailed Information */}
+                        <Card className="relative bg-gradient-to-br from-black/80 to-gray-900/80 border border-purple-900/20 shadow-xl mt-6 transition-all duration-700 transform-gpu hover:scale-105 hover:shadow-purple-500/20 hover:shadow-2xl group">
+                          {/* 3D Effects - Glowing Edges */}
+                          <div className="absolute -inset-0.5 bg-gradient-to-r from-purple-600 to-fuchsia-600 rounded-xl blur opacity-0 group-hover:opacity-10 transition duration-1000"></div>
+                          <div className="absolute -inset-1 bg-gradient-to-r from-purple-600 to-fuchsia-600 rounded-xl blur-md opacity-0 group-hover:opacity-5 transition duration-1000 delay-100"></div>
+                          
+                          <CardHeader className="p-4 relative">
+                            <Badge variant="outline" className="bg-purple-900/30 text-purple-300 border-purple-700/50 mb-1 self-start transition-all duration-500 group-hover:bg-purple-900/50">
                               {event.vaultType}
                             </Badge>
-                            <CardTitle className="text-md text-white">{event.specialName}</CardTitle>
-                            <CardDescription className="text-xs">
+                            <CardTitle className="text-md text-white group-hover:text-transparent group-hover:bg-clip-text group-hover:bg-gradient-to-r group-hover:from-purple-400 group-hover:to-fuchsia-500 transition-all duration-500">
+                              {event.specialName}
+                            </CardTitle>
+                            <CardDescription className="text-xs flex items-center gap-1">
+                              <Calendar className="h-3 w-3" />
                               {event.date}
                             </CardDescription>
                           </CardHeader>
-                          <CardContent className="p-4 pt-0">
-                            <div className="flex justify-between mb-2">
-                              <span className="text-sm text-gray-400">Amount:</span>
-                              <span className="text-sm font-medium text-white">{event.amount.toLocaleString()} CVT</span>
+                          
+                          <CardContent className="p-4 pt-0 space-y-3">
+                            <div>
+                              <div className="flex justify-between mb-2">
+                                <span className="text-sm text-gray-400">Amount:</span>
+                                <span className="text-sm font-medium text-white">{event.amount.toLocaleString()} CVT</span>
+                              </div>
+                              <div className="flex justify-between mb-3">
+                                <span className="text-sm text-gray-400">Percentage:</span>
+                                <span className="text-sm font-medium text-white">{event.percentage}</span>
+                              </div>
+                              <p className="text-xs text-gray-300">{event.description}</p>
                             </div>
-                            <div className="flex justify-between mb-3">
-                              <span className="text-sm text-gray-400">Percentage:</span>
-                              <span className="text-sm font-medium text-white">{event.percentage}</span>
+                            
+                            {/* Action Buttons */}
+                            <div className="flex gap-2 pt-2 justify-center">
+                              <Button 
+                                variant="outline" 
+                                size="sm" 
+                                className="h-8 text-xs w-1/2 border-purple-900/50 hover:bg-purple-900/20 hover:text-purple-300 transition-all duration-300"
+                                onClick={() => document.getElementById(`blockchain-details-${event.year}`)?.classList.toggle('hidden')}
+                              >
+                                <span className="flex items-center gap-1">
+                                  <TrendingUp className="h-3 w-3" />
+                                  Blockchain Details
+                                </span>
+                              </Button>
+                              <Button 
+                                variant="outline" 
+                                size="sm" 
+                                className="h-8 text-xs w-1/2 border-purple-900/50 hover:bg-purple-900/20 hover:text-purple-300 transition-all duration-300"
+                                onClick={() => document.getElementById(`verification-details-${event.year}`)?.classList.toggle('hidden')}
+                              >
+                                <span className="flex items-center gap-1">
+                                  <ShieldCheck className="h-3 w-3" />
+                                  Verification Details
+                                </span>
+                              </Button>
                             </div>
-                            <p className="text-xs text-gray-300 line-clamp-4">{event.description}</p>
+                            
+                            {/* Collapsible Blockchain Details */}
+                            <div id={`blockchain-details-${event.year}`} className="hidden pt-2 border-t border-gray-800 transition-all duration-500">
+                              <div className="space-y-2">
+                                <h4 className="text-xs font-medium text-purple-400 flex items-center gap-1">
+                                  <TrendingUp className="h-3 w-3" />
+                                  Smart Contract: {event.blockchainDetails.smartContract}
+                                </h4>
+                                <div className="grid grid-cols-2 gap-2">
+                                  <div className="bg-black/40 p-2 rounded-md">
+                                    <div className="text-xs font-medium text-white mb-1">Ethereum</div>
+                                    <div className="text-[10px] text-gray-400 break-all">{event.blockchainDetails.ethereum}</div>
+                                  </div>
+                                  <div className="bg-black/40 p-2 rounded-md">
+                                    <div className="text-xs font-medium text-white mb-1">TON</div>
+                                    <div className="text-[10px] text-gray-400 break-all">{event.blockchainDetails.ton}</div>
+                                  </div>
+                                </div>
+                                <div className="bg-black/40 p-2 rounded-md">
+                                  <div className="text-xs font-medium text-white mb-1">Solana</div>
+                                  <div className="text-[10px] text-gray-400">{event.blockchainDetails.solana}</div>
+                                </div>
+                              </div>
+                            </div>
+                            
+                            {/* Collapsible Verification Details */}
+                            <div id={`verification-details-${event.year}`} className="hidden pt-2 border-t border-gray-800 transition-all duration-500">
+                              <div className="space-y-2">
+                                <h4 className="text-xs font-medium text-purple-400 flex items-center gap-1">
+                                  <ShieldCheck className="h-3 w-3" />
+                                  {event.verificationDetails.mechanism}
+                                </h4>
+                                <div className="grid grid-cols-2 gap-2 text-[10px]">
+                                  <div className="bg-black/40 p-2 rounded-md">
+                                    <div className="font-medium text-white mb-1">Security Level</div>
+                                    <div className="flex items-center gap-1">
+                                      <div className="h-1.5 bg-gradient-to-r from-purple-600 to-fuchsia-600 rounded-full" style={{width: `${event.verificationDetails.difficulty}%`}}></div>
+                                      <span className="text-gray-400">{event.verificationDetails.difficulty}/100</span>
+                                    </div>
+                                  </div>
+                                  <div className="bg-black/40 p-2 rounded-md">
+                                    <div className="font-medium text-white mb-1">Validators</div>
+                                    <div className="text-purple-400 font-bold">{event.verificationDetails.validators}</div>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
                           </CardContent>
                         </Card>
                       </div>
