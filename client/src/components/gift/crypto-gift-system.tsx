@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { Gift, Send, Check, AlertCircle, Sparkles, FileText } from "lucide-react";
+import { Gift, Send, Check, AlertCircle, Sparkles, FileText, Shield, Rocket, BarChart, PenSquare, ShieldCheck, Layers, Clock } from "lucide-react";
 import { useEthereum } from "@/contexts/ethereum-context";
 import { useQuery } from "@tanstack/react-query";
 import { motion, AnimatePresence } from "framer-motion";
@@ -64,6 +64,10 @@ const giftFormSchema = z.object({
   lockInVault: z.boolean().default(false),
   lockDuration: z.number().min(1).optional(),
   includeAttachments: z.boolean().default(false),
+  securityLevel: z.enum(["standard", "premium", "military"]).default("standard"),
+  crossChainProtection: z.boolean().default(false),
+  visualTheme: z.enum(["elegant", "luxury", "minimalist", "futuristic"]).default("elegant"),
+  giftTracking: z.boolean().default(true),
 });
 
 type GiftFormValues = z.infer<typeof giftFormSchema>;
@@ -73,6 +77,7 @@ const SUPPORTED_CRYPTOS = [
   { id: "ETH", name: "Ethereum", icon: "⟠", chainId: 1 },
   { id: "TON", name: "Toncoin", icon: "💎", chainId: null },
   { id: "SOL", name: "Solana", icon: "◎", chainId: null },
+  { id: "BTC", name: "Bitcoin", icon: "₿", chainId: null },
   { id: "CVT", name: "Chronos Vault Token", icon: "🔒", chainId: null },
 ];
 
@@ -107,6 +112,10 @@ export function CryptoGiftSystem({ userId, onGiftSent, onAdvancedGift }: CryptoG
       lockInVault: false,
       lockDuration: 30, // Default lock duration of 30 days
       includeAttachments: false,
+      securityLevel: "standard",
+      crossChainProtection: false,
+      visualTheme: "elegant",
+      giftTracking: true,
     },
   });
   
@@ -157,8 +166,15 @@ export function CryptoGiftSystem({ userId, onGiftSent, onAdvancedGift }: CryptoG
               metadata: {
                 recipient: values.recipientAddress,
                 giftMessage: values.message,
-                senderAddress: walletInfo?.address
-              }
+                senderAddress: walletInfo?.address,
+                securityLevel: values.securityLevel,
+                crossChainProtection: values.crossChainProtection,
+                visualTheme: values.visualTheme,
+                giftTracking: values.giftTracking
+              },
+              securityLevel: values.securityLevel === "military" ? 3 : 
+                             values.securityLevel === "premium" ? 2 : 1,
+              crossChainVerification: values.crossChainProtection
             };
             
             // First send ETH to the contract
@@ -168,16 +184,17 @@ export function CryptoGiftSystem({ userId, onGiftSent, onAdvancedGift }: CryptoG
             }
             
             // Create the gift vault
-            const vaultResponse = await apiRequest("POST", "/api/vaults", vaultData) as Vault;
+            const vaultResponse = await apiRequest("POST", "/api/vaults", vaultData);
+            const vault = vaultResponse as unknown as Vault;
             setTransactionHash(ethSendResult.transactionHash || "");
             
             // If there are attachments, upload them to the vault
-            if (values.includeAttachments && attachments.length > 0 && vaultResponse) {
+            if (values.includeAttachments && attachments.length > 0 && vault) {
               // Attach files to the vault
               for (const attachment of attachments) {
                 if (!attachment.id) { // Only handle attachments that aren't already saved
                   const attachmentData = {
-                    vaultId: vaultResponse.id,
+                    vaultId: vault?.id || 0,
                     fileName: attachment.fileName,
                     fileType: attachment.fileType,
                     fileSize: attachment.fileSize,
@@ -435,17 +452,21 @@ export function CryptoGiftSystem({ userId, onGiftSent, onAdvancedGift }: CryptoG
                 control={form.control}
                 name="lockInVault"
                 render={({ field }) => (
-                  <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
+                  <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4 border-purple-100 bg-purple-50/30">
                     <div className="space-y-0.5">
-                      <FormLabel className="text-base">Time-Lock in a Vault</FormLabel>
+                      <FormLabel className="text-base flex items-center gap-2">
+                        <Shield className="h-5 w-5 text-purple-600" />
+                        Time-Lock in a Vault
+                      </FormLabel>
                       <FormDescription>
-                        Create a time-locked vault for this gift
+                        Create a time-locked vault for this gift with premium security
                       </FormDescription>
                     </div>
                     <FormControl>
                       <Switch
                         checked={field.value}
                         onCheckedChange={field.onChange}
+                        className="data-[state=checked]:bg-purple-600"
                       />
                     </FormControl>
                   </FormItem>
@@ -453,28 +474,155 @@ export function CryptoGiftSystem({ userId, onGiftSent, onAdvancedGift }: CryptoG
               />
               
               {lockInVault && (
-                <FormField
-                  control={form.control}
-                  name="lockDuration"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Lock Duration (Days)</FormLabel>
-                      <FormControl>
-                        <Input 
-                          type="number"
-                          min={1}
-                          max={3650}
-                          {...field}
-                          onChange={(e) => field.onChange(parseInt(e.target.value))}
-                        />
-                      </FormControl>
-                      <FormDescription>
-                        How long the gift will be locked in the vault
-                      </FormDescription>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
+                <>
+                  <FormField
+                    control={form.control}
+                    name="lockDuration"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel className="flex items-center gap-2">
+                          <Gift className="h-4 w-4 text-purple-600" />
+                          Lock Duration (Days)
+                        </FormLabel>
+                        <FormControl>
+                          <Input 
+                            type="number"
+                            min={1}
+                            max={3650}
+                            {...field}
+                            onChange={(e) => field.onChange(parseInt(e.target.value))}
+                            className="border-purple-200 focus-visible:ring-purple-500"
+                          />
+                        </FormControl>
+                        <FormDescription>
+                          How long the gift will be locked in the vault
+                        </FormDescription>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  
+                  <FormField
+                    control={form.control}
+                    name="securityLevel"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel className="flex items-center gap-2">
+                          <ShieldCheck className="h-4 w-4 text-purple-600" />
+                          Security Level
+                        </FormLabel>
+                        <Select 
+                          onValueChange={field.onChange} 
+                          defaultValue={field.value}
+                        >
+                          <FormControl>
+                            <SelectTrigger className="border-purple-200 focus-visible:ring-purple-500">
+                              <SelectValue placeholder="Select security level" />
+                            </SelectTrigger>
+                          </FormControl>
+                          <SelectContent>
+                            <SelectItem value="standard">
+                              Standard Security
+                            </SelectItem>
+                            <SelectItem value="premium">
+                              Premium (Enhanced Encryption)
+                            </SelectItem>
+                            <SelectItem value="military">
+                              Military-Grade Security
+                            </SelectItem>
+                          </SelectContent>
+                        </Select>
+                        <FormDescription>
+                          Choose the level of security for your gift vault
+                        </FormDescription>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  
+                  <FormField
+                    control={form.control}
+                    name="crossChainProtection"
+                    render={({ field }) => (
+                      <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4 border-purple-100 bg-purple-50/30">
+                        <div className="space-y-0.5">
+                          <FormLabel className="text-base flex items-center gap-2">
+                            <Layers className="h-5 w-5 text-purple-600" />
+                            Cross-Chain Protection
+                          </FormLabel>
+                          <FormDescription>
+                            Enable multi-chain verification for maximum security
+                          </FormDescription>
+                        </div>
+                        <FormControl>
+                          <Switch
+                            checked={field.value}
+                            onCheckedChange={field.onChange}
+                            className="data-[state=checked]:bg-purple-600"
+                          />
+                        </FormControl>
+                      </FormItem>
+                    )}
+                  />
+                  
+                  <FormField
+                    control={form.control}
+                    name="visualTheme"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel className="flex items-center gap-2">
+                          <PenSquare className="h-4 w-4 text-purple-600" />
+                          Gift Presentation Theme
+                        </FormLabel>
+                        <Select 
+                          onValueChange={field.onChange} 
+                          defaultValue={field.value}
+                        >
+                          <FormControl>
+                            <SelectTrigger className="border-purple-200 focus-visible:ring-purple-500">
+                              <SelectValue placeholder="Select visual theme" />
+                            </SelectTrigger>
+                          </FormControl>
+                          <SelectContent>
+                            <SelectItem value="elegant">Elegant Minimalist</SelectItem>
+                            <SelectItem value="luxury">Luxury Premium</SelectItem>
+                            <SelectItem value="minimalist">Clean Modern</SelectItem>
+                            <SelectItem value="futuristic">Futuristic Neon</SelectItem>
+                          </SelectContent>
+                        </Select>
+                        <FormDescription>
+                          Choose how your gift will be presented to the recipient
+                        </FormDescription>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  
+                  <FormField
+                    control={form.control}
+                    name="giftTracking"
+                    render={({ field }) => (
+                      <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4 border-purple-100 bg-purple-50/30">
+                        <div className="space-y-0.5">
+                          <FormLabel className="text-base flex items-center gap-2">
+                            <BarChart className="h-5 w-5 text-purple-600" />
+                            Enable Gift Tracking
+                          </FormLabel>
+                          <FormDescription>
+                            Track when your gift is viewed and unlocked
+                          </FormDescription>
+                        </div>
+                        <FormControl>
+                          <Switch
+                            checked={field.value}
+                            onCheckedChange={field.onChange}
+                            className="data-[state=checked]:bg-purple-600"
+                          />
+                        </FormControl>
+                      </FormItem>
+                    )}
+                  />
+                </>
               )}
               
               <FormField

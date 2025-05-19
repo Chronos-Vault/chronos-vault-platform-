@@ -165,10 +165,10 @@ const App: React.FC = () => {
                       <Route path="/security-verification-demo" component={SecurityVerificationDemoPage} />
                       <Route path="/behavioral-authentication" component={BehavioralAuthenticationPage} />
                       <Route path="/behavioral-auth" component={BehavioralAuthenticationPage} />
+                      <Route path="/quantum-resistant" component={QuantumResistantVaultPage} />
                       <Route path="/zero-knowledge-verification" component={ZeroKnowledgeVerificationPage} />
                       <Route path="/zk-privacy-demo" component={ZkPrivacyDemoPage} />
                       <Route path="/triple-chain-security-demo" component={TripleChainSecurityDemoPage} />
-                      <Route path="/quantum-resistant" component={QuantumResistantVaultPage} />
                       <Route path="/bitcoin-halving" component={BitcoinHalvingPage} />
                       
                       {/* Blockchain Integration */}
@@ -188,6 +188,7 @@ const App: React.FC = () => {
                       <Route path="/cross-chain-vault" component={CrossChainVaultPage} />
                       <Route path="/cross-chain-fragment-vault" component={CrossChainFragmentVaultPage} />
                       <Route path="/quantum-resistant-vault" component={QuantumResistantVaultPage} />
+                      <Route path="/vault-school-hub" component={VaultSchoolPage} />
                       <Route path="/sovereign-fortress-vault" component={SovereignFortressVaultPage} />
                       <Route path="/nft-powered-vault" component={NFTPoweredVaultPage} />
                       <Route path="/unique-security-vault" component={UriqueSecurityVaultPage} />
@@ -208,7 +209,7 @@ const App: React.FC = () => {
                       <Route path="/cross-chain-bridge" component={CrossChainBridgePage} />
                       <Route path="/cross-chain-atomic-swap" component={CrossChainAtomicSwapPage} />
                       <Route path="/ton-wallet-cross-chain-bridge" component={TonWalletCrossChainBridgePage} />
-                      <Route path="/bridge-vs-swap" component={CrossChainVsAtomicSwapPage} />
+                      <Route path="/bridge-vs-swap" component={BridgeVsSwapPage} />
                       <Route path="/atomic-swaps" component={CrossChainAtomicSwapPage} />
                       
                       {/* Token & Payment */}
