@@ -21,7 +21,7 @@ import CvtTokenomicsPage from '@/pages/cvt-tokenomics';
 import CvtUtilityPage from '@/pages/cvt-utility-new';
 import TermsOfServicePage from '@/pages/terms-of-service';
 import CookiePolicyPage from '@/pages/cookie-policy';
-import DocumentationPage from '@/pages/documentation';
+import DocumentationPage from '@/pages/DocumentationPage';
 import VaultSchoolPage from '@/pages/vault-school';
 
 // Vault Type Pages
@@ -221,6 +221,17 @@ const App: React.FC = () => {
                       <Route path="/subscription" component={SubscriptionPage} />
                       <Route path="/token-vaults" component={CvtTokenPage} />
                       <Route path="/gift-crypto" component={CvtPaymentPage} />
+                      
+                      {/* Documentation Pages */}
+                      <Route path="/docs" component={DocumentationPage} />
+                      <Route path="/roadmap" component={DocumentationPage} />
+                      <Route path="/smart-contracts" component={DocumentationPage} />
+                      <Route path="/technical-spec" component={DocumentationPage} />
+                      <Route path="/tokenomics" component={CvtTokenomicsPage} />
+                      <Route path="/technical-security-docs" component={DocumentationPage} />
+                      <Route path="/security-video-guides" component={DocumentationPage} />
+                      <Route path="/security-tutorials" component={DocumentationPage} />
+                      <Route path="/military-grade-security" component={DocumentationPage} />
                     </Switch>
                     
                     <Footer />
