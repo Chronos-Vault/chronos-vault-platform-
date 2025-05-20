@@ -489,23 +489,33 @@ const VaultCard = ({ vault, selected, onClick }: { vault: any; selected: boolean
               className="w-full bg-[#6B00D7] hover:bg-[#5A00B8] text-white font-medium h-12 rounded-lg shadow-lg shadow-[#6B00D7]/30"
               onClick={(e) => {
                 e.stopPropagation();
-                // Use the correct format based on Vault School Hub documentation
-                if (vault.id === 'multi-signature') {
-                  window.location.href = '/multi-signature-vault';
-                } else if (vault.id === 'biometric') {
-                  window.location.href = '/biometric-vault';
-                } else if (vault.id === 'standard') {
-                  window.location.href = '/sovereign-fortress-vault';
-                } else if (vault.id === 'cross-chain') {
-                  window.location.href = '/cross-chain-vault';
-                } else if (vault.id === 'quantum-resistant') {
-                  window.location.href = '/quantum-resistant-vault';
-                } else if (vault.id === 'enhanced-biometric') {
-                  window.location.href = '/enhanced-biometric-vault';
-                } else if (vault.id === 'nft-powered') {
-                  window.location.href = '/nft-powered-vault';
+                // Use the correct fully developed vault form pages from Vault School Hub
+                const vaultRoutes = {
+                  'standard': '/sovereign-fortress-vault',
+                  'multi-signature': '/multi-signature-vault',
+                  'biometric': '/biometric-vault',
+                  'enhanced-biometric': '/enhanced-biometric-vault',
+                  'geo-location': '/geo-location-vault',
+                  'time-lock': '/time-lock-vault',
+                  'cross-chain': '/cross-chain-vault',
+                  'cross-chain-fragment': '/cross-chain-fragment-vault',
+                  'quantum-resistant': '/quantum-resistant-vault',
+                  'smart-contract': '/smart-contract-vault',
+                  'ai-assisted-investment': '/ai-assisted-investment-vault',
+                  'intent-inheritance': '/intent-inheritance-vault',
+                  'time-locked-memory': '/time-locked-memory-vault',
+                  'bitcoin-halving': '/bitcoin-halving-vault',
+                  'investment-discipline': '/investment-discipline-vault',
+                  'nft-powered': '/nft-powered-vault',
+                  'unique-security': '/unique-security-vault',
+                  'family-heritage': '/family-heritage-vault-form'
+                };
+                
+                // Navigate to the specialized vault page or fall back to default pattern
+                if (vaultRoutes[vault.id]) {
+                  window.location.href = vaultRoutes[vault.id];
                 } else {
-                  // Default pattern for other vault types
+                  // Default for any vaults not specifically defined
                   window.location.href = `/${vault.id}-vault`;
                 }
               }}
