@@ -1,8 +1,9 @@
+import React from "react";
 import { Button } from "@/components/ui/button";
 import { Link } from "wouter";
 import { ArrowLeft, Check, Shield, Users, Key, Fingerprint, Clock, Bell } from "lucide-react";
 
-const MultiSignatureVaultPage = () => {
+const MultiSignatureVaultPage: React.FC = () => {
   return (
     <div className="container mx-auto px-4 py-12">
       {/* Header Section */}
@@ -386,8 +387,10 @@ const MultiSignatureVaultPage = () => {
 
       {/* Multi-Signature Vault Creation Form */}
       <div className="mb-16 bg-[#121212] border border-[#333] rounded-xl p-8 max-w-4xl mx-auto">
-        <h2 className="text-2xl font-bold text-white mb-6 text-center bg-clip-text text-transparent bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7]">
-          Create Your Multi-Signature Vault
+        <h2 className="text-2xl font-bold text-white mb-6 text-center">
+          <span className="bg-clip-text text-transparent bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7]">
+            Create Your Multi-Signature Vault
+          </span>
         </h2>
         
         <div className="mb-8">
@@ -402,7 +405,7 @@ const MultiSignatureVaultPage = () => {
           </div>
         </div>
         
-        <form className="space-y-6">
+        <div className="space-y-6">
           {/* Basic Vault Information */}
           <div>
             <h3 className="text-lg font-medium text-white mb-4">Vault Configuration</h3>
@@ -667,7 +670,10 @@ const MultiSignatureVaultPage = () => {
                     </select>
                   </div>
                   
-                  <button type="button" className="w-full py-2 border border-dashed border-[#333] rounded-lg text-sm text-gray-400 hover:text-[#FF5AF7] hover:border-[#FF5AF7]/30 transition-colors">
+                  <button 
+                    type="button" 
+                    className="w-full py-2 border border-dashed border-[#333] rounded-lg text-sm text-gray-400 hover:text-[#FF5AF7] hover:border-[#FF5AF7]/30 transition-colors"
+                  >
                     + Add another signer
                   </button>
                 </div>
@@ -697,10 +703,10 @@ const MultiSignatureVaultPage = () => {
               Create Multi-Signature Vault
             </Button>
             <p className="text-xs text-center text-gray-500 mt-3">
-              By creating this vault, you're implementing industry-leading security with Triple-Chain protection
+              By creating this vault, you&apos;re implementing industry-leading security with Triple-Chain protection
             </p>
           </div>
-        </form>
+        </div>
       </div>
 
       {/* CTA Section */}
