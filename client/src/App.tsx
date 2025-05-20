@@ -88,6 +88,9 @@ import IntentInheritanceVaultPage from '@/pages/intent-inheritance-vault';
 // Using direct import of component
 import TimeLockedMemoryVault from '@/pages/time-locked-memory-vault';
 const TimeLockedMemoryVaultPage = TimeLockedMemoryVault;
+// Using direct import of advanced component
+import TimeLockedMemoryVaultNew from '@/pages/time-locked-memory-vault-new';
+const TimeLockedMemoryVaultNewPage = TimeLockedMemoryVaultNew;
 import InvestmentDisciplineVaultPage from '@/pages/investment-discipline-vault';
 import DynamicVaultFormPage from '@/pages/dynamic-vault-form';
 import FamilyHeritageVaultFormPage from '@/pages/family-heritage-vault-form';
@@ -224,7 +227,7 @@ const App: React.FC = () => {
                       <Route path="/intent-inheritance-vault" component={IntentInheritanceVaultPage} />
                       <Route path="/ai-intent-inheritance-vault" component={IntentInheritanceVaultPage} />
                       <Route path="/time-locked-memory-vault" component={TimeLockedMemoryVaultPage} />
-                      <Route path="/specialized-vault-memory" component={TimeLockedMemoryVaultPage} />
+                      <Route path="/specialized-vault-memory" component={TimeLockedMemoryVaultNewPage} />
                       <Route path="/investment-discipline-vault" component={InvestmentDisciplineVaultPage} />
                       <Route path="/milestone-based-vault" component={InvestmentDisciplineVaultPage} />
                       <Route path="/dynamic-vault-form" component={DynamicVaultFormPage} />
