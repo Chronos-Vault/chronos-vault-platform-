@@ -282,12 +282,17 @@ const App: React.FC = () => {
                       </Route>
                       <Route path="/quantum-resistant" component={QuantumResistantVaultPage} />
                       
-                      {/* Vault School Hub Documentation Routes - Dynamic Routing */}
-                      <Route path="/documentation/:vaultType">{(params) => {
-                        const { vaultType } = params;
-                        // Dynamically determine which documentation component to render based on URL params
-                        return <DocumentationRouter vaultType={vaultType} />;
-                      }}</Route>
+                      {/* Vault Documentation Routes */}
+                      <Route path="/documentation/multi-signature-vault" component={DocumentationPage} />
+                      <Route path="/documentation/bitcoin-halving-vault" component={DocumentationPage} />
+                      <Route path="/documentation/time-locked-memory-vault" component={DocumentationPage} />
+                      <Route path="/documentation/quantum-resistant-vault" component={DocumentationPage} />
+                      <Route path="/documentation/cross-chain-fragment-vault" component={DocumentationPage} />
+                      <Route path="/documentation/geo-location-vault" component={DocumentationPage} />
+                      <Route path="/vault-school-hub" component={VaultSchoolPage} />
+                      
+                      {/* Default route for documentation */}
+                      <Route path="/documentation/:vaultType" component={VaultSchoolPage} />
                     </Switch>
                     
                     <Footer />
