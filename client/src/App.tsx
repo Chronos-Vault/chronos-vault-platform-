@@ -223,6 +223,7 @@ const App: React.FC = () => {
                       <Route path="/cross-chain-fragment-vault" component={CrossChainFragmentVaultPage} />
                       <Route path="/quantum-resistant-vault" component={QuantumResistantVaultPage} />
                       <Route path="/vault-school-hub" component={VaultSchoolPage} />
+                      <Route path="/vault-school" component={VaultSchoolPage} />
                       <Route path="/sovereign-fortress-vault" component={SovereignFortressVaultPage} />
                       <Route path="/nft-powered-vault" component={NFTPoweredVaultPage} />
                       <Route path="/unique-security-vault" component={UriqueSecurityVaultPage} />
@@ -279,6 +280,13 @@ const App: React.FC = () => {
                         {(params) => <BehavioralAuthenticationPage tab="social" />}
                       </Route>
                       <Route path="/quantum-resistant" component={QuantumResistantVaultPage} />
+                      
+                      {/* Vault School Hub Documentation Routes - Dynamic Routing */}
+                      <Route path="/documentation/:vaultType">{(params) => {
+                        const { vaultType } = params;
+                        // Dynamically determine which documentation component to render based on URL params
+                        return <DocumentationRouter vaultType={vaultType} />;
+                      }}</Route>
                     </Switch>
                     
                     <Footer />
