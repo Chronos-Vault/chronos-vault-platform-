@@ -158,7 +158,7 @@ const VAULT_TYPES = [
   },
   { 
     id: "gift", 
-    name: "Gift Vault", 
+    name: "Gift Vault™", 
     description: "Send crypto gifts to friends and family with optional time-locking.",
     icon: <Gift className="h-5 w-5" />,
     color: "#FF5AF7",
@@ -166,21 +166,21 @@ const VAULT_TYPES = [
   },
   { 
     id: "inheritance", 
-    name: "Inheritance Vault", 
+    name: "Inheritance Vault™", 
     description: "Create a digital inheritance plan for your crypto assets.",
     icon: <Landmark className="h-5 w-5" />,
     color: "#4A90E2"
   },
   { 
     id: "timelock", 
-    name: "Deep Time Vault", 
+    name: "Deep Time Vault™", 
     description: "Lock assets for very long periods with enhanced security.",
     icon: <Clock className="h-5 w-5" />,
     color: "#2ECC71"
   },
   { 
     id: "milestone", 
-    name: "Milestone Vault", 
+    name: "Milestone Vault™", 
     description: "Unlock portions of assets when specific milestones are reached.",
     icon: <Layers className="h-5 w-5" />,
     color: "#E67E22"
