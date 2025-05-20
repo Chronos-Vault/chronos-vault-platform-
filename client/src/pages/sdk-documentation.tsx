@@ -905,43 +905,10 @@ async fn connect_websocket(client: &Client) -> Result<(), Box<dyn std::error::Er
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-6">
-                <div className="flex space-x-2 mb-6">
-                  <Button
-                    variant={selectedLanguage === 'javascript' ? 'default' : 'outline'}
-                    onClick={() => setSelectedLanguage('javascript')}
-                    size="sm"
-                  >
-                    JavaScript
-                  </Button>
-                  <Button
-                    variant={selectedLanguage === 'python' ? 'default' : 'outline'}
-                    onClick={() => setSelectedLanguage('python')}
-                    size="sm"
-                  >
-                    Python
-                  </Button>
-                  <Button
-                    variant={selectedLanguage === 'java' ? 'default' : 'outline'}
-                    onClick={() => setSelectedLanguage('java')}
-                    size="sm"
-                  >
-                    Java
-                  </Button>
-                  <Button
-                    variant={selectedLanguage === 'go' ? 'default' : 'outline'}
-                    onClick={() => setSelectedLanguage('go')}
-                    size="sm"
-                  >
-                    Go
-                  </Button>
-                  <Button
-                    variant={selectedLanguage === 'rust' ? 'default' : 'outline'}
-                    onClick={() => setSelectedLanguage('rust')}
-                    size="sm"
-                  >
-                    Rust
-                  </Button>
-                </div>
+                <LanguageSelector
+                  selectedLanguage={selectedLanguage}
+                  setSelectedLanguage={setSelectedLanguage}
+                />
 
                 <div className="bg-slate-900 text-slate-50 p-4 rounded-md">
                   <pre className="text-sm overflow-x-auto">
