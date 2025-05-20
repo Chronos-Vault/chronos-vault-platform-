@@ -19,6 +19,7 @@ const LanguageSelector: React.FC<LanguageSelectorProps> = ({
         className="flex-grow sm:flex-grow-0"
       >
         <span className="flex items-center gap-2">
+          <img src="/images/languages/js-logo.svg" alt="JavaScript" className="w-5 h-5" />
           <span className="hidden sm:inline">JavaScript</span>
           <span className="sm:hidden">JS</span>
         </span>
@@ -29,7 +30,11 @@ const LanguageSelector: React.FC<LanguageSelectorProps> = ({
         size="sm"
         className="flex-grow sm:flex-grow-0"
       >
-        <span className="flex items-center gap-2">Python</span>
+        <span className="flex items-center gap-2">
+          <img src="/images/languages/python-logo.svg" alt="Python" className="w-5 h-5" />
+          <span className="hidden sm:inline">Python</span>
+          <span className="sm:hidden">Py</span>
+        </span>
       </Button>
       <Button
         variant={selectedLanguage === 'java' ? 'default' : 'outline'}
@@ -37,7 +42,11 @@ const LanguageSelector: React.FC<LanguageSelectorProps> = ({
         size="sm"
         className="flex-grow sm:flex-grow-0"
       >
-        <span className="flex items-center gap-2">Java</span>
+        <span className="flex items-center gap-2">
+          <img src="/images/languages/java-logo.svg" alt="Java" className="w-5 h-5" />
+          <span className="hidden sm:inline">Java</span>
+          <span className="sm:hidden">Java</span>
+        </span>
       </Button>
       <Button
         variant={selectedLanguage === 'go' ? 'default' : 'outline'}
@@ -45,7 +54,11 @@ const LanguageSelector: React.FC<LanguageSelectorProps> = ({
         size="sm"
         className="flex-grow sm:flex-grow-0"
       >
-        <span className="flex items-center gap-2">Go</span>
+        <span className="flex items-center gap-2">
+          <img src="/images/languages/go-logo.svg" alt="Go" className="w-5 h-5" />
+          <span className="hidden sm:inline">Go</span>
+          <span className="sm:hidden">Go</span>
+        </span>
       </Button>
       <Button
         variant={selectedLanguage === 'rust' ? 'default' : 'outline'}
@@ -53,7 +66,11 @@ const LanguageSelector: React.FC<LanguageSelectorProps> = ({
         size="sm"
         className="flex-grow sm:flex-grow-0"
       >
-        <span className="flex items-center gap-2">Rust</span>
+        <span className="flex items-center gap-2">
+          <img src="/images/languages/rust-logo.svg" alt="Rust" className="w-5 h-5" />
+          <span className="hidden sm:inline">Rust</span>
+          <span className="sm:hidden">Rust</span>
+        </span>
       </Button>
     </div>
   );
