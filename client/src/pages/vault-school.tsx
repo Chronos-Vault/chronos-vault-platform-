@@ -178,7 +178,7 @@ const vaultTypes = [
     id: "time-locked-new",
     name: "Advanced Time-Lock Memory Vault",
     icon: "🕰️",
-    href: "/create-vault/time-locked-memory",
+    href: "/documentation/time-locked-memory-vault",
     description: "Next-generation vault for preserving memories and assets with customizable time triggers",
     features: [
       "Enhanced multimedia preservation",
