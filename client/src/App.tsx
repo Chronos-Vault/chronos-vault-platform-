@@ -53,6 +53,7 @@ import TonSecurityPage from '@/pages/ton-security';
 import CrossChainSecurityPage from '@/pages/cross-chain-security';
 import SecurityVerificationPage from '@/pages/security-verification';
 import SecurityVerificationDemoPage from '@/pages/security-verification-demo';
+import SecurityTestingPage from '@/pages/security-testing';
 import BehavioralAuthenticationPage from '@/pages/behavioral-authentication';
 import ZeroKnowledgeVerificationPage from '@/pages/zero-knowledge-verification-page';
 import ZkPrivacyDemoPage from '@/pages/zk-privacy-demo';
@@ -193,6 +194,7 @@ const App: React.FC = () => {
                       <Route path="/cross-chain-security" component={CrossChainSecurityPage} />
                       <Route path="/security-verification" component={SecurityVerificationPage} />
                       <Route path="/security-verification-demo" component={SecurityVerificationDemoPage} />
+                      <Route path="/security-testing" component={SecurityTestingPage} />
                       <Route path="/behavioral-authentication">
                         {(params) => <BehavioralAuthenticationPage tab="overview" />}
                       </Route>
