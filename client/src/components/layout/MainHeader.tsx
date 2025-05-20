@@ -509,7 +509,7 @@ const MainHeader = () => {
                         Technical project documentation
                       </ListItem>
                       <ListItem 
-                        href="/documentation/technical-specification" 
+                        href="/technical-specification" 
                         title="🔧 Technical Spec"
                         highlight={true}
                       >
