@@ -72,6 +72,7 @@ import SmartContractVaultPage from '@/pages/smart-contract-vault';
 
 // Vault Pages - Advanced
 import CrossChainVaultPage from '@/pages/cross-chain-vault';
+import CrossChainVaultForm from '@/pages/cross-chain-vault-form';
 import CrossChainFragmentVaultPage from '@/pages/cross-chain-fragment-vault';
 import QuantumResistantVaultPage from '@/pages/quantum-resistant-vault';
 import SovereignFortressVaultPage from '@/pages/sovereign-fortress-vault';
@@ -205,6 +206,7 @@ const App: React.FC = () => {
                       
                       {/* Advanced Vault Types */}
                       <Route path="/cross-chain-vault" component={CrossChainVaultPage} />
+                      <Route path="/cross-chain-vault-form" component={CrossChainVaultForm} />
                       <Route path="/cross-chain-fragment-vault" component={CrossChainFragmentVaultPage} />
                       <Route path="/quantum-resistant-vault" component={QuantumResistantVaultPage} />
                       <Route path="/vault-school-hub" component={VaultSchoolPage} />
