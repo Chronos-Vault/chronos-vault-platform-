@@ -545,7 +545,7 @@ const VaultSchoolPage = () => {
                     Explore Security Architecture
                   </Button>
                 </Link>
-                <Link href="/security-whitepaper">
+                <Link href="/documentation/security-whitepaper">
                   <Button variant="outline" className="border-[#6B00D7] text-[#FF5AF7] hover:bg-[#6B00D7]/10">
                     Read Security Whitepaper
                   </Button>
@@ -711,7 +711,7 @@ const VaultSchoolPage = () => {
               </div>
               <h3 className="text-xl font-semibold mb-2">Security Whitepapers</h3>
               <p className="text-gray-300 mb-4">Detailed information on our security protocols and technology.</p>
-              <Link href="/security-whitepaper">
+              <Link href="/documentation/security-whitepaper">
                 <Button variant="outline" className="w-full border-[#6B00D7] text-[#FF5AF7] hover:bg-[#6B00D7]/10">
                   Read Whitepapers
                 </Button>
