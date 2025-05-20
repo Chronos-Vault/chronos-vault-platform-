@@ -100,7 +100,7 @@ const VAULT_TYPES = [
   },
   {
     id: 'cross-chain',
-    title: 'Cross-Chain Verification',
+    title: 'Cross-Chain Verification™',
     description: 'Verify assets across multiple blockchains',
     icon: '⛓️',
     color: '#2196F3',
@@ -116,7 +116,7 @@ const VAULT_TYPES = [
   },
   {
     id: 'smart-contract',
-    title: 'Smart Contract Vault',
+    title: 'Smart Contract Vault™',
     description: 'Automated rules and conditions',
     icon: '📜',
     color: '#673AB7',
@@ -132,7 +132,7 @@ const VAULT_TYPES = [
   },
   {
     id: 'dynamic',
-    title: 'Dynamic Vault',
+    title: 'Dynamic Vault™',
     description: 'Adapt to market or user behavior',
     icon: '📊',
     color: '#009688',
@@ -148,7 +148,7 @@ const VAULT_TYPES = [
   },
   {
     id: 'nft-powered',
-    title: 'NFT-Powered Vault',
+    title: 'NFT-Powered Vault™',
     description: 'Use NFTs as access keys to your vault',
     icon: '🖼️',
     color: '#9C27B0',
@@ -164,7 +164,7 @@ const VAULT_TYPES = [
   },
   {
     id: 'unique-security',
-    title: 'Unique Security Vault',
+    title: 'Unique Security Vault™',
     description: 'Enhanced security with custom protocols',
     icon: '🛡️',
     color: '#F44336',
@@ -180,7 +180,7 @@ const VAULT_TYPES = [
   },
   {
     id: 'ai-intent',
-    title: 'AI Intent Inheritance Vault',
+    title: 'AI Intent Inheritance Vault™',
     description: 'Natural language inheritance planning',
     icon: '🧠',
     color: '#00BCD4',
