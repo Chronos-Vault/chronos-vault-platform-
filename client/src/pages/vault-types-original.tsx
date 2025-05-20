@@ -65,7 +65,7 @@ const VAULT_TYPES = [
   },
   {
     id: "cross-chain",
-    name: "Cross-Chain Verification",
+    name: "Cross-Chain Verification™",
     description: "Verify assets across multiple blockchains",
     icon: "⛓️",
     color: "#8B00D7",
@@ -76,7 +76,7 @@ const VAULT_TYPES = [
   },
   {
     id: "smart-contract",
-    name: "Smart Contract Vault",
+    name: "Smart Contract Vault™",
     description: "Automated rules and conditions",
     icon: "📜",
     color: "#5271FF",
@@ -87,7 +87,7 @@ const VAULT_TYPES = [
   },
   {
     id: "dynamic",
-    name: "Dynamic Vault",
+    name: "Dynamic Vault™",
     description: "Adapt to market or user behavior",
     icon: "📊",
     color: "#FF5151",
@@ -98,7 +98,7 @@ const VAULT_TYPES = [
   },
   {
     id: "nft-powered",
-    name: "NFT-Powered Vault",
+    name: "NFT-Powered Vault™",
     description: "Use NFTs as access keys to your vault",
     icon: "🖼️",
     color: "#CE19FF",
@@ -109,7 +109,7 @@ const VAULT_TYPES = [
   },
   {
     id: "unique",
-    name: "Unique Security Vault",
+    name: "Unique Security Vault™",
     description: "Enhanced security with custom protocols",
     icon: "🛡️",
     color: "#fca103",
@@ -120,7 +120,7 @@ const VAULT_TYPES = [
   },
   {
     id: "ai-intent-inheritance",
-    name: "AI Intent Inheritance Vault",
+    name: "AI Intent Inheritance Vault™",
     description: "Natural language inheritance planning",
     icon: "🧠",
     color: "#9E00FF",
@@ -131,7 +131,7 @@ const VAULT_TYPES = [
   },
   {
     id: "memory-vault",
-    name: "Time-Locked Memory Vault",
+    name: "Time-Locked Memory Vault™",
     description: "Digital assets with multimedia memories",
     icon: "📦",
     color: "#FF3A8C",
@@ -142,7 +142,7 @@ const VAULT_TYPES = [
   },
   {
     id: "quantum-resistant",
-    name: "Quantum-Resistant Vault",
+    name: "Quantum-Resistant Vault™",
     description: "Progressive security that scales with value",
     icon: "🔒",
     color: "#00B8FF",
@@ -153,7 +153,7 @@ const VAULT_TYPES = [
   },
   {
     id: "composite-vault",
-    name: "Cross-Chain Fragment Vault",
+    name: "Cross-Chain Fragment Vault™",
     description: "Splits your assets across multiple blockchains",
     icon: "🧩",
     color: "#00E5A0",
@@ -164,7 +164,7 @@ const VAULT_TYPES = [
   },
   {
     id: "geo-temporal",
-    name: "Location-Time Restricted Vault",
+    name: "Location-Time Restricted Vault™",
     description: "Access only at specific locations during set times",
     icon: "🌎",
     color: "#47A0FF",
