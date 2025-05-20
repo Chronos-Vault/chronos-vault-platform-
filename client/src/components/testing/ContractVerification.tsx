@@ -14,8 +14,14 @@ interface ContractVerificationProps {
   className?: string;
 }
 
+// Contract interface type
+interface Contract {
+  name: string;
+  address: string;
+}
+
 // Known contract addresses by blockchain
-const knownContracts = {
+const knownContracts: Record<BlockchainType, Contract[]> = {
   [BlockchainType.ETHEREUM]: [
     { name: 'ChronosVault Master', address: '0x4B0897b0513fdC7C541B6d9D7E929C4e5364D2dB' },
     { name: 'Time Lock Factory', address: '0x3FaB184622Dc19b6109349B94811493BF2a45362' },
@@ -30,6 +36,10 @@ const knownContracts = {
     { name: 'Vault Factory', address: 'EQB0gCDoGJNTfoPUSCgBxLuZ_O-7aYUccU0P1Vj_QdO6rQTf' },
     { name: 'Staking Contract', address: 'EQDi_PSI1WbigxBKCj7vEz2pAvUQfw0IFZz9Sz2aGHUFNpSw' },
     { name: 'Newly Deployed Contract', address: 'UQAkIXbCToQ6LowMrDNG2K3ERmMH8m4XB2owWgL0BAB14Jtl' }
+  ],
+  [BlockchainType.BITCOIN]: [
+    { name: 'CVT Bitcoin Bridge', address: 'bc1qxy2kgdygjrsqtzq2n0yrf2493p83kkfjhx0wlh' },
+    { name: 'MultiSig Vault', address: 'bc1qar0srrr7xfkvy5l643lydnw9re59gtzzwf5mdq' }
   ]
 };
 
@@ -64,13 +74,15 @@ export default function ContractVerification({ className }: ContractVerification
         return `https://explorer.solana.com/address/${address}?cluster=devnet`;
       case BlockchainType.TON:
         return `https://testnet.tonscan.org/address/${address}`;
+      case BlockchainType.BITCOIN:
+        return `https://blockstream.info/testnet/address/${address}`;
       default:
         return '#';
     }
   };
   
   // Simulate verification of contracts
-  const verifyContracts = async () => {
+  const verifyContracts = async (): Promise<void> => {
     setIsVerifying(true);
     setResults([]);
     
@@ -86,10 +98,20 @@ export default function ContractVerification({ className }: ContractVerification
     
     // Simulate verification with delay
     setTimeout(() => {
-      const verificationResults = contractsToVerify.map(contract => {
+      const verificationResults = contractsToVerify.map((contract: Contract) => {
         // In a real implementation, we would make API calls to verify each contract
         // For now, we're simulating successful verification for known contracts
-        const isKnown = knownContracts[activeChain].some(c => c.address === contract.address);
+        const isKnown = knownContracts[activeChain].some((c: Contract) => c.address === contract.address);
+        
+        // Determine balance based on chain
+        let balance = '3.5 TON';
+        if (activeChain === BlockchainType.ETHEREUM) {
+          balance = '0.05 ETH';
+        } else if (activeChain === BlockchainType.SOLANA) {
+          balance = '1.2 SOL';
+        } else if (activeChain === BlockchainType.BITCOIN) {
+          balance = '0.002 BTC';
+        }
         
         return {
           address: contract.address,
@@ -97,9 +119,7 @@ export default function ContractVerification({ className }: ContractVerification
           status: {
             isVerified: isKnown,
             isDeployed: true,
-            balance: activeChain === BlockchainType.ETHEREUM ? '0.05 ETH' :
-                     activeChain === BlockchainType.SOLANA ? '1.2 SOL' :
-                     '3.5 TON',
+            balance,
             deploymentDate: '2025-04-15',
             transactions: Math.floor(Math.random() * 100) + 5,
             message: isKnown ? 
@@ -169,7 +189,7 @@ export default function ContractVerification({ className }: ContractVerification
             <div>
               <Label className="text-sm font-medium text-white">Known Chronos Vault Contracts</Label>
               <div className="mt-2 grid gap-2">
-                {knownContracts[activeChain].map((contract, index) => (
+                {knownContracts[activeChain].map((contract: Contract, index: number) => (
                   <div key={index} className="bg-black/20 border border-[#6B00D7]/20 rounded-lg p-3">
                     <div className="flex justify-between items-center">
                       <div>
