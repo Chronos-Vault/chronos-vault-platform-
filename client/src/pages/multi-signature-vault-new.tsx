@@ -157,7 +157,11 @@ const MultiSignatureVaultNewPage: React.FC = () => {
                   </div>
                   <div>
                     <p className="text-sm text-gray-400">Blockchain</p>
-                    <p className="font-medium">{BlockchainType[selectedBlockchain]}</p>
+                    <p className="font-medium">
+                      {selectedBlockchain === BlockchainType.TON ? "TON" : 
+                       selectedBlockchain === BlockchainType.ETHEREUM ? "Ethereum" : 
+                       selectedBlockchain === BlockchainType.SOLANA ? "Solana" : "Unknown"}
+                    </p>
                   </div>
                 </div>
                 
@@ -242,7 +246,14 @@ const MultiSignatureVaultNewPage: React.FC = () => {
                     <Label>Blockchain</Label>
                     <Select 
                       value={selectedBlockchain.toString()} 
-                      onValueChange={(value) => setSelectedBlockchain(Number(value) as BlockchainType)}
+                      onValueChange={(value) => {
+                        const blockchainValue = Number(value);
+                        if (blockchainValue === BlockchainType.TON ||
+                            blockchainValue === BlockchainType.ETHEREUM ||
+                            blockchainValue === BlockchainType.SOLANA) {
+                          setSelectedBlockchain(blockchainValue);
+                        }
+                      }}
                     >
                       <SelectTrigger className="mt-2">
                         <SelectValue placeholder="Select a blockchain" />
