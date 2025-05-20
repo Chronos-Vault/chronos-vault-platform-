@@ -173,8 +173,8 @@ const MainHeader = () => {
       title: "Developer",
       icon: "🧪",
       items: [
-        { name: "API Documentation", href: "/documentation", icon: "📚", highlight: true },
-        { name: "SDK Access", href: "/documentation#sdk", icon: "💻", highlight: true },
+        { name: "API Documentation", href: "/api-documentation", icon: "📚", highlight: true },
+        { name: "SDK Documentation", href: "/sdk-documentation", icon: "💻", highlight: true },
         { name: "Smart Contract Audit", href: "/audit-test", icon: "🔍", highlight: true },
         { name: "Contract Templates", href: "/documentation#templates", icon: "📄", highlight: true },
         { name: `Dev Mode ${devModeEnabled ? 'On' : 'Off'}`, href: "#", icon: "🛠️", isAction: true, action: () => toggleDevMode() },
