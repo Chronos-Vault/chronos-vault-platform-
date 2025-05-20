@@ -92,125 +92,378 @@ const VAULT_TYPES = [
       "Travel permissions"
     ],
     tags: ['Triple-Chain', 'Zero-Knowledge', 'Advanced Security']
+  },
+  {
+    id: 'cross-chain',
+    title: 'Cross-Chain Verification',
+    description: 'Verify assets across multiple blockchains',
+    icon: '⛓️',
+    color: '#2196F3',
+    securityLevel: 5,
+    complexityLevel: 4,
+    features: [
+      "Triple-Chain Security",
+      "Cross-chain verification protocols",
+      "Multi-network validation",
+      "Unified security monitoring"
+    ],
+    tags: ['Triple-Chain', 'Zero-Knowledge', 'Advanced Security']
+  },
+  {
+    id: 'smart-contract',
+    title: 'Smart Contract Vault',
+    description: 'Automated rules and conditions',
+    icon: '📜',
+    color: '#673AB7',
+    securityLevel: 4,
+    complexityLevel: 5,
+    features: [
+      "Conditional access rules",
+      "Automated actions",
+      "Event-based triggers",
+      "Custom logic implementation"
+    ],
+    tags: ['Advanced Security']
+  },
+  {
+    id: 'dynamic',
+    title: 'Dynamic Vault',
+    description: 'Adapt to market or user behavior',
+    icon: '📊',
+    color: '#009688',
+    securityLevel: 4,
+    complexityLevel: 5,
+    features: [
+      "Behavioral adaptability",
+      "Market response strategies",
+      "Self-adjusting security",
+      "Custom security settings"
+    ],
+    tags: ['Advanced Security']
+  },
+  {
+    id: 'nft-powered',
+    title: 'NFT-Powered Vault',
+    description: 'Use NFTs as access keys to your vault',
+    icon: '🖼️',
+    color: '#9C27B0',
+    securityLevel: 4,
+    complexityLevel: 3,
+    features: [
+      "NFT access verification",
+      "Transferable vault access",
+      "Digital collectible integration",
+      "NFT-based permissions"
+    ],
+    tags: ['Triple-Chain', 'Advanced Security']
+  },
+  {
+    id: 'unique-security',
+    title: 'Unique Security Vault',
+    description: 'Enhanced security with custom protocols',
+    icon: '🛡️',
+    color: '#F44336',
+    securityLevel: 5,
+    complexityLevel: 4,
+    features: [
+      "Zero-Knowledge Privacy Layer",
+      "Military-grade encryption",
+      "Quantum-resistant protocols",
+      "Custom security combinations"
+    ],
+    tags: ['Triple-Chain', 'Zero-Knowledge', 'Advanced Security']
+  },
+  {
+    id: 'ai-intent',
+    title: 'AI Intent Inheritance Vault',
+    description: 'Natural language inheritance planning',
+    icon: '🧠',
+    color: '#00BCD4',
+    securityLevel: 5,
+    complexityLevel: 3,
+    features: [
+      "Express intent in plain language",
+      "AI-powered smart contract generation",
+      "Conditional inheritance rules",
+      "Adaptable to complex real-world scenarios"
+    ],
+    tags: ['Triple-Chain', 'Zero-Knowledge', 'Advanced Security']
+  },
+  {
+    id: 'time-locked-memory',
+    title: 'Time-Locked Memory Vault',
+    description: 'Digital assets with multimedia memories',
+    icon: '📦',
+    color: '#CDDC39',
+    securityLevel: 4,
+    complexityLevel: 3,
+    features: [
+      "Combined assets and personal media",
+      "Photos, videos and messages storage",
+      "Synchronized unlocking on future date",
+      "Perfect for gifts and personal time capsules"
+    ],
+    tags: ['Triple-Chain', 'Zero-Knowledge', 'Advanced Security']
+  },
+  {
+    id: 'quantum-resistant',
+    title: 'Quantum-Resistant Vault',
+    description: 'Progressive security that scales with value',
+    icon: '🔒',
+    color: '#9C27B0',
+    securityLevel: 5,
+    complexityLevel: 4,
+    features: [
+      "Auto-scaling security tiers",
+      "Post-quantum cryptography",
+      "Value-based security enforcement",
+      "Adaptive security protocols"
+    ],
+    tags: ['Triple-Chain', 'Zero-Knowledge', 'Advanced Security', 'Quantum-Resistant']
+  },
+  {
+    id: 'cross-chain-fragment',
+    title: 'Cross-Chain Fragment Vault',
+    description: 'Splits your assets across multiple blockchains',
+    icon: '🧩',
+    color: '#3F51B5',
+    securityLevel: 5,
+    complexityLevel: 5,
+    features: [
+      "Asset splitting across chains",
+      "Multiple blockchain storage",
+      "Fragmented recovery system",
+      "Protection from single-chain failures"
+    ],
+    tags: ['Triple-Chain', 'Zero-Knowledge', 'Advanced Security']
+  },
+  {
+    id: 'location-time',
+    title: 'Location-Time Restricted Vault',
+    description: 'Access only at specific locations during set times',
+    icon: '🌎',
+    color: '#4CAF50',
+    securityLevel: 5,
+    complexityLevel: 4,
+    features: [
+      "Dual verification: location + time window",
+      "Physical presence requirement",
+      "Scheduled access periods",
+      "Perfect for location-sensitive business assets"
+    ],
+    tags: ['Triple-Chain', 'Zero-Knowledge', 'Advanced Security']
+  },
+  {
+    id: 'investment-discipline',
+    title: 'Investment Discipline Vault',
+    description: 'Prevents emotional selling during market volatility',
+    icon: '💎',
+    color: '#2196F3',
+    securityLevel: 4,
+    complexityLevel: 3,
+    features: [
+      "Programmable exit conditions",
+      "Market event-based triggers",
+      "Time-locked investment periods",
+      "Protection from panic-selling"
+    ],
+    tags: ['Triple-Chain', 'Zero-Knowledge', 'Advanced Security']
+  },
+  {
+    id: 'ai-assisted',
+    title: 'AI-Assisted Investment Vault',
+    description: 'AI-powered market analysis for optimal trading',
+    icon: '🤖',
+    color: '#00BCD4',
+    securityLevel: 5,
+    complexityLevel: 4,
+    features: [
+      "AI market trend analysis",
+      "Smart trading suggestions",
+      "Customizable investment strategies",
+      "Automated risk assessment"
+    ],
+    tags: ['Triple-Chain', 'Zero-Knowledge', 'Advanced Security', 'AI-Powered']
+  },
+  {
+    id: 'milestone',
+    title: 'Milestone-Based Release Vault',
+    description: 'Unlocks assets when you achieve personal goals',
+    icon: '🏆',
+    color: '#FF9800',
+    securityLevel: 4,
+    complexityLevel: 3,
+    features: [
+      "Achievement-based unlocking",
+      "Progressive asset release",
+      "Customizable goal verification",
+      "Reward system integration"
+    ],
+    tags: ['Triple-Chain', 'Zero-Knowledge', 'Advanced Security']
+  },
+  {
+    id: 'family-heritage',
+    title: 'Family Heritage Vault',
+    description: 'Secure generational wealth transfer with education',
+    icon: '👪',
+    color: '#795548',
+    securityLevel: 5,
+    complexityLevel: 4,
+    features: [
+      "Multi-generational planning",
+      "Educational content integration",
+      "Gradual inheritance mechanism",
+      "Family governance protocols"
+    ],
+    tags: ['Triple-Chain', 'Zero-Knowledge', 'Advanced Security', 'Quantum-Resistant']
+  },
+  {
+    id: 'bitcoin-halving',
+    title: 'Bitcoin Halving Vault',
+    description: 'Optimized for Bitcoin halving cycle investment strategy',
+    icon: '₿',
+    color: '#F7931A',
+    securityLevel: 5,
+    complexityLevel: 3,
+    features: [
+      "Bitcoin halving cycle optimization",
+      "Automatic rebalancing",
+      "Long-term value preservation",
+      "Halving event-triggered actions"
+    ],
+    tags: ['Bitcoin', 'Investment', 'Advanced Security']
+  },
+  {
+    id: 'gift-crypto',
+    title: 'Gift Crypto Vault',
+    description: 'Create memorable crypto gifts for special occasions',
+    icon: '🎁',
+    color: '#E91E63',
+    securityLevel: 3,
+    complexityLevel: 1,
+    features: [
+      "Personalized crypto gifts",
+      "Customizable gift messages",
+      "Special occasion scheduling",
+      "Beginner-friendly interface"
+    ],
+    tags: ['Gift', 'Beginner-Friendly', 'Time-Based']
+  },
+  {
+    id: 'behavioral-auth',
+    title: 'Behavioral Authentication Vault',
+    description: 'Secure with AI-powered behavioral biometrics',
+    icon: '🔍',
+    color: '#607D8B',
+    securityLevel: 5,
+    complexityLevel: 3,
+    features: [
+      "Pattern recognition security",
+      "Continuous authentication",
+      "Anomaly detection",
+      "Fraud prevention system"
+    ],
+    tags: ['AI-Powered', 'Biometrics', 'Advanced Security']
   }
 ];
 
-// VaultCard component for displaying vault information
+// VaultCard component for displaying vault information - more compact design
 const VaultCard = ({ vault, selected, onClick }: { vault: any; selected: boolean; onClick: () => void }) => {
-  const { title, description, icon, color, securityLevel, complexityLevel, features, tags } = vault;
+  const { title, description, icon, color, features, tags } = vault;
   
   return (
     <motion.div 
-      className={`relative rounded-xl p-5 transition-all duration-300 cursor-pointer ${
+      className={`relative rounded-xl p-4 transition-all duration-300 cursor-pointer ${
         selected ? 'bg-white/10 border-2' : 'bg-black/40 border border-gray-800 hover:bg-white/5'
       }`}
       style={{ borderColor: selected ? color : undefined }}
       onClick={onClick}
-      whileHover={{ y: -5 }}
-      initial={{ opacity: 0, y: 20 }}
+      whileHover={{ y: -3 }}
+      initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.3 }}
     >
       {/* Icon and Title */}
-      <div className="flex items-start mb-3">
-        <div className="text-2xl mr-3">{icon}</div>
+      <div className="flex items-start mb-2">
+        <div className="text-xl mr-2">{icon}</div>
         <div>
-          <h3 className="text-lg font-bold text-white">{title}</h3>
-          <div className="text-sm opacity-60">{description}</div>
+          <h3 className="text-base font-bold text-white leading-tight">{title}</h3>
+          <div className="text-xs text-gray-400 mt-0.5">{description}</div>
         </div>
       </div>
       
-      {/* Security & Complexity Meters */}
-      <div className="flex justify-between mb-4">
-        <div className="w-1/2 pr-2">
-          <div className="text-xs uppercase tracking-wider opacity-60 mb-1">Security</div>
-          <div className="flex items-center">
-            {Array(5).fill(0).map((_, i) => (
-              <div 
-                key={i} 
-                className="w-4 h-1 rounded-full mr-1" 
-                style={{ 
-                  backgroundColor: i < securityLevel 
-                    ? color
-                    : 'rgba(255,255,255,0.1)'
-                }}
-              />
-            ))}
-            <span className="text-xs ml-1">{securityLevel}/5</span>
-          </div>
+      {/* Tags - show only first 2 tags in non-selected state */}
+      {!selected && (
+        <div className="flex flex-wrap gap-1 mb-1 mt-2">
+          {tags.slice(0, 2).map(tag => (
+            <span 
+              key={tag} 
+              className="inline-block px-1.5 py-0.5 text-[10px] rounded-sm"
+              style={{ backgroundColor: `${color}20`, color: `${color}` }}
+            >
+              {tag}
+            </span>
+          ))}
+          {tags.length > 2 && (
+            <span className="inline-block px-1.5 py-0.5 text-[10px] rounded-sm bg-black/30 text-gray-400">
+              +{tags.length - 2} more
+            </span>
+          )}
         </div>
-        <div className="w-1/2 pl-2">
-          <div className="text-xs uppercase tracking-wider opacity-60 mb-1">Complexity</div>
-          <div className="flex items-center">
-            {Array(5).fill(0).map((_, i) => (
-              <div 
-                key={i} 
-                className="w-4 h-1 rounded-full mr-1" 
-                style={{ 
-                  backgroundColor: i < complexityLevel 
-                    ? 'rgba(255,255,255,0.5)'
-                    : 'rgba(255,255,255,0.1)'
-                }}
-              />
-            ))}
-            <span className="text-xs ml-1">{complexityLevel}/5</span>
-          </div>
-        </div>
-      </div>
+      )}
       
-      {/* Tags */}
-      <div className="flex flex-wrap gap-2 mb-3">
-        {tags.map(tag => (
-          <span 
-            key={tag} 
-            className="inline-block px-2 py-1 text-xs rounded-md"
-            style={{ backgroundColor: `${color}20` }}
-          >
-            {tag}
-          </span>
-        ))}
-      </div>
-      
-      {/* Features */}
+      {/* Selected state with features and create button */}
       {selected && (
         <motion.div 
-          className="mt-4"
-          initial={{ opacity: 0, height: 0 }}
-          animate={{ opacity: 1, height: 'auto' }}
-          transition={{ duration: 0.3 }}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          className="mt-3"
         >
-          <div className="text-xs uppercase tracking-wider opacity-60 mb-2">Key Features</div>
-          <ul className="space-y-1">
+          {/* All tags in selected state */}
+          <div className="flex flex-wrap gap-1 mb-3">
+            {tags.map(tag => (
+              <span 
+                key={tag} 
+                className="inline-block px-1.5 py-0.5 text-[10px] rounded-sm"
+                style={{ backgroundColor: `${color}20`, color: `${color}` }}
+              >
+                {tag}
+              </span>
+            ))}
+          </div>
+          
+          {/* Features */}
+          <div className="text-xs uppercase tracking-wider text-gray-400 mb-2">Key Features</div>
+          <ul className="space-y-1 mb-4">
             {features.map((feature, idx) => (
-              <li key={idx} className="flex items-start text-sm">
-                <Check className="h-4 w-4 mr-2 mt-0.5" style={{ color }} />
-                {feature}
+              <li key={idx} className="flex items-start text-xs">
+                <Check className="h-3 w-3 mr-1 mt-0.5 flex-shrink-0" style={{ color }} />
+                <span>{feature}</span>
               </li>
             ))}
           </ul>
+          
+          {/* Create button */}
+          <Button 
+            className="w-full bg-[#6B00D7] hover:bg-[#5A00B8] text-white text-sm h-8"
+            onClick={(e) => {
+              e.stopPropagation();
+              window.location.href = `/${vault.id}-vault/create`;
+            }}
+          >
+            <Shield className="mr-2 h-3.5 w-3.5" />
+            Create this Vault
+          </Button>
         </motion.div>
       )}
       
       {/* Selected indicator */}
       {selected && (
         <div 
-          className="absolute -right-2 -top-2 w-5 h-5 rounded-full flex items-center justify-center"
+          className="absolute -right-1.5 -top-1.5 w-4 h-4 rounded-full flex items-center justify-center"
           style={{ backgroundColor: color }}
         >
-          <Check className="h-3 w-3 text-black" />
-        </div>
-      )}
-
-      {/* Create button when selected */}
-      {selected && (
-        <div className="mt-4 pt-4 border-t border-gray-800">
-          <Button 
-            className="w-full bg-[#6B00D7] hover:bg-[#5A00B8] text-white"
-            onClick={() => window.location.href = `/${vault.id}-vault/create`}
-          >
-            <Shield className="mr-2 h-4 w-4" />
-            Create this Vault
-          </Button>
+          <Check className="h-2.5 w-2.5 text-black" />
         </div>
       )}
     </motion.div>
@@ -245,7 +498,37 @@ const VaultTypesPage = () => {
       icon: '🛡️',
       vaults: VAULT_TYPES.filter(v => 
         v.tags.includes('Zero-Knowledge') || 
+        v.tags.includes('Advanced Security') ||
         v.tags.includes('Quantum-Resistant'))
+    },
+    investment: {
+      title: 'Investment',
+      color: '#00BCD4',
+      icon: '💎',
+      vaults: VAULT_TYPES.filter(v => 
+        v.tags.includes('Investment') || 
+        v.id === 'milestone' || 
+        v.id === 'family-heritage' ||
+        v.id === 'ai-assisted' ||
+        v.id === 'bitcoin-halving' ||
+        v.id === 'investment-discipline')
+    },
+    time: {
+      title: 'Time-Based',
+      color: '#FF9800',
+      icon: '⏱️',
+      vaults: VAULT_TYPES.filter(v => 
+        v.id.includes('time') || 
+        v.tags.includes('Time-Based'))
+    },
+    special: {
+      title: 'Special',
+      color: '#E91E63',
+      icon: '✨',
+      vaults: VAULT_TYPES.filter(v => 
+        v.id === 'gift-crypto' || 
+        v.id === 'nft-powered' ||
+        v.id === 'behavioral-auth')
     }
   };
   
@@ -281,13 +564,42 @@ const VaultTypesPage = () => {
           </Button>
         </div>
 
+        {/* Feature Cards at the top */}
+        <div className="mb-8 grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="bg-black/40 border border-[#6B00D7]/30 rounded-xl p-5">
+            <div className="flex items-start">
+              <div className="mr-3 mt-1">
+                <svg viewBox="0 0 24 24" className="h-6 w-6 text-[#FF5AF7]" fill="none" stroke="currentColor" strokeWidth="2">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 21v-7.5a.75.75 0 01.75-.75h3a.75.75 0 01.75.75V21m-4.5 0H2.36m11.14 0H18m0 0h3.64m-1.39 0V9.349m-16.5 11.65V9.35m0 0a3.001 3.001 0 003.75-.615A2.993 2.993 0 009.75 9.75c.896 0 1.7-.393 2.25-1.016a2.993 2.993 0 002.25 1.016c.896 0 1.7-.393 2.25-1.016a3.001 3.001 0 003.75.614m-16.5 0a3.004 3.004 0 01-.621-4.72L4.318 3.44A1.5 1.5 0 015.378 3h13.243a1.5 1.5 0 011.06.44l1.19 1.189a3 3 0 01-.621 4.72m-13.5 8.65h3.75a.75.75 0 00.75-.75V13.5a.75.75 0 00-.75-.75H6.75a.75.75 0 00-.75.75v3.75c0 .415.336.75.75.75z" />
+                </svg>
+              </div>
+              <div>
+                <h3 className="text-xl font-bold text-white mb-1">Triple-Chain Security</h3>
+                <p className="text-gray-300">Secures your assets across Ethereum, TON and Solana for unparalleled protection</p>
+              </div>
+            </div>
+          </div>
+          
+          <div className="bg-black/40 border border-[#6B00D7]/30 rounded-xl p-5">
+            <div className="flex items-start">
+              <div className="mr-3 mt-1">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-6 w-6 text-[#FF5AF7]"><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"/><path d="M5 3v4"/><path d="M19 17v4"/><path d="M3 5h4"/><path d="M17 19h4"/></svg>
+              </div>
+              <div>
+                <h3 className="text-xl font-bold text-white mb-1">AI-Powered Intelligence</h3>
+                <p className="text-gray-300">Smart security protocols that adapt to threats in real-time</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
         {/* Vault Categories Tabs */}
         <Tabs 
           value={activeCategory} 
           onValueChange={setActiveCategory}
-          className="mb-8"
+          className="mb-6"
         >
-          <TabsList className="grid grid-cols-3 bg-black/20 p-1 rounded-lg border border-[#6B00D7]/30">
+          <TabsList className="grid grid-cols-3 md:grid-cols-6 bg-black/20 p-1 rounded-lg border border-[#6B00D7]/30">
             {Object.entries(vaultCategories).map(([key, category]) => (
               <TabsTrigger 
                 key={key} 
@@ -301,8 +613,8 @@ const VaultTypesPage = () => {
           </TabsList>
         </Tabs>
         
-        {/* Vault Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        {/* Vault Grid - with smaller cards */}
+        <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-3">
           {currentVaults.map((vault) => (
             <VaultCard 
               key={vault.id}
