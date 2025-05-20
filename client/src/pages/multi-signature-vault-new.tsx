@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Link } from "wouter";
 import { ArrowLeft, Check, Shield, Users, Key, Fingerprint, Clock, Bell } from "lucide-react";
 
+// This is the cutting-edge form component (not documentation)
 const MultiSignatureVaultNewPage: React.FC = () => {
   return (
     <div className="container mx-auto px-4 py-12">
