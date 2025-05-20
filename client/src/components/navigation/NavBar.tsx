@@ -569,8 +569,8 @@ export const NavBar: React.FC = () => {
               <SidebarItem 
                 icon={<Shield className="h-5 w-5" />} 
                 label="Triple-Chain Security" 
-                href="/triple-chain-security-demo" 
-                active={location === '/triple-chain-security-demo'}
+                href="/triple-chain-security" 
+                active={location === '/triple-chain-security'}
                 onClick={closeSidebar}
               />
             </SidebarSection>
