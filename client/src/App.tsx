@@ -218,9 +218,8 @@ const App: React.FC = () => {
                       <Route path="/family-heritage-vault-form" component={FamilyHeritageVaultFormPage} />
                       <Route path="/bitcoin-halving-vault" component={BitcoinHalvingVaultPage} />
                       
-                      {/* Vault Creation Forms - Fix for 404 errors */}
-                      <Route path="/vaults/:vaultType/create" component={CreateVaultEnhancedPage} />
-                      <Route path="/:vaultType-vault/create" component={CreateVaultEnhancedPage} />
+                      {/* Vault Direct Access Routes - Based on Vault School documentation */}
+                      <Route path="/:vaultType-vault" component={CreateVaultEnhancedPage} />
                       
                       {/* Cross-Chain Features */}
                       <Route path="/cross-chain-operations" component={CrossChainMonitorPage} />

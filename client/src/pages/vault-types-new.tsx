@@ -489,8 +489,8 @@ const VaultCard = ({ vault, selected, onClick }: { vault: any; selected: boolean
               className="w-full bg-[#6B00D7] hover:bg-[#5A00B8] text-white font-medium h-12 rounded-lg shadow-lg shadow-[#6B00D7]/30"
               onClick={(e) => {
                 e.stopPropagation();
-                // Support both URL formats to ensure forms load correctly
-                window.location.href = `/vaults/${vault.id}/create`;
+                // Use the correct format from Vault School Hub documentation
+                window.location.href = `/${vault.id}-vault`;
               }}
             >
               <Shield className="mr-2 h-4 w-4" />
