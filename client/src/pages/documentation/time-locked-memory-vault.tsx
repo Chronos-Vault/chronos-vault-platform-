@@ -93,7 +93,7 @@ const TimeLockedMemoryVaultDocumentation = () => {
                   Send meaningful memories to your future self or loved ones
                 </div>
                 <Button variant="outline" asChild>
-                  <Link href="/time-locked-memory-vault">Create Memory Vault</Link>
+                  <Link href="/documentation/time-locked-memory-vault">View Documentation</Link>
                 </Button>
               </CardFooter>
             </Card>
@@ -545,7 +545,7 @@ const TimeLockedMemoryVaultDocumentation = () => {
                       Contact Support
                     </Button>
                     <Button className="bg-gradient-to-r from-amber-500 to-red-500 hover:from-amber-600 hover:to-red-600 flex-1" asChild>
-                      <Link href="/time-locked-memory-vault">Create Memory Vault</Link>
+                      <Link href="/specialized-vault-memory">Create Memory Vault</Link>
                     </Button>
                   </div>
                 </div>
