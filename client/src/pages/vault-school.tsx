@@ -146,7 +146,7 @@ const vaultTypes = [
     id: "location-time",
     name: "Location-Time Vault",
     icon: "🗺️",
-    href: "/location-time-vault",
+    href: "/documentation/location-time-vault",
     description: "Advanced vault with both geographic and temporal access requirements",
     features: [
       "Combined time-lock and location verification",

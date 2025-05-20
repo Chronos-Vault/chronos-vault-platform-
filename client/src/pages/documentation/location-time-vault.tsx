@@ -92,7 +92,7 @@ const LocationTimeVaultDocumentation = () => {
                   Achieve unprecedented security with dual-factor authentication
                 </div>
                 <Button variant="outline" asChild>
-                  <Link href="/location-time-vault">Create Location-Time Vault</Link>
+                  <Link href="/documentation/location-time-vault">View Documentation</Link>
                 </Button>
               </CardFooter>
             </Card>
@@ -534,7 +534,7 @@ const LocationTimeVaultDocumentation = () => {
                       Contact Support
                     </Button>
                     <Button className="bg-gradient-to-r from-violet-500 to-fuchsia-500 hover:from-violet-600 hover:to-fuchsia-600 flex-1" asChild>
-                      <Link href="/location-time-vault">Create Location-Time Vault</Link>
+                      <Link href="/specialized-vault-location">Create Location-Time Vault</Link>
                     </Button>
                   </div>
                 </div>
