@@ -308,7 +308,7 @@ const VAULT_TYPES = [
   },
   {
     id: 'family-heritage',
-    title: 'Family Heritage Vault',
+    title: 'Family Heritage Vault™',
     description: 'Secure generational wealth transfer with education',
     icon: '👪',
     color: '#795548',
