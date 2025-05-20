@@ -51,7 +51,7 @@ const DocumentationRouter: React.FC<DocumentationRouterProps> = ({ vaultType }) 
     'dynamic-security-vault': DynamicSecurityVaultDoc,
     'gift-crypto-vault': GiftCryptoVaultDoc,
     'inheritance-planning-vault': InheritancePlanningVaultDoc,
-    'location-time-vault': LocationTimeVaultDoc,
+    'location-time-vault': LocationTimeVaultDoc
   };
 
   // Get the component for the requested vault type
