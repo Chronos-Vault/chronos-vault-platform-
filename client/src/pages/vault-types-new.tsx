@@ -501,7 +501,7 @@ const VaultCard = ({ vault, selected, onClick }: { vault: any; selected: boolean
                   'smart-contract': '/smart-contract-vault',
                   
                   // Advanced Vault Types (fully developed form components)
-                  'cross-chain': '/cross-chain-vault',
+                  'cross-chain': '/cross-chain-vault-form',
                   'cross-chain-fragment': '/cross-chain-fragment-vault',
                   'quantum-resistant': '/quantum-resistant-vault',
                   'nft-powered': '/nft-powered-vault',
