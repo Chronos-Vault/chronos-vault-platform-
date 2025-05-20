@@ -175,7 +175,7 @@ const VAULT_TYPES = [
   },
   {
     id: "diamond-hands",
-    name: "Investment Discipline Vault",
+    name: "Investment Discipline Vault™",
     description: "Prevents emotional selling during market volatility",
     icon: "💎",
     color: "#3F51FF",
@@ -186,7 +186,7 @@ const VAULT_TYPES = [
   },
   {
     id: "ai-investment",
-    name: "AI-Assisted Investment Vault",
+    name: "AI-Assisted Investment Vault™",
     description: "AI-powered market analysis for optimal trading",
     icon: "🤖",
     color: "#00E676",
@@ -197,7 +197,7 @@ const VAULT_TYPES = [
   },
   {
     id: "milestone-based",
-    name: "Milestone-Based Release Vault",
+    name: "Milestone-Based Release Vault™",
     description: "Unlocks assets when you achieve personal goals",
     icon: "🏆",
     color: "#FF9800",
@@ -208,7 +208,7 @@ const VAULT_TYPES = [
   },
   {
     id: "family-heritage",
-    name: "Family Heritage Vault",
+    name: "Family Heritage Vault™",
     description: "Secure generational wealth transfer with education",
     icon: "👪",
     color: "#E040FB",

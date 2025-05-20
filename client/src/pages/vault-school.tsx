@@ -50,7 +50,7 @@ const categories = {
 const vaultTypes = [
   {
     id: "smart-contract",
-    name: "Smart Contract Vault",
+    name: "Smart Contract Vault™",
     icon: "📘",
     href: "/smart-contract-vault",
     description: "ERC-4626 compliant tokenized vault with cross-chain security verification",
@@ -67,7 +67,7 @@ const vaultTypes = [
   },
   {
     id: "multi-signature",
-    name: "Multi-Signature Vault",
+    name: "Multi-Signature Vault™",
     icon: "🔒",
     href: "/documentation/multi-signature-vault",
     description: "Enhanced security requiring multiple approvals for asset access",
@@ -82,7 +82,7 @@ const vaultTypes = [
   },
   {
     id: "biometric",
-    name: "Biometric Vault",
+    name: "Biometric Vault™",
     icon: "📱",
     href: "/documentation/biometric-vault",
     description: "Secure vaults with advanced biometric authentication mechanisms",
