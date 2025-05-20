@@ -33,6 +33,9 @@ import TechnicalSpecPage from '@/pages/technical-spec';
 import APIDocumentationPage from '@/pages/api-documentation';
 import SDKDocumentationPage from '@/pages/sdk-documentation';
 import IntegrationExamplesPage from '@/pages/integration-examples';
+import DeveloperPortalPage from '@/pages/developer-portal';
+import IntegrationGuidePage from '@/pages/integration-guide';
+import SmartContractSDKPage from '@/pages/smart-contract-sdk';
 
 // Vault Type Pages
 import VaultTypesPage from '@/pages/vault-types-new';
@@ -262,6 +265,9 @@ const App: React.FC = () => {
                       <Route path="/api-documentation" component={APIDocumentationPage} />
                       <Route path="/sdk-documentation" component={SDKDocumentationPage} />
                       <Route path="/integration-examples" component={IntegrationExamplesPage} />
+                      <Route path="/developer-portal" component={DeveloperPortalPage} />
+                      <Route path="/integration-guide" component={IntegrationGuidePage} />
+                      <Route path="/smart-contract-sdk" component={SmartContractSDKPage} />
 
                       {/* Vault Direct Access Routes - Based on Vault School documentation */}
                       {/* Switching to explicit routes instead of catch-all to avoid conflicts */}

@@ -19,6 +19,7 @@ const DocumentationLayout: React.FC<DocumentationLayoutProps> = ({
   children, 
   title, 
   description, 
+  subtitle, 
   icon, 
   cta 
 }) => {
@@ -34,7 +35,8 @@ const DocumentationLayout: React.FC<DocumentationLayoutProps> = ({
           <div className="bg-card px-4 pt-20 pb-12 border-b">
             <div className="container mx-auto max-w-6xl">
               {icon && <div className="text-4xl mb-4">{icon}</div>}
-              {title && <h1 className="text-4xl font-bold tracking-tight mb-4">{title}</h1>}
+              {title && <h1 className="text-4xl font-bold tracking-tight mb-2">{title}</h1>}
+              {subtitle && <p className="text-xl text-indigo-400 mb-3">{subtitle}</p>}
               {description && <p className="text-xl text-muted-foreground max-w-3xl">{description}</p>}
               {cta}
             </div>
