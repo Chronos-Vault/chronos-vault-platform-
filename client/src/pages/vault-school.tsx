@@ -228,7 +228,7 @@ const vaultTypes = [
   },
   {
     id: "quantum-resistant",
-    name: "Quantum-Resistant Vault",
+    name: "Quantum-Resistant Vault™",
     icon: "🔐",
     href: "/documentation/quantum-resistant-vault",
     description: "Future-proof vault using post-quantum cryptographic algorithms",
@@ -245,7 +245,7 @@ const vaultTypes = [
   },
   {
     id: "bitcoin-halving",
-    name: "Bitcoin Halving Vault",
+    name: "Bitcoin Halving Vault™",
     icon: "₿",
     href: "/documentation/bitcoin-halving-vault",
     description: "Bitcoin-specific vault optimized for halving cycle investment strategy",
@@ -260,7 +260,7 @@ const vaultTypes = [
   },
   {
     id: "family-heritage",
-    name: "Family Heritage Vault",
+    name: "Family Heritage Vault™",
     icon: "👪",
     href: "/documentation/family-heritage-vault",
     description: "Secure generational wealth transfer with education",
@@ -277,7 +277,7 @@ const vaultTypes = [
   },
   {
     id: "gift-crypto",
-    name: "Gift Crypto Vault",
+    name: "Gift Crypto Vault™",
     icon: "🎁",
     href: "/documentation/gift-crypto-vault",
     description: "Create memorable crypto gifts with time-locked conditions",
@@ -294,7 +294,7 @@ const vaultTypes = [
   },
   {
     id: "milestone-based",
-    name: "Milestone-Based Release Vault",
+    name: "Milestone-Based Release Vault™",
     icon: "🏆",
     href: "/documentation/milestone-based-vault",
     description: "Unlocks assets when you achieve personal goals",
@@ -311,7 +311,7 @@ const vaultTypes = [
   },
   {
     id: "ai-assisted-investment",
-    name: "AI-Assisted Investment Vault",
+    name: "AI-Assisted Investment Vault™",
     icon: "🤖",
     href: "/documentation/ai-assisted-investment-vault",
     description: "AI-powered market analysis for optimal trading decisions",
@@ -328,7 +328,7 @@ const vaultTypes = [
   },
   {
     id: "ai-intent-inheritance",
-    name: "AI Intent Inheritance Vault",
+    name: "AI Intent Inheritance Vault™",
     icon: "🧠",
     href: "/documentation/ai-intent-inheritance-vault",
     description: "Natural language inheritance planning with advanced intent recognition",
@@ -345,7 +345,7 @@ const vaultTypes = [
   },
   {
     id: "unique-security",
-    name: "Unique Security Vault",
+    name: "Unique Security Vault™",
     icon: "🛡️",
     href: "/documentation/unique-security-vault",
     description: "Customizable vault with user-defined security parameters and verification methods",
