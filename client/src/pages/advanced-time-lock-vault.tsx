@@ -838,19 +838,19 @@ const AdvancedTimeLockVault: React.FC = () => {
                       </h3>
                       <ul className="space-y-2 text-sm text-gray-300">
                         <li className="flex items-start">
-                          <Check className="h-4 w-4 mr-2 text-[#00E5A0] mt-0.5" />
+                          <CheckCircle2 className="h-4 w-4 mr-2 text-[#00E5A0] mt-0.5" />
                           Quantum-resistant encryption algorithms
                         </li>
                         <li className="flex items-start">
-                          <Check className="h-4 w-4 mr-2 text-[#00E5A0] mt-0.5" />
+                          <CheckCircle2 className="h-4 w-4 mr-2 text-[#00E5A0] mt-0.5" />
                           Zero-knowledge privacy shield
                         </li>
                         <li className="flex items-start">
-                          <Check className="h-4 w-4 mr-2 text-[#00E5A0] mt-0.5" />
+                          <CheckCircle2 className="h-4 w-4 mr-2 text-[#00E5A0] mt-0.5" />
                           Triple-Chain verification with redundancy
                         </li>
                         <li className="flex items-start">
-                          <Check className="h-4 w-4 mr-2 text-[#00E5A0] mt-0.5" />
+                          <CheckCircle2 className="h-4 w-4 mr-2 text-[#00E5A0] mt-0.5" />
                           Behavioral anomaly detection
                         </li>
                       </ul>

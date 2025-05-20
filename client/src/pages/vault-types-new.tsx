@@ -497,7 +497,7 @@ const VaultCard = ({ vault, selected, onClick }: { vault: any; selected: boolean
                   'biometric': '/enhanced-biometric-vault',
                   'enhanced-biometric': '/enhanced-biometric-vault',
                   'geo-location': '/geo-location-vault',
-                  'time-lock': '/time-lock-vault',
+                  'time-lock': '/advanced-time-lock-vault',
                   'smart-contract': '/enhanced-smart-contract-vault',
                   
                   // Advanced Vault Types (fully developed form components)

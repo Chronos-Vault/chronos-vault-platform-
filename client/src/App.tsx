@@ -80,6 +80,7 @@ import NFTPoweredVaultPage from '@/pages/nft-powered-vault';
 import UriqueSecurityVaultPage from '@/pages/unique-security-vault';
 import EnhancedBiometricVaultPage from '@/pages/enhanced-biometric-vault';
 import EnhancedSmartContractVaultPage from '@/pages/enhanced-smart-contract-vault';
+import AdvancedTimeLockVaultPage from '@/pages/advanced-time-lock-vault';
 
 // Vault Pages - Specialized
 import AiAssistedInvestmentVaultPage from '@/pages/ai-assisted-investment-vault';
@@ -197,6 +198,7 @@ const App: React.FC = () => {
                       
                       {/* Basic Vault Types */}
                       <Route path="/time-lock-vault" component={TimeLockVaultPage} />
+                      <Route path="/advanced-time-lock-vault" component={AdvancedTimeLockVaultPage} />
                       {/* Commented out old component route to prevent conflict */}
                       {/* <Route path="/multi-signature-vault" component={MultiSignatureVaultPage} /> */}
                       <Route path="/multi-signature-vault-new" component={MultiSignatureVaultNewPage} />
