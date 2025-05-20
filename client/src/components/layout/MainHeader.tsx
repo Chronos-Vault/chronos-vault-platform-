@@ -173,9 +173,12 @@ const MainHeader = () => {
       title: "Developer",
       icon: "🧪",
       items: [
+        { name: "Developer Portal", href: "/developer-portal", icon: "🧪", highlight: true, isNew: true },
         { name: "API Documentation", href: "/api-documentation", icon: "📚", highlight: true },
         { name: "SDK Documentation", href: "/sdk-documentation", icon: "💻", highlight: true },
-        { name: "Integration Examples", href: "/integration-examples", icon: "🔌", highlight: true, isNew: true },
+        { name: "Integration Guide", href: "/integration-guide", icon: "📘", highlight: true, isNew: true },
+        { name: "Integration Examples", href: "/integration-examples", icon: "🔌", highlight: true },
+        { name: "Smart Contract SDK", href: "/smart-contract-sdk", icon: "📜", highlight: true, isNew: true },
         { name: "Smart Contract Audit", href: "/audit-test", icon: "🔍", highlight: true },
         { name: "Contract Templates", href: "/api-documentation#templates", icon: "📄", highlight: true },
         { name: `Dev Mode ${devModeEnabled ? 'On' : 'Off'}`, href: "#", icon: "🛠️", isAction: true, action: () => toggleDevMode() },
@@ -330,6 +333,63 @@ const MainHeader = () => {
                         title="📈 Transaction Monitor"
                       >
                         Monitor transaction status and activity
+                      </ListItem>
+                    </ul>
+                  </NavigationMenuContent>
+                </NavigationMenuItem>
+
+                <NavigationMenuItem>
+                  <NavigationMenuTrigger className="bg-transparent text-gray-300 hover:text-white hover:bg-[#6B00D7]/10">
+                    <span className="inline-flex items-center gap-1.5">
+                      <span className="text-base">🧪</span> Developer
+                    </span>
+                  </NavigationMenuTrigger>
+                  <NavigationMenuContent>
+                    <ul className="grid w-[400px] gap-2 p-4 bg-[#1A1A1A] border border-[#333] shadow-xl">
+                      <ListItem
+                        href="/developer-portal"
+                        title="🧪 Developer Portal"
+                        highlight={true}
+                        isNew={true}
+                      >
+                        Complete developer resources for Chronos Vault integration
+                      </ListItem>
+                      <ListItem
+                        href="/api-documentation"
+                        title="📚 API Documentation"
+                        highlight={true}
+                      >
+                        Comprehensive documentation for all API endpoints
+                      </ListItem>
+                      <ListItem
+                        href="/sdk-documentation"
+                        title="💻 SDK Documentation"
+                        highlight={true}
+                      >
+                        Client libraries for multiple programming languages
+                      </ListItem>
+                      <ListItem
+                        href="/integration-guide"
+                        title="📘 Integration Guide"
+                        highlight={true}
+                        isNew={true}
+                      >
+                        Step-by-step integration instructions for developers
+                      </ListItem>
+                      <ListItem
+                        href="/integration-examples"
+                        title="🔌 Integration Examples"
+                        highlight={true}
+                      >
+                        Real-world examples of Chronos Vault integration
+                      </ListItem>
+                      <ListItem
+                        href="/smart-contract-sdk"
+                        title="📜 Smart Contract SDK"
+                        highlight={true}
+                        isNew={true}
+                      >
+                        Blockchain smart contract interfaces and tooling
                       </ListItem>
                     </ul>
                   </NavigationMenuContent>
