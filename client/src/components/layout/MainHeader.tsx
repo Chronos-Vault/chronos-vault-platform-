@@ -175,8 +175,9 @@ const MainHeader = () => {
       items: [
         { name: "API Documentation", href: "/api-documentation", icon: "📚", highlight: true },
         { name: "SDK Documentation", href: "/sdk-documentation", icon: "💻", highlight: true },
+        { name: "Integration Examples", href: "/integration-examples", icon: "🔌", highlight: true, isNew: true },
         { name: "Smart Contract Audit", href: "/audit-test", icon: "🔍", highlight: true },
-        { name: "Contract Templates", href: "/documentation#templates", icon: "📄", highlight: true },
+        { name: "Contract Templates", href: "/api-documentation#templates", icon: "📄", highlight: true },
         { name: `Dev Mode ${devModeEnabled ? 'On' : 'Off'}`, href: "#", icon: "🛠️", isAction: true, action: () => toggleDevMode() },
         { name: `Bypass Wallet ${devModeEnabled && bypassWalletRequirements ? 'On' : 'Off'}`, href: "#", icon: "⚡", isAction: true, action: () => setBypassWalletRequirements(!bypassWalletRequirements) },
       ]

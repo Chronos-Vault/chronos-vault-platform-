@@ -19,7 +19,9 @@ import {
   Lock,
   Layers,
   Languages,
-  BookOpen
+  BookOpen,
+  Key,
+  Wallet
 } from "lucide-react";
 
 const SDKDocumentation = () => {
@@ -986,7 +988,7 @@ async fn connect_websocket(client: &Client) -> Result<(), Box<dyn std::error::Er
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div className="rounded-lg border bg-card shadow p-4">
                       <h4 className="font-medium mb-2 flex items-center gap-2">
-                        <Key className="h-4 w-4 text-indigo-500" />
+                        <Key size={16} className="text-indigo-500" />
                         API Key Authentication
                       </h4>
                       <p className="text-sm text-slate-600 dark:text-slate-400 mb-2">
@@ -1001,7 +1003,7 @@ async fn connect_websocket(client: &Client) -> Result<(), Box<dyn std::error::Er
                     </div>
                     <div className="rounded-lg border bg-card shadow p-4">
                       <h4 className="font-medium mb-2 flex items-center gap-2">
-                        <Wallet className="h-4 w-4 text-indigo-500" />
+                        <Wallet size={16} className="text-indigo-500" />
                         Wallet-Based Authentication
                       </h4>
                       <p className="text-sm text-slate-600 dark:text-slate-400 mb-2">
