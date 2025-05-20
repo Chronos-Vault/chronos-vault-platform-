@@ -68,20 +68,20 @@ const Footer = ({ className = '' }: { className?: string }) => {
             <h3 className="font-poppins font-semibold text-xl mb-5 text-white">Resources</h3>
             <ul className="space-y-4">
               <li>
-                <Link to="/vault-school" className="text-gray-300 hover:text-[#FF5AF7] transition-all font-poppins font-light hover:translate-x-1 inline-flex">
+                <Link href="/vault-school" className="text-gray-300 hover:text-[#FF5AF7] transition-all font-poppins font-light hover:translate-x-1 inline-flex">
                   Vault School Hub
                 </Link>
               </li>
-              <li><Link to="/documentation" className="text-gray-300 hover:text-[#FF5AF7] transition-all font-poppins font-light hover:translate-x-1 inline-flex">Documentation</Link></li>
-              <li><Link to="/technical-specification" className="text-gray-300 hover:text-[#FF5AF7] transition-all font-poppins font-light hover:translate-x-1 inline-flex">Technical Specs</Link></li>
-              <li><Link to="/project-whitepaper" className="text-gray-300 hover:text-[#FF5AF7] transition-all font-poppins font-light hover:translate-x-1 inline-flex">Project Whitepaper</Link></li>
-              <li><Link to="/whitepaper" className="text-gray-300 hover:text-[#FF5AF7] transition-all font-poppins font-light hover:translate-x-1 inline-flex">CVT Whitepaper</Link></li>
+              <li><Link href="/documentation" className="text-gray-300 hover:text-[#FF5AF7] transition-all font-poppins font-light hover:translate-x-1 inline-flex">Documentation</Link></li>
+              <li><Link href="/technical-spec" className="text-gray-300 hover:text-[#FF5AF7] transition-all font-poppins font-light hover:translate-x-1 inline-flex">Technical Specs</Link></li>
+              <li><Link href="/project-whitepaper" className="text-gray-300 hover:text-[#FF5AF7] transition-all font-poppins font-light hover:translate-x-1 inline-flex">Project Whitepaper</Link></li>
+              <li><Link href="/whitepaper" className="text-gray-300 hover:text-[#FF5AF7] transition-all font-poppins font-light hover:translate-x-1 inline-flex">CVT Whitepaper</Link></li>
               <li><a href="https://github.com/Chronos-Vault" target="_blank" rel="noopener noreferrer" className="text-gray-300 hover:text-[#FF5AF7] transition-all font-poppins font-light hover:translate-x-1 inline-flex">GitHub</a></li>
               <li><a href="https://t.me/chronosvaultnetwork" target="_blank" rel="noopener noreferrer" className="text-gray-300 hover:text-[#FF5AF7] transition-all font-poppins font-light hover:translate-x-1 inline-flex">Telegram</a></li>
               <li><a href="https://discord.gg/z7uhRcAw" target="_blank" rel="noopener noreferrer" className="text-gray-300 hover:text-[#FF5AF7] transition-all font-poppins font-light hover:translate-x-1 inline-flex">Discord</a></li>
-              <li><Link to="/security-testing" className="text-gray-300 hover:text-[#FF5AF7] transition-all font-poppins font-light hover:translate-x-1 inline-flex">Security Testing</Link></li>
-              <li><Link to="/cross-chain-security" className="text-gray-300 hover:text-[#FF5AF7] transition-all font-poppins font-light hover:translate-x-1 inline-flex">Cross-Chain Security</Link></li>
-              <li><Link to="/security-verification-demo" className="text-gray-300 hover:text-[#FF5AF7] transition-all font-poppins font-light hover:translate-x-1 inline-flex">Triple-Chain Verification</Link></li>
+              <li><Link href="/security-testing" className="text-gray-300 hover:text-[#FF5AF7] transition-all font-poppins font-light hover:translate-x-1 inline-flex">Security Testing</Link></li>
+              <li><Link href="/cross-chain-security" className="text-gray-300 hover:text-[#FF5AF7] transition-all font-poppins font-light hover:translate-x-1 inline-flex">Cross-Chain Security</Link></li>
+              <li><Link href="/security-verification-demo" className="text-gray-300 hover:text-[#FF5AF7] transition-all font-poppins font-light hover:translate-x-1 inline-flex">Triple-Chain Verification</Link></li>
             </ul>
           </div>
           
