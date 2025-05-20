@@ -3,15 +3,15 @@ import { Button } from "@/components/ui/button";
 import { Link } from "wouter";
 import { ArrowLeft, Check, Shield, Users, Key, Fingerprint, Clock, Bell } from "lucide-react";
 
-const MultiSignatureVaultPage: React.FC = () => {
+const MultiSignatureVaultNewPage: React.FC = () => {
   return (
     <div className="container mx-auto px-4 py-12">
       {/* Header Section */}
       <div className="mb-12">
-        <Link href="/vault-school">
+        <Link href="/vault-types">
           <Button variant="ghost" className="mb-6 hover:bg-[#6B00D7]/10">
             <ArrowLeft className="mr-2 h-4 w-4" />
-            Back to Vault School
+            Back to Vault Types
           </Button>
         </Link>
 
@@ -725,4 +725,4 @@ const MultiSignatureVaultPage: React.FC = () => {
   );
 };
 
-export default MultiSignatureVaultPage;
+export default MultiSignatureVaultNewPage;
