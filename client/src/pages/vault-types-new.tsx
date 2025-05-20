@@ -534,10 +534,15 @@ const VaultCard = ({ vault, selected, onClick }: { vault: any; selected: boolean
                 
                 // Direct to fully developed form component that matches the vault type
                 const route = formRoutes[vault.id] || '/dynamic-vault-form';
-                console.log(`Routing vault ID ${vault.id} to ${route}`);
                 
-                // Use window.location for reliable navigation
-                window.location.href = route;
+                // Special case handling for multi-signature vault to ensure correct form is used
+                if (vault.id === 'multi-signature') {
+                  console.log('Navigating to multi-signature-vault-new form');
+                  window.location.href = '/multi-signature-vault-new';
+                } else {
+                  console.log(`Routing vault ID ${vault.id} to ${route}`);
+                  window.location.href = route;
+                }
               }}
             >
               <Shield className="mr-2 h-4 w-4" />
