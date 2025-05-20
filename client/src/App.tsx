@@ -212,10 +212,15 @@ const App: React.FC = () => {
                       
                       {/* Specialized Vault Types */}
                       <Route path="/ai-assisted-investment-vault" component={AiAssistedInvestmentVaultPage} />
+                      <Route path="/ai-investment-vault" component={AiAssistedInvestmentVaultPage} />
                       <Route path="/intent-inheritance-vault" component={IntentInheritanceVaultPage} />
+                      <Route path="/ai-intent-inheritance-vault" component={IntentInheritanceVaultPage} />
                       <Route path="/time-locked-memory-vault" component={TimeLockedMemoryVaultPage} />
+                      <Route path="/specialized-vault-memory" component={TimeLockedMemoryVaultPage} />
                       <Route path="/investment-discipline-vault" component={InvestmentDisciplineVaultPage} />
+                      <Route path="/milestone-based-vault" component={InvestmentDisciplineVaultPage} />
                       <Route path="/dynamic-vault-form" component={DynamicVaultFormPage} />
+                      <Route path="/family-heritage-vault" component={FamilyHeritageVaultFormPage} />
                       <Route path="/family-heritage-vault-form" component={FamilyHeritageVaultFormPage} />
                       <Route path="/bitcoin-halving-vault" component={BitcoinHalvingVaultPage} />
                       

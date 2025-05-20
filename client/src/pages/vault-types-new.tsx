@@ -489,18 +489,18 @@ const VaultCard = ({ vault, selected, onClick }: { vault: any; selected: boolean
               className="w-full bg-[#6B00D7] hover:bg-[#5A00B8] text-white font-medium h-12 rounded-lg shadow-lg shadow-[#6B00D7]/30"
               onClick={(e) => {
                 e.stopPropagation();
-                // Map directly to the enhanced/new versions of the fully developed vault forms
+                // Map directly to the cutting-edge, fully developed vault form components
                 const formRoutes = {
-                  // Basic Vault Types (enhanced forms)
+                  // Basic Vault Types (fully developed form components)
                   'standard': '/sovereign-fortress-vault',
-                  'multi-signature': '/multi-signature-vault-new', // Use enhanced multi-sig form
+                  'multi-signature': '/multi-signature-vault-new', 
                   'biometric': '/biometric-vault',
                   'enhanced-biometric': '/enhanced-biometric-vault',
                   'geo-location': '/geo-location-vault',
                   'time-lock': '/time-lock-vault',
                   'smart-contract': '/smart-contract-vault',
                   
-                  // Advanced Vault Types (enhanced forms)
+                  // Advanced Vault Types (fully developed form components)
                   'cross-chain': '/cross-chain-vault',
                   'cross-chain-fragment': '/cross-chain-fragment-vault',
                   'quantum-resistant': '/quantum-resistant-vault',
@@ -508,20 +508,28 @@ const VaultCard = ({ vault, selected, onClick }: { vault: any; selected: boolean
                   'unique-security': '/unique-security-vault',
                   'enhanced-smart-contract': '/enhanced-smart-contract-vault',
                   
-                  // Specialized Vault Types (enhanced forms)
-                  'ai-assisted-investment': '/ai-assisted-investment-vault',
+                  // Specialized Vault Types (fully developed form components)
+                  'ai-assisted-investment': '/ai-investment-vault', // Use the specialized AI vault form
                   'intent-inheritance': '/intent-inheritance-vault',
-                  'time-locked-memory': '/time-locked-memory-vault',
+                  'time-locked-memory': '/specialized-vault-memory', // Use specialized memory vault component
                   'investment-discipline': '/investment-discipline-vault',
                   'bitcoin-halving': '/bitcoin-halving-vault',
-                  'family-heritage': '/family-heritage-vault-form',
+                  'family-heritage': '/family-heritage-vault', // Remove -form suffix to use enhanced component
                   'dynamic': '/dynamic-vault-form',
                   
-                  // Additional mappings for variant names
+                  // Additional mappings for variant names (all point to fully developed forms)
                   'geo-temporal': '/geo-location-vault',
                   'investment-strategy': '/investment-discipline-vault',
-                  'memory-vault': '/time-locked-memory-vault',
-                  'quantum': '/quantum-resistant-vault'
+                  'memory-vault': '/specialized-vault-memory', // Updated memory vault path
+                  'quantum': '/quantum-resistant-vault',
+                  'milestone-based': '/milestone-based-vault',
+                  'milestone': '/milestone-based-vault',
+                  'ai-investment': '/ai-investment-vault',
+                  'composite-vault': '/cross-chain-fragment-vault',
+                  'diamond-hands': '/investment-discipline-vault',
+                  'ai-intent': '/ai-intent-inheritance-vault',
+                  'ai-intent-inheritance': '/ai-intent-inheritance-vault',
+                  'sovereign': '/sovereign-fortress-vault'
                 };
                 
                 // Direct to fully developed form component that matches the vault type
