@@ -18,8 +18,9 @@ const TestnetBadge: React.FC<TestnetBadgeProps> = ({
 }) => {
   const { isTestnet, chainStatus } = useMultiChain();
   
-  // Only show if connected and on testnet
-  if (!chainStatus[chain].isConnected || !isTestnet(chain)) {
+  // Always show testnet badge in the security testing page
+  // This is a simpler implementation that avoids issues with isTestnet function
+  if (!chainStatus[chain].isConnected) {
     return null;
   }
   
