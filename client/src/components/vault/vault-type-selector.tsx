@@ -150,7 +150,7 @@ const VaultTypeSelector: React.FC<VaultTypeProps> = ({ selectedType, onChange })
       
       <VaultTypeCard 
         type="cross-chain"
-        title="Cross-Chain Verification"
+        title="Cross-Chain Verification™"
         description="Verify assets across multiple blockchains"
         icon="⛓️"
         color="#8B00D7"
@@ -168,7 +168,7 @@ const VaultTypeSelector: React.FC<VaultTypeProps> = ({ selectedType, onChange })
       
       <VaultTypeCard 
         type="smart-contract"
-        title="Smart Contract"
+        title="Smart Contract Vault™"
         description="Automated rules and conditions"
         icon="📜"
         color="#5271FF"
@@ -186,7 +186,7 @@ const VaultTypeSelector: React.FC<VaultTypeProps> = ({ selectedType, onChange })
       
       <VaultTypeCard 
         type="dynamic"
-        title="Dynamic"
+        title="Dynamic Vault™"
         description="Adapt to market or user behavior"
         icon="📊"
         color="#FF5151"
@@ -204,7 +204,7 @@ const VaultTypeSelector: React.FC<VaultTypeProps> = ({ selectedType, onChange })
       
       <VaultTypeCard 
         type="nft-powered"
-        title="NFT-Powered"
+        title="NFT-Powered Vault™"
         description="Use NFTs as access keys to your vault"
         icon="🖼️"
         color="#CE19FF"
@@ -222,7 +222,7 @@ const VaultTypeSelector: React.FC<VaultTypeProps> = ({ selectedType, onChange })
       
       <VaultTypeCard 
         type="unique"
-        title="Unique Security"
+        title="Unique Security Vault™"
         description="Enhanced security with custom protocols"
         icon="🛡️"
         color="#fca103"
@@ -240,7 +240,7 @@ const VaultTypeSelector: React.FC<VaultTypeProps> = ({ selectedType, onChange })
       
       <VaultTypeCard 
         type="ai-intent-inheritance"
-        title="AI Intent Inheritance"
+        title="AI Intent Inheritance Vault™"
         description="Natural language inheritance planning"
         icon="🧠"
         color="#9E00FF"
@@ -259,7 +259,7 @@ const VaultTypeSelector: React.FC<VaultTypeProps> = ({ selectedType, onChange })
       {/* New specialized vaults */}
       <VaultTypeCard 
         type="memory-vault"
-        title="Time-Locked Memory Vault"
+        title="Time-Locked Memory Vault™"
         description="Digital assets with multimedia memories"
         icon="📦"
         color="#FF3A8C"
@@ -277,7 +277,7 @@ const VaultTypeSelector: React.FC<VaultTypeProps> = ({ selectedType, onChange })
 
       <VaultTypeCard 
         type="quantum-resistant"
-        title="Quantum-Resistant"
+        title="Quantum-Resistant Vault™"
         description="Progressive security that scales with value"
         icon="🔐"
         color="#00B8FF"
