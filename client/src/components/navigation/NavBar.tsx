@@ -137,12 +137,12 @@ export const NavBar: React.FC = () => {
                   </DropdownMenuItem>
                   <DropdownMenuItem asChild>
                     <Link href="/quantum-resistant-vault" className="px-4 py-2 rounded-md hover:bg-[#6B00D7]/20 flex items-center">
-                      <Cpu className="w-4 h-4 mr-2" /> Quantum-Resistant Vault
+                      <Cpu className="w-4 h-4 mr-2" /> Quantum-Resistant Vault™
                     </Link>
                   </DropdownMenuItem>
                   <DropdownMenuItem asChild>
                     <Link href="/sovereign-fortress-vault" className="px-4 py-2 rounded-md hover:bg-[#6B00D7]/20 flex items-center">
-                      <Hexagon className="w-4 h-4 mr-2" /> Sovereign Fortress Vault 
+                      <Hexagon className="w-4 h-4 mr-2" /> Sovereign Fortress Vault™ 
                       <span className="ml-2 bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] text-white text-[10px] px-1.5 rounded-full">NEW</span>
                     </Link>
                   </DropdownMenuItem>
@@ -205,22 +205,22 @@ export const NavBar: React.FC = () => {
                   </DropdownMenuItem>
                   <DropdownMenuItem asChild>
                     <Link href="/cross-chain-security" className="px-4 py-2 rounded-md hover:bg-[#6B00D7]/20 flex items-center">
-                      <LockKeyhole className="w-4 h-4 mr-2" /> Cross-Chain Security
+                      <LockKeyhole className="w-4 h-4 mr-2" /> Cross-Chain Security Vault™
                     </Link>
                   </DropdownMenuItem>
                   <DropdownMenuItem asChild>
                     <Link href="/behavioral-auth" className="px-4 py-2 rounded-md hover:bg-[#6B00D7]/20 flex items-center">
-                      <Fingerprint className="w-4 h-4 mr-2" /> Behavioral Authentication
+                      <Fingerprint className="w-4 h-4 mr-2" /> Behavioral Authentication Vault™
                     </Link>
                   </DropdownMenuItem>
                   <DropdownMenuItem asChild>
                     <Link href="/quantum-resistant" className="px-4 py-2 rounded-md hover:bg-[#6B00D7]/20 flex items-center">
-                      <KeyRound className="w-4 h-4 mr-2" /> Quantum Resistant
+                      <KeyRound className="w-4 h-4 mr-2" /> Quantum Resistant Vault™
                     </Link>
                   </DropdownMenuItem>
                   <DropdownMenuItem asChild>
                     <Link href="/social-recovery" className="px-4 py-2 rounded-md hover:bg-[#6B00D7]/20 flex items-center">
-                      <Users className="w-4 h-4 mr-2" /> Social Recovery
+                      <Users className="w-4 h-4 mr-2" /> Social Recovery Vault™
                     </Link>
                   </DropdownMenuItem>
                 </DropdownMenuContent>
@@ -241,17 +241,17 @@ export const NavBar: React.FC = () => {
                   </DropdownMenuItem>
                   <DropdownMenuItem asChild>
                     <Link href="/bitcoin-halving" className="px-4 py-2 rounded-md hover:bg-[#6B00D7]/20 flex items-center">
-                      <Bitcoin className="w-4 h-4 mr-2" /> Bitcoin Halving
+                      <Bitcoin className="w-4 h-4 mr-2" /> Bitcoin Halving Vault™
                     </Link>
                   </DropdownMenuItem>
                   <DropdownMenuItem asChild>
                     <Link href="/gift-crypto" className="px-4 py-2 rounded-md hover:bg-[#6B00D7]/20 flex items-center">
-                      <Gift className="w-4 h-4 mr-2" /> Gift Crypto
+                      <Gift className="w-4 h-4 mr-2" /> Gift Crypto Vault™
                     </Link>
                   </DropdownMenuItem>
                   <DropdownMenuItem asChild>
                     <Link href="/token-vaults" className="px-4 py-2 rounded-md hover:bg-[#6B00D7]/20 flex items-center">
-                      <Coins className="w-4 h-4 mr-2" /> Token Vaults
+                      <Coins className="w-4 h-4 mr-2" /> Token Vaults™
                     </Link>
                   </DropdownMenuItem>
                 </DropdownMenuContent>
