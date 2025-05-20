@@ -29,6 +29,11 @@ import RoadmapPage from '@/pages/roadmap';
 import SmartContractsPage from '@/pages/smart-contracts';
 import TechnicalSpecPage from '@/pages/technical-spec';
 
+// Documentation Pages
+import APIDocumentationPage from '@/pages/api-documentation';
+import SDKDocumentationPage from '@/pages/sdk-documentation';
+import IntegrationExamplesPage from '@/pages/integration-examples';
+
 // Vault Type Pages
 import VaultTypesPage from '@/pages/vault-types-new';
 import VaultTypesSelector from '@/pages/vault-types-selector';
@@ -253,6 +258,11 @@ const App: React.FC = () => {
                       <Route path="/family-heritage-vault-form" component={FamilyHeritageVaultFormPage} />
                       <Route path="/bitcoin-halving-vault" component={BitcoinHalvingComponent} />
                       
+                      {/* Developer Documentation Routes */}
+                      <Route path="/api-documentation" component={APIDocumentationPage} />
+                      <Route path="/sdk-documentation" component={SDKDocumentationPage} />
+                      <Route path="/integration-examples" component={IntegrationExamplesPage} />
+
                       {/* Vault Direct Access Routes - Based on Vault School documentation */}
                       {/* Switching to explicit routes instead of catch-all to avoid conflicts */}
                       {/* <Route path="/:vaultType-vault" component={CreateVaultEnhancedPage} /> */}
