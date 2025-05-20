@@ -9,6 +9,7 @@ import { AuthProvider } from '@/contexts/auth-context';
 import { MultiChainProvider } from '@/contexts/multi-chain-context';
 import { NavBar } from '@/components/navigation/NavBar';
 import Footer from '@/components/layout/footer';
+import DocumentationRouter from '@/components/documentation/DocumentationRouter';
 
 // Main Pages
 import HomePage from '@/pages/home';
