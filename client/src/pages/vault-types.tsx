@@ -196,7 +196,7 @@ const VAULT_TYPES = [
   },
   {
     id: 'time-locked-memory',
-    title: 'Time-Locked Memory Vault',
+    title: 'Time-Locked Memory Vault™',
     description: 'Digital assets with multimedia memories',
     icon: '📦',
     color: '#CDDC39',
@@ -212,7 +212,7 @@ const VAULT_TYPES = [
   },
   {
     id: 'quantum-resistant',
-    title: 'Quantum-Resistant Vault',
+    title: 'Quantum-Resistant Vault™',
     description: 'Progressive security that scales with value',
     icon: '🔒',
     color: '#9C27B0',
@@ -228,7 +228,7 @@ const VAULT_TYPES = [
   },
   {
     id: 'cross-chain-fragment',
-    title: 'Cross-Chain Fragment Vault',
+    title: 'Cross-Chain Fragment Vault™',
     description: 'Splits your assets across multiple blockchains',
     icon: '🧩',
     color: '#3F51B5',
@@ -244,7 +244,7 @@ const VAULT_TYPES = [
   },
   {
     id: 'location-time',
-    title: 'Location-Time Restricted Vault',
+    title: 'Location-Time Restricted Vault™',
     description: 'Access only at specific locations during set times',
     icon: '🌎',
     color: '#4CAF50',
@@ -260,7 +260,7 @@ const VAULT_TYPES = [
   },
   {
     id: 'investment-discipline',
-    title: 'Investment Discipline Vault',
+    title: 'Investment Discipline Vault™',
     description: 'Prevents emotional selling during market volatility',
     icon: '💎',
     color: '#2196F3',
@@ -276,7 +276,7 @@ const VAULT_TYPES = [
   },
   {
     id: 'ai-assisted',
-    title: 'AI-Assisted Investment Vault',
+    title: 'AI-Assisted Investment Vault™',
     description: 'AI-powered market analysis for optimal trading',
     icon: '🤖',
     color: '#00BCD4',
@@ -292,7 +292,7 @@ const VAULT_TYPES = [
   },
   {
     id: 'milestone',
-    title: 'Milestone-Based Release Vault',
+    title: 'Milestone-Based Release Vault™',
     description: 'Unlocks assets when you achieve personal goals',
     icon: '🏆',
     color: '#FF9800',
