@@ -447,7 +447,7 @@ const MultiSignatureVaultPage = () => {
                     className="w-full px-4 py-3 bg-[#1A1A1A] border border-[#333] rounded-lg text-white focus:ring-2 focus:ring-[#6B00D7] focus:border-transparent"
                   >
                     <option value="2">2 Signers</option>
-                    <option value="3" selected>3 Signers</option>
+                    <option value="3" defaultValue="selected">3 Signers</option>
                     <option value="4">4 Signers</option>
                     <option value="5">5 Signers</option>
                     <option value="7">7 Signers</option>
@@ -463,7 +463,7 @@ const MultiSignatureVaultPage = () => {
                     id="requiredSigners"
                     className="w-full px-4 py-3 bg-[#1A1A1A] border border-[#333] rounded-lg text-white focus:ring-2 focus:ring-[#6B00D7] focus:border-transparent"
                   >
-                    <option value="2" selected>2 Required (out of 3)</option>
+                    <option value="2" defaultValue="selected">2 Required (out of 3)</option>
                     <option value="3">3 Required (out of 3)</option>
                   </select>
                   <p className="text-xs text-gray-500 mt-1">
@@ -501,7 +501,7 @@ const MultiSignatureVaultPage = () => {
                       type="checkbox"
                       id="timeLock"
                       className="h-4 w-4 text-[#6B00D7] focus:ring-[#6B00D7] bg-[#1A1A1A] border-[#333] rounded"
-                      checked
+                      defaultChecked
                     />
                   </div>
                   <div className="ml-3">
@@ -525,7 +525,7 @@ const MultiSignatureVaultPage = () => {
                       type="checkbox"
                       id="socialRecovery"
                       className="h-4 w-4 text-[#6B00D7] focus:ring-[#6B00D7] bg-[#1A1A1A] border-[#333] rounded"
-                      checked
+                      defaultChecked
                     />
                   </div>
                   <div className="ml-3">
@@ -535,7 +535,7 @@ const MultiSignatureVaultPage = () => {
                       id="recoveryThreshold"
                       className="mt-2 w-full px-3 py-2 bg-[#1A1A1A] border border-[#333] rounded-lg text-white text-sm focus:ring-2 focus:ring-[#6B00D7] focus:border-transparent"
                     >
-                      <option value="2" selected>2 trusted contacts required</option>
+                      <option value="2">2 trusted contacts required</option>
                       <option value="3">3 trusted contacts required</option>
                       <option value="5">5 trusted contacts required</option>
                     </select>
@@ -549,7 +549,7 @@ const MultiSignatureVaultPage = () => {
                     type="checkbox"
                     id="quantumResistant"
                     className="h-4 w-4 text-[#6B00D7] focus:ring-[#6B00D7] bg-[#1A1A1A] border-[#333] rounded"
-                    checked
+                    defaultChecked
                   />
                 </div>
                 <div className="ml-3">
@@ -564,7 +564,7 @@ const MultiSignatureVaultPage = () => {
                     type="checkbox"
                     id="zeroKnowledge"
                     className="h-4 w-4 text-[#6B00D7] focus:ring-[#6B00D7] bg-[#1A1A1A] border-[#333] rounded"
-                    checked
+                    defaultChecked
                   />
                 </div>
                 <div className="ml-3">
