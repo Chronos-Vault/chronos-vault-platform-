@@ -339,10 +339,7 @@ const MainHeader = () => {
                 </NavigationMenuItem>
 
                 <NavigationMenuItem>
-                  <NavigationMenuTrigger className={cn(
-                      navigationMenuTriggerStyle(),
-                      "bg-transparent text-gray-300 hover:text-white hover:bg-[#6B00D7]/10"
-                    )}>
+                  <NavigationMenuTrigger className="bg-transparent text-gray-300 hover:text-white hover:bg-[#6B00D7]/10">
                     <span className="inline-flex items-center gap-1.5">
                       <span className="text-base">🧪</span> Developer
                     </span>
