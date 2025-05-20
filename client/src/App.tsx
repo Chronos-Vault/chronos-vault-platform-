@@ -18,6 +18,7 @@ import AboutPage from '@/pages/about';
 import FaqPage from '@/pages/faq';
 import TeamPage from '@/pages/team';
 import WhitepaperPage from '@/pages/whitepaper';
+import ProjectWhitepaperPage from '@/pages/project-whitepaper';
 import CvtTokenomicsPage from '@/pages/cvt-tokenomics';
 import CvtUtilityPage from '@/pages/cvt-utility-new';
 import TermsOfServicePage from '@/pages/terms-of-service';
@@ -157,6 +158,7 @@ const App: React.FC = () => {
                       <Route path="/faq" component={FaqPage} />
                       <Route path="/team" component={TeamPage} />
                       <Route path="/whitepaper" component={WhitepaperPage} />
+                      <Route path="/project-whitepaper" component={ProjectWhitepaperPage} />
                       <Route path="/documentation" component={DocumentationPage} />
                       {/* Important: The route below is disabled to fix conflict with multi-signature-vault-new */}
                       {/* <Route path="/documentation/multi-signature-vault" component={DocumentationPage} /> */}
