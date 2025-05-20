@@ -238,6 +238,7 @@ const App: React.FC = () => {
                       <Route path="/ai-intent-inheritance-vault" component={IntentInheritanceVaultPage} />
                       <Route path="/time-locked-memory-vault" component={TimeLockedMemoryVaultPage} />
                       <Route path="/specialized-vault-memory" component={TimeLockedMemoryVaultNewPage} />
+                      <Route path="/create-vault/time-locked-memory" component={TimeLockedMemoryVaultNewPage} />
                       <Route path="/investment-discipline-vault" component={InvestmentDisciplineVaultAdvancedPage} />
                       <Route path="/milestone-based-vault" component={MilestoneBasedVaultFormPage} />
                       <Route path="/dynamic-vault-form" component={DynamicVaultFormPage} />
