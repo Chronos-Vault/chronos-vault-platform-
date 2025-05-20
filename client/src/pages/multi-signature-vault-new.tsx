@@ -445,9 +445,10 @@ const MultiSignatureVaultPage = () => {
                   <select
                     id="totalSigners"
                     className="w-full px-4 py-3 bg-[#1A1A1A] border border-[#333] rounded-lg text-white focus:ring-2 focus:ring-[#6B00D7] focus:border-transparent"
+                    defaultValue="3"
                   >
                     <option value="2">2 Signers</option>
-                    <option value="3" defaultValue="selected">3 Signers</option>
+                    <option value="3">3 Signers</option>
                     <option value="4">4 Signers</option>
                     <option value="5">5 Signers</option>
                     <option value="7">7 Signers</option>
@@ -462,8 +463,9 @@ const MultiSignatureVaultPage = () => {
                   <select
                     id="requiredSigners"
                     className="w-full px-4 py-3 bg-[#1A1A1A] border border-[#333] rounded-lg text-white focus:ring-2 focus:ring-[#6B00D7] focus:border-transparent"
+                    defaultValue="2"
                   >
-                    <option value="2" defaultValue="selected">2 Required (out of 3)</option>
+                    <option value="2">2 Required (out of 3)</option>
                     <option value="3">3 Required (out of 3)</option>
                   </select>
                   <p className="text-xs text-gray-500 mt-1">
@@ -510,10 +512,11 @@ const MultiSignatureVaultPage = () => {
                     <select
                       id="timeLockPeriod"
                       className="mt-2 w-full px-3 py-2 bg-[#1A1A1A] border border-[#333] rounded-lg text-white text-sm focus:ring-2 focus:ring-[#6B00D7] focus:border-transparent"
+                      defaultValue="24"
                     >
                       <option value="1">1 hour for transactions &gt; 1 ETH</option>
                       <option value="4">4 hours for transactions &gt; 5 ETH</option>
-                      <option value="24" defaultValue="selected">24 hours for transactions &gt; 10 ETH</option>
+                      <option value="24">24 hours for transactions &gt; 10 ETH</option>
                       <option value="48">48 hours for all transactions</option>
                     </select>
                   </div>
@@ -534,6 +537,7 @@ const MultiSignatureVaultPage = () => {
                     <select
                       id="recoveryThreshold"
                       className="mt-2 w-full px-3 py-2 bg-[#1A1A1A] border border-[#333] rounded-lg text-white text-sm focus:ring-2 focus:ring-[#6B00D7] focus:border-transparent"
+                      defaultValue="2"
                     >
                       <option value="2">2 trusted contacts required</option>
                       <option value="3">3 trusted contacts required</option>
