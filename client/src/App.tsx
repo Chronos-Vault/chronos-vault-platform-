@@ -282,17 +282,11 @@ const App: React.FC = () => {
                       </Route>
                       <Route path="/quantum-resistant" component={QuantumResistantVaultPage} />
                       
-                      {/* Vault Documentation Routes */}
-                      <Route path="/documentation/multi-signature-vault" component={DocumentationPage} />
-                      <Route path="/documentation/bitcoin-halving-vault" component={DocumentationPage} />
-                      <Route path="/documentation/time-locked-memory-vault" component={DocumentationPage} />
-                      <Route path="/documentation/quantum-resistant-vault" component={DocumentationPage} />
-                      <Route path="/documentation/cross-chain-fragment-vault" component={DocumentationPage} />
-                      <Route path="/documentation/geo-location-vault" component={DocumentationPage} />
+                      {/* Vault School and Documentation Routes */}
                       <Route path="/vault-school-hub" component={VaultSchoolPage} />
-                      
-                      {/* Default route for documentation */}
-                      <Route path="/documentation/:vaultType" component={VaultSchoolPage} />
+                      <Route path="/documentation/:vaultType">
+                        {(params) => <DocumentationRouter vaultType={params.vaultType} />}
+                      </Route>
                     </Switch>
                     
                     <Footer />

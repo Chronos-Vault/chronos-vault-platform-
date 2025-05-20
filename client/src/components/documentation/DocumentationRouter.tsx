@@ -2,6 +2,7 @@ import React from 'react';
 import DocumentationLayout from '@/components/layout/DocumentationLayout';
 import { Loader2 } from 'lucide-react';
 import { useLocation } from 'wouter';
+// No need for Onboarding Provider - using DocumentationLayout instead
 
 // Import all documentation components directly
 import BitcoinHalvingVaultDoc from '@/pages/documentation/bitcoin-halving-vault';
@@ -57,27 +58,33 @@ const DocumentationRouter: React.FC<DocumentationRouterProps> = ({ vaultType }) 
   // Get the component for the requested vault type
   const VaultDocComponent = vaultComponents[vaultType];
 
-  if (VaultDocComponent) {
-    return <VaultDocComponent />;
-  }
+  // Simply render the component without special providers
+  const renderComponent = () => {
+    if (VaultDocComponent) {
+      // Just render the component directly
+      return <VaultDocComponent />;
+    }
 
-  // Fallback if component doesn't exist
-  return (
-    <DocumentationLayout>
-      <div className="container mx-auto py-10 px-4 max-w-6xl">
-        <h1 className="text-3xl font-bold mb-6">Documentation Not Found</h1>
-        <p className="text-lg text-muted-foreground mb-6">
-          Sorry, we couldn't find documentation for '{vaultType}'. Please check the URL or return to the Vault School Hub.
-        </p>
-        <button 
-          onClick={() => setLocation('/vault-school-hub')} 
-          className="px-4 py-2 bg-[#FF5AF7] text-white rounded-md hover:bg-[#E047D9] transition-colors"
-        >
-          Back to Vault School Hub
-        </button>
-      </div>
-    </DocumentationLayout>
-  );
+    // Fallback if component doesn't exist
+    return (
+      <DocumentationLayout>
+        <div className="container mx-auto py-10 px-4 max-w-6xl">
+          <h1 className="text-3xl font-bold mb-6">Documentation Not Found</h1>
+          <p className="text-lg text-muted-foreground mb-6">
+            Sorry, we couldn't find documentation for '{vaultType}'. Please check the URL or return to the Vault School Hub.
+          </p>
+          <button 
+            onClick={() => setLocation('/vault-school-hub')} 
+            className="px-4 py-2 bg-[#FF5AF7] text-white rounded-md hover:bg-[#E047D9] transition-colors"
+          >
+            Back to Vault School Hub
+          </button>
+        </div>
+      </DocumentationLayout>
+    );
+  };
+
+  return renderComponent();
 };
 
 export default DocumentationRouter;
