@@ -78,7 +78,7 @@ const VaultTypeSelector: React.FC<VaultTypeProps> = ({ selectedType, onChange })
       
       <VaultTypeCard 
         type="multi-signature"
-        title="Multi-Signature Vault"
+        title="Multi-Signature Vault™"
         description="Our advanced implementation with Triple-Chain security"
         icon="🔐"
         color="#FF5AF7"
@@ -96,7 +96,7 @@ const VaultTypeSelector: React.FC<VaultTypeProps> = ({ selectedType, onChange })
       
       <VaultTypeCard 
         type="biometric"
-        title="Biometric"
+        title="Biometric Vault™"
         description="Secure with fingerprint or facial recognition"
         icon="👆"
         color="#00D7C3"
@@ -114,7 +114,7 @@ const VaultTypeSelector: React.FC<VaultTypeProps> = ({ selectedType, onChange })
       
       <VaultTypeCard 
         type="time-lock"
-        title="Advanced Time-Lock"
+        title="Advanced Time-Lock™"
         description="Schedule complex time-based unlocking"
         icon="⏱️"
         color="#D76B00"
@@ -132,7 +132,7 @@ const VaultTypeSelector: React.FC<VaultTypeProps> = ({ selectedType, onChange })
       
       <VaultTypeCard 
         type="geolocation"
-        title="Geolocation"
+        title="Geolocation Vault™"
         description="Access only from specific locations"
         icon="📍"
         color="#00D74B"
