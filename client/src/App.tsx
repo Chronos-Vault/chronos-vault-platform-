@@ -97,7 +97,8 @@ const InvestmentDisciplineVaultAdvancedPage = InvestmentDisciplineVaultAdvanced;
 // Using direct import of milestone based vault form component
 import MilestoneBasedVaultForm from '@/pages/milestone-based-vault-form';
 const MilestoneBasedVaultFormPage = MilestoneBasedVaultForm;
-// Remove the conflicting import
+// Direct import of bitcoin-halving component
+import BitcoinHalvingComponent from '@/pages/bitcoin-halving';
 import InvestmentDisciplineVaultPage from '@/pages/investment-discipline-vault';
 import DynamicVaultFormPage from '@/pages/dynamic-vault-form';
 import FamilyHeritageVaultFormPage from '@/pages/family-heritage-vault-form';
@@ -198,7 +199,7 @@ const App: React.FC = () => {
                       <Route path="/zero-knowledge-verification" component={ZeroKnowledgeVerificationPage} />
                       <Route path="/zk-privacy-demo" component={ZkPrivacyDemoPage} />
                       <Route path="/triple-chain-security-demo" component={TripleChainSecurityDemoPage} />
-                      <Route path="/bitcoin-halving" component={BitcoinHalvingAdvancedPage} />
+                      <Route path="/bitcoin-halving" component={BitcoinHalvingComponent} />
                       
                       {/* Blockchain Integration */}
                       <Route path="/ethereum-integration" component={EthereumIntegrationPage} />
@@ -240,7 +241,7 @@ const App: React.FC = () => {
                       <Route path="/dynamic-vault-form" component={DynamicVaultFormPage} />
                       <Route path="/family-heritage-vault" component={FamilyHeritageVaultFormPage} />
                       <Route path="/family-heritage-vault-form" component={FamilyHeritageVaultFormPage} />
-                      <Route path="/bitcoin-halving-vault" component={BitcoinHalvingAdvancedPage} />
+                      <Route path="/bitcoin-halving-vault" component={BitcoinHalvingComponent} />
                       
                       {/* Vault Direct Access Routes - Based on Vault School documentation */}
                       {/* Switching to explicit routes instead of catch-all to avoid conflicts */}
