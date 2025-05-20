@@ -69,7 +69,7 @@ const vaultTypes = [
     id: "multi-signature",
     name: "Multi-Signature Vault",
     icon: "🔒",
-    href: "/multi-signature-vault-new",
+    href: "/documentation/multi-signature-vault",
     description: "Enhanced security requiring multiple approvals for asset access",
     features: [
       "Configurable M-of-N signature requirements",
