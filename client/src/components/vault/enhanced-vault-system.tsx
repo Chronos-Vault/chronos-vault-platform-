@@ -187,28 +187,28 @@ const VAULT_TYPES = [
   },
   { 
     id: "multisig", 
-    name: "Multi-Signature Vault", 
+    name: "Multi-Signature Vault™", 
     description: "Require multiple approvals to unlock the vault.",
     icon: <Users className="h-5 w-5" />,
     color: "#9B59B6"
   },
   { 
     id: "recurring", 
-    name: "Recurring Vault", 
+    name: "Recurring Vault™", 
     description: "Set up recurring deposits or withdrawals on a schedule.",
     icon: <RotateCcw className="h-5 w-5" />,
     color: "#34495E"
   },
   { 
     id: "halving", 
-    name: "Bitcoin Halving Vault", 
+    name: "Bitcoin Halving Vault™", 
     description: "Automatically unlock based on Bitcoin halving events.",
     icon: <RefreshCw className="h-5 w-5" />,
     color: "#F7931A"
   },
   { 
     id: "cross-chain", 
-    name: "Cross-Chain Vault", 
+    name: "Cross-Chain Vault™", 
     description: "Enable assets to move between different blockchains.",
     icon: <Diamond className="h-5 w-5" />,
     color: "#16A085"

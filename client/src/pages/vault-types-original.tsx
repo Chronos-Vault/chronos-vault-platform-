@@ -21,7 +21,7 @@ const VAULT_TYPES = [
   },
   {
     id: "multi-signature",
-    name: "Multi-Signature Vault",
+    name: "Multi-Signature Vault™",
     description: "Our advanced implementation with Triple-Chain security",
     icon: "🔐",
     color: "#FF5AF7",
@@ -32,7 +32,7 @@ const VAULT_TYPES = [
   },
   {
     id: "biometric",
-    name: "Biometric Vault",
+    name: "Biometric Vault™",
     description: "Secure with fingerprint or facial recognition",
     icon: "👆",
     color: "#00D7C3",
@@ -43,7 +43,7 @@ const VAULT_TYPES = [
   },
   {
     id: "time-lock",
-    name: "Advanced Time-Lock",
+    name: "Advanced Time-Lock™",
     description: "Schedule complex time-based unlocking",
     icon: "⏱️",
     color: "#D76B00",
@@ -54,7 +54,7 @@ const VAULT_TYPES = [
   },
   {
     id: "geolocation",
-    name: "Geolocation Vault",
+    name: "Geolocation Vault™",
     description: "Access only from specific locations",
     icon: "📍",
     color: "#00D74B",
