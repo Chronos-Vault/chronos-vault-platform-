@@ -65,6 +65,7 @@ import ConnectTonPage from '@/pages/connect-ton';
 // Vault Pages - Basic
 import TimeLockVaultPage from '@/pages/time-lock-vault';
 import MultiSignatureVaultPage from '@/pages/multi-signature-vault';
+import MultiSignatureVaultNewPage from '@/pages/multi-signature-vault-new';
 import GeoLocationVaultPage from '@/pages/geo-location-vault';
 import BiometricVaultPage from '@/pages/biometric-vault';
 import SmartContractVaultPage from '@/pages/smart-contract-vault';
@@ -194,7 +195,7 @@ const App: React.FC = () => {
                       {/* Basic Vault Types */}
                       <Route path="/time-lock-vault" component={TimeLockVaultPage} />
                       <Route path="/multi-signature-vault" component={MultiSignatureVaultPage} />
-                      <Route path="/multi-signature-vault-new" component={MultiSignatureVaultPage} />
+                      <Route path="/multi-signature-vault-new" component={MultiSignatureVaultNewPage} />
                       <Route path="/geo-location-vault" component={GeoLocationVaultPage} />
                       <Route path="/biometric-vault" component={BiometricVaultPage} />
                       <Route path="/smart-contract-vault" component={SmartContractVaultPage} />

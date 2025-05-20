@@ -511,9 +511,9 @@ const MultiSignatureVaultPage = () => {
                       id="timeLockPeriod"
                       className="mt-2 w-full px-3 py-2 bg-[#1A1A1A] border border-[#333] rounded-lg text-white text-sm focus:ring-2 focus:ring-[#6B00D7] focus:border-transparent"
                     >
-                      <option value="1">1 hour for transactions > 1 ETH</option>
-                      <option value="4">4 hours for transactions > 5 ETH</option>
-                      <option value="24" selected>24 hours for transactions > 10 ETH</option>
+                      <option value="1">1 hour for transactions &gt; 1 ETH</option>
+                      <option value="4">4 hours for transactions &gt; 5 ETH</option>
+                      <option value="24" defaultValue="selected">24 hours for transactions &gt; 10 ETH</option>
                       <option value="48">48 hours for all transactions</option>
                     </select>
                   </div>
