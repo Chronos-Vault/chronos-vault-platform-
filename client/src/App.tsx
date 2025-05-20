@@ -201,7 +201,9 @@ const App: React.FC = () => {
                       <Route path="/behavioral-auth">
                         {(params) => <BehavioralAuthenticationPage tab="overview" />}
                       </Route>
-                      <Route path="/quantum-resistant" component={QuantumResistantVaultPage} />
+                      <Route path="/quantum-resistant">
+                        {() => <DocumentationRouter vaultType="quantum-resistant-vault" />}
+                      </Route>
                       <Route path="/zero-knowledge-verification" component={ZeroKnowledgeVerificationPage} />
                       <Route path="/zk-privacy-demo" component={ZkPrivacyDemoPage} />
                       <Route path="/triple-chain-security-demo" component={TripleChainSecurityDemoPage} />
