@@ -17,7 +17,7 @@ import {
 import { useToast } from '@/hooks/use-toast';
 import { OnboardingProvider } from '@/contexts/onboarding-context';
 
-export default function TripleChainSecurityDemo() {
+export default function TripleChainSecurity() {
   const { toast } = useToast();
   const [vaultId, setVaultId] = useState('vault-1683246549872');
   const [showVerifier, setShowVerifier] = useState(false);
@@ -63,10 +63,10 @@ export default function TripleChainSecurityDemo() {
         <div className="container mx-auto px-4 py-8">
           <div className="mb-8 text-center">
             <h1 className="mb-2 text-4xl font-bold tracking-tight text-primary">
-              Triple-Chain Security™ Demo
+              Triple-Chain Security™
             </h1>
             <p className="mx-auto max-w-2xl text-lg text-muted-foreground">
-              Experience Chronos Vault's revolutionary security architecture that leverages
+              Chronos Vault's revolutionary security architecture leverages
               Ethereum, TON, and Solana blockchains for unparalleled digital asset protection.
             </p>
           </div>

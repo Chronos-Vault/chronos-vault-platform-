@@ -65,7 +65,7 @@ import SecurityTestingPage from '@/pages/security-testing';
 import BehavioralAuthenticationPage from '@/pages/behavioral-authentication';
 import ZeroKnowledgeVerificationPage from '@/pages/zero-knowledge-verification-page';
 import ZkPrivacyDemoPage from '@/pages/zk-privacy-demo';
-import TripleChainSecurityDemoPage from '@/pages/triple-chain-security-demo';
+import TripleChainSecurityPage from '@/pages/triple-chain-security';
 
 // Integration Pages
 import EthereumIntegrationPage from '@/pages/ethereum-integration';
@@ -214,7 +214,7 @@ const App: React.FC = () => {
                       </Route>
                       <Route path="/zero-knowledge-verification" component={ZeroKnowledgeVerificationPage} />
                       <Route path="/zk-privacy-demo" component={ZkPrivacyDemoPage} />
-                      <Route path="/triple-chain-security-demo" component={TripleChainSecurityDemoPage} />
+                      <Route path="/triple-chain-security" component={TripleChainSecurityPage} />
                       <Route path="/bitcoin-halving" component={BitcoinHalvingComponent} />
                       
                       {/* Blockchain Integration */}
