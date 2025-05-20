@@ -538,7 +538,10 @@ const VaultCard = ({ vault, selected, onClick }: { vault: any; selected: boolean
                 // Special case handling for multi-signature vault to ensure correct form is used
                 if (vault.id === 'multi-signature') {
                   console.log('Navigating to multi-signature-vault-new form');
-                  window.location.href = '/multi-signature-vault-new';
+                  // Use the direct URL with full path to avoid routing conflicts
+                  const multiSigFormUrl = window.location.origin + '/multi-signature-vault-new';
+                  console.log('Full multi-signature vault URL:', multiSigFormUrl);
+                  window.location.replace(multiSigFormUrl);
                 } else {
                   console.log(`Routing vault ID ${vault.id} to ${route}`);
                   window.location.href = route;

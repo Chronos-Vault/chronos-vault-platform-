@@ -144,6 +144,7 @@ const App: React.FC = () => {
                       <Route path="/team" component={TeamPage} />
                       <Route path="/whitepaper" component={WhitepaperPage} />
                       <Route path="/documentation" component={DocumentationPage} />
+                      <Route path="/documentation/multi-signature-vault" component={DocumentationPage} />
                       <Route path="/vault-school" component={VaultSchoolPage} />
                       <Route path="/terms-of-service" component={TermsOfServicePage} />
                       <Route path="/cookie-policy" component={CookiePolicyPage} />
