@@ -380,7 +380,7 @@ const vaultTypes = [
     id: "inheritance-planning",
     name: "Inheritance Planning Vault",
     icon: "🌳",
-    href: "/inheritance-planning-vault",
+    href: "/documentation/inheritance-planning-vault",
     description: "Secure estate planning with conditional access for beneficiaries",
     features: [
       "Beneficiary management system",
