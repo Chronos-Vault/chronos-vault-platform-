@@ -144,7 +144,8 @@ const App: React.FC = () => {
                       <Route path="/team" component={TeamPage} />
                       <Route path="/whitepaper" component={WhitepaperPage} />
                       <Route path="/documentation" component={DocumentationPage} />
-                      <Route path="/documentation/multi-signature-vault" component={DocumentationPage} />
+                      {/* Important: The route below is disabled to fix conflict with multi-signature-vault-new */}
+                      {/* <Route path="/documentation/multi-signature-vault" component={DocumentationPage} /> */}
                       <Route path="/vault-school" component={VaultSchoolPage} />
                       <Route path="/terms-of-service" component={TermsOfServicePage} />
                       <Route path="/cookie-policy" component={CookiePolicyPage} />
@@ -195,7 +196,8 @@ const App: React.FC = () => {
                       
                       {/* Basic Vault Types */}
                       <Route path="/time-lock-vault" component={TimeLockVaultPage} />
-                      <Route path="/multi-signature-vault" component={MultiSignatureVaultPage} />
+                      {/* Commented out old component route to prevent conflict */}
+                      {/* <Route path="/multi-signature-vault" component={MultiSignatureVaultPage} /> */}
                       <Route path="/multi-signature-vault-new" component={MultiSignatureVaultNewPage} />
                       <Route path="/geo-location-vault" component={GeoLocationVaultPage} />
                       <Route path="/biometric-vault" component={BiometricVaultPage} />
