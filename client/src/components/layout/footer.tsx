@@ -55,7 +55,7 @@ const Footer = ({ className = '' }: { className?: string }) => {
                 Smart Contract Vault
 
               </Link></li>
-              <li><Link href="/multi-signature-vault" className="text-gray-300 hover:text-[#FF5AF7] transition-all font-poppins font-light hover:translate-x-1 inline-flex">Multi-Signature Vault</Link></li>
+              <li><Link href="/documentation/multi-signature-vault" className="text-gray-300 hover:text-[#FF5AF7] transition-all font-poppins font-light hover:translate-x-1 inline-flex">Multi-Signature Vault</Link></li>
               <li><Link href="/cross-chain-vault" className="text-gray-300 hover:text-[#FF5AF7] transition-all font-poppins font-light hover:translate-x-1 inline-flex">Cross-Chain Vault</Link></li>
               <li><Link href="/token-vaults" className="text-gray-300 hover:text-[#FF5AF7] transition-all font-poppins font-light hover:translate-x-1 inline-flex">Token Vaults</Link></li>
               <li><Link href="/bitcoin-halving-vault" className="text-gray-300 hover:text-[#FF5AF7] transition-all font-poppins font-light hover:translate-x-1 inline-flex">Bitcoin Halving Vault</Link></li>

@@ -322,7 +322,7 @@ const RevolutionaryHero: React.FC<RevolutionaryHeroProps> = ({ onCreateVault }) 
                   className="w-full px-6 py-6 text-lg font-medium rounded-xl border-2 border-[#6B00D7] hover:border-[#FF5AF7] hover:bg-[#6B00D7]/10 transition-all"
                   asChild
                 >
-                  <Link href="/multi-signature-vault">
+                  <Link href="/documentation/multi-signature-vault">
                     <div className="flex items-center justify-center">
                       <motion.i 
                         className="ri-lock-password-line mr-2 text-xl text-[#FF5AF7]"

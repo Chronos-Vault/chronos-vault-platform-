@@ -415,7 +415,7 @@ const CyberpunkHolographicHero: React.FC<CyberpunkHolographicHeroProps> = ({ onC
                   className="w-full py-6 text-lg border-2 border-[#6B00D7] hover:border-[#FF5AF7] hover:bg-[#6B00D7]/10 transition-all text-white"
                   asChild
                 >
-                  <Link href="/multi-signature-vault">
+                  <Link href="/documentation/multi-signature-vault">
                     <LockKeyhole className="mr-2" /> Multi-Signature Vault
                   </Link>
                 </Button>
