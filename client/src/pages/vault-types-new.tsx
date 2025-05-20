@@ -533,15 +533,11 @@ const VaultCard = ({ vault, selected, onClick }: { vault: any; selected: boolean
                 };
                 
                 // Direct to fully developed form component that matches the vault type
-                if (formRoutes[vault.id]) {
-                  window.location.href = formRoutes[vault.id];
-                } else if (vault.id === 'sovereign') {
-                  // Special case for Sovereign Fortress Vault
-                  window.location.href = '/sovereign-fortress-vault';
-                } else {
-                  // If no match, use dynamic vault form which handles all types
-                  window.location.href = '/dynamic-vault-form';
-                }
+                const route = formRoutes[vault.id] || '/dynamic-vault-form';
+                console.log(`Routing vault ID ${vault.id} to ${route}`);
+                
+                // Use setLocation to navigate
+                setLocation(route);
               }}
             >
               <Shield className="mr-2 h-4 w-4" />
