@@ -6,6 +6,7 @@ export interface DocumentationLayoutProps {
   children: React.ReactNode;
   title?: string;
   description?: string;
+  subtitle?: string;
   icon?: string;
   cta?: React.ReactNode;
 }
