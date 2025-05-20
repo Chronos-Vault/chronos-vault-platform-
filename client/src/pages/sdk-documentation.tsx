@@ -24,6 +24,13 @@ import {
   Wallet
 } from "lucide-react";
 
+// Import language logos
+import jsLogo from '@assets/javascript-logo.png';
+import pythonLogo from '@assets/python-logo.png';
+import javaLogo from '@assets/java-logo.png';
+import goLogo from '@assets/golang-logo.png';
+import rustLogo from '@assets/rust-logo.png';
+
 const SDKDocumentation = () => {
   const [selectedLanguage, setSelectedLanguage] = useState<'javascript' | 'python' | 'java' | 'go' | 'rust'>('javascript');
 
@@ -842,11 +849,12 @@ async fn connect_websocket(client: &Client) -> Result<(), Box<dyn std::error::Er
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-6">
-                <div className="flex space-x-2 mb-6">
+                <div className="flex flex-wrap gap-2 mb-6">
                   <Button
                     variant={selectedLanguage === 'javascript' ? 'default' : 'outline'}
                     onClick={() => setSelectedLanguage('javascript')}
                     size="sm"
+                    className="flex-grow sm:flex-grow-0"
                   >
                     JavaScript
                   </Button>
@@ -854,6 +862,7 @@ async fn connect_websocket(client: &Client) -> Result<(), Box<dyn std::error::Er
                     variant={selectedLanguage === 'python' ? 'default' : 'outline'}
                     onClick={() => setSelectedLanguage('python')}
                     size="sm"
+                    className="flex-grow sm:flex-grow-0"
                   >
                     Python
                   </Button>
@@ -861,6 +870,7 @@ async fn connect_websocket(client: &Client) -> Result<(), Box<dyn std::error::Er
                     variant={selectedLanguage === 'java' ? 'default' : 'outline'}
                     onClick={() => setSelectedLanguage('java')}
                     size="sm"
+                    className="flex-grow sm:flex-grow-0"
                   >
                     Java
                   </Button>
@@ -868,6 +878,7 @@ async fn connect_websocket(client: &Client) -> Result<(), Box<dyn std::error::Er
                     variant={selectedLanguage === 'go' ? 'default' : 'outline'}
                     onClick={() => setSelectedLanguage('go')}
                     size="sm"
+                    className="flex-grow sm:flex-grow-0"
                   >
                     Go
                   </Button>
@@ -875,6 +886,7 @@ async fn connect_websocket(client: &Client) -> Result<(), Box<dyn std::error::Er
                     variant={selectedLanguage === 'rust' ? 'default' : 'outline'}
                     onClick={() => setSelectedLanguage('rust')}
                     size="sm"
+                    className="flex-grow sm:flex-grow-0"
                   >
                     Rust
                   </Button>
