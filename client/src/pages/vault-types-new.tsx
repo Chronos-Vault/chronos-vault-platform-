@@ -536,8 +536,8 @@ const VaultCard = ({ vault, selected, onClick }: { vault: any; selected: boolean
                 const route = formRoutes[vault.id] || '/dynamic-vault-form';
                 console.log(`Routing vault ID ${vault.id} to ${route}`);
                 
-                // Use setLocation to navigate
-                setLocation(route);
+                // Use window.location for reliable navigation
+                window.location.href = route;
               }}
             >
               <Shield className="mr-2 h-4 w-4" />
