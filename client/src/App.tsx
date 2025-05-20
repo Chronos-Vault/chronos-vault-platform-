@@ -97,10 +97,11 @@ const InvestmentDisciplineVaultAdvancedPage = InvestmentDisciplineVaultAdvanced;
 // Using direct import of milestone based vault form component
 import MilestoneBasedVaultForm from '@/pages/milestone-based-vault-form';
 const MilestoneBasedVaultFormPage = MilestoneBasedVaultForm;
+// Remove the conflicting import
 import InvestmentDisciplineVaultPage from '@/pages/investment-discipline-vault';
 import DynamicVaultFormPage from '@/pages/dynamic-vault-form';
 import FamilyHeritageVaultFormPage from '@/pages/family-heritage-vault-form';
-import BitcoinHalvingVaultPage from '@/pages/bitcoin-halving-vault';
+// Bitcoin Halving Vault now uses the advanced implementation
 
 // Cross-Chain Features
 import CrossChainBridgePage from '@/pages/cross-chain-bridge';
@@ -110,7 +111,7 @@ import CrossChainVsAtomicSwapPage from '@/pages/cross-chain-vs-atomic-swap';
 import BridgeVsSwapPage from '@/pages/bridge-vs-swap';
 import SecurityDashboardPage from '@/pages/security-dashboard';
 import TripleChainSecurityDashboardPage from '@/pages/security-dashboard-page';
-import BitcoinHalvingPage from '@/pages/bitcoin-halving';
+import BitcoinHalvingAdvancedPage from '@/pages/bitcoin-halving';
 import SecurityTutorialsVideo from '@/pages/security-tutorials-video';
 import SecurityTutorials from '@/pages/security-tutorials';
 import MilitaryGradeSecurity from '@/pages/military-grade-security';
@@ -197,7 +198,7 @@ const App: React.FC = () => {
                       <Route path="/zero-knowledge-verification" component={ZeroKnowledgeVerificationPage} />
                       <Route path="/zk-privacy-demo" component={ZkPrivacyDemoPage} />
                       <Route path="/triple-chain-security-demo" component={TripleChainSecurityDemoPage} />
-                      <Route path="/bitcoin-halving" component={BitcoinHalvingPage} />
+                      <Route path="/bitcoin-halving" component={BitcoinHalvingAdvancedPage} />
                       
                       {/* Blockchain Integration */}
                       <Route path="/ethereum-integration" component={EthereumIntegrationPage} />
@@ -239,7 +240,7 @@ const App: React.FC = () => {
                       <Route path="/dynamic-vault-form" component={DynamicVaultFormPage} />
                       <Route path="/family-heritage-vault" component={FamilyHeritageVaultFormPage} />
                       <Route path="/family-heritage-vault-form" component={FamilyHeritageVaultFormPage} />
-                      <Route path="/bitcoin-halving-vault" component={BitcoinHalvingVaultPage} />
+                      <Route path="/bitcoin-halving-vault" component={BitcoinHalvingAdvancedPage} />
                       
                       {/* Vault Direct Access Routes - Based on Vault School documentation */}
                       {/* Switching to explicit routes instead of catch-all to avoid conflicts */}
