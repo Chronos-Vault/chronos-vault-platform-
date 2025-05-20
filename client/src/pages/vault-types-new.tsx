@@ -676,8 +676,8 @@ const VaultTypesPage = () => {
           </div>
         </div>
         
-        {/* Vault Grid - with larger, more visible cards */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+        {/* Vault Grid - optimized for mobile with improved spacing and performance */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 px-2 sm:px-0 mx-auto">
           {currentVaults.map((vault) => (
             <VaultCard 
               key={vault.id}
