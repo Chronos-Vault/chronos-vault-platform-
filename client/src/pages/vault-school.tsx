@@ -97,7 +97,7 @@ const vaultTypes = [
   },
   {
     id: "cross-chain",
-    name: "Cross-Chain Vault",
+    name: "Cross-Chain Vault™",
     icon: "🧩",
     href: "/cross-chain-vault",
     description: "Assets secured across multiple blockchain networks simultaneously",
@@ -112,7 +112,7 @@ const vaultTypes = [
   },
   {
     id: "cross-chain-fragment",
-    name: "Cross-Chain Fragment Vault",
+    name: "Cross-Chain Fragment Vault™",
     icon: "🔗",
     href: "/documentation/cross-chain-fragment-vault",
     description: "Fragments your assets across multiple chains for enhanced security",
@@ -128,7 +128,7 @@ const vaultTypes = [
   },
   {
     id: "geo-location",
-    name: "Geo-Location Vault",
+    name: "Geo-Location Vault™",
     icon: "🌎",
     href: "/documentation/geo-location-vault",
     description: "Access controlled by physical location requirements",
@@ -144,7 +144,7 @@ const vaultTypes = [
   },
   {
     id: "location-time",
-    name: "Location-Time Vault",
+    name: "Location-Time Vault™",
     icon: "🗺️",
     href: "/documentation/location-time-vault",
     description: "Advanced vault with both geographic and temporal access requirements",
@@ -160,7 +160,7 @@ const vaultTypes = [
   },
   {
     id: "time-lock-memory",
-    name: "Time-Lock Memory Vault",
+    name: "Time-Lock Memory Vault™",
     icon: "⏰",
     href: "/documentation/time-locked-memory-vault",
     description: "Store digital assets together with multimedia memories",
@@ -176,7 +176,7 @@ const vaultTypes = [
   },
   {
     id: "time-locked-new",
-    name: "Advanced Time-Lock Memory Vault",
+    name: "Advanced Time-Lock Memory Vault™",
     icon: "🕰️",
     href: "/documentation/time-locked-memory-vault",
     description: "Next-generation vault for preserving memories and assets with customizable time triggers",
@@ -194,7 +194,7 @@ const vaultTypes = [
 
   {
     id: "investment-discipline-advanced",
-    name: "Investment Discipline Vault",
+    name: "Investment Discipline Vault™",
     icon: "📈",
     href: "/documentation/investment-discipline-vault",
     description: "Sophisticated investment strategy enforcement with behavioral safeguards",
@@ -211,7 +211,7 @@ const vaultTypes = [
   },
   {
     id: "nft-powered",
-    name: "NFT-Powered Vault",
+    name: "NFT-Powered Vault™",
     icon: "🖼️",
     href: "/documentation/nft-powered-vault",
     description: "Vaults secured by ownership of specific NFTs as access keys",
