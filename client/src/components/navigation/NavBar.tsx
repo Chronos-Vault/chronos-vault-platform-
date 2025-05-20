@@ -122,17 +122,17 @@ export const NavBar: React.FC = () => {
                   </DropdownMenuItem>
                   <DropdownMenuItem asChild>
                     <Link href="/time-lock-vault" className="px-4 py-2 rounded-md hover:bg-[#6B00D7]/20 flex items-center">
-                      <Clock className="w-4 h-4 mr-2" /> Time Lock Vault
+                      <Clock className="w-4 h-4 mr-2" /> Time Lock Vault™
                     </Link>
                   </DropdownMenuItem>
                   <DropdownMenuItem asChild>
                     <Link href="/documentation/multi-signature-vault" className="px-4 py-2 rounded-md hover:bg-[#6B00D7]/20 flex items-center">
-                      <Users className="w-4 h-4 mr-2" /> Multi-Signature Vault
+                      <Users className="w-4 h-4 mr-2" /> Multi-Signature Vault™
                     </Link>
                   </DropdownMenuItem>
                   <DropdownMenuItem asChild>
                     <Link href="/geo-location-vault" className="px-4 py-2 rounded-md hover:bg-[#6B00D7]/20 flex items-center">
-                      <MapPin className="w-4 h-4 mr-2" /> Geo-Location Vault
+                      <MapPin className="w-4 h-4 mr-2" /> Geo-Location Vault™
                     </Link>
                   </DropdownMenuItem>
                   <DropdownMenuItem asChild>

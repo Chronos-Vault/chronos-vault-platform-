@@ -378,7 +378,7 @@ const vaultTypes = [
   },
   {
     id: "inheritance-planning",
-    name: "Inheritance Planning Vault",
+    name: "Inheritance Planning Vault™",
     icon: "🌳",
     href: "/documentation/inheritance-planning-vault",
     description: "Secure estate planning with conditional access for beneficiaries",
@@ -393,7 +393,7 @@ const vaultTypes = [
   },
   {
     id: "dynamic-vault",
-    name: "Dynamic Security Vault",
+    name: "Dynamic Security Vault™",
     icon: "🔄",
     href: "/documentation/dynamic-security-vault",
     description: "Adaptable vault with customizable security parameters and realtime risk adaptation",
@@ -409,7 +409,7 @@ const vaultTypes = [
   },
   {
     id: "payment-channel",
-    name: "Payment Channel Vault",
+    name: "Payment Channel Vault™",
     icon: "💸",
     href: "/documentation/payment-channel-vault",
     description: "Optimized for high-frequency transactions with instant settlement",
