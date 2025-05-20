@@ -417,18 +417,7 @@ const VaultCard = ({ vault, selected, onClick }: { vault: any; selected: boolean
         </div>
       )}
       
-      {/* Create button in non-selected state */}
-      {!selected && (
-        <Button 
-          className="w-full mt-3 bg-black/40 hover:bg-[#6B00D7]/80 text-white text-sm border border-[#6B00D7]/40"
-          onClick={(e) => {
-            e.stopPropagation();
-            setSelected(vault.id);
-          }}
-        >
-          Select Vault
-        </Button>
-      )}
+      {/* No select button in non-selected state - removed as requested */}
       
       {/* Selected state with features and create button */}
       {selected && (
@@ -485,7 +474,8 @@ const VaultCard = ({ vault, selected, onClick }: { vault: any; selected: boolean
             className="w-full bg-[#6B00D7] hover:bg-[#5A00B8] text-white font-medium h-10 shadow-lg shadow-[#6B00D7]/30"
             onClick={(e) => {
               e.stopPropagation();
-              window.location.href = `/${vault.id}-vault/create`;
+              // Directly navigate to the form without changing the URL structure
+              window.location.href = `/vaults/${vault.id}/create`;
             }}
           >
             <Shield className="mr-2 h-4 w-4" />
