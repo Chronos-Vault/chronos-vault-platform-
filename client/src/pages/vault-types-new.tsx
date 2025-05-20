@@ -494,7 +494,7 @@ const VaultCard = ({ vault, selected, onClick }: { vault: any; selected: boolean
                   // Basic Vault Types (fully developed form components)
                   'standard': '/sovereign-fortress-vault',
                   'multi-signature': '/multi-signature-vault-new', 
-                  'biometric': '/biometric-vault',
+                  'biometric': '/enhanced-biometric-vault',
                   'enhanced-biometric': '/enhanced-biometric-vault',
                   'geo-location': '/geo-location-vault',
                   'time-lock': '/time-lock-vault',
