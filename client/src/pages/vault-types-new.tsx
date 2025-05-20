@@ -489,18 +489,18 @@ const VaultCard = ({ vault, selected, onClick }: { vault: any; selected: boolean
               className="w-full bg-[#6B00D7] hover:bg-[#5A00B8] text-white font-medium h-12 rounded-lg shadow-lg shadow-[#6B00D7]/30"
               onClick={(e) => {
                 e.stopPropagation();
-                // Map directly to fully developed vault form components from App.tsx routes
+                // Map directly to the enhanced/new versions of the fully developed vault forms
                 const formRoutes = {
-                  // Basic Vault Types (fully developed forms)
+                  // Basic Vault Types (enhanced forms)
                   'standard': '/sovereign-fortress-vault',
-                  'multi-signature': '/multi-signature-vault',
+                  'multi-signature': '/multi-signature-vault-new', // Use enhanced multi-sig form
                   'biometric': '/biometric-vault',
                   'enhanced-biometric': '/enhanced-biometric-vault',
                   'geo-location': '/geo-location-vault',
                   'time-lock': '/time-lock-vault',
                   'smart-contract': '/smart-contract-vault',
                   
-                  // Advanced Vault Types (fully developed forms)
+                  // Advanced Vault Types (enhanced forms)
                   'cross-chain': '/cross-chain-vault',
                   'cross-chain-fragment': '/cross-chain-fragment-vault',
                   'quantum-resistant': '/quantum-resistant-vault',
@@ -508,7 +508,7 @@ const VaultCard = ({ vault, selected, onClick }: { vault: any; selected: boolean
                   'unique-security': '/unique-security-vault',
                   'enhanced-smart-contract': '/enhanced-smart-contract-vault',
                   
-                  // Specialized Vault Types (fully developed forms)
+                  // Specialized Vault Types (enhanced forms)
                   'ai-assisted-investment': '/ai-assisted-investment-vault',
                   'intent-inheritance': '/intent-inheritance-vault',
                   'time-locked-memory': '/time-locked-memory-vault',
