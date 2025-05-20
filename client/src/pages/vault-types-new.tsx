@@ -367,68 +367,76 @@ const VAULT_TYPES = [
   }
 ];
 
-// VaultCard component for displaying vault information - enhanced design
+// VaultCard component for displaying vault information - enhanced design with more prominent visuals
 const VaultCard = ({ vault, selected, onClick }: { vault: any; selected: boolean; onClick: () => void }) => {
   const { title, description, icon, color, features, tags } = vault;
   
   return (
     <motion.div 
-      className={`relative rounded-xl p-6 transition-all duration-500 cursor-pointer ${
-        selected ? 'bg-white/10 border-2 shadow-lg shadow-[#6B00D7]/20' : 'bg-black/40 border border-gray-800 hover:bg-white/5'
+      className={`relative rounded-xl overflow-hidden transition-all duration-500 cursor-pointer ${
+        selected 
+          ? 'bg-gradient-to-br from-black/80 via-[#2A0058]/80 to-black/80 border-2 shadow-lg shadow-[#6B00D7]/40' 
+          : 'bg-gradient-to-br from-black/90 to-black/70 border border-gray-800 hover:border-gray-700'
       }`}
       style={{ borderColor: selected ? color : undefined }}
       onClick={onClick}
-      whileHover={{ y: -5, scale: 1.02 }}
+      whileHover={{ 
+        y: -8, 
+        boxShadow: `0 10px 25px -5px ${color}30, 0 8px 10px -6px ${color}20` 
+      }}
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.5 }}
+      transition={{ duration: 0.7 }}
     >
-      {/* Icon and Title */}
-      <div className="flex items-start mb-3">
-        <div 
-          className="text-2xl mr-3 w-10 h-10 rounded-lg flex items-center justify-center"
-          style={{ backgroundColor: `${color}20` }}
-        >
-          {icon}
-        </div>
-        <div>
-          <h3 className="text-lg font-bold text-white leading-tight">{title}</h3>
-          <div className="text-sm text-gray-400 mt-1">{description}</div>
-        </div>
-      </div>
+      {/* Header with color bar */}
+      <div 
+        className="h-2 w-full"
+        style={{ backgroundColor: color }}
+      />
       
-      {/* Tags - show only first 2 tags in non-selected state */}
-      {!selected && (
-        <div className="flex flex-wrap gap-1.5 mb-2 mt-3">
-          {tags.slice(0, 2).map(tag => (
-            <span 
-              key={tag} 
-              className="inline-block px-2 py-1 text-xs rounded-md font-medium"
-              style={{ backgroundColor: `${color}20`, color: `${color}` }}
-            >
-              {tag}
+      <div className="p-6">
+        {/* Icon and Title */}
+        <div className="flex items-start mb-4">
+          <div 
+            className="text-3xl mr-4 w-12 h-12 rounded-lg flex items-center justify-center"
+            style={{ backgroundColor: `${color}20` }}
+          >
+            {icon}
+          </div>
+          <div>
+            <h3 className="text-xl font-bold text-white leading-tight">{title}</h3>
+            <div className="text-sm text-gray-300 mt-1">{description}</div>
+          </div>
+        </div>
+        
+        {/* Security Level - Always visible */}
+        <div className="mb-4">
+          <div className="flex justify-between items-center mb-2">
+            <div className="text-xs uppercase tracking-wider text-gray-400">Security Level</div>
+            <span className="text-xs text-white font-bold px-2 py-1 rounded-full" 
+                  style={{ backgroundColor: color }}>
+              {vault.securityLevel}/5
             </span>
-          ))}
-          {tags.length > 2 && (
-            <span className="inline-block px-2 py-1 text-xs rounded-md bg-black/30 text-gray-400 font-medium">
-              +{tags.length - 2} more
-            </span>
-          )}
+          </div>
+          <div className="flex items-center">
+            {Array(5).fill(0).map((_, i) => (
+              <div 
+                key={i} 
+                className="h-1.5 rounded-full mr-1 flex-1" 
+                style={{ 
+                  backgroundColor: i < vault.securityLevel 
+                    ? color
+                    : 'rgba(255,255,255,0.1)'
+                }}
+              />
+            ))}
+          </div>
         </div>
-      )}
-      
-      {/* No select button in non-selected state - removed as requested */}
-      
-      {/* Selected state with features and create button */}
-      {selected && (
-        <motion.div 
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          className="mt-4"
-        >
-          {/* All tags in selected state */}
-          <div className="flex flex-wrap gap-1.5 mb-4">
-            {tags.map(tag => (
+        
+        {/* Tags - show only first 2 tags in non-selected state */}
+        {!selected && (
+          <div className="flex flex-wrap gap-1.5 mt-4">
+            {tags.slice(0, 2).map(tag => (
               <span 
                 key={tag} 
                 className="inline-block px-2 py-1 text-xs rounded-md font-medium"
@@ -437,60 +445,68 @@ const VaultCard = ({ vault, selected, onClick }: { vault: any; selected: boolean
                 {tag}
               </span>
             ))}
+            {tags.length > 2 && (
+              <span className="inline-block px-2 py-1 text-xs rounded-md bg-black/30 text-gray-400 font-medium">
+                +{tags.length - 2} more
+              </span>
+            )}
           </div>
-          
-          {/* Security Level */}
-          <div className="mb-4">
-            <div className="text-xs uppercase tracking-wider text-gray-400 mb-2">Security Level</div>
-            <div className="flex items-center">
-              {Array(5).fill(0).map((_, i) => (
-                <div 
-                  key={i} 
-                  className="w-8 h-1.5 rounded-full mr-1" 
-                  style={{ 
-                    backgroundColor: i < vault.securityLevel 
-                      ? color
-                      : 'rgba(255,255,255,0.1)'
-                  }}
-                />
-              ))}
-              <span className="text-xs ml-2 text-gray-400">{vault.securityLevel}/5</span>
-            </div>
-          </div>
-          
-          {/* Features */}
-          <div className="text-xs uppercase tracking-wider text-gray-400 mb-2">Key Features</div>
-          <ul className="space-y-2 mb-5">
-            {features.map((feature, idx) => (
-              <li key={idx} className="flex items-start text-sm">
-                <Check className="h-4 w-4 mr-2 mt-0.5 flex-shrink-0" style={{ color }} />
-                <span>{feature}</span>
-              </li>
-            ))}
-          </ul>
-          
-          {/* Create button */}
-          <Button 
-            className="w-full bg-[#6B00D7] hover:bg-[#5A00B8] text-white font-medium h-10 shadow-lg shadow-[#6B00D7]/30"
-            onClick={(e) => {
-              e.stopPropagation();
-              // Directly navigate to the form without changing the URL structure
-              window.location.href = `/vaults/${vault.id}/create`;
-            }}
+        )}
+        
+        {/* Selected state with features and create button */}
+        {selected && (
+          <motion.div 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            className="mt-4"
           >
-            <Shield className="mr-2 h-4 w-4" />
-            Create this Vault
-          </Button>
-        </motion.div>
-      )}
+            {/* All tags in selected state */}
+            <div className="flex flex-wrap gap-1.5 mb-4">
+              {tags.map(tag => (
+                <span 
+                  key={tag} 
+                  className="inline-block px-2 py-1 text-xs rounded-md font-medium"
+                  style={{ backgroundColor: `${color}20`, color: `${color}` }}
+                >
+                  {tag}
+                </span>
+              ))}
+            </div>
+            
+            {/* Features */}
+            <div className="text-xs uppercase tracking-wider text-gray-400 mb-2">Key Features</div>
+            <ul className="space-y-2 mb-6">
+              {features.map((feature, idx) => (
+                <li key={idx} className="flex items-start text-sm text-white">
+                  <Check className="h-4 w-4 mr-2 mt-0.5 flex-shrink-0" style={{ color }} />
+                  <span>{feature}</span>
+                </li>
+              ))}
+            </ul>
+            
+            {/* Create button */}
+            <Button 
+              className="w-full bg-[#6B00D7] hover:bg-[#5A00B8] text-white font-medium h-12 rounded-lg shadow-lg shadow-[#6B00D7]/30"
+              onClick={(e) => {
+                e.stopPropagation();
+                // Support both URL formats to ensure forms load correctly
+                window.location.href = `/vaults/${vault.id}/create`;
+              }}
+            >
+              <Shield className="mr-2 h-4 w-4" />
+              Create this Vault
+            </Button>
+          </motion.div>
+        )}
+      </div>
       
       {/* Selected indicator */}
       {selected && (
         <div 
-          className="absolute -right-2 -top-2 w-6 h-6 rounded-full flex items-center justify-center shadow-md"
+          className="absolute -right-2 -top-2 w-8 h-8 rounded-full flex items-center justify-center shadow-xl"
           style={{ backgroundColor: color }}
         >
-          <Check className="h-3.5 w-3.5 text-black" />
+          <Check className="h-4 w-4 text-white" />
         </div>
       )}
     </motion.div>
