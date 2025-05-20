@@ -226,7 +226,8 @@ const App: React.FC = () => {
                       <Route path="/bitcoin-halving-vault" component={BitcoinHalvingVaultPage} />
                       
                       {/* Vault Direct Access Routes - Based on Vault School documentation */}
-                      <Route path="/:vaultType-vault" component={CreateVaultEnhancedPage} />
+                      {/* Switching to explicit routes instead of catch-all to avoid conflicts */}
+                      {/* <Route path="/:vaultType-vault" component={CreateVaultEnhancedPage} /> */}
                       
                       {/* Cross-Chain Features */}
                       <Route path="/cross-chain-operations" component={CrossChainMonitorPage} />
