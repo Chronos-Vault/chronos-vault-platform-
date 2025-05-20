@@ -194,6 +194,7 @@ const App: React.FC = () => {
                       {/* Basic Vault Types */}
                       <Route path="/time-lock-vault" component={TimeLockVaultPage} />
                       <Route path="/multi-signature-vault" component={MultiSignatureVaultPage} />
+                      <Route path="/multi-signature-vault-new" component={MultiSignatureVaultPage} />
                       <Route path="/geo-location-vault" component={GeoLocationVaultPage} />
                       <Route path="/biometric-vault" component={BiometricVaultPage} />
                       <Route path="/smart-contract-vault" component={SmartContractVaultPage} />
