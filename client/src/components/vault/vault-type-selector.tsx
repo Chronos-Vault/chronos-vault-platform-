@@ -295,7 +295,7 @@ const VaultTypeSelector: React.FC<VaultTypeProps> = ({ selectedType, onChange })
 
       <VaultTypeCard 
         type="composite-vault"
-        title="Cross-Chain Fragment Vault"
+        title="Cross-Chain Fragment Vault™"
         description="Splits your assets across multiple blockchains"
         icon="🧩"
         color="#00E5A0"
@@ -313,7 +313,7 @@ const VaultTypeSelector: React.FC<VaultTypeProps> = ({ selectedType, onChange })
 
       <VaultTypeCard 
         type="geo-temporal"
-        title="Location-Time Restricted Vault"
+        title="Location-Time Restricted Vault™"
         description="Access only at specific locations during set times"
         icon="🌎"
         color="#47A0FF"
@@ -331,7 +331,7 @@ const VaultTypeSelector: React.FC<VaultTypeProps> = ({ selectedType, onChange })
 
       <VaultTypeCard 
         type="diamond-hands"
-        title="Investment Discipline Vault"
+        title="Investment Discipline Vault™"
         description="Prevents emotional selling during market volatility"
         icon="💎"
         color="#3F51FF"
@@ -350,7 +350,7 @@ const VaultTypeSelector: React.FC<VaultTypeProps> = ({ selectedType, onChange })
       {/* New Innovative Vault Types */}
       <VaultTypeCard 
         type="ai-investment"
-        title="AI-Assisted Investment Vault"
+        title="AI-Assisted Investment Vault™"
         description="AI-powered market analysis for optimal trading"
         icon="🤖"
         color="#00E676"
@@ -368,7 +368,7 @@ const VaultTypeSelector: React.FC<VaultTypeProps> = ({ selectedType, onChange })
 
       <VaultTypeCard 
         type="milestone-based"
-        title="Milestone-Based Release Vault"
+        title="Milestone-Based Release Vault™"
         description="Unlocks assets when you achieve personal goals"
         icon="🏆"
         color="#FF9800"
@@ -386,7 +386,7 @@ const VaultTypeSelector: React.FC<VaultTypeProps> = ({ selectedType, onChange })
 
       <VaultTypeCard 
         type="family-heritage"
-        title="Family Heritage Vault"
+        title="Family Heritage Vault™"
         description="Secure generational wealth transfer with education"
         icon="👪"
         color="#E040FB"
