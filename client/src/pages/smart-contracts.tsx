@@ -795,8 +795,8 @@ pub fn process_verify_vault_status(
               API Documentation
             </Button>
             <Button variant="outline" className="bg-[#6B00D7]/20 hover:bg-[#6B00D7]/40 border-[#6B00D7]/50" onClick={() => window.location.href = '/triple-chain-security'}>
-              <Loader className="mr-2 h-4 w-4" />
-              Security Demo
+              <Shield className="mr-2 h-4 w-4" />
+              Triple-Chain Security
             </Button>
           </div>
         </motion.div>
