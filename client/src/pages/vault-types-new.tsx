@@ -489,35 +489,41 @@ const VaultCard = ({ vault, selected, onClick }: { vault: any; selected: boolean
               className="w-full bg-[#6B00D7] hover:bg-[#5A00B8] text-white font-medium h-12 rounded-lg shadow-lg shadow-[#6B00D7]/30"
               onClick={(e) => {
                 e.stopPropagation();
-                // Direct to the existing vault creation forms, not documentation
-                const vaultForms = {
+                // Map to existing vault creation forms based on vault-types-selector.tsx patterns
+                const vaultRoutingMap = {
+                  // Basic vault types
                   'standard': '/specialized-vault?type=standard',
                   'multi-signature': '/multi-signature-vault-new',
-                  'biometric': '/specialized-vault-creation?type=biometric',
-                  'enhanced-biometric': '/specialized-vault-creation?type=enhanced-biometric',
-                  'geo-location': '/specialized-vault-creation?type=geolocation',
+                  'biometric': '/biometric-vault',
+                  'enhanced-biometric': '/enhanced-biometric-vault',
+                  'geo-location': '/geo-vault',
                   'time-lock': '/specialized-vault?type=time-lock',
+                  
+                  // Advanced vault types
                   'cross-chain': '/cross-chain-vault',
-                  'cross-chain-fragment': '/specialized-vault-creation?type=cross-chain-fragment',
-                  'quantum-resistant': '/specialized-vault-creation?type=quantum-resistant',
-                  'smart-contract': '/specialized-vault-creation?type=smart-contract',
+                  'cross-chain-fragment': '/cross-chain-vault?mode=fragmented',
+                  'quantum-resistant': '/quantum-vault',
+                  'smart-contract': '/smart-contract-vault',
+                  
+                  // Specialized vault types
                   'ai-assisted-investment': '/ai-investment-vault',
                   'intent-inheritance': '/intent-inheritance-vault',
-                  'time-locked-memory': '/specialized-vault-creation?type=memory-vault',
+                  'time-locked-memory': '/specialized-vault-memory',
                   'bitcoin-halving': '/bitcoin-halving-vault',
                   'investment-discipline': '/investment-discipline-vault',
                   'nft-powered': '/specialized-vault-creation?type=nft-powered',
-                  'unique-security': '/specialized-vault-creation?type=unique',
+                  'unique-security': '/specialized-vault-creation?type=unique&security=enhanced',
                   'family-heritage': '/family-heritage-vault-form',
-                  'dynamic': '/dynamic-vault-form'
+                  'dynamic': '/dynamic-vault-form',
+                  'sovereign': '/sovereign-fortress-vault'
                 };
                 
-                // Navigate to the form or use dynamic routing
-                if (vaultForms[vault.id]) {
-                  window.location.href = vaultForms[vault.id];
+                // Navigate to the correct form page based on vault ID
+                if (vaultRoutingMap[vault.id]) {
+                  window.location.href = vaultRoutingMap[vault.id];
                 } else {
-                  // Fall back to specialized vault creation with type parameter
-                  window.location.href = `/specialized-vault-creation?type=${vault.id}`;
+                  // If no specific route is found, use the advanced vault creation page
+                  window.location.href = `/advanced-vault-creation?type=${vault.id}`;
                 }
               }}
             >
