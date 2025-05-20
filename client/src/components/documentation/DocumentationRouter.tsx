@@ -25,6 +25,7 @@ import GiftCryptoVaultDoc from '@/pages/documentation/gift-crypto-vault';
 import InheritancePlanningVaultDoc from '@/pages/documentation/inheritance-planning-vault';
 import LocationTimeVaultDoc from '@/pages/documentation/location-time-vault';
 import BiometricVaultDoc from '@/pages/documentation/biometric-vault';
+import SecurityWhitepaperDoc from '@/pages/documentation/security-whitepaper';
 
 interface DocumentationRouterProps {
   vaultType: string;
@@ -54,7 +55,8 @@ const DocumentationRouter: React.FC<DocumentationRouterProps> = ({ vaultType }) 
     'gift-crypto-vault': GiftCryptoVaultDoc,
     'inheritance-planning-vault': InheritancePlanningVaultDoc,
     'location-time-vault': LocationTimeVaultDoc,
-    'biometric-vault': BiometricVaultDoc
+    'biometric-vault': BiometricVaultDoc,
+    'security-whitepaper': SecurityWhitepaperDoc
   };
 
   // Get the component for the requested vault type
