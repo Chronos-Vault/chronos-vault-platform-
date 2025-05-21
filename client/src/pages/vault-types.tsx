@@ -16,6 +16,19 @@ import {
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import { motion } from 'framer-motion';
 
+// Function to render trademark symbol
+const renderTrademark = (title) => {
+  if (!title.includes('™')) return title;
+  const parts = title.split('™');
+  return (
+    <>
+      {parts[0]}
+      <span style={{ verticalAlign: 'super', fontSize: '60%', marginLeft: '1px' }}>™</span>
+      {parts[1] || ''}
+    </>
+  );
+};
+
 // Define all our vault types with full details
 const VAULT_TYPES = [
   {
@@ -344,7 +357,7 @@ const VaultCard = ({ vault, selected, onClick }) => {
       <div className="flex items-start mb-3">
         <div className="text-2xl mr-3">{icon}</div>
         <div>
-          <h3 className="text-lg font-bold text-white">{title}</h3>
+          <h3 className="text-lg font-bold text-white">{renderTrademark(title)}</h3>
           <div className="text-sm opacity-60">{description}</div>
         </div>
       </div>
