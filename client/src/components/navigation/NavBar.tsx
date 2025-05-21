@@ -107,6 +107,13 @@ export const NavBar: React.FC = () => {
             
             {/* Right side: Navigation + Status */}
             <div className="hidden md:flex items-center space-x-2">
+              {/* How It Works - Prominent Navigation Item */}
+              <Link href="/how-it-works" className="flex items-center px-3 py-2 mr-2 rounded-md bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] text-white hover:opacity-90 transition-all shadow-md">
+                <Search className="w-4 h-4 mr-1" /> 
+                How It Works
+                <span className="bg-white text-[#6B00D7] text-[10px] ml-1.5 px-1.5 py-0.5 rounded-full font-bold tracking-wider">NEW</span>
+              </Link>
+              
               {/* Vaults Dropdown */}
               <DropdownMenu>
                 <DropdownMenuTrigger className="text-gray-200 hover:text-[#FF5AF7] transition-colors px-3 py-2 rounded-md hover:bg-black/30 outline-none">
@@ -397,6 +404,22 @@ export const NavBar: React.FC = () => {
           <div className="px-3 py-5 overflow-y-auto h-[calc(100%-80px)]">
             {/* Main Section */}
             <SidebarSection icon={<Home className="h-5 w-5" />} title="Main">
+              {/* Special How It Works Item with highlight */}
+              <div className="mb-3 relative">
+                <Link 
+                  href="/how-it-works" 
+                  className="flex items-center px-3 py-3 rounded-md bg-gradient-to-r from-[#6B00D7]/20 to-[#FF5AF7]/20 border border-[#FF5AF7]/30 text-white hover:bg-gradient-to-r hover:from-[#6B00D7]/30 hover:to-[#FF5AF7]/30 transition-all"
+                  onClick={closeSidebar}
+                >
+                  <Search className="h-5 w-5 mr-3 text-[#FF5AF7]" />
+                  <div className="flex flex-col">
+                    <span className="font-medium">How It Works</span>
+                    <span className="text-xs text-gray-300">Simple guide to our platform</span>
+                  </div>
+                  <span className="bg-[#FF5AF7] text-white text-[10px] ml-auto px-1.5 py-0.5 rounded-full font-bold tracking-wider">NEW</span>
+                </Link>
+              </div>
+              
               <SidebarItem 
                 icon={<Home className="h-5 w-5" />} 
                 label="Home" 
