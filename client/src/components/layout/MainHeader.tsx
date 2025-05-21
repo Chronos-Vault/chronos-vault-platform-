@@ -234,8 +234,8 @@ const MainHeader = () => {
                     asChild
                     className={cn(
                       navigationMenuTriggerStyle(),
-                      "bg-transparent text-gray-300 hover:text-white hover:bg-[#6B00D7]/10",
-                      location === "/how-it-works" ? "text-white bg-[#6B00D7]/20" : ""
+                      "bg-transparent hover:text-white bg-gradient-to-r from-[#6B00D7]/50 to-[#FF5AF7]/30 text-white shadow-lg",
+                      location === "/how-it-works" ? "text-white from-[#6B00D7]/70 to-[#FF5AF7]/50" : ""
                     )}
                   >
                     <Link href="/how-it-works">
@@ -723,6 +723,26 @@ const MainHeader = () => {
                     </SheetClose>
                   </div>
                   
+                  {/* Featured How It Works link */}
+                  <div className="mb-4 mx-1">
+                    <Link 
+                      href="/how-it-works" 
+                      className="flex items-center gap-3 p-3 rounded-lg bg-gradient-to-r from-[#6B00D7]/50 to-[#FF5AF7]/30 border border-[#6B00D7]/50 shadow-md hover:shadow-lg transition-all"
+                      onClick={() => setMobileMenuOpen(false)}
+                    >
+                      <div className="flex items-center justify-center w-10 h-10 rounded-full bg-white/10 shadow-inner">
+                        <span className="text-xl">🔍</span>
+                      </div>
+                      <div>
+                        <h3 className="text-white font-medium text-base">How It Works</h3>
+                        <p className="text-xs text-white/70">Simple guide to our technology</p>
+                      </div>
+                      <div className="ml-auto">
+                        <span className="bg-[#FF5AF7] text-white text-[8px] px-1.5 py-0.5 rounded-full font-bold tracking-wider shadow-md shadow-[#FF5AF7]/30 animate-pulse">NEW</span>
+                      </div>
+                    </Link>
+                  </div>
+
                   {/* Mobile navigation with improved UX and accessibility */}
                   <div className="flex-1 overflow-y-auto py-4 pr-2 -mr-2 mobile-menu-scrollbar">
                     <div className="flex flex-col gap-6">
