@@ -328,6 +328,9 @@ const VAULT_TYPES = [
 const VaultCard = ({ vault, selected, onClick }) => {
   const { title, description, icon, color, securityLevel, complexityLevel, features, tags } = vault;
   
+  // Process the title to ensure trademark symbol appears consistently
+  const processedTitle = title.endsWith('™') ? title.slice(0, -1) : title;
+  
   return (
     <motion.div 
       className={`relative rounded-xl p-6 transition-all duration-300 cursor-pointer ${
@@ -345,7 +348,7 @@ const VaultCard = ({ vault, selected, onClick }) => {
         <div className="text-2xl mr-3">{icon}</div>
         <div>
           <h3 className="text-lg font-bold text-white">
-            {title.replace(/™/g, '')}
+            {processedTitle}
             <sup style={{ fontSize: '60%', position: 'relative', top: '-4px' }}>™</sup>
           </h3>
           <div className="text-sm opacity-60">{description}</div>
