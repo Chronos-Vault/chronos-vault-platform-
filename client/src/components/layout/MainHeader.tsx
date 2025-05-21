@@ -114,6 +114,7 @@ const MainHeader = () => {
       icon: "🏠",
       items: [
         { name: "Home", href: "/", icon: "🏠" },
+        { name: "How It Works", href: "/how-it-works", icon: "🔍", highlight: true, isNew: true },
         { name: "Vaults", href: "/vault-types", icon: "🔐" },
       ]
     },
@@ -228,6 +229,24 @@ const MainHeader = () => {
           <div className="hidden md:flex items-center gap-4">
             <NavigationMenu className="hidden md:flex">
               <NavigationMenuList>
+                <NavigationMenuItem>
+                  <NavigationMenuLink 
+                    asChild
+                    className={cn(
+                      navigationMenuTriggerStyle(),
+                      "bg-transparent text-gray-300 hover:text-white hover:bg-[#6B00D7]/10",
+                      location === "/how-it-works" ? "text-white bg-[#6B00D7]/20" : ""
+                    )}
+                  >
+                    <Link href="/how-it-works">
+                      <span className="inline-flex items-center gap-1.5">
+                        <span className="text-base">🔍</span> How It Works
+                        <span className="bg-[#FF5AF7] text-white text-[8px] px-1.5 py-0.5 rounded-full font-bold tracking-wider shadow-md shadow-[#FF5AF7]/30 animate-pulse">NEW</span>
+                      </span>
+                    </Link>
+                  </NavigationMenuLink>
+                </NavigationMenuItem>
+                
                 <NavigationMenuItem>
                   <NavigationMenuLink 
                     asChild
