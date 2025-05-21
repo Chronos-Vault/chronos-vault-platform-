@@ -68,9 +68,9 @@ export const NavBar: React.FC = () => {
       {/* Main navigation bar */}
       <header className="bg-black sticky top-0 z-50 border-b border-purple-900/30">
         <div className="container mx-auto px-4 py-3">
-          <div className="flex justify-between items-center">
+          <div className="grid grid-cols-12 items-center">
             {/* Logo Section - Left Side */}
-            <div className="flex-shrink-0">
+            <div className="col-span-6 md:col-span-3 flex-shrink-0">
               {/* Logo - Matching Footer Style */}
               <Link href="/" className="flex items-center gap-3 group">
                 <div className="h-12 w-12 rounded-full flex items-center justify-center shadow-lg shadow-[#6B00D7]/20 group-hover:shadow-[#FF5AF7] group-hover:shadow-xl transition-all duration-500 overflow-hidden border-2 border-white/20 group-hover:border-[#FF5AF7] transform group-hover:scale-125 relative animate-pulse group-hover:animate-none">
@@ -92,8 +92,8 @@ export const NavBar: React.FC = () => {
               </Link>
             </div>
             
-            {/* Mobile Menu Button - Only on mobile */}
-            <div className="md:hidden">
+            {/* Mobile Menu Button - Right aligned on mobile */}
+            <div className="col-span-6 md:hidden flex justify-end">
               <button 
                 className="relative text-[#FF5AF7] hover:text-[#6B00D7] transition-colors duration-300 p-2 rounded-full overflow-hidden group"
                 onClick={() => setSidebarOpen(true)}
@@ -105,8 +105,8 @@ export const NavBar: React.FC = () => {
               </button>
             </div>
             
-            {/* Right side: Navigation + Status */}
-            <div className="hidden md:flex items-center space-x-2">
+            {/* Right side: Navigation + Status - Centered in middle columns */}
+            <div className="hidden md:col-span-9 md:flex items-center justify-end space-x-2">
               {/* How It Works - Prominent Navigation Item */}
               <Link href="/how-it-works" className="flex items-center px-3 py-2 mr-2 rounded-md bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] text-white hover:opacity-90 transition-all shadow-md group">
                 <div className="flex items-center relative">
