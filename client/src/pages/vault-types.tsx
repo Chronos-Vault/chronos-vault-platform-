@@ -16,9 +16,6 @@ import {
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import { motion } from 'framer-motion';
 
-// Function to add trademark to vault titles
-// This was removed as it was not being used effectively
-
 // Define all our vault types with full details
 const VAULT_TYPES = [
   {
@@ -347,9 +344,7 @@ const VaultCard = ({ vault, selected, onClick }) => {
       <div className="flex items-start mb-3">
         <div className="text-2xl mr-3">{icon}</div>
         <div>
-          <h3 className="text-lg font-bold text-white">
-            {title.slice(-1) === "™" ? title : title + "™"}
-          </h3>
+          <h3 className="text-lg font-bold text-white" dangerouslySetInnerHTML={{ __html: title.replace('™', '<sup style="font-size: 60%; position: relative; top: -4px;">™</sup>') }}></h3>
           <div className="text-sm opacity-60">{description}</div>
         </div>
       </div>
