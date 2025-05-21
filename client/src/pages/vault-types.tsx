@@ -344,7 +344,11 @@ const VaultCard = ({ vault, selected, onClick }) => {
       <div className="flex items-start mb-3">
         <div className="text-2xl mr-3">{icon}</div>
         <div>
-          <h3 className="text-lg font-bold text-white" dangerouslySetInnerHTML={{ __html: title.replace('™', '<sup style="font-size: 60%; position: relative; top: -4px;">™</sup>') }}></h3>
+          <h3 className="text-lg font-bold text-white" dangerouslySetInnerHTML={{ 
+            __html: title.includes('™') 
+              ? title.replace('™', '<sup style="font-size: 60%; position: relative; top: -4px;">™</sup>') 
+              : title + '<sup style="font-size: 60%; position: relative; top: -4px;">™</sup>'
+          }}></h3>
           <div className="text-sm opacity-60">{description}</div>
         </div>
       </div>
