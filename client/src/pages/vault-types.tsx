@@ -344,7 +344,7 @@ const VaultCard = ({ vault, selected, onClick }) => {
       <div className="flex items-start mb-3">
         <div className="text-2xl mr-3">{icon}</div>
         <div>
-          <h3 className="text-lg font-bold text-white">{title.includes('™') ? <>{title.split('™')[0]}<sup>™</sup></> : title}</h3>
+          <h3 className="text-lg font-bold text-white">{title}</h3>
           <div className="text-sm opacity-60">{description}</div>
         </div>
       </div>
