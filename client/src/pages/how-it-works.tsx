@@ -31,8 +31,8 @@ import {
 const HowItWorksPage = () => {
   return (
     <DocumentationLayout 
-      title="How Chronos Vault Works" 
-      description="Discover the technology behind our revolutionary secure digital vaults"
+      title="" 
+      description=""
     >
       <div className="max-w-4xl mx-auto">
         <div className="mb-12">
