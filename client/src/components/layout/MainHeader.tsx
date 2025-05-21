@@ -190,6 +190,7 @@ const MainHeader = () => {
       title: "Resources",
       icon: "📚",
       items: [
+        { name: "How It Works", href: "/how-it-works", icon: "🔍", highlight: true, isNew: true },
         { name: "CVT Token", href: "/cvt-token", icon: "🪙" },
         { name: "CVT Utility", href: "/cvt-utility", icon: "⚡", highlight: true },
         { name: "Tokenomics", href: "/cvt-tokenomics", icon: "📊" },
@@ -544,6 +545,14 @@ const MainHeader = () => {
                   </NavigationMenuTrigger>
                   <NavigationMenuContent>
                     <ul className="grid w-[400px] gap-2 p-4 md:grid-cols-2 bg-[#1A1A1A] border border-[#333] shadow-xl">
+                      <ListItem 
+                        href="/how-it-works" 
+                        title="🔍 How It Works"
+                        highlight={true}
+                        isNew={true}
+                      >
+                        Discover how our revolutionary technology protects your digital assets
+                      </ListItem>
                       <ListItem 
                         href="/cvt-token" 
                         title="🪙 CVT Token"
