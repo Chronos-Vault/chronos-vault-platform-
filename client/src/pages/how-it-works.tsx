@@ -122,7 +122,7 @@ const HowItWorksPage = () => {
           </section>
         
           {/* Triple-Chain Security Section */}
-          <section className="mb-16">
+          <section id="getting-started" className="mb-16">
             <div className="flex items-center gap-3 mb-5">
               <Shield className="w-8 h-8 text-[#FF5AF7]" />
               <h2 className="text-3xl font-bold text-white">Triple-Chain Security™: The Foundation</h2>
