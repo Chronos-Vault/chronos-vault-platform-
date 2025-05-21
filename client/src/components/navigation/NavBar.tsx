@@ -108,10 +108,16 @@ export const NavBar: React.FC = () => {
             {/* Right side: Navigation + Status */}
             <div className="hidden md:flex items-center space-x-2">
               {/* How It Works - Prominent Navigation Item */}
-              <Link href="/how-it-works" className="flex items-center px-3 py-2 mr-2 rounded-md bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] text-white hover:opacity-90 transition-all shadow-md">
-                <Search className="w-4 h-4 mr-1" /> 
-                How It Works
-                <span className="bg-white text-[#6B00D7] text-[10px] ml-1.5 px-1.5 py-0.5 rounded-full font-bold tracking-wider">NEW</span>
+              <Link href="/how-it-works" className="flex items-center px-3 py-2 mr-2 rounded-md bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] text-white hover:opacity-90 transition-all shadow-md group">
+                <div className="flex items-center relative">
+                  <Search className="w-4 h-4 mr-1.5 group-hover:animate-pulse" /> 
+                  <span>How It Works</span>
+                  <span className="ml-1.5 flex items-center opacity-80">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="group-hover:translate-x-0.5 transition-transform">
+                      <path d="M5 12H19M19 12L12 5M19 12L12 19" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                    </svg>
+                  </span>
+                </div>
               </Link>
               
               {/* Vaults Dropdown */}
@@ -408,15 +414,22 @@ export const NavBar: React.FC = () => {
               <div className="mb-3 relative">
                 <Link 
                   href="/how-it-works" 
-                  className="flex items-center px-3 py-3 rounded-md bg-gradient-to-r from-[#6B00D7]/20 to-[#FF5AF7]/20 border border-[#FF5AF7]/30 text-white hover:bg-gradient-to-r hover:from-[#6B00D7]/30 hover:to-[#FF5AF7]/30 transition-all"
+                  className="flex items-center px-3 py-3 rounded-md bg-gradient-to-r from-[#6B00D7]/20 to-[#FF5AF7]/20 border border-[#FF5AF7]/30 text-white hover:bg-gradient-to-r hover:from-[#6B00D7]/30 hover:to-[#FF5AF7]/30 transition-all group"
                   onClick={closeSidebar}
                 >
-                  <Search className="h-5 w-5 mr-3 text-[#FF5AF7]" />
+                  <div className="relative">
+                    <Search className="h-5 w-5 mr-3 text-[#FF5AF7]" />
+                    <span className="absolute -top-1 -right-1 w-2 h-2 bg-[#FF5AF7] rounded-full animate-ping opacity-75"></span>
+                  </div>
                   <div className="flex flex-col">
                     <span className="font-medium">How It Works</span>
                     <span className="text-xs text-gray-300">Simple guide to our platform</span>
                   </div>
-                  <span className="bg-[#FF5AF7] text-white text-[10px] ml-auto px-1.5 py-0.5 rounded-full font-bold tracking-wider">NEW</span>
+                  <span className="ml-auto">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="group-hover:translate-x-0.5 transition-transform text-[#FF5AF7]">
+                      <path d="M5 12H19M19 12L12 5M19 12L12 19" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                    </svg>
+                  </span>
                 </Link>
               </div>
               
