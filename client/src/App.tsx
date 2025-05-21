@@ -1,5 +1,5 @@
 import React from 'react';
-import { Route, Switch } from 'wouter';
+import { Route, Switch, Link } from 'wouter';
 import { Toaster } from '@/components/ui/toaster';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ErrorBoundary } from '@/components/error-boundary/ErrorBoundary';
@@ -159,6 +159,21 @@ const App: React.FC = () => {
             <MultiChainProvider>
               <CVTTokenProvider>
                 <div className="min-h-screen bg-black text-white">
+                  {/* How It Works Banner - Always Visible */}
+                  <div className="sticky top-0 left-0 right-0 z-50 bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] py-2 text-white text-center shadow-lg">
+                    <div className="container mx-auto flex items-center justify-center">
+                      <Link 
+                        href="/how-it-works" 
+                        className="flex items-center gap-2 px-4 py-1.5 bg-white/20 hover:bg-white/30 rounded-full transition-all"
+                      >
+                        <span className="text-lg animate-pulse">🔍</span>
+                        <span className="font-semibold hidden sm:inline">New to Chronos Vault?</span>
+                        <span className="font-bold underline">Learn How It Works</span>
+                        <span className="bg-white text-[#6B00D7] text-[10px] px-2 py-0.5 rounded-full font-bold tracking-wider animate-pulse ml-1">NEW</span>
+                        <span className="ml-1">→</span>
+                      </Link>
+                    </div>
+                  </div>
                   <NavBar />
                   <div className="pt-2">
                     <Switch>

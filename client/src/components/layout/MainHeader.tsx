@@ -2,6 +2,7 @@ import { Button } from "@/components/ui/button";
 import logoPath from "@assets/IMG_3753.jpeg";
 import { useMultiChain, BlockchainType } from "@/contexts/multi-chain-context";
 import { Link, useLocation } from "wouter";
+import { useState } from "react";
 import {
   Sheet,
   SheetContent,
@@ -94,6 +95,7 @@ interface MobileNavCategory {
 
 const MainHeader = () => {
   const [location] = useLocation();
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const { isAuthenticated } = useAuthContext();
 
   // Combined contexts for functionality
@@ -210,8 +212,8 @@ const MainHeader = () => {
 
   return (
     <header className="relative z-20 border-b border-[#6B00D7]/20 backdrop-blur-sm bg-gradient-to-r from-[#121212]/90 to-[#1A1A1A]/90">
-      <div className="container mx-auto px-4 py-4">
-        <nav className="flex justify-between items-center">
+        <div className="container mx-auto px-4 py-4">
+          <nav className="flex justify-between items-center">
           <Link href="/" className="flex items-center gap-3 group">
             <div className="h-12 w-12 rounded-full flex items-center justify-center shadow-xl shadow-[#FF5AF7]/40 group-hover:shadow-[#FF5AF7]/50 transition-all overflow-hidden border-2 border-white/40 animate-logo-glow">
               <img src={logoPath} alt="Chronos Vault Logo" className="w-full h-full object-cover" />
