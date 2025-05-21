@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useLocation } from 'wouter';
 import { Button } from '@/components/ui/button';
 import { 
@@ -458,6 +458,16 @@ const VaultTypesPage = () => {
   const [selected, setSelected] = useState(VAULT_TYPES[0].id);
   const [activeCategory, setActiveCategory] = useState('all');
   const [, navigate] = useLocation();
+  
+  // Ensure all vault titles have trademark symbols
+  useEffect(() => {
+    // This runs once on component mount to ensure all vault titles have trademark symbols
+    VAULT_TYPES.forEach(vault => {
+      if (!vault.title.includes('™')) {
+        vault.title = vault.title + '™';
+      }
+    });
+  }, []);
   
   const selectedVault = VAULT_TYPES.find(v => v.id === selected) || VAULT_TYPES[0];
   
