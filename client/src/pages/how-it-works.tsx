@@ -37,7 +37,7 @@ const HowItWorksPage = () => {
       <div className="max-w-4xl mx-auto">
         <div className="mb-12">
           <div className="mb-8 text-center">
-            <h1 className="text-4xl font-bold text-white mb-4">How Chronos Vault Works</h1>
+            <h1 className="text-4xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] mb-4">How Chronos Vault Works</h1>
             <p className="text-xl text-gray-400 max-w-2xl mx-auto">
               Discover the revolutionary technology behind our secure digital vaults and how it protects your assets
             </p>
