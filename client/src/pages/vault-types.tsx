@@ -23,7 +23,14 @@ const renderTrademark = (title) => {
   return (
     <>
       {parts[0]}
-      <span style={{ verticalAlign: 'super', fontSize: '60%', marginLeft: '1px' }}>™</span>
+      <span style={{ 
+        verticalAlign: 'super', 
+        fontSize: '60%', 
+        marginLeft: '1px',
+        display: 'inline-block',
+        position: 'relative',
+        top: '-2px'
+      }}>™</span>
       {parts[1] || ''}
     </>
   );
