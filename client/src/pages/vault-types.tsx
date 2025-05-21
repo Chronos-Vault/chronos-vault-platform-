@@ -364,9 +364,9 @@ const VaultCard = ({ vault, selected, onClick }) => {
       <div className="flex items-start mb-3">
         <div className="text-2xl mr-3">{icon}</div>
         <div>
-          <h3 className="text-lg font-bold text-white">
+          <h3 className="text-lg font-bold text-white flex items-center">
             {title.replace("™", "")}
-            <sup style={{ fontSize: "60%", marginLeft: "1px" }}>™</sup>
+            <span className="text-[60%] ml-[1px] relative top-[-5px]">™</span>
           </h3>
           <div className="text-sm opacity-60">{description}</div>
         </div>
