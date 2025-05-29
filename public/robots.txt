@@ -1,0 +1,34 @@
+User-agent: *
+Allow: /
+
+# Allow all search engines to access all content
+Allow: /vault-types
+Allow: /create-vault
+Allow: /my-vaults
+Allow: /documentation
+Allow: /api-documentation
+Allow: /cvt-token
+Allow: /whitepaper
+Allow: /security-dashboard
+
+# Sitemap location
+Sitemap: https://chronosvault.org/sitemap.xml
+
+# Crawl delay for better server performance
+Crawl-delay: 1
+
+# Allow faster crawling for Google and Bing
+User-agent: Googlebot
+Crawl-delay: 0
+
+User-agent: Bingbot  
+Crawl-delay: 0
+
+# Block access to development and admin files
+Disallow: /node_modules/
+Disallow: /.git/
+Disallow: /src/
+Disallow: /admin/
+Disallow: /private/
+Disallow: *.log
+Disallow: *.tmp

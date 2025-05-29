@@ -1,0 +1,249 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
+  <!-- Homepage -->
+  <url>
+    <loc>https://chronosvault.org/</loc>
+    <lastmod>2025-05-29</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>1.0</priority>
+  </url>
+  
+  <!-- Main Platform Pages -->
+  <url>
+    <loc>https://chronosvault.org/my-vaults</loc>
+    <lastmod>2025-05-29</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  
+  <url>
+    <loc>https://chronosvault.org/vault-types</loc>
+    <lastmod>2025-05-29</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  
+  <url>
+    <loc>https://chronosvault.org/create-vault</loc>
+    <lastmod>2025-05-29</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  
+  <!-- Security & Technology Pages -->
+  <url>
+    <loc>https://chronosvault.org/triple-chain-security</loc>
+    <lastmod>2025-05-29</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  
+  <url>
+    <loc>https://chronosvault.org/zero-knowledge-verification</loc>
+    <lastmod>2025-05-29</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  
+  <url>
+    <loc>https://chronosvault.org/quantum-resistant-vault</loc>
+    <lastmod>2025-05-29</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  
+  <url>
+    <loc>https://chronosvault.org/cross-chain-security</loc>
+    <lastmod>2025-05-29</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  
+  <url>
+    <loc>https://chronosvault.org/security-dashboard</loc>
+    <lastmod>2025-05-29</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  
+  <!-- Vault Types -->
+  <url>
+    <loc>https://chronosvault.org/time-lock-vault</loc>
+    <lastmod>2025-05-29</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  
+  <url>
+    <loc>https://chronosvault.org/multi-signature-vault-new</loc>
+    <lastmod>2025-05-29</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  
+  <url>
+    <loc>https://chronosvault.org/geo-location-vault</loc>
+    <lastmod>2025-05-29</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  
+  <url>
+    <loc>https://chronosvault.org/biometric-vault</loc>
+    <lastmod>2025-05-29</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  
+  <url>
+    <loc>https://chronosvault.org/cross-chain-vault</loc>
+    <lastmod>2025-05-29</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  
+  <url>
+    <loc>https://chronosvault.org/ai-assisted-investment-vault</loc>
+    <lastmod>2025-05-29</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  
+  <url>
+    <loc>https://chronosvault.org/sovereign-fortress-vault</loc>
+    <lastmod>2025-05-29</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  
+  <!-- Blockchain Integration -->
+  <url>
+    <loc>https://chronosvault.org/ethereum-integration</loc>
+    <lastmod>2025-05-29</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://chronosvault.org/solana-integration</loc>
+    <lastmod>2025-05-29</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://chronosvault.org/ton-integration</loc>
+    <lastmod>2025-05-29</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <!-- CVT Token & Tokenomics -->
+  <url>
+    <loc>https://chronosvault.org/cvt-token</loc>
+    <lastmod>2025-05-29</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  
+  <url>
+    <loc>https://chronosvault.org/cvt-tokenomics</loc>
+    <lastmod>2025-05-29</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  
+  <url>
+    <loc>https://chronosvault.org/cvt-staking</loc>
+    <lastmod>2025-05-29</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  
+  <!-- Documentation -->
+  <url>
+    <loc>https://chronosvault.org/documentation</loc>
+    <lastmod>2025-05-29</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  
+  <url>
+    <loc>https://chronosvault.org/api-documentation</loc>
+    <lastmod>2025-05-29</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  
+  <url>
+    <loc>https://chronosvault.org/sdk-documentation</loc>
+    <lastmod>2025-05-29</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  
+  <url>
+    <loc>https://chronosvault.org/integration-examples</loc>
+    <lastmod>2025-05-29</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <!-- Information Pages -->
+  <url>
+    <loc>https://chronosvault.org/about</loc>
+    <lastmod>2025-05-29</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://chronosvault.org/team</loc>
+    <lastmod>2025-05-29</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  
+  <url>
+    <loc>https://chronosvault.org/roadmap</loc>
+    <lastmod>2025-05-29</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://chronosvault.org/whitepaper</loc>
+    <lastmod>2025-05-29</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  
+  <url>
+    <loc>https://chronosvault.org/project-whitepaper</loc>
+    <lastmod>2025-05-29</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  
+  <url>
+    <loc>https://chronosvault.org/faq</loc>
+    <lastmod>2025-05-29</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  
+  <!-- Legal Pages -->
+  <url>
+    <loc>https://chronosvault.org/terms-of-service</loc>
+    <lastmod>2025-05-29</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.3</priority>
+  </url>
+  
+  <url>
+    <loc>https://chronosvault.org/cookie-policy</loc>
+    <lastmod>2025-05-29</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.3</priority>
+  </url>
+</urlset>
