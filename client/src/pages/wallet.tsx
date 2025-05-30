@@ -28,16 +28,23 @@ export default function WalletPage() {
   const [recipientAddress, setRecipientAddress] = useState('');
   const [hasWallet, setHasWallet] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+  const [walletData, setWalletData] = useState(null);
+  const [showSwapModal, setShowSwapModal] = useState(false);
+  const [showDepositModal, setShowDepositModal] = useState(false);
+  const [showWithdrawModal, setShowWithdrawModal] = useState(false);
 
   // Check for existing wallet on component mount
   useEffect(() => {
     const checkWalletExists = () => {
       // Check localStorage for wallet data
-      const walletData = localStorage.getItem('chronos_wallet');
+      const storedWalletData = localStorage.getItem('chronos_wallet');
       const walletCreated = localStorage.getItem('chronos_wallet_created');
       
-      if (walletData || walletCreated === 'true') {
+      if (storedWalletData || walletCreated === 'true') {
         setHasWallet(true);
+        if (storedWalletData) {
+          setWalletData(JSON.parse(storedWalletData));
+        }
       } else {
         setHasWallet(false);
       }
@@ -47,11 +54,11 @@ export default function WalletPage() {
     checkWalletExists();
   }, []);
 
-  // Mock wallet data - replace with real API calls
+  // Get wallet balances - new wallets start with zero balance
   const walletBalances = {
-    ethereum: { balance: '12.5847', symbol: 'ETH', usd: '$41,423.50' },
-    solana: { balance: '245.32', symbol: 'SOL', usd: '$8,932.15' },
-    ton: { balance: '1,847.90', symbol: 'TON', usd: '$3,695.80' }
+    ethereum: { balance: '0.0000', symbol: 'ETH', usd: '$0.00' },
+    solana: { balance: '0.0000', symbol: 'SOL', usd: '$0.00' },
+    ton: { balance: '0.0000', symbol: 'TON', usd: '$0.00' }
   };
 
   const recentTransactions = [
@@ -111,17 +118,17 @@ export default function WalletPage() {
     ethereum: {
       name: 'Ethereum',
       color: 'bg-blue-500',
-      address: '0x742d35cc6aa31ae21a60bf2c8d10b1e5a3e33a3b'
+      address: walletData?.addresses?.ethereum || '0x742d35cc6aa31ae21a60bf2c8d10b1e5a3e33a3b'
     },
     solana: {
       name: 'Solana',
       color: 'bg-purple-500',
-      address: '9WzDXwBbmkg8ZTbNMqUxvQRAyrZzDsGYdLVL9zYtAWWM'
+      address: walletData?.addresses?.solana || '9WzDXwBbmkg8ZTbNMqUxvQRAyrZzDsGYdLVL9zYtAWWM'
     },
     ton: {
       name: 'TON',
       color: 'bg-cyan-500',
-      address: 'EQBvW8Z5huBkMJYdnfAEM5JqTNkuWX3diqYENkWsIL0XggGG'
+      address: walletData?.addresses?.ton || 'EQBvW8Z5huBkMJYdnfAEM5JqTNkuWX3diqYENkWsIL0XggGG'
     }
   };
 
@@ -400,10 +407,12 @@ export default function WalletPage() {
                         <p className="text-gray-400 mb-4">
                           Instant, secure swaps between Ethereum, Solana, and TON networks
                         </p>
-                        <Button className="bg-gradient-to-r from-purple-500 to-cyan-500">
-                          <Zap className="w-4 h-4 mr-2" />
-                          Launch Swap Interface
-                        </Button>
+                        <Link href="/cross-chain-atomic-swap">
+                          <Button className="bg-gradient-to-r from-purple-500 to-cyan-500 hover:from-purple-600 hover:to-cyan-600">
+                            <Zap className="w-4 h-4 mr-2" />
+                            Launch Swap Interface
+                          </Button>
+                        </Link>
                       </div>
                     </TabsContent>
                   </Tabs>
