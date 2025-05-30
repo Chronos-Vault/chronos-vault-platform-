@@ -612,3 +612,187 @@ export type DeviceVerification = typeof deviceVerifications.$inferSelect;
 
 export type InsertRecoveryKey = z.infer<typeof insertRecoveryKeySchema>;
 export type RecoveryKey = typeof recoveryKeys.$inferSelect;
+
+// Wallet Integration API Tables
+export const walletRegistrations = pgTable("wallet_registrations", {
+  id: serial("id").primaryKey(),
+  walletId: text("wallet_id").notNull().unique(),
+  walletName: text("wallet_name").notNull(),
+  developerAddress: text("developer_address").notNull(),
+  callbackUrl: text("callback_url").notNull(),
+  apiKey: text("api_key").notNull().unique(),
+  apiSecret: text("api_secret").notNull(),
+  permissions: jsonb("permissions").notNull(),
+  rateLimits: jsonb("rate_limits").notNull(),
+  isActive: boolean("is_active").default(true),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+  updatedAt: timestamp("updated_at"),
+});
+
+export const walletSessions = pgTable("wallet_sessions", {
+  id: serial("id").primaryKey(),
+  sessionToken: text("session_token").notNull().unique(),
+  walletId: text("wallet_id").notNull(),
+  userAddress: text("user_address").notNull(),
+  chain: text("chain").notNull(),
+  expiresAt: timestamp("expires_at").notNull(),
+  securityScore: integer("security_score").default(98),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+  lastActivity: timestamp("last_activity"),
+  isActive: boolean("is_active").default(true),
+});
+
+export const walletVaults = pgTable("wallet_vaults", {
+  id: serial("id").primaryKey(),
+  vaultId: text("vault_id").notNull().unique(),
+  walletId: text("wallet_id").notNull(),
+  userAddress: text("user_address").notNull(),
+  name: text("name").notNull(),
+  vaultType: text("vault_type").notNull(),
+  securityLevel: text("security_level").notNull(),
+  securityScore: integer("security_score").default(99),
+  estimatedAttackCost: text("estimated_attack_cost"),
+  assets: jsonb("assets").notNull(),
+  timeLock: jsonb("time_lock"),
+  beneficiaries: jsonb("beneficiaries"),
+  vaultAddresses: jsonb("vault_addresses").notNull(),
+  transactionHashes: jsonb("transaction_hashes"),
+  status: text("status").default("active"),
+  totalValueUsd: text("total_value_usd"),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+  updatedAt: timestamp("updated_at"),
+  metadata: jsonb("metadata"),
+});
+
+export const walletTransactions = pgTable("wallet_transactions", {
+  id: serial("id").primaryKey(),
+  transactionId: text("transaction_id").notNull().unique(),
+  verificationId: text("verification_id").notNull(),
+  walletId: text("wallet_id").notNull(),
+  userAddress: text("user_address").notNull(),
+  fromAddress: text("from_address").notNull(),
+  toAddress: text("to_address").notNull(),
+  amount: text("amount").notNull(),
+  tokenAddress: text("token_address"),
+  chain: text("chain").notNull(),
+  riskScore: integer("risk_score"),
+  riskLevel: text("risk_level"),
+  aiAnalysis: jsonb("ai_analysis"),
+  trinityVerification: jsonb("trinity_verification"),
+  status: text("status").default("pending"),
+  trinityHashes: jsonb("trinity_hashes"),
+  estimatedGas: jsonb("estimated_gas"),
+  priority: text("priority"),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+  completedAt: timestamp("completed_at"),
+  metadata: jsonb("metadata"),
+});
+
+export const walletSecurityAlerts = pgTable("wallet_security_alerts", {
+  id: serial("id").primaryKey(),
+  alertId: text("alert_id").notNull().unique(),
+  walletId: text("wallet_id").notNull(),
+  userAddress: text("user_address"),
+  vaultId: text("vault_id"),
+  alertType: text("alert_type").notNull(),
+  severity: text("severity").notNull(),
+  message: text("message").notNull(),
+  aiAnalysis: jsonb("ai_analysis"),
+  autoActionsTaken: jsonb("auto_actions_taken"),
+  affectedVault: text("affected_vault"),
+  isResolved: boolean("is_resolved").default(false),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+  resolvedAt: timestamp("resolved_at"),
+  metadata: jsonb("metadata"),
+});
+
+export const walletWebhooks = pgTable("wallet_webhooks", {
+  id: serial("id").primaryKey(),
+  webhookId: text("webhook_id").notNull().unique(),
+  walletId: text("wallet_id").notNull(),
+  url: text("url").notNull(),
+  events: jsonb("events").notNull(),
+  secret: text("secret"),
+  isActive: boolean("is_active").default(true),
+  lastTriggered: timestamp("last_triggered"),
+  successCount: integer("success_count").default(0),
+  failureCount: integer("failure_count").default(0),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+  updatedAt: timestamp("updated_at"),
+});
+
+// Insert schemas for wallet integration
+export const insertWalletRegistrationSchema = createInsertSchema(walletRegistrations).pick({
+  walletId: true,
+  walletName: true,
+  developerAddress: true,
+  callbackUrl: true,
+  apiKey: true,
+  apiSecret: true,
+  permissions: true,
+  rateLimits: true,
+  isActive: true,
+});
+
+export const insertWalletSessionSchema = createInsertSchema(walletSessions).pick({
+  sessionToken: true,
+  walletId: true,
+  userAddress: true,
+  chain: true,
+  expiresAt: true,
+  securityScore: true,
+  isActive: true,
+});
+
+export const insertWalletVaultSchema = createInsertSchema(walletVaults).pick({
+  vaultId: true,
+  walletId: true,
+  userAddress: true,
+  name: true,
+  vaultType: true,
+  securityLevel: true,
+  securityScore: true,
+  estimatedAttackCost: true,
+  assets: true,
+  timeLock: true,
+  beneficiaries: true,
+  vaultAddresses: true,
+  transactionHashes: true,
+  status: true,
+  totalValueUsd: true,
+  metadata: true,
+});
+
+export const insertWalletTransactionSchema = createInsertSchema(walletTransactions).pick({
+  transactionId: true,
+  verificationId: true,
+  walletId: true,
+  userAddress: true,
+  fromAddress: true,
+  toAddress: true,
+  amount: true,
+  tokenAddress: true,
+  chain: true,
+  riskScore: true,
+  riskLevel: true,
+  aiAnalysis: true,
+  trinityVerification: true,
+  status: true,
+  trinityHashes: true,
+  estimatedGas: true,
+  priority: true,
+  metadata: true,
+});
+
+// Type exports for wallet integration
+export type InsertWalletRegistration = z.infer<typeof insertWalletRegistrationSchema>;
+export type WalletRegistration = typeof walletRegistrations.$inferSelect;
+
+export type InsertWalletSession = z.infer<typeof insertWalletSessionSchema>;
+export type WalletSession = typeof walletSessions.$inferSelect;
+
+export type InsertWalletVault = z.infer<typeof insertWalletVaultSchema>;
+export type WalletVault = typeof walletVaults.$inferSelect;
+
+export type InsertWalletTransaction = z.infer<typeof insertWalletTransactionSchema>;
+export type WalletTransaction = typeof walletTransactions.$inferSelect;
