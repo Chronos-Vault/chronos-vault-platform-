@@ -15,15 +15,18 @@ import {
   TrendingUp,
   Zap,
   Lock,
-  Globe
+  Globe,
+  Plus
 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import { Link } from 'wouter';
 
 export default function WalletPage() {
   const { toast } = useToast();
   const [selectedChain, setSelectedChain] = useState('ethereum');
   const [sendAmount, setSendAmount] = useState('');
   const [recipientAddress, setRecipientAddress] = useState('');
+  const [hasWallet, setHasWallet] = useState(false); // Check if user has created a wallet
 
   // Mock wallet data - replace with real API calls
   const walletBalances = {
@@ -102,6 +105,69 @@ export default function WalletPage() {
       address: 'EQBvW8Z5huBkMJYdnfAEM5JqTNkuWX3diqYENkWsIL0XggGG'
     }
   };
+
+  // Show wallet creation prompt if no wallet exists
+  if (!hasWallet) {
+    return (
+      <div className="min-h-screen bg-black text-white">
+        <div className="relative px-6 py-16">
+          <div className="absolute inset-0 bg-gradient-to-r from-purple-900/20 via-blue-900/20 to-cyan-900/20"></div>
+          
+          <div className="relative max-w-4xl mx-auto text-center">
+            <div className="p-4 bg-gradient-to-r from-purple-500 to-cyan-500 rounded-xl w-20 h-20 flex items-center justify-center mx-auto mb-8">
+              <Wallet className="w-10 h-10" />
+            </div>
+            
+            <h1 className="text-4xl font-bold bg-gradient-to-r from-purple-400 to-cyan-400 bg-clip-text text-transparent mb-6">
+              Welcome to Chronos Wallet
+            </h1>
+            
+            <p className="text-gray-400 text-lg max-w-2xl mx-auto mb-8">
+              Create your secure multi-chain wallet protected by Trinity Protocol. Experience quantum-resistant security across Ethereum, Solana, and TON networks.
+            </p>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
+              <Card className="bg-gray-900/50 border-green-500/30">
+                <CardContent className="p-6 text-center">
+                  <Shield className="w-12 h-12 text-green-400 mx-auto mb-4" />
+                  <h3 className="text-lg font-semibold mb-2">Trinity Protocol</h3>
+                  <p className="text-gray-400 text-sm">Triple-chain verification for maximum security</p>
+                </CardContent>
+              </Card>
+
+              <Card className="bg-gray-900/50 border-blue-500/30">
+                <CardContent className="p-6 text-center">
+                  <Lock className="w-12 h-12 text-blue-400 mx-auto mb-4" />
+                  <h3 className="text-lg font-semibold mb-2">Quantum Resistant</h3>
+                  <p className="text-gray-400 text-sm">Advanced cryptography that's future-proof</p>
+                </CardContent>
+              </Card>
+
+              <Card className="bg-gray-900/50 border-purple-500/30">
+                <CardContent className="p-6 text-center">
+                  <Globe className="w-12 h-12 text-purple-400 mx-auto mb-4" />
+                  <h3 className="text-lg font-semibold mb-2">Multi-Chain</h3>
+                  <p className="text-gray-400 text-sm">Native support for 3 major blockchains</p>
+                </CardContent>
+              </Card>
+            </div>
+
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <Link href="/create-wallet">
+                <Button className="bg-gradient-to-r from-purple-500 to-cyan-500 hover:from-purple-600 hover:to-cyan-600 text-lg px-8 py-3">
+                  <Plus className="w-5 h-5 mr-2" />
+                  Create New Wallet
+                </Button>
+              </Link>
+              <Button variant="outline" className="text-lg px-8 py-3">
+                Import Existing Wallet
+              </Button>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-black text-white">

@@ -39,6 +39,7 @@ import SmartContractSDKPage from '@/pages/smart-contract-sdk';
 import DeveloperAPIKeysPage from '@/pages/DeveloperAPIKeys';
 import WalletIntegrationDemoPage from '@/pages/WalletIntegrationDemo';
 import WalletPage from '@/pages/wallet';
+import CreateWalletPage from '@/pages/create-wallet';
 
 // Vault Type Pages
 import VaultTypesPage from '@/pages/vault-types-new';
@@ -169,6 +170,7 @@ const App: React.FC = () => {
                       {/* Main Pages */}
                       <Route path="/" component={HomePage} />
                       <Route path="/wallet" component={WalletPage} />
+                      <Route path="/create-wallet" component={CreateWalletPage} />
                       <Route path="/my-vaults" component={MyVaultsPage} />
                       <Route path="/about" component={AboutPage} />
                       <Route path="/faq" component={FaqPage} />
