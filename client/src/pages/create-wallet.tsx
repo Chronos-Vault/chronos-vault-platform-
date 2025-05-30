@@ -21,10 +21,11 @@ import {
   Cpu
 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
-import { Link } from 'wouter';
+import { Link, useLocation } from 'wouter';
 
 export default function CreateWalletPage() {
   const { toast } = useToast();
+  const [, setLocation] = useLocation();
   const [step, setStep] = useState(1);
   const [walletName, setWalletName] = useState('');
   const [password, setPassword] = useState('');
@@ -84,6 +85,21 @@ export default function CreateWalletPage() {
       });
       return;
     }
+    
+    // Save wallet creation state to localStorage
+    const walletData = {
+      name: walletName,
+      chains: selectedChains,
+      created: new Date().toISOString(),
+      addresses: {
+        ethereum: '0x742d35cc6aa31ae21a60bf2c8d10b1e5a3e33a3b',
+        solana: '9WzDXwBbmkg8ZTbNMqUxvQRAyrZzDsGYdLVL9zYtAWWM',
+        ton: 'EQBvW8Z5huBkMJYdnfAEM5JqTNkuWX3diqYENkWsIL0XggGG'
+      }
+    };
+    
+    localStorage.setItem('chronos_wallet', JSON.stringify(walletData));
+    localStorage.setItem('chronos_wallet_created', 'true');
     
     setWalletCreated(true);
     setStep(3);

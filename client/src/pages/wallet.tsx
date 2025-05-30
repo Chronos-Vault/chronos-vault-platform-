@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -26,7 +26,26 @@ export default function WalletPage() {
   const [selectedChain, setSelectedChain] = useState('ethereum');
   const [sendAmount, setSendAmount] = useState('');
   const [recipientAddress, setRecipientAddress] = useState('');
-  const [hasWallet, setHasWallet] = useState(false); // Check if user has created a wallet
+  const [hasWallet, setHasWallet] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+
+  // Check for existing wallet on component mount
+  useEffect(() => {
+    const checkWalletExists = () => {
+      // Check localStorage for wallet data
+      const walletData = localStorage.getItem('chronos_wallet');
+      const walletCreated = localStorage.getItem('chronos_wallet_created');
+      
+      if (walletData || walletCreated === 'true') {
+        setHasWallet(true);
+      } else {
+        setHasWallet(false);
+      }
+      setIsLoading(false);
+    };
+
+    checkWalletExists();
+  }, []);
 
   // Mock wallet data - replace with real API calls
   const walletBalances = {
@@ -105,6 +124,18 @@ export default function WalletPage() {
       address: 'EQBvW8Z5huBkMJYdnfAEM5JqTNkuWX3diqYENkWsIL0XggGG'
     }
   };
+
+  // Show loading state while checking for wallet
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-black text-white flex items-center justify-center">
+        <div className="text-center">
+          <div className="w-8 h-8 border-2 border-purple-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+          <p className="text-gray-400">Loading wallet...</p>
+        </div>
+      </div>
+    );
+  }
 
   // Show wallet creation prompt if no wallet exists
   if (!hasWallet) {
