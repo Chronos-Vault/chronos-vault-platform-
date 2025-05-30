@@ -60,6 +60,28 @@ const DeveloperPortal = () => {
             <Card className="bg-black/20 border border-gray-800 hover:border-[#FF5AF7]/50 transition-all group">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
+                  <ServerCog className="h-6 w-6 text-green-500 group-hover:text-[#FF5AF7] transition-colors" />
+                  API Keys Management
+                </CardTitle>
+                <CardDescription>
+                  Generate and manage wallet integration credentials
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <p className="text-sm text-gray-400">
+                  Create API keys for external wallet developers to integrate with Chronos Vault Trinity Protocol security infrastructure.
+                </p>
+              </CardContent>
+              <CardFooter>
+                <Button asChild variant="outline" className="w-full bg-green-600/10 border-green-600/30 hover:bg-green-600/20">
+                  <Link href="/developer-api-keys">Manage API Keys</Link>
+                </Button>
+              </CardFooter>
+            </Card>
+
+            <Card className="bg-black/20 border border-gray-800 hover:border-[#FF5AF7]/50 transition-all group">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
                   <FileJson className="h-6 w-6 text-indigo-500 group-hover:text-[#FF5AF7] transition-colors" />
                   API Reference
                 </CardTitle>
