@@ -193,8 +193,19 @@ export async function registerRoutes(app: Express): Promise<Server> {
     });
   });
   
-  // Register the API router
+  // Register the API router with higher priority - mount before any middleware
   app.use('/api', apiRouter);
+  
+  // Add explicit API route handlers to ensure they bypass frontend routing
+  app.use('/api/*', (req, res, next) => {
+    // If we reach here, the API route wasn't found
+    res.status(404).json({ 
+      error: { 
+        code: 'API_ENDPOINT_NOT_FOUND', 
+        message: 'API endpoint not found' 
+      } 
+    });
+  });
   
   // Direct emergency reset endpoint for mobile issues
   app.get('/mobile-reset', resetOnboarding);
@@ -202,7 +213,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.get('/m-reset', resetOnboarding);
   
   // Set up Vite for development or serve static files for production
-  // We set this up last so API routes take precedence
+  // API routes are already handled above
   if (process.env.NODE_ENV === 'development') {
     const { setupVite } = await import('./vite');
     await setupVite(app, httpServer);
