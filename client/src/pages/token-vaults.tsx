@@ -30,14 +30,17 @@ const CustomProgress: React.FC<ProgressProps> = ({ value, className, indicatorCl
   React.useEffect(() => {
     // This adds a style tag to handle the indicator styling
     if (indicatorClassName) {
+      // Sanitize className to only allow safe CSS class patterns
+      const sanitizedClassName = indicatorClassName.replace(/[^a-zA-Z0-9\-_\s]/g, '');
+      
       const styleId = `progress-indicator-${Math.random().toString(36).slice(2, 9)}`;
       const styleTag = document.createElement('style');
       styleTag.id = styleId;
-      styleTag.innerHTML = `
-        .progress-bar-custom div {
-          ${indicatorClassName.includes('bg-gradient') ? indicatorClassName : ''}
-        }
-      `;
+      
+      // Use textContent instead of innerHTML to prevent XSS
+      const cssRule = `.progress-bar-custom div { ${sanitizedClassName.includes('bg-gradient') ? sanitizedClassName : ''} }`;
+      styleTag.textContent = cssRule;
+      
       document.head.appendChild(styleTag);
       
       return () => {
