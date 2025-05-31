@@ -33,9 +33,16 @@ class TonConnector {
         this.tonConnectUI = existingTonConnectUI;
       } else {
         try {
-          // Initialize TonConnectUI
+          // Initialize TonConnectUI with proper error handling
           const manifestUrl = `${window.location.origin}/tonconnect-manifest.json`;
           console.log('Initializing TonConnectUI with manifest URL:', manifestUrl);
+          
+          // Ensure Buffer is available before creating TonConnectUI
+          if (typeof window !== 'undefined' && !(window as any).Buffer) {
+            const { Buffer } = await import('buffer');
+            (window as any).Buffer = Buffer;
+            (window as any).global = window;
+          }
           
           // Create new instance
           this.tonConnectUI = new TonConnectUI({
@@ -45,9 +52,11 @@ class TonConnector {
           
           // Store as global instance
           (window as any).__tonConnectUIInstance = this.tonConnectUI;
+          console.log('TonConnectUI successfully initialized');
         } catch (error) {
-          console.warn('Could not create new TonConnectUI, using fallback:', error);
-          // Handle as gracefully as possible
+          console.error('Error creating TonConnectUI:', error);
+          // Set to null to prevent further errors
+          this.tonConnectUI = null;
         }
       }
       

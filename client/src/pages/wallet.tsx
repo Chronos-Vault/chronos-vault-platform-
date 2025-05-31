@@ -57,7 +57,7 @@ export default function WalletPage() {
     setHasWallet(true);
     
     // Update wallet balances for connected wallet
-    setRealWalletBalances(prev => ({
+    setRealWalletBalances((prev: any) => ({
       ...prev,
       [walletType]: { connected: true, address }
     }));

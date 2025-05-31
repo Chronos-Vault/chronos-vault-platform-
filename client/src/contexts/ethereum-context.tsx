@@ -31,6 +31,7 @@ interface EthereumContextType {
   availableNetworks: { id: string; name: string; chainId: number }[];
   currentNetwork: EthereumNetwork;
   walletAddress: string;
+  account: string | null;
   
   // Methods
   connect: () => Promise<boolean>;
@@ -234,6 +235,7 @@ export const EthereumProvider: React.FC<EthereumProviderProps> = ({ children }) 
     availableNetworks,
     currentNetwork,
     walletAddress: getWalletInfo()?.address || '',
+    account: getWalletInfo()?.address || null,
     connect,
     disconnect,
     sendETH,
