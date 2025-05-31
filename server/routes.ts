@@ -28,6 +28,7 @@ import { ConnectorFactory } from './blockchain/connector-factory';
 import { securityLogger, SecurityEventType } from './monitoring/security-logger';
 import { geolocationService } from './services/geolocation-service';
 import { VerificationStatus } from './blockchain/cross-chain-vault-verification';
+import { testnetWalletService } from './services/testnet-wallet-service';
 import { WebSocket } from 'ws';
 import { initializeWebSocketManager, getWebSocketManager } from './websocket/websocket-manager';
 import { resetOnboarding } from './api/emergency-reset';
