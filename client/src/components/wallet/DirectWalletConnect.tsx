@@ -12,9 +12,9 @@ export function DirectWalletConnect({ onConnect }: DirectWalletConnectProps) {
 
   const connectMetaMask = async () => {
     try {
-      // Check for MetaMask availability
-      if (typeof window !== 'undefined' && (window as any).ethereum && (window as any).ethereum.isMetaMask) {
-        // Request account access
+      // Force MetaMask connection without download fallback
+      if (typeof window !== 'undefined' && (window as any).ethereum) {
+        // Try to connect to any Ethereum provider
         const accounts = await (window as any).ethereum.request({
           method: 'eth_requestAccounts'
         });
@@ -52,35 +52,34 @@ export function DirectWalletConnect({ onConnect }: DirectWalletConnectProps) {
         }
       }
       
-      // If no MetaMask detected, provide installation guidance
-      const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-      if (isMobile) {
-        toast({
-          title: "Install MetaMask",
-          description: "Please install MetaMask mobile app to continue",
-        });
-        window.open('https://metamask.io/download/', '_blank');
-      } else {
-        toast({
-          title: "MetaMask Required",
-          description: "Please install MetaMask browser extension to connect",
-        });
-        window.open('https://metamask.io/download/', '_blank');
-      }
-    } catch (error) {
-      console.error('MetaMask authorization failed:', error);
+      // If no provider available, show connection error
       toast({
-        title: "Authorization Failed",
-        description: "Unable to authorize MetaMask with Chronos Vault",
+        title: "MetaMask Not Available",
+        description: "Please ensure MetaMask is installed and unlocked",
         variant: "destructive",
       });
+    } catch (error) {
+      console.error('MetaMask connection error:', error);
+      if ((error as any).code === 4001) {
+        toast({
+          title: "Connection Rejected",
+          description: "Please accept the connection request in MetaMask",
+          variant: "destructive",
+        });
+      } else {
+        toast({
+          title: "Connection Failed",
+          description: "Unable to connect to MetaMask. Please try again.",
+          variant: "destructive",
+        });
+      }
     }
   };
 
   const connectPhantom = async () => {
     try {
-      // Check for Phantom wallet availability
-      if (typeof window !== 'undefined' && (window as any).solana && (window as any).solana.isPhantom) {
+      // Force Phantom connection without download fallback
+      if (typeof window !== 'undefined' && (window as any).solana) {
         // Connect to Phantom wallet
         const response = await (window as any).solana.connect();
         
@@ -114,47 +113,42 @@ export function DirectWalletConnect({ onConnect }: DirectWalletConnectProps) {
         }
       }
       
-      // If no Phantom detected, provide installation guidance
-      const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-      if (isMobile) {
-        toast({
-          title: "Install Phantom",
-          description: "Please install Phantom mobile app to continue",
-        });
-        window.open('https://phantom.app/download', '_blank');
-      } else {
-        toast({
-          title: "Phantom Required",
-          description: "Please install Phantom browser extension to connect",
-        });
-        window.open('https://phantom.app/download', '_blank');
-      }
-    } catch (error) {
-      console.error('Phantom authorization failed:', error);
+      // If no provider available, show connection error
       toast({
-        title: "Authorization Failed",
-        description: "Unable to authorize Phantom with Chronos Vault",
+        title: "Phantom Not Available",
+        description: "Please ensure Phantom wallet is installed and unlocked",
         variant: "destructive",
       });
+    } catch (error) {
+      console.error('Phantom connection error:', error);
+      if ((error as any).code === 4001 || (error as any).message?.includes('User rejected')) {
+        toast({
+          title: "Connection Rejected",
+          description: "Please accept the connection request in Phantom",
+          variant: "destructive",
+        });
+      } else {
+        toast({
+          title: "Connection Failed",
+          description: "Unable to connect to Phantom. Please try again.",
+          variant: "destructive",
+        });
+      }
     }
   };
 
   const connectTonKeeper = async () => {
     try {
-      // Check for TON Keeper availability
-      if (typeof window !== 'undefined' && (window as any).tonkeeper) {
+      // Force TON Keeper connection without download fallback
+      if (typeof window !== 'undefined' && (window as any).ton) {
         // Use TonConnect protocol for proper authorization
-        const connector = (window as any).tonkeeper;
+        const tonConnector = (window as any).ton;
         
-        const connectResult = await connector.connect({
-          manifestUrl: '/tonconnect-manifest.json',
-          items: [{
-            name: "ton_addr",
-            payload: "chronos-vault-auth"
-          }]
-        });
+        const connectResult = await tonConnector.send('ton_requestAccounts');
         
-        if (connectResult && connectResult.address) {
+        if (connectResult && connectResult.length > 0) {
+          const address = connectResult[0];
+          
           // Authorize with Chronos Vault backend
           const authResponse = await fetch('/api/vault/authorize-wallet', {
             method: 'POST',
@@ -162,18 +156,17 @@ export function DirectWalletConnect({ onConnect }: DirectWalletConnectProps) {
               'Content-Type': 'application/json',
             },
             body: JSON.stringify({
-              address: connectResult.address,
+              address: address,
               walletType: 'tonkeeper',
-              blockchain: 'ton',
-              proof: connectResult.proof
+              blockchain: 'ton'
             }),
           });
 
           if (authResponse.ok) {
-            onConnect('tonkeeper', connectResult.address);
+            onConnect('tonkeeper', address);
             toast({
               title: "TON Keeper Authorized",
-              description: `Wallet authorized for Chronos Vault: ${connectResult.address.slice(0, 6)}...${connectResult.address.slice(-4)}`,
+              description: `Wallet authorized for Chronos Vault: ${address.slice(0, 6)}...${address.slice(-4)}`,
             });
           } else {
             throw new Error('Failed to authorize wallet with Chronos Vault');
@@ -182,28 +175,27 @@ export function DirectWalletConnect({ onConnect }: DirectWalletConnectProps) {
         }
       }
       
-      // If no TON Keeper detected, provide installation guidance
-      const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-      if (isMobile) {
-        toast({
-          title: "Install TON Keeper",
-          description: "Please install TON Keeper mobile app to continue",
-        });
-        window.open('https://tonkeeper.com/', '_blank');
-      } else {
-        toast({
-          title: "TON Keeper Required",
-          description: "Please install TON Keeper browser extension to connect",
-        });
-        window.open('https://tonkeeper.com/', '_blank');
-      }
-    } catch (error) {
-      console.error('TON Keeper authorization failed:', error);
+      // If no provider available, show connection error
       toast({
-        title: "Authorization Failed",
-        description: "Unable to authorize TON Keeper with Chronos Vault",
+        title: "TON Keeper Not Available",
+        description: "Please ensure TON Keeper wallet is installed and unlocked",
         variant: "destructive",
       });
+    } catch (error) {
+      console.error('TON Keeper connection error:', error);
+      if ((error as any).code === 4001 || (error as any).message?.includes('User rejected')) {
+        toast({
+          title: "Connection Rejected",
+          description: "Please accept the connection request in TON Keeper",
+          variant: "destructive",
+        });
+      } else {
+        toast({
+          title: "Connection Failed",
+          description: "Unable to connect to TON Keeper. Please try again.",
+          variant: "destructive",
+        });
+      }
     }
   };
 
