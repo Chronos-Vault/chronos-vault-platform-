@@ -126,13 +126,7 @@ export default function WalletPage() {
     }
   ];
 
-  const copyAddress = (address: string) => {
-    navigator.clipboard.writeText(address);
-    toast({
-      title: "Address Copied",
-      description: "Wallet address copied to clipboard",
-    });
-  };
+
 
   const handleAirdrop = async (network: 'solana' | 'ton') => {
     try {
@@ -165,6 +159,123 @@ export default function WalletPage() {
       toast({
         title: "Airdrop Error",
         description: "Failed to request testnet tokens",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const copyAddress = async (address: string) => {
+    try {
+      await navigator.clipboard.writeText(address);
+      toast({
+        title: "Address Copied",
+        description: "Wallet address copied to clipboard",
+      });
+    } catch (error) {
+      toast({
+        title: "Copy Failed",
+        description: "Could not copy address to clipboard",
+        variant: "destructive",
+      });
+    }
+  };
+
+  // Connect wallet functions
+  const connectWallet = async (chain: string) => {
+    setIsLoading(true);
+    try {
+      const response = await fetch(`/api/wallet/connect/${chain}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' }
+      });
+      
+      const data = await response.json();
+      
+      if (data.status === 'success') {
+        toast({
+          title: `${chain.charAt(0).toUpperCase() + chain.slice(1)} Connected`,
+          description: `Wallet connected successfully: ${data.address.slice(0, 8)}...${data.address.slice(-6)}`,
+        });
+        
+        // Refresh wallet data
+        window.location.reload();
+      } else {
+        toast({
+          title: "Connection Failed",
+          description: data.message || "Failed to connect wallet",
+          variant: "destructive",
+        });
+      }
+    } catch (error) {
+      toast({
+        title: "Connection Error",
+        description: "Network error while connecting wallet",
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // Handle deposit functionality
+  const handleDeposit = async (amount: string, network: string) => {
+    try {
+      const response = await fetch('/api/wallet/deposit', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ amount, network })
+      });
+      
+      const data = await response.json();
+      
+      if (data.status === 'success') {
+        toast({
+          title: "Deposit Initiated",
+          description: `Depositing ${amount} on ${network}`,
+        });
+      } else {
+        toast({
+          title: "Deposit Failed",
+          description: data.message || "Failed to initiate deposit",
+          variant: "destructive",
+        });
+      }
+    } catch (error) {
+      toast({
+        title: "Deposit Error",
+        description: "Network error during deposit",
+        variant: "destructive",
+      });
+    }
+  };
+
+  // Handle withdraw functionality
+  const handleWithdraw = async (amount: string, address: string, network: string) => {
+    try {
+      const response = await fetch('/api/wallet/withdraw', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ amount, address, network })
+      });
+      
+      const data = await response.json();
+      
+      if (data.status === 'success') {
+        toast({
+          title: "Withdrawal Initiated",
+          description: `Withdrawing ${amount} to ${address.slice(0, 8)}...${address.slice(-6)}`,
+        });
+      } else {
+        toast({
+          title: "Withdrawal Failed",
+          description: data.message || "Failed to initiate withdrawal",
+          variant: "destructive",
+        });
+      }
+    } catch (error) {
+      toast({
+        title: "Withdrawal Error",
+        description: "Network error during withdrawal",
         variant: "destructive",
       });
     }
@@ -469,15 +580,11 @@ export default function WalletPage() {
                               <Button 
                                 size="sm" 
                                 className="w-full text-xs"
-                                onClick={() => {
-                                  toast({
-                                    title: `Connect ${chain.charAt(0).toUpperCase() + chain.slice(1)} Wallet`,
-                                    description: "Please connect your wallet to continue",
-                                  });
-                                }}
+                                onClick={() => connectWallet(chain)}
+                                disabled={isLoading}
                               >
                                 <Wallet className="w-3 h-3 mr-1" />
-                                Connect {chain.charAt(0).toUpperCase() + chain.slice(1)}
+                                {isLoading ? 'Connecting...' : `Connect ${chain.charAt(0).toUpperCase() + chain.slice(1)}`}
                               </Button>
                             </div>
                           )}
