@@ -24,12 +24,12 @@ export function BrowserWalletConnect({ walletType, onConnect, onCancel }: Browse
     phantom: {
       name: 'Phantom',
       description: 'Connect using Phantom browser extension',
-      checkMethod: () => typeof window !== 'undefined' && window.solana?.isPhantom
+      checkMethod: () => typeof window !== 'undefined' && (window as any).solana?.isPhantom
     },
     tonkeeper: {
       name: 'TON Keeper',
       description: 'Connect using TON Keeper browser extension',
-      checkMethod: () => typeof window !== 'undefined' && window.ton
+      checkMethod: () => typeof window !== 'undefined' && (window as any).ton
     }
   };
 
@@ -67,7 +67,7 @@ export function BrowserWalletConnect({ walletType, onConnect, onCancel }: Browse
       setStatus('error');
       toast({
         title: 'Connection Failed',
-        description: error.message || 'Failed to connect to MetaMask',
+        description: (error as Error).message || 'Failed to connect to MetaMask',
         variant: 'destructive',
       });
     }

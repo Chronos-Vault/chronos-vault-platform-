@@ -360,7 +360,7 @@ export const TonProvider: React.FC<TonProviderProps> = ({ children }) => {
     comment?: string;
   }): Promise<{ success: boolean; vaultAddress?: string; transactionHash?: string; error?: string }> => {
     try {
-      const result = await tonService.createVault(params.unlockTime, params.recipient, params.amount, params.comment);
+      const result = await tonService.createVault(params.unlockTime, params.amount, params.recipient);
       
       // Refresh wallet info after vault creation
       setWalletInfo(tonService.getWalletInfo());
