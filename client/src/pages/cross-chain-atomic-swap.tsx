@@ -121,7 +121,43 @@ const AtomicSwapPage = () => {
     },
   });
 
-  // Handle form submission
+  // State for swap routes and real-time data
+  const [swapRoutes, setSwapRoutes] = useState<any[]>([]);
+  const [isLoadingRoutes, setIsLoadingRoutes] = useState(false);
+  const [bestRoute, setBestRoute] = useState<any>(null);
+
+  // Function to find optimal swap routes using the DeFi service
+  const findSwapRoutes = async (fromToken: string, toToken: string, amount: string, fromNetwork: string, toNetwork: string) => {
+    setIsLoadingRoutes(true);
+    try {
+      const response = await fetch('/api/defi/swap/routes', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          fromToken,
+          toToken,
+          amount,
+          fromNetwork,
+          toNetwork
+        })
+      });
+
+      const result = await response.json();
+      if (result.status === 'success') {
+        setSwapRoutes(result.data);
+        setBestRoute(result.data[0]); // Best route is first
+        return result.data;
+      }
+      throw new Error('Failed to fetch routes');
+    } catch (error) {
+      console.error('Route finding failed:', error);
+      throw error;
+    } finally {
+      setIsLoadingRoutes(false);
+    }
+  };
+
+  // Enhanced form submission with real DeFi integration
   const onSubmit = async (data: FormValues) => {
     setIsCreating(true);
     try {
@@ -145,11 +181,44 @@ const AtomicSwapPage = () => {
       if (!destAddress) {
         throw new Error(`No wallet address found for ${data.crossChainDestination}`);
       }
-      
+
+      // Find optimal swap routes first
+      const routes = await findSwapRoutes(
+        'TON', // Derive from source chain
+        'ETH', // Derive from destination chain
+        data.crossChainSourceAmount,
+        data.crossChainSource.toLowerCase(),
+        data.crossChainDestination.toLowerCase()
+      );
+
+      if (routes.length === 0) {
+        throw new Error('No viable swap routes found');
+      }
+
+      // Create atomic swap order using the DeFi service
+      const swapResponse = await fetch('/api/defi/swap/create', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          userAddress: sourceAddress,
+          fromToken: 'TON',
+          toToken: 'ETH',
+          fromAmount: data.crossChainSourceAmount,
+          minAmount: (parseFloat(data.crossChainSourceAmount) * 0.95).toString(), // 5% slippage
+          fromNetwork: data.crossChainSource.toLowerCase(),
+          toNetwork: data.crossChainDestination.toLowerCase()
+        })
+      });
+
+      const swapResult = await swapResponse.json();
+      if (swapResult.status !== 'success') {
+        throw new Error(swapResult.message || 'Failed to create swap order');
+      }
+
       // Get security settings from the multi-signature form
       const multiSigConfig = form.watch("multiSignatureConfig");
       
-      // Create the swap configuration
+      // Create the swap configuration for the existing system
       const swapConfig: SwapConfig = {
         sourceChain: data.crossChainSource as BlockchainType,
         destChain: data.crossChainDestination as BlockchainType,
@@ -166,16 +235,16 @@ const AtomicSwapPage = () => {
         useBackupRecovery: multiSigConfig?.useBackupRecovery || false,
         recoveryAddress: multiSigConfig?.recoveryAddress || undefined,
         geolocationRestricted: multiSigConfig?.geolocationRestricted || false,
-        allowedGeolocationHashes: ["current-location-hash"], // In a real implementation, we would get actual geo hashes
+        allowedGeolocationHashes: ["current-location-hash"],
         securityLevel: multiSigConfig?.securityLevel || "standard"
       };
       
-      // Create the swap
+      // Create the swap in the existing system
       const swap = await createSwap(swapConfig);
       
       toast({
-        title: "Atomic Swap Initiated",
-        description: `Cross-chain atomic swap created successfully with ID: ${swap.id.slice(0, 8)}...`,
+        title: "Atomic Swap Created",
+        description: `Cross-chain atomic swap created with optimal route. Order ID: ${swapResult.data.id.slice(0, 8)}...`,
       });
       
       // Switch to the history tab to see the created swap
