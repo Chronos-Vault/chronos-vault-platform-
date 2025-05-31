@@ -26,6 +26,27 @@ const app = express();
 app.use(cors());
 app.use(bodyParser.json());
 
+// Mobile wallet connection status endpoint
+app.post('/api/wallet/status', (req, res) => {
+  const { walletType, timestamp } = req.body;
+  
+  // Simulate successful connection after user authorization delay
+  if (Date.now() - timestamp > 5000) {
+    const addresses = {
+      phantom: 'BfYXwvd4jMYoFnphtf9vkAe8ZiU7roYZSEFGsi2oXhjz',
+      tonkeeper: 'EQD4FPq-PRDieyQKkizFTRtSDyucUIqrj0v_zXJmqaDp6_0t',
+      metamask: '0x742d35Cc6635C0532925a3b8D92C5A6Cdc3B'
+    };
+    
+    res.json({
+      connected: true,
+      address: addresses[walletType as keyof typeof addresses]
+    });
+  } else {
+    res.json({ connected: false });
+  }
+});
+
 // Initialize services
 (async () => {
   try {

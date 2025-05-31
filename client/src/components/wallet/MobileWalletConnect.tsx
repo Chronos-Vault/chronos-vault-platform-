@@ -4,7 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { QrCode, Smartphone, CheckCircle, AlertCircle } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
-import { createWeb3Modal, defaultConfig } from '@web3modal/ethers/react';
+import { useWalletConnect } from './WalletConnectProvider';
 
 interface MobileWalletConnectProps {
   walletType: 'metamask' | 'phantom' | 'tonkeeper';
@@ -66,46 +66,81 @@ export function MobileWalletConnect({ walletType, onConnect }: MobileWalletConne
 
   const handleMobileConnect = async () => {
     setConnectionStatus('connecting');
-    const connectionUri = generateConnectionRequest();
-    setQrData(connectionUri);
-    setShowQR(true);
-
+    
     try {
-      // For Ethereum-based wallets, try WalletConnect protocol
       if (walletType === 'metamask') {
-        // Use proper WalletConnect deep link
-        window.open(connectionUri, '_blank');
+        // Use real WalletConnect for MetaMask mobile
+        const { connect, account } = useWalletConnect();
+        await connect();
         
-        // Simulate connection after user authorizes in wallet app
-        setTimeout(() => {
-          const mockAddress = '0x742d35Cc6635C0532925a3b8D92C5A6Cdc3B';
+        if (account) {
           setConnectionStatus('connected');
           setShowQR(false);
-          onConnect(walletType, mockAddress);
+          onConnect(walletType, account);
           toast({
             title: "MetaMask Connected",
-            description: `Connected: ${mockAddress.slice(0, 6)}...${mockAddress.slice(-4)}`,
+            description: `Connected: ${account.slice(0, 6)}...${account.slice(-4)}`,
           });
-        }, 8000);
+        }
       } else {
-        // For other wallets, open their native connection flow
-        window.open(connectionUri, '_blank');
+        // For Phantom and TON Keeper, show QR code for proper wallet authorization
+        const connectionUri = generateConnectionRequest();
+        setQrData(connectionUri);
+        setShowQR(true);
         
-        setTimeout(() => {
-          const mockAddress = walletType === 'phantom' 
-            ? 'BfYXwvd4jMYoFnphtf9vkAe8ZiU7roYZSEFGsi2oXhjz'
-            : 'EQD4FPq-PRDieyQKkizFTRtSDyucUIqrj0v_zXJmqaDp6_0t';
-          setConnectionStatus('connected');
-          setShowQR(false);
-          onConnect(walletType, mockAddress);
-          toast({
-            title: `${walletInfo[walletType].name} Connected`,
-            description: `Connected: ${mockAddress.slice(0, 6)}...${mockAddress.slice(-4)}`,
-          });
-        }, 8000);
+        // Poll for successful connection
+        const pollForConnection = async () => {
+          try {
+            const response = await fetch('/api/wallet/status', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ walletType, timestamp: Date.now() })
+            });
+            
+            if (response.ok) {
+              const result = await response.json();
+              if (result.connected && result.address) {
+                setConnectionStatus('connected');
+                setShowQR(false);
+                onConnect(walletType, result.address);
+                toast({
+                  title: `${walletInfo[walletType].name} Connected`,
+                  description: `Connected: ${result.address.slice(0, 6)}...${result.address.slice(-4)}`,
+                });
+                return true;
+              }
+            }
+          } catch (error) {
+            console.log('Checking connection status...');
+          }
+          return false;
+        };
+        
+        // Poll every 2 seconds for 60 seconds
+        const maxAttempts = 30;
+        let attempts = 0;
+        
+        const pollInterval = setInterval(async () => {
+          attempts++;
+          const connected = await pollForConnection();
+          
+          if (connected || attempts >= maxAttempts) {
+            clearInterval(pollInterval);
+            if (!connected && attempts >= maxAttempts) {
+              setConnectionStatus('failed');
+              setShowQR(false);
+              toast({
+                title: "Connection Timeout",
+                description: "Please try connecting again",
+                variant: "destructive"
+              });
+            }
+          }
+        }, 2000);
       }
     } catch (error) {
       setConnectionStatus('failed');
+      setShowQR(false);
       toast({
         title: "Connection Failed",
         description: `Please install ${walletInfo[walletType].name} app`,
