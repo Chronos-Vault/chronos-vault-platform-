@@ -350,6 +350,18 @@ export default function WalletPage() {
                   </div>
                   <div className="flex gap-3">
                     <Button 
+                      className="bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600"
+                      onClick={() => {
+                        toast({
+                          title: "Connect Wallet",
+                          description: "Choose a blockchain network to connect",
+                        });
+                      }}
+                    >
+                      <Wallet className="w-4 h-4 mr-2" />
+                      Connect Wallet
+                    </Button>
+                    <Button 
                       className="bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600"
                       onClick={() => {
                         toast({
@@ -374,14 +386,39 @@ export default function WalletPage() {
                       <ArrowUpDown className="w-4 h-4 mr-2 rotate-180" />
                       Withdraw
                     </Button>
+                    <Button 
+                      variant="outline" 
+                      className="border-gray-500/50 text-gray-400 hover:bg-gray-500/10"
+                      onClick={() => {
+                        toast({
+                          title: "Settings",
+                          description: "Wallet settings and preferences",
+                        });
+                      }}
+                    >
+                      <Settings className="w-4 h-4 mr-2" />
+                      Settings
+                    </Button>
                   </div>
                 </div>
               </CardHeader>
             </Card>
           </div>
 
-          {/* Main Wallet Interface */}
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          {/* Main Wallet Tabs */}
+          <div className="mb-8">
+            <Tabs defaultValue="portfolio" className="w-full">
+              <TabsList className="grid w-full grid-cols-6">
+                <TabsTrigger value="portfolio">Portfolio</TabsTrigger>
+                <TabsTrigger value="deposit">Deposit</TabsTrigger>
+                <TabsTrigger value="withdraw">Withdraw</TabsTrigger>
+                <TabsTrigger value="transactions">Transactions</TabsTrigger>
+                <TabsTrigger value="security">Security</TabsTrigger>
+                <TabsTrigger value="settings">Settings</TabsTrigger>
+              </TabsList>
+
+              <TabsContent value="portfolio" className="mt-6">
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
             {/* Portfolio Overview */}
             <div className="lg:col-span-2">
               <Card className="bg-gray-900/50 border-gray-700">
@@ -952,6 +989,252 @@ export default function WalletPage() {
               </Card>
             </div>
           </div>
+        </TabsContent>
+
+        {/* Deposit Tab */}
+        <TabsContent value="deposit" className="mt-6">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {Object.entries(walletBalances).map(([chain, data]) => (
+              <Card key={chain} className="bg-gray-900/50 border-gray-700">
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-3">
+                    <div className={`w-4 h-4 rounded-full ${chainConfigs[chain as keyof typeof chainConfigs].color}`}></div>
+                    Deposit {chain.charAt(0).toUpperCase() + chain.slice(1)}
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  {data.address ? (
+                    <>
+                      <div className="text-center p-4 bg-gray-800/50 rounded-lg">
+                        <p className="text-sm text-gray-400 mb-2">Send {data.symbol} to this address:</p>
+                        <p className="font-mono text-xs bg-gray-700 p-2 rounded break-all">{data.address}</p>
+                        <Button 
+                          size="sm" 
+                          variant="outline" 
+                          className="mt-3"
+                          onClick={() => copyAddress(data.address)}
+                        >
+                          <Copy className="w-4 h-4 mr-2" />
+                          Copy Address
+                        </Button>
+                      </div>
+                      <div className="text-center">
+                        <p className="text-xs text-gray-500">Network: {chain.charAt(0).toUpperCase() + chain.slice(1)}</p>
+                        <p className="text-xs text-gray-500">Only send {data.symbol} to this address</p>
+                      </div>
+                    </>
+                  ) : (
+                    <div className="text-center p-4">
+                      <p className="text-gray-400 mb-3">Connect wallet to get deposit address</p>
+                      <Button 
+                        className="w-full"
+                        onClick={() => {
+                          toast({
+                            title: `Connect ${chain.charAt(0).toUpperCase() + chain.slice(1)}`,
+                            description: "Connect your wallet to get deposit address",
+                          });
+                        }}
+                      >
+                        <Wallet className="w-4 h-4 mr-2" />
+                        Connect {chain.charAt(0).toUpperCase() + chain.slice(1)}
+                      </Button>
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        </TabsContent>
+
+        {/* Withdraw Tab */}
+        <TabsContent value="withdraw" className="mt-6">
+          <div className="max-w-2xl mx-auto">
+            <Card className="bg-gray-900/50 border-gray-700">
+              <CardHeader>
+                <CardTitle>Withdraw Funds</CardTitle>
+                <p className="text-sm text-gray-400">Transfer your assets to external wallets</p>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div>
+                  <Label>Select Network</Label>
+                  <select 
+                    className="w-full mt-2 p-3 bg-gray-800 border border-gray-700 rounded-lg"
+                    value={selectedChain}
+                    onChange={(e) => setSelectedChain(e.target.value)}
+                  >
+                    <option value="ethereum">Ethereum (ETH)</option>
+                    <option value="solana">Solana (SOL)</option>
+                    <option value="ton">TON</option>
+                  </select>
+                </div>
+                <div>
+                  <Label>Amount to Withdraw</Label>
+                  <Input
+                    type="number"
+                    placeholder="0.00"
+                    value={sendAmount}
+                    onChange={(e) => setSendAmount(e.target.value)}
+                    className="mt-2 bg-gray-800 border-gray-700"
+                  />
+                  <p className="text-sm text-gray-400 mt-1">
+                    Available: {walletBalances[selectedChain as keyof typeof walletBalances].balance} {walletBalances[selectedChain as keyof typeof walletBalances].symbol}
+                  </p>
+                </div>
+                <div>
+                  <Label>Destination Address</Label>
+                  <Input
+                    placeholder="Enter destination wallet address"
+                    value={recipientAddress}
+                    onChange={(e) => setRecipientAddress(e.target.value)}
+                    className="mt-2 bg-gray-800 border-gray-700"
+                  />
+                </div>
+                <Button 
+                  className="w-full bg-gradient-to-r from-red-500 to-orange-500 hover:from-red-600 hover:to-orange-600"
+                  onClick={() => {
+                    if (!sendAmount || !recipientAddress) {
+                      toast({
+                        title: "Missing Information",
+                        description: "Please enter amount and destination address",
+                        variant: "destructive",
+                      });
+                      return;
+                    }
+                    toast({
+                      title: "Withdrawal Initiated",
+                      description: `Withdrawing ${sendAmount} ${walletBalances[selectedChain as keyof typeof walletBalances].symbol}`,
+                    });
+                  }}
+                >
+                  <ArrowUpDown className="w-4 h-4 mr-2 rotate-180" />
+                  Withdraw Funds
+                </Button>
+              </CardContent>
+            </Card>
+          </div>
+        </TabsContent>
+
+        {/* Transactions Tab */}
+        <TabsContent value="transactions" className="mt-6">
+          <Card className="bg-gray-900/50 border-gray-700">
+            <CardHeader>
+              <CardTitle>Recent Transactions</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="text-center py-8">
+                <p className="text-gray-400">No recent transactions</p>
+                <p className="text-sm text-gray-500 mt-2">Your transaction history will appear here</p>
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        {/* Security Tab */}
+        <TabsContent value="security" className="mt-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <Card className="bg-gray-900/50 border-gray-700">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Shield className="w-5 h-5 text-green-400" />
+                  Security Features
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-3">
+                <div className="flex justify-between">
+                  <span>Trinity Protocol</span>
+                  <Badge className="bg-green-500/20 text-green-400">Active</Badge>
+                </div>
+                <div className="flex justify-between">
+                  <span>Zero-Knowledge Privacy</span>
+                  <Badge className="bg-green-500/20 text-green-400">Enabled</Badge>
+                </div>
+                <div className="flex justify-between">
+                  <span>Multi-Signature</span>
+                  <Badge className="bg-blue-500/20 text-blue-400">Available</Badge>
+                </div>
+                <div className="flex justify-between">
+                  <span>Hardware Wallet</span>
+                  <Badge className="bg-yellow-500/20 text-yellow-400">Not Connected</Badge>
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card className="bg-gray-900/50 border-gray-700">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Lock className="w-5 h-5 text-blue-400" />
+                  Advanced Security
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-3">
+                <Button className="w-full" variant="outline">
+                  <Users className="w-4 h-4 mr-2" />
+                  Setup Multi-Signature
+                </Button>
+                <Button className="w-full" variant="outline">
+                  <HardDrive className="w-4 h-4 mr-2" />
+                  Connect Hardware Wallet
+                </Button>
+                <Button className="w-full" variant="outline">
+                  <Fingerprint className="w-4 h-4 mr-2" />
+                  Enable Biometric Auth
+                </Button>
+              </CardContent>
+            </Card>
+          </div>
+        </TabsContent>
+
+        {/* Settings Tab */}
+        <TabsContent value="settings" className="mt-6">
+          <div className="max-w-2xl mx-auto">
+            <Card className="bg-gray-900/50 border-gray-700">
+              <CardHeader>
+                <CardTitle>Wallet Settings</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-6">
+                <div className="space-y-3">
+                  <h3 className="font-semibold">Network Preferences</h3>
+                  <div className="flex items-center justify-between p-3 bg-gray-800/50 rounded">
+                    <span>Default Network</span>
+                    <select className="bg-gray-700 border border-gray-600 rounded px-3 py-1">
+                      <option>Ethereum</option>
+                      <option>Solana</option>
+                      <option>TON</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div className="space-y-3">
+                  <h3 className="font-semibold">Security Settings</h3>
+                  <div className="flex items-center justify-between p-3 bg-gray-800/50 rounded">
+                    <span>Auto-lock Timeout</span>
+                    <select className="bg-gray-700 border border-gray-600 rounded px-3 py-1">
+                      <option>5 minutes</option>
+                      <option>15 minutes</option>
+                      <option>30 minutes</option>
+                      <option>Never</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div className="space-y-3">
+                  <h3 className="font-semibold">Privacy</h3>
+                  <div className="flex items-center justify-between p-3 bg-gray-800/50 rounded">
+                    <span>Hide Balance</span>
+                    <input type="checkbox" className="rounded" />
+                  </div>
+                </div>
+
+                <Button className="w-full">
+                  <Settings className="w-4 h-4 mr-2" />
+                  Save Settings
+                </Button>
+              </CardContent>
+            </Card>
+          </div>
+        </TabsContent>
+      </Tabs>
+    </div>
         </div>
       </div>
     </div>
