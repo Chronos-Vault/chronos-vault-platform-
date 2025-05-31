@@ -171,16 +171,49 @@ export function RealMobileWalletConnector({ onConnect }: RealMobileWalletConnect
         description: `Please approve the connection in your ${wallet.name} app`,
       });
 
-      // Use the correct mobile wallet connection protocol
-      if (wallet.type === 'metamask') {
-        // MetaMask mobile app link
-        window.location.href = `metamask://dapp/${window.location.hostname}${window.location.pathname}`;
-      } else if (wallet.type === 'phantom') {
-        // Phantom mobile app link  
-        window.location.href = `phantom://browse/${window.location.hostname}${window.location.pathname}`;
-      } else if (wallet.type === 'tonkeeper') {
-        // TON Keeper mobile app link
-        window.location.href = `tonkeeper://dapp/${window.location.hostname}${window.location.pathname}`;
+      // Use proper mobile wallet connection with real address
+      try {
+        let realAddress = '';
+        
+        if (wallet.type === 'metamask') {
+          // Try to connect via WalletConnect or injected provider
+          if ((window as any).ethereum) {
+            const accounts = await (window as any).ethereum.request({
+              method: 'eth_requestAccounts'
+            });
+            realAddress = accounts[0];
+          } else {
+            // Request WalletConnect integration
+            throw new Error('MetaMask connection requires WalletConnect setup');
+          }
+        } else if (wallet.type === 'phantom') {
+          // Try to connect via Solana provider
+          if ((window as any).solana && (window as any).solana.isPhantom) {
+            const response = await (window as any).solana.connect();
+            realAddress = response.publicKey.toString();
+          } else {
+            throw new Error('Phantom wallet not detected on mobile');
+          }
+        } else if (wallet.type === 'tonkeeper') {
+          // Use TON Connect
+          if ((window as any).TonConnectUI) {
+            const tonConnectUI = new (window as any).TonConnectUI({
+              manifestUrl: `${window.location.origin}/tonconnect-manifest.json`
+            });
+            const connectedWallet = await tonConnectUI.connectWallet();
+            realAddress = connectedWallet.account.address;
+          } else {
+            throw new Error('TON Connect not available');
+          }
+        }
+        
+        if (realAddress) {
+          console.log(`${wallet.name} connected with real address:`, realAddress);
+          processWalletConnection(wallet.type, realAddress);
+        }
+      } catch (connectionError) {
+        console.error(`${wallet.name} connection failed:`, connectionError);
+        throw connectionError;
       }
 
     } catch (error) {

@@ -25,7 +25,6 @@ import {
   Settings
 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
-import { WalletDetection } from '@/components/wallet/WalletDetection';
 import { RealMobileWalletConnector } from '@/components/wallet/RealMobileWalletConnector';
 import { WalletVaultIntegration } from '@/components/wallet/WalletVaultIntegration';
 import { Link } from 'wouter';
