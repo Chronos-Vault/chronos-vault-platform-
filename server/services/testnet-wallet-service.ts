@@ -5,8 +5,6 @@
  */
 
 import { Connection, Keypair, PublicKey } from '@solana/web3.js';
-import { Cell, beginCell } from '@ton/core';
-import bs58 from 'bs58';
 import crypto from 'crypto';
 
 export interface WalletInfo {
