@@ -543,9 +543,24 @@ export default function WalletPage() {
                           const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
                           
                           if (isMobile) {
-                            // Mobile: Use deep link to open Phantom app
-                            const deepLink = `phantom://browse/${encodeURIComponent(window.location.href)}`;
+                            // Mobile: Try to open Phantom app with fallback
+                            const currentUrl = `${window.location.protocol}//${window.location.host}${window.location.pathname}`;
+                            const deepLink = `https://phantom.app/ul/browse/${encodeURIComponent(currentUrl)}?ref=https%3A%2F%2Fphantom.app`;
+                            
+                            // Try opening the app, fallback to store if not installed
+                            const startTime = Date.now();
                             window.location.href = deepLink;
+                            
+                            setTimeout(() => {
+                              if (Date.now() - startTime < 2000) {
+                                // If we're still here after 2 seconds, app likely not installed
+                                const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+                                const storeUrl = isIOS 
+                                  ? 'https://apps.apple.com/app/phantom-solana-wallet/id1598432977'
+                                  : 'https://play.google.com/store/apps/details?id=app.phantom';
+                                window.open(storeUrl, '_blank');
+                              }
+                            }, 2000);
                             
                             toast({
                               title: "Opening Phantom",
@@ -590,9 +605,24 @@ export default function WalletPage() {
                           const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
                           
                           if (isMobile) {
-                            // Mobile: Use TON Keeper deep link
-                            const deepLink = `tonkeeper://dapp/${encodeURIComponent(window.location.href)}`;
+                            // Mobile: Try to open TON Keeper app with fallback
+                            const currentUrl = `${window.location.protocol}//${window.location.host}${window.location.pathname}`;
+                            const deepLink = `https://app.tonkeeper.com/ton-connect?v=2&id=chronos-vault&r=tc&ret=back&s=app&u=${encodeURIComponent(currentUrl)}`;
+                            
+                            // Try opening the app, fallback to store if not installed
+                            const startTime = Date.now();
                             window.location.href = deepLink;
+                            
+                            setTimeout(() => {
+                              if (Date.now() - startTime < 2000) {
+                                // If we're still here after 2 seconds, app likely not installed
+                                const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+                                const storeUrl = isIOS 
+                                  ? 'https://apps.apple.com/app/tonkeeper/id1587742107'
+                                  : 'https://play.google.com/store/apps/details?id=com.ton_keeper';
+                                window.open(storeUrl, '_blank');
+                              }
+                            }, 2000);
                             
                             toast({
                               title: "Opening TON Keeper",
