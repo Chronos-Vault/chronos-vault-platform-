@@ -162,6 +162,19 @@ export function BrowserWalletConnect({ walletType, onConnect, onCancel }: Browse
   const wallet = walletInfo[walletType];
   const isWalletInstalled = wallet.checkMethod();
 
+  // Add debugging on component mount
+  useEffect(() => {
+    console.log('=== Wallet Detection Debug ===');
+    console.log('Window object available:', typeof window !== 'undefined');
+    console.log('Ethereum provider:', !!window.ethereum);
+    console.log('MetaMask detected:', !!window.ethereum?.isMetaMask);
+    console.log('Solana provider:', !!window.solana);
+    console.log('Phantom detected:', !!window.solana?.isPhantom);
+    console.log('TON provider:', !!window.ton);
+    console.log(`Current wallet (${walletType}) installed:`, isWalletInstalled);
+    console.log('===========================');
+  }, [walletType, isWalletInstalled]);
+
   return (
     <Card className="w-full max-w-md mx-auto">
       <CardHeader className="text-center">
