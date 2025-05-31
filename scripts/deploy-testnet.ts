@@ -281,20 +281,18 @@ async function configureCrossChainVerification(deploymentInfo) {
     
     // Configure Solana bridge via CLI with safe parameterization
     console.log('Configuring Solana bridge...');
-    execSync('solana program call $SOL_BRIDGE setTrustedBridge ETH $ETH_BRIDGE', {
-      env: { 
-        ...process.env,
-        SOL_BRIDGE: deploymentInfo.solana.bridge,
-        ETH_BRIDGE: deploymentInfo.ethereum.bridge
-      }
-    });
-    execSync('solana program call $SOL_BRIDGE setTrustedBridge TON $TON_BRIDGE', {
-      env: { 
-        ...process.env,
-        SOL_BRIDGE: deploymentInfo.solana.bridge,
-        TON_BRIDGE: deploymentInfo.ton.bridge
-      }
-    });
+    execSync('solana program call', [
+      deploymentInfo.solana.bridge,
+      'setTrustedBridge',
+      'ETH',
+      deploymentInfo.ethereum.bridge
+    ]);
+    execSync('solana program call', [
+      deploymentInfo.solana.bridge,
+      'setTrustedBridge', 
+      'TON',
+      deploymentInfo.ton.bridge
+    ]);
     
     console.log(chalk.green('Cross-chain verification configuration completed!'));
     
