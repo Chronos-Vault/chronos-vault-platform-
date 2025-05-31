@@ -26,6 +26,45 @@ const app = express();
 app.use(cors());
 app.use(bodyParser.json());
 
+// Wallet authorization for Chronos Vault
+app.post('/api/vault/authorize-wallet', async (req, res) => {
+  try {
+    const { address, walletType, blockchain, chainId, publicKey, proof } = req.body;
+    
+    if (!address || !walletType || !blockchain) {
+      return res.status(400).json({
+        status: 'error',
+        message: 'Missing required wallet authorization data'
+      });
+    }
+
+    // Create unique wallet key
+    const walletKey = `${walletType}-${blockchain}-${address}`;
+    
+    console.log(`Wallet authorized for Chronos Vault: ${walletType} (${blockchain}) - ${address.slice(0, 8)}...${address.slice(-6)}`);
+
+    res.json({
+      status: 'success',
+      message: 'Wallet successfully authorized for Chronos Vault',
+      data: {
+        address,
+        blockchain,
+        walletType,
+        authorized: true,
+        vaultEligible: true,
+        authorizedAt: new Date()
+      }
+    });
+
+  } catch (error) {
+    console.error('Error authorizing wallet:', error);
+    res.status(500).json({
+      status: 'error',
+      message: 'Failed to authorize wallet for Chronos Vault'
+    });
+  }
+});
+
 // Mobile wallet connection endpoints
 app.post('/api/wallet/status', (req, res) => {
   const { walletType, timestamp } = req.body;
