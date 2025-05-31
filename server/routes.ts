@@ -26,6 +26,7 @@ import { testnetWalletRoutes } from './api/testnet-wallet-routes';
 import { multiSigRoutes } from './api/multisig-routes';
 import { hardwareWalletRoutes } from './api/hardware-wallet-routes';
 import walletAuthRoutes from './routes/wallet-auth';
+import vaultWalletRoutes from './routes/vault-wallet';
 import { defiRoutes } from './api/defi-routes';
 import { systemHealthMonitor } from './monitoring/system-health-monitor';
 import { incidentResponseSystem } from './monitoring/incident-response';
@@ -116,6 +117,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
   
   // Register wallet authorization routes
   apiRouter.use('/api', walletAuthRoutes);
+  
+  // Register vault-wallet integration routes
+  apiRouter.use('/vault', vaultWalletRoutes);
   
   // Initialize and register chain-agnostic verification routes
   const chainAgnosticVerifier = initializeChainAgnosticVerification(connectorFactory);

@@ -5,7 +5,7 @@ const router = Router();
 
 const addWalletSchema = z.object({
   address: z.string().min(1, 'Wallet address is required'),
-  chain: z.enum(['ethereum', 'solana', 'ton'], 'Invalid blockchain network'),
+  chain: z.enum(['ethereum', 'solana', 'ton']),
   walletType: z.string().min(1, 'Wallet type is required')
 });
 
