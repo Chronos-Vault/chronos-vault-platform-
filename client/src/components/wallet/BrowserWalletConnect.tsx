@@ -35,13 +35,23 @@ export function BrowserWalletConnect({ walletType, onConnect, onCancel }: Browse
 
   const connectMetaMask = async () => {
     try {
-      if (!window.ethereum?.isMetaMask) {
-        throw new Error('MetaMask not found');
+      console.log('Attempting MetaMask connection...');
+      console.log('Window ethereum available:', !!window.ethereum);
+      console.log('MetaMask detected:', !!window.ethereum?.isMetaMask);
+      
+      if (!window.ethereum) {
+        throw new Error('No Ethereum provider found. Please install MetaMask.');
+      }
+
+      if (!window.ethereum.isMetaMask) {
+        throw new Error('MetaMask not detected. Please install MetaMask extension.');
       }
 
       const accounts = await window.ethereum.request({
         method: 'eth_requestAccounts'
       });
+
+      console.log('MetaMask accounts received:', accounts);
 
       if (accounts.length > 0) {
         onConnect('metamask', accounts[0]);
@@ -49,13 +59,15 @@ export function BrowserWalletConnect({ walletType, onConnect, onCancel }: Browse
           title: 'MetaMask Connected',
           description: `Connected: ${accounts[0].slice(0, 6)}...${accounts[0].slice(-4)}`,
         });
+      } else {
+        throw new Error('No accounts available');
       }
     } catch (error) {
       console.error('MetaMask connection failed:', error);
       setStatus('error');
       toast({
         title: 'Connection Failed',
-        description: 'Failed to connect to MetaMask',
+        description: error.message || 'Failed to connect to MetaMask',
         variant: 'destructive',
       });
     }
@@ -63,11 +75,20 @@ export function BrowserWalletConnect({ walletType, onConnect, onCancel }: Browse
 
   const connectPhantom = async () => {
     try {
-      if (!window.solana?.isPhantom) {
-        throw new Error('Phantom not found');
+      console.log('Attempting Phantom connection...');
+      console.log('Window solana available:', !!window.solana);
+      console.log('Phantom detected:', !!window.solana?.isPhantom);
+      
+      if (!window.solana) {
+        throw new Error('No Solana provider found. Please install Phantom wallet.');
+      }
+
+      if (!window.solana.isPhantom) {
+        throw new Error('Phantom not detected. Please install Phantom extension.');
       }
 
       const response = await window.solana.connect();
+      console.log('Phantom response received:', response);
       
       if (response.publicKey) {
         const address = response.publicKey.toString();
@@ -76,13 +97,15 @@ export function BrowserWalletConnect({ walletType, onConnect, onCancel }: Browse
           title: 'Phantom Connected',
           description: `Connected: ${address.slice(0, 6)}...${address.slice(-4)}`,
         });
+      } else {
+        throw new Error('No public key received from Phantom');
       }
     } catch (error) {
       console.error('Phantom connection failed:', error);
       setStatus('error');
       toast({
         title: 'Connection Failed',
-        description: 'Failed to connect to Phantom',
+        description: error.message || 'Failed to connect to Phantom',
         variant: 'destructive',
       });
     }
