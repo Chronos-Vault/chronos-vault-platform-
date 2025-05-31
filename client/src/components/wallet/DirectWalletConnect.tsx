@@ -28,10 +28,11 @@ export function DirectWalletConnect({ onConnect }: DirectWalletConnectProps) {
         }
       }
       
-      // If no MetaMask detected, open mobile app
+      // If no MetaMask detected, open mobile app with proper deep link
       const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
       if (isMobile) {
-        window.open('https://metamask.app.link/dapp/' + window.location.host, '_blank');
+        const dappUrl = encodeURIComponent(window.location.href);
+        window.location.href = `https://metamask.app.link/dapp/${window.location.host}${window.location.pathname}`;
       } else {
         window.open('https://metamask.io/download/', '_blank');
         toast({
@@ -66,10 +67,11 @@ export function DirectWalletConnect({ onConnect }: DirectWalletConnectProps) {
         }
       }
       
-      // If no Phantom detected, open mobile app
+      // If no Phantom detected, open mobile app with proper deep link
       const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
       if (isMobile) {
-        window.open('https://phantom.app/ul/browse/' + window.location.href, '_blank');
+        const dappUrl = encodeURIComponent(window.location.href);
+        window.location.href = `https://phantom.app/ul/browse/${dappUrl}?ref=${window.location.host}`;
       } else {
         window.open('https://phantom.app/download', '_blank');
         toast({
@@ -92,8 +94,10 @@ export function DirectWalletConnect({ onConnect }: DirectWalletConnectProps) {
       // For TON Keeper, use TonConnect protocol
       const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
       if (isMobile) {
-        // Mobile TON Keeper deep link
-        window.open('https://app.tonkeeper.com/ton-connect', '_blank');
+        // Mobile TON Keeper deep link with TonConnect
+        const connectUrl = encodeURIComponent(window.location.href);
+        const tonConnectUrl = `https://app.tonkeeper.com/ton-connect?v=2&id=chronos-vault&r=2&ret=back&s=connect&d=${connectUrl}`;
+        window.location.href = tonConnectUrl;
       } else if (typeof window !== 'undefined' && (window as any).ton) {
         // Desktop extension
         onConnect('tonkeeper', 'TON-Connected-' + Date.now());
