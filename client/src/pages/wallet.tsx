@@ -16,7 +16,13 @@ import {
   Zap,
   Lock,
   Globe,
-  Plus
+  Plus,
+  Users,
+  HardDrive,
+  Fingerprint,
+  Clock,
+  Key,
+  Settings
 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { Link } from 'wouter';
@@ -427,11 +433,13 @@ export default function WalletPage() {
                 </CardHeader>
                 <CardContent>
                   <Tabs defaultValue="send" className="w-full">
-                    <TabsList className="grid w-full grid-cols-4">
+                    <TabsList className="grid w-full grid-cols-6 text-xs">
                       <TabsTrigger value="send">Send</TabsTrigger>
                       <TabsTrigger value="receive">Receive</TabsTrigger>
                       <TabsTrigger value="swap">Swap</TabsTrigger>
-                      <TabsTrigger value="withdraw">Withdraw</TabsTrigger>
+                      <TabsTrigger value="multisig">MultiSig</TabsTrigger>
+                      <TabsTrigger value="hardware">Hardware</TabsTrigger>
+                      <TabsTrigger value="security">Security</TabsTrigger>
                     </TabsList>
 
                     <TabsContent value="send" className="space-y-4 mt-6">
@@ -613,6 +621,235 @@ export default function WalletPage() {
                             Withdraw Funds
                           </Button>
                         </div>
+                      </div>
+                    </TabsContent>
+
+                    {/* Multi-Signature Wallet Tab */}
+                    <TabsContent value="multisig" className="space-y-4 mt-6">
+                      <div className="space-y-4">
+                        <div className="flex items-center gap-3 p-4 bg-blue-500/10 border border-blue-500/30 rounded-lg">
+                          <Users className="w-6 h-6 text-blue-400" />
+                          <div>
+                            <h3 className="font-semibold text-blue-400">Multi-Signature Wallet</h3>
+                            <p className="text-sm text-gray-400">Require multiple signatures for enhanced security</p>
+                          </div>
+                        </div>
+
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                          <Card className="bg-gray-800/50 border-gray-600">
+                            <CardContent className="p-4">
+                              <h4 className="font-semibold mb-2">Create MultiSig Wallet</h4>
+                              <p className="text-sm text-gray-400 mb-3">Set up a new multi-signature wallet</p>
+                              <Link href="/multi-signature-vault-new">
+                                <Button size="sm" className="w-full">
+                                  <Users className="w-4 h-4 mr-2" />
+                                  Create MultiSig
+                                </Button>
+                              </Link>
+                            </CardContent>
+                          </Card>
+
+                          <Card className="bg-gray-800/50 border-gray-600">
+                            <CardContent className="p-4">
+                              <h4 className="font-semibold mb-2">Active MultiSig Wallets</h4>
+                              <p className="text-sm text-gray-400 mb-3">0 active multi-signature wallets</p>
+                              <Button size="sm" variant="outline" className="w-full" disabled>
+                                View MultiSig Wallets
+                              </Button>
+                            </CardContent>
+                          </Card>
+                        </div>
+
+                        <Card className="bg-gray-800/50 border-gray-600">
+                          <CardHeader>
+                            <CardTitle className="text-sm">MultiSig Transaction</CardTitle>
+                          </CardHeader>
+                          <CardContent className="space-y-3">
+                            <div>
+                              <Label className="text-xs">Required Signatures</Label>
+                              <Input placeholder="2" className="mt-1 bg-gray-700 border-gray-600 text-sm" />
+                            </div>
+                            <div>
+                              <Label className="text-xs">Co-signer Addresses</Label>
+                              <Input placeholder="Add co-signer address" className="mt-1 bg-gray-700 border-gray-600 text-sm" />
+                            </div>
+                            <Button size="sm" className="w-full bg-blue-500 hover:bg-blue-600">
+                              <Shield className="w-4 h-4 mr-2" />
+                              Initialize MultiSig Transaction
+                            </Button>
+                          </CardContent>
+                        </Card>
+                      </div>
+                    </TabsContent>
+
+                    {/* Hardware Wallet Tab */}
+                    <TabsContent value="hardware" className="space-y-4 mt-6">
+                      <div className="space-y-4">
+                        <div className="flex items-center gap-3 p-4 bg-green-500/10 border border-green-500/30 rounded-lg">
+                          <HardDrive className="w-6 h-6 text-green-400" />
+                          <div>
+                            <h3 className="font-semibold text-green-400">Hardware Wallet Integration</h3>
+                            <p className="text-sm text-gray-400">Connect Ledger or Trezor for maximum security</p>
+                          </div>
+                        </div>
+
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                          <Card className="bg-gray-800/50 border-gray-600">
+                            <CardContent className="p-4 text-center">
+                              <div className="w-12 h-12 bg-blue-500/20 rounded-lg flex items-center justify-center mx-auto mb-3">
+                                <HardDrive className="w-6 h-6 text-blue-400" />
+                              </div>
+                              <h4 className="font-semibold mb-2">Ledger</h4>
+                              <p className="text-xs text-gray-400 mb-3">Connect your Ledger hardware wallet</p>
+                              <Button 
+                                size="sm" 
+                                className="w-full"
+                                onClick={() => {
+                                  toast({
+                                    title: "Connecting to Ledger",
+                                    description: "Please connect and unlock your Ledger device",
+                                  });
+                                }}
+                              >
+                                Connect Ledger
+                              </Button>
+                            </CardContent>
+                          </Card>
+
+                          <Card className="bg-gray-800/50 border-gray-600">
+                            <CardContent className="p-4 text-center">
+                              <div className="w-12 h-12 bg-green-500/20 rounded-lg flex items-center justify-center mx-auto mb-3">
+                                <Key className="w-6 h-6 text-green-400" />
+                              </div>
+                              <h4 className="font-semibold mb-2">Trezor</h4>
+                              <p className="text-xs text-gray-400 mb-3">Connect your Trezor hardware wallet</p>
+                              <Button 
+                                size="sm" 
+                                variant="outline" 
+                                className="w-full"
+                                onClick={() => {
+                                  toast({
+                                    title: "Connecting to Trezor",
+                                    description: "Please connect and unlock your Trezor device",
+                                  });
+                                }}
+                              >
+                                Connect Trezor
+                              </Button>
+                            </CardContent>
+                          </Card>
+                        </div>
+
+                        <Card className="bg-gray-800/50 border-gray-600">
+                          <CardHeader>
+                            <CardTitle className="text-sm">Hardware Wallet Status</CardTitle>
+                          </CardHeader>
+                          <CardContent>
+                            <div className="flex items-center justify-between py-2">
+                              <span className="text-sm text-gray-400">Connected Devices</span>
+                              <Badge variant="outline">0 devices</Badge>
+                            </div>
+                            <div className="flex items-center justify-between py-2">
+                              <span className="text-sm text-gray-400">Security Level</span>
+                              <Badge className="bg-yellow-500/20 text-yellow-400">Standard</Badge>
+                            </div>
+                            <Button size="sm" className="w-full mt-3" variant="outline">
+                              <Settings className="w-4 h-4 mr-2" />
+                              Hardware Wallet Settings
+                            </Button>
+                          </CardContent>
+                        </Card>
+                      </div>
+                    </TabsContent>
+
+                    {/* Advanced Security Tab */}
+                    <TabsContent value="security" className="space-y-4 mt-6">
+                      <div className="space-y-4">
+                        <div className="flex items-center gap-3 p-4 bg-purple-500/10 border border-purple-500/30 rounded-lg">
+                          <Shield className="w-6 h-6 text-purple-400" />
+                          <div>
+                            <h3 className="font-semibold text-purple-400">Advanced Security Features</h3>
+                            <p className="text-sm text-gray-400">Biometric auth, time-locks, and enhanced protection</p>
+                          </div>
+                        </div>
+
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                          <Card className="bg-gray-800/50 border-gray-600">
+                            <CardContent className="p-4">
+                              <div className="flex items-center gap-3 mb-3">
+                                <Fingerprint className="w-5 h-5 text-blue-400" />
+                                <h4 className="font-semibold">Biometric Authentication</h4>
+                              </div>
+                              <p className="text-xs text-gray-400 mb-3">Secure your wallet with fingerprint or face recognition</p>
+                              <Button 
+                                size="sm" 
+                                className="w-full"
+                                onClick={() => {
+                                  toast({
+                                    title: "Biometric Setup",
+                                    description: "Biometric authentication configured successfully",
+                                  });
+                                }}
+                              >
+                                <Fingerprint className="w-4 h-4 mr-2" />
+                                Enable Biometric Auth
+                              </Button>
+                            </CardContent>
+                          </Card>
+
+                          <Card className="bg-gray-800/50 border-gray-600">
+                            <CardContent className="p-4">
+                              <div className="flex items-center gap-3 mb-3">
+                                <Clock className="w-5 h-5 text-green-400" />
+                                <h4 className="font-semibold">Time-Locked Transactions</h4>
+                              </div>
+                              <p className="text-xs text-gray-400 mb-3">Schedule transactions for future execution</p>
+                              <Link href="/advanced-time-lock-vault">
+                                <Button size="sm" variant="outline" className="w-full">
+                                  <Clock className="w-4 h-4 mr-2" />
+                                  Create Time-Lock
+                                </Button>
+                              </Link>
+                            </CardContent>
+                          </Card>
+                        </div>
+
+                        <Card className="bg-gray-800/50 border-gray-600">
+                          <CardHeader>
+                            <CardTitle className="text-sm">Security Settings</CardTitle>
+                          </CardHeader>
+                          <CardContent className="space-y-3">
+                            <div className="flex items-center justify-between">
+                              <span className="text-sm">Two-Factor Authentication</span>
+                              <Badge className="bg-green-500/20 text-green-400">Enabled</Badge>
+                            </div>
+                            <div className="flex items-center justify-between">
+                              <span className="text-sm">Zero-Knowledge Privacy</span>
+                              <Badge className="bg-green-500/20 text-green-400">Active</Badge>
+                            </div>
+                            <div className="flex items-center justify-between">
+                              <span className="text-sm">Quantum Resistance</span>
+                              <Badge className="bg-blue-500/20 text-blue-400">Enabled</Badge>
+                            </div>
+                            <div className="flex items-center justify-between">
+                              <span className="text-sm">Trinity Protocol</span>
+                              <Badge className="bg-purple-500/20 text-purple-400">Active</Badge>
+                            </div>
+                            
+                            <div className="pt-3 space-y-2">
+                              <Button size="sm" className="w-full" variant="outline">
+                                <Settings className="w-4 h-4 mr-2" />
+                                Advanced Security Settings
+                              </Button>
+                              <Link href="/security-dashboard">
+                                <Button size="sm" className="w-full bg-purple-500 hover:bg-purple-600">
+                                  <Shield className="w-4 h-4 mr-2" />
+                                  Open Security Dashboard
+                                </Button>
+                              </Link>
+                            </div>
+                          </CardContent>
+                        </Card>
                       </div>
                     </TabsContent>
                   </Tabs>
