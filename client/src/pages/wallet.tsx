@@ -1349,10 +1349,39 @@ export default function WalletPage() {
               <CardTitle>Recent Transactions</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="text-center py-8">
-                <p className="text-gray-400">No recent transactions</p>
-                <p className="text-sm text-gray-500 mt-2">Your transaction history will appear here</p>
-              </div>
+              {transactionHistory.length > 0 ? (
+                <div className="space-y-3">
+                  {transactionHistory.map((tx) => (
+                    <div key={tx.id} className="flex items-center justify-between p-3 bg-gray-800/50 rounded-lg">
+                      <div className="flex items-center gap-3">
+                        <div className={`w-2 h-2 rounded-full ${
+                          tx.status === 'confirmed' ? 'bg-green-400' : 
+                          tx.status === 'pending' ? 'bg-yellow-400' : 'bg-red-400'
+                        }`}></div>
+                        <div>
+                          <p className="font-medium">{tx.type.charAt(0).toUpperCase() + tx.type.slice(1)}</p>
+                          <p className="text-sm text-gray-400">{tx.amount}</p>
+                          {tx.to && <p className="text-xs text-gray-500">To: {tx.to.slice(0, 8)}...{tx.to.slice(-6)}</p>}
+                        </div>
+                      </div>
+                      <div className="text-right">
+                        <p className="text-sm">{tx.timestamp}</p>
+                        <Badge className={`text-xs ${
+                          tx.status === 'confirmed' ? 'bg-green-500/20 text-green-400' : 
+                          tx.status === 'pending' ? 'bg-yellow-500/20 text-yellow-400' : 'bg-red-500/20 text-red-400'
+                        }`}>
+                          {tx.status}
+                        </Badge>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="text-center py-8">
+                  <p className="text-gray-400">No recent transactions</p>
+                  <p className="text-sm text-gray-500 mt-2">Your transaction history will appear here</p>
+                </div>
+              )}
             </CardContent>
           </Card>
         </TabsContent>
@@ -1395,15 +1424,111 @@ export default function WalletPage() {
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-3">
-                <Button className="w-full" variant="outline">
+                <Button 
+                  className="w-full" 
+                  variant="outline"
+                  onClick={async () => {
+                    try {
+                      const response = await fetch('/api/security/multisig/setup', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' }
+                      });
+                      
+                      const data = await response.json();
+                      
+                      if (data.status === 'success') {
+                        toast({
+                          title: "Multi-Signature Setup Complete",
+                          description: "Multi-signature wallet has been configured",
+                        });
+                      } else {
+                        toast({
+                          title: "Setup Failed",
+                          description: data.message || "Failed to setup multi-signature",
+                          variant: "destructive",
+                        });
+                      }
+                    } catch (error) {
+                      toast({
+                        title: "Network Error",
+                        description: "Failed to connect to security service",
+                        variant: "destructive",
+                      });
+                    }
+                  }}
+                >
                   <Users className="w-4 h-4 mr-2" />
                   Setup Multi-Signature
                 </Button>
-                <Button className="w-full" variant="outline">
+                <Button 
+                  className="w-full" 
+                  variant="outline"
+                  onClick={async () => {
+                    try {
+                      const response = await fetch('/api/security/hardware-wallet/scan', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' }
+                      });
+                      
+                      const data = await response.json();
+                      
+                      if (data.status === 'success') {
+                        toast({
+                          title: "Hardware Wallet Detected",
+                          description: "Found compatible hardware wallet",
+                        });
+                      } else {
+                        toast({
+                          title: "No Hardware Wallet Found",
+                          description: "Please connect your Ledger or Trezor device",
+                          variant: "destructive",
+                        });
+                      }
+                    } catch (error) {
+                      toast({
+                        title: "Hardware Wallet Error",
+                        description: "Failed to scan for hardware wallets",
+                        variant: "destructive",
+                      });
+                    }
+                  }}
+                >
                   <HardDrive className="w-4 h-4 mr-2" />
                   Connect Hardware Wallet
                 </Button>
-                <Button className="w-full" variant="outline">
+                <Button 
+                  className="w-full" 
+                  variant="outline"
+                  onClick={async () => {
+                    try {
+                      const response = await fetch('/api/security/biometric/setup', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' }
+                      });
+                      
+                      const data = await response.json();
+                      
+                      if (data.status === 'success') {
+                        toast({
+                          title: "Biometric Authentication Enabled",
+                          description: "Fingerprint authentication is now active",
+                        });
+                      } else {
+                        toast({
+                          title: "Biometric Setup Failed",
+                          description: data.message || "Failed to enable biometric authentication",
+                          variant: "destructive",
+                        });
+                      }
+                    } catch (error) {
+                      toast({
+                        title: "Biometric Error",
+                        description: "Failed to configure biometric authentication",
+                        variant: "destructive",
+                      });
+                    }
+                  }}
+                >
                   <Fingerprint className="w-4 h-4 mr-2" />
                   Enable Biometric Auth
                 </Button>
