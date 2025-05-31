@@ -45,24 +45,47 @@ export const SimpleMobileWallet: React.FC<SimpleMobileWalletProps> = ({
   const [connectionUri, setConnectionUri] = useState('');
   const { toast } = useToast();
 
-  const generateConnectionUri = () => {
+  const generateConnectionUri = async () => {
     const sessionId = Math.random().toString(36).substring(2, 15);
-    const projectId = 'f1a006966920cbcac785194f58b6e073';
     const appUrl = window.location.origin;
     
-    switch (walletType) {
-      case 'metamask':
-        // WalletConnect v2 URI for MetaMask
-        const wcUri = `wc:${sessionId}@2?relay-protocol=irn&symKey=${btoa(sessionId)}&projectId=${projectId}`;
-        return wcUri;
-      case 'phantom':
-        // Phantom connect URI
-        return `phantom://v1/connect?dapp_encryption_public_key=${sessionId}&cluster=devnet&app_url=${encodeURIComponent(appUrl)}&redirect_link=${encodeURIComponent(appUrl)}`;
-      case 'tonkeeper':
-        // TON Connect URI
-        return `tc://tonconnect?v=2&id=${sessionId}&r=${encodeURIComponent(appUrl + '/tonconnect-manifest.json')}&ret=${encodeURIComponent(appUrl)}`;
-      default:
-        return `session:${sessionId}`;
+    // Create a real WalletConnect session
+    try {
+      const response = await fetch('/api/wallet/create-session', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ 
+          walletType,
+          sessionId,
+          appUrl
+        })
+      });
+      
+      const sessionData = await response.json();
+      
+      switch (walletType) {
+        case 'metamask':
+          return sessionData.wcUri;
+        case 'phantom':
+          return sessionData.phantomUri;
+        case 'tonkeeper':
+          return sessionData.tonUri;
+        default:
+          return `session:${sessionId}`;
+      }
+    } catch (error) {
+      console.error('Failed to create wallet session:', error);
+      // Fallback URIs if session creation fails
+      switch (walletType) {
+        case 'metamask':
+          return `wc:${sessionId}@2?relay-protocol=irn&symKey=${btoa(sessionId)}`;
+        case 'phantom':
+          return `phantom://v1/connect?dapp_encryption_public_key=${sessionId}&cluster=devnet&app_url=${encodeURIComponent(appUrl)}`;
+        case 'tonkeeper':
+          return `tc://tonconnect?v=2&id=${sessionId}&r=${encodeURIComponent(appUrl + '/tonconnect-manifest.json')}`;
+        default:
+          return `session:${sessionId}`;
+      }
     }
   };
 
@@ -85,7 +108,7 @@ export const SimpleMobileWallet: React.FC<SimpleMobileWalletProps> = ({
   const handleConnect = async () => {
     setIsConnecting(true);
     
-    const uri = generateConnectionUri();
+    const uri = await generateConnectionUri();
     setConnectionUri(uri);
     await generateQRCode(uri);
     

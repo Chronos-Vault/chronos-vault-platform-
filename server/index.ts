@@ -87,6 +87,26 @@ app.post('/api/wallet/ton-connect', async (req, res) => {
   }
 });
 
+// Create wallet session endpoint
+app.post('/api/wallet/create-session', async (req, res) => {
+  const { walletType, sessionId, appUrl } = req.body;
+  
+  try {
+    // Create wallet-specific connection URIs
+    const projectId = process.env.WALLETCONNECT_PROJECT_ID || 'f1a006966920cbcac785194f58b6e073';
+    
+    const sessionData = {
+      wcUri: `wc:${sessionId}@2?relay-protocol=irn&symKey=${Buffer.from(sessionId).toString('base64')}&projectId=${projectId}`,
+      phantomUri: `phantom://v1/connect?dapp_encryption_public_key=${sessionId}&cluster=devnet&app_url=${encodeURIComponent(appUrl)}&redirect_link=${encodeURIComponent(appUrl)}`,
+      tonUri: `tc://tonconnect?v=2&id=${sessionId}&r=${encodeURIComponent(appUrl + '/tonconnect-manifest.json')}&ret=${encodeURIComponent(appUrl)}`
+    };
+    
+    res.json(sessionData);
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to create wallet session' });
+  }
+});
+
 // Real wallet connection checking endpoint
 app.post('/api/wallet/check-connection', async (req, res) => {
   const { walletType, connectionUri, timestamp } = req.body;
@@ -105,7 +125,7 @@ app.post('/api/wallet/check-connection', async (req, res) => {
       
       res.json({
         connected: true,
-        address: walletAddresses[walletType],
+        address: walletAddresses[walletType as keyof typeof walletAddresses],
         authorized: true
       });
     } else {
