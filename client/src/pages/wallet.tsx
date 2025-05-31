@@ -25,7 +25,7 @@ import {
   Settings
 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
-import { RealMobileWalletConnector } from '@/components/wallet/RealMobileWalletConnector';
+import { SimpleMobileConnector } from '@/components/wallet/SimpleMobileConnector';
 import { WalletVaultIntegration } from '@/components/wallet/WalletVaultIntegration';
 import { Link } from 'wouter';
 import WalletConnector from '@/components/wallet/WalletConnector';
@@ -537,7 +537,7 @@ export default function WalletPage() {
                     </div>
                   </div>
                   
-                  <RealMobileWalletConnector onConnect={handleWalletConnect} />
+                  <SimpleMobileConnector onConnect={handleWalletConnect} />
                 </div>
               </CardHeader>
             </Card>
