@@ -107,18 +107,7 @@ export const NavBar: React.FC = () => {
             
             {/* Right side: Navigation + Status - Centered in middle columns */}
             <div className="hidden md:col-span-9 md:flex items-center justify-end space-x-2">
-              {/* How It Works - Prominent Navigation Item */}
-              <Link href="/how-it-works" className="flex items-center px-3 py-2 mr-2 rounded-md bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] text-white hover:opacity-90 transition-all shadow-md group">
-                <div className="flex items-center relative">
-                  <Search className="w-4 h-4 mr-1.5 group-hover:animate-pulse" /> 
-                  <span>How It Works</span>
-                  <span className="ml-1.5 flex items-center opacity-80">
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="group-hover:translate-x-0.5 transition-transform">
-                      <path d="M5 12H19M19 12L12 5M19 12L12 19" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                    </svg>
-                  </span>
-                </div>
-              </Link>
+
 
               {/* Wallet - Prominent Navigation Item */}
               <Link href="/wallet" className="flex items-center px-3 py-2 mr-2 rounded-md bg-gradient-to-r from-cyan-500 to-purple-500 text-white hover:opacity-90 transition-all shadow-md group">
@@ -370,9 +359,30 @@ export const NavBar: React.FC = () => {
               <Button 
                 className="bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] hover:from-[#FF5AF7] hover:to-[#6B00D7] text-white border-none shadow-md shadow-purple-900/20 hover:shadow-purple-900/40 transition-all duration-300"
                 size="sm"
+                onClick={() => {
+                  if (isConnected) {
+                    // If already connected, go to wallet page
+                    window.location.href = '/wallet';
+                  } else {
+                    // If not connected, trigger wallet connection
+                    if (typeof window !== 'undefined' && window.ethereum) {
+                      // MetaMask is available
+                      window.ethereum.request({ method: 'eth_requestAccounts' })
+                        .then(() => {
+                          window.location.href = '/wallet';
+                        })
+                        .catch((error: any) => {
+                          console.error('Failed to connect wallet:', error);
+                        });
+                    } else {
+                      // No wallet detected, redirect to wallet page for options
+                      window.location.href = '/wallet';
+                    }
+                  }
+                }}
               >
                 <Wallet className="w-4 h-4 mr-2" />
-                Connect Wallet
+                {isConnected ? 'View Wallet' : 'Connect Wallet'}
               </Button>
               
               {/* Network Status */}
