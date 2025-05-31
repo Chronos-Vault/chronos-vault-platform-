@@ -94,13 +94,6 @@ export function WalletDetection({ onConnect }: WalletDetectionProps) {
       let walletType = '';
       
       if (wallet.name === 'MetaMask') {
-        if (isMobile && !wallet.provider) {
-          // On mobile without extension, use deep link
-          const deepLink = `https://metamask.app.link/dapp/${window.location.host}${window.location.pathname}`;
-          window.open(deepLink, '_self');
-          return;
-        }
-        
         if (wallet.provider) {
           // Request account access if needed
           const accounts = await wallet.provider.request({
@@ -108,6 +101,13 @@ export function WalletDetection({ onConnect }: WalletDetectionProps) {
           });
           address = accounts[0];
           walletType = 'metamask';
+        } else {
+          toast({
+            title: "MetaMask Not Found",
+            description: "Please install MetaMask extension to connect",
+            variant: "destructive"
+          });
+          return;
         }
         
         // Send to backend for authorization
@@ -139,17 +139,17 @@ export function WalletDetection({ onConnect }: WalletDetectionProps) {
         }
         
       } else if (wallet.name === 'Phantom') {
-        if (isMobile && !wallet.provider) {
-          // On mobile without extension, use deep link
-          const deepLink = `https://phantom.app/ul/browse/${window.location.host}${window.location.pathname}`;
-          window.open(deepLink, '_self');
-          return;
-        }
-        
         if (wallet.provider) {
           const response = await wallet.provider.connect();
           address = response.publicKey.toString();
           walletType = 'phantom';
+        } else {
+          toast({
+            title: "Phantom Not Found",
+            description: "Please install Phantom extension to connect",
+            variant: "destructive"
+          });
+          return;
         }
         
         // Send to backend for authorization
@@ -180,13 +180,6 @@ export function WalletDetection({ onConnect }: WalletDetectionProps) {
         }
         
       } else if (wallet.name === 'TON Keeper') {
-        if (isMobile && !wallet.provider) {
-          // On mobile without extension, use deep link
-          const deepLink = `https://tonkeeper.com/browser/${window.location.host}${window.location.pathname}`;
-          window.open(deepLink, '_self');
-          return;
-        }
-        
         if (wallet.provider) {
           // Try TON Connect approach
           if (wallet.provider.connect) {
@@ -195,6 +188,13 @@ export function WalletDetection({ onConnect }: WalletDetectionProps) {
             address = walletInfo?.account?.address || '';
             walletType = 'tonkeeper';
           }
+        } else {
+          toast({
+            title: "TON Keeper Not Found",
+            description: "Please install TON Keeper extension to connect",
+            variant: "destructive"
+          });
+          return;
         }
         
         if (address) {
