@@ -592,7 +592,7 @@ export default function WalletPage() {
                     )}
                     
                     {isMobile ? (
-                      <MobileWalletConnect 
+                      <SimpleMobileWallet 
                         walletType="tonkeeper" 
                         onConnect={handleWalletConnect} 
                       />
