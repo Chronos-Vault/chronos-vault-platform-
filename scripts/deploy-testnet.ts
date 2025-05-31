@@ -11,6 +11,22 @@ import * as fs from 'fs';
 import * as path from 'path';
 import * as chalk from 'chalk';
 
+// Security: Validate contract addresses to prevent command injection
+function validateContractAddress(address: string, chain: 'ethereum' | 'ton' | 'solana'): boolean {
+  if (typeof address !== 'string' || address.length === 0) return false;
+  
+  switch (chain) {
+    case 'ethereum':
+      return /^0x[a-fA-F0-9]{40}$/.test(address);
+    case 'ton':
+      return /^EQ[A-Za-z0-9_-]{46}$/.test(address);
+    case 'solana':
+      return /^[1-9A-HJ-NP-Za-km-z]{32,44}$/.test(address);
+    default:
+      return false;
+  }
+}
+
 async function main() {
   console.log(chalk.blue('================================================'));
   console.log(chalk.blue('Chronos Vault Testnet Deployment'));
@@ -227,6 +243,17 @@ async function configureCrossChainVerification(deploymentInfo) {
   try {
     console.log('Setting up cross-chain verification between contracts...');
     
+    // Security: Validate all contract addresses before using them in commands
+    if (!validateContractAddress(deploymentInfo.ethereum.bridge, 'ethereum')) {
+      throw new Error('Invalid Ethereum bridge address');
+    }
+    if (!validateContractAddress(deploymentInfo.ton.bridge, 'ton')) {
+      throw new Error('Invalid TON bridge address');
+    }
+    if (!validateContractAddress(deploymentInfo.solana.bridge, 'solana')) {
+      throw new Error('Invalid Solana bridge address');
+    }
+    
     // Configure Ethereum bridge to recognize other chain bridges
     console.log('Configuring Ethereum bridge...');
     const Bridge = await ethers.getContractFactory('ChronosBridge');
@@ -235,15 +262,39 @@ async function configureCrossChainVerification(deploymentInfo) {
     await ethereumBridge.setTrustedBridge('TON', deploymentInfo.ton.bridge);
     await ethereumBridge.setTrustedBridge('SOLANA', deploymentInfo.solana.bridge);
     
-    // Configure TON bridge via CLI
+    // Configure TON bridge via CLI with safe parameterization
     console.log('Configuring TON bridge...');
-    execSync(`npx ton-cli bridge set-trusted --address ${deploymentInfo.ton.bridge} --chain ETH --bridge ${deploymentInfo.ethereum.bridge}`);
-    execSync(`npx ton-cli bridge set-trusted --address ${deploymentInfo.ton.bridge} --chain SOL --bridge ${deploymentInfo.solana.bridge}`);
+    execSync('npx ton-cli bridge set-trusted --address $TON_BRIDGE --chain ETH --bridge $ETH_BRIDGE', {
+      env: { 
+        ...process.env,
+        TON_BRIDGE: deploymentInfo.ton.bridge,
+        ETH_BRIDGE: deploymentInfo.ethereum.bridge
+      }
+    });
+    execSync('npx ton-cli bridge set-trusted --address $TON_BRIDGE --chain SOL --bridge $SOL_BRIDGE', {
+      env: { 
+        ...process.env,
+        TON_BRIDGE: deploymentInfo.ton.bridge,
+        SOL_BRIDGE: deploymentInfo.solana.bridge
+      }
+    });
     
-    // Configure Solana bridge via CLI
+    // Configure Solana bridge via CLI with safe parameterization
     console.log('Configuring Solana bridge...');
-    execSync(`solana program call ${deploymentInfo.solana.bridge} setTrustedBridge ETH ${deploymentInfo.ethereum.bridge}`);
-    execSync(`solana program call ${deploymentInfo.solana.bridge} setTrustedBridge TON ${deploymentInfo.ton.bridge}`);
+    execSync('solana program call $SOL_BRIDGE setTrustedBridge ETH $ETH_BRIDGE', {
+      env: { 
+        ...process.env,
+        SOL_BRIDGE: deploymentInfo.solana.bridge,
+        ETH_BRIDGE: deploymentInfo.ethereum.bridge
+      }
+    });
+    execSync('solana program call $SOL_BRIDGE setTrustedBridge TON $TON_BRIDGE', {
+      env: { 
+        ...process.env,
+        SOL_BRIDGE: deploymentInfo.solana.bridge,
+        TON_BRIDGE: deploymentInfo.ton.bridge
+      }
+    });
     
     console.log(chalk.green('Cross-chain verification configuration completed!'));
     
