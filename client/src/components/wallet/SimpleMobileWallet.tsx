@@ -48,14 +48,19 @@ export const SimpleMobileWallet: React.FC<SimpleMobileWalletProps> = ({
   const generateConnectionUri = () => {
     const sessionId = Math.random().toString(36).substring(2, 15);
     const projectId = 'f1a006966920cbcac785194f58b6e073';
+    const appUrl = window.location.origin;
     
     switch (walletType) {
       case 'metamask':
-        return `wc:${sessionId}@2?relay-protocol=irn&symKey=${sessionId}&projectId=${projectId}`;
+        // WalletConnect v2 URI for MetaMask
+        const wcUri = `wc:${sessionId}@2?relay-protocol=irn&symKey=${btoa(sessionId)}&projectId=${projectId}`;
+        return wcUri;
       case 'phantom':
-        return `https://phantom.app/ul/v1/connect?dapp_encryption_public_key=${sessionId}&cluster=devnet&app_url=${encodeURIComponent(window.location.origin)}`;
+        // Phantom connect URI
+        return `phantom://v1/connect?dapp_encryption_public_key=${sessionId}&cluster=devnet&app_url=${encodeURIComponent(appUrl)}&redirect_link=${encodeURIComponent(appUrl)}`;
       case 'tonkeeper':
-        return `tc://tonconnect?v=2&id=${sessionId}&r=${encodeURIComponent(window.location.origin + '/tonconnect-manifest.json')}&ret=back`;
+        // TON Connect URI
+        return `tc://tonconnect?v=2&id=${sessionId}&r=${encodeURIComponent(appUrl + '/tonconnect-manifest.json')}&ret=${encodeURIComponent(appUrl)}`;
       default:
         return `session:${sessionId}`;
     }
@@ -94,9 +99,9 @@ export const SimpleMobileWallet: React.FC<SimpleMobileWalletProps> = ({
       // Try to open the app after a short delay
       setTimeout(() => {
         const mobileDeepLinks = {
-          metamask: 'https://metamask.app.link/dapp/' + window.location.host,
-          phantom: 'https://phantom.app/ul/browse/' + encodeURIComponent(window.location.href),
-          tonkeeper: 'https://app.tonkeeper.com/ton-connect?ret=' + encodeURIComponent(window.location.href)
+          metamask: `https://metamask.app.link/wc?uri=${encodeURIComponent(uri)}`,
+          phantom: uri, // Use the phantom:// URI directly
+          tonkeeper: uri // Use the tc:// URI directly
         };
         
         // Create invisible link and click it to trigger app opening
@@ -231,9 +236,9 @@ export const SimpleMobileWallet: React.FC<SimpleMobileWalletProps> = ({
               <Button
                 onClick={() => {
                   const appLinks = {
-                    metamask: 'https://metamask.app.link/dapp/' + window.location.host,
-                    phantom: 'https://phantom.app/ul/browse/' + encodeURIComponent(window.location.href),
-                    tonkeeper: 'https://app.tonkeeper.com/ton-connect?ret=' + encodeURIComponent(window.location.href)
+                    metamask: `https://metamask.app.link/wc?uri=${encodeURIComponent(connectionUri)}`,
+                    phantom: connectionUri, // Use the phantom:// URI directly
+                    tonkeeper: connectionUri // Use the tc:// URI directly
                   };
                   
                   // Try multiple methods to open the app
