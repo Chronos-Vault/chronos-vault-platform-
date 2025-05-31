@@ -222,30 +222,30 @@ export const TonProvider: React.FC<TonProviderProps> = ({ children }) => {
     let initInterval: NodeJS.Timeout | null = null;
     let updateInterval: NodeJS.Timeout | null = null;
     
-    // First attempt immediately
-    initTon();
+    // Disable initial TON initialization to prevent infinite loop
+    // initTon();
     
-    // If not successful, try again periodically until max attempts
-    initInterval = setInterval(() => {
-      // Only continue auto-retries if we haven't hit max attempts and not in manual retry
-      if (isComponentMounted && initAttempts < MAX_INIT_ATTEMPTS && !manualRetryInProgress) {
-        initTon();
-      } else if (initAttempts >= MAX_INIT_ATTEMPTS) {
-        // Stop trying to initialize automatically after max attempts
-        if (initInterval) {
-          clearInterval(initInterval);
-          initInterval = null;
-        }
-      }
-    }, 1500);
+    // Disable automatic retries to prevent infinite loop
+    // initInterval = setInterval(() => {
+    //   // Only continue auto-retries if we haven't hit max attempts and not in manual retry
+    //   if (isComponentMounted && initAttempts < MAX_INIT_ATTEMPTS && !manualRetryInProgress) {
+    //     initTon();
+    //   } else if (initAttempts >= MAX_INIT_ATTEMPTS) {
+    //     // Stop trying to initialize automatically after max attempts
+    //     if (initInterval) {
+    //       clearInterval(initInterval);
+    //       initInterval = null;
+    //     }
+    //   }
+    // }, 1500);
     
-    // Start update interval for wallet info updates
-    updateInterval = setInterval(() => {
-      if (isComponentMounted && tonService.isInitialized) {
-        setConnectionStatus(tonService.getConnectionStatus());
-        setWalletInfo(tonService.getWalletInfo());
-      }
-    }, 3000);
+    // Disable update interval to prevent conflicts
+    // updateInterval = setInterval(() => {
+    //   if (isComponentMounted && tonService.isInitialized) {
+    //     setConnectionStatus(tonService.getConnectionStatus());
+    //     setWalletInfo(tonService.getWalletInfo());
+    //   }
+    // }, 3000);
 
     return () => {
       isComponentMounted = false;

@@ -195,15 +195,12 @@ export function RealMobileWalletConnector({ onConnect }: RealMobileWalletConnect
             throw new Error('Phantom wallet not detected on mobile');
           }
         } else if (wallet.type === 'tonkeeper') {
-          // Use TON Connect
-          if ((window as any).TonConnectUI) {
-            const tonConnectUI = new (window as any).TonConnectUI({
-              manifestUrl: `${window.location.origin}/tonconnect-manifest.json`
-            });
-            const connectedWallet = await tonConnectUI.connectWallet();
-            realAddress = connectedWallet.account.address;
+          // For TON Keeper, check if wallet is available
+          if ((window as any).ton) {
+            const tonWallet = await (window as any).ton.send('ton_requestAccounts');
+            realAddress = tonWallet[0];
           } else {
-            throw new Error('TON Connect not available');
+            throw new Error('TON Keeper wallet not detected on mobile');
           }
         }
         
