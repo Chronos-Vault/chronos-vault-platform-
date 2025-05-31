@@ -170,7 +170,7 @@ export function SolanaProvider({ children }: SolanaProviderProps) {
     connectionStatus,
     availableWallets,
     walletAddress: walletInfo?.address || '',
-    publicKey: walletInfo?.publicKey,
+    publicKey: walletInfo?.address,
     wallet: walletInfo,
     connect,
     disconnect,

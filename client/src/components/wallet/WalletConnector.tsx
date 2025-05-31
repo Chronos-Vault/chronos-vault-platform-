@@ -24,7 +24,7 @@ export default function WalletConnector({ onConnect }: WalletConnectorProps) {
         
         if (accounts.length > 0) {
           const address = accounts[0];
-          setConnectedWallets(prev => new Set([...prev, 'metamask']));
+          setConnectedWallets(prev => new Set([...Array.from(prev), 'metamask']));
           onConnect('metamask', address);
           
           toast({
@@ -81,7 +81,7 @@ export default function WalletConnector({ onConnect }: WalletConnectorProps) {
           const response = await (window as any).solana.connect({ onlyIfTrusted: false });
           const address = response.publicKey.toString();
           
-          setConnectedWallets(prev => new Set([...prev, 'phantom']));
+          setConnectedWallets(prev => new Set([...Array.from(prev), 'phantom']));
           onConnect('phantom', address);
           
           toast({
@@ -130,7 +130,7 @@ export default function WalletConnector({ onConnect }: WalletConnectorProps) {
             description: "Please approve the connection in your TON wallet",
           });
           
-          setConnectedWallets(prev => new Set([...prev, 'tonkeeper']));
+          setConnectedWallets(prev => new Set([...Array.from(prev), 'tonkeeper']));
           onConnect('tonkeeper', 'TON-wallet-connected');
         } else {
           window.open('https://tonkeeper.com/', '_blank');

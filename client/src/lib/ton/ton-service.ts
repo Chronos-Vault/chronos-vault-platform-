@@ -585,11 +585,11 @@ class TONService {
       }
       
       // Format vault parameters
-      const vaultParams = formatTONVaultParams(
-        unlockTime, 
-        recipient || this.walletInfo?.address || '',
-        'Chronos Vault on TON'
-      );
+      const vaultParams = formatTONVaultParams({
+        unlockTime,
+        recipient: recipient || this.walletInfo?.address || '',
+        comment: comment || 'Chronos Vault on TON'
+      });
       
       // For development mode, simulate vault creation success
       if (import.meta.env.DEV) {
