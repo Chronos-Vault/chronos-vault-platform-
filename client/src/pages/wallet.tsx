@@ -493,24 +493,39 @@ export default function WalletPage() {
                       className="bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 text-xs"
                       onClick={async () => {
                         try {
-                          // Try to connect MetaMask
-                          if (typeof window !== 'undefined' && window.ethereum) {
-                            await window.ethereum.request({ method: 'eth_requestAccounts' });
+                          // Check if we're on mobile
+                          const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+                          
+                          if (isMobile) {
+                            // Mobile: Use MetaMask deep link
+                            const deepLink = `https://metamask.app.link/dapp/${window.location.host}${window.location.pathname}`;
+                            window.location.href = deepLink;
+                            
                             toast({
-                              title: "MetaMask Connected",
-                              description: "Ethereum wallet connected successfully",
+                              title: "Opening MetaMask",
+                              description: "Redirecting to MetaMask mobile app...",
                             });
                           } else {
-                            toast({
-                              title: "MetaMask Not Found",
-                              description: "Please install MetaMask browser extension",
-                              variant: "destructive",
-                            });
+                            // Desktop: Try browser extension
+                            if (typeof window !== 'undefined' && (window as any).ethereum) {
+                              await (window as any).ethereum.request({ method: 'eth_requestAccounts' });
+                              toast({
+                                title: "MetaMask Connected",
+                                description: "Ethereum wallet connected successfully",
+                              });
+                            } else {
+                              // Open MetaMask website to download
+                              window.open('https://metamask.io/', '_blank');
+                              toast({
+                                title: "Install MetaMask",
+                                description: "Download MetaMask from metamask.io",
+                              });
+                            }
                           }
                         } catch (error) {
                           toast({
                             title: "Connection Failed",
-                            description: "Failed to connect MetaMask",
+                            description: "Please ensure MetaMask is installed",
                             variant: "destructive",
                           });
                         }
@@ -524,24 +539,39 @@ export default function WalletPage() {
                       className="bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 text-xs"
                       onClick={async () => {
                         try {
-                          // Try to connect Phantom
-                          if (typeof window !== 'undefined' && window.phantom?.solana) {
-                            await window.phantom.solana.connect();
+                          // Check if we're on mobile
+                          const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+                          
+                          if (isMobile) {
+                            // Mobile: Use deep link to open Phantom app
+                            const deepLink = `phantom://browse/${encodeURIComponent(window.location.href)}`;
+                            window.location.href = deepLink;
+                            
                             toast({
-                              title: "Phantom Connected",
-                              description: "Solana wallet connected successfully",
+                              title: "Opening Phantom",
+                              description: "Redirecting to Phantom mobile app...",
                             });
                           } else {
-                            toast({
-                              title: "Phantom Not Found",
-                              description: "Please install Phantom wallet extension",
-                              variant: "destructive",
-                            });
+                            // Desktop: Try browser extension
+                            if (typeof window !== 'undefined' && (window as any).solana && (window as any).solana.isPhantom) {
+                              const response = await (window as any).solana.connect();
+                              toast({
+                                title: "Phantom Connected",
+                                description: `Connected: ${response.publicKey.toString().slice(0, 8)}...`,
+                              });
+                            } else {
+                              // Open Phantom website to download
+                              window.open('https://phantom.app/', '_blank');
+                              toast({
+                                title: "Install Phantom",
+                                description: "Download Phantom wallet from phantom.app",
+                              });
+                            }
                           }
                         } catch (error) {
                           toast({
                             title: "Connection Failed",
-                            description: "Failed to connect Phantom wallet",
+                            description: "Please ensure Phantom wallet is installed",
                             variant: "destructive",
                           });
                         }
@@ -556,28 +586,39 @@ export default function WalletPage() {
                       className="border-cyan-500/50 text-cyan-400 hover:bg-cyan-500/10 text-xs"
                       onClick={async () => {
                         try {
-                          // Try to connect TON Keeper using TonConnect
-                          if (typeof window !== 'undefined') {
-                            // Check for TonConnect or TON wallets
-                            const tonConnect = window.TonConnect || window.tonkeeper;
-                            if (tonConnect) {
-                              await tonConnect.connect();
-                              toast({
-                                title: "TON Keeper Connected",
-                                description: "TON wallet connected successfully",
-                              });
-                            } else {
-                              // Fallback to TonConnect protocol
+                          // Check if we're on mobile
+                          const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+                          
+                          if (isMobile) {
+                            // Mobile: Use TON Keeper deep link
+                            const deepLink = `tonkeeper://dapp/${encodeURIComponent(window.location.href)}`;
+                            window.location.href = deepLink;
+                            
+                            toast({
+                              title: "Opening TON Keeper",
+                              description: "Redirecting to TON Keeper mobile app...",
+                            });
+                          } else {
+                            // Desktop: Try browser extension or redirect to download
+                            if (typeof window !== 'undefined' && ((window as any).ton || (window as any).tonkeeper)) {
+                              // Try to connect using available TON wallet
                               toast({
                                 title: "TON Keeper",
-                                description: "Please use TON Connect QR code to connect",
+                                description: "Please approve connection in your TON wallet",
+                              });
+                            } else {
+                              // Open TON Keeper website to download
+                              window.open('https://tonkeeper.com/', '_blank');
+                              toast({
+                                title: "Install TON Keeper",
+                                description: "Download TON Keeper from tonkeeper.com",
                               });
                             }
                           }
                         } catch (error) {
                           toast({
-                            title: "Connection Info",
-                            description: "Install TON Keeper or use QR code connection",
+                            title: "Connection Failed",
+                            description: "Please ensure TON Keeper is installed",
                             variant: "destructive",
                           });
                         }
