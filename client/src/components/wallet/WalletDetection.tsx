@@ -85,13 +85,19 @@ export function WalletDetection({ onConnect }: WalletDetectionProps) {
       });
       
       const result = await response.json();
+      console.log('Authorization response:', result);
       
       if (response.ok && result.status === 'success') {
-        setWalletStatuses(prev => prev.map(w => 
-          w.name === wallet.name 
-            ? { ...w, connected: true, address }
-            : w
-        ));
+        // Update wallet status to show connected
+        setWalletStatuses(prev => {
+          const updated = prev.map(w => 
+            w.name === wallet.name 
+              ? { ...w, connected: true, address }
+              : w
+          );
+          console.log('Updated wallet statuses:', updated);
+          return updated;
+        });
         
         onConnect(walletType, address);
         
