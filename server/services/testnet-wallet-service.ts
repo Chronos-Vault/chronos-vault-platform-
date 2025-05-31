@@ -5,6 +5,7 @@
  */
 
 import { Connection, Keypair, PublicKey } from '@solana/web3.js';
+import bs58 from 'bs58';
 import crypto from 'crypto';
 
 export interface WalletInfo {
@@ -36,9 +37,30 @@ class TestnetWalletService {
     try {
       // Load Solana private key
       if (process.env.SOLANA_PRIVATE_KEY) {
-        const privateKeyBytes = Buffer.from(process.env.SOLANA_PRIVATE_KEY, 'hex');
-        this.solanaKeypair = Keypair.fromSecretKey(privateKeyBytes);
-        console.log('Solana wallet initialized:', this.solanaKeypair.publicKey.toString());
+        try {
+          // Try different key formats
+          let privateKeyBytes: Uint8Array;
+          
+          if (process.env.SOLANA_PRIVATE_KEY.includes(',')) {
+            // Array format: [1,2,3,...]
+            const keyArray = JSON.parse(process.env.SOLANA_PRIVATE_KEY);
+            privateKeyBytes = new Uint8Array(keyArray);
+          } else if (process.env.SOLANA_PRIVATE_KEY.length === 128) {
+            // Hex format (64 bytes = 128 hex chars)
+            privateKeyBytes = new Uint8Array(Buffer.from(process.env.SOLANA_PRIVATE_KEY, 'hex'));
+          } else if (process.env.SOLANA_PRIVATE_KEY.length === 44 || process.env.SOLANA_PRIVATE_KEY.length === 88) {
+            // Base58 format (common for Solana)
+            privateKeyBytes = bs58.decode(process.env.SOLANA_PRIVATE_KEY);
+          } else {
+            // Base64 format
+            privateKeyBytes = new Uint8Array(Buffer.from(process.env.SOLANA_PRIVATE_KEY, 'base64'));
+          }
+          
+          this.solanaKeypair = Keypair.fromSecretKey(privateKeyBytes);
+          console.log('Solana wallet initialized:', this.solanaKeypair.publicKey.toString());
+        } catch (error) {
+          console.error('Failed to parse Solana private key:', error);
+        }
       }
 
       // Load TON private key
