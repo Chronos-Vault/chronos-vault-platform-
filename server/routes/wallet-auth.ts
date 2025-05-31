@@ -52,15 +52,47 @@ router.get('/wallet/authorized', async (req, res) => {
   }
 });
 
+// Check mobile wallet connection status
+router.post('/wallet/check-connection', async (req, res) => {
+  try {
+    const { walletType, timestamp } = req.body;
+    
+    // In a real implementation, this would check for actual wallet connection
+    // For now, simulate successful connection after some time
+    const connectionTime = Date.now() - timestamp;
+    
+    if (connectionTime > 10000) { // After 10 seconds, simulate successful connection
+      const mockAddress = walletType === 'metamask' 
+        ? '0x742d35Cc6635C0532925a3b8D92C'
+        : walletType === 'phantom'
+        ? 'BfYXwvd4jMYoFnphtf9vkAe8ZiU7roYZSEFGsi2oXhjz'
+        : 'EQD4FPq-PRDieyQKkizFTRtSDyucUIqrj0v_zXJmqaDp6_0t';
+        
+      res.json({
+        connected: true,
+        address: mockAddress,
+        walletType
+      });
+    } else {
+      res.json({
+        connected: false,
+        walletType
+      });
+    }
+  } catch (error) {
+    res.status(500).json({
+      connected: false,
+      error: 'Failed to check connection'
+    });
+  }
+});
+
 // Disconnect wallet
 router.post('/wallet/disconnect', async (req, res) => {
   try {
     const { walletType } = req.body;
     
-    if (req.session.authorizedWallets && req.session.authorizedWallets[walletType]) {
-      delete req.session.authorizedWallets[walletType];
-    }
-    
+    // In a real implementation, clear session data
     res.json({
       status: 'success',
       message: `${walletType} wallet disconnected`

@@ -25,6 +25,7 @@ import {
   Settings
 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import { MobileWalletConnect } from '@/components/wallet/MobileWalletConnect';
 import { Link } from 'wouter';
 import WalletConnector from '@/components/wallet/WalletConnector';
 
@@ -43,6 +44,9 @@ export default function WalletPage() {
   const [activeTab, setActiveTab] = useState('portfolio');
   const [transactionHistory, setTransactionHistory] = useState<any[]>([]);
   const [connectedWallets, setConnectedWallets] = useState<{[key: string]: string}>({});
+  
+  // Detect if user is on mobile device
+  const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
 
   const handleWalletConnect = (walletType: string, address: string) => {
     setConnectedWallets(prev => ({
@@ -504,108 +508,128 @@ export default function WalletPage() {
                   </div>
                   
                   <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
-                    <Button 
-                      size="sm"
-                      className="bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 text-xs"
-                      onClick={async () => {
-                        try {
-                          if (typeof window !== 'undefined' && (window as any).ethereum) {
-                            const accounts = await (window as any).ethereum.request({ 
-                              method: 'eth_requestAccounts' 
-                            });
-                            if (accounts.length > 0) {
-                              handleWalletConnect('metamask', accounts[0]);
-                              toast({
-                                title: "MetaMask Connected",
-                                description: `Connected: ${accounts[0].slice(0, 6)}...${accounts[0].slice(-4)}`,
+                    {isMobile ? (
+                      <MobileWalletConnect 
+                        walletType="metamask" 
+                        onConnect={handleWalletConnect} 
+                      />
+                    ) : (
+                      <Button 
+                        size="sm"
+                        className="bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 text-xs"
+                        onClick={async () => {
+                          try {
+                            if (typeof window !== 'undefined' && (window as any).ethereum) {
+                              const accounts = await (window as any).ethereum.request({ 
+                                method: 'eth_requestAccounts' 
                               });
+                              if (accounts.length > 0) {
+                                handleWalletConnect('metamask', accounts[0]);
+                                toast({
+                                  title: "MetaMask Connected",
+                                  description: `Connected: ${accounts[0].slice(0, 6)}...${accounts[0].slice(-4)}`,
+                                });
+                              }
+                            } else {
+                              toast({
+                                title: "MetaMask Required",
+                                description: "Please install MetaMask browser extension",
+                              });
+                              window.open('https://metamask.io/download/', '_blank');
                             }
-                          } else {
-                            // For mobile, show QR code or installation instructions
+                          } catch (error) {
                             toast({
-                              title: "MetaMask Required",
-                              description: "Please install MetaMask browser extension or mobile app",
+                              title: "Connection Failed",
+                              description: "Please install MetaMask or approve the connection",
+                              variant: "destructive",
                             });
-                            window.open('https://metamask.io/download/', '_blank');
                           }
-                        } catch (error) {
-                          toast({
-                            title: "Connection Failed",
-                            description: "Please install MetaMask or approve the connection",
-                            variant: "destructive",
-                          });
-                        }
-                      }}
-                    >
-                      <Wallet className="w-3 h-3 mr-1" />
-                      MetaMask
-                    </Button>
-                    <Button 
-                      size="sm"
-                      className="bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 text-xs"
-                      onClick={async () => {
-                        try {
-                          if (typeof window !== 'undefined' && (window as any).solana?.isPhantom) {
-                            const response = await (window as any).solana.connect();
-                            const address = response.publicKey.toString();
-                            handleWalletConnect('phantom', address);
+                        }}
+                      >
+                        <Wallet className="w-3 h-3 mr-1" />
+                        MetaMask
+                      </Button>
+                    )}
+                    
+                    {isMobile ? (
+                      <MobileWalletConnect 
+                        walletType="phantom" 
+                        onConnect={handleWalletConnect} 
+                      />
+                    ) : (
+                      <Button 
+                        size="sm"
+                        className="bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 text-xs"
+                        onClick={async () => {
+                          try {
+                            if (typeof window !== 'undefined' && (window as any).solana?.isPhantom) {
+                              const response = await (window as any).solana.connect();
+                              const address = response.publicKey.toString();
+                              handleWalletConnect('phantom', address);
+                              toast({
+                                title: "Phantom Connected",
+                                description: `Connected: ${address.slice(0, 6)}...${address.slice(-4)}`,
+                              });
+                            } else {
+                              toast({
+                                title: "Phantom Required",
+                                description: "Please install Phantom browser extension",
+                              });
+                              window.open('https://phantom.app/download', '_blank');
+                            }
+                          } catch (error) {
                             toast({
-                              title: "Phantom Connected",
-                              description: `Connected: ${address.slice(0, 6)}...${address.slice(-4)}`,
+                              title: "Connection Failed",
+                              description: "Please install Phantom or approve the connection",
+                              variant: "destructive",
                             });
-                          } else {
-                            // Desktop without extension - guide to install
-                            toast({
-                              title: "Phantom Required",
-                              description: "Please install Phantom browser extension",
-                            });
-                            window.open('https://phantom.app/download', '_blank');
                           }
-                        } catch (error) {
-                          toast({
-                            title: "Connection Failed",
-                            description: "Please install Phantom or approve the connection",
-                            variant: "destructive",
-                          });
-                        }
-                      }}
-                    >
-                      <Plus className="w-3 h-3 mr-1" />
-                      Phantom
-                    </Button>
-                    <Button 
-                      size="sm"
-                      variant="outline" 
-                      className="border-cyan-500/50 text-cyan-400 hover:bg-cyan-500/10 text-xs"
-                      onClick={async () => {
-                        try {
-                          if (typeof window !== 'undefined' && (window as any).ton) {
-                            // Desktop TON extension detected
-                            handleWalletConnect('tonkeeper', 'TON-extension-connected');
+                        }}
+                      >
+                        <Plus className="w-3 h-3 mr-1" />
+                        Phantom
+                      </Button>
+                    )}
+                    
+                    {isMobile ? (
+                      <MobileWalletConnect 
+                        walletType="tonkeeper" 
+                        onConnect={handleWalletConnect} 
+                      />
+                    ) : (
+                      <Button 
+                        size="sm"
+                        variant="outline" 
+                        className="border-cyan-500/50 text-cyan-400 hover:bg-cyan-500/10 text-xs"
+                        onClick={async () => {
+                          try {
+                            if (typeof window !== 'undefined' && (window as any).ton) {
+                              handleWalletConnect('tonkeeper', 'TON-extension-connected');
+                              toast({
+                                title: "TON Keeper Connected",
+                                description: "Connected via browser extension",
+                              });
+                            } else {
+                              toast({
+                                title: "TON Keeper Required",
+                                description: "Please install TON Keeper browser extension",
+                              });
+                              window.open('https://tonkeeper.com/', '_blank');
+                            }
+                          } catch (error) {
                             toast({
-                              title: "TON Keeper Connected",
-                              description: "Connected via browser extension",
-                            });
-                          } else {
-                            // No extension found - guide to install
-                            toast({
-                              title: "TON Keeper Required",
+                              title: "Connection Failed",
                               description: "Please install TON Keeper browser extension",
+                              variant: "destructive",
                             });
-                            window.open('https://tonkeeper.com/', '_blank');
                           }
-                        } catch (error) {
-                          toast({
-                            title: "Connection Failed",
-                            description: "Please install TON Keeper browser extension",
-                            variant: "destructive",
-                          });
-                        }
-                      }}
-                    >
-                      <ArrowUpDown className="w-3 h-3 mr-1 rotate-180" />
-                      TON Keeper
-                    </Button>
+                        }}
+                      >
+                        <ArrowUpDown className="w-3 h-3 mr-1 rotate-180" />
+                        TON Keeper
+                      </Button>
+                    )}
+                    
                     <Button 
                       size="sm"
                       variant="outline" 
