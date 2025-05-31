@@ -151,9 +151,20 @@ class TONService {
           try {
             // Ensure buffer is available before creating TonConnectUI
             if (typeof window !== 'undefined' && !(window as any).Buffer) {
-              const { Buffer } = await import('buffer');
-              (window as any).Buffer = Buffer;
-              (window as any).global = window;
+              try {
+                const bufferModule = await import('buffer');
+                (window as any).Buffer = bufferModule.Buffer;
+                (window as any).global = window;
+                (window as any).process = { env: {} };
+              } catch (bufferError) {
+                console.warn('Buffer polyfill failed, using fallback:', bufferError);
+                // Provide a minimal Buffer polyfill
+                (window as any).Buffer = {
+                  from: (data: any) => new Uint8Array(data),
+                  alloc: (size: number) => new Uint8Array(size),
+                  isBuffer: () => false
+                };
+              }
             }
             
             this.tonConnectUI = new TonConnectUI({

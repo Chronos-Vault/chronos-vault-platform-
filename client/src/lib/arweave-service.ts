@@ -1,6 +1,16 @@
 import { WebBundlr } from '@bundlr-network/client';
 import { UploadedMedia, MediaType } from '@/components/vault/media-uploader';
-import { Buffer } from 'buffer';
+
+// Handle buffer polyfill for browser compatibility
+let BufferPolyfill: any;
+try {
+  BufferPolyfill = (globalThis as any).Buffer || require('buffer').Buffer;
+} catch {
+  // Fallback for browser environment
+  BufferPolyfill = {
+    from: (data: ArrayBuffer) => new Uint8Array(data)
+  };
+}
 
 /**
  * ArweaveService provides functionality for uploading files to the Arweave network
@@ -111,7 +121,7 @@ class ArweaveService {
       
       // Get file data as arrayBuffer and convert to Buffer
       const arrayBuffer = await file.arrayBuffer();
-      const buffer = Buffer.from(arrayBuffer);
+      const buffer = BufferPolyfill.from(arrayBuffer);
       
       // Upload the file to Arweave
       const response = await this.bundlr.upload(buffer, {
