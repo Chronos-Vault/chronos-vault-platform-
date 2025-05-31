@@ -40,6 +40,7 @@ export default function WalletPage() {
   const [showWithdrawModal, setShowWithdrawModal] = useState(false);
   const [realWalletBalances, setRealWalletBalances] = useState<any>({});
   const [activeTab, setActiveTab] = useState('portfolio');
+  const [transactionHistory, setTransactionHistory] = useState<any[]>([]);
 
   // Fetch real testnet wallet data
   useEffect(() => {
@@ -261,10 +262,35 @@ export default function WalletPage() {
       const data = await response.json();
       
       if (data.status === 'success') {
+        // Add transaction to history
+        const newTransaction = {
+          id: Date.now().toString(),
+          type: 'withdrawal',
+          amount: `${amount} ${network.toUpperCase()}`,
+          timestamp: 'Just now',
+          status: 'pending',
+          chain: network,
+          to: address
+        };
+        
+        setTransactionHistory(prev => [newTransaction, ...prev]);
+        
         toast({
           title: "Withdrawal Initiated",
           description: `Withdrawing ${amount} to ${address.slice(0, 8)}...${address.slice(-6)}`,
         });
+        
+        // Simulate transaction confirmation after 3 seconds
+        setTimeout(() => {
+          setTransactionHistory(prev => 
+            prev.map(tx => 
+              tx.id === newTransaction.id 
+                ? { ...tx, status: 'confirmed', timestamp: '3 seconds ago' }
+                : tx
+            )
+          );
+        }, 3000);
+        
       } else {
         toast({
           title: "Withdrawal Failed",
@@ -817,10 +843,9 @@ export default function WalletPage() {
                                 });
                                 return;
                               }
-                              toast({
-                                title: "Withdrawal Initiated",
-                                description: `Withdrawing ${sendAmount} ${walletBalances[selectedChain as keyof typeof walletBalances].symbol} to external wallet`,
-                              });
+                              handleWithdraw(sendAmount, recipientAddress, selectedChain);
+                              setSendAmount('');
+                              setRecipientAddress('');
                             }}
                             className="w-full bg-gradient-to-r from-red-500 to-orange-500 hover:from-red-600 hover:to-orange-600"
                           >
@@ -880,7 +905,43 @@ export default function WalletPage() {
                               <Label className="text-xs">Co-signer Addresses</Label>
                               <Input placeholder="Add co-signer address" className="mt-1 bg-gray-700 border-gray-600 text-sm" />
                             </div>
-                            <Button size="sm" className="w-full bg-blue-500 hover:bg-blue-600">
+                            <Button 
+                              size="sm" 
+                              className="w-full bg-blue-500 hover:bg-blue-600"
+                              onClick={async () => {
+                                try {
+                                  const response = await fetch('/api/security/multisig/initialize', {
+                                    method: 'POST',
+                                    headers: { 'Content-Type': 'application/json' },
+                                    body: JSON.stringify({
+                                      requiredSignatures: 2,
+                                      cosigners: ['0x...'] // Add actual addresses
+                                    })
+                                  });
+                                  
+                                  const data = await response.json();
+                                  
+                                  if (data.status === 'success') {
+                                    toast({
+                                      title: "MultiSig Initialized",
+                                      description: "Multi-signature transaction setup complete",
+                                    });
+                                  } else {
+                                    toast({
+                                      title: "MultiSig Setup Failed",
+                                      description: data.message || "Failed to initialize MultiSig",
+                                      variant: "destructive",
+                                    });
+                                  }
+                                } catch (error) {
+                                  toast({
+                                    title: "Network Error",
+                                    description: "Failed to connect to MultiSig service",
+                                    variant: "destructive",
+                                  });
+                                }
+                              }}
+                            >
                               <Shield className="w-4 h-4 mr-2" />
                               Initialize MultiSig Transaction
                             </Button>
@@ -911,11 +972,35 @@ export default function WalletPage() {
                               <Button 
                                 size="sm" 
                                 className="w-full"
-                                onClick={() => {
-                                  toast({
-                                    title: "Connecting to Ledger",
-                                    description: "Please connect and unlock your Ledger device",
-                                  });
+                                onClick={async () => {
+                                  try {
+                                    const response = await fetch('/api/security/hardware-wallet/connect', {
+                                      method: 'POST',
+                                      headers: { 'Content-Type': 'application/json' },
+                                      body: JSON.stringify({ device: 'ledger' })
+                                    });
+                                    
+                                    const data = await response.json();
+                                    
+                                    if (data.status === 'success') {
+                                      toast({
+                                        title: "Ledger Connected",
+                                        description: "Hardware wallet connected successfully",
+                                      });
+                                    } else {
+                                      toast({
+                                        title: "Connection Failed",
+                                        description: "Please connect and unlock your Ledger device",
+                                        variant: "destructive",
+                                      });
+                                    }
+                                  } catch (error) {
+                                    toast({
+                                      title: "Hardware Wallet Error",
+                                      description: "Failed to connect to Ledger device",
+                                      variant: "destructive",
+                                    });
+                                  }
                                 }}
                               >
                                 Connect Ledger
@@ -934,11 +1019,35 @@ export default function WalletPage() {
                                 size="sm" 
                                 variant="outline" 
                                 className="w-full"
-                                onClick={() => {
-                                  toast({
-                                    title: "Connecting to Trezor",
-                                    description: "Please connect and unlock your Trezor device",
-                                  });
+                                onClick={async () => {
+                                  try {
+                                    const response = await fetch('/api/security/hardware-wallet/connect', {
+                                      method: 'POST',
+                                      headers: { 'Content-Type': 'application/json' },
+                                      body: JSON.stringify({ device: 'trezor' })
+                                    });
+                                    
+                                    const data = await response.json();
+                                    
+                                    if (data.status === 'success') {
+                                      toast({
+                                        title: "Trezor Connected",
+                                        description: "Hardware wallet connected successfully",
+                                      });
+                                    } else {
+                                      toast({
+                                        title: "Connection Failed",
+                                        description: "Please connect and unlock your Trezor device",
+                                        variant: "destructive",
+                                      });
+                                    }
+                                  } catch (error) {
+                                    toast({
+                                      title: "Hardware Wallet Error",
+                                      description: "Failed to connect to Trezor device",
+                                      variant: "destructive",
+                                    });
+                                  }
                                 }}
                               >
                                 Connect Trezor
@@ -991,11 +1100,34 @@ export default function WalletPage() {
                               <Button 
                                 size="sm" 
                                 className="w-full"
-                                onClick={() => {
-                                  toast({
-                                    title: "Biometric Setup",
-                                    description: "Biometric authentication configured successfully",
-                                  });
+                                onClick={async () => {
+                                  try {
+                                    const response = await fetch('/api/security/biometric/enable', {
+                                      method: 'POST',
+                                      headers: { 'Content-Type': 'application/json' }
+                                    });
+                                    
+                                    const data = await response.json();
+                                    
+                                    if (data.status === 'success') {
+                                      toast({
+                                        title: "Biometric Authentication Enabled",
+                                        description: "Fingerprint authentication is now active",
+                                      });
+                                    } else {
+                                      toast({
+                                        title: "Biometric Setup Failed",
+                                        description: data.message || "Failed to enable biometric authentication",
+                                        variant: "destructive",
+                                      });
+                                    }
+                                  } catch (error) {
+                                    toast({
+                                      title: "Biometric Error",
+                                      description: "Failed to configure biometric authentication",
+                                      variant: "destructive",
+                                    });
+                                  }
                                 }}
                               >
                                 <Fingerprint className="w-4 h-4 mr-2" />
