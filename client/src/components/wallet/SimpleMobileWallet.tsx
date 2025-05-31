@@ -88,26 +88,26 @@ export const SimpleMobileWallet: React.FC<SimpleMobileWalletProps> = ({
     const isMobile = /Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
     
     if (isMobile) {
-      // For mobile, try to open wallet app directly first
-      const mobileDeepLinks = {
-        metamask: `metamask://dapp/${window.location.host}${window.location.pathname}`,
-        phantom: `phantom://browse/${encodeURIComponent(window.location.href)}`,
-        tonkeeper: `tonkeeper://connect?url=${encodeURIComponent(window.location.href)}`
-      };
+      // For mobile, show QR code and provide app opening button
+      setShowQR(true);
       
-      try {
-        // Try to open the app immediately
-        window.location.href = mobileDeepLinks[walletType];
+      // Try to open the app after a short delay
+      setTimeout(() => {
+        const mobileDeepLinks = {
+          metamask: 'https://metamask.app.link/dapp/' + window.location.host,
+          phantom: 'https://phantom.app/ul/browse/' + encodeURIComponent(window.location.href),
+          tonkeeper: 'https://app.tonkeeper.com/ton-connect?ret=' + encodeURIComponent(window.location.href)
+        };
         
-        // Also show QR code as fallback
-        setTimeout(() => {
-          setShowQR(true);
-        }, 1000);
-        
-      } catch (error) {
-        // If deep link fails, show QR code
-        setShowQR(true);
-      }
+        // Create invisible link and click it to trigger app opening
+        const link = document.createElement('a');
+        link.href = mobileDeepLinks[walletType];
+        link.target = '_blank';
+        link.rel = 'noopener noreferrer';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+      }, 500);
     } else {
       // For desktop, show QR code immediately
       setShowQR(true);
@@ -195,12 +195,25 @@ export const SimpleMobileWallet: React.FC<SimpleMobileWalletProps> = ({
             <div className="grid grid-cols-1 gap-2 w-full">
               <Button
                 onClick={() => {
-                  const deepLinks = {
-                    metamask: `metamask://dapp/${window.location.host}`,
-                    phantom: `phantom://browse/${encodeURIComponent(window.location.href)}`,
-                    tonkeeper: `tonkeeper://connect?url=${encodeURIComponent(window.location.href)}`
+                  const appLinks = {
+                    metamask: 'https://metamask.app.link/dapp/' + window.location.host,
+                    phantom: 'https://phantom.app/ul/browse/' + encodeURIComponent(window.location.href),
+                    tonkeeper: 'https://app.tonkeeper.com/ton-connect?ret=' + encodeURIComponent(window.location.href)
                   };
-                  window.location.href = deepLinks[walletType];
+                  
+                  // Try multiple methods to open the app
+                  const link = document.createElement('a');
+                  link.href = appLinks[walletType];
+                  link.target = '_blank';
+                  link.rel = 'noopener noreferrer';
+                  document.body.appendChild(link);
+                  link.click();
+                  document.body.removeChild(link);
+                  
+                  // Also try window.open as backup
+                  setTimeout(() => {
+                    window.open(appLinks[walletType], '_blank');
+                  }, 100);
                 }}
                 className={`bg-gradient-to-r ${wallet.color} hover:opacity-90 text-white`}
               >
