@@ -93,13 +93,22 @@ export function WalletDetection({ onConnect }: WalletDetectionProps) {
       let address = '';
       let walletType = '';
       
-      if (wallet.name === 'MetaMask' && wallet.provider) {
-        // Request account access if needed
-        const accounts = await wallet.provider.request({
-          method: 'eth_requestAccounts'
-        });
-        address = accounts[0];
-        walletType = 'metamask';
+      if (wallet.name === 'MetaMask') {
+        if (isMobile && !wallet.provider) {
+          // On mobile without extension, use deep link
+          const deepLink = `https://metamask.app.link/dapp/${window.location.host}${window.location.pathname}`;
+          window.open(deepLink, '_self');
+          return;
+        }
+        
+        if (wallet.provider) {
+          // Request account access if needed
+          const accounts = await wallet.provider.request({
+            method: 'eth_requestAccounts'
+          });
+          address = accounts[0];
+          walletType = 'metamask';
+        }
         
         // Send to backend for authorization
         const response = await fetch('/api/vault/authorize-wallet', {
@@ -129,10 +138,19 @@ export function WalletDetection({ onConnect }: WalletDetectionProps) {
           });
         }
         
-      } else if (wallet.name === 'Phantom' && wallet.provider) {
-        const response = await wallet.provider.connect();
-        address = response.publicKey.toString();
-        walletType = 'phantom';
+      } else if (wallet.name === 'Phantom') {
+        if (isMobile && !wallet.provider) {
+          // On mobile without extension, use deep link
+          const deepLink = `https://phantom.app/ul/browse/${window.location.host}${window.location.pathname}`;
+          window.open(deepLink, '_self');
+          return;
+        }
+        
+        if (wallet.provider) {
+          const response = await wallet.provider.connect();
+          address = response.publicKey.toString();
+          walletType = 'phantom';
+        }
         
         // Send to backend for authorization
         const authResponse = await fetch('/api/vault/authorize-wallet', {
@@ -161,13 +179,22 @@ export function WalletDetection({ onConnect }: WalletDetectionProps) {
           });
         }
         
-      } else if (wallet.name === 'TON Keeper' && wallet.provider) {
-        // Try TON Connect approach
-        if (wallet.provider.connect) {
-          await wallet.provider.connect();
-          const walletInfo = wallet.provider.wallet;
-          address = walletInfo?.account?.address || '';
-          walletType = 'tonkeeper';
+      } else if (wallet.name === 'TON Keeper') {
+        if (isMobile && !wallet.provider) {
+          // On mobile without extension, use deep link
+          const deepLink = `https://tonkeeper.com/browser/${window.location.host}${window.location.pathname}`;
+          window.open(deepLink, '_self');
+          return;
+        }
+        
+        if (wallet.provider) {
+          // Try TON Connect approach
+          if (wallet.provider.connect) {
+            await wallet.provider.connect();
+            const walletInfo = wallet.provider.wallet;
+            address = walletInfo?.account?.address || '';
+            walletType = 'tonkeeper';
+          }
         }
         
         if (address) {
