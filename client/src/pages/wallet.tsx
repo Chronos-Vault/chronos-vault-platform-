@@ -363,6 +363,17 @@ export default function WalletPage() {
                             <Copy className="w-3 h-3 mr-1" />
                             Copy Address
                           </Button>
+                          {(chain === 'solana' || chain === 'ton') && (
+                            <Button 
+                              size="sm" 
+                              variant="outline"
+                              onClick={() => handleAirdrop(chain as 'solana' | 'ton')}
+                              className="text-xs bg-green-500/10 border-green-500/30 text-green-400 hover:bg-green-500/20"
+                            >
+                              <Plus className="w-3 h-3 mr-1" />
+                              Testnet Airdrop
+                            </Button>
+                          )}
                         </div>
                       </div>
                     ))}
