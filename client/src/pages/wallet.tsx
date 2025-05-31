@@ -491,27 +491,100 @@ export default function WalletPage() {
                     <Button 
                       size="sm"
                       className="bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 text-xs"
-                      onClick={() => setActiveTab('portfolio')}
+                      onClick={async () => {
+                        try {
+                          // Try to connect MetaMask
+                          if (typeof window !== 'undefined' && window.ethereum) {
+                            await window.ethereum.request({ method: 'eth_requestAccounts' });
+                            toast({
+                              title: "MetaMask Connected",
+                              description: "Ethereum wallet connected successfully",
+                            });
+                          } else {
+                            toast({
+                              title: "MetaMask Not Found",
+                              description: "Please install MetaMask browser extension",
+                              variant: "destructive",
+                            });
+                          }
+                        } catch (error) {
+                          toast({
+                            title: "Connection Failed",
+                            description: "Failed to connect MetaMask",
+                            variant: "destructive",
+                          });
+                        }
+                      }}
                     >
                       <Wallet className="w-3 h-3 mr-1" />
-                      Connect
+                      MetaMask
                     </Button>
                     <Button 
                       size="sm"
                       className="bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 text-xs"
-                      onClick={() => setActiveTab('deposit')}
+                      onClick={async () => {
+                        try {
+                          // Try to connect Phantom
+                          if (typeof window !== 'undefined' && window.phantom?.solana) {
+                            await window.phantom.solana.connect();
+                            toast({
+                              title: "Phantom Connected",
+                              description: "Solana wallet connected successfully",
+                            });
+                          } else {
+                            toast({
+                              title: "Phantom Not Found",
+                              description: "Please install Phantom wallet extension",
+                              variant: "destructive",
+                            });
+                          }
+                        } catch (error) {
+                          toast({
+                            title: "Connection Failed",
+                            description: "Failed to connect Phantom wallet",
+                            variant: "destructive",
+                          });
+                        }
+                      }}
                     >
                       <Plus className="w-3 h-3 mr-1" />
-                      Deposit
+                      Phantom
                     </Button>
                     <Button 
                       size="sm"
                       variant="outline" 
-                      className="border-red-500/50 text-red-400 hover:bg-red-500/10 text-xs"
-                      onClick={() => setActiveTab('withdraw')}
+                      className="border-cyan-500/50 text-cyan-400 hover:bg-cyan-500/10 text-xs"
+                      onClick={async () => {
+                        try {
+                          // Try to connect TON Keeper using TonConnect
+                          if (typeof window !== 'undefined') {
+                            // Check for TonConnect or TON wallets
+                            const tonConnect = window.TonConnect || window.tonkeeper;
+                            if (tonConnect) {
+                              await tonConnect.connect();
+                              toast({
+                                title: "TON Keeper Connected",
+                                description: "TON wallet connected successfully",
+                              });
+                            } else {
+                              // Fallback to TonConnect protocol
+                              toast({
+                                title: "TON Keeper",
+                                description: "Please use TON Connect QR code to connect",
+                              });
+                            }
+                          }
+                        } catch (error) {
+                          toast({
+                            title: "Connection Info",
+                            description: "Install TON Keeper or use QR code connection",
+                            variant: "destructive",
+                          });
+                        }
+                      }}
                     >
                       <ArrowUpDown className="w-3 h-3 mr-1 rotate-180" />
-                      Withdraw
+                      TON Keeper
                     </Button>
                     <Button 
                       size="sm"
