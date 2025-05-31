@@ -251,18 +251,51 @@ export function WalletDetection({ onConnect }: WalletDetectionProps) {
           console.log('Mobile device detected, connecting via MetaMask mobile...');
           // For real mobile wallet connection
           try {
-            // Try to connect via WalletConnect or mobile deep link
-            const dappUrl = `${window.location.protocol}//${window.location.host}${window.location.pathname}`;
-            const metamaskDeepLink = `https://metamask.app.link/dapp/${window.location.host}${window.location.pathname}?redirect=${encodeURIComponent(dappUrl)}`;
+            // For mobile, try to trigger native wallet connection
+            console.log('Attempting to connect with installed MetaMask mobile app...');
             
-            // Store connection attempt in localStorage for callback
-            localStorage.setItem('wallet_connection_attempt', JSON.stringify({
-              type: 'metamask',
-              timestamp: Date.now()
-            }));
+            // Check if we're in MetaMask's in-app browser
+            const isMetaMaskApp = (window as any).ethereum?.isMetaMask;
             
-            // Redirect to MetaMask app
-            window.location.href = metamaskDeepLink;
+            if (isMetaMaskApp) {
+              // We're inside MetaMask app, request accounts directly
+              const accounts = await (window as any).ethereum.request({
+                method: 'eth_requestAccounts'
+              });
+              address = accounts[0];
+              walletType = 'metamask';
+              console.log('Connected via MetaMask in-app browser:', address);
+            } else {
+              // For mobile, create a universal link that will work with installed MetaMask
+              console.log('Creating MetaMask mobile connection...');
+              
+              // Create a connection session
+              const sessionId = Date.now().toString();
+              const connectionData = {
+                sessionId,
+                dappName: 'Chronos Vault',
+                dappUrl: window.location.origin,
+                dappIcon: `${window.location.origin}/favicon.ico`,
+                timestamp: Date.now()
+              };
+              
+              localStorage.setItem(`metamask_session_${sessionId}`, JSON.stringify(connectionData));
+              
+              // Create MetaMask universal link
+              const metamaskUniversalLink = `https://metamask.app.link/dapp/${window.location.hostname}${window.location.pathname}?session=${sessionId}`;
+              
+              toast({
+                title: "Opening MetaMask",
+                description: "Please approve the connection in your MetaMask mobile app",
+              });
+              
+              // Open MetaMask app
+              setTimeout(() => {
+                window.location.href = metamaskUniversalLink;
+              }, 1000);
+              
+              return;
+            }
             return;
           } catch (error) {
             console.error('Mobile MetaMask connection error:', error);
