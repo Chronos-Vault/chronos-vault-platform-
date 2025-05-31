@@ -74,9 +74,20 @@ export function WalletDetection({ onConnect }: WalletDetectionProps) {
 
   const connectWallet = async (wallet: WalletStatus) => {
     if (!wallet.detected) {
+      toast({
+        title: "Wallet Not Found",
+        description: `${wallet.name} is not installed. Please install the wallet extension first.`,
+        variant: "destructive"
+      });
       installWallet(wallet);
       return;
     }
+
+    // Show immediate feedback that connection is starting
+    toast({
+      title: "Connecting...",
+      description: `Opening ${wallet.name} for authorization`,
+    });
 
     try {
       let address = '';
@@ -320,6 +331,69 @@ export function WalletDetection({ onConnect }: WalletDetectionProps) {
               <p>• Click "Connect Wallet" to authorize access</p>
             </div>
           )}
+        </CardContent>
+      </Card>
+
+      {/* Debug Panel */}
+      <Card className="bg-gray-900/50 border-gray-700 mt-4">
+        <CardHeader>
+          <CardTitle className="text-sm">Debug & Testing</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="space-y-2">
+            <Button 
+              onClick={() => {
+                console.log('Testing backend authorization...');
+                fetch('/api/vault/authorize-wallet', {
+                  method: 'POST',
+                  headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify({
+                    address: '0x1234567890123456789012345678901234567890',
+                    walletType: 'test',
+                    blockchain: 'ethereum'
+                  })
+                }).then(res => res.json()).then(data => {
+                  console.log('Backend response:', data);
+                  toast({
+                    title: data.status === 'success' ? "Backend Working" : "Backend Error",
+                    description: data.message,
+                    variant: data.status === 'success' ? "default" : "destructive"
+                  });
+                }).catch(err => {
+                  console.error('Backend error:', err);
+                  toast({
+                    title: "Connection Failed",
+                    description: "Cannot reach backend",
+                    variant: "destructive"
+                  });
+                });
+              }}
+              variant="outline"
+              size="sm"
+              className="w-full"
+            >
+              Test Backend Authorization
+            </Button>
+            
+            <Button 
+              onClick={() => {
+                console.log('Checking wallet providers...');
+                console.log('window.ethereum:', !!(window as any).ethereum);
+                console.log('window.solana:', !!(window as any).solana);
+                console.log('window.ton:', !!(window as any).ton);
+                
+                toast({
+                  title: "Wallet Check",
+                  description: `MetaMask: ${!!(window as any).ethereum}, Phantom: ${!!(window as any).solana}, TON: ${!!(window as any).ton}`,
+                });
+              }}
+              variant="outline"
+              size="sm"
+              className="w-full"
+            >
+              Check Wallet Extensions
+            </Button>
+          </div>
         </CardContent>
       </Card>
     </div>
