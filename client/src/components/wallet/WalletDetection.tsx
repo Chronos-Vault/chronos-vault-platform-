@@ -1,239 +1,306 @@
 import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
 import { useToast } from '@/hooks/use-toast';
+import { Wallet, CheckCircle, AlertCircle, Smartphone, Monitor } from 'lucide-react';
 
 interface WalletDetectionProps {
   onConnect: (walletType: string, address: string) => void;
 }
 
+interface WalletStatus {
+  name: string;
+  detected: boolean;
+  connected: boolean;
+  address?: string;
+  provider: any;
+  icon: string;
+  installUrl: string;
+  mobileDeepLink?: string;
+}
+
 export function WalletDetection({ onConnect }: WalletDetectionProps) {
   const { toast } = useToast();
-  const [detectedWallets, setDetectedWallets] = useState<string[]>([]);
+  const [walletStatuses, setWalletStatuses] = useState<WalletStatus[]>([]);
   const [isChecking, setIsChecking] = useState(true);
+  const [isMobile, setIsMobile] = useState(false);
 
   useEffect(() => {
+    // Detect mobile device
+    const checkMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+    setIsMobile(checkMobile);
+
     const checkWallets = async () => {
-      const detected = [];
+      // Wait for wallet providers to load
+      await new Promise(resolve => setTimeout(resolve, 1000));
       
-      // Wait for providers to load
-      await new Promise(resolve => setTimeout(resolve, 500));
+      const wallets: WalletStatus[] = [
+        {
+          name: 'MetaMask',
+          detected: !!(window as any).ethereum,
+          connected: false,
+          provider: (window as any).ethereum,
+          icon: '🦊',
+          installUrl: 'https://metamask.io/download/',
+          mobileDeepLink: checkMobile ? 'https://metamask.app.link/dapp/' : undefined
+        },
+        {
+          name: 'Phantom',
+          detected: !!(window as any).solana?.isPhantom,
+          connected: false,
+          provider: (window as any).solana,
+          icon: '👻',
+          installUrl: 'https://phantom.app/',
+          mobileDeepLink: checkMobile ? 'https://phantom.app/ul/browse/' : undefined
+        },
+        {
+          name: 'TON Keeper',
+          detected: !!(window as any).tonkeeper || !!(window as any).ton,
+          connected: false,
+          provider: (window as any).tonkeeper || (window as any).ton,
+          icon: '💎',
+          installUrl: 'https://tonkeeper.com/',
+          mobileDeepLink: checkMobile ? 'tonkeeper://connect' : undefined
+        }
+      ];
       
-      // Check for Ethereum providers
-      if ((window as any).ethereum) {
-        detected.push('MetaMask/Ethereum');
-      }
-      
-      // Check for Solana providers
-      if ((window as any).solana?.isPhantom) {
-        detected.push('Phantom');
-      }
-      
-      // Check for TON providers
-      if ((window as any).tonkeeper || (window as any).ton) {
-        detected.push('TON Keeper');
-      }
-      
-      setDetectedWallets(detected);
+      setWalletStatuses(wallets);
       setIsChecking(false);
     };
     
     checkWallets();
   }, []);
 
-  const connectEthereum = async () => {
+  const connectWallet = async (wallet: WalletStatus) => {
     try {
-      const ethereum = (window as any).ethereum;
+      let address = '';
+      let walletType = '';
       
-      if (!ethereum) {
-        toast({
-          title: "Ethereum Wallet Required",
-          description: "Please install MetaMask or another Ethereum wallet",
-          variant: "destructive",
+      if (wallet.name === 'MetaMask' && wallet.provider) {
+        // Connect to MetaMask
+        const accounts = await wallet.provider.request({
+          method: 'eth_requestAccounts'
         });
-        return;
-      }
-
-      const accounts = await ethereum.request({
-        method: 'eth_requestAccounts'
-      });
-      
-      if (accounts?.length > 0) {
-        const chainId = await ethereum.request({
+        address = accounts[0];
+        walletType = 'metamask';
+        
+        // Get chain ID for verification
+        const chainId = await wallet.provider.request({
           method: 'eth_chainId'
         });
         
-        const authResponse = await fetch('/api/vault/authorize-wallet', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            address: accounts[0],
-            chainId,
-            walletType: 'metamask',
-            blockchain: 'ethereum'
-          }),
-        });
-
-        if (authResponse.ok) {
-          onConnect('metamask', accounts[0]);
-          toast({
-            title: "Ethereum Wallet Connected",
-            description: `Connected: ${accounts[0].slice(0, 8)}...${accounts[0].slice(-6)}`,
-          });
-        }
-      }
-    } catch (error: any) {
-      if (error.code === 4001) {
-        toast({
-          title: "Connection Rejected",
-          description: "Please accept the wallet connection request",
-          variant: "destructive",
-        });
-      } else {
-        toast({
-          title: "Connection Failed",
-          description: "Please unlock your wallet and try again",
-          variant: "destructive",
-        });
-      }
-    }
-  };
-
-  const connectSolana = async () => {
-    try {
-      const solana = (window as any).solana;
-      
-      if (!solana?.isPhantom) {
-        toast({
-          title: "Phantom Wallet Required",
-          description: "Please install Phantom wallet for Solana",
-          variant: "destructive",
-        });
-        return;
-      }
-
-      const response = await solana.connect();
-      
-      if (response?.publicKey) {
-        const address = response.publicKey.toString();
-        
-        const authResponse = await fetch('/api/vault/authorize-wallet', {
+        // Authorize with backend
+        await fetch('/api/vault/authorize-wallet', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
             address,
-            walletType: 'phantom',
-            blockchain: 'solana'
-          }),
+            walletType,
+            blockchain: 'ethereum',
+            chainId
+          })
         });
-
-        if (authResponse.ok) {
-          onConnect('phantom', address);
-          toast({
-            title: "Phantom Connected",
-            description: `Connected: ${address.slice(0, 8)}...${address.slice(-6)}`,
-          });
-        }
+        
+      } else if (wallet.name === 'Phantom' && wallet.provider) {
+        // Connect to Phantom
+        const response = await wallet.provider.connect();
+        address = response.publicKey.toString();
+        walletType = 'phantom';
+        
+        // Authorize with backend
+        await fetch('/api/vault/authorize-wallet', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            address,
+            walletType,
+            blockchain: 'solana',
+            publicKey: address
+          })
+        });
+        
+      } else if (wallet.name === 'TON Keeper' && wallet.provider) {
+        // Connect to TON Keeper
+        const tonConnect = wallet.provider;
+        await tonConnect.connect();
+        const walletInfo = tonConnect.wallet;
+        address = walletInfo?.account?.address || '';
+        walletType = 'tonkeeper';
+        
+        // Authorize with backend
+        await fetch('/api/vault/authorize-wallet', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            address,
+            walletType,
+            blockchain: 'ton'
+          })
+        });
       }
-    } catch (error: any) {
-      if (error.code === 4001 || error.message?.includes('rejected')) {
+      
+      if (address) {
+        // Update wallet status
+        setWalletStatuses(prev => prev.map(w => 
+          w.name === wallet.name 
+            ? { ...w, connected: true, address }
+            : w
+        ));
+        
+        // Call parent callback
+        onConnect(walletType, address);
+        
         toast({
-          title: "Connection Rejected",
-          description: "Please accept the wallet connection request",
-          variant: "destructive",
-        });
-      } else {
-        toast({
-          title: "Connection Failed",
-          description: "Please unlock Phantom and try again",
-          variant: "destructive",
+          title: "Wallet Connected",
+          description: `Successfully connected ${wallet.name}`,
+          variant: "default"
         });
       }
+      
+    } catch (error) {
+      console.error('Wallet connection error:', error);
+      
+      // Handle mobile deep linking if wallet not detected
+      if (!wallet.detected && isMobile && wallet.mobileDeepLink) {
+        const currentUrl = encodeURIComponent(window.location.href);
+        const deepLink = wallet.mobileDeepLink + currentUrl;
+        window.location.href = deepLink;
+        return;
+      }
+      
+      toast({
+        title: "Connection Failed",
+        description: wallet.detected 
+          ? `Failed to connect to ${wallet.name}. Please try again.`
+          : `${wallet.name} not installed. Please install the wallet first.`,
+        variant: "destructive"
+      });
     }
   };
 
-  const connectTON = async () => {
-    try {
-      // For TON, we'll provide instructions for real wallet connection
-      toast({
-        title: "TON Wallet Setup Required",
-        description: "Please install TON Keeper or Tonhub wallet to connect to TON network",
-        variant: "destructive",
-      });
-    } catch (error) {
-      toast({
-        title: "TON Connection Error",
-        description: "Unable to connect to TON wallet",
-        variant: "destructive",
-      });
+  const installWallet = (wallet: WalletStatus) => {
+    if (isMobile && wallet.mobileDeepLink) {
+      // On mobile, try to open the wallet app
+      window.location.href = wallet.mobileDeepLink;
+    } else {
+      // On desktop, open installation page
+      window.open(wallet.installUrl, '_blank');
     }
   };
 
   if (isChecking) {
     return (
-      <div className="text-center p-4">
-        <div className="animate-spin w-6 h-6 border-2 border-blue-500 border-t-transparent rounded-full mx-auto mb-2"></div>
-        <p>Detecting installed wallets...</p>
-      </div>
+      <Card className="w-full max-w-2xl mx-auto">
+        <CardContent className="p-6">
+          <div className="flex items-center justify-center space-x-2">
+            <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-600"></div>
+            <span>Detecting wallets...</span>
+          </div>
+        </CardContent>
+      </Card>
     );
   }
 
   return (
-    <div className="space-y-4">
-      <div className="text-sm text-gray-600 mb-4">
-        Detected wallets: {detectedWallets.length > 0 ? detectedWallets.join(', ') : 'None detected'}
+    <div className="w-full max-w-4xl mx-auto space-y-6">
+      {/* Device Type Indicator */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            {isMobile ? <Smartphone className="h-5 w-5" /> : <Monitor className="h-5 w-5" />}
+            Wallet Connection - {isMobile ? 'Mobile' : 'Desktop'} Device
+          </CardTitle>
+        </CardHeader>
+      </Card>
+
+      {/* Wallet Status Cards */}
+      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+        {walletStatuses.map((wallet) => (
+          <Card key={wallet.name} className="relative">
+            <CardHeader className="pb-3">
+              <CardTitle className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <span className="text-2xl">{wallet.icon}</span>
+                  <span className="text-lg">{wallet.name}</span>
+                </div>
+                {wallet.detected ? (
+                  <Badge variant="default" className="bg-green-100 text-green-800">
+                    <CheckCircle className="h-3 w-3 mr-1" />
+                    Detected
+                  </Badge>
+                ) : (
+                  <Badge variant="secondary">
+                    <AlertCircle className="h-3 w-3 mr-1" />
+                    Not Found
+                  </Badge>
+                )}
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              {wallet.connected && wallet.address && (
+                <div className="mb-3 p-2 bg-green-50 rounded">
+                  <div className="text-sm font-medium text-green-800">Connected</div>
+                  <div className="text-xs text-green-600 font-mono">
+                    {wallet.address.slice(0, 8)}...{wallet.address.slice(-6)}
+                  </div>
+                </div>
+              )}
+              
+              {wallet.detected ? (
+                <Button 
+                  onClick={() => connectWallet(wallet)}
+                  disabled={wallet.connected}
+                  className="w-full"
+                  variant={wallet.connected ? "outline" : "default"}
+                >
+                  <Wallet className="h-4 w-4 mr-2" />
+                  {wallet.connected ? 'Connected' : 'Connect Wallet'}
+                </Button>
+              ) : (
+                <Button 
+                  onClick={() => installWallet(wallet)}
+                  variant="outline"
+                  className="w-full"
+                >
+                  {isMobile ? 'Open App' : 'Install Wallet'}
+                </Button>
+              )}
+              
+              {!wallet.detected && (
+                <p className="text-xs text-gray-500 mt-2">
+                  {isMobile 
+                    ? 'Tap to open wallet app or install from app store'
+                    : 'Click to install wallet extension'
+                  }
+                </p>
+              )}
+            </CardContent>
+          </Card>
+        ))}
       </div>
-      
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <Button 
-          onClick={connectEthereum}
-          className="flex items-center gap-2 p-4 h-auto"
-          variant={detectedWallets.some(w => w.includes('MetaMask')) ? "default" : "outline"}
-        >
-          <div className="w-8 h-8 bg-orange-500 rounded-full flex items-center justify-center text-white font-bold">
-            Ξ
-          </div>
-          <div className="text-left">
-            <div className="font-semibold">Ethereum</div>
-            <div className="text-xs opacity-75">MetaMask, etc.</div>
-          </div>
-        </Button>
 
-        <Button 
-          onClick={connectSolana}
-          className="flex items-center gap-2 p-4 h-auto"
-          variant={detectedWallets.includes('Phantom') ? "default" : "outline"}
-        >
-          <div className="w-8 h-8 bg-purple-500 rounded-full flex items-center justify-center text-white font-bold">
-            ◎
-          </div>
-          <div className="text-left">
-            <div className="font-semibold">Solana</div>
-            <div className="text-xs opacity-75">Phantom</div>
-          </div>
-        </Button>
-
-        <Button 
-          onClick={connectTON}
-          className="flex items-center gap-2 p-4 h-auto"
-          variant={detectedWallets.includes('TON Keeper') ? "default" : "outline"}
-        >
-          <div className="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center text-white font-bold">
-            T
-          </div>
-          <div className="text-left">
-            <div className="font-semibold">TON</div>
-            <div className="text-xs opacity-75">TON Keeper</div>
-          </div>
-        </Button>
-      </div>
-
-      {detectedWallets.length === 0 && (
-        <div className="text-center p-4 bg-yellow-50 rounded-lg border border-yellow-200">
-          <p className="text-yellow-800">
-            No wallet extensions detected. Please install a wallet browser extension to connect to Chronos Vault.
-          </p>
-        </div>
-      )}
+      {/* Connection Instructions */}
+      <Card>
+        <CardHeader>
+          <CardTitle>Connection Instructions</CardTitle>
+        </CardHeader>
+        <CardContent>
+          {isMobile ? (
+            <div className="space-y-2 text-sm">
+              <p>• Install wallet apps from official app stores</p>
+              <p>• Open this page in your wallet's built-in browser</p>
+              <p>• Or use WalletConnect for compatible wallets</p>
+            </div>
+          ) : (
+            <div className="space-y-2 text-sm">
+              <p>• Install wallet browser extensions from official sources</p>
+              <p>• Refresh this page after installation</p>
+              <p>• Click "Connect Wallet" to authorize access</p>
+            </div>
+          )}
+        </CardContent>
+      </Card>
     </div>
   );
 }
