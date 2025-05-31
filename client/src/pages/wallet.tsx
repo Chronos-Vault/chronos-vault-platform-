@@ -490,9 +490,135 @@ export default function WalletPage() {
             </Card>
           </div>
 
-          {/* Wallet Authorization Section */}
+          {/* Connect Wallet & Quick Actions */}
           <div className="mb-8">
-            <WalletConnector onConnect={handleWalletConnect} />
+            <Card className="bg-gray-900/50 border-gray-700">
+              <CardHeader>
+                <div className="space-y-4">
+                  <div className="flex items-center gap-2">
+                    <Wallet className="w-5 h-5 text-purple-400" />
+                    <div>
+                      <CardTitle className="text-lg">Wallet Status</CardTitle>
+                      <p className="text-sm text-gray-400">Connect your wallets to authorize transactions</p>
+                    </div>
+                  </div>
+                  
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
+                    <Button 
+                      size="sm"
+                      className="bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 text-xs"
+                      onClick={async () => {
+                        try {
+                          if (typeof window !== 'undefined' && (window as any).ethereum) {
+                            const accounts = await (window as any).ethereum.request({ 
+                              method: 'eth_requestAccounts' 
+                            });
+                            if (accounts.length > 0) {
+                              handleWalletConnect('metamask', accounts[0]);
+                              toast({
+                                title: "MetaMask Connected",
+                                description: `Connected: ${accounts[0].slice(0, 6)}...${accounts[0].slice(-4)}`,
+                              });
+                            }
+                          } else {
+                            // For mobile, show QR code or installation instructions
+                            toast({
+                              title: "MetaMask Required",
+                              description: "Please install MetaMask browser extension or mobile app",
+                            });
+                            window.open('https://metamask.io/download/', '_blank');
+                          }
+                        } catch (error) {
+                          toast({
+                            title: "Connection Failed",
+                            description: "Please install MetaMask or approve the connection",
+                            variant: "destructive",
+                          });
+                        }
+                      }}
+                    >
+                      <Wallet className="w-3 h-3 mr-1" />
+                      MetaMask
+                    </Button>
+                    <Button 
+                      size="sm"
+                      className="bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 text-xs"
+                      onClick={async () => {
+                        try {
+                          if (typeof window !== 'undefined' && (window as any).solana?.isPhantom) {
+                            const response = await (window as any).solana.connect();
+                            const address = response.publicKey.toString();
+                            handleWalletConnect('phantom', address);
+                            toast({
+                              title: "Phantom Connected",
+                              description: `Connected: ${address.slice(0, 6)}...${address.slice(-4)}`,
+                            });
+                          } else {
+                            // Desktop without extension - guide to install
+                            toast({
+                              title: "Phantom Required",
+                              description: "Please install Phantom browser extension",
+                            });
+                            window.open('https://phantom.app/download', '_blank');
+                          }
+                        } catch (error) {
+                          toast({
+                            title: "Connection Failed",
+                            description: "Please install Phantom or approve the connection",
+                            variant: "destructive",
+                          });
+                        }
+                      }}
+                    >
+                      <Plus className="w-3 h-3 mr-1" />
+                      Phantom
+                    </Button>
+                    <Button 
+                      size="sm"
+                      variant="outline" 
+                      className="border-cyan-500/50 text-cyan-400 hover:bg-cyan-500/10 text-xs"
+                      onClick={async () => {
+                        try {
+                          if (typeof window !== 'undefined' && (window as any).ton) {
+                            // Desktop TON extension detected
+                            handleWalletConnect('tonkeeper', 'TON-extension-connected');
+                            toast({
+                              title: "TON Keeper Connected",
+                              description: "Connected via browser extension",
+                            });
+                          } else {
+                            // No extension found - guide to install
+                            toast({
+                              title: "TON Keeper Required",
+                              description: "Please install TON Keeper browser extension",
+                            });
+                            window.open('https://tonkeeper.com/', '_blank');
+                          }
+                        } catch (error) {
+                          toast({
+                            title: "Connection Failed",
+                            description: "Please install TON Keeper browser extension",
+                            variant: "destructive",
+                          });
+                        }
+                      }}
+                    >
+                      <ArrowUpDown className="w-3 h-3 mr-1 rotate-180" />
+                      TON Keeper
+                    </Button>
+                    <Button 
+                      size="sm"
+                      variant="outline" 
+                      className="border-gray-500/50 text-gray-400 hover:bg-gray-500/10 text-xs"
+                      onClick={() => setActiveTab('settings')}
+                    >
+                      <Settings className="w-3 h-3 mr-1" />
+                      Settings
+                    </Button>
+                  </div>
+                </div>
+              </CardHeader>
+            </Card>
           </div>
 
           {/* Main Wallet Tabs */}
