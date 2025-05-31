@@ -83,21 +83,37 @@ export const SimpleMobileWallet: React.FC<SimpleMobileWalletProps> = ({
     const uri = generateConnectionUri();
     setConnectionUri(uri);
     await generateQRCode(uri);
-    setShowQR(true);
-
-    // Try to open wallet app on mobile
+    
+    // Check if we're on mobile device
     const isMobile = /Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
     
     if (isMobile) {
-      const wallet = walletInfo[walletType];
-      const deepLinkUrl = `${wallet.deepLink}${encodeURIComponent(window.location.href)}`;
+      // For mobile, try to open wallet app directly first
+      const mobileDeepLinks = {
+        metamask: `metamask://dapp/${window.location.host}${window.location.pathname}`,
+        phantom: `phantom://browse/${encodeURIComponent(window.location.href)}`,
+        tonkeeper: `tonkeeper://connect?url=${encodeURIComponent(window.location.href)}`
+      };
       
-      setTimeout(() => {
-        window.open(deepLinkUrl, '_blank');
-      }, 2000);
+      try {
+        // Try to open the app immediately
+        window.location.href = mobileDeepLinks[walletType];
+        
+        // Also show QR code as fallback
+        setTimeout(() => {
+          setShowQR(true);
+        }, 1000);
+        
+      } catch (error) {
+        // If deep link fails, show QR code
+        setShowQR(true);
+      }
+    } else {
+      // For desktop, show QR code immediately
+      setShowQR(true);
     }
 
-    // Simulate connection after 8 seconds
+    // Simulate successful connection after user has time to connect
     setTimeout(() => {
       const addresses = {
         metamask: '0x742d35Cc6635C0532925a3b8D92C5A6Cdc3B',
@@ -112,74 +128,94 @@ export const SimpleMobileWallet: React.FC<SimpleMobileWalletProps> = ({
         title: `${walletInfo[walletType].name} Connected`,
         description: `Connected: ${addresses[walletType].slice(0, 6)}...${addresses[walletType].slice(-4)}`,
       });
-    }, 8000);
+    }, 6000);
   };
 
   const wallet = walletInfo[walletType];
 
   return (
     <>
-      <Card className="hover:shadow-lg transition-shadow">
-        <CardHeader className="text-center">
-          <CardTitle className="flex items-center justify-center gap-2">
-            <span className="text-2xl">{wallet.icon}</span>
+      <Button
+        onClick={handleConnect}
+        disabled={isConnecting}
+        className={`w-full h-12 bg-gradient-to-r ${wallet.color} hover:opacity-90 text-white font-medium text-sm`}
+      >
+        {isConnecting ? (
+          <>
+            <div className="animate-spin h-4 w-4 border-2 border-white border-t-transparent rounded-full mr-2" />
+            Connecting...
+          </>
+        ) : (
+          <>
+            <span className="text-lg mr-2">{wallet.icon}</span>
             {wallet.name}
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div className={`w-full h-32 bg-gradient-to-r ${wallet.color} rounded-lg flex items-center justify-center`}>
-            <Smartphone className="h-12 w-12 text-white" />
-          </div>
-          
-          <Button 
-            onClick={handleConnect} 
-            disabled={isConnecting}
-            className="w-full"
-          >
-            {isConnecting ? (
-              <>
-                <div className="animate-spin h-4 w-4 border-2 border-white border-t-transparent rounded-full mr-2" />
-                Connecting...
-              </>
-            ) : (
-              <>
-                <QrCode className="h-4 w-4 mr-2" />
-                Connect {wallet.name}
-              </>
-            )}
-          </Button>
-        </CardContent>
-      </Card>
+          </>
+        )}
+      </Button>
 
       <Dialog open={showQR} onOpenChange={setShowQR}>
-        <DialogContent className="max-w-md">
+        <DialogContent className="max-w-sm mx-4 sm:max-w-md">
           <DialogHeader>
-            <DialogTitle>Connect {wallet.name}</DialogTitle>
-            <DialogDescription>
-              Scan this QR code with your {wallet.name} app to connect
+            <DialogTitle className="text-center">
+              <span className="text-2xl mr-2">{wallet.icon}</span>
+              Connect {wallet.name}
+            </DialogTitle>
+            <DialogDescription className="text-center">
+              Scan this QR code with your {wallet.name} app or tap to open
             </DialogDescription>
           </DialogHeader>
           
-          <div className="flex flex-col items-center space-y-4">
-            {qrCodeImage && (
-              <img 
-                src={qrCodeImage} 
-                alt="QR Code" 
-                className="w-64 h-64 border rounded-lg"
-              />
+          <div className="flex flex-col items-center space-y-4 p-4">
+            {qrCodeImage ? (
+              <div className="bg-white p-4 rounded-lg shadow-lg">
+                <img 
+                  src={qrCodeImage} 
+                  alt="QR Code" 
+                  className="w-48 h-48 sm:w-56 sm:h-56"
+                />
+              </div>
+            ) : (
+              <div className="w-48 h-48 sm:w-56 sm:h-56 bg-gray-100 rounded-lg flex items-center justify-center">
+                <div className="animate-spin h-8 w-8 border-2 border-gray-400 border-t-transparent rounded-full" />
+              </div>
             )}
             
-            <p className="text-sm text-gray-600 text-center">
-              Open your {wallet.name} app and scan this QR code to connect
-            </p>
+            <div className="text-center space-y-2">
+              <p className="text-sm text-gray-600">
+                1. Open your {wallet.name} app
+              </p>
+              <p className="text-sm text-gray-600">
+                2. Scan this QR code or tap "Open App" below
+              </p>
+              <p className="text-sm text-gray-600">
+                3. Approve the connection
+              </p>
+            </div>
             
-            <Button
-              variant="outline"
-              onClick={() => window.open(wallet.downloadUrl, '_blank')}
-              className="w-full"
-            >
-              Don't have {wallet.name}? Download it
-            </Button>
+            <div className="grid grid-cols-1 gap-2 w-full">
+              <Button
+                onClick={() => {
+                  const deepLinks = {
+                    metamask: `metamask://dapp/${window.location.host}`,
+                    phantom: `phantom://browse/${encodeURIComponent(window.location.href)}`,
+                    tonkeeper: `tonkeeper://connect?url=${encodeURIComponent(window.location.href)}`
+                  };
+                  window.location.href = deepLinks[walletType];
+                }}
+                className={`bg-gradient-to-r ${wallet.color} hover:opacity-90 text-white`}
+              >
+                <Smartphone className="h-4 w-4 mr-2" />
+                Open {wallet.name} App
+              </Button>
+              
+              <Button
+                variant="outline"
+                onClick={() => window.open(wallet.downloadUrl, '_blank')}
+                size="sm"
+              >
+                Don't have {wallet.name}? Download it
+              </Button>
+            </div>
           </div>
         </DialogContent>
       </Dialog>
