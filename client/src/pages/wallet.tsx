@@ -32,33 +32,62 @@ export default function WalletPage() {
   const [showSwapModal, setShowSwapModal] = useState(false);
   const [showDepositModal, setShowDepositModal] = useState(false);
   const [showWithdrawModal, setShowWithdrawModal] = useState(false);
+  const [realWalletBalances, setRealWalletBalances] = useState<any>({});
 
-  // Check for existing wallet on component mount
+  // Fetch real testnet wallet data
   useEffect(() => {
-    const checkWalletExists = () => {
-      // Check localStorage for wallet data
-      const storedWalletData = localStorage.getItem('chronos_wallet');
-      const walletCreated = localStorage.getItem('chronos_wallet_created');
-      
-      if (storedWalletData || walletCreated === 'true') {
-        setHasWallet(true);
-        if (storedWalletData) {
-          setWalletData(JSON.parse(storedWalletData));
+    const fetchRealWalletData = async () => {
+      try {
+        // Fetch Solana wallet data
+        const solanaResponse = await fetch('/api/testnet-wallet/solana');
+        const solanaData = await solanaResponse.json();
+        
+        // Fetch TON wallet data
+        const tonResponse = await fetch('/api/testnet-wallet/ton');
+        const tonData = await tonResponse.json();
+        
+        // Fetch wallet addresses
+        const addressesResponse = await fetch('/api/testnet-wallet/addresses');
+        const addressesData = await addressesResponse.json();
+        
+        if (solanaData.status === 'success' || tonData.status === 'success') {
+          setHasWallet(true);
+          setRealWalletBalances({
+            solana: solanaData.status === 'success' ? solanaData.data : null,
+            ton: tonData.status === 'success' ? tonData.data : null,
+            addresses: addressesData.status === 'success' ? addressesData.data : null
+          });
         }
-      } else {
-        setHasWallet(false);
+      } catch (error) {
+        console.error('Failed to fetch wallet data:', error);
+      } finally {
+        setIsLoading(false);
       }
-      setIsLoading(false);
     };
 
-    checkWalletExists();
+    fetchRealWalletData();
   }, []);
 
-  // Get wallet balances - new wallets start with zero balance
+  // Get wallet balances from real testnet data
   const walletBalances = {
-    ethereum: { balance: '0.0000', symbol: 'ETH', usd: '$0.00' },
-    solana: { balance: '0.0000', symbol: 'SOL', usd: '$0.00' },
-    ton: { balance: '0.0000', symbol: 'TON', usd: '$0.00' }
+    ethereum: { 
+      balance: '0.0000', 
+      symbol: 'ETH', 
+      usd: '$0.00',
+      address: '0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266'
+    },
+    solana: { 
+      balance: realWalletBalances.solana?.balance || '0.0000', 
+      symbol: 'SOL', 
+      usd: '$0.00',
+      address: realWalletBalances.addresses?.solana || 'Not Connected'
+    },
+    ton: { 
+      balance: realWalletBalances.ton?.balance || '0.0000', 
+      symbol: 'TON', 
+      usd: '$0.00',
+      address: realWalletBalances.addresses?.ton || 'Not Connected'
+    }
   };
 
   const recentTransactions = [
@@ -98,6 +127,42 @@ export default function WalletPage() {
     });
   };
 
+  const handleAirdrop = async (network: 'solana' | 'ton') => {
+    try {
+      const response = await fetch('/api/testnet-wallet/airdrop', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ network }),
+      });
+      
+      const result = await response.json();
+      
+      if (result.status === 'success' && result.data.success) {
+        toast({
+          title: "Airdrop Successful",
+          description: `Received testnet tokens on ${network}. Transaction: ${result.data.hash?.slice(0, 8)}...`,
+        });
+        
+        // Refresh wallet data
+        window.location.reload();
+      } else {
+        toast({
+          title: "Airdrop Failed",
+          description: result.data.error || "Failed to request airdrop",
+          variant: "destructive",
+        });
+      }
+    } catch (error) {
+      toast({
+        title: "Airdrop Error",
+        description: "Failed to request testnet tokens",
+        variant: "destructive",
+      });
+    }
+  };
+
   const handleSend = () => {
     if (!sendAmount || !recipientAddress) {
       toast({
@@ -118,17 +183,17 @@ export default function WalletPage() {
     ethereum: {
       name: 'Ethereum',
       color: 'bg-blue-500',
-      address: walletData?.addresses?.ethereum || '0x742d35cc6aa31ae21a60bf2c8d10b1e5a3e33a3b'
+      address: walletBalances.ethereum.address
     },
     solana: {
       name: 'Solana',
       color: 'bg-purple-500',
-      address: walletData?.addresses?.solana || '9WzDXwBbmkg8ZTbNMqUxvQRAyrZzDsGYdLVL9zYtAWWM'
+      address: walletBalances.solana.address
     },
     ton: {
       name: 'TON',
       color: 'bg-cyan-500',
-      address: walletData?.addresses?.ton || 'EQBvW8Z5huBkMJYdnfAEM5JqTNkuWX3diqYENkWsIL0XggGG'
+      address: walletBalances.ton.address
     }
   };
 
