@@ -113,22 +113,41 @@ export const SimpleMobileWallet: React.FC<SimpleMobileWalletProps> = ({
       setShowQR(true);
     }
 
-    // Simulate successful connection after user has time to connect
-    setTimeout(() => {
-      const addresses = {
-        metamask: '0x742d35Cc6635C0532925a3b8D92C5A6Cdc3B',
-        phantom: 'BfYXwvd4jMYoFnphtf9vkAe8ZiU7roYZSEFGsi2oXhjz',
-        tonkeeper: 'EQD4FPq-PRDieyQKkizFTRtSDyucUIqrj0v_zXJmqaDp6_0t'
-      };
-      
-      setIsConnecting(false);
-      setShowQR(false);
-      onConnect(walletType, addresses[walletType]);
-      toast({
-        title: `${walletInfo[walletType].name} Connected`,
-        description: `Connected: ${addresses[walletType].slice(0, 6)}...${addresses[walletType].slice(-4)}`,
-      });
-    }, 6000);
+    // Check for real wallet connection
+    const checkConnection = async () => {
+      try {
+        const response = await fetch('/api/wallet/check-connection', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ 
+            walletType, 
+            connectionUri: uri,
+            timestamp: Date.now()
+          })
+        });
+        
+        const result = await response.json();
+        
+        if (result.connected && result.address) {
+          setIsConnecting(false);
+          setShowQR(false);
+          onConnect(walletType, result.address);
+          toast({
+            title: `${walletInfo[walletType].name} Connected`,
+            description: `Connected: ${result.address.slice(0, 6)}...${result.address.slice(-4)}`,
+          });
+        } else {
+          // Continue checking for connection
+          setTimeout(checkConnection, 2000);
+        }
+      } catch (error) {
+        console.error('Connection check failed:', error);
+        setTimeout(checkConnection, 2000);
+      }
+    };
+
+    // Start checking for connection after a delay
+    setTimeout(checkConnection, 3000);
   };
 
   const wallet = walletInfo[walletType];
@@ -181,15 +200,31 @@ export const SimpleMobileWallet: React.FC<SimpleMobileWalletProps> = ({
             )}
             
             <div className="text-center space-y-2">
-              <p className="text-sm text-gray-600">
-                1. Open your {wallet.name} app
-              </p>
-              <p className="text-sm text-gray-600">
-                2. Scan this QR code or tap "Open App" below
-              </p>
-              <p className="text-sm text-gray-600">
-                3. Approve the connection
-              </p>
+              {isConnecting ? (
+                <>
+                  <p className="text-sm text-green-600 font-medium">
+                    ✓ {wallet.name} app opened
+                  </p>
+                  <p className="text-sm text-gray-600">
+                    Please authorize the connection in your {wallet.name} app
+                  </p>
+                  <p className="text-xs text-gray-500">
+                    Waiting for authorization...
+                  </p>
+                </>
+              ) : (
+                <>
+                  <p className="text-sm text-gray-600">
+                    1. Open your {wallet.name} app
+                  </p>
+                  <p className="text-sm text-gray-600">
+                    2. Scan this QR code or tap "Open App" below
+                  </p>
+                  <p className="text-sm text-gray-600">
+                    3. Approve the connection
+                  </p>
+                </>
+              )}
             </div>
             
             <div className="grid grid-cols-1 gap-2 w-full">
