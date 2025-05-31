@@ -24,6 +24,7 @@ import { explorerRouter } from './api/explorer-routes';
 import walletApiRouter from './wallet-api';
 import { testnetWalletRoutes } from './api/testnet-wallet-routes';
 import { multiSigRoutes } from './api/multisig-routes';
+import { hardwareWalletRoutes } from './api/hardware-wallet-routes';
 import { systemHealthMonitor } from './monitoring/system-health-monitor';
 import { incidentResponseSystem } from './monitoring/incident-response';
 import { ConnectorFactory } from './blockchain/connector-factory';
@@ -104,6 +105,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
   
   // Register multi-signature wallet routes
   apiRouter.use('/multisig', multiSigRoutes);
+  
+  // Register hardware wallet routes
+  apiRouter.use('/hardware-wallet', hardwareWalletRoutes);
   
   // Initialize and register chain-agnostic verification routes
   const chainAgnosticVerifier = initializeChainAgnosticVerification(connectorFactory);

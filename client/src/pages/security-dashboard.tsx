@@ -1,558 +1,610 @@
-/**
- * Security Dashboard Page
- * 
- * This page provides a comprehensive overview of the platform's security features,
- * security status across different chains, and security settings management.
- */
-
 import React, { useState, useEffect } from 'react';
-import { useLocation } from 'wouter';
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
-import { Separator } from '@/components/ui/separator';
-import { Progress } from '@/components/ui/progress';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Switch } from '@/components/ui/switch';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { 
-  Shield, AlertTriangle, CheckCircle2, Lock, ArrowLeft, 
-  Activity, AlertCircle, Eye, EyeOff, XCircle, Clock,
-  Fingerprint, ShieldAlert, ShieldCheck, Network, Zap, Key
+  Shield, 
+  Users, 
+  Clock, 
+  Fingerprint,
+  Smartphone,
+  Key,
+  CheckCircle,
+  AlertCircle,
+  Plus,
+  Settings,
+  Lock,
+  Unlock,
+  Timer,
+  Eye,
+  Copy
 } from 'lucide-react';
+import { useToast } from '@/hooks/use-toast';
 
-const SecurityDashboardPage = () => {
-  const [_, navigate] = useLocation();
+interface MultiSigWallet {
+  id: string;
+  name: string;
+  network: string;
+  requiredSignatures: number;
+  totalSigners: number;
+  signers: string[];
+  address: string;
+  isActive: boolean;
+}
+
+interface HardwareDevice {
+  id: string;
+  type: string;
+  model: string;
+  isConnected: boolean;
+  supportedNetworks: string[];
+  securityLevel: string;
+}
+
+interface TimeLockedTransaction {
+  id: string;
+  network: string;
+  recipient: string;
+  amount: string;
+  unlockTime: string;
+  status: string;
+  requiredApprovals: number;
+  currentApprovals: number;
+}
+
+export default function SecurityDashboard() {
+  const { toast } = useToast();
   const [activeTab, setActiveTab] = useState('overview');
-  const [securityScores, setSecurityScores] = useState({
-    ethereum: 92,
-    solana: 88,
-    ton: 94,
-    bitcoin: 90,
-    overall: 91
-  });
-  
-  // Mock security alerts for demonstration
-  const [securityAlerts, setSecurityAlerts] = useState([
-    {
-      id: 'alert-1',
-      type: 'warning',
-      message: 'Suspicious login attempt detected from unknown location',
-      timestamp: new Date(Date.now() - 1800000), // 30 minutes ago
-      chainId: 'ethereum',
-      resolved: false
-    },
-    {
-      id: 'alert-2',
-      type: 'info',
-      message: 'Zero-knowledge proof verification successful for vault access',
-      timestamp: new Date(Date.now() - 3600000), // 1 hour ago
-      chainId: 'ton',
-      resolved: true
-    },
-    {
-      id: 'alert-3',
-      type: 'critical',
-      message: 'Multi-signature verification failed - additional signatures required',
-      timestamp: new Date(Date.now() - 7200000), // 2 hours ago
-      chainId: 'solana',
-      resolved: true
-    }
-  ]);
-  
-  // Security settings
-  const [securitySettings, setSecuritySettings] = useState({
-    twoFactorEnabled: true,
-    biometricEnabled: false,
-    multiSignatureEnabled: true,
-    anonymousTransactionsEnabled: false,
-    quantumResistantEncryption: true,
-    automaticLockEnabled: true,
-    behavioralAnalysisEnabled: true,
-    realTimeAlertsEnabled: true,
-    deviceWhitelistEnabled: false,
-    zeroKnowledgeProofsEnabled: true
-  });
+  const [multiSigWallets, setMultiSigWallets] = useState<MultiSigWallet[]>([]);
+  const [hardwareDevices, setHardwareDevices] = useState<HardwareDevice[]>([]);
+  const [timeLockedTxs, setTimeLockedTxs] = useState<TimeLockedTransaction[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
 
-  // Toggle a security setting
-  const toggleSetting = (setting: string) => {
-    setSecuritySettings({
-      ...securitySettings,
-      [setting]: !securitySettings[setting as keyof typeof securitySettings]
-    });
-  };
-  
-  // Format alert time
-  const formatAlertTime = (timestamp: Date) => {
-    const now = new Date();
-    const diffInMinutes = Math.floor((now.getTime() - timestamp.getTime()) / (1000 * 60));
-    
-    if (diffInMinutes < 60) {
-      return `${diffInMinutes} minutes ago`;
-    } else if (diffInMinutes < 1440) {
-      return `${Math.floor(diffInMinutes / 60)} hours ago`;
-    } else {
-      return timestamp.toLocaleDateString();
+  // Multi-sig wallet creation form
+  const [newWalletName, setNewWalletName] = useState('');
+  const [selectedNetwork, setSelectedNetwork] = useState('ethereum');
+  const [signers, setSigners] = useState(['']);
+  const [requiredSigs, setRequiredSigs] = useState(2);
+
+  useEffect(() => {
+    loadSecurityData();
+  }, []);
+
+  const loadSecurityData = async () => {
+    setIsLoading(true);
+    try {
+      // Load mock data for demonstration
+      setMultiSigWallets([
+        {
+          id: 'wallet_001',
+          name: 'Treasury Vault',
+          network: 'ethereum',
+          requiredSignatures: 3,
+          totalSigners: 5,
+          signers: ['0x123...', '0x456...', '0x789...', '0xabc...', '0xdef...'],
+          address: '0x742d35cc6aa31ae21a60bf2c8d10b1e5a3e33a3b',
+          isActive: true
+        }
+      ]);
+
+      setHardwareDevices([
+        {
+          id: 'ledger_001',
+          type: 'Ledger',
+          model: 'Nano X',
+          isConnected: true,
+          supportedNetworks: ['ethereum', 'solana', 'bitcoin'],
+          securityLevel: 'Maximum'
+        }
+      ]);
+
+      setTimeLockedTxs([
+        {
+          id: 'timelock_001',
+          network: 'ethereum',
+          recipient: '0x987fcdeb21fcac5f123...',
+          amount: '10.5 ETH',
+          unlockTime: new Date(Date.now() + 86400000).toISOString(), // 24 hours from now
+          status: 'locked',
+          requiredApprovals: 2,
+          currentApprovals: 1
+        }
+      ]);
+    } catch (error) {
+      console.error('Failed to load security data:', error);
+    } finally {
+      setIsLoading(false);
     }
   };
-  
-  // Alert icon based on type
-  const getAlertIcon = (type: string) => {
-    switch (type) {
-      case 'critical':
-        return <AlertCircle className="h-5 w-5 text-red-500" />;
-      case 'warning':
-        return <AlertTriangle className="h-5 w-5 text-amber-500" />;
-      case 'info':
-        return <CheckCircle2 className="h-5 w-5 text-green-500" />;
-      default:
-        return <Shield className="h-5 w-5 text-blue-500" />;
+
+  const createMultiSigWallet = async () => {
+    if (!newWalletName || signers.filter(s => s.trim()).length < 2) {
+      toast({
+        title: "Invalid Input",
+        description: "Please provide a wallet name and at least 2 signers",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    try {
+      const response = await fetch('/api/multisig/wallets', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: newWalletName,
+          network: selectedNetwork,
+          signers: signers.filter(s => s.trim()),
+          requiredSignatures: requiredSigs
+        })
+      });
+
+      const result = await response.json();
+      
+      if (result.status === 'success') {
+        toast({
+          title: "Multi-Sig Wallet Created",
+          description: `${newWalletName} wallet deployed successfully`,
+        });
+        setNewWalletName('');
+        setSigners(['']);
+        loadSecurityData();
+      }
+    } catch (error) {
+      toast({
+        title: "Creation Failed",
+        description: "Failed to create multi-signature wallet",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const detectHardwareWallets = async () => {
+    try {
+      const response = await fetch('/api/hardware-wallet/devices/detect');
+      const result = await response.json();
+      
+      if (result.status === 'success') {
+        setHardwareDevices(result.data.devices);
+        toast({
+          title: "Hardware Scan Complete",
+          description: `Found ${result.data.count} connected device(s)`,
+        });
+      }
+    } catch (error) {
+      toast({
+        title: "Scan Failed",
+        description: "Failed to detect hardware wallets",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const setupBiometric = async (deviceId: string) => {
+    try {
+      const response = await fetch('/api/hardware-wallet/biometric/setup', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          userId: 'current_user',
+          deviceId,
+          biometricType: 'fingerprint'
+        })
+      });
+
+      const result = await response.json();
+      
+      if (result.status === 'success') {
+        toast({
+          title: "Biometric Setup Complete",
+          description: "Fingerprint authentication enabled",
+        });
+      }
+    } catch (error) {
+      toast({
+        title: "Setup Failed",
+        description: "Failed to setup biometric authentication",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const addSigner = () => {
+    setSigners([...signers, '']);
+  };
+
+  const updateSigner = (index: number, value: string) => {
+    const newSigners = [...signers];
+    newSigners[index] = value;
+    setSigners(newSigners);
+  };
+
+  const removeSigner = (index: number) => {
+    if (signers.length > 1) {
+      setSigners(signers.filter((_, i) => i !== index));
     }
   };
 
   return (
-    <div className="container mx-auto px-4 py-10 max-w-7xl">
-      <Button 
-        variant="ghost" 
-        className="mb-6 hover:bg-[#6B00D7]/10"
-        onClick={() => navigate('/dashboard')}
-      >
-        <ArrowLeft className="mr-2 h-4 w-4" />
-        Back to Dashboard
-      </Button>
-      
-      <div className="flex items-center mb-6">
-        <div className="h-12 w-12 rounded-full bg-gradient-to-br from-[#6B00D7] to-[#FF5AF7] flex items-center justify-center shadow-lg shadow-[#6B00D7]/30 mr-4">
-          <Shield className="h-6 w-6 text-white" />
+    <div className="min-h-screen bg-black text-white p-6">
+      <div className="max-w-7xl mx-auto">
+        {/* Header */}
+        <div className="mb-8">
+          <h1 className="text-3xl font-bold bg-gradient-to-r from-purple-400 to-cyan-400 bg-clip-text text-transparent mb-2">
+            Security Dashboard
+          </h1>
+          <p className="text-gray-400">
+            Advanced security features powered by Trinity Protocol
+          </p>
         </div>
-        <h1 className="text-3xl md:text-4xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7]">
-          Security Dashboard
-        </h1>
-      </div>
-      
-      <p className="text-gray-400 max-w-3xl mb-6">
-        Monitor and manage the security of your vaults and cross-chain operations with our comprehensive security dashboard.
-        Track security scores, manage alerts, and configure advanced security settings.
-      </p>
-      
-      <Tabs defaultValue={activeTab} onValueChange={setActiveTab} className="space-y-8">
-        <TabsList className="grid w-full grid-cols-3 bg-[#1A1A1A] border border-[#333] p-1 rounded-lg">
-          <TabsTrigger value="overview" className="data-[state=active]:bg-[#6B00D7] data-[state=active]:text-white">
-            Overview
-          </TabsTrigger>
-          <TabsTrigger value="alerts" className="data-[state=active]:bg-[#6B00D7] data-[state=active]:text-white">
-            Security Alerts
-          </TabsTrigger>
-          <TabsTrigger value="settings" className="data-[state=active]:bg-[#6B00D7] data-[state=active]:text-white">
-            Security Settings
-          </TabsTrigger>
-        </TabsList>
-        
-        {/* Overview Tab */}
-        <TabsContent value="overview" className="space-y-6">
-          {/* Security Score Card */}
-          <Card className="bg-[#1A1A1A] border-[#333] shadow-xl">
-            <CardHeader>
-              <CardTitle className="text-xl text-white">
-                <div className="flex items-center">
-                  <ShieldCheck className="h-5 w-5 mr-2 text-[#FF5AF7]" />
-                  Security Score
+
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
+          <TabsList className="grid w-full grid-cols-4 bg-gray-900">
+            <TabsTrigger value="overview" className="flex items-center gap-2">
+              <Shield className="w-4 h-4" />
+              Overview
+            </TabsTrigger>
+            <TabsTrigger value="multisig" className="flex items-center gap-2">
+              <Users className="w-4 h-4" />
+              Multi-Signature
+            </TabsTrigger>
+            <TabsTrigger value="hardware" className="flex items-center gap-2">
+              <Key className="w-4 h-4" />
+              Hardware Wallets
+            </TabsTrigger>
+            <TabsTrigger value="timelock" className="flex items-center gap-2">
+              <Clock className="w-4 h-4" />
+              Time-Locked
+            </TabsTrigger>
+          </TabsList>
+
+          {/* Overview Tab */}
+          <TabsContent value="overview" className="space-y-6">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <Card className="bg-gray-900/50 border-green-500/30">
+                <CardHeader className="pb-3">
+                  <CardTitle className="flex items-center gap-2 text-green-400">
+                    <Users className="w-5 h-5" />
+                    Multi-Sig Wallets
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="text-2xl font-bold">{multiSigWallets.length}</div>
+                  <p className="text-sm text-gray-400">Active wallets</p>
+                </CardContent>
+              </Card>
+
+              <Card className="bg-gray-900/50 border-blue-500/30">
+                <CardHeader className="pb-3">
+                  <CardTitle className="flex items-center gap-2 text-blue-400">
+                    <Key className="w-5 h-5" />
+                    Hardware Devices
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="text-2xl font-bold">{hardwareDevices.filter(d => d.isConnected).length}</div>
+                  <p className="text-sm text-gray-400">Connected devices</p>
+                </CardContent>
+              </Card>
+
+              <Card className="bg-gray-900/50 border-purple-500/30">
+                <CardHeader className="pb-3">
+                  <CardTitle className="flex items-center gap-2 text-purple-400">
+                    <Clock className="w-5 h-5" />
+                    Time-Locked
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="text-2xl font-bold">{timeLockedTxs.length}</div>
+                  <p className="text-sm text-gray-400">Pending transactions</p>
+                </CardContent>
+              </Card>
+            </div>
+
+            {/* Security Features */}
+            <Card className="bg-gray-900/50 border-gray-700">
+              <CardHeader>
+                <CardTitle>Active Security Features</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="flex items-center gap-3 p-3 bg-green-500/10 rounded-lg">
+                    <CheckCircle className="w-5 h-5 text-green-400" />
+                    <div>
+                      <p className="font-medium">Trinity Protocol</p>
+                      <p className="text-sm text-gray-400">Cross-chain security active</p>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-3 p-3 bg-green-500/10 rounded-lg">
+                    <CheckCircle className="w-5 h-5 text-green-400" />
+                    <div>
+                      <p className="font-medium">Zero-Knowledge Proofs</p>
+                      <p className="text-sm text-gray-400">Privacy protection enabled</p>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-3 p-3 bg-green-500/10 rounded-lg">
+                    <CheckCircle className="w-5 h-5 text-green-400" />
+                    <div>
+                      <p className="font-medium">Quantum Resistance</p>
+                      <p className="text-sm text-gray-400">Post-quantum encryption</p>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-3 p-3 bg-green-500/10 rounded-lg">
+                    <CheckCircle className="w-5 h-5 text-green-400" />
+                    <div>
+                      <p className="font-medium">Behavioral Analysis</p>
+                      <p className="text-sm text-gray-400">AI threat detection</p>
+                    </div>
+                  </div>
                 </div>
-              </CardTitle>
-              <CardDescription className="text-gray-400">
-                Your overall security rating across all blockchains
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="mb-6">
-                <div className="flex justify-between items-center mb-2">
-                  <div className="text-white font-semibold">Overall Security</div>
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          {/* Multi-Signature Tab */}
+          <TabsContent value="multisig" className="space-y-6">
+            {/* Create New Multi-Sig Wallet */}
+            <Card className="bg-gray-900/50 border-gray-700">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Plus className="w-5 h-5" />
+                  Create Multi-Signature Wallet
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
-                    <Badge variant="outline" className="bg-green-500/20 text-green-400 border-green-500/30">
-                      Excellent
-                    </Badge>
+                    <Label htmlFor="walletName">Wallet Name</Label>
+                    <Input
+                      id="walletName"
+                      value={newWalletName}
+                      onChange={(e) => setNewWalletName(e.target.value)}
+                      placeholder="Treasury Vault"
+                      className="bg-gray-800 border-gray-600"
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="network">Network</Label>
+                    <Select value={selectedNetwork} onValueChange={setSelectedNetwork}>
+                      <SelectTrigger className="bg-gray-800 border-gray-600">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="ethereum">Ethereum</SelectItem>
+                        <SelectItem value="solana">Solana</SelectItem>
+                        <SelectItem value="ton">TON</SelectItem>
+                      </SelectContent>
+                    </Select>
                   </div>
                 </div>
-                <Progress 
-                  value={securityScores.overall} 
-                  className="h-3 bg-[#333]" 
-                  indicatorClassName="bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7]" 
-                />
-                <div className="mt-1 text-right text-sm text-gray-400">{securityScores.overall}/100</div>
-              </div>
-              
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+
                 <div>
-                  <div className="flex justify-between items-center mb-2">
-                    <div className="text-white">Ethereum</div>
-                    <div className="text-sm text-gray-400">{securityScores.ethereum}/100</div>
-                  </div>
-                  <Progress 
-                    value={securityScores.ethereum} 
-                    className="h-2 bg-[#333]" 
-                    indicatorClassName="bg-[#627EEA]" 
+                  <Label>Signers</Label>
+                  {signers.map((signer, index) => (
+                    <div key={index} className="flex gap-2 mt-2">
+                      <Input
+                        value={signer}
+                        onChange={(e) => updateSigner(index, e.target.value)}
+                        placeholder="0x742d35cc6aa31ae21a60bf2c8d10b1e5a3e33a3b"
+                        className="bg-gray-800 border-gray-600"
+                      />
+                      {signers.length > 1 && (
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => removeSigner(index)}
+                          className="border-red-500 text-red-400"
+                        >
+                          Remove
+                        </Button>
+                      )}
+                    </div>
+                  ))}
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={addSigner}
+                    className="mt-2"
+                  >
+                    Add Signer
+                  </Button>
+                </div>
+
+                <div>
+                  <Label htmlFor="requiredSigs">Required Signatures</Label>
+                  <Input
+                    id="requiredSigs"
+                    type="number"
+                    value={requiredSigs}
+                    onChange={(e) => setRequiredSigs(Number(e.target.value))}
+                    min={1}
+                    max={signers.filter(s => s.trim()).length}
+                    className="bg-gray-800 border-gray-600"
                   />
                 </div>
-                
-                <div>
-                  <div className="flex justify-between items-center mb-2">
-                    <div className="text-white">Solana</div>
-                    <div className="text-sm text-gray-400">{securityScores.solana}/100</div>
-                  </div>
-                  <Progress 
-                    value={securityScores.solana} 
-                    className="h-2 bg-[#333]" 
-                    indicatorClassName="bg-[#9945FF]" 
-                  />
-                </div>
-                
-                <div>
-                  <div className="flex justify-between items-center mb-2">
-                    <div className="text-white">TON</div>
-                    <div className="text-sm text-gray-400">{securityScores.ton}/100</div>
-                  </div>
-                  <Progress 
-                    value={securityScores.ton} 
-                    className="h-2 bg-[#333]" 
-                    indicatorClassName="bg-[#0098EA]" 
-                  />
-                </div>
-                
-                <div>
-                  <div className="flex justify-between items-center mb-2">
-                    <div className="text-white">Bitcoin</div>
-                    <div className="text-sm text-gray-400">{securityScores.bitcoin}/100</div>
-                  </div>
-                  <Progress 
-                    value={securityScores.bitcoin} 
-                    className="h-2 bg-[#333]" 
-                    indicatorClassName="bg-[#F7931A]" 
-                  />
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-          
-          {/* Security Features */}
-          <Card className="bg-[#1A1A1A] border-[#333] shadow-xl">
-            <CardHeader>
-              <CardTitle className="text-xl text-white">
-                <div className="flex items-center">
-                  <Lock className="h-5 w-5 mr-2 text-[#FF5AF7]" />
-                  Active Security Features
-                </div>
-              </CardTitle>
-              <CardDescription className="text-gray-400">
-                Overview of your enabled security measures
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-                <div className="bg-[#242424] rounded-lg p-4 border border-[#333] flex items-start space-x-3">
-                  <div className="bg-[#6B00D7]/20 p-2 rounded-full">
-                    <Fingerprint className="h-5 w-5 text-[#FF5AF7]" />
-                  </div>
-                  <div>
-                    <h3 className="text-white font-medium">Multi-Factor Authentication</h3>
-                    <p className="text-gray-400 text-sm">Enhanced login security</p>
-                  </div>
-                </div>
-                
-                <div className="bg-[#242424] rounded-lg p-4 border border-[#333] flex items-start space-x-3">
-                  <div className="bg-[#6B00D7]/20 p-2 rounded-full">
-                    <Key className="h-5 w-5 text-[#FF5AF7]" />
-                  </div>
-                  <div>
-                    <h3 className="text-white font-medium">Quantum-Resistant Encryption</h3>
-                    <p className="text-gray-400 text-sm">Future-proof data protection</p>
-                  </div>
-                </div>
-                
-                <div className="bg-[#242424] rounded-lg p-4 border border-[#333] flex items-start space-x-3">
-                  <div className="bg-[#6B00D7]/20 p-2 rounded-full">
-                    <Network className="h-5 w-5 text-[#FF5AF7]" />
-                  </div>
-                  <div>
-                    <h3 className="text-white font-medium">Cross-Chain Verification</h3>
-                    <p className="text-gray-400 text-sm">Multi-blockchain security</p>
-                  </div>
-                </div>
-                
-                <div className="bg-[#242424] rounded-lg p-4 border border-[#333] flex items-start space-x-3">
-                  <div className="bg-[#6B00D7]/20 p-2 rounded-full">
-                    <Activity className="h-5 w-5 text-[#FF5AF7]" />
-                  </div>
-                  <div>
-                    <h3 className="text-white font-medium">Behavioral Analysis</h3>
-                    <p className="text-gray-400 text-sm">AI-powered threat detection</p>
-                  </div>
-                </div>
-                
-                <div className="bg-[#242424] rounded-lg p-4 border border-[#333] flex items-start space-x-3">
-                  <div className="bg-[#6B00D7]/20 p-2 rounded-full">
-                    <Zap className="h-5 w-5 text-[#FF5AF7]" />
-                  </div>
-                  <div>
-                    <h3 className="text-white font-medium">Real-Time Monitoring</h3>
-                    <p className="text-gray-400 text-sm">Continuous security checks</p>
-                  </div>
-                </div>
-                
-                <div className="bg-[#242424] rounded-lg p-4 border border-[#333] flex items-start space-x-3">
-                  <div className="bg-[#6B00D7]/20 p-2 rounded-full">
-                    <EyeOff className="h-5 w-5 text-[#FF5AF7]" />
-                  </div>
-                  <div>
-                    <h3 className="text-white font-medium">Zero-Knowledge Proofs</h3>
-                    <p className="text-gray-400 text-sm">Privacy-preserving verification</p>
-                  </div>
-                </div>
-              </div>
-            </CardContent>
-            <CardFooter>
-              <Button 
-                variant="outline" 
-                className="w-full text-[#FF5AF7] border-[#FF5AF7]/30 hover:bg-[#FF5AF7]/10"
-                onClick={() => setActiveTab('settings')}
-              >
-                <ShieldAlert className="mr-2 h-4 w-4" />
-                Manage Security Settings
-              </Button>
-            </CardFooter>
-          </Card>
-        </TabsContent>
-        
-        {/* Alerts Tab */}
-        <TabsContent value="alerts" className="space-y-6">
-          <Card className="bg-[#1A1A1A] border-[#333] shadow-xl">
-            <CardHeader>
-              <CardTitle className="text-xl text-white">
-                <div className="flex items-center">
-                  <AlertTriangle className="h-5 w-5 mr-2 text-[#FF5AF7]" />
-                  Security Alerts
-                </div>
-              </CardTitle>
-              <CardDescription className="text-gray-400">
-                Recent security events and notifications
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
-                {securityAlerts.length > 0 ? (
-                  securityAlerts.map(alert => (
-                    <div 
-                      key={alert.id} 
-                      className={`p-4 rounded-lg border flex items-start space-x-3 ${
-                        alert.type === 'critical' 
-                          ? 'bg-red-500/10 border-red-500/30' 
-                          : alert.type === 'warning'
-                            ? 'bg-amber-500/10 border-amber-500/30'
-                            : 'bg-green-500/10 border-green-500/30'
-                      }`}
-                    >
-                      <div className="flex-shrink-0 mt-0.5">
-                        {getAlertIcon(alert.type)}
-                      </div>
-                      <div className="flex-1">
-                        <div className="flex justify-between items-start">
-                          <h3 className="text-white font-medium">{alert.message}</h3>
-                          {alert.resolved && (
-                            <Badge variant="outline" className="bg-green-500/10 text-green-400 border-green-500/30 ml-2">
-                              Resolved
-                            </Badge>
-                          )}
-                        </div>
-                        <div className="flex items-center text-sm text-gray-400 mt-1">
-                          <Clock className="h-3 w-3 mr-1" />
-                          {formatAlertTime(alert.timestamp)}
-                          <span className="mx-2">•</span>
-                          <Badge variant="outline" className="bg-[#242424] text-gray-300 border-[#333] h-5">
-                            {alert.chainId.charAt(0).toUpperCase() + alert.chainId.slice(1)}
+
+                <Button onClick={createMultiSigWallet} className="w-full">
+                  Create Multi-Signature Wallet
+                </Button>
+              </CardContent>
+            </Card>
+
+            {/* Existing Multi-Sig Wallets */}
+            <Card className="bg-gray-900/50 border-gray-700">
+              <CardHeader>
+                <CardTitle>Your Multi-Signature Wallets</CardTitle>
+              </CardHeader>
+              <CardContent>
+                {multiSigWallets.length === 0 ? (
+                  <p className="text-gray-400 text-center py-8">No multi-signature wallets created yet</p>
+                ) : (
+                  <div className="space-y-4">
+                    {multiSigWallets.map((wallet) => (
+                      <div key={wallet.id} className="p-4 bg-gray-800/50 rounded-lg">
+                        <div className="flex items-center justify-between mb-3">
+                          <h3 className="font-semibold">{wallet.name}</h3>
+                          <Badge variant={wallet.isActive ? 'default' : 'secondary'}>
+                            {wallet.isActive ? 'Active' : 'Inactive'}
                           </Badge>
                         </div>
+                        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
+                          <div>
+                            <p className="text-gray-400">Network</p>
+                            <p className="capitalize">{wallet.network}</p>
+                          </div>
+                          <div>
+                            <p className="text-gray-400">Required Signatures</p>
+                            <p>{wallet.requiredSignatures}/{wallet.totalSigners}</p>
+                          </div>
+                          <div>
+                            <p className="text-gray-400">Address</p>
+                            <p className="font-mono text-xs">{wallet.address.slice(0, 10)}...</p>
+                          </div>
+                          <div>
+                            <Button size="sm" variant="outline">
+                              <Settings className="w-4 h-4" />
+                            </Button>
+                          </div>
+                        </div>
                       </div>
-                    </div>
-                  ))
-                ) : (
-                  <div className="text-center py-10">
-                    <CheckCircle2 className="h-12 w-12 text-green-500 mx-auto mb-4" />
-                    <h3 className="text-xl font-medium text-white">All Clear</h3>
-                    <p className="text-gray-400 mt-1">No security alerts detected</p>
+                    ))}
                   </div>
                 )}
-              </div>
-            </CardContent>
-            <CardFooter className="flex justify-between">
-              <Button variant="outline" className="border-[#333] text-gray-400 hover:bg-[#242424]">
-                <XCircle className="mr-2 h-4 w-4" />
-                Clear All
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          {/* Hardware Wallets Tab */}
+          <TabsContent value="hardware" className="space-y-6">
+            <div className="flex justify-between items-center">
+              <h2 className="text-xl font-semibold">Hardware Wallet Integration</h2>
+              <Button onClick={detectHardwareWallets}>
+                <Smartphone className="w-4 h-4 mr-2" />
+                Scan for Devices
               </Button>
-              <Button className="bg-[#6B00D7] hover:bg-[#5A00B6] text-white">
-                <Shield className="mr-2 h-4 w-4" />
-                Run Security Scan
-              </Button>
-            </CardFooter>
-          </Card>
-        </TabsContent>
-        
-        {/* Settings Tab */}
-        <TabsContent value="settings" className="space-y-6">
-          <Card className="bg-[#1A1A1A] border-[#333] shadow-xl">
-            <CardHeader>
-              <CardTitle className="text-xl text-white">
-                <div className="flex items-center">
-                  <ShieldCheck className="h-5 w-5 mr-2 text-[#FF5AF7]" />
-                  Security Settings
-                </div>
-              </CardTitle>
-              <CardDescription className="text-gray-400">
-                Configure your security preferences and protection level
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-6">
-                <div className="space-y-4">
-                  <h3 className="text-lg font-medium text-white">Authentication & Access</h3>
-                  <Separator className="bg-[#333]" />
-                  
-                  <div className="flex items-center justify-between">
-                    <div className="space-y-0.5">
-                      <Label className="text-white">Two-Factor Authentication</Label>
-                      <p className="text-xs text-gray-400">Require 2FA code for all logins</p>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {hardwareDevices.map((device) => (
+                <Card key={device.id} className="bg-gray-900/50 border-gray-700">
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2">
+                      <Key className="w-5 h-5" />
+                      {device.type} {device.model}
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    <div className="flex items-center gap-2">
+                      <div className={`w-3 h-3 rounded-full ${device.isConnected ? 'bg-green-400' : 'bg-red-400'}`}></div>
+                      <span className="text-sm">{device.isConnected ? 'Connected' : 'Disconnected'}</span>
                     </div>
-                    <Switch 
-                      checked={securitySettings.twoFactorEnabled}
-                      onCheckedChange={() => toggleSetting('twoFactorEnabled')}
-                      className="data-[state=checked]:bg-[#6B00D7]"
-                    />
-                  </div>
-                  
-                  <div className="flex items-center justify-between">
-                    <div className="space-y-0.5">
-                      <Label className="text-white">Biometric Authentication</Label>
-                      <p className="text-xs text-gray-400">Use fingerprint or face recognition</p>
+                    
+                    <div>
+                      <p className="text-sm text-gray-400 mb-2">Supported Networks</p>
+                      <div className="flex flex-wrap gap-1">
+                        {device.supportedNetworks.map((network) => (
+                          <Badge key={network} variant="outline" className="text-xs">
+                            {network}
+                          </Badge>
+                        ))}
+                      </div>
                     </div>
-                    <Switch 
-                      checked={securitySettings.biometricEnabled}
-                      onCheckedChange={() => toggleSetting('biometricEnabled')}
-                      className="data-[state=checked]:bg-[#6B00D7]"
-                    />
-                  </div>
-                  
-                  <div className="flex items-center justify-between">
-                    <div className="space-y-0.5">
-                      <Label className="text-white">Multi-Signature Verification</Label>
-                      <p className="text-xs text-gray-400">Require multiple signatures for high-value transactions</p>
+
+                    <div>
+                      <p className="text-sm text-gray-400 mb-2">Security Level</p>
+                      <Badge variant={device.securityLevel === 'Maximum' ? 'default' : 'secondary'}>
+                        {device.securityLevel}
+                      </Badge>
                     </div>
-                    <Switch 
-                      checked={securitySettings.multiSignatureEnabled}
-                      onCheckedChange={() => toggleSetting('multiSignatureEnabled')}
-                      className="data-[state=checked]:bg-[#6B00D7]"
-                    />
-                  </div>
-                  
-                  <div className="flex items-center justify-between">
-                    <div className="space-y-0.5">
-                      <Label className="text-white">Automatic Lock</Label>
-                      <p className="text-xs text-gray-400">Lock account after 15 minutes of inactivity</p>
+
+                    <div className="flex gap-2">
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        onClick={() => setupBiometric(device.id)}
+                        className="flex items-center gap-1"
+                      >
+                        <Fingerprint className="w-4 h-4" />
+                        Setup Biometric
+                      </Button>
                     </div>
-                    <Switch 
-                      checked={securitySettings.automaticLockEnabled}
-                      onCheckedChange={() => toggleSetting('automaticLockEnabled')}
-                      className="data-[state=checked]:bg-[#6B00D7]"
-                    />
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+
+            {hardwareDevices.length === 0 && (
+              <Card className="bg-gray-900/50 border-gray-700">
+                <CardContent className="text-center py-12">
+                  <Key className="w-12 h-12 text-gray-400 mx-auto mb-4" />
+                  <h3 className="text-lg font-semibold mb-2">No Hardware Wallets Detected</h3>
+                  <p className="text-gray-400 mb-4">
+                    Connect your Ledger, Trezor, or other hardware wallet to get started
+                  </p>
+                  <Button onClick={detectHardwareWallets}>
+                    Scan for Devices
+                  </Button>
+                </CardContent>
+              </Card>
+            )}
+          </TabsContent>
+
+          {/* Time-Locked Transactions Tab */}
+          <TabsContent value="timelock" className="space-y-6">
+            <Card className="bg-gray-900/50 border-gray-700">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Timer className="w-5 h-5" />
+                  Time-Locked Transactions
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                {timeLockedTxs.length === 0 ? (
+                  <p className="text-gray-400 text-center py-8">No time-locked transactions</p>
+                ) : (
+                  <div className="space-y-4">
+                    {timeLockedTxs.map((tx) => (
+                      <div key={tx.id} className="p-4 bg-gray-800/50 rounded-lg">
+                        <div className="flex items-center justify-between mb-3">
+                          <div className="flex items-center gap-2">
+                            <Lock className="w-4 h-4 text-yellow-400" />
+                            <span className="font-medium">{tx.amount}</span>
+                          </div>
+                          <Badge variant={tx.status === 'locked' ? 'secondary' : 'default'}>
+                            {tx.status}
+                          </Badge>
+                        </div>
+                        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
+                          <div>
+                            <p className="text-gray-400">Network</p>
+                            <p className="capitalize">{tx.network}</p>
+                          </div>
+                          <div>
+                            <p className="text-gray-400">Recipient</p>
+                            <p className="font-mono text-xs">{tx.recipient.slice(0, 10)}...</p>
+                          </div>
+                          <div>
+                            <p className="text-gray-400">Unlock Time</p>
+                            <p className="text-xs">{new Date(tx.unlockTime).toLocaleDateString()}</p>
+                          </div>
+                          <div>
+                            <p className="text-gray-400">Approvals</p>
+                            <p>{tx.currentApprovals}/{tx.requiredApprovals}</p>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
                   </div>
-                  
-                  <div className="flex items-center justify-between">
-                    <div className="space-y-0.5">
-                      <Label className="text-white">Device Whitelist</Label>
-                      <p className="text-xs text-gray-400">Only allow access from approved devices</p>
-                    </div>
-                    <Switch 
-                      checked={securitySettings.deviceWhitelistEnabled}
-                      onCheckedChange={() => toggleSetting('deviceWhitelistEnabled')}
-                      className="data-[state=checked]:bg-[#6B00D7]"
-                    />
-                  </div>
-                </div>
-                
-                <div className="space-y-4">
-                  <h3 className="text-lg font-medium text-white">Advanced Protection</h3>
-                  <Separator className="bg-[#333]" />
-                  
-                  <div className="flex items-center justify-between">
-                    <div className="space-y-0.5">
-                      <Label className="text-white">Zero-Knowledge Proofs</Label>
-                      <p className="text-xs text-gray-400">Enable privacy-preserving verification</p>
-                    </div>
-                    <Switch 
-                      checked={securitySettings.zeroKnowledgeProofsEnabled}
-                      onCheckedChange={() => toggleSetting('zeroKnowledgeProofsEnabled')}
-                      className="data-[state=checked]:bg-[#6B00D7]"
-                    />
-                  </div>
-                  
-                  <div className="flex items-center justify-between">
-                    <div className="space-y-0.5">
-                      <Label className="text-white">Quantum-Resistant Encryption</Label>
-                      <p className="text-xs text-gray-400">Use post-quantum cryptography for data</p>
-                    </div>
-                    <Switch 
-                      checked={securitySettings.quantumResistantEncryption}
-                      onCheckedChange={() => toggleSetting('quantumResistantEncryption')}
-                      className="data-[state=checked]:bg-[#6B00D7]"
-                    />
-                  </div>
-                  
-                  <div className="flex items-center justify-between">
-                    <div className="space-y-0.5">
-                      <Label className="text-white">Behavioral Analysis</Label>
-                      <p className="text-xs text-gray-400">AI-powered anomaly detection</p>
-                    </div>
-                    <Switch 
-                      checked={securitySettings.behavioralAnalysisEnabled}
-                      onCheckedChange={() => toggleSetting('behavioralAnalysisEnabled')}
-                      className="data-[state=checked]:bg-[#6B00D7]"
-                    />
-                  </div>
-                  
-                  <div className="flex items-center justify-between">
-                    <div className="space-y-0.5">
-                      <Label className="text-white">Anonymous Transactions</Label>
-                      <p className="text-xs text-gray-400">Enable full privacy mode for transactions</p>
-                    </div>
-                    <Switch 
-                      checked={securitySettings.anonymousTransactionsEnabled}
-                      onCheckedChange={() => toggleSetting('anonymousTransactionsEnabled')}
-                      className="data-[state=checked]:bg-[#6B00D7]"
-                    />
-                  </div>
-                  
-                  <div className="flex items-center justify-between">
-                    <div className="space-y-0.5">
-                      <Label className="text-white">Real-Time Security Alerts</Label>
-                      <p className="text-xs text-gray-400">Receive immediate notifications of security events</p>
-                    </div>
-                    <Switch 
-                      checked={securitySettings.realTimeAlertsEnabled}
-                      onCheckedChange={() => toggleSetting('realTimeAlertsEnabled')}
-                      className="data-[state=checked]:bg-[#6B00D7]"
-                    />
-                  </div>
-                </div>
-              </div>
-            </CardContent>
-            <CardFooter>
-              <Button className="w-full bg-[#6B00D7] hover:bg-[#5A00B6] text-white">
-                <ShieldCheck className="mr-2 h-4 w-4" />
-                Save Security Settings
-              </Button>
-            </CardFooter>
-          </Card>
-        </TabsContent>
-      </Tabs>
+                )}
+              </CardContent>
+            </Card>
+          </TabsContent>
+        </Tabs>
+      </div>
     </div>
   );
-};
-
-export default SecurityDashboardPage;
+}
