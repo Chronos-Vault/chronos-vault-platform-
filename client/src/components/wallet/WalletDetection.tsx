@@ -140,13 +140,18 @@ export function WalletDetection({ onConnect }: WalletDetectionProps) {
       let walletType = '';
       
       if (wallet.name === 'MetaMask') {
-        if (wallet.provider) {
+        const ethereum = (window as any).ethereum;
+        if (ethereum && ethereum.isMetaMask) {
           // Request account access if needed
-          const accounts = await wallet.provider.request({
+          const accounts = await ethereum.request({
             method: 'eth_requestAccounts'
           });
           address = accounts[0];
           walletType = 'metamask';
+        } else if (isMobile) {
+          // Open MetaMask app on mobile
+          window.open(`https://metamask.app.link/dapp/${window.location.host}${window.location.pathname}`, '_self');
+          return;
         } else {
           toast({
             title: "MetaMask Not Found",
@@ -164,10 +169,15 @@ export function WalletDetection({ onConnect }: WalletDetectionProps) {
         }
         
       } else if (wallet.name === 'Phantom') {
-        if (wallet.provider) {
-          const response = await wallet.provider.connect();
+        const solana = (window as any).solana;
+        if (solana && solana.isPhantom) {
+          const response = await solana.connect();
           address = response.publicKey.toString();
           walletType = 'phantom';
+        } else if (isMobile) {
+          // Open Phantom app on mobile
+          window.open(`https://phantom.app/ul/browse/${window.location.host}${window.location.pathname}`, '_self');
+          return;
         } else {
           toast({
             title: "Phantom Not Found",
@@ -185,14 +195,15 @@ export function WalletDetection({ onConnect }: WalletDetectionProps) {
         }
         
       } else if (wallet.name === 'TON Keeper') {
-        if (wallet.provider) {
-          // Try TON Connect approach
-          if (wallet.provider.connect) {
-            await wallet.provider.connect();
-            const walletInfo = wallet.provider.wallet;
-            address = walletInfo?.account?.address || '';
-            walletType = 'tonkeeper';
-          }
+        const ton = (window as any).ton || (window as any).tonkeeper;
+        if (ton) {
+          const response = await ton.connect();
+          address = response.address || response.account?.address || '';
+          walletType = 'tonkeeper';
+        } else if (isMobile) {
+          // Open TON Keeper app on mobile
+          window.open(`https://tonkeeper.com/browser/${window.location.host}${window.location.pathname}`, '_self');
+          return;
         } else {
           toast({
             title: "TON Keeper Not Found",
