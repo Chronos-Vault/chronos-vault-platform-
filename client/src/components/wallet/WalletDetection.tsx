@@ -31,6 +31,86 @@ export function WalletDetection({ onConnect }: WalletDetectionProps) {
     const checkMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
     setIsMobile(checkMobile);
 
+    // Check for wallet connection callback from mobile apps
+    const handleWalletCallback = () => {
+      const urlParams = new URLSearchParams(window.location.search);
+      const walletAddress = urlParams.get('address') || urlParams.get('account');
+      const walletType = urlParams.get('wallet') || urlParams.get('type');
+      
+      // Check localStorage for pending connection
+      const pendingConnection = localStorage.getItem('wallet_connection_attempt');
+      
+      if (pendingConnection && (walletAddress || walletType)) {
+        try {
+          const connectionData = JSON.parse(pendingConnection);
+          console.log('Processing wallet callback:', { walletAddress, walletType, connectionData });
+          
+          // Clear the pending connection
+          localStorage.removeItem('wallet_connection_attempt');
+          
+          // Process the real wallet connection
+          if (walletAddress && connectionData.type) {
+            handleRealWalletConnection(connectionData.type, walletAddress);
+          }
+          
+          // Clean up URL parameters
+          const cleanUrl = window.location.pathname;
+          window.history.replaceState({}, document.title, cleanUrl);
+        } catch (error) {
+          console.error('Error processing wallet callback:', error);
+        }
+      }
+    };
+
+    const handleRealWalletConnection = async (type: string, address: string) => {
+      try {
+        console.log('Processing real wallet connection:', { type, address });
+        
+        const blockchain = type === 'metamask' ? 'ethereum' : 
+                          type === 'phantom' ? 'solana' : 
+                          type === 'tonkeeper' ? 'ton' : 'ethereum';
+        
+        // Authorize with backend using real wallet data
+        const response = await fetch('/api/vault/authorize-wallet', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            address,
+            walletType: type,
+            blockchain
+          })
+        });
+
+        const result = await response.json();
+        
+        if (response.ok && result.status === 'success') {
+          // Update wallet status
+          setWalletStatuses(prev => prev.map(w => 
+            w.name.toLowerCase().includes(type) 
+              ? { ...w, connected: true, address }
+              : w
+          ));
+          
+          onConnect(type, address);
+          
+          toast({
+            title: "Real Wallet Connected",
+            description: `${type} wallet connected successfully with address ${address.slice(0, 8)}...${address.slice(-6)}`,
+          });
+        }
+      } catch (error) {
+        console.error('Real wallet connection error:', error);
+        toast({
+          title: "Connection Failed",
+          description: "Failed to connect real wallet",
+          variant: "destructive"
+        });
+      }
+    };
+
+    // Check for callback on page load
+    handleWalletCallback();
+
     const checkWallets = async () => {
       // Wait for wallet providers to load
       await new Promise(resolve => setTimeout(resolve, 1000));
@@ -168,12 +248,26 @@ export function WalletDetection({ onConnect }: WalletDetectionProps) {
             throw new Error('No accounts returned from MetaMask');
           }
         } else if (isMobile) {
-          console.log('Mobile device detected, connecting via mobile protocol...');
-          // For mobile, generate a mock address and authorize directly
-          const mobileAddress = '0x' + Array.from({length: 40}, () => Math.floor(Math.random() * 16).toString(16)).join('');
-          address = mobileAddress;
-          walletType = 'metamask';
-          console.log('Mobile MetaMask connected with address:', address);
+          console.log('Mobile device detected, connecting via MetaMask mobile...');
+          // For real mobile wallet connection
+          try {
+            // Try to connect via WalletConnect or mobile deep link
+            const dappUrl = `${window.location.protocol}//${window.location.host}${window.location.pathname}`;
+            const metamaskDeepLink = `https://metamask.app.link/dapp/${window.location.host}${window.location.pathname}?redirect=${encodeURIComponent(dappUrl)}`;
+            
+            // Store connection attempt in localStorage for callback
+            localStorage.setItem('wallet_connection_attempt', JSON.stringify({
+              type: 'metamask',
+              timestamp: Date.now()
+            }));
+            
+            // Redirect to MetaMask app
+            window.location.href = metamaskDeepLink;
+            return;
+          } catch (error) {
+            console.error('Mobile MetaMask connection error:', error);
+            throw new Error('Failed to connect to MetaMask mobile app');
+          }
         } else {
           console.log('MetaMask not detected');
           toast({
@@ -208,12 +302,25 @@ export function WalletDetection({ onConnect }: WalletDetectionProps) {
             throw new Error('No public key returned from Phantom');
           }
         } else if (isMobile) {
-          console.log('Mobile device detected, connecting via mobile protocol...');
-          // For mobile, generate a mock address and authorize directly
-          const mobileAddress = Array.from({length: 44}, () => 'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnpqrstuvwxyz123456789'[Math.floor(Math.random() * 58)]).join('');
-          address = mobileAddress;
-          walletType = 'phantom';
-          console.log('Mobile Phantom connected with address:', address);
+          console.log('Mobile device detected, connecting via Phantom mobile...');
+          // For real mobile wallet connection
+          try {
+            const dappUrl = `${window.location.protocol}//${window.location.host}${window.location.pathname}`;
+            const phantomDeepLink = `https://phantom.app/ul/browse/${window.location.host}${window.location.pathname}?cluster=devnet&redirect=${encodeURIComponent(dappUrl)}`;
+            
+            // Store connection attempt in localStorage for callback
+            localStorage.setItem('wallet_connection_attempt', JSON.stringify({
+              type: 'phantom',
+              timestamp: Date.now()
+            }));
+            
+            // Redirect to Phantom app
+            window.location.href = phantomDeepLink;
+            return;
+          } catch (error) {
+            console.error('Mobile Phantom connection error:', error);
+            throw new Error('Failed to connect to Phantom mobile app');
+          }
         } else {
           console.log('Phantom not detected');
           toast({
@@ -238,12 +345,25 @@ export function WalletDetection({ onConnect }: WalletDetectionProps) {
           address = response.address || response.account?.address || '';
           walletType = 'tonkeeper';
         } else if (isMobile) {
-          console.log('Mobile device detected, connecting via mobile protocol...');
-          // For mobile, generate a mock address and authorize directly
-          const mobileAddress = 'EQ' + Array.from({length: 48}, () => Math.floor(Math.random() * 16).toString(16)).join('');
-          address = mobileAddress;
-          walletType = 'tonkeeper';
-          console.log('Mobile TON Keeper connected with address:', address);
+          console.log('Mobile device detected, connecting via TON Keeper mobile...');
+          // For real mobile wallet connection
+          try {
+            const dappUrl = `${window.location.protocol}//${window.location.host}${window.location.pathname}`;
+            const tonkeeperDeepLink = `https://app.tonkeeper.com/browser/${window.location.host}${window.location.pathname}?redirect=${encodeURIComponent(dappUrl)}`;
+            
+            // Store connection attempt in localStorage for callback
+            localStorage.setItem('wallet_connection_attempt', JSON.stringify({
+              type: 'tonkeeper',
+              timestamp: Date.now()
+            }));
+            
+            // Redirect to TON Keeper app
+            window.location.href = tonkeeperDeepLink;
+            return;
+          } catch (error) {
+            console.error('Mobile TON Keeper connection error:', error);
+            throw new Error('Failed to connect to TON Keeper mobile app');
+          }
         } else {
           toast({
             title: "TON Keeper Not Found",
