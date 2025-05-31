@@ -74,16 +74,23 @@ export function WalletDetection({ onConnect }: WalletDetectionProps) {
 
   const authorizeWalletWithBackend = async (address: string, walletType: string, blockchain: string, wallet: WalletStatus) => {
     try {
+      console.log('Authorizing wallet with backend:', { address, walletType, blockchain });
+      
+      const requestData = {
+        address,
+        walletType,
+        blockchain
+      };
+      
+      console.log('Sending authorization request:', requestData);
+      
       const response = await fetch('/api/vault/authorize-wallet', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          address,
-          walletType,
-          blockchain
-        })
+        body: JSON.stringify(requestData)
       });
       
+      console.log('Authorization response status:', response.status);
       const result = await response.json();
       console.log('Authorization response:', result);
       
@@ -139,20 +146,34 @@ export function WalletDetection({ onConnect }: WalletDetectionProps) {
       let address = '';
       let walletType = '';
       
+      console.log('Starting wallet connection for:', wallet.name);
+      
       if (wallet.name === 'MetaMask') {
+        console.log('Attempting MetaMask connection...');
         const ethereum = (window as any).ethereum;
+        
         if (ethereum && ethereum.isMetaMask) {
+          console.log('MetaMask provider found, requesting accounts...');
           // Request account access if needed
           const accounts = await ethereum.request({
             method: 'eth_requestAccounts'
           });
-          address = accounts[0];
-          walletType = 'metamask';
+          console.log('MetaMask accounts received:', accounts);
+          
+          if (accounts && accounts.length > 0) {
+            address = accounts[0];
+            walletType = 'metamask';
+            console.log('MetaMask connected successfully:', address);
+          } else {
+            throw new Error('No accounts returned from MetaMask');
+          }
         } else if (isMobile) {
+          console.log('Mobile device detected, opening MetaMask app...');
           // Open MetaMask app on mobile
           window.open(`https://metamask.app.link/dapp/${window.location.host}${window.location.pathname}`, '_self');
           return;
         } else {
+          console.log('MetaMask not detected');
           toast({
             title: "MetaMask Not Found",
             description: "Please install MetaMask extension to connect",
@@ -169,16 +190,28 @@ export function WalletDetection({ onConnect }: WalletDetectionProps) {
         }
         
       } else if (wallet.name === 'Phantom') {
+        console.log('Attempting Phantom connection...');
         const solana = (window as any).solana;
+        
         if (solana && solana.isPhantom) {
+          console.log('Phantom provider found, connecting...');
           const response = await solana.connect();
-          address = response.publicKey.toString();
-          walletType = 'phantom';
+          console.log('Phantom response received:', response);
+          
+          if (response && response.publicKey) {
+            address = response.publicKey.toString();
+            walletType = 'phantom';
+            console.log('Phantom connected successfully:', address);
+          } else {
+            throw new Error('No public key returned from Phantom');
+          }
         } else if (isMobile) {
+          console.log('Mobile device detected, opening Phantom app...');
           // Open Phantom app on mobile
           window.open(`https://phantom.app/ul/browse/${window.location.host}${window.location.pathname}`, '_self');
           return;
         } else {
+          console.log('Phantom not detected');
           toast({
             title: "Phantom Not Found",
             description: "Please install Phantom extension to connect",
