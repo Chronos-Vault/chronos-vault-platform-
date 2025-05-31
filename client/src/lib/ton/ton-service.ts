@@ -218,7 +218,7 @@ class TONService {
       connect: async () => {
         console.log('Mock TonConnectUI: Simulating connection...');
         mockUI.connected = true;
-        mockUI.wallet = {
+        const walletData = {
           account: {
             address: '0:1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef',
             chain: 'testnet'
@@ -227,6 +227,8 @@ class TONService {
           walletVersion: '1.0.0',
           walletName: 'Chronos Vault Testnet Wallet'
         };
+        mockUI.wallet = walletData;
+        mockUI.account = walletData.account;
         return Promise.resolve(true);
       },
       disconnect: async () => {
@@ -250,7 +252,7 @@ class TONService {
         setTimeout(() => {
           if (this._mockStatusChangeCallback && !mockUI.connected) {
             mockUI.connected = true;
-            mockUI.wallet = {
+            const walletData = {
               account: {
                 address: '0:1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef',
                 chain: 'testnet'
@@ -259,6 +261,8 @@ class TONService {
               walletVersion: '1.0.0',
               walletName: 'Chronos Vault Testnet Wallet'
             };
+            mockUI.wallet = walletData;
+            mockUI.account = walletData.account;
             this._mockStatusChangeCallback(mockUI.wallet);
           }
         }, 500);
@@ -588,7 +592,8 @@ class TONService {
       const vaultParams = formatTONVaultParams({
         unlockTime,
         recipient: recipient || this.walletInfo?.address || '',
-        comment: comment || 'Chronos Vault on TON'
+        comment: comment || 'Chronos Vault on TON',
+        securityLevel: 1
       });
       
       // For development mode, simulate vault creation success
