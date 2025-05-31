@@ -18,6 +18,7 @@ interface SolanaContextType {
   availableWallets: SolanaWallet[];
   walletAddress: string;
   publicKey?: string;
+  wallet: any;
   connect: (walletName?: string) => Promise<boolean>;
   disconnect: () => Promise<boolean>;
   sendSOL: (toAddress: string, amount: string) => Promise<SolanaTransactionResponse>;
@@ -170,6 +171,7 @@ export function SolanaProvider({ children }: SolanaProviderProps) {
     availableWallets,
     walletAddress: walletInfo?.address || '',
     publicKey: walletInfo?.publicKey,
+    wallet: walletInfo,
     connect,
     disconnect,
     sendSOL,

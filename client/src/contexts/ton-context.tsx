@@ -44,6 +44,7 @@ interface TonContextType {
   walletInfo: TONWalletInfo | null;
   connectionStatus: typeof TonConnectionStatus[keyof typeof TonConnectionStatus];
   metadata: TONWalletMetadata | null;
+  wallet: any;
   
   // Error handling and retry
   retryTonConnection: () => Promise<boolean>;
@@ -638,6 +639,7 @@ export const TonProvider: React.FC<TonProviderProps> = ({ children }) => {
     walletInfo,
     connectionStatus,
     metadata,
+    wallet: walletInfo,
     
     // Error handling and retry
     retryTonConnection,

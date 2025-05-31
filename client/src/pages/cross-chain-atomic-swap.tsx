@@ -231,7 +231,7 @@ const AtomicSwapPage = () => {
         // Include new security features
         useAtomicMultiSig: multiSigConfig?.useAtomicMultiSig || false,
         requiredSignatures: multiSigConfig?.requiredSignatures || 0,
-        additionalSigners: multiSigConfig?.signers?.map(s => s.address) || [],
+        additionalSigners: multiSigConfig?.signers?.map((s: any) => s.address) || [],
         useBackupRecovery: multiSigConfig?.useBackupRecovery || false,
         recoveryAddress: multiSigConfig?.recoveryAddress || undefined,
         geolocationRestricted: multiSigConfig?.geolocationRestricted || false,
