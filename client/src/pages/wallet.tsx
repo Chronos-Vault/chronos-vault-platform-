@@ -39,6 +39,7 @@ export default function WalletPage() {
   const [showDepositModal, setShowDepositModal] = useState(false);
   const [showWithdrawModal, setShowWithdrawModal] = useState(false);
   const [realWalletBalances, setRealWalletBalances] = useState<any>({});
+  const [activeTab, setActiveTab] = useState('portfolio');
 
   // Fetch real testnet wallet data
   useEffect(() => {
@@ -353,12 +354,7 @@ export default function WalletPage() {
                     <Button 
                       size="sm"
                       className="bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 text-xs"
-                      onClick={() => {
-                        toast({
-                          title: "Connect Wallet",
-                          description: "Choose a blockchain network to connect",
-                        });
-                      }}
+                      onClick={() => setActiveTab('portfolio')}
                     >
                       <Wallet className="w-3 h-3 mr-1" />
                       Connect
@@ -366,12 +362,7 @@ export default function WalletPage() {
                     <Button 
                       size="sm"
                       className="bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 text-xs"
-                      onClick={() => {
-                        toast({
-                          title: "Deposit",
-                          description: "Select a network to deposit funds",
-                        });
-                      }}
+                      onClick={() => setActiveTab('deposit')}
                     >
                       <Plus className="w-3 h-3 mr-1" />
                       Deposit
@@ -380,12 +371,7 @@ export default function WalletPage() {
                       size="sm"
                       variant="outline" 
                       className="border-red-500/50 text-red-400 hover:bg-red-500/10 text-xs"
-                      onClick={() => {
-                        toast({
-                          title: "Withdraw",
-                          description: "Select funds to withdraw",
-                        });
-                      }}
+                      onClick={() => setActiveTab('withdraw')}
                     >
                       <ArrowUpDown className="w-3 h-3 mr-1 rotate-180" />
                       Withdraw
@@ -394,12 +380,7 @@ export default function WalletPage() {
                       size="sm"
                       variant="outline" 
                       className="border-gray-500/50 text-gray-400 hover:bg-gray-500/10 text-xs"
-                      onClick={() => {
-                        toast({
-                          title: "Settings",
-                          description: "Wallet settings and preferences",
-                        });
-                      }}
+                      onClick={() => setActiveTab('settings')}
                     >
                       <Settings className="w-3 h-3 mr-1" />
                       Settings
@@ -412,7 +393,7 @@ export default function WalletPage() {
 
           {/* Main Wallet Tabs */}
           <div className="mb-8">
-            <Tabs defaultValue="portfolio" className="w-full">
+            <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
               <TabsList className="grid w-full grid-cols-3 md:grid-cols-6 gap-1">
                 <TabsTrigger value="portfolio" className="text-xs">Portfolio</TabsTrigger>
                 <TabsTrigger value="deposit" className="text-xs">Deposit</TabsTrigger>
