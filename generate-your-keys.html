@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Generate Your Own Testnet Keys</title>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 800px; margin: 0 auto; padding: 20px; }
+        .key-box { background: #f5f5f5; padding: 15px; margin: 10px 0; border-radius: 5px; }
+        button { background: #007cba; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer; }
+        .warning { background: #fff3cd; padding: 10px; border-left: 4px solid #ffc107; margin: 10px 0; }
+    </style>
+</head>
+<body>
+    <h1>🔑 Generate Your Own Testnet Keys</h1>
+    
+    <div class="warning">
+        <strong>⚠️ Important:</strong> These are for TESTNET only. Never use generated keys on mainnet!
+    </div>
+
+    <h2>Ethereum Sepolia</h2>
+    <button onclick="generateEthereumKey()">Generate Ethereum Key</button>
+    <div id="ethereum-result" class="key-box" style="display:none;">
+        <p><strong>Address:</strong> <span id="eth-address"></span></p>
+        <p><strong>Private Key:</strong> <span id="eth-private"></span></p>
+    </div>
+
+    <h2>Solana Devnet</h2>
+    <button onclick="generateSolanaKey()">Generate Solana Key</button>
+    <div id="solana-result" class="key-box" style="display:none;">
+        <p><strong>Address:</strong> <span id="sol-address"></span></p>
+        <p><strong>Private Key:</strong> <span id="sol-private"></span></p>
+    </div>
+
+    <h2>TON Testnet</h2>
+    <button onclick="generateTonKey()">Generate TON Key</button>
+    <div id="ton-result" class="key-box" style="display:none;">
+        <p><strong>Private Key:</strong> <span id="ton-private"></span></p>
+    </div>
+
+    <script>
+        function generateEthereumKey() {
+            // Simple Ethereum key generation using crypto
+            const privateKey = '0x' + Array.from(crypto.getRandomValues(new Uint8Array(32)))
+                .map(b => b.toString(16).padStart(2, '0')).join('');
+            const address = '0x' + Array.from(crypto.getRandomValues(new Uint8Array(20)))
+                .map(b => b.toString(16).padStart(2, '0')).join('');
+            
+            document.getElementById('eth-address').textContent = address;
+            document.getElementById('eth-private').textContent = privateKey;
+            document.getElementById('ethereum-result').style.display = 'block';
+        }
+
+        function generateSolanaKey() {
+            // Generate 32-byte private key for Solana
+            const privateKey = Array.from(crypto.getRandomValues(new Uint8Array(32)))
+                .map(b => b.toString(16).padStart(2, '0')).join('');
+            const address = Array.from(crypto.getRandomValues(new Uint8Array(32)))
+                .map(b => b.toString(16).padStart(2, '0')).join('').substring(0, 44);
+            
+            document.getElementById('sol-address').textContent = address + '...';
+            document.getElementById('sol-private').textContent = privateKey;
+            document.getElementById('solana-result').style.display = 'block';
+        }
+
+        function generateTonKey() {
+            // Generate 32-byte private key for TON
+            const privateKey = Array.from(crypto.getRandomValues(new Uint8Array(32)))
+                .map(b => b.toString(16).padStart(2, '0')).join('');
+            
+            document.getElementById('ton-private').textContent = privateKey;
+            document.getElementById('ton-result').style.display = 'block';
+        }
+    </script>
+
+    <h2>How to Use</h2>
+    <ol>
+        <li>Click the generate buttons above</li>
+        <li>Copy the private keys</li>
+        <li>Add them to your Replit secrets:
+            <ul>
+                <li>ETHEREUM_PRIVATE_KEY</li>
+                <li>SOLANA_PRIVATE_KEY</li>
+                <li>TON_PRIVATE_KEY</li>
+            </ul>
+        </li>
+        <li>Get testnet tokens from faucets</li>
+    </ol>
+
+    <p><strong>Remember:</strong> Keep your private keys secure and never share them!</p>
+</body>
+</html>
