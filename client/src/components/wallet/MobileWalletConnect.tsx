@@ -56,9 +56,20 @@ export function MobileWalletConnect({ walletType, onConnect }: MobileWalletConne
       case 'metamask':
         return `https://metamask.app.link/wc?uri=${encodeURIComponent(wcUri)}`;
       case 'phantom':
-        return `https://phantom.app/ul/v1/connect?dapp_encryption_public_key=${btoa(sessionId)}&cluster=devnet&app_url=${encodeURIComponent(window.location.origin)}&redirect_link=${encodeURIComponent(window.location.href)}`;
+        // Generate proper Phantom connection QR code data
+        return JSON.stringify({
+          method: 'connect',
+          params: {
+            dapp_encryption_public_key: sessionId,
+            cluster: 'devnet',
+            app_url: window.location.origin,
+            redirect_link: window.location.href
+          }
+        });
       case 'tonkeeper':
-        return `https://app.tonkeeper.com/ton-connect/v2?v=2&id=${sessionId}&name=${encodeURIComponent(appMetadata.name)}&url=${encodeURIComponent(appMetadata.url)}&ret=${encodeURIComponent(window.location.href)}`;
+        // Generate proper TON Connect QR code
+        const manifestUrl = `${window.location.origin}/tonconnect-manifest.json`;
+        return `tc://tonconnect?v=2&id=${sessionId}&r=${encodeURIComponent(manifestUrl)}&ret=back`;
       default:
         return wcUri;
     }
