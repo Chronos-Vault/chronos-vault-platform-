@@ -171,22 +171,17 @@ export function RealMobileWalletConnector({ onConnect }: RealMobileWalletConnect
         description: `Please approve the connection in your ${wallet.name} app`,
       });
 
-      // Try deep link first, fallback to universal link
-      const tryDeepLink = () => {
-        window.location.href = wallet.deepLink;
-      };
-
-      const tryUniversalLink = () => {
-        window.location.href = wallet.universalLink;
-      };
-
-      // Try deep link first
-      tryDeepLink();
-
-      // Fallback to universal link after short delay
-      setTimeout(() => {
-        tryUniversalLink();
-      }, 2000);
+      // Use the correct mobile wallet connection protocol
+      if (wallet.type === 'metamask') {
+        // MetaMask mobile app link
+        window.location.href = `metamask://dapp/${window.location.hostname}${window.location.pathname}`;
+      } else if (wallet.type === 'phantom') {
+        // Phantom mobile app link  
+        window.location.href = `phantom://browse/${window.location.hostname}${window.location.pathname}`;
+      } else if (wallet.type === 'tonkeeper') {
+        // TON Keeper mobile app link
+        window.location.href = `tonkeeper://dapp/${window.location.hostname}${window.location.pathname}`;
+      }
 
     } catch (error) {
       console.error(`${wallet.name} connection error:`, error);
