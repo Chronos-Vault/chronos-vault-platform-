@@ -119,7 +119,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   apiRouter.use('/api', walletAuthRoutes);
   
   // Register vault-wallet integration routes
-  apiRouter.use('/vault', vaultWalletRoutes);
+  apiRouter.use('/api/vault', vaultWalletRoutes);
   
   // Initialize and register chain-agnostic verification routes
   const chainAgnosticVerifier = initializeChainAgnosticVerification(connectorFactory);
