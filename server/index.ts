@@ -26,7 +26,7 @@ const app = express();
 app.use(cors());
 app.use(bodyParser.json());
 
-// Mobile wallet connection status endpoint
+// Mobile wallet connection endpoints
 app.post('/api/wallet/status', (req, res) => {
   const { walletType, timestamp } = req.body;
   
@@ -44,6 +44,46 @@ app.post('/api/wallet/status', (req, res) => {
     });
   } else {
     res.json({ connected: false });
+  }
+});
+
+// Phantom wallet connection endpoint
+app.post('/api/wallet/phantom-connect', async (req, res) => {
+  const { connectionData } = req.body;
+  
+  try {
+    // Parse connection data and establish Phantom connection
+    const connectionInfo = JSON.parse(connectionData);
+    
+    // Simulate Phantom wallet authorization
+    setTimeout(() => {
+      res.json({
+        publicKey: 'BfYXwvd4jMYoFnphtf9vkAe8ZiU7roYZSEFGsi2oXhjz',
+        connected: true
+      });
+    }, 2000);
+  } catch (error) {
+    res.status(400).json({ error: 'Invalid connection data' });
+  }
+});
+
+// TON Keeper connection endpoint
+app.post('/api/wallet/ton-connect', async (req, res) => {
+  const { connectionUri } = req.body;
+  
+  try {
+    // Parse TON Connect URI and establish connection
+    const tonConnectInfo = new URL(connectionUri);
+    
+    // Simulate TON Keeper authorization
+    setTimeout(() => {
+      res.json({
+        address: 'EQD4FPq-PRDieyQKkizFTRtSDyucUIqrj0v_zXJmqaDp6_0t',
+        connected: true
+      });
+    }, 2000);
+  } catch (error) {
+    res.status(400).json({ error: 'Invalid TON Connect URI' });
   }
 });
 

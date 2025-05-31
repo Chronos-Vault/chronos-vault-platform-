@@ -4,7 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { QrCode, Smartphone, CheckCircle, AlertCircle } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
-import { useWalletConnect } from './WalletConnectProvider';
+import { EthereumProvider } from '@walletconnect/ethereum-provider';
 
 interface MobileWalletConnectProps {
   walletType: 'metamask' | 'phantom' | 'tonkeeper';
@@ -80,67 +80,86 @@ export function MobileWalletConnect({ walletType, onConnect }: MobileWalletConne
     
     try {
       if (walletType === 'metamask') {
-        // Use WalletConnect for MetaMask mobile
-        const connectionUri = generateConnectionRequest();
-        setQrData(connectionUri);
-        setShowQR(true);
+        // Initialize real WalletConnect provider
+        const provider = await EthereumProvider.init({
+          projectId: 'f1a006966920cbcac785194f58b6e073',
+          chains: [1, 11155111],
+          showQrModal: true,
+          metadata: {
+            name: 'Chronos Vault',
+            description: 'Secure Multi-Chain Vault Platform',
+            url: window.location.origin,
+            icons: [`${window.location.origin}/favicon.ico`]
+          }
+        });
+
+        // Enable connection
+        const accounts = await provider.enable();
         
-        // Start polling for connection
-        setTimeout(() => {
-          const mockAddress = '0x742d35Cc6635C0532925a3b8D92C5A6Cdc3B';
+        if (accounts.length > 0) {
           setConnectionStatus('connected');
           setShowQR(false);
-          onConnect(walletType, mockAddress);
+          onConnect(walletType, accounts[0]);
           toast({
             title: "MetaMask Connected",
-            description: `Connected: ${mockAddress.slice(0, 6)}...${mockAddress.slice(-4)}`,
+            description: `Connected: ${accounts[0].slice(0, 6)}...${accounts[0].slice(-4)}`,
           });
-        }, 6000);
+        }
       } else {
-        // For Phantom and TON Keeper, show QR code for proper wallet authorization
+        // For Phantom and TON Keeper, show QR code and establish real connection
         const connectionUri = generateConnectionRequest();
         setQrData(connectionUri);
         setShowQR(true);
         
-        // Poll for successful connection
-        const pollForConnection = async () => {
+        // Create connection session
+        const connectWallet = async () => {
           try {
-            const response = await fetch('/api/wallet/status', {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({ walletType, timestamp: Date.now() })
-            });
-            
-            if (response.ok) {
-              const result = await response.json();
-              if (result.connected && result.address) {
-                setConnectionStatus('connected');
-                setShowQR(false);
-                onConnect(walletType, result.address);
-                toast({
-                  title: `${walletInfo[walletType].name} Connected`,
-                  description: `Connected: ${result.address.slice(0, 6)}...${result.address.slice(-4)}`,
-                });
-                return true;
+            if (walletType === 'phantom') {
+              // Phantom connection via Solana adapter
+              const response = await fetch('/api/wallet/phantom-connect', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ connectionData: connectionUri })
+              });
+              
+              if (response.ok) {
+                const result = await response.json();
+                if (result.publicKey) {
+                  setConnectionStatus('connected');
+                  setShowQR(false);
+                  onConnect(walletType, result.publicKey);
+                  toast({
+                    title: "Phantom Connected",
+                    description: `Connected: ${result.publicKey.slice(0, 6)}...${result.publicKey.slice(-4)}`,
+                  });
+                  return;
+                }
+              }
+            } else if (walletType === 'tonkeeper') {
+              // TON Connect protocol
+              const response = await fetch('/api/wallet/ton-connect', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ connectionUri })
+              });
+              
+              if (response.ok) {
+                const result = await response.json();
+                if (result.address) {
+                  setConnectionStatus('connected');
+                  setShowQR(false);
+                  onConnect(walletType, result.address);
+                  toast({
+                    title: "TON Keeper Connected",
+                    description: `Connected: ${result.address.slice(0, 6)}...${result.address.slice(-4)}`,
+                  });
+                  return;
+                }
               }
             }
-          } catch (error) {
-            console.log('Checking connection status...');
-          }
-          return false;
-        };
-        
-        // Poll every 2 seconds for 60 seconds
-        const maxAttempts = 30;
-        let attempts = 0;
-        
-        const pollInterval = setInterval(async () => {
-          attempts++;
-          const connected = await pollForConnection();
-          
-          if (connected || attempts >= maxAttempts) {
-            clearInterval(pollInterval);
-            if (!connected && attempts >= maxAttempts) {
+            
+            // If no immediate connection, wait for user action
+            setTimeout(() => {
               setConnectionStatus('failed');
               setShowQR(false);
               toast({
@@ -148,9 +167,16 @@ export function MobileWalletConnect({ walletType, onConnect }: MobileWalletConne
                 description: "Please try connecting again",
                 variant: "destructive"
               });
-            }
+            }, 30000);
+            
+          } catch (error) {
+            console.error('Wallet connection error:', error);
+            setConnectionStatus('failed');
+            setShowQR(false);
           }
-        }, 2000);
+        };
+
+        await connectWallet();
       }
     } catch (error) {
       setConnectionStatus('failed');
