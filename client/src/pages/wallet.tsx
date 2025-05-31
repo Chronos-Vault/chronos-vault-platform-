@@ -26,6 +26,7 @@ import {
 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { SimpleWalletButtons } from '@/components/wallet/SimpleWalletButtons';
+import { WalletVaultIntegration } from '@/components/wallet/WalletVaultIntegration';
 import { Link } from 'wouter';
 import WalletConnector from '@/components/wallet/WalletConnector';
 
@@ -60,6 +61,35 @@ export default function WalletPage() {
       ...prev,
       [walletType]: { connected: true, address }
     }));
+
+    toast({
+      title: "Wallet Connected",
+      description: `${walletType} wallet connected successfully`,
+    });
+  };
+
+  // Convert connected wallets to format expected by WalletVaultIntegration
+  const getConnectedWalletsForVault = () => {
+    return Object.entries(connectedWallets).map(([type, address]) => ({
+      type,
+      address,
+      chain: getChainFromWalletType(type),
+      balance: realWalletBalances[type]?.balance || '0'
+    }));
+  };
+
+  const getChainFromWalletType = (walletType: string) => {
+    switch (walletType.toLowerCase()) {
+      case 'metamask': return 'ethereum';
+      case 'phantom': return 'solana';
+      case 'tonkeeper': return 'ton';
+      default: return 'ethereum';
+    }
+  };
+
+  const handleCreateVault = (walletAddress: string, chain: string) => {
+    // Navigate to vault creation with pre-filled wallet data
+    window.location.href = `/create-vault?wallet=${walletAddress}&chain=${chain}`;
   };
 
   // Fetch real testnet wallet data
@@ -511,6 +541,14 @@ export default function WalletPage() {
                 </div>
               </CardHeader>
             </Card>
+          </div>
+
+          {/* Wallet to Vault Integration */}
+          <div className="mb-8">
+            <WalletVaultIntegration 
+              connectedWallets={getConnectedWalletsForVault()} 
+              onCreateVault={handleCreateVault}
+            />
           </div>
 
           {/* Main Wallet Tabs */}
