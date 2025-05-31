@@ -149,6 +149,13 @@ class TONService {
           console.log('Initializing TonConnectUI with manifest URL:', manifestUrl);
           
           try {
+            // Ensure buffer is available before creating TonConnectUI
+            if (typeof window !== 'undefined' && !(window as any).Buffer) {
+              const { Buffer } = await import('buffer');
+              (window as any).Buffer = Buffer;
+              (window as any).global = window;
+            }
+            
             this.tonConnectUI = new TonConnectUI({
               manifestUrl: manifestUrl,
               buttonRootId: 'ton-connect-button'
@@ -159,14 +166,10 @@ class TONService {
           } catch (elementError) {
             console.warn('Error creating TonConnectUI:', elementError);
             
-            // Create a minimal mock implementation for development mode
-            if (import.meta.env.DEV) {
-              this.tonConnectUI = this.createMockTonConnectUI();
-              console.log('Created mock TON Connect UI for development mode');
-            } else {
-              // In production, propagate the error
-              throw elementError;
-            }
+            // For any initialization error, fallback to a safe state
+            this.tonConnectUI = null;
+            this._isInitialized = false;
+            return false;
           }
           
           // Only add event listeners if we have a valid instance

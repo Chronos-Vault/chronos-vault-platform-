@@ -3,6 +3,7 @@ import { WagmiProvider } from "wagmi";
 import { QueryClientProvider } from "@tanstack/react-query";
 import App from "./App";
 import "./index.css";
+import "./lib/polyfills";
 import { ThemeProvider } from "@/components/ui/theme-provider";
 import { wagmiConfig } from "@/lib/web3Config";
 import { AuthProvider } from "@/contexts/auth-context";
