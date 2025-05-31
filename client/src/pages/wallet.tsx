@@ -25,7 +25,7 @@ import {
   Settings
 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
-import { WalletConnectionChoice } from '@/components/wallet/WalletConnectionChoice';
+import { SimpleWalletButtons } from '@/components/wallet/SimpleWalletButtons';
 import { Link } from 'wouter';
 import WalletConnector from '@/components/wallet/WalletConnector';
 
@@ -507,13 +507,7 @@ export default function WalletPage() {
                     </div>
                   </div>
                   
-                  <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
-                    {isMobile ? (
-                      <SimpleMobileWallet 
-                        walletType="metamask" 
-                        onConnect={handleWalletConnect} 
-                      />
-                    ) : (
+                  <SimpleWalletButtons onConnect={handleWalletConnect} />
                       <Button 
                         size="sm"
                         className="bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 text-xs"
@@ -551,12 +545,10 @@ export default function WalletPage() {
                       </Button>
                     )}
                     
-                    {isMobile ? (
-                      <SimpleMobileWallet 
-                        walletType="phantom" 
-                        onConnect={handleWalletConnect} 
-                      />
-                    ) : (
+                    <WalletConnectionChoice 
+                      walletType="phantom" 
+                      onConnect={handleWalletConnect}
+                    >
                       <Button 
                         size="sm"
                         className="bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 text-xs"
@@ -589,14 +581,12 @@ export default function WalletPage() {
                         <Plus className="w-3 h-3 mr-1" />
                         Phantom
                       </Button>
-                    )}
+                    </WalletConnectionChoice>
                     
-                    {isMobile ? (
-                      <SimpleMobileWallet 
-                        walletType="tonkeeper" 
-                        onConnect={handleWalletConnect} 
-                      />
-                    ) : (
+                    <WalletConnectionChoice 
+                      walletType="tonkeeper" 
+                      onConnect={handleWalletConnect}
+                    >
                       <Button 
                         size="sm"
                         variant="outline" 
@@ -628,7 +618,7 @@ export default function WalletPage() {
                         <ArrowUpDown className="w-3 h-3 mr-1 rotate-180" />
                         TON Keeper
                       </Button>
-                    )}
+                    </WalletConnectionChoice>
                     
                     <Button 
                       size="sm"
