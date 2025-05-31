@@ -72,6 +72,46 @@ export function WalletDetection({ onConnect }: WalletDetectionProps) {
     checkWallets();
   }, []);
 
+  const authorizeWalletWithBackend = async (address: string, walletType: string, blockchain: string, wallet: WalletStatus) => {
+    try {
+      const response = await fetch('/api/vault/authorize-wallet', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          address,
+          walletType,
+          blockchain
+        })
+      });
+      
+      const result = await response.json();
+      
+      if (response.ok && result.status === 'success') {
+        setWalletStatuses(prev => prev.map(w => 
+          w.name === wallet.name 
+            ? { ...w, connected: true, address }
+            : w
+        ));
+        
+        onConnect(walletType, address);
+        
+        toast({
+          title: "Wallet Authorized",
+          description: `${wallet.name} connected to Chronos Vault successfully`,
+        });
+      } else {
+        throw new Error(result.message || 'Authorization failed');
+      }
+    } catch (error) {
+      console.error('Authorization error:', error);
+      toast({
+        title: "Authorization Failed",
+        description: `Failed to authorize ${wallet.name} with Chronos Vault`,
+        variant: "destructive"
+      });
+    }
+  };
+
   const connectWallet = async (wallet: WalletStatus) => {
     if (!wallet.detected) {
       toast({
@@ -111,31 +151,10 @@ export function WalletDetection({ onConnect }: WalletDetectionProps) {
         }
         
         // Send to backend for authorization
-        const response = await fetch('/api/vault/authorize-wallet', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            address,
-            walletType,
-            blockchain: 'ethereum'
-          })
-        });
-        
-        if (response.ok) {
-          // Update wallet status
-          setWalletStatuses(prev => prev.map(w => 
-            w.name === wallet.name 
-              ? { ...w, connected: true, address }
-              : w
-          ));
-          
-          onConnect(walletType, address);
-          
-          toast({
-            title: "Wallet Authorized",
-            description: `${wallet.name} connected to Chronos Vault`,
-            variant: "default"
-          });
+        if (address && walletType) {
+          await authorizeWalletWithBackend(address, walletType, 'ethereum', wallet);
+        } else {
+          throw new Error('Failed to get wallet address');
         }
         
       } else if (wallet.name === 'Phantom') {
@@ -153,30 +172,10 @@ export function WalletDetection({ onConnect }: WalletDetectionProps) {
         }
         
         // Send to backend for authorization
-        const authResponse = await fetch('/api/vault/authorize-wallet', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            address,
-            walletType,
-            blockchain: 'solana'
-          })
-        });
-        
-        if (authResponse.ok) {
-          setWalletStatuses(prev => prev.map(w => 
-            w.name === wallet.name 
-              ? { ...w, connected: true, address }
-              : w
-          ));
-          
-          onConnect(walletType, address);
-          
-          toast({
-            title: "Wallet Authorized",
-            description: `${wallet.name} connected to Chronos Vault`,
-            variant: "default"
-          });
+        if (address && walletType) {
+          await authorizeWalletWithBackend(address, walletType, 'solana', wallet);
+        } else {
+          throw new Error('Failed to get wallet address');
         }
         
       } else if (wallet.name === 'TON Keeper') {
@@ -197,32 +196,10 @@ export function WalletDetection({ onConnect }: WalletDetectionProps) {
           return;
         }
         
-        if (address) {
-          const authResponse = await fetch('/api/vault/authorize-wallet', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              address,
-              walletType,
-              blockchain: 'ton'
-            })
-          });
-          
-          if (authResponse.ok) {
-            setWalletStatuses(prev => prev.map(w => 
-              w.name === wallet.name 
-                ? { ...w, connected: true, address }
-                : w
-            ));
-            
-            onConnect(walletType, address);
-            
-            toast({
-              title: "Wallet Authorized",
-              description: `${wallet.name} connected to Chronos Vault`,
-              variant: "default"
-            });
-          }
+        if (address && walletType) {
+          await authorizeWalletWithBackend(address, walletType, 'ton', wallet);
+        } else {
+          throw new Error('Failed to get wallet address');
         }
       }
       
