@@ -340,17 +340,19 @@ export default function WalletPage() {
           <div className="mb-8">
             <Card className="bg-gray-900/50 border-gray-700">
               <CardHeader>
-                <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-                  <div>
-                    <CardTitle className="flex items-center gap-2">
-                      <Wallet className="w-5 h-5 text-purple-400" />
-                      Wallet Status
-                    </CardTitle>
-                    <p className="text-sm text-gray-400 mt-1">Connected to 3 networks</p>
+                <div className="space-y-4">
+                  <div className="flex items-center gap-2">
+                    <Wallet className="w-5 h-5 text-purple-400" />
+                    <div>
+                      <CardTitle className="text-lg">Wallet Status</CardTitle>
+                      <p className="text-sm text-gray-400">Connected to 3 networks</p>
+                    </div>
                   </div>
-                  <div className="flex gap-3">
+                  
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
                     <Button 
-                      className="bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600"
+                      size="sm"
+                      className="bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 text-xs"
                       onClick={() => {
                         toast({
                           title: "Connect Wallet",
@@ -358,11 +360,12 @@ export default function WalletPage() {
                         });
                       }}
                     >
-                      <Wallet className="w-4 h-4 mr-2" />
-                      Connect Wallet
+                      <Wallet className="w-3 h-3 mr-1" />
+                      Connect
                     </Button>
                     <Button 
-                      className="bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600"
+                      size="sm"
+                      className="bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 text-xs"
                       onClick={() => {
                         toast({
                           title: "Deposit",
@@ -370,12 +373,13 @@ export default function WalletPage() {
                         });
                       }}
                     >
-                      <Plus className="w-4 h-4 mr-2" />
+                      <Plus className="w-3 h-3 mr-1" />
                       Deposit
                     </Button>
                     <Button 
+                      size="sm"
                       variant="outline" 
-                      className="border-red-500/50 text-red-400 hover:bg-red-500/10"
+                      className="border-red-500/50 text-red-400 hover:bg-red-500/10 text-xs"
                       onClick={() => {
                         toast({
                           title: "Withdraw",
@@ -383,12 +387,13 @@ export default function WalletPage() {
                         });
                       }}
                     >
-                      <ArrowUpDown className="w-4 h-4 mr-2 rotate-180" />
+                      <ArrowUpDown className="w-3 h-3 mr-1 rotate-180" />
                       Withdraw
                     </Button>
                     <Button 
+                      size="sm"
                       variant="outline" 
-                      className="border-gray-500/50 text-gray-400 hover:bg-gray-500/10"
+                      className="border-gray-500/50 text-gray-400 hover:bg-gray-500/10 text-xs"
                       onClick={() => {
                         toast({
                           title: "Settings",
@@ -396,7 +401,7 @@ export default function WalletPage() {
                         });
                       }}
                     >
-                      <Settings className="w-4 h-4 mr-2" />
+                      <Settings className="w-3 h-3 mr-1" />
                       Settings
                     </Button>
                   </div>
@@ -408,13 +413,13 @@ export default function WalletPage() {
           {/* Main Wallet Tabs */}
           <div className="mb-8">
             <Tabs defaultValue="portfolio" className="w-full">
-              <TabsList className="grid w-full grid-cols-6">
-                <TabsTrigger value="portfolio">Portfolio</TabsTrigger>
-                <TabsTrigger value="deposit">Deposit</TabsTrigger>
-                <TabsTrigger value="withdraw">Withdraw</TabsTrigger>
-                <TabsTrigger value="transactions">Transactions</TabsTrigger>
-                <TabsTrigger value="security">Security</TabsTrigger>
-                <TabsTrigger value="settings">Settings</TabsTrigger>
+              <TabsList className="grid w-full grid-cols-3 md:grid-cols-6 gap-1">
+                <TabsTrigger value="portfolio" className="text-xs">Portfolio</TabsTrigger>
+                <TabsTrigger value="deposit" className="text-xs">Deposit</TabsTrigger>
+                <TabsTrigger value="withdraw" className="text-xs">Withdraw</TabsTrigger>
+                <TabsTrigger value="transactions" className="text-xs">History</TabsTrigger>
+                <TabsTrigger value="security" className="text-xs">Security</TabsTrigger>
+                <TabsTrigger value="settings" className="text-xs">Settings</TabsTrigger>
               </TabsList>
 
               <TabsContent value="portfolio" className="mt-6">
@@ -429,71 +434,74 @@ export default function WalletPage() {
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                     {Object.entries(walletBalances).map(([chain, data]) => (
-                      <div key={chain} className="space-y-3">
-                        <div className="flex items-center justify-between">
-                          <div className="flex items-center gap-3">
-                            <div className={`w-3 h-3 rounded-full ${chainConfigs[chain as keyof typeof chainConfigs].color}`}></div>
-                            <span className="font-semibold capitalize">{chain}</span>
+                      <Card key={chain} className="bg-gray-800/50 border-gray-600 p-4">
+                        <div className="space-y-3">
+                          <div className="flex items-center justify-between">
+                            <div className="flex items-center gap-2">
+                              <div className={`w-3 h-3 rounded-full ${chainConfigs[chain as keyof typeof chainConfigs].color}`}></div>
+                              <span className="font-semibold capitalize text-sm">{chain}</span>
+                            </div>
+                            <Badge className={data.address ? "bg-green-500/20 text-green-400 text-xs" : "bg-red-500/20 text-red-400 text-xs"}>
+                              {data.address ? "Connected" : "Disconnected"}
+                            </Badge>
                           </div>
-                          <Badge className={data.address ? "bg-green-500/20 text-green-400" : "bg-red-500/20 text-red-400"}>
-                            {data.address ? "Connected" : "Disconnected"}
-                          </Badge>
-                        </div>
-                        
-                        {data.address ? (
-                          <div>
-                            <p className="text-2xl font-bold">{data.balance} {data.symbol}</p>
-                            <p className="text-gray-400">{data.usd}</p>
-                            <p className="text-xs text-gray-500 font-mono mt-2">
-                              {data.address.slice(0, 8)}...{data.address.slice(-6)}
-                            </p>
-                          </div>
-                        ) : (
-                          <div className="text-center py-4">
-                            <p className="text-gray-400 mb-3">Wallet not connected</p>
-                            <Button 
-                              size="sm" 
-                              className="w-full"
-                              onClick={() => {
-                                toast({
-                                  title: `Connect ${chain.charAt(0).toUpperCase() + chain.slice(1)} Wallet`,
-                                  description: "Please connect your wallet to continue",
-                                });
-                              }}
-                            >
-                              <Wallet className="w-4 h-4 mr-2" />
-                              Connect {chain.charAt(0).toUpperCase() + chain.slice(1)}
-                            </Button>
-                          </div>
-                        )}
-                        
-                        {data.address && (
-                          <div className="flex items-center gap-2">
-                            <Button 
-                              size="sm" 
-                              variant="outline"
-                              onClick={() => copyAddress(chainConfigs[chain as keyof typeof chainConfigs].address)}
-                              className="text-xs"
-                            >
-                              <Copy className="w-3 h-3 mr-1" />
-                              Copy Address
-                            </Button>
-                            {(chain === 'solana' || chain === 'ton') && (
+                          
+                          {data.address ? (
+                            <>
+                              <div className="text-center py-2">
+                                <p className="text-xl font-bold">{data.balance} {data.symbol}</p>
+                                <p className="text-gray-400 text-sm">{data.usd}</p>
+                                <p className="text-xs text-gray-500 font-mono mt-1">
+                                  {data.address.slice(0, 6)}...{data.address.slice(-4)}
+                                </p>
+                              </div>
+                              
+                              <div className="space-y-2">
+                                <Button 
+                                  size="sm" 
+                                  variant="outline"
+                                  onClick={() => copyAddress(chainConfigs[chain as keyof typeof chainConfigs].address)}
+                                  className="w-full text-xs"
+                                >
+                                  <Copy className="w-3 h-3 mr-1" />
+                                  Copy Address
+                                </Button>
+                                
+                                {(chain === 'solana' || chain === 'ton') && (
+                                  <Button 
+                                    size="sm" 
+                                    variant="outline"
+                                    onClick={() => handleAirdrop(chain as 'solana' | 'ton')}
+                                    className="w-full text-xs bg-green-500/10 border-green-500/30 text-green-400 hover:bg-green-500/20"
+                                  >
+                                    <Plus className="w-3 h-3 mr-1" />
+                                    Get Testnet Tokens
+                                  </Button>
+                                )}
+                              </div>
+                            </>
+                          ) : (
+                            <div className="text-center py-4">
+                              <p className="text-gray-400 mb-3 text-sm">Wallet not connected</p>
                               <Button 
                                 size="sm" 
-                                variant="outline"
-                                onClick={() => handleAirdrop(chain as 'solana' | 'ton')}
-                                className="text-xs bg-green-500/10 border-green-500/30 text-green-400 hover:bg-green-500/20"
+                                className="w-full text-xs"
+                                onClick={() => {
+                                  toast({
+                                    title: `Connect ${chain.charAt(0).toUpperCase() + chain.slice(1)} Wallet`,
+                                    description: "Please connect your wallet to continue",
+                                  });
+                                }}
                               >
-                                <Plus className="w-3 h-3 mr-1" />
-                                Testnet Airdrop
+                                <Wallet className="w-3 h-3 mr-1" />
+                                Connect {chain.charAt(0).toUpperCase() + chain.slice(1)}
                               </Button>
-                            )}
-                          </div>
-                        )}
-                      </div>
+                            </div>
+                          )}
+                        </div>
+                      </Card>
                     ))}
                   </div>
                 </CardContent>
