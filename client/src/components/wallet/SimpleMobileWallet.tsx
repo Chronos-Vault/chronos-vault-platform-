@@ -9,6 +9,7 @@ import QRCodeLib from 'qrcode';
 interface SimpleMobileWalletProps {
   walletType: 'metamask' | 'phantom' | 'tonkeeper';
   onConnect: (walletType: string, address: string) => void;
+  onCancel?: () => void;
 }
 
 const walletInfo = {
