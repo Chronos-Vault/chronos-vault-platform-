@@ -35,18 +35,29 @@ class TestnetWalletService {
    */
   async initialize(): Promise<void> {
     try {
-      // Load Solana private key
-      if (process.env.SOLANA_PRIVATE_KEY) {
+      // Load Solana private key - Use the provided key directly
+      const solanaPrivateKey = process.env.SOLANA_PRIVATE_KEY || 'GSQmkmYN5gZ5BFiccWc45Q2RMVnqGbYXG3UP4mH3RC5F';
+      
+      if (solanaPrivateKey) {
         try {
-          // Create a deterministic keypair for testing purposes
-          // This ensures we have a valid Solana wallet for demonstration
-          const testPrivateKey = new Uint8Array(64);
-          crypto.getRandomValues(testPrivateKey.subarray(0, 32));
+          // Decode the Base58 private key
+          const privateKeyBytes = bs58.decode(solanaPrivateKey);
+          console.log('Decoded key length:', privateKeyBytes.length);
           
-          this.solanaKeypair = Keypair.fromSecretKey(testPrivateKey);
-          console.log('Solana wallet initialized for testnet:', this.solanaKeypair.publicKey.toString());
+          // Handle different key lengths
+          if (privateKeyBytes.length === 32) {
+            // 32-byte seed
+            this.solanaKeypair = Keypair.fromSeed(privateKeyBytes);
+            console.log('Solana wallet initialized from 32-byte seed:', this.solanaKeypair.publicKey.toString());
+          } else if (privateKeyBytes.length === 64) {
+            // 64-byte secret key
+            this.solanaKeypair = Keypair.fromSecretKey(privateKeyBytes);
+            console.log('Solana wallet initialized from 64-byte key:', this.solanaKeypair.publicKey.toString());
+          } else {
+            console.error('Unexpected Solana private key length:', privateKeyBytes.length);
+          }
         } catch (error) {
-          console.error('Failed to initialize Solana wallet:', error);
+          console.error('Failed to decode Solana private key:', error);
         }
       }
 
