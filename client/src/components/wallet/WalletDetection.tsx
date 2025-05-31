@@ -4,6 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { useToast } from '@/hooks/use-toast';
 import { Wallet, CheckCircle, AlertCircle, Smartphone, Monitor } from 'lucide-react';
+import { WalletAuthorizationModal } from './WalletAuthorizationModal';
 
 interface WalletDetectionProps {
   onConnect: (walletType: string, address: string) => void;
@@ -25,6 +26,15 @@ export function WalletDetection({ onConnect }: WalletDetectionProps) {
   const [walletStatuses, setWalletStatuses] = useState<WalletStatus[]>([]);
   const [isChecking, setIsChecking] = useState(true);
   const [isMobile, setIsMobile] = useState(false);
+  const [authModal, setAuthModal] = useState<{
+    isOpen: boolean;
+    wallet: {
+      name: string;
+      icon: string;
+      provider: any;
+      blockchain: string;
+    } | null;
+  }>({ isOpen: false, wallet: null });
 
   useEffect(() => {
     // Detect mobile device
@@ -72,111 +82,42 @@ export function WalletDetection({ onConnect }: WalletDetectionProps) {
     checkWallets();
   }, []);
 
-  const connectWallet = async (wallet: WalletStatus) => {
-    try {
-      let address = '';
-      let walletType = '';
-      
-      if (wallet.name === 'MetaMask' && wallet.provider) {
-        // Direct MetaMask browser extension connection
-        const accounts = await wallet.provider.request({
-          method: 'eth_requestAccounts'
-        });
-        address = accounts[0];
-        walletType = 'metamask';
-        
-        // Get chain ID for verification
-        const chainId = await wallet.provider.request({
-          method: 'eth_chainId'
-        });
-        
-        // Authorize with backend
-        await fetch('/api/vault/authorize-wallet', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            address,
-            walletType,
-            blockchain: 'ethereum',
-            chainId
-          })
-        });
-        
-      } else if (wallet.name === 'Phantom' && wallet.provider) {
-        // Direct Phantom browser extension connection
-        const response = await wallet.provider.connect();
-        address = response.publicKey.toString();
-        walletType = 'phantom';
-        
-        // Authorize with backend
-        await fetch('/api/vault/authorize-wallet', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            address,
-            walletType,
-            blockchain: 'solana',
-            publicKey: address
-          })
-        });
-        
-      } else if (wallet.name === 'TON Keeper' && wallet.provider) {
-        // Direct TON Keeper browser extension connection
-        if (typeof wallet.provider.send === 'function') {
-          const result = await wallet.provider.send('ton_requestAccounts');
-          address = result.accounts[0];
-          walletType = 'tonkeeper';
-        } else {
-          // Fallback for different TON wallet interfaces
-          const tonConnect = wallet.provider;
-          await tonConnect.connect();
-          const walletInfo = tonConnect.wallet;
-          address = walletInfo?.account?.address || '';
-          walletType = 'tonkeeper';
-        }
-        
-        // Authorize with backend
-        await fetch('/api/vault/authorize-wallet', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            address,
-            walletType,
-            blockchain: 'ton'
-          })
-        });
-      }
-      
-      if (address) {
-        // Update wallet status
-        setWalletStatuses(prev => prev.map(w => 
-          w.name === wallet.name 
-            ? { ...w, connected: true, address }
-            : w
-        ));
-        
-        // Call parent callback
-        onConnect(walletType, address);
-        
-        toast({
-          title: "Wallet Connected",
-          description: `Successfully connected ${wallet.name}`,
-          variant: "default"
-        });
-      }
-      
-    } catch (error) {
-      console.error('Wallet connection error:', error);
-      
-      // Show appropriate error message
-      toast({
-        title: "Connection Failed",
-        description: wallet.detected 
-          ? `Failed to connect to ${wallet.name}. Please ensure the wallet is unlocked and try again.`
-          : `${wallet.name} not detected. Please install the wallet extension first.`,
-        variant: "destructive"
-      });
+  const openAuthorizationModal = (wallet: WalletStatus) => {
+    if (!wallet.detected) {
+      installWallet(wallet);
+      return;
     }
+
+    // Determine blockchain network
+    let blockchain = '';
+    if (wallet.name === 'MetaMask') blockchain = 'ethereum';
+    else if (wallet.name === 'Phantom') blockchain = 'solana';
+    else if (wallet.name === 'TON Keeper') blockchain = 'ton';
+
+    setAuthModal({
+      isOpen: true,
+      wallet: {
+        name: wallet.name,
+        icon: wallet.icon,
+        provider: wallet.provider,
+        blockchain
+      }
+    });
+  };
+
+  const handleWalletAuthorized = (walletType: string, address: string) => {
+    // Update wallet status
+    setWalletStatuses(prev => prev.map(w => 
+      w.name === authModal.wallet?.name 
+        ? { ...w, connected: true, address }
+        : w
+    ));
+    
+    // Call parent callback
+    onConnect(walletType, address);
+    
+    // Close modal
+    setAuthModal({ isOpen: false, wallet: null });
   };
 
   const installWallet = (wallet: WalletStatus) => {
@@ -249,13 +190,13 @@ export function WalletDetection({ onConnect }: WalletDetectionProps) {
               
               {wallet.detected ? (
                 <Button 
-                  onClick={() => connectWallet(wallet)}
+                  onClick={() => openAuthorizationModal(wallet)}
                   disabled={wallet.connected}
                   className="w-full"
                   variant={wallet.connected ? "outline" : "default"}
                 >
                   <Wallet className="h-4 w-4 mr-2" />
-                  {wallet.connected ? 'Connected' : 'Connect Wallet'}
+                  {wallet.connected ? 'Connected' : 'Authorize for Chronos Vault'}
                 </Button>
               ) : (
                 <Button 
@@ -301,6 +242,14 @@ export function WalletDetection({ onConnect }: WalletDetectionProps) {
           )}
         </CardContent>
       </Card>
+
+      {/* Authorization Modal */}
+      <WalletAuthorizationModal
+        isOpen={authModal.isOpen}
+        wallet={authModal.wallet}
+        onClose={() => setAuthModal({ isOpen: false, wallet: null })}
+        onAuthorized={handleWalletAuthorized}
+      />
     </div>
   );
 }
