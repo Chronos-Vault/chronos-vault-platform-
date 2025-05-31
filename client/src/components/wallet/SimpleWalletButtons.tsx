@@ -1,7 +1,7 @@
 import React from 'react';
 import { Button } from '@/components/ui/button';
 import { WalletConnectionChoice } from './WalletConnectionChoice';
-import { Wallet, Plus, ArrowUpDown } from 'lucide-react';
+import { Wallet, Plus, ArrowUpDown, Settings } from 'lucide-react';
 
 interface SimpleWalletButtonsProps {
   onConnect: (walletType: string, address: string) => void;

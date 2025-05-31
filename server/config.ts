@@ -30,21 +30,21 @@ const featureFlags = {
   
   // Enhanced blockchain connector simulation flags
   // Master flag - if true, all chains are simulated unless overridden by specific flags
-  SKIP_BLOCKCHAIN_CONNECTOR_INIT: process.env.SKIP_BLOCKCHAIN_CONNECTOR_INIT === 'true' || true, // defaulting to true for now
+  SKIP_BLOCKCHAIN_CONNECTOR_INIT: process.env.SKIP_BLOCKCHAIN_CONNECTOR_INIT === 'true' || false, // enabling real connections
   
   // Chain-specific simulation flags - these override the master flag when explicitly set
   // If master flag is true but a specific flag is false, that specific chain will use real connections
   SIMULATE_ETHEREUM: process.env.SIMULATE_ETHEREUM === 'true' || 
     (process.env.SIMULATE_ETHEREUM !== 'false' && 
-     (process.env.SKIP_BLOCKCHAIN_CONNECTOR_INIT === 'true' || true)),
+     (process.env.SKIP_BLOCKCHAIN_CONNECTOR_INIT === 'true' || false)),
   
   SIMULATE_SOLANA: process.env.SIMULATE_SOLANA === 'true' || 
     (process.env.SIMULATE_SOLANA !== 'false' && 
-     (process.env.SKIP_BLOCKCHAIN_CONNECTOR_INIT === 'true' || true)),
+     (process.env.SKIP_BLOCKCHAIN_CONNECTOR_INIT === 'true' || false)),
   
   SIMULATE_TON: process.env.SIMULATE_TON === 'true' || 
     (process.env.SIMULATE_TON !== 'false' && 
-     (process.env.SKIP_BLOCKCHAIN_CONNECTOR_INIT === 'true' || true)),
+     (process.env.SKIP_BLOCKCHAIN_CONNECTOR_INIT === 'true' || false)),
   
   SIMULATE_BITCOIN: process.env.SIMULATE_BITCOIN === 'true' || 
     (process.env.SIMULATE_BITCOIN !== 'false' && 
