@@ -43,7 +43,7 @@ export function WalletDetection({ onConnect }: WalletDetectionProps) {
           provider: (window as any).ethereum,
           icon: '🦊',
           installUrl: 'https://metamask.io/download/',
-          mobileDeepLink: checkMobile ? 'https://metamask.app.link/dapp/' : undefined
+          mobileDeepLink: checkMobile ? 'metamask://dapp/' : undefined
         },
         {
           name: 'Phantom',
@@ -52,7 +52,7 @@ export function WalletDetection({ onConnect }: WalletDetectionProps) {
           provider: (window as any).solana,
           icon: '👻',
           installUrl: 'https://phantom.app/',
-          mobileDeepLink: checkMobile ? 'https://phantom.app/ul/browse/' : undefined
+          mobileDeepLink: checkMobile ? 'phantom://' : undefined
         },
         {
           name: 'TON Keeper',
@@ -78,7 +78,7 @@ export function WalletDetection({ onConnect }: WalletDetectionProps) {
       let walletType = '';
       
       if (wallet.name === 'MetaMask' && wallet.provider) {
-        // Connect to MetaMask
+        // Direct MetaMask browser extension connection
         const accounts = await wallet.provider.request({
           method: 'eth_requestAccounts'
         });
@@ -103,7 +103,7 @@ export function WalletDetection({ onConnect }: WalletDetectionProps) {
         });
         
       } else if (wallet.name === 'Phantom' && wallet.provider) {
-        // Connect to Phantom
+        // Direct Phantom browser extension connection
         const response = await wallet.provider.connect();
         address = response.publicKey.toString();
         walletType = 'phantom';
@@ -121,12 +121,19 @@ export function WalletDetection({ onConnect }: WalletDetectionProps) {
         });
         
       } else if (wallet.name === 'TON Keeper' && wallet.provider) {
-        // Connect to TON Keeper
-        const tonConnect = wallet.provider;
-        await tonConnect.connect();
-        const walletInfo = tonConnect.wallet;
-        address = walletInfo?.account?.address || '';
-        walletType = 'tonkeeper';
+        // Direct TON Keeper browser extension connection
+        if (typeof wallet.provider.send === 'function') {
+          const result = await wallet.provider.send('ton_requestAccounts');
+          address = result.accounts[0];
+          walletType = 'tonkeeper';
+        } else {
+          // Fallback for different TON wallet interfaces
+          const tonConnect = wallet.provider;
+          await tonConnect.connect();
+          const walletInfo = tonConnect.wallet;
+          address = walletInfo?.account?.address || '';
+          walletType = 'tonkeeper';
+        }
         
         // Authorize with backend
         await fetch('/api/vault/authorize-wallet', {
@@ -161,19 +168,12 @@ export function WalletDetection({ onConnect }: WalletDetectionProps) {
     } catch (error) {
       console.error('Wallet connection error:', error);
       
-      // Handle mobile deep linking if wallet not detected
-      if (!wallet.detected && isMobile && wallet.mobileDeepLink) {
-        const currentUrl = encodeURIComponent(window.location.href);
-        const deepLink = wallet.mobileDeepLink + currentUrl;
-        window.location.href = deepLink;
-        return;
-      }
-      
+      // Show appropriate error message
       toast({
         title: "Connection Failed",
         description: wallet.detected 
-          ? `Failed to connect to ${wallet.name}. Please try again.`
-          : `${wallet.name} not installed. Please install the wallet first.`,
+          ? `Failed to connect to ${wallet.name}. Please ensure the wallet is unlocked and try again.`
+          : `${wallet.name} not detected. Please install the wallet extension first.`,
         variant: "destructive"
       });
     }
