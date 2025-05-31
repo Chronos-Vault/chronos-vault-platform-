@@ -76,18 +76,18 @@ export function BrowserWalletConnect({ walletType, onConnect, onCancel }: Browse
   const connectPhantom = async () => {
     try {
       console.log('Attempting Phantom connection...');
-      console.log('Window solana available:', !!window.solana);
-      console.log('Phantom detected:', !!window.solana?.isPhantom);
+      console.log('Window solana available:', !!(window as any).solana);
+      console.log('Phantom detected:', !!(window as any).solana?.isPhantom);
       
-      if (!window.solana) {
+      if (!(window as any).solana) {
         throw new Error('No Solana provider found. Please install Phantom wallet.');
       }
 
-      if (!window.solana.isPhantom) {
+      if (!(window as any).solana.isPhantom) {
         throw new Error('Phantom not detected. Please install Phantom extension.');
       }
 
-      const response = await window.solana.connect();
+      const response = await (window as any).solana.connect();
       console.log('Phantom response received:', response);
       
       if (response.publicKey) {
@@ -105,7 +105,7 @@ export function BrowserWalletConnect({ walletType, onConnect, onCancel }: Browse
       setStatus('error');
       toast({
         title: 'Connection Failed',
-        description: error.message || 'Failed to connect to Phantom',
+        description: (error as Error).message || 'Failed to connect to Phantom',
         variant: 'destructive',
       });
     }
@@ -113,7 +113,7 @@ export function BrowserWalletConnect({ walletType, onConnect, onCancel }: Browse
 
   const connectTonKeeper = async () => {
     try {
-      if (!window.ton) {
+      if (!(window as any).ton) {
         throw new Error('TON Keeper not found');
       }
 
@@ -168,9 +168,9 @@ export function BrowserWalletConnect({ walletType, onConnect, onCancel }: Browse
     console.log('Window object available:', typeof window !== 'undefined');
     console.log('Ethereum provider:', !!window.ethereum);
     console.log('MetaMask detected:', !!window.ethereum?.isMetaMask);
-    console.log('Solana provider:', !!window.solana);
-    console.log('Phantom detected:', !!window.solana?.isPhantom);
-    console.log('TON provider:', !!window.ton);
+    console.log('Solana provider:', !!(window as any).solana);
+    console.log('Phantom detected:', !!(window as any).solana?.isPhantom);
+    console.log('TON provider:', !!(window as any).ton);
     console.log(`Current wallet (${walletType}) installed:`, isWalletInstalled);
     console.log('===========================');
   }, [walletType, isWalletInstalled]);
