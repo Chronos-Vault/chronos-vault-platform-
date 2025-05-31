@@ -25,7 +25,7 @@ import {
   Settings
 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
-import { MobileWalletConnect } from '@/components/wallet/MobileWalletConnect';
+import { SimpleMobileWallet } from '@/components/wallet/SimpleMobileWallet';
 import { Link } from 'wouter';
 import WalletConnector from '@/components/wallet/WalletConnector';
 
@@ -509,7 +509,7 @@ export default function WalletPage() {
                   
                   <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
                     {isMobile ? (
-                      <MobileWalletConnect 
+                      <SimpleMobileWallet 
                         walletType="metamask" 
                         onConnect={handleWalletConnect} 
                       />
@@ -552,7 +552,7 @@ export default function WalletPage() {
                     )}
                     
                     {isMobile ? (
-                      <MobileWalletConnect 
+                      <SimpleMobileWallet 
                         walletType="phantom" 
                         onConnect={handleWalletConnect} 
                       />

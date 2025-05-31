@@ -4,7 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { QrCode, Smartphone, CheckCircle, AlertCircle } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
-import { EthereumProvider } from '@walletconnect/ethereum-provider';
+import QRCodeLib from 'qrcode';
 
 interface MobileWalletConnectProps {
   walletType: 'metamask' | 'phantom' | 'tonkeeper';
