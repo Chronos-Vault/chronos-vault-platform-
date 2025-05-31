@@ -25,6 +25,7 @@ import walletApiRouter from './wallet-api';
 import { testnetWalletRoutes } from './api/testnet-wallet-routes';
 import { multiSigRoutes } from './api/multisig-routes';
 import { hardwareWalletRoutes } from './api/hardware-wallet-routes';
+import { defiRoutes } from './api/defi-routes';
 import { systemHealthMonitor } from './monitoring/system-health-monitor';
 import { incidentResponseSystem } from './monitoring/incident-response';
 import { ConnectorFactory } from './blockchain/connector-factory';
