@@ -26,6 +26,7 @@ import {
 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { Link } from 'wouter';
+import WalletConnector from '@/components/wallet/WalletConnector';
 
 export default function WalletPage() {
   const { toast } = useToast();
@@ -41,6 +42,21 @@ export default function WalletPage() {
   const [realWalletBalances, setRealWalletBalances] = useState<any>({});
   const [activeTab, setActiveTab] = useState('portfolio');
   const [transactionHistory, setTransactionHistory] = useState<any[]>([]);
+  const [connectedWallets, setConnectedWallets] = useState<{[key: string]: string}>({});
+
+  const handleWalletConnect = (walletType: string, address: string) => {
+    setConnectedWallets(prev => ({
+      ...prev,
+      [walletType]: address
+    }));
+    setHasWallet(true);
+    
+    // Update wallet balances for connected wallet
+    setRealWalletBalances(prev => ({
+      ...prev,
+      [walletType]: { connected: true, address }
+    }));
+  };
 
   // Fetch real testnet wallet data
   useEffect(() => {
@@ -474,202 +490,9 @@ export default function WalletPage() {
             </Card>
           </div>
 
-          {/* Connect Wallet & Quick Actions */}
+          {/* Wallet Authorization Section */}
           <div className="mb-8">
-            <Card className="bg-gray-900/50 border-gray-700">
-              <CardHeader>
-                <div className="space-y-4">
-                  <div className="flex items-center gap-2">
-                    <Wallet className="w-5 h-5 text-purple-400" />
-                    <div>
-                      <CardTitle className="text-lg">Wallet Status</CardTitle>
-                      <p className="text-sm text-gray-400">Connected to 3 networks</p>
-                    </div>
-                  </div>
-                  
-                  <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
-                    <Button 
-                      size="sm"
-                      className="bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 text-xs"
-                      onClick={async () => {
-                        try {
-                          // Check if we're on mobile
-                          const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-                          
-                          if (isMobile) {
-                            // Mobile: Use MetaMask deep link
-                            const deepLink = `https://metamask.app.link/dapp/${window.location.host}${window.location.pathname}`;
-                            window.location.href = deepLink;
-                            
-                            toast({
-                              title: "Opening MetaMask",
-                              description: "Redirecting to MetaMask mobile app...",
-                            });
-                          } else {
-                            // Desktop: Try browser extension
-                            if (typeof window !== 'undefined' && (window as any).ethereum) {
-                              await (window as any).ethereum.request({ method: 'eth_requestAccounts' });
-                              toast({
-                                title: "MetaMask Connected",
-                                description: "Ethereum wallet connected successfully",
-                              });
-                            } else {
-                              // Open MetaMask website to download
-                              window.open('https://metamask.io/', '_blank');
-                              toast({
-                                title: "Install MetaMask",
-                                description: "Download MetaMask from metamask.io",
-                              });
-                            }
-                          }
-                        } catch (error) {
-                          toast({
-                            title: "Connection Failed",
-                            description: "Please ensure MetaMask is installed",
-                            variant: "destructive",
-                          });
-                        }
-                      }}
-                    >
-                      <Wallet className="w-3 h-3 mr-1" />
-                      MetaMask
-                    </Button>
-                    <Button 
-                      size="sm"
-                      className="bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 text-xs"
-                      onClick={async () => {
-                        try {
-                          // Check if we're on mobile
-                          const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-                          
-                          if (isMobile) {
-                            // Mobile: Try to open Phantom app with fallback
-                            const currentUrl = `${window.location.protocol}//${window.location.host}${window.location.pathname}`;
-                            const deepLink = `https://phantom.app/ul/browse/${encodeURIComponent(currentUrl)}?ref=https%3A%2F%2Fphantom.app`;
-                            
-                            // Try opening the app, fallback to store if not installed
-                            const startTime = Date.now();
-                            window.location.href = deepLink;
-                            
-                            setTimeout(() => {
-                              if (Date.now() - startTime < 2000) {
-                                // If we're still here after 2 seconds, app likely not installed
-                                const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
-                                const storeUrl = isIOS 
-                                  ? 'https://apps.apple.com/app/phantom-solana-wallet/id1598432977'
-                                  : 'https://play.google.com/store/apps/details?id=app.phantom';
-                                window.open(storeUrl, '_blank');
-                              }
-                            }, 2000);
-                            
-                            toast({
-                              title: "Opening Phantom",
-                              description: "Redirecting to Phantom mobile app...",
-                            });
-                          } else {
-                            // Desktop: Try browser extension
-                            if (typeof window !== 'undefined' && (window as any).solana && (window as any).solana.isPhantom) {
-                              const response = await (window as any).solana.connect();
-                              toast({
-                                title: "Phantom Connected",
-                                description: `Connected: ${response.publicKey.toString().slice(0, 8)}...`,
-                              });
-                            } else {
-                              // Open Phantom website to download
-                              window.open('https://phantom.app/', '_blank');
-                              toast({
-                                title: "Install Phantom",
-                                description: "Download Phantom wallet from phantom.app",
-                              });
-                            }
-                          }
-                        } catch (error) {
-                          toast({
-                            title: "Connection Failed",
-                            description: "Please ensure Phantom wallet is installed",
-                            variant: "destructive",
-                          });
-                        }
-                      }}
-                    >
-                      <Plus className="w-3 h-3 mr-1" />
-                      Phantom
-                    </Button>
-                    <Button 
-                      size="sm"
-                      variant="outline" 
-                      className="border-cyan-500/50 text-cyan-400 hover:bg-cyan-500/10 text-xs"
-                      onClick={async () => {
-                        try {
-                          // Check if we're on mobile
-                          const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-                          
-                          if (isMobile) {
-                            // Mobile: Try to open TON Keeper app with fallback
-                            const currentUrl = `${window.location.protocol}//${window.location.host}${window.location.pathname}`;
-                            const deepLink = `https://app.tonkeeper.com/ton-connect?v=2&id=chronos-vault&r=tc&ret=back&s=app&u=${encodeURIComponent(currentUrl)}`;
-                            
-                            // Try opening the app, fallback to store if not installed
-                            const startTime = Date.now();
-                            window.location.href = deepLink;
-                            
-                            setTimeout(() => {
-                              if (Date.now() - startTime < 2000) {
-                                // If we're still here after 2 seconds, app likely not installed
-                                const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
-                                const storeUrl = isIOS 
-                                  ? 'https://apps.apple.com/app/tonkeeper/id1587742107'
-                                  : 'https://play.google.com/store/apps/details?id=com.ton_keeper';
-                                window.open(storeUrl, '_blank');
-                              }
-                            }, 2000);
-                            
-                            toast({
-                              title: "Opening TON Keeper",
-                              description: "Redirecting to TON Keeper mobile app...",
-                            });
-                          } else {
-                            // Desktop: Try browser extension or redirect to download
-                            if (typeof window !== 'undefined' && ((window as any).ton || (window as any).tonkeeper)) {
-                              // Try to connect using available TON wallet
-                              toast({
-                                title: "TON Keeper",
-                                description: "Please approve connection in your TON wallet",
-                              });
-                            } else {
-                              // Open TON Keeper website to download
-                              window.open('https://tonkeeper.com/', '_blank');
-                              toast({
-                                title: "Install TON Keeper",
-                                description: "Download TON Keeper from tonkeeper.com",
-                              });
-                            }
-                          }
-                        } catch (error) {
-                          toast({
-                            title: "Connection Failed",
-                            description: "Please ensure TON Keeper is installed",
-                            variant: "destructive",
-                          });
-                        }
-                      }}
-                    >
-                      <ArrowUpDown className="w-3 h-3 mr-1 rotate-180" />
-                      TON Keeper
-                    </Button>
-                    <Button 
-                      size="sm"
-                      variant="outline" 
-                      className="border-gray-500/50 text-gray-400 hover:bg-gray-500/10 text-xs"
-                      onClick={() => setActiveTab('settings')}
-                    >
-                      <Settings className="w-3 h-3 mr-1" />
-                      Settings
-                    </Button>
-                  </div>
-                </div>
-              </CardHeader>
-            </Card>
+            <WalletConnector onConnect={handleWalletConnect} />
           </div>
 
           {/* Main Wallet Tabs */}
