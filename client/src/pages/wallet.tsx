@@ -28,7 +28,7 @@ export default function WalletPage() {
   const [recipientAddress, setRecipientAddress] = useState('');
   const [hasWallet, setHasWallet] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
-  const [walletData, setWalletData] = useState(null);
+  const [walletData, setWalletData] = useState<any>(null);
   const [showSwapModal, setShowSwapModal] = useState(false);
   const [showDepositModal, setShowDepositModal] = useState(false);
   const [showWithdrawModal, setShowWithdrawModal] = useState(false);
@@ -351,9 +351,11 @@ export default function WalletPage() {
                 </CardHeader>
                 <CardContent>
                   <Tabs defaultValue="send" className="w-full">
-                    <TabsList className="grid w-full grid-cols-2">
+                    <TabsList className="grid w-full grid-cols-4">
                       <TabsTrigger value="send">Send</TabsTrigger>
+                      <TabsTrigger value="receive">Receive</TabsTrigger>
                       <TabsTrigger value="swap">Swap</TabsTrigger>
+                      <TabsTrigger value="withdraw">Withdraw</TabsTrigger>
                     </TabsList>
 
                     <TabsContent value="send" className="space-y-4 mt-6">
@@ -400,6 +402,56 @@ export default function WalletPage() {
                       </Button>
                     </TabsContent>
 
+                    <TabsContent value="receive" className="space-y-4 mt-6">
+                      <div className="text-center p-8 bg-gray-800/50 rounded-lg">
+                        <div className="w-16 h-16 mx-auto mb-4 bg-gradient-to-r from-green-500 to-emerald-500 rounded-xl flex items-center justify-center">
+                          <ArrowUpDown className="w-8 h-8 text-white rotate-90" />
+                        </div>
+                        <h3 className="text-lg font-semibold mb-2">Receive Funds</h3>
+                        <p className="text-gray-400 mb-4">
+                          Share your wallet address to receive {chainConfigs[selectedChain as keyof typeof chainConfigs]?.name} assets
+                        </p>
+                        
+                        <div className="bg-gray-900 p-4 rounded-lg mb-4">
+                          <Label className="text-sm text-gray-400">Your {chainConfigs[selectedChain as keyof typeof chainConfigs]?.name} Address</Label>
+                          <div className="flex items-center gap-2 mt-2">
+                            <Input 
+                              value={chainConfigs[selectedChain as keyof typeof chainConfigs]?.address || ''} 
+                              readOnly 
+                              className="bg-gray-800 border-gray-700 text-sm"
+                            />
+                            <Button 
+                              size="sm" 
+                              variant="outline"
+                              onClick={() => {
+                                navigator.clipboard.writeText(chainConfigs[selectedChain as keyof typeof chainConfigs]?.address || '');
+                                toast({
+                                  title: "Address Copied",
+                                  description: "Wallet address copied to clipboard",
+                                });
+                              }}
+                            >
+                              <Copy className="w-4 h-4" />
+                            </Button>
+                          </div>
+                        </div>
+
+                        <div className="grid grid-cols-3 gap-2 mb-4">
+                          {Object.entries(chainConfigs).map(([key, config]) => (
+                            <Button
+                              key={key}
+                              variant={selectedChain === key ? "default" : "outline"}
+                              size="sm"
+                              onClick={() => setSelectedChain(key)}
+                              className="text-xs"
+                            >
+                              {config.name}
+                            </Button>
+                          ))}
+                        </div>
+                      </div>
+                    </TabsContent>
+
                     <TabsContent value="swap" className="space-y-4 mt-6">
                       <div className="text-center p-8 bg-gray-800/50 rounded-lg">
                         <ArrowUpDown className="w-12 h-12 mx-auto mb-4 text-purple-400" />
@@ -413,6 +465,78 @@ export default function WalletPage() {
                             Launch Swap Interface
                           </Button>
                         </Link>
+                      </div>
+                    </TabsContent>
+
+                    <TabsContent value="withdraw" className="space-y-4 mt-6">
+                      <div className="text-center p-8 bg-gray-800/50 rounded-lg">
+                        <div className="w-16 h-16 mx-auto mb-4 bg-gradient-to-r from-red-500 to-orange-500 rounded-xl flex items-center justify-center">
+                          <ArrowUpDown className="w-8 h-8 text-white rotate-180" />
+                        </div>
+                        <h3 className="text-lg font-semibold mb-2">Withdraw to External Wallet</h3>
+                        <p className="text-gray-400 mb-4">
+                          Transfer your assets to external wallets or exchanges
+                        </p>
+                        
+                        <div className="space-y-4 text-left">
+                          <div>
+                            <Label>Select Chain</Label>
+                            <select 
+                              className="w-full mt-2 p-2 bg-gray-800 border border-gray-700 rounded-md"
+                              value={selectedChain}
+                              onChange={(e) => setSelectedChain(e.target.value)}
+                            >
+                              <option value="ethereum">Ethereum (ETH)</option>
+                              <option value="solana">Solana (SOL)</option>
+                              <option value="ton">TON</option>
+                            </select>
+                          </div>
+
+                          <div>
+                            <Label>Amount to Withdraw</Label>
+                            <Input
+                              type="number"
+                              placeholder="0.00"
+                              value={sendAmount}
+                              onChange={(e) => setSendAmount(e.target.value)}
+                              className="mt-2 bg-gray-800 border-gray-700"
+                            />
+                            <p className="text-sm text-gray-400 mt-1">
+                              Available: {walletBalances[selectedChain as keyof typeof walletBalances].balance} {walletBalances[selectedChain as keyof typeof walletBalances].symbol}
+                            </p>
+                          </div>
+
+                          <div>
+                            <Label>External Wallet Address</Label>
+                            <Input
+                              placeholder="Enter destination address"
+                              value={recipientAddress}
+                              onChange={(e) => setRecipientAddress(e.target.value)}
+                              className="mt-2 bg-gray-800 border-gray-700"
+                            />
+                          </div>
+
+                          <Button 
+                            onClick={() => {
+                              if (!sendAmount || !recipientAddress) {
+                                toast({
+                                  title: "Missing Information",
+                                  description: "Please enter amount and destination address",
+                                  variant: "destructive",
+                                });
+                                return;
+                              }
+                              toast({
+                                title: "Withdrawal Initiated",
+                                description: `Withdrawing ${sendAmount} ${walletBalances[selectedChain as keyof typeof walletBalances].symbol} to external wallet`,
+                              });
+                            }}
+                            className="w-full bg-gradient-to-r from-red-500 to-orange-500 hover:from-red-600 hover:to-orange-600"
+                          >
+                            <ArrowUpDown className="w-4 h-4 mr-2 rotate-180" />
+                            Withdraw Funds
+                          </Button>
+                        </div>
                       </div>
                     </TabsContent>
                   </Tabs>
