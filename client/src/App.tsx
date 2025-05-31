@@ -41,6 +41,7 @@ import WalletIntegrationDemoPage from '@/pages/WalletIntegrationDemo';
 import WalletPage from '@/pages/wallet';
 import CreateWalletPage from '@/pages/create-wallet';
 import SecurityDashboard from '@/pages/security-dashboard';
+import DeFiDashboard from '@/pages/defi-dashboard';
 
 // Vault Type Pages
 import VaultTypesPage from '@/pages/vault-types-new';
@@ -173,6 +174,7 @@ const App: React.FC = () => {
                       <Route path="/wallet" component={WalletPage} />
                       <Route path="/create-wallet" component={CreateWalletPage} />
                       <Route path="/security" component={SecurityDashboard} />
+                      <Route path="/defi" component={DeFiDashboard} />
                       <Route path="/my-vaults" component={MyVaultsPage} />
                       <Route path="/about" component={AboutPage} />
                       <Route path="/faq" component={FaqPage} />

@@ -110,6 +110,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Register hardware wallet routes
   apiRouter.use('/hardware-wallet', hardwareWalletRoutes);
   
+  // Register DeFi routes
+  apiRouter.use('/defi', defiRoutes);
+  
   // Initialize and register chain-agnostic verification routes
   const chainAgnosticVerifier = initializeChainAgnosticVerification(connectorFactory);
   apiRouter.use('/chain-agnostic-verification', chainAgnosticVerificationRoutes);
