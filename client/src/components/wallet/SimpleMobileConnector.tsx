@@ -15,7 +15,29 @@ export function SimpleMobileConnector({ onConnect }: SimpleMobileConnectorProps)
   const connectMetaMask = async () => {
     setConnecting('metamask');
     try {
-      if ((window as any).ethereum) {
+      // For mobile, try deep link first, then fallback to provider detection
+      const isMobile = /Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+      
+      if (isMobile && !(window as any).ethereum) {
+        // Use WalletConnect for mobile authorization
+        const wcUri = await fetch('/api/wallet/connect/metamask', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' }
+        });
+        
+        const { uri } = await wcUri.json();
+        
+        if (uri) {
+          // Open MetaMask with WalletConnect URI
+          const walletConnectLink = `metamask://wc?uri=${encodeURIComponent(uri)}`;
+          window.location.href = walletConnectLink;
+          
+          toast({
+            title: "Opening MetaMask",
+            description: "Please approve the connection in your MetaMask app",
+          });
+        }
+      } else if ((window as any).ethereum) {
         const accounts = await (window as any).ethereum.request({
           method: 'eth_requestAccounts'
         });
@@ -28,8 +50,9 @@ export function SimpleMobileConnector({ onConnect }: SimpleMobileConnectorProps)
           onConnect('metamask', accounts[0]);
         }
       } else {
+        window.open('https://metamask.io/download/', '_blank');
         toast({
-          title: "MetaMask Not Found",
+          title: "MetaMask Required",
           description: "Please install MetaMask mobile app",
           variant: "destructive",
         });
