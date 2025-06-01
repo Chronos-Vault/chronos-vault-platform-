@@ -19,8 +19,16 @@ export function WalletConnectAuth({ onWalletConnected }: WalletConnectAuthProps)
       try {
         const { SignClient } = await import('@walletconnect/sign-client');
         
+        // Get project ID from environment
+        const projectId = import.meta.env.VITE_WALLETCONNECT_PROJECT_ID;
+        
+        if (!projectId) {
+          console.error('WalletConnect Project ID is missing');
+          return;
+        }
+        
         const client = await SignClient.init({
-          projectId: import.meta.env.VITE_WALLETCONNECT_PROJECT_ID || process.env.WALLETCONNECT_PROJECT_ID,
+          projectId,
           metadata: {
             name: 'Chronos Vault',
             description: 'Multi-chain digital vault platform',
