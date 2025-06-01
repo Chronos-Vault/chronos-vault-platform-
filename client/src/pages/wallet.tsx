@@ -25,10 +25,9 @@ import {
   Settings
 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
-import { WalletConnectAuth } from '@/components/wallet/WalletConnectAuth';
+import { CleanWalletConnector } from '@/components/wallet/CleanWalletConnector';
 import { WalletVaultIntegration } from '@/components/wallet/WalletVaultIntegration';
 import { Link } from 'wouter';
-import WalletConnector from '@/components/wallet/WalletConnector';
 
 export default function WalletPage() {
   const { toast } = useToast();
@@ -537,7 +536,7 @@ export default function WalletPage() {
                     </div>
                   </div>
                   
-                  <WalletConnectAuth onWalletConnected={handleWalletAuthenticated} />
+                  <CleanWalletConnector />
                 </div>
               </CardHeader>
             </Card>
