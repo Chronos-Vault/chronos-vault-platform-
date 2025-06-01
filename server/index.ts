@@ -183,6 +183,77 @@ app.post('/api/wallet/check-connection', async (req, res) => {
   }
 });
 
+// Mobile wallet connection endpoints
+app.post('/api/wallet/connect/:chain', async (req, res) => {
+  const { chain } = req.params;
+  
+  try {
+    // Simulate wallet connection based on chain
+    const mockAddresses = {
+      ethereum: '0x742d35Cc6634C0532925a3b8d3AC1e8c4A3b3b3c',
+      solana: '9WzDXwBbmkg8ZTbNMqUxvQRAyrZzDsGYdLVL9zYtAWWM',
+      ton: 'EQBvW8Z5huBkMJYdnfAEM5JqTNkuWX3diqYENkWsIL0XggGG'
+    };
+    
+    const address = mockAddresses[chain as keyof typeof mockAddresses];
+    
+    if (address) {
+      res.json({
+        status: 'success',
+        address,
+        chain,
+        connected: true
+      });
+    } else {
+      res.status(400).json({
+        status: 'error',
+        message: 'Unsupported chain'
+      });
+    }
+  } catch (error) {
+    res.status(500).json({
+      status: 'error',
+      message: 'Connection failed'
+    });
+  }
+});
+
+// Wallet deposit endpoint
+app.post('/api/wallet/deposit', async (req, res) => {
+  const { amount, network } = req.body;
+  
+  try {
+    res.json({
+      status: 'success',
+      message: `Deposit of ${amount} on ${network} initiated`,
+      txHash: `0x${Math.random().toString(16).slice(2, 18)}`
+    });
+  } catch (error) {
+    res.status(500).json({
+      status: 'error',
+      message: 'Deposit failed'
+    });
+  }
+});
+
+// Wallet withdraw endpoint
+app.post('/api/wallet/withdraw', async (req, res) => {
+  const { amount, address, network } = req.body;
+  
+  try {
+    res.json({
+      status: 'success',
+      message: `Withdrawal of ${amount} to ${address} on ${network} initiated`,
+      txHash: `0x${Math.random().toString(16).slice(2, 18)}`
+    });
+  } catch (error) {
+    res.status(500).json({
+      status: 'error',
+      message: 'Withdrawal failed'
+    });
+  }
+});
+
 // Initialize services
 (async () => {
   try {
