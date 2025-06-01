@@ -59,11 +59,11 @@ Timestamp: ${Date.now()}`;
           toast({ title: "MetaMask Authorized", description: "Wallet connected and authorized" });
         }
       } else {
-        // Mobile: Use WalletConnect protocol
+        // Mobile: Direct deep link
         const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
         if (isMobile) {
-          window.location.href = `https://metamask.app.link/dapp/${window.location.hostname}${window.location.pathname}`;
-          toast({ title: "Opening MetaMask", description: "Please connect and authorize in MetaMask app" });
+          window.location.href = `metamask://dapp/${window.location.hostname}`;
+          toast({ title: "Opening MetaMask", description: "Please authorize in MetaMask and return" });
         } else {
           toast({ title: "Install MetaMask", description: "MetaMask browser extension required" });
         }
