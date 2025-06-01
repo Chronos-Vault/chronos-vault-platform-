@@ -25,7 +25,7 @@ import {
   Settings
 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
-import { RealWalletAuth } from '@/components/wallet/RealWalletAuth';
+import { WorkingWalletConnector } from '@/components/wallet/WorkingWalletConnector';
 import { WalletVaultIntegration } from '@/components/wallet/WalletVaultIntegration';
 import { Link } from 'wouter';
 import WalletConnector from '@/components/wallet/WalletConnector';
@@ -49,7 +49,7 @@ export default function WalletPage() {
   // Detect if user is on mobile device
   const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
 
-  const handleWalletAuthenticated = (walletType: string, address: string, signature: string) => {
+  const handleWalletAuthenticated = (walletType: string, address: string) => {
     setConnectedWallets(prev => ({
       ...prev,
       [walletType]: address
@@ -59,7 +59,7 @@ export default function WalletPage() {
     // Update wallet balances for authenticated wallet
     setRealWalletBalances((prev: any) => ({
       ...prev,
-      [walletType]: { connected: true, address, authenticated: true, signature }
+      [walletType]: { connected: true, address, authenticated: true }
     }));
 
     toast({
@@ -537,7 +537,7 @@ export default function WalletPage() {
                     </div>
                   </div>
                   
-                  <RealWalletAuth onAuthenticated={handleWalletAuthenticated} />
+                  <WorkingWalletConnector onWalletConnected={handleWalletAuthenticated} />
                 </div>
               </CardHeader>
             </Card>
