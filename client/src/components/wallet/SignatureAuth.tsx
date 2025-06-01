@@ -111,7 +111,7 @@ export function SignatureAuth({ onAuthenticated }: SignatureAuthProps) {
 
       // Request signature from Phantom
       const signatureResult = await (window as any).solana.signMessage(encodedMessage, 'utf8');
-      const signature = Array.from(signatureResult.signature).map(b => b.toString(16).padStart(2, '0')).join('');
+      const signature = Array.from(signatureResult.signature).map((b: number) => b.toString(16).padStart(2, '0')).join('');
 
       // Verify signature on backend
       const verifyResponse = await fetch('/api/wallet/verify-signature', {

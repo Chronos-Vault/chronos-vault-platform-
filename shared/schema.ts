@@ -813,15 +813,7 @@ export const insertWalletRegistrationSchema = createInsertSchema(walletRegistrat
   isActive: true,
 });
 
-export const insertWalletSessionSchema = createInsertSchema(walletSessions).pick({
-  sessionToken: true,
-  walletId: true,
-  userAddress: true,
-  chain: true,
-  expiresAt: true,
-  securityScore: true,
-  isActive: true,
-});
+// Removed duplicate insertWalletSessionSchema - using the one defined earlier
 
 export const insertWalletVaultSchema = createInsertSchema(walletVaults).pick({
   vaultId: true,
