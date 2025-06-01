@@ -26,11 +26,99 @@ import {
 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 
+// TypeScript declarations for wallet APIs
+declare global {
+  interface Window {
+    ethereum?: any;
+    solana?: any;
+  }
+}
+
 import { WalletVaultIntegration } from '@/components/wallet/WalletVaultIntegration';
 import { Link } from 'wouter';
 
 export default function WalletPage() {
   const { toast } = useToast();
+
+  // MetaMask connection
+  const connectMetaMask = async () => {
+    try {
+      if (typeof window.ethereum !== 'undefined') {
+        const accounts = await window.ethereum.request({
+          method: 'eth_requestAccounts'
+        });
+        
+        // Request signature for Chronos Vault
+        const message = 'Sign this message to authenticate with Chronos Vault';
+        const signature = await window.ethereum.request({
+          method: 'personal_sign',
+          params: [message, accounts[0]]
+        });
+        
+        toast({
+          title: "MetaMask Connected",
+          description: `Connected: ${accounts[0].slice(0, 6)}...${accounts[0].slice(-4)}`
+        });
+      } else {
+        // Mobile deep link
+        window.open('https://metamask.app.link/dapp/' + window.location.host, '_blank');
+      }
+    } catch (error) {
+      toast({
+        title: "Connection Failed",
+        description: "Could not connect to MetaMask",
+        variant: "destructive"
+      });
+    }
+  };
+
+  // Phantom connection
+  const connectPhantom = async () => {
+    try {
+      if (window.solana && window.solana.isPhantom) {
+        const response = await window.solana.connect();
+        
+        // Request signature for Chronos Vault
+        const message = new TextEncoder().encode('Sign this message to authenticate with Chronos Vault');
+        const signature = await window.solana.signMessage(message);
+        
+        toast({
+          title: "Phantom Connected",
+          description: `Connected: ${response.publicKey.toString().slice(0, 6)}...${response.publicKey.toString().slice(-4)}`
+        });
+      } else {
+        // Mobile deep link
+        window.open('https://phantom.app/ul/browse/' + encodeURIComponent(window.location.href), '_blank');
+      }
+    } catch (error) {
+      toast({
+        title: "Connection Failed",
+        description: "Could not connect to Phantom",
+        variant: "destructive"
+      });
+    }
+  };
+
+  // TON Keeper connection
+  const connectTonKeeper = async () => {
+    try {
+      // Mobile deep link for TON Keeper
+      const tonConnectUrl = `tc://connect?r=${encodeURIComponent(window.location.origin)}&v=2&id=chronos-vault`;
+      window.open(tonConnectUrl, '_blank');
+      
+      toast({
+        title: "Opening TON Keeper",
+        description: "Please approve the connection request in TON Keeper"
+      });
+    } catch (error) {
+      toast({
+        title: "Connection Failed",
+        description: "Could not connect to TON Keeper",
+        variant: "destructive"
+      });
+    }
+  };
+
   const [selectedChain, setSelectedChain] = useState('ethereum');
   const [sendAmount, setSendAmount] = useState('');
   const [recipientAddress, setRecipientAddress] = useState('');
@@ -536,9 +624,34 @@ export default function WalletPage() {
                     </div>
                   </div>
                   
-                  {/* Original wallet connection will be restored */}
-                  <div className="text-center text-gray-400 py-8">
-                    Wallet connections available
+                  {/* Wallet Connection Buttons */}
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                    <Button
+                      onClick={connectMetaMask}
+                      className="flex items-center gap-2 bg-orange-500/10 border-orange-500/30 text-orange-400 hover:bg-orange-500/20"
+                      variant="outline"
+                    >
+                      <Wallet className="w-4 h-4" />
+                      MetaMask
+                    </Button>
+                    
+                    <Button
+                      onClick={connectPhantom}
+                      className="flex items-center gap-2 bg-purple-500/10 border-purple-500/30 text-purple-400 hover:bg-purple-500/20"
+                      variant="outline"
+                    >
+                      <Wallet className="w-4 h-4" />
+                      Phantom
+                    </Button>
+                    
+                    <Button
+                      onClick={connectTonKeeper}
+                      className="flex items-center gap-2 bg-blue-500/10 border-blue-500/30 text-blue-400 hover:bg-blue-500/20"
+                      variant="outline"
+                    >
+                      <Wallet className="w-4 h-4" />
+                      TON Keeper
+                    </Button>
                   </div>
                 </div>
               </CardHeader>
