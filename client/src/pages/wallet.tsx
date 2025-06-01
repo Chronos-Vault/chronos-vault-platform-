@@ -40,80 +40,107 @@ import { Link } from 'wouter';
 export default function WalletPage() {
   const { toast } = useToast();
 
-  // MetaMask connection
+  // MetaMask connection with proper signature request
   const connectMetaMask = async () => {
     try {
       if (typeof window.ethereum !== 'undefined') {
+        // Request account access
         const accounts = await window.ethereum.request({
           method: 'eth_requestAccounts'
         });
         
-        // Request signature for Chronos Vault
-        const message = 'Sign this message to authenticate with Chronos Vault';
+        // Create signature message
+        const message = 'Welcome to Chronos Vault! Please sign this message to authenticate your wallet.\n\nThis signature proves ownership of your wallet without revealing private keys.\n\nTimestamp: ' + new Date().toISOString();
+        
+        // Request signature
         const signature = await window.ethereum.request({
           method: 'personal_sign',
           params: [message, accounts[0]]
         });
         
         toast({
-          title: "MetaMask Connected",
-          description: `Connected: ${accounts[0].slice(0, 6)}...${accounts[0].slice(-4)}`
+          title: "MetaMask Connected & Signed",
+          description: `Authenticated: ${accounts[0].slice(0, 6)}...${accounts[0].slice(-4)}`
         });
       } else {
-        // Mobile deep link
-        window.open('https://metamask.app.link/dapp/' + window.location.host, '_blank');
+        // Mobile deep link with signature request
+        const message = encodeURIComponent('Welcome to Chronos Vault! Please sign this message to authenticate.');
+        const deepLink = `https://metamask.app.link/dapp/${window.location.host}/wallet?sign=${message}`;
+        window.location.href = deepLink;
       }
     } catch (error) {
       toast({
-        title: "Connection Failed",
-        description: "Could not connect to MetaMask",
+        title: "MetaMask Error",
+        description: error.message || "Failed to connect",
         variant: "destructive"
       });
     }
   };
 
-  // Phantom connection
+  // Phantom connection with proper signature request
   const connectPhantom = async () => {
     try {
       if (window.solana && window.solana.isPhantom) {
+        // Connect to Phantom
         const response = await window.solana.connect();
         
-        // Request signature for Chronos Vault
-        const message = new TextEncoder().encode('Sign this message to authenticate with Chronos Vault');
-        const signature = await window.solana.signMessage(message);
+        // Create signature message
+        const message = 'Welcome to Chronos Vault!\n\nSign to authenticate: ' + new Date().toISOString();
+        const encodedMessage = new TextEncoder().encode(message);
+        
+        // Request signature
+        const signature = await window.solana.signMessage(encodedMessage);
         
         toast({
-          title: "Phantom Connected",
-          description: `Connected: ${response.publicKey.toString().slice(0, 6)}...${response.publicKey.toString().slice(-4)}`
+          title: "Phantom Connected & Signed",
+          description: `Authenticated: ${response.publicKey.toString().slice(0, 6)}...${response.publicKey.toString().slice(-4)}`
         });
       } else {
-        // Mobile deep link
-        window.open('https://phantom.app/ul/browse/' + encodeURIComponent(window.location.href), '_blank');
+        // Mobile deep link with signature request
+        const message = encodeURIComponent('Welcome to Chronos Vault! Please sign to authenticate.');
+        const deepLink = `phantom://browse/${encodeURIComponent(window.location.href)}?cluster=devnet&message=${message}`;
+        window.location.href = deepLink;
       }
     } catch (error) {
       toast({
-        title: "Connection Failed",
-        description: "Could not connect to Phantom",
+        title: "Phantom Error",
+        description: error.message || "Failed to connect",
         variant: "destructive"
       });
     }
   };
 
-  // TON Keeper connection
+  // TON Keeper connection with proper signature request
   const connectTonKeeper = async () => {
     try {
-      // Mobile deep link for TON Keeper
-      const tonConnectUrl = `tc://connect?r=${encodeURIComponent(window.location.origin)}&v=2&id=chronos-vault`;
-      window.open(tonConnectUrl, '_blank');
+      // Create proper TON Connect URL with signature request
+      const message = 'Welcome to Chronos Vault! Sign to authenticate: ' + Date.now();
+      const tonConnectPayload = {
+        method: 'ton_requestAuth',
+        params: {
+          message: message,
+          origin: window.location.origin,
+          timestamp: Date.now()
+        }
+      };
+      
+      const deepLink = `tonkeeper://tc/connect?${new URLSearchParams({
+        r: window.location.origin,
+        v: '2',
+        id: 'chronos-vault',
+        payload: JSON.stringify(tonConnectPayload)
+      }).toString()}`;
+      
+      window.location.href = deepLink;
       
       toast({
         title: "Opening TON Keeper",
-        description: "Please approve the connection request in TON Keeper"
+        description: "Please sign the authentication message in TON Keeper"
       });
     } catch (error) {
       toast({
-        title: "Connection Failed",
-        description: "Could not connect to TON Keeper",
+        title: "TON Keeper Error", 
+        description: error.message || "Failed to connect",
         variant: "destructive"
       });
     }
