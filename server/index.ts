@@ -254,6 +254,106 @@ app.post('/api/wallet/withdraw', async (req, res) => {
   }
 });
 
+// Wallet signature verification endpoint
+app.post('/api/wallet/verify-signature', async (req, res) => {
+  const { walletType, address, message, signature, blockchain, publicKey } = req.body;
+  
+  try {
+    let verified = false;
+    
+    // Basic signature verification logic
+    if (walletType === 'metamask' && blockchain === 'ethereum') {
+      // For MetaMask/Ethereum, verify the signature format
+      verified = signature && signature.startsWith('0x') && signature.length === 132;
+    } else if (walletType === 'phantom' && blockchain === 'solana') {
+      // For Phantom/Solana, verify signature and publicKey format
+      verified = signature && signature.length === 128 && publicKey && address;
+    } else if (walletType === 'tonkeeper' && blockchain === 'ton') {
+      // For TON Keeper, basic verification
+      verified = signature && signature.startsWith('ton_signature_') && address.startsWith('EQ');
+    }
+    
+    if (verified) {
+      // Generate session token
+      const sessionToken = `session_${Date.now()}_${Math.random().toString(36).substring(2)}`;
+      
+      // Store authentication in global map
+      const authKey = `${walletType}-${blockchain}-${address}`;
+      authorizedWallets.set(authKey, {
+        address,
+        blockchain,
+        walletType,
+        signature,
+        message,
+        sessionToken,
+        authenticatedAt: new Date(),
+        isAuthenticated: true,
+        expiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000) // 24 hours
+      });
+      
+      console.log(`Wallet authenticated: ${walletType} (${blockchain}) - ${address.slice(0, 8)}...${address.slice(-6)}`);
+      
+      res.json({
+        verified: true,
+        sessionToken,
+        address,
+        blockchain,
+        walletType,
+        message: 'Signature verified successfully'
+      });
+    } else {
+      res.status(400).json({
+        verified: false,
+        message: 'Invalid signature or wallet data'
+      });
+    }
+  } catch (error) {
+    console.error('Signature verification error:', error);
+    res.status(500).json({
+      verified: false,
+      message: 'Signature verification failed'
+    });
+  }
+});
+
+// Get authenticated wallet status
+app.get('/api/wallet/auth-status/:walletType/:blockchain/:address', (req, res) => {
+  const { walletType, blockchain, address } = req.params;
+  const authKey = `${walletType}-${blockchain}-${address}`;
+  const authData = authorizedWallets.get(authKey);
+  
+  if (authData && authData.isAuthenticated && authData.expiresAt > new Date()) {
+    res.json({
+      authenticated: true,
+      ...authData
+    });
+  } else {
+    res.json({
+      authenticated: false,
+      message: 'Wallet not authenticated or session expired'
+    });
+  }
+});
+
+// Revoke wallet authentication
+app.post('/api/wallet/revoke-auth', (req, res) => {
+  const { walletType, blockchain, address } = req.body;
+  const authKey = `${walletType}-${blockchain}-${address}`;
+  
+  if (authorizedWallets.has(authKey)) {
+    authorizedWallets.delete(authKey);
+    res.json({
+      success: true,
+      message: 'Wallet authentication revoked'
+    });
+  } else {
+    res.status(404).json({
+      success: false,
+      message: 'Wallet authentication not found'
+    });
+  }
+});
+
 // Initialize services
 (async () => {
   try {

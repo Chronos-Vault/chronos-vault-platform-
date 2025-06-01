@@ -14,6 +14,40 @@ export const users = pgTable("users", {
   metadata: jsonb("metadata"),
 });
 
+// Wallet authentication table for multi-chain signature verification
+export const walletAuth = pgTable("wallet_auth", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").notNull(),
+  walletAddress: text("wallet_address").notNull(),
+  blockchain: text("blockchain").notNull(), // ethereum, solana, ton
+  publicKey: text("public_key"),
+  nonce: text("nonce").notNull(),
+  signature: text("signature"),
+  signedMessage: text("signed_message"),
+  isVerified: boolean("is_verified").default(false),
+  expiresAt: timestamp("expires_at").notNull(),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+  lastUsed: timestamp("last_used"),
+  status: text("status").notNull().default("pending"), // pending, verified, expired, revoked
+  metadata: jsonb("metadata"),
+});
+
+// Session management for authenticated wallets
+export const walletSessions = pgTable("wallet_sessions", {
+  id: serial("id").primaryKey(),
+  walletAuthId: integer("wallet_auth_id").notNull(),
+  sessionToken: text("session_token").notNull().unique(),
+  walletAddress: text("wallet_address").notNull(),
+  blockchain: text("blockchain").notNull(),
+  isActive: boolean("is_active").default(true),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+  expiresAt: timestamp("expires_at").notNull(),
+  lastActivity: timestamp("last_activity").notNull().defaultNow(),
+  ipAddress: text("ip_address"),
+  userAgent: text("user_agent"),
+  metadata: jsonb("metadata"),
+});
+
 export const vaults = pgTable("vaults", {
   id: serial("id").primaryKey(),
   userId: integer("user_id"),
@@ -146,6 +180,62 @@ export const insertUserSchema = createInsertSchema(users).pick({
   subscriptionStatus: true,
   metadata: true,
 });
+
+export const insertWalletAuthSchema = createInsertSchema(walletAuth)
+  .pick({
+    userId: true,
+    walletAddress: true,
+    blockchain: true,
+    publicKey: true,
+    nonce: true,
+    signature: true,
+    signedMessage: true,
+    isVerified: true,
+    expiresAt: true,
+    status: true,
+    metadata: true,
+  })
+  .extend({
+    expiresAt: z.union([z.string(), z.date()])
+      .transform(val => {
+        if (val instanceof Date) return val;
+        if (typeof val === 'string') {
+          const date = new Date(val);
+          if (isNaN(date.getTime())) {
+            throw new Error('Invalid date format for expiresAt');
+          }
+          return date;
+        }
+        return new Date();
+      })
+  });
+
+export const insertWalletSessionSchema = createInsertSchema(walletSessions)
+  .pick({
+    walletAuthId: true,
+    sessionToken: true,
+    walletAddress: true,
+    blockchain: true,
+    isActive: true,
+    expiresAt: true,
+    ipAddress: true,
+    userAgent: true,
+    metadata: true,
+  })
+  .extend({
+    expiresAt: z.union([z.string(), z.date()])
+      .transform(val => {
+        if (val instanceof Date) return val;
+        if (typeof val === 'string') {
+          const date = new Date(val);
+          if (isNaN(date.getTime())) {
+            throw new Error('Invalid date format for expiresAt');
+          }
+          return date;
+        }
+        return new Date();
+      })
+  });
 
 export const insertVaultSchema = createInsertSchema(vaults)
   .pick({
@@ -629,18 +719,7 @@ export const walletRegistrations = pgTable("wallet_registrations", {
   updatedAt: timestamp("updated_at"),
 });
 
-export const walletSessions = pgTable("wallet_sessions", {
-  id: serial("id").primaryKey(),
-  sessionToken: text("session_token").notNull().unique(),
-  walletId: text("wallet_id").notNull(),
-  userAddress: text("user_address").notNull(),
-  chain: text("chain").notNull(),
-  expiresAt: timestamp("expires_at").notNull(),
-  securityScore: integer("security_score").default(98),
-  createdAt: timestamp("created_at").notNull().defaultNow(),
-  lastActivity: timestamp("last_activity"),
-  isActive: boolean("is_active").default(true),
-});
+// Removed duplicate walletSessions - using the one defined earlier
 
 export const walletVaults = pgTable("wallet_vaults", {
   id: serial("id").primaryKey(),

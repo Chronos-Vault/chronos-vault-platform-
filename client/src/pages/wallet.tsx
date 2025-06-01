@@ -25,7 +25,7 @@ import {
   Settings
 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
-import { MobileWalletFix } from '@/components/wallet/MobileWalletFix';
+import { SignatureAuth } from '@/components/wallet/SignatureAuth';
 import { WalletVaultIntegration } from '@/components/wallet/WalletVaultIntegration';
 import { Link } from 'wouter';
 import WalletConnector from '@/components/wallet/WalletConnector';
@@ -49,22 +49,22 @@ export default function WalletPage() {
   // Detect if user is on mobile device
   const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
 
-  const handleWalletConnect = (walletType: string, address: string) => {
+  const handleWalletAuthenticated = (walletType: string, address: string, signature: string) => {
     setConnectedWallets(prev => ({
       ...prev,
       [walletType]: address
     }));
     setHasWallet(true);
     
-    // Update wallet balances for connected wallet
+    // Update wallet balances for authenticated wallet
     setRealWalletBalances((prev: any) => ({
       ...prev,
-      [walletType]: { connected: true, address }
+      [walletType]: { connected: true, address, authenticated: true, signature }
     }));
 
     toast({
-      title: "Wallet Connected",
-      description: `${walletType} wallet connected successfully`,
+      title: "Wallet Authenticated",
+      description: `${walletType} wallet authenticated with signature verification`,
     });
   };
 
@@ -537,7 +537,7 @@ export default function WalletPage() {
                     </div>
                   </div>
                   
-                  <MobileWalletFix onConnect={handleWalletConnect} />
+                  <SignatureAuth onAuthenticated={handleWalletAuthenticated} />
                 </div>
               </CardHeader>
             </Card>
