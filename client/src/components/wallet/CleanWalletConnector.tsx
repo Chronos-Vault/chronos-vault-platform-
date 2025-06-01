@@ -36,35 +36,61 @@ export function CleanWalletConnector() {
 
   // Connect to MetaMask (Ethereum)
   const connectMetaMask = async () => {
-    if (!window.ethereum) {
-      toast({
-        title: "MetaMask Not Found",
-        description: "Please install MetaMask wallet on your device",
-        variant: "destructive"
-      });
-      return;
-    }
-
     setMetamaskWallet(prev => ({ ...prev, isConnecting: true, error: null }));
 
     try {
-      const accounts = await window.ethereum.request({
-        method: 'eth_requestAccounts'
-      });
-      
-      if (accounts && accounts.length > 0) {
-        setMetamaskWallet({
-          address: accounts[0],
-          isConnected: true,
-          isConnecting: false,
-          error: null
+      // Check if MetaMask is installed
+      if (window.ethereum) {
+        // Desktop/browser connection
+        const accounts = await window.ethereum.request({
+          method: 'eth_requestAccounts'
         });
         
-        toast({
-          title: "MetaMask Connected",
-          description: `Connected to ${accounts[0].slice(0, 6)}...${accounts[0].slice(-4)}`,
-        });
+        if (accounts && accounts.length > 0) {
+          setMetamaskWallet({
+            address: accounts[0],
+            isConnected: true,
+            isConnecting: false,
+            error: null
+          });
+          
+          toast({
+            title: "MetaMask Connected",
+            description: `Connected to ${accounts[0].slice(0, 6)}...${accounts[0].slice(-4)}`,
+          });
+          return;
+        }
       }
+      
+      // Mobile deep link connection
+      const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+      if (isMobile) {
+        const currentUrl = encodeURIComponent(window.location.href);
+        const deepLink = `metamask://dapp/${window.location.hostname}`;
+        
+        // Try to open MetaMask mobile app
+        window.location.href = deepLink;
+        
+        // Fallback to app store if MetaMask doesn't open
+        setTimeout(() => {
+          if (document.hidden) return; // App opened successfully
+          
+          const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+          const storeLink = isIOS 
+            ? 'https://apps.apple.com/app/metamask/id1438144202'
+            : 'https://play.google.com/store/apps/details?id=io.metamask';
+          
+          if (confirm('MetaMask not found. Would you like to install it?')) {
+            window.open(storeLink, '_blank');
+          }
+        }, 2000);
+        
+        setMetamaskWallet(prev => ({ ...prev, isConnecting: false }));
+        return;
+      }
+      
+      throw new Error('MetaMask not detected');
+      
     } catch (error: any) {
       setMetamaskWallet(prev => ({
         ...prev,
@@ -74,7 +100,7 @@ export function CleanWalletConnector() {
       
       toast({
         title: "Connection Failed",
-        description: "Failed to connect to MetaMask",
+        description: "Please ensure MetaMask is installed and try again",
         variant: "destructive"
       });
     }
@@ -82,34 +108,59 @@ export function CleanWalletConnector() {
 
   // Connect to Phantom (Solana)
   const connectPhantom = async () => {
-    if (!(window as any).solana || !(window as any).solana.isPhantom) {
-      toast({
-        title: "Phantom Not Found",
-        description: "Please install Phantom wallet on your device",
-        variant: "destructive"
-      });
-      return;
-    }
-
     setPhantomWallet(prev => ({ ...prev, isConnecting: true, error: null }));
 
     try {
-      const response = await (window as any).solana.connect();
-      
-      if (response.publicKey) {
-        const address = response.publicKey.toString();
-        setPhantomWallet({
-          address,
-          isConnected: true,
-          isConnecting: false,
-          error: null
-        });
+      // Check if Phantom is installed (desktop/browser)
+      if ((window as any).solana && (window as any).solana.isPhantom) {
+        const response = await (window as any).solana.connect();
         
-        toast({
-          title: "Phantom Connected",
-          description: `Connected to ${address.slice(0, 6)}...${address.slice(-4)}`,
-        });
+        if (response.publicKey) {
+          const address = response.publicKey.toString();
+          setPhantomWallet({
+            address,
+            isConnected: true,
+            isConnecting: false,
+            error: null
+          });
+          
+          toast({
+            title: "Phantom Connected",
+            description: `Connected to ${address.slice(0, 6)}...${address.slice(-4)}`,
+          });
+          return;
+        }
       }
+      
+      // Mobile deep link connection
+      const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+      if (isMobile) {
+        const currentUrl = encodeURIComponent(window.location.href);
+        const deepLink = `phantom://browse/${window.location.hostname}${window.location.pathname}`;
+        
+        // Try to open Phantom mobile app
+        window.location.href = deepLink;
+        
+        // Fallback to app store if Phantom doesn't open
+        setTimeout(() => {
+          if (document.hidden) return; // App opened successfully
+          
+          const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+          const storeLink = isIOS 
+            ? 'https://apps.apple.com/app/phantom-solana-wallet/id1598432977'
+            : 'https://play.google.com/store/apps/details?id=app.phantom';
+          
+          if (confirm('Phantom not found. Would you like to install it?')) {
+            window.open(storeLink, '_blank');
+          }
+        }, 2000);
+        
+        setPhantomWallet(prev => ({ ...prev, isConnecting: false }));
+        return;
+      }
+      
+      throw new Error('Phantom not detected');
+      
     } catch (error: any) {
       setPhantomWallet(prev => ({
         ...prev,
@@ -119,7 +170,7 @@ export function CleanWalletConnector() {
       
       toast({
         title: "Connection Failed",
-        description: "Failed to connect to Phantom",
+        description: "Please ensure Phantom is installed and try again",
         variant: "destructive"
       });
     }
@@ -130,28 +181,57 @@ export function CleanWalletConnector() {
     setTonWallet(prev => ({ ...prev, isConnecting: true, error: null }));
 
     try {
-      // Simple TON connection using WalletConnect
-      const projectId = import.meta.env.VITE_WALLETCONNECT_PROJECT_ID;
-      
-      if (!projectId) {
-        throw new Error('WalletConnect Project ID not configured');
+      // Mobile deep link connection for TON Keeper
+      const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+      if (isMobile) {
+        const projectId = import.meta.env.VITE_WALLETCONNECT_PROJECT_ID;
+        const currentUrl = encodeURIComponent(window.location.href);
+        
+        // TON Keeper deep link
+        const deepLink = `tonkeeper://connect?ref=${currentUrl}`;
+        
+        // Try to open TON Keeper mobile app
+        window.location.href = deepLink;
+        
+        // Fallback to app store if TON Keeper doesn't open
+        setTimeout(() => {
+          if (document.hidden) return; // App opened successfully
+          
+          const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+          const storeLink = isIOS 
+            ? 'https://apps.apple.com/app/tonkeeper/id1587742107'
+            : 'https://play.google.com/store/apps/details?id=com.ton_keeper';
+          
+          if (confirm('TON Keeper not found. Would you like to install it?')) {
+            window.open(storeLink, '_blank');
+          }
+        }, 2000);
+        
+        setTonWallet(prev => ({ ...prev, isConnecting: false }));
+        return;
       }
-
-      // For now, simulate TON connection
-      // In production, this would use proper TON Connect protocol
-      const mockAddress = "EQD4FPq-PRDieyQKkizFTRtSDyucUIqrj0v_zXJmqaDp_7HR";
       
-      setTonWallet({
-        address: mockAddress,
-        isConnected: true,
-        isConnecting: false,
-        error: null
-      });
+      // Desktop/browser TON Connect (if available)
+      if ((window as any).ton) {
+        const result = await (window as any).ton.connect();
+        if (result.address) {
+          setTonWallet({
+            address: result.address,
+            isConnected: true,
+            isConnecting: false,
+            error: null
+          });
+          
+          toast({
+            title: "TON Keeper Connected",
+            description: `Connected to ${result.address.slice(0, 6)}...${result.address.slice(-4)}`,
+          });
+          return;
+        }
+      }
       
-      toast({
-        title: "TON Keeper Connected",
-        description: `Connected to ${mockAddress.slice(0, 6)}...${mockAddress.slice(-4)}`,
-      });
+      throw new Error('TON Keeper not detected');
+      
     } catch (error: any) {
       setTonWallet(prev => ({
         ...prev,
@@ -161,7 +241,7 @@ export function CleanWalletConnector() {
       
       toast({
         title: "Connection Failed",
-        description: "Failed to connect to TON Keeper",
+        description: "Please ensure TON Keeper is installed and try again",
         variant: "destructive"
       });
     }
