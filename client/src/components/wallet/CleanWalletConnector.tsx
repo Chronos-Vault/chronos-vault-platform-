@@ -39,94 +39,86 @@ export function CleanWalletConnector() {
     setMetamaskWallet(prev => ({ ...prev, isConnecting: true, error: null }));
 
     try {
-      // Check if MetaMask is installed
+      // Desktop browser connection
+      if (window.ethereum && !window.ethereum.isMetaMask) {
+        window.ethereum = undefined;
+      }
+      
       if (window.ethereum) {
-        // Desktop/browser connection
         const accounts = await window.ethereum.request({
           method: 'eth_requestAccounts'
         });
         
         if (accounts && accounts.length > 0) {
-          // Request signature for Chronos Vault authorization
-          const message = `Welcome to Chronos Vault!\n\nPlease sign this message to authorize your wallet for secure vault operations.\n\nWallet: ${accounts[0]}\nTimestamp: ${Date.now()}`;
+          const message = `Welcome to Chronos Vault!\n\nAuthorize wallet: ${accounts[0]}\nTimestamp: ${Date.now()}`;
           
-          try {
-            const signature = await window.ethereum.request({
-              method: 'personal_sign',
-              params: [message, accounts[0]]
-            });
-            
-            // Verify signature with backend
-            const response = await fetch('/api/auth/verify-signature', {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({
-                address: accounts[0],
-                message,
-                signature,
-                walletType: 'metamask'
-              })
-            });
-            
-            if (response.ok) {
-              setMetamaskWallet({
-                address: accounts[0],
-                isConnected: true,
-                isConnecting: false,
-                error: null
-              });
-              
-              toast({
-                title: "MetaMask Authorized",
-                description: `Wallet authenticated with Chronos Vault`,
-              });
-            } else {
-              throw new Error('Signature verification failed');
-            }
-          } catch (sigError) {
-            throw new Error('Authorization cancelled by user');
-          }
+          const signature = await window.ethereum.request({
+            method: 'personal_sign',
+            params: [message, accounts[0]]
+          });
+          
+          setMetamaskWallet({
+            address: accounts[0],
+            isConnected: true,
+            isConnecting: false,
+            error: null
+          });
+          
+          toast({
+            title: "MetaMask Connected",
+            description: `Connected: ${accounts[0].slice(0, 6)}...${accounts[0].slice(-4)}`,
+          });
           return;
         }
       }
       
-      // Mobile connection: Use deep link to open wallet, then wait for user to return
-      const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-      if (isMobile) {
-        // Create connection intent and open MetaMask
-        const connectionUrl = `${window.location.origin}?wallet=metamask&connect=true`;
-        const deepLink = `metamask://dapp/${window.location.hostname}${window.location.pathname}?wallet=metamask`;
+      // Mobile: Use WalletConnect
+      const projectId = import.meta.env.VITE_WALLETCONNECT_PROJECT_ID;
+      if (projectId) {
+        const { EthereumProvider } = await import('@walletconnect/ethereum-provider');
         
-        // Store connection attempt in sessionStorage
-        sessionStorage.setItem('pendingWalletConnection', JSON.stringify({
-          wallet: 'metamask',
-          timestamp: Date.now()
-        }));
-        
-        // Open MetaMask app
-        window.location.href = deepLink;
-        
-        // Set connecting state but don't reset immediately
-        toast({
-          title: "Opening MetaMask",
-          description: "Please authorize in MetaMask app and return to this page",
+        const provider = await EthereumProvider.init({
+          projectId,
+          chains: [1],
+          showQrModal: true,
+          metadata: {
+            name: 'Chronos Vault',
+            description: 'Secure Digital Vault',
+            url: window.location.origin,
+            icons: ['https://walletconnect.com/walletconnect-logo.png']
+          }
         });
         
-        return;
+        const accounts = await provider.enable();
+        
+        if (accounts && accounts.length > 0) {
+          setMetamaskWallet({
+            address: accounts[0],
+            isConnected: true,
+            isConnecting: false,
+            error: null
+          });
+          
+          toast({
+            title: "Wallet Connected",
+            description: `Connected: ${accounts[0].slice(0, 6)}...${accounts[0].slice(-4)}`,
+          });
+          return;
+        }
       }
       
-      throw new Error('MetaMask not detected');
+      throw new Error('No wallet connection available');
       
     } catch (error: any) {
       setMetamaskWallet(prev => ({
         ...prev,
         isConnecting: false,
-        error: error.message || 'Failed to connect to MetaMask'
+        error: 'Connection failed'
       }));
       
       toast({
         title: "Connection Failed",
-        description: "Please ensure MetaMask is installed and try again",
+        description: "Could not connect wallet",
         variant: "destructive"
       });
     }
