@@ -94,7 +94,7 @@ export function CleanWalletConnector() {
     setPhantomWallet(prev => ({ ...prev, isConnecting: true, error: null }));
 
     try {
-      const response = await window.solana.connect();
+      const response = await (window as any).solana.connect();
       
       if (response.publicKey) {
         const address = response.publicKey.toString();
@@ -179,8 +179,8 @@ export function CleanWalletConnector() {
   };
 
   const disconnectPhantom = () => {
-    if (window.solana) {
-      window.solana.disconnect();
+    if ((window as any).solana) {
+      (window as any).solana.disconnect();
     }
     setPhantomWallet({
       address: null,
@@ -219,8 +219,8 @@ export function CleanWalletConnector() {
     }
 
     // Check Phantom
-    if (window.solana && window.solana.isConnected) {
-      const publicKey = window.solana.publicKey;
+    if ((window as any).solana && (window as any).solana.isConnected) {
+      const publicKey = (window as any).solana.publicKey;
       if (publicKey) {
         setPhantomWallet(prev => ({
           ...prev,
