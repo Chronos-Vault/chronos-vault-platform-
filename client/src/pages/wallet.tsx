@@ -25,7 +25,7 @@ import {
   Settings
 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
-import { SignatureAuth } from '@/components/wallet/SignatureAuth';
+import { RealWalletAuth } from '@/components/wallet/RealWalletAuth';
 import { WalletVaultIntegration } from '@/components/wallet/WalletVaultIntegration';
 import { Link } from 'wouter';
 import WalletConnector from '@/components/wallet/WalletConnector';
@@ -537,7 +537,7 @@ export default function WalletPage() {
                     </div>
                   </div>
                   
-                  <SignatureAuth onAuthenticated={handleWalletAuthenticated} />
+                  <RealWalletAuth onAuthenticated={handleWalletAuthenticated} />
                 </div>
               </CardHeader>
             </Card>
