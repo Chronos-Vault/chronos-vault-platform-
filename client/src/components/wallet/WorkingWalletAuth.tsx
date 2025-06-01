@@ -39,31 +39,41 @@ export const WorkingWalletAuth = () => {
   const connectMetaMask = async () => {
     try {
       if (window.ethereum) {
+        // Desktop: Connect and sign immediately
         const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
         
         if (accounts[0]) {
-          // Request signature immediately
-          const message = `Authorize Chronos Vault\nWallet: ${accounts[0]}\nTimestamp: ${Date.now()}`;
+          const message = `Welcome to Chronos Vault!
+
+Please sign this message to authorize your wallet for secure vault operations.
+
+Wallet: ${accounts[0]}
+Timestamp: ${Date.now()}`;
           
-          try {
-            await window.ethereum.request({
-              method: 'personal_sign',
-              params: [message, accounts[0]]
-            });
-            
-            setWallets(prev => ({ ...prev, metamask: { address: accounts[0], connected: true } }));
-            toast({ title: "MetaMask Authorized", description: "Wallet connected successfully" });
-          } catch (sigError) {
-            toast({ title: "Authorization Cancelled", variant: "destructive" });
-          }
+          const signature = await window.ethereum.request({
+            method: 'personal_sign',
+            params: [message, accounts[0]]
+          });
+          
+          setWallets(prev => ({ ...prev, metamask: { address: accounts[0], connected: true } }));
+          toast({ title: "MetaMask Authorized", description: "Wallet connected and authorized" });
         }
       } else {
-        // Mobile: Open MetaMask app
-        window.location.href = `metamask://dapp/${window.location.hostname}`;
-        toast({ title: "Opening MetaMask", description: "Please authorize and return" });
+        // Mobile: Use WalletConnect protocol
+        const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+        if (isMobile) {
+          window.location.href = `https://metamask.app.link/dapp/${window.location.hostname}${window.location.pathname}`;
+          toast({ title: "Opening MetaMask", description: "Please connect and authorize in MetaMask app" });
+        } else {
+          toast({ title: "Install MetaMask", description: "MetaMask browser extension required" });
+        }
       }
-    } catch (error) {
-      toast({ title: "Connection Failed", variant: "destructive" });
+    } catch (error: any) {
+      if (error.code === 4001) {
+        toast({ title: "Connection Cancelled", description: "User cancelled the connection" });
+      } else {
+        toast({ title: "Connection Failed", description: "Failed to connect to MetaMask" });
+      }
     }
   };
 
