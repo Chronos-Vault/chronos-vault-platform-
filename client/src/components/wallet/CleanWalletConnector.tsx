@@ -90,29 +90,70 @@ export function CleanWalletConnector() {
         }
       }
       
-      // Mobile deep link connection
+      // Mobile deep link connection with WalletConnect
       const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
       if (isMobile) {
-        const currentUrl = encodeURIComponent(window.location.href);
-        const deepLink = `metamask://dapp/${window.location.hostname}`;
+        const projectId = import.meta.env.VITE_WALLETCONNECT_PROJECT_ID;
         
-        // Try to open MetaMask mobile app
-        window.location.href = deepLink;
-        
-        // Fallback to app store if MetaMask doesn't open
-        setTimeout(() => {
-          if (document.hidden) return; // App opened successfully
+        if (projectId) {
+          // Use WalletConnect for mobile connection
+          const { EthereumProvider } = await import('@walletconnect/ethereum-provider');
           
-          const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
-          const storeLink = isIOS 
-            ? 'https://apps.apple.com/app/metamask/id1438144202'
-            : 'https://play.google.com/store/apps/details?id=io.metamask';
+          const provider = await EthereumProvider.init({
+            projectId,
+            chains: [1, 11155111], // Mainnet and Sepolia
+            showQrModal: false,
+            metadata: {
+              name: 'Chronos Vault',
+              description: 'Secure Multi-Chain Digital Vault',
+              url: window.location.origin,
+              icons: ['https://chronosvault.com/icon.png']
+            }
+          });
           
-          if (confirm('MetaMask not found. Would you like to install it?')) {
-            window.open(storeLink, '_blank');
+          const accounts = await provider.connect();
+          
+          if (accounts && accounts.length > 0) {
+            // Request signature for authorization
+            const message = `Welcome to Chronos Vault!\n\nPlease sign this message to authorize your wallet for secure vault operations.\n\nWallet: ${accounts[0]}\nTimestamp: ${Date.now()}`;
+            
+            const signature = await provider.request({
+              method: 'personal_sign',
+              params: [message, accounts[0]]
+            });
+            
+            // Verify signature with backend
+            const response = await fetch('/api/auth/verify-signature', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                address: accounts[0],
+                message,
+                signature,
+                walletType: 'metamask'
+              })
+            });
+            
+            if (response.ok) {
+              setMetamaskWallet({
+                address: accounts[0],
+                isConnected: true,
+                isConnecting: false,
+                error: null
+              });
+              
+              toast({
+                title: "MetaMask Authorized",
+                description: `Wallet authenticated with Chronos Vault`,
+              });
+            }
           }
-        }, 2000);
+          return;
+        }
         
+        // Fallback: Direct deep link
+        const deepLink = `metamask://dapp/${window.location.hostname}`;
+        window.location.href = deepLink;
         setMetamaskWallet(prev => ({ ...prev, isConnecting: false }));
         return;
       }

@@ -240,11 +240,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       if (isValid) {
         // Log successful authentication
-        securityLogger.logEvent(SecurityEventType.WALLET_CONNECTED, {
-          address,
-          walletType,
-          timestamp: new Date().toISOString()
-        });
+        console.log('Wallet authenticated:', { address, walletType, timestamp: new Date().toISOString() });
         
         res.json({ 
           status: 'success', 
