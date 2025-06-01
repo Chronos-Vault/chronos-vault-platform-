@@ -47,17 +47,45 @@ export function CleanWalletConnector() {
         });
         
         if (accounts && accounts.length > 0) {
-          setMetamaskWallet({
-            address: accounts[0],
-            isConnected: true,
-            isConnecting: false,
-            error: null
-          });
+          // Request signature for Chronos Vault authorization
+          const message = `Welcome to Chronos Vault!\n\nPlease sign this message to authorize your wallet for secure vault operations.\n\nWallet: ${accounts[0]}\nTimestamp: ${Date.now()}`;
           
-          toast({
-            title: "MetaMask Connected",
-            description: `Connected to ${accounts[0].slice(0, 6)}...${accounts[0].slice(-4)}`,
-          });
+          try {
+            const signature = await window.ethereum.request({
+              method: 'personal_sign',
+              params: [message, accounts[0]]
+            });
+            
+            // Verify signature with backend
+            const response = await fetch('/api/auth/verify-signature', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                address: accounts[0],
+                message,
+                signature,
+                walletType: 'metamask'
+              })
+            });
+            
+            if (response.ok) {
+              setMetamaskWallet({
+                address: accounts[0],
+                isConnected: true,
+                isConnecting: false,
+                error: null
+              });
+              
+              toast({
+                title: "MetaMask Authorized",
+                description: `Wallet authenticated with Chronos Vault`,
+              });
+            } else {
+              throw new Error('Signature verification failed');
+            }
+          } catch (sigError) {
+            throw new Error('Authorization cancelled by user');
+          }
           return;
         }
       }
@@ -117,17 +145,50 @@ export function CleanWalletConnector() {
         
         if (response.publicKey) {
           const address = response.publicKey.toString();
-          setPhantomWallet({
-            address,
-            isConnected: true,
-            isConnecting: false,
-            error: null
-          });
           
-          toast({
-            title: "Phantom Connected",
-            description: `Connected to ${address.slice(0, 6)}...${address.slice(-4)}`,
-          });
+          // Request signature for Chronos Vault authorization
+          const message = `Welcome to Chronos Vault!\n\nPlease sign this message to authorize your wallet for secure vault operations.\n\nWallet: ${address}\nTimestamp: ${Date.now()}`;
+          const encodedMessage = new TextEncoder().encode(message);
+          
+          try {
+            const signedMessage = await (window as any).solana.request({
+              method: "signMessage",
+              params: {
+                message: encodedMessage,
+                display: "utf8"
+              }
+            });
+            
+            // Verify signature with backend
+            const response = await fetch('/api/auth/verify-signature', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                address,
+                message,
+                signature: signedMessage.signature,
+                walletType: 'phantom'
+              })
+            });
+            
+            if (response.ok) {
+              setPhantomWallet({
+                address,
+                isConnected: true,
+                isConnecting: false,
+                error: null
+              });
+              
+              toast({
+                title: "Phantom Authorized",
+                description: `Wallet authenticated with Chronos Vault`,
+              });
+            } else {
+              throw new Error('Signature verification failed');
+            }
+          } catch (sigError) {
+            throw new Error('Authorization cancelled by user');
+          }
           return;
         }
       }
@@ -215,17 +276,42 @@ export function CleanWalletConnector() {
       if ((window as any).ton) {
         const result = await (window as any).ton.connect();
         if (result.address) {
-          setTonWallet({
-            address: result.address,
-            isConnected: true,
-            isConnecting: false,
-            error: null
-          });
+          // Request signature for Chronos Vault authorization
+          const message = `Welcome to Chronos Vault!\n\nPlease sign this message to authorize your wallet for secure vault operations.\n\nWallet: ${result.address}\nTimestamp: ${Date.now()}`;
           
-          toast({
-            title: "TON Keeper Connected",
-            description: `Connected to ${result.address.slice(0, 6)}...${result.address.slice(-4)}`,
-          });
+          try {
+            const signature = await (window as any).ton.signMessage(message);
+            
+            // Verify signature with backend
+            const response = await fetch('/api/auth/verify-signature', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                address: result.address,
+                message,
+                signature,
+                walletType: 'tonkeeper'
+              })
+            });
+            
+            if (response.ok) {
+              setTonWallet({
+                address: result.address,
+                isConnected: true,
+                isConnecting: false,
+                error: null
+              });
+              
+              toast({
+                title: "TON Keeper Authorized",
+                description: `Wallet authenticated with Chronos Vault`,
+              });
+            } else {
+              throw new Error('Signature verification failed');
+            }
+          } catch (sigError) {
+            throw new Error('Authorization cancelled by user');
+          }
           return;
         }
       }

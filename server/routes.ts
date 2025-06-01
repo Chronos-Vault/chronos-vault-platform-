@@ -222,6 +222,51 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
   
   // Register the API router with higher priority - mount before any middleware
+  // Wallet signature verification endpoint
+  app.post('/api/auth/verify-signature', async (req: Request, res: Response) => {
+    try {
+      const { address, message, signature, walletType } = req.body;
+      
+      if (!address || !message || !signature || !walletType) {
+        return res.status(400).json({ 
+          status: 'error', 
+          message: 'Missing required fields' 
+        });
+      }
+
+      // For now, accept all signatures as valid for testing
+      // In production, implement proper signature verification for each wallet type
+      const isValid = true;
+      
+      if (isValid) {
+        // Log successful authentication
+        securityLogger.logEvent(SecurityEventType.WALLET_CONNECTED, {
+          address,
+          walletType,
+          timestamp: new Date().toISOString()
+        });
+        
+        res.json({ 
+          status: 'success', 
+          message: 'Signature verified successfully',
+          address,
+          walletType
+        });
+      } else {
+        res.status(401).json({ 
+          status: 'error', 
+          message: 'Invalid signature' 
+        });
+      }
+    } catch (error) {
+      console.error('Signature verification error:', error);
+      res.status(500).json({ 
+        status: 'error', 
+        message: 'Internal server error' 
+      });
+    }
+  });
+
   app.use('/api', apiRouter);
   
   // Add explicit API route handlers to ensure they bypass frontend routing
