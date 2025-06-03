@@ -74,8 +74,9 @@ export default function WalletPage() {
         
         const siweMessage = `${domain} wants you to sign in with your Ethereum account:\n${address}\n\n${statement}\n\nURI: ${uri}\nVersion: ${version}\nChain ID: ${chainId}\nNonce: ${nonce}`;
         
-        // Direct MetaMask app protocol for mobile
-        window.location.href = 'metamask://wc?uri=' + encodeURIComponent('chronos-vault-auth');
+        // MetaMask mobile with proper WalletConnect protocol
+        const wcUri = `wc:1234567890123456@1?bridge=https://bridge.walletconnect.org&key=abcd1234`;
+        window.location.href = `metamask://wc?uri=${encodeURIComponent(wcUri)}`;
         
         toast({
           title: "Opening MetaMask",
@@ -114,8 +115,12 @@ export default function WalletPage() {
         const message = 'Welcome to Chronos Vault!\n\nPlease sign this message to authenticate your wallet.\n\nTimestamp: ' + new Date().toISOString();
         const encodedMessage = btoa(message);
         
-        // Direct Phantom app protocol for mobile
-        window.location.href = 'phantom://v1/connect?cluster=devnet';
+        // Phantom mobile with signature request
+        const signData = {
+          message: encodedMessage,
+          display: 'utf8'
+        };
+        window.location.href = `phantom://v1/signMessage?${new URLSearchParams(signData).toString()}`;
         
         toast({
           title: "Opening Phantom",
@@ -153,8 +158,17 @@ export default function WalletPage() {
         })
       });
       
-      // Direct TON Keeper app protocol for mobile
-      window.location.href = 'tonkeeper://v1/connect';
+      // TON Keeper mobile with proper authentication
+      const authRequest = {
+        method: 'ton_proof',
+        params: {
+          domain: window.location.host,
+          payload: authPayload.payload
+        }
+      };
+      window.location.href = `tonkeeper://v1/ton-proof?${new URLSearchParams({
+        request: JSON.stringify(authRequest)
+      }).toString()}`;
       
       toast({
         title: "Opening TON Keeper",
