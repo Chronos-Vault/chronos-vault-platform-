@@ -654,24 +654,119 @@ const Home = () => {
                   <div className="flex gap-3">
                     <button 
                       onClick={() => {
+                        // Create a zip-like structure with multiple files
+                        const sdkFiles = {
+                          'package.json': JSON.stringify({
+                            name: '@chronos-vault/mobile-sdk',
+                            version: '1.0.0',
+                            description: 'Chronos Vault Mobile SDK for iOS',
+                            main: 'ChronosVaultSDK.js',
+                            dependencies: {
+                              'react-native': '^0.73.0',
+                              'react-native-keychain': '^8.1.3',
+                              'react-native-biometrics': '^3.0.1',
+                              'react-native-encrypted-storage': '^4.0.3',
+                              '@react-native-async-storage/async-storage': '^1.21.0',
+                              'react-native-device-info': '^10.12.0'
+                            }
+                          }, null, 2),
+                          'README.md': `# Chronos Vault Mobile SDK for iOS
+
+## Installation
+
+1. Install the SDK: \`npm install @chronos-vault/mobile-sdk\`
+2. Install dependencies: \`npm install react-native-keychain react-native-biometrics react-native-encrypted-storage\`
+3. For iOS, run: \`cd ios && pod install\`
+
+## Usage
+
+\`\`\`javascript
+import ChronosVaultSDK from '@chronos-vault/mobile-sdk';
+
+const sdk = new ChronosVaultSDK({
+  apiEndpoint: '${window.location.origin}',
+  enableBiometrics: true,
+  enableEncryption: true
+});
+
+await sdk.initialize();
+await sdk.authenticate();
+const vaults = await sdk.getVaults();
+\`\`\`
+
+## Features
+
+- Biometric authentication
+- Encrypted storage
+- Multi-chain wallet support
+- Real-time security monitoring
+- Cross-platform compatibility
+
+Visit https://chronosvault.com for full documentation.
+`,
+                          'ios-setup.md': `# iOS Setup Guide
+
+## Prerequisites
+
+- Xcode 12.0 or later
+- iOS 11.0 or later
+- React Native 0.70+
+
+## Installation Steps
+
+1. Add to your React Native project:
+   \`\`\`bash
+   npm install @chronos-vault/mobile-sdk
+   npm install react-native-keychain react-native-biometrics
+   \`\`\`
+
+2. iOS Pod Installation:
+   \`\`\`bash
+   cd ios
+   pod install
+   \`\`\`
+
+3. Add permissions to Info.plist:
+   \`\`\`xml
+   <key>NSFaceIDUsageDescription</key>
+   <string>Use Face ID to authenticate</string>
+   <key>NSBiometricUsageDescription</key>
+   <string>Use biometric authentication</string>
+   \`\`\`
+
+4. Initialize in your app:
+   \`\`\`javascript
+   import ChronosVaultSDK from '@chronos-vault/mobile-sdk';
+   
+   const sdk = new ChronosVaultSDK({
+     apiEndpoint: '${window.location.origin}',
+     enableBiometrics: true
+   });
+   \`\`\`
+
+## Testing on Device
+
+1. Build for iOS: \`npx react-native run-ios --device\`
+2. Ensure your device is connected and developer mode enabled
+3. The SDK will automatically detect iOS capabilities
+
+For complete integration examples, visit our documentation.
+`
+                        };
+                        
+                        // Create a data URL with all files
+                        const filesContent = Object.entries(sdkFiles)
+                          .map(([filename, content]) => `=== ${filename} ===\n${content}\n`)
+                          .join('\n');
+                        
                         const link = document.createElement('a');
-                        link.href = 'data:application/octet-stream;base64,' + btoa(JSON.stringify({
-                          name: '@chronos-vault/mobile-sdk',
-                          version: '1.0.0',
-                          description: 'Chronos Vault Mobile SDK for iOS',
-                          main: 'ChronosVaultSDK.js',
-                          dependencies: {
-                            'react-native': '^0.73.0',
-                            'react-native-keychain': '^8.1.3',
-                            'react-native-biometrics': '^3.0.1'
-                          }
-                        }, null, 2));
-                        link.download = 'chronos-vault-sdk-ios.json';
+                        link.href = 'data:text/plain;charset=utf-8,' + encodeURIComponent(filesContent);
+                        link.download = 'chronos-vault-ios-sdk.txt';
                         link.click();
                       }}
                       className="flex-1 bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] text-white py-2 px-4 rounded-lg font-medium hover:shadow-lg hover:shadow-[#6B00D7]/50 transition-all duration-300 text-center"
                     >
-                      Download SDK
+                      Download iOS SDK
                     </button>
                     <Link href="/sdk-documentation">
                       <button className="flex-1 bg-transparent border border-[#FF5AF7]/60 text-white py-2 px-4 rounded-lg font-medium hover:bg-[#FF5AF7]/10 transition-all duration-300 text-center">
