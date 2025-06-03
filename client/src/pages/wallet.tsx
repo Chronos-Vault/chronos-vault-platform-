@@ -689,54 +689,159 @@ export default function WalletPage() {
                     </div>
                   </div>
                   
-                  {/* Native Wallet Authentication */}
+                  {/* Real Wallet Authentication */}
                   <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                     <Button
-                      onClick={() => {
-                        // Generate a sample Ethereum address for demo
-                        const ethAddress = "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266";
-                        toast({
-                          title: "Ethereum Wallet Connected",
-                          description: `Address: ${ethAddress.slice(0, 6)}...${ethAddress.slice(-4)}`
-                        });
+                      onClick={async () => {
+                        try {
+                          if (typeof window.ethereum !== 'undefined') {
+                            const accounts = await window.ethereum.request({
+                              method: 'eth_requestAccounts'
+                            });
+                            
+                            const message = `Chronos Vault Authentication\nAddress: ${accounts[0]}\nTimestamp: ${Date.now()}`;
+                            const signature = await window.ethereum.request({
+                              method: 'personal_sign',
+                              params: [message, accounts[0]]
+                            });
+                            
+                            const response = await fetch('/api/wallet/verify-signature', {
+                              method: 'POST',
+                              headers: { 'Content-Type': 'application/json' },
+                              body: JSON.stringify({
+                                walletType: 'metamask',
+                                address: accounts[0],
+                                message,
+                                signature,
+                                blockchain: 'ethereum'
+                              })
+                            });
+                            
+                            const result = await response.json();
+                            
+                            if (result.verified) {
+                              toast({
+                                title: "MetaMask Connected",
+                                description: `Verified: ${accounts[0].slice(0, 6)}...${accounts[0].slice(-4)}`
+                              });
+                            }
+                          } else {
+                            const projectId = import.meta.env.VITE_WALLETCONNECT_PROJECT_ID;
+                            if (projectId) {
+                              window.open(`https://metamask.app.link/dapp/${window.location.hostname}`, '_blank');
+                              toast({
+                                title: "Opening MetaMask",
+                                description: "Please approve the connection in MetaMask mobile app"
+                              });
+                            } else {
+                              toast({
+                                title: "MetaMask Required",
+                                description: "Please install MetaMask extension",
+                                variant: "destructive"
+                              });
+                            }
+                          }
+                        } catch (error) {
+                          toast({
+                            title: "Connection Failed",
+                            description: "Failed to connect to MetaMask",
+                            variant: "destructive"
+                          });
+                        }
                       }}
                       className="flex items-center gap-2 bg-orange-500/10 border-orange-500/30 text-orange-400 hover:bg-orange-500/20"
                       variant="outline"
                     >
                       <Wallet className="w-4 h-4" />
-                      Ethereum Wallet
+                      MetaMask
                     </Button>
                     
                     <Button
-                      onClick={() => {
-                        // Generate a sample Solana address for demo
-                        const solAddress = "BfYXwvd4jMYoFnphtf9vkAe8ZiU7roYZSEFGsi2oXhjz";
-                        toast({
-                          title: "Solana Wallet Connected",
-                          description: `Address: ${solAddress.slice(0, 6)}...${solAddress.slice(-4)}`
-                        });
+                      onClick={async () => {
+                        try {
+                          if (window.solana && window.solana.isPhantom) {
+                            const response = await window.solana.connect();
+                            const message = `Chronos Vault Authentication\nAddress: ${response.publicKey.toString()}\nTimestamp: ${Date.now()}`;
+                            const encodedMessage = new TextEncoder().encode(message);
+                            
+                            const signatureResult = await window.solana.signMessage(encodedMessage, 'utf8');
+                            const signature = Array.from(signatureResult.signature).map((b: number) => b.toString(16).padStart(2, '0')).join('');
+                            
+                            const verifyResponse = await fetch('/api/wallet/verify-signature', {
+                              method: 'POST',
+                              headers: { 'Content-Type': 'application/json' },
+                              body: JSON.stringify({
+                                walletType: 'phantom',
+                                address: response.publicKey.toString(),
+                                message,
+                                signature,
+                                blockchain: 'solana',
+                                publicKey: response.publicKey.toString()
+                              })
+                            });
+                            
+                            const result = await verifyResponse.json();
+                            
+                            if (result.verified) {
+                              toast({
+                                title: "Phantom Connected",
+                                description: `Verified: ${response.publicKey.toString().slice(0, 6)}...${response.publicKey.toString().slice(-4)}`
+                              });
+                            }
+                          } else {
+                            window.open('https://phantom.app/download', '_blank');
+                            toast({
+                              title: "Phantom Required",
+                              description: "Please install Phantom wallet",
+                              variant: "destructive"
+                            });
+                          }
+                        } catch (error) {
+                          toast({
+                            title: "Connection Failed",
+                            description: "Failed to connect to Phantom",
+                            variant: "destructive"
+                          });
+                        }
                       }}
                       className="flex items-center gap-2 bg-purple-500/10 border-purple-500/30 text-purple-400 hover:bg-purple-500/20"
                       variant="outline"
                     >
                       <Wallet className="w-4 h-4" />
-                      Solana Wallet
+                      Phantom
                     </Button>
                     
                     <Button
-                      onClick={() => {
-                        // Generate a sample TON address for demo
-                        const tonAddress = "EQD8TJ8xEWB1SpnRE4d89YO3jl0W0EiBnNS4IBaHaUmdfizE";
-                        toast({
-                          title: "TON Wallet Connected",
-                          description: `Address: ${tonAddress.slice(0, 6)}...${tonAddress.slice(-4)}`
-                        });
+                      onClick={async () => {
+                        try {
+                          // Initialize TON Connect with your manifest
+                          const tonConnectUI = new (window as any).TON_CONNECT_UI.TonConnectUI({
+                            manifestUrl: `${window.location.origin}/tonconnect-manifest.json`
+                          });
+                          
+                          await tonConnectUI.connectWallet();
+                          
+                          if (tonConnectUI.connected) {
+                            const address = tonConnectUI.account?.address;
+                            toast({
+                              title: "TON Keeper Connected",
+                              description: `Connected: ${address?.slice(0, 6)}...${address?.slice(-4)}`
+                            });
+                          }
+                        } catch (error) {
+                          window.open('https://tonkeeper.com/download', '_blank');
+                          toast({
+                            title: "TON Keeper Required",
+                            description: "Please install TON Keeper wallet",
+                            variant: "destructive"
+                          });
+                        }
                       }}
                       className="flex items-center gap-2 bg-blue-500/10 border-blue-500/30 text-blue-400 hover:bg-blue-500/20"
                       variant="outline"
                     >
                       <Wallet className="w-4 h-4" />
-                      TON Wallet
+                      TON Keeper
                     </Button>
                   </div>
                 </div>
