@@ -35,6 +35,7 @@ declare global {
 }
 
 import { WalletVaultIntegration } from '@/components/wallet/WalletVaultIntegration';
+import { RealWalletAuth } from '@/components/wallet/RealWalletAuth';
 import { Link } from 'wouter';
 
 export default function WalletPage() {
@@ -688,34 +689,14 @@ export default function WalletPage() {
                     </div>
                   </div>
                   
-                  {/* Wallet Connection Buttons */}
-                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                    <Button
-                      onClick={connectMetaMask}
-                      className="flex items-center gap-2 bg-orange-500/10 border-orange-500/30 text-orange-400 hover:bg-orange-500/20"
-                      variant="outline"
-                    >
-                      <Wallet className="w-4 h-4" />
-                      MetaMask
-                    </Button>
-                    
-                    <Button
-                      onClick={connectPhantom}
-                      className="flex items-center gap-2 bg-purple-500/10 border-purple-500/30 text-purple-400 hover:bg-purple-500/20"
-                      variant="outline"
-                    >
-                      <Wallet className="w-4 h-4" />
-                      Phantom
-                    </Button>
-                    
-                    <Button
-                      onClick={connectTonKeeper}
-                      className="flex items-center gap-2 bg-blue-500/10 border-blue-500/30 text-blue-400 hover:bg-blue-500/20"
-                      variant="outline"
-                    >
-                      <Wallet className="w-4 h-4" />
-                      TON Keeper
-                    </Button>
+                  {/* Working Wallet Connector with SDK Integration */}
+                  <div className="space-y-4">
+                    <RealWalletAuth onAuthenticated={(walletType, address, signature) => {
+                      toast({
+                        title: `${walletType} Authenticated`,
+                        description: `Connected: ${address.slice(0, 6)}...${address.slice(-4)}`
+                      });
+                    }} />
                   </div>
                 </div>
               </CardHeader>
