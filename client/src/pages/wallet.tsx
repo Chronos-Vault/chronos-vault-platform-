@@ -63,10 +63,25 @@ export default function WalletPage() {
           description: `Authenticated: ${accounts[0].slice(0, 6)}...${accounts[0].slice(-4)}`
         });
       } else {
-        // Universal link for mobile MetaMask with WalletConnect
-        const wcUri = `wc:chronos-vault@1?bridge=https%3A%2F%2Fbridge.walletconnect.org&key=chronos`;
-        const deepLink = `https://metamask.app.link/wc?uri=${encodeURIComponent(wcUri)}`;
-        window.open(deepLink, '_self');
+        // Create SIWE (Sign-In with Ethereum) message for mobile
+        const domain = window.location.host;
+        const address = '0x' + Math.random().toString(16).substr(2, 40); // Temporary for demo
+        const statement = 'Sign in to Chronos Vault';
+        const uri = window.location.origin;
+        const version = '1';
+        const chainId = '1';
+        const nonce = Math.random().toString(36).substring(7);
+        
+        const siweMessage = `${domain} wants you to sign in with your Ethereum account:\n${address}\n\n${statement}\n\nURI: ${uri}\nVersion: ${version}\nChain ID: ${chainId}\nNonce: ${nonce}`;
+        
+        // MetaMask mobile deep link with sign parameters
+        const deepLink = `https://metamask.app.link/dapp/${domain}?message=${encodeURIComponent(siweMessage)}&method=personal_sign`;
+        window.location.href = deepLink;
+        
+        toast({
+          title: "Opening MetaMask",
+          description: "Please sign the authentication message"
+        });
       }
     } catch (error) {
       toast({
@@ -96,9 +111,18 @@ export default function WalletPage() {
           description: `Authenticated: ${response.publicKey.toString().slice(0, 6)}...${response.publicKey.toString().slice(-4)}`
         });
       } else {
-        // Direct Phantom app link with authentication request
-        const deepLink = `https://phantom.app/ul/v1/connect?app_url=${encodeURIComponent(window.location.origin)}&cluster=devnet&redirect_link=${encodeURIComponent(window.location.href)}`;
-        window.open(deepLink, '_self');
+        // Create message to sign for Phantom mobile
+        const message = 'Welcome to Chronos Vault!\n\nPlease sign this message to authenticate your wallet.\n\nTimestamp: ' + new Date().toISOString();
+        const encodedMessage = btoa(message);
+        
+        // Phantom mobile deep link with signature request
+        const deepLink = `phantom://v1/signMessage?message=${encodedMessage}&redirect_link=${encodeURIComponent(window.location.href)}`;
+        window.location.href = deepLink;
+        
+        toast({
+          title: "Opening Phantom",
+          description: "Please sign the authentication message"
+        });
       }
     } catch (error) {
       toast({
@@ -112,32 +136,36 @@ export default function WalletPage() {
   // TON Keeper connection with proper signature request
   const connectTonKeeper = async () => {
     try {
-      // Use proper TON Connect universal link
-      const manifest = {
-        url: window.location.origin,
-        name: "Chronos Vault",
-        iconUrl: `${window.location.origin}/favicon.ico`,
-        termsOfUseUrl: `${window.location.origin}/terms`,
-        privacyPolicyUrl: `${window.location.origin}/privacy`
+      // Create authentication payload for TON Connect
+      const authPayload = {
+        domain: window.location.host,
+        timestamp: Date.now(),
+        payload: 'chronos-vault-auth-' + Date.now()
       };
       
-      const deepLink = `https://app.tonkeeper.com/ton-connect?${new URLSearchParams({
+      // TON Connect deep link with authentication request
+      const tonConnectParams = new URLSearchParams({
         v: '2',
         id: 'chronos-vault',
         r: window.location.origin,
-        ret: 'back'
-      }).toString()}`;
+        ret: 'back',
+        request: JSON.stringify({
+          method: 'ton_requestAuth',
+          params: authPayload
+        })
+      });
       
-      window.open(deepLink, '_self');
+      const deepLink = `tonkeeper://ton-connect?${tonConnectParams.toString()}`;
+      window.location.href = deepLink;
       
       toast({
         title: "Opening TON Keeper",
-        description: "Please approve the connection request in TON Keeper"
+        description: "Please sign the authentication request in TON Keeper"
       });
     } catch (error) {
       toast({
         title: "TON Keeper Error", 
-        description: error.message || "Failed to connect",
+        description: (error as Error).message || "Failed to connect",
         variant: "destructive"
       });
     }
