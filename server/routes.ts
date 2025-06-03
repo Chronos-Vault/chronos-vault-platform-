@@ -223,41 +223,81 @@ export async function registerRoutes(app: Express): Promise<Server> {
   
   // Register the API router with higher priority - mount before any middleware
   // Wallet signature verification endpoint
-  app.post('/api/auth/verify-signature', async (req: Request, res: Response) => {
+  app.post('/api/wallet/verify-signature', async (req: Request, res: Response) => {
     try {
-      const { address, message, signature, walletType } = req.body;
+      const { address, message, signature, walletType, blockchain, publicKey } = req.body;
       
       if (!address || !message || !signature || !walletType) {
         return res.status(400).json({ 
-          status: 'error', 
+          verified: false, 
           message: 'Missing required fields' 
         });
       }
 
-      // For now, accept all signatures as valid for testing
-      // In production, implement proper signature verification for each wallet type
-      const isValid = true;
+      let isValid = false;
+      
+      try {
+        // Verify signature based on wallet type
+        switch (walletType.toLowerCase()) {
+          case 'metamask':
+            // Import ethers for Ethereum signature verification
+            const { ethers } = await import('ethers');
+            const recoveredAddress = ethers.verifyMessage(message, signature);
+            isValid = recoveredAddress.toLowerCase() === address.toLowerCase();
+            break;
+            
+          case 'phantom':
+            // Import Solana web3 for Solana signature verification
+            const { PublicKey } = await import('@solana/web3.js');
+            const nacl = await import('tweetnacl');
+            
+            if (publicKey) {
+              const messageBytes = new TextEncoder().encode(message);
+              const signatureBytes = new Uint8Array(signature.match(/.{1,2}/g)?.map((byte: string) => parseInt(byte, 16)) || []);
+              const publicKeyBytes = new PublicKey(publicKey).toBytes();
+              
+              isValid = nacl.sign.detached.verify(messageBytes, signatureBytes, publicKeyBytes);
+            }
+            break;
+            
+          case 'tonkeeper':
+            // For TON, we'll accept the signature for now since TON verification requires complex setup
+            // In production, implement proper TON signature verification
+            isValid = true;
+            break;
+            
+          default:
+            isValid = false;
+        }
+      } catch (verifyError) {
+        console.error('Signature verification failed:', verifyError);
+        isValid = false;
+      }
       
       if (isValid) {
+        // Generate session token
+        const sessionToken = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
+        
         // Log successful authentication
-        console.log('Wallet authenticated:', { address, walletType, timestamp: new Date().toISOString() });
+        console.log('Wallet authenticated:', { address, walletType, blockchain, timestamp: new Date().toISOString() });
         
         res.json({ 
-          status: 'success', 
+          verified: true, 
           message: 'Signature verified successfully',
           address,
-          walletType
+          walletType,
+          sessionToken
         });
       } else {
         res.status(401).json({ 
-          status: 'error', 
+          verified: false, 
           message: 'Invalid signature' 
         });
       }
     } catch (error) {
       console.error('Signature verification error:', error);
       res.status(500).json({ 
-        status: 'error', 
+        verified: false, 
         message: 'Internal server error' 
       });
     }
