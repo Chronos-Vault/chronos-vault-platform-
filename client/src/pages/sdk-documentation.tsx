@@ -217,7 +217,7 @@ const authenticated = await sdk.authenticate();`, 'quickstart')}
                   <div className="relative">
                     <div className="bg-black/60 rounded-lg p-4 border border-[#6B00D7]/20 font-mono text-sm text-gray-300">
                       <div className="text-gray-500">// Authenticate with biometrics</div>
-                      <div className="text-purple-400">const authenticateUser = async () =&gt; {`{`}</div>
+                      <div className="text-purple-400">const authenticateUser = async () {`=>`} {`{`}</div>
                       <div className="pl-4 text-yellow-400">try {`{`}</div>
                       <div className="pl-8 text-emerald-400">const result = await sdk.authenticate();</div>
                       <div className="pl-8 text-purple-400">if (result) {`{`}</div>
@@ -263,7 +263,7 @@ const authenticated = await sdk.authenticate();`, 'quickstart')}
                   <div className="relative">
                     <div className="bg-black/60 rounded-lg p-4 border border-[#6B00D7]/20 font-mono text-sm text-gray-300">
                       <div className="text-gray-500">// Create a new vault</div>
-                      <div className="text-purple-400">const createVault = async () =&gt; {`{`}</div>
+                      <div className="text-purple-400">const createVault = async () {`=>`} {`{`}</div>
                       <div className="pl-4 text-purple-400">const vaultConfig = {`{`}</div>
                       <div className="pl-8"><span className="text-yellow-400">name</span>: <span className="text-green-400">'My Mobile Vault'</span>,</div>
                       <div className="pl-8"><span className="text-yellow-400">type</span>: <span className="text-green-400">'personal'</span>,</div>
@@ -299,7 +299,7 @@ const authenticated = await sdk.authenticate();`, 'quickstart')}
                   <div className="relative">
                     <div className="bg-black/60 rounded-lg p-4 border border-[#6B00D7]/20 font-mono text-sm text-gray-300">
                       <div className="text-gray-500">// Transfer assets from vault</div>
-                      <div className="text-purple-400">const transferAssets = async (vaultId) =&gt; {`{`}</div>
+                      <div className="text-purple-400">const transferAssets = async (vaultId) {`=>`} {`{`}</div>
                       <div className="pl-4 text-purple-400">const transferConfig = {`{`}</div>
                       <div className="pl-8"><span className="text-yellow-400">to</span>: <span className="text-green-400">'0x742d35Cc6634C0532925a3b8D46C0Ac5c2A4C0c0'</span>,</div>
                       <div className="pl-8"><span className="text-yellow-400">amount</span>: <span className="text-green-400">'0.1'</span>,</div>
