@@ -74,9 +74,8 @@ export default function WalletPage() {
         
         const siweMessage = `${domain} wants you to sign in with your Ethereum account:\n${address}\n\n${statement}\n\nURI: ${uri}\nVersion: ${version}\nChain ID: ${chainId}\nNonce: ${nonce}`;
         
-        // MetaMask mobile deep link with sign parameters
-        const deepLink = `https://metamask.app.link/dapp/${domain}?message=${encodeURIComponent(siweMessage)}&method=personal_sign`;
-        window.location.href = deepLink;
+        // Direct MetaMask app protocol for mobile
+        window.location.href = 'metamask://wc?uri=' + encodeURIComponent('chronos-vault-auth');
         
         toast({
           title: "Opening MetaMask",
@@ -115,9 +114,8 @@ export default function WalletPage() {
         const message = 'Welcome to Chronos Vault!\n\nPlease sign this message to authenticate your wallet.\n\nTimestamp: ' + new Date().toISOString();
         const encodedMessage = btoa(message);
         
-        // Phantom mobile deep link with signature request
-        const deepLink = `phantom://v1/signMessage?message=${encodedMessage}&redirect_link=${encodeURIComponent(window.location.href)}`;
-        window.location.href = deepLink;
+        // Direct Phantom app protocol for mobile
+        window.location.href = 'phantom://v1/connect?cluster=devnet';
         
         toast({
           title: "Opening Phantom",
@@ -155,8 +153,8 @@ export default function WalletPage() {
         })
       });
       
-      const deepLink = `tonkeeper://ton-connect?${tonConnectParams.toString()}`;
-      window.location.href = deepLink;
+      // Direct TON Keeper app protocol for mobile
+      window.location.href = 'tonkeeper://v1/connect';
       
       toast({
         title: "Opening TON Keeper",
