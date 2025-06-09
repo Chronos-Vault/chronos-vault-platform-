@@ -5,11 +5,12 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ErrorBoundary } from '@/components/error-boundary/ErrorBoundary';
 import { TransactionErrorProvider } from '@/contexts/transaction-error-context';
 import { CVTTokenProvider } from '@/contexts/cvt-token-context';
-import { AuthProvider } from '@/contexts/auth-context';
+import { AuthProvider, useAuthContext } from '@/context/AuthContext';
 import { MultiChainProvider } from '@/contexts/multi-chain-context';
 import { NavBar } from '@/components/navigation/NavBar';
 import Footer from '@/components/layout/footer';
 import DocumentationRouter from '@/components/documentation/DocumentationRouter';
+import { WalletAuthModal } from '@/components/auth/WalletAuthModal';
 
 // Main Pages
 import HomePage from '@/pages/home';
