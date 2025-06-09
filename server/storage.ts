@@ -1,5 +1,6 @@
 import { 
   users, type User, type InsertUser,
+  walletAuth, walletSessions,
   vaults, type Vault, type InsertVault,
   beneficiaries, type Beneficiary, type InsertBeneficiary,
   attachments, type Attachment, type InsertAttachment,
@@ -11,7 +12,8 @@ import {
   devices, type Device, type InsertDevice,
   deviceAuthLogs, type DeviceAuthLog, type InsertDeviceAuthLog,
   deviceVerifications, type DeviceVerification, type InsertDeviceVerification,
-  recoveryKeys, type RecoveryKey, type InsertRecoveryKey
+  recoveryKeys, type RecoveryKey, type InsertRecoveryKey,
+  insertWalletAuthSchema, insertWalletSessionSchema
 } from "@shared/schema";
 import { db } from "./db";
 import { eq, and, desc, isNull } from "drizzle-orm";
@@ -23,6 +25,14 @@ export interface IStorage {
   getUserByWalletAddress(walletAddress: string): Promise<User | undefined>;
   createUser(user: InsertUser): Promise<User>;
   updateUser(id: number, user: Partial<User>): Promise<User | undefined>;
+  
+  // Wallet authentication methods
+  createWalletAuth(auth: any): Promise<any>;
+  getWalletAuthByAddress(walletAddress: string, blockchain: string): Promise<any>;
+  updateWalletAuth(id: number, updates: any): Promise<any>;
+  createWalletSession(session: any): Promise<any>;
+  getActiveWalletSession(sessionToken: string): Promise<any>;
+  invalidateWalletSession(sessionToken: string): Promise<boolean>;
   
   // Vault methods
   getVault(id: number): Promise<Vault | undefined>;

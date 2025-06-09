@@ -40,6 +40,7 @@ import { initializeWebSocketManager, getWebSocketManager } from './websocket/web
 import { resetOnboarding } from './api/emergency-reset';
 import { registerCrossChainOperationsRoutes } from './api/cross-chain-operations-routes';
 import apiRoutes from './routes/index';
+import authRoutes from './auth-routes';
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // Create HTTP server instance
@@ -303,6 +304,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Add wallet authentication routes
+  app.use('/api', authRoutes);
+  
   app.use('/api', apiRouter);
   
   // Add explicit API route handlers to ensure they bypass frontend routing
