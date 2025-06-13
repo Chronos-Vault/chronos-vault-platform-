@@ -33,139 +33,197 @@ declare global {
   }
 }
 
-// MetaMask/Ethereum integration - supports mobile and browser
+// MetaMask/Ethereum integration - real wallet connection
 const connectMetaMask = async () => {
-  // Check if browser extension is available
+  // Check if MetaMask is available in browser
   if (typeof window.ethereum !== 'undefined' && window.ethereum.isMetaMask) {
     try {
+      // Request account access
       const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
-      const message = `Welcome to Chronos Vault!\n\nPlease sign this message to authenticate your wallet.\n\nAddress: ${accounts[0]}\nTimestamp: ${new Date().toISOString()}`;
       
+      if (!accounts || accounts.length === 0) {
+        throw new Error('No accounts found in MetaMask');
+      }
+      
+      const address = accounts[0];
+      const message = `Authenticate with Chronos Vault\n\nWallet: ${address}\nTimestamp: ${Date.now()}\nNonce: ${Math.random()}`;
+      
+      // Request signature from MetaMask
       const signature = await window.ethereum.request({
         method: 'personal_sign',
-        params: [message, accounts[0]]
+        params: [message, address]
       });
       
-      return { address: accounts[0], signature, message };
+      return { address, signature, message };
     } catch (error: any) {
       if (error.code === 4001) {
-        throw new Error('MetaMask connection was rejected by user');
+        throw new Error('User rejected the connection request');
       }
-      throw new Error('MetaMask connection failed: ' + (error.message || error));
+      throw new Error(`MetaMask error: ${error.message}`);
     }
-  } 
+  }
   
-  // Mobile wallet connection via WalletConnect or deep links
+  // If no browser extension, check for mobile
   const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
   
   if (isMobile) {
-    // Create deep link for MetaMask mobile app
-    const dappUrl = encodeURIComponent(window.location.href);
-    const metamaskDeepLink = `https://metamask.app.link/dapp/${window.location.host}`;
-    
-    // Open MetaMask mobile app
-    window.location.href = metamaskDeepLink;
-    
-    // Wait for user to complete authentication in mobile app
-    await new Promise(resolve => setTimeout(resolve, 3000));
-    
-    // Generate demo authentication for mobile connection
-    const demoAddress = '0x742d35Cc6135C38565C5435849fb1B8E3a3b';
-    const message = `Welcome to Chronos Vault!\n\nAddress: ${demoAddress}\nTimestamp: ${new Date().toISOString()}`;
-    const signature = `0x${Date.now().toString(16)}...mobile_signature`;
-    
-    return { address: demoAddress, signature, message };
+    // Try WalletConnect for mobile
+    try {
+      // Import WalletConnect dynamically
+      const WalletConnect = (await import('@walletconnect/ethereum-provider')).default;
+      
+      const provider = await WalletConnect.init({
+        projectId: 'chronos-vault-project', // You need a real WalletConnect project ID
+        chains: [1, 11155111], // Mainnet and Sepolia
+        showQrModal: true
+      });
+      
+      await provider.enable();
+      const accounts = provider.accounts;
+      
+      if (!accounts || accounts.length === 0) {
+        throw new Error('No accounts connected');
+      }
+      
+      const address = accounts[0];
+      const message = `Authenticate with Chronos Vault\n\nWallet: ${address}\nTimestamp: ${Date.now()}`;
+      
+      // Request signature via WalletConnect
+      const signature = await provider.request({
+        method: 'personal_sign',
+        params: [message, address]
+      });
+      
+      return { address, signature, message };
+    } catch (wcError) {
+      // Fallback to MetaMask deep link
+      const deepLink = `https://metamask.app.link/dapp/${window.location.host}`;
+      window.open(deepLink, '_blank');
+      throw new Error('Please complete authentication in MetaMask mobile app and try again');
+    }
   }
   
-  // Desktop fallback
+  // No wallet available
   window.open('https://metamask.io/download/', '_blank');
-  throw new Error('Please install MetaMask browser extension or use MetaMask mobile app');
+  throw new Error('MetaMask not detected. Please install MetaMask and refresh the page');
 };
 
-// Phantom/Solana integration - supports mobile and browser
+// Phantom/Solana integration - real wallet connection
 const connectPhantom = async () => {
-  // Check if browser extension is available
+  // Check if Phantom is available in browser
   if (window.solana && window.solana.isPhantom) {
     try {
+      // Connect to Phantom wallet
       const response = await window.solana.connect();
-      const message = `Welcome to Chronos Vault!\n\nSign to authenticate your Solana wallet.\n\nAddress: ${response.publicKey.toString()}\nTimestamp: ${new Date().toISOString()}`;
       
+      if (!response.publicKey) {
+        throw new Error('No public key received from Phantom');
+      }
+      
+      const address = response.publicKey.toString();
+      const message = `Authenticate with Chronos Vault\n\nWallet: ${address}\nTimestamp: ${Date.now()}\nNonce: ${Math.random()}`;
+      
+      // Request signature from Phantom
       const encodedMessage = new TextEncoder().encode(message);
-      const signature = await window.solana.signMessage(encodedMessage);
+      const signatureResponse = await window.solana.signMessage(encodedMessage, 'utf8');
       
       return { 
-        address: response.publicKey.toString(), 
-        signature: Array.from(signature.signature), 
+        address, 
+        signature: Array.from(signatureResponse.signature), 
         message 
       };
     } catch (error: any) {
-      if (error.code === 4001) {
-        throw new Error('Phantom connection was rejected by user');
+      if (error.code === 4001 || error.message?.includes('User rejected')) {
+        throw new Error('User rejected the connection request');
       }
-      throw new Error('Phantom connection failed: ' + (error.message || error));
+      throw new Error(`Phantom error: ${error.message}`);
     }
   }
   
-  // Mobile wallet connection
+  // Check for mobile and try Solana Mobile Wallet Adapter
   const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
   
   if (isMobile) {
-    // Create deep link for Phantom mobile app
-    const phantomDeepLink = `https://phantom.app/ul/browse/${encodeURIComponent(window.location.href)}?ref=chronosvault`;
-    
-    // Open Phantom mobile app
-    window.location.href = phantomDeepLink;
-    
-    // Wait for user to complete authentication in mobile app
-    await new Promise(resolve => setTimeout(resolve, 3000));
-    
-    // Generate demo authentication for mobile connection
-    const demoAddress = 'BfYXwvd4jMYoFnphtf9vkAe8ZiU7roYZSEFGsi2oXhjz';
-    const message = `Welcome to Chronos Vault!\n\nAddress: ${demoAddress}\nTimestamp: ${new Date().toISOString()}`;
-    const signature = Array.from(new Uint8Array(64).map(() => Math.floor(Math.random() * 256)));
-    
-    return { address: demoAddress, signature, message };
+    try {
+      // Try Solana mobile connection
+      
+      // Fallback to universal link
+      const universalLink = `solana:${encodeURIComponent(window.location.href)}`;
+      window.open(universalLink, '_blank');
+      
+      throw new Error('Please complete authentication in Phantom mobile app and return to this page');
+    } catch (mobileError) {
+      // Open Phantom app store page
+      const phantomAppLink = 'https://phantom.app/download';
+      window.open(phantomAppLink, '_blank');
+      throw new Error('Phantom mobile app not found. Please install Phantom and try again');
+    }
   }
   
-  // Desktop fallback
+  // No wallet available
   window.open('https://phantom.app/', '_blank');
-  throw new Error('Please install Phantom browser extension or use Phantom mobile app');
+  throw new Error('Phantom not detected. Please install Phantom and refresh the page');
 };
 
-// TON Keeper integration - opens real TON Keeper wallet
+// TON Keeper integration - real wallet connection
 const connectTonKeeper = async () => {
-  // Detect if mobile device
-  const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-  
-  if (isMobile) {
-    // Mobile TON Keeper deep link
-    const tonkeeperDeepLink = `tonkeeper://v1/connect?id=chronos-vault&name=${encodeURIComponent('Chronos Vault')}&url=${encodeURIComponent(window.location.origin)}`;
+  try {
+    // Import TON Connect for proper wallet integration
+    const { TonConnect } = await import('@tonconnect/sdk');
     
-    // Open TON Keeper mobile app
-    window.location.href = tonkeeperDeepLink;
+    const tonConnect = new TonConnect({
+      manifestUrl: `${window.location.origin}/tonconnect-manifest.json`
+    });
     
-    // Wait for user to complete authentication
-    await new Promise(resolve => setTimeout(resolve, 4000));
+    // Get available wallets
+    const wallets = await tonConnect.getWallets();
+    const tonkeeperWallet = wallets.find(wallet => wallet.name.includes('Tonkeeper'));
     
-    // Generate authenticated session
-    const authenticatedAddress = 'EQD4FPq-PRDieyQKkizFTRtSDyucUIqrj0v_zXJmqaDp6_0t';
-    const message = `Welcome to Chronos Vault!\n\nAddress: ${authenticatedAddress}\nTimestamp: ${new Date().toISOString()}`;
-    const signature = `ton_mobile_auth_${Date.now()}`;
+    if (!tonkeeperWallet) {
+      throw new Error('TON Keeper not found in available wallets');
+    }
     
-    return { address: authenticatedAddress, signature, message };
-  } else {
-    // Desktop: Open TON Keeper web version
-    const tonkeeperWebUrl = 'https://tonkeeper.com/';
-    window.open(tonkeeperWebUrl, '_blank');
+    // Connect to TON Keeper
+    await tonConnect.connect(tonkeeperWallet);
     
-    // Wait for user interaction
-    await new Promise(resolve => setTimeout(resolve, 3000));
+    // Get connected wallet info
+    const wallet = tonConnect.wallet;
+    if (!wallet) {
+      throw new Error('Failed to connect to TON Keeper');
+    }
     
-    const webAddress = 'EQD4FPq-PRDieyQKkizFTRtSDyucUIqrj0v_zXJmqaDp6_0t';
-    const message = `Welcome to Chronos Vault!\n\nAddress: ${webAddress}\nTimestamp: ${new Date().toISOString()}`;
-    const signature = `ton_web_auth_${Date.now()}`;
+    const address = wallet.account.address;
+    const message = `Authenticate with Chronos Vault\n\nWallet: ${address}\nTimestamp: ${Date.now()}\nNonce: ${Math.random()}`;
     
-    return { address: webAddress, signature, message };
+    // Request signature from TON Keeper
+    const signature = await tonConnect.sendTransaction({
+      validUntil: Math.floor(Date.now() / 1000) + 300, // 5 minutes
+      messages: [{
+        address: address,
+        amount: '1', // 1 nanoTON for signature verification
+        payload: message
+      }]
+    });
+    
+    return { 
+      address, 
+      signature: signature.boc, 
+      message 
+    };
+  } catch (error: any) {
+    // Fallback for mobile devices
+    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+    
+    if (isMobile) {
+      // Use TON Keeper universal link
+      const universalLink = `https://app.tonkeeper.com/transfer/${encodeURIComponent(window.location.origin)}`;
+      window.open(universalLink, '_blank');
+      throw new Error('Please complete authentication in TON Keeper mobile app and return to this page');
+    }
+    
+    // Desktop fallback
+    window.open('https://tonkeeper.com/', '_blank');
+    throw new Error('TON Keeper not detected. Please install TON Keeper and refresh the page');
   }
 };
 

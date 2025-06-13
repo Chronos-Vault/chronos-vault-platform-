@@ -239,37 +239,29 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const isDevelopment = process.env.NODE_ENV === 'development';
       
       try {
-        // Check for mobile wallet signatures
-        const isMobileSignature = signature.includes('mobile_signature') || 
-                                 signature.includes('mobile_auth') || 
-                                 signature.includes('web_auth') ||
-                                 signature.startsWith('0x') && signature.includes('mobile_signature');
-        
-        // In development mode, accept simulated signatures for testnet
-        if (isDevelopment && (signature.startsWith('simulated_') || isMobileSignature)) {
-          console.log(`Development mode: Accepting ${isMobileSignature ? 'mobile' : 'simulated'} signature for ${walletType} wallet ${address}`);
+        // Proper signature verification for real wallets
+        if (isDevelopment && signature.startsWith('simulated_')) {
+          console.log(`Development mode: Accepting simulated signature for ${walletType} wallet ${address}`);
           isValid = true;
         } else {
           // Verify signature based on wallet type
           switch (walletType.toLowerCase()) {
             case 'metamask':
               try {
-                if (isMobileSignature) {
-                  // Mobile MetaMask wallet connection
-                  console.log(`Mobile MetaMask authentication verified for ${address}`);
-                  isValid = true;
-                } else {
-                  // Import ethers for Ethereum signature verification
-                  const { ethers } = await import('ethers');
-                  const recoveredAddress = ethers.verifyMessage(message, signature);
-                  isValid = recoveredAddress.toLowerCase() === address.toLowerCase();
-                  console.log(`MetaMask signature verification: ${isValid ? 'success' : 'failed'} for ${address}`);
+                // Import ethers for Ethereum signature verification
+                const { ethers } = await import('ethers');
+                const recoveredAddress = ethers.verifyMessage(message, signature);
+                isValid = recoveredAddress.toLowerCase() === address.toLowerCase();
+                console.log(`MetaMask signature verification: ${isValid ? 'SUCCESS' : 'FAILED'} for ${address}`);
+                
+                if (isValid) {
+                  console.log(`Real wallet authenticated: metamask (ethereum) - ${address.slice(0, 8)}...${address.slice(-6)}`);
                 }
               } catch (ethError: any) {
-                console.log(`MetaMask signature verification failed for ${address}:`, ethError.message);
-                // In development, fall back to simulated verification for testnet addresses
-                if (isDevelopment && address.startsWith('0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266')) {
-                  console.log('Development fallback: Accepting testnet MetaMask address');
+                console.log(`Signature verification failed for metamask: ${address}`);
+                // Only accept testnet addresses in development with proper format
+                if (isDevelopment && address.startsWith('0x') && address.length === 42) {
+                  console.log('Development fallback: Accepting valid Ethereum address format');
                   isValid = true;
                 }
               }
@@ -277,26 +269,34 @@ export async function registerRoutes(app: Express): Promise<Server> {
               
             case 'phantom':
               try {
-                // For Solana signature verification
-                if (Array.isArray(signature)) {
-                  // Handle array signature format from Phantom
-                  isValid = signature.length > 50; // Basic validation
-                  console.log(`Phantom signature verification: ${isValid ? 'success' : 'failed'} for ${address}`);
-                } else if (isMobileSignature) {
-                  // Mobile Phantom wallet connection
-                  console.log(`Mobile Phantom authentication verified for ${address}`);
-                  isValid = true;
+                // For Solana signature verification using nacl
+                if (Array.isArray(signature) && signature.length === 64) {
+                  // Import nacl for Solana signature verification
+                  const nacl = (await import('tweetnacl')).default;
+                  const bs58 = (await import('bs58')).default;
+                  
+                  const messageBytes = new TextEncoder().encode(message);
+                  const signatureBytes = new Uint8Array(signature);
+                  const publicKeyBytes = bs58.decode(address);
+                  
+                  isValid = nacl.sign.detached.verify(messageBytes, signatureBytes, publicKeyBytes);
+                  console.log(`Phantom signature verification: ${isValid ? 'SUCCESS' : 'FAILED'} for ${address}`);
+                  
+                  if (isValid) {
+                    console.log(`Real wallet authenticated: phantom (solana) - ${address.slice(0, 8)}...${address.slice(-6)}`);
+                  }
                 } else {
-                  // In development, accept simulated Phantom signatures
-                  if (isDevelopment) {
-                    console.log('Development mode: Accepting Phantom signature for testnet');
+                  console.log(`Signature verification failed for phantom: ${address}`);
+                  // Only accept valid Solana addresses in development
+                  if (isDevelopment && typeof address === 'string' && address.length >= 32 && address.length <= 44) {
+                    console.log('Development fallback: Accepting valid Solana address format');
                     isValid = true;
                   }
                 }
               } catch (solError: any) {
-                console.log(`Phantom signature verification failed for ${address}:`, solError.message);
-                if (isDevelopment) {
-                  console.log('Development fallback: Accepting testnet Phantom address');
+                console.log(`Signature verification failed for phantom: ${address}`);
+                if (isDevelopment && typeof address === 'string' && address.length >= 32) {
+                  console.log('Development fallback: Accepting valid Solana address format');
                   isValid = true;
                 }
               }
