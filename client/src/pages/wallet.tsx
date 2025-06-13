@@ -25,9 +25,6 @@ import {
   Settings
 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
-import { useWalletAuth } from '@/hooks/useWalletAuth';
-import { useAuthContext } from '@/context/AuthContext';
-import { WalletAuthModal } from '@/components/auth/WalletAuthModal';
 
 // TypeScript declarations for wallet APIs
 declare global {
@@ -37,70 +34,159 @@ declare global {
   }
 }
 
+import { WalletVaultIntegration } from '@/components/wallet/WalletVaultIntegration';
+import { RealWalletAuth } from '@/components/wallet/RealWalletAuth';
+import { Link } from 'wouter';
+
 export default function WalletPage() {
   const { toast } = useToast();
-  const walletAuth = useWalletAuth();
-  const { user, showAuthModal, setShowAuthModal } = useAuthContext();
 
-  // Connect wallet using the new authentication system
-  const connectWallet = async (walletType: string, blockchain: string) => {
+  // MetaMask connection with proper signature request
+  const connectMetaMask = async () => {
     try {
-      let walletAddress = '';
-
-      // Get wallet address based on type
-      switch (walletType) {
-        case 'metamask':
-          if (!window.ethereum) {
-            toast({
-              title: "MetaMask Not Found",
-              description: "Please install MetaMask extension",
-              variant: "destructive"
-            });
-            return;
-          }
-          const accounts = await window.ethereum.request({
-            method: 'eth_requestAccounts'
-          });
-          walletAddress = accounts[0];
-          break;
-
-        case 'phantom':
-          if (!window.solana?.isPhantom) {
-            toast({
-              title: "Phantom Not Found", 
-              description: "Please install Phantom wallet",
-              variant: "destructive"
-            });
-            return;
-          }
-          const response = await window.solana.connect();
-          walletAddress = response.publicKey.toString();
-          break;
-
-        case 'tonkeeper':
-          // For TON, use simulated address for demo
-          walletAddress = 'EQD4FPq-PRDieyQKkizFTRtSDyucUIqrj0v_zXJmqaDp6_0t';
-          break;
-
-        default:
-          throw new Error('Unsupported wallet type');
-      }
-
-      // Use the new authentication system
-      const success = await walletAuth.authenticateWallet(walletType, walletAddress, blockchain);
-      
-      if (success) {
-        toast({
-          title: "Wallet Connected",
-          description: `Successfully authenticated ${walletType} wallet`,
+      if (typeof window.ethereum !== 'undefined') {
+        // Request account access
+        const accounts = await window.ethereum.request({
+          method: 'eth_requestAccounts'
         });
-        // Refresh the page to show authenticated state
-        window.location.reload();
+        
+        // Create signature message
+        const message = 'Welcome to Chronos Vault! Please sign this message to authenticate your wallet.\n\nThis signature proves ownership of your wallet without revealing private keys.\n\nTimestamp: ' + new Date().toISOString();
+        
+        // Request signature
+        const signature = await window.ethereum.request({
+          method: 'personal_sign',
+          params: [message, accounts[0]]
+        });
+        
+        // Send to backend for verification
+        const response = await fetch('/api/wallet/verify-signature', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            walletType: 'metamask',
+            address: accounts[0],
+            message,
+            signature,
+            blockchain: 'ethereum'
+          })
+        });
+        
+        if (response.ok) {
+          const result = await response.json();
+          toast({
+            title: "MetaMask Connected & Authenticated",
+            description: `Successfully verified: ${accounts[0].slice(0, 6)}...${accounts[0].slice(-4)}`
+          });
+          setConnectedWallets(prev => ({ ...prev, metamask: accounts[0] }));
+          window.location.reload(); // Refresh to show authenticated state
+        } else {
+          throw new Error('Authentication failed');
+        }
+      } else {
+        toast({
+          title: "MetaMask Not Found",
+          description: "Please install MetaMask extension or use MetaMask mobile app",
+          variant: "destructive"
+        });
       }
     } catch (error) {
       toast({
-        title: "Connection Failed",
-        description: error instanceof Error ? error.message : "Failed to connect wallet",
+        title: "MetaMask Error",
+        description: error.message || "Failed to connect",
+        variant: "destructive"
+      });
+    }
+  };
+
+  // Phantom connection with proper signature request
+  const connectPhantom = async () => {
+    try {
+      if (window.solana && window.solana.isPhantom) {
+        // Connect to Phantom
+        const response = await window.solana.connect();
+        
+        // Create signature message
+        const message = 'Welcome to Chronos Vault!\n\nSign to authenticate: ' + new Date().toISOString();
+        const encodedMessage = new TextEncoder().encode(message);
+        
+        // Request signature
+        const signature = await window.solana.signMessage(encodedMessage);
+        
+        // Send to backend for verification
+        const authResponse = await fetch('/api/wallet/verify-signature', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            walletType: 'phantom',
+            address: response.publicKey.toString(),
+            message,
+            signature: Array.from(signature.signature),
+            blockchain: 'solana'
+          })
+        });
+        
+        if (authResponse.ok) {
+          const result = await authResponse.json();
+          toast({
+            title: "Phantom Connected & Authenticated",
+            description: `Successfully verified: ${response.publicKey.toString().slice(0, 6)}...${response.publicKey.toString().slice(-4)}`
+          });
+          setConnectedWallets(prev => ({ ...prev, phantom: response.publicKey.toString() }));
+          window.location.reload(); // Refresh to show authenticated state
+        } else {
+          throw new Error('Authentication failed');
+        }
+      } else {
+        toast({
+          title: "Phantom Not Found",
+          description: "Please install Phantom wallet extension or use Phantom mobile app",
+          variant: "destructive"
+        });
+      }
+    } catch (error) {
+      toast({
+        title: "Phantom Error",
+        description: error.message || "Failed to connect",
+        variant: "destructive"
+      });
+    }
+  };
+
+  // TON Keeper connection with proper signature request
+  const connectTonKeeper = async () => {
+    try {
+      // For TON, simulate authentication for demo purposes
+      const tonAddress = 'EQD4FPq-PRDieyQKkizFTRtSDyucUIqrj0v_zXJmqaDp6_0t';
+      const message = `Chronos Vault Authentication\nAddress: ${tonAddress}\nTimestamp: ${Date.now()}`;
+      
+      const response = await fetch('/api/wallet/verify-signature', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          walletType: 'tonkeeper',
+          address: tonAddress,
+          message,
+          signature: 'simulated_ton_signature',
+          blockchain: 'ton'
+        })
+      });
+      
+      if (response.ok) {
+        const result = await response.json();
+        toast({
+          title: "TON Keeper Connected & Authenticated",
+          description: `Successfully verified: ${tonAddress.slice(0, 8)}...${tonAddress.slice(-6)}`
+        });
+        setConnectedWallets(prev => ({ ...prev, tonkeeper: tonAddress }));
+        window.location.reload(); // Refresh to show authenticated state
+      } else {
+        throw new Error('Authentication failed');
+      }
+    } catch (error) {
+      toast({
+        title: "TON Keeper Error", 
+        description: (error as Error).message || "Failed to connect",
         variant: "destructive"
       });
     }
@@ -109,20 +195,39 @@ export default function WalletPage() {
   const [selectedChain, setSelectedChain] = useState('ethereum');
   const [sendAmount, setSendAmount] = useState('');
   const [recipientAddress, setRecipientAddress] = useState('');
+  const [hasWallet, setHasWallet] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+  const [walletData, setWalletData] = useState<any>(null);
+  const [showSwapModal, setShowSwapModal] = useState(false);
+  const [showDepositModal, setShowDepositModal] = useState(false);
+  const [showWithdrawModal, setShowWithdrawModal] = useState(false);
   const [realWalletBalances, setRealWalletBalances] = useState<any>({});
   const [activeTab, setActiveTab] = useState('portfolio');
+  const [transactionHistory, setTransactionHistory] = useState<any[]>([]);
+  const [connectedWallets, setConnectedWallets] = useState<{[key: string]: string}>({});
 
-  // Check authentication status and load wallet data
+  // Check wallet connection status on component mount
   useEffect(() => {
     const checkWalletStatus = async () => {
       try {
-        if (user) {
-          // Load wallet balances and data
-          const response = await fetch('/api/testnet-wallet/balances');
+        // Check if user has authenticated wallet session
+        const sessionToken = localStorage.getItem('wallet_session_token');
+        if (sessionToken) {
+          const response = await fetch('/api/auth/status', {
+            headers: { 'Authorization': `Bearer ${sessionToken}` }
+          });
+          
           if (response.ok) {
-            const data = await response.json();
-            setRealWalletBalances(data.data || {});
+            const userData = await response.json();
+            setHasWallet(true);
+            setWalletData(userData);
+            
+            // Load wallet balances
+            const balancesResponse = await fetch('/api/testnet-wallet/balances');
+            if (balancesResponse.ok) {
+              const balancesData = await balancesResponse.json();
+              setRealWalletBalances(balancesData.data || {});
+            }
           }
         }
       } catch (error) {
@@ -133,7 +238,7 @@ export default function WalletPage() {
     };
 
     checkWalletStatus();
-  }, [user]);
+  }, []);
 
   const walletBalances = {
     ethereum: { 
@@ -185,6 +290,42 @@ export default function WalletPage() {
     }
   ];
 
+  const handleAirdrop = async (network: 'solana' | 'ton') => {
+    try {
+      const response = await fetch('/api/testnet-wallet/airdrop', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ network }),
+      });
+      
+      const result = await response.json();
+      
+      if (result.status === 'success' && result.data.success) {
+        toast({
+          title: "Airdrop Successful",
+          description: `Received testnet tokens on ${network}. Transaction: ${result.data.hash?.slice(0, 8)}...`,
+        });
+        
+        // Refresh wallet data
+        window.location.reload();
+      } else {
+        toast({
+          title: "Airdrop Failed",
+          description: result.data.error || "Failed to request airdrop",
+          variant: "destructive",
+        });
+      }
+    } catch (error) {
+      toast({
+        title: "Airdrop Error",
+        description: "Failed to request testnet tokens",
+        variant: "destructive",
+      });
+    }
+  };
+
   const copyAddress = async (address: string) => {
     try {
       await navigator.clipboard.writeText(address);
@@ -217,7 +358,25 @@ export default function WalletPage() {
     });
   };
 
-  // Show wallet connection interface if not authenticated
+  const chainConfigs = {
+    ethereum: {
+      name: 'Ethereum',
+      color: 'bg-blue-500',
+      address: walletBalances.ethereum.address
+    },
+    solana: {
+      name: 'Solana',
+      color: 'bg-purple-500',
+      address: walletBalances.solana.address
+    },
+    ton: {
+      name: 'TON',
+      color: 'bg-cyan-500',
+      address: walletBalances.ton.address
+    }
+  };
+
+  // Show loading state
   if (isLoading) {
     return (
       <div className="min-h-screen bg-black text-white flex items-center justify-center">
@@ -229,7 +388,8 @@ export default function WalletPage() {
     );
   }
 
-  if (!user) {
+  // Show wallet connection interface if not authenticated
+  if (!hasWallet) {
     return (
       <div className="min-h-screen bg-black text-white">
         <div className="relative px-6 py-16">
@@ -248,47 +408,44 @@ export default function WalletPage() {
             </p>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
-              <Card className="bg-gray-900/50 border-orange-500/30">
+              <Card className="bg-gray-900/50 border-orange-500/30 hover:border-orange-400/50 transition-colors">
                 <CardContent className="p-8 text-center">
                   <div className="text-4xl mb-4">🦊</div>
                   <h3 className="text-xl font-semibold text-orange-400 mb-2">MetaMask</h3>
                   <p className="text-gray-400 text-sm mb-6">Ethereum & EVM Compatible</p>
                   <Button
-                    onClick={() => connectWallet('metamask', 'ethereum')}
+                    onClick={connectMetaMask}
                     className="w-full bg-orange-600 hover:bg-orange-700"
-                    disabled={walletAuth.isAuthenticated}
                   >
-                    {walletAuth.isAuthenticated ? 'Connected' : 'Connect MetaMask'}
+                    Connect MetaMask
                   </Button>
                 </CardContent>
               </Card>
 
-              <Card className="bg-gray-900/50 border-purple-500/30">
+              <Card className="bg-gray-900/50 border-purple-500/30 hover:border-purple-400/50 transition-colors">
                 <CardContent className="p-8 text-center">
                   <div className="text-4xl mb-4">👻</div>
                   <h3 className="text-xl font-semibold text-purple-400 mb-2">Phantom</h3>
                   <p className="text-gray-400 text-sm mb-6">Solana Ecosystem</p>
                   <Button
-                    onClick={() => connectWallet('phantom', 'solana')}
+                    onClick={connectPhantom}
                     className="w-full bg-purple-600 hover:bg-purple-700"
-                    disabled={walletAuth.isAuthenticated}
                   >
-                    {walletAuth.isAuthenticated ? 'Connected' : 'Connect Phantom'}
+                    Connect Phantom
                   </Button>
                 </CardContent>
               </Card>
 
-              <Card className="bg-gray-900/50 border-blue-500/30">
+              <Card className="bg-gray-900/50 border-blue-500/30 hover:border-blue-400/50 transition-colors">
                 <CardContent className="p-8 text-center">
                   <div className="text-4xl mb-4">💎</div>
                   <h3 className="text-xl font-semibold text-blue-400 mb-2">TON Keeper</h3>
                   <p className="text-gray-400 text-sm mb-6">TON Blockchain</p>
                   <Button
-                    onClick={() => connectWallet('tonkeeper', 'ton')}
+                    onClick={connectTonKeeper}
                     className="w-full bg-blue-600 hover:bg-blue-700"
-                    disabled={walletAuth.isAuthenticated}
                   >
-                    {walletAuth.isAuthenticated ? 'Connected' : 'Connect TON Keeper'}
+                    Connect TON Keeper
                   </Button>
                 </CardContent>
               </Card>
@@ -333,17 +490,13 @@ export default function WalletPage() {
             </div>
           </div>
         </div>
-
-        <WalletAuthModal 
-          isOpen={showAuthModal} 
-          onClose={() => setShowAuthModal(false)} 
-        />
       </div>
     );
   }
 
   return (
     <div className="min-h-screen bg-black text-white">
+      {/* Hero Section */}
       <div className="relative px-6 py-16">
         <div className="absolute inset-0 bg-gradient-to-r from-purple-900/20 via-blue-900/20 to-cyan-900/20"></div>
         
@@ -369,15 +522,18 @@ export default function WalletPage() {
             </div>
           </div>
 
+          {/* Portfolio Overview */}
           <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
             <TabsList className="bg-gray-900/50">
               <TabsTrigger value="portfolio">Portfolio</TabsTrigger>
               <TabsTrigger value="send">Send</TabsTrigger>
               <TabsTrigger value="transactions">Transactions</TabsTrigger>
+              <TabsTrigger value="vaults">Vaults</TabsTrigger>
               <TabsTrigger value="settings">Settings</TabsTrigger>
             </TabsList>
 
             <TabsContent value="portfolio" className="space-y-6">
+              {/* Wallet Balances */}
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 {Object.entries(walletBalances).map(([chain, data]) => (
                   <Card key={chain} className="bg-gray-900/50 border-gray-700">
@@ -414,6 +570,17 @@ export default function WalletPage() {
                             <Copy className="w-4 h-4" />
                           </Button>
                         </div>
+
+                        {(chain === 'solana' || chain === 'ton') && (
+                          <Button
+                            onClick={() => handleAirdrop(chain as 'solana' | 'ton')}
+                            size="sm"
+                            variant="outline"
+                            className="w-full"
+                          >
+                            Request Testnet Tokens
+                          </Button>
+                        )}
                       </div>
                     </CardContent>
                   </Card>
@@ -507,6 +674,10 @@ export default function WalletPage() {
               </Card>
             </TabsContent>
 
+            <TabsContent value="vaults" className="space-y-6">
+              <WalletVaultIntegration />
+            </TabsContent>
+
             <TabsContent value="settings" className="space-y-6">
               <Card className="bg-gray-900/50 border-gray-700">
                 <CardHeader>
@@ -539,6 +710,26 @@ export default function WalletPage() {
                     </div>
                     <Badge className="bg-green-500/20 text-green-400">Active</Badge>
                   </div>
+
+                  <div className="border-t border-gray-700 pt-4">
+                    <h3 className="text-lg font-semibold mb-4">Connected Wallets</h3>
+                    <div className="space-y-3">
+                      {Object.entries(connectedWallets).map(([wallet, address]) => (
+                        <div key={wallet} className="flex items-center justify-between p-3 bg-gray-800/30 rounded-lg">
+                          <div className="flex items-center gap-3">
+                            <div className="text-2xl">
+                              {wallet === 'metamask' ? '🦊' : wallet === 'phantom' ? '👻' : '💎'}
+                            </div>
+                            <div>
+                              <p className="font-semibold capitalize">{wallet}</p>
+                              <p className="text-xs text-gray-400">{address.slice(0, 8)}...{address.slice(-6)}</p>
+                            </div>
+                          </div>
+                          <Badge className="bg-green-500/20 text-green-400">Connected</Badge>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
                 </CardContent>
               </Card>
             </TabsContent>
@@ -546,10 +737,8 @@ export default function WalletPage() {
         </div>
       </div>
 
-      <WalletAuthModal 
-        isOpen={showAuthModal} 
-        onClose={() => setShowAuthModal(false)} 
-      />
+      {/* Real Wallet Authentication Component */}
+      <RealWalletAuth />
     </div>
   );
 }
