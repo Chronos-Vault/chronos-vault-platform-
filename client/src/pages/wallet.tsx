@@ -29,8 +29,20 @@ import { useToast } from '@/hooks/use-toast';
 // TypeScript declarations for wallet APIs
 declare global {
   interface Window {
-    ethereum?: any;
-    solana?: any;
+    ethereum?: {
+      isMetaMask?: boolean;
+      request: (request: { method: string; params?: any[] }) => Promise<any>;
+      on: (event: string, callback: (...args: any[]) => void) => void;
+      removeListener: (event: string, callback: (...args: any[]) => void) => void;
+      selectedAddress?: string;
+      chainId?: string;
+    };
+    solana?: {
+      isPhantom?: boolean;
+      connect: () => Promise<{ publicKey: { toString: () => string } }>;
+      signMessage: (message: Uint8Array) => Promise<{ signature: Uint8Array }>;
+      disconnect: () => Promise<void>;
+    };
   }
 }
 
@@ -249,12 +261,7 @@ export default function WalletPage() {
   const [transactionHistory, setTransactionHistory] = useState<any[]>([]);
   const [connectedWallets, setConnectedWallets] = useState<{[key: string]: string}>({});
 
-  // Convert connected wallets to the expected array format for WalletVaultIntegration
-  const connectedWalletsArray = Object.entries(connectedWallets).map(([type, address]) => ({
-    type,
-    address,
-    connected: true
-  }));
+
 
   // Check wallet connection status on component mount
   useEffect(() => {
@@ -804,15 +811,69 @@ export default function WalletPage() {
             </TabsContent>
 
             <TabsContent value="vaults" className="space-y-6">
-              <WalletVaultIntegration 
-                connectedWallets={connectedWalletsArray}
-                onCreateVault={(vaultData) => {
-                  toast({
-                    title: "Vault Created",
-                    description: `Successfully created vault`,
-                  });
-                }}
-              />
+              <Card className="bg-gray-900/50 border-gray-700">
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <HardDrive className="w-5 h-5" />
+                    Vault Management
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div className="space-y-4">
+                      <h3 className="text-lg font-semibold">Create New Vault</h3>
+                      <div className="space-y-3">
+                        <div>
+                          <Label>Vault Type</Label>
+                          <select className="w-full bg-gray-800 border border-gray-600 rounded-md px-3 py-2 text-white">
+                            <option value="personal">Personal Vault</option>
+                            <option value="multi-sig">Multi-Signature Vault</option>
+                            <option value="time-locked">Time-Locked Vault</option>
+                            <option value="sovereign">Sovereign Fortress</option>
+                          </select>
+                        </div>
+                        <div>
+                          <Label>Security Level</Label>
+                          <select className="w-full bg-gray-800 border border-gray-600 rounded-md px-3 py-2 text-white">
+                            <option value="standard">Standard Security</option>
+                            <option value="enhanced">Enhanced Security</option>
+                            <option value="maximum">Maximum Security</option>
+                          </select>
+                        </div>
+                        <Button className="w-full bg-purple-600 hover:bg-purple-700">
+                          <Plus className="w-4 h-4 mr-2" />
+                          Create Vault
+                        </Button>
+                      </div>
+                    </div>
+                    
+                    <div className="space-y-4">
+                      <h3 className="text-lg font-semibold">Active Vaults</h3>
+                      <div className="space-y-3">
+                        <div className="p-4 bg-gray-800/50 rounded-lg">
+                          <div className="flex items-center justify-between">
+                            <div>
+                              <p className="font-semibold">Personal Vault #1</p>
+                              <p className="text-sm text-gray-400">Standard Security • Active</p>
+                            </div>
+                            <Badge className="bg-green-500/20 text-green-400">Active</Badge>
+                          </div>
+                        </div>
+                        
+                        <div className="p-4 bg-gray-800/50 rounded-lg">
+                          <div className="flex items-center justify-between">
+                            <div>
+                              <p className="font-semibold">Multi-Sig Vault</p>
+                              <p className="text-sm text-gray-400">Enhanced Security • Locked</p>
+                            </div>
+                            <Badge className="bg-orange-500/20 text-orange-400">Locked</Badge>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
             </TabsContent>
 
             <TabsContent value="settings" className="space-y-6">
@@ -874,17 +935,7 @@ export default function WalletPage() {
         </div>
       </div>
 
-      {/* Real Wallet Authentication Component */}
-      <RealWalletAuth 
-        onAuthenticated={(authData) => {
-          setHasWallet(true);
-          setWalletData(authData);
-          toast({
-            title: "Authentication Successful",
-            description: "Wallet authenticated successfully",
-          });
-        }}
-      />
+
 
       {/* Deposit Modal */}
       {showDepositModal && (
