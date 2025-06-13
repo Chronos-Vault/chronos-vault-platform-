@@ -112,6 +112,13 @@ export default function WalletPage() {
         
         if (response.ok) {
           const result = await response.json();
+          
+          // Store authentication data
+          localStorage.setItem('wallet_session_token', result.sessionToken);
+          localStorage.setItem('wallet_address', simulatedAddress);
+          localStorage.setItem('wallet_type', 'metamask');
+          localStorage.setItem('blockchain', 'ethereum');
+          
           toast({
             title: "MetaMask Connected (Testnet Mode)",
             description: `Successfully authenticated Ethereum wallet: ${simulatedAddress.slice(0, 8)}...${simulatedAddress.slice(-6)}`
@@ -161,6 +168,13 @@ export default function WalletPage() {
         
         if (authResponse.ok) {
           const result = await authResponse.json();
+          
+          // Store authentication data
+          localStorage.setItem('wallet_session_token', result.sessionToken);
+          localStorage.setItem('wallet_address', response.publicKey.toString());
+          localStorage.setItem('wallet_type', 'phantom');
+          localStorage.setItem('blockchain', 'solana');
+          
           toast({
             title: "Phantom Connected & Authenticated",
             description: `Successfully verified: ${response.publicKey.toString().slice(0, 6)}...${response.publicKey.toString().slice(-4)}`
@@ -189,6 +203,13 @@ export default function WalletPage() {
         
         if (response.ok) {
           const result = await response.json();
+          
+          // Store authentication data
+          localStorage.setItem('wallet_session_token', result.sessionToken);
+          localStorage.setItem('wallet_address', simulatedAddress);
+          localStorage.setItem('wallet_type', 'phantom');
+          localStorage.setItem('blockchain', 'solana');
+          
           toast({
             title: "Phantom Connected (Testnet Mode)",
             description: `Successfully authenticated Solana wallet: ${simulatedAddress.slice(0, 8)}...${simulatedAddress.slice(-6)}`
@@ -229,6 +250,13 @@ export default function WalletPage() {
       
       if (response.ok) {
         const result = await response.json();
+        
+        // Store authentication data
+        localStorage.setItem('wallet_session_token', result.sessionToken);
+        localStorage.setItem('wallet_address', tonAddress);
+        localStorage.setItem('wallet_type', 'tonkeeper');
+        localStorage.setItem('blockchain', 'ton');
+        
         toast({
           title: "TON Keeper Connected & Authenticated",
           description: `Successfully verified: ${tonAddress.slice(0, 8)}...${tonAddress.slice(-6)}`
