@@ -334,7 +334,10 @@ export default function WalletPage() {
           </div>
         </div>
 
-        <WalletAuthModal />
+        <WalletAuthModal 
+          isOpen={showAuthModal} 
+          onClose={() => setShowAuthModal(false)} 
+        />
       </div>
     );
   }
@@ -543,7 +546,10 @@ export default function WalletPage() {
         </div>
       </div>
 
-      <WalletAuthModal />
+      <WalletAuthModal 
+        isOpen={showAuthModal} 
+        onClose={() => setShowAuthModal(false)} 
+      />
     </div>
   );
 }
