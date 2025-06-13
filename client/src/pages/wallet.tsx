@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { WalletConnector } from '@/components/WalletConnector';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -278,25 +279,10 @@ export default function WalletPage() {
     checkAuth();
   }, []);
 
-  // Handle wallet authentication
-  const handleWalletAuth = async (walletType: 'metamask' | 'phantom' | 'tonkeeper') => {
+  // Handle real wallet connection
+  const handleRealWalletConnect = async (connection: any) => {
     try {
       setLoading(true);
-      let authData;
-      
-      switch (walletType) {
-        case 'metamask':
-          authData = await connectMetaMask();
-          break;
-        case 'phantom':
-          authData = await connectPhantom();
-          break;
-        case 'tonkeeper':
-          authData = await connectTonKeeper();
-          break;
-        default:
-          throw new Error('Unsupported wallet type');
-      }
 
       // Send to backend for verification
       const response = await fetch('/api/wallet/verify-signature', {
@@ -489,55 +475,7 @@ export default function WalletPage() {
               Secure multi-chain wallet authentication with Trinity Protocol
             </p>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
-              <Card className="bg-gray-900/50 border-orange-500/30 hover:border-orange-400/50 transition-colors">
-                <CardContent className="p-8 text-center">
-                  <div className="text-4xl mb-4">🦊</div>
-                  <h3 className="text-xl font-semibold text-orange-400 mb-2">MetaMask</h3>
-                  <p className="text-gray-400 text-sm mb-4">Ethereum & EVM Compatible</p>
-                  <p className="text-xs text-gray-500 mb-6">Mobile app will open automatically</p>
-                  <Button
-                    onClick={() => handleWalletAuth('metamask')}
-                    className="w-full bg-orange-600 hover:bg-orange-700"
-                    disabled={loading}
-                  >
-                    {loading ? 'Opening MetaMask...' : 'Connect MetaMask'}
-                  </Button>
-                </CardContent>
-              </Card>
-
-              <Card className="bg-gray-900/50 border-purple-500/30 hover:border-purple-400/50 transition-colors">
-                <CardContent className="p-8 text-center">
-                  <div className="text-4xl mb-4">👻</div>
-                  <h3 className="text-xl font-semibold text-purple-400 mb-2">Phantom</h3>
-                  <p className="text-gray-400 text-sm mb-4">Solana Ecosystem</p>
-                  <p className="text-xs text-gray-500 mb-6">Mobile app will open automatically</p>
-                  <Button
-                    onClick={() => handleWalletAuth('phantom')}
-                    className="w-full bg-purple-600 hover:bg-purple-700"
-                    disabled={loading}
-                  >
-                    {loading ? 'Opening Phantom...' : 'Connect Phantom'}
-                  </Button>
-                </CardContent>
-              </Card>
-
-              <Card className="bg-gray-900/50 border-blue-500/30 hover:border-blue-400/50 transition-colors">
-                <CardContent className="p-8 text-center">
-                  <div className="text-4xl mb-4">💎</div>
-                  <h3 className="text-xl font-semibold text-blue-400 mb-2">TON Keeper</h3>
-                  <p className="text-gray-400 text-sm mb-4">TON Blockchain</p>
-                  <p className="text-xs text-gray-500 mb-6">Mobile app will open automatically</p>
-                  <Button
-                    onClick={() => handleWalletAuth('tonkeeper')}
-                    className="w-full bg-blue-600 hover:bg-blue-700"
-                    disabled={loading}
-                  >
-                    {loading ? 'Opening TON Keeper...' : 'Connect TON Keeper'}
-                  </Button>
-                </CardContent>
-              </Card>
-            </div>
+            <WalletConnector onConnect={handleRealWalletConnect} />
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               <Card className="bg-gray-900/50 border-green-500/30">

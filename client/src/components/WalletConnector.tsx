@@ -103,7 +103,7 @@ export function WalletConnector({ onConnect }: WalletConnectorProps) {
 
       onConnect({
         address,
-        signature: Array.from(signatureResponse.signature),
+        signature: Array.from(signatureResponse.signature) as any,
         message,
         walletType: 'phantom'
       });
