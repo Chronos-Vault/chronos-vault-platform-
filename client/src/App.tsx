@@ -39,7 +39,7 @@ import IntegrationGuidePage from '@/pages/integration-guide';
 import SmartContractSDKPage from '@/pages/smart-contract-sdk';
 import DeveloperAPIKeysPage from '@/pages/DeveloperAPIKeys';
 import WalletIntegrationDemoPage from '@/pages/WalletIntegrationDemo';
-import WalletPage from '@/pages/wallet';
+import WalletPage from '@/pages/wallet-fixed';
 import CreateWalletPage from '@/pages/create-wallet';
 import SecurityDashboard from '@/pages/security-dashboard';
 import DeFiDashboard from '@/pages/defi-dashboard';

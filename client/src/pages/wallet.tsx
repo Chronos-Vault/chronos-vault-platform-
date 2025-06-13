@@ -283,51 +283,50 @@ export default function WalletPage() {
   const handleRealWalletConnect = async (connection: any) => {
     try {
       setLoading(true);
-
-      // Send to backend for verification
+      
+      // Verify signature with backend
       const response = await fetch('/api/wallet/verify-signature', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+        },
         body: JSON.stringify({
-          address: authData.address,
-          message: authData.message,
-          signature: authData.signature,
-          walletType,
-          blockchain: walletType === 'metamask' ? 'ethereum' : walletType === 'phantom' ? 'solana' : 'ton'
-        })
+          address: connection.address,
+          message: connection.message,
+          signature: connection.signature,
+          walletType: connection.walletType,
+          blockchain: connection.walletType === 'metamask' ? 'ethereum' : 
+                     connection.walletType === 'phantom' ? 'solana' : 'ton'
+        }),
       });
-
-      if (!response.ok) {
-        throw new Error('Authentication failed');
-      }
-
+      
       const result = await response.json();
       
-      // Store authentication data
+      if (!result.verified) {
+        throw new Error(result.message || 'Signature verification failed');
+      }
+      
+      // Store wallet info and session
       localStorage.setItem('wallet_session_token', result.sessionToken);
-      localStorage.setItem('wallet_address', authData.address);
-      localStorage.setItem('wallet_type', walletType);
-      localStorage.setItem('blockchain', result.blockchain);
+      localStorage.setItem('wallet_address', connection.address);
+      localStorage.setItem('wallet_type', connection.walletType);
       
       setWalletInfo({
-        address: authData.address,
-        walletType,
+        address: connection.address,
+        walletType: connection.walletType,
         token: result.sessionToken
       });
       setIsAuthenticated(true);
       
-      const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-      const connectionType = isMobile ? 'Mobile App' : 'Browser Extension';
-      
       toast({
-        title: `${walletType.charAt(0).toUpperCase() + walletType.slice(1)} Connected`,
-        description: `Successfully authenticated via ${connectionType}: ${authData.address.slice(0, 8)}...${authData.address.slice(-6)}`
+        title: `${connection.walletType.charAt(0).toUpperCase() + connection.walletType.slice(1)} Connected`,
+        description: `Successfully authenticated: ${connection.address.slice(0, 8)}...${connection.address.slice(-6)}`
       });
       
     } catch (error: any) {
       toast({
-        title: "Connection Failed",
-        description: error?.message || 'Wallet connection failed',
+        title: "Authentication Failed",
+        description: error.message || 'Failed to verify wallet signature',
         variant: "destructive"
       });
     } finally {
