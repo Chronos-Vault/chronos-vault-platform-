@@ -23,7 +23,7 @@ import { Slider } from '@/components/ui/slider';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useToast } from '@/hooks/use-toast';
 import { useWallet } from '@/contexts/wallet-context';
-import WalletConnect from '@/components/wallet/WalletConnect';
+import { WalletConnector } from '@/components/wallet/WalletConnector';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
@@ -603,7 +603,7 @@ export default function CVTStakingPage() {
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <WalletConnect />
+            <WalletConnector />
           </CardContent>
         </Card>
       ) : (

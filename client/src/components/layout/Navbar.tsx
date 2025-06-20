@@ -1,6 +1,6 @@
 import { Link, useLocation } from 'wouter';
 import { Button } from '@/components/ui/button';
-import WalletConnect from '@/components/wallet/WalletConnect';
+import { WalletConnector } from '@/components/wallet/WalletConnector';
 import {
   NavigationMenu,
   NavigationMenuContent,
