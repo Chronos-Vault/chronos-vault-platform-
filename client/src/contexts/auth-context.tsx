@@ -1,54 +1,76 @@
-import { createContext, useContext, ReactNode, useEffect } from 'react';
-import useAuth from '@/hooks/use-auth';
-import { useDevMode } from './dev-mode-context';
+/**
+ * Authentication Context
+ * 
+ * Provides authentication state and methods throughout the application
+ */
 
-// Define the auth context type
-type AuthContextType = ReturnType<typeof useAuth> & {
-  // Add a development mode override property
+import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+
+interface AuthContextType {
   isAuthenticated: boolean;
-};
+  user: any | null;
+  login: (credentials: any) => Promise<boolean>;
+  logout: () => void;
+  loading: boolean;
+}
 
-// Create the auth context with a default undefined value
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-// Auth provider props
-interface AuthProviderProps {
-  children: ReactNode;
-}
+export function AuthProvider({ children }: { children: ReactNode }) {
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(false);
 
-// Auth provider component
-export function AuthProvider({ children }: AuthProviderProps) {
-  // Use the auth hook
-  const auth = useAuth();
-  
-  // Get development mode state
-  const { devModeEnabled } = useDevMode();
-  
-  // Override isAuthenticated when in development mode
-  const enhancedAuth: AuthContextType = {
-    ...auth,
-    // When in dev mode, always return true for isAuthenticated
-    isAuthenticated: devModeEnabled ? true : auth.isAuthenticated
-  };
-  
-  // Log development mode authentication status changes
-  useEffect(() => {
-    if (devModeEnabled) {
-      console.log('Development mode enabled: bypassing authentication requirements');
+  const login = async (credentials: any): Promise<boolean> => {
+    setLoading(true);
+    try {
+      // Simulate login process
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      setIsAuthenticated(true);
+      setUser({ id: '1', name: 'User' });
+      return true;
+    } catch (error) {
+      return false;
+    } finally {
+      setLoading(false);
     }
-  }, [devModeEnabled]);
+  };
 
-  // Provide the enhanced auth context to children
-  return <AuthContext.Provider value={enhancedAuth}>{children}</AuthContext.Provider>;
+  const logout = () => {
+    setIsAuthenticated(false);
+    setUser(null);
+  };
+
+  useEffect(() => {
+    // Check for existing auth on mount
+    const checkAuth = () => {
+      // In development mode, simulate authenticated state
+      if (process.env.NODE_ENV === 'development') {
+        setIsAuthenticated(true);
+        setUser({ id: 'dev-user', name: 'Development User' });
+      }
+    };
+    
+    checkAuth();
+  }, []);
+
+  return (
+    <AuthContext.Provider value={{
+      isAuthenticated,
+      user,
+      login,
+      logout,
+      loading
+    }}>
+      {children}
+    </AuthContext.Provider>
+  );
 }
 
-// Custom hook to consume the auth context
 export function useAuthContext() {
   const context = useContext(AuthContext);
-  
-  if (!context) {
+  if (context === undefined) {
     throw new Error('useAuthContext must be used within an AuthProvider');
   }
-  
   return context;
 }

@@ -1,110 +1,48 @@
-import { createContext, useContext, ReactNode, useState, useEffect } from 'react';
+/**
+ * Development Mode Context
+ * 
+ * Provides development mode settings and controls
+ */
 
-// Type definition for the dev mode context
+import React, { createContext, useContext, useState, ReactNode } from 'react';
+
 interface DevModeContextType {
   devModeEnabled: boolean;
-  isDevMode: boolean;  // Alias for devModeEnabled for compatibility
   toggleDevMode: () => void;
   isDevelopmentEnvironment: boolean;
   bypassWalletRequirements: boolean;
-  setBypassWalletRequirements: (value: boolean) => void;
+  setBypassWalletRequirements: (bypass: boolean) => void;
 }
 
-// Create the context with default values
-export const DevModeContext = createContext<DevModeContextType>({
-  devModeEnabled: false,
-  isDevMode: false,
-  toggleDevMode: () => {},
-  isDevelopmentEnvironment: false,
-  bypassWalletRequirements: false,
-  setBypassWalletRequirements: () => {},
-});
+const DevModeContext = createContext<DevModeContextType | undefined>(undefined);
 
-// Props for the provider component
-interface DevModeProviderProps {
-  children: ReactNode;
-}
-
-// The provider component
-export function DevModeProvider({ children }: DevModeProviderProps) {
-  // Check if we're in development mode
-  const isDevelopmentEnvironment = 
-    import.meta.env.MODE === 'development' || 
-    import.meta.env.DEV === true;
-
-  // State to track if dev mode and bypass wallet are enabled
-  const [devModeEnabled, setDevModeEnabled] = useState<boolean>(false);
-  const [bypassWalletRequirements, setBypassWalletRequirements] = useState<boolean>(false);
-
-  // Initialize from localStorage on mount
-  useEffect(() => {
-    // Load dev mode setting
-    const savedDevMode = localStorage.getItem('chronosVault_devMode');
-    if (savedDevMode === 'true') {
-      setDevModeEnabled(true);
-    }
-    
-    // Load bypass wallet setting
-    const savedBypassWallet = localStorage.getItem('chronosVault_bypassWallet');
-    if (savedBypassWallet === 'true') {
-      setBypassWalletRequirements(true);
-    }
-  }, []);
-
-  // Function to toggle dev mode
-  const toggleDevMode = () => {
-    const newValue = !devModeEnabled;
-    setDevModeEnabled(newValue);
-    localStorage.setItem('chronosVault_devMode', newValue.toString());
-    
-    // Log the state change for debugging
-    console.log(`Development mode ${newValue ? 'enabled' : 'disabled'}`);
-    
-    // If turning dev mode off, also turn off bypass wallet requirements
-    if (!newValue && bypassWalletRequirements) {
-      setBypassWalletRequirements(false);
-      localStorage.setItem('chronosVault_bypassWallet', 'false');
-    }
-  };
+export function DevModeProvider({ children }: { children: ReactNode }) {
+  const [devModeEnabled, setDevModeEnabled] = useState(process.env.NODE_ENV === 'development');
+  const [bypassWalletRequirements, setBypassWalletRequirements] = useState(true);
   
-  // Function to toggle bypass wallet requirements
-  const handleSetBypassWalletRequirements = (value: boolean) => {
-    // Only allow setting this if dev mode is enabled
-    if (!devModeEnabled && value) {
-      console.warn('Cannot enable bypass wallet requirements when dev mode is disabled');
-      return;
-    }
-    
-    setBypassWalletRequirements(value);
-    localStorage.setItem('chronosVault_bypassWallet', value.toString());
-    console.log(`Bypass wallet requirements ${value ? 'enabled' : 'disabled'}`);
+  const isDevelopmentEnvironment = process.env.NODE_ENV === 'development';
+
+  const toggleDevMode = () => {
+    setDevModeEnabled(!devModeEnabled);
   };
 
-  // Create the context value
-  const contextValue: DevModeContextType = {
-    devModeEnabled,
-    isDevMode: devModeEnabled, // Alias for compatibility
-    toggleDevMode,
-    isDevelopmentEnvironment,
-    bypassWalletRequirements,
-    setBypassWalletRequirements: handleSetBypassWalletRequirements,
-  };
-
-  // Provide the context to children
   return (
-    <DevModeContext.Provider value={contextValue}>
+    <DevModeContext.Provider value={{
+      devModeEnabled,
+      toggleDevMode,
+      isDevelopmentEnvironment,
+      bypassWalletRequirements,
+      setBypassWalletRequirements
+    }}>
       {children}
     </DevModeContext.Provider>
   );
 }
 
-// Custom hook to use the dev mode context
 export function useDevMode() {
   const context = useContext(DevModeContext);
-  
   if (context === undefined) {
     throw new Error('useDevMode must be used within a DevModeProvider');
   }
-  
   return context;
 }

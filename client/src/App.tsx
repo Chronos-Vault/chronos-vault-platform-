@@ -1,12 +1,8 @@
 import React from 'react';
 import { Route, Switch, Link } from 'wouter';
 import { Toaster } from '@/components/ui/toaster';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ErrorBoundary } from '@/components/error-boundary/ErrorBoundary';
-import { TransactionErrorProvider } from '@/contexts/transaction-error-context';
-import { CVTTokenProvider } from '@/contexts/cvt-token-context';
-import { AuthProvider, useAuthContext } from '@/context/AuthContext';
-import { MultiChainProvider } from '@/contexts/multi-chain-context';
+import { useAuthContext } from '@/contexts/auth-context';
 import { NavBar } from '@/components/navigation/NavBar';
 import Footer from '@/components/layout/footer';
 import DocumentationRouter from '@/components/documentation/DocumentationRouter';
@@ -159,12 +155,7 @@ const queryClient = new QueryClient({
 const App: React.FC = () => {
   return (
     <ErrorBoundary name="App">
-      <QueryClientProvider client={queryClient}>
-        <TransactionErrorProvider>
-          <AuthProvider>
-            <MultiChainProvider>
-              <CVTTokenProvider>
-                <div className="min-h-screen bg-black text-white">
+      <div className="min-h-screen bg-black text-white">
 
                   <NavBar />
                   <div className="pt-2">
@@ -331,13 +322,7 @@ const App: React.FC = () => {
                     
                     <Footer />
                   </div>
-                  <Toaster />
                 </div>
-              </CVTTokenProvider>
-            </MultiChainProvider>
-          </AuthProvider>
-        </TransactionErrorProvider>
-      </QueryClientProvider>
     </ErrorBoundary>
   );
 };
