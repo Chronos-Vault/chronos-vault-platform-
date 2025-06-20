@@ -115,7 +115,7 @@ export function Navbar() {
         
         <div className="flex items-center gap-4">
           <div className="hidden sm:block">
-            <WalletConnect />
+            <WalletConnector />
           </div>
           
           <MobileNav />
@@ -140,7 +140,7 @@ function MobileNav() {
               <MobileNavLink href="/portfolio" title="Portfolio" />
               <li className="mt-2 pt-2 border-t">
                 <div className="py-2">
-                  <WalletConnect />
+                  <WalletConnector />
                 </div>
               </li>
             </ul>

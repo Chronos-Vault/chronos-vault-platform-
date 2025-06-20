@@ -10,7 +10,7 @@ import { useQuery, useMutation } from '@tanstack/react-query';
 import { crossChainBridgeService } from '@/services/CrossChainBridgeService';
 import { useBlockchain, type ChainType } from '@/hooks/use-blockchain';
 import { useToast } from "@/hooks/use-toast";
-import WalletConnect, { WalletInfo } from '@/components/wallet/WalletConnect';
+import { WalletConnector } from '@/components/wallet/WalletConnector';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
