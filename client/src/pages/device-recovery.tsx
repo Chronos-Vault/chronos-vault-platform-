@@ -6,7 +6,7 @@ import { useToast } from "@/hooks/use-toast";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Shield, AlertTriangle } from "lucide-react";
-import DeviceRecoveryFlow from '@/components/auth/DeviceRecoveryFlow';
+// Removed old device recovery flow import
 
 /**
  * Device Recovery Page
@@ -49,7 +49,9 @@ const DeviceRecoveryPage: React.FC = () => {
               </AlertDescription>
             </Alert>
 
-            <DeviceRecoveryFlow />
+            <div className="text-center text-gray-400">
+            Device recovery functionality will be implemented with the new wallet system.
+          </div>
             
             <div className="mt-8 text-center">
               <Button 
