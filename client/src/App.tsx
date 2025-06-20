@@ -309,11 +309,11 @@ const App: React.FC = () => {
                         {(params) => <DocumentationRouter vaultType={params.vaultType} />}
                       </Route>
                     </Switch>
-                    
                     <Footer />
-                  </div>
-                </div>
-    </ErrorBoundary>
+        </div>
+        <BlockchainErrorDisplay />
+      </ErrorBoundary>
+    </div>
   );
 };
 
