@@ -1,4 +1,4 @@
-import { pgTable, text, serial, integer, timestamp, boolean, jsonb } from "drizzle-orm/pg-core";
+import { pgTable, text, serial, integer, timestamp, boolean, jsonb, varchar, index } from "drizzle-orm/pg-core";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
 
@@ -402,6 +402,56 @@ export type SignatureRequest = typeof signatureRequests.$inferSelect;
 
 export type InsertSignature = z.infer<typeof insertSignatureSchema>;
 export type Signature = typeof signatures.$inferSelect;
+
+// New wallet system tables
+export const walletConnections = pgTable("wallet_connections", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").references(() => users.id),
+  walletType: varchar("wallet_type", { length: 50 }).notNull(),
+  walletAddress: varchar("wallet_address", { length: 100 }).notNull(),
+  blockchain: varchar("blockchain", { length: 50 }).notNull(),
+  isActive: boolean("is_active").default(true),
+  signature: text("signature"),
+  message: text("message"),
+  connectedAt: timestamp("connected_at").defaultNow(),
+  lastUsed: timestamp("last_used").defaultNow(),
+});
+
+export const newWalletSessions = pgTable("new_wallet_sessions", {
+  id: serial("id").primaryKey(),
+  sessionId: varchar("session_id", { length: 100 }).notNull().unique(),
+  walletConnectionId: integer("wallet_connection_id").references(() => walletConnections.id),
+  userId: integer("user_id").references(() => users.id),
+  isActive: boolean("is_active").default(true),
+  expiresAt: timestamp("expires_at").notNull(),
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
+export const newWalletAuthAttempts = pgTable("new_wallet_auth_attempts", {
+  id: serial("id").primaryKey(),
+  walletAddress: varchar("wallet_address", { length: 100 }).notNull(),
+  walletType: varchar("wallet_type", { length: 50 }).notNull(),
+  blockchain: varchar("blockchain", { length: 50 }).notNull(),
+  nonce: varchar("nonce", { length: 100 }).notNull(),
+  message: text("message").notNull(),
+  signature: text("signature"),
+  isVerified: boolean("is_verified").default(false),
+  attemptedAt: timestamp("attempted_at").defaultNow(),
+  expiresAt: timestamp("expires_at").notNull(),
+});
+
+// New wallet connection types
+export type NewWalletConnection = typeof walletConnections.$inferSelect;
+export type InsertNewWalletConnection = typeof walletConnections.$inferInsert;
+export type NewWalletSession = typeof newWalletSessions.$inferSelect;
+export type InsertNewWalletSession = typeof newWalletSessions.$inferInsert;
+export type NewWalletAuthAttempt = typeof newWalletAuthAttempts.$inferSelect;
+export type InsertNewWalletAuthAttempt = typeof newWalletAuthAttempts.$inferInsert;
+
+// Zod schemas for new wallet system
+export const insertNewWalletConnectionSchema = createInsertSchema(walletConnections);
+export const insertNewWalletSessionSchema = createInsertSchema(newWalletSessions);
+export const insertNewWalletAuthAttemptSchema = createInsertSchema(newWalletAuthAttempts);
 
 // Explorer types for the Vault Explorer feature
 export type BlockchainType = 'ETH' | 'SOL' | 'TON';

@@ -21,12 +21,9 @@ import zeroKnowledgeRoutes from './api/zero-knowledge-routes';
 import geoVaultRoutes from './api/geo-vault-routes';
 import bridgeRoutes from './api/bridge-routes';
 import { explorerRouter } from './api/explorer-routes';
-import walletApiRouter from './wallet-api';
-import { testnetWalletRoutes } from './api/testnet-wallet-routes';
-import { multiSigRoutes } from './api/multisig-routes';
-import { hardwareWalletRoutes } from './api/hardware-wallet-routes';
-import walletAuthRoutes from './routes/wallet-auth';
-import vaultWalletRoutes from './routes/vault-wallet';
+import walletRoutes from './wallet/wallet-routes';
+// Removed old wallet-related routes
+// Removed old wallet auth routes
 import { defiRoutes } from './api/defi-routes';
 import { systemHealthMonitor } from './monitoring/system-health-monitor';
 import { incidentResponseSystem } from './monitoring/incident-response';
@@ -34,7 +31,7 @@ import { ConnectorFactory } from './blockchain/connector-factory';
 import { securityLogger, SecurityEventType } from './monitoring/security-logger';
 import { geolocationService } from './services/geolocation-service';
 import { VerificationStatus } from './blockchain/cross-chain-vault-verification';
-import { testnetWalletService } from './services/testnet-wallet-service';
+// Removed testnet wallet service import
 import { WebSocket } from 'ws';
 import { initializeWebSocketManager, getWebSocketManager } from './websocket/websocket-manager';
 import { resetOnboarding } from './api/emergency-reset';
@@ -98,29 +95,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Register vault explorer routes
   apiRouter.use('/explorer', explorerRouter);
   
-  // Register wallet integration API routes
-  apiRouter.use('/v1', walletApiRouter);
+  // Register new wallet system routes
+  apiRouter.use('/wallet', walletRoutes);
   
-  // Initialize testnet wallet service with real private keys
-  await testnetWalletService.initialize();
-  
-  // Register real testnet wallet routes
-  apiRouter.use('/testnet-wallet', testnetWalletRoutes);
-  
-  // Register multi-signature wallet routes
-  apiRouter.use('/multisig', multiSigRoutes);
-  
-  // Register hardware wallet routes
-  apiRouter.use('/hardware-wallet', hardwareWalletRoutes);
+  // Old wallet services removed
   
   // Register DeFi routes
   apiRouter.use('/defi', defiRoutes);
   
-  // Register wallet authorization routes
-  apiRouter.use('/api', walletAuthRoutes);
-  
-  // Register vault-wallet integration routes
-  app.use('/api/vault', vaultWalletRoutes);
+  // Old wallet routes removed - using new wallet system
   
   // Initialize and register chain-agnostic verification routes
   const chainAgnosticVerifier = initializeChainAgnosticVerification(connectorFactory);
