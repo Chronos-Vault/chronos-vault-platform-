@@ -145,11 +145,10 @@ import GiftCryptoPage from '@/pages/gift-crypto';
 
 const App: React.FC = () => {
   return (
-    <ErrorBoundary name="App">
-      <div className="min-h-screen bg-black text-white">
-
-                  <NavBar />
-                  <div className="pt-2">
+    <div className="min-h-screen bg-black text-white">
+      <ErrorBoundary name="App">
+        <NavBar />
+        <div className="pt-2">
                     <Switch>
                       {/* Main Pages */}
                       <Route path="/" component={HomePage} />

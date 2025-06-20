@@ -87,7 +87,7 @@ export const BlockchainErrorProvider: React.FC<{ children: ReactNode }> = ({ chi
 // Display component for blockchain errors
 export const BlockchainErrorDisplay: React.FC = () => {
   const { errors, clearError, clearChainErrors } = useBlockchainErrors();
-  const { devModeEnabled } = useDevMode();
+  const devModeEnabled = process.env.NODE_ENV === 'development';
   const [retrying, setRetrying] = useState<Record<string, boolean>>({});
 
   if (errors.length === 0) {

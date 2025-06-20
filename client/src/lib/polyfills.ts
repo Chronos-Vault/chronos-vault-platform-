@@ -2,11 +2,14 @@
  * Browser polyfills for Node.js modules
  */
 
-// Buffer polyfill  
+// Buffer polyfill
 if (typeof window !== 'undefined' && !window.Buffer) {
   import('buffer').then(({ Buffer }) => {
     window.Buffer = Buffer;
     window.global = window;
+  }).catch(() => {
+    // Fallback if buffer import fails
+    console.warn('Buffer polyfill failed to load');
   });
 }
 

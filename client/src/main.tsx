@@ -2,6 +2,7 @@ import { createRoot } from "react-dom/client";
 import { WagmiProvider } from "wagmi";
 import { QueryClientProvider } from "@tanstack/react-query";
 import App from "./App";
+import AppSimple from "./App-simple";
 import "./index.css";
 import "./lib/polyfills";
 import { ThemeProvider } from "@/components/ui/theme-provider";
