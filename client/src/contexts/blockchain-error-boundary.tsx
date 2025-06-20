@@ -2,7 +2,6 @@ import React, { createContext, useContext, useState, ReactNode } from 'react';
 import { AlertCircle, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-import { useDevMode } from './dev-mode-context';
 
 export type BlockchainChain = 'Ethereum' | 'Solana' | 'TON' | 'Bitcoin';
 
@@ -33,7 +32,7 @@ export const useBlockchainErrors = () => {
 
 export const BlockchainErrorProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [errors, setErrors] = useState<BlockchainError[]>([]);
-  const { devModeEnabled } = useDevMode();
+  const devModeEnabled = process.env.NODE_ENV === 'development';
 
   const addError = (error: BlockchainError) => {
     // Add timestamp if not provided
