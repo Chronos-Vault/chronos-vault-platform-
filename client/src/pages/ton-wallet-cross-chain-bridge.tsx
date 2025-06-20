@@ -907,12 +907,7 @@ export default function CrossChainBridgePage() {
       </div>
       
       {/* Integrated Wallet Connection Dialog */}
-      <WalletConnect
-        isOpen={walletDialogOpen}
-        onClose={() => setWalletDialogOpen(false)}
-        initialChain={selectedChainForConnect}
-        onWalletConnected={handleWalletConnected}
-      />
+      <WalletConnector />
     </div>
   );
 }
