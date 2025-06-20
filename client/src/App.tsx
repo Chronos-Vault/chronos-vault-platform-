@@ -2,7 +2,7 @@ import React from 'react';
 import { Route, Switch, Link } from 'wouter';
 import { ErrorBoundary } from '@/components/error-boundary/ErrorBoundary';
 import { useAuthContext } from '@/contexts/auth-context';
-import { NavBar } from '@/components/navigation/NavBar';
+import Header from '@/components/layout/header';
 import Footer from '@/components/layout/footer';
 import DocumentationRouter from '@/components/documentation/DocumentationRouter';
 // Removed old wallet auth modal import

@@ -19,7 +19,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Menu, X, Settings, Bug } from "lucide-react";
 import CrossChainWalletSelector from "@/components/auth/cross-chain-wallet-selector";
-import { BitcoinWalletConnector } from "@/components/bitcoin/bitcoin-wallet-connector";
+// import { BitcoinWalletConnector } from "@/components/bitcoin/bitcoin-wallet-connector";
 import { useAuthContext } from "@/contexts/auth-context";
 import { useDevMode } from "@/contexts/dev-mode-context";
 
@@ -214,7 +214,6 @@ const Header = () => {
                 </DropdownMenu>
               )}
               <CrossChainWalletSelector />
-              <BitcoinWalletConnector />
             </div>
 
             {/* Mobile Menu */}
@@ -308,9 +307,9 @@ const Header = () => {
                         Connect Wallet
                       </h3>
                       <CrossChainWalletSelector className="w-full" />
-                      <div className="mt-3">
+                      {/* <div className="mt-3">
                         <BitcoinWalletConnector />
-                      </div>
+                      </div> */}
                     </div>
                     
                     {isDevelopmentEnvironment && (
