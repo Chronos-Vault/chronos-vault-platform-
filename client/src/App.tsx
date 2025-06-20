@@ -2,7 +2,7 @@ import React from 'react';
 import { Route, Switch, Link } from 'wouter';
 import { ErrorBoundary } from '@/components/error-boundary/ErrorBoundary';
 import { useAuthContext } from '@/contexts/auth-context';
-import Header from '@/components/layout/header';
+import { NavBar } from '@/components/navigation/NavBar';
 import Footer from '@/components/layout/footer';
 import DocumentationRouter from '@/components/documentation/DocumentationRouter';
 // Removed old wallet auth modal import
@@ -147,7 +147,7 @@ const App: React.FC = () => {
   return (
     <div className="min-h-screen bg-black text-white">
       <ErrorBoundary name="App">
-        <Header />
+        <NavBar />
         <div className="pt-2">
                     <Switch>
                       {/* Main Pages */}
