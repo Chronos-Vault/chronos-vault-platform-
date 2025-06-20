@@ -30,6 +30,7 @@ const Header = () => {
 
   // Desktop navigation links (streamlined for better UX)
   const desktopNavigationLinks = [
+    { name: "Wallets", href: "/wallet", icon: "💳" },
     { name: "Vaults", href: "/vault-types", icon: "🔐" },
     { name: "Explore", href: "#", icon: "🔍", children: [
       { name: "📊 Cross-Chain Monitor", href: "/cross-chain-monitor", highlight: true },
