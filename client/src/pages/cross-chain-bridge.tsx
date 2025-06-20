@@ -12,7 +12,7 @@ import { crossChainBridgeService, BridgeTransactionStatus } from '@/services/Cro
 import { useBlockchain, type ChainType } from '@/hooks/use-blockchain';
 import { useWallet } from '@/contexts/wallet-context';
 import { useToast } from "@/hooks/use-toast";
-import WalletConnect from '@/components/wallet/WalletConnect';
+import { WalletConnector } from '@/components/wallet/WalletConnector';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -589,7 +589,7 @@ export default function CrossChainBridgePage() {
               </div>
             </CardHeader>
             <CardContent className="relative z-10">
-              <WalletConnect />
+              <WalletConnector />
             </CardContent>
           </Card>
           
