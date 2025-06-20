@@ -311,7 +311,7 @@ const App: React.FC = () => {
                     </Switch>
                     <Footer />
         </div>
-        <BlockchainErrorDisplay />
+
       </ErrorBoundary>
     </div>
   );
