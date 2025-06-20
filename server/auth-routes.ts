@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { walletStorage } from "./wallet-storage";
+// Removed old wallet storage import
 import { insertWalletAuthSchema, insertWalletSessionSchema } from "@shared/schema";
 import crypto from "crypto";
 import { ethers } from "ethers";
