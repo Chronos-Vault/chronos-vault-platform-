@@ -1,30 +1,20 @@
 /**
- * Browser Polyfills for Node.js modules
- * Fixes compatibility issues with blockchain libraries
+ * Browser polyfills for Node.js modules
  */
 
-// Buffer polyfill for browser compatibility
-import { Buffer } from 'buffer';
-
-// Make Buffer available globally
-if (typeof globalThis !== 'undefined') {
-  globalThis.Buffer = Buffer;
-}
-
-if (typeof window !== 'undefined') {
-  (window as any).Buffer = Buffer;
-  (window as any).global = window;
+// Buffer polyfill  
+if (typeof window !== 'undefined' && !window.Buffer) {
+  import('buffer').then(({ Buffer }) => {
+    window.Buffer = Buffer;
+    window.global = window;
+  });
 }
 
 // Process polyfill
-if (typeof process === 'undefined') {
-  (globalThis as any).process = {
-    env: {},
-    nextTick: (fn: Function) => setTimeout(fn, 0),
-    browser: true,
-    version: '',
-    versions: { node: '' }
-  };
+if (typeof window !== 'undefined' && !window.process) {
+  window.process = {
+    env: {
+      NODE_ENV: 'development'
+    }
+  } as any;
 }
-
-export { Buffer };

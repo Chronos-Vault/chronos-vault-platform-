@@ -1,6 +1,5 @@
 import React from 'react';
 import { Route, Switch, Link } from 'wouter';
-import { Toaster } from '@/components/ui/toaster';
 import { ErrorBoundary } from '@/components/error-boundary/ErrorBoundary';
 import { useAuthContext } from '@/contexts/auth-context';
 import { NavBar } from '@/components/navigation/NavBar';
@@ -142,15 +141,7 @@ import CvtPaymentPage from '@/pages/cvt-payment';
 import SubscriptionPage from '@/pages/subscription';
 import GiftCryptoPage from '@/pages/gift-crypto';
 
-// Create a client for React Query
-const queryClient = new QueryClient({
-  defaultOptions: {
-    queries: {
-      retry: 1,
-      refetchOnWindowFocus: false,
-    },
-  },
-});
+
 
 const App: React.FC = () => {
   return (
