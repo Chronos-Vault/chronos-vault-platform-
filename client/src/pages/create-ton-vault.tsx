@@ -12,7 +12,7 @@ import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useToast } from '@/hooks/use-toast';
 import { useBlockchain } from '@/hooks/use-blockchain';
-import WalletConnect from '@/components/wallet/WalletConnect';
+import { WalletConnector } from '@/components/wallet/WalletConnector';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Separator } from '@/components/ui/separator';
 import { Badge } from '@/components/ui/badge';
@@ -270,7 +270,7 @@ export default function CreateTonVaultPage() {
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <WalletConnect />
+            <WalletConnector />
           </CardContent>
         </Card>
       ) : (
