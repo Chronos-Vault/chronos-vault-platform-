@@ -19,7 +19,7 @@ import { Progress } from '@/components/ui/progress';
 import { ArrowDownToLine, Lock, Shield, ShieldCheck, ShieldAlert, Zap } from 'lucide-react';
 import { BlockchainType } from '../../types/blockchain.types';
 import { zkVerificationService, ZkVerificationRequest } from '../../services/zk-verification-service';
-import { useUserWallets } from '../../hooks/use-user-wallets';
+import { useUserWallets } from '@/hooks/use-user-wallets';
 import { queryClient } from '../../lib/queryClient';
 
 interface VerificationResultProps {

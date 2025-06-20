@@ -101,16 +101,23 @@ export class EthereumConnector implements BlockchainConnector {
       // Initialize contract based on network
       const contractAddresses = isTestnet ? CONTRACT_ADDRESSES.testnet : CONTRACT_ADDRESSES.mainnet;
       
-      if (process.env.ETHEREUM_PRIVATE_KEY) {
-        this.wallet = new ethers.Wallet(process.env.ETHEREUM_PRIVATE_KEY, this.provider);
-        this.signer = this.wallet;
-        
-        // Initialize contract with signer
-        this.vaultContract = new ethers.Contract(contractAddresses.vault, VAULT_ABI, this.signer);
-        this.walletAddress = this.wallet.address;
-        
-        securityLogger.info(`Ethereum connector initialized with wallet ${this.walletAddress} on ${this.networkVersion}`);
-      } else if (config.isDevelopmentMode) {
+      if (process.env.ETHEREUM_PRIVATE_KEY && process.env.ETHEREUM_PRIVATE_KEY.startsWith('0x') && process.env.ETHEREUM_PRIVATE_KEY.length === 66) {
+        try {
+          this.wallet = new ethers.Wallet(process.env.ETHEREUM_PRIVATE_KEY, this.provider);
+          this.signer = this.wallet;
+          
+          // Initialize contract with signer
+          this.vaultContract = new ethers.Contract(contractAddresses.vault, VAULT_ABI, this.signer);
+          this.walletAddress = this.wallet.address;
+          
+          securityLogger.info(`Ethereum connector initialized with wallet ${this.walletAddress} on ${this.networkVersion}`);
+        } catch (error) {
+          securityLogger.warn(`Invalid Ethereum private key provided, using development mode instead: ${error}`);
+          // Fall through to development mode
+          this.walletAddress = "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266";
+          securityLogger.info(`Ethereum connector initialized in dev mode with simulated wallet ${this.walletAddress}`);
+        }
+      } else if (config.isDevelopmentMode || process.env.ETHEREUM_PRIVATE_KEY) {
         // For development, we'll use a hardcoded address for simulation
         this.walletAddress = "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266"; // Common Hardhat test address
         securityLogger.info(`Ethereum connector initialized in dev mode with simulated wallet ${this.walletAddress}`);

@@ -30,7 +30,7 @@ const featureFlags = {
   
   // Enhanced blockchain connector simulation flags
   // Master flag - if true, all chains are simulated unless overridden by specific flags
-  SKIP_BLOCKCHAIN_CONNECTOR_INIT: process.env.SKIP_BLOCKCHAIN_CONNECTOR_INIT === 'true' || false, // enabling real connections
+  SKIP_BLOCKCHAIN_CONNECTOR_INIT: process.env.SKIP_BLOCKCHAIN_CONNECTOR_INIT === 'true' || true, // enabling simulation by default in development
   
   // Chain-specific simulation flags - these override the master flag when explicitly set
   // If master flag is true but a specific flag is false, that specific chain will use real connections
