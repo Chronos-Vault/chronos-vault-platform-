@@ -146,7 +146,8 @@ import GiftCryptoPage from '@/pages/gift-crypto';
 const App: React.FC = () => {
   return (
     <div className="min-h-screen bg-black text-white">
-      <Header />
+      <ErrorBoundary name="App">
+        <Header />
         <div className="pt-2">
                     <Switch>
                       {/* Main Pages */}
@@ -310,6 +311,7 @@ const App: React.FC = () => {
                     </Switch>
                     <Footer />
         </div>
+      </ErrorBoundary>
     </div>
   );
 };
