@@ -1,0 +1,17 @@
+# Commands to run in your Git Bash terminal
+
+# 1. Commit your changes
+git commit -m "Initial commit: Chronos Vault Platform with complete file structure"
+
+# 2. Connect to GitHub repository
+git remote add origin https://github.com/Chronos-Vault/chronos-vault-platform.git
+
+# 3. Set main branch and push
+git branch -M main
+git push -u origin main
+
+# After this completes successfully, you can open GitHub Desktop and it should automatically detect the repository
+
+# Alternative if you get errors:
+# git pull origin main --allow-unrelated-histories
+# git push -u origin main
