@@ -1,0 +1,2680 @@
+import React, { useState, useEffect } from "react";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Slider } from "@/components/ui/slider";
+import { Switch } from "@/components/ui/switch";
+import { 
+  Select, 
+  SelectContent, 
+  SelectItem, 
+  SelectTrigger, 
+  SelectValue 
+} from "@/components/ui/select";
+import {
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+} from "@/components/ui/tabs";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { Badge } from "@/components/ui/badge";
+import { Progress } from "@/components/ui/progress";
+import { Separator } from "@/components/ui/separator";
+import { Checkbox } from "@/components/ui/checkbox";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+import { 
+  Lock, 
+  Users, 
+  Shield, 
+  Clock, 
+  Fingerprint, 
+  Key, 
+  CheckCircle2, 
+  XCircle, 
+  AlertCircle,
+  RotateCw,
+  FileLock2,
+  FileText,
+  Clock10,
+  ArrowUpRight,
+  ShieldAlert,
+  Plus,
+  Download,
+  X
+} from "lucide-react";
+
+// Enum for blockchain types (this should match your existing enum if you have one)
+export enum BlockchainType {
+  ETHEREUM = 0,
+  SOLANA = 1,
+  TON = 2,
+  BITCOIN = 3
+}
+
+// Transaction types for custom signing policies
+export enum TransactionType {
+  TRANSFER = 'transfer',
+  CONTRACT_INTERACTION = 'contract_interaction',
+  RECOVERY = 'recovery',
+  SETTINGS_CHANGE = 'settings_change',
+  ADD_SIGNER = 'add_signer',
+  REMOVE_SIGNER = 'remove_signer',
+  CHANGE_THRESHOLD = 'change_threshold'
+}
+
+// Types for Multi-Signature Vault
+interface Signer {
+  id: string;
+  address: string;
+  name: string;
+  status: 'pending' | 'accepted' | 'rejected';
+  role: 'owner' | 'signer' | 'viewer';
+  timeAdded: Date;
+  hasKey: boolean;
+  // Time-based access constraints
+  timeConstraints: {
+    enabled: boolean;
+    startTime: string; // Format: "HH:MM" - 24-hour format
+    endTime: string; // Format: "HH:MM" - 24-hour format
+    allowedDays: number[]; // 0 = Sunday, 1 = Monday, etc.
+    timeZone: string; // e.g., "America/New_York"
+    effectiveFrom?: Date; // When these constraints become active (optional)
+    effectiveUntil?: Date; // Optional expiration of these constraints
+  };
+  // Transaction type permissions for custom signing policies
+  transactionPermissions: {
+    enabled: boolean;
+    allowedTypes: TransactionType[]; // Types of transactions this signer can approve
+    approvalLimits: {
+      [TransactionType.TRANSFER]: {
+        maxAmount: string; // Maximum amount this signer can approve
+        allowedDestinations: string[]; // Approved destination addresses
+      };
+      [TransactionType.CONTRACT_INTERACTION]: {
+        allowedContracts: string[]; // Approved contract addresses
+        allowedMethods: string[]; // Approved method signatures
+      };
+    };
+  };
+}
+
+// Guardian for social recovery
+interface RecoveryGuardian {
+  id: string;
+  address: string;
+  name: string;
+  email?: string;
+  status: 'pending' | 'active';
+  timeAdded: Date;
+  lastVerification?: Date;
+  isBackup?: boolean;
+}
+
+interface Transaction {
+  id: string;
+  type: string;
+  status: 'pending' | 'approved' | 'rejected' | 'executed' | 'expired';
+  description: string;
+  requiredSignatures: number;
+  currentSignatures: number;
+  signers: string[];
+  creator: string;
+  timeCreated: Date;
+  timeExecuted?: Date;
+  expirationTime: Date;
+  amount?: string;
+  destination?: string;
+  contractInteraction?: {
+    method: string;
+    params: string;
+  };
+}
+
+interface VaultAsset {
+  name: string;
+  symbol: string;
+  amount: string;
+  valueUSD: number;
+  icon: string;
+}
+
+interface MultiSigVaultProps {
+  vaultName?: string;
+  vaultDescription?: string;
+  blockchain: BlockchainType;
+  threshold: number;
+  signers: Signer[];
+  assetTimelock?: Date;
+  onCreateVault?: (vaultData: any) => void;
+  isReadOnly?: boolean;
+}
+
+// Constants and mock data (in a real app, these would be loaded from the blockchain)
+const MOCK_TRANSACTIONS: Transaction[] = [
+  {
+    id: "tx-001",
+    type: "send",
+    status: "pending",
+    description: "Weekly team payment",
+    requiredSignatures: 3,
+    currentSignatures: 1,
+    signers: ["0x742d35Cc6634C0532925a3b844Bc454e4438f44e"],
+    creator: "0x742d35Cc6634C0532925a3b844Bc454e4438f44e",
+    timeCreated: new Date(Date.now() - 86400000), // 1 day ago
+    expirationTime: new Date(Date.now() + 86400000 * 2), // expires in 2 days
+    amount: "1.5 ETH",
+    destination: "0x3a9A6718D5fbC3a2360941348f5821d4c98B722d"
+  },
+  {
+    id: "tx-002",
+    type: "contract",
+    status: "approved",
+    description: "Update vault timeout settings",
+    requiredSignatures: 3,
+    currentSignatures: 3,
+    signers: [
+      "0x742d35Cc6634C0532925a3b844Bc454e4438f44e",
+      "0x5B38Da6a701c568545dCfcB03FcB875f56beddC4",
+      "0xDc26F5E4b5E4dEF47A247c38714499a9d5e57Eb9"
+    ],
+    creator: "0x5B38Da6a701c568545dCfcB03FcB875f56beddC4",
+    timeCreated: new Date(Date.now() - 86400000 * 3), // 3 days ago
+    timeExecuted: new Date(Date.now() - 86400000 * 2), // 2 days ago
+    expirationTime: new Date(Date.now() - 86400000), // expired 1 day ago
+    contractInteraction: {
+      method: "updateTimelock",
+      params: "{ timeout: 1209600 }" // 14 days in seconds
+    }
+  },
+  {
+    id: "tx-003",
+    type: "send",
+    status: "executed",
+    description: "Transfer to cold storage",
+    requiredSignatures: 3,
+    currentSignatures: 3,
+    signers: [
+      "0x742d35Cc6634C0532925a3b844Bc454e4438f44e",
+      "0x5B38Da6a701c568545dCfcB03FcB875f56beddC4",
+      "0xDc26F5E4b5E4dEF47A247c38714499a9d5e57Eb9"
+    ],
+    creator: "0x742d35Cc6634C0532925a3b844Bc454e4438f44e",
+    timeCreated: new Date(Date.now() - 86400000 * 5), // 5 days ago
+    timeExecuted: new Date(Date.now() - 86400000 * 4), // 4 days ago
+    expirationTime: new Date(Date.now() - 86400000 * 2), // expired 2 days ago
+    amount: "25 ETH",
+    destination: "0xa1B38Da6A701c968505dCfcB03FcB875f56bedEa"
+  }
+];
+
+const MOCK_VAULT_ASSETS: VaultAsset[] = [
+  {
+    name: "Ethereum",
+    symbol: "ETH",
+    amount: "32.456",
+    valueUSD: 97368,
+    icon: "ri-ethereum-line"
+  },
+  {
+    name: "USD Coin",
+    symbol: "USDC",
+    amount: "50,000",
+    valueUSD: 50000,
+    icon: "ri-coin-line"
+  },
+  {
+    name: "TON",
+    symbol: "TON",
+    amount: "10,500",
+    valueUSD: 63000,
+    icon: "ri-disc-line"
+  },
+  {
+    name: "Wrapped BTC",
+    symbol: "WBTC",
+    amount: "0.75",
+    valueUSD: 38250,
+    icon: "ri-bit-coin-line"
+  }
+];
+
+/**
+ * Multi-Signature Vault Component
+ * Provides a comprehensive UI for creating and managing a multi-signature vault
+ * with advanced security features, transaction management, and signer coordination.
+ */
+export function MultiSignatureVault({
+  vaultName = "New Multi-Signature Vault",
+  vaultDescription = "",
+  blockchain = BlockchainType.ETHEREUM,
+  threshold = 2,
+  signers = [],
+  assetTimelock,
+  onCreateVault,
+  isReadOnly = false
+}: MultiSigVaultProps) {
+  // Setup states for the vault
+  const [name, setName] = useState<string>(vaultName);
+  const [description, setDescription] = useState<string>(vaultDescription);
+  const [selectedBlockchain, setSelectedBlockchain] = useState<BlockchainType>(blockchain);
+  const [signersThreshold, setSignersThreshold] = useState<number>(threshold);
+  // Create a default owner signer
+  const defaultSigner: Signer = {
+    id: "1",
+    address: "0x742d35Cc6634C0532925a3b844Bc454e4438f44e",
+    name: "You (Owner)",
+    status: 'accepted' as const,
+    role: 'owner' as const,
+    timeAdded: new Date(),
+    hasKey: true,
+    timeConstraints: {
+      enabled: false,
+      startTime: "09:00",
+      endTime: "17:00",
+      allowedDays: [1, 2, 3, 4, 5], // Monday to Friday
+      timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone
+    },
+    transactionPermissions: {
+      enabled: false,
+      allowedTypes: [
+        TransactionType.TRANSFER,
+        TransactionType.CONTRACT_INTERACTION,
+        TransactionType.RECOVERY,
+        TransactionType.SETTINGS_CHANGE,
+        TransactionType.ADD_SIGNER,
+        TransactionType.REMOVE_SIGNER,
+        TransactionType.CHANGE_THRESHOLD
+      ],
+      approvalLimits: {
+        [TransactionType.TRANSFER]: {
+          maxAmount: "1000",
+          allowedDestinations: []
+        },
+        [TransactionType.CONTRACT_INTERACTION]: {
+          allowedContracts: [],
+          allowedMethods: []
+        }
+      }
+    }
+  };
+  
+  const [vaultSigners, setVaultSigners] = useState<Signer[]>(signers.length > 0 ? signers : [defaultSigner]);
+  const [newSignerAddress, setNewSignerAddress] = useState<string>("");
+  const [newSignerName, setNewSignerName] = useState<string>("");
+  const [timelock, setTimelock] = useState<Date | undefined>(assetTimelock);
+  const [timelockDays, setTimelockDays] = useState<number>(assetTimelock ? 
+    Math.ceil((assetTimelock.getTime() - new Date().getTime()) / (1000 * 3600 * 24)) : 30);
+  
+  // Transaction management
+  const [transactions, setTransactions] = useState<Transaction[]>(MOCK_TRANSACTIONS);
+  const [assets, setAssets] = useState<VaultAsset[]>(MOCK_VAULT_ASSETS);
+  const [newTransaction, setNewTransaction] = useState<{
+    type: string;
+    description: string;
+    destination?: string;
+    amount?: string;
+    contractMethod?: string;
+    contractParams?: string;
+  }>({
+    type: 'send',
+    description: '',
+    destination: '',
+    amount: '',
+    contractMethod: '',
+    contractParams: ''
+  });
+  
+  // Security Settings
+  const [enableHardwareKey, setEnableHardwareKey] = useState<boolean>(true);
+  const [enableQRSignature, setEnableQRSignature] = useState<boolean>(false);
+  const [enableBiometrics, setEnableBiometrics] = useState<boolean>(false);
+  const [enableRecovery, setEnableRecovery] = useState<boolean>(true);
+  const [enableEncryption, setEnableEncryption] = useState<boolean>(true);
+  const [activityNotifications, setActivityNotifications] = useState<boolean>(true);
+  const [gasSettings, setGasSettings] = useState<string>("automatic");
+  
+  // Social Recovery Settings
+  const [recoveryGuardians, setRecoveryGuardians] = useState<RecoveryGuardian[]>([]);
+  const [guardianThreshold, setGuardianThreshold] = useState<number>(2);
+  const [newGuardian, setNewGuardian] = useState<{name: string, address: string, email: string}>({
+    name: '',
+    address: '',
+    email: ''
+  });
+  const [recoveryDialogOpen, setRecoveryDialogOpen] = useState<boolean>(false);
+  const [recoveryInitiated, setRecoveryInitiated] = useState<boolean>(false);
+  const [recoveryStep, setRecoveryStep] = useState<number>(1);
+  const [recoveryApprovals, setRecoveryApprovals] = useState<number>(0);
+  
+  // Additional features
+  const [transactionExpiry, setTransactionExpiry] = useState<number>(7); // days
+  const [createMode, setCreateMode] = useState<boolean>(!isReadOnly && signers.length === 0);
+  
+  const getCurrentProgress = (): number => {
+    let progress = 0;
+    
+    if (name.length > 0) progress += 20;
+    if (vaultSigners.length >= 2) progress += 20;
+    if (signersThreshold > 0 && signersThreshold <= vaultSigners.length) progress += 20;
+    if (description.length > 0) progress += 20;
+    if (enableRecovery) progress += 20;
+    
+    return progress;
+  };
+  
+  const addSigner = () => {
+    if (!newSignerAddress || !newSignerName) return;
+    
+    // Basic address validation - would be more sophisticated in production
+    if (!newSignerAddress.startsWith('0x') || newSignerAddress.length !== 42) {
+      alert('Please enter a valid Ethereum address');
+      return;
+    }
+    
+    // Check if address already exists
+    if (vaultSigners.some(signer => signer.address.toLowerCase() === newSignerAddress.toLowerCase())) {
+      alert('This address is already added as a signer');
+      return;
+    }
+    
+    // Create a new signer with the required structure
+    const newSigner: Signer = {
+      id: (vaultSigners.length + 1).toString(),
+      address: newSignerAddress,
+      name: newSignerName,
+      status: 'pending' as const,
+      role: 'owner' as const,
+      timeAdded: new Date(),
+      hasKey: false,
+      timeConstraints: {
+        enabled: false,
+        startTime: "09:00",
+        endTime: "17:00",
+        allowedDays: [1, 2, 3, 4, 5], // Monday to Friday
+        timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone
+      },
+      transactionPermissions: {
+        enabled: false,
+        allowedTypes: [
+          TransactionType.TRANSFER,
+          TransactionType.CONTRACT_INTERACTION,
+          TransactionType.RECOVERY,
+          TransactionType.SETTINGS_CHANGE,
+          TransactionType.ADD_SIGNER,
+          TransactionType.REMOVE_SIGNER,
+          TransactionType.CHANGE_THRESHOLD
+        ],
+        approvalLimits: {
+          [TransactionType.TRANSFER]: {
+            maxAmount: "1000",
+            allowedDestinations: []
+          },
+          [TransactionType.CONTRACT_INTERACTION]: {
+            allowedContracts: [],
+            allowedMethods: []
+          }
+        }
+      }
+    };
+    
+    const newSigners = [
+      ...vaultSigners,
+      newSigner
+    ];
+    
+    setVaultSigners(newSigners);
+    setNewSignerAddress("");
+    setNewSignerName("");
+    
+    // Update threshold if needed
+    if (signersThreshold > newSigners.length) {
+      setSignersThreshold(newSigners.length);
+    }
+  };
+  
+  const removeSigner = (id: string) => {
+    const newSigners = vaultSigners.filter(signer => signer.id !== id);
+    setVaultSigners(newSigners);
+    
+    // Adjust threshold if needed
+    if (signersThreshold > newSigners.length) {
+      setSignersThreshold(newSigners.length);
+    }
+  };
+  
+  // Social Recovery Management
+  const addGuardian = () => {
+    if (!newGuardian.name || !newGuardian.address) return;
+    
+    // Basic address validation - would be more sophisticated in production
+    if (!newGuardian.address.startsWith('0x') || newGuardian.address.length !== 42) {
+      alert('Please enter a valid Ethereum address');
+      return;
+    }
+    
+    // Check if address already exists
+    if (recoveryGuardians.some(guardian => guardian.address.toLowerCase() === newGuardian.address.toLowerCase())) {
+      alert('This address is already added as a guardian');
+      return;
+    }
+    
+    const newGuardians = [
+      ...recoveryGuardians,
+      {
+        id: (recoveryGuardians.length + 1).toString(),
+        address: newGuardian.address,
+        name: newGuardian.name,
+        email: newGuardian.email,
+        status: 'pending' as const,
+        timeAdded: new Date(),
+      }
+    ];
+    
+    setRecoveryGuardians(newGuardians);
+    setNewGuardian({
+      name: '',
+      address: '',
+      email: ''
+    });
+    
+    // Update threshold if needed
+    if (guardianThreshold > newGuardians.length) {
+      setGuardianThreshold(newGuardians.length);
+    }
+  };
+  
+  const removeGuardian = (id: string) => {
+    const newGuardians = recoveryGuardians.filter(guardian => guardian.id !== id);
+    setRecoveryGuardians(newGuardians);
+    
+    // Adjust threshold if needed
+    if (guardianThreshold > newGuardians.length) {
+      setGuardianThreshold(newGuardians.length);
+    }
+  };
+  
+  const initiateRecovery = () => {
+    setRecoveryInitiated(true);
+    setRecoveryStep(1);
+    setRecoveryApprovals(0);
+    
+    // In a real app, this would trigger notifications to all guardians
+    console.log('Recovery process initiated. Notifying guardians...');
+  };
+  
+  const approveRecovery = () => {
+    const newApprovals = recoveryApprovals + 1;
+    setRecoveryApprovals(newApprovals);
+    
+    if (newApprovals >= guardianThreshold) {
+      setRecoveryStep(2);
+      // In a real app, this would trigger the actual recovery process
+      console.log('Recovery threshold reached. Processing recovery...');
+    }
+  };
+  
+  const completeRecovery = () => {
+    setRecoveryStep(3);
+    // In a real app, this would finalize the recovery process
+    console.log('Recovery completed. Access restored.');
+    
+    // Reset recovery state after a delay (simulating the completion)
+    setTimeout(() => {
+      setRecoveryDialogOpen(false);
+      setRecoveryInitiated(false);
+      setRecoveryStep(1);
+      setRecoveryApprovals(0);
+    }, 3000);
+  };
+  
+  // Transaction management
+  const createTransaction = () => {
+    if (newTransaction.type === 'send' && (!newTransaction.destination || !newTransaction.amount)) {
+      alert('Please fill in all required fields for a transfer transaction');
+      return;
+    }
+    
+    if (newTransaction.type === 'contract' && (!newTransaction.contractMethod || !newTransaction.destination)) {
+      alert('Please fill in all required fields for a contract interaction');
+      return;
+    }
+    
+    if (!newTransaction.description) {
+      alert('Please provide a description for the transaction');
+      return;
+    }
+    
+    const newTx: Transaction = {
+      id: `tx-${Date.now().toString(36)}`,
+      type: newTransaction.type,
+      status: 'pending',
+      description: newTransaction.description,
+      requiredSignatures: signersThreshold,
+      currentSignatures: 1, // Creator automatically signs
+      signers: [vaultSigners[0].address], // Creator's address
+      creator: vaultSigners[0].address,
+      timeCreated: new Date(),
+      expirationTime: new Date(Date.now() + transactionExpiry * 24 * 60 * 60 * 1000)
+    };
+    
+    if (newTransaction.type === 'send') {
+      newTx.amount = newTransaction.amount;
+      newTx.destination = newTransaction.destination;
+    } else if (newTransaction.type === 'contract') {
+      newTx.contractInteraction = {
+        method: newTransaction.contractMethod || '',
+        params: newTransaction.contractParams || ''
+      };
+      newTx.destination = newTransaction.destination;
+    }
+    
+    setTransactions([newTx, ...transactions]);
+    
+    // Reset the form
+    setNewTransaction({
+      type: 'send',
+      description: '',
+      destination: '',
+      amount: '',
+      contractMethod: '',
+      contractParams: ''
+    });
+  };
+  
+  const signTransaction = (txId: string) => {
+    setTransactions(transactions.map(tx => {
+      if (tx.id === txId) {
+        // Add current user as a signer
+        const newSigners = [...tx.signers, vaultSigners[0].address];
+        const uniqueSigners = [...new Set(newSigners)]; // Remove duplicates
+        
+        const newSignatureCount = uniqueSigners.length;
+        let newStatus = tx.status;
+        
+        // If we've reached the threshold, mark as approved
+        if (newSignatureCount >= tx.requiredSignatures) {
+          newStatus = 'approved';
+        }
+        
+        return {
+          ...tx,
+          signers: uniqueSigners,
+          currentSignatures: newSignatureCount,
+          status: newStatus
+        };
+      }
+      return tx;
+    }));
+  };
+  
+  const executeTransaction = (txId: string) => {
+    setTransactions(transactions.map(tx => {
+      if (tx.id === txId && tx.status === 'approved') {
+        return {
+          ...tx,
+          status: 'executed',
+          timeExecuted: new Date()
+        };
+      }
+      return tx;
+    }));
+    
+    // In a real app, this would trigger the actual blockchain transaction
+    console.log(`Executing transaction ${txId}...`);
+  };
+  
+  const rejectTransaction = (txId: string) => {
+    setTransactions(transactions.map(tx => {
+      if (tx.id === txId) {
+        return {
+          ...tx,
+          status: 'rejected'
+        };
+      }
+      return tx;
+    }));
+  };
+  
+  // Check if a signer can sign based on time constraints
+  const canSignBasedOnTimeConstraints = (signer: Signer): boolean => {
+    if (!signer.timeConstraints.enabled) {
+      return true; // No time constraints, always allowed
+    }
+    
+    try {
+      // Get current time
+      const now = new Date();
+      const currentDay = now.getDay(); // 0 = Sunday, 1 = Monday, etc.
+      
+      // Check if current day is allowed
+      if (!signer.timeConstraints.allowedDays.includes(currentDay)) {
+        return false;
+      }
+      
+      // Parse time strings
+      const startParts = signer.timeConstraints.startTime.split(':');
+      const endParts = signer.timeConstraints.endTime.split(':');
+      
+      const startHour = parseInt(startParts[0]);
+      const startMinute = parseInt(startParts[1]);
+      const endHour = parseInt(endParts[0]);
+      const endMinute = parseInt(endParts[1]);
+      
+      // Check if we're using a timezone
+      let currentHour, currentMinute;
+      if (signer.timeConstraints.timeZone) {
+        // Convert to target timezone
+        const options: Intl.DateTimeFormatOptions = { 
+          hour: 'numeric', 
+          minute: 'numeric',
+          hour12: false,
+          timeZone: signer.timeConstraints.timeZone
+        };
+        const formatter = new Intl.DateTimeFormat('en-US', options);
+        const timeParts = formatter.formatToParts(now);
+        
+        currentHour = parseInt(timeParts.find(part => part.type === 'hour')?.value || '0');
+        currentMinute = parseInt(timeParts.find(part => part.type === 'minute')?.value || '0');
+      } else {
+        // Use local time
+        currentHour = now.getHours();
+        currentMinute = now.getMinutes();
+      }
+      
+      // Convert to minutes for easier comparison
+      const currentTimeInMinutes = currentHour * 60 + currentMinute;
+      const startTimeInMinutes = startHour * 60 + startMinute;
+      const endTimeInMinutes = endHour * 60 + endMinute;
+      
+      // Check if current time is within allowed hours
+      if (endTimeInMinutes > startTimeInMinutes) {
+        // Simple case: start and end times are on the same day
+        return currentTimeInMinutes >= startTimeInMinutes && currentTimeInMinutes <= endTimeInMinutes;
+      } else {
+        // Complex case: time window crosses midnight
+        return currentTimeInMinutes >= startTimeInMinutes || currentTimeInMinutes <= endTimeInMinutes;
+      }
+    } catch (error) {
+      console.error("Error checking time constraints:", error);
+      return false; // Default to denying access on error
+    }
+  };
+  
+  // UI for creating a multi-signature vault
+  const renderCreationUI = () => {
+    return (
+      <div className="space-y-8">
+        <div className="space-y-2">
+          <h2 className="text-2xl font-bold tracking-tight">Create Multi-Signature Vault</h2>
+          <p className="text-gray-500">
+            Configure your vault with multiple signers and custom security settings
+          </p>
+        </div>
+        
+        <div className="space-y-2">
+          <div>Current Progress</div>
+          <Progress value={getCurrentProgress()} className="h-2" />
+        </div>
+        
+        <div className="space-y-4">
+          <Card className="bg-black/40 border-gray-800">
+            <CardHeader>
+              <CardTitle className="flex items-center">
+                <Lock className="w-5 h-5 mr-2 text-[#FF5AF7]" />
+                Basic Configuration
+              </CardTitle>
+              <CardDescription>
+                Set up your vault's name, description, and blockchain
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-4">
+                <div className="space-y-2">
+                  <Label htmlFor="vault-name">Vault Name</Label>
+                  <Input
+                    id="vault-name"
+                    placeholder="Team Treasury"
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                  />
+                </div>
+                
+                <div className="space-y-2">
+                  <Label htmlFor="vault-description">Description</Label>
+                  <Textarea
+                    id="vault-description"
+                    placeholder="Describe the purpose of this vault..."
+                    value={description}
+                    onChange={(e) => setDescription(e.target.value)}
+                    className="min-h-[100px]"
+                  />
+                </div>
+                
+                <div className="space-y-2">
+                  <Label htmlFor="blockchain">Blockchain</Label>
+                  <Select
+                    value={selectedBlockchain.toString()}
+                    onValueChange={(v) => setSelectedBlockchain(parseInt(v))}
+                  >
+                    <SelectTrigger id="blockchain">
+                      <SelectValue placeholder="Select blockchain" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="0">Ethereum</SelectItem>
+                      <SelectItem value="1">Solana</SelectItem>
+                      <SelectItem value="2">TON</SelectItem>
+                      <SelectItem value="3">Bitcoin</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                
+                <div className="space-y-2">
+                  <Label>Time Lock (days)</Label>
+                  <div className="flex items-center space-x-4">
+                    <Slider
+                      value={[timelockDays]}
+                      min={0}
+                      max={365}
+                      step={1}
+                      onValueChange={(values) => setTimelockDays(values[0])}
+                      className="flex-1"
+                    />
+                    <span className="text-sm w-16 text-right">
+                      {timelockDays} days
+                    </span>
+                  </div>
+                  <p className="text-xs text-gray-500">
+                    Assets will be locked for {timelockDays} days after vault creation
+                    {timelockDays > 0 && ` (until ${new Date(Date.now() + timelockDays * 24 * 60 * 60 * 1000).toLocaleDateString()})`}
+                  </p>
+                </div>
+              </CardContent>
+            </Card>
+            
+            <Card className="bg-black/40 border-gray-800">
+              <CardHeader>
+                <CardTitle className="flex items-center">
+                  <Users className="w-5 h-5 mr-2 text-[#3F51FF]" />
+                  Signers Configuration
+                </CardTitle>
+                <CardDescription>Add and manage vault signers</CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="flex justify-between items-center">
+                  <div className="space-y-1">
+                    <Label>Required Signatures</Label>
+                    <p className="text-xs text-gray-500">
+                      Number of signers required to approve transactions
+                    </p>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <Button 
+                      variant="outline" 
+                      size="sm"
+                      onClick={() => setSignersThreshold(Math.max(1, signersThreshold - 1))}
+                      disabled={signersThreshold <= 1}
+                      className="h-8 w-8 p-0"
+                    >
+                      -
+                    </Button>
+                    <span className="text-lg font-bold w-8 text-center">{signersThreshold}</span>
+                    <Button 
+                      variant="outline" 
+                      size="sm"
+                      onClick={() => setSignersThreshold(Math.min(vaultSigners.length, signersThreshold + 1))}
+                      disabled={signersThreshold >= vaultSigners.length}
+                      className="h-8 w-8 p-0"
+                    >
+                      +
+                    </Button>
+                  </div>
+                </div>
+                
+                <div className="pt-2">
+                  <Label className="mb-3 block">Signers</Label>
+                  <div className="space-y-3">
+                    {vaultSigners.map((signer) => (
+                      <div 
+                        key={signer.id} 
+                        className="p-3 bg-black/40 rounded-md border border-gray-800"
+                      >
+                        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+                          <div className="flex items-center space-x-3">
+                            <div className="bg-[#3F51FF]/20 p-2 rounded-full min-w-[32px] flex-shrink-0">
+                              <Users className="h-4 w-4 text-[#3F51FF]" />
+                            </div>
+                            <div className="overflow-hidden">
+                              <div className="font-medium">{signer.name}</div>
+                              <div className="text-xs text-gray-500 font-mono truncate">{signer.address}</div>
+                            </div>
+                          </div>
+                          <div className="flex items-center justify-between sm:justify-end gap-3">
+                            {signer.role === 'owner' ? (
+                              <Badge variant="outline" className="bg-purple-900/30 text-purple-400 border-purple-800">Owner</Badge>
+                            ) : (
+                              <Badge variant="outline" className="bg-blue-900/30 text-blue-400 border-blue-800">Signer</Badge>
+                            )}
+                            
+                            {signer.role !== 'owner' && (
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                onClick={() => removeSigner(signer.id)}
+                                className="h-8 w-8 p-0 text-gray-400 hover:text-white"
+                              >
+                                <XCircle className="h-4 w-4" />
+                              </Button>
+                            )}
+                          </div>
+                        </div>
+                        
+                        {/* Time-based access constraints */}
+                        <div className="mt-3 pt-3 border-t border-gray-800">
+                          <div className="flex justify-between items-center mb-2">
+                            <Label htmlFor={`time-constraints-${signer.id}`} className="text-sm font-medium flex items-center gap-1">
+                              <Clock10 className="h-3.5 w-3.5 text-gray-400" />
+                              Time-based Access Constraints
+                            </Label>
+                            <Switch 
+                              id={`time-constraints-${signer.id}`} 
+                              checked={signer.timeConstraints.enabled}
+                              onCheckedChange={(checked) => {
+                                setVaultSigners(vaultSigners.map(s => 
+                                  s.id === signer.id 
+                                    ? { 
+                                        ...s, 
+                                        timeConstraints: { 
+                                          ...s.timeConstraints, 
+                                          enabled: checked 
+                                        } 
+                                      } 
+                                    : s
+                                ))
+                              }}
+                              className="ml-2"
+                            />
+                          </div>
+                          
+                          {signer.timeConstraints.enabled && (
+                            <div className="space-y-3 mt-2 text-sm">
+                              <div className="grid grid-cols-2 gap-2">
+                                <div>
+                                  <Label htmlFor={`start-time-${signer.id}`} className="text-xs">Start Time</Label>
+                                  <Input 
+                                    id={`start-time-${signer.id}`}
+                                    type="time"
+                                    value={signer.timeConstraints.startTime}
+                                    onChange={(e) => {
+                                      setVaultSigners(vaultSigners.map(s =>
+                                        s.id === signer.id
+                                          ? {
+                                              ...s,
+                                              timeConstraints: {
+                                                ...s.timeConstraints,
+                                                startTime: e.target.value
+                                              }
+                                            }
+                                          : s
+                                      ))
+                                    }}
+                                    className="bg-black/40 border-gray-700 h-8 mt-1"
+                                  />
+                                </div>
+                                <div>
+                                  <Label htmlFor={`end-time-${signer.id}`} className="text-xs">End Time</Label>
+                                  <Input 
+                                    id={`end-time-${signer.id}`}
+                                    type="time"
+                                    value={signer.timeConstraints.endTime}
+                                    onChange={(e) => {
+                                      setVaultSigners(vaultSigners.map(s =>
+                                        s.id === signer.id
+                                          ? {
+                                              ...s,
+                                              timeConstraints: {
+                                                ...s.timeConstraints,
+                                                endTime: e.target.value
+                                              }
+                                            }
+                                          : s
+                                      ))
+                                    }}
+                                    className="bg-black/40 border-gray-700 h-8 mt-1"
+                                  />
+                                </div>
+                              </div>
+                              
+                              <div>
+                                <Label className="text-xs mb-1 block">Allowed Days</Label>
+                                <div className="flex flex-wrap gap-1">
+                                  {['S', 'M', 'T', 'W', 'T', 'F', 'S'].map((day, idx) => (
+                                    <Button
+                                      key={idx}
+                                      type="button"
+                                      size="sm"
+                                      variant={signer.timeConstraints.allowedDays.includes(idx) ? "default" : "outline"}
+                                      className={`w-8 h-8 p-0 ${
+                                        signer.timeConstraints.allowedDays.includes(idx) 
+                                          ? "bg-[#3F51FF] hover:bg-[#3F51FF]/90" 
+                                          : "border-gray-700 text-gray-400"
+                                      }`}
+                                      onClick={() => {
+                                        const newAllowedDays = signer.timeConstraints.allowedDays.includes(idx)
+                                          ? signer.timeConstraints.allowedDays.filter(d => d !== idx)
+                                          : [...signer.timeConstraints.allowedDays, idx];
+                                          
+                                        setVaultSigners(vaultSigners.map(s =>
+                                          s.id === signer.id
+                                            ? {
+                                                ...s,
+                                                timeConstraints: {
+                                                  ...s.timeConstraints,
+                                                  allowedDays: newAllowedDays
+                                                }
+                                              }
+                                            : s
+                                        ))
+                                      }}
+                                    >
+                                      {day}
+                                    </Button>
+                                  ))}
+                                </div>
+                                <p className="text-xs text-gray-500 mt-1">
+                                  {signer.timeConstraints.enabled 
+                                    ? `Signer can approve transactions during ${signer.timeConstraints.startTime} - ${signer.timeConstraints.endTime} on selected days.` 
+                                    : 'No time constraints applied.'}
+                                </p>
+                              </div>
+                            </div>
+                          )}
+                        </div>
+                        
+                        {/* Transaction type permissions */}
+                        <div className="mt-3 pt-3 border-t border-gray-800">
+                          <div className="flex justify-between items-center mb-2">
+                            <Label htmlFor={`transaction-permissions-${signer.id}`} className="text-sm font-medium flex items-center gap-1">
+                              <FileLock2 className="h-3.5 w-3.5 text-gray-400" />
+                              Custom Signing Policies
+                            </Label>
+                            <Switch 
+                              id={`transaction-permissions-${signer.id}`} 
+                              checked={signer.transactionPermissions.enabled}
+                              onCheckedChange={(checked) => {
+                                setVaultSigners(vaultSigners.map(s => 
+                                  s.id === signer.id 
+                                    ? { 
+                                        ...s, 
+                                        transactionPermissions: { 
+                                          ...s.transactionPermissions,
+                                          enabled: checked 
+                                        } 
+                                      } 
+                                    : s
+                                ))
+                              }}
+                              className="ml-2"
+                            />
+                          </div>
+                          
+                          {signer.transactionPermissions.enabled && (
+                            <div className="space-y-4 mt-2 text-sm">
+                              <div>
+                                <Label className="text-xs mb-1 block">Allowed Transaction Types</Label>
+                                <div className="grid grid-cols-2 gap-1">
+                                  {Object.values(TransactionType).map((type) => (
+                                    <div key={type} className="flex items-center space-x-2">
+                                      <Checkbox 
+                                        id={`tx-type-${type}-${signer.id}`}
+                                        checked={signer.transactionPermissions.allowedTypes.includes(type)}
+                                        onCheckedChange={(checked) => {
+                                          setVaultSigners(vaultSigners.map(s => {
+                                            if (s.id !== signer.id) return s;
+                                            
+                                            const newAllowedTypes = checked 
+                                              ? [...s.transactionPermissions.allowedTypes, type]
+                                              : s.transactionPermissions.allowedTypes.filter(t => t !== type);
+                                              
+                                            return {
+                                              ...s,
+                                              transactionPermissions: {
+                                                ...s.transactionPermissions,
+                                                allowedTypes: newAllowedTypes
+                                              }
+                                            };
+                                          }));
+                                        }}
+                                      />
+                                      <Label 
+                                        htmlFor={`tx-type-${type}-${signer.id}`}
+                                        className="text-xs cursor-pointer"
+                                      >
+                                        {type.replace(/_/g, ' ')}
+                                      </Label>
+                                    </div>
+                                  ))}
+                                </div>
+                              </div>
+                              
+                              {/* Transfer Amount Limit */}
+                              {signer.transactionPermissions.allowedTypes.includes(TransactionType.TRANSFER) && (
+                                <div>
+                                  <Accordion type="single" collapsible className="w-full">
+                                    <AccordionItem value="transfer-limits" className="border-gray-800">
+                                      <AccordionTrigger className="text-xs py-2">
+                                        Transfer Limits
+                                      </AccordionTrigger>
+                                      <AccordionContent>
+                                        <div className="space-y-2 pt-2">
+                                          <div>
+                                            <Label htmlFor={`max-amount-${signer.id}`} className="text-xs">
+                                              Maximum Amount
+                                            </Label>
+                                            <Input
+                                              id={`max-amount-${signer.id}`}
+                                              value={signer.transactionPermissions.approvalLimits[TransactionType.TRANSFER].maxAmount}
+                                              onChange={(e) => {
+                                                setVaultSigners(vaultSigners.map(s => {
+                                                  if (s.id !== signer.id) return s;
+                                                  
+                                                  // Create a properly typed updated signer
+                                                  const updatedSigner: Signer = {
+                                                    ...s,
+                                                    transactionPermissions: {
+                                                      ...s.transactionPermissions,
+                                                      approvalLimits: {
+                                                        ...s.transactionPermissions.approvalLimits,
+                                                        [TransactionType.TRANSFER]: {
+                                                          ...s.transactionPermissions.approvalLimits[TransactionType.TRANSFER],
+                                                          maxAmount: e.target.value,
+                                                        }
+                                                      }
+                                                    }
+                                                  };
+                                                  
+                                                  return updatedSigner;
+                                                }));
+                                              }}
+                                              placeholder="1000"
+                                              className="bg-black/40 border-gray-700 h-8 mt-1"
+                                            />
+                                          </div>
+                                          
+                                          <div>
+                                            <Label className="text-xs flex items-center justify-between">
+                                              <span>Allowed Destinations</span>
+                                              <Button type="button" variant="ghost" size="sm" className="h-6 px-2 text-xs">
+                                                + Add
+                                              </Button>
+                                            </Label>
+                                            <div className="mt-1">
+                                              {signer.transactionPermissions.approvalLimits[TransactionType.TRANSFER].allowedDestinations.length === 0 ? (
+                                                <div className="text-xs text-gray-500 italic">
+                                                  No restrictions (can send to any address)
+                                                </div>
+                                              ) : (
+                                                <div className="space-y-1">
+                                                  {signer.transactionPermissions.approvalLimits[TransactionType.TRANSFER].allowedDestinations.map((addr, i) => (
+                                                    <div key={i} className="flex items-center justify-between text-xs bg-black/20 p-1 rounded">
+                                                      <code className="font-mono">{addr}</code>
+                                                      <Button type="button" variant="ghost" size="sm" className="h-5 w-5 p-0">
+                                                        <X className="h-3 w-3" />
+                                                      </Button>
+                                                    </div>
+                                                  ))}
+                                                </div>
+                                              )}
+                                            </div>
+                                          </div>
+                                        </div>
+                                      </AccordionContent>
+                                    </AccordionItem>
+                                  </Accordion>
+                                </div>
+                              )}
+                              
+                              {/* Contract Interaction Limits */}
+                              {signer.transactionPermissions.allowedTypes.includes(TransactionType.CONTRACT_INTERACTION) && (
+                                <div>
+                                  <Accordion type="single" collapsible className="w-full">
+                                    <AccordionItem value="contract-limits" className="border-gray-800">
+                                      <AccordionTrigger className="text-xs py-2">
+                                        Contract Interaction Limits
+                                      </AccordionTrigger>
+                                      <AccordionContent>
+                                        <div className="space-y-2 pt-2">
+                                          <div>
+                                            <Label className="text-xs flex items-center justify-between">
+                                              <span>Allowed Contracts</span>
+                                              <Button type="button" variant="ghost" size="sm" className="h-6 px-2 text-xs">
+                                                + Add
+                                              </Button>
+                                            </Label>
+                                            <div className="mt-1">
+                                              {signer.transactionPermissions.approvalLimits[TransactionType.CONTRACT_INTERACTION].allowedContracts.length === 0 ? (
+                                                <div className="text-xs text-gray-500 italic">
+                                                  No restrictions (can interact with any contract)
+                                                </div>
+                                              ) : (
+                                                <div className="space-y-1">
+                                                  {signer.transactionPermissions.approvalLimits[TransactionType.CONTRACT_INTERACTION].allowedContracts.map((addr, i) => (
+                                                    <div key={i} className="flex items-center justify-between text-xs bg-black/20 p-1 rounded">
+                                                      <code className="font-mono">{addr}</code>
+                                                      <Button type="button" variant="ghost" size="sm" className="h-5 w-5 p-0">
+                                                        <X className="h-3 w-3" />
+                                                      </Button>
+                                                    </div>
+                                                  ))}
+                                                </div>
+                                              )}
+                                            </div>
+                                          </div>
+                                          
+                                          <div>
+                                            <Label className="text-xs flex items-center justify-between">
+                                              <span>Allowed Methods</span>
+                                              <Button type="button" variant="ghost" size="sm" className="h-6 px-2 text-xs">
+                                                + Add
+                                              </Button>
+                                            </Label>
+                                            <div className="mt-1">
+                                              {signer.transactionPermissions.approvalLimits[TransactionType.CONTRACT_INTERACTION].allowedMethods.length === 0 ? (
+                                                <div className="text-xs text-gray-500 italic">
+                                                  No restrictions (can call any method)
+                                                </div>
+                                              ) : (
+                                                <div className="space-y-1">
+                                                  {signer.transactionPermissions.approvalLimits[TransactionType.CONTRACT_INTERACTION].allowedMethods.map((method, i) => (
+                                                    <div key={i} className="flex items-center justify-between text-xs bg-black/20 p-1 rounded">
+                                                      <code className="font-mono">{method}</code>
+                                                      <Button type="button" variant="ghost" size="sm" className="h-5 w-5 p-0">
+                                                        <X className="h-3 w-3" />
+                                                      </Button>
+                                                    </div>
+                                                  ))}
+                                                </div>
+                                              )}
+                                            </div>
+                                          </div>
+                                        </div>
+                                      </AccordionContent>
+                                    </AccordionItem>
+                                  </Accordion>
+                                </div>
+                              )}
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+                
+                <div className="border border-gray-800 rounded-md p-4 bg-black/20">
+                  <div className="space-y-3">
+                    <h4 className="text-sm font-medium">Add New Signer</h4>
+                    <div className="grid gap-2">
+                      <div>
+                        <Label htmlFor="new-signer-name" className="text-xs">Name</Label>
+                        <Input
+                          id="new-signer-name"
+                          placeholder="Signer Name"
+                          value={newSignerName}
+                          onChange={(e) => setNewSignerName(e.target.value)}
+                          className="bg-black/40 border-gray-700 h-9 mt-1"
+                        />
+                      </div>
+                      <div>
+                        <Label htmlFor="new-signer-address" className="text-xs">Ethereum Address</Label>
+                        <Input
+                          id="new-signer-address"
+                          placeholder="0x..."
+                          value={newSignerAddress}
+                          onChange={(e) => setNewSignerAddress(e.target.value)}
+                          className="bg-black/40 border-gray-700 h-9 mt-1 font-mono"
+                        />
+                      </div>
+                    </div>
+                    <Button 
+                      onClick={addSigner} 
+                      disabled={!newSignerName || !newSignerAddress}
+                      className="w-full"
+                    >
+                      <Plus className="mr-2 h-4 w-4" />
+                      Add Signer
+                    </Button>
+                  </div>
+                </div>
+                
+                <div className="flex items-center space-x-2 text-sm">
+                  <AlertCircle className="h-4 w-4 text-amber-400" />
+                  <span className="text-amber-400">
+                    Make sure to add all necessary signers before creating the vault
+                  </span>
+                </div>
+              </CardContent>
+            </Card>
+            
+            <Card className="bg-black/40 border-gray-800">
+              <CardHeader>
+                <CardTitle className="flex items-center">
+                  <Shield className="w-5 h-5 mr-2 text-green-400" />
+                  Advanced Security
+                </CardTitle>
+                <CardDescription>Configure additional security settings</CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-6">
+                <div className="space-y-4">
+                  <h4 className="font-medium text-sm">Authentication Methods</h4>
+                  <div className="space-y-2">
+                    <div className="flex items-center justify-between">
+                      <div className="space-y-0.5">
+                        <Label className="text-sm">Hardware Key Authentication</Label>
+                        <p className="text-xs text-gray-500">
+                          Require hardware security keys for transaction signing
+                        </p>
+                      </div>
+                      <Switch
+                        checked={enableHardwareKey}
+                        onCheckedChange={setEnableHardwareKey}
+                      />
+                    </div>
+                    
+                    <div className="flex items-center justify-between">
+                      <div className="space-y-0.5">
+                        <Label className="text-sm">QR Code Authentication</Label>
+                        <p className="text-xs text-gray-500">
+                          Enable mobile app QR code signing for transactions
+                        </p>
+                      </div>
+                      <Switch
+                        checked={enableQRSignature}
+                        onCheckedChange={setEnableQRSignature}
+                      />
+                    </div>
+                    
+                    <div className="flex items-center justify-between">
+                      <div className="space-y-0.5">
+                        <Label className="text-sm">Biometric Authentication</Label>
+                        <p className="text-xs text-gray-500">
+                          Use biometric verification for transaction approvals
+                        </p>
+                      </div>
+                      <Switch
+                        checked={enableBiometrics}
+                        onCheckedChange={setEnableBiometrics}
+                      />
+                    </div>
+                  </div>
+                </div>
+                
+                <Separator className="bg-gray-800" />
+                
+                <div className="space-y-4">
+                  <h4 className="font-medium text-sm">Social Recovery Setup</h4>
+                  <div className="space-y-2">
+                    <div className="flex items-center justify-between">
+                      <div className="space-y-0.5">
+                        <Label className="text-sm">Enable Social Recovery</Label>
+                        <p className="text-xs text-gray-500">
+                          Allow trusted guardians to help recover vault access
+                        </p>
+                      </div>
+                      <Switch
+                        checked={enableRecovery}
+                        onCheckedChange={setEnableRecovery}
+                      />
+                    </div>
+                    
+                    {enableRecovery && (
+                      <div className="mt-4 space-y-2">
+                        <div className="flex justify-between items-center">
+                          <div className="space-y-1">
+                            <Label>Required Guardian Approvals</Label>
+                            <p className="text-xs text-gray-500">
+                              Number of guardians needed to approve recovery
+                            </p>
+                          </div>
+                          <div className="flex items-center space-x-2">
+                            <Button 
+                              variant="outline" 
+                              size="sm"
+                              onClick={() => setGuardianThreshold(Math.max(1, guardianThreshold - 1))}
+                              disabled={guardianThreshold <= 1}
+                              className="h-8 w-8 p-0"
+                            >
+                              -
+                            </Button>
+                            <span className="text-lg font-bold w-8 text-center">{guardianThreshold}</span>
+                            <Button 
+                              variant="outline" 
+                              size="sm"
+                              onClick={() => setGuardianThreshold(Math.min(
+                                recoveryGuardians.length > 0 ? recoveryGuardians.length : 5, 
+                                guardianThreshold + 1
+                              ))}
+                              disabled={recoveryGuardians.length > 0 && guardianThreshold >= recoveryGuardians.length}
+                              className="h-8 w-8 p-0"
+                            >
+                              +
+                            </Button>
+                          </div>
+                        </div>
+                        
+                        <div className="pt-2">
+                          <div className="text-sm font-medium mb-2">Recovery Guardians</div>
+                          <div className="space-y-2 max-h-[180px] overflow-y-auto pr-2">
+                            {recoveryGuardians.map((guardian) => (
+                              <div 
+                                key={guardian.id} 
+                                className="flex items-center justify-between py-2 border-b border-gray-800 last:border-0"
+                              >
+                                <div className="flex items-center space-x-2">
+                                  <div className="bg-green-900/30 p-1.5 rounded-full">
+                                    <ShieldAlert className="h-3.5 w-3.5 text-green-500" />
+                                  </div>
+                                  <div>
+                                    <div className="text-sm font-medium">{guardian.name}</div>
+                                    <div className="text-xs text-gray-500 font-mono">{guardian.address.slice(0, 6)}...{guardian.address.slice(-4)}</div>
+                                  </div>
+                                </div>
+                                <Button
+                                  variant="ghost"
+                                  size="sm"
+                                  onClick={() => removeGuardian(guardian.id)}
+                                  className="h-8 w-8 p-0 text-gray-400 hover:text-white"
+                                >
+                                  <XCircle className="h-4 w-4" />
+                                </Button>
+                              </div>
+                            ))}
+                            
+                            {recoveryGuardians.length === 0 && (
+                              <div className="text-center py-4 text-sm text-gray-500">
+                                No guardians added yet. Add at least {guardianThreshold} guardian(s).
+                              </div>
+                            )}
+                          </div>
+                          
+                          <div className="mt-3 border border-gray-800 rounded-md p-3 bg-black/20">
+                            <div className="space-y-3">
+                              <h4 className="text-sm font-medium">Add Recovery Guardian</h4>
+                              <div className="grid gap-2">
+                                <div>
+                                  <Label htmlFor="guardian-name" className="text-xs">Name</Label>
+                                  <Input
+                                    id="guardian-name"
+                                    placeholder="Guardian Name"
+                                    value={newGuardian.name}
+                                    onChange={(e) => setNewGuardian({...newGuardian, name: e.target.value})}
+                                    className="bg-black/40 border-gray-700 h-9 mt-1"
+                                  />
+                                </div>
+                                <div>
+                                  <Label htmlFor="guardian-address" className="text-xs">Ethereum Address</Label>
+                                  <Input
+                                    id="guardian-address"
+                                    placeholder="0x..."
+                                    value={newGuardian.address}
+                                    onChange={(e) => setNewGuardian({...newGuardian, address: e.target.value})}
+                                    className="bg-black/40 border-gray-700 h-9 mt-1 font-mono"
+                                  />
+                                </div>
+                                <div>
+                                  <Label htmlFor="guardian-email" className="text-xs">Email (optional)</Label>
+                                  <Input
+                                    id="guardian-email"
+                                    placeholder="email@example.com"
+                                    value={newGuardian.email}
+                                    onChange={(e) => setNewGuardian({...newGuardian, email: e.target.value})}
+                                    className="bg-black/40 border-gray-700 h-9 mt-1"
+                                  />
+                                </div>
+                              </div>
+                              <Button 
+                                onClick={addGuardian} 
+                                disabled={!newGuardian.name || !newGuardian.address}
+                                className="w-full"
+                              >
+                                <Plus className="mr-2 h-4 w-4" />
+                                Add Guardian
+                              </Button>
+                            </div>
+                          </div>
+                          
+                          {recoveryGuardians.length > 0 && recoveryGuardians.length < guardianThreshold && (
+                            <div className="flex items-center space-x-2 text-sm mt-2">
+                              <AlertCircle className="h-4 w-4 text-amber-400" />
+                              <span className="text-amber-400">
+                                Add at least {guardianThreshold - recoveryGuardians.length} more guardian(s)
+                              </span>
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </div>
+                
+                <Separator className="bg-gray-800" />
+                
+                <div className="space-y-4">
+                  <h4 className="font-medium text-sm">Additional Security Settings</h4>
+                  <div className="space-y-2">
+                    <div className="flex items-center justify-between">
+                      <div className="space-y-0.5">
+                        <Label className="text-sm">Encrypted Storage</Label>
+                        <p className="text-xs text-gray-500">
+                          Enable end-to-end encryption for vault data
+                        </p>
+                      </div>
+                      <Switch
+                        checked={enableEncryption}
+                        onCheckedChange={setEnableEncryption}
+                      />
+                    </div>
+                    
+                    <div className="flex items-center justify-between">
+                      <div className="space-y-0.5">
+                        <Label className="text-sm">Activity Notifications</Label>
+                        <p className="text-xs text-gray-500">
+                          Receive alerts for vault activity and approval requests
+                        </p>
+                      </div>
+                      <Switch
+                        checked={activityNotifications}
+                        onCheckedChange={setActivityNotifications}
+                      />
+                    </div>
+                    
+                    <div className="space-y-1">
+                      <Label className="text-sm">Transaction Expiry</Label>
+                      <p className="text-xs text-gray-500 mb-2">
+                        Set how long unsigned transactions remain valid
+                      </p>
+                      <Select
+                        value={transactionExpiry.toString()}
+                        onValueChange={(value) => setTransactionExpiry(parseInt(value))}
+                      >
+                        <SelectTrigger className="w-full">
+                          <SelectValue placeholder="Select expiry time" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="1">1 day</SelectItem>
+                          <SelectItem value="3">3 days</SelectItem>
+                          <SelectItem value="7">1 week</SelectItem>
+                          <SelectItem value="14">2 weeks</SelectItem>
+                          <SelectItem value="30">30 days</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    
+                    <div className="space-y-1">
+                      <Label className="text-sm">Gas Fee Settings</Label>
+                      <p className="text-xs text-gray-500 mb-2">
+                        Configure how transaction gas fees are handled
+                      </p>
+                      <Select
+                        value={gasSettings}
+                        onValueChange={setGasSettings}
+                      >
+                        <SelectTrigger className="w-full">
+                          <SelectValue placeholder="Select gas settings" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="automatic">Automatic (Recommended)</SelectItem>
+                          <SelectItem value="economy">Economy Mode</SelectItem>
+                          <SelectItem value="fast">Fast Execution</SelectItem>
+                          <SelectItem value="manual">Manual Control</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+          
+          <CardFooter className="flex justify-end pt-4">
+            <Button
+              onClick={() => {
+                // Create the vault
+                const vaultData = {
+                  name,
+                  description,
+                  blockchain: selectedBlockchain,
+                  signers: vaultSigners,
+                  signersThreshold,
+                  timelockDays,
+                  securitySettings: {
+                    hardwareKey: enableHardwareKey,
+                    qrSignature: enableQRSignature,
+                    biometrics: enableBiometrics,
+                    recovery: enableRecovery,
+                    encryption: enableEncryption,
+                    notifications: activityNotifications,
+                    transactionExpiry,
+                    gasSettings,
+                  },
+                  recoverySettings: enableRecovery ? {
+                    guardians: recoveryGuardians,
+                    threshold: guardianThreshold,
+                  } : null,
+                };
+                
+                if (onCreateVault) {
+                  onCreateVault(vaultData);
+                } else {
+                  console.log('Vault created:', vaultData);
+                  // In a real app, this would interact with smart contracts
+                }
+                
+                // Once created, switch to management view
+                setCreateMode(false);
+              }}
+              disabled={
+                !name || 
+                vaultSigners.length < signersThreshold || 
+                (enableRecovery && recoveryGuardians.length < guardianThreshold)
+              }
+              className="bg-gradient-to-r from-[#3F51FF] to-[#8B49F6] hover:from-[#3F51FF]/90 hover:to-[#8B49F6]/90 text-white"
+            >
+              Create Vault
+            </Button>
+          </CardFooter>
+        </div>
+      </div>
+    );
+  };
+  
+  // UI for managing an existing multi-signature vault
+  const renderManagementUI = () => {
+    return (
+      <div className="space-y-6">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+          <div>
+            <h2 className="text-2xl font-bold tracking-tight flex items-center">
+              {name}
+              <Badge className="ml-2 bg-[#3F51FF]/20 text-[#3F51FF] hover:bg-[#3F51FF]/30 hover:text-[#3F51FF]">
+                Multi-Signature
+              </Badge>
+            </h2>
+            <p className="text-gray-500 mt-1">{description}</p>
+          </div>
+          
+          <div className="flex space-x-2">
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button variant="outline" size="sm">
+                    <Download className="h-4 w-4 mr-2" />
+                    <span className="hidden sm:inline">Export</span>
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>Export vault configuration</p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+            
+            <Dialog open={recoveryDialogOpen} onOpenChange={setRecoveryDialogOpen}>
+              <DialogTrigger asChild>
+                <Button variant="outline" size="sm" className="text-amber-500 border-amber-900/50">
+                  <ShieldAlert className="h-4 w-4 mr-2" />
+                  <span className="hidden sm:inline">Recovery</span>
+                </Button>
+              </DialogTrigger>
+              <DialogContent className="sm:max-w-[425px] bg-[#0A0A0A] border border-gray-800">
+                <DialogHeader>
+                  <DialogTitle>Social Recovery Process</DialogTitle>
+                  <DialogDescription>
+                    {!recoveryInitiated 
+                      ? "Initiate the recovery process to regain access to your vault." 
+                      : `Recovery in progress. ${guardianThreshold - recoveryApprovals} more guardian(s) needed.`}
+                  </DialogDescription>
+                </DialogHeader>
+                
+                <div className="py-4">
+                  {!recoveryInitiated ? (
+                    <div className="space-y-4">
+                      <Alert variant="destructive" className="bg-red-950/20 border-red-900">
+                        <AlertCircle className="h-4 w-4" />
+                        <AlertTitle>Important</AlertTitle>
+                        <AlertDescription>
+                          Only initiate recovery if you've lost access to your primary keys. This process will reset access to the vault.
+                        </AlertDescription>
+                      </Alert>
+                      <div className="text-sm space-y-1">
+                        <p className="font-medium">Recovery requires:</p>
+                        <ul className="list-disc pl-5 text-gray-400">
+                          <li>{guardianThreshold} out of {recoveryGuardians.length} guardian approvals</li>
+                          <li>Identity verification process</li>
+                          <li>24-48 hour security timelock</li>
+                        </ul>
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="space-y-4">
+                      {recoveryStep === 1 && (
+                        <>
+                          <div className="flex justify-center py-2">
+                            <div className="bg-amber-900/20 p-4 rounded-full">
+                              <ShieldAlert className="h-10 w-10 text-amber-500" />
+                            </div>
+                          </div>
+                          <Progress value={(recoveryApprovals / guardianThreshold) * 100} className="h-2" />
+                          <div className="text-center text-sm">
+                            <p className="font-medium">Recovery approvals: {recoveryApprovals}/{guardianThreshold}</p>
+                            <p className="text-gray-400 mt-1">
+                              Waiting for guardians to approve your recovery request
+                            </p>
+                          </div>
+                          <div className="bg-black/40 rounded-md p-3 border border-gray-800">
+                            <div className="font-medium text-sm mb-2">Recovery Guardians</div>
+                            <div className="space-y-2 max-h-[120px] overflow-y-auto">
+                              {recoveryGuardians.map((guardian, idx) => (
+                                <div key={guardian.id} className="flex items-center justify-between">
+                                  <div className="flex items-center space-x-2">
+                                    <div className="bg-green-900/20 p-1 rounded-full">
+                                      <ShieldAlert className="h-3 w-3 text-green-500" />
+                                    </div>
+                                    <span className="text-sm">{guardian.name}</span>
+                                  </div>
+                                  <Badge 
+                                    variant={idx < recoveryApprovals ? "default" : "outline"}
+                                    className={idx < recoveryApprovals 
+                                      ? "bg-green-900/20 text-green-400 hover:bg-green-900/30" 
+                                      : "bg-gray-900/20 text-gray-400"
+                                    }
+                                  >
+                                    {idx < recoveryApprovals ? "Approved" : "Pending"}
+                                  </Badge>
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+                        </>
+                      )}
+                      
+                      {recoveryStep === 2 && (
+                        <>
+                          <div className="flex justify-center py-2">
+                            <div className="bg-blue-900/20 p-4 rounded-full">
+                              <Clock className="h-10 w-10 text-blue-500" />
+                            </div>
+                          </div>
+                          <div className="text-center text-sm">
+                            <p className="font-medium">Security Timelock Period</p>
+                            <p className="text-gray-400 mt-1">
+                              Your recovery request has been approved. A 24-hour timelock period is in effect.
+                            </p>
+                          </div>
+                          <div className="bg-black/40 rounded-md p-3 border border-gray-800">
+                            <div className="font-medium text-sm mb-2">Timelock Details</div>
+                            <div className="grid grid-cols-2 gap-2 text-center">
+                              <div className="p-2 bg-black/20 rounded-md">
+                                <div className="text-xs text-gray-400">Started</div>
+                                <div className="text-sm font-medium">
+                                  {new Date().toLocaleDateString()} {new Date().toLocaleTimeString()}
+                                </div>
+                              </div>
+                              <div className="p-2 bg-black/20 rounded-md">
+                                <div className="text-xs text-gray-400">Completes</div>
+                                <div className="text-sm font-medium">
+                                  {new Date(Date.now() + 24 * 60 * 60 * 1000).toLocaleDateString()} {new Date(Date.now() + 24 * 60 * 60 * 1000).toLocaleTimeString()}
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </>
+                      )}
+                      
+                      {recoveryStep === 3 && (
+                        <>
+                          <div className="flex justify-center py-2">
+                            <div className="bg-green-900/20 p-4 rounded-full">
+                              <CheckCircle2 className="h-10 w-10 text-green-500" />
+                            </div>
+                          </div>
+                          <div className="text-center text-sm">
+                            <p className="font-medium">Recovery Successful</p>
+                            <p className="text-gray-400 mt-1">
+                              Your vault access has been restored. You can now set up new keys.
+                            </p>
+                          </div>
+                        </>
+                      )}
+                    </div>
+                  )}
+                </div>
+                
+                <DialogFooter>
+                  {!recoveryInitiated ? (
+                    <>
+                      <Button variant="outline" onClick={() => setRecoveryDialogOpen(false)}>
+                        Cancel
+                      </Button>
+                      <Button onClick={initiateRecovery} className="bg-amber-600 hover:bg-amber-700">
+                        Initiate Recovery
+                      </Button>
+                    </>
+                  ) : (
+                    <>
+                      {recoveryStep === 1 && (
+                        <Button onClick={approveRecovery} className="bg-green-600 hover:bg-green-700">
+                          Simulate Guardian Approval
+                        </Button>
+                      )}
+                      {recoveryStep === 2 && (
+                        <Button onClick={completeRecovery} className="bg-blue-600 hover:bg-blue-700">
+                          Complete Recovery
+                        </Button>
+                      )}
+                      {recoveryStep === 3 && (
+                        <Button onClick={() => setRecoveryDialogOpen(false)} className="bg-green-600 hover:bg-green-700">
+                          Continue
+                        </Button>
+                      )}
+                    </>
+                  )}
+                </DialogFooter>
+              </DialogContent>
+            </Dialog>
+          </div>
+        </div>
+        
+        <Tabs defaultValue="transactions" className="w-full">
+          <TabsList className="w-full bg-[#0A0A0A] border border-gray-800 rounded-lg h-12">
+            <TabsTrigger value="transactions" className="rounded-md h-9 data-[state=active]:bg-[#3F51FF]/10 data-[state=active]:text-[#3F51FF]">
+              Transactions
+            </TabsTrigger>
+            <TabsTrigger value="signers" className="rounded-md h-9 data-[state=active]:bg-[#3F51FF]/10 data-[state=active]:text-[#3F51FF]">
+              Signers
+            </TabsTrigger>
+            <TabsTrigger value="assets" className="rounded-md h-9 data-[state=active]:bg-[#3F51FF]/10 data-[state=active]:text-[#3F51FF]">
+              Assets
+            </TabsTrigger>
+            <TabsTrigger value="settings" className="rounded-md h-9 data-[state=active]:bg-[#3F51FF]/10 data-[state=active]:text-[#3F51FF]">
+              Settings
+            </TabsTrigger>
+          </TabsList>
+          
+          <TabsContent value="transactions" className="space-y-4 mt-4">
+            <Card className="bg-black/40 border-gray-800">
+              <CardHeader className="pb-3">
+                <CardTitle>Pending Transactions</CardTitle>
+                <CardDescription>
+                  Transactions requiring signatures
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                {transactions.filter(tx => tx.status === 'pending').length === 0 ? (
+                  <div className="text-center py-8 text-gray-500">
+                    <FileText className="h-12 w-12 mx-auto mb-3 opacity-20" />
+                    <p>No pending transactions</p>
+                  </div>
+                ) : (
+                  <div className="space-y-3">
+                    {transactions
+                      .filter(tx => tx.status === 'pending')
+                      .map(transaction => (
+                        <div key={transaction.id} className="p-4 border border-gray-800 rounded-lg bg-black/30">
+                          <div className="flex justify-between items-start">
+                            <div>
+                              <h4 className="font-medium text-sm">{transaction.description}</h4>
+                              <div className="flex items-center mt-1 space-x-2">
+                                <Badge 
+                                  variant="outline"
+                                  className="text-amber-400 border-amber-900/50 bg-amber-900/10"
+                                >
+                                  Pending
+                                </Badge>
+                                <span className="text-xs text-gray-500">
+                                  Created {new Date(transaction.timeCreated).toLocaleDateString()}
+                                </span>
+                              </div>
+                            </div>
+                            <div className="flex space-x-2">
+                              <Button 
+                                variant="outline" 
+                                size="sm"
+                                onClick={() => signTransaction(transaction.id)}
+                                disabled={transaction.signers.includes(vaultSigners[0].address)}
+                              >
+                                Sign
+                              </Button>
+                              <Button 
+                                variant="destructive" 
+                                size="sm"
+                                onClick={() => rejectTransaction(transaction.id)}
+                              >
+                                Reject
+                              </Button>
+                            </div>
+                          </div>
+                          
+                          <Separator className="my-3 bg-gray-800" />
+                          
+                          <div className="grid grid-cols-2 gap-4">
+                            <div>
+                              <p className="text-xs text-gray-500 mb-1">Transaction Details</p>
+                              {transaction.type === 'send' ? (
+                                <div className="space-y-1 text-sm">
+                                  <div className="flex justify-between">
+                                    <span className="text-gray-400">Type:</span>
+                                    <span>Transfer</span>
+                                  </div>
+                                  <div className="flex justify-between">
+                                    <span className="text-gray-400">Amount:</span>
+                                    <span>{transaction.amount}</span>
+                                  </div>
+                                  <div className="flex justify-between">
+                                    <span className="text-gray-400">To:</span>
+                                    <span className="font-mono">{transaction.destination?.slice(0, 6)}...{transaction.destination?.slice(-4)}</span>
+                                  </div>
+                                </div>
+                              ) : (
+                                <div className="space-y-1 text-sm">
+                                  <div className="flex justify-between">
+                                    <span className="text-gray-400">Type:</span>
+                                    <span>Contract</span>
+                                  </div>
+                                  <div className="flex justify-between">
+                                    <span className="text-gray-400">Method:</span>
+                                    <span>{transaction.contractInteraction?.method}</span>
+                                  </div>
+                                  <div className="flex justify-between">
+                                    <span className="text-gray-400">Contract:</span>
+                                    <span className="font-mono">{transaction.destination?.slice(0, 6)}...{transaction.destination?.slice(-4)}</span>
+                                  </div>
+                                </div>
+                              )}
+                            </div>
+                            
+                            <div>
+                              <p className="text-xs text-gray-500 mb-1">Signatures</p>
+                              <div className="space-y-2">
+                                <div className="flex items-center justify-between">
+                                  <span className="text-sm">{transaction.currentSignatures} of {transaction.requiredSignatures} signatures</span>
+                                  <Progress 
+                                    value={(transaction.currentSignatures / transaction.requiredSignatures) * 100} 
+                                    className="h-1 w-16" 
+                                  />
+                                </div>
+                                <div className="text-xs text-gray-400">
+                                  Expires in {Math.ceil((transaction.expirationTime.getTime() - Date.now()) / (1000 * 60 * 60 * 24))} days
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                  </div>
+                )}
+                
+                <div className="mt-4">
+                  <Dialog>
+                    <DialogTrigger asChild>
+                      <Button className="w-full bg-gradient-to-r from-[#3F51FF] to-[#8B49F6] hover:from-[#3F51FF]/90 hover:to-[#8B49F6]/90">
+                        <Plus className="h-4 w-4 mr-2" />
+                        Create New Transaction
+                      </Button>
+                    </DialogTrigger>
+                    <DialogContent className="bg-[#0A0A0A] border border-gray-800 sm:max-w-[550px]">
+                      <DialogHeader>
+                        <DialogTitle>Create New Transaction</DialogTitle>
+                        <DialogDescription>
+                          Create a new transaction that requires multi-signature approval.
+                        </DialogDescription>
+                      </DialogHeader>
+                      
+                      <div className="space-y-4 py-4">
+                        <div className="space-y-2">
+                          <Label htmlFor="tx-type">Transaction Type</Label>
+                          <Select
+                            value={newTransaction.type}
+                            onValueChange={(value) => setNewTransaction({...newTransaction, type: value})}
+                          >
+                            <SelectTrigger id="tx-type">
+                              <SelectValue placeholder="Select transaction type" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="send">Transfer Assets</SelectItem>
+                              <SelectItem value="contract">Contract Interaction</SelectItem>
+                            </SelectContent>
+                          </Select>
+                        </div>
+                        
+                        <div className="space-y-2">
+                          <Label htmlFor="tx-description">Description</Label>
+                          <Input
+                            id="tx-description"
+                            placeholder="Brief description of this transaction"
+                            value={newTransaction.description}
+                            onChange={(e) => setNewTransaction({...newTransaction, description: e.target.value})}
+                          />
+                        </div>
+                        
+                        {newTransaction.type === 'send' && (
+                          <>
+                            <div className="space-y-2">
+                              <Label htmlFor="tx-destination">Destination Address</Label>
+                              <Input
+                                id="tx-destination"
+                                placeholder="0x..."
+                                value={newTransaction.destination || ''}
+                                onChange={(e) => setNewTransaction({...newTransaction, destination: e.target.value})}
+                                className="font-mono"
+                              />
+                            </div>
+                            
+                            <div className="space-y-2">
+                              <Label htmlFor="tx-amount">Amount</Label>
+                              <Input
+                                id="tx-amount"
+                                placeholder="1.5 ETH"
+                                value={newTransaction.amount || ''}
+                                onChange={(e) => setNewTransaction({...newTransaction, amount: e.target.value})}
+                              />
+                            </div>
+                          </>
+                        )}
+                        
+                        {newTransaction.type === 'contract' && (
+                          <>
+                            <div className="space-y-2">
+                              <Label htmlFor="tx-contract">Contract Address</Label>
+                              <Input
+                                id="tx-contract"
+                                placeholder="0x..."
+                                value={newTransaction.destination || ''}
+                                onChange={(e) => setNewTransaction({...newTransaction, destination: e.target.value})}
+                                className="font-mono"
+                              />
+                            </div>
+                            
+                            <div className="space-y-2">
+                              <Label htmlFor="tx-method">Method Name/Signature</Label>
+                              <Input
+                                id="tx-method"
+                                placeholder="transfer(address,uint256)"
+                                value={newTransaction.contractMethod || ''}
+                                onChange={(e) => setNewTransaction({...newTransaction, contractMethod: e.target.value})}
+                                className="font-mono"
+                              />
+                            </div>
+                            
+                            <div className="space-y-2">
+                              <Label htmlFor="tx-params">Parameters (JSON format)</Label>
+                              <Textarea
+                                id="tx-params"
+                                placeholder='{"recipient": "0x1234...", "amount": "1000000000000000000"}'
+                                value={newTransaction.contractParams || ''}
+                                onChange={(e) => setNewTransaction({...newTransaction, contractParams: e.target.value})}
+                                className="font-mono min-h-[100px]"
+                              />
+                            </div>
+                          </>
+                        )}
+                      </div>
+                      
+                      <DialogFooter>
+                        <Button type="submit" onClick={createTransaction}>Create Transaction</Button>
+                      </DialogFooter>
+                    </DialogContent>
+                  </Dialog>
+                </div>
+              </CardContent>
+            </Card>
+            
+            <Card className="bg-black/40 border-gray-800">
+              <CardHeader className="pb-3">
+                <CardTitle>Transaction History</CardTitle>
+                <CardDescription>
+                  Past transactions
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <Table>
+                  <TableHeader>
+                    <TableRow className="hover:bg-transparent border-gray-800">
+                      <TableHead>Description</TableHead>
+                      <TableHead>Type</TableHead>
+                      <TableHead>Status</TableHead>
+                      <TableHead>Date</TableHead>
+                      <TableHead className="text-right">Actions</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {transactions
+                      .filter(tx => tx.status !== 'pending')
+                      .map(transaction => (
+                        <TableRow key={transaction.id} className="hover:bg-black/20 border-gray-800">
+                          <TableCell className="font-medium">{transaction.description}</TableCell>
+                          <TableCell>{transaction.type === 'send' ? 'Transfer' : 'Contract'}</TableCell>
+                          <TableCell>
+                            <Badge 
+                              variant="outline"
+                              className={
+                                transaction.status === 'approved' 
+                                  ? "text-blue-400 border-blue-900/50 bg-blue-900/10"
+                                  : transaction.status === 'executed' 
+                                    ? "text-green-400 border-green-900/50 bg-green-900/10"
+                                    : "text-red-400 border-red-900/50 bg-red-900/10"
+                              }
+                            >
+                              {transaction.status.charAt(0).toUpperCase() + transaction.status.slice(1)}
+                            </Badge>
+                          </TableCell>
+                          <TableCell>
+                            {transaction.timeExecuted 
+                              ? new Date(transaction.timeExecuted).toLocaleDateString()
+                              : new Date(transaction.timeCreated).toLocaleDateString()
+                            }
+                          </TableCell>
+                          <TableCell className="text-right">
+                            {transaction.status === 'approved' && (
+                              <Button
+                                variant="ghost" 
+                                size="sm"
+                                onClick={() => executeTransaction(transaction.id)}
+                                className="h-8 text-xs"
+                              >
+                                Execute
+                              </Button>
+                            )}
+                            {transaction.status === 'executed' && (
+                              <Button
+                                variant="ghost" 
+                                size="sm"
+                                className="h-8 text-xs"
+                                onClick={() => window.open(`https://etherscan.io/tx/0x${Math.random().toString(16).slice(2)}`, '_blank')}
+                              >
+                                View
+                                <ArrowUpRight className="ml-1 h-3 w-3" />
+                              </Button>
+                            )}
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    {transactions.filter(tx => tx.status !== 'pending').length === 0 && (
+                      <TableRow>
+                        <TableCell colSpan={5} className="text-center py-6 text-gray-500">
+                          No transaction history yet
+                        </TableCell>
+                      </TableRow>
+                    )}
+                  </TableBody>
+                </Table>
+              </CardContent>
+            </Card>
+          </TabsContent>
+          
+          <TabsContent value="signers" className="space-y-4 mt-4">
+            <Card className="bg-black/40 border-gray-800">
+              <CardHeader className="pb-3">
+                <CardTitle>Vault Signers</CardTitle>
+                <CardDescription>
+                  Active signers for this vault
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-4">
+                  <div className="flex items-center justify-between p-3 bg-[#3F51FF]/10 rounded-lg border border-[#3F51FF]/20">
+                    <div className="flex items-center space-x-2">
+                      <div className="bg-gradient-to-r from-[#3F51FF] to-[#8B49F6] p-2 rounded-full">
+                        <Users className="h-5 w-5 text-white" />
+                      </div>
+                      <div>
+                        <div className="font-medium">Required Signatures</div>
+                        <div className="text-sm text-gray-400">
+                          {signersThreshold} out of {vaultSigners.length} signers
+                        </div>
+                      </div>
+                    </div>
+                    <Dialog>
+                      <DialogTrigger asChild>
+                        <Button variant="outline" size="sm">
+                          Change
+                        </Button>
+                      </DialogTrigger>
+                      <DialogContent className="bg-[#0A0A0A] border border-gray-800 sm:max-w-[400px]">
+                        <DialogHeader>
+                          <DialogTitle>Update Signature Threshold</DialogTitle>
+                          <DialogDescription>
+                            Change the number of signatures required to approve transactions.
+                          </DialogDescription>
+                        </DialogHeader>
+                        
+                        <div className="py-4">
+                          <div className="flex justify-center items-center space-x-4">
+                            <Button 
+                              variant="outline" 
+                              size="lg"
+                              onClick={() => setSignersThreshold(Math.max(1, signersThreshold - 1))}
+                              disabled={signersThreshold <= 1}
+                              className="h-12 w-12 p-0 text-xl"
+                            >
+                              -
+                            </Button>
+                            <div className="text-center">
+                              <div className="text-3xl font-bold">{signersThreshold}</div>
+                              <div className="text-sm text-gray-500">out of {vaultSigners.length}</div>
+                            </div>
+                            <Button 
+                              variant="outline" 
+                              size="lg"
+                              onClick={() => setSignersThreshold(Math.min(vaultSigners.length, signersThreshold + 1))}
+                              disabled={signersThreshold >= vaultSigners.length}
+                              className="h-12 w-12 p-0 text-xl"
+                            >
+                              +
+                            </Button>
+                          </div>
+                          
+                          <div className="mt-4 text-sm text-gray-400 text-center">
+                            This will require a multi-signature transaction to be approved.
+                          </div>
+                        </div>
+                        
+                        <DialogFooter>
+                          <Button type="submit">Update Threshold</Button>
+                        </DialogFooter>
+                      </DialogContent>
+                    </Dialog>
+                  </div>
+                  
+                  <div>
+                    <div className="text-sm font-medium mb-2">Active Signers</div>
+                    <div className="space-y-2 max-h-[480px] overflow-y-auto pr-2">
+                      {vaultSigners.map((signer) => (
+                        <div 
+                          key={signer.id} 
+                          className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 p-3 bg-black/40 rounded-md border border-gray-800"
+                        >
+                          <div className="flex items-center space-x-3">
+                            <div className="bg-gray-800 h-10 w-10 min-w-[40px] flex-shrink-0 rounded-full flex items-center justify-center">
+                              {signer.hasKey ? (
+                                <Key className="h-5 w-5 text-green-500" />
+                              ) : (
+                                <Fingerprint className="h-5 w-5 text-blue-500" />
+                              )}
+                            </div>
+                            <div className="overflow-hidden">
+                              <div className="font-medium">{signer.name}</div>
+                              <div className="text-xs text-gray-500 font-mono truncate">{signer.address}</div>
+                            </div>
+                          </div>
+                          <div className="flex items-center justify-between sm:justify-end gap-3">
+                            {signer.role === 'owner' ? (
+                              <Badge variant="outline" className="bg-purple-900/30 text-purple-400 border-purple-800">Owner</Badge>
+                            ) : (
+                              <Badge variant="outline" className="bg-blue-900/30 text-blue-400 border-blue-800">Signer</Badge>
+                            )}
+                            
+                            <TooltipProvider>
+                              <Tooltip>
+                                <TooltipTrigger asChild>
+                                  <Button
+                                    variant="ghost"
+                                    size="sm"
+                                    className={`h-8 w-8 p-0 ${
+                                      canSignBasedOnTimeConstraints(signer)
+                                        ? "text-green-500"
+                                        : "text-gray-500"
+                                    }`}
+                                  >
+                                    <Clock className="h-4 w-4" />
+                                  </Button>
+                                </TooltipTrigger>
+                                <TooltipContent>
+                                  {canSignBasedOnTimeConstraints(signer)
+                                    ? "Signer can currently approve transactions"
+                                    : "Signer cannot approve transactions at this time"}
+                                </TooltipContent>
+                              </Tooltip>
+                            </TooltipProvider>
+                            
+                            {signer.role !== 'owner' && (
+                              <TooltipProvider>
+                                <Tooltip>
+                                  <TooltipTrigger asChild>
+                                    <Button
+                                      variant="ghost"
+                                      size="sm"
+                                      className="h-8 w-8 p-0 text-red-400 hover:text-red-500"
+                                    >
+                                      <XCircle className="h-4 w-4" />
+                                    </Button>
+                                  </TooltipTrigger>
+                                  <TooltipContent>
+                                    <p>Remove signer (requires multi-sig approval)</p>
+                                  </TooltipContent>
+                                </Tooltip>
+                              </TooltipProvider>
+                            )}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                  
+                  <div className="border border-gray-800 rounded-md p-4 bg-black/20">
+                    <div className="space-y-3">
+                      <h4 className="text-sm font-medium">Add New Signer</h4>
+                      <div className="grid gap-2">
+                        <div>
+                          <Label htmlFor="new-signer-name" className="text-xs">Name</Label>
+                          <Input
+                            id="new-signer-name"
+                            placeholder="Signer Name"
+                            value={newSignerName}
+                            onChange={(e) => setNewSignerName(e.target.value)}
+                            className="bg-black/40 border-gray-700 h-9 mt-1"
+                          />
+                        </div>
+                        <div>
+                          <Label htmlFor="new-signer-address" className="text-xs">Ethereum Address</Label>
+                          <Input
+                            id="new-signer-address"
+                            placeholder="0x..."
+                            value={newSignerAddress}
+                            onChange={(e) => setNewSignerAddress(e.target.value)}
+                            className="bg-black/40 border-gray-700 h-9 mt-1 font-mono"
+                          />
+                        </div>
+                      </div>
+                      <Button 
+                        onClick={addSigner} 
+                        disabled={!newSignerName || !newSignerAddress}
+                        className="w-full"
+                      >
+                        <Plus className="mr-2 h-4 w-4" />
+                        Propose New Signer
+                      </Button>
+                    </div>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+            
+            <Card className="bg-black/40 border-gray-800">
+              <CardHeader className="pb-3">
+                <CardTitle>Social Recovery</CardTitle>
+                <CardDescription>
+                  Manage recovery guardians
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-4">
+                  <div className="flex items-center justify-between p-3 bg-green-900/10 rounded-lg border border-green-900/20">
+                    <div className="flex items-center space-x-2">
+                      <div className="bg-green-900/30 p-2 rounded-full">
+                        <ShieldAlert className="h-5 w-5 text-green-500" />
+                      </div>
+                      <div>
+                        <div className="font-medium">Recovery Status</div>
+                        <div className="text-sm text-gray-400">
+                          {enableRecovery 
+                            ? `${guardianThreshold} out of ${recoveryGuardians.length} guardians required`
+                            : 'Social recovery is disabled'
+                          }
+                        </div>
+                      </div>
+                    </div>
+                    <Switch
+                      checked={enableRecovery}
+                      onCheckedChange={setEnableRecovery}
+                    />
+                  </div>
+                  
+                  {enableRecovery && (
+                    <>
+                      <div>
+                        <div className="text-sm font-medium mb-2">Recovery Guardians</div>
+                        <div className="space-y-2 max-h-[240px] overflow-y-auto pr-2">
+                          {recoveryGuardians.map((guardian) => (
+                            <div 
+                              key={guardian.id} 
+                              className="flex items-center justify-between py-2 px-3 bg-black/40 rounded-md border border-gray-800"
+                            >
+                              <div className="flex items-center space-x-2">
+                                <div className="bg-green-900/30 p-1.5 rounded-full">
+                                  <ShieldAlert className="h-3.5 w-3.5 text-green-500" />
+                                </div>
+                                <div>
+                                  <div className="text-sm font-medium">{guardian.name}</div>
+                                  <div className="text-xs text-gray-500 font-mono">{guardian.address.slice(0, 6)}...{guardian.address.slice(-4)}</div>
+                                </div>
+                              </div>
+                              <div className="flex items-center space-x-2">
+                                {guardian.email && (
+                                  <Badge variant="outline" className="bg-blue-900/10 text-blue-400 border-blue-800">
+                                    Email
+                                  </Badge>
+                                )}
+                                <Button
+                                  variant="ghost"
+                                  size="sm"
+                                  onClick={() => removeGuardian(guardian.id)}
+                                  className="h-8 w-8 p-0 text-gray-400 hover:text-white"
+                                >
+                                  <XCircle className="h-4 w-4" />
+                                </Button>
+                              </div>
+                            </div>
+                          ))}
+                          
+                          {recoveryGuardians.length === 0 && (
+                            <div className="text-center py-4 text-sm text-gray-500">
+                              No guardians added yet. Add at least {guardianThreshold} guardian(s).
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                      
+                      <div className="border border-gray-800 rounded-md p-4 bg-black/20">
+                        <div className="space-y-3">
+                          <h4 className="text-sm font-medium">Add Recovery Guardian</h4>
+                          <div className="grid gap-2">
+                            <div>
+                              <Label htmlFor="guardian-name" className="text-xs">Name</Label>
+                              <Input
+                                id="guardian-name"
+                                placeholder="Guardian Name"
+                                value={newGuardian.name}
+                                onChange={(e) => setNewGuardian({...newGuardian, name: e.target.value})}
+                                className="bg-black/40 border-gray-700 h-9 mt-1"
+                              />
+                            </div>
+                            <div>
+                              <Label htmlFor="guardian-address" className="text-xs">Ethereum Address</Label>
+                              <Input
+                                id="guardian-address"
+                                placeholder="0x..."
+                                value={newGuardian.address}
+                                onChange={(e) => setNewGuardian({...newGuardian, address: e.target.value})}
+                                className="bg-black/40 border-gray-700 h-9 mt-1 font-mono"
+                              />
+                            </div>
+                            <div>
+                              <Label htmlFor="guardian-email" className="text-xs">Email (optional)</Label>
+                              <Input
+                                id="guardian-email"
+                                placeholder="email@example.com"
+                                value={newGuardian.email}
+                                onChange={(e) => setNewGuardian({...newGuardian, email: e.target.value})}
+                                className="bg-black/40 border-gray-700 h-9 mt-1"
+                              />
+                            </div>
+                          </div>
+                          <Button 
+                            onClick={addGuardian} 
+                            disabled={!newGuardian.name || !newGuardian.address}
+                            className="w-full"
+                          >
+                            <Plus className="mr-2 h-4 w-4" />
+                            Add Guardian
+                          </Button>
+                        </div>
+                      </div>
+                    </>
+                  )}
+                </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
+          
+          <TabsContent value="assets" className="space-y-4 mt-4">
+            <Card className="bg-black/40 border-gray-800">
+              <CardHeader className="pb-3">
+                <CardTitle>Vault Assets</CardTitle>
+                <CardDescription>
+                  Crypto assets stored in this vault
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <Table>
+                  <TableHeader>
+                    <TableRow className="hover:bg-transparent border-gray-800">
+                      <TableHead>Asset</TableHead>
+                      <TableHead>Balance</TableHead>
+                      <TableHead className="text-right">Value (USD)</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {assets.map((asset) => (
+                      <TableRow key={asset.name} className="hover:bg-black/20 border-gray-800">
+                        <TableCell>
+                          <div className="flex items-center space-x-2">
+                            <div className={`p-1.5 rounded-full bg-${asset.symbol.toLowerCase()}-500/20`}>
+                              <i className={`${asset.icon} text-lg text-${asset.symbol.toLowerCase()}-500`}></i>
+                            </div>
+                            <div>
+                              <div className="font-medium">{asset.name}</div>
+                              <div className="text-xs text-gray-500">{asset.symbol}</div>
+                            </div>
+                          </div>
+                        </TableCell>
+                        <TableCell>
+                          <div className="font-mono">{asset.amount}</div>
+                        </TableCell>
+                        <TableCell className="text-right">
+                          ${asset.valueUSD.toLocaleString()}
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+                
+                <div className="mt-4 p-4 border border-gray-800 rounded-lg bg-black/20">
+                  <div className="flex justify-between items-center">
+                    <div className="text-sm font-medium">Total Value</div>
+                    <div className="text-xl font-bold">
+                      ${assets.reduce((total, asset) => total + asset.valueUSD, 0).toLocaleString()}
+                    </div>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
+          
+          <TabsContent value="settings" className="space-y-4 mt-4">
+            <Card className="bg-black/40 border-gray-800">
+              <CardHeader className="pb-3">
+                <CardTitle>Vault Settings</CardTitle>
+                <CardDescription>
+                  Manage your vault configuration
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-6">
+                <div className="space-y-4">
+                  <h4 className="font-medium text-sm">Basic Information</h4>
+                  <div className="space-y-2">
+                    <div>
+                      <Label htmlFor="edit-vault-name">Vault Name</Label>
+                      <Input
+                        id="edit-vault-name"
+                        value={name}
+                        onChange={(e) => setName(e.target.value)}
+                        className="bg-black/40 border-gray-700 mt-1"
+                      />
+                    </div>
+                    
+                    <div>
+                      <Label htmlFor="edit-vault-description">Description</Label>
+                      <Textarea
+                        id="edit-vault-description"
+                        value={description}
+                        onChange={(e) => setDescription(e.target.value)}
+                        className="bg-black/40 border-gray-700 min-h-[100px] mt-1"
+                      />
+                    </div>
+                  </div>
+                </div>
+                
+                <Separator className="bg-gray-800" />
+                
+                <div className="space-y-4">
+                  <h4 className="font-medium text-sm">Authentication & Security</h4>
+                  <div className="space-y-2">
+                    <div className="flex items-center justify-between">
+                      <div className="space-y-0.5">
+                        <Label className="text-sm">Hardware Key Authentication</Label>
+                        <p className="text-xs text-gray-500">
+                          Require hardware security keys for transaction signing
+                        </p>
+                      </div>
+                      <Switch
+                        checked={enableHardwareKey}
+                        onCheckedChange={setEnableHardwareKey}
+                      />
+                    </div>
+                    
+                    <div className="flex items-center justify-between">
+                      <div className="space-y-0.5">
+                        <Label className="text-sm">QR Code Authentication</Label>
+                        <p className="text-xs text-gray-500">
+                          Enable mobile app QR code signing for transactions
+                        </p>
+                      </div>
+                      <Switch
+                        checked={enableQRSignature}
+                        onCheckedChange={setEnableQRSignature}
+                      />
+                    </div>
+                    
+                    <div className="flex items-center justify-between">
+                      <div className="space-y-0.5">
+                        <Label className="text-sm">Biometric Authentication</Label>
+                        <p className="text-xs text-gray-500">
+                          Use biometric verification for transaction approvals
+                        </p>
+                      </div>
+                      <Switch
+                        checked={enableBiometrics}
+                        onCheckedChange={setEnableBiometrics}
+                      />
+                    </div>
+                    
+                    <div className="flex items-center justify-between">
+                      <div className="space-y-0.5">
+                        <Label className="text-sm">Encrypted Storage</Label>
+                        <p className="text-xs text-gray-500">
+                          Enable end-to-end encryption for vault data
+                        </p>
+                      </div>
+                      <Switch
+                        checked={enableEncryption}
+                        onCheckedChange={setEnableEncryption}
+                      />
+                    </div>
+                  </div>
+                </div>
+                
+                <Separator className="bg-gray-800" />
+                
+                <div className="space-y-4">
+                  <h4 className="font-medium text-sm">Transaction Settings</h4>
+                  <div className="space-y-2">
+                    <div className="space-y-1">
+                      <Label className="text-sm">Transaction Expiry</Label>
+                      <p className="text-xs text-gray-500 mb-2">
+                        Set how long unsigned transactions remain valid
+                      </p>
+                      <Select
+                        value={transactionExpiry.toString()}
+                        onValueChange={(value) => setTransactionExpiry(parseInt(value))}
+                      >
+                        <SelectTrigger className="w-full bg-black/40 border-gray-700">
+                          <SelectValue placeholder="Select expiry time" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="1">1 day</SelectItem>
+                          <SelectItem value="3">3 days</SelectItem>
+                          <SelectItem value="7">1 week</SelectItem>
+                          <SelectItem value="14">2 weeks</SelectItem>
+                          <SelectItem value="30">30 days</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    
+                    <div className="space-y-1">
+                      <Label className="text-sm">Gas Fee Settings</Label>
+                      <p className="text-xs text-gray-500 mb-2">
+                        Configure how transaction gas fees are handled
+                      </p>
+                      <Select
+                        value={gasSettings}
+                        onValueChange={setGasSettings}
+                      >
+                        <SelectTrigger className="w-full bg-black/40 border-gray-700">
+                          <SelectValue placeholder="Select gas settings" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="automatic">Automatic (Recommended)</SelectItem>
+                          <SelectItem value="economy">Economy Mode</SelectItem>
+                          <SelectItem value="fast">Fast Execution</SelectItem>
+                          <SelectItem value="manual">Manual Control</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  </div>
+                </div>
+              </CardContent>
+              <CardFooter className="flex justify-end pt-4">
+                <Button className="bg-gradient-to-r from-[#3F51FF] to-[#8B49F6] hover:from-[#3F51FF]/90 hover:to-[#8B49F6]/90 text-white">
+                  Save Changes
+                </Button>
+              </CardFooter>
+            </Card>
+          </TabsContent>
+        </Tabs>
+      </div>
+    );
+  };
+  
+  return (
+    <div className="container mx-auto px-4 py-8 max-w-6xl">
+      {createMode ? renderCreationUI() : renderManagementUI()}
+    </div>
+  );
+}
