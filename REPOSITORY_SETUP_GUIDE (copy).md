@@ -67,25 +67,21 @@ chronos-vault-sdk/
 ```
 chronos-vault-docs/
 ├── technical/
-│   ├── SETUP_GUIDE.md               # Setup instructions
-│   ├── DEPLOYMENT_GUIDE.md          # Deployment guide
-│   ├── TECHNICAL_README.md          # Technical documentation
-│   └── API_REFERENCE.md             # API reference
+│   ├── SETUP_GUIDE.md               # If exists
+│   ├── DEPLOYMENT_GUIDE.md          # If exists
+│   ├── TECHNICAL_README.md          # If exists
+│   ├── API_REFERENCE.md             # If exists
+│   └── SAFE_API_DOCUMENTATION.md    # If exists
 ├── whitepapers/
 │   ├── CVT_WHITEPAPER.md            # Main whitepaper
 │   ├── CVT_TOKENOMICS_SPECIFICATION.md # Tokenomics
-│   └── trinity-protocol-deep-dive.md # Trinity Protocol details
+│   └── trinity-protocol-deep-dive.md # If exists
 ├── articles/
 │   ├── medium-article-*.md          # All Medium articles
 │   └── reddit-post-*.md             # All Reddit posts
 ├── guides/
-│   ├── GITHUB_SETUP_INSTRUCTIONS.md # GitHub setup
-│   └── WINDOWS_GITHUB_SETUP.md      # Windows setup
-├── business/
-│   ├── BUSINESS_SALE_PACKAGE.md     # Business documentation
-│   ├── FINANCIAL_PROJECTIONS.md    # Financial projections
-│   └── DEVELOPMENT_PARTNERSHIP_PROPOSAL.md # Partnership docs
-├── package.json                     # Use docs-package.json
+│   ├── GITHUB_SETUP_INSTRUCTIONS.md # If exists
+│   └── WINDOWS_GITHUB_SETUP.md      # If exists
 ├── .gitignore                       # Use docs-gitignore
 └── README.md                        # Use REPOSITORY_4_DOCS_README.md
 ```
