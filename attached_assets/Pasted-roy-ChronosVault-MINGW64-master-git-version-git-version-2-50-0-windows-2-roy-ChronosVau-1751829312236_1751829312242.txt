@@ -1,0 +1,418 @@
+roy@ChronosVault MINGW64 ~ (master)
+$ git --version
+git version 2.50.0.windows.2
+
+roy@ChronosVault MINGW64 ~ (master)
+$ git remote origin ^[[200~https://github.com/Chronos-Vault/chronos-vault-platform-.git~
+error: unknown subcommand: `origin'
+usage: git remote [-v | --verbose]
+   or: git remote add [-t <branch>] [-m <master>] [-f] [--tags | --no-tags] [--mirror=<fetch|push>] <name> <url>
+   or: git remote rename [--[no-]progress] <old> <new>
+   or: git remote remove <name>
+   or: git remote set-head <name> (-a | --auto | -d | --delete | <branch>)
+   or: git remote [-v | --verbose] show [-n] <name>
+   or: git remote prune [-n | --dry-run] <name>
+   or: git remote [-v | --verbose] update [-p | --prune] [(<group> | <remote>)...]
+   or: git remote set-branches [--add] <name> <branch>...
+   or: git remote get-url [--push] [--all] <name>
+   or: git remote set-url [--push] <name> <newurl> [<oldurl>]
+   or: git remote set-url --add <name> <newurl>
+   or: git remote set-url --delete <name> <url>
+
+    -v, --[no-]verbose    be verbose; must be placed before a subcommand
+
+
+roy@ChronosVault MINGW64 ~ (master)
+$ C:\Users\roy\Desktop\chronos-vault-platform
+bash: C:UsersroyDesktopchronos-vault-platform: command not found
+
+roy@ChronosVault MINGW64 ~ (master)
+$ ^[[200~"C:\Users\roy\Desktop\chronos-vault-platform"~
+bash: C:\Users\roy\Desktop\chronos-vault-platform~: No such file or directory
+
+roy@ChronosVault MINGW64 ~ (master)
+$ "C:\Users\roy\Desktop\chronos-vault-platform"
+bash: C:\Users\roy\Desktop\chronos-vault-platform: Is a directory
+
+roy@ChronosVault MINGW64 ~ (master)
+$ cd ^C
+
+roy@ChronosVault MINGW64 ~ (master)
+$ ^[[200~git init
+bash: $'\E[200~git': command not found
+
+roy@ChronosVault MINGW64 ~ (master)
+$ ^C
+
+roy@ChronosVault MINGW64 ~ (master)
+$  git remote origin ^[[200~https://github.com/Chronos-Vault/chronos-vault-platform-.git~
+error: unknown subcommand: `origin'
+usage: git remote [-v | --verbose]
+   or: git remote add [-t <branch>] [-m <master>] [-f] [--tags | --no-tags] [--mirror=<fetch|push>] <name> <url>
+   or: git remote rename [--[no-]progress] <old> <new>
+   or: git remote remove <name>
+   or: git remote set-head <name> (-a | --auto | -d | --delete | <branch>)
+   or: git remote [-v | --verbose] show [-n] <name>
+   or: git remote prune [-n | --dry-run] <name>
+   or: git remote [-v | --verbose] update [-p | --prune] [(<group> | <remote>)...]
+   or: git remote set-branches [--add] <name> <branch>...
+   or: git remote get-url [--push] [--all] <name>
+   or: git remote set-url [--push] <name> <newurl> [<oldurl>]
+   or: git remote set-url --add <name> <newurl>
+   or: git remote set-url --delete <name> <url>
+
+    -v, --[no-]verbose    be verbose; must be placed before a subcommand
+
+
+roy@ChronosVault MINGW64 ~ (master)
+$ ^C
+
+roy@ChronosVault MINGW64 ~ (master)
+$ git init
+Reinitialized existing Git repository in C:/Users/roy/.git/
+
+roy@ChronosVault MINGW64 ~ (master)
+$ git add .
+warning: could not open directory 'AppData/Local/Application Data/': Permission denied
+warning: could not open directory 'AppData/Local/History/': Permission denied
+warning: could not open directory 'AppData/Local/Microsoft/Windows/INetCache/Content.IE5/': Permission denied
+warning: could not open directory 'AppData/Local/Microsoft/Windows/INetCache/Low/Content.IE5/': Permission denied
+warning: could not open directory 'AppData/Local/Microsoft/Windows/Temporary Internet Files/': Permission denied
+warning: could not open directory 'AppData/Local/Temporary Internet Files/': Permission denied
+warning: could not open directory 'Application Data/': Permission denied
+warning: could not open directory 'Cookies/': Permission denied
+warning: could not open directory 'Documents/My Music/': Permission denied
+warning: could not open directory 'Documents/My Pictures/': Permission denied
+warning: could not open directory 'Documents/My Videos/': Permission denied
+warning: could not open directory 'Local Settings/': Permission denied
+warning: could not open directory 'My Documents/': Permission denied
+warning: could not open directory 'NetHood/': Permission denied
+warning: could not open directory 'PrintHood/': Permission denied
+warning: could not open directory 'Recent/': Permission denied
+warning: could not open directory 'SendTo/': Permission denied
+warning: could not open directory 'Start Menu/': Permission denied
+warning: could not open directory 'Templates/': Permission denied
+warning: in the working copy of '.bash_history', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of '.gitconfig', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'AppData/Local/BraveSoftware/Brave-Browser/User Data/AmountExtractionHeuristicRegexes/3/manifest.json', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'AppData/Local/BraveSoftware/Brave-Browser/User Data/CertificateRevocation/9903/LICENSE', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'AppData/Local/BraveSoftware/Brave-Browser/User Data/CertificateRevocation/9903/manifest.json', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'AppData/Local/BraveSoftware/Brave-Browser/User Data/Crowd Deny/2025.6.29.850/manifest.json', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'AppData/Local/BraveSoftware/Brave-Browser/User Data/Default/BraveWallet/Brave Wallet Storage/CURRENT', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'AppData/Local/BraveSoftware/Brave-Browser/User Data/Default/BraveWallet/Brave Wallet Storage/LOG', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'AppData/Local/BraveSoftware/Brave-Browser/User Data/Default/Cache/Cache_Data/f_000073', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'AppData/Local/BraveSoftware/Brave-Browser/User Data/Default/Cache/Cache_Data/f_000074', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'AppData/Local/BraveSoftware/Brave-Browser/User Data/Default/Cache/Cache_Data/f_000075', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'AppData/Local/BraveSoftware/Brave-Browser/User Data/Default/Cache/Cache_Data/f_000076', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'AppData/Local/BraveSoftware/Brave-Browser/User Data/Default/Cache/Cache_Data/f_000077', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'AppData/Local/BraveSoftware/Brave-Browser/User Data/Default/Cache/Cache_Data/f_000078', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'AppData/Local/BraveSoftware/Brave-Browser/User Data/Default/Cache/Cache_Data/f_000079', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'AppData/Local/BraveSoftware/Brave-Browser/User Data/Default/Cache/Cache_Data/f_00007a', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'AppData/Local/BraveSoftware/Brave-Browser/User Data/Default/Cache/Cache_Data/f_00007b', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'AppData/Local/BraveSoftware/Brave-Browser/User Data/Default/Cache/Cache_Data/f_00007c', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'AppData/Local/BraveSoftware/Brave-Browser/User Data/Default/Cache/Cache_Data/f_00007d', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'AppData/Local/BraveSoftware/Brave-Browser/User Data/Default/Cache/Cache_Data/f_00007e', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'AppData/Local/BraveSoftware/Brave-Browser/User Data/Default/Cache/Cache_Data/f_00007f', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'AppData/Local/BraveSoftware/Brave-Browser/User Data/Default/Cache/Cache_Data/f_000080', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'AppData/Local/BraveSoftware/Brave-Browser/User Data/Default/Cache/Cache_Data/f_000081', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'AppData/Local/BraveSoftware/Brave-Browser/User Data/Default/Cache/Cache_Data/f_000082', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'AppData/Local/BraveSoftware/Brave-Browser/User Data/Default/Cache/Cache_Data/f_000083', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'AppData/Local/BraveSoftware/Brave-Browser/User Data/Default/Cache/Cache_Data/f_000084', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'AppData/Local/BraveSoftware/Brave-Browser/User Data/Default/Cache/Cache_Data/f_000085', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'AppData/Local/BraveSoftware/Brave-Browser/User Data/Default/Cache/Cache_Data/f_000086', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'AppData/Local/BraveSoftware/Brave-Browser/User Data/Default/Cache/Cache_Data/f_000087', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'AppData/Local/BraveSoftware/Brave-Browser/User Data/Default/Cache/Cache_Data/f_000088', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'AppData/Local/BraveSoftware/Brave-Browser/User Data/Default/Cache/Cache_Data/f_000089', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'AppData/Local/BraveSoftware/Brave-Browser/User Data/Default/Cache/Cache_Data/f_00008a', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'AppData/Local/BraveSoftware/Brave-Browser/User Data/Default/Cache/Cache_Data/f_00008b', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'AppData/Local/BraveSoftware/Brave-Browser/User Data/Default/Cache/Cache_Data/f_00008c', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'AppData/Local/BraveSoftware/Brave-Browser/User Data/Default/Cache/Cache_Data/f_00008d', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'AppData/Local/BraveSoftware/Brave-Browser/User Data/Default/Cache/Cache_Data/f_00008e', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'AppData/Local/BraveSoftware/Brave-Browser/User Data/Default/Cache/Cache_Data/f_00008f', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'AppData/Local/BraveSoftware/Brave-Browser/User Data/Default/Cache/Cache_Data/f_000090', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'AppData/Local/BraveSoftware/Brave-Browser/User Data/Default/Cache/Cache_Data/f_000091', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'AppData/Local/BraveSoftware/Brave-Browser/User Data/Default/Cache/Cache_Data/f_000092', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'AppData/Local/BraveSoftware/Brave-Browser/User Data/Default/Cache/Cache_Data/f_000093', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'AppData/Local/BraveSoftware/Brave-Browser/User Data/Default/Cache/Cache_Data/f_000094', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'AppData/Local/BraveSoftware/Brave-Browser/User Data/Default/Cache/Cache_Data/f_000095', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'AppData/Local/BraveSoftware/Brave-Browser/User Data/Default/Cache/Cache_Data/f_000096', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'AppData/Local/BraveSoftware/Brave-Browser/User Data/Default/Cache/Cache_Data/f_000097', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'AppData/Local/BraveSoftware/Brave-Browser/User Data/Default/Cache/Cache_Data/f_000098', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'AppData/Local/BraveSoftware/Brave-Browser/User Data/Default/Cache/Cache_Data/f_000099', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'AppData/Local/BraveSoftware/Brave-Browser/User Data/Default/Cache/Cache_Data/f_00009a', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'AppData/Local/BraveSoftware/Brave-Browser/User Data/Default/Cache/Cache_Data/f_00009b', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'AppData/Local/BraveSoftware/Brave-Browser/User Data/Default/Cache/Cache_Data/f_00009c', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'AppData/Local/BraveSoftware/Brave-Browser/User Data/Default/Cache/Cache_Data/f_00009d', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'AppData/Local/BraveSoftware/Brave-Browser/User Data/Default/Cache/Cache_Data/f_00009e', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'AppData/Local/BraveSoftware/Brave-Browser/User Data/Default/Cache/Cache_Data/f_00009f', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'AppData/Local/BraveSoftware/Brave-Browser/User Data/Default/Cache/Cache_Data/f_0000a0', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'AppData/Local/BraveSoftware/Brave-Browser/User Data/Default/Cache/Cache_Data/f_0000a1', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'AppData/Local/BraveSoftware/Brave-Browser/User Data/Default/Cache/Cache_Data/f_0000a2', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'AppData/Local/BraveSoftware/Brave-Browser/User Data/Default/Cache/Cache_Data/f_0000a3', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'AppData/Local/BraveSoftware/Brave-Browser/User Data/Default/Cache/Cache_Data/f_0000a4', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'AppData/Local/BraveSoftware/Brave-Browser/User Data/Default/Cache/Cache_Data/f_0000a5', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'AppData/Local/BraveSoftware/Brave-Browser/User Data/Default/Cache/Cache_Data/f_0000a6', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'AppData/Local/BraveSoftware/Brave-Browser/User Data/Default/Cache/Cache_Data/f_0000a7', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'AppData/Local/BraveSoftware/Brave-Browser/User Data/Default/Cache/Cache_Data/f_0000a8', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'AppData/Local/BraveSoftware/Brave-Browser/User Data/Default/Cache/Cache_Data/f_0000a9', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'AppData/Local/BraveSoftware/Brave-Browser/User Data/Default/Cache/Cache_Data/f_0000aa', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'AppData/Local/BraveSoftware/Brave-Browser/User Data/Default/Cache/Cache_Data/f_0000ab', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'AppData/Local/BraveSoftware/Brave-Browser/User Data/Default/Cache/Cache_Data/f_0000ac', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'AppData/Local/BraveSoftware/Brave-Browser/User Data/Default/Cache/Cache_Data/f_0000ad', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'AppData/Local/BraveSoftware/Brave-Browser/User Data/Default/Cache/Cache_Data/f_0000ae', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'AppData/Local/BraveSoftware/Brave-Browser/User Data/Default/Cache/Cache_Data/f_0000af', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'AppData/Local/BraveSoftware/Brave-Browser/User Data/Default/Cache/Cache_Data/f_0000b0', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'AppData/Local/BraveSoftware/Brave-Browser/User Data/Default/Cache/Cache_Data/f_0000b1', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'AppData/Local/BraveSoftware/Brave-Browser/User Data/Default/Cache/Cache_Data/f_0000b2', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'AppData/Local/BraveSoftware/Brave-Browser/User Data/Default/Cache/Cache_Data/f_0000b3', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'AppData/Local/BraveSoftware/Brave-Browser/User Data/Default/Cache/Cache_Data/f_0000b4', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'AppData/Local/BraveSoftware/Brave-Browser/User Data/Default/Cache/Cache_Data/f_0000b5', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'AppData/Local/BraveSoftware/Brave-Browser/User Data/Default/Cache/Cache_Data/f_0000b6', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'AppData/Local/BraveSoftware/Brave-Browser/User Data/Default/Cache/Cache_Data/f_0000b8', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'AppData/Local/BraveSoftware/Brave-Browser/User Data/Default/Cache/Cache_Data/f_0000b9', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'AppData/Local/BraveSoftware/Brave-Browser/User Data/Default/Cache/Cache_Data/f_0000ba', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'AppData/Local/BraveSoftware/Brave-Browser/User Data/Default/Cache/Cache_Data/f_0000bb', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'AppData/Local/BraveSoftware/Brave-Browser/User Data/Default/Cache/Cache_Data/f_0000bc', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'AppData/Local/BraveSoftware/Brave-Browser/User Data/Default/Cache/Cache_Data/f_0000bd', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'AppData/Local/BraveSoftware/Brave-Browser/User Data/Default/Cache/Cache_Data/f_0000be', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'AppData/Local/BraveSoftware/Brave-Browser/User Data/Default/Cache/Cache_Data/f_0000bf', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'AppData/Local/BraveSoftware/Brave-Browser/User Data/Default/Cache/Cache_Data/f_0000c0', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'AppData/Local/BraveSoftware/Brave-Browser/User Data/Default/Cache/Cache_Data/f_0000c1', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'AppData/Local/BraveSoftware/Brave-Browser/User Data/Default/Cache/Cache_Data/f_0000c2', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'AppData/Local/BraveSoftware/Brave-Browser/User Data/Default/Cache/Cache_Data/f_0000c3', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'AppData/Local/BraveSoftware/Brave-Browser/User Data/Default/Cache/Cache_Data/f_0000c4', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'AppData/Local/BraveSoftware/Brave-Browser/User Data/Default/Cache/Cache_Data/f_0000c5', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'AppData/Local/BraveSoftware/Brave-Browser/User Data/Default/Cache/Cache_Data/f_0000c6', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'AppData/Local/BraveSoftware/Brave-Browser/User Data/Default/Cache/Cache_Data/f_0000c7', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'AppData/Local/BraveSoftware/Brave-Browser/User Data/Default/Cache/Cache_Data/f_0000c8', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'AppData/Local/BraveSoftware/Brave-Browser/User Data/Default/Cache/Cache_Data/f_0000c9', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'AppData/Local/BraveSoftware/Brave-Browser/User Data/Default/Cache/Cache_Data/f_0000ca', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'AppData/Local/BraveSoftware/Brave-Browser/User Data/Default/Cache/Cache_Data/f_0000cb', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'AppData/Local/BraveSoftware/Brave-Browser/User Data/Default/Cache/Cache_Data/f_0000cc', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'AppData/Local/BraveSoftware/Brave-Browser/User Data/Default/Cache/Cache_Data/f_0000cd', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'AppData/Local/BraveSoftware/Brave-Browser/User Data/Default/Cache/Cache_Data/f_0000ce', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'AppData/Local/BraveSoftware/Brave-Browser/User Data/Default/Cache/Cache_Data/f_0000cf', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'AppData/Local/BraveSoftware/Brave-Browser/User Data/Default/Cache/Cache_Data/f_0000d0', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'AppData/Local/BraveSoftware/Brave-Browser/User Data/Default/Cache/Cache_Data/f_0000d1', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'AppData/Local/BraveSoftware/Brave-Browser/User Data/Default/Cache/Cache_Data/f_0000d2', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'AppData/Local/BraveSoftware/Brave-Browser/User Data/Default/Cache/Cache_Data/f_0000d3', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'AppData/Local/BraveSoftware/Brave-Browser/User Data/Default/Cache/Cache_Data/f_0000d4', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'AppData/Local/BraveSoftware/Brave-Browser/User Data/Default/Cache/Cache_Data/f_0000d5', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'AppData/Local/BraveSoftware/Brave-Browser/User Data/Default/Cache/Cache_Data/f_0000d6', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'AppData/Local/BraveSoftware/Brave-Browser/User Data/Default/Cache/Cache_Data/f_0000d7', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'AppData/Local/BraveSoftware/Brave-Browser/User Data/Default/Cache/Cache_Data/f_0000d8', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'AppData/Local/BraveSoftware/Brave-Browser/User Data/Default/Cache/Cache_Data/f_0000d9', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'AppData/Local/BraveSoftware/Brave-Browser/User Data/Default/Cache/Cache_Data/f_0000da', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'AppData/Local/BraveSoftware/Brave-Browser/User Data/Default/Cache/Cache_Data/f_0000db', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'AppData/Local/BraveSoftware/Brave-Browser/User Data/Default/Cache/Cache_Data/f_0000dc', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'AppData/Local/BraveSoftware/Brave-Browser/User Data/Default/Cache/Cache_Data/f_0000dd', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'AppData/Local/BraveSoftware/Brave-Browser/User Data/Default/Cache/Cache_Data/f_0000de', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'AppData/Local/BraveSoftware/Brave-Browser/User Data/Default/Cache/Cache_Data/f_0000df', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'AppData/Local/BraveSoftware/Brave-Browser/User Data/Default/Cache/Cache_Data/f_0000e0', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'AppData/Local/BraveSoftware/Brave-Browser/User Data/Default/Cache/Cache_Data/f_0000e1', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'AppData/Local/BraveSoftware/Brave-Browser/User Data/Default/Cache/Cache_Data/f_0000e2', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'AppData/Local/BraveSoftware/Brave-Browser/User Data/Default/Cache/Cache_Data/f_0000e3', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'AppData/Local/BraveSoftware/Brave-Browser/User Data/Default/Cache/Cache_Data/f_0000e4', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'AppData/Local/BraveSoftware/Brave-Browser/User Data/Default/Cache/Cache_Data/f_0000e5', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'AppData/Local/BraveSoftware/Brave-Browser/User Data/Default/Cache/Cache_Data/f_0000e6', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'AppData/Local/BraveSoftware/Brave-Browser/User Data/Default/Cache/Cache_Data/f_0000e7', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'AppData/Local/BraveSoftware/Brave-Browser/User Data/Default/Cache/Cache_Data/f_0000e8', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'AppData/Local/BraveSoftware/Brave-Browser/User Data/Default/Cache/Cache_Data/f_0000e9', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'AppData/Local/BraveSoftware/Brave-Browser/User Data/Default/Cache/Cache_Data/f_0000ea', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'AppData/Local/BraveSoftware/Brave-Browser/User Data/Default/Cache/Cache_Data/f_0000eb', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'AppData/Local/BraveSoftware/Brave-Browser/User Data/Default/Cache/Cache_Data/f_0000ec', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'AppData/Local/BraveSoftware/Brave-Browser/User Data/Default/Cache/Cache_Data/f_0000ed', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'AppData/Local/BraveSoftware/Brave-Browser/User Data/Default/Cache/Cache_Data/f_0000ee', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'AppData/Local/BraveSoftware/Brave-Browser/User Data/Default/Cache/Cache_Data/f_0000ef', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'AppData/Local/BraveSoftware/Brave-Browser/User Data/Default/Cache/Cache_Data/f_0000f0', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'AppData/Local/BraveSoftware/Brave-Browser/User Data/Default/Cache/Cache_Data/f_0000f1', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'AppData/Local/BraveSoftware/Brave-Browser/User Data/Default/Cache/Cache_Data/f_0000f2', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'AppData/Local/BraveSoftware/Brave-Browser/User Data/Default/Cache/Cache_Data/f_0000f3', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'AppData/Local/BraveSoftware/Brave-Browser/User Data/Default/Cache/Cache_Data/f_0000f4', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'AppData/Local/BraveSoftware/Brave-Browser/User Data/Default/Cache/Cache_Data/f_0000f5', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'AppData/Local/BraveSoftware/Brave-Browser/User Data/Default/Cache/Cache_Data/f_0000f6', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'AppData/Local/BraveSoftware/Brave-Browser/User Data/Default/Cache/Cache_Data/f_0000f7', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'AppData/Local/BraveSoftware/Brave-Browser/User Data/Default/Cache/Cache_Data/f_0000f8', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'AppData/Local/BraveSoftware/Brave-Browser/User Data/Default/Cache/Cache_Data/f_0000f9', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'AppData/Local/BraveSoftware/Brave-Browser/User Data/Default/Cache/Cache_Data/f_0000fa', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'AppData/Local/BraveSoftware/Brave-Browser/User Data/Default/Cache/Cache_Data/f_0000fb', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'AppData/Local/BraveSoftware/Brave-Browser/User Data/Default/Cache/Cache_Data/f_0000fc', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'AppData/Local/BraveSoftware/Brave-Browser/User Data/Default/Cache/Cache_Data/f_0000fd', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'AppData/Local/BraveSoftware/Brave-Browser/User Data/Default/Cache/Cache_Data/f_0000fe', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'AppData/Local/BraveSoftware/Brave-Browser/User Data/Default/Cache/Cache_Data/f_0000ff', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'AppData/Local/BraveSoftware/Brave-Browser/User Data/Default/Cache/Cache_Data/f_000100', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'AppData/Local/BraveSoftware/Brave-Browser/User Data/Default/Cache/Cache_Data/f_000101', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'AppData/Local/BraveSoftware/Brave-Browser/User Data/Default/Cache/Cache_Data/f_000102', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'AppData/Local/BraveSoftware/Brave-Browser/User Data/Default/Cache/Cache_Data/f_000103', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'AppData/Local/BraveSoftware/Brave-Browser/User Data/Default/Cache/Cache_Data/f_000104', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'AppData/Local/BraveSoftware/Brave-Browser/User Data/Default/Cache/Cache_Data/f_000105', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'AppData/Local/BraveSoftware/Brave-Browser/User Data/Default/Cache/Cache_Data/f_000106', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'AppData/Local/BraveSoftware/Brave-Browser/User Data/Default/Cache/Cache_Data/f_000107', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'AppData/Local/BraveSoftware/Brave-Browser/User Data/Default/Cache/Cache_Data/f_000108', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'AppData/Local/BraveSoftware/Brave-Browser/User Data/Default/Cache/Cache_Data/f_000109', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'AppData/Local/BraveSoftware/Brave-Browser/User Data/Default/Cache/Cache_Data/f_00010a', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'AppData/Local/BraveSoftware/Brave-Browser/User Data/Default/Cache/Cache_Data/f_00010b', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'AppData/Local/BraveSoftware/Brave-Browser/User Data/Default/Cache/Cache_Data/f_00010c', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'AppData/Local/BraveSoftware/Brave-Browser/User Data/Default/Cache/Cache_Data/f_00010d', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'AppData/Local/BraveSoftware/Brave-Browser/User Data/Default/Cache/Cache_Data/f_00010e', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'AppData/Local/BraveSoftware/Brave-Browser/User Data/Default/Cache/Cache_Data/f_00010f', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'AppData/Local/BraveSoftware/Brave-Browser/User Data/Default/Cache/Cache_Data/f_000110', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'AppData/Local/BraveSoftware/Brave-Browser/User Data/Default/Cache/Cache_Data/f_000111', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'AppData/Local/BraveSoftware/Brave-Browser/User Data/Default/Cache/Cache_Data/f_000112', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'AppData/Local/BraveSoftware/Brave-Browser/User Data/Default/Cache/Cache_Data/f_000113', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'AppData/Local/BraveSoftware/Brave-Browser/User Data/Default/Cache/Cache_Data/f_000114', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'AppData/Local/BraveSoftware/Brave-Browser/User Data/Default/Cache/Cache_Data/f_000115', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'AppData/Local/BraveSoftware/Brave-Browser/User Data/Default/Cache/Cache_Data/f_000116', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'AppData/Local/BraveSoftware/Brave-Browser/User Data/Default/Cache/Cache_Data/f_000117', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'AppData/Local/BraveSoftware/Brave-Browser/User Data/Default/Cache/Cache_Data/f_000118', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'AppData/Local/BraveSoftware/Brave-Browser/User Data/Default/Cache/Cache_Data/f_000119', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'AppData/Local/BraveSoftware/Brave-Browser/User Data/Default/Cache/Cache_Data/f_00011a', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'AppData/Local/BraveSoftware/Brave-Browser/User Data/Default/Cache/Cache_Data/f_00011b', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'AppData/Local/BraveSoftware/Brave-Browser/User Data/Default/Cache/Cache_Data/f_00011c', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'AppData/Local/BraveSoftware/Brave-Browser/User Data/Default/Cache/Cache_Data/f_00011d', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'AppData/Local/BraveSoftware/Brave-Browser/User Data/Default/Cache/Cache_Data/f_00011e', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'AppData/Local/BraveSoftware/Brave-Browser/User Data/Default/Cache/Cache_Data/f_00011f', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'AppData/Local/BraveSoftware/Brave-Browser/User Data/Default/Cache/Cache_Data/f_000120', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'AppData/Local/BraveSoftware/Brave-Browser/User Data/Default/Cache/Cache_Data/f_000121', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'AppData/Local/BraveSoftware/Brave-Browser/User Data/Default/Cache/Cache_Data/f_000122', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'AppData/Local/BraveSoftware/Brave-Browser/User Data/Default/Cache/Cache_Data/f_000123', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'AppData/Local/BraveSoftware/Brave-Browser/User Data/Default/Cache/Cache_Data/f_000124', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'AppData/Local/BraveSoftware/Brave-Browser/User Data/Default/Cache/Cache_Data/f_000125', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'AppData/Local/BraveSoftware/Brave-Browser/User Data/Default/Cache/Cache_Data/f_000126', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'AppData/Local/BraveSoftware/Brave-Browser/User Data/Default/Cache/Cache_Data/f_000127', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'AppData/Local/BraveSoftware/Brave-Browser/User Data/Default/Cache/Cache_Data/f_000128', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'AppData/Local/BraveSoftware/Brave-Browser/User Data/Default/Cache/Cache_Data/f_000129', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'AppData/Local/BraveSoftware/Brave-Browser/User Data/Default/Cache/Cache_Data/f_00012a', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'AppData/Local/BraveSoftware/Brave-Browser/User Data/Default/Cache/Cache_Data/f_00012b', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'AppData/Local/BraveSoftware/Brave-Browser/User Data/Default/Cache/Cache_Data/f_00012c', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'AppData/Local/BraveSoftware/Brave-Browser/User Data/Default/Cache/Cache_Data/f_00012d', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'AppData/Local/BraveSoftware/Brave-Browser/User Data/Default/Cache/Cache_Data/f_00012e', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'AppData/Local/BraveSoftware/Brave-Browser/User Data/Default/Cache/Cache_Data/f_00012f', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'AppData/Local/BraveSoftware/Brave-Browser/User Data/Default/Cache/Cache_Data/f_000130', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'AppData/Local/BraveSoftware/Brave-Browser/User Data/Default/Cache/Cache_Data/f_000131', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'AppData/Local/BraveSoftware/Brave-Browser/User Data/Default/Cache/Cache_Data/f_000132', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'AppData/Local/BraveSoftware/Brave-Browser/User Data/Default/Cache/Cache_Data/f_000133', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'AppData/Local/BraveSoftware/Brave-Browser/User Data/Default/Cache/Cache_Data/f_000134', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'AppData/Local/BraveSoftware/Brave-Browser/User Data/Default/Cache/Cache_Data/f_000135', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'AppData/Local/BraveSoftware/Brave-Browser/User Data/Default/Cache/Cache_Data/f_000136', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'AppData/Local/BraveSoftware/Brave-Browser/User Data/Default/Cache/Cache_Data/f_000137', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'AppData/Local/BraveSoftware/Brave-Browser/User Data/Default/Cache/Cache_Data/f_000138', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'AppData/Local/BraveSoftware/Brave-Browser/User Data/Default/Cache/Cache_Data/f_000139', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'AppData/Local/BraveSoftware/Brave-Browser/User Data/Default/Cache/Cache_Data/f_00013a', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'AppData/Local/BraveSoftware/Brave-Browser/User Data/Default/Cache/Cache_Data/f_00013b', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'AppData/Local/BraveSoftware/Brave-Browser/User Data/Default/Cache/Cache_Data/f_00013c', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'AppData/Local/BraveSoftware/Brave-Browser/User Data/Default/Cache/Cache_Data/f_00013d', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'AppData/Local/BraveSoftware/Brave-Browser/User Data/Default/Cache/Cache_Data/f_00013e', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'AppData/Local/BraveSoftware/Brave-Browser/User Data/Default/Cache/Cache_Data/f_00013f', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'AppData/Local/BraveSoftware/Brave-Browser/User Data/Default/Cache/Cache_Data/f_000140', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'AppData/Local/BraveSoftware/Brave-Browser/User Data/Default/Cache/Cache_Data/f_000141', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'AppData/Local/BraveSoftware/Brave-Browser/User Data/Default/Cache/Cache_Data/f_000142', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'AppData/Local/BraveSoftware/Brave-Browser/User Data/Default/Cache/Cache_Data/f_000143', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'AppData/Local/BraveSoftware/Brave-Browser/User Data/Default/Cache/Cache_Data/f_000144', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'AppData/Local/BraveSoftware/Brave-Browser/User Data/Default/Cache/Cache_Data/f_000145', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'AppData/Local/BraveSoftware/Brave-Browser/User Data/Default/Cache/Cache_Data/f_000146', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'AppData/Local/BraveSoftware/Brave-Browser/User Data/Default/Cache/Cache_Data/f_000147', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'AppData/Local/BraveSoftware/Brave-Browser/User Data/Default/Cache/Cache_Data/f_000148', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'AppData/Local/BraveSoftware/Brave-Browser/User Data/Default/Cache/Cache_Data/f_000149', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'AppData/Local/BraveSoftware/Brave-Browser/User Data/Default/Cache/Cache_Data/f_00014a', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'AppData/Local/BraveSoftware/Brave-Browser/User Data/Default/Cache/Cache_Data/f_00014b', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'AppData/Local/BraveSoftware/Brave-Browser/User Data/Default/Cache/Cache_Data/f_00014c', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'AppData/Local/BraveSoftware/Brave-Browser/User Data/Default/Cache/Cache_Data/f_00014d', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'AppData/Local/BraveSoftware/Brave-Browser/User Data/Default/Cache/Cache_Data/f_00014e', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'AppData/Local/BraveSoftware/Brave-Browser/User Data/Default/Cache/Cache_Data/f_00014f', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'AppData/Local/BraveSoftware/Brave-Browser/User Data/Default/Cache/Cache_Data/f_000150', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'AppData/Local/BraveSoftware/Brave-Browser/User Data/Default/Cache/Cache_Data/f_000151', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'AppData/Local/BraveSoftware/Brave-Browser/User Data/Default/Cache/Cache_Data/f_000152', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'AppData/Local/BraveSoftware/Brave-Browser/User Data/Default/Cache/Cache_Data/f_000153', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'AppData/Local/BraveSoftware/Brave-Browser/User Data/Default/Cache/Cache_Data/f_000154', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'AppData/Local/BraveSoftware/Brave-Browser/User Data/Default/Cache/Cache_Data/f_000155', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'AppData/Local/BraveSoftware/Brave-Browser/User Data/Default/Cache/Cache_Data/f_000156', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'AppData/Local/BraveSoftware/Brave-Browser/User Data/Default/Cache/Cache_Data/f_000157', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'AppData/Local/BraveSoftware/Brave-Browser/User Data/Default/Cache/Cache_Data/f_000158', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'AppData/Local/BraveSoftware/Brave-Browser/User Data/Default/Cache/Cache_Data/f_000159', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'AppData/Local/BraveSoftware/Brave-Browser/User Data/Default/Cache/Cache_Data/f_00015a', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'AppData/Local/BraveSoftware/Brave-Browser/User Data/Default/Cache/Cache_Data/f_00015b', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'AppData/Local/BraveSoftware/Brave-Browser/User Data/Default/Cache/Cache_Data/f_00015c', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'AppData/Local/BraveSoftware/Brave-Browser/User Data/Default/Cache/Cache_Data/f_00015d', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'AppData/Local/BraveSoftware/Brave-Browser/User Data/Default/Cache/Cache_Data/f_00015e', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'AppData/Local/BraveSoftware/Brave-Browser/User Data/Default/Cache/Cache_Data/f_00015f', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'AppData/Local/BraveSoftware/Brave-Browser/User Data/Default/Cache/Cache_Data/f_000160', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'AppData/Local/BraveSoftware/Brave-Browser/User Data/Default/Cache/Cache_Data/f_000161', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'AppData/Local/BraveSoftware/Brave-Browser/User Data/Default/Cache/Cache_Data/f_000162', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'AppData/Local/BraveSoftware/Brave-Browser/User Data/Default/Cache/Cache_Data/f_000163', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'AppData/Local/BraveSoftware/Brave-Browser/User Data/Default/Cache/Cache_Data/f_000164', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'AppData/Local/BraveSoftware/Brave-Browser/User Data/Default/Cache/Cache_Data/f_000165', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'AppData/Local/BraveSoftware/Brave-Browser/User Data/Default/Cache/Cache_Data/f_000166', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'AppData/Local/BraveSoftware/Brave-Browser/User Data/Default/Cache/Cache_Data/f_000167', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'AppData/Local/BraveSoftware/Brave-Browser/User Data/Default/Cache/Cache_Data/f_000168', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'AppData/Local/BraveSoftware/Brave-Browser/User Data/Default/Cache/Cache_Data/f_000169', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'AppData/Local/BraveSoftware/Brave-Browser/User Data/Default/Cache/Cache_Data/f_00016a', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'AppData/Local/BraveSoftware/Brave-Browser/User Data/Default/Cache/Cache_Data/f_00016b', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'AppData/Local/BraveSoftware/Brave-Browser/User Data/Default/Cache/Cache_Data/f_00016c', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'AppData/Local/BraveSoftware/Brave-Browser/User Data/Default/Cache/Cache_Data/f_00016d', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'AppData/Local/BraveSoftware/Brave-Browser/User Data/Default/Cache/Cache_Data/f_00016e', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'AppData/Local/BraveSoftware/Brave-Browser/User Data/Default/Cache/Cache_Data/f_00016f', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'AppData/Local/BraveSoftware/Brave-Browser/User Data/Default/Cache/Cache_Data/f_000170', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'AppData/Local/BraveSoftware/Brave-Browser/User Data/Default/Cache/Cache_Data/f_000171', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'AppData/Local/BraveSoftware/Brave-Browser/User Data/Default/Cache/Cache_Data/f_000172', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'AppData/Local/BraveSoftware/Brave-Browser/User Data/Default/Cache/Cache_Data/f_000173', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'AppData/Local/BraveSoftware/Brave-Browser/User Data/Default/Cache/Cache_Data/f_000174', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'AppData/Local/BraveSoftware/Brave-Browser/User Data/Default/Cache/Cache_Data/f_000175', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'AppData/Local/BraveSoftware/Brave-Browser/User Data/Default/Cache/Cache_Data/f_000176', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'AppData/Local/BraveSoftware/Brave-Browser/User Data/Default/Cache/Cache_Data/f_000177', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'AppData/Local/BraveSoftware/Brave-Browser/User Data/Default/Cache/Cache_Data/f_000178', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'AppData/Local/BraveSoftware/Brave-Browser/User Data/Default/Cache/Cache_Data/f_000179', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'AppData/Local/BraveSoftware/Brave-Browser/User Data/Default/Cache/Cache_Data/f_00017a', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'AppData/Local/BraveSoftware/Brave-Browser/User Data/Default/Cache/Cache_Data/f_00017b', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'AppData/Local/BraveSoftware/Brave-Browser/User Data/Default/Cache/Cache_Data/f_00017c', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'AppData/Local/BraveSoftware/Brave-Browser/User Data/Default/Cache/Cache_Data/f_00017d', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'AppData/Local/BraveSoftware/Brave-Browser/User Data/Default/Cache/Cache_Data/f_00017e', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'AppData/Local/BraveSoftware/Brave-Browser/User Data/Default/Cache/Cache_Data/f_00017f', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'AppData/Local/BraveSoftware/Brave-Browser/User Data/Default/Cache/Cache_Data/f_000180', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'AppData/Local/BraveSoftware/Brave-Browser/User Data/Default/Cache/Cache_Data/f_000181', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'AppData/Local/BraveSoftware/Brave-Browser/User Data/Default/Cache/Cache_Data/f_000182', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'AppData/Local/BraveSoftware/Brave-Browser/User Data/Default/Cache/Cache_Data/f_00018f', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'AppData/Local/BraveSoftware/Brave-Browser/User Data/Default/Cache/Cache_Data/f_000190', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'AppData/Local/BraveSoftware/Brave-Browser/User Data/Default/Cache/Cache_Data/f_000191', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'AppData/Local/BraveSoftware/Brave-Browser/User Data/Default/Cache/Cache_Data/f_000192', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'AppData/Local/BraveSoftware/Brave-Browser/User Data/Default/Extension Rules/CURRENT', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'AppData/Local/BraveSoftware/Brave-Browser/User Data/Default/Extension Rules/LOG', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'AppData/Local/BraveSoftware/Brave-Browser/User Data/Default/Extension Scripts/CURRENT', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'AppData/Local/BraveSoftware/Brave-Browser/User Data/Default/Extension Scripts/LOG', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'AppData/Local/BraveSoftware/Brave-Browser/User Data/Default/Extension State/CURRENT', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'AppData/Local/BraveSoftware/Brave-Browser/User Data/Default/Extension State/LOG', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'AppData/Local/BraveSoftware/Brave-Browser/User Data/Default/GCM Store/Encryption/CURRENT', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'AppData/Local/BraveSoftware/Brave-Browser/User Data/Default/GCM Store/Encryption/LOG', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'AppData/Local/BraveSoftware/Brave-Browser/User Data/Default/IndexedDB/https_replit.com_0.indexeddb.leveldb/CURRENT', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'AppData/Local/BraveSoftware/Brave-Browser/User Data/Default/IndexedDB/https_replit.com_0.indexeddb.leveldb/LOG', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'AppData/Local/BraveSoftware/Brave-Browser/User Data/Default/IndexedDB/https_replit.com_0.indexeddb.leveldb/LOG.old', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'AppData/Local/BraveSoftware/Brave-Browser/User Data/Default/Local Storage/leveldb/CURRENT', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'AppData/Local/BraveSoftware/Brave-Browser/User Data/Default/Local Storage/leveldb/LOG', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'AppData/Local/BraveSoftware/Brave-Browser/User Data/Default/Rewards.log', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'AppData/Local/BraveSoftware/Brave-Browser/User Data/Default/Service Worker/Database/CURRENT', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'AppData/Local/BraveSoftware/Brave-Browser/User Data/Default/Service Worker/Database/LOG', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'AppData/Local/BraveSoftware/Brave-Browser/User Data/Default/Session Storage/CURRENT', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'AppData/Local/BraveSoftware/Brave-Browser/User Data/Default/Session Storage/LOG', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'AppData/Local/BraveSoftware/Brave-Browser/User Data/Default/Site Characteristics Database/CURRENT', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'AppData/Local/BraveSoftware/Brave-Browser/User Data/Default/Site Characteristics Database/LOG', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'AppData/Local/BraveSoftware/Brave-Browser/User Data/Default/Sync Data/LevelDB/CURRENT', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'AppData/Local/BraveSoftware/Brave-Browser/User Data/Default/Sync Data/LevelDB/LOG', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'AppData/Local/BraveSoftware/Brave-Browser/User Data/Default/shared_proto_db/CURRENT', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'AppData/Local/BraveSoftware/Brave-Browser/User Data/Default/shared_proto_db/LOG', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'AppData/Local/BraveSoftware/Brave-Browser/User Data/Default/shared_proto_db/metadata/CURRENT', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'AppData/Local/BraveSoftware/Brave-Browser/User Data/Default/shared_proto_db/metadata/LOG', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'AppData/Local/BraveSoftware/Brave-Browser/User Data/FileTypePolicies/67/manifest.json', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'AppData/Local/BraveSoftware/Brave-Browser/User Data/OnDeviceHeadSuggestModel/20250617.774246486.14/manifest.json', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'AppData/Local/BraveSoftware/Brave-Browser/User Data/PKIMetadata/1363/manifest.json', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'AppData/Local/BraveSoftware/Brave-Browser/User Data/SSLErrorAssistant/7/manifest.json', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'AppData/Local/BraveSoftware/Brave-Browser/User Data/SafetyTips/3075/manifest.json', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'AppData/Local/BraveSoftware/Brave-Browser/User Data/TpcdMetadata/2025.7.5.1/manifest.json', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'AppData/Local/BraveSoftware/Brave-Browser/User Data/ZxcvbnData/3/english_wikipedia.txt', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'AppData/Local/BraveSoftware/Brave-Browser/User Data/ZxcvbnData/3/female_names.txt', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'AppData/Local/BraveSoftware/Brave-Browser/User Data/ZxcvbnData/3/male_names.txt', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'AppData/Local/BraveSoftware/Brave-Browser/User Data/ZxcvbnData/3/manifest.json', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'AppData/Local/BraveSoftware/Brave-Browser/User Data/ZxcvbnData/3/passwords.txt', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'AppData/Local/BraveSoftware/Brave-Browser/User Data/ZxcvbnData/3/surnames.txt', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'AppData/Local/BraveSoftware/Brave-Browser/User Data/ZxcvbnData/3/us_tv_and_film.txt', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'AppData/Local/BraveSoftware/Brave-Browser/User Data/adcocjohghhfpidemphmcmlmhnfgikei/1.0.386/list.txt', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'AppData/Local/BraveSoftware/Brave-Browser/User Data/adcocjohghhfpidemphmcmlmhnfgikei/1.0.38
