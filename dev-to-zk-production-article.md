@@ -320,13 +320,30 @@ Our optimizations delivered measurable results:
 
 ### Before vs After Optimization
 
-| Metric | Before | After | Improvement |
-|--------|--------|-------|-------------|
-| **Single Proof Generation** | 2000ms | 800ms | 150% faster |
-| **Batch Processing (10 proofs)** | 20,000ms | 3,200ms | 525% faster |
-| **Memory Usage** | 512MB | 128MB | 75% reduction |
-| **CPU Utilization** | 45% | 85% | Better resource usage |
-| **Cache Hit Rate** | 0% | 90% | Massive efficiency gain |
+**🔥 Single Proof Generation**
+- Before: 2000ms
+- After: 800ms  
+- **Improvement: 150% faster**
+
+**⚡ Batch Processing (10 proofs)**
+- Before: 20,000ms
+- After: 3,200ms
+- **Improvement: 525% faster**
+
+**💾 Memory Usage**
+- Before: 512MB
+- After: 128MB
+- **Improvement: 75% reduction**
+
+**🖥️ CPU Utilization**
+- Before: 45%
+- After: 85%
+- **Improvement: Better resource usage**
+
+**📈 Cache Hit Rate**
+- Before: 0%
+- After: 90%
+- **Improvement: Massive efficiency gain**
 
 ### Production Scale Metrics
 
