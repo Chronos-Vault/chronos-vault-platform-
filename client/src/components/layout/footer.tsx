@@ -45,6 +45,9 @@ const Footer = ({ className = '' }: { className?: string }) => {
               <a href="https://medium.com/@chronosvault" target="_blank" rel="noopener noreferrer" className="w-12 h-12 rounded-full bg-[#6B00D7]/10 flex items-center justify-center text-[#FF5AF7] hover:text-white border border-[#6B00D7]/30 hover:border-[#FF5AF7] hover:shadow-lg hover:shadow-[#FF5AF7]/20 transition-all">
                 <i className="ri-medium-line text-xl"></i>
               </a>
+              <a href="https://dev.to/chronosvault" target="_blank" rel="noopener noreferrer" className="w-12 h-12 rounded-full bg-[#6B00D7]/10 flex items-center justify-center text-[#FF5AF7] hover:text-white border border-[#6B00D7]/30 hover:border-[#FF5AF7] hover:shadow-lg hover:shadow-[#FF5AF7]/20 transition-all">
+                <i className="ri-code-s-slash-line text-xl"></i>
+              </a>
             </div>
           </div>
           
@@ -95,6 +98,7 @@ const Footer = ({ className = '' }: { className?: string }) => {
               <li><Link href="/security-testing" className="text-gray-300 hover:text-[#FF5AF7] transition-all font-poppins font-light hover:translate-x-1 inline-flex">Security Testing</Link></li>
               <li><Link href="/cross-chain-security" className="text-gray-300 hover:text-[#FF5AF7] transition-all font-poppins font-light hover:translate-x-1 inline-flex">Cross-Chain Security</Link></li>
               <li><Link href="/security-verification-demo" className="text-gray-300 hover:text-[#FF5AF7] transition-all font-poppins font-light hover:translate-x-1 inline-flex">Triple-Chain Verification</Link></li>
+              <li><a href="https://dev.to/chronosvault" target="_blank" rel="noopener noreferrer" className="text-gray-300 hover:text-[#FF5AF7] transition-all font-poppins font-light hover:translate-x-1 inline-flex">Dev.to Articles</a></li>
             </ul>
           </div>
           
