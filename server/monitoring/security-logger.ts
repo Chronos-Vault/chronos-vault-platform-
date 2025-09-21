@@ -290,9 +290,18 @@ class SecurityLogger {
     for (let i = 0; i < this.logs.length; i++) {
       const log = this.logs[i];
       
-      // Recalculate the hash
-      const dataString = `${previousHash}|${log.timestamp.toISOString()}|${log.level}|${log.eventType}|${log.message}`;
-      const calculatedHash = Buffer.from(dataString).toString('base64');
+      // Apply the same truncation logic as generateLogHash() for consistency
+      const truncatedPreviousHash = previousHash.substring(0, 100);
+      const truncatedEventType = typeof log.eventType === 'string' 
+        ? log.eventType.substring(0, 100) 
+        : 'unknown';
+      const truncatedMessage = typeof log.message === 'string' 
+        ? log.message.substring(0, 1000) 
+        : String(log.message).substring(0, 1000);
+      
+      // Recalculate the hash using the same format as generateLogHash()
+      const dataString = `${truncatedPreviousHash}|${log.timestamp.toISOString()}|${log.level}|${truncatedEventType}|${truncatedMessage}`;
+      const calculatedHash = Buffer.from(dataString).toString('base64').substring(0, 100);
       
       // Compare with stored hash
       if (log.hash !== calculatedHash) {
