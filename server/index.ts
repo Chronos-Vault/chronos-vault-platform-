@@ -13,11 +13,18 @@ import { setupVite, serveStatic } from './vite';
 import { getSecurityAuditService } from './security/security-audit-service';
 import { transactionMonitor } from './blockchain/transaction-monitor';
 
-// Set development mode environment variables
-if (process.env.NODE_ENV === 'development') {
-  process.env.BYPASS_AUTH = 'true';
-  console.log('Running in development mode with authentication bypass enabled');
+// Enhanced security: Strict authentication in all environments
+const isProduction = process.env.NODE_ENV === 'production';
+const isDevelopment = process.env.NODE_ENV === 'development';
+
+// Security logging for environment detection
+if (isProduction) {
+  console.log('🔒 PRODUCTION MODE: Maximum security protocols activated');
+} else if (isDevelopment) {
+  console.log('🛠️ DEVELOPMENT MODE: Enhanced logging enabled (authentication required)');
 }
+
+// REMOVED: Authentication bypass for security compliance
 
 // Create Express app
 const app = express();

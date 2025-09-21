@@ -15,8 +15,6 @@ import {
   recoveryKeys, type RecoveryKey, type InsertRecoveryKey,
   insertWalletAuthSchema, insertWalletSessionSchema
 } from "@shared/schema";
-import { db } from "./db";
-import { eq, and, desc, isNull } from "drizzle-orm";
 
 export interface IStorage {
   // User methods
@@ -132,7 +130,19 @@ export class MemStorage implements IStorage {
   private securityIncidents: Map<number, SecurityIncident>;
   private signatureRequests: Map<number, SignatureRequest>;
   private signatures: Map<number, Signature>;
+  private walletAuth: Map<number, any>;
+  private walletSessions: Map<number, any>;
+  private devices: Map<number, Device>;
+  private deviceAuthLogs: Map<number, DeviceAuthLog>;
+  private deviceVerifications: Map<number, DeviceVerification>;
+  private recoveryKeys: Map<number, RecoveryKey>;
   private currentUserId: number;
+  private currentWalletAuthId: number;
+  private currentWalletSessionId: number;
+  private currentDeviceId: number;
+  private currentDeviceAuthLogId: number;
+  private currentDeviceVerificationId: number;
+  private currentRecoveryKeyId: number;
   private currentVaultId: number;
   private currentBeneficiaryId: number;
   private currentAttachmentId: number;
@@ -152,7 +162,19 @@ export class MemStorage implements IStorage {
     this.securityIncidents = new Map();
     this.signatureRequests = new Map();
     this.signatures = new Map();
+    this.walletAuth = new Map();
+    this.walletSessions = new Map();
+    this.devices = new Map();
+    this.deviceAuthLogs = new Map();
+    this.deviceVerifications = new Map();
+    this.recoveryKeys = new Map();
     this.currentUserId = 1;
+    this.currentWalletAuthId = 1;
+    this.currentWalletSessionId = 1;
+    this.currentDeviceId = 1;
+    this.currentDeviceAuthLogId = 1;
+    this.currentDeviceVerificationId = 1;
+    this.currentRecoveryKeyId = 1;
     this.currentVaultId = 1;
     this.currentBeneficiaryId = 1;
     this.currentAttachmentId = 1;
@@ -162,12 +184,226 @@ export class MemStorage implements IStorage {
     this.currentSignatureRequestId = 1;
     this.currentSignatureId = 1;
     
-    // Add a demo user for testing
-    this.createUser({
-      username: "demo",
-      password: "password123",
-      walletAddress: "0x742d35Cc6634C0532925a3b844Bc454e4438f44e"
-    });
+    // Initialize with secure defaults only (no hardcoded credentials)
+    // Demo users can be created through proper API endpoints with secure generation
+  }
+
+  // Wallet authentication methods
+  async createWalletAuth(auth: any): Promise<any> {
+    const id = this.currentWalletAuthId++;
+    const walletAuth = { ...auth, id, createdAt: new Date() };
+    this.walletAuth.set(id, walletAuth);
+    return walletAuth;
+  }
+
+  async getWalletAuthByAddress(walletAddress: string, blockchain: string): Promise<any> {
+    return Array.from(this.walletAuth.values()).find(
+      (auth) => auth.walletAddress === walletAddress && auth.blockchain === blockchain
+    );
+  }
+
+  async updateWalletAuth(id: number, updates: any): Promise<any> {
+    const auth = this.walletAuth.get(id);
+    if (!auth) return undefined;
+    const updated = { ...auth, ...updates, updatedAt: new Date() };
+    this.walletAuth.set(id, updated);
+    return updated;
+  }
+
+  async createWalletSession(session: any): Promise<any> {
+    const id = this.currentWalletSessionId++;
+    const walletSession = { ...session, id, createdAt: new Date() };
+    this.walletSessions.set(id, walletSession);
+    return walletSession;
+  }
+
+  async getActiveWalletSession(sessionToken: string): Promise<any> {
+    return Array.from(this.walletSessions.values()).find(
+      (session) => session.sessionToken === sessionToken && session.isActive
+    );
+  }
+
+  async invalidateWalletSession(sessionToken: string): Promise<boolean> {
+    const session = Array.from(this.walletSessions.values()).find(
+      (s) => s.sessionToken === sessionToken
+    );
+    if (session) {
+      session.isActive = false;
+      return true;
+    }
+    return false;
+  }
+
+  // Device management methods
+  async getDevice(id: number): Promise<Device | undefined> {
+    return this.devices.get(id);
+  }
+
+  async getDeviceByDeviceId(deviceId: string): Promise<Device | undefined> {
+    return Array.from(this.devices.values()).find(
+      (device) => device.deviceId === deviceId
+    );
+  }
+
+  async getDevicesByUser(userId: number): Promise<Device[]> {
+    return Array.from(this.devices.values()).filter(
+      (device) => device.userId === userId
+    );
+  }
+
+  async getDevicesByStatus(status: string): Promise<Device[]> {
+    return Array.from(this.devices.values()).filter(
+      (device) => device.status === status
+    );
+  }
+
+  async createDevice(insertDevice: InsertDevice): Promise<Device> {
+    const id = this.currentDeviceId++;
+    const device: Device = {
+      ...insertDevice,
+      id,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+      deviceName: insertDevice.deviceName,
+      publicKey: insertDevice.publicKey ?? null,
+      status: insertDevice.status ?? 'active',
+      tonContractAddress: insertDevice.tonContractAddress ?? null,
+      operatingSystem: insertDevice.operatingSystem ?? null,
+      browserInfo: insertDevice.browserInfo ?? null,
+      metadata: insertDevice.metadata ?? null,
+      lastLogin: null,
+      trustScore: null,
+      isTrusted: false,
+      isCurrent: false
+    };
+    this.devices.set(id, device);
+    return device;
+  }
+
+  async updateDevice(id: number, updateData: Partial<Device>): Promise<Device | undefined> {
+    const device = this.devices.get(id);
+    if (!device) return undefined;
+    const updated = { ...device, ...updateData, updatedAt: new Date() };
+    this.devices.set(id, updated);
+    return updated;
+  }
+
+  async deleteDevice(id: number): Promise<boolean> {
+    return this.devices.delete(id);
+  }
+
+  async validateDevice(deviceId: string, tonContractAddress: string): Promise<boolean> {
+    const device = await this.getDeviceByDeviceId(deviceId);
+    return device ? device.tonContractAddress === tonContractAddress : false;
+  }
+
+  // Device authentication logs
+  async createDeviceAuthLog(insertLog: InsertDeviceAuthLog): Promise<DeviceAuthLog> {
+    const id = this.currentDeviceAuthLogId++;
+    const log: DeviceAuthLog = {
+      ...insertLog,
+      id,
+      timestamp: new Date(),
+      ipAddress: insertLog.ipAddress ?? null,
+      location: insertLog.location ?? null,
+      failureReason: insertLog.failureReason ?? null,
+      riskScore: insertLog.riskScore ?? null,
+      chainVerification: insertLog.chainVerification ?? null,
+      metadata: insertLog.metadata ?? null
+    };
+    this.deviceAuthLogs.set(id, log);
+    return log;
+  }
+
+  async getDeviceAuthLogsByDevice(deviceId: number): Promise<DeviceAuthLog[]> {
+    return Array.from(this.deviceAuthLogs.values()).filter(
+      (log) => log.deviceId === deviceId
+    );
+  }
+
+  async getDeviceAuthLogsByUser(userId: number): Promise<DeviceAuthLog[]> {
+    return Array.from(this.deviceAuthLogs.values()).filter(
+      (log) => log.userId === userId
+    );
+  }
+
+  async getLatestDeviceAuthLogs(userId: number, limit = 10): Promise<DeviceAuthLog[]> {
+    return Array.from(this.deviceAuthLogs.values())
+      .filter((log) => log.userId === userId)
+      .sort((a, b) => b.timestamp.getTime() - a.timestamp.getTime())
+      .slice(0, limit);
+  }
+
+  // Device verification methods
+  async getDeviceVerification(id: number): Promise<DeviceVerification | undefined> {
+    return this.deviceVerifications.get(id);
+  }
+
+  async getDeviceVerificationsByDevice(deviceId: number): Promise<DeviceVerification[]> {
+    return Array.from(this.deviceVerifications.values()).filter(
+      (verification) => verification.deviceId === deviceId
+    );
+  }
+
+  async createDeviceVerification(insertVerification: InsertDeviceVerification): Promise<DeviceVerification> {
+    const id = this.currentDeviceVerificationId++;
+    const verification: DeviceVerification = {
+      ...insertVerification,
+      id,
+      timestamp: new Date(),
+      verificationData: insertVerification.verificationData,
+      verificationStatus: insertVerification.verificationStatus ?? 'pending',
+      metadata: insertVerification.metadata ?? null
+    };
+    this.deviceVerifications.set(id, verification);
+    return verification;
+  }
+
+  async updateDeviceVerificationStatus(id: number, status: string): Promise<DeviceVerification | undefined> {
+    const verification = this.deviceVerifications.get(id);
+    if (!verification) return undefined;
+    const updated = { ...verification, status, updatedAt: new Date() };
+    this.deviceVerifications.set(id, updated);
+    return updated;
+  }
+
+  // Recovery key methods
+  async createRecoveryKey(insertKey: InsertRecoveryKey): Promise<RecoveryKey> {
+    const id = this.currentRecoveryKeyId++;
+    const key: RecoveryKey = {
+      ...insertKey,
+      id,
+      createdAt: new Date(),
+      usedAt: null,
+      isUsed: null,
+      deviceId: insertKey.deviceId ?? null,
+      metadata: insertKey.metadata ?? null
+    };
+    this.recoveryKeys.set(id, key);
+    return key;
+  }
+
+  async getRecoveryKeyByHash(keyHash: string): Promise<RecoveryKey | undefined> {
+    return Array.from(this.recoveryKeys.values()).find(
+      (key) => key.keyHash === keyHash
+    );
+  }
+
+  async getRecoveryKeysByUser(userId: number): Promise<RecoveryKey[]> {
+    return Array.from(this.recoveryKeys.values()).filter(
+      (key) => key.userId === userId
+    );
+  }
+
+  async markRecoveryKeyAsUsed(id: number, deviceId?: number): Promise<RecoveryKey | undefined> {
+    const key = this.recoveryKeys.get(id);
+    if (!key) return undefined;
+    const updated = { 
+      ...key, 
+      deviceId: deviceId ?? null
+    };
+    this.recoveryKeys.set(id, updated);
+    return updated;
   }
 
   // User methods
@@ -567,11 +803,61 @@ export class MemStorage implements IStorage {
 }
 
 import { db } from "./db";
-import { eq } from "drizzle-orm";
+import { eq, and, desc, isNull } from "drizzle-orm";
 
 // Database Storage implementation
 export class DatabaseStorage implements IStorage {
   
+  // Wallet authentication methods
+  async createWalletAuth(auth: any): Promise<any> {
+    const [authRecord] = await db.insert(walletAuth).values({
+      ...auth,
+      createdAt: new Date()
+    }).returning();
+    return authRecord;
+  }
+
+  async getWalletAuthByAddress(walletAddress: string, blockchain: string): Promise<any> {
+    const [auth] = await db.select().from(walletAuth)
+      .where(and(
+        eq(walletAuth.walletAddress, walletAddress),
+        eq(walletAuth.blockchain, blockchain)
+      ));
+    return auth;
+  }
+
+  async updateWalletAuth(id: number, updates: any): Promise<any> {
+    const [updated] = await db.update(walletAuth)
+      .set(updates)
+      .where(eq(walletAuth.id, id))
+      .returning();
+    return updated;
+  }
+
+  async createWalletSession(session: any): Promise<any> {
+    const [sessionRecord] = await db.insert(walletSessions).values({
+      ...session,
+      createdAt: new Date()
+    }).returning();
+    return sessionRecord;
+  }
+
+  async getActiveWalletSession(sessionToken: string): Promise<any> {
+    const [session] = await db.select().from(walletSessions)
+      .where(and(
+        eq(walletSessions.sessionToken, sessionToken),
+        eq(walletSessions.isActive, true)
+      ));
+    return session;
+  }
+
+  async invalidateWalletSession(sessionToken: string): Promise<boolean> {
+    const result = await db.update(walletSessions)
+      .set({ isActive: false })
+      .where(eq(walletSessions.sessionToken, sessionToken));
+    return (result.rowCount ?? 0) > 0;
+  }
+
   // Device management methods
   async getDevice(id: number): Promise<Device | undefined> {
     const [device] = await db.select().from(devices).where(eq(devices.id, id));
@@ -616,7 +902,7 @@ export class DatabaseStorage implements IStorage {
 
   async deleteDevice(id: number): Promise<boolean> {
     const result = await db.delete(devices).where(eq(devices.id, id));
-    return result.count > 0;
+    return (result.rowCount ?? 0) > 0;
   }
   
   async validateDevice(deviceId: string, tonContractAddress: string): Promise<boolean> {
