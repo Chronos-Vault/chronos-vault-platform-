@@ -61,6 +61,7 @@
     "@tonconnect/ui": "^2.1.0",
     "@types/body-parser": "^1.19.5",
     "@types/chai": "^5.2.2",
+    "@types/cookie-parser": "^1.4.9",
     "@types/cors": "^2.8.17",
     "@types/memoizee": "^0.4.12",
     "@types/mocha": "^10.0.10",
