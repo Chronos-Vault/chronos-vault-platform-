@@ -158,7 +158,7 @@ app.post('/api/vault/authorize-wallet', async (req, res) => {
   const { address, walletType, blockchain, chainId, signature, nonce } = req.body;
   
   if (!address || !walletType || !blockchain || !signature || !nonce) {
-    securityLogger.warning('Incomplete wallet authorization attempt', SecurityEventType.AUTH_FAILURE, {
+    securityLogger.warn('Incomplete wallet authorization attempt', SecurityEventType.AUTH_FAILURE, {
       missingFields: { address: !address, walletType: !walletType, blockchain: !blockchain, signature: !signature, nonce: !nonce }
     });
     return res.status(400).json({
@@ -171,7 +171,7 @@ app.post('/api/vault/authorize-wallet', async (req, res) => {
   const challenge = pendingNonces.get(challengeKey);
   
   if (!challenge) {
-    securityLogger.warning('No pending nonce challenge found for wallet authorization', SecurityEventType.AUTH_FAILURE, {
+    securityLogger.warn('No pending nonce challenge found for wallet authorization', SecurityEventType.AUTH_FAILURE, {
       blockchain,
       addressPrefix: address.slice(0, 8)
     });
@@ -184,7 +184,7 @@ app.post('/api/vault/authorize-wallet', async (req, res) => {
   // Check nonce expiry (5 minutes)
   if (Date.now() - challenge.timestamp.getTime() > 5 * 60 * 1000) {
     pendingNonces.delete(challengeKey);
-    securityLogger.warning('Expired nonce used in wallet authorization', SecurityEventType.AUTH_FAILURE, {
+    securityLogger.warn('Expired nonce used in wallet authorization', SecurityEventType.AUTH_FAILURE, {
       blockchain,
       addressPrefix: address.slice(0, 8)
     });
@@ -238,7 +238,7 @@ app.post('/api/vault/authorize-wallet', async (req, res) => {
       const messageBytes = new TextEncoder().encode(signInMessage);
       const signatureBytes = Uint8Array.from(Buffer.from(signature, 'hex'));
       
-      signatureValid = verify(messageBytes, signatureBytes, publicKey.toBytes());
+      signatureValid = verify(signatureBytes, messageBytes, publicKey.toBytes());
     } else if (blockchain === 'ton') {
       // TON signature verification - simplified for now
       signatureValid = signature && signature.length > 128; // Basic validation
@@ -254,7 +254,7 @@ app.post('/api/vault/authorize-wallet', async (req, res) => {
 
   if (!signatureValid) {
     challenge.attempts++;
-    securityLogger.warning('Invalid signature in wallet authorization', SecurityEventType.AUTH_FAILURE, {
+    securityLogger.warn('Invalid signature in wallet authorization', SecurityEventType.AUTH_FAILURE, {
       blockchain,
       addressPrefix: address.slice(0, 8),
       attempts: challenge.attempts

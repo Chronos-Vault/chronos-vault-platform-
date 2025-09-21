@@ -95,13 +95,16 @@ export class SecurityAuditFramework {
     
     const event: SecurityEvent = {
       id: auditId,
-      timestamp: new Date().toISOString(),
-      operation,
-      level,
+      timestamp: new Date(),
+      type: operation.type,
+      chainId: operation.chainId,
+      vaultId: operation.vaultId,
+      walletAddress: operation.walletAddress,
+      auditLevel: level,
+      operationType: operation.operationType,
+      threatLevel: SecurityThreatLevel.NONE,
       metadata,
-      status: 'pending',
-      result: null,
-      threatLevel: 'unknown'
+      verified: false
     };
     
     this.auditQueue.push(event);
@@ -134,12 +137,12 @@ export class SecurityAuditFramework {
     
     // Clone and filter the queue
     const queue = priorityOnly 
-      ? this.auditQueue.filter(event => event.level === 'high' && event.status === 'pending')
-      : this.auditQueue.filter(event => event.status === 'pending');
+      ? this.auditQueue.filter(event => event.auditLevel === SecurityAuditLevel.HIGH && !event.verified)
+      : this.auditQueue.filter(event => !event.verified);
     
-    // Mark events as processing
+    // Mark events as being processed (add to metadata)
     queue.forEach(event => {
-      event.status = 'processing';
+      event.metadata.processingStatus = 'processing';
     });
     
     // Process each audit
@@ -148,33 +151,34 @@ export class SecurityAuditFramework {
         const result = await this.performAudit(event);
         
         // Update the event
-        event.status = 'completed';
-        event.result = result;
+        event.metadata.processingStatus = 'completed';
+        event.metadata.auditResult = result;
         event.threatLevel = this.determineThreatLevel(result);
+        event.verified = result.success;
         
         // Log based on threat level
-        if (event.threatLevel === 'critical' || event.threatLevel === 'high') {
+        if (event.threatLevel === SecurityThreatLevel.CRITICAL || event.threatLevel === SecurityThreatLevel.ALERT) {
           securityLogger.error(
             `SECURITY THREAT [${event.threatLevel}]: ${result.message}`,
             SecurityEventType.SUSPICIOUS_ACTIVITY,
             {
               auditId: event.id,
-              operation: event.operation,
+              operation: event.type,
               metadata: event.metadata
             }
           );
           
           // Trigger alerts for critical threats
-          if (event.threatLevel === 'critical' && config.securityConfig.logging.alertOnCriticalEvents) {
+          if (event.threatLevel === SecurityThreatLevel.CRITICAL && config.securityConfig.logging.alertOnCriticalEvents) {
             this.triggerSecurityAlert(event);
           }
-        } else if (event.threatLevel === 'medium') {
+        } else if (event.threatLevel === SecurityThreatLevel.WARNING) {
           securityLogger.warn(
             `Security concern: ${result.message}`,
             SecurityEventType.VAULT_MODIFICATION,
             {
               auditId: event.id,
-              operation: event.operation
+              operation: event.type
             }
           );
         } else {
@@ -183,26 +187,28 @@ export class SecurityAuditFramework {
             SecurityEventType.VAULT_ACCESS,
             {
               auditId: event.id,
-              operation: event.operation
+              operation: event.type
             }
           );
         }
       } catch (error) {
         // Mark as failed
-        event.status = 'failed';
-        event.result = {
-          passed: false,
+        event.metadata.processingStatus = 'failed';
+        event.metadata.auditResult = {
+          success: false,
+          timestamp: new Date(),
           message: `Audit processing error: ${error instanceof Error ? error.message : String(error)}`,
-          details: { error }
+          validationResults: { error }
         };
-        event.threatLevel = 'unknown';
+        event.threatLevel = SecurityThreatLevel.NONE;
+        event.verified = false;
         
         securityLogger.error(
           'Failed to process security audit', 
           SecurityEventType.SYSTEM_ERROR,
           {
             auditId: event.id,
-            operation: event.operation,
+            operation: event.type,
             error
           }
         );
@@ -211,8 +217,8 @@ export class SecurityAuditFramework {
     
     // Clean up processed events
     this.auditQueue = this.auditQueue.filter(event => 
-      event.status === 'pending' || 
-      (priorityOnly && event.level !== 'high')
+      !event.verified || 
+      (priorityOnly && event.auditLevel !== SecurityAuditLevel.HIGH)
     );
   }
   
@@ -220,9 +226,9 @@ export class SecurityAuditFramework {
    * Perform the actual audit based on the operation type
    */
   private async performAudit(event: SecurityEvent): Promise<AuditResult> {
-    const { operation, metadata } = event;
+    const { type, metadata } = event;
     
-    switch (operation) {
+    switch (type) {
       case 'vault_creation':
         return this.auditVaultCreation(metadata);
       
@@ -249,9 +255,10 @@ export class SecurityAuditFramework {
         
       default:
         return {
-          passed: false,
-          message: `Unknown operation type: ${operation}`,
-          details: { operation }
+          success: false,
+          timestamp: new Date(),
+          message: `Unknown operation type: ${type}`,
+          validationResults: { type }
         };
     }
   }
@@ -260,28 +267,28 @@ export class SecurityAuditFramework {
    * Determine the threat level based on audit result
    */
   private determineThreatLevel(result: AuditResult): SecurityThreatLevel {
-    if (!result.passed) {
-      // Extract threat level from details if available
-      if (result.details?.threatLevel) {
-        return result.details.threatLevel as SecurityThreatLevel;
+    if (!result.success) {
+      // Extract threat level from validation results if available
+      if (result.validationResults?.threatLevel) {
+        return result.validationResults.threatLevel as SecurityThreatLevel;
       }
       
-      // Use severity from details if available
-      if (result.details?.severity) {
-        const severity = result.details.severity;
-        if (severity >= 80) return 'critical';
-        if (severity >= 60) return 'high';
-        if (severity >= 40) return 'medium';
-        if (severity >= 20) return 'low';
-        return 'info';
+      // Use severity from validation results if available
+      if (result.validationResults?.severity) {
+        const severity = result.validationResults.severity;
+        if (severity >= 80) return SecurityThreatLevel.CRITICAL;
+        if (severity >= 60) return SecurityThreatLevel.ALERT;
+        if (severity >= 40) return SecurityThreatLevel.WARNING;
+        if (severity >= 20) return SecurityThreatLevel.SUSPICIOUS;
+        return SecurityThreatLevel.NONE;
       }
       
-      // Default to medium for failed audits without specified threat level
-      return 'medium';
+      // Default to warning for failed audits without specified threat level
+      return SecurityThreatLevel.WARNING;
     }
     
-    // Passed audits are info level by default
-    return 'info';
+    // Successful audits are none level by default
+    return SecurityThreatLevel.NONE;
   }
   
   /**
@@ -298,9 +305,9 @@ export class SecurityAuditFramework {
       SecurityEventType.SUSPICIOUS_ACTIVITY,
       {
         auditId: event.id,
-        operation: event.operation,
+        operation: event.type,
         metadata: event.metadata,
-        result: event.result
+        result: event.metadata.auditResult
       }
     );
     
@@ -308,8 +315,8 @@ export class SecurityAuditFramework {
     if (config.isDevelopmentMode) {
       console.error('CRITICAL SECURITY ALERT (Development Mode Only):', {
         id: event.id,
-        operation: event.operation,
-        message: event.result?.message
+        operation: event.type,
+        message: event.metadata.auditResult?.message
       });
     }
   }
@@ -323,11 +330,12 @@ export class SecurityAuditFramework {
     // Required fields validation
     if (!vaultId || !chainId || !securityLevel || !ownerAddress) {
       return {
-        passed: false,
+        success: false,
+        timestamp: new Date(),
         message: 'Vault creation audit failed due to missing required fields',
-        details: { 
+        validationResults: { 
           missingFields: !vaultId ? 'vaultId' : !chainId ? 'chainId' : !securityLevel ? 'securityLevel' : 'ownerAddress',
-          threatLevel: 'medium',
+          threatLevel: SecurityThreatLevel.WARNING,
           severity: 50
         }
       };
@@ -336,9 +344,10 @@ export class SecurityAuditFramework {
     // Security level validation
     if (![1, 2, 3].includes(securityLevel)) {
       return {
-        passed: false,
+        success: false,
+        timestamp: new Date(),
         message: `Invalid security level: ${securityLevel}`,
-        details: { threatLevel: 'medium', severity: 50 }
+        validationResults: { threatLevel: 'medium', severity: 50 }
       };
     }
     
@@ -349,9 +358,10 @@ export class SecurityAuditFramework {
       
       if (isNaN(lockTime) || lockTime <= now) {
         return {
-          passed: false,
+          success: false,
+        timestamp: new Date(),
           message: 'Invalid time lock: must be in the future',
-          details: { threatLevel: 'medium', severity: 40 }
+          validationResults: { threatLevel: 'medium', severity: 40 }
         };
       }
     }
@@ -359,9 +369,10 @@ export class SecurityAuditFramework {
     // Wallet address format validation
     if (!this.isValidBlockchainAddress(ownerAddress, chainId)) {
       return {
-        passed: false,
+        success: false,
+        timestamp: new Date(),
         message: `Invalid owner address format for chain ${chainId}`,
-        details: { threatLevel: 'medium', severity: 60 }
+        validationResults: { threatLevel: 'medium', severity: 60 }
       };
     }
     
@@ -371,17 +382,19 @@ export class SecurityAuditFramework {
       
       if (!secondaryChains || !Array.isArray(secondaryChains) || secondaryChains.length < 1) {
         return {
-          passed: false,
+          success: false,
+        timestamp: new Date(),
           message: 'Security level 3 requires at least one secondary chain for verification',
-          details: { threatLevel: 'medium', severity: 50 }
+          validationResults: { threatLevel: 'medium', severity: 50 }
         };
       }
     }
     
     return {
-      passed: true,
+      success: true,
+        timestamp: new Date(),
       message: 'Vault creation audit passed',
-      details: { 
+      validationResults: { 
         vaultId,
         chainId,
         securityLevel,
@@ -399,9 +412,10 @@ export class SecurityAuditFramework {
     // Required fields validation
     if (!vaultId || !chainId || !requesterAddress) {
       return {
-        passed: false,
+        success: false,
+        timestamp: new Date(),
         message: 'Vault unlock audit failed due to missing required fields',
-        details: { 
+        validationResults: { 
           missingFields: !vaultId ? 'vaultId' : !chainId ? 'chainId' : 'requesterAddress',
           threatLevel: 'high',
           severity: 70
@@ -414,9 +428,10 @@ export class SecurityAuditFramework {
     
     if (!isOwner && !isBeneficiary) {
       return {
-        passed: false,
+        success: false,
+        timestamp: new Date(),
         message: 'Unauthorized vault unlock attempt',
-        details: { 
+        validationResults: { 
           threatLevel: 'critical',
           severity: 90,
           requesterAddress
@@ -432,9 +447,10 @@ export class SecurityAuditFramework {
       if (!isNaN(lockUntil) && lockUntil > now) {
         // This is a time-locked vault being accessed before unlock time
         return {
-          passed: false,
+          success: false,
+        timestamp: new Date(),
           message: 'Attempted to unlock vault before time lock expiration',
-          details: { 
+          validationResults: { 
             threatLevel: 'critical',
             severity: 90,
             currentTime: new Date().toISOString(),
@@ -451,9 +467,10 @@ export class SecurityAuditFramework {
       
       if (!crossChainVerificationComplete) {
         return {
-          passed: false,
+          success: false,
+        timestamp: new Date(),
           message: 'Cross-chain verification required for level 3 security vault unlock',
-          details: { 
+          validationResults: { 
             threatLevel: 'high',
             severity: 80
           }
@@ -462,9 +479,10 @@ export class SecurityAuditFramework {
     }
     
     return {
-      passed: true,
+      success: true,
+        timestamp: new Date(),
       message: 'Vault unlock audit passed',
-      details: { 
+      validationResults: { 
         vaultId,
         chainId,
         requesterType: isOwner ? 'owner' : 'beneficiary'
@@ -481,9 +499,10 @@ export class SecurityAuditFramework {
     // Required fields validation
     if (!vaultId || !primaryChain || !secondaryChains || !verificationResults) {
       return {
-        passed: false,
+        success: false,
+        timestamp: new Date(),
         message: 'Cross-chain verification audit failed due to missing required fields',
-        details: { 
+        validationResults: { 
           missingFields: !vaultId ? 'vaultId' : !primaryChain ? 'primaryChain' : 
                        !secondaryChains ? 'secondaryChains' : 'verificationResults',
           threatLevel: 'high',
@@ -495,9 +514,10 @@ export class SecurityAuditFramework {
     // Check that we have verification results from all secondary chains
     if (!Array.isArray(secondaryChains) || !Array.isArray(verificationResults)) {
       return {
-        passed: false,
+        success: false,
+        timestamp: new Date(),
         message: 'Invalid cross-chain verification data structure',
-        details: { threatLevel: 'medium', severity: 50 }
+        validationResults: { threatLevel: 'medium', severity: 50 }
       };
     }
     
@@ -508,9 +528,10 @@ export class SecurityAuditFramework {
     
     if (failedVerifications.length > 0) {
       return {
-        passed: false,
+        success: false,
+        timestamp: new Date(),
         message: `Cross-chain verification failed for chains: ${failedVerifications.join(', ')}`,
-        details: { 
+        validationResults: { 
           threatLevel: 'high',
           severity: 70,
           failedChains: failedVerifications,
@@ -526,9 +547,10 @@ export class SecurityAuditFramework {
     // If timestamps differ by more than 15 minutes, flag as suspicious
     if (maxTimeDifference > 15 * 60 * 1000) {
       return {
-        passed: false,
+        success: false,
+        timestamp: new Date(),
         message: 'Suspicious time difference between cross-chain verifications',
-        details: { 
+        validationResults: { 
           threatLevel: 'high',
           severity: 80,
           timeDifferenceMs: maxTimeDifference,
@@ -538,9 +560,10 @@ export class SecurityAuditFramework {
     }
     
     return {
-      passed: true,
+      success: true,
+        timestamp: new Date(),
       message: 'Cross-chain verification audit passed',
-      details: { 
+      validationResults: { 
         vaultId,
         primaryChain,
         secondaryChainCount: secondaryChains.length,
@@ -558,9 +581,10 @@ export class SecurityAuditFramework {
     // Required fields validation
     if (!vaultId || !chainId || !ownerAddress || !beneficiaryAddress) {
       return {
-        passed: false,
+        success: false,
+        timestamp: new Date(),
         message: 'Beneficiary addition audit failed due to missing required fields',
-        details: { 
+        validationResults: { 
           missingFields: !vaultId ? 'vaultId' : !chainId ? 'chainId' : 
                        !ownerAddress ? 'ownerAddress' : 'beneficiaryAddress',
           threatLevel: 'medium',
@@ -574,9 +598,10 @@ export class SecurityAuditFramework {
     
     if (!isOwner) {
       return {
-        passed: false,
+        success: false,
+        timestamp: new Date(),
         message: 'Only the vault owner can add beneficiaries',
-        details: { 
+        validationResults: { 
           threatLevel: 'critical',
           severity: 90,
           requesterAddress: metadata.requesterAddress
@@ -587,9 +612,10 @@ export class SecurityAuditFramework {
     // Validate beneficiary address format
     if (!this.isValidBlockchainAddress(beneficiaryAddress, chainId)) {
       return {
-        passed: false,
+        success: false,
+        timestamp: new Date(),
         message: `Invalid beneficiary address format for chain ${chainId}`,
-        details: { threatLevel: 'medium', severity: 50 }
+        validationResults: { threatLevel: 'medium', severity: 50 }
       };
     }
     
@@ -598,9 +624,10 @@ export class SecurityAuditFramework {
         Array.isArray(metadata.existingBeneficiaries) && 
         metadata.existingBeneficiaries.includes(beneficiaryAddress)) {
       return {
-        passed: false,
+        success: false,
+        timestamp: new Date(),
         message: 'Beneficiary already exists for this vault',
-        details: { threatLevel: 'low', severity: 30 }
+        validationResults: { threatLevel: 'low', severity: 30 }
       };
     }
     
@@ -610,17 +637,19 @@ export class SecurityAuditFramework {
       
       if (!secondaryChainUpdates || !Array.isArray(secondaryChainUpdates) || secondaryChainUpdates.length < 1) {
         return {
-          passed: false,
+          success: false,
+        timestamp: new Date(),
           message: 'Security level 3 requires beneficiary addition on secondary chains',
-          details: { threatLevel: 'medium', severity: 60 }
+          validationResults: { threatLevel: 'medium', severity: 60 }
         };
       }
     }
     
     return {
-      passed: true,
+      success: true,
+        timestamp: new Date(),
       message: 'Beneficiary addition audit passed',
-      details: { 
+      validationResults: { 
         vaultId,
         chainId,
         beneficiaryAddress
@@ -637,9 +666,10 @@ export class SecurityAuditFramework {
     // Required fields validation
     if (!vaultId || !chainId || !depositorAddress || !amount || !assetType) {
       return {
-        passed: false,
+        success: false,
+        timestamp: new Date(),
         message: 'Asset deposit audit failed due to missing required fields',
-        details: { 
+        validationResults: { 
           missingFields: !vaultId ? 'vaultId' : !chainId ? 'chainId' : 
                        !depositorAddress ? 'depositorAddress' : 
                        !amount ? 'amount' : 'assetType',
@@ -653,9 +683,10 @@ export class SecurityAuditFramework {
     const numAmount = Number(amount);
     if (isNaN(numAmount) || numAmount <= 0) {
       return {
-        passed: false,
+        success: false,
+        timestamp: new Date(),
         message: 'Invalid deposit amount',
-        details: { 
+        validationResults: { 
           threatLevel: 'medium',
           severity: 40,
           amount
@@ -666,9 +697,10 @@ export class SecurityAuditFramework {
     // Check for usual or suspicious deposit sizes
     if (metadata.historicalAverage && numAmount > metadata.historicalAverage * 10) {
       return {
-        passed: false,
+        success: false,
+        timestamp: new Date(),
         message: 'Unusually large deposit detected',
-        details: { 
+        validationResults: { 
           threatLevel: 'medium',
           severity: 50,
           amount: numAmount,
@@ -684,9 +716,10 @@ export class SecurityAuditFramework {
         metadata.restrictedDepositors.length > 0 && 
         !metadata.restrictedDepositors.includes(depositorAddress)) {
       return {
-        passed: false,
+        success: false,
+        timestamp: new Date(),
         message: 'Deposit from unauthorized address to restricted vault',
-        details: { 
+        validationResults: { 
           threatLevel: 'high',
           severity: 70,
           depositorAddress
@@ -695,9 +728,10 @@ export class SecurityAuditFramework {
     }
     
     return {
-      passed: true,
+      success: true,
+        timestamp: new Date(),
       message: 'Asset deposit audit passed',
-      details: { 
+      validationResults: { 
         vaultId,
         chainId,
         amount: numAmount,
@@ -715,9 +749,10 @@ export class SecurityAuditFramework {
     // Required fields validation
     if (!vaultId || !chainId || !ownerAddress || oldLevel === undefined || newLevel === undefined) {
       return {
-        passed: false,
+        success: false,
+        timestamp: new Date(),
         message: 'Security level change audit failed due to missing required fields',
-        details: { 
+        validationResults: { 
           missingFields: !vaultId ? 'vaultId' : !chainId ? 'chainId' : 
                        !ownerAddress ? 'ownerAddress' : 
                        oldLevel === undefined ? 'oldLevel' : 'newLevel',
@@ -732,9 +767,10 @@ export class SecurityAuditFramework {
     
     if (!isOwner) {
       return {
-        passed: false,
+        success: false,
+        timestamp: new Date(),
         message: 'Only the vault owner can change security level',
-        details: { 
+        validationResults: { 
           threatLevel: 'critical',
           severity: 90,
           requesterAddress: metadata.requesterAddress
@@ -745,9 +781,10 @@ export class SecurityAuditFramework {
     // Validate security levels
     if (![1, 2, 3].includes(oldLevel) || ![1, 2, 3].includes(newLevel)) {
       return {
-        passed: false,
+        success: false,
+        timestamp: new Date(),
         message: 'Invalid security level values',
-        details: { 
+        validationResults: { 
           threatLevel: 'medium',
           severity: 50,
           oldLevel,
@@ -762,9 +799,10 @@ export class SecurityAuditFramework {
       
       if (!secondaryChains || !Array.isArray(secondaryChains) || secondaryChains.length < 1) {
         return {
-          passed: false,
+          success: false,
+        timestamp: new Date(),
           message: 'Security level 3 requires at least one secondary chain for verification',
-          details: { threatLevel: 'medium', severity: 50 }
+          validationResults: { threatLevel: 'medium', severity: 50 }
         };
       }
     }
@@ -772,9 +810,10 @@ export class SecurityAuditFramework {
     // Check if vault contains assets before lowering security level
     if (oldLevel > newLevel && metadata.vaultValue && metadata.vaultValue > 0) {
       return {
-        passed: false,
+        success: false,
+        timestamp: new Date(),
         message: 'Reducing security level on a vault with assets',
-        details: { 
+        validationResults: { 
           threatLevel: 'high',
           severity: 70,
           currentValue: metadata.vaultValue
@@ -783,9 +822,10 @@ export class SecurityAuditFramework {
     }
     
     return {
-      passed: true,
+      success: true,
+        timestamp: new Date(),
       message: 'Security level change audit passed',
-      details: { 
+      validationResults: { 
         vaultId,
         chainId,
         oldLevel,
@@ -804,9 +844,10 @@ export class SecurityAuditFramework {
     // Required fields validation
     if (!chainId || !walletAddress || !walletType) {
       return {
-        passed: false,
+        success: false,
+        timestamp: new Date(),
         message: 'Wallet connection audit failed due to missing required fields',
-        details: { 
+        validationResults: { 
           missingFields: !chainId ? 'chainId' : !walletAddress ? 'walletAddress' : 'walletType',
           threatLevel: 'medium',
           severity: 40
@@ -817,18 +858,20 @@ export class SecurityAuditFramework {
     // Validate address format
     if (!this.isValidBlockchainAddress(walletAddress, chainId)) {
       return {
-        passed: false,
+        success: false,
+        timestamp: new Date(),
         message: `Invalid wallet address format for chain ${chainId}`,
-        details: { threatLevel: 'medium', severity: 50 }
+        validationResults: { threatLevel: 'medium', severity: 50 }
       };
     }
     
     // Check for suspicious connection patterns
     if (metadata.recentConnections && metadata.recentConnections > 10) {
       return {
-        passed: false,
+        success: false,
+        timestamp: new Date(),
         message: 'Suspicious number of recent wallet connection attempts',
-        details: { 
+        validationResults: { 
           threatLevel: 'high',
           severity: 70,
           recentConnections: metadata.recentConnections
@@ -843,9 +886,10 @@ export class SecurityAuditFramework {
       // This is a very simplified check - production would use more sophisticated geo-distance calculation
       if (userGeolocation.country !== previousGeolocation.country) {
         return {
-          passed: false,
+          success: false,
+        timestamp: new Date(),
           message: 'Unusual geolocation change detected',
-          details: { 
+          validationResults: { 
             threatLevel: 'high',
             severity: 70,
             currentLocation: userGeolocation.country,
@@ -857,9 +901,10 @@ export class SecurityAuditFramework {
     }
     
     return {
-      passed: true,
+      success: true,
+        timestamp: new Date(),
       message: 'Wallet connection audit passed',
-      details: { 
+      validationResults: { 
         chainId,
         walletType
       }
@@ -875,9 +920,10 @@ export class SecurityAuditFramework {
     // Required fields validation
     if (!chainId || !walletAddress || !transactionType || !transactionData) {
       return {
-        passed: false,
+        success: false,
+        timestamp: new Date(),
         message: 'Transaction submission audit failed due to missing required fields',
-        details: { 
+        validationResults: { 
           missingFields: !chainId ? 'chainId' : !walletAddress ? 'walletAddress' : 
                        !transactionType ? 'transactionType' : 'transactionData',
           threatLevel: 'medium',
@@ -889,9 +935,10 @@ export class SecurityAuditFramework {
     // Check transaction size/gas limits
     if (transactionData.gasLimit && transactionData.gasLimit > 1000000) {
       return {
-        passed: false,
+        success: false,
+        timestamp: new Date(),
         message: 'Unusually high gas limit for transaction',
-        details: { 
+        validationResults: { 
           threatLevel: 'medium',
           severity: 60,
           gasLimit: transactionData.gasLimit
@@ -905,9 +952,10 @@ export class SecurityAuditFramework {
       
       if (metadata.averageTransactionValue && value > metadata.averageTransactionValue * 5) {
         return {
-          passed: false,
+          success: false,
+        timestamp: new Date(),
           message: 'Unusually large transaction value',
-          details: { 
+          validationResults: { 
             threatLevel: 'medium',
             severity: 60,
             value,
@@ -926,9 +974,10 @@ export class SecurityAuditFramework {
       
       if (transactionData.to && suspiciousContracts.includes(transactionData.to)) {
         return {
-          passed: false,
+          success: false,
+        timestamp: new Date(),
           message: 'Interaction with suspicious or flagged contract',
-          details: { 
+          validationResults: { 
             threatLevel: 'critical',
             severity: 90,
             contractAddress: transactionData.to
@@ -938,9 +987,10 @@ export class SecurityAuditFramework {
     }
     
     return {
-      passed: true,
+      success: true,
+        timestamp: new Date(),
       message: 'Transaction submission audit passed',
-      details: { 
+      validationResults: { 
         chainId,
         transactionType
       }
@@ -992,7 +1042,7 @@ export class SecurityAuditFramework {
    */
   public getCompletedAudits(): SecurityEvent[] {
     return [...this.auditQueue].filter(event => 
-      event.status === 'completed'
+      event.verified && event.metadata.processingStatus === 'completed'
     );
   }
   

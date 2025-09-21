@@ -101,7 +101,8 @@ export class TestTransactionUtility {
           return { success: false, error: 'Bytecode required for contract deployment' };
         }
         
-        const deployResult = await ethereumService.deployContract(bytecode, data || []);
+        // Contract deployment not available in current service version
+        const deployResult = { success: false, error: 'Contract deployment not available in current service version' };
         return {
           success: !!deployResult.transactionHash,
           hash: deployResult.transactionHash,
@@ -113,7 +114,8 @@ export class TestTransactionUtility {
           return { success: false, error: 'Contract address required for contract call' };
         }
         
-        const callResult = await ethereumService.callContract(contractAddress, data || '0x');
+        // Contract calls not available in current service version
+        const callResult = { success: false, error: 'Contract calls not available in current service version' };
         return {
           success: !!callResult.transactionHash,
           hash: callResult.transactionHash,
@@ -151,7 +153,7 @@ export class TestTransactionUtility {
         
         // Execute transfer using solanaService
         // Using send method which should be available
-        const result = await solanaService.send(
+        const result = await solanaService.sendSOL(
           transferRecipient, 
           parseFloat(transferAmount)
         );
@@ -195,8 +197,7 @@ export class TestTransactionUtility {
         // Execute transfer using tonService
         const result = await tonService.sendTON(
           transferRecipient,
-          transferAmount,
-          'Test transaction from Chronos Vault'
+          transferAmount
         );
 
         return {
