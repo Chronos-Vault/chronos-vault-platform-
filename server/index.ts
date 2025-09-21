@@ -6,6 +6,7 @@ import express from 'express';
 import cors from 'cors';
 import crypto from 'crypto';
 import bodyParser from 'body-parser';
+import cookieParser from 'cookie-parser';
 import { registerRoutes } from './routes';
 import { performanceOptimizer } from './performance/optimization-service';
 import { systemHealthMonitor } from './monitoring/system-health-monitor';
@@ -85,6 +86,7 @@ const corsOptions = {
 
 // Middleware
 app.use(cors(corsOptions));
+app.use(cookieParser());
 app.use(bodyParser.json());
 
 // Global wallet authorization storage
@@ -129,10 +131,25 @@ app.post('/api/vault/request-nonce', (req, res) => {
     challengeKey
   });
 
+  // Create standardized sign-in message based on blockchain
+  let signInMessage: string;
+  if (blockchain === 'ethereum') {
+    // SIWE (Sign-In with Ethereum) format
+    signInMessage = `chronos-vault.replit.app wants you to sign in with your Ethereum account:\n${address}\n\nSign in to Chronos Vault\n\nURI: https://chronos-vault.replit.app\nVersion: 1\nChain ID: 1\nNonce: ${nonce}\nIssued At: ${new Date().toISOString()}`;
+  } else if (blockchain === 'solana') {
+    // Solana Sign-In format
+    signInMessage = `Chronos Vault\n\nSign in to access your vault\nWallet: ${address}\nNonce: ${nonce}\nIssued: ${new Date().toISOString()}\nDomain: chronos-vault.replit.app`;
+  } else if (blockchain === 'ton') {
+    // TON Proof format
+    signInMessage = `ton-proof-item-v2/chronos-vault.replit.app/${new Date().getTime()}/${nonce}/${address}`;
+  } else {
+    signInMessage = `Sign in to Chronos Vault\nAddress: ${address}\nNonce: ${nonce}\nTimestamp: ${new Date().toISOString()}`;
+  }
+
   res.json({
     status: 'success',
     nonce,
-    message: `Sign this nonce to prove ownership: ${nonce}`
+    message: signInMessage
   });
 });
 
@@ -194,19 +211,31 @@ app.post('/api/vault/authorize-wallet', async (req, res) => {
     });
   }
 
+  // Reconstruct the same message format for verification
+  let signInMessage: string;
+  if (blockchain === 'ethereum') {
+    signInMessage = `chronos-vault.replit.app wants you to sign in with your Ethereum account:\n${address}\n\nSign in to Chronos Vault\n\nURI: https://chronos-vault.replit.app\nVersion: 1\nChain ID: 1\nNonce: ${nonce}\nIssued At: ${challenge.timestamp.toISOString()}`;
+  } else if (blockchain === 'solana') {
+    signInMessage = `Chronos Vault\n\nSign in to access your vault\nWallet: ${address}\nNonce: ${nonce}\nIssued: ${challenge.timestamp.toISOString()}\nDomain: chronos-vault.replit.app`;
+  } else if (blockchain === 'ton') {
+    signInMessage = `ton-proof-item-v2/chronos-vault.replit.app/${challenge.timestamp.getTime()}/${nonce}/${address}`;
+  } else {
+    signInMessage = `Sign in to Chronos Vault\nAddress: ${address}\nNonce: ${nonce}\nTimestamp: ${challenge.timestamp.toISOString()}`;
+  }
+
   // Verify signature based on blockchain type
   let signatureValid = false;
   try {
     if (blockchain === 'ethereum') {
       const { verifyMessage } = await import('ethers');
-      const recoveredAddress = verifyMessage(nonce, signature);
+      const recoveredAddress = verifyMessage(signInMessage, signature);
       signatureValid = recoveredAddress.toLowerCase() === address.toLowerCase();
     } else if (blockchain === 'solana') {
       const { PublicKey } = await import('@solana/web3.js');
       const { verify } = await import('tweetnacl');
       
       const publicKey = new PublicKey(address);
-      const messageBytes = new TextEncoder().encode(nonce);
+      const messageBytes = new TextEncoder().encode(signInMessage);
       const signatureBytes = Uint8Array.from(Buffer.from(signature, 'hex'));
       
       signatureValid = verify(messageBytes, signatureBytes, publicKey.toBytes());
@@ -261,6 +290,15 @@ app.post('/api/vault/authorize-wallet', async (req, res) => {
     chainId
   });
 
+  // Set secure httpOnly session cookie instead of JSON token
+  res.cookie('chronos-session', sessionToken, {
+    httpOnly: true,
+    secure: isProduction, // HTTPS only in production
+    sameSite: 'strict',
+    maxAge: 24 * 60 * 60 * 1000, // 24 hours
+    path: '/'
+  });
+
   res.json({
     status: 'success',
     message: 'Wallet successfully authorized with cryptographic proof',
@@ -270,7 +308,6 @@ app.post('/api/vault/authorize-wallet', async (req, res) => {
       walletType,
       authorized: true,
       vaultEligible: true,
-      sessionToken,
       authorizedAt: new Date()
     }
   });
