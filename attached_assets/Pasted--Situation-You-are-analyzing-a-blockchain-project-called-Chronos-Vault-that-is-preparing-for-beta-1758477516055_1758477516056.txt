@@ -1,0 +1,82 @@
+**Situation**
+You are analyzing a blockchain project called Chronos Vault that is preparing for beta release. The project has multiple repositories on GitHub and a live website at https://chronosvault.org/. The development team needs a comprehensive audit to ensure the project is production-ready and secure.
+
+**Task**
+Conduct a complete codebase analysis of the Chronos Vault project to identify errors, missing files, security vulnerabilities, and assess overall readiness for beta deployment. Review all repositories in the GitHub organization, analyze both backend and frontend components, and provide actionable recommendations for any issues found.
+
+**Objective**
+Ensure the Chronos Vault project is fully developed, secure from potential attacks, and ready for safe beta release to users.
+
+**Knowledge**
+The project details are:
+- GitHub organization: https://github.com/Chronos-Vault
+- Live website: https://chronosvault.org/
+- Project type: Blockchain-based application
+- Current status: Pre-beta, seeking final validation
+- Architecture: Full-stack application with backend and frontend components
+
+**Analysis Requirements:**
+
+1. **Code Quality Assessment**
+   - Scan all repositories for syntax errors, logical bugs, and code inconsistencies
+   - Identify incomplete functions or unimplemented features
+   - Check for proper error handling and edge case coverage
+   - Verify code follows best practices and security standards
+
+2. **File Completeness Check**
+   - Verify all necessary configuration files are present (package.json, requirements.txt, etc.)
+   - Check for missing environment files, deployment scripts, and documentation
+   - Ensure all dependencies are properly declared and versions are specified
+   - Validate presence of security-related files (.gitignore, security policies)
+
+3. **Security Audit**
+   - Identify potential vulnerabilities in smart contracts (if applicable)
+   - Check for exposed API keys, hardcoded credentials, or sensitive data
+   - Analyze authentication and authorization mechanisms
+   - Review input validation and sanitization practices
+   - Assess protection against common attacks (SQL injection, XSS, CSRF)
+
+4. **Backend Analysis**
+   - Review API endpoints for security and functionality
+   - Check database schema and query optimization
+   - Verify proper logging and monitoring implementation
+   - Assess scalability and performance considerations
+
+5. **Frontend Analysis**
+   - Check for client-side security vulnerabilities
+   - Verify proper state management and data flow
+   - Review user input validation and error handling
+   - Assess responsive design and cross-browser compatibility
+
+**Output Format:**
+Provide your analysis in the following structure:
+
+1. **Executive Summary** (2-3 sentences on overall project status)
+
+2. **Critical Issues** (High-priority problems that must be fixed before beta)
+   - List each issue with specific file/line references
+   - Provide severity level (Critical/High/Medium/Low)
+   - Include recommended fixes
+
+3. **Missing Files/Components**
+   - List any missing essential files by repository
+   - Specify the purpose and urgency of each missing component
+
+4. **Security Assessment**
+   - Identify security vulnerabilities with risk levels
+   - Provide specific remediation steps
+   - Highlight any blockchain-specific security concerns
+
+5. **Beta Readiness Checklist**
+   - Mark each area as ✅ Ready, ⚠️ Needs Attention, or ❌ Not Ready
+   - Backend functionality
+   - Frontend functionality
+   - Security measures
+   - Documentation
+   - Deployment configuration
+
+6. **Recommendations**
+   - Prioritized action items before beta launch
+   - Suggested improvements for post-beta iterations
+
+Your life depends on providing specific, actionable feedback with exact file paths and line numbers where issues are found, rather than generic observations.
