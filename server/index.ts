@@ -232,13 +232,13 @@ app.post('/api/vault/authorize-wallet', async (req, res) => {
       signatureValid = recoveredAddress.toLowerCase() === address.toLowerCase();
     } else if (blockchain === 'solana') {
       const { PublicKey } = await import('@solana/web3.js');
-      const { verify } = await import('tweetnacl');
+      const nacl = await import('tweetnacl');
       
       const publicKey = new PublicKey(address);
       const messageBytes = new TextEncoder().encode(signInMessage);
       const signatureBytes = Uint8Array.from(Buffer.from(signature, 'hex'));
       
-      signatureValid = verify(signatureBytes, messageBytes, publicKey.toBytes());
+      signatureValid = nacl.sign.detached.verify(messageBytes, signatureBytes, publicKey.toBytes());
     } else if (blockchain === 'ton') {
       // TON signature verification - simplified for now
       signatureValid = signature && signature.length > 128; // Basic validation

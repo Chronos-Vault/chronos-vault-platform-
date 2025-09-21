@@ -222,10 +222,10 @@ class TONService {
    * This is used when the real UI initialization fails
    */
   private createMockTonConnectUI(): any {
-    const mockUI = {
+    const mockUI: any = {
       connected: false,
-      wallet: null,
-      account: null,
+      wallet: null as any,
+      account: null as any,
       connect: async () => {
         console.log('Mock TonConnectUI: Simulating connection...');
         mockUI.connected = true;
@@ -603,7 +603,7 @@ class TONService {
       const vaultParams = formatTONVaultParams({
         unlockTime,
         recipient: recipient || this.walletInfo?.address || '',
-        comment: comment || 'Chronos Vault on TON',
+        comment: 'Chronos Vault on TON',
         securityLevel: 1
       });
       

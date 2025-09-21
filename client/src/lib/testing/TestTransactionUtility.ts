@@ -104,10 +104,10 @@ export class TestTransactionUtility {
         // Contract deployment not available in current service version
         const deployResult = { success: false, error: 'Contract deployment not available in current service version' };
         return {
-          success: !!deployResult.transactionHash,
-          hash: deployResult.transactionHash,
+          success: deployResult.success,
+          hash: undefined,
           error: deployResult.error,
-          details: { type: 'contract_deploy', contractAddress: deployResult.contractAddress }
+          details: { type: 'contract_deploy', contractAddress: undefined }
         };
       } else if (type === 'contract_call') {
         if (!contractAddress) {
@@ -117,8 +117,8 @@ export class TestTransactionUtility {
         // Contract calls not available in current service version
         const callResult = { success: false, error: 'Contract calls not available in current service version' };
         return {
-          success: !!callResult.transactionHash,
-          hash: callResult.transactionHash,
+          success: callResult.success,
+          hash: undefined,
           error: callResult.error,
           details: { type: 'contract_call', contractAddress, data }
         };
@@ -155,7 +155,7 @@ export class TestTransactionUtility {
         // Using send method which should be available
         const result = await solanaService.sendSOL(
           transferRecipient, 
-          parseFloat(transferAmount)
+          transferAmount
         );
 
         return {

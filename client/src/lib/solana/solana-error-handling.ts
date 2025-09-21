@@ -12,6 +12,7 @@
 export enum SolanaErrorType {
   NETWORK_ERROR = 'NETWORK_ERROR',           // Connection issues
   RPC_ERROR = 'RPC_ERROR',                   // RPC API errors
+  RATE_LIMIT_ERROR = 'RATE_LIMIT_ERROR',     // Rate limiting errors
   VALIDATION_ERROR = 'VALIDATION_ERROR',     // Input validation failures
   WALLET_ERROR = 'WALLET_ERROR',             // Wallet connection issues
   TRANSACTION_ERROR = 'TRANSACTION_ERROR',   // Transaction execution errors

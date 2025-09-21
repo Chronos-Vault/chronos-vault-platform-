@@ -595,14 +595,15 @@ class SolanaService {
         // Check if we should retry
         if (retryAttempt < this.maxRetries && 
            (errorType === SolanaErrorType.NETWORK_ERROR || 
-            errorType === SolanaErrorType.RPC_ERROR)) {
+            errorType === SolanaErrorType.RPC_ERROR || 
+            errorType === SolanaErrorType.RATE_LIMIT_ERROR)) {
           // Calculate delay with exponential backoff
           const delayMs = this.calculateBackoff(retryAttempt);
           
           console.log(`Retrying in ${delayMs}ms...`);
           await this.delay(delayMs);
           
-          // Try the next endpoint if available
+          // Try the next endpoint if available for RPC or rate limit errors
           if (errorType === SolanaErrorType.RPC_ERROR || errorType === SolanaErrorType.RATE_LIMIT_ERROR) {
             this.switchToNextEndpoint();
           }
@@ -1207,7 +1208,7 @@ class SolanaService {
         try {
           if (slot) {
             const block = await this.connection.getBlock(slot);
-            blockTime = block?.blockTime;
+            blockTime = block?.blockTime ?? undefined;
           }
         } catch (timeError) {
           console.warn('Failed to get block time:', timeError);
