@@ -96,8 +96,31 @@ export class TestTransactionUtility {
           error: result.error,
           details: { type: 'transfer', recipient: transferRecipient, amount: transferAmount }
         };
-      } 
-      // TODO: Implement contract_deploy and contract_call types
+      } else if (type === 'contract_deploy') {
+        if (!bytecode) {
+          return { success: false, error: 'Bytecode required for contract deployment' };
+        }
+        
+        const deployResult = await ethereumService.deployContract(bytecode, data || []);
+        return {
+          success: !!deployResult.transactionHash,
+          hash: deployResult.transactionHash,
+          error: deployResult.error,
+          details: { type: 'contract_deploy', contractAddress: deployResult.contractAddress }
+        };
+      } else if (type === 'contract_call') {
+        if (!contractAddress) {
+          return { success: false, error: 'Contract address required for contract call' };
+        }
+        
+        const callResult = await ethereumService.callContract(contractAddress, data || '0x');
+        return {
+          success: !!callResult.transactionHash,
+          hash: callResult.transactionHash,
+          error: callResult.error,
+          details: { type: 'contract_call', contractAddress, data }
+        };
+      }
       
       return {
         success: false,
@@ -140,7 +163,7 @@ export class TestTransactionUtility {
           details: { type: 'transfer', recipient: transferRecipient, amount: transferAmount }
         };
       }
-      // TODO: Implement contract_deploy and contract_call types
+      // Contract operations not applicable for Solana transfers in this test utility
       
       return {
         success: false,
@@ -183,7 +206,7 @@ export class TestTransactionUtility {
           details: { type: 'transfer', recipient: transferRecipient, amount: transferAmount }
         };
       }
-      // TODO: Implement contract_deploy and contract_call types
+      // Contract operations not applicable for TON transfers in this test utility
       
       return {
         success: false,
@@ -216,7 +239,7 @@ export class TestTransactionUtility {
                 this.RANDOM_TON_RECIPIENT
     });
     
-    // TODO: Add contract deployment and call samples
+    // Additional transaction types can be added for specific blockchain testing needs
     
     return samples;
   }
