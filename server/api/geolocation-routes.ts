@@ -11,6 +11,8 @@ import { db } from '../db';
 import { geolocationService } from '../services/geolocation-service';
 import { securityLogger, SecurityEventType } from '../monitoring/security-logger';
 import { authenticateRequest } from '../middleware/auth';
+import { vaults, geoVaults } from '../../shared/schema';
+import { eq } from 'drizzle-orm';
 
 const router = Router();
 
@@ -80,7 +82,71 @@ router.post('/geo-vaults', authenticateRequest, async (req: Request, res: Respon
     
     // If this is connected to an existing vault, link them
     if (validatedData.vaultId) {
-      // TODO: Link to existing vault in database
+      try {
+        // SECURITY: Verify vault exists and belongs to the user
+        const existingVault = await db.select().from(vaults)
+          .where(eq(vaults.id, validatedData.vaultId))
+          .limit(1);
+          
+        if (existingVault.length === 0) {
+          return res.status(404).json({
+            success: false,
+            message: 'Vault not found'
+          });
+        }
+        
+        if (existingVault[0].userId !== req.user!.id) {
+          securityLogger.warn('Unauthorized vault linking attempt', SecurityEventType.UNAUTHORIZED_ACCESS, {
+            userId: req.user!.id,
+            attemptedVaultId: validatedData.vaultId,
+            actualOwnerId: existingVault[0].userId
+          });
+          return res.status(403).json({
+            success: false,
+            message: 'Access denied: vault does not belong to user'
+          });
+        }
+        
+        // Create geolocation vault record in database
+        const geoVaultData = {
+          userId: req.user!.id,
+          name: validatedData.name,
+          description: validatedData.description || null,
+          boundaryType: validatedData.boundaryType,
+          coordinates: validatedData.coordinates,
+          radius: validatedData.radius || null,
+          countryCode: validatedData.countryCode || null,
+          minAccuracy: validatedData.minAccuracy || null,
+          requiresRealTimeVerification: validatedData.requiresRealTimeVerification,
+          multiFactorUnlock: validatedData.multiFactorUnlock,
+          metadata: {
+            vaultId: validatedData.vaultId, // Link to existing vault
+            geoVaultId: vaultId,
+            allowedTimeWindows: validatedData.allowedTimeWindows || [],
+            createdAt: new Date().toISOString()
+          }
+        };
+        
+        // Insert geolocation vault record
+        await db.insert(geoVaults).values(geoVaultData);
+        
+        securityLogger.info(`Geolocation vault linked to existing vault ${validatedData.vaultId}`, SecurityEventType.VAULT_CREATION, {
+          userId: req.user!.id,
+          geoVaultId: vaultId,
+          linkedVaultId: validatedData.vaultId,
+        });
+      } catch (dbError) {
+        console.error('Error linking geolocation vault to database:', dbError);
+        securityLogger.error('Failed to link geolocation vault to database', SecurityEventType.SYSTEM_ERROR, {
+          userId: req.user!.id,
+          vaultId: validatedData.vaultId,
+          error: dbError instanceof Error ? dbError.message : String(dbError)
+        });
+        return res.status(500).json({
+          success: false,
+          message: 'Database error during vault linking'
+        });
+      }
     }
     
     securityLogger.info(`User ${req.user!.id} created geolocation vault: ${vaultId}`, SecurityEventType.VAULT_CREATION, {

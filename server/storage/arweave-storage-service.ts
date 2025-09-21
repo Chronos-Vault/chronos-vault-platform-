@@ -8,9 +8,12 @@
 import Arweave from 'arweave';
 import { WebBundlr } from '@bundlr-network/client';
 import { db } from '../db';
-import type { StoredFile, FileStatus, UploadOptions, UploadResult, StorageStatus, VerificationRecord, StorageError } from '../../shared/types/storage';
+import type { StoredFile, UploadOptions, UploadResult, StorageStatus, VerificationRecord, StorageError } from '../../shared/types/storage';
+import { FileStatus } from '../../shared/types/storage';
 import { STORAGE_CONFIG } from '../../shared/config/storage';
 import { logger } from '../utils/logger';
+import { attachments, vaults } from '../../shared/schema';
+import { eq } from 'drizzle-orm';
 
 // Helper function to generate unique IDs
 function generateId(): string {
@@ -207,6 +210,27 @@ export class ArweaveStorageService {
         });
       }
       
+      // SECURITY: Verify vault exists and belongs to the user before upload
+      const existingVault = await db.select().from(vaults)
+        .where(eq(vaults.id, parseInt(vaultId.toString())))
+        .limit(1);
+        
+      if (existingVault.length === 0) {
+        throw {
+          code: 'VAULT_NOT_FOUND',
+          message: `Vault ${vaultId} not found`,
+          statusCode: 404
+        } as StorageError;
+      }
+      
+      if (existingVault[0].userId !== parseInt(userId.toString())) {
+        throw {
+          code: 'UNAUTHORIZED_VAULT_ACCESS',
+          message: `Access denied: vault ${vaultId} does not belong to user ${userId}`,
+          statusCode: 403
+        } as StorageError;
+      }
+      
       // Create file record in database with pending status
       const fileId = generateId();
       const storedFile: StoredFile = {
@@ -225,8 +249,22 @@ export class ArweaveStorageService {
         permanentUri: ''
       };
       
-      // TODO: Save file record to database
-      // await db.insert(files).values(storedFile);
+      // Save file record to database
+      await db.insert(attachments).values({
+        vaultId: parseInt(vaultId.toString()),
+        fileName: storedFile.fileName,
+        fileType: storedFile.fileType,
+        fileSize: storedFile.fileSize,
+        description: `Arweave upload: ${fileName}`,
+        storageKey: fileId,
+        isEncrypted: options.encrypt || false,
+        metadata: {
+          transactionId: '',
+          permanentUri: '',
+          status: FileStatus.PENDING,
+          uploadDate: storedFile.uploadDate.toISOString()
+        }
+      });
       
       console.log(`Starting upload of ${fileName} to Arweave via Bundlr...`);
       
@@ -242,12 +280,15 @@ export class ArweaveStorageService {
       storedFile.status = FileStatus.STORED;
       storedFile.permanentUri = `${STORAGE_CONFIG.ARWEAVE.GATEWAY_URL}/${response.id}`;
       
-      // TODO: Update file record in database
-      // await db.update(files).set({
-      //   transactionId: response.id,
-      //   status: FileStatus.STORED,
-      //   permanentUri: `${STORAGE_CONFIG.ARWEAVE.GATEWAY_URL}/${response.id}`
-      // }).where(eq(files.id, fileId));
+      // Update file record in database
+      await db.update(attachments).set({
+        metadata: {
+          transactionId: response.id,
+          permanentUri: `${STORAGE_CONFIG.ARWEAVE.GATEWAY_URL}/${response.id}`,
+          status: FileStatus.STORED,
+          uploadDate: storedFile.uploadDate.toISOString()
+        }
+      }).where(eq(attachments.storageKey, fileId));
       
       // Return upload result
       const result: UploadResult = {
@@ -288,10 +329,22 @@ export class ArweaveStorageService {
         };
       }
       
-      // TODO: Update file status in database to failed
-      // await db.update(files).set({
-      //   status: FileStatus.FAILED
-      // }).where(eq(files.id, fileId));
+      // Update file status in database to failed
+      if (typeof storedFile.id === 'string') {
+        try {
+          await db.update(attachments).set({
+            metadata: {
+              transactionId: '',
+              permanentUri: '',
+              status: FileStatus.FAILED,
+              uploadDate: storedFile.uploadDate.toISOString(),
+              error: (error as Error).message
+            }
+          }).where(eq(attachments.storageKey, storedFile.id));
+        } catch (dbError) {
+          console.error('Failed to update file status in database:', dbError);
+        }
+      }
       
       throw storageError;
     }
