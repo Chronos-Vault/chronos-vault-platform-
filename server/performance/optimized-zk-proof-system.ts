@@ -1,6 +1,20 @@
 /**
- * Optimized ZK Proof System
- * Implements batch processing and proof templates for 192% performance improvement
+ * ⚠️ CRITICAL SECURITY WARNING ⚠️
+ * 
+ * THIS IS A SIMULATED ZK PROOF SYSTEM FOR DEMONSTRATION ONLY
+ * 
+ * ❌ DO NOT USE FOR SECURITY DECISIONS
+ * ❌ NOT REAL zkSNARK VERIFICATION  
+ * ❌ PROVIDES NO CRYPTOGRAPHIC SECURITY
+ * 
+ * This module implements batch processing and proof templates for 192% performance improvement
+ * in development/testing environments, but MUST BE REPLACED with real zkSNARK libraries
+ * before production deployment.
+ * 
+ * For production, integrate:
+ * - Real zkSNARK libraries (e.g., snarkjs, circom)
+ * - Audited proof generation/verification
+ * - Proper circuit implementation
  */
 
 import { EventEmitter } from 'events';
@@ -44,6 +58,10 @@ export class OptimizedZKProofSystem extends EventEmitter {
   private readonly maxWaitTime = 500; // ms
   private proofTemplates: Map<string, PrecomputedProof> = new Map();
   private processingActive = false;
+  
+  // SECURITY QUARANTINE FLAG
+  private readonly UNSAFE_FOR_PRODUCTION = true;
+  private readonly SECURITY_WARNING = "🚨 SIMULATED ZK PROOFS - NOT CRYPTOGRAPHICALLY SECURE 🚨";
 
   // Performance metrics
   private metrics = {
@@ -62,8 +80,15 @@ export class OptimizedZKProofSystem extends EventEmitter {
 
   /**
    * Generate ZK proof with optimization
+   * 
+   * ⚠️ SECURITY WARNING: This generates SIMULATED proofs only!
    */
   async generateProof(transaction: Transaction): Promise<ZKProof> {
+    if (this.UNSAFE_FOR_PRODUCTION) {
+      console.warn(this.SECURITY_WARNING);
+      console.warn("generateProof() called - THIS IS NOT CRYPTOGRAPHICALLY SECURE");
+    }
+    
     const startTime = performance.now();
 
     // Try to use precomputed template first

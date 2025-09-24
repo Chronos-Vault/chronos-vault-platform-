@@ -1,6 +1,20 @@
 /**
- * Quantum Key Pool Manager
- * Implements precomputed quantum-resistant key management for 900% performance improvement
+ * ⚠️ CRITICAL SECURITY WARNING ⚠️
+ * 
+ * THIS IS A SIMULATED QUANTUM KEY MANAGER FOR DEMONSTRATION ONLY
+ * 
+ * ❌ DO NOT USE FOR SECURITY DECISIONS
+ * ❌ NOT REAL POST-QUANTUM CRYPTOGRAPHY
+ * ❌ USES STANDARD NODE.JS CRYPTO (NOT QUANTUM-RESISTANT)
+ * 
+ * This module implements precomputed key management for 900% performance improvement
+ * in development/testing environments, but MUST BE REPLACED with real post-quantum
+ * cryptography libraries before production deployment.
+ * 
+ * For production, integrate:
+ * - Real PQC libraries (e.g., CRYSTALS-Kyber, CRYSTALS-Dilithium, SPHINCS+)
+ * - Audited implementations from NIST PQC standards
+ * - Proper quantum-resistant key exchange and signatures
  */
 
 import { EventEmitter } from 'events';
@@ -40,6 +54,11 @@ export class QuantumKeyPoolManager extends EventEmitter {
   private keyPools: Map<KeyType, QuantumKeyPair[]> = new Map();
   private generationWorkers: Map<KeyType, NodeJS.Timeout> = new Map();
   private isGenerating: Map<KeyType, boolean> = new Map();
+  
+  // SECURITY QUARANTINE FLAGS
+  private readonly UNSAFE_FOR_PRODUCTION = true;
+  private readonly SECURITY_WARNING = "🚨 SIMULATED QUANTUM KEYS - NOT POST-QUANTUM SECURE 🚨";
+  private readonly CRYPTO_WARNING = "⚠️ Using Node.js crypto, NOT real Kyber/Dilithium/SPHINCS+ ⚠️";
   
   // Pool configuration
   private readonly poolSizes: Record<KeyType, number> = {
