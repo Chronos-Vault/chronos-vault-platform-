@@ -1,0 +1,16 @@
+# COPY AND PASTE THESE COMMANDS INTO THE REPLIT SHELL
+
+# Command 1: Set correct remote
+git remote set-url origin https://github.com/Chronos-Vault/chronos-vault-platform-.git
+
+# Command 2: Verify remote is set
+git remote -v
+
+# Command 3: Push your files
+git push origin main
+
+# If authentication fails, use this instead (replace YOUR_USERNAME and YOUR_TOKEN):
+# git push https://YOUR_USERNAME:YOUR_TOKEN@github.com/Chronos-Vault/chronos-vault-platform-.git main
+
+# After successful push, check your repository at:
+# https://github.com/Chronos-Vault/chronos-vault-platform-
