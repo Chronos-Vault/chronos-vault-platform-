@@ -136,10 +136,10 @@ Chronos Vault is committed to blockchain education:
 
 For more detailed information, please refer to:
 
-- [ChronosToken Whitepaper](./CVT_WHITEPAPER.md)
-- [Security Architecture](./SECURITY_ARCHITECTURE.md)
-- [Technical Documentation](./TECHNICAL_README.md)
-- [Deployment Guide](./DEPLOYMENT_GUIDE.md)
+- [ChronosToken Whitepaper](https://github.com/Chronos-Vault/chronos-vault-docs/blob/main/CVT_WHITEPAPER.md)
+- [Security Architecture](https://github.com/Chronos-Vault/chronos-vault-security/blob/main/SECURITY_ARCHITECTURE.md)
+- [Technical Documentation](https://github.com/Chronos-Vault/chronos-vault-docs/blob/main/TECHNICAL_README.md)
+- [Deployment Guide](https://github.com/Chronos-Vault/chronos-vault-docs/blob/main/DEPLOYMENT_GUIDE.md)
 
 ## License
 
