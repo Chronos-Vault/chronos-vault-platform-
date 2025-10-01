@@ -1,6 +1,6 @@
 # Chronos Vault: The Ultimate Multi-Chain Digital Vault Platform
 
-![Chronos Vault](./generated-icon.png)
+
 
 ## Overview
 
