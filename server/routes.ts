@@ -40,6 +40,8 @@ import apiRoutes from './routes/index';
 import authRoutes from './auth-routes-new';
 import chainFeeRoutes from './api/chain-fee-routes';
 import vaultChainRoutes from './api/vault-chain-routes';
+import { SolanaProgramClient, CHRONOS_VAULT_PROGRAM_ID } from './blockchain/solana-program-client';
+import config from './config';
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // Create HTTP server instance
@@ -117,6 +119,30 @@ export async function registerRoutes(app: Express): Promise<Server> {
   
   // Register vault chain selection and planning routes
   apiRouter.use('/vault-chain', vaultChainRoutes);
+  
+  // Solana status endpoint - exposes deployed program data
+  apiRouter.get('/solana/status', async (req: Request, res: Response) => {
+    try {
+      const solanaProgramClient = new SolanaProgramClient(config.blockchainConfig.solana.rpcUrl);
+      const currentSlot = await solanaProgramClient.getCurrentSlot();
+      
+      res.json({
+        success: true,
+        programId: CHRONOS_VAULT_PROGRAM_ID,
+        currentSlot,
+        rpcUrl: config.blockchainConfig.solana.rpcUrl,
+        network: config.blockchainConfig.solana.isTestnet ? 'devnet' : 'mainnet',
+        explorerUrl: `${config.blockchainConfig.solana.blockExplorerUrl}/address/${CHRONOS_VAULT_PROGRAM_ID}${config.blockchainConfig.solana.isTestnet ? '?cluster=devnet' : ''}`
+      });
+    } catch (error: any) {
+      securityLogger.error('Failed to get Solana status', SecurityEventType.SYSTEM_ERROR, error);
+      res.status(500).json({
+        success: false,
+        error: 'Failed to get Solana status',
+        message: error?.message || 'Unknown error'
+      });
+    }
+  });
   
   // Old wallet routes removed - using new wallet system
   
