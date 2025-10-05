@@ -343,42 +343,64 @@ export const TransactionMonitoringProvider: React.FC<{ children: React.ReactNode
     return;
   }, [devModeEnabled]);
   
-  // Refresh transactions from all chains
+  // Refresh transactions from all chains - NOW USING REAL BACKEND API
   const refreshTransactions = useCallback(async () => {
-    console.log('Would fetch Ethereum transactions here');
-    
-    // In a real implementation, fetch transactions from all chains
-    // For this simulation, add mock data if in development mode
-    
-    if (devModeEnabled) {
-      // Generate simulated transactions if we don't have any
-      if (transactions.length === 0) {
+    try {
+      // Fetch REAL transaction data from backend API
+      const response = await fetch('/api/transactions');
+      
+      if (!response.ok) {
+        throw new Error(`Failed to fetch transactions: ${response.statusText}`);
+      }
+      
+      const data = await response.json();
+      
+      if (data.status === 'success' && data.transactions) {
+        // Transform backend transaction data to frontend format
+        const transformedTransactions: CrossChainTransaction[] = data.transactions.map((tx: any) => ({
+          id: tx.id,
+          txHash: tx.hash,
+          correlationId: tx.id, // Use transaction ID as correlation ID
+          blockchain: tx.chain,
+          network: tx.chain === 'ETH' ? 'Ethereum' : tx.chain === 'SOL' ? 'Solana' : tx.chain === 'TON' ? 'TON' : 'Bitcoin',
+          fromAddress: tx.metadata?.from || '0x0000000000000000000000000000000000000000',
+          toAddress: tx.metadata?.to || '0x0000000000000000000000000000000000000000',
+          amount: tx.metadata?.amount || 0,
+          status: tx.status,
+          timestamp: new Date(tx.createdAt).getTime(),
+          confirmations: tx.confirmations,
+          type: tx.operation as TransactionType || 'transfer',
+          direction: 'outgoing',
+          verificationStatus: tx.status === 'confirmed' ? 'verified' : tx.status === 'failed' ? 'failed' : 'pending',
+          securityLevel: tx.metadata?.securityLevel || 1,
+          vaultId: tx.metadata?.vaultId,
+          error: tx.error
+        }));
+        
+        setTransactions(transformedTransactions);
+        console.log(`Fetched ${transformedTransactions.length} transactions from backend API`);
+      } else if (devModeEnabled && data.transactions.length === 0) {
+        // If no transactions in backend and dev mode, generate mock data
+        if (transactions.length === 0) {
+          const mockTransactions = generateMockTransactions();
+          setTransactions(mockTransactions);
+          console.log('No backend transactions, using mock data in dev mode');
+        }
+      }
+      
+      setLastUpdated(Date.now());
+    } catch (error) {
+      console.error('Error fetching transactions from backend:', error);
+      
+      // Fallback to mock data in dev mode if API fails
+      if (devModeEnabled && transactions.length === 0) {
         const mockTransactions = generateMockTransactions();
         setTransactions(mockTransactions);
-      } else {
-        // Update statuses on existing transactions
-        setTransactions(prev => 
-          prev.map(tx => {
-            // Randomly progress pending transactions
-            if (tx.status === 'pending' && Math.random() > 0.6) {
-              return { ...tx, status: 'confirming' };
-            }
-            // Randomly confirm transactions that are confirming
-            if (tx.status === 'confirming' && Math.random() > 0.7) {
-              return { 
-                ...tx, 
-                status: 'confirmed',
-                confirmations: 1 + Math.floor(Math.random() * 10)
-              };
-            }
-            return tx;
-          })
-        );
+        console.log('API error, using mock data in dev mode');
       }
+      
+      setLastUpdated(Date.now());
     }
-    
-    setLastUpdated(Date.now());
-    return;
   }, [devModeEnabled, transactions]);
   
   // Get monitoring status
