@@ -137,30 +137,29 @@ const Sidebar: React.FC<{
               />
               <MenuItem 
                 icon={<div className="text-white text-md">📊</div>}
-                label="Cross-Chain Monitor" 
-                href="/cross-chain-monitor" 
-              />
-              <MenuItem 
-                icon={<div className="text-white text-md">📊</div>}
-                label="Cross-Chain Metrics" 
-                href="/cross-chain-metrics" 
+                label="Operations & Monitoring Hub" 
+                href="/monitoring"
+                isNew
               />
               <MenuItem 
                 icon={<div className="text-white text-md">🔄</div>}
-                label="Cross-Chain Operations" 
-                href="/cross-chain-operations"
+                label="Cross-Chain Bridge Hub" 
+                href="/bridge"
+                isNew
+              />
+              <MenuItem 
+                icon={<div className="text-white text-md">🛡️</div>}
+                label="Security Control Center" 
+                href="/security"
                 isNew
               />
               
               <div className="mt-4 pt-4 border-t border-[#2D0C4B]/30">
                 <MenuItem 
-                  icon={<div className="text-white text-md">⚙️</div>}
+                  icon={<div className="text-white text-md">💼</div>}
                   label="Connect Wallets" 
-                  onClick={() => {}} 
+                  href="/wallet"
                 />
-                <div className="mt-3 border border-[#2D0C4B]/50 rounded-lg p-3 flex justify-center">
-                  <div className="text-white text-sm">📄</div>
-                </div>
               </div>
             </div>
           )}
@@ -174,30 +173,21 @@ const Sidebar: React.FC<{
                 isHeader 
               />
               <MenuItem 
-                icon={<div className="text-white text-md">📄</div>}
-                label="Transaction Verification" 
-                href="/transaction-verification" 
+                icon={<div className="text-white text-md">📊</div>}
+                label="Operations & Monitoring Hub" 
+                href="/monitoring"
+                isNew
               />
               <MenuItem 
                 icon={<div className="text-white text-md">🔄</div>}
-                label="Cross-Chain Bridge" 
-                href="/cross-chain-bridge" 
-              />
-              <MenuItem 
-                icon={<div className="text-white text-md">⚛️</div>}
-                label="Atomic Swaps" 
-                href="/atomic-swaps" 
-              />
-              <MenuItem 
-                icon={<div className="text-white text-md">🔄</div>}
-                label="Bridge vs Swap" 
-                href="/bridge-vs-swap" 
+                label="Cross-Chain Bridge Hub" 
+                href="/bridge"
                 isNew
               />
               <MenuItem 
                 icon={<div className="text-white text-md">🛡️</div>}
-                label="Security Dashboard" 
-                href="/security-dashboard" 
+                label="Security Control Center" 
+                href="/security"
                 isNew
               />
               <MenuItem 
@@ -214,13 +204,10 @@ const Sidebar: React.FC<{
               
               <div className="mt-4 pt-4 border-t border-[#2D0C4B]/30">
                 <MenuItem 
-                  icon={<div className="text-white text-md">⚙️</div>}
+                  icon={<div className="text-white text-md">💼</div>}
                   label="Connect Wallets" 
-                  onClick={() => {}} 
+                  href="/wallet"
                 />
-                <div className="mt-3 border border-[#2D0C4B]/50 rounded-lg p-3 flex justify-center">
-                  <div className="text-white text-sm">📄</div>
-                </div>
               </div>
             </div>
           )}
@@ -281,13 +268,10 @@ const Sidebar: React.FC<{
               
               <div className="mt-4 pt-4 border-t border-[#2D0C4B]/30">
                 <MenuItem 
-                  icon={<div className="text-white text-md">⚙️</div>}
+                  icon={<div className="text-white text-md">💼</div>}
                   label="Connect Wallets" 
-                  onClick={() => {}} 
+                  href="/wallet"
                 />
-                <div className="mt-3 border border-[#2D0C4B]/50 rounded-lg p-3 flex justify-center">
-                  <div className="text-white text-sm">📄</div>
-                </div>
               </div>
             </div>
           )}
@@ -345,13 +329,10 @@ const Sidebar: React.FC<{
               
               <div className="mt-4 pt-4 border-t border-[#2D0C4B]/30">
                 <MenuItem 
-                  icon={<div className="text-white text-md">⚙️</div>}
+                  icon={<div className="text-white text-md">💼</div>}
                   label="Connect Wallets" 
-                  onClick={() => {}} 
+                  href="/wallet"
                 />
-                <div className="mt-3 border border-[#2D0C4B]/50 rounded-lg p-3 flex justify-center">
-                  <div className="text-white text-sm">📄</div>
-                </div>
               </div>
             </div>
           )}
@@ -400,13 +381,10 @@ const Sidebar: React.FC<{
               
               <div className="mt-4 pt-4 border-t border-[#2D0C4B]/30">
                 <MenuItem 
-                  icon={<div className="text-white text-md">⚙️</div>}
+                  icon={<div className="text-white text-md">💼</div>}
                   label="Connect Wallets" 
-                  onClick={() => {}} 
+                  href="/wallet"
                 />
-                <div className="mt-3 border border-[#2D0C4B]/50 rounded-lg p-3 flex justify-center">
-                  <div className="text-white text-sm">📄</div>
-                </div>
               </div>
             </div>
           )}
@@ -473,13 +451,10 @@ const Sidebar: React.FC<{
               
               <div className="mt-4 pt-4 border-t border-[#2D0C4B]/30">
                 <MenuItem 
-                  icon={<div className="text-white text-md">⚙️</div>}
+                  icon={<div className="text-white text-md">💼</div>}
                   label="Connect Wallets" 
-                  onClick={() => {}} 
+                  href="/wallet"
                 />
-                <div className="mt-3 border border-[#2D0C4B]/50 rounded-lg p-3 flex justify-center">
-                  <div className="text-white text-sm">📄</div>
-                </div>
               </div>
             </div>
           )}
@@ -546,13 +521,10 @@ const Sidebar: React.FC<{
               
               <div className="mt-4 pt-4 border-t border-[#2D0C4B]/30">
                 <MenuItem 
-                  icon={<div className="text-white text-md">⚙️</div>}
+                  icon={<div className="text-white text-md">💼</div>}
                   label="Connect Wallets" 
-                  onClick={() => {}} 
+                  href="/wallet"
                 />
-                <div className="mt-3 border border-[#2D0C4B]/50 rounded-lg p-3 flex justify-center">
-                  <div className="text-white text-sm">📄</div>
-                </div>
               </div>
             </div>
           )}
