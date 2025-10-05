@@ -93,10 +93,15 @@ class AutomatedRecoveryProtocol extends EventEmitter {
       });
     });
     
-    // Start health check loop
-    this.startHealthCheckLoop();
-    
-    securityLogger.info('Automated Recovery Protocol service initialized');
+    // Only start health check loop in production mode
+    // In development, chains are simulated and health checks cause false degradation warnings
+    const isDevelopment = process.env.NODE_ENV === 'development';
+    if (!isDevelopment) {
+      this.startHealthCheckLoop();
+      securityLogger.info('Automated Recovery Protocol service initialized with health monitoring');
+    } else {
+      securityLogger.info('Automated Recovery Protocol service initialized (health checks disabled in development mode)');
+    }
   }
   
   /**
