@@ -28,7 +28,7 @@ const knownContracts: Record<BlockchainType, Contract[]> = {
     { name: 'CVT Token', address: '0x45A67D5ea5DEf0964B9CeA3C9e45E944C5D6183D' }
   ],
   [BlockchainType.SOLANA]: [
-    { name: 'ChronosVault Program', address: 'ChronoSVauLt111111111111111111111111111111111' },
+    { name: 'ChronosVault Program', address: 'ChronoSVauLt11111111111111111111111111111111' },
     { name: 'Cross-Chain Bridge', address: 'Fg6PaFpoGXkYsidMpWTK6W2BeZ7FEfcYkg476zPFsLnS' }
   ],
   [BlockchainType.TON]: [
