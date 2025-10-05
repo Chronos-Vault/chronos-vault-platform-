@@ -110,7 +110,11 @@ export const NavBar: React.FC = () => {
 
 
               {/* Wallet - Prominent Navigation Item */}
-              <Link href="/wallet" className="flex items-center px-3 py-2 mr-2 rounded-md bg-gradient-to-r from-cyan-500 to-purple-500 text-white hover:opacity-90 transition-all shadow-md group">
+              <Link 
+                href="/wallet" 
+                className="flex items-center px-3 py-2 mr-2 rounded-md bg-gradient-to-r from-cyan-500 to-purple-500 text-white hover:opacity-90 transition-all shadow-md group"
+                data-testid="button-connect-wallet-navbar"
+              >
                 <div className="flex items-center relative">
                   <Wallet className="w-4 h-4 mr-1.5 group-hover:animate-pulse" /> 
                   <span>Wallet</span>
@@ -173,33 +177,20 @@ export const NavBar: React.FC = () => {
                 </DropdownMenuTrigger>
                 <DropdownMenuContent className="bg-[#0E0318] border border-purple-900/30 text-gray-200 p-2 rounded-lg shadow-lg shadow-[#6B00D7]/20 min-w-[220px] z-50">
                   <DropdownMenuItem asChild>
-                    <Link href="/cross-chain-monitor" className="px-4 py-2 rounded-md hover:bg-[#6B00D7]/20 flex items-center">
-                      <Database className="w-4 h-4 mr-2" /> Cross-Chain Monitor
+                    <Link href="/monitoring" className="px-4 py-2 rounded-md hover:bg-[#6B00D7]/20 flex items-center">
+                      <Database className="w-4 h-4 mr-2" /> Operations & Monitoring Hub
+                      <span className="ml-2 bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] text-white text-[10px] px-1.5 rounded-full">NEW</span>
                     </Link>
                   </DropdownMenuItem>
                   <DropdownMenuItem asChild>
-                    <Link href="/cross-chain-fee-monitor" className="px-4 py-2 rounded-md hover:bg-[#6B00D7]/20 flex items-center">
-                      <Database className="w-4 h-4 mr-2" /> Cross-Chain Metrics
+                    <Link href="/bridge" className="px-4 py-2 rounded-md hover:bg-[#6B00D7]/20 flex items-center">
+                      <Combine className="w-4 h-4 mr-2" /> Cross-Chain Bridge Hub
+                      <span className="ml-2 bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] text-white text-[10px] px-1.5 rounded-full">NEW</span>
                     </Link>
                   </DropdownMenuItem>
                   <DropdownMenuItem asChild>
-                    <Link href="/transaction-monitor" className="px-4 py-2 rounded-md hover:bg-[#6B00D7]/20 flex items-center">
-                      <ListChecks className="w-4 h-4 mr-2" /> Transaction Monitor
-                    </Link>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem asChild>
-                    <Link href="/transaction-verification" className="px-4 py-2 rounded-md hover:bg-[#6B00D7]/20 flex items-center">
-                      <ShieldCheck className="w-4 h-4 mr-2" /> Transaction Verification
-                    </Link>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem asChild>
-                    <Link href="/cross-chain-bridge" className="px-4 py-2 rounded-md hover:bg-[#6B00D7]/20 flex items-center">
-                      <Combine className="w-4 h-4 mr-2" /> Cross-Chain Bridge
-                    </Link>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem asChild>
-                    <Link href="/atomic-swaps" className="px-4 py-2 rounded-md hover:bg-[#6B00D7]/20 flex items-center">
-                      <Atom className="w-4 h-4 mr-2" /> Atomic Swaps
+                    <Link href="/vault-explorer" className="px-4 py-2 rounded-md hover:bg-[#6B00D7]/20 flex items-center">
+                      <ListChecks className="w-4 h-4 mr-2" /> Vault Explorer
                     </Link>
                   </DropdownMenuItem>
                 </DropdownMenuContent>
@@ -212,30 +203,37 @@ export const NavBar: React.FC = () => {
                     Security <ChevronRight className="w-4 h-4 ml-1 rotate-90" />
                   </div>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent className="bg-[#0E0318] border border-purple-900/30 text-gray-200 p-2 rounded-lg shadow-lg shadow-[#6B00D7]/20 min-w-[240px] z-50">
+                <DropdownMenuContent className="bg-[#0E0318] border border-purple-900/30 text-gray-200 p-2 rounded-lg shadow-lg shadow-[#6B00D7]/20 min-w-[260px] z-50">
                   <DropdownMenuItem asChild>
-                    <Link href="/security-dashboard" className="px-4 py-2 rounded-md hover:bg-[#6B00D7]/20 flex items-center">
-                      <ShieldAlert className="w-4 h-4 mr-2" /> Security Dashboard
+                    <Link href="/security" className="px-4 py-2 rounded-md hover:bg-[#6B00D7]/20 flex items-center">
+                      <ShieldAlert className="w-4 h-4 mr-2" /> Security Control Center
+                      <span className="ml-2 bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] text-white text-[10px] px-1.5 rounded-full">NEW</span>
                     </Link>
                   </DropdownMenuItem>
                   <DropdownMenuItem asChild>
-                    <Link href="/cross-chain-security" className="px-4 py-2 rounded-md hover:bg-[#6B00D7]/20 flex items-center">
-                      <LockKeyhole className="w-4 h-4 mr-2" /> Cross-Chain Security Vault™
+                    <Link href="/trinity-protocol" className="px-4 py-2 rounded-md hover:bg-[#6B00D7]/20 flex items-center">
+                      <Shield className="w-4 h-4 mr-2" /> Trinity Protocol™
+                      <span className="ml-2 bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] text-white text-[10px] px-1.5 rounded-full">NEW</span>
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem asChild>
+                    <Link href="/device-recovery" className="px-4 py-2 rounded-md hover:bg-[#6B00D7]/20 flex items-center">
+                      <LockKeyhole className="w-4 h-4 mr-2" /> TON Emergency Recovery
                     </Link>
                   </DropdownMenuItem>
                   <DropdownMenuItem asChild>
                     <Link href="/behavioral-auth" className="px-4 py-2 rounded-md hover:bg-[#6B00D7]/20 flex items-center">
-                      <Fingerprint className="w-4 h-4 mr-2" /> Behavioral Authentication Vault™
+                      <Fingerprint className="w-4 h-4 mr-2" /> Behavioral Authentication
                     </Link>
                   </DropdownMenuItem>
                   <DropdownMenuItem asChild>
                     <Link href="/quantum-resistant" className="px-4 py-2 rounded-md hover:bg-[#6B00D7]/20 flex items-center">
-                      <KeyRound className="w-4 h-4 mr-2" /> Quantum Resistant Vault™
+                      <KeyRound className="w-4 h-4 mr-2" /> Quantum-Resistant Security
                     </Link>
                   </DropdownMenuItem>
                   <DropdownMenuItem asChild>
-                    <Link href="/social-recovery" className="px-4 py-2 rounded-md hover:bg-[#6B00D7]/20 flex items-center">
-                      <Users className="w-4 h-4 mr-2" /> Social Recovery Vault™
+                    <Link href="/zero-knowledge-verification" className="px-4 py-2 rounded-md hover:bg-[#6B00D7]/20 flex items-center">
+                      <EyeOff className="w-4 h-4 mr-2" /> Zero-Knowledge Proofs
                     </Link>
                   </DropdownMenuItem>
                 </DropdownMenuContent>
@@ -355,36 +353,6 @@ export const NavBar: React.FC = () => {
                 </DropdownMenuContent>
               </DropdownMenu>
               
-              {/* Connect Wallet Button */}
-              <Button 
-                className="bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] hover:from-[#FF5AF7] hover:to-[#6B00D7] text-white border-none shadow-md shadow-purple-900/20 hover:shadow-purple-900/40 transition-all duration-300"
-                size="sm"
-                onClick={() => {
-                  if (isConnected) {
-                    // If already connected, go to wallet page
-                    window.location.href = '/wallet';
-                  } else {
-                    // If not connected, trigger wallet connection
-                    if (typeof window !== 'undefined' && window.ethereum) {
-                      // MetaMask is available
-                      window.ethereum.request({ method: 'eth_requestAccounts' })
-                        .then(() => {
-                          window.location.href = '/wallet';
-                        })
-                        .catch((error: any) => {
-                          console.error('Failed to connect wallet:', error);
-                        });
-                    } else {
-                      // No wallet detected, redirect to wallet page for options
-                      window.location.href = '/wallet';
-                    }
-                  }
-                }}
-              >
-                <Wallet className="w-4 h-4 mr-2" />
-                {isConnected ? 'View Wallet' : 'Connect Wallet'}
-              </Button>
-              
               {/* Network Status */}
               <div className="hidden lg:flex items-center bg-black/60 rounded-full px-3 py-1.5 text-xs border border-purple-900/30">
                 <div className="h-2 w-2 rounded-full bg-green-500 animate-pulse mr-2"></div>
@@ -460,29 +428,6 @@ export const NavBar: React.FC = () => {
                   </span>
                 </Link>
               </div>
-
-              {/* Wallet Item with highlight */}
-              <div className="mb-3 relative">
-                <Link 
-                  href="/wallet" 
-                  className="flex items-center px-3 py-3 rounded-md bg-gradient-to-r from-cyan-500/20 to-purple-500/20 border border-cyan-500/30 text-white hover:bg-gradient-to-r hover:from-cyan-500/30 hover:to-purple-500/30 transition-all group"
-                  onClick={closeSidebar}
-                >
-                  <div className="relative">
-                    <Wallet className="h-5 w-5 mr-3 text-cyan-400" />
-                    <span className="absolute -top-1 -right-1 w-2 h-2 bg-cyan-400 rounded-full animate-ping opacity-75"></span>
-                  </div>
-                  <div className="flex flex-col">
-                    <span className="font-medium">Chronos Wallet</span>
-                    <span className="text-xs text-gray-300">Trinity Protocol Security</span>
-                  </div>
-                  <span className="ml-auto">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="group-hover:translate-x-0.5 transition-transform text-cyan-400">
-                      <path d="M5 12H19M19 12L12 5M19 12L12 19" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                    </svg>
-                  </span>
-                </Link>
-              </div>
               
               <SidebarItem 
                 icon={<Home className="h-5 w-5" />} 
@@ -505,74 +450,29 @@ export const NavBar: React.FC = () => {
             <SidebarSection icon={<Search className="h-5 w-5" />} title="Explore">
               <SidebarItem 
                 icon={<Database className="h-5 w-5" />} 
-                label="Cross-Chain Monitor" 
-                href="/cross-chain-monitor" 
-                active={location === '/cross-chain-monitor'}
+                label="Operations & Monitoring Hub" 
+                href="/monitoring" 
+                active={location === '/monitoring'}
                 onClick={closeSidebar}
+                isNew
               />
               
-              <SidebarItem 
-                icon={<Database className="h-5 w-5" />} 
-                label="Cross-Chain Metrics" 
-                href="/cross-chain-fee-monitor" 
-                active={location === '/cross-chain-fee-monitor'}
-                onClick={closeSidebar}
-              />
-              
-              <SidebarItem 
-                icon={<ArrowDownUp className="h-5 w-5" />} 
-                label="Cross-Chain Operations" 
-                href="/cross-chain-operations" 
-                active={location === '/cross-chain-operations'}
-                onClick={closeSidebar}
-              />
-
-              <SidebarItem 
-                icon={<ListChecks className="h-5 w-5" />} 
-                label="Transaction Monitor" 
-                href="/transaction-monitor" 
-                active={location === '/transaction-monitor'}
-                onClick={closeSidebar}
-              />
-
-              <SidebarItem 
-                icon={<ShieldCheck className="h-5 w-5" />} 
-                label="Transaction Verification" 
-                href="/transaction-verification" 
-                active={location === '/transaction-verification'}
-                onClick={closeSidebar}
-              />
-
               <SidebarItem 
                 icon={<Combine className="h-5 w-5" />} 
-                label="Cross-Chain Bridge" 
-                href="/cross-chain-bridge" 
-                active={location === '/cross-chain-bridge'}
+                label="Cross-Chain Bridge Hub" 
+                href="/bridge" 
+                active={location === '/bridge'}
                 onClick={closeSidebar}
+                isNew
               />
-
-              <SidebarItem 
-                icon={<Atom className="h-5 w-5" />} 
-                label="Atomic Swaps" 
-                href="/atomic-swaps" 
-                active={location === '/atomic-swaps'}
-                onClick={closeSidebar}
-              />
-
-              <SidebarItem 
-                icon={<ArrowRightLeft className="h-5 w-5" />} 
-                label="Bridge vs Swap" 
-                href="/bridge-vs-swap" 
-                active={location === '/bridge-vs-swap'}
-                onClick={closeSidebar}
-              />
-
+              
               <SidebarItem 
                 icon={<ShieldAlert className="h-5 w-5" />} 
-                label="Security Dashboard" 
-                href="/security-dashboard" 
-                active={location === '/security-dashboard'}
+                label="Security Control Center" 
+                href="/security" 
+                active={location === '/security'}
                 onClick={closeSidebar}
+                isNew
               />
 
               <SidebarItem 
@@ -611,13 +511,31 @@ export const NavBar: React.FC = () => {
               />
             </SidebarSection>
 
-            {/* Security Features Section */}
-            <SidebarSection icon={<Shield className="h-5 w-5" />} title="Security Features">
+            {/* Security Section */}
+            <SidebarSection icon={<Shield className="h-5 w-5" />} title="Security">
+              <SidebarItem 
+                icon={<ShieldAlert className="h-5 w-5" />} 
+                label="Security Control Center" 
+                href="/security" 
+                active={location === '/security'}
+                onClick={closeSidebar}
+                isNew={true}
+              />
+
+              <SidebarItem 
+                icon={<Shield className="h-5 w-5" />} 
+                label="Trinity Protocol™" 
+                href="/trinity-protocol" 
+                active={location === '/trinity-protocol'}
+                onClick={closeSidebar}
+                isNew={true}
+              />
+
               <SidebarItem 
                 icon={<LockKeyhole className="h-5 w-5" />} 
-                label="Cross-Chain Security" 
-                href="/cross-chain-security" 
-                active={location === '/cross-chain-security'}
+                label="TON Emergency Recovery" 
+                href="/device-recovery" 
+                active={location === '/device-recovery'}
                 onClick={closeSidebar}
               />
 
@@ -631,33 +549,17 @@ export const NavBar: React.FC = () => {
 
               <SidebarItem 
                 icon={<KeyRound className="h-5 w-5" />} 
-                label="Quantum Resistant" 
+                label="Quantum-Resistant Security" 
                 href="/quantum-resistant" 
                 active={location === '/quantum-resistant'}
                 onClick={closeSidebar}
               />
 
               <SidebarItem 
-                icon={<Users className="h-5 w-5" />} 
-                label="Social Recovery" 
-                href="/social-recovery" 
-                active={location === '/social-recovery'}
-                onClick={closeSidebar}
-              />
-
-              <SidebarItem 
-                icon={<Lock className="h-5 w-5" />} 
-                label="Zero-Knowledge Verification" 
+                icon={<EyeOff className="h-5 w-5" />} 
+                label="Zero-Knowledge Proofs" 
                 href="/zero-knowledge-verification" 
                 active={location === '/zero-knowledge-verification'}
-                onClick={closeSidebar}
-              />
-              
-              <SidebarItem 
-                icon={<Shield className="h-5 w-5" />} 
-                label="Triple-Chain Security" 
-                href="/triple-chain-security" 
-                active={location === '/triple-chain-security'}
                 onClick={closeSidebar}
               />
             </SidebarSection>
@@ -842,9 +744,10 @@ export const NavBar: React.FC = () => {
               <div className="bg-black/30 rounded-lg p-4 border border-purple-900/20">
                 <p className="text-xs text-gray-400 mb-3">Connect your wallets to use all vault features</p>
                 <Link 
-                  href="/connect-ton" 
+                  href="/wallet" 
                   className="bg-gradient-to-r from-purple-600 to-pink-500 hover:from-pink-500 hover:to-purple-600 text-white text-sm font-medium px-4 py-2 rounded-md flex items-center justify-center transition-all duration-300 hover:shadow-[0_0_15px_rgba(168,85,247,0.5)] w-full"
                   onClick={closeSidebar}
+                  data-testid="button-connect-wallet-sidebar"
                 >
                   <Wallet className="h-4 w-4 mr-2" />
                   Connect Wallets
