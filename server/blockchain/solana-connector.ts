@@ -25,14 +25,15 @@ import { securityLogger } from '../monitoring/security-logger';
 import config from '../config';
 
 // Solana program IDs (replace with actual deployed program IDs)
+// Note: These are placeholder 44-character base58 addresses
 const PROGRAM_IDS = {
   mainnet: {
-    vault: "ChronoSVauLt111111111111111111111111111111111",
-    bridge: "Chrono5Bridge11111111111111111111111111111111"
+    vault: "ChronoSVauLt11111111111111111111111111111111",
+    bridge: "Chrono5Bridge1111111111111111111111111111111"
   },
   devnet: {
-    vault: "ChronoSVauLt111111111111111111111111111111111",
-    bridge: "Chrono5Bridge11111111111111111111111111111111"
+    vault: "ChronoSVauLt11111111111111111111111111111111",
+    bridge: "Chrono5Bridge1111111111111111111111111111111"
   }
 };
 
@@ -76,12 +77,24 @@ export class SolanaConnector implements BlockchainConnector {
       this.connection = new Connection(rpcUrl, 'confirmed');
       
       // Initialize keypair from private key if available
-      if (process.env.SOLANA_PRIVATE_KEY) {
-        const privateKeyBytes = Buffer.from(process.env.SOLANA_PRIVATE_KEY, 'hex');
-        this.keypair = Keypair.fromSecretKey(privateKeyBytes);
-        this.walletAddress = this.keypair.publicKey.toString();
-        
-        securityLogger.info(`Solana connector initialized with keypair ${this.walletAddress} on ${this.networkVersion}`);
+      if (process.env.SOLANA_PRIVATE_KEY && process.env.SOLANA_PRIVATE_KEY.length === 128) {
+        // Only use the private key if it's in the correct hex format (64 bytes = 128 hex chars)
+        try {
+          const privateKeyBytes = Buffer.from(process.env.SOLANA_PRIVATE_KEY, 'hex');
+          this.keypair = Keypair.fromSecretKey(privateKeyBytes);
+          this.walletAddress = this.keypair.publicKey.toString();
+          
+          securityLogger.info(`Solana connector initialized with keypair ${this.walletAddress} on ${this.networkVersion}`);
+        } catch (keyError) {
+          securityLogger.warn(`Invalid SOLANA_PRIVATE_KEY format, falling back to dev mode: ${keyError}`);
+          // Fall through to dev mode
+          if (config.isDevelopmentMode) {
+            const testKeypair = Keypair.generate();
+            this.keypair = testKeypair;
+            this.walletAddress = testKeypair.publicKey.toString();
+            securityLogger.info(`Solana connector initialized in dev mode with simulated keypair ${this.walletAddress}`);
+          }
+        }
       } else if (config.isDevelopmentMode) {
         // For development, we use a test keypair
         // In a real environment, we'd never hardcode a keypair
