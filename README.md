@@ -1,6 +1,6 @@
 # Chronos Vault: The Ultimate Multi-Chain Digital Vault Platform
 
-
+![Chronos Vault](./generated-icon.png)
 
 ## Overview
 
@@ -103,15 +103,100 @@ CVT serves essential functions within the Chronos Vault ecosystem:
 
 Chronos Vault is built with a cutting-edge tech stack featuring:
 
-- React.js with TypeScript for responsive, modern UI
-- Tailwind CSS for beautiful, consistent design
-- Multi-blockchain support (Ethereum, Solana, TON, Bitcoin)
-- Cross-chain security verification protocols
-- Zero-knowledge proof infrastructure
-- Quantum-resistant cryptography
-- Framer Motion for advanced animations
-- Three.js for 3D visualizations of security concepts
-- PostgreSQL database for persistent storage
+- **Frontend**: React.js with TypeScript, Tailwind CSS, shadcn/ui components
+- **Backend**: Express.js with TypeScript, PostgreSQL database
+- **Blockchain**: Ethereum Layer 2 (Arbitrum), Solana, TON
+- **Smart Contracts**: Solidity (Ethereum/Arbitrum), Rust (Solana), FunC (TON)
+- **Security**: Zero-knowledge proofs, quantum-resistant cryptography
+- **UI/UX**: Framer Motion animations, Three.js 3D visualizations
+- **State Management**: TanStack Query (React Query v5)
+- **Wallet Integration**: MetaMask, Phantom, TON Keeper
+
+### Trinity Protocol Architecture
+
+Our platform implements the Trinity Protocol with 2-of-3 consensus across three blockchains:
+
+- **Ethereum Layer 2 (Arbitrum)**: Primary security layer (95% lower fees than L1)
+- **Solana**: Rapid validation and high-frequency monitoring
+- **TON**: Quantum-resistant backup and emergency recovery
+
+## Getting Started
+
+### Prerequisites
+
+- Node.js 18+ and npm
+- PostgreSQL database
+- MetaMask wallet (for Ethereum/Arbitrum)
+- Phantom wallet (for Solana, optional)
+- TON Keeper wallet (for TON, optional)
+
+### Installation
+
+1. **Clone the repository**
+```bash
+git clone https://github.com/Chronos-Vault/chronos-vault-platform.git
+cd chronos-vault-platform
+```
+
+2. **Install dependencies**
+```bash
+npm install
+```
+
+3. **Set up environment variables**
+```bash
+cp .env.example .env
+# Edit .env with your configuration
+```
+
+Required environment variables:
+- `DATABASE_URL`: PostgreSQL connection string
+- `ETHEREUM_RPC_URL`: Arbitrum Sepolia RPC (default: https://sepolia-rollup.arbitrum.io/rpc)
+- `ETHEREUM_CHAIN_ID`: 421614 (Arbitrum Sepolia)
+- `JWT_SECRET`: Your secret key for authentication
+- `PRIVATE_KEY`: Your wallet private key (testnet only)
+
+4. **Set up the database**
+```bash
+npm run db:push
+```
+
+5. **Start the development server**
+```bash
+npm run dev
+```
+
+The application will be available at `http://localhost:5000`
+
+### Deployed Contracts (Arbitrum Sepolia Testnet)
+
+The Trinity Protocol smart contracts are deployed on Arbitrum Sepolia:
+
+- **CVT Token**: `0xFb419D8E32c14F774279a4dEEf330dc893257147`
+- **CVT Bridge**: `0x21De95EbA01E31173Efe1b9c4D57E58bb840bA86`
+- **ChronosVault**: `0x99444B0B1d6F7b21e9234229a2AC2bC0150B9d91`
+- **CrossChainBridge**: `0x13dc7df46c2e87E8B2010A28F13404580158Ed9A`
+- **Test USDC**: `0x6818bbb8f604b4c0b52320f633C1E5BF2c5b07bd`
+
+View on Arbiscan: https://sepolia.arbiscan.io
+
+### Testing
+
+Run the test suite:
+```bash
+npm test
+```
+
+Run smart contract tests:
+```bash
+npx hardhat test
+```
+
+### Building for Production
+
+```bash
+npm run build
+```
 
 ## Security Testing & Verification
 
@@ -136,14 +221,28 @@ Chronos Vault is committed to blockchain education:
 
 For more detailed information, please refer to:
 
-- [ChronosToken Whitepaper](https://github.com/Chronos-Vault/chronos-vault-docs/blob/main/CVT_WHITEPAPER.md)
-- [Security Architecture](https://github.com/Chronos-Vault/chronos-vault-security/blob/main/SECURITY_ARCHITECTURE.md)
-- [Technical Documentation](https://github.com/Chronos-Vault/chronos-vault-docs/blob/main/TECHNICAL_README.md)
-- [Deployment Guide](https://github.com/Chronos-Vault/chronos-vault-docs/blob/main/DEPLOYMENT_GUIDE.md)
+- [ChronosToken Whitepaper](./CVT_WHITEPAPER.md)
+- [Security Architecture](./SECURITY_ARCHITECTURE.md)
+- [Technical Documentation](./TECHNICAL_README.md)
+- [Deployment Guide](./DEPLOYMENT_GUIDE.md)
+
+## Contributing
+
+We welcome contributions from the community! Please see our [Contributing Guidelines](./CONTRIBUTING.md) for details.
+
+### Open Source Vision
+
+Chronos Vault is an open-source project committed to advancing blockchain security. We believe in:
+- Mathematical security over trust assumptions
+- Transparent, auditable code
+- Community-driven development
+- Enterprise-ready implementation
 
 ## License
 
-© 2025 Chronos Vault. All rights reserved.
+This project is licensed under the MIT License - see the [LICENSE](./LICENSE) file for details.
+
+Copyright (c) 2025 Chronos Vault
 
 ## Contact
 
