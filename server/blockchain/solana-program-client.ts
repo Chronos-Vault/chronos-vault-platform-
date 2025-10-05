@@ -50,14 +50,8 @@ export class SolanaProgramClient {
   constructor(rpcEndpoint: string) {
     this.connection = new Connection(rpcEndpoint, 'confirmed');
     
-    // In production, this would be the actual deployed program ID
-    // For development, we use a simulated program ID
+    // Connected to deployed Chronos Vault program on Solana Devnet
     this.programId = new PublicKey(CHRONOS_VAULT_PROGRAM_ID);
-    
-    securityLogger.info(
-      `Solana Program Client initialized with program: ${CHRONOS_VAULT_PROGRAM_ID}`,
-      SecurityEventType.SYSTEM_ERROR
-    );
   }
 
   /**
