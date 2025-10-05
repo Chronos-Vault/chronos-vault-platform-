@@ -156,11 +156,19 @@ export function MultiChainSecurityVerification({
             <ul className="space-y-2 text-sm">
               <li className="flex justify-between">
                 <span className="text-gray-400">Vault ID:</span>
-                <span className="font-mono">{vaultId.substring(0, 8)}...{vaultId.substring(vaultId.length - 8)}</span>
+                <span className="font-mono">
+                  {vaultId && vaultId.length > 16 
+                    ? `${vaultId.substring(0, 8)}...${vaultId.substring(vaultId.length - 8)}`
+                    : vaultId || 'N/A'}
+                </span>
               </li>
               <li className="flex justify-between">
                 <span className="text-gray-400">Transaction:</span>
-                <span className="font-mono">{txHash.substring(0, 8)}...{txHash.substring(txHash.length - 8)}</span>
+                <span className="font-mono">
+                  {txHash && txHash.length > 16 
+                    ? `${txHash.substring(0, 8)}...${txHash.substring(txHash.length - 8)}`
+                    : txHash || 'N/A'}
+                </span>
               </li>
               <li className="flex justify-between">
                 <span className="text-gray-400">Source Chain:</span>
