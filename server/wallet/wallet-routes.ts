@@ -4,6 +4,24 @@ import { walletService } from "./wallet-service";
 
 const router = Router();
 
+// Generate TON proof payload
+router.get("/ton/generate-payload", async (req, res) => {
+  try {
+    const payload = await walletService.generateTonProofPayload();
+    
+    res.json({
+      success: true,
+      payload,
+    });
+  } catch (error) {
+    console.error("TON payload generation error:", error);
+    res.status(500).json({
+      success: false,
+      error: "Failed to generate payload",
+    });
+  }
+});
+
 // Request wallet authentication
 const requestAuthSchema = z.object({
   walletAddress: z.string().min(1),
@@ -93,10 +111,8 @@ router.post("/connect", async (req, res) => {
       success: true,
       user: {
         id: user.id,
-        email: user.email,
-        firstName: user.firstName,
-        lastName: user.lastName,
-        profileImageUrl: user.profileImageUrl,
+        email: user.email || null,
+        username: user.username,
       },
       wallet: {
         id: connection.id,
@@ -132,7 +148,7 @@ router.get("/wallets", async (req, res) => {
     
     const session = await walletService.validateSession(sessionId);
     
-    if (!session) {
+    if (!session || !session.userId) {
       return res.status(401).json({
         success: false,
         error: "Invalid or expired session",
