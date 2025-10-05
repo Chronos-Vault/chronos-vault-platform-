@@ -13,6 +13,7 @@ import { EnhancedMediaUploader } from "@/components/attachments/enhanced-media-u
 import VaultTypeSelector, { SpecializedVaultType } from "@/components/vault/vault-type-selector";
 import { MemoryVaultContent } from "@/components/vault/memory-vault-content";
 import { useCVTToken, StakingTier } from "@/contexts/cvt-token-context";
+import { ChainSelector } from "@/components/vault/ChainSelector";
 import { Coins, Wallet, ArrowLeftRight, ArrowRightCircle, Shield, CheckCircle2, AlertCircle, ChevronRight, Loader2 } from "lucide-react";
 import { ValidationSummary } from "@/components/vault/validation-summary";
 import { FormReview } from "@/components/vault/form-review";
@@ -1337,6 +1338,39 @@ export function CreateVaultForm({
                   <VaultTypeSelector 
                     selectedType={form.watch('vaultType') as SpecializedVaultType}
                     onChange={handleVaultTypeChange}
+                  />
+                </div>
+
+                {/* Primary Blockchain Selection with Fee Comparison */}
+                <div className="mb-8">
+                  <h3 className="text-xl font-semibold mb-3 bg-clip-text text-transparent bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7]">
+                    Choose Primary Blockchain
+                  </h3>
+                  <p className="text-gray-400 mb-4">Select your primary blockchain - save up to 99.5% on fees with Solana vs Ethereum</p>
+                  
+                  <ChainSelector
+                    selectedChain={
+                      form.watch('primaryChain') === 'TON' ? 'ton' :
+                      form.watch('primaryChain') === 'ETH' ? 'ethereum' :
+                      form.watch('primaryChain') === 'SOL' ? 'solana' : 'ton'
+                    }
+                    onChainSelect={(chain: 'ethereum' | 'solana' | 'ton', feeData: any) => {
+                      const chainCode = chain === 'ethereum' ? 'ETH' : chain === 'solana' ? 'SOL' : 'TON';
+                      form.setValue('primaryChain', chainCode);
+                      
+                      if (feeData && feeData[chain]) {
+                        form.setValue('estimatedCreationFee', feeData[chain].estimatedFeeNative || '0');
+                        form.setValue('estimatedCreationFeeUsd', feeData[chain].estimatedFeeUsd || '0');
+                      }
+                      
+                      if (feeData && feeData.recommendation === chain) {
+                        const reason = `Lowest fee: $${feeData[chain]?.estimatedFeeUsd || '0'}`;
+                        form.setValue('chainSelectionReason', reason);
+                      } else {
+                        form.setValue('chainSelectionReason', `User selected ${chainCode} chain`);
+                      }
+                    }}
+                    operationType="vault_creation"
                   />
                 </div>
                 
