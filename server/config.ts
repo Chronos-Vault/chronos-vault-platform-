@@ -30,13 +30,11 @@ const featureFlags = {
   
   // Enhanced blockchain connector simulation flags
   // Master flag - if true, all chains are simulated unless overridden by specific flags
-  SKIP_BLOCKCHAIN_CONNECTOR_INIT: process.env.SKIP_BLOCKCHAIN_CONNECTOR_INIT === 'true' || true, // enabling simulation by default in development
+  SKIP_BLOCKCHAIN_CONNECTOR_INIT: process.env.SKIP_BLOCKCHAIN_CONNECTOR_INIT === 'true' || false,
   
   // Chain-specific simulation flags - these override the master flag when explicitly set
-  // If master flag is true but a specific flag is false, that specific chain will use real connections
-  SIMULATE_ETHEREUM: process.env.SIMULATE_ETHEREUM === 'true' || 
-    (process.env.SIMULATE_ETHEREUM !== 'false' && 
-     (process.env.SKIP_BLOCKCHAIN_CONNECTOR_INIT === 'true' || false)),
+  // ETHEREUM IS LIVE - Connected to deployed Sepolia contracts!
+  SIMULATE_ETHEREUM: false, // ✅ REAL ETHEREUM CONNECTION - Contracts deployed on Sepolia!
   
   SIMULATE_SOLANA: process.env.SIMULATE_SOLANA === 'true' || 
     (process.env.SIMULATE_SOLANA !== 'false' && 
@@ -51,21 +49,60 @@ const featureFlags = {
      (process.env.SKIP_BLOCKCHAIN_CONNECTOR_INIT === 'true' || true)),
 };
 
+// Trinity Protocol Layer 2 Configuration
+// Network selection: arbitrum (default, 95% lower fees) or sepolia (legacy L1)
+const ethereumNetwork = process.env.ETHEREUM_NETWORK || 'arbitrum';
+const isArbitrum = ethereumNetwork === 'arbitrum';
+
 // Blockchain-specific configuration
 const blockchainConfig = {
   ethereum: {
     enabled: true,
-    rpcUrl: process.env.ETHEREUM_RPC_URL || 'https://goerli.infura.io/v3/your-api-key',
-    chainId: process.env.NODE_ENV === 'production' ? 1 : 5, // 1 = Mainnet, 5 = Goerli testnet
+    network: ethereumNetwork, // 'arbitrum' or 'sepolia'
+    rpcUrl: isArbitrum
+      ? (process.env.ARBITRUM_RPC_URL || 'https://arbitrum-sepolia-rpc.publicnode.com')
+      : (process.env.ETHEREUM_RPC_URL || 'https://ethereum-sepolia-rpc.publicnode.com'),
+    chainId: process.env.NODE_ENV === 'production'
+      ? (isArbitrum ? 42161 : 1) // 42161 = Arbitrum One, 1 = Ethereum Mainnet
+      : (isArbitrum ? 421614 : 11155111), // 421614 = Arbitrum Sepolia, 11155111 = Sepolia
     contracts: {
-      vaultFactory: process.env.ETH_VAULT_FACTORY_ADDRESS || '0x123...',
-      cvtToken: process.env.ETH_CVT_TOKEN_ADDRESS || '0x456...',
-      bridge: process.env.ETH_BRIDGE_ADDRESS || '0x789...',
+      vault: isArbitrum
+        ? (process.env.ARBITRUM_VAULT_ADDRESS || '0x99444B0B1d6F7b21e9234229a2AC2bC0150B9d91')
+        : (process.env.ETH_VAULT_ADDRESS || '0x29fd67501afd535599ff83AE072c20E31Afab958'),
+      testToken: isArbitrum
+        ? (process.env.ARBITRUM_TEST_TOKEN_ADDRESS || '0x6818bbb8f604b4c0b52320f633C1E5BF2c5b07bd')
+        : (process.env.ETH_TEST_TOKEN_ADDRESS || '0xeb6C02FCD86B3dE11Dbae83599a002558Ace5eFc'),
+      cvtToken: isArbitrum
+        ? (process.env.ARBITRUM_CVT_TOKEN_ADDRESS || '0xFb419D8E32c14F774279a4dEEf330dc893257147')
+        : (process.env.ETH_CVT_TOKEN_ADDRESS || '0xeb6C02FCD86B3dE11Dbae83599a002558Ace5eFc'),
+      crossChainBridge: isArbitrum
+        ? (process.env.ARBITRUM_BRIDGE_ADDRESS || '0x13dc7df46c2e87E8B2010A28F13404580158Ed9A')
+        : (process.env.ETH_BRIDGE_ADDRESS || '0xFb419D8E32c14F774279a4dEEf330dc893257147'),
+      cvtBridge: isArbitrum
+        ? (process.env.ARBITRUM_CVT_BRIDGE_ADDRESS || '0x21De95EbA01E31173Efe1b9c4D57E58bb840bA86')
+        : (process.env.ETH_CVT_BRIDGE_ADDRESS || '0x2529A8900aD37386F6250281A5085D60Bd673c4B'),
+    },
+    contractAddresses: {
+      vault: isArbitrum
+        ? (process.env.ARBITRUM_VAULT_ADDRESS || '0x99444B0B1d6F7b21e9234229a2AC2bC0150B9d91')
+        : (process.env.ETH_VAULT_ADDRESS || '0x29fd67501afd535599ff83AE072c20E31Afab958'),
+      testToken: isArbitrum
+        ? (process.env.ARBITRUM_TEST_TOKEN_ADDRESS || '0x6818bbb8f604b4c0b52320f633C1E5BF2c5b07bd')
+        : (process.env.ETH_TEST_TOKEN_ADDRESS || '0xeb6C02FCD86B3dE11Dbae83599a002558Ace5eFc'),
+      cvtToken: isArbitrum
+        ? (process.env.ARBITRUM_CVT_TOKEN_ADDRESS || '0xFb419D8E32c14F774279a4dEEf330dc893257147')
+        : (process.env.ETH_CVT_TOKEN_ADDRESS || '0xeb6C02FCD86B3dE11Dbae83599a002558Ace5eFc'),
+      crossChainBridge: isArbitrum
+        ? (process.env.ARBITRUM_BRIDGE_ADDRESS || '0x13dc7df46c2e87E8B2010A28F13404580158Ed9A')
+        : (process.env.ETH_BRIDGE_ADDRESS || '0xFb419D8E32c14F774279a4dEEf330dc893257147'),
+      cvtBridge: isArbitrum
+        ? (process.env.ARBITRUM_CVT_BRIDGE_ADDRESS || '0x21De95EbA01E31173Efe1b9c4D57E58bb840bA86')
+        : (process.env.ETH_CVT_BRIDGE_ADDRESS || '0x2529A8900aD37386F6250281A5085D60Bd673c4B'),
     },
     isTestnet: process.env.NODE_ENV !== 'production',
-    blockExplorerUrl: process.env.NODE_ENV === 'production' 
-      ? 'https://etherscan.io' 
-      : 'https://goerli.etherscan.io',
+    blockExplorerUrl: process.env.NODE_ENV === 'production'
+      ? (isArbitrum ? 'https://arbiscan.io' : 'https://etherscan.io')
+      : (isArbitrum ? 'https://sepolia.arbiscan.io' : 'https://sepolia.etherscan.io'),
   },
   
   solana: {
@@ -88,9 +125,19 @@ const blockchainConfig = {
     apiUrl: 'https://toncenter.com/api/v2/jsonRPC',
     isTestnet: process.env.NODE_ENV !== 'production',
     contracts: {
-      vaultMaster: process.env.TON_VAULT_MASTER_ADDRESS || 'EQAvDfYmkVV2zFXzC0Hs2e2RGWJyMXHpnMTXH4jnI2W3AwLb',
-      vaultFactory: process.env.TON_VAULT_FACTORY_ADDRESS || 'EQB0gCDoGJNTfoPUSCgBxLuZ_O-7aYUccU0P1Vj_QdO6rQTf',
-      cvtToken: process.env.TON_CVT_TOKEN_ADDRESS || 'EQDi_PSI1WbigxBKCj7vEz2pAvUQfw0IFZz9Sz2aGHUFNpSw',
+      // REAL DEPLOYED CONTRACTS (October 4, 2025)
+      // ChronosVault: Handles time-locked vaults, emergency recovery, Trinity Protocol verification
+      chronosVault: process.env.TON_CHRONOS_VAULT_ADDRESS || 'EQDJAnXDPT-NivritpEhQeP0XmG20NdeUtxgh4nUiWH-DF7M',
+      vaultMaster: process.env.TON_CHRONOS_VAULT_ADDRESS || 'EQDJAnXDPT-NivritpEhQeP0XmG20NdeUtxgh4nUiWH-DF7M', // Alias for vault operations
+      
+      // CVTBridge: Handles cross-chain HTLC swaps and bridge operations
+      cvtBridge: process.env.TON_CVT_BRIDGE_ADDRESS || 'EQAOJxa1WDjGZ7f3n53JILojhZoDdTOKWl6h41_yOWX3v0tq',
+      bridge: process.env.TON_CVT_BRIDGE_ADDRESS || 'EQAOJxa1WDjGZ7f3n53JILojhZoDdTOKWl6h41_yOWX3v0tq', // Alias for bridge operations
+      
+      // Note: vaultFactory and cvtToken contracts are not yet deployed
+      // These will be deployed separately when needed for factory pattern and token operations
+      vaultFactory: null, // Not yet deployed
+      cvtToken: null, // Not yet deployed - will use CVTBridge for now
     },
     blockExplorerUrl: process.env.NODE_ENV === 'production'
       ? 'https://tonscan.org'
@@ -426,7 +473,7 @@ const config = {
   
   // Get fallback chain for a primary chain
   getFallbackChain(primaryChain: 'ethereum' | 'solana' | 'ton' | 'bitcoin'): 'ethereum' | 'solana' | 'ton' | 'bitcoin' {
-    return this.crossChainVerification.fallbackChains[primaryChain];
+    return this.crossChainVerification.fallbackChains[primaryChain] as 'ethereum' | 'solana' | 'ton' | 'bitcoin';
   }
 };
 
