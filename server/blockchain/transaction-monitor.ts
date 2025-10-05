@@ -176,6 +176,13 @@ class TransactionMonitor extends EventEmitter {
   }
   
   /**
+   * Get all transactions
+   */
+  public getAllTransactions(): TransactionRecord[] {
+    return Array.from(this.transactions.values());
+  }
+  
+  /**
    * Check for pending transactions
    */
   private async checkPendingTransactions(): Promise<void> {
