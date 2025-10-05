@@ -75,7 +75,7 @@ const solanaAdapter: BlockchainProofAdapter = {
     return {
       network: 'solana',
       commitment: 'confirmed',
-      programId: 'ChronoSVauLt111111111111111111111111111111111',
+      programId: 'ChronoSVauLt11111111111111111111111111111111',
       slot: Math.floor(Math.random() * 100000000)
     };
   }
