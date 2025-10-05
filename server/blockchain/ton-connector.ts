@@ -16,17 +16,33 @@ import {
 import { securityLogger } from '../monitoring/security-logger';
 import config from '../config';
 
-// TON contracts (replace with actual deployed contract addresses)
+// TON contracts - REAL DEPLOYED ADDRESSES (October 4, 2025)
+// ChronosVault: Time-locked vaults with Trinity Protocol emergency recovery
+// CVTBridge: Cross-chain HTLC swaps and atomic transfers
 const CONTRACT_ADDRESSES = {
   mainnet: {
-    vaultMaster: 'EQAvDfYmkVV2zFXzC0Hs2e2RGWJyMXHpnMTXH4jnI2W3AwLb',
-    vaultFactory: 'EQB0gCDoGJNTfoPUSCgBxLuZ_O-7aYUccU0P1Vj_QdO6rQTf',
-    bridge: 'EQDi_PSI1WbigxBKCj7vEz2pAvUQfw0IFZz9Sz2aGHUFNpTw'
+    // Main vault contract - handles time locks, emergency recovery, Trinity Protocol verification
+    chronosVault: 'EQDJAnXDPT-NivritpEhQeP0XmG20NdeUtxgh4nUiWH-DF7M',
+    vaultMaster: 'EQDJAnXDPT-NivritpEhQeP0XmG20NdeUtxgh4nUiWH-DF7M', // Alias for vault operations
+    
+    // Cross-chain bridge contract - handles HTLC swaps and bridge operations
+    bridge: 'EQAOJxa1WDjGZ7f3n53JILojhZoDdTOKWl6h41_yOWX3v0tq',
+    cvtBridge: 'EQAOJxa1WDjGZ7f3n53JILojhZoDdTOKWl6h41_yOWX3v0tq', // Alias for bridge operations
+    
+    // Not yet deployed - will be added when factory pattern is needed
+    vaultFactory: null,
   },
   testnet: {
-    vaultMaster: 'EQAvDfYmkVV2zFXzC0Hs2e2RGWJyMXHpnMTXH4jnI2W3AwLb',
-    vaultFactory: 'EQB0gCDoGJNTfoPUSCgBxLuZ_O-7aYUccU0P1Vj_QdO6rQTf',
-    bridge: 'EQDi_PSI1WbigxBKCj7vEz2pAvUQfw0IFZz9Sz2aGHUFNpTw'
+    // Main vault contract - handles time locks, emergency recovery, Trinity Protocol verification
+    chronosVault: 'EQDJAnXDPT-NivritpEhQeP0XmG20NdeUtxgh4nUiWH-DF7M',
+    vaultMaster: 'EQDJAnXDPT-NivritpEhQeP0XmG20NdeUtxgh4nUiWH-DF7M', // Alias for vault operations
+    
+    // Cross-chain bridge contract - handles HTLC swaps and bridge operations
+    bridge: 'EQAOJxa1WDjGZ7f3n53JILojhZoDdTOKWl6h41_yOWX3v0tq',
+    cvtBridge: 'EQAOJxa1WDjGZ7f3n53JILojhZoDdTOKWl6h41_yOWX3v0tq', // Alias for bridge operations
+    
+    // Not yet deployed - will be added when factory pattern is needed
+    vaultFactory: null,
   }
 };
 
@@ -42,8 +58,10 @@ export class TonConnector implements BlockchainConnector {
   private tonClient: any = null; // TonClient Core instance
   private wallet: any = null; // TON wallet instance
   private walletAddress: string | null = null;
-  private vaultMasterAddress: string;
-  private vaultFactoryAddress: string;
+  private chronosVaultAddress: string; // Main vault contract for time locks and emergency recovery
+  private cvtBridgeAddress: string; // Bridge contract for HTLC swaps
+  private vaultMasterAddress: string; // Alias for chronosVaultAddress
+  private vaultFactoryAddress: string | null; // Factory not deployed yet, using ChronosVault directly
   
   /**
    * Initialize the TON connector
@@ -58,10 +76,18 @@ export class TonConnector implements BlockchainConnector {
       return;
     }
     
-    // Set up contract addresses
+    // Set up contract addresses - use real deployed contracts
     const addresses = isTestnet ? CONTRACT_ADDRESSES.testnet : CONTRACT_ADDRESSES.mainnet;
-    this.vaultMasterAddress = addresses.vaultMaster;
-    this.vaultFactoryAddress = addresses.vaultFactory;
+    
+    // ChronosVault handles vault operations (deployed)
+    this.chronosVaultAddress = addresses.chronosVault;
+    this.vaultMasterAddress = addresses.vaultMaster; // Alias for chronosVault
+    
+    // CVTBridge handles bridge operations (deployed)
+    this.cvtBridgeAddress = addresses.bridge;
+    
+    // Factory not deployed yet - fallback to direct ChronosVault usage
+    this.vaultFactoryAddress = addresses.vaultFactory || addresses.chronosVault;
     
     try {
       if (typeof window !== 'undefined') {
