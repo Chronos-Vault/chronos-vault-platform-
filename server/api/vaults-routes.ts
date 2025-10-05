@@ -101,6 +101,7 @@ const createVaultSchema = z.object({
     VaultType.GEOLOCATION
   ]),
   value: z.number(),
+  primaryChain: z.enum(['ethereum', 'solana', 'ton']).optional().default('ethereum'), // User's choice of primary blockchain!
   metadata: z.record(z.any()).optional(),
   securityLevel: z.number().optional(), // For quantum vaults
   unlockDate: z.string().optional(), // For time-locked vaults
