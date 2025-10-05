@@ -215,7 +215,7 @@ class VaultContractService {
         
         await vaultContract.addCrossChainAddress(
           "Solana", 
-          "ChronoSVauLt111111111111111111111111111111111"
+          "ChronoSVauLt11111111111111111111111111111111"
         );
       }
 
