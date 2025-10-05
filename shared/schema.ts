@@ -62,6 +62,8 @@ export const vaults = pgTable("vaults", {
   isLocked: boolean("is_locked").notNull().default(true),
   // Adding metadata field for additional vault configuration
   metadata: jsonb("metadata"),
+  // Primary blockchain for this vault - user's choice!
+  primaryChain: text("primary_chain").notNull().default("ethereum"), // ethereum, solana, ton
   // Cross-chain contract addresses
   ethereumContractAddress: text("ethereum_contract_address"),
   solanaContractAddress: text("solana_contract_address"),
@@ -70,6 +72,12 @@ export const vaults = pgTable("vaults", {
   securityLevel: integer("security_level").default(1), // Level 1-5
   crossChainEnabled: boolean("cross_chain_enabled").default(false),
   privacyEnabled: boolean("privacy_enabled").default(false),
+  // Fee tracking and chain selection metadata
+  estimatedCreationFee: text("estimated_creation_fee"), // Fee in native token (ETH/SOL/TON)
+  estimatedCreationFeeUsd: text("estimated_creation_fee_usd"), // Fee in USD for comparison
+  actualCreationFee: text("actual_creation_fee"), // Actual fee paid after creation
+  chainSelectionReason: text("chain_selection_reason"), // Why user picked this chain
+  trinityRoles: jsonb("trinity_roles"), // Dynamic Trinity Protocol roles: {primary: "ethereum", verify1: "solana", verify2: "ton"}
 });
 
 export const beneficiaries = pgTable("beneficiaries", {
@@ -108,6 +116,20 @@ export const chainContracts = pgTable("chain_contracts", {
   deploymentTx: text("deployment_tx"),
   isActive: boolean("is_active").default(true),
   metadata: jsonb("metadata"),
+});
+
+// Chain fee estimates for real-time comparison
+export const chainFeeEstimates = pgTable("chain_fee_estimates", {
+  id: serial("id").primaryKey(),
+  blockchain: text("blockchain").notNull(), // ethereum, solana, ton
+  operationType: text("operation_type").notNull(), // vault_creation, withdrawal, transfer, swap
+  estimatedFeeNative: text("estimated_fee_native").notNull(), // Fee in native token
+  estimatedFeeUsd: text("estimated_fee_usd").notNull(), // Fee in USD
+  gasPrice: text("gas_price"), // Current gas price (for Ethereum)
+  networkCongestion: text("network_congestion"), // low, medium, high
+  estimatedTime: integer("estimated_time"), // Estimated confirmation time in seconds
+  lastUpdated: timestamp("last_updated").notNull().defaultNow(),
+  metadata: jsonb("metadata"), // Additional chain-specific data
 });
 
 // New table for cross-chain transactions
@@ -248,12 +270,18 @@ export const insertVaultSchema = createInsertSchema(vaults)
     timeLockPeriod: true,
     unlockDate: true,
     metadata: true,
+    primaryChain: true,
     ethereumContractAddress: true,
     solanaContractAddress: true,
     tonContractAddress: true,
     securityLevel: true,
     crossChainEnabled: true,
     privacyEnabled: true,
+    estimatedCreationFee: true,
+    estimatedCreationFeeUsd: true,
+    actualCreationFee: true,
+    chainSelectionReason: true,
+    trinityRoles: true,
   })
   .extend({
     // Match database schema where assetAmount is a text field
@@ -326,6 +354,17 @@ export const insertChainContractSchema = createInsertSchema(chainContracts).pick
   metadata: true,
 });
 
+export const insertChainFeeEstimateSchema = createInsertSchema(chainFeeEstimates).pick({
+  blockchain: true,
+  operationType: true,
+  estimatedFeeNative: true,
+  estimatedFeeUsd: true,
+  gasPrice: true,
+  networkCongestion: true,
+  estimatedTime: true,
+  metadata: true,
+});
+
 export const insertCrossChainTransactionSchema = createInsertSchema(crossChainTransactions).pick({
   vaultId: true,
   sourceChain: true,
@@ -352,6 +391,9 @@ export const insertSecurityIncidentSchema = createInsertSchema(securityIncidents
 
 export type InsertChainContract = z.infer<typeof insertChainContractSchema>;
 export type ChainContract = typeof chainContracts.$inferSelect;
+
+export type InsertChainFeeEstimate = z.infer<typeof insertChainFeeEstimateSchema>;
+export type ChainFeeEstimate = typeof chainFeeEstimates.$inferSelect;
 
 export type InsertCrossChainTransaction = z.infer<typeof insertCrossChainTransactionSchema>;
 export type CrossChainTransaction = typeof crossChainTransactions.$inferSelect;
@@ -904,6 +946,39 @@ export const insertWalletTransactionSchema = createInsertSchema(walletTransactio
   priority: true,
   metadata: true,
 });
+
+// Multi-signature wallet management
+export const multiSigWallets = pgTable("multi_sig_wallets", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").notNull(),
+  walletId: text("wallet_id").notNull().unique(),
+  name: text("name").notNull(),
+  network: text("network").notNull(), // ethereum, solana, ton
+  address: text("address").notNull(),
+  requiredSignatures: integer("required_signatures").notNull(),
+  totalSigners: integer("total_signers").notNull(),
+  signers: jsonb("signers").notNull(), // Array of signer addresses and metadata
+  isActive: boolean("is_active").default(true),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+  updatedAt: timestamp("updated_at"),
+  metadata: jsonb("metadata"),
+});
+
+export const insertMultiSigWalletSchema = createInsertSchema(multiSigWallets).pick({
+  userId: true,
+  walletId: true,
+  name: true,
+  network: true,
+  address: true,
+  requiredSignatures: true,
+  totalSigners: true,
+  signers: true,
+  isActive: true,
+  metadata: true,
+});
+
+export type InsertMultiSigWallet = z.infer<typeof insertMultiSigWalletSchema>;
+export type MultiSigWallet = typeof multiSigWallets.$inferSelect;
 
 // Type exports for wallet integration
 export type InsertWalletRegistration = z.infer<typeof insertWalletRegistrationSchema>;
