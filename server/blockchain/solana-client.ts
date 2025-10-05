@@ -7,6 +7,7 @@
  */
 
 import { securityLogger } from '../monitoring/security-logger';
+import { SecurityEventType } from "../monitoring/security-logger";
 import config from '../config';
 
 class SolanaClient {
@@ -21,15 +22,15 @@ class SolanaClient {
     }
     
     try {
-      securityLogger.info('Initializing Solana client');
+      securityLogger.info('Initializing Solana client', SecurityEventType.CROSS_CHAIN_VERIFICATION);
       
       // In a real implementation, this would initialize Solana web3.js with a connection
       // For development mode, we'll just set initialized to true
       
       this.initialized = true;
-      securityLogger.info('Solana client initialized successfully');
+      securityLogger.info('Solana client initialized successfully', SecurityEventType.CROSS_CHAIN_VERIFICATION);
     } catch (error) {
-      securityLogger.error('Failed to initialize Solana client', error);
+      securityLogger.error('Failed to initialize Solana client', SecurityEventType.SYSTEM_ERROR, error);
       throw error;
     }
   }
@@ -111,6 +112,22 @@ class SolanaClient {
     
     // In a real implementation, this would get the status from Solana
     throw new Error('Not implemented - production Solana signature status');
+  }
+
+  /**
+   * Get vault monitoring data (Trinity Protocol)
+   */
+  async getVaultMonitoringData(vaultId: string): Promise<any> {
+    if (config.isDevelopmentMode) {
+      return {
+        vaultId,
+        anomalyDetected: false,
+        lastCheck: Date.now(),
+        transactionCount: Math.floor(Math.random() * 100)
+      };
+    }
+
+    throw new Error('Not implemented - production Solana monitoring');
   }
 }
 
