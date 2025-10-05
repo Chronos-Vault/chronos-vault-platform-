@@ -6,7 +6,7 @@
  * functionality.
  */
 
-import { securityLogger } from '../monitoring/security-logger';
+import { securityLogger, SecurityEventType } from '../monitoring/security-logger';
 import config from '../config';
 import { ethers } from 'ethers';
 
@@ -52,13 +52,17 @@ class EthereumClient {
     }
     
     try {
-      securityLogger.info('Initializing Ethereum client');
+      securityLogger.info('Initializing Ethereum client', SecurityEventType.SYSTEM_ERROR);
       
-      if (config.isDevelopmentMode) {
+      // Check if we should simulate Ethereum
+      if (config.shouldSimulateBlockchain('ethereum')) {
         this.initialized = true;
-        securityLogger.info('Ethereum client initialized in development mode');
+        securityLogger.info('Ethereum client initialized in SIMULATION mode', SecurityEventType.SYSTEM_ERROR);
         return;
       }
+      
+      // REAL ETHEREUM CONNECTION - Using deployed Sepolia contracts
+      securityLogger.info('🚀 Connecting to REAL Ethereum blockchain (Sepolia)...', SecurityEventType.CROSS_CHAIN_VERIFICATION);
       
       if (!process.env.ETHEREUM_RPC_URL) {
         throw new Error('ETHEREUM_RPC_URL environment variable is not set');
@@ -69,20 +73,19 @@ class EthereumClient {
       
       // Test the connection
       const network = await this.provider.getNetwork();
-      securityLogger.info(`Connected to Ethereum network: ${network.name} (${network.chainId})`);
+      securityLogger.info(`✅ Connected to Ethereum network: ${network.name} (Chain ID: ${network.chainId})`, SecurityEventType.CROSS_CHAIN_VERIFICATION);
       
-      // Initialize the vault contract
-      if (config.blockchainConfig.ethereum.contractAddresses.vault) {
+      // Initialize the vault contract with deployed address
+      if (config.blockchainConfig?.ethereum?.contractAddresses?.vault) {
         this.vaultContract = new ethers.Contract(
           config.blockchainConfig.ethereum.contractAddresses.vault,
           this.vaultAbi,
           this.provider
         );
-        securityLogger.info(`Initialized Ethereum vault contract at ${config.blockchainConfig.ethereum.contractAddresses.vault}`);
+        securityLogger.info(`✅ Initialized ChronosVault contract at ${config.blockchainConfig.ethereum.contractAddresses.vault}`, SecurityEventType.VAULT_CREATION);
       }
       
       // Initialize the multi-signature contract if available
-      // Note: multiSig is not in the default config, but we can check for its existence in a real deployment
       const contractAddresses = config.blockchainConfig.ethereum.contractAddresses as any;
       if (contractAddresses.multiSig) {
         this.multiSigContract = new ethers.Contract(
@@ -90,13 +93,13 @@ class EthereumClient {
           this.multiSigAbi,
           this.provider
         );
-        securityLogger.info(`Initialized Ethereum multi-signature contract at ${contractAddresses.multiSig}`);
+        securityLogger.info(`✅ Initialized multi-signature contract at ${contractAddresses.multiSig}`, SecurityEventType.VAULT_CREATION);
       }
       
       this.initialized = true;
-      securityLogger.info('Ethereum client initialized successfully');
+      securityLogger.info('🎉 Ethereum client initialized successfully with REAL blockchain connection!', SecurityEventType.CROSS_CHAIN_VERIFICATION);
     } catch (error) {
-      securityLogger.error('Failed to initialize Ethereum client', error);
+      securityLogger.error('❌ Failed to initialize Ethereum client', SecurityEventType.SYSTEM_ERROR, error);
       throw error;
     }
   }
@@ -156,7 +159,7 @@ class EthereumClient {
         gasUsed: receipt ? receipt.gasUsed.toString() : null
       };
     } catch (error) {
-      securityLogger.error(`Failed to get Ethereum transaction: ${txId}`, error);
+      securityLogger.error(`Failed to get Ethereum transaction: ${txId}`, SecurityEventType.SYSTEM_ERROR, error);
       throw error;
     }
   }
@@ -192,7 +195,7 @@ class EthereumClient {
         owner: result.owner
       };
     } catch (error) {
-      securityLogger.error(`Failed to verify vault on Ethereum: ${vaultId}`, error);
+      securityLogger.error(`Failed to verify vault on Ethereum: ${vaultId}`, SecurityEventType.CROSS_CHAIN_VERIFICATION, error);
       throw error;
     }
   }
@@ -228,7 +231,7 @@ class EthereumClient {
         timestamp: result.timestamp.toNumber() * 1000 // Convert from seconds to milliseconds
       };
     } catch (error) {
-      securityLogger.error(`Failed to verify cross-chain status on Ethereum: ${vaultId}`, error);
+      securityLogger.error(`Failed to verify cross-chain status on Ethereum: ${vaultId}`, SecurityEventType.CROSS_CHAIN_VERIFICATION, error);
       throw error;
     }
   }
@@ -261,7 +264,7 @@ class EthereumClient {
       // Compare the recovered address with the provided address
       return recoveredAddress.toLowerCase() === address.toLowerCase();
     } catch (error) {
-      securityLogger.error('Failed to verify Ethereum signature', error);
+      securityLogger.error('Failed to verify Ethereum signature', SecurityEventType.AUTH_FAILURE, error);
       return false;
     }
   }
@@ -313,7 +316,7 @@ class EthereumClient {
         blockNumber: receipt.blockNumber
       };
     } catch (error) {
-      securityLogger.error(`Failed to create Ethereum signature request: ${requestId}`, error);
+      securityLogger.error(`Failed to create Ethereum signature request: ${requestId}`, SecurityEventType.SYSTEM_ERROR, error);
       throw error;
     }
   }
@@ -355,7 +358,7 @@ class EthereumClient {
       
       return true;
     } catch (error) {
-      securityLogger.error(`Failed to add Ethereum signature: ${requestId}`, error);
+      securityLogger.error(`Failed to add Ethereum signature: ${requestId}`, SecurityEventType.SYSTEM_ERROR, error);
       return false;
     }
   }
@@ -405,10 +408,71 @@ class EthereumClient {
         requiredSignatures: result.requiredSignatures.toNumber()
       };
     } catch (error) {
-      securityLogger.error(`Failed to get Ethereum signature status: ${requestId}`, error);
+      securityLogger.error(`Failed to get Ethereum signature status: ${requestId}`, SecurityEventType.SYSTEM_ERROR, error);
       throw error;
+    }
+  }
+
+  /**
+   * Verify vault existence (Trinity Protocol)
+   */
+  async verifyVault(vaultId: string): Promise<boolean> {
+    if (config.isDevelopmentMode) {
+      return true;
+    }
+
+    try {
+      const result = await this.verifyVaultExists(vaultId);
+      return result.exists;
+    } catch (error) {
+      securityLogger.error(`Failed to verify vault: ${vaultId}`, SecurityEventType.VAULT_ACCESS, error);
+      return false;
+    }
+  }
+
+  /**
+   * Check unlock conditions (Trinity Protocol)
+   */
+  async checkUnlockConditions(vaultId: string): Promise<boolean> {
+    if (config.isDevelopmentMode) {
+      return true;
+    }
+
+    try {
+      if (!this.vaultContract) {
+        return false;
+      }
+
+      const unlockTime = await this.vaultContract.unlockTime();
+      const currentTime = Math.floor(Date.now() / 1000);
+      
+      return currentTime >= unlockTime;
+    } catch (error) {
+      securityLogger.error(`Failed to check unlock conditions: ${vaultId}`, SecurityEventType.VAULT_ACCESS, error);
+      return false;
+    }
+  }
+
+  /**
+   * Verify withdrawal permissions (Trinity Protocol)
+   */
+  async verifyWithdrawalPermissions(vaultId: string, requester: string): Promise<boolean> {
+    if (config.isDevelopmentMode) {
+      return true;
+    }
+
+    try {
+      if (!this.vaultContract) {
+        return false;
+      }
+
+      const isAuthorized = await this.vaultContract.authorizedRetrievers(requester);
+      return isAuthorized;
+    } catch (error) {
+      securityLogger.error(`Failed to verify withdrawal permissions: ${vaultId}`, SecurityEventType.VAULT_ACCESS, error);
+      return false;
     }
   }
 }
 
-export const ethersClient = new EthereumClient();
+export const ethereumClient = new EthereumClient();
