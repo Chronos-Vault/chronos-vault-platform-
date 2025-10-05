@@ -1,5 +1,5 @@
 import { BlockchainType } from '@shared/types';
-import { securityLogger } from '../utils/logger';
+import { securityLogger } from '../monitoring/security-logger';
 import { EventEmitter } from 'events';
 
 /**
