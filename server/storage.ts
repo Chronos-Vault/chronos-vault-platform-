@@ -13,6 +13,7 @@ import {
   deviceAuthLogs, type DeviceAuthLog, type InsertDeviceAuthLog,
   deviceVerifications, type DeviceVerification, type InsertDeviceVerification,
   recoveryKeys, type RecoveryKey, type InsertRecoveryKey,
+  multiSigWallets, type MultiSigWallet, type InsertMultiSigWallet,
   insertWalletAuthSchema, insertWalletSessionSchema
 } from "@shared/schema";
 
@@ -118,6 +119,15 @@ export interface IStorage {
   getRecoveryKeyByHash(keyHash: string): Promise<RecoveryKey | undefined>;
   getRecoveryKeysByUser(userId: number): Promise<RecoveryKey[]>;
   markRecoveryKeyAsUsed(id: number, deviceId?: number): Promise<RecoveryKey | undefined>;
+  
+  // Multi-signature wallet methods
+  getMultiSigWallet(id: number): Promise<MultiSigWallet | undefined>;
+  getMultiSigWalletByWalletId(walletId: string): Promise<MultiSigWallet | undefined>;
+  getMultiSigWalletsByUser(userId: number): Promise<MultiSigWallet[]>;
+  getMultiSigWalletsByNetwork(network: string): Promise<MultiSigWallet[]>;
+  createMultiSigWallet(wallet: InsertMultiSigWallet): Promise<MultiSigWallet>;
+  updateMultiSigWallet(id: number, wallet: Partial<MultiSigWallet>): Promise<MultiSigWallet | undefined>;
+  deleteMultiSigWallet(id: number): Promise<boolean>;
 }
 
 export class MemStorage implements IStorage {
@@ -800,6 +810,35 @@ export class MemStorage implements IStorage {
   async deleteSignature(id: number): Promise<boolean> {
     return this.signatures.delete(id);
   }
+
+  // Multi-signature wallet methods
+  async getMultiSigWallet(id: number): Promise<MultiSigWallet | undefined> {
+    return undefined; // MemStorage does not persist multi-sig wallets
+  }
+
+  async getMultiSigWalletByWalletId(walletId: string): Promise<MultiSigWallet | undefined> {
+    return undefined; // MemStorage does not persist multi-sig wallets
+  }
+
+  async getMultiSigWalletsByUser(userId: number): Promise<MultiSigWallet[]> {
+    return []; // MemStorage does not persist multi-sig wallets
+  }
+
+  async getMultiSigWalletsByNetwork(network: string): Promise<MultiSigWallet[]> {
+    return []; // MemStorage does not persist multi-sig wallets
+  }
+
+  async createMultiSigWallet(wallet: InsertMultiSigWallet): Promise<MultiSigWallet> {
+    throw new Error("MemStorage does not support multi-sig wallets");
+  }
+
+  async updateMultiSigWallet(id: number, wallet: Partial<MultiSigWallet>): Promise<MultiSigWallet | undefined> {
+    return undefined; // MemStorage does not persist multi-sig wallets
+  }
+
+  async deleteMultiSigWallet(id: number): Promise<boolean> {
+    return false; // MemStorage does not persist multi-sig wallets
+  }
 }
 
 import { db } from "./db";
@@ -1455,6 +1494,69 @@ export class DatabaseStorage implements IStorage {
       .delete(signatures)
       .where(eq(signatures.id, id))
       .returning({ id: signatures.id });
+    return result.length > 0;
+  }
+
+  // Multi-signature wallet methods
+  async getMultiSigWallet(id: number): Promise<MultiSigWallet | undefined> {
+    const [wallet] = await db
+      .select()
+      .from(multiSigWallets)
+      .where(eq(multiSigWallets.id, id));
+    return wallet || undefined;
+  }
+
+  async getMultiSigWalletByWalletId(walletId: string): Promise<MultiSigWallet | undefined> {
+    const [wallet] = await db
+      .select()
+      .from(multiSigWallets)
+      .where(eq(multiSigWallets.walletId, walletId));
+    return wallet || undefined;
+  }
+
+  async getMultiSigWalletsByUser(userId: number): Promise<MultiSigWallet[]> {
+    return await db
+      .select()
+      .from(multiSigWallets)
+      .where(eq(multiSigWallets.userId, userId));
+  }
+
+  async getMultiSigWalletsByNetwork(network: string): Promise<MultiSigWallet[]> {
+    return await db
+      .select()
+      .from(multiSigWallets)
+      .where(eq(multiSigWallets.network, network));
+  }
+
+  async createMultiSigWallet(wallet: InsertMultiSigWallet): Promise<MultiSigWallet> {
+    const [newWallet] = await db
+      .insert(multiSigWallets)
+      .values({
+        ...wallet,
+        createdAt: new Date(),
+        updatedAt: new Date()
+      })
+      .returning();
+    return newWallet;
+  }
+
+  async updateMultiSigWallet(id: number, wallet: Partial<MultiSigWallet>): Promise<MultiSigWallet | undefined> {
+    const [updatedWallet] = await db
+      .update(multiSigWallets)
+      .set({
+        ...wallet,
+        updatedAt: new Date()
+      })
+      .where(eq(multiSigWallets.id, id))
+      .returning();
+    return updatedWallet || undefined;
+  }
+
+  async deleteMultiSigWallet(id: number): Promise<boolean> {
+    const result = await db
+      .delete(multiSigWallets)
+      .where(eq(multiSigWallets.id, id))
+      .returning({ id: multiSigWallets.id });
     return result.length > 0;
   }
 }
