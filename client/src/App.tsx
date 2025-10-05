@@ -3,6 +3,7 @@ import { Route, Switch, Link } from 'wouter';
 import { ErrorBoundary } from '@/components/error-boundary/ErrorBoundary';
 import { useAuthContext } from '@/contexts/auth-context';
 import { NavBar } from '@/components/navigation/NavBar';
+import ScrollToTop from '@/components/navigation/ScrollToTop';
 import Footer from '@/components/layout/footer';
 import DocumentationRouter from '@/components/documentation/DocumentationRouter';
 // Removed old wallet auth modal import
@@ -50,6 +51,7 @@ import SpecializedVaultCreationPage from '@/pages/specialized-vault-creation';
 import CreateTonVaultPage from '@/pages/create-ton-vault';
 
 // Monitoring Pages
+import MonitoringPage from '@/pages/monitoring';
 import TransactionMonitorPage from '@/pages/transaction-monitor';
 import CrossChainMonitorPage from '@/pages/cross-chain-monitor';
 import CrossChainFeesPage from '@/pages/cross-chain-fee-monitor';
@@ -68,6 +70,7 @@ import ZeroKnowledgeVerificationPage from '@/pages/zero-knowledge-verification-p
 import ZkPrivacyDemoPage from '@/pages/zk-privacy-demo';
 import TripleChainSecurityPage from '@/pages/triple-chain-security';
 import HowItWorksPage from '@/pages/how-it-works';
+import TrinityProtocolDashboard from '@/pages/trinity-protocol-dashboard';
 
 // Integration Pages
 import EthereumIntegrationPage from '@/pages/ethereum-integration';
@@ -118,11 +121,13 @@ import FamilyHeritageVaultFormPage from '@/pages/family-heritage-vault-form';
 // Bitcoin Halving Vault now uses the advanced implementation
 
 // Cross-Chain Features
+import BridgePage from '@/pages/bridge';
 import CrossChainBridgePage from '@/pages/cross-chain-bridge';
 import CrossChainAtomicSwapPage from '@/pages/cross-chain-atomic-swap';
 import TonWalletCrossChainBridgePage from '@/pages/ton-wallet-cross-chain-bridge';
 import CrossChainVsAtomicSwapPage from '@/pages/cross-chain-vs-atomic-swap';
 import BridgeVsSwapPage from '@/pages/bridge-vs-swap';
+import SecurityPage from '@/pages/security';
 import SecurityDashboardPage from '@/pages/security-dashboard';
 import TripleChainSecurityDashboardPage from '@/pages/security-dashboard-page';
 import BitcoinHalvingAdvancedPage from '@/pages/bitcoin-halving';
@@ -147,6 +152,7 @@ const App: React.FC = () => {
   return (
     <div className="min-h-screen bg-black text-white">
       <ErrorBoundary name="App">
+        <ScrollToTop />
         <NavBar />
         <div className="pt-2">
                     <Switch>
@@ -181,15 +187,21 @@ const App: React.FC = () => {
                       <Route path="/create-ton-vault" component={CreateTonVaultPage} />
                       
                       {/* Monitoring & Management */}
+                      <Route path="/monitoring" component={MonitoringPage} />
+                      {/* Legacy routes - kept for backward compatibility */}
                       <Route path="/transaction-monitor" component={TransactionMonitorPage} />
                       <Route path="/transaction-verification" component={SecurityVerificationPage} />
                       <Route path="/cross-chain-monitor" component={CrossChainMonitorPage} />
                       <Route path="/cross-chain-fee-monitor" component={CrossChainFeesPage} />
+                      <Route path="/cross-chain-operations" component={MonitoringPage} />
                       <Route path="/vault-explorer" component={VaultExplorerPage} />
                       <Route path="/device-management" component={DeviceManagementPage} />
                       <Route path="/device-recovery" component={DeviceRecoveryPage} />
                       
                       {/* Security Pages */}
+                      <Route path="/security" component={SecurityPage} />
+                      {/* Legacy routes - kept for backward compatibility */}
+                      <Route path="/trinity-protocol" component={TrinityProtocolDashboard} />
                       <Route path="/security-dashboard" component={TripleChainSecurityDashboardPage} />
                       <Route path="/ton-security" component={TonSecurityPage} />
                       <Route path="/cross-chain-security" component={CrossChainSecurityPage} />
@@ -270,12 +282,14 @@ const App: React.FC = () => {
                       {/* <Route path="/:vaultType-vault" component={CreateVaultEnhancedPage} /> */}
                       
                       {/* Cross-Chain Features */}
-                      <Route path="/cross-chain-operations" component={CrossChainMonitorPage} />
+                      <Route path="/bridge" component={BridgePage} />
+                      {/* Legacy routes - kept for backward compatibility */}
+                      <Route path="/cross-chain-operations" component={MonitoringPage} />
                       <Route path="/cross-chain-bridge" component={CrossChainBridgePage} />
                       <Route path="/cross-chain-atomic-swap" component={CrossChainAtomicSwapPage} />
                       <Route path="/ton-wallet-cross-chain-bridge" component={TonWalletCrossChainBridgePage} />
                       <Route path="/bridge-vs-swap" component={BridgeVsSwapPage} />
-                      <Route path="/atomic-swaps" component={CrossChainAtomicSwapPage} />
+                      <Route path="/atomic-swaps" component={BridgePage} />
                       
                       {/* Token & Payment */}
                       <Route path="/cvt-tokenomics" component={CvtTokenomicsPage} />
