@@ -130,70 +130,30 @@ export function WalletProvider({ children }: { children: ReactNode }) {
       setIsDevelopmentMode(savedDevMode === 'true');
     }
     
-    // Initialize TON Connect
+    // Initialize TON Connect - use existing global instance if available
     try {
       console.log('Attempting to initialize TON service');
       
-      // Only create a new instance if one doesn't exist
-      if (!tonConnect) {
+      // Check for existing global instance first
+      const existingInstance = (window as any).__tonConnectUIInstance;
+      
+      if (existingInstance) {
+        console.log('[WalletContext] Using existing TON Connect instance');
+        setTonConnect(existingInstance);
+      } else if (!tonConnect) {
+        // Only create new instance if no global instance exists
+        const manifestUrl = `${window.location.origin}/tonconnect-manifest.json`;
+        console.log('[WalletContext] Creating new TON Connect instance with manifest:', manifestUrl);
+        
         const newTonConnect = new TonConnectUI({
-          manifestUrl: 'https://chronosvault.io/tonconnect-manifest.json',
-          buttonRootId: 'ton-connect-button'
+          manifestUrl
         });
         
+        // Store globally to prevent duplicates
+        (window as any).__tonConnectUIInstance = newTonConnect;
         setTonConnect(newTonConnect);
         
-        // Try to restore session
-        console.log('Attempting to restore TON wallet session...');
-        const restoreConnection = async () => {
-          if (newTonConnect && newTonConnect.connected) {
-            try {
-              console.log('Attempting to reconnect to TON wallet');
-              
-              // In development mode, pretend we're connected
-              if (isDevelopmentMode) {
-                setStatus(prev => ({ ...prev, ton: 'connected' }));
-                setConnectedWallets(prev => ({
-                  ...prev,
-                  ton: {
-                    address: 'EQAvDfYmkVV2zFXzC0Hs2e2RGWJyMXHpnMTXH4jnI2W3AwLb',
-                    chainId: 'ton',
-                    network: 'testnet',
-                    balance: {
-                      total: '10.5',
-                      formatted: '10.5',
-                      symbol: 'TON',
-                      decimals: 9
-                    },
-                    isTestnet: true
-                  }
-                }));
-              } else {
-                // For real connection, handle TON Connect events
-                console.log('Starting TON wallet connection process...');
-                
-                const walletConnectionSource = newTonConnect.connectWallet();
-                walletConnectionSource.catch(err => {
-                  console.error('Error connecting to TON wallet:', err);
-                  setStatus(prev => ({ ...prev, ton: 'error' }));
-                  
-                  toast({
-                    title: 'Wallet Connection Error',
-                    description: 'Failed to connect to TON wallet. Please try again.',
-                    variant: 'destructive'
-                  });
-                });
-              }
-              
-              console.log('Successfully reconnected to TON wallet');
-            } catch (error) {
-              console.error('Error restoring TON connection:', error);
-              setStatus(prev => ({ ...prev, ton: 'error' }));
-            }
-          }
-        };
-        
-        restoreConnection();
+        console.log('[WalletContext] TON Connect instance created and stored globally');
       }
     } catch (error) {
       console.error('Failed to initialize TON Connect:', error);
