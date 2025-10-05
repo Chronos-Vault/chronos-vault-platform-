@@ -19,9 +19,42 @@ import { PublicKey } from "@solana/web3.js";
 import nacl from "tweetnacl";
 
 export class WalletService {
+  // In-memory store for TON proof payloads (use Redis in production)
+  private tonProofPayloads: Map<string, { timestamp: number }> = new Map();
+
   // Generate a nonce for wallet authentication
   generateNonce(): string {
     return crypto.randomBytes(16).toString('hex');
+  }
+
+  // Generate TON proof payload
+  async generateTonProofPayload(): Promise<string> {
+    const payload = crypto.randomBytes(32).toString('hex');
+    
+    this.tonProofPayloads.set(payload, {
+      timestamp: Date.now()
+    });
+    
+    setTimeout(() => {
+      this.tonProofPayloads.delete(payload);
+    }, 20 * 60 * 1000);
+    
+    return payload;
+  }
+
+  // Validate TON proof payload
+  validateTonProofPayload(payload: string): boolean {
+    const stored = this.tonProofPayloads.get(payload);
+    if (!stored) return false;
+    
+    const age = Date.now() - stored.timestamp;
+    if (age > 20 * 60 * 1000) {
+      this.tonProofPayloads.delete(payload);
+      return false;
+    }
+    
+    this.tonProofPayloads.delete(payload);
+    return true;
   }
 
   // Generate authentication message
@@ -86,9 +119,20 @@ export class WalletService {
           break;
 
         case 'ton':
-          // TON signature verification would go here
-          // For now, we'll mark it as valid for development
-          isValid = true;
+          try {
+            const tonProof = JSON.parse(signature);
+            
+            if (tonProof.proof && tonProof.proof.payload) {
+              isValid = this.validateTonProofPayload(tonProof.proof.payload);
+              console.log('TON proof validation result:', isValid);
+            } else {
+              console.log('TON proof does not contain required fields');
+              isValid = false;
+            }
+          } catch (e) {
+            console.error('Error parsing TON proof:', e);
+            isValid = false;
+          }
           break;
 
         default:
