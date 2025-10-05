@@ -6,7 +6,7 @@
  * functionality.
  */
 
-import { securityLogger } from '../monitoring/security-logger';
+import { securityLogger, SecurityEventType } from '../monitoring/security-logger';
 import config from '../config';
 import TonWeb from 'tonweb';
 import { TonClient as TonclientCore } from '@tonclient/core';
@@ -55,12 +55,12 @@ class TonClient {
     }
     
     try {
-      securityLogger.info('Initializing TON client');
+      securityLogger.info('Initializing TON client', SecurityEventType.CROSS_CHAIN_VERIFICATION);
       
       // In development mode, just mark as initialized
       if (config.isDevelopmentMode) {
         this.initialized = true;
-        securityLogger.info('TON client initialized in development mode');
+        securityLogger.info('TON client initialized in development mode', SecurityEventType.CROSS_CHAIN_VERIFICATION);
         return;
       }
       
@@ -70,9 +70,9 @@ class TonClient {
       }
       
       // Initialize TonWeb
-      const apiUrl = config.blockchainConfig.ton.network === 'mainnet'
-        ? 'https://toncenter.com/api/v2/jsonRPC'
-        : 'https://testnet.toncenter.com/api/v2/jsonRPC';
+      const apiUrl = config.blockchainConfig.ton.isTestnet
+        ? 'https://testnet.toncenter.com/api/v2/jsonRPC'
+        : 'https://toncenter.com/api/v2/jsonRPC';
       
       this.tonweb = new TonWeb(new TonWeb.HttpProvider(apiUrl, {
         apiKey: process.env.TON_API_KEY
@@ -81,24 +81,24 @@ class TonClient {
       // Initialize TonClient Core
       this.toncore = new TonclientCore({
         network: {
-          server_address: config.blockchainConfig.ton.network === 'mainnet'
-            ? 'main.ton.dev'
-            : 'net.ton.dev'
+          server_address: config.blockchainConfig.ton.isTestnet
+            ? 'net.ton.dev'
+            : 'main.ton.dev'
         }
       });
       
       // Initialize vault contract
-      const vaultAddress = config.blockchainConfig.ton.contractAddresses.vault;
+      const vaultAddress = config.blockchainConfig.ton.contracts.vaultMaster;
       if (vaultAddress) {
         // In a real implementation, we would create a contract instance
         // This is a simplified version of how this would work
-        securityLogger.info(`Initialized TON vault contract at ${vaultAddress}`);
+        securityLogger.info(`Initialized TON vault contract at ${vaultAddress}`, SecurityEventType.CROSS_CHAIN_VERIFICATION);
       }
       
       this.initialized = true;
-      securityLogger.info('TON client initialized successfully');
+      securityLogger.info('TON client initialized successfully', SecurityEventType.CROSS_CHAIN_VERIFICATION);
     } catch (error) {
-      securityLogger.error('Failed to initialize TON client', error);
+      securityLogger.error('Failed to initialize TON client', SecurityEventType.SYSTEM_ERROR, error);
       throw error;
     }
   }
@@ -161,7 +161,7 @@ class TonClient {
         blockNumber: tx.block ? parseInt(tx.block, 16) : 0
       };
     } catch (error) {
-      securityLogger.error('Failed to get TON transaction', error);
+      securityLogger.error('Failed to get TON transaction', SecurityEventType.SYSTEM_ERROR, error);
       throw error;
     }
   }
@@ -217,7 +217,7 @@ class TonClient {
           : `Transaction pending with ${confirmations}/${requiredConfirmations} confirmations`
       };
     } catch (error) {
-      securityLogger.error('Failed to validate TON transaction', error);
+      securityLogger.error('Failed to validate TON transaction', SecurityEventType.SYSTEM_ERROR, error);
       
       return {
         isValid: false,
@@ -234,7 +234,7 @@ class TonClient {
   async getTransactionsForAddress(address: string): Promise<any[]> {
     // Validate the address first
     if (!this.validateAddress(address)) {
-      securityLogger.warn(`Invalid TON address format: ${address}`);
+      securityLogger.warn(`Invalid TON address format: ${address}`, SecurityEventType.SYSTEM_ERROR);
       throw new Error(`Invalid TON address format: ${address}`);
     }
     
@@ -284,7 +284,7 @@ class TonClient {
         };
       });
     } catch (error) {
-      securityLogger.error('Failed to get TON transactions for address', error);
+      securityLogger.error('Failed to get TON transactions for address', SecurityEventType.SYSTEM_ERROR, error);
       throw error;
     }
   }
@@ -322,7 +322,7 @@ class TonClient {
       const isValid = this.tonweb.utils.Address.isValid(address);
       return isValid;
     } catch (error) {
-      securityLogger.error('Failed to validate TON address', error);
+      securityLogger.error('Failed to validate TON address', SecurityEventType.SYSTEM_ERROR, error);
       return false;
     }
   }
@@ -333,7 +333,7 @@ class TonClient {
   async verifySignature(data: any, signature: string, address: string): Promise<boolean> {
     // Check if the address is valid first
     if (!this.validateAddress(address)) {
-      securityLogger.warn(`Invalid TON address format: ${address}`);
+      securityLogger.warn(`Invalid TON address format: ${address}`, SecurityEventType.SYSTEM_ERROR);
       return false;
     }
     
@@ -358,7 +358,7 @@ class TonClient {
       const publicKey = await this.getPublicKeyFromAddress(address);
       
       if (!publicKey) {
-        securityLogger.warn(`Could not derive public key from address: ${address}`);
+        securityLogger.warn(`Could not derive public key from address: ${address}`, SecurityEventType.SYSTEM_ERROR);
         return false;
       }
       
@@ -366,15 +366,16 @@ class TonClient {
       const signatureBuffer = Buffer.from(signature, 'hex');
       
       // Use TonWeb or TonClient to verify the signature
-      const isValid = await this.tonweb.utils.verifySignature(
+      // Note: verifySignature may not be available in all TonWeb versions
+      const isValid = await (this.tonweb as any).utils?.verifySignature?.(
         publicKey,
         dataToVerify,
         signatureBuffer
       );
       
-      return isValid;
+      return isValid || false;
     } catch (error) {
-      securityLogger.error('Failed to verify TON signature', error);
+      securityLogger.error('Failed to verify TON signature', SecurityEventType.SYSTEM_ERROR, error);
       return false;
     }
   }
@@ -397,7 +398,8 @@ class TonClient {
     try {
       // In a real implementation, you'd need to query the contract state
       // and extract the public key from it
-      const accountInfo = await this.tonweb.getAccountInfo(address);
+      // Note: getAccountInfo may not be available in all TonWeb versions
+      const accountInfo = await (this.tonweb as any).provider?.getAddressInfo?.(address);
       
       // This is a placeholder - in reality, you'd need to parse the account data
       // to extract the public key
@@ -407,7 +409,7 @@ class TonClient {
       
       return null;
     } catch (error) {
-      securityLogger.error(`Failed to get public key for address ${address}`, error);
+      securityLogger.error(`Failed to get public key for address ${address}`, SecurityEventType.SYSTEM_ERROR, error);
       return null;
     }
   }
@@ -442,7 +444,7 @@ class TonClient {
       requiredSignatures: data.requiredSignatures || 2
     };
     
-    securityLogger.info(`Created TON signature request: ${requestId}`);
+    securityLogger.info(`Created TON signature request: ${requestId}`, SecurityEventType.VAULT_ACCESS);
     
     return {
       requestId,
@@ -473,7 +475,7 @@ class TonClient {
     );
     
     if (!isValid) {
-      securityLogger.warn(`Invalid signature from ${address} for request ${requestId}`);
+      securityLogger.warn(`Invalid signature from ${address} for request ${requestId}`, SecurityEventType.VAULT_ACCESS);
       return false;
     }
     
@@ -486,7 +488,7 @@ class TonClient {
       this.signatureRequests[requestId].status = 'approved';
     }
     
-    securityLogger.info(`Added signature from ${address} for request ${requestId}, total: ${sigCount}`);
+    securityLogger.info(`Added signature from ${address} for request ${requestId}, total: ${sigCount}`, SecurityEventType.VAULT_ACCESS);
     
     return true;
   }
@@ -550,7 +552,7 @@ class TonClient {
     
     try {
       // In a real implementation, this would query the vault contract
-      const vaultAddress = config.blockchainConfig.ton.contractAddresses.vault;
+      const vaultAddress = config.blockchainConfig.ton.contracts.vaultMaster;
       
       if (!vaultAddress) {
         throw new Error('TON vault contract address not configured');
@@ -567,7 +569,7 @@ class TonClient {
         owner: 'EQAvDfYmkVV2zFXzC0Hs2e2RGWJyMXHpnMTXH4jnI2W3AwLb'
       };
     } catch (error) {
-      securityLogger.error(`Failed to verify vault exists on TON: ${vaultId}`, error);
+      securityLogger.error(`Failed to verify vault exists on TON: ${vaultId}`, SecurityEventType.SYSTEM_ERROR, error);
       throw error;
     }
   }
@@ -593,7 +595,7 @@ class TonClient {
     
     try {
       // In a real implementation, this would query the vault contract's cross-chain status
-      const vaultAddress = config.blockchainConfig.ton.contractAddresses.vault;
+      const vaultAddress = config.blockchainConfig.ton.contracts.vaultMaster;
       
       if (!vaultAddress) {
         throw new Error('TON vault contract address not configured');
@@ -609,12 +611,28 @@ class TonClient {
         timestamp: Date.now() - 3600000 // 1 hour ago
       };
     } catch (error) {
-      securityLogger.error(`Failed to verify cross-chain status on TON: ${vaultId} from ${sourceChain}`, error);
+      securityLogger.error(`Failed to verify cross-chain status on TON: ${vaultId} from ${sourceChain}`, SecurityEventType.SYSTEM_ERROR, error);
       return {
         verified: false,
         timestamp: 0
       };
     }
+  }
+
+  /**
+   * Get vault backup data (Trinity Protocol)
+   */
+  async getVaultBackupData(vaultId: string): Promise<any> {
+    if (config.isDevelopmentMode) {
+      return {
+        vaultId,
+        backupHash: '0x' + Math.random().toString(16).substring(2),
+        lastBackup: Date.now() - 3600000,
+        backupVerified: true
+      };
+    }
+
+    throw new Error('Not implemented - production TON backup');
   }
 }
 
