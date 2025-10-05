@@ -400,31 +400,30 @@ class SecurityServiceAggregator {
   
   /**
    * Update Solana chain status
+   * Uses deployed Solana program via backend API
    */
   private async updateSolanaStatus() {
     try {
-      // In a real implementation, this would fetch actual blockchain data
       const solStatus = this.chainStatuses.get('SOL')!;
       
-      // Attempt to get network data if service is available
-      if (solanaService) {
-        try {
-          const connected = solanaService.isConnected();
-          solStatus.status = connected ? 'online' : 'offline';
-          
-          if (connected) {
-            // Get latest slot if possible
-            try {
-              const slot = await solanaService.getCurrentSlot(); // Use getCurrentSlot instead of getLatestSlot
-              solStatus.latestBlock = slot || 0;
-            } catch (slotError) {
-              console.log('Could not get Solana slot:', slotError);
-            }
-          }
-        } catch (error) {
-          console.log('Error connecting to Solana:', error);
+      // Call backend API to get deployed Solana program status
+      try {
+        const response = await fetch('/api/solana/status');
+        const data = await response.json();
+        
+        if (data.success && data.currentSlot) {
+          solStatus.status = 'online';
+          solStatus.latestBlock = data.currentSlot;
+          solStatus.active = true;
+          solStatus.synced = true;
+        } else {
           solStatus.status = 'degraded';
+          solStatus.active = false;
         }
+      } catch (error) {
+        // Silently handle error - don't spam console
+        solStatus.status = 'degraded';
+        solStatus.active = false;
       }
       
       // Update last sync time
