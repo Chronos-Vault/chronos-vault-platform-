@@ -30,7 +30,7 @@ export interface CreateVaultRequest {
   description?: string;
   assetType: string; // ETH, SOL, TON, USDC, etc.
   assetAmount: string;
-  primaryChain: 'ethereum' | 'solana' | 'ton';
+  // FIXED ARCHITECTURE: Arbitrum L2 PRIMARY, Solana MONITOR, TON BACKUP
   securityLevel: 1 | 2 | 3 | 4 | 5;
   
   // Time-lock specific
@@ -71,19 +71,17 @@ export class VaultCreationService {
 
   /**
    * Main vault creation method
+   * FIXED ARCHITECTURE: Arbitrum L2 PRIMARY, Solana MONITOR, TON BACKUP
    */
   async createVault(request: CreateVaultRequest): Promise<VaultCreationResult> {
-    securityLogger.info(`🏗️ Creating ${request.vaultType} vault on ${request.primaryChain}`, SecurityEventType.VAULT_CREATION);
+    securityLogger.info(`🏗️ Creating ${request.vaultType} vault with Trinity Protocol (Arbitrum L2 primary)`, SecurityEventType.VAULT_CREATION);
     
     try {
       // Validate request
       this.validateRequest(request);
       
-      // Determine Trinity Protocol roles
-      const trinityRoles = trinityProtocol.determineChainRoles(request.primaryChain);
-      
-      // Create vault in database first
-      const vaultData = await this.createVaultInDatabase(request, trinityRoles);
+      // Create vault in database first (using fixed Arbitrum-primary architecture)
+      const vaultData = await this.createVaultInDatabase(request);
       
       // Deploy to primary chain based on vault type
       let deploymentResult: any;
@@ -179,10 +177,10 @@ export class VaultCreationService {
 
   /**
    * Create vault record in database
+   * FIXED ARCHITECTURE: Arbitrum L2 PRIMARY, Solana MONITOR, TON BACKUP
    */
   private async createVaultInDatabase(
-    request: CreateVaultRequest,
-    trinityRoles: any
+    request: CreateVaultRequest
   ): Promise<any> {
     const unlockDate = new Date();
     unlockDate.setDate(unlockDate.getDate() + (request.timeLockDays || 0));
@@ -196,10 +194,10 @@ export class VaultCreationService {
       assetAmount: request.assetAmount,
       timeLockPeriod: request.timeLockDays || 0,
       unlockDate: unlockDate,
-      primaryChain: request.primaryChain,
+      primaryChain: 'ethereum', // Fixed: Arbitrum L2 (ethereum client)
       securityLevel: request.securityLevel,
       crossChainEnabled: request.securityLevel >= 4, // Enhanced and Maximum security
-      trinityRoles: trinityRoles,
+      trinityRoles: { primary: 'ethereum', monitor: 'solana', backup: 'ton' }, // Fixed roles
       trinityVerificationStatus: 'pending',
       signaturesRequired: request.signaturesRequired,
       signerAddresses: request.signerAddresses,
@@ -216,43 +214,24 @@ export class VaultCreationService {
 
   /**
    * Create Time-Lock Vault
+   * PRIMARY: Arbitrum L2 (ethereum), MONITOR: Solana, BACKUP: TON
    */
   async createTimeLockVault(vaultData: any, request: CreateVaultRequest): Promise<any> {
-    securityLogger.info(`⏱️ Creating Time-Lock Vault with ${request.timeLockDays} days lock`, SecurityEventType.VAULT_CREATION);
+    securityLogger.info(`⏱️ Creating Time-Lock Vault on Arbitrum L2 with ${request.timeLockDays} days lock`, SecurityEventType.VAULT_CREATION);
     
     const unlockTimestamp = Math.floor(Date.now() / 1000) + (request.timeLockDays! * 24 * 60 * 60);
     
-    // Deploy to primary chain
-    let ethereumTxHash, solanaTxHash, tonTxHash;
-    let ethereumContractAddress, solanaContractAddress, tonContractAddress;
-    
-    if (request.primaryChain === 'ethereum') {
-      const result = await ethereumClient.createTimeLockVault(
-        request.walletAddress,
-        request.assetAmount,
-        unlockTimestamp
-      );
-      ethereumTxHash = result.txHash;
-      ethereumContractAddress = result.vaultAddress;
-    } else if (request.primaryChain === 'solana') {
-      const result = await this.solanaProgramClient.createTimeLockVault(
-        request.walletAddress,
-        request.assetAmount,
-        unlockTimestamp
-      );
-      solanaTxHash = result.signature;
-      solanaContractAddress = result.vaultPubkey;
-    } else if (request.primaryChain === 'ton') {
-      const result = await tonClient.createTimeLockVault(
-        request.walletAddress,
-        request.assetAmount,
-        unlockTimestamp
-      );
-      tonTxHash = result.txHash;
-      tonContractAddress = result.vaultAddress;
-    }
+    // FIXED: Always deploy to Arbitrum L2 (ethereum client) as PRIMARY
+    const result = await ethereumClient.createTimeLockVault(
+      request.walletAddress,
+      request.assetAmount,
+      unlockTimestamp
+    );
+    const ethereumTxHash = result.txHash;
+    const ethereumContractAddress = result.vaultAddress;
     
     // Trinity Protocol verification (2-of-3 or 3-of-3 based on security level)
+    // FIXED: Always uses Arbitrum L2 PRIMARY, Solana MONITOR, TON BACKUP
     const requiredChains = request.securityLevel === 5 ? 3 : 2;
     const trinityVerification = await trinityProtocol.verifyOperation({
       operationId: `vault-create-${vaultData.id}`,
@@ -269,11 +248,11 @@ export class VaultCreationService {
     
     return {
       ethereumTxHash,
-      solanaTxHash,
-      tonTxHash,
+      solanaTxHash: undefined,
+      tonTxHash: undefined,
       ethereumContractAddress,
-      solanaContractAddress,
-      tonContractAddress,
+      solanaContractAddress: undefined,
+      tonContractAddress: undefined,
       trinityVerificationHash: trinityVerification.proofHash,
       trinityVerified: trinityVerification.consensusReached,
     };
@@ -281,40 +260,21 @@ export class VaultCreationService {
 
   /**
    * Create Multi-Signature Vault
+   * PRIMARY: Arbitrum L2 (ethereum), MONITOR: Solana, BACKUP: TON
    */
   async createMultiSigVault(vaultData: any, request: CreateVaultRequest): Promise<any> {
-    securityLogger.info(`🔐 Creating Multi-Sig Vault (${request.signaturesRequired}/${request.signerAddresses?.length})`, SecurityEventType.VAULT_CREATION);
+    securityLogger.info(`🔐 Creating Multi-Sig Vault on Arbitrum L2 (${request.signaturesRequired}/${request.signerAddresses?.length})`, SecurityEventType.VAULT_CREATION);
     
-    let ethereumTxHash, solanaTxHash, tonTxHash;
-    let ethereumContractAddress, solanaContractAddress, tonContractAddress;
+    // FIXED: Always deploy to Arbitrum L2 (ethereum client) as PRIMARY
+    const result = await ethereumClient.createMultiSigVault(
+      request.signerAddresses!,
+      request.signaturesRequired!,
+      request.assetAmount
+    );
+    const ethereumTxHash = result.txHash;
+    const ethereumContractAddress = result.vaultAddress;
     
-    if (request.primaryChain === 'ethereum') {
-      const result = await ethereumClient.createMultiSigVault(
-        request.signerAddresses!,
-        request.signaturesRequired!,
-        request.assetAmount
-      );
-      ethereumTxHash = result.txHash;
-      ethereumContractAddress = result.vaultAddress;
-    } else if (request.primaryChain === 'solana') {
-      const result = await this.solanaProgramClient.createMultiSigVault(
-        request.signerAddresses!,
-        request.signaturesRequired!,
-        request.assetAmount
-      );
-      solanaTxHash = result.signature;
-      solanaContractAddress = result.vaultPubkey;
-    } else if (request.primaryChain === 'ton') {
-      const result = await tonClient.createMultiSigVault(
-        request.signerAddresses!,
-        request.signaturesRequired!,
-        request.assetAmount
-      );
-      tonTxHash = result.txHash;
-      tonContractAddress = result.vaultAddress;
-    }
-    
-    // Trinity Protocol verification
+    // Trinity Protocol verification (FIXED: no primaryChain parameter)
     const requiredChains = request.securityLevel === 5 ? 3 : 2;
     const trinityVerification = await trinityProtocol.verifyOperation({
       operationId: `vault-create-${vaultData.id}`,
@@ -331,11 +291,11 @@ export class VaultCreationService {
     
     return {
       ethereumTxHash,
-      solanaTxHash,
-      tonTxHash,
+      solanaTxHash: undefined,
+      tonTxHash: undefined,
       ethereumContractAddress,
-      solanaContractAddress,
-      tonContractAddress,
+      solanaContractAddress: undefined,
+      tonContractAddress: undefined,
       trinityVerificationHash: trinityVerification.proofHash,
       trinityVerified: trinityVerification.consensusReached,
     };
@@ -390,6 +350,7 @@ export class VaultCreationService {
     }
     
     // Trinity Protocol verification (always 3-of-3 for fragment vaults)
+    // FIXED: Always uses Arbitrum L2 PRIMARY, Solana MONITOR, TON BACKUP
     const trinityVerification = await trinityProtocol.verifyOperation({
       operationId: `vault-create-${vaultData.id}`,
       operationType: OperationType.VAULT_CREATE,
