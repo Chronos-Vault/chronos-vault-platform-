@@ -14,6 +14,7 @@ interface WalletState {
 }
 
 interface WalletConnectorProps {
+  chain?: string;
   onWalletConnected?: (wallet: WalletState) => void;
 }
 
@@ -24,6 +25,44 @@ export const WalletConnector: React.FC<WalletConnectorProps> = ({ onWalletConnec
     phantom: { connected: false, address: '', type: 'phantom', blockchain: 'solana', connecting: false },
     tonkeeper: { connected: false, address: '', type: 'tonkeeper', blockchain: 'ton', connecting: false }
   });
+
+  // Restore wallet connection on mount
+  useEffect(() => {
+    const restoreWallet = async () => {
+      const sessionId = localStorage.getItem('wallet_session');
+      if (!sessionId) return;
+
+      try {
+        const response = await fetch('/api/wallet/session');
+        const data = await response.json();
+        
+        if (data.success && data.session) {
+          const { walletAddress, walletType, blockchain } = data.session;
+          const connectedWallet = {
+            connected: true,
+            address: walletAddress,
+            type: walletType,
+            blockchain,
+            connecting: false
+          };
+
+          setWallets(prev => ({
+            ...prev,
+            [walletType]: connectedWallet
+          }));
+
+          if (onWalletConnected) {
+            onWalletConnected(connectedWallet);
+          }
+        }
+      } catch (error) {
+        console.error('Failed to restore wallet session:', error);
+        localStorage.removeItem('wallet_session');
+      }
+    };
+
+    restoreWallet();
+  }, [onWalletConnected]);
 
   const connectWallet = async (walletType: string) => {
     const wallet = wallets[walletType];
@@ -37,21 +76,39 @@ export const WalletConnector: React.FC<WalletConnectorProps> = ({ onWalletConnec
       let signature = '';
       let message = '';
 
+      // Detect mobile
+      const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+
       // Get wallet address based on type
       if (walletType === 'metamask') {
         if (!window.ethereum?.isMetaMask) {
-          throw new Error('MetaMask not installed');
+          if (isMobile) {
+            // For mobile: Open this page in MetaMask's built-in browser
+            const hostname = window.location.hostname;
+            const path = window.location.pathname + window.location.search;
+            const metamaskDeepLink = `https://metamask.app.link/dapp/${hostname}${path}`;
+            window.location.href = metamaskDeepLink;
+            throw new Error('Redirecting to MetaMask browser...');
+          }
+          throw new Error('MetaMask not installed. Please install the MetaMask extension.');
         }
         const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
         address = accounts[0];
       } else if (walletType === 'phantom') {
         if (!window.solana?.isPhantom) {
-          throw new Error('Phantom wallet not installed');
+          if (isMobile) {
+            // For mobile: Open this page in Phantom's built-in browser
+            const currentUrl = window.location.href;
+            const phantomDeepLink = `https://phantom.app/ul/browse/${encodeURIComponent(currentUrl)}?ref=${encodeURIComponent(window.location.origin)}`;
+            window.location.href = phantomDeepLink;
+            throw new Error('Redirecting to Phantom browser...');
+          }
+          throw new Error('Phantom wallet not installed. Please install the Phantom extension.');
         }
         const response = await window.solana.connect();
         address = response.publicKey.toString();
       } else if (walletType === 'tonkeeper') {
-        // Simulate TON wallet connection
+        // For TON Keeper, simulate connection (works on mobile and desktop)
         address = `0:${Math.random().toString(36).substring(2, 15)}${Math.random().toString(36).substring(2, 15)}`;
       }
 
@@ -159,14 +216,18 @@ export const WalletConnector: React.FC<WalletConnectorProps> = ({ onWalletConnec
     }
   };
 
+  // Detect mobile
+  const isMobile = typeof window !== 'undefined' && /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+
   const walletData = [
     {
       id: 'metamask',
       name: 'MetaMask',
-      blockchain: 'Ethereum',
+      blockchain: 'Arbitrum L2',
       icon: '🦊',
       color: 'from-orange-500 to-yellow-500',
-      available: typeof window !== 'undefined' && window.ethereum?.isMetaMask
+      available: (typeof window !== 'undefined' && window.ethereum?.isMetaMask) || isMobile,
+      mobileOnly: isMobile && !(typeof window !== 'undefined' && window.ethereum?.isMetaMask)
     },
     {
       id: 'phantom',
@@ -174,7 +235,8 @@ export const WalletConnector: React.FC<WalletConnectorProps> = ({ onWalletConnec
       blockchain: 'Solana',
       icon: '👻',
       color: 'from-purple-500 to-pink-500',
-      available: typeof window !== 'undefined' && window.solana?.isPhantom
+      available: (typeof window !== 'undefined' && window.solana?.isPhantom) || isMobile,
+      mobileOnly: isMobile && !(typeof window !== 'undefined' && window.solana?.isPhantom)
     },
     {
       id: 'tonkeeper',
@@ -182,7 +244,8 @@ export const WalletConnector: React.FC<WalletConnectorProps> = ({ onWalletConnec
       blockchain: 'TON',
       icon: '💎',
       color: 'from-blue-500 to-cyan-500',
-      available: true
+      available: true,
+      mobileOnly: false
     }
   ];
 
@@ -216,6 +279,12 @@ export const WalletConnector: React.FC<WalletConnectorProps> = ({ onWalletConnec
                 </div>
               ) : (
                 <div className="space-y-2">
+                  {wallet.mobileOnly && (
+                    <div className="flex items-center gap-1 text-cyan-400 text-xs">
+                      <AlertCircle className="w-3 h-3" />
+                      Opens in {wallet.name} browser
+                    </div>
+                  )}
                   {!wallet.available && (
                     <div className="flex items-center gap-1 text-yellow-500 text-xs">
                       <AlertCircle className="w-3 h-3" />
@@ -231,12 +300,12 @@ export const WalletConnector: React.FC<WalletConnectorProps> = ({ onWalletConnec
                     {state.connecting ? (
                       <>
                         <Loader2 className="w-3 h-3 mr-1 animate-spin" />
-                        Connecting...
+                        {wallet.mobileOnly ? 'Redirecting...' : 'Connecting...'}
                       </>
                     ) : (
                       <>
                         <Wallet className="w-3 h-3 mr-1" />
-                        Connect
+                        {wallet.mobileOnly ? 'Open in Wallet Browser' : 'Connect'}
                       </>
                     )}
                   </Button>
