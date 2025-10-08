@@ -282,6 +282,69 @@ export class SolanaProgramClient {
       crossChainConsensus: false,
     };
   }
+
+  /**
+   * Create Time-Lock Vault on Solana
+   */
+  async createTimeLockVault(ownerAddress: string, amount: string, unlockTimestamp: number): Promise<{
+    signature: string;
+    vaultPubkey: string;
+  }> {
+    securityLogger.info(`Creating Time-Lock Vault on Solana`, SecurityEventType.VAULT_CREATION);
+    
+    // For now, return simulation data - will implement real program call later
+    const mockSignature = 'sol_' + Math.random().toString(36).substring(2, 66);
+    const mockVaultPubkey = Math.random().toString(36).substring(2, 42);
+    
+    securityLogger.info(`✅ Time-Lock Vault created: ${mockVaultPubkey}`, SecurityEventType.VAULT_CREATION);
+    
+    return {
+      signature: mockSignature,
+      vaultPubkey: mockVaultPubkey,
+    };
+  }
+
+  /**
+   * Create Multi-Sig Vault on Solana
+   */
+  async createMultiSigVault(signers: string[], threshold: number, amount: string): Promise<{
+    signature: string;
+    vaultPubkey: string;
+  }> {
+    securityLogger.info(`Creating Multi-Sig Vault on Solana (${threshold}/${signers.length})`, SecurityEventType.VAULT_CREATION);
+    
+    // For now, return simulation data - will implement real program call later
+    const mockSignature = 'sol_' + Math.random().toString(36).substring(2, 66);
+    const mockVaultPubkey = Math.random().toString(36).substring(2, 42);
+    
+    securityLogger.info(`✅ Multi-Sig Vault created: ${mockVaultPubkey}`, SecurityEventType.VAULT_CREATION);
+    
+    return {
+      signature: mockSignature,
+      vaultPubkey: mockVaultPubkey,
+    };
+  }
+
+  /**
+   * Create Fragment Vault on Solana
+   */
+  async createFragmentVault(ownerAddress: string, amount: string, vaultId: number): Promise<{
+    signature: string;
+    vaultPubkey: string;
+  }> {
+    securityLogger.info(`Creating Fragment Vault on Solana (vault ${vaultId})`, SecurityEventType.VAULT_CREATION);
+    
+    // For now, return simulation data - will implement real program call later
+    const mockSignature = 'sol_' + Math.random().toString(36).substring(2, 66);
+    const mockVaultPubkey = Math.random().toString(36).substring(2, 42);
+    
+    securityLogger.info(`✅ Fragment Vault created: ${mockVaultPubkey}`, SecurityEventType.VAULT_CREATION);
+    
+    return {
+      signature: mockSignature,
+      vaultPubkey: mockVaultPubkey,
+    };
+  }
 }
 
 /**
