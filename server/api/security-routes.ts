@@ -16,7 +16,7 @@ import progressiveQuantumRoutes from './progressive-quantum-vault-routes';
 // Middleware to ensure admin access
 const requireAdmin = (req: Request, res: Response, next: Function) => {
   // In a real implementation, check if the user has admin privileges
-  const isAdmin = req.session?.userRole === 'admin' || req.headers['x-admin-key'] === process.env.ADMIN_API_KEY;
+  const isAdmin = (req as any).session?.userRole === 'admin' || req.headers['x-admin-key'] === process.env.ADMIN_API_KEY;
   
   if (!isAdmin) {
     return res.status(403).json({
@@ -202,7 +202,7 @@ export function registerSecurityRoutes(app: Express): void {
       }
       
       // Use authenticated user ID or from body
-      const creatorId = req.session?.userId || req.body.creatorId;
+      const creatorId = (req as any).session?.userId || req.body.creatorId;
       
       if (!creatorId) {
         return res.status(400).json({
