@@ -8,8 +8,6 @@ export const users = pgTable("users", {
   password: text("password").notNull(),
   walletAddress: text("wallet_address"),
   email: text("email"),
-  stripeCustomerId: text("stripe_customer_id"),
-  stripeSubscriptionId: text("stripe_subscription_id"),
   subscriptionStatus: text("subscription_status"),
   metadata: jsonb("metadata"),
 });
@@ -53,7 +51,7 @@ export const vaults = pgTable("vaults", {
   userId: integer("user_id"),
   name: text("name").notNull(),
   description: text("description"),
-  vaultType: text("vault_type").notNull(), // legacy, investment, project
+  vaultType: text("vault_type").notNull(), // timelock, multisig, crosschain_fragment, etc.
   assetType: text("asset_type").notNull(),
   assetAmount: text("asset_amount").notNull(),
   timeLockPeriod: integer("time_lock_period").notNull(), // in days
@@ -78,6 +76,19 @@ export const vaults = pgTable("vaults", {
   actualCreationFee: text("actual_creation_fee"), // Actual fee paid after creation
   chainSelectionReason: text("chain_selection_reason"), // Why user picked this chain
   trinityRoles: jsonb("trinity_roles"), // Dynamic Trinity Protocol roles: {primary: "ethereum", verify1: "solana", verify2: "ton"}
+  // Trinity Protocol verification status
+  trinityVerificationStatus: text("trinity_verification_status").default("pending"), // pending, verified, failed
+  trinityVerificationHash: text("trinity_verification_hash"), // Cross-chain verification proof hash
+  // Transaction hashes for vault creation on each chain
+  ethereumTxHash: text("ethereum_tx_hash"),
+  solanaTxHash: text("solana_tx_hash"),
+  tonTxHash: text("ton_tx_hash"),
+  // Multi-sig specific fields
+  signaturesRequired: integer("signatures_required"), // For multi-sig vaults
+  signerAddresses: jsonb("signer_addresses"), // Array of signer wallet addresses
+  // Fragment vault specific fields
+  fragmentDistribution: jsonb("fragment_distribution"), // How fragments are distributed across chains
+  fragmentRecoveryThreshold: integer("fragment_recovery_threshold"), // Minimum fragments needed for recovery
 });
 
 export const beneficiaries = pgTable("beneficiaries", {
@@ -197,8 +208,6 @@ export const insertUserSchema = createInsertSchema(users).pick({
   password: true,
   walletAddress: true,
   email: true,
-  stripeCustomerId: true,
-  stripeSubscriptionId: true,
   subscriptionStatus: true,
   metadata: true,
 });
@@ -282,6 +291,15 @@ export const insertVaultSchema = createInsertSchema(vaults)
     actualCreationFee: true,
     chainSelectionReason: true,
     trinityRoles: true,
+    trinityVerificationStatus: true,
+    trinityVerificationHash: true,
+    ethereumTxHash: true,
+    solanaTxHash: true,
+    tonTxHash: true,
+    signaturesRequired: true,
+    signerAddresses: true,
+    fragmentDistribution: true,
+    fragmentRecoveryThreshold: true,
   })
   .extend({
     // Match database schema where assetAmount is a text field

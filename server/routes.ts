@@ -9,7 +9,6 @@ import securityLoggerRoutes from './api/security-logger-routes';
 import securityRoutes from './routes/security-routes';
 import healthRoutes from './api/health-routes';
 import incidentRoutes from './api/incident-routes';
-import paymentRoutes from './api/payment-routes';
 import vaultVerificationRoutes, { initializeVaultVerification } from './api/vault-verification-routes';
 import chainAgnosticVerificationRoutes, { initializeChainAgnosticVerification } from './api/chain-agnostic-verification-routes';
 import multiChainStateSyncRoutes, { initializeMultiChainSync } from './api/multi-chain-state-sync-routes';
@@ -40,6 +39,7 @@ import apiRoutes from './routes/index';
 import authRoutes from './auth-routes-new';
 import chainFeeRoutes from './api/chain-fee-routes';
 import vaultChainRoutes from './api/vault-chain-routes';
+import vaultCreationRoutes from './api/vault-creation-routes';
 import { SolanaProgramClient, CHRONOS_VAULT_PROGRAM_ID } from './blockchain/solana-program-client';
 import config from './config';
 
@@ -66,7 +66,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
   apiRouter.use('/health', healthRoutes);
   apiRouter.use('/incidents', incidentRoutes);
-  apiRouter.use('/payments', paymentRoutes);
   
   // Register our new device verification and TON smart contract integration routes
   apiRouter.use('/', apiRoutes);
@@ -119,6 +118,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
   
   // Register vault chain selection and planning routes
   apiRouter.use('/vault-chain', vaultChainRoutes);
+  
+  // Register vault creation routes
+  apiRouter.use('/vault-creation', vaultCreationRoutes);
   
   // Solana status endpoint - exposes deployed program data
   apiRouter.get('/solana/status', async (req: Request, res: Response) => {

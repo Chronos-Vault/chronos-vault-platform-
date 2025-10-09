@@ -346,23 +346,23 @@ export default function SecurityDashboard() {
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                {securityHealth ? (
+                {securityHealth && securityHealth.metrics ? (
                   <>
                     <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
                       <div className="text-center p-3 bg-purple-500/10 rounded-lg">
-                        <div className="text-2xl font-bold text-purple-400">{securityHealth.metrics.healthScore}%</div>
+                        <div className="text-2xl font-bold text-purple-400">{securityHealth.metrics.healthScore || 0}%</div>
                         <p className="text-xs text-gray-400">Health Score</p>
                       </div>
                       <div className="text-center p-3 bg-green-500/10 rounded-lg">
-                        <div className="text-2xl font-bold text-green-400">{securityHealth.metrics.blockedAttacks}</div>
+                        <div className="text-2xl font-bold text-green-400">{securityHealth.metrics.blockedAttacks || 0}</div>
                         <p className="text-xs text-gray-400">Blocked Attacks</p>
                       </div>
                       <div className="text-center p-3 bg-blue-500/10 rounded-lg">
-                        <div className="text-2xl font-bold text-blue-400">{securityHealth.metrics.totalIncidents}</div>
+                        <div className="text-2xl font-bold text-blue-400">{securityHealth.metrics.totalIncidents || 0}</div>
                         <p className="text-xs text-gray-400">Total Incidents</p>
                       </div>
                       <div className="text-center p-3 bg-orange-500/10 rounded-lg">
-                        <div className="text-2xl font-bold text-orange-400">{securityHealth.metrics.challengedTransactions}</div>
+                        <div className="text-2xl font-bold text-orange-400">{securityHealth.metrics.challengedTransactions || 0}</div>
                         <p className="text-xs text-gray-400">Challenged Txs</p>
                       </div>
                     </div>
@@ -370,8 +370,8 @@ export default function SecurityDashboard() {
                     <div className="space-y-3">
                       <p className="text-sm font-semibold text-gray-300">Active Security Systems:</p>
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                        <div className={`flex items-center gap-3 p-3 rounded-lg ${securityHealth.features.zeroKnowledgePrivacy ? 'bg-green-500/10' : 'bg-gray-500/10'}`}>
-                          {securityHealth.features.zeroKnowledgePrivacy ? (
+                        <div className={`flex items-center gap-3 p-3 rounded-lg ${securityHealth.features?.zeroKnowledgePrivacy ? 'bg-green-500/10' : 'bg-gray-500/10'}`}>
+                          {securityHealth.features?.zeroKnowledgePrivacy ? (
                             <CheckCircle className="w-5 h-5 text-green-400" />
                           ) : (
                             <AlertCircle className="w-5 h-5 text-gray-400" />
@@ -381,8 +381,8 @@ export default function SecurityDashboard() {
                             <p className="text-xs text-gray-400">Groth16 Protocol</p>
                           </div>
                         </div>
-                        <div className={`flex items-center gap-3 p-3 rounded-lg ${securityHealth.features.quantumResistantEncryption ? 'bg-green-500/10' : 'bg-gray-500/10'}`}>
-                          {securityHealth.features.quantumResistantEncryption ? (
+                        <div className={`flex items-center gap-3 p-3 rounded-lg ${securityHealth.features?.quantumResistantEncryption ? 'bg-green-500/10' : 'bg-gray-500/10'}`}>
+                          {securityHealth.features?.quantumResistantEncryption ? (
                             <CheckCircle className="w-5 h-5 text-green-400" />
                           ) : (
                             <AlertCircle className="w-5 h-5 text-gray-400" />
@@ -392,8 +392,8 @@ export default function SecurityDashboard() {
                             <p className="text-xs text-gray-400">ML-KEM-1024 + Dilithium-5</p>
                           </div>
                         </div>
-                        <div className={`flex items-center gap-3 p-3 rounded-lg ${securityHealth.features.behavioralAnalysis ? 'bg-green-500/10' : 'bg-gray-500/10'}`}>
-                          {securityHealth.features.behavioralAnalysis ? (
+                        <div className={`flex items-center gap-3 p-3 rounded-lg ${securityHealth.features?.behavioralAnalysis ? 'bg-green-500/10' : 'bg-gray-500/10'}`}>
+                          {securityHealth.features?.behavioralAnalysis ? (
                             <CheckCircle className="w-5 h-5 text-green-400" />
                           ) : (
                             <AlertCircle className="w-5 h-5 text-gray-400" />
@@ -403,8 +403,8 @@ export default function SecurityDashboard() {
                             <p className="text-xs text-gray-400">AI-powered threat detection</p>
                           </div>
                         </div>
-                        <div className={`flex items-center gap-3 p-3 rounded-lg ${securityHealth.features.multiSignature ? 'bg-green-500/10' : 'bg-gray-500/10'}`}>
-                          {securityHealth.features.multiSignature ? (
+                        <div className={`flex items-center gap-3 p-3 rounded-lg ${securityHealth.features?.multiSignature ? 'bg-green-500/10' : 'bg-gray-500/10'}`}>
+                          {securityHealth.features?.multiSignature ? (
                             <CheckCircle className="w-5 h-5 text-green-400" />
                           ) : (
                             <AlertCircle className="w-5 h-5 text-gray-400" />
@@ -414,8 +414,8 @@ export default function SecurityDashboard() {
                             <p className="text-xs text-gray-400">3-of-5 MPC threshold</p>
                           </div>
                         </div>
-                        <div className={`flex items-center gap-3 p-3 rounded-lg ${securityHealth.features.dataPersistence ? 'bg-green-500/10' : 'bg-gray-500/10'}`}>
-                          {securityHealth.features.dataPersistence ? (
+                        <div className={`flex items-center gap-3 p-3 rounded-lg ${securityHealth.features?.dataPersistence ? 'bg-green-500/10' : 'bg-gray-500/10'}`}>
+                          {securityHealth.features?.dataPersistence ? (
                             <CheckCircle className="w-5 h-5 text-green-400" />
                           ) : (
                             <AlertCircle className="w-5 h-5 text-gray-400" />
@@ -425,8 +425,8 @@ export default function SecurityDashboard() {
                             <p className="text-xs text-gray-400">Redundant storage</p>
                           </div>
                         </div>
-                        <div className={`flex items-center gap-3 p-3 rounded-lg ${securityHealth.features.crossChainVerification ? 'bg-green-500/10' : 'bg-gray-500/10'}`}>
-                          {securityHealth.features.crossChainVerification ? (
+                        <div className={`flex items-center gap-3 p-3 rounded-lg ${securityHealth.features?.crossChainVerification ? 'bg-green-500/10' : 'bg-gray-500/10'}`}>
+                          {securityHealth.features?.crossChainVerification ? (
                             <CheckCircle className="w-5 h-5 text-green-400" />
                           ) : (
                             <AlertCircle className="w-5 h-5 text-gray-400" />
@@ -441,7 +441,7 @@ export default function SecurityDashboard() {
                     
                     <div className="mt-4 pt-4 border-t border-gray-700">
                       <p className="text-xs text-gray-400">
-                        Last Updated: {new Date(securityHealth.metrics.lastUpdated).toLocaleString()}
+                        Last Updated: {securityHealth.metrics?.lastUpdated ? new Date(securityHealth.metrics.lastUpdated).toLocaleString() : 'Unknown'}
                       </p>
                     </div>
                   </>

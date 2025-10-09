@@ -440,8 +440,6 @@ export class MemStorage implements IStorage {
       id,
       walletAddress: insertUser.walletAddress || null,
       email: insertUser.email || null,
-      stripeCustomerId: insertUser.stripeCustomerId || null,
-      stripeSubscriptionId: insertUser.stripeSubscriptionId || null,
       subscriptionStatus: insertUser.subscriptionStatus || null,
       metadata: insertUser.metadata || null
     };
