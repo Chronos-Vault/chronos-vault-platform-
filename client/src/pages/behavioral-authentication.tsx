@@ -7,6 +7,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { useLocation } from 'wouter';
+import { useQuery } from '@tanstack/react-query';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
@@ -32,6 +33,12 @@ const BehavioralAuthenticationPage = (props: any) => {
   const [isScanning, setIsScanning] = useState(false);
   const [confidenceScore, setConfidenceScore] = useState(0);
   const [simulationComplete, setSimulationComplete] = useState(false);
+
+  // Fetch real behavioral analysis data from backend
+  const { data: behavioralData, isLoading } = useQuery({
+    queryKey: ['/api/behavioral/analysis'],
+    refetchInterval: 30000, // Refresh every 30 seconds
+  });
   
   // Settings state
   const [settings, setSettings] = useState({
