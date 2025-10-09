@@ -102,7 +102,7 @@ class SolanaService {
     // Check for development environment
     this.devModeEnabled = (typeof import.meta.env !== 'undefined' && import.meta.env.DEV) || 
                         (typeof window !== 'undefined' && window.location && window.location.hostname && 
-                         (window.location.hostname.includes('chronosvault') || window.location.hostname === 'localhost')) || 
+                         (window.location.hostname.includes('replit') || window.location.hostname === 'localhost')) || 
                         process.env.NODE_ENV === 'development';
     
     // Initialize endpoints
