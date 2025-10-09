@@ -152,6 +152,33 @@ const CrossChainBridgeHub = () => {
     refetchInterval: 10000, // Refresh every 10 seconds
   });
 
+  // Fetch real-time DEX swap quote (Jupiter/Uniswap V3/DeDust)
+  const { data: swapQuote, isLoading: isQuoteLoading } = useQuery({
+    queryKey: ['/api/defi/swap/price', sourceChain, targetChain, sourceAsset, targetAsset, amount],
+    queryFn: async () => {
+      if (!amount || parseFloat(amount) <= 0) return null;
+      
+      try {
+        const params = new URLSearchParams({
+          fromToken: sourceAsset,
+          toToken: targetAsset,
+          amount: amount,
+          fromNetwork: sourceChain,
+          toNetwork: targetChain,
+        });
+        
+        const response = await fetch(`/api/defi/swap/price?${params}`);
+        const data = await response.json();
+        return data.status === 'success' ? data.data : null;
+      } catch (error) {
+        console.error("Failed to fetch swap quote:", error);
+        return null;
+      }
+    },
+    enabled: !!amount && parseFloat(amount) > 0,
+    refetchInterval: 15000, // Refresh every 15 seconds
+  });
+
   // Bridge transfer mutation - REAL SMART CONTRACT INTEGRATION
   const bridgeMutation = useMutation({
     mutationFn: async () => {
@@ -159,7 +186,8 @@ const CrossChainBridgeHub = () => {
         throw new Error('Please fill in all required fields');
       }
       
-      const userAddress = wallet.connectedWallets[sourceChain]?.address || walletInfo?.[sourceChain]?.address;
+      const userAddress = wallet.connectedWallets[sourceChain]?.address || 
+        (sourceChain !== 'bitcoin' ? walletInfo?.[sourceChain]?.address : undefined);
       
       return await crossChainBridgeService.initiateBridge({
         sourceChain,
@@ -197,7 +225,9 @@ const CrossChainBridgeHub = () => {
   // Atomic swap creation mutation - REAL HTLC IMPLEMENTATION
   const swapMutation = useMutation({
     mutationFn: async (values: FormValues) => {
-      const userAddress = wallet.connectedWallets[values.crossChainSource as ChainType]?.address || walletInfo?.[values.crossChainSource as ChainType]?.address;
+      const sourceChainType = values.crossChainSource as ChainType;
+      const userAddress = wallet.connectedWallets[sourceChainType]?.address || 
+        (sourceChainType !== 'bitcoin' ? walletInfo?.[sourceChainType]?.address : undefined);
       
       // Call real HTLC atomic swap endpoint
       const response = await fetch('/api/bridge/swap/atomic', {
@@ -274,7 +304,9 @@ const CrossChainBridgeHub = () => {
       case 'solana': return 'SOL';
       case 'ton': return 'TON';
       case 'bitcoin': return 'BTC';
-      default: return chain.toUpperCase();
+      default: 
+        const _exhaustiveCheck: never = chain;
+        return String(_exhaustiveCheck).toUpperCase();
     }
   };
 
@@ -399,6 +431,32 @@ const CrossChainBridgeHub = () => {
                       className="bg-black border-[#333]"
                       data-testid="input-amount"
                     />
+                    {/* Real-time DEX Quote Display */}
+                    {swapQuote && amount && (
+                      <div className="mt-2 p-3 rounded-lg bg-gradient-to-r from-purple-500/10 to-cyan-500/10 border border-purple-500/20">
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center gap-2">
+                            <Zap className="h-4 w-4 text-purple-400" />
+                            <span className="text-sm text-gray-400">Real-time Quote:</span>
+                          </div>
+                          <div className="text-right">
+                            <p className="text-lg font-bold text-white">
+                              ≈ {parseFloat(swapQuote.price).toFixed(6)} {targetAsset}
+                            </p>
+                            <p className="text-xs text-gray-500">
+                              Route: {swapQuote.route?.join(' → ') || 'Direct'} 
+                              {swapQuote.priceImpact && ` • ${(swapQuote.priceImpact * 100).toFixed(2)}% impact`}
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+                    )}
+                    {isQuoteLoading && amount && (
+                      <div className="mt-2 flex items-center gap-2 text-sm text-gray-400">
+                        <Loader2 className="h-3 w-3 animate-spin" />
+                        Fetching best price from DEX...
+                      </div>
+                    )}
                   </div>
 
                   {/* Direction Indicator */}
@@ -688,7 +746,11 @@ const CrossChainBridgeHub = () => {
 
                 {/* HTLC Verification */}
                 <div>
-                  <HTLCVerificationPanel />
+                  <HTLCVerificationPanel 
+                    sourceChain={form.watch('crossChainSource') as BlockchainType || BlockchainType.ETHEREUM}
+                    destinationChain={form.watch('crossChainDestination') as BlockchainType || BlockchainType.TON}
+                    swapStatus={swapMutation.data?.status || 'pending'}
+                  />
                 </div>
               </div>
             </form>
