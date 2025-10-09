@@ -279,37 +279,35 @@ const VaultExplorer = () => {
   const blockchain = useBlockchain();
   const isConnected = blockchain.isConnected;
 
-  // Define response types for API endpoints
-  type ApiResponse<T> = {
-    success: boolean;
-    stats?: ExplorerStats;
-    vaults?: VaultInfo[];
-    message?: string;
-  };
-
-  // Fetch explorer stats
-  const { data: statsData, isLoading: statsLoading } = useQuery<ApiResponse<ExplorerStats>>({
-    queryKey: ['/api/explorer/stats'],
-    retry: 1
-  });
-
-  // Fetch recent vaults
-  const { data: recentVaultsData, isLoading: recentVaultsLoading } = useQuery<ApiResponse<VaultInfo[]>>({
-    queryKey: ['/api/explorer/recent'],
-    retry: 1
-  });
-
-  // Fetch blockchain-specific vaults
-  const { data: blockchainVaultsData, isLoading: blockchainVaultsLoading } = useQuery<ApiResponse<VaultInfo[]>>({
-    queryKey: ['/api/explorer/blockchain', activeBlockchain],
-    enabled: activeBlockchain !== 'ALL',
-    retry: 1
-  });
-
-  // Fetch search results
-  const { data: searchResultsData, isLoading: searchResultsLoading, refetch: refetchSearch } = useQuery<ApiResponse<VaultInfo[]>>({
-    queryKey: ['/api/explorer/search'],
-    enabled: false,
+  // Fetch vault explorer data from backend API
+  const { data: explorerData, isLoading, refetch } = useQuery<{
+    stats: {
+      totalVaults: number;
+      activeVaults: number;
+      lockedVaults: number;
+      totalValue: number;
+      byBlockchain: {
+        ethereum: number;
+        solana: number;
+        ton: number;
+      };
+    };
+    vaults: Array<{
+      id: string;
+      name: string;
+      type: string;
+      blockchain: string;
+      status: string;
+      value: string;
+      assetType: string;
+      createdAt: Date;
+      securityLevel: string;
+      crossChainEnabled: boolean;
+    }>;
+    lastUpdated: string;
+  }>({
+    queryKey: ['/api/vaults/explorer'],
+    refetchInterval: 30000, // Refresh every 30 seconds
     retry: 1
   });
 
@@ -317,7 +315,7 @@ const VaultExplorer = () => {
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
     if (searchQuery.trim()) {
-      refetchSearch();
+      refetch();
       setActiveTab('search');
     } else {
       toast({
@@ -328,32 +326,50 @@ const VaultExplorer = () => {
     }
   };
 
-  // Default empty stats
-  const defaultStats: ExplorerStats = {
+  // Transform backend data to match component needs
+  const stats = explorerData?.stats ? {
+    totalVaults: explorerData.stats.totalVaults,
+    byChain: { 
+      ETH: explorerData.stats.byBlockchain.ethereum, 
+      SOL: explorerData.stats.byBlockchain.solana, 
+      TON: explorerData.stats.byBlockchain.ton 
+    },
+    byStatus: { 
+      active: explorerData.stats.activeVaults, 
+      locked: explorerData.stats.lockedVaults, 
+      unlocked: 0, 
+      pending: 0 
+    },
+    totalValue: { 
+      ETH: `${explorerData.stats.totalValue.toFixed(2)} ETH`, 
+      SOL: '0 SOL', 
+      TON: '0 TON' 
+    }
+  } : {
     totalVaults: 0,
     byChain: { ETH: 0, SOL: 0, TON: 0 },
     byStatus: { active: 0, locked: 0, unlocked: 0, pending: 0 },
     totalValue: { ETH: '0 ETH', SOL: '0 SOL', TON: '0 TON' }
   };
 
-  // Extract stats from data
-  const stats: ExplorerStats = statsData?.success && statsData.stats ? statsData.stats : defaultStats;
-
-  // Extract vaults from data based on active tab
-  const vaults: VaultInfo[] = (() => {
-    if (activeTab === 'search') {
-      return searchResultsData?.success && searchResultsData.vaults ? searchResultsData.vaults : [];
-    } else if (activeTab === 'blockchain' && activeBlockchain !== 'ALL') {
-      return blockchainVaultsData?.success && blockchainVaultsData.vaults ? blockchainVaultsData.vaults : [];
-    } else {
-      return recentVaultsData?.success && recentVaultsData.vaults ? recentVaultsData.vaults : [];
-    }
-  })();
-
-  // Check if any data is loading
-  const isLoading = statsLoading || recentVaultsLoading || 
-    (activeTab === 'blockchain' && blockchainVaultsLoading) || 
-    (activeTab === 'search' && searchResultsLoading);
+  // Filter vaults based on active blockchain
+  const vaults = explorerData?.vaults ? 
+    explorerData.vaults
+      .filter(v => activeBlockchain === 'ALL' || v.blockchain === activeBlockchain.toLowerCase())
+      .filter(v => !searchQuery || v.id.toLowerCase().includes(searchQuery.toLowerCase()) || v.name.toLowerCase().includes(searchQuery.toLowerCase()))
+      .map(v => ({
+        id: v.id,
+        name: v.name,
+        vaultType: v.type,
+        blockchain: (v.blockchain.toUpperCase() as BlockchainType),
+        status: (v.status as VaultStatus),
+        totalValue: v.value,
+        assetType: v.assetType,
+        createdAt: v.createdAt,
+        securityLevel: (v.securityLevel as SecurityLevel),
+        crossChainEnabled: v.crossChainEnabled
+      } as VaultInfo))
+    : [];
 
   return (
     <div className="container pt-8 mb-16">
@@ -375,8 +391,9 @@ const VaultExplorer = () => {
                   <p className="text-yellow-400">Connect your wallet to verify ownership and access your vaults</p>
                 </div>
                 <Button 
-                  onClick={() => blockchain.connect('ton')} 
+                  onClick={() => window.location.href = '/wallet'} 
                   className="bg-[#6B00D7] hover:bg-[#6B00D7]/90 text-white"
+                  data-testid="button-connect-wallet-explorer"
                 >
                   <Wallet className="mr-2 h-4 w-4" />
                   Connect Wallet

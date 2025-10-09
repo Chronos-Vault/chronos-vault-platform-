@@ -122,17 +122,38 @@ const CrossChainBridgeHub = () => {
     },
   });
 
-  // Fetch bridge status
-  const { data: bridgeStatus, isLoading: isStatusLoading } = useQuery({
-    queryKey: ['/api/bridge/status', sourceChain, targetChain],
-    queryFn: async () => {
-      try {
-        return await crossChainBridgeService.getBridgeStatus(sourceChain, targetChain);
-      } catch (error) {
-        console.error("Failed to fetch bridge status:", error);
-        return null;
-      }
-    },
+  // Fetch bridge status from backend API
+  const { data: bridgeStatus, isLoading: isStatusLoading } = useQuery<{
+    statistics: {
+      totalVolume: string;
+      activeSwaps: number;
+      completedSwaps: number;
+      averageTime: string;
+      successRate: number;
+    };
+    liquidity: {
+      ethereum: { available: number; locked: number; utilization: number };
+      solana: { available: number; locked: number; utilization: number };
+      ton: { available: number; locked: number; utilization: number };
+    };
+    recentSwaps: Array<{
+      id: string;
+      from: string;
+      to: string;
+      amount: string;
+      status: string;
+      timestamp: string;
+    }>;
+    activeOperations: Array<{
+      id: string;
+      type: string;
+      chains: string[];
+      status: string;
+      progress: number;
+    }>;
+    lastUpdated: string;
+  }>({
+    queryKey: ['/api/bridge/status'],
     refetchInterval: 15000,
   });
 
