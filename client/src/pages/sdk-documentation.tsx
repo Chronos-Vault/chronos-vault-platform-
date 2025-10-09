@@ -174,7 +174,7 @@ const SDKDocumentation = () => {
                     <br />
                     <div className="text-gray-500">// Initialize with your configuration</div>
                     <div className="text-purple-400">const sdk = new ChronosVaultSDK({`{`}</div>
-                    <div className="pl-4"><span className="text-yellow-400">apiEndpoint</span>: <span className="text-green-400">'https://your-chronosvault-app.chronosvault.org'</span>,</div>
+                    <div className="pl-4"><span className="text-yellow-400">apiEndpoint</span>: <span className="text-green-400">'https://api.chronosvault.org'</span>,</div>
                     <div className="pl-4"><span className="text-yellow-400">enableBiometrics</span>: <span className="text-blue-400">true</span>,</div>
                     <div className="pl-4"><span className="text-yellow-400">enableEncryption</span>: <span className="text-blue-400">true</span>,</div>
                     <div className="pl-4"><span className="text-yellow-400">debugMode</span>: <span className="text-blue-400">__DEV__</span></div>
@@ -188,7 +188,7 @@ const SDKDocumentation = () => {
                     onClick={() => copyToClipboard(`import ChronosVaultSDK from '@chronos-vault/mobile-sdk';
 
 const sdk = new ChronosVaultSDK({
-  apiEndpoint: 'https://your-chronosvault-app.chronosvault.org',
+  apiEndpoint: 'https://api.chronosvault.org',
   enableBiometrics: true,
   enableEncryption: true,
   debugMode: __DEV__
