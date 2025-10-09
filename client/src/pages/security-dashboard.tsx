@@ -56,9 +56,29 @@ interface TimeLockedTransaction {
   currentApprovals: number;
 }
 
+interface SecurityHealthData {
+  status: string;
+  features: {
+    zeroKnowledgePrivacy: boolean;
+    quantumResistantEncryption: boolean;
+    behavioralAnalysis: boolean;
+    multiSignature: boolean;
+    dataPersistence: boolean;
+    crossChainVerification: boolean;
+  };
+  metrics: {
+    totalIncidents: number;
+    blockedAttacks: number;
+    challengedTransactions: number;
+    healthScore: number;
+    lastUpdated: string;
+  };
+}
+
 export default function SecurityDashboard() {
   const { toast } = useToast();
   const [activeTab, setActiveTab] = useState('overview');
+  const [securityHealth, setSecurityHealth] = useState<SecurityHealthData | null>(null);
   const [multiSigWallets, setMultiSigWallets] = useState<MultiSigWallet[]>([]);
   const [hardwareDevices, setHardwareDevices] = useState<HardwareDevice[]>([]);
   const [timeLockedTxs, setTimeLockedTxs] = useState<TimeLockedTransaction[]>([]);
@@ -77,7 +97,19 @@ export default function SecurityDashboard() {
   const loadSecurityData = async () => {
     setIsLoading(true);
     try {
-      // Load mock data for demonstration
+      // Fetch real Mathematical Defense Layer status from backend
+      const securityResponse = await fetch('/api/security/health');
+      const securityData = await securityResponse.json();
+      
+      console.log('Mathematical Defense Layer Status:', securityData);
+      
+      // Store Mathematical Defense Layer metrics
+      setSecurityHealth(securityData);
+      
+      // Note: Mathematical Defense Layer data will be displayed in the overview tab
+      // Multi-sig wallets and other features use their respective endpoints
+      
+      // Load mock data temporarily for demonstration (will be replaced with real endpoints)
       setMultiSigWallets([
         {
           id: 'wallet_001',
@@ -305,42 +337,119 @@ export default function SecurityDashboard() {
               </Card>
             </div>
 
-            {/* Security Features */}
-            <Card className="bg-gray-900/50 border-gray-700">
+            {/* Mathematical Defense Layer Status */}
+            <Card className="bg-gray-900/50 border-purple-500/30">
               <CardHeader>
-                <CardTitle>Active Security Features</CardTitle>
+                <CardTitle className="flex items-center gap-2">
+                  <Shield className="w-5 h-5 text-purple-400" />
+                  Mathematical Defense Layer
+                </CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div className="flex items-center gap-3 p-3 bg-green-500/10 rounded-lg">
-                    <CheckCircle className="w-5 h-5 text-green-400" />
-                    <div>
-                      <p className="font-medium">Trinity Protocol</p>
-                      <p className="text-sm text-gray-400">Cross-chain security active</p>
+                {securityHealth ? (
+                  <>
+                    <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+                      <div className="text-center p-3 bg-purple-500/10 rounded-lg">
+                        <div className="text-2xl font-bold text-purple-400">{securityHealth.metrics.healthScore}%</div>
+                        <p className="text-xs text-gray-400">Health Score</p>
+                      </div>
+                      <div className="text-center p-3 bg-green-500/10 rounded-lg">
+                        <div className="text-2xl font-bold text-green-400">{securityHealth.metrics.blockedAttacks}</div>
+                        <p className="text-xs text-gray-400">Blocked Attacks</p>
+                      </div>
+                      <div className="text-center p-3 bg-blue-500/10 rounded-lg">
+                        <div className="text-2xl font-bold text-blue-400">{securityHealth.metrics.totalIncidents}</div>
+                        <p className="text-xs text-gray-400">Total Incidents</p>
+                      </div>
+                      <div className="text-center p-3 bg-orange-500/10 rounded-lg">
+                        <div className="text-2xl font-bold text-orange-400">{securityHealth.metrics.challengedTransactions}</div>
+                        <p className="text-xs text-gray-400">Challenged Txs</p>
+                      </div>
                     </div>
-                  </div>
-                  <div className="flex items-center gap-3 p-3 bg-green-500/10 rounded-lg">
-                    <CheckCircle className="w-5 h-5 text-green-400" />
-                    <div>
-                      <p className="font-medium">Zero-Knowledge Proofs</p>
-                      <p className="text-sm text-gray-400">Privacy protection enabled</p>
+                    
+                    <div className="space-y-3">
+                      <p className="text-sm font-semibold text-gray-300">Active Security Systems:</p>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                        <div className={`flex items-center gap-3 p-3 rounded-lg ${securityHealth.features.zeroKnowledgePrivacy ? 'bg-green-500/10' : 'bg-gray-500/10'}`}>
+                          {securityHealth.features.zeroKnowledgePrivacy ? (
+                            <CheckCircle className="w-5 h-5 text-green-400" />
+                          ) : (
+                            <AlertCircle className="w-5 h-5 text-gray-400" />
+                          )}
+                          <div>
+                            <p className="font-medium">Zero-Knowledge Privacy</p>
+                            <p className="text-xs text-gray-400">Groth16 Protocol</p>
+                          </div>
+                        </div>
+                        <div className={`flex items-center gap-3 p-3 rounded-lg ${securityHealth.features.quantumResistantEncryption ? 'bg-green-500/10' : 'bg-gray-500/10'}`}>
+                          {securityHealth.features.quantumResistantEncryption ? (
+                            <CheckCircle className="w-5 h-5 text-green-400" />
+                          ) : (
+                            <AlertCircle className="w-5 h-5 text-gray-400" />
+                          )}
+                          <div>
+                            <p className="font-medium">Quantum-Resistant Crypto</p>
+                            <p className="text-xs text-gray-400">ML-KEM-1024 + Dilithium-5</p>
+                          </div>
+                        </div>
+                        <div className={`flex items-center gap-3 p-3 rounded-lg ${securityHealth.features.behavioralAnalysis ? 'bg-green-500/10' : 'bg-gray-500/10'}`}>
+                          {securityHealth.features.behavioralAnalysis ? (
+                            <CheckCircle className="w-5 h-5 text-green-400" />
+                          ) : (
+                            <AlertCircle className="w-5 h-5 text-gray-400" />
+                          )}
+                          <div>
+                            <p className="font-medium">Behavioral Analysis</p>
+                            <p className="text-xs text-gray-400">AI-powered threat detection</p>
+                          </div>
+                        </div>
+                        <div className={`flex items-center gap-3 p-3 rounded-lg ${securityHealth.features.multiSignature ? 'bg-green-500/10' : 'bg-gray-500/10'}`}>
+                          {securityHealth.features.multiSignature ? (
+                            <CheckCircle className="w-5 h-5 text-green-400" />
+                          ) : (
+                            <AlertCircle className="w-5 h-5 text-gray-400" />
+                          )}
+                          <div>
+                            <p className="font-medium">Multi-Signature Gateway</p>
+                            <p className="text-xs text-gray-400">3-of-5 MPC threshold</p>
+                          </div>
+                        </div>
+                        <div className={`flex items-center gap-3 p-3 rounded-lg ${securityHealth.features.dataPersistence ? 'bg-green-500/10' : 'bg-gray-500/10'}`}>
+                          {securityHealth.features.dataPersistence ? (
+                            <CheckCircle className="w-5 h-5 text-green-400" />
+                          ) : (
+                            <AlertCircle className="w-5 h-5 text-gray-400" />
+                          )}
+                          <div>
+                            <p className="font-medium">Data Persistence</p>
+                            <p className="text-xs text-gray-400">Redundant storage</p>
+                          </div>
+                        </div>
+                        <div className={`flex items-center gap-3 p-3 rounded-lg ${securityHealth.features.crossChainVerification ? 'bg-green-500/10' : 'bg-gray-500/10'}`}>
+                          {securityHealth.features.crossChainVerification ? (
+                            <CheckCircle className="w-5 h-5 text-green-400" />
+                          ) : (
+                            <AlertCircle className="w-5 h-5 text-gray-400" />
+                          )}
+                          <div>
+                            <p className="font-medium">Cross-Chain Verification</p>
+                            <p className="text-xs text-gray-400">2-of-3 Trinity consensus</p>
+                          </div>
+                        </div>
+                      </div>
                     </div>
-                  </div>
-                  <div className="flex items-center gap-3 p-3 bg-green-500/10 rounded-lg">
-                    <CheckCircle className="w-5 h-5 text-green-400" />
-                    <div>
-                      <p className="font-medium">Quantum Resistance</p>
-                      <p className="text-sm text-gray-400">Post-quantum encryption</p>
+                    
+                    <div className="mt-4 pt-4 border-t border-gray-700">
+                      <p className="text-xs text-gray-400">
+                        Last Updated: {new Date(securityHealth.metrics.lastUpdated).toLocaleString()}
+                      </p>
                     </div>
+                  </>
+                ) : (
+                  <div className="flex items-center justify-center py-8">
+                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-purple-400"></div>
                   </div>
-                  <div className="flex items-center gap-3 p-3 bg-green-500/10 rounded-lg">
-                    <CheckCircle className="w-5 h-5 text-green-400" />
-                    <div>
-                      <p className="font-medium">Behavioral Analysis</p>
-                      <p className="text-sm text-gray-400">AI threat detection</p>
-                    </div>
-                  </div>
-                </div>
+                )}
               </CardContent>
             </Card>
           </TabsContent>
