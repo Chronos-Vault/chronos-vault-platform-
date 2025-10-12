@@ -10,7 +10,7 @@ import {
   CardTitle,
 } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { ChevronRightIcon, BookOpenIcon, ShieldCheckIcon, KeySquareIcon, UsersIcon } from 'lucide-react';
+import { ChevronRightIcon, BookOpenIcon, ShieldCheckIcon, KeySquareIcon, UsersIcon, FileTextIcon } from 'lucide-react';
 
 // Import components
 import PageHeader from '@/components/layout/page-header';
@@ -228,19 +228,82 @@ const SecurityTutorials = () => {
           <div className="grid gap-6 mt-8">
             <Card className="bg-[#1A1A1A] border border-[#333] shadow-xl">
               <CardHeader>
-                <CardTitle className="text-2xl text-white">Understanding Quantum-Resistant Cryptography</CardTitle>
+                <CardTitle className="text-2xl text-white">Quantum-Resistant Cryptography Tutorial</CardTitle>
                 <CardDescription className="text-gray-400">
-                  How our post-quantum cryptographic systems protect your assets from future threats
+                  Learn how to use ML-KEM-1024 and MPC key management for quantum-safe vaults
                 </CardDescription>
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
                   <p className="text-gray-400">
-                    Quantum-Resistant Cryptography uses advanced mathematical algorithms that are designed to withstand
-                    attacks from quantum computers, which could potentially break traditional encryption methods.
+                    Chronos Vault uses <span className="text-[#50E3C2] font-semibold">ML-KEM-1024 (NIST FIPS 203)</span> for quantum-resistant key encapsulation and 
+                    <span className="text-[#50E3C2] font-semibold"> 3-of-5 Shamir Secret Sharing</span> for distributed key management. Here's how to use them:
                   </p>
                   
-                  <h3 className="text-xl font-semibold mt-6 text-[#FF5AF7]">Core Technologies</h3>
+                  <h3 className="text-xl font-semibold mt-6 text-[#FF5AF7]">Step 1: Generate Hybrid Quantum-Resistant Keys</h3>
+                  
+                  <div className="bg-[#0D0D0D] p-4 rounded-lg border border-[#444] overflow-x-auto mt-4">
+                    <pre className="text-sm text-gray-300">
+{`// Initialize quantum-resistant crypto system
+import { QuantumResistantCrypto } from '@chronos-vault/security';
+
+const quantumCrypto = new QuantumResistantCrypto();
+await quantumCrypto.initialize();
+
+// Generate hybrid keys (Classical RSA-4096 + Quantum ML-KEM-1024)
+const hybridKeys = await quantumCrypto.generateHybridKeyPair();
+
+console.log('✅ Hybrid keys generated:', {
+  classical: hybridKeys.classical.publicKey,
+  quantum: hybridKeys.quantum.publicKey,
+  combined: hybridKeys.combined.publicKey  // Use this for vault encryption
+});`}
+                    </pre>
+                  </div>
+                  
+                  <h3 className="text-xl font-semibold mt-6 text-[#FF5AF7]">Step 2: Distribute Keys with MPC (3-of-5 Threshold)</h3>
+                  <p className="text-gray-400">
+                    Split your vault key into 5 shares where any 3 can reconstruct it. No single node has access to the complete key.
+                  </p>
+                  
+                  <div className="bg-[#0D0D0D] p-4 rounded-lg border border-[#444] overflow-x-auto mt-4">
+                    <pre className="text-sm text-gray-300">
+{`// Real MPC implementation using Shamir Secret Sharing
+import { MPCKeyManagement } from '@chronos-vault/security';
+
+const mpc = new MPCKeyManagement();
+await mpc.initialize();
+
+// Generate distributed key (3-of-5 threshold)
+const distributedKey = await mpc.generateDistributedKey(
+  vaultId,
+  3,  // threshold: need 3 shares to reconstruct
+  5   // total shares distributed across 5 nodes
+);
+
+// Key shares are automatically encrypted with quantum-resistant crypto
+// and distributed across Trinity Protocol nodes:
+// - 2 nodes on Arbitrum L2
+// - 2 nodes on Solana  
+// - 1 node on TON
+
+console.log('🔑 Distributed Key Info:');
+console.log(\`  - Shares distributed: \${distributedKey.totalShares}\`);
+console.log(\`  - Threshold required: \${distributedKey.threshold}\`);
+console.log(\`  - Quantum-resistant: YES\`);
+console.log(\`  - Public key hash: \${distributedKey.publicKey}\`);`}
+                    </pre>
+                  </div>
+                  
+                  <div className="bg-[#111] p-4 rounded-lg border border-[#333] mt-6">
+                    <h4 className="text-lg font-medium text-white mb-2">Security Guarantee</h4>
+                    <p className="text-gray-400 text-sm">
+                      Even if 2 out of 5 nodes are compromised, your vault key remains secure. An attacker needs to simultaneously 
+                      compromise <span className="text-[#50E3C2] font-semibold">at least 3 nodes</span> to reconstruct your key - a mathematically negligible probability.
+                    </p>
+                  </div>
+                  
+                  <h3 className="text-xl font-semibold mt-6 text-[#FF5AF7]">Step 3: Use in Your Vault</h3>
                   
                   <div className="space-y-4 mt-4">
                     <div className="flex items-start">
@@ -248,10 +311,9 @@ const SecurityTutorials = () => {
                         <KeySquareIcon className="w-6 h-6 text-[#FF5AF7]" />
                       </div>
                       <div>
-                        <h4 className="text-lg font-medium text-white">Lattice-Based Cryptography</h4>
+                        <h4 className="text-lg font-medium text-white">Encryption</h4>
                         <p className="text-gray-400">
-                          Our system uses lattice-based algorithms which rely on the hardness of certain mathematical
-                          problems that even quantum computers find difficult to solve.
+                          Use the hybrid public key to encrypt vault data. Only the distributed private key (requiring 3-of-5 shares) can decrypt it.
                         </p>
                       </div>
                     </div>
@@ -261,10 +323,9 @@ const SecurityTutorials = () => {
                         <KeySquareIcon className="w-6 h-6 text-[#FF5AF7]" />
                       </div>
                       <div>
-                        <h4 className="text-lg font-medium text-white">Dynamic Key Rotation</h4>
+                        <h4 className="text-lg font-medium text-white">Key Reconstruction</h4>
                         <p className="text-gray-400">
-                          The system automatically rotates cryptographic keys according to a schedule, limiting the
-                          window of opportunity for any potential attacker.
+                          When unlocking your vault, the system automatically requests key shares from 3 nodes and reconstructs the private key temporarily in secure memory.
                         </p>
                       </div>
                     </div>
@@ -605,6 +666,64 @@ const SecurityTutorials = () => {
           </div>
         </TabsContent>
       </Tabs>
+
+      {/* GitHub Source Code Links */}
+      <div className="mt-10 bg-gradient-to-r from-[#1A1A1A] to-[#111] border border-[#333] rounded-lg p-6 shadow-xl">
+        <h2 className="text-2xl font-bold bg-gradient-to-r from-white via-[#FF5AF7] to-[#6B00D7] bg-clip-text text-transparent mb-4">
+          View Tutorial Code on GitHub
+        </h2>
+        <p className="text-gray-400 mb-6">
+          All tutorial code examples are from our <span className="text-[#50E3C2] font-semibold">open-source repositories</span>. 
+          Copy, modify, and integrate directly into your applications.
+        </p>
+        
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <a 
+            href="https://github.com/Chronos-Vault/chronos-vault-sdk" 
+            target="_blank" 
+            rel="noopener noreferrer"
+            className="bg-[#111] p-4 rounded-lg border border-[#333] hover:border-[#FF5AF7] transition-colors group"
+            data-testid="link-sdk-tutorials"
+          >
+            <div className="flex items-center gap-3 mb-2">
+              <FileTextIcon className="h-5 w-5 text-[#FF5AF7]" />
+              <h3 className="text-lg font-semibold text-white group-hover:text-[#FF5AF7] transition-colors">SDK Examples</h3>
+            </div>
+            <p className="text-sm text-gray-400">Complete integration tutorials and code samples</p>
+            <p className="text-xs text-gray-500 mt-2">examples/quantum-vault-example.ts</p>
+          </a>
+          
+          <a 
+            href="https://github.com/Chronos-Vault/chronos-vault-security" 
+            target="_blank" 
+            rel="noopener noreferrer"
+            className="bg-[#111] p-4 rounded-lg border border-[#333] hover:border-[#FF5AF7] transition-colors group"
+            data-testid="link-security-tutorials"
+          >
+            <div className="flex items-center gap-3 mb-2">
+              <ShieldCheckIcon className="h-5 w-5 text-[#FF5AF7]" />
+              <h3 className="text-lg font-semibold text-white group-hover:text-[#FF5AF7] transition-colors">Security Core</h3>
+            </div>
+            <p className="text-sm text-gray-400">MPC, Quantum Crypto, VDF implementations</p>
+            <p className="text-xs text-gray-500 mt-2">server/security/</p>
+          </a>
+          
+          <a 
+            href="https://github.com/Chronos-Vault/chronos-vault-contracts" 
+            target="_blank" 
+            rel="noopener noreferrer"
+            className="bg-[#111] p-4 rounded-lg border border-[#333] hover:border-[#FF5AF7] transition-colors group"
+            data-testid="link-contracts-tutorials"
+          >
+            <div className="flex items-center gap-3 mb-2">
+              <KeySquareIcon className="h-5 w-5 text-[#FF5AF7]" />
+              <h3 className="text-lg font-semibold text-white group-hover:text-[#FF5AF7] transition-colors">Smart Contracts</h3>
+            </div>
+            <p className="text-sm text-gray-400">Arbitrum, Solana, TON contract examples</p>
+            <p className="text-xs text-gray-500 mt-2">contracts/</p>
+          </a>
+        </div>
+      </div>
 
       <div className="mt-10 bg-gradient-to-r from-[#1A1A1A] to-[#111] border border-[#333] rounded-lg p-6 shadow-xl">
         <h2 className="text-2xl font-bold bg-gradient-to-r from-white via-[#FF5AF7] to-[#6B00D7] bg-clip-text text-transparent">Need More Help?</h2>
