@@ -19,48 +19,48 @@ export default function RevolutionaryFeatures() {
           />
 
           {/* Triple Chain Security */}
-          <section className="mt-16">
+          <section id="triple-chain" className="mt-16">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12 items-center">
               <div className="px-2 sm:px-0">
                 <div className="bg-gradient-to-r from-[#6B00D7]/20 to-[#FF5AF7]/20 w-fit rounded-full px-4 py-1.5 mb-4">
                   <span className="text-sm font-medium text-[#FF5AF7]">Chain Redundancy</span>
                 </div>
                 <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-6">
-                  <span className="bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent">Triple-Chain </span>
-                  <span className="animate-text-shine bg-gradient-to-r from-[#6B00D7] via-[#FF5AF7] to-[#6B00D7] bg-clip-text text-transparent bg-300% inline-block">Security</span>
+                  <span className="bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent">Trinity </span>
+                  <span className="animate-text-shine bg-gradient-to-r from-[#6B00D7] via-[#FF5AF7] to-[#6B00D7] bg-clip-text text-transparent bg-300% inline-block">Protocol</span>
                 </h2>
                 <p className="text-gray-300 text-base sm:text-lg mb-6 leading-relaxed">
-                  Our revolutionary Triple-Chain Security system distributes your vault data across Ethereum, Solana, and TON networks simultaneously, creating an unprecedented level of protection against single-chain vulnerabilities.
+                  Our Trinity Protocol features <strong className="text-[#FF5AF7]">fixed-role layer architecture</strong> where each blockchain serves a dedicated security purpose. Ethereum Layer 2 provides primary security with 95% lower fees, while Solana and TON deliver rapid validation and quantum-resistant backup with 2-of-3 mathematical consensus!
                 </p>
 
                 <div className="space-y-4 mb-8">
                   <div className="flex items-start gap-3">
-                    <div className="w-6 h-6 rounded-full bg-[#6B00D7]/20 flex items-center justify-center flex-shrink-0 mt-1">
-                      <i className="ri-checkbox-circle-fill text-[#FF5AF7]"></i>
+                    <div className="w-6 h-6 rounded-full bg-purple-500/20 flex items-center justify-center flex-shrink-0 mt-1">
+                      <i className="ri-checkbox-circle-fill text-purple-400"></i>
                     </div>
                     <div>
-                      <h4 className="font-semibold text-white">Ethereum Security Layer</h4>
-                      <p className="text-gray-400 text-sm sm:text-base">Leverages Ethereum's battle-tested security and robust consensus mechanisms as the primary security foundation.</p>
+                      <h4 className="font-semibold text-purple-400">Ethereum Layer 2: Primary Security</h4>
+                      <p className="text-gray-400 text-sm sm:text-base">Immutable ownership records via Layer 2 for 95% lower fees with maximum decentralization and ecosystem support.</p>
                     </div>
                   </div>
                   
                   <div className="flex items-start gap-3">
-                    <div className="w-6 h-6 rounded-full bg-[#6B00D7]/20 flex items-center justify-center flex-shrink-0 mt-1">
-                      <i className="ri-checkbox-circle-fill text-[#FF5AF7]"></i>
+                    <div className="w-6 h-6 rounded-full bg-purple-500/20 flex items-center justify-center flex-shrink-0 mt-1">
+                      <i className="ri-checkbox-circle-fill text-purple-400"></i>
                     </div>
                     <div>
-                      <h4 className="font-semibold text-white">Solana Speed Layer</h4>
-                      <p className="text-gray-400 text-sm sm:text-base">Utilizes Solana's high-speed transactions and low-cost operations for quick access and responsive vault interactions.</p>
+                      <h4 className="font-semibold text-purple-400">Solana: Rapid Validation</h4>
+                      <p className="text-gray-400 text-sm sm:text-base">High-frequency monitoring and state verification with lightning-fast speeds for real-time security.</p>
                     </div>
                   </div>
                   
                   <div className="flex items-start gap-3">
-                    <div className="w-6 h-6 rounded-full bg-[#6B00D7]/20 flex items-center justify-center flex-shrink-0 mt-1">
-                      <i className="ri-checkbox-circle-fill text-[#FF5AF7]"></i>
+                    <div className="w-6 h-6 rounded-full bg-purple-500/20 flex items-center justify-center flex-shrink-0 mt-1">
+                      <i className="ri-checkbox-circle-fill text-purple-400"></i>
                     </div>
                     <div>
-                      <h4 className="font-semibold text-white">TON Backup Layer</h4>
-                      <p className="text-gray-400 text-sm sm:text-base">Employs TON's scalable architecture as a resilient fallback system, ensuring continuous vault access under any circumstances.</p>
+                      <h4 className="font-semibold text-purple-400">TON: Recovery System</h4>
+                      <p className="text-gray-400 text-sm sm:text-base">Quantum-resistant backup and recovery layer for long-term asset protection with cutting-edge cryptography!</p>
                     </div>
                   </div>
                 </div>

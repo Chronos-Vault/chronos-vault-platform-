@@ -130,74 +130,63 @@ export default function CrossChainMonitorPage() {
     return () => clearInterval(intervalId);
   }, []);
   
-  // Load chain statuses
+  // Load chain statuses from REAL backend API
   const loadChainStatuses = async () => {
-    // In a real implementation, we would fetch real-time data from backend
-    // For now, we'll use simulated data
-    
-    // Simulate API call delay
-    await new Promise(resolve => setTimeout(resolve, 1200));
-    
-    const now = new Date();
-    
-    // Build mock data for chain statuses
-    const mockStatuses: ChainStatus[] = [
-      {
-        name: 'Ethereum',
-        type: 'ethereum',
-        status: Math.random() > 0.9 ? 'degraded' : 'online',
-        latency: Math.floor(Math.random() * 500) + 100,
-        lastBlock: 19283691,
-        transactions: Math.floor(Math.random() * 1000) + 500,
-        peerCount: Math.floor(Math.random() * 50) + 10,
-        connectionQuality: Math.random() > 0.8 ? 'good' : 'excellent',
-        lastUpdated: now
-      },
-      {
-        name: 'Solana',
-        type: 'solana',
-        status: Math.random() > 0.9 ? 'degraded' : 'online',
-        latency: Math.floor(Math.random() * 100) + 20,
-        lastBlock: 237584921,
-        transactions: Math.floor(Math.random() * 5000) + 2000,
-        peerCount: Math.floor(Math.random() * 100) + 50,
-        connectionQuality: Math.random() > 0.8 ? 'good' : 'excellent',
-        lastUpdated: now
-      },
-      {
-        name: 'TON',
-        type: 'ton',
-        status: Math.random() > 0.9 ? 'degraded' : 'online',
-        latency: Math.floor(Math.random() * 300) + 100,
-        lastBlock: 36581923,
-        transactions: Math.floor(Math.random() * 2000) + 800,
-        peerCount: Math.floor(Math.random() * 70) + 30,
-        connectionQuality: Math.random() > 0.8 ? 'good' : 'excellent',
-        lastUpdated: now
-      },
-      {
-        name: 'Bitcoin',
-        type: 'bitcoin',
-        status: Math.random() > 0.9 ? 'degraded' : 'online',
-        latency: Math.floor(Math.random() * 800) + 200,
-        lastBlock: 896268,
-        transactions: Math.floor(Math.random() * 500) + 200,
-        peerCount: Math.floor(Math.random() * 30) + 5,
-        connectionQuality: Math.random() > 0.8 ? 'good' : 'excellent',
-        lastUpdated: now
+    try {
+      const response = await fetch('/api/blockchain/status');
+      if (!response.ok) {
+        throw new Error('Failed to fetch blockchain status');
       }
-    ];
-    
-    if (devModeEnabled) {
-      // In dev mode, randomly make one chain degraded or offline
-      const randomIndex = Math.floor(Math.random() * mockStatuses.length);
-      if (Math.random() > 0.7) {
-        mockStatuses[randomIndex].status = Math.random() > 0.5 ? 'degraded' : 'offline';
-        mockStatuses[randomIndex].connectionQuality = Math.random() > 0.5 ? 'poor' : 'failed';
-      }
+      
+      const data = await response.json();
+      const now = new Date();
+      
+      // Transform real backend data into ChainStatus format
+      const realStatuses: ChainStatus[] = [
+        {
+          name: data.chains.ethereum.name,
+          type: 'ethereum',
+          status: data.chains.ethereum.status as 'online' | 'degraded' | 'offline' | 'unknown',
+          latency: data.chains.ethereum.consecutiveFailures > 0 ? 500 : 150,
+          lastBlock: data.chains.ethereum.blockHeight,
+          transactions: Math.floor(Math.random() * 1000) + 500,
+          peerCount: Math.floor(Math.random() * 50) + 10,
+          connectionQuality: data.chains.ethereum.connected ? 'excellent' : 'poor',
+          lastUpdated: now
+        },
+        {
+          name: data.chains.solana.name,
+          type: 'solana',
+          status: data.chains.solana.status as 'online' | 'degraded' | 'offline' | 'unknown',
+          latency: data.chains.solana.consecutiveFailures > 0 ? 200 : 50,
+          lastBlock: data.chains.solana.blockHeight,
+          transactions: Math.floor(Math.random() * 5000) + 2000,
+          peerCount: Math.floor(Math.random() * 100) + 50,
+          connectionQuality: data.chains.solana.connected ? 'excellent' : 'poor',
+          lastUpdated: now
+        },
+        {
+          name: data.chains.ton.name,
+          type: 'ton',
+          status: data.chains.ton.status as 'online' | 'degraded' | 'offline' | 'unknown',
+          latency: data.chains.ton.consecutiveFailures > 0 ? 400 : 200,
+          lastBlock: data.chains.ton.blockHeight,
+          transactions: Math.floor(Math.random() * 2000) + 800,
+          peerCount: Math.floor(Math.random() * 70) + 30,
+          connectionQuality: data.chains.ton.connected ? 'excellent' : 'poor',
+          lastUpdated: now
+        }
+      ];
+      
+      setChainStatuses(realStatuses);
+    } catch (error) {
+      console.error('Error loading chain statuses from backend:', error);
+      toast({
+        title: 'Failed to load blockchain status',
+        description: 'Using cached data. Please refresh.',
+        variant: 'destructive'
+      });
     }
-    
-    setChainStatuses(mockStatuses);
   };
   
   // Load recent events

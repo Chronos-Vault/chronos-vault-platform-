@@ -194,20 +194,20 @@ export default function SmartContractVault() {
                     </CardHeader>
                     <CardContent>
                       <p className="text-sm text-gray-300">
-                        Our proprietary Triple-Chain Security™ system distributes security responsibilities across three independent blockchain networks, creating an unprecedented security model.
+                        Our proprietary Trinity Protocol: 2-of-3 Chain Security distributes security responsibilities across three independent blockchain networks with fixed roles, creating an unprecedented security model.
                       </p>
                       <div className="mt-4 space-y-2">
                         <div className="flex items-center">
                           <CheckCircle2 className="h-4 w-4 text-green-500 mr-2" />
-                          <span className="text-sm text-gray-300">Ethereum primary ownership layer</span>
+                          <span className="text-sm text-gray-300">Ethereum Layer - Primary Security (via Layer 2 for 95% lower fees)</span>
                         </div>
                         <div className="flex items-center">
                           <CheckCircle2 className="h-4 w-4 text-green-500 mr-2" />
-                          <span className="text-sm text-gray-300">Solana high-frequency monitoring</span>
+                          <span className="text-sm text-gray-300">Solana Layer - Rapid Validation with millisecond confirmation</span>
                         </div>
                         <div className="flex items-center">
                           <CheckCircle2 className="h-4 w-4 text-green-500 mr-2" />
-                          <span className="text-sm text-gray-300">TON recovery and backup system</span>
+                          <span className="text-sm text-gray-300">TON Layer - Recovery System with quantum-resistant backup</span>
                         </div>
                       </div>
                     </CardContent>

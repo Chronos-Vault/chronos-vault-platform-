@@ -324,6 +324,39 @@ class CrossChainBridgeService {
   }
   
   /**
+   * Initiate a real bridge transfer with Trinity Protocol
+   * @param params Bridge transfer parameters
+   * @returns Bridge operation result
+   */
+  async initiateBridge(params: {
+    sourceChain: BlockchainType;
+    targetChain: BlockchainType;
+    asset: string;
+    amount: number;
+    recipientAddress: string;
+    userAddress?: string;
+    prioritizeSecurity?: boolean;
+  }): Promise<any> {
+    const response = await apiRequest("POST", "/api/bridge/initiate", {
+      sourceChain: params.sourceChain,
+      targetChain: params.targetChain,
+      amount: params.amount,
+      assetType: params.asset,
+      recipientAddress: params.recipientAddress,
+      userAddress: params.userAddress,
+      prioritizeSecurity: params.prioritizeSecurity !== false
+    });
+    
+    const data = await response.json();
+    
+    if (!data.success) {
+      throw new Error(data.error || "Failed to initiate bridge transfer");
+    }
+    
+    return data.data;
+  }
+
+  /**
    * Connect to a blockchain wallet
    * @param chain Blockchain to connect to
    * @returns Connection result

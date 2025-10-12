@@ -18,6 +18,9 @@ import { quantumCrypto } from './security/quantum-resistant-crypto';
 import { zkProofSystem } from './security/zk-proof-system';
 import { securityAudit } from './security/automated-security-audit';
 import { performanceOptimizer as perfOptimizer } from './security/performance-optimizer';
+import { trinityStateCoordinator } from './services/trinity-state-coordinator';
+import { circuitBreakerService } from './services/circuit-breaker-service';
+import { emergencyRecoveryProtocol } from './services/emergency-recovery-protocol';
 
 // Enhanced security: Strict authentication in all environments
 const isProduction = process.env.NODE_ENV === 'production';
@@ -1187,6 +1190,45 @@ app.get('/api/vaults/explorer', async (req, res) => {
     // Initialize transaction monitor
     transactionMonitor.initialize();
     console.log('Transaction Monitor initialized successfully');
+    
+    // Initialize Trinity Protocol cross-chain state synchronization
+    console.log('Initializing Trinity Protocol...');
+    await trinityStateCoordinator.initialize();
+    await trinityStateCoordinator.start();
+    console.log('✅ Trinity Protocol State Coordinator started');
+    
+    // Start circuit breaker monitoring
+    await circuitBreakerService.startMonitoring();
+    console.log('✅ Circuit Breaker Service monitoring started');
+    
+    // Start emergency recovery protocol
+    await emergencyRecoveryProtocol.start();
+    console.log('✅ Emergency Recovery Protocol active');
+    
+    // Trinity Protocol event listeners
+    trinityStateCoordinator.on('consensus:reached', (data) => {
+      securityLogger.info(
+        `Trinity Protocol consensus reached for vault ${data.vaultId}`,
+        SecurityEventType.SYSTEM_ERROR,
+        data
+      );
+    });
+    
+    circuitBreakerService.on('chain:failed', (data) => {
+      securityLogger.critical(
+        `Chain failure detected: ${data.chain}`,
+        SecurityEventType.SYSTEM_ERROR,
+        data
+      );
+    });
+    
+    emergencyRecoveryProtocol.on('emergency:activated', (data) => {
+      securityLogger.critical(
+        'Emergency recovery mode activated',
+        SecurityEventType.SYSTEM_ERROR,
+        data
+      );
+    });
     
   } catch (error: any) {
     console.error('Failed to initialize services:', error);

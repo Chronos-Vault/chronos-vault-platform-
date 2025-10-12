@@ -233,17 +233,17 @@ const CrossChainFragmentVaultDocumentation = () => {
                       The core security mechanism for distributing access control across blockchain networks:
                     </p>
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
-                      <div className="bg-white dark:bg-black/20 p-3 rounded border">
-                        <span className="text-purple-500 font-semibold block mb-1">Ethereum Layer</span>
-                        Primary smart contract management with EIP-1559 transaction optimization, solidity formal verification, and multi-signature authentication contracts.
+                      <div className="bg-white dark:bg-black/20 p-3 rounded border border-[#6B00D7]/50">
+                        <span className="text-purple-500 font-semibold block mb-1">Ethereum Layer - Primary Security</span>
+                        Immutable ownership and access control via Layer 2 for 95% lower fees. EIP-1559 optimization, formal verification, multi-signature.
                       </div>
-                      <div className="bg-white dark:bg-black/20 p-3 rounded border">
-                        <span className="text-purple-500 font-semibold block mb-1">Solana Layer</span>
-                        High-speed transaction verification utilizing parallel processing with Proof of History sequencing and Sealevel runtime for concurrent fragment validation.
+                      <div className="bg-white dark:bg-black/20 p-3 rounded border border-[#6B00D7]/50">
+                        <span className="text-purple-500 font-semibold block mb-1">Solana Layer - Rapid Validation</span>
+                        High-frequency monitoring with millisecond confirmation. Parallel processing, PoH sequencing, Sealevel runtime for speed.
                       </div>
-                      <div className="bg-white dark:bg-black/20 p-3 rounded border">
-                        <span className="text-purple-500 font-semibold block mb-1">TON Layer</span>
-                        Advanced cryptographic layer utilizing the powerful TON Virtual Machine (TVM) for fragment verification with formal mathematical proofs and workchain isolation.
+                      <div className="bg-white dark:bg-black/20 p-3 rounded border border-[#6B00D7]/50">
+                        <span className="text-purple-500 font-semibold block mb-1">TON Layer - Recovery System</span>
+                        Quantum-resistant backup and emergency recovery. TVM, formal proofs, workchain isolation for maximum resilience.
                       </div>
                     </div>
                   </div>
@@ -362,7 +362,7 @@ const CrossChainFragmentVaultDocumentation = () => {
                         <ul className="list-disc pl-5 space-y-1 text-muted-foreground">
                           <li>Networks: Mainnet, Testnet</li>
                           <li>Script Types: P2TR (Taproot) with MAST capabilities</li>
-                          <li>Fee Estimation: Dynamic with CPFP transaction strategy</li>
+                          <li>Fee Estimation: Intelligent with CPFP transaction strategy</li>
                           <li>Transaction Generation: PSBT format with multi-sig support</li>
                           <li>Verification Method: Full verification using SPV proofs</li>
                         </ul>
@@ -389,7 +389,7 @@ const CrossChainFragmentVaultDocumentation = () => {
                           <li>Standard Security: 2-of-3 fragment threshold (ETH, SOL, TON)</li>
                           <li>Enhanced Security: 3-of-4 with optional Bitcoin integration</li>
                           <li>Maximum Security: 4-of-4 with mandatory verification on all chains</li>
-                          <li>Dynamic Adjustment: Threshold adapts based on operation value</li>
+                          <li>Intelligent Adjustment: Threshold adapts based on operation value</li>
                           <li>Contextual Security: Different thresholds for different operation types</li>
                         </ul>
                       </div>

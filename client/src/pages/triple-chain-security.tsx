@@ -74,57 +74,94 @@ export default function TripleChainSecurity() {
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <Shield className="h-6 w-6 text-primary" />
-                How Triple-Chain Security™ Works
+                How Trinity Protocol Works
               </CardTitle>
               <CardDescription className="text-slate-300">
-                Our innovative security architecture distributes trust across three independent blockchains
+                Each blockchain serves a specific role in our 2-of-3 security architecture with Ethereum Layer 2 (Arbitrum) for affordable primary security.
               </CardDescription>
             </CardHeader>
             <CardContent>
+              <div className="mb-6 rounded-lg bg-[#6B00D7]/10 border border-[#6B00D7]/30 p-4">
+                <div className="mb-2 flex items-center gap-2 font-medium text-purple-400">
+                  <Shield className="h-5 w-5" />
+                  <h3>Fixed Layer Architecture</h3>
+                </div>
+                <p className="text-sm text-slate-300">
+                  Each blockchain has a dedicated role in protecting your vault. The Trinity Protocol uses Ethereum Layer 2 (Arbitrum) deployment 
+                  for 95% lower fees while maintaining 2-of-3 mathematical consensus across all three layers.
+                </p>
+              </div>
+
               <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
-                <div className="rounded-lg bg-slate-800/50 p-4">
-                  <div className="mb-3 flex items-center gap-2 font-medium text-primary">
+                <div className="rounded-lg bg-slate-800/50 p-4 border border-[#6B00D7]/50">
+                  <div className="mb-3 flex items-center gap-2 font-medium text-purple-400">
                     <LockIcon className="h-5 w-5" />
-                    <h3>Ethereum Layer</h3>
+                    <h3>Ethereum Layer 2 (Arbitrum)</h3>
                   </div>
-                  <p className="text-sm text-slate-300">
-                    Primary ownership layer responsible for vault creation, access control,
-                    and time-lock enforcement. Acts as the source of truth for vault ownership.
+                  <p className="text-sm text-slate-300 mb-3">
+                    Primary Security layer with immutable ownership records. Deployed via Arbitrum Layer 2 for 95% lower fees while maintaining maximum decentralization.
                   </p>
+                  <div className="text-xs text-slate-400">
+                    <div className="flex justify-between mb-1">
+                      <span>Role:</span>
+                      <span className="text-purple-400">Primary Security</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span>Status:</span>
+                      <span className="text-purple-400">LAYER 2 OPTIMIZED</span>
+                    </div>
+                  </div>
                 </div>
                 
-                <div className="rounded-lg bg-slate-800/50 p-4">
-                  <div className="mb-3 flex items-center gap-2 font-medium text-primary">
+                <div className="rounded-lg bg-slate-800/50 p-4 border border-[#6B00D7]/50">
+                  <div className="mb-3 flex items-center gap-2 font-medium text-purple-400">
                     <BarChart3 className="h-5 w-5" />
-                    <h3>Solana Layer</h3>
+                    <h3>Solana</h3>
                   </div>
-                  <p className="text-sm text-slate-300">
-                    High-frequency monitoring layer that provides real-time security checks
-                    and rapid verification of vault status. Protects against unauthorized access attempts.
+                  <p className="text-sm text-slate-300 mb-3">
+                    Rapid Validation layer providing high-frequency monitoring and state verification with lightning-fast transaction speeds.
                   </p>
+                  <div className="text-xs text-slate-400">
+                    <div className="flex justify-between mb-1">
+                      <span>Role:</span>
+                      <span className="text-purple-400">Rapid Validation</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span>Status:</span>
+                      <span className="text-purple-400">NETWORK ACTIVE</span>
+                    </div>
+                  </div>
                 </div>
                 
-                <div className="rounded-lg bg-slate-800/50 p-4">
-                  <div className="mb-3 flex items-center gap-2 font-medium text-primary">
+                <div className="rounded-lg bg-slate-800/50 p-4 border border-[#6B00D7]/50">
+                  <div className="mb-3 flex items-center gap-2 font-medium text-purple-400">
                     <Database className="h-5 w-5" />
-                    <h3>TON Layer</h3>
+                    <h3>TON</h3>
                   </div>
-                  <p className="text-sm text-slate-300">
-                    Backup and recovery layer providing emergency access mechanisms
-                    and cross-chain verification. Enables disaster recovery in case of primary chain issues.
+                  <p className="text-sm text-slate-300 mb-3">
+                    Recovery System layer with quantum-resistant backup and recovery capabilities using cutting-edge cryptography.
                   </p>
+                  <div className="text-xs text-slate-400">
+                    <div className="flex justify-between mb-1">
+                      <span>Role:</span>
+                      <span className="text-purple-400">Recovery System</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span>Status:</span>
+                      <span className="text-purple-400">NETWORK ACTIVE</span>
+                    </div>
+                  </div>
                 </div>
               </div>
               
               <div className="mt-6 rounded-lg bg-primary/10 p-4">
                 <div className="mb-2 flex items-center gap-2 font-medium text-primary">
                   <Shield className="h-5 w-5" />
-                  <h3>Cross-Chain Verification Protocol</h3>
+                  <h3>2-of-3 Mathematical Consensus</h3>
                 </div>
                 <p className="text-sm text-slate-300">
-                  All operations on high-security vaults require verification across multiple blockchains.
-                  Each chain independently verifies and confirms the validity of requests, creating a
-                  distributed security system that eliminates single points of failure.
+                  Your vault requires verification from at least 2 out of 3 blockchain layers for all operations. 
+                  This mathematical consensus ensures maximum security—even if one blockchain is compromised, your assets remain protected by the other two layers.
                 </p>
               </div>
             </CardContent>

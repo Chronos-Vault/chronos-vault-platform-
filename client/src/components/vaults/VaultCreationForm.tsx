@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useMutation } from '@tanstack/react-query';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -7,6 +8,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Badge } from '@/components/ui/badge';
 import { Lock, Shield, Clock, Coins, AlertTriangle } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import { apiRequest } from '@/lib/queryClient';
 
 const VAULT_TYPES = [
   { value: 'time-lock', label: 'Time Lock Vault', description: 'Unlock after specified time' },
@@ -42,32 +44,56 @@ export default function VaultCreationForm() {
     unlockTime: '',
   });
 
-  const [isCreating, setIsCreating] = useState(false);
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-
-    if (!formData.vaultName || !formData.vaultType || !formData.cryptocurrency || !formData.amount) {
-      toast({
-        title: "❌ Missing Information",
-        description: "Please fill in all required fields",
-        variant: "destructive"
-      });
-      return;
-    }
-
-    setIsCreating(true);
-
-    try {
-      const selectedSecurity = SECURITY_LEVELS.find(s => s.value === formData.securityLevel);
+  // Create vault mutation
+  const createVaultMutation = useMutation({
+    mutationFn: async (data: typeof formData) => {
+      const selectedSecurity = SECURITY_LEVELS.find(s => s.value === data.securityLevel);
       
       toast({
         title: "🔺 Creating Trinity Protocol Vault",
         description: `Deploying across ${selectedSecurity?.chains} blockchain${selectedSecurity?.chains! > 1 ? 's' : ''}...`,
       });
 
-      await new Promise(resolve => setTimeout(resolve, 2000));
+      // Map vault types to API endpoints
+      if (data.vaultType === 'time-lock') {
+        const unlockTimestamp = data.unlockTime 
+          ? Math.floor(new Date(data.unlockTime).getTime() / 1000)
+          : Math.floor(Date.now() / 1000) + 30 * 24 * 60 * 60; // Default 30 days
 
+        const response = await apiRequest('POST', '/api/vault-creation/time-lock', {
+          ownerAddress: '0x0000000000000000000000000000000000000000', // TODO: Get from wallet
+          amount: data.amount,
+          unlockTimestamp,
+          vaultName: data.vaultName,
+          vaultDescription: `${data.cryptocurrency} vault with ${selectedSecurity?.label} security`,
+        });
+        return response.json();
+      } else if (data.vaultType === 'multi-sig') {
+        const response = await apiRequest('POST', '/api/vault-creation/multi-sig', {
+          signers: [
+            '0x0000000000000000000000000000000000000001',
+            '0x0000000000000000000000000000000000000002',
+          ], // TODO: Get from form
+          threshold: 2,
+          amount: data.amount,
+          vaultName: data.vaultName,
+          vaultDescription: `${data.cryptocurrency} vault with ${selectedSecurity?.label} security`,
+        });
+        return response.json();
+      } else {
+        // For other vault types, use fragment vault as fallback
+        const response = await apiRequest('POST', '/api/vault-creation/fragment', {
+          ownerAddress: '0x0000000000000000000000000000000000000000', // TODO: Get from wallet
+          amount: data.amount,
+          vaultName: data.vaultName,
+          vaultDescription: `${data.cryptocurrency} vault with ${selectedSecurity?.label} security`,
+        });
+        return response.json();
+      }
+    },
+    onSuccess: (data) => {
+      const selectedSecurity = SECURITY_LEVELS.find(s => s.value === formData.securityLevel);
+      
       toast({
         title: "✅ Vault Created Successfully!",
         description: `${formData.vaultName} is now protected by Trinity Protocol with ${selectedSecurity?.label} security (${selectedSecurity?.chains}-chain protection)`,
@@ -81,15 +107,29 @@ export default function VaultCreationForm() {
         amount: '',
         unlockTime: '',
       });
-    } catch (error: any) {
+    },
+    onError: (error: any) => {
       toast({
         title: "❌ Vault Creation Failed",
         description: error.message || "Failed to create vault",
         variant: "destructive"
       });
-    } finally {
-      setIsCreating(false);
+    },
+  });
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    if (!formData.vaultName || !formData.vaultType || !formData.cryptocurrency || !formData.amount) {
+      toast({
+        title: "❌ Missing Information",
+        description: "Please fill in all required fields",
+        variant: "destructive"
+      });
+      return;
     }
+
+    createVaultMutation.mutate(formData);
   };
 
   const selectedSecurity = SECURITY_LEVELS.find(s => s.value === formData.securityLevel);
@@ -236,11 +276,11 @@ export default function VaultCreationForm() {
           <div className="flex gap-4">
             <Button
               type="submit"
-              disabled={isCreating}
+              disabled={createVaultMutation.isPending}
               className="flex-1 bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700"
               data-testid="button-create-vault"
             >
-              {isCreating ? (
+              {createVaultMutation.isPending ? (
                 <>
                   <div className="animate-spin mr-2 h-4 w-4 border-2 border-white border-t-transparent rounded-full" />
                   Creating Vault...

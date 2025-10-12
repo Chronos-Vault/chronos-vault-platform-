@@ -75,7 +75,7 @@ export default function Documentation() {
                     <li>
                       <a href="#ethereum" className="text-gray-300 hover:text-white transition-colors flex items-center gap-2">
                         <span className="w-1.5 h-1.5 rounded-full bg-[#6B00D7]"></span>
-                        Ethereum Integration
+                        Ethereum Layer 2 Integration
                       </a>
                     </li>
                     <li>
@@ -88,6 +88,60 @@ export default function Documentation() {
                       <a href="#ton" className="text-gray-300 hover:text-white transition-colors flex items-center gap-2">
                         <span className="w-1.5 h-1.5 rounded-full bg-[#6B00D7]"></span>
                         TON Integration
+                      </a>
+                    </li>
+                  </ul>
+                </div>
+
+                <div>
+                  <h4 className="text-[#FF5AF7] font-medium mb-2">🛡️ Mathematical Defense Layer</h4>
+                  <ul className="space-y-2 pl-2">
+                    <li>
+                      <a href="#mdl-overview" className="text-gray-300 hover:text-white transition-colors flex items-center gap-2">
+                        <span className="w-1.5 h-1.5 rounded-full bg-[#6B00D7]"></span>
+                        MDL Overview
+                      </a>
+                    </li>
+                    <li>
+                      <a href="#zk-proofs" className="text-gray-300 hover:text-white transition-colors flex items-center gap-2">
+                        <span className="w-1.5 h-1.5 rounded-full bg-[#6B00D7]"></span>
+                        Zero-Knowledge Proofs
+                      </a>
+                    </li>
+                    <li>
+                      <a href="#quantum-crypto" className="text-gray-300 hover:text-white transition-colors flex items-center gap-2">
+                        <span className="w-1.5 h-1.5 rounded-full bg-[#6B00D7]"></span>
+                        Quantum-Resistant Crypto
+                      </a>
+                    </li>
+                    <li>
+                      <a href="#mpc" className="text-gray-300 hover:text-white transition-colors flex items-center gap-2">
+                        <span className="w-1.5 h-1.5 rounded-full bg-[#6B00D7]"></span>
+                        Multi-Party Computation
+                      </a>
+                    </li>
+                    <li>
+                      <a href="#vdf" className="text-gray-300 hover:text-white transition-colors flex items-center gap-2">
+                        <span className="w-1.5 h-1.5 rounded-full bg-[#6B00D7]"></span>
+                        Verifiable Delay Functions
+                      </a>
+                    </li>
+                  </ul>
+                </div>
+
+                <div>
+                  <h4 className="text-[#FF5AF7] font-medium mb-2">Developer Resources</h4>
+                  <ul className="space-y-2 pl-2">
+                    <li>
+                      <a href="#github-repos" className="text-gray-300 hover:text-white transition-colors flex items-center gap-2">
+                        <span className="w-1.5 h-1.5 rounded-full bg-[#6B00D7]"></span>
+                        GitHub Repositories
+                      </a>
+                    </li>
+                    <li>
+                      <a href="#integration-guide" className="text-gray-300 hover:text-white transition-colors flex items-center gap-2">
+                        <span className="w-1.5 h-1.5 rounded-full bg-[#6B00D7]"></span>
+                        Integration Guide
                       </a>
                     </li>
                   </ul>
@@ -134,7 +188,7 @@ export default function Documentation() {
                   <div className="bg-[#6B00D7]/10 border border-[#6B00D7]/30 rounded-lg p-4">
                     <h4 className="font-semibold text-white mb-2">Key Innovations</h4>
                     <ul className="list-disc pl-5 space-y-1">
-                      <li>Multi-chain architecture with Ethereum, Solana, and TON integration</li>
+                      <li>Multi-chain architecture with Ethereum Layer 2 (Arbitrum), Solana, and TON integration</li>
                       <li>Triple-chain security model for unprecedented reliability</li>
                       <li>Cross-chain atomic swaps for asset conversion while time-locked</li>
                       <li>Permanent storage through IPFS and Arweave integration</li>
@@ -143,8 +197,8 @@ export default function Documentation() {
                   </div>
                   
                   <div className="mt-5 grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <Link href="/technical-specification" className="block">
-                      <div className="bg-gradient-to-r from-[#6B00D7]/20 to-[#FF5AF7]/10 border border-[#6B00D7]/30 rounded-lg p-4 hover:from-[#6B00D7]/30 hover:to-[#FF5AF7]/20 transition-all">
+                    <Link href="/technical-spec">
+                      <div className="bg-gradient-to-r from-[#6B00D7]/20 to-[#FF5AF7]/10 border border-[#6B00D7]/30 rounded-lg p-4 hover:from-[#6B00D7]/30 hover:to-[#FF5AF7]/20 transition-all cursor-pointer">
                         <h4 className="font-semibold text-white flex items-center gap-2">
                           <span className="text-xl">🧪</span>
                           Technical Specifications
@@ -152,8 +206,8 @@ export default function Documentation() {
                         <p className="text-gray-300 mt-1">Explore the detailed technical architecture and specifications of the Chronos Vault platform.</p>
                       </div>
                     </Link>
-                    <Link href="/cvt-tokenomics" className="block">
-                      <div className="bg-gradient-to-r from-[#6B00D7]/20 to-[#FF5AF7]/10 border border-[#6B00D7]/30 rounded-lg p-4 hover:from-[#6B00D7]/30 hover:to-[#FF5AF7]/20 transition-all">
+                    <Link href="/cvt-tokenomics">
+                      <div className="bg-gradient-to-r from-[#6B00D7]/20 to-[#FF5AF7]/10 border border-[#6B00D7]/30 rounded-lg p-4 hover:from-[#6B00D7]/30 hover:to-[#FF5AF7]/20 transition-all cursor-pointer">
                         <h4 className="font-semibold text-white flex items-center gap-2">
                           <span className="text-xl">📊</span>
                           CVT Tokenomics
@@ -161,8 +215,8 @@ export default function Documentation() {
                         <p className="text-gray-300 mt-1">Learn about the ChronosVault Token (CVT), its deflationary model, and distribution schedule.</p>
                       </div>
                     </Link>
-                    <Link href="/project-whitepaper" className="block">
-                      <div className="bg-gradient-to-r from-[#6B00D7]/20 to-[#FF5AF7]/10 border border-[#6B00D7]/30 rounded-lg p-4 hover:from-[#6B00D7]/30 hover:to-[#FF5AF7]/20 transition-all">
+                    <Link href="/project-whitepaper">
+                      <div className="bg-gradient-to-r from-[#6B00D7]/20 to-[#FF5AF7]/10 border border-[#6B00D7]/30 rounded-lg p-4 hover:from-[#6B00D7]/30 hover:to-[#FF5AF7]/20 transition-all cursor-pointer">
                         <h4 className="font-semibold text-white flex items-center gap-2">
                           <span className="text-xl">📑</span>
                           Project Whitepaper
@@ -170,8 +224,8 @@ export default function Documentation() {
                         <p className="text-gray-300 mt-1">Read the comprehensive overview of the Chronos Vault platform, architecture, and vision.</p>
                       </div>
                     </Link>
-                    <Link href="/whitepaper" className="block">
-                      <div className="bg-gradient-to-r from-[#6B00D7]/20 to-[#FF5AF7]/10 border border-[#6B00D7]/30 rounded-lg p-4 hover:from-[#6B00D7]/30 hover:to-[#FF5AF7]/20 transition-all">
+                    <Link href="/whitepaper">
+                      <div className="bg-gradient-to-r from-[#6B00D7]/20 to-[#FF5AF7]/10 border border-[#6B00D7]/30 rounded-lg p-4 hover:from-[#6B00D7]/30 hover:to-[#FF5AF7]/20 transition-all cursor-pointer">
                         <h4 className="font-semibold text-white flex items-center gap-2">
                           <span className="text-xl">💎</span>
                           CVT Whitepaper
@@ -309,21 +363,26 @@ export default function Documentation() {
                 
                 <div className="space-y-4 text-gray-300">
                   <p>
-                    Our revolutionary Triple-Chain Security system distributes your vault data across Ethereum, Solana, and TON networks simultaneously, creating an unprecedented level of protection against single-chain vulnerabilities.
+                    Our revolutionary <strong className="text-[#FF5AF7]">Trinity Protocol: 2-of-3 Chain Security</strong> provides 
+                    unparalleled protection through fixed-role blockchain architecture. Each chain serves a specific purpose, 
+                    combining their strengths for maximum security.
                   </p>
                   
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
-                    <div className="p-4 bg-[#141414] rounded-lg border border-[#333]">
-                      <h4 className="font-semibold text-white mb-2">Ethereum Layer</h4>
-                      <p className="text-sm">Provides robust security and immutability as the primary security foundation.</p>
+                    <div className="p-4 bg-[#141414] rounded-lg border border-[#6B00D7]/50">
+                      <h4 className="font-semibold text-white mb-2">Ethereum Layer 2 (Arbitrum)</h4>
+                      <p className="text-sm mb-1"><span className="text-[#FF5AF7] font-medium">Primary Security</span> - Immutable ownership and access control via Arbitrum Layer 2 for 95% lower fees</p>
+                      <p className="text-xs text-gray-400">Status: LAYER 2 OPTIMIZED</p>
                     </div>
-                    <div className="p-4 bg-[#141414] rounded-lg border border-[#333]">
+                    <div className="p-4 bg-[#141414] rounded-lg border border-[#6B00D7]/50">
                       <h4 className="font-semibold text-white mb-2">Solana Layer</h4>
-                      <p className="text-sm">Enables high-speed transactions and responsive vault interactions.</p>
+                      <p className="text-sm mb-1"><span className="text-[#FF5AF7] font-medium">Rapid Validation</span> - High-frequency monitoring with millisecond confirmation</p>
+                      <p className="text-xs text-gray-400">Status: NETWORK ACTIVE</p>
                     </div>
-                    <div className="p-4 bg-[#141414] rounded-lg border border-[#333]">
+                    <div className="p-4 bg-[#141414] rounded-lg border border-[#6B00D7]/50">
                       <h4 className="font-semibold text-white mb-2">TON Layer</h4>
-                      <p className="text-sm">Acts as a resilient fallback system with complex recovery logic capabilities.</p>
+                      <p className="text-sm mb-1"><span className="text-[#FF5AF7] font-medium">Recovery System</span> - Quantum-resistant backup and emergency recovery</p>
+                      <p className="text-xs text-gray-400">Status: NETWORK ACTIVE</p>
                     </div>
                   </div>
                   
@@ -454,22 +513,22 @@ export default function Documentation() {
                   <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-[#6B00D7]/30 to-[#FF5AF7]/20 flex items-center justify-center">
                     <span className="text-xl">Ξ</span>
                   </div>
-                  Ethereum Integration
+                  Ethereum Layer 2 (Arbitrum) Integration
                 </h2>
                 
                 <div className="space-y-4 text-gray-300">
                   <p>
-                    Ethereum integration provides robust security and programmability through ERC-4626 compliant tokenized vaults and advanced smart contracts that enable conditional unlocking and multi-signature control.
+                    Ethereum Layer 2 (Arbitrum) integration provides robust security and programmability through ERC-4626 compliant tokenized vaults and advanced smart contracts that enable conditional unlocking and multi-signature control, with 95% lower fees.
                   </p>
                   
                   <div className="bg-[#141414] rounded-lg border border-[#333] p-4">
-                    <h3 className="font-semibold text-white mb-2">Ethereum Features</h3>
+                    <h3 className="font-semibold text-white mb-2">Ethereum Layer 2 Features</h3>
                     <ul className="list-disc pl-5 space-y-1">
                       <li>ERC-4626 compliant tokenized vaults for maximum interoperability</li>
                       <li>Multi-signature vault control with customizable thresholds</li>
                       <li>Integration with Ethereum Name Service (ENS) for user-friendly addressing</li>
                       <li>Support for all ERC-20 tokens and ERC-721/ERC-1155 NFTs</li>
-                      <li>Layer 2 integration with Polygon, Arbitrum, and Optimism for lower fees</li>
+                      <li>Deployed on Arbitrum Layer 2 for 95% lower fees while maintaining Ethereum security</li>
                     </ul>
                   </div>
                   
@@ -559,6 +618,331 @@ export default function Documentation() {
                     >
                       Learn More About TON Integration
                     </Button>
+                  </div>
+                </div>
+              </div>
+            </section>
+            
+            {/* Mathematical Defense Layer Overview */}
+            <section id="mdl-overview" className="scroll-mt-24 mt-12">
+              <div className="bg-gradient-to-br from-[#1D1D1D] to-[#151515] rounded-xl border border-[#333] p-6">
+                <h2 className="text-2xl font-bold mb-4 flex items-center gap-2">
+                  <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-[#6B00D7]/30 to-[#FF5AF7]/20 flex items-center justify-center">
+                    <span className="text-xl">🛡️</span>
+                  </div>
+                  Mathematical Defense Layer (MDL)
+                </h2>
+                
+                <div className="space-y-4 text-gray-300">
+                  <div className="bg-gradient-to-r from-[#6B00D7]/20 to-[#FF5AF7]/10 border border-[#6B00D7]/50 rounded-lg p-5">
+                    <h3 className="text-xl font-semibold text-white mb-2 flex items-center gap-2">
+                      <span className="text-2xl">🔐</span> Trust Math, Not Humans
+                    </h3>
+                    <p className="text-lg">
+                      The world's first <strong className="text-[#FF5AF7]">mathematically provable</strong> blockchain security system where every security claim is cryptographically verifiable, not just audited.
+                    </p>
+                  </div>
+                  
+                  <p>
+                    Unlike traditional platforms that rely on audits and trust, Chronos Vault provides <strong className="text-white">mathematical proofs</strong>. Every security claim is verifiable through cryptographic evidence, not human promises.
+                  </p>
+                  
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+                    <div className="p-4 bg-[#141414] rounded-lg border border-[#6B00D7]/50">
+                      <h4 className="font-semibold text-[#FF5AF7] mb-2">7 Security Layers</h4>
+                      <ul className="text-sm space-y-1 list-disc pl-4">
+                        <li>Zero-Knowledge Proofs (Groth16)</li>
+                        <li>Quantum-Resistant Crypto (ML-KEM-1024)</li>
+                        <li>Multi-Party Computation (3-of-5 Shamir)</li>
+                        <li>Verifiable Delay Functions (Wesolowski VDF)</li>
+                        <li>AI + Cryptographic Governance</li>
+                        <li>Formal Verification (Symbolic Execution)</li>
+                        <li>Trinity Protocol (2-of-3 Multi-Chain)</li>
+                      </ul>
+                    </div>
+                    
+                    <div className="p-4 bg-[#141414] rounded-lg border border-[#6B00D7]/50">
+                      <h4 className="font-semibold text-[#FF5AF7] mb-2">Mathematical Guarantees</h4>
+                      <ul className="text-sm space-y-1 list-disc pl-4">
+                        <li>Privacy: Verifier learns nothing beyond validity</li>
+                        <li>Time-Locks: Provably impossible to bypass</li>
+                        <li>Key Distribution: No single point of failure</li>
+                        <li>Quantum Safety: Resistant to Shor's algorithm</li>
+                        <li>AI Decisions: Cryptographically validated</li>
+                        <li>Contract Security: Formally proven</li>
+                        <li>Multi-Chain: 2-of-3 consensus required</li>
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            {/* Zero-Knowledge Proofs */}
+            <section id="zk-proofs" className="scroll-mt-24 mt-12">
+              <div className="bg-gradient-to-br from-[#1D1D1D] to-[#151515] rounded-xl border border-[#333] p-6">
+                <h2 className="text-2xl font-bold mb-4 flex items-center gap-2">
+                  <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-[#6B00D7]/30 to-[#FF5AF7]/20 flex items-center justify-center">
+                    <span className="text-xl">🔍</span>
+                  </div>
+                  Zero-Knowledge Proofs
+                </h2>
+                
+                <div className="space-y-4 text-gray-300">
+                  <p>
+                    Privacy-preserving verification using <strong className="text-[#FF5AF7]">Groth16 protocol</strong> with SnarkJS. Prove vault ownership without revealing your private key or identity.
+                  </p>
+                  
+                  <div className="bg-[#141414] rounded-lg border border-[#333] p-4 font-mono text-sm overflow-x-auto">
+                    <div className="text-[#FF5AF7]">// Generate commitment (hides sensitive data)</div>
+                    <div className="text-gray-400">const commitment = await zkService.generateCommitment(secretValue, salt);</div>
+                    <div className="mt-2 text-[#FF5AF7]">// Verify without revealing secret</div>
+                    <div className="text-gray-400">const isValid = await zkService.verifyCommitment(commitment);</div>
+                  </div>
+                  
+                  <div className="p-4 bg-[#6B00D7]/10 border border-[#6B00D7]/30 rounded-lg">
+                    <h4 className="font-semibold text-white mb-2">Mathematical Guarantee</h4>
+                    <p className="text-sm font-mono">∀ proof P: verified(P) ⟹ verifier_learns_nothing_beyond_validity(P)</p>
+                    <p className="text-sm mt-2">Proof generation: ~5-20ms | Verification: ~2-10ms</p>
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            {/* Quantum-Resistant Cryptography */}
+            <section id="quantum-crypto" className="scroll-mt-24 mt-12">
+              <div className="bg-gradient-to-br from-[#1D1D1D] to-[#151515] rounded-xl border border-[#333] p-6">
+                <h2 className="text-2xl font-bold mb-4 flex items-center gap-2">
+                  <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-[#6B00D7]/30 to-[#FF5AF7]/20 flex items-center justify-center">
+                    <span className="text-xl">⚛️</span>
+                  </div>
+                  Quantum-Resistant Cryptography
+                </h2>
+                
+                <div className="space-y-4 text-gray-300">
+                  <p>
+                    NIST-approved post-quantum cryptography protecting against future quantum computers using <strong className="text-[#FF5AF7]">ML-KEM-1024</strong> and <strong className="text-[#FF5AF7]">CRYSTALS-Dilithium-5</strong>.
+                  </p>
+                  
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="p-4 bg-[#141414] rounded-lg border border-[#333]">
+                      <h4 className="font-semibold text-white mb-2">Key Exchange</h4>
+                      <p className="text-sm">ML-KEM-1024 (NIST FIPS 203) - Secure key encapsulation mechanism resistant to quantum attacks</p>
+                    </div>
+                    <div className="p-4 bg-[#141414] rounded-lg border border-[#333]">
+                      <h4 className="font-semibold text-white mb-2">Digital Signatures</h4>
+                      <p className="text-sm">CRYSTALS-Dilithium-5 - Highest security level post-quantum signatures</p>
+                    </div>
+                  </div>
+                  
+                  <div className="p-4 bg-[#6B00D7]/10 border border-[#6B00D7]/30 rounded-lg">
+                    <h4 className="font-semibold text-white mb-2">Mathematical Guarantee</h4>
+                    <p className="text-sm font-mono">∀ attack A using Shor's algorithm: P(success) = negligible</p>
+                    <p className="text-sm mt-2">Encryption: ~10-20ms | Future-proof security</p>
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            {/* Multi-Party Computation */}
+            <section id="mpc" className="scroll-mt-24 mt-12">
+              <div className="bg-gradient-to-br from-[#1D1D1D] to-[#151515] rounded-xl border border-[#333] p-6">
+                <h2 className="text-2xl font-bold mb-4 flex items-center gap-2">
+                  <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-[#6B00D7]/30 to-[#FF5AF7]/20 flex items-center justify-center">
+                    <span className="text-xl">🔑</span>
+                  </div>
+                  Multi-Party Computation (MPC)
+                </h2>
+                
+                <div className="space-y-4 text-gray-300">
+                  <p>
+                    Distributed key management using <strong className="text-[#FF5AF7]">Shamir Secret Sharing</strong> with 3-of-5 threshold. No single point of failure - your vault keys are mathematically distributed.
+                  </p>
+                  
+                  <div className="bg-[#141414] rounded-lg border border-[#333] p-4">
+                    <h3 className="font-semibold text-white mb-2">How MPC Works</h3>
+                    <ol className="list-decimal pl-5 space-y-2 text-sm">
+                      <li>Master key is split into 5 shares using polynomial interpolation</li>
+                      <li>Each share is encrypted with quantum-resistant crypto</li>
+                      <li>Shares are distributed across 5 independent nodes</li>
+                      <li>Minimum 3 shares required to reconstruct the key</li>
+                      <li>Byzantine Fault Tolerant - secure against malicious nodes</li>
+                    </ol>
+                  </div>
+                  
+                  <div className="p-4 bg-[#6B00D7]/10 border border-[#6B00D7]/30 rounded-lg">
+                    <h4 className="font-semibold text-white mb-2">Mathematical Guarantee</h4>
+                    <p className="text-sm font-mono">∀ MPC key K: reconstruct(K) requires ≥ 3 threshold shares</p>
+                    <p className="text-sm mt-2">Key generation: ~50-100ms | Zero single points of failure</p>
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            {/* Verifiable Delay Functions */}
+            <section id="vdf" className="scroll-mt-24 mt-12">
+              <div className="bg-gradient-to-br from-[#1D1D1D] to-[#151515] rounded-xl border border-[#333] p-6">
+                <h2 className="text-2xl font-bold mb-4 flex items-center gap-2">
+                  <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-[#6B00D7]/30 to-[#FF5AF7]/20 flex items-center justify-center">
+                    <span className="text-xl">⏰</span>
+                  </div>
+                  Verifiable Delay Functions (VDF)
+                </h2>
+                
+                <div className="space-y-4 text-gray-300">
+                  <p>
+                    Provable time-locks using <strong className="text-[#FF5AF7]">Wesolowski VDF</strong> with RSA-2048 groups. Time-locks that cannot be bypassed - even by vault creators or administrators.
+                  </p>
+                  
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="p-4 bg-[#141414] rounded-lg border border-[#333]">
+                      <h4 className="font-semibold text-white mb-2">Sequential Computation</h4>
+                      <p className="text-sm">VDF requires O(T) sequential operations that cannot be parallelized - making time enforcement mathematically guaranteed</p>
+                    </div>
+                    <div className="p-4 bg-[#141414] rounded-lg border border-[#333]">
+                      <h4 className="font-semibold text-white mb-2">Fast Verification</h4>
+                      <p className="text-sm">Verification takes O(log T) time with Fiat-Shamir non-interactive proofs</p>
+                    </div>
+                  </div>
+                  
+                  <div className="p-4 bg-[#6B00D7]/10 border border-[#6B00D7]/30 rounded-lg">
+                    <h4 className="font-semibold text-white mb-2">Mathematical Guarantee</h4>
+                    <p className="text-sm font-mono">∀ VDF computation: unlock_before_T_iterations = impossible</p>
+                    <p className="text-sm mt-2">Provably enforceable time-locks with cryptographic certainty</p>
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            {/* GitHub Repositories */}
+            <section id="github-repos" className="scroll-mt-24 mt-12">
+              <div className="bg-gradient-to-br from-[#1D1D1D] to-[#151515] rounded-xl border border-[#333] p-6">
+                <h2 className="text-2xl font-bold mb-4 flex items-center gap-2">
+                  <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-[#6B00D7]/30 to-[#FF5AF7]/20 flex items-center justify-center">
+                    <i className="ri-github-fill"></i>
+                  </div>
+                  GitHub Repositories
+                </h2>
+                
+                <div className="space-y-4 text-gray-300">
+                  <p>
+                    All Chronos Vault code is open-source and available on GitHub. Explore the implementation of the Mathematical Defense Layer and contribute to the future of blockchain security.
+                  </p>
+                  
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <a href="https://github.com/Chronos-Vault/chronos-vault-security" target="_blank" rel="noopener noreferrer" className="block p-4 bg-[#141414] rounded-lg border border-[#333] hover:border-[#6B00D7] transition-all group">
+                      <h4 className="font-semibold text-white mb-2 flex items-center gap-2">
+                        <i className="ri-shield-star-line text-[#FF5AF7]"></i>
+                        chronos-vault-security
+                      </h4>
+                      <p className="text-sm mb-2">Mathematical Defense Layer implementation - ZK proofs, quantum crypto, MPC, VDF, AI governance, formal verification</p>
+                      <div className="flex items-center gap-2 text-xs text-[#6B00D7] group-hover:text-[#FF5AF7]">
+                        <span>View Repository</span>
+                        <i className="ri-arrow-right-line"></i>
+                      </div>
+                    </a>
+                    
+                    <a href="https://github.com/Chronos-Vault/chronos-vault-contracts" target="_blank" rel="noopener noreferrer" className="block p-4 bg-[#141414] rounded-lg border border-[#333] hover:border-[#6B00D7] transition-all group">
+                      <h4 className="font-semibold text-white mb-2 flex items-center gap-2">
+                        <i className="ri-file-code-line text-[#FF5AF7]"></i>
+                        chronos-vault-contracts
+                      </h4>
+                      <p className="text-sm mb-2">Smart contracts for Ethereum/Arbitrum, Solana programs, TON contracts, and ZK circuits (Circom)</p>
+                      <div className="flex items-center gap-2 text-xs text-[#6B00D7] group-hover:text-[#FF5AF7]">
+                        <span>View Repository</span>
+                        <i className="ri-arrow-right-line"></i>
+                      </div>
+                    </a>
+                    
+                    <a href="https://github.com/Chronos-Vault/chronos-vault-platform-" target="_blank" rel="noopener noreferrer" className="block p-4 bg-[#141414] rounded-lg border border-[#333] hover:border-[#6B00D7] transition-all group">
+                      <h4 className="font-semibold text-white mb-2 flex items-center gap-2">
+                        <i className="ri-apps-line text-[#FF5AF7]"></i>
+                        chronos-vault-platform
+                      </h4>
+                      <p className="text-sm mb-2">Full-stack platform - React frontend, Express backend, multi-chain integrations, vault management system</p>
+                      <div className="flex items-center gap-2 text-xs text-[#6B00D7] group-hover:text-[#FF5AF7]">
+                        <span>View Repository</span>
+                        <i className="ri-arrow-right-line"></i>
+                      </div>
+                    </a>
+                    
+                    <a href="https://github.com/Chronos-Vault/chronos-vault-sdk" target="_blank" rel="noopener noreferrer" className="block p-4 bg-[#141414] rounded-lg border border-[#333] hover:border-[#6B00D7] transition-all group">
+                      <h4 className="font-semibold text-white mb-2 flex items-center gap-2">
+                        <i className="ri-code-box-line text-[#FF5AF7]"></i>
+                        chronos-vault-sdk
+                      </h4>
+                      <p className="text-sm mb-2">Developer SDK and integration libraries for building on Chronos Vault</p>
+                      <div className="flex items-center gap-2 text-xs text-[#6B00D7] group-hover:text-[#FF5AF7]">
+                        <span>View Repository</span>
+                        <i className="ri-arrow-right-line"></i>
+                      </div>
+                    </a>
+                  </div>
+                  
+                  <div className="mt-6 p-4 bg-gradient-to-r from-[#6B00D7]/20 to-[#FF5AF7]/10 border border-[#6B00D7]/30 rounded-lg">
+                    <h4 className="font-semibold text-white mb-2 flex items-center gap-2">
+                      <i className="ri-star-line text-[#FF5AF7]"></i>
+                      Main Organization
+                    </h4>
+                    <p className="text-sm mb-3">Visit our GitHub organization to explore all repositories and contribute to the project</p>
+                    <a href="https://github.com/Chronos-Vault" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 px-4 py-2 bg-[#6B00D7] hover:bg-[#5500AB] text-white rounded-lg transition-all">
+                      <i className="ri-github-fill"></i>
+                      <span>github.com/Chronos-Vault</span>
+                      <i className="ri-external-link-line text-sm"></i>
+                    </a>
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            {/* Integration Guide */}
+            <section id="integration-guide" className="scroll-mt-24 mt-12">
+              <div className="bg-gradient-to-br from-[#1D1D1D] to-[#151515] rounded-xl border border-[#333] p-6">
+                <h2 className="text-2xl font-bold mb-4 flex items-center gap-2">
+                  <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-[#6B00D7]/30 to-[#FF5AF7]/20 flex items-center justify-center">
+                    <span className="text-xl">🔧</span>
+                  </div>
+                  Integration Guide
+                </h2>
+                
+                <div className="space-y-4 text-gray-300">
+                  <p>
+                    Integrate Chronos Vault's Mathematical Defense Layer into your application for enterprise-grade security with cryptographic guarantees.
+                  </p>
+                  
+                  <div className="bg-[#141414] rounded-lg border border-[#333] p-4 font-mono text-sm overflow-x-auto">
+                    <div className="text-[#FF5AF7]">// Initialize Mathematical Defense Layer</div>
+                    <div className="text-gray-400">import {'{ MathematicalDefenseLayer }'} from '@chronos-vault/security';</div>
+                    <div className="mt-2 text-gray-400">const mdl = new MathematicalDefenseLayer();</div>
+                    <div className="text-gray-400">await mdl.initialize();</div>
+                    <div className="mt-3 text-[#FF5AF7]">// Create secure vault with all 7 layers</div>
+                    <div className="text-gray-400">const vault = await mdl.createSecureVault({'{'}</div>
+                    <div className="text-gray-400 pl-4">vaultId: 'vault-001',</div>
+                    <div className="text-gray-400 pl-4">assetValue: 1000000,</div>
+                    <div className="text-gray-400 pl-4">securityLevel: 'maximum'</div>
+                    <div className="text-gray-400">{'}'});</div>
+                  </div>
+                  
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
+                    <div className="p-3 bg-[#141414] rounded-lg border border-[#333]">
+                      <h4 className="font-semibold text-[#FF5AF7] text-sm mb-1">Step 1</h4>
+                      <p className="text-xs">Install SDK from npm or clone from GitHub</p>
+                    </div>
+                    <div className="p-3 bg-[#141414] rounded-lg border border-[#333]">
+                      <h4 className="font-semibold text-[#FF5AF7] text-sm mb-1">Step 2</h4>
+                      <p className="text-xs">Initialize MDL and configure security parameters</p>
+                    </div>
+                    <div className="p-3 bg-[#141414] rounded-lg border border-[#333]">
+                      <h4 className="font-semibold text-[#FF5AF7] text-sm mb-1">Step 3</h4>
+                      <p className="text-xs">Create vaults with mathematical proof generation</p>
+                    </div>
+                  </div>
+                  
+                  <div className="flex justify-end mt-4">
+                    <Link href="/developer-portal" className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] hover:from-[#5500AB] hover:to-[#FF46E8] text-white rounded-lg transition-all">
+                      <span>Visit Developer Portal</span>
+                      <i className="ri-arrow-right-line"></i>
+                    </Link>
                   </div>
                 </div>
               </div>

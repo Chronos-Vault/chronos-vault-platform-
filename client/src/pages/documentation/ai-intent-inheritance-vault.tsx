@@ -376,8 +376,11 @@ export default function AIIntentInheritanceVaultDocumentation() {
                 <h3 className="text-xl font-semibold mb-4">Blockchain Implementation</h3>
                 <div className="space-y-4">
                   <div>
-                    <h4 className="font-semibold">Primary Chain:</h4>
-                    <p className="text-muted-foreground">Ethereum (ERC-4626 compliant vault)</p>
+                    <h4 className="font-semibold">Trinity Protocol: 2-of-3 Chain Security:</h4>
+                    <p className="text-muted-foreground">
+                      Fixed-role architecture: Ethereum Layer (Primary Security via Layer 2 for 95% lower fees), Solana Layer (Rapid Validation), 
+                      and TON Layer (Recovery System) provide 2-of-3 consensus security with each blockchain fulfilling its specialized role.
+                    </p>
                   </div>
                   <div>
                     <h4 className="font-semibold">Intent Storage:</h4>
@@ -385,7 +388,7 @@ export default function AIIntentInheritanceVaultDocumentation() {
                   </div>
                   <div>
                     <h4 className="font-semibold">Cross-Chain Verification:</h4>
-                    <p className="text-muted-foreground">Intent validation through TON and Solana with 2/3 threshold</p>
+                    <p className="text-muted-foreground">Intent validation across Ethereum, Solana, and TON with 2/3 threshold</p>
                   </div>
                   <div>
                     <h4 className="font-semibold">Oracle Integration:</h4>

@@ -40,6 +40,7 @@ import authRoutes from './auth-routes-new';
 import chainFeeRoutes from './api/chain-fee-routes';
 import vaultChainRoutes from './api/vault-chain-routes';
 import vaultCreationRoutes from './api/vault-creation-routes';
+import githubSyncRoutes from './api/github-sync-routes';
 import { SolanaProgramClient, CHRONOS_VAULT_PROGRAM_ID } from './blockchain/solana-program-client';
 import config from './config';
 
@@ -121,6 +122,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
   
   // Register vault creation routes
   apiRouter.use('/vault-creation', vaultCreationRoutes);
+  
+  // Register GitHub sync routes for automatic repository updates
+  apiRouter.use('/github', githubSyncRoutes);
   
   // Solana status endpoint - exposes deployed program data
   apiRouter.get('/solana/status', async (req: Request, res: Response) => {

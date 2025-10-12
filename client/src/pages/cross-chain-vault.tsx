@@ -102,10 +102,9 @@ const CrossChainVaultPage = () => {
                 <h4 className="text-lg font-medium text-white">Chain-Specific Roles</h4>
               </div>
               <p className="text-gray-300 text-sm">
-                Each blockchain in our Triple-Chain Security™ architecture plays a specific role:
-                TON serves as the primary chain for vault creation and management, Ethereum provides
-                security verification, and Solana handles high-speed monitoring. Bitcoin can be added 
-                for additional timestamping.
+                Our revolutionary Trinity Protocol: 2-of-3 Chain Security uses fixed-role architecture for maximum security. 
+                Ethereum Layer (Primary Security via Layer 2 for 95% lower fees), Solana Layer (Rapid Validation for high-frequency monitoring), 
+                and TON Layer (Recovery System with quantum-resistant backup) work together in 2-of-3 consensus for unparalleled protection.
               </p>
             </div>
             
@@ -139,23 +138,23 @@ const CrossChainVaultPage = () => {
             <ul className="space-y-2 text-gray-300 mb-4">
               <li className="flex items-start">
                 <span className="text-[#FF5AF7] mr-2">•</span>
-                <span>Primary vault contract is deployed on TON</span>
+                <span>Ethereum Layer serves as Primary Security with immutable ownership and access control (via Layer 2 for 95% lower fees)</span>
               </li>
               <li className="flex items-start">
                 <span className="text-[#FF5AF7] mr-2">•</span>
-                <span>Verification contracts are deployed on Ethereum and Solana</span>
+                <span>Solana Layer provides Rapid Validation with high-frequency monitoring and millisecond confirmation</span>
               </li>
               <li className="flex items-start">
                 <span className="text-[#FF5AF7] mr-2">•</span>
-                <span>Optional Bitcoin timestamping is configured if selected</span>
+                <span>TON Layer acts as Recovery System with quantum-resistant backup and emergency recovery</span>
               </li>
               <li className="flex items-start">
                 <span className="text-[#FF5AF7] mr-2">•</span>
-                <span>Cross-chain initialization transactions establish trust between contracts</span>
+                <span>Cross-chain initialization transactions establish trust between all three layers</span>
               </li>
               <li className="flex items-start">
                 <span className="text-[#FF5AF7] mr-2">•</span>
-                <span>Vault parameters and verification requirements are synchronized across chains</span>
+                <span>2-of-3 verification requirements synchronized across all layers for maximum security</span>
               </li>
             </ul>
             <p className="text-gray-300">
@@ -258,7 +257,7 @@ const CrossChainVaultPage = () => {
               </li>
               <li className="flex items-start">
                 <span className="text-[#FF5AF7] mr-2">•</span>
-                <span>Dynamic adjustment of verification requirements during network disruptions</span>
+                <span>Intelligent adjustment of verification requirements during network disruptions</span>
               </li>
               <li className="flex items-start">
                 <span className="text-[#FF5AF7] mr-2">•</span>

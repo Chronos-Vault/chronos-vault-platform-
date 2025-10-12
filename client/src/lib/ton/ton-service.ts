@@ -168,8 +168,7 @@ class TONService {
             }
             
             this.tonConnectUI = new TonConnectUI({
-              manifestUrl: manifestUrl,
-              buttonRootId: 'ton-connect-button'
+              manifestUrl: manifestUrl
             });
             
             // Store the successful instance in the static variable for future reuse

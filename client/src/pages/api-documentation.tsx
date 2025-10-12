@@ -35,74 +35,77 @@ const ApiDocumentation = () => {
   const [selectedEndpoint, setSelectedEndpoint] = useState<EndpointKey | null>(null);
   const [selectedLanguage, setSelectedLanguage] = useState<LanguageKey>("javascript");
 
-  // Sample endpoint for interactive display
+  // Sample endpoint for interactive display - EXACT backend structures from server/api/vaults-routes.ts
   const sampleEndpoints = {
     "List Vaults": {
       method: "GET",
       path: "/api/vaults",
-      description: "Returns a list of vaults associated with the authenticated user.",
+      description: "Returns all vaults. Optional 'type' query param filters by vault type. Response structure varies by vault type.",
       parameters: [
-        { name: "type", type: "string", description: "Filter by vault type (e.g., 'time-lock', 'quantum-resistant')" },
-        { name: "status", type: "string", description: "Filter by status (e.g., 'active', 'pending', 'locked')" },
-        { name: "page", type: "integer", description: "Page number for pagination" },
-        { name: "limit", type: "integer", description: "Number of items per page (default: 20, max: 100)" }
+        { name: "type", type: "string", description: "Optional: Filter by type ('time-lock', 'quantum-progressive', 'multi-signature', etc.)" }
       ],
       response: {
+        success: true,
         vaults: [
           {
-            id: "v_1a2b3c4d5e6f",
-            name: "My Savings Vault",
-            type: "time-lock",
-            status: "active",
-            createdAt: "2025-04-15T12:34:56Z",
-            lockUntil: "2026-01-01T00:00:00Z",
-            chains: ["ethereum", "ton"],
-            assets: [
-              {
-                assetId: "eth_mainnet_native",
-                amount: "1.5",
-                valueUsd: 4500.00
+            id: "quantum-vault-1",
+            name: "High-Value Quantum Vault",
+            description: "Quantum-resistant vault with progressive security for high-value assets",
+            type: "quantum-progressive",
+            value: 125000,
+            createdAt: "2025-09-22T00:00:00.000Z",
+            updatedAt: "2025-10-07T00:00:00.000Z",
+            securityLevel: "advanced",
+            securityInfo: {
+              vaultId: "quantum-vault-1",
+              securityStrength: 90,
+              currentTier: "advanced",
+              lastUpgrade: "2025-10-07T00:00:00.000Z",
+              hasZeroKnowledgeProofs: true,
+              requiredSignatures: 2,
+              signatures: {
+                algorithm: "CRYSTALS-Dilithium",
+                strength: "High"
+              },
+              encryption: {
+                algorithm: "Kyber-1024",
+                latticeParameters: {
+                  dimension: 1024,
+                  errorDistribution: "Gaussian",
+                  ringType: "Ring-LWE"
+                }
               }
-            ]
+            }
           }
-        ],
-        pagination: {
-          total: 12,
-          page: 1,
-          limit: 20,
-          hasMore: false
-        }
+        ]
       }
     },
     "Create Vault": {
       method: "POST",
       path: "/api/vaults",
-      description: "Creates a new vault.",
+      description: "Creates a new vault. Required: id, name, type, value. Optional: description, primaryChain (defaults to 'ethereum'), unlockDate (for time-lock), metadata (free-form object), securityLevel/beneficiaries/requiredSignatures (type-specific). Backend auto-adds createdAt/updatedAt timestamps via new Date().toISOString().",
       requestBody: {
-        name: "My Savings Vault",
-        description: "Long-term savings vault",
+        id: "vault-67890",
+        name: "My Time-Locked Vault",
+        description: "Savings locked until 2026",
         type: "time-lock",
-        lockUntil: "2026-01-01T00:00:00Z",
-        chains: ["ethereum", "ton"],
-        features: {
-          quantumResistant: true,
-          crossChainVerification: true,
-          multiSignature: false
-        },
-        security: {
-          verificationLevel: "advanced",
-          requireMultiSignature: false,
-          timeDelay: 86400
-        }
+        value: 50000,
+        primaryChain: "ethereum",
+        unlockDate: "2026-01-01T00:00:00Z"
       },
       response: {
-        id: "v_1a2b3c4d5e6f",
-        status: "created",
-        depositAddresses: {
-          ethereum: "0xabcdef1234567890abcdef1234567890abcdef12",
-          ton: "UQAkIXbCToQ6LowMrDNG2K3ERmMH8m4XB2owWgL0BAB14Jtl"
-        },
-        createdAt: "2025-05-20T12:34:56Z"
+        success: true,
+        vault: {
+          id: "vault-67890",
+          name: "My Time-Locked Vault",
+          description: "Savings locked until 2026",
+          type: "time-lock",
+          value: 50000,
+          primaryChain: "ethereum",
+          unlockDate: "2026-01-01T00:00:00Z",
+          createdAt: "2025-10-12T14:30:00.000Z",
+          updatedAt: "2025-10-12T14:30:00.000Z"
+        }
       }
     }
   };
@@ -110,139 +113,125 @@ const ApiDocumentation = () => {
   // Sample code snippets for different languages
   const codeSnippets = {
     "List Vaults": {
-      javascript: `import { ChronosVaultClient } from '@chronos-vault/sdk';
-
-// Initialize client with API key
-const client = new ChronosVaultClient({
-  apiKey: 'YOUR_API_KEY',
-  environment: 'production'
-});
-
-// List all vaults
+      javascript: `// List all vaults using fetch API
 async function listVaults() {
   try {
-    const response = await client.vaults.list({
-      type: 'time-lock',
-      status: 'active',
-      page: 1,
-      limit: 20
+    const response = await fetch('/api/vaults?type=time-lock', {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        // Wallet auth token from /api/auth/verify
+        'Authorization': 'Bearer YOUR_JWT_TOKEN'
+      }
     });
-    console.log(response.vaults);
+    
+    const data = await response.json();
+    console.log('Vaults:', data.vaults);
   } catch (error) {
     console.error('Error listing vaults:', error);
   }
 }
 
 listVaults();`,
-      python: `from chronos_vault_sdk import ChronosVaultClient
+      python: `import requests
 
-# Initialize client with API key
-client = ChronosVaultClient(
-    api_key='YOUR_API_KEY',
-    environment='production'
-)
+# List all vaults using requests library
+def list_vaults():
+    try:
+        response = requests.get(
+            'https://your-app.replit.app/api/vaults',
+            params={'type': 'time-lock'},
+            headers={
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer YOUR_JWT_TOKEN'
+            }
+        )
+        data = response.json()
+        print('Vaults:', data['vaults'])
+    except Exception as e:
+        print(f"Error listing vaults: {e}")
 
-# List all vaults
-try:
-    response = client.vaults.list(
-        type='time-lock',
-        status='active',
-        page=1,
-        limit=20
-    )
-    print(response.vaults)
-except Exception as e:
-    print(f"Error listing vaults: {e}")`,
-      curl: `curl -X GET "https://api.chronosvault.org/api/vaults?type=time-lock&status=active&page=1&limit=20" \\
-  -H "Authorization: Bearer YOUR_API_KEY" \\
+list_vaults()`,
+      curl: `curl -X GET "https://your-app.replit.app/api/vaults?type=time-lock" \\
+  -H "Authorization: Bearer YOUR_JWT_TOKEN" \\
   -H "Content-Type: application/json"`
     },
     "Create Vault": {
-      javascript: `import { ChronosVaultClient } from '@chronos-vault/sdk';
-
-// Initialize client with API key
-const client = new ChronosVaultClient({
-  apiKey: 'YOUR_API_KEY',
-  environment: 'production'
-});
-
-// Create a new vault
+      javascript: `// Create a new vault using fetch API
 async function createVault() {
   try {
-    const vault = await client.vaults.create({
-      name: "My Savings Vault",
-      description: "Long-term savings vault",
-      type: "time-lock",
-      lockUntil: new Date("2026-01-01T00:00:00Z"),
-      chains: ["ethereum", "ton"],
-      features: {
-        quantumResistant: true,
-        crossChainVerification: true,
-        multiSignature: false
+    const response = await fetch('/api/vaults', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer YOUR_JWT_TOKEN'
       },
-      security: {
-        verificationLevel: "advanced",
-        requireMultiSignature: false,
-        timeDelay: 86400
-      }
+      body: JSON.stringify({
+        id: crypto.randomUUID(),
+        name: "My Savings Vault",
+        description: "Long-term savings vault",
+        type: "time-lock",
+        value: 1000,
+        primaryChain: "ethereum",
+        unlockDate: "2026-01-01T00:00:00Z",
+        metadata: {
+          quantumResistant: true,
+          crossChainVerification: true
+        }
+      })
     });
-    console.log(vault);
+    
+    const vault = await response.json();
+    console.log('Created vault:', vault);
   } catch (error) {
     console.error('Error creating vault:', error);
   }
 }
 
 createVault();`,
-      python: `from chronos_vault_sdk import ChronosVaultClient
+      python: `import requests
 from datetime import datetime, timezone
 
-# Initialize client with API key
-client = ChronosVaultClient(
-    api_key='YOUR_API_KEY',
-    environment='production'
-)
+# Create a new vault using requests library
+def create_vault():
+    try:
+        response = requests.post(
+            'https://your-app.replit.app/api/vaults',
+            json={
+                'id': 'vault_' + str(uuid.uuid4()),
+                'name': 'My Savings Vault',
+                'description': 'Long-term savings vault',
+                'type': 'time-lock',
+                'value': 1000,
+                'primaryChain': 'ethereum',
+                'unlockDate': '2026-01-01T00:00:00Z',
+                'metadata': {
+                    'quantumResistant': True,
+                    'crossChainVerification': True
+                }
+            },
+            headers={
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer YOUR_JWT_TOKEN'
+            }
+        )
+        vault = response.json()
+        print('Created vault:', vault)
+    except Exception as e:
+        print(f"Error creating vault: {e}")
 
-# Create a new vault
-try:
-    vault = client.vaults.create({
-        'name': 'My Savings Vault',
-        'description': 'Long-term savings vault',
-        'type': 'time-lock',
-        'lockUntil': datetime(2026, 1, 1, tzinfo=timezone.utc),
-        'chains': ['ethereum', 'ton'],
-        'features': {
-            'quantumResistant': True,
-            'crossChainVerification': True,
-            'multiSignature': False
-        },
-        'security': {
-            'verificationLevel': 'advanced',
-            'requireMultiSignature': False,
-            'timeDelay': 86400
-        }
-    })
-    print(vault)
-except Exception as e:
-    print(f"Error creating vault: {e}")`,
-      curl: `curl -X POST "https://api.chronosvault.org/api/vaults" \\
-  -H "Authorization: Bearer YOUR_API_KEY" \\
+create_vault()`,
+      curl: `curl -X POST "https://your-app.replit.app/api/vaults" \\
+  -H "Authorization: Bearer YOUR_JWT_TOKEN" \\
   -H "Content-Type: application/json" \\
   -d '{
+    "id": "vault-12345",
     "name": "My Savings Vault",
     "description": "Long-term savings vault",
     "type": "time-lock",
-    "lockUntil": "2026-01-01T00:00:00Z",
-    "chains": ["ethereum", "ton"],
-    "features": {
-      "quantumResistant": true,
-      "crossChainVerification": true,
-      "multiSignature": false
-    },
-    "security": {
-      "verificationLevel": "advanced",
-      "requireMultiSignature": false,
-      "timeDelay": 86400
-    }
+    "value": 50000,
+    "primaryChain": "ethereum",
+    "unlockDate": "2026-01-01T00:00:00Z"
   }'`
     }
   };
@@ -268,7 +257,7 @@ except Exception as e:
             <TabsTrigger value="authentication">Authentication</TabsTrigger>
             <TabsTrigger value="endpoints">Endpoints</TabsTrigger>
             <TabsTrigger value="examples">Examples</TabsTrigger>
-            <TabsTrigger value="sdk">SDK Access</TabsTrigger>
+            <TabsTrigger value="rest">REST Integration</TabsTrigger>
           </TabsList>
 
           <TabsContent value="overview">
@@ -366,7 +355,7 @@ except Exception as e:
               </CardContent>
               <CardFooter className="border-t pt-6">
                 <Button variant="outline" asChild className="mr-4">
-                  <Link href="/documentation/sdk">View SDK Documentation</Link>
+                  <Link href="/integration-guide">View Integration Guide</Link>
                 </Button>
                 <Button asChild className="bg-gradient-to-r from-indigo-500 to-cyan-500 hover:from-indigo-600 hover:to-cyan-600">
                   <Link href="#endpoints">Explore API Endpoints</Link>
@@ -417,8 +406,8 @@ except Exception as e:
                       <h3 className="text-xl font-semibold">Wallet-Based Authentication</h3>
                     </div>
                     <p className="mb-4">
-                      Connect your blockchain wallet to authenticate. Our SDK simplifies this process,
-                      handling signature verification automatically.
+                      Connect your blockchain wallet to authenticate. The REST API handles signature 
+                      verification with a simple nonce → sign → verify flow.
                     </p>
                     <div className="space-y-4">
                       <div className="flex items-center p-2 bg-black/5 dark:bg-white/5 rounded-md">
@@ -474,85 +463,74 @@ except Exception as e:
                     </TabsList>
                     <TabsContent value="javascript" className="mt-4">
                       <div className="bg-zinc-950 text-zinc-50 p-4 rounded-md font-mono text-sm overflow-auto">
-                        <pre>{`import { ChronosVaultClient } from '@chronos-vault/sdk';
+                        <pre>{`// Wallet-based Authentication with MetaMask
+import { ethers } from 'ethers';
 
-// API Key Authentication
-const apiClient = new ChronosVaultClient({
-  apiKey: 'YOUR_API_KEY',
-  environment: 'production'
-});
-
-// Wallet-based Authentication (MetaMask)
-import { useEthereum } from '@chronos-vault/wallet-connector';
-
-const WalletAuth = () => {
-  const { connect, account, signMessage } = useEthereum();
-  
-  const authenticateWithWallet = async () => {
-    // Connect wallet
-    await connect();
+async function authenticateWithWallet() {
+  try {
+    // Connect to MetaMask
+    const provider = new ethers.BrowserProvider(window.ethereum);
+    await provider.send('eth_requestAccounts', []);
+    const signer = await provider.getSigner();
+    const address = await signer.getAddress();
     
-    // Request nonce from server
-    const response = await fetch('https://api.chronosvault.org/api/auth/nonce');
-    const { nonce } = await response.json();
+    // Step 1: Request nonce from server
+    const nonceRes = await fetch('/api/auth/nonce');
+    const { nonce } = await nonceRes.json();
     
-    // Sign message with nonce
-    const signature = await signMessage(\`Sign this message to authenticate: \${nonce}\`);
+    // Step 2: Sign message with wallet
+    const message = \`Sign this message to authenticate: \${nonce}\`;
+    const signature = await signer.signMessage(message);
     
-    // Verify signature on server
-    const authResponse = await fetch('https://api.chronosvault.org/api/auth/verify', {
+    // Step 3: Verify signature on server
+    const authRes = await fetch('/api/auth/verify', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ address: account, signature, nonce })
+      body: JSON.stringify({ address, signature, nonce })
     });
     
-    const { token } = await authResponse.json();
+    const { token } = await authRes.json();
+    console.log('JWT Token:', token);
     
-    // Create client with JWT token
-    const walletClient = new ChronosVaultClient({
-      token,
-      environment: 'production'
+    // Step 4: Use token for authenticated requests
+    const vaultsRes = await fetch('/api/vaults', {
+      headers: { 'Authorization': \`Bearer \${token}\` }
     });
     
-    return walletClient;
-  };
-  
-  return { authenticateWithWallet };
-};`}</pre>
+    const { vaults } = await vaultsRes.json();
+    return { token, vaults };
+  } catch (error) {
+    console.error('Authentication failed:', error);
+  }
+}
+
+authenticateWithWallet();`}</pre>
                       </div>
                     </TabsContent>
                     <TabsContent value="python" className="mt-4">
                       <div className="bg-zinc-950 text-zinc-50 p-4 rounded-md font-mono text-sm overflow-auto">
-                        <pre>{`from chronos_vault_sdk import ChronosVaultClient
+                        <pre>{`# Wallet-based Authentication with Python
 import requests
-import json
-
-# API Key Authentication
-api_client = ChronosVaultClient(
-    api_key='YOUR_API_KEY',
-    environment='production'
-)
-
-# Wallet-based Authentication
 from eth_account import Account
 from eth_account.messages import encode_defunct
 
 def authenticate_with_wallet(private_key):
+    # Create account from private key
     account = Account.from_key(private_key)
     address = account.address
     
-    # Request nonce from server
-    response = requests.get('https://api.chronosvault.org/api/auth/nonce')
-    nonce = response.json()['nonce']
+    # Step 1: Request nonce from server
+    nonce_res = requests.get('https://your-app.replit.app/api/auth/nonce')
+    nonce = nonce_res.json()['nonce']
     
-    # Sign message with nonce
+    # Step 2: Sign message with wallet
     message = f"Sign this message to authenticate: {nonce}"
     encoded_message = encode_defunct(text=message)
     signed_message = account.sign_message(encoded_message)
     
-    # Verify signature on server
-    auth_response = requests.post(
-        'https://api.chronosvault.org/api/auth/verify',
+    # Step 3: Verify signature on server
+    auth_res = requests.post(
+        'https://your-app.replit.app/api/auth/verify',
         json={
             'address': address,
             'signature': signed_message.signature.hex(),
@@ -560,15 +538,20 @@ def authenticate_with_wallet(private_key):
         }
     )
     
-    token = auth_response.json()['token']
+    token = auth_res.json()['token']
+    print(f'JWT Token: {token}')
     
-    # Create client with JWT token
-    wallet_client = ChronosVaultClient(
-        token=token,
-        environment='production'
+    # Step 4: Use token for authenticated requests
+    vaults_res = requests.get(
+        'https://your-app.replit.app/api/vaults',
+        headers={'Authorization': f'Bearer {token}'}
     )
     
-    return wallet_client`}</pre>
+    vaults = vaults_res.json()['vaults']
+    return {'token': token, 'vaults': vaults}
+
+# Example usage
+authenticate_with_wallet('YOUR_PRIVATE_KEY')`}</pre>
                       </div>
                     </TabsContent>
                     <TabsContent value="curl" className="mt-4">
@@ -947,6 +930,184 @@ curl -X GET "https://api.chronosvault.org/api/vaults" \\
                             <strong>Note:</strong> Trinity Protocol endpoints are currently in development. WebSocket support for real-time event streaming will be available in the next release.
                           </p>
                         </div>
+                      </AccordionContent>
+                    </AccordionItem>
+
+                    <AccordionItem value="cross-chain">
+                      <AccordionTrigger className="hover:bg-slate-100 dark:hover:bg-slate-900/50 px-4 rounded-md">
+                        <div className="flex items-center gap-2">
+                          <Globe className="h-5 w-5 text-indigo-500" />
+                          <span className="font-medium">Cross-Chain Operations</span>
+                        </div>
+                      </AccordionTrigger>
+                      <AccordionContent className="px-4">
+                        <ul className="space-y-2 py-2">
+                          <li className="flex items-center justify-between p-2 rounded-md hover:bg-slate-100 dark:hover:bg-slate-900/50">
+                            <div className="flex items-center gap-2">
+                              <span className="px-2 py-1 text-xs font-bold rounded bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300">GET</span>
+                              <code className="font-mono text-sm">/api/cross-chain-operations</code>
+                            </div>
+                            <span className="text-sm text-slate-600 dark:text-slate-400">List all cross-chain operations</span>
+                          </li>
+                          <li className="flex items-center justify-between p-2 rounded-md hover:bg-slate-100 dark:hover:bg-slate-900/50">
+                            <div className="flex items-center gap-2">
+                              <span className="px-2 py-1 text-xs font-bold rounded bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300">POST</span>
+                              <code className="font-mono text-sm">/api/cross-chain-operations</code>
+                            </div>
+                            <span className="text-sm text-slate-600 dark:text-slate-400">Create cross-chain operation</span>
+                          </li>
+                          <li className="flex items-center justify-between p-2 rounded-md hover:bg-slate-100 dark:hover:bg-slate-900/50">
+                            <div className="flex items-center gap-2">
+                              <span className="px-2 py-1 text-xs font-bold rounded bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300">GET</span>
+                              <code className="font-mono text-sm">/api/vault-verification/verify</code>
+                            </div>
+                            <span className="text-sm text-slate-600 dark:text-slate-400">Verify vault across chains</span>
+                          </li>
+                          <li className="flex items-center justify-between p-2 rounded-md hover:bg-slate-100 dark:hover:bg-slate-900/50">
+                            <div className="flex items-center gap-2">
+                              <span className="px-2 py-1 text-xs font-bold rounded bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300">GET</span>
+                              <code className="font-mono text-sm">/api/bridge/status</code>
+                            </div>
+                            <span className="text-sm text-slate-600 dark:text-slate-400">Get bridge status</span>
+                          </li>
+                        </ul>
+                      </AccordionContent>
+                    </AccordionItem>
+
+                    <AccordionItem value="defi">
+                      <AccordionTrigger className="hover:bg-slate-100 dark:hover:bg-slate-900/50 px-4 rounded-md">
+                        <div className="flex items-center gap-2">
+                          <Zap className="h-5 w-5 text-indigo-500" />
+                          <span className="font-medium">DeFi Operations</span>
+                        </div>
+                      </AccordionTrigger>
+                      <AccordionContent className="px-4">
+                        <ul className="space-y-2 py-2">
+                          <li className="flex items-center justify-between p-2 rounded-md hover:bg-slate-100 dark:hover:bg-slate-900/50">
+                            <div className="flex items-center gap-2">
+                              <span className="px-2 py-1 text-xs font-bold rounded bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300">POST</span>
+                              <code className="font-mono text-sm">/api/defi/swap/routes</code>
+                            </div>
+                            <span className="text-sm text-slate-600 dark:text-slate-400">Find optimal swap routes</span>
+                          </li>
+                          <li className="flex items-center justify-between p-2 rounded-md hover:bg-slate-100 dark:hover:bg-slate-900/50">
+                            <div className="flex items-center gap-2">
+                              <span className="px-2 py-1 text-xs font-bold rounded bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300">GET</span>
+                              <code className="font-mono text-sm">/api/defi/swap/price</code>
+                            </div>
+                            <span className="text-sm text-slate-600 dark:text-slate-400">Get real-time swap price</span>
+                          </li>
+                          <li className="flex items-center justify-between p-2 rounded-md hover:bg-slate-100 dark:hover:bg-slate-900/50">
+                            <div className="flex items-center gap-2">
+                              <span className="px-2 py-1 text-xs font-bold rounded bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300">POST</span>
+                              <code className="font-mono text-sm">/api/defi/swap/create</code>
+                            </div>
+                            <span className="text-sm text-slate-600 dark:text-slate-400">Create atomic swap order</span>
+                          </li>
+                          <li className="flex items-center justify-between p-2 rounded-md hover:bg-slate-100 dark:hover:bg-slate-900/50">
+                            <div className="flex items-center gap-2">
+                              <span className="px-2 py-1 text-xs font-bold rounded bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300">GET</span>
+                              <code className="font-mono text-sm">/api/defi/staking/pools</code>
+                            </div>
+                            <span className="text-sm text-slate-600 dark:text-slate-400">List staking pools</span>
+                          </li>
+                        </ul>
+                      </AccordionContent>
+                    </AccordionItem>
+
+                    <AccordionItem value="advanced-security">
+                      <AccordionTrigger className="hover:bg-slate-100 dark:hover:bg-slate-900/50 px-4 rounded-md">
+                        <div className="flex items-center gap-2">
+                          <Key className="h-5 w-5 text-indigo-500" />
+                          <span className="font-medium">Advanced Security (ZK, Quantum, Multi-Sig)</span>
+                        </div>
+                      </AccordionTrigger>
+                      <AccordionContent className="px-4">
+                        <ul className="space-y-2 py-2">
+                          <li className="flex items-center justify-between p-2 rounded-md hover:bg-slate-100 dark:hover:bg-slate-900/50">
+                            <div className="flex items-center gap-2">
+                              <span className="px-2 py-1 text-xs font-bold rounded bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300">POST</span>
+                              <code className="font-mono text-sm">/api/security/zk-proofs/ownership</code>
+                            </div>
+                            <span className="text-sm text-slate-600 dark:text-slate-400">Generate ZK proof of ownership</span>
+                          </li>
+                          <li className="flex items-center justify-between p-2 rounded-md hover:bg-slate-100 dark:hover:bg-slate-900/50">
+                            <div className="flex items-center gap-2">
+                              <span className="px-2 py-1 text-xs font-bold rounded bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300">POST</span>
+                              <code className="font-mono text-sm">/api/security/zk-proofs/verify</code>
+                            </div>
+                            <span className="text-sm text-slate-600 dark:text-slate-400">Verify ZK proof</span>
+                          </li>
+                          <li className="flex items-center justify-between p-2 rounded-md hover:bg-slate-100 dark:hover:bg-slate-900/50">
+                            <div className="flex items-center gap-2">
+                              <span className="px-2 py-1 text-xs font-bold rounded bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300">POST</span>
+                              <code className="font-mono text-sm">/api/security/quantum/keypair</code>
+                            </div>
+                            <span className="text-sm text-slate-600 dark:text-slate-400">Generate quantum-resistant keypair</span>
+                          </li>
+                          <li className="flex items-center justify-between p-2 rounded-md hover:bg-slate-100 dark:hover:bg-slate-900/50">
+                            <div className="flex items-center gap-2">
+                              <span className="px-2 py-1 text-xs font-bold rounded bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300">POST</span>
+                              <code className="font-mono text-sm">/api/security/quantum/encrypt</code>
+                            </div>
+                            <span className="text-sm text-slate-600 dark:text-slate-400">Encrypt with CRYSTALS-Kyber</span>
+                          </li>
+                          <li className="flex items-center justify-between p-2 rounded-md hover:bg-slate-100 dark:hover:bg-slate-900/50">
+                            <div className="flex items-center gap-2">
+                              <span className="px-2 py-1 text-xs font-bold rounded bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300">GET</span>
+                              <code className="font-mono text-sm">/api/security/vaults/{"{vaultId}"}/signers</code>
+                            </div>
+                            <span className="text-sm text-slate-600 dark:text-slate-400">Get multi-sig signers</span>
+                          </li>
+                          <li className="flex items-center justify-between p-2 rounded-md hover:bg-slate-100 dark:hover:bg-slate-900/50">
+                            <div className="flex items-center gap-2">
+                              <span className="px-2 py-1 text-xs font-bold rounded bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300">POST</span>
+                              <code className="font-mono text-sm">/api/security/approval-requests</code>
+                            </div>
+                            <span className="text-sm text-slate-600 dark:text-slate-400">Create approval request</span>
+                          </li>
+                        </ul>
+                      </AccordionContent>
+                    </AccordionItem>
+
+                    <AccordionItem value="wallet">
+                      <AccordionTrigger className="hover:bg-slate-100 dark:hover:bg-slate-900/50 px-4 rounded-md">
+                        <div className="flex items-center gap-2">
+                          <Wallet className="h-5 w-5 text-indigo-500" />
+                          <span className="font-medium">Wallet Management</span>
+                        </div>
+                      </AccordionTrigger>
+                      <AccordionContent className="px-4">
+                        <ul className="space-y-2 py-2">
+                          <li className="flex items-center justify-between p-2 rounded-md hover:bg-slate-100 dark:hover:bg-slate-900/50">
+                            <div className="flex items-center gap-2">
+                              <span className="px-2 py-1 text-xs font-bold rounded bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300">POST</span>
+                              <code className="font-mono text-sm">/api/wallet/connect/{"{chain}"}</code>
+                            </div>
+                            <span className="text-sm text-slate-600 dark:text-slate-400">Connect wallet to chain</span>
+                          </li>
+                          <li className="flex items-center justify-between p-2 rounded-md hover:bg-slate-100 dark:hover:bg-slate-900/50">
+                            <div className="flex items-center gap-2">
+                              <span className="px-2 py-1 text-xs font-bold rounded bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300">POST</span>
+                              <code className="font-mono text-sm">/api/wallet/deposit</code>
+                            </div>
+                            <span className="text-sm text-slate-600 dark:text-slate-400">Deposit to vault</span>
+                          </li>
+                          <li className="flex items-center justify-between p-2 rounded-md hover:bg-slate-100 dark:hover:bg-slate-900/50">
+                            <div className="flex items-center gap-2">
+                              <span className="px-2 py-1 text-xs font-bold rounded bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300">POST</span>
+                              <code className="font-mono text-sm">/api/wallet/withdraw</code>
+                            </div>
+                            <span className="text-sm text-slate-600 dark:text-slate-400">Withdraw from vault</span>
+                          </li>
+                          <li className="flex items-center justify-between p-2 rounded-md hover:bg-slate-100 dark:hover:bg-slate-900/50">
+                            <div className="flex items-center gap-2">
+                              <span className="px-2 py-1 text-xs font-bold rounded bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300">POST</span>
+                              <code className="font-mono text-sm">/api/wallet/verify-signature</code>
+                            </div>
+                            <span className="text-sm text-slate-600 dark:text-slate-400">Verify wallet signature</span>
+                          </li>
+                        </ul>
                       </AccordionContent>
                     </AccordionItem>
                   </Accordion>
@@ -1439,19 +1600,66 @@ if __name__ == "__main__":
             </Card>
           </TabsContent>
 
-          <TabsContent value="sdk">
+          <TabsContent value="rest">
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
-                  <BadgeCheck className="h-6 w-6 text-indigo-500" />
-                  SDK & Libraries
+                  <Code className="h-6 w-6 text-indigo-500" />
+                  REST API Integration
                 </CardTitle>
                 <CardDescription>
-                  Official client libraries for multiple programming languages
+                  Chronos Vault uses standard REST API - no proprietary SDK needed
                 </CardDescription>
               </CardHeader>
               <CardContent>
                 <div className="space-y-6">
+                  <div className="rounded-lg bg-gradient-to-r from-indigo-50 to-cyan-50 p-6 border border-indigo-100 dark:from-indigo-950/20 dark:to-cyan-950/20 dark:border-indigo-900/50">
+                    <h3 className="text-xl font-semibold mb-3 text-indigo-700 dark:text-indigo-400">100% Standard REST API</h3>
+                    <p className="text-lg mb-4">
+                      There is <strong>NO proprietary SDK package</strong> to install. Chronos Vault is built on standard REST API architecture, 
+                      allowing you to integrate using any HTTP client library in your preferred programming language.
+                    </p>
+                    
+                    <div className="bg-yellow-50 dark:bg-yellow-950/20 border border-yellow-200 dark:border-yellow-900/50 rounded-lg p-4 mb-4">
+                      <h4 className="font-semibold text-yellow-800 dark:text-yellow-400 mb-2">⚠️ No SDK Installation Required</h4>
+                      <p className="text-sm text-yellow-700 dark:text-yellow-300">
+                        Packages like @chronos-vault/sdk or chronos-vault-sdk do NOT exist. 
+                        Use standard HTTP clients (fetch, axios, requests, etc.) to call our REST API endpoints directly.
+                      </p>
+                    </div>
+                    
+                    <h4 className="font-semibold mb-3 text-indigo-700 dark:text-indigo-400">Use Standard HTTP Clients</h4>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div className="bg-white/50 dark:bg-black/20 rounded-lg p-4 border border-gray-200 dark:border-gray-800">
+                        <h5 className="font-medium mb-2">JavaScript / TypeScript</h5>
+                        <div className="bg-zinc-950 text-zinc-50 p-2 rounded-md font-mono text-xs">
+                          <code>fetch(), axios, got</code>
+                        </div>
+                      </div>
+                      
+                      <div className="bg-white/50 dark:bg-black/20 rounded-lg p-4 border border-gray-200 dark:border-gray-800">
+                        <h5 className="font-medium mb-2">Python</h5>
+                        <div className="bg-zinc-950 text-zinc-50 p-2 rounded-md font-mono text-xs">
+                          <code>requests, httpx, aiohttp</code>
+                        </div>
+                      </div>
+                      
+                      <div className="bg-white/50 dark:bg-black/20 rounded-lg p-4 border border-gray-200 dark:border-gray-800">
+                        <h5 className="font-medium mb-2">Go</h5>
+                        <div className="bg-zinc-950 text-zinc-50 p-2 rounded-md font-mono text-xs">
+                          <code>net/http, resty</code>
+                        </div>
+                      </div>
+                      
+                      <div className="bg-white/50 dark:bg-black/20 rounded-lg p-4 border border-gray-200 dark:border-gray-800">
+                        <h5 className="font-medium mb-2">Java</h5>
+                        <div className="bg-zinc-950 text-zinc-50 p-2 rounded-md font-mono text-xs">
+                          <code>HttpClient, OkHttp</code>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div className="rounded-lg p-6 border bg-gradient-to-br from-indigo-50/50 to-purple-50/50 dark:from-indigo-950/20 dark:to-purple-950/20">
                       <div className="flex items-center gap-3 mb-4">
@@ -1462,32 +1670,22 @@ if __name__ == "__main__":
                       </div>
                       <div className="space-y-4">
                         <div>
-                          <h4 className="font-medium mb-1">Installation</h4>
+                          <h4 className="font-medium mb-1">Standard fetch() API</h4>
                           <div className="bg-zinc-950 text-zinc-50 p-3 rounded-md font-mono text-sm">
-                            npm install @chronos-vault/sdk
-                          </div>
-                        </div>
-                        <div>
-                          <h4 className="font-medium mb-1">Basic Usage</h4>
-                          <div className="bg-zinc-950 text-zinc-50 p-3 rounded-md font-mono text-sm">
-                            <pre>{`import { ChronosVaultClient } from '@chronos-vault/sdk';
-
-// Initialize client with API key
-const client = new ChronosVaultClient({
-  apiKey: 'YOUR_API_KEY',
-  environment: 'production'
+                            <pre>{`// No installation needed - use fetch()
+const res = await fetch('/api/vaults', {
+  headers: {
+    'Authorization': \`Bearer \${token}\`
+  }
 });
-
-// List user vaults
-const vaults = await client.vaults.list();
-console.log(vaults);`}</pre>
+const data = await res.json();`}</pre>
                           </div>
                         </div>
                         <div className="pt-2">
-                          <Button asChild variant="outline" className="w-full">
-                            <Link href="/sdk-documentation">
+                          <Button asChild variant="default" className="w-full bg-indigo-500 hover:bg-indigo-600">
+                            <Link href="/integration-guide">
                               <span className="flex items-center justify-center gap-2">
-                                View JavaScript SDK Documentation
+                                View REST API Integration Guide
                                 <svg width="20" height="20" viewBox="0 0 15 15" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M3.64645 11.3536C3.45118 11.1583 3.45118 10.8417 3.64645 10.6465L10.2929 4L6 4C5.72386 4 5.5 3.77614 5.5 3.5C5.5 3.22386 5.72386 3 6 3L11.5 3C11.7761 3 12 3.22386 12 3.5L12 9C12 9.27614 11.7761 9.5 11.5 9.5C11.2239 9.5 11 9.27614 11 9L11 4.70711L4.35355 11.3536C4.15829 11.5488 3.84171 11.5488 3.64645 11.3536Z" fill="currentColor" fillRule="evenodd" clipRule="evenodd"></path></svg>
                               </span>
                             </Link>
@@ -1505,32 +1703,24 @@ console.log(vaults);`}</pre>
                       </div>
                       <div className="space-y-4">
                         <div>
-                          <h4 className="font-medium mb-1">Installation</h4>
+                          <h4 className="font-medium mb-1">Standard requests library</h4>
                           <div className="bg-zinc-950 text-zinc-50 p-3 rounded-md font-mono text-sm">
-                            pip install chronos-vault-sdk
-                          </div>
-                        </div>
-                        <div>
-                          <h4 className="font-medium mb-1">Basic Usage</h4>
-                          <div className="bg-zinc-950 text-zinc-50 p-3 rounded-md font-mono text-sm">
-                            <pre>{`from chronos_vault_sdk import ChronosVaultClient
+                            <pre>{`# pip install requests
+import requests
 
-# Initialize client with API key
-client = ChronosVaultClient(
-    api_key='YOUR_API_KEY',
-    environment='production'
+res = requests.get('/api/vaults',
+    headers={
+        'Authorization': f'Bearer {token}'
+    }
 )
-
-# List user vaults
-vaults = client.vaults.list()
-print(vaults)`}</pre>
+data = res.json()`}</pre>
                           </div>
                         </div>
                         <div className="pt-2">
-                          <Button asChild variant="outline" className="w-full">
-                            <Link href="/sdk-documentation">
+                          <Button asChild variant="default" className="w-full bg-indigo-500 hover:bg-indigo-600">
+                            <Link href="/integration-guide">
                               <span className="flex items-center justify-center gap-2">
-                                View Python SDK Documentation
+                                View REST API Integration Guide
                                 <svg width="20" height="20" viewBox="0 0 15 15" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M3.64645 11.3536C3.45118 11.1583 3.45118 10.8417 3.64645 10.6465L10.2929 4L6 4C5.72386 4 5.5 3.77614 5.5 3.5C5.5 3.22386 5.72386 3 6 3L11.5 3C11.7761 3 12 3.22386 12 3.5L12 9C12 9.27614 11.7761 9.5 11.5 9.5C11.2239 9.5 11 9.27614 11 9L11 4.70711L4.35355 11.3536C4.15829 11.5488 3.84171 11.5488 3.64645 11.3536Z" fill="currentColor" fillRule="evenodd" clipRule="evenodd"></path></svg>
                               </span>
                             </Link>
@@ -1538,6 +1728,32 @@ print(vaults)`}</pre>
                         </div>
                       </div>
                     </div>
+                  </div>
+                  
+                  <div className="bg-indigo-50 dark:bg-indigo-950/20 rounded-lg p-6 border border-indigo-100 dark:border-indigo-900/50">
+                    <h4 className="font-semibold mb-3 text-indigo-700 dark:text-indigo-400">Authentication Flow</h4>
+                    <p className="text-gray-700 dark:text-gray-300 mb-3">
+                      All authentication is wallet-based (MetaMask, Phantom, TON Keeper):
+                    </p>
+                    <ol className="list-decimal list-inside space-y-2 text-gray-700 dark:text-gray-300">
+                      <li>GET /api/auth/nonce - Get authentication nonce</li>
+                      <li>Sign message with wallet (contains nonce)</li>
+                      <li>POST /api/auth/verify - Verify signature, receive JWT token</li>
+                      <li>Use JWT token in Authorization header for all API calls</li>
+                    </ol>
+                  </div>
+                  
+                  <div className="flex flex-col items-center gap-4 pt-4">
+                    <Button asChild size="lg" className="bg-gradient-to-r from-indigo-500 to-cyan-500 hover:from-indigo-600 hover:to-cyan-600">
+                      <Link href="/integration-guide">
+                        Complete Integration Guide with Code Examples
+                      </Link>
+                    </Button>
+                    <Button asChild variant="outline" size="lg">
+                      <Link href="#endpoints">
+                        Browse API Endpoints Reference
+                      </Link>
+                    </Button>
                   </div>
                   
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -1550,18 +1766,15 @@ print(vaults)`}</pre>
                       </div>
                       <div className="space-y-4">
                         <div>
-                          <h4 className="font-medium mb-1">Installation</h4>
-                          <div className="bg-zinc-950 text-zinc-50 p-3 rounded-md font-mono text-sm">
-                            go get github.com/chronos-vault/sdk-go
+                          <h4 className="font-medium mb-1">Standard net/http</h4>
+                          <div className="bg-zinc-950 text-zinc-50 p-2 rounded-md font-mono text-xs">
+                            <code>import "net/http"</code>
                           </div>
                         </div>
                         <div className="pt-2">
                           <Button asChild variant="outline" className="w-full">
-                            <Link href="/sdk-documentation">
-                              <span className="flex items-center justify-center gap-2">
-                                View Go SDK Documentation
-                                <svg width="20" height="20" viewBox="0 0 15 15" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M3.64645 11.3536C3.45118 11.1583 3.45118 10.8417 3.64645 10.6465L10.2929 4L6 4C5.72386 4 5.5 3.77614 5.5 3.5C5.5 3.22386 5.72386 3 6 3L11.5 3C11.7761 3 12 3.22386 12 3.5L12 9C12 9.27614 11.7761 9.5 11.5 9.5C11.2239 9.5 11 9.27614 11 9L11 4.70711L4.35355 11.3536C4.15829 11.5488 3.84171 11.5488 3.64645 11.3536Z" fill="currentColor" fillRule="evenodd" clipRule="evenodd"></path></svg>
-                              </span>
+                            <Link href="/integration-guide">
+                              View Integration Guide
                             </Link>
                           </Button>
                         </div>

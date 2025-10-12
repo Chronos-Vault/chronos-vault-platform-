@@ -46,7 +46,7 @@ export class TripleChainSecurityService {
       // Set contract addresses (these would come from configuration in a real implementation)
       this.tonVaultAddress = 'EQAvDfYmkVV2zFXzC0Hs2e2RGWJyMXHpnMTXH4jnI2W3AwLb'; // TON testnet
       this.ethereumVaultAddress = '0x8B26dE49A29F1f8C121dD7e168a43Fb4f5ba2cDB'; // Ethereum testnet
-      this.solanaVaultProgramId = 'ChronoSVauLt111111111111111111111111111111111'; // Solana devnet
+      this.solanaVaultProgramId = 'ChronoSVauLt11111111111111111111111111111111'; // Solana devnet
       
       this.tonBridgeAddress = 'EQB0gCDoGJNTfoPUSCgBxLuZ_O-7aYUccU0P1Vj_QdO6rQTf'; // TON testnet
       this.ethereumBridgeAddress = '0x9876dE49A29F1f8C121dD7e168a43Fb4f5ba2FFE'; // Ethereum testnet

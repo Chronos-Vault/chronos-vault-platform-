@@ -193,30 +193,34 @@ const BiometricVaultPage = () => {
           </div>
           
           <div className="bg-[#1A1A1A] border border-[#333] rounded-lg p-6">
-            <h3 className="text-xl font-semibold text-white mb-4">3. Cross-Chain Security Architecture</h3>
+            <h3 className="text-xl font-semibold text-white mb-4">3. Trinity Protocol: 2-of-3 Chain Security</h3>
             <p className="text-gray-300 mb-4">
-              Biometric Vaults implement our Triple-Chain Security™ architecture:
+              Biometric Vaults implement our revolutionary fixed-role Trinity Protocol:
             </p>
             <ul className="space-y-2 text-gray-300 mb-4">
               <li className="flex items-start">
                 <span className="text-[#FF5AF7] mr-2">•</span>
-                <span>Primary vault contract on Ethereum manages ownership and access control</span>
+                <span><strong className="text-white">Ethereum Layer</strong> - Primary Security with immutable ownership and access control (via Layer 2 for 95% lower fees)</span>
               </li>
               <li className="flex items-start">
                 <span className="text-[#FF5AF7] mr-2">•</span>
-                <span>Solana verification contract provides high-speed monitoring of verification attempts</span>
+                <span><strong className="text-white">Solana Layer</strong> - Rapid Validation with high-frequency monitoring and millisecond confirmation</span>
               </li>
               <li className="flex items-start">
                 <span className="text-[#FF5AF7] mr-2">•</span>
-                <span>TON backup security system handles emergency recovery operations</span>
+                <span><strong className="text-white">TON Layer</strong> - Recovery System with quantum-resistant backup and emergency recovery</span>
               </li>
               <li className="flex items-start">
                 <span className="text-[#FF5AF7] mr-2">•</span>
-                <span>Optional Bitcoin timestamping for additional verification security</span>
+                <span>2-of-3 blockchain verification required for all biometric authentications</span>
+              </li>
+              <li className="flex items-start">
+                <span className="text-[#FF5AF7] mr-2">•</span>
+                <span>Fixed-role architecture ensures maximum security with Layer 2 optimization for cost efficiency</span>
               </li>
             </ul>
             <p className="text-gray-300">
-              This multi-chain approach provides redundancy and enhanced security against blockchain-specific vulnerabilities.
+              This fixed-role multi-chain approach provides maximum security with Layer 2 optimization for Ethereum transactions.
             </p>
           </div>
           

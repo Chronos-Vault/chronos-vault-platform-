@@ -194,33 +194,43 @@ export default function SmartContractsPage() {
                       </CardDescription>
                     </CardHeader>
                     <CardContent className="space-y-4">
-                      <div className="bg-[#181818] p-4 rounded-md border border-[#333]">
+                      <div className="bg-[#6B00D7]/10 p-4 rounded-md border border-[#6B00D7]/30">
                         <div className="flex items-center space-x-2 mb-3">
-                          <div className="w-4 h-4 rounded-full bg-blue-600"></div>
-                          <h4 className="font-medium">Ethereum: Primary Verification</h4>
+                          <div className="w-4 h-4 rounded-full bg-purple-500"></div>
+                          <h4 className="font-medium text-purple-400">Trinity Protocol: Fixed Layer Architecture</h4>
                         </div>
-                        <div className="ml-6 border-l-2 border-blue-600 pl-3 py-1 text-sm">
-                          Manages primary ownership and access control
+                        <div className="ml-6 border-l-2 border-purple-500 pl-3 py-1 text-sm">
+                          Each blockchain serves a dedicated security role. Trinity Protocol provides 2-of-3 verification across all layers with Ethereum Layer 2 for affordable primary security.
                         </div>
                       </div>
                       
-                      <div className="bg-[#181818] p-4 rounded-md border border-[#333]">
+                      <div className="bg-[#181818] p-4 rounded-md border border-[#6B00D7]/30">
                         <div className="flex items-center space-x-2 mb-3">
-                          <div className="w-4 h-4 rounded-full bg-purple-600"></div>
-                          <h4 className="font-medium">Solana: Real-time Monitoring</h4>
+                          <div className="w-4 h-4 rounded-full bg-purple-500"></div>
+                          <h4 className="font-medium text-purple-400">Ethereum Layer 2: Primary Security</h4>
                         </div>
-                        <div className="ml-6 border-l-2 border-purple-600 pl-3 py-1 text-sm">
-                          Provides high-speed transaction validation
+                        <div className="ml-6 border-l-2 border-purple-500 pl-3 py-1 text-sm">
+                          Immutable ownership records via Layer 2 for 95% lower fees. Max decentralization & ecosystem support.
                         </div>
                       </div>
                       
-                      <div className="bg-[#181818] p-4 rounded-md border border-[#333]">
+                      <div className="bg-[#181818] p-4 rounded-md border border-[#6B00D7]/30">
                         <div className="flex items-center space-x-2 mb-3">
-                          <div className="w-4 h-4 rounded-full bg-blue-400"></div>
-                          <h4 className="font-medium">TON: Recovery Operations</h4>
+                          <div className="w-4 h-4 rounded-full bg-purple-500"></div>
+                          <h4 className="font-medium text-purple-400">Solana: Rapid Validation</h4>
                         </div>
-                        <div className="ml-6 border-l-2 border-blue-400 pl-3 py-1 text-sm">
-                          Manages backup security and recovery processes
+                        <div className="ml-6 border-l-2 border-purple-500 pl-3 py-1 text-sm">
+                          High-frequency monitoring and state verification. Lightning fast & ultra-low latency consensus.
+                        </div>
+                      </div>
+                      
+                      <div className="bg-[#181818] p-4 rounded-md border border-[#6B00D7]/30">
+                        <div className="flex items-center space-x-2 mb-3">
+                          <div className="w-4 h-4 rounded-full bg-purple-500"></div>
+                          <h4 className="font-medium text-purple-400">TON: Recovery System</h4>
+                        </div>
+                        <div className="ml-6 border-l-2 border-purple-500 pl-3 py-1 text-sm">
+                          Quantum-resistant backup and recovery layer for long-term asset protection.
                         </div>
                       </div>
                     </CardContent>
@@ -488,10 +498,10 @@ function createTimeLockedVault(
                             <div className="flex justify-between">
                               <h4 className="font-medium text-[#FF5AF7]">chronos_vault.rs</h4>
                               <div className="flex space-x-2">
-                                <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => handleCopyAddress("ChronoSVauLt111111111111111111111111111111111")}>
+                                <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => handleCopyAddress("ChronoSVauLt11111111111111111111111111111111")}>
                                   <Copy className="h-4 w-4" />
                                 </Button>
-                                <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => window.open("https://explorer.solana.com/address/ChronoSVauLt111111111111111111111111111111111?cluster=devnet", "_blank")}>
+                                <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => window.open("https://explorer.solana.com/address/ChronoSVauLt11111111111111111111111111111111?cluster=devnet", "_blank")}>
                                   <ExternalLink className="h-4 w-4" />
                                 </Button>
                               </div>

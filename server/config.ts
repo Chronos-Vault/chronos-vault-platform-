@@ -110,7 +110,9 @@ const blockchainConfig = {
     rpcUrl: process.env.SOLANA_RPC_URL || 'https://api.devnet.solana.com',
     isTestnet: process.env.NODE_ENV !== 'production',
     programs: {
-      vaultProgram: process.env.SOL_VAULT_PROGRAM_ID || 'VAULT_PROGRAM_ID',
+      // DEPLOYED SOLANA PROGRAM (October 5, 2025)
+      // ChronosVault Solana Program - High-speed monitoring for Trinity Protocol
+      vaultProgram: process.env.SOL_VAULT_PROGRAM_ID || 'CYaDJYRqm35udQ8vkxoajSER8oaniQUcV8Vvw5BqJyo2',
       tokenProgram: process.env.SOL_TOKEN_PROGRAM_ID || 'TOKEN_PROGRAM_ID',
       bridgeProgram: process.env.SOL_BRIDGE_PROGRAM_ID || 'BRIDGE_PROGRAM_ID',
     },

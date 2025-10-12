@@ -6,9 +6,14 @@
 
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 
+interface User {
+  id: string;
+  name: string;
+}
+
 interface AuthContextType {
   isAuthenticated: boolean;
-  user: any | null;
+  user: User | null;
   login: (credentials: any) => Promise<boolean>;
   logout: () => void;
   loading: boolean;
@@ -18,7 +23,7 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [user, setUser] = useState(null);
+  const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(false);
 
   const login = async (credentials: any): Promise<boolean> => {

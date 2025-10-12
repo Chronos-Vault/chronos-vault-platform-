@@ -434,9 +434,10 @@ const MilitaryGradeSecurity = () => {
                         <Layers className="w-5 h-5 mr-2" /> Blockchain Integration
                       </h3>
                       <ul className="list-disc pl-6 space-y-2">
-                        <li>Ethereum smart contracts for primary security governance</li>
-                        <li>TON contracts for secondary independent verification</li>
-                        <li>Solana programs for high-performance tertiary validation</li>
+                        <li>Ethereum Layer serves as Primary Security with immutable ownership (via Layer 2 for 95% lower fees)</li>
+                        <li>Solana Layer provides Rapid Validation with high-frequency monitoring and millisecond confirmation</li>
+                        <li>TON Layer acts as Recovery System with quantum-resistant backup and emergency recovery</li>
+                        <li>2-of-3 blockchain consensus required for all security operations via Trinity Protocol</li>
                         <li>Cross-chain state verification with cryptographic proofs</li>
                         <li>Threshold signature schemes for distributed authorization</li>
                       </ul>

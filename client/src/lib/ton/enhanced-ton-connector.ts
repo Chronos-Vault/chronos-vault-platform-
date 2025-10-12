@@ -154,7 +154,6 @@ export class EnhancedTonConnector {
           this.debug('Creating new TonConnectUI instance');
           this.tonConnectUI = new TonConnectUI({
             manifestUrl,
-            buttonRootId: this.options.buttonRootId,
             uiPreferences: {
               theme: this.options.walletStyle || 'dark'
             }

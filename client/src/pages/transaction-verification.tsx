@@ -84,28 +84,28 @@ export default function TransactionVerificationPage() {
                 
                 <TabsContent value="overview" className="space-y-4 mt-4">
                   <p className="text-sm">
-                    Our Triple-Chain Security Architecture leverages three independent blockchains
-                    to create an unprecedented level of security for your digital assets.
+                    Our revolutionary <strong className="text-primary">Trinity Protocol: 2-of-3 Chain Security</strong> provides 
+                    unparalleled protection through fixed-role blockchain architecture. Ethereum Layer 2 deployment ensures 95% lower fees!
                   </p>
                   
                   <div className="bg-muted/50 p-3 rounded-md space-y-2">
-                    <h4 className="font-medium">Primary Chain (Ethereum)</h4>
+                    <h4 className="font-medium text-primary">Ethereum Layer - Primary Security</h4>
                     <p className="text-xs text-muted-foreground">
-                      Holds the master record of ownership and access control.
+                      Immutable ownership and access control via Layer 2 for 95% lower fees • Status: LAYER 2 OPTIMIZED
                     </p>
                   </div>
                   
                   <div className="bg-muted/50 p-3 rounded-md space-y-2">
-                    <h4 className="font-medium">Validation Chain (Solana)</h4>
+                    <h4 className="font-medium">Solana Layer - Rapid Validation</h4>
                     <p className="text-xs text-muted-foreground">
-                      Provides high-frequency monitoring and rapid transaction validation.
+                      High-frequency monitoring with millisecond confirmation • Status: NETWORK ACTIVE
                     </p>
                   </div>
                   
                   <div className="bg-muted/50 p-3 rounded-md space-y-2">
-                    <h4 className="font-medium">Recovery Chain (TON)</h4>
+                    <h4 className="font-medium">TON Layer - Recovery System</h4>
                     <p className="text-xs text-muted-foreground">
-                      Offers emergency recovery systems and secure backup of asset state.
+                      Quantum-resistant backup and emergency recovery • Status: NETWORK ACTIVE
                     </p>
                   </div>
                 </TabsContent>

@@ -179,7 +179,9 @@ export default function ConnectTonPage() {
                   <div>
                     <h3 className="text-lg font-medium mb-1">Enhanced Security</h3>
                     <p className="text-muted-foreground">
-                      Access our Triple-Chain Security™ system with TON as the primary blockchain, providing you with unparalleled protection for your digital assets.
+                      Access our Trinity Protocol: 2-of-3 Chain Security with fixed-role architecture. 
+                      Ethereum (Primary Security via Layer 2), Solana (Rapid Validation), and TON (Recovery System) 
+                      provide unparalleled protection for your digital assets.
                     </p>
                   </div>
                 </div>

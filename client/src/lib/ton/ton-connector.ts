@@ -57,8 +57,7 @@ class TonConnector {
           
           // Create new instance
           this.tonConnectUI = new TonConnectUI({
-            manifestUrl,
-            buttonRootId: 'ton-connect-button'
+            manifestUrl
           });
           
           // Store as global instance

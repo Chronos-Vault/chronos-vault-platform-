@@ -32,6 +32,10 @@ interface WalletState {
 
 const WalletPage: React.FC = () => {
   const { toast } = useToast();
+  
+  // Check if running on mobile device
+  const isMobile = typeof window !== 'undefined' && /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+  
   const [wallets, setWallets] = useState<Record<string, WalletState>>({
     metamask: { connected: false, address: '', type: 'metamask', blockchain: 'ethereum', connecting: false },
     phantom: { connected: false, address: '', type: 'phantom', blockchain: 'solana', connecting: false },
@@ -70,8 +74,24 @@ const WalletPage: React.FC = () => {
     setWallets(prev => ({ ...prev, metamask: { ...prev.metamask, connecting: true } }));
     
     try {
+      // Check if on mobile and MetaMask is not injected
+      if (isMobile && !window.ethereum?.isMetaMask) {
+        // Open MetaMask app using deep link
+        const dappUrl = encodeURIComponent(window.location.href);
+        const metamaskDeepLink = `https://metamask.app.link/dapp/${window.location.host}/wallet`;
+        window.location.href = metamaskDeepLink;
+        
+        toast({
+          title: "Opening MetaMask",
+          description: "Opening MetaMask app... Please approve the connection",
+        });
+        
+        setWallets(prev => ({ ...prev, metamask: { ...prev.metamask, connecting: false } }));
+        return;
+      }
+      
       if (!window.ethereum?.isMetaMask) {
-        throw new Error('MetaMask not installed');
+        throw new Error('MetaMask not installed. Please install MetaMask browser extension or mobile app.');
       }
 
       // Request account access
@@ -165,8 +185,29 @@ const WalletPage: React.FC = () => {
     setWallets(prev => ({ ...prev, phantom: { ...prev.phantom, connecting: true } }));
     
     try {
+      // Check if on mobile and Phantom is not injected
+      if (isMobile && !window.solana?.isPhantom) {
+        // Open Phantom app using universal link
+        const currentUrl = window.location.href;
+        const phantomDeepLink = `https://phantom.app/ul/browse/${encodeURIComponent(currentUrl)}`;
+        
+        toast({
+          title: "Opening Phantom",
+          description: "Redirecting to Phantom app...",
+        });
+        
+        setWallets(prev => ({ ...prev, phantom: { ...prev.phantom, connecting: false } }));
+        
+        // Redirect after showing toast
+        setTimeout(() => {
+          window.location.href = phantomDeepLink;
+        }, 100);
+        
+        return;
+      }
+      
       if (!window.solana?.isPhantom) {
-        throw new Error('Phantom wallet not installed');
+        throw new Error('Phantom wallet not installed. Please install Phantom browser extension or mobile app.');
       }
 
       // Connect to Phantom
@@ -192,7 +233,10 @@ const WalletPage: React.FC = () => {
       // Sign message
       const messageBytes = new TextEncoder().encode(authData.message);
       const signedMessage = await window.solana.signMessage(messageBytes);
-      const signature = Array.from(signedMessage.signature);
+      
+      // Convert signature Uint8Array to base64 (more robust method)
+      const signatureArray: number[] = Array.from(signedMessage.signature);
+      const signatureBase64 = btoa(signatureArray.map(byte => String.fromCharCode(byte)).join(''));
 
       // Verify signature
       const verifyResponse = await fetch('/api/wallet/auth/verify', {
@@ -200,7 +244,7 @@ const WalletPage: React.FC = () => {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           attemptId: authData.attemptId,
-          signature
+          signature: signatureBase64
         })
       });
 
@@ -217,7 +261,7 @@ const WalletPage: React.FC = () => {
           walletAddress: address,
           walletType: 'phantom',
           blockchain: 'solana',
-          signature: JSON.stringify(signature),
+          signature: signatureBase64,
           message: authData.message
         })
       });
@@ -255,10 +299,76 @@ const WalletPage: React.FC = () => {
     setWallets(prev => ({ ...prev, tonkeeper: { ...prev.tonkeeper, connecting: true } }));
     
     try {
-      // For TON, we'll use a simulated connection in development
-      const address = `0:${Math.random().toString(36).substring(2, 15)}${Math.random().toString(36).substring(2, 15)}`;
+      // Import TonConnectUI dynamically
+      const { TonConnectUI } = await import('@tonconnect/ui');
+      
+      // Use existing global instance or create new one
+      let tonConnect = (window as any).__tonConnectUIInstance;
+      
+      if (!tonConnect) {
+        console.log('[Wallet Page] Creating new TON Connect instance');
+        tonConnect = new TonConnectUI({
+          manifestUrl: `${window.location.origin}/tonconnect-manifest.json`
+        });
+        (window as any).__tonConnectUIInstance = tonConnect;
+      } else {
+        console.log('[Wallet Page] Reusing existing TON Connect instance');
+      }
 
-      // Request authentication
+      // 1. Fetch TON proof payload from backend
+      const payloadResponse = await fetch('/api/wallet/ton/generate-payload');
+      const payloadData = await payloadResponse.json();
+      
+      if (!payloadData.success || !payloadData.payload) {
+        throw new Error('Failed to generate TON proof payload');
+      }
+
+      console.log('Generated TON proof payload:', payloadData.payload);
+
+      // 2. Request tonProof during connection
+      tonConnect.setConnectRequestParameters({
+        state: 'ready',
+        value: { 
+          tonProof: payloadData.payload 
+        }
+      });
+
+      // 3. Open TON Connect modal and wait for connection with proof
+      const walletConnectionPromise = new Promise<any>((resolve, reject) => {
+        const unsubscribe = tonConnect.onStatusChange((wallet: any) => {
+          if (wallet) {
+            unsubscribe();
+            resolve(wallet);
+          }
+        });
+        
+        // Timeout after 2 minutes
+        setTimeout(() => {
+          unsubscribe();
+          reject(new Error('Connection timeout'));
+        }, 120000);
+      });
+
+      // Open modal
+      await tonConnect.openModal();
+      
+      // Wait for wallet connection from modal
+      const wallet = await walletConnectionPromise;
+      const address = wallet.account.address;
+      
+      console.log('TON Wallet connected:', address);
+      console.log('TON Connect Items:', wallet.connectItems);
+
+      // 4. Extract tonProof from wallet connection
+      const tonProof = wallet.connectItems?.tonProof;
+      
+      if (!tonProof || tonProof.error) {
+        throw new Error(tonProof?.error?.message || 'TON proof not provided');
+      }
+
+      console.log('TON Proof received:', tonProof);
+
+      // 5. Request authentication from backend
       const authResponse = await fetch('/api/wallet/auth/request', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -274,10 +384,10 @@ const WalletPage: React.FC = () => {
         throw new Error('Failed to request authentication');
       }
 
-      // Simulate signature for TON
-      const signature = 'ton_signature_' + Date.now();
+      // 6. Serialize tonProof for backend
+      const signature = JSON.stringify(tonProof);
 
-      // Verify signature
+      // 7. Verify signature with backend
       const verifyResponse = await fetch('/api/wallet/auth/verify', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -289,10 +399,10 @@ const WalletPage: React.FC = () => {
 
       const verifyData = await verifyResponse.json();
       if (!verifyData.success) {
-        throw new Error('Signature verification failed');
+        throw new Error('TON proof verification failed');
       }
 
-      // Connect wallet
+      // 8. Connect wallet
       const connectResponse = await fetch('/api/wallet/connect', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -310,7 +420,7 @@ const WalletPage: React.FC = () => {
         throw new Error('Failed to connect wallet');
       }
 
-      // Update state and store session
+      // 9. Update state and store session
       setWallets(prev => ({ 
         ...prev, 
         tonkeeper: { ...prev.tonkeeper, connected: true, address, connecting: false } 
@@ -320,7 +430,7 @@ const WalletPage: React.FC = () => {
 
       toast({
         title: "TON Keeper Connected",
-        description: `Connected to ${address.slice(0, 8)}...${address.slice(-6)}`,
+        description: `Connected with verified proof to ${address.slice(0, 8)}...${address.slice(-6)}`,
       });
 
     } catch (error: any) {
@@ -350,7 +460,9 @@ const WalletPage: React.FC = () => {
       icon: '🦊',
       color: 'from-orange-500 to-yellow-500',
       connect: connectMetaMask,
-      available: typeof window !== 'undefined' && window.ethereum?.isMetaMask
+      // On mobile, always show as available (deep linking will handle it)
+      // On desktop, check for browser extension
+      available: isMobile || (typeof window !== 'undefined' && window.ethereum?.isMetaMask)
     },
     {
       id: 'phantom',
@@ -359,7 +471,9 @@ const WalletPage: React.FC = () => {
       icon: '👻',
       color: 'from-purple-500 to-pink-500',
       connect: connectPhantom,
-      available: typeof window !== 'undefined' && window.solana?.isPhantom
+      // On mobile, always show as available (deep linking will handle it)
+      // On desktop, check for browser extension
+      available: isMobile || (typeof window !== 'undefined' && window.solana?.isPhantom)
     },
     {
       id: 'tonkeeper',
@@ -368,7 +482,7 @@ const WalletPage: React.FC = () => {
       icon: '💎',
       color: 'from-blue-500 to-cyan-500',
       connect: connectTonKeeper,
-      available: true // TON is always available in development
+      available: true // Always available (uses TON Connect protocol)
     }
   ];
 

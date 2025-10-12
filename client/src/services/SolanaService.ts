@@ -37,7 +37,7 @@ class SolanaServiceWrapper {
       this.keypair = solanaService.getKeyPair();
       
       // Set program IDs
-      this.vaultProgramId = 'ChronoSVauLt111111111111111111111111111111111'; // Solana devnet
+      this.vaultProgramId = 'ChronoSVauLt11111111111111111111111111111111'; // Solana devnet
       this.bridgeProgramId = 'Fg6PaFpoGXkYsidMpWTK6W2BeZ7FEfcYkg476zPFsLnS'; // Solana devnet
       
       this.connected = true;

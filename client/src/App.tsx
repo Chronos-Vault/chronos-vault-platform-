@@ -25,6 +25,7 @@ import VaultSchoolPage from '@/pages/vault-school';
 import RoadmapPage from '@/pages/roadmap';
 import SmartContractsPage from '@/pages/smart-contracts';
 import TechnicalSpecPage from '@/pages/technical-spec';
+import RevolutionaryFeaturesPage from '@/pages/revolutionary-features';
 
 // Documentation Pages
 import APIDocumentationPage from '@/pages/api-documentation';
@@ -171,6 +172,7 @@ const App: React.FC = () => {
                       <Route path="/documentation" component={DocumentationPage} />
                       {/* Important: The route below is disabled to fix conflict with multi-signature-vault-new */}
                       {/* <Route path="/documentation/multi-signature-vault" component={DocumentationPage} /> */}
+                      <Route path="/revolutionary-features" component={RevolutionaryFeaturesPage} />
                       <Route path="/vault-school" component={VaultSchoolPage} />
                       <Route path="/terms-of-service" component={TermsOfServicePage} />
                       <Route path="/cookie-policy" component={CookiePolicyPage} />

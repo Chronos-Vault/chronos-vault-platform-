@@ -180,7 +180,7 @@ const TokenInfoCard: React.FC = () => {
 };
 
 const CVTTokenPage: React.FC = () => {
-  const { isAuthenticated, connectWallet, signIn, isAuthenticating } = useAuthContext();
+  const { isAuthenticated, login, loading } = useAuthContext();
   const { toast } = useToast();
   const [isConnecting, setIsConnecting] = useState(false);
   
@@ -188,12 +188,15 @@ const CVTTokenPage: React.FC = () => {
   const handleConnectWallet = async () => {
     try {
       setIsConnecting(true);
-      await connectWallet();
-      await signIn();
-      toast({
-        title: "Connected successfully",
-        description: "Your wallet is now connected to Chronos Vault",
-      });
+      const success = await login({ wallet: 'auto' });
+      if (success) {
+        toast({
+          title: "Connected successfully",
+          description: "Your wallet is now connected to Chronos Vault",
+        });
+      } else {
+        throw new Error('Login failed');
+      }
     } catch (error) {
       console.error("Failed to connect wallet:", error);
       toast({

@@ -104,12 +104,12 @@ export default function TechnicalSpecification() {
                   <Accordion type="single" collapsible className="w-full space-y-4">
                     <AccordionItem value="ethereum" className="border border-[#333] rounded-lg px-4">
                       <AccordionTrigger className="py-4 text-md font-semibold hover:no-underline">
-                        Ethereum Implementation
+                        Ethereum Layer 2 (Arbitrum) Implementation
                       </AccordionTrigger>
                       <AccordionContent className="text-gray-300 pt-0 pb-4">
                         <div className="space-y-4">
                           <p>
-                            The Ethereum layer serves as the primary ownership and transaction layer, maintaining the definitive record of vault ownership and transfer rights.
+                            Ethereum Layer 2 (Arbitrum) serves as the Primary Security layer in Trinity Protocol, maintaining vault ownership records with maximum decentralization while reducing fees by 95% through Arbitrum Layer 2 deployment.
                           </p>
                           
                           <div>
@@ -168,7 +168,7 @@ export default function TechnicalSpecification() {
                       <AccordionContent className="text-gray-300 pt-0 pb-4">
                         <div className="space-y-4">
                           <p>
-                            The Solana layer provides high-frequency monitoring and security checks using its high-throughput capabilities.
+                            Solana serves as the Rapid Validation layer in Trinity Protocol, providing high-frequency monitoring and state verification. Its high-throughput capabilities enable real-time security monitoring across vault operations.
                           </p>
                           
                           <div>
@@ -215,25 +215,25 @@ export default function TechnicalSpecification() {
                   </div>
                   
                   <div className="bg-[#0F0F0F] border border-[#222] rounded-lg p-4">
-                    <h4 className="text-md font-semibold text-white mb-2">Bridge Architecture</h4>
+                    <h4 className="text-md font-semibold text-white mb-2">Trinity Protocol Bridge</h4>
                     <div className="grid grid-cols-3 gap-2 text-center">
-                      <div className="bg-[#171717] rounded p-2">
-                        <p className="text-xs font-semibold text-purple-400">Ethereum</p>
-                        <p className="text-[10px] text-gray-500">Ownership Layer</p>
+                      <div className="bg-[#171717] rounded p-2 border border-[#6B00D7]/30">
+                        <p className="text-xs font-semibold text-purple-400">Ethereum Layer 2 (Arbitrum)</p>
+                        <p className="text-[10px] text-gray-500">Primary Security</p>
+                      </div>
+                      <div className="py-1 flex justify-center items-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-purple-400"><path d="M5 12h14"></path><path d="m12 5 7 7-7 7"></path></svg>
+                      </div>
+                      <div className="bg-[#171717] rounded p-2 border border-[#6B00D7]/30">
+                        <p className="text-xs font-semibold text-purple-400">Solana</p>
+                        <p className="text-[10px] text-gray-500">Rapid Validation</p>
                       </div>
                       <div className="py-1 flex justify-center items-center">
                         <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-[#FF5AF7]"><path d="M5 12h14"></path><path d="m12 5 7 7-7 7"></path></svg>
                       </div>
-                      <div className="bg-[#171717] rounded p-2">
-                        <p className="text-xs font-semibold text-blue-400">TON</p>
-                        <p className="text-[10px] text-gray-500">Recovery Layer</p>
-                      </div>
-                      <div className="py-1 flex justify-center items-center">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-[#FF5AF7]"><path d="M5 12h14"></path><path d="m12 5 7 7-7 7"></path></svg>
-                      </div>
-                      <div className="bg-[#171717] rounded p-2">
-                        <p className="text-xs font-semibold text-green-400">Solana</p>
-                        <p className="text-[10px] text-gray-500">Monitoring Layer</p>
+                      <div className="bg-[#171717] rounded p-2 border border-[#6B00D7]/30">
+                        <p className="text-xs font-semibold text-purple-400">TON</p>
+                        <p className="text-[10px] text-gray-500">Recovery System</p>
                       </div>
                       <div className="py-1 flex justify-center items-center">
                         <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-[#FF5AF7]"><path d="M5 12h14"></path><path d="m12 5 7 7-7 7"></path></svg>
@@ -260,7 +260,7 @@ export default function TechnicalSpecification() {
                   
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                     <div className="bg-[#0F0F0F] border border-[#222] rounded-lg p-4">
-                      <h4 className="text-md font-semibold text-white mb-2">Ethereum Layer</h4>
+                      <h4 className="text-md font-semibold text-white mb-2">Ethereum Layer 2 (Arbitrum)</h4>
                       <ul className="text-sm text-gray-400 space-y-2">
                         <li>• Ownership records</li>
                         <li>• Access control rules</li>

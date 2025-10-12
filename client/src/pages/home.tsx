@@ -18,10 +18,10 @@ const Home = () => {
   const [isVisible, setIsVisible] = useState(false);
   const heroRef = useRef<HTMLDivElement>(null);
 
-  // Enhanced vault data for impressive display
+  // Real metrics from implemented features
   const securityRating = 100;
-  const activeVaults = 10467;
-  const blockchains = 4;
+  const supportedChains = 3; // Ethereum, Solana, TON
+  const feeReduction = 95; // % savings with Layer 2 vs Ethereum L1
 
   // Mark onboarding as complete to prevent any redirects
   useEffect(() => {
@@ -173,7 +173,7 @@ const Home = () => {
               </motion.p>
             </div>
             
-            {/* Stats Section with Real Data */}
+            {/* Stats Section with Real Technology Metrics */}
             <motion.div 
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -181,21 +181,96 @@ const Home = () => {
               className="grid grid-cols-3 gap-4 max-w-2xl mx-auto mb-12 bg-black/40 backdrop-blur-sm p-6 rounded-xl border border-[#6B00D7]/20"
             >
               <div className="text-center">
-                <div className="text-3xl font-bold text-[#FF5AF7] mb-1">{activeVaults.toLocaleString()}</div>
-                <div className="text-sm text-gray-400">Active Vaults</div>
-              </div>
-              <div className="text-center">
-                <div className="text-3xl font-bold text-[#FF5AF7] mb-1">{blockchains}+</div>
+                <div className="text-3xl font-bold text-[#FF5AF7] mb-1">{supportedChains}</div>
                 <div className="text-sm text-gray-400">Blockchains</div>
               </div>
               <div className="text-center">
-                <div className="text-3xl font-bold text-[#FF5AF7] mb-1">{securityRating}%</div>
-                <div className="text-sm text-gray-400">Security Rating</div>
+                <div className="text-3xl font-bold text-[#FF5AF7] mb-1">{feeReduction}%</div>
+                <div className="text-sm text-gray-400">Fee Savings</div>
+              </div>
+              <div className="text-center">
+                <div className="text-3xl font-bold text-[#FF5AF7] mb-1">2-of-3</div>
+                <div className="text-sm text-gray-400">Trinity Verify</div>
               </div>
             </motion.div>
             
             {/* Advanced Security Cards Grid - Matching Premium Triple-Chain Style */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto mb-16">
+              
+              {/* Trinity Protocol Architecture */}
+              <motion.div 
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.7, delay: 0.2 }}
+                className="relative group overflow-hidden"
+              >
+                <div className="absolute inset-0 bg-gradient-to-br from-[#6B00D7]/40 to-[#FF5AF7]/30 opacity-0 group-hover:opacity-100 transition-opacity duration-700 -z-10 blur-xl"></div>
+                
+                <div className="relative bg-gradient-to-b from-black/80 to-[#0a0014] backdrop-blur-lg border border-[#6B00D7]/20 hover:border-[#6B00D7]/40 rounded-2xl p-6 transition-all duration-300 shadow-glow overflow-hidden group-hover:shadow-[0_0_25px_rgba(107,0,215,0.3)]">
+                  <div className="absolute top-3 right-3 text-xs px-2.5 py-1 bg-[#6B00D7]/20 text-[#FF5AF7] rounded-full font-medium">
+                    Layer 2 Optimized
+                  </div>
+                  
+                  <div className="absolute top-0 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-[#FF5AF7]/50 to-transparent"></div>
+
+                  <h3 className="text-xl md:text-2xl font-bold text-white mt-4 mb-3 flex items-center">
+                    <div className="mr-3 p-2 rounded-lg bg-gradient-to-br from-[#6B00D7]/20 to-[#FF5AF7]/10 flex items-center justify-center">
+                      <Zap className="text-[#FF5AF7] w-6 h-6" />
+                    </div>
+                    <span className="bg-clip-text text-transparent bg-gradient-to-r from-white to-white via-[#FF5AF7] animate-gradient-text">Trinity Protocol Security</span>
+                  </h3>
+                  
+                  <p className="text-gray-300 mb-5 pl-1">
+                    Fixed blockchain roles with Ethereum Layer 2 (Arbitrum) deployment for 95% lower fees. 2-of-3 mathematical consensus ensures maximum security.
+                  </p>
+                  
+                  <div className="space-y-3 mb-4">
+                    <div className="bg-black/40 rounded-xl p-3 border border-[#6B00D7]/10 group-hover:border-[#6B00D7]/20 transition-all duration-300">
+                      <div className="flex justify-between items-center mb-2">
+                        <div className="flex items-center gap-2">
+                          <span className="text-2xl">⟠</span>
+                          <span className="font-medium text-white">Ethereum Layer 2 (Arbitrum)</span>
+                        </div>
+                        <span className="text-[#FF5AF7] text-sm">Primary Security</span>
+                      </div>
+                      <div className="text-xs text-gray-400">Immutable ownership & access control</div>
+                    </div>
+                    
+                    <div className="bg-black/40 rounded-xl p-3 border border-[#6B00D7]/10 group-hover:border-[#6B00D7]/20 transition-all duration-300">
+                      <div className="flex justify-between items-center mb-2">
+                        <div className="flex items-center gap-2">
+                          <span className="text-2xl">◎</span>
+                          <span className="font-medium text-white">Solana</span>
+                        </div>
+                        <span className="text-[#FF5AF7] text-sm">Rapid Validation</span>
+                      </div>
+                      <div className="text-xs text-gray-400">High-frequency monitoring</div>
+                    </div>
+                    
+                    <div className="bg-black/40 rounded-xl p-3 border border-[#6B00D7]/10 group-hover:border-[#6B00D7]/20 transition-all duration-300">
+                      <div className="flex justify-between items-center mb-2">
+                        <div className="flex items-center gap-2">
+                          <span className="text-2xl">💎</span>
+                          <span className="font-medium text-white">TON</span>
+                        </div>
+                        <span className="text-[#FF5AF7] text-sm">Recovery System</span>
+                      </div>
+                      <div className="text-xs text-gray-400">Quantum-resistant backup</div>
+                    </div>
+                  </div>
+                  
+                  <div className="pt-3 border-t border-gray-700">
+                    <p className="text-xs text-gray-400">
+                      <Shield className="w-3 h-3 inline mr-1 text-blue-400" />
+                      Mathematical 2-of-3 consensus across all three blockchains
+                    </p>
+                  </div>
+                  
+                  <div className="absolute -inset-4 -z-10 opacity-0 group-hover:opacity-30 transition-opacity duration-700">
+                    <div className="absolute inset-0 translate-x-[-100%] group-hover:translate-x-[100%] transition-all duration-2000 ease-in-out bg-gradient-to-r from-transparent via-white to-transparent"></div>
+                  </div>
+                </div>
+              </motion.div>
               {/* Real-Time Security Monitoring */}
               <motion.div 
                 initial={{ opacity: 0, y: 20 }}
@@ -937,8 +1012,12 @@ const Home = () => {
                   </div>
                 </div>
                 
-                {/* Triple-Chain Architecture Diagram */}
+                {/* Trinity Protocol Architecture */}
                 <div className="relative mx-auto max-w-3xl mb-10 pt-6">
+                  <div className="text-center mb-6">
+                    <span className="text-[#FF5AF7] text-sm font-bold">TRINITY PROTOCOL: 2-OF-3 CHAIN SECURITY</span>
+                    <p className="text-gray-400 text-xs mt-1">Ethereum Layer 2 (Arbitrum) deployment for 95% lower fees</p>
+                  </div>
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                     {/* Ethereum Layer */}
                     <div className="relative group">
@@ -949,17 +1028,17 @@ const Home = () => {
                             <div className="text-[#FF5AF7] text-xs font-bold">ETH</div>
                           </div>
                           <div>
-                            <span className="text-white text-sm font-semibold block">Ethereum Layer</span>
+                            <span className="text-white text-sm font-semibold block">Ethereum Layer 2 (Arbitrum)</span>
                             <span className="text-[#FF5AF7] text-xs">Primary Security</span>
                           </div>
                         </div>
                         <div className="h-0.5 w-full bg-gradient-to-r from-transparent via-[#6B00D7] to-transparent mb-3 opacity-50"></div>
                         <p className="text-gray-400 text-xs leading-relaxed">
-                          Provides primary blockchain security for ownership records and access control with immutable contract verification.
+                          Primary blockchain security with immutable ownership records and access control via Layer 2 for optimal fees.
                         </p>
                         <div className="mt-3 text-[10px] text-gray-500 font-mono flex items-center">
                           <div className="h-1 w-1 rounded-full bg-[#6B00D7] animate-pulse mr-1"></div>
-                          NETWORK ACTIVE
+                          LAYER 2 OPTIMIZED
                         </div>
                       </div>
                     </div>
@@ -979,7 +1058,7 @@ const Home = () => {
                         </div>
                         <div className="h-0.5 w-full bg-gradient-to-r from-transparent via-[#6B00D7] to-transparent mb-3 opacity-50"></div>
                         <p className="text-gray-400 text-xs leading-relaxed">
-                          High-frequency monitoring and rapid validation system with millisecond security confirmation protocol.
+                          High-frequency monitoring and rapid validation with millisecond security confirmation protocol.
                         </p>
                         <div className="mt-3 text-[10px] text-gray-500 font-mono flex items-center">
                           <div className="h-1 w-1 rounded-full bg-[#6B00D7] animate-pulse mr-1"></div>
@@ -1003,7 +1082,7 @@ const Home = () => {
                         </div>
                         <div className="h-0.5 w-full bg-gradient-to-r from-transparent via-[#6B00D7] to-transparent mb-3 opacity-50"></div>
                         <p className="text-gray-400 text-xs leading-relaxed">
-                          Backup security system with secure recovery operations and emergency validation protocols.
+                          Quantum-resistant backup security with emergency recovery operations and validation protocols.
                         </p>
                         <div className="mt-3 text-[10px] text-gray-500 font-mono flex items-center">
                           <div className="h-1 w-1 rounded-full bg-[#6B00D7] animate-pulse mr-1"></div>
@@ -1205,17 +1284,22 @@ const Home = () => {
                   
                   <div className="flex items-center space-x-4 mb-6">
                     <div className="bg-[#6B00D7]/20 p-3 rounded-lg">
-                      <Shield className="text-[#FF5AF7] w-6 h-6" />
+                      <Zap className="text-[#FF5AF7] w-6 h-6" />
                     </div>
                     <div>
-                      <h3 className="text-xl font-semibold text-white">Vault Creation</h3>
+                      <h3 className="text-xl font-semibold text-white">Trinity Protocol Architecture</h3>
                     </div>
                   </div>
-                  <p className="text-gray-400">Create and configure your vault with options for time-locking, multi-signature requirements, and advanced security parameters.</p>
+                  <p className="text-gray-400">Fixed blockchain roles ensure maximum security: Ethereum Layer 2 for primary security with 95% lower fees, Solana for rapid validation, TON for quantum-resistant backup.</p>
                   
                   <div className="mt-4 pt-4 border-t border-gray-800">
-                    <div className="flex items-center space-x-2 text-sm text-gray-500">
-                      <span className="flex items-center"><CheckCircle className="w-4 h-4 mr-1 text-[#FF5AF7]" /> AI security analysis active</span>
+                    <div className="flex items-center justify-between text-sm">
+                      <span className="text-gray-500">Ethereum Layer 2</span>
+                      <span className="text-[#FF5AF7] font-semibold">Primary Security</span>
+                    </div>
+                    <div className="flex items-center justify-between text-sm mt-1">
+                      <span className="text-gray-500">Solana + TON</span>
+                      <span className="text-[#FF5AF7] font-semibold">2-of-3 Consensus</span>
                     </div>
                   </div>
                 </div>

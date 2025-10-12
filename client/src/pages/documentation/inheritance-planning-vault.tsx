@@ -307,20 +307,25 @@ export default function InheritancePlanningVaultDocumentation() {
                 <h3 className="text-xl font-semibold mb-4">Blockchain Implementation</h3>
                 <div className="space-y-4">
                   <div>
-                    <h4 className="font-semibold">Primary Chain:</h4>
-                    <p className="text-muted-foreground">Ethereum (ERC-4626 compliant)</p>
+                    <h4 className="font-semibold">Trinity Protocol: 2-of-3 Chain Security:</h4>
+                    <p className="text-muted-foreground">
+                      Fixed-role architecture: Ethereum Layer (Primary Security via Layer 2 for 95% lower fees), Solana Layer (Rapid Validation with millisecond confirmation), 
+                      and TON Layer (Recovery System with quantum-resistant backup) provide 2-of-3 consensus protection.
+                    </p>
                   </div>
                   <div>
-                    <h4 className="font-semibold">Secondary Chains:</h4>
-                    <p className="text-muted-foreground">TON and Solana (cross-chain verification)</p>
+                    <h4 className="font-semibold">Fixed Chain Roles:</h4>
+                    <p className="text-muted-foreground">
+                      Ethereum handles primary ownership and access control; Solana provides high-frequency monitoring; TON enables emergency recovery.
+                    </p>
                   </div>
                   <div>
                     <h4 className="font-semibold">Smart Contract Standards:</h4>
-                    <p className="text-muted-foreground">ERC-4626 (Tokenized Vault), ERC-721 (for beneficiary NFTs)</p>
+                    <p className="text-muted-foreground">ERC-4626 (Tokenized Vault), ERC-721 (for beneficiary NFTs), cross-chain compatibility</p>
                   </div>
                   <div>
                     <h4 className="font-semibold">Consensus Mechanism:</h4>
-                    <p className="text-muted-foreground">Multi-chain validation with 2/3 threshold</p>
+                    <p className="text-muted-foreground">2-of-3 multi-chain validation with Layer 2 optimization for Ethereum transactions</p>
                   </div>
                 </div>
               </div>

@@ -11,6 +11,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ArrowLeft, Clock, Shield, Wallet, CheckCircle2, AlertTriangle, Loader2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { ChainSelector, SupportedChain } from "@/components/ChainSelector";
 import {
   Form,
   FormControl,
@@ -32,6 +33,7 @@ const vaultFormSchema = z.object({
     message: "Unlock date must be in the future",
   }),
   blockchain: z.string().min(1, "Please select a blockchain"),
+  primaryChain: z.enum(['ethereum', 'solana', 'ton']).default('solana'), // Revolutionary: Choose your primary blockchain!
   assetAmount: z.string().min(1, "Please enter an amount to lock"),
   beneficiaryAddress: z.string().optional(),
   securityLevel: z.string().default("standard"),
@@ -69,6 +71,7 @@ const CreateVaultEnhanced = () => {
       description: "",
       unlockDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().substring(0, 16), // 30 days from now
       blockchain: BlockchainType.TON,
+      primaryChain: 'solana', // Default to Solana for ultra-low fees!
       assetAmount: "0.1",
       beneficiaryAddress: "",
       securityLevel: "standard",
@@ -295,6 +298,23 @@ const CreateVaultEnhanced = () => {
                 
                 <Form {...form}>
                   <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+                    {/* Revolutionary: Choose Primary Blockchain */}
+                    <FormField
+                      control={form.control}
+                      name="primaryChain"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormControl>
+                            <ChainSelector
+                              selectedChain={field.value as SupportedChain}
+                              onSelect={(chain) => field.onChange(chain)}
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                       <FormField
                         control={form.control}

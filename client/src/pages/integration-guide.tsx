@@ -144,11 +144,11 @@ const IntegrationGuide = () => {
                 
                 <Card className="bg-black/20 border border-gray-800">
                   <CardHeader className="pb-2">
-                    <CardTitle className="text-base">2. Install SDK</CardTitle>
+                    <CardTitle className="text-base">2. Set Up HTTP Client</CardTitle>
                   </CardHeader>
                   <CardContent>
                     <p className="text-sm text-gray-400">
-                      Choose your preferred language SDK and install it in your project.
+                      Use standard HTTP clients (fetch, axios, requests) - no SDK needed.
                     </p>
                   </CardContent>
                 </Card>
@@ -182,79 +182,169 @@ const IntegrationGuide = () => {
                 <TabsContent value="javascript" className="space-y-4 pt-4">
                   <div className="bg-slate-900 text-slate-50 p-4 rounded-md">
                     <pre className="text-sm overflow-x-auto">
-                      <code>{`// Install the SDK
-npm install @chronos-vault/sdk
+                      <code>{`// Integrate using REST API with fetch
+// No SDK required - use standard HTTP requests
 
-// Import and initialize
-import { ChronosVaultClient } from '@chronos-vault/sdk';
+// 1. Authenticate with wallet (MetaMask, Phantom, TON Keeper)
+async function authenticateWallet() {
+  // Request nonce
+  const nonceRes = await fetch('/api/auth/nonce');
+  const { nonce } = await nonceRes.json();
+  
+  // Sign with wallet (example with ethers.js)
+  const signature = await signer.signMessage(\`Sign: \${nonce}\`);
+  
+  // Verify and get JWT token
+  const authRes = await fetch('/api/auth/verify', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ address, signature, nonce })
+  });
+  
+  const { token } = await authRes.json();
+  return token;
+}
 
-const client = new ChronosVaultClient({
-  apiKey: 'YOUR_API_KEY',
-  environment: 'testnet' // or 'mainnet' for production
-});`}</code>
+// 2. Use token for API requests
+async function createVault(token) {
+  const res = await fetch('/api/vaults', {
+    method: 'POST',
+    headers: {
+      'Authorization': \`Bearer \${token}\`,
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+      id: crypto.randomUUID(),
+      name: 'My Vault',
+      type: 'time-lock',
+      value: 1000,
+      primaryChain: 'ethereum'
+    })
+  });
+  
+  return await res.json();
+}`}</code>
                     </pre>
                   </div>
                   
                   <p className="text-gray-300">
-                    The JavaScript SDK supports both browser and Node.js environments. For browser usage,
-                    you can also connect directly to user wallets for authentication.
+                    Integration uses standard fetch API calls - no proprietary SDK needed. Works in both browser and Node.js environments with wallet-based authentication.
                   </p>
                 </TabsContent>
                 
                 <TabsContent value="python" className="space-y-4 pt-4">
                   <div className="bg-slate-900 text-slate-50 p-4 rounded-md">
                     <pre className="text-sm overflow-x-auto">
-                      <code>{`# Install the SDK
-pip install chronos-vault-sdk
+                      <code>{`# Integrate using REST API with requests library
+# No SDK required - use standard HTTP requests
+import requests
+from eth_account import Account
+from eth_account.messages import encode_defunct
 
-# Import and initialize
-from chronos_vault_sdk import ChronosVaultClient
+# 1. Authenticate with wallet
+def authenticate_wallet(private_key):
+    account = Account.from_key(private_key)
+    address = account.address
+    
+    # Request nonce
+    nonce_res = requests.get('https://your-app.replit.app/api/auth/nonce')
+    nonce = nonce_res.json()['nonce']
+    
+    # Sign with wallet
+    message = f"Sign: {nonce}"
+    encoded_msg = encode_defunct(text=message)
+    signed_msg = account.sign_message(encoded_msg)
+    
+    # Verify and get JWT token
+    auth_res = requests.post(
+        'https://your-app.replit.app/api/auth/verify',
+        json={'address': address, 'signature': signed_msg.signature.hex(), 'nonce': nonce}
+    )
+    
+    return auth_res.json()['token']
 
-client = ChronosVaultClient(
-    api_key='YOUR_API_KEY',
-    environment='testnet'  # or 'mainnet' for production
-)`}</code>
+# 2. Use token for API requests
+def create_vault(token):
+    res = requests.post(
+        'https://your-app.replit.app/api/vaults',
+        headers={'Authorization': f'Bearer {token}', 'Content-Type': 'application/json'},
+        json={
+            'id': 'vault_' + str(uuid.uuid4()),
+            'name': 'My Vault',
+            'type': 'time-lock',
+            'value': 1000,
+            'primaryChain': 'ethereum'
+        }
+    )
+    
+    return res.json()`}</code>
                     </pre>
                   </div>
                   
                   <p className="text-gray-300">
-                    The Python SDK works well for server-side implementations and backend services.
+                    Integration uses standard requests library - no proprietary SDK needed. Perfect for server-side implementations and backend services.
                   </p>
                 </TabsContent>
                 
                 <TabsContent value="java" className="space-y-4 pt-4">
                   <div className="bg-slate-900 text-slate-50 p-4 rounded-md">
                     <pre className="text-sm overflow-x-auto">
-                      <code>{`// Add the SDK to your Maven pom.xml
-<dependency>
-  <groupId>org.chronosvault</groupId>
-  <artifactId>chronos-vault-sdk</artifactId>
-  <version>1.0.0</version>
-</dependency>
+                      <code>{`// Integrate using REST API with Java HTTP Client
+// No SDK required - use standard HTTP requests
+import java.net.http.*;
+import java.net.URI;
+import com.google.gson.Gson;
 
-// Import and initialize
-import org.chronosvault.ChronosVaultClient;
+// 1. Authenticate and get JWT token
+public String authenticateWallet(String address, String signature, String nonce) {
+    HttpClient client = HttpClient.newHttpClient();
+    Gson gson = new Gson();
+    
+    // Prepare request body
+    Map<String, String> authData = Map.of(
+        "address", address,
+        "signature", signature,
+        "nonce", nonce
+    );
+    
+    HttpRequest request = HttpRequest.newBuilder()
+        .uri(URI.create("https://your-app.replit.app/api/auth/verify"))
+        .header("Content-Type", "application/json")
+        .POST(HttpRequest.BodyPublishers.ofString(gson.toJson(authData)))
+        .build();
+    
+    HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+    JsonObject json = gson.fromJson(response.body(), JsonObject.class);
+    return json.get("token").getAsString();
+}
 
-ChronosVaultClient client = ChronosVaultClient.builder()
-    .withApiKey("YOUR_API_KEY")
-    .withEnvironment("testnet") // or "mainnet" for production
-    .build();`}</code>
+// 2. Use token for API requests
+public JsonObject createVault(String token) {
+    // Similar pattern with Authorization header
+    // headers: { "Authorization": "Bearer " + token }
+}`}</code>
                     </pre>
                   </div>
                   
                   <p className="text-gray-300">
-                    The Java SDK is ideal for enterprise applications and services that require strong typing.
+                    Integration uses standard Java HTTP Client - no proprietary SDK needed. Ideal for enterprise applications with strong typing.
                   </p>
                 </TabsContent>
                 
                 <TabsContent value="other" className="space-y-4 pt-4">
                   <p className="text-gray-300">
-                    We also provide SDKs for Go and Rust. See the SDK documentation for installation and usage 
-                    instructions for these languages.
+                    Chronos Vault uses standard REST API architecture. You can integrate using any HTTP client library in your preferred language:
                   </p>
                   
-                  <p className="text-gray-300">
-                    Alternatively, you can directly use our REST API with any HTTP client in your preferred language.
+                  <ul className="list-disc list-inside text-gray-300 space-y-2">
+                    <li><strong>Go:</strong> Use net/http package for HTTP requests</li>
+                    <li><strong>Rust:</strong> Use reqwest crate for HTTP requests</li>
+                    <li><strong>PHP:</strong> Use Guzzle or cURL for HTTP requests</li>
+                    <li><strong>Ruby:</strong> Use Faraday or HTTParty gems</li>
+                  </ul>
+                  
+                  <p className="text-gray-300 mt-4">
+                    All languages follow the same pattern: authenticate with wallet signatures, get JWT token, use token for API calls.
                   </p>
                   
                   <Button asChild variant="outline">
@@ -285,23 +375,25 @@ ChronosVaultClient client = ChronosVaultClient.builder()
                     
                     <div className="bg-slate-900 text-slate-50 p-4 rounded-md">
                       <pre className="text-sm overflow-x-auto">
-                        <code>{`// JavaScript example
-const client = new ChronosVaultClient({
-  apiKey: 'YOUR_API_KEY',
-  environment: 'testnet'
-});
+                        <code>{`// Note: Chronos Vault uses wallet-based authentication only
+// API key auth is NOT supported - all auth is done via wallet signatures
 
-// The client is now authenticated and ready to use
-const vaults = await client.vaults.list();`}</code>
+// For server-side operations, use wallet authentication:
+const { token } = await authenticateWallet(); // From wallet signature
+
+// Use token for API requests
+const vaultsRes = await fetch('/api/vaults', {
+  headers: { 'Authorization': \`Bearer \${token}\` }
+});
+const { vaults } = await vaultsRes.json();`}</code>
                       </pre>
                     </div>
                     
-                    <Alert variant="destructive" className="border-red-500/50 bg-red-500/10">
-                      <AlertCircle className="h-4 w-4" />
-                      <AlertTitle>Important Security Note</AlertTitle>
+                    <Alert variant="default" className="border-blue-500/50 bg-blue-500/10">
+                      <AlertCircle className="h-4 w-4 text-blue-500" />
+                      <AlertTitle>100% Blockchain-Native Authentication</AlertTitle>
                       <AlertDescription>
-                        Never include your API key directly in client-side code. API keys should be stored
-                        securely on your server and used only in server-to-server communications.
+                        Chronos Vault is 100% crypto-native. ALL authentication is done via wallet signatures (MetaMask, Phantom, TON Keeper). There are NO traditional API keys - only JWT tokens obtained after wallet signature verification.
                       </AlertDescription>
                     </Alert>
                   </AccordionContent>
@@ -317,26 +409,46 @@ const vaults = await client.vaults.list();`}</code>
                     
                     <div className="bg-slate-900 text-slate-50 p-4 rounded-md">
                       <pre className="text-sm overflow-x-auto">
-                        <code>{`// JavaScript example with MetaMask
-const client = new ChronosVaultClient({
-  wallet: {
-    type: 'ethereum',
-    provider: window.ethereum // browser wallet provider (e.g. MetaMask)
-  },
-  environment: 'testnet'
-});
+                        <code>{`// Wallet authentication with MetaMask (using ethers.js)
+import { ethers } from 'ethers';
 
-// Authenticate the user with their wallet
-await client.authenticate();
-
-// The client is now authenticated with the user's wallet
-const vaults = await client.vaults.list();`}</code>
+async function authenticateWallet() {
+  // Connect to MetaMask
+  const provider = new ethers.BrowserProvider(window.ethereum);
+  await provider.send('eth_requestAccounts', []);
+  const signer = await provider.getSigner();
+  const address = await signer.getAddress();
+  
+  // Get nonce from server
+  const nonceRes = await fetch('/api/auth/nonce');
+  const { nonce } = await nonceRes.json();
+  
+  // Sign message with wallet
+  const message = \`Sign this message to authenticate: \${nonce}\`;
+  const signature = await signer.signMessage(message);
+  
+  // Verify signature and get JWT token
+  const authRes = await fetch('/api/auth/verify', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ address, signature, nonce })
+  });
+  
+  const { token } = await authRes.json();
+  
+  // Use token for API requests
+  const vaultsRes = await fetch('/api/vaults', {
+    headers: { 'Authorization': \`Bearer \${token}\` }
+  });
+  
+  return await vaultsRes.json();
+}`}</code>
                       </pre>
                     </div>
                     
                     <p className="text-gray-300">
-                      We support wallet authentication for Ethereum (MetaMask, WalletConnect), TON (Tonkeeper),
-                      and Solana (Phantom, Solflare) wallets.
+                      We support wallet authentication for Ethereum (MetaMask, WalletConnect), TON (TON Keeper),
+                      and Solana (Phantom, Solflare) wallets. All use the same signature-based authentication flow.
                     </p>
                   </AccordionContent>
                 </AccordionItem>
@@ -527,20 +639,45 @@ console.log(\`Webhook registered with ID: \${webhook.id}\`);`}</code>
               
               <div className="bg-slate-900 text-slate-50 p-4 rounded-md mt-4">
                 <pre className="text-sm overflow-x-auto">
-                  <code>{`// Test environment setup
-const client = new ChronosVaultClient({
-  apiKey: 'YOUR_TEST_API_KEY',
-  environment: 'testnet'
-});
+                  <code>{`// Test environment setup - use testnet deployment
+const TESTNET_API = 'https://your-testnet-app.replit.dev';
 
-// Test wallet connection
-const testWalletClient = new ChronosVaultClient({
-  wallet: {
-    type: 'ethereum',
-    provider: testEthereumProvider // Test provider from dev portal
-  },
-  environment: 'testnet'
-});`}</code>
+// Authenticate with test wallet
+async function testWalletAuth() {
+  const nonceRes = await fetch(\`\${TESTNET_API}/api/auth/nonce\`);
+  const { nonce } = await nonceRes.json();
+  
+  // Sign with testnet wallet
+  const signature = await testSigner.signMessage(\`Sign: \${nonce}\`);
+  
+  const authRes = await fetch(\`\${TESTNET_API}/api/auth/verify\`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ address, signature, nonce })
+  });
+  
+  return authRes.json();
+}
+
+// Test vault operations
+async function testVaultCreation(token) {
+  const res = await fetch(\`\${TESTNET_API}/api/vaults\`, {
+    method: 'POST',
+    headers: {
+      'Authorization': \`Bearer \${token}\`,
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+      id: crypto.randomUUID(),
+      name: 'Test Vault',
+      type: 'time-lock',
+      value: 100, // Test tokens
+      primaryChain: 'ethereum'
+    })
+  });
+  
+  return await res.json();
+}`}</code>
                 </pre>
               </div>
               
@@ -628,11 +765,15 @@ const testWalletClient = new ChronosVaultClient({
               
               <div className="bg-slate-900 text-slate-50 p-4 rounded-md mt-4">
                 <pre className="text-sm overflow-x-auto">
-                  <code>{`// Production environment setup
-const client = new ChronosVaultClient({
-  apiKey: 'YOUR_PRODUCTION_API_KEY',
-  environment: 'mainnet'
-});`}</code>
+                  <code>{`// Production environment setup - point to mainnet deployment
+const MAINNET_API = 'https://your-mainnet-app.replit.app';
+
+// All wallet authentication and API calls same as testnet
+// Just change the base URL to your mainnet deployment
+async function mainnetAuth() {
+  const nonceRes = await fetch(\`\${MAINNET_API}/api/auth/nonce\`);
+  // ... same auth flow
+}`}</code>
                 </pre>
               </div>
             </section>

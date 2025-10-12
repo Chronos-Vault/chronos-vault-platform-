@@ -333,13 +333,111 @@ export function WalletProvider({ children }: { children: ReactNode }) {
       
       // Real wallet connection logic based on chain
       switch (chain) {
-        case 'ethereum':
-          // Ethereum connection logic will go here
-          throw new Error('Real Ethereum connection not implemented yet');
+        case 'ethereum': {
+          // Check if MetaMask is installed
+          if (typeof window.ethereum === 'undefined') {
+            throw new Error('MetaMask not installed. Please install MetaMask extension.');
+          }
+          
+          // Request account access
+          const accounts = await window.ethereum.request({ 
+            method: 'eth_requestAccounts' 
+          });
+          
+          if (!accounts || accounts.length === 0) {
+            throw new Error('No accounts found');
+          }
+          
+          const address = accounts[0];
+          
+          // Get balance
+          const balanceWei = await window.ethereum.request({
+            method: 'eth_getBalance',
+            params: [address, 'latest']
+          });
+          
+          const balanceEth = parseInt(balanceWei, 16) / 1e18;
+          
+          // Get chain ID
+          const chainIdHex = await window.ethereum.request({ method: 'eth_chainId' });
+          
+          // Update status and wallet data
+          setStatus(prev => ({ ...prev, ethereum: 'connected' }));
+          setConnectedWallets(prev => ({
+            ...prev,
+            ethereum: {
+              address,
+              balance: {
+                total: balanceWei,
+                formatted: balanceEth.toFixed(4),
+                symbol: 'ETH',
+                decimals: 18
+              },
+              chainId: 'ethereum',
+              network: 'ethereum',
+              isTestnet: chainIdHex === '0xaa36a7' || chainIdHex === '0x5' || chainIdHex === '0x13881' // Sepolia, Goerli, Mumbai
+            }
+          }));
+          
+          if (!activeChain) {
+            setActiveChain('ethereum');
+          }
+          
+          toast({
+            title: 'Ethereum Wallet Connected',
+            description: `Connected to ${address.slice(0, 6)}...${address.slice(-4)}`,
+          });
+          
+          return true;
+        }
         
-        case 'solana':
-          // Solana connection logic will go here
-          throw new Error('Real Solana connection not implemented yet');
+        case 'solana': {
+          // Check if Phantom is installed
+          if (typeof window.solana === 'undefined' || !window.solana.isPhantom) {
+            throw new Error('Phantom wallet not installed. Please install Phantom extension.');
+          }
+          
+          // Connect to Phantom
+          const response = await window.solana.connect();
+          const address = response.publicKey.toString();
+          
+          // Get balance
+          const connection = new (await import('@solana/web3.js')).Connection(
+            'https://api.devnet.solana.com',
+            'confirmed'
+          );
+          const balance = await connection.getBalance(response.publicKey);
+          const balanceSol = balance / 1e9;
+          
+          // Update status and wallet data
+          setStatus(prev => ({ ...prev, solana: 'connected' }));
+          setConnectedWallets(prev => ({
+            ...prev,
+            solana: {
+              address,
+              balance: {
+                total: balance.toString(),
+                formatted: balanceSol.toFixed(4),
+                symbol: 'SOL',
+                decimals: 9
+              },
+              chainId: 'solana',
+              network: 'solana',
+              isTestnet: true
+            }
+          }));
+          
+          if (!activeChain) {
+            setActiveChain('solana');
+          }
+          
+          toast({
+            title: 'Solana Wallet Connected',
+            description: `Connected to ${address.slice(0, 6)}...${address.slice(-4)}`,
+          });
+          
+          return true;
+        }
         
         case 'ton':
           // TON connection logic
@@ -352,8 +450,8 @@ export function WalletProvider({ children }: { children: ReactNode }) {
           }
         
         case 'bitcoin':
-          // Bitcoin connection logic will go here
-          throw new Error('Real Bitcoin connection not implemented yet');
+          // Bitcoin connection requires external wallet like Unisat or Xverse
+          throw new Error('Bitcoin wallet connection requires Unisat or Xverse extension. Coming soon!');
         
         default:
           throw new Error(`Unknown chain: ${chain}`);
@@ -399,11 +497,38 @@ export function WalletProvider({ children }: { children: ReactNode }) {
       // Real wallet disconnection logic based on chain
       switch (chain) {
         case 'ethereum':
-          // Ethereum disconnection logic will go here
+          // MetaMask doesn't have a programmatic disconnect
+          // We just update our local state
+          setStatus(prev => ({ ...prev, ethereum: 'disconnected' }));
+          setConnectedWallets(prev => {
+            const updated = { ...prev };
+            delete updated.ethereum;
+            return updated;
+          });
+          
+          toast({
+            title: 'Ethereum Wallet Disconnected',
+            description: 'MetaMask has been disconnected',
+          });
           break;
         
         case 'solana':
-          // Solana disconnection logic will go here
+          // Disconnect from Phantom
+          if (window.solana && window.solana.isPhantom) {
+            await window.solana.disconnect();
+          }
+          
+          setStatus(prev => ({ ...prev, solana: 'disconnected' }));
+          setConnectedWallets(prev => {
+            const updated = { ...prev };
+            delete updated.solana;
+            return updated;
+          });
+          
+          toast({
+            title: 'Solana Wallet Disconnected',
+            description: 'Phantom has been disconnected',
+          });
           break;
         
         case 'ton':
@@ -411,23 +536,33 @@ export function WalletProvider({ children }: { children: ReactNode }) {
           if (tonConnect) {
             await tonConnect.disconnect();
           }
+          
+          setStatus(prev => ({ ...prev, ton: 'disconnected' }));
+          setConnectedWallets(prev => {
+            const updated = { ...prev };
+            delete updated.ton;
+            return updated;
+          });
+          
+          toast({
+            title: 'TON Wallet Disconnected',
+            description: 'TON Keeper has been disconnected',
+          });
           break;
         
         case 'bitcoin':
           // Bitcoin disconnection logic will go here
+          setStatus(prev => ({ ...prev, bitcoin: 'disconnected' }));
+          setConnectedWallets(prev => {
+            const updated = { ...prev };
+            delete updated.bitcoin;
+            return updated;
+          });
           break;
         
         default:
           throw new Error(`Unknown chain: ${chain}`);
       }
-      
-      // Update status and remove wallet data
-      setStatus(prev => ({ ...prev, [chain]: 'disconnected' }));
-      setConnectedWallets(prev => {
-        const updated = { ...prev };
-        delete updated[chain];
-        return updated;
-      });
       
       // If active chain is disconnected, set active chain to null
       if (activeChain === chain) {

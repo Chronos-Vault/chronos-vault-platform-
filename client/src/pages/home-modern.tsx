@@ -936,8 +936,12 @@ const Home = () => {
                   </div>
                 </div>
                 
-                {/* Triple-Chain Architecture Diagram */}
+                {/* Trinity Protocol Architecture */}
                 <div className="relative mx-auto max-w-3xl mb-10 pt-6">
+                  <div className="text-center mb-6">
+                    <span className="text-[#FF5AF7] text-sm font-bold">TRINITY PROTOCOL: 2-OF-3 CHAIN SECURITY</span>
+                    <p className="text-gray-400 text-xs mt-1">Ethereum Layer 2 (Arbitrum) deployment for 95% lower fees</p>
+                  </div>
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                     {/* Ethereum Layer */}
                     <div className="relative group">
@@ -948,17 +952,17 @@ const Home = () => {
                             <div className="text-[#FF5AF7] text-xs font-bold">ETH</div>
                           </div>
                           <div>
-                            <span className="text-white text-sm font-semibold block">Ethereum Layer</span>
+                            <span className="text-white text-sm font-semibold block">Ethereum Layer 2 (Arbitrum)</span>
                             <span className="text-[#FF5AF7] text-xs">Primary Security</span>
                           </div>
                         </div>
                         <div className="h-0.5 w-full bg-gradient-to-r from-transparent via-[#6B00D7] to-transparent mb-3 opacity-50"></div>
                         <p className="text-gray-400 text-xs leading-relaxed">
-                          Provides primary blockchain security for ownership records and access control with immutable contract verification.
+                          Primary blockchain security with immutable ownership records and access control via Layer 2 for optimal fees.
                         </p>
                         <div className="mt-3 text-[10px] text-gray-500 font-mono flex items-center">
                           <div className="h-1 w-1 rounded-full bg-[#6B00D7] animate-pulse mr-1"></div>
-                          NETWORK ACTIVE
+                          LAYER 2 OPTIMIZED
                         </div>
                       </div>
                     </div>
@@ -978,7 +982,7 @@ const Home = () => {
                         </div>
                         <div className="h-0.5 w-full bg-gradient-to-r from-transparent via-[#6B00D7] to-transparent mb-3 opacity-50"></div>
                         <p className="text-gray-400 text-xs leading-relaxed">
-                          High-frequency monitoring and rapid validation system with millisecond security confirmation protocol.
+                          High-frequency monitoring and rapid validation with millisecond security confirmation protocol.
                         </p>
                         <div className="mt-3 text-[10px] text-gray-500 font-mono flex items-center">
                           <div className="h-1 w-1 rounded-full bg-[#6B00D7] animate-pulse mr-1"></div>
@@ -1002,7 +1006,7 @@ const Home = () => {
                         </div>
                         <div className="h-0.5 w-full bg-gradient-to-r from-transparent via-[#6B00D7] to-transparent mb-3 opacity-50"></div>
                         <p className="text-gray-400 text-xs leading-relaxed">
-                          Backup security system with secure recovery operations and emergency validation protocols.
+                          Quantum-resistant backup security with emergency recovery operations and validation protocols.
                         </p>
                         <div className="mt-3 text-[10px] text-gray-500 font-mono flex items-center">
                           <div className="h-1 w-1 rounded-full bg-[#6B00D7] animate-pulse mr-1"></div>

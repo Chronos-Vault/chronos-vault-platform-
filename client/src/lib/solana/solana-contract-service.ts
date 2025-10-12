@@ -17,7 +17,7 @@ export class SolanaContractService {
   private static instance: SolanaContractService;
   
   // Program IDs from our actual deployed contracts
-  private readonly VAULT_PROGRAM_ID = 'ChronoSVauLt111111111111111111111111111111111';
+  private readonly VAULT_PROGRAM_ID = 'ChronoSVauLt11111111111111111111111111111111';
   private readonly BRIDGE_PROGRAM_ID = 'Fg6PaFpoGXkYsidMpWTK6W2BeZ7FEfcYkg476zPFsLnS';
   private readonly TOKEN_PROGRAM_ID = 'TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA';
   

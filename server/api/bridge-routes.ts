@@ -862,4 +862,24 @@ router.post('/swap/atomic', async (req: Request, res: Response) => {
   }
 });
 
+// Circuit Breaker Status Route - V3 Contracts Monitoring
+router.get('/circuit-breaker/status', async (_req: Request, res: Response) => {
+  try {
+    const { circuitBreakerMonitor } = await import('../security/circuit-breaker-monitor');
+    const status = await circuitBreakerMonitor.getAllStatus();
+    
+    res.json(status);
+  } catch (error) {
+    securityLogger.error('Failed to get circuit breaker status', SecurityEventType.API_ERROR, {
+      error: error instanceof Error ? error.message : String(error)
+    });
+    
+    res.status(500).json({
+      success: false,
+      error: 'Failed to fetch circuit breaker status',
+      message: error instanceof Error ? error.message : 'Unknown error'
+    });
+  }
+});
+
 export default router;
