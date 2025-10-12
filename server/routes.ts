@@ -41,6 +41,7 @@ import chainFeeRoutes from './api/chain-fee-routes';
 import vaultChainRoutes from './api/vault-chain-routes';
 import vaultCreationRoutes from './api/vault-creation-routes';
 import githubSyncRoutes from './api/github-sync-routes';
+import vaultMDLRoutes from './routes/vault-mdl-routes';
 import { SolanaProgramClient, CHRONOS_VAULT_PROGRAM_ID } from './blockchain/solana-program-client';
 import config from './config';
 
@@ -122,6 +123,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
   
   // Register vault creation routes
   apiRouter.use('/vault-creation', vaultCreationRoutes);
+  
+  // Register Mathematical Defense Layer vault routes
+  apiRouter.use('/vault', vaultMDLRoutes);
   
   // Register GitHub sync routes for automatic repository updates
   apiRouter.use('/github', githubSyncRoutes);
@@ -709,6 +713,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.get('/mobile-reset', resetOnboarding);
   app.get('/emergency-reset', resetOnboarding);
   app.get('/m-reset', resetOnboarding);
+  
+  // PERMANENT REDIRECT: Legacy SDK documentation URL → Canonical route
+  // This ensures Safari's cached JS bundles can't bypass the new routing logic
+  app.get('/sdk-documentation', (req, res) => {
+    res.redirect(301, '/documentation/sdk');
+  });
   
   // Serve TON Connect manifest as JSON
   app.get('/tonconnect-manifest.json', (req, res) => {
