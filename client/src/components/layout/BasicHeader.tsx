@@ -207,9 +207,9 @@ const BasicHeader = () => {
             isNew
           />
           <RoundMenuItem 
-            icon={<FileText className="text-white w-5 h-5" />}
-            label="Security Video Guides" 
-            href="/security-video-guides"
+            icon={<Code className="text-white w-5 h-5" />}
+            label="Security Integration Guide" 
+            href="/security-integration-guide"
             isNew
           />
           <RoundMenuItem 
