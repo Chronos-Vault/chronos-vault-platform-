@@ -34,6 +34,13 @@ const ApiDocumentation = () => {
   
   const [selectedEndpoint, setSelectedEndpoint] = useState<EndpointKey | null>(null);
   const [selectedLanguage, setSelectedLanguage] = useState<LanguageKey>("javascript");
+  const [activeTab, setActiveTab] = useState<string>("overview");
+
+  const handleTabChange = (value: string) => {
+    setActiveTab(value);
+    // Scroll to top when tab changes
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
 
   // Sample endpoint for interactive display - EXACT backend structures from server/api/vaults-routes.ts
   const sampleEndpoints = {
@@ -116,13 +123,13 @@ const ApiDocumentation = () => {
       javascript: `// List all vaults using fetch API
 async function listVaults() {
   try {
-    const response = await fetch('/api/vaults?type=time-lock', {
+    const response = await fetch('https://chronosvault.org/api/vaults?type=time-lock', {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
-        // Wallet auth token from /api/auth/verify
         'Authorization': 'Bearer YOUR_JWT_TOKEN'
-      }
+      },
+      credentials: 'include'
     });
     
     const data = await response.json();
@@ -139,7 +146,7 @@ listVaults();`,
 def list_vaults():
     try:
         response = requests.get(
-            'https://api.chronosvault.com/api/vaults',
+            'https://chronosvault.org/api/vaults',
             params={'type': 'time-lock'},
             headers={
                 'Content-Type': 'application/json',
@@ -152,7 +159,7 @@ def list_vaults():
         print(f"Error listing vaults: {e}")
 
 list_vaults()`,
-      curl: `curl -X GET "https://api.chronosvault.com/api/vaults?type=time-lock" \\
+      curl: `curl -X GET "https://chronosvault.org/api/vaults?type=time-lock" \\
   -H "Authorization: Bearer YOUR_JWT_TOKEN" \\
   -H "Content-Type: application/json"`
     },
@@ -160,12 +167,13 @@ list_vaults()`,
       javascript: `// Create a new vault using fetch API
 async function createVault() {
   try {
-    const response = await fetch('/api/vaults', {
+    const response = await fetch('https://chronosvault.org/api/vaults', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
         'Authorization': 'Bearer YOUR_JWT_TOKEN'
       },
+      credentials: 'include',
       body: JSON.stringify({
         id: crypto.randomUUID(),
         name: "My Savings Vault",
@@ -176,7 +184,7 @@ async function createVault() {
         unlockDate: "2026-01-01T00:00:00Z",
         metadata: {
           quantumResistant: true,
-          crossChainVerification: true
+          trinityProtocolEnabled: true
         }
       })
     });
@@ -190,13 +198,13 @@ async function createVault() {
 
 createVault();`,
       python: `import requests
-from datetime import datetime, timezone
+import uuid
 
 # Create a new vault using requests library
 def create_vault():
     try:
         response = requests.post(
-            'https://api.chronosvault.com/api/vaults',
+            'https://chronosvault.org/api/vaults',
             json={
                 'id': 'vault_' + str(uuid.uuid4()),
                 'name': 'My Savings Vault',
@@ -207,7 +215,7 @@ def create_vault():
                 'unlockDate': '2026-01-01T00:00:00Z',
                 'metadata': {
                     'quantumResistant': True,
-                    'crossChainVerification': True
+                    'trinityProtocolEnabled': True
                 }
             },
             headers={
@@ -221,7 +229,7 @@ def create_vault():
         print(f"Error creating vault: {e}")
 
 create_vault()`,
-      curl: `curl -X POST "https://api.chronosvault.com/api/vaults" \\
+      curl: `curl -X POST "https://chronosvault.org/api/vaults" \\
   -H "Authorization: Bearer YOUR_JWT_TOKEN" \\
   -H "Content-Type: application/json" \\
   -d '{
@@ -251,7 +259,7 @@ create_vault()`,
           </p>
         </div>
 
-        <Tabs defaultValue="overview" className="w-full">
+        <Tabs value={activeTab} onValueChange={handleTabChange} className="w-full">
           <TabsList className="grid grid-cols-5 w-full mb-8">
             <TabsTrigger value="overview">Overview</TabsTrigger>
             <TabsTrigger value="authentication">Authentication</TabsTrigger>
@@ -290,16 +298,19 @@ create_vault()`,
                   
                   <h3 className="text-xl font-semibold mb-2 text-indigo-700 dark:text-indigo-400">Base URL</h3>
                   <div className="bg-black/10 dark:bg-white/10 p-3 rounded-md font-mono mb-4">
-                    https://api.chronosvault.org/api
+                    https://chronosvault.org/api
+                  </div>
+                  <div className="bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800 rounded-md p-4 mb-4">
+                    <p className="text-amber-800 dark:text-amber-400 text-sm">
+                      <strong>Important:</strong> The API is served from the same domain as the platform (chronosvault.org), not a separate subdomain.
+                    </p>
                   </div>
                   
-                  <h3 className="text-xl font-semibold mb-2 text-indigo-700 dark:text-indigo-400">API Versioning</h3>
+                  <h3 className="text-xl font-semibold mb-2 text-indigo-700 dark:text-indigo-400">Trinity Protocol Security</h3>
                   <p className="mb-4">
-                    The current API version is v1. API versioning is maintained through the URL path:
+                    All vault operations are secured by the Trinity Protocol with 2-of-3 multi-chain consensus across Arbitrum L2, Solana, and TON blockchains. 
+                    Attack probability &lt; 10⁻¹⁸ ensuring mathematical security.
                   </p>
-                  <div className="bg-black/10 dark:bg-white/10 p-3 rounded-md font-mono mb-4">
-                    https://api.chronosvault.org/api/v1/...
-                  </div>
                   
                   <h3 className="text-xl font-semibold mb-2 text-indigo-700 dark:text-indigo-400">Response Format</h3>
                   <p className="mb-2">
@@ -357,8 +368,11 @@ create_vault()`,
                 <Button variant="outline" asChild className="mr-4">
                   <Link href="/integration-guide">View Integration Guide</Link>
                 </Button>
-                <Button asChild className="bg-gradient-to-r from-indigo-500 to-cyan-500 hover:from-indigo-600 hover:to-cyan-600">
-                  <Link href="#endpoints">Explore API Endpoints</Link>
+                <Button 
+                  onClick={() => handleTabChange("endpoints")} 
+                  className="bg-gradient-to-r from-indigo-500 to-cyan-500 hover:from-indigo-600 hover:to-cyan-600"
+                >
+                  Explore API Endpoints
                 </Button>
               </CardFooter>
             </Card>
@@ -520,7 +534,7 @@ def authenticate_with_wallet(private_key):
     address = account.address
     
     # Step 1: Request nonce from server
-    nonce_res = requests.get('https://api.chronosvault.com/api/auth/nonce')
+    nonce_res = requests.get('https://chronosvault.org/api/vault/request-nonce')
     nonce = nonce_res.json()['nonce']
     
     # Step 2: Sign message with wallet
@@ -530,21 +544,21 @@ def authenticate_with_wallet(private_key):
     
     # Step 3: Verify signature on server
     auth_res = requests.post(
-        'https://api.chronosvault.com/api/auth/verify',
+        'https://chronosvault.org/api/wallet/verify-signature',
         json={
             'address': address,
             'signature': signed_message.signature.hex(),
-            'nonce': nonce
+            'message': nonce
         }
     )
     
-    token = auth_res.json()['token']
-    print(f'JWT Token: {token}')
+    # Session created automatically, use credentials
+    print('Authentication successful')
     
-    # Step 4: Use token for authenticated requests
+    # Step 4: Use session for authenticated requests
     vaults_res = requests.get(
-        'https://api.chronosvault.com/api/vaults',
-        headers={'Authorization': f'Bearer {token}'}
+        'https://chronosvault.org/api/vaults',
+        headers={'Content-Type': 'application/json'}
     )
     
     vaults = vaults_res.json()['vaults']
@@ -557,31 +571,34 @@ authenticate_with_wallet('YOUR_PRIVATE_KEY')`}</pre>
                     <TabsContent value="curl" className="mt-4">
                       <div className="bg-zinc-950 text-zinc-50 p-4 rounded-md font-mono text-sm overflow-auto">
                         <pre>{`# API Key Authentication
-curl -X GET "https://api.chronosvault.org/api/vaults" \\
+curl -X GET "https://chronosvault.org/api/vaults" \\
   -H "Authorization: Bearer YOUR_API_KEY" \\
   -H "Content-Type: application/json"
 
 # Wallet-based Authentication (3-step process)
 
 # Step 1: Request nonce
-curl -X GET "https://api.chronosvault.org/api/auth/nonce"
+curl -X POST "https://chronosvault.org/api/vault/request-nonce" \\
+  -H "Content-Type: application/json" \\
+  -d '{"walletAddress": "0xYourWalletAddress"}'
 
 # Step 2: Sign message with nonce using wallet (cannot be done with curl alone)
 # Using web3.js, ethers.js, or other wallet library:
 # const signature = await wallet.signMessage(\`Sign this message to authenticate: \${nonce}\`);
 
 # Step 3: Verify signature
-curl -X POST "https://api.chronosvault.org/api/auth/verify" \\
+curl -X POST "https://chronosvault.org/api/wallet/verify-signature" \\
   -H "Content-Type: application/json" \\
   -d '{
     "address": "0xYourWalletAddress",
     "signature": "0xSignatureFromWallet",
-    "nonce": "NonceFromStep1"
+    "message": "NonceFromStep1"
   }'
 
-# Step 4: Use returned token for subsequent requests
-curl -X GET "https://api.chronosvault.org/api/vaults" \\
-  -H "Authorization: Bearer TOKEN_FROM_STEP_3" \\
+# Step 4: Use session for subsequent requests (session-based, no token needed)
+curl -X GET "https://chronosvault.org/api/vaults" \\
+  --cookie-jar cookies.txt \\
+  --cookie cookies.txt \\
   -H "Content-Type: application/json"`}</pre>
                       </div>
                     </TabsContent>
@@ -1801,7 +1818,7 @@ data = res.json()`}</pre>
                         </div>
                         <div className="pt-2">
                           <Button asChild variant="outline" className="w-full">
-                            <Link href="/sdk-documentation">
+                            <Link href="/documentation/sdk">
                               <span className="flex items-center justify-center gap-2">
                                 View Java SDK Documentation
                                 <svg width="20" height="20" viewBox="0 0 15 15" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M3.64645 11.3536C3.45118 11.1583 3.45118 10.8417 3.64645 10.6465L10.2929 4L6 4C5.72386 4 5.5 3.77614 5.5 3.5C5.5 3.22386 5.72386 3 6 3L11.5 3C11.7761 3 12 3.22386 12 3.5L12 9C12 9.27614 11.7761 9.5 11.5 9.5C11.2239 9.5 11 9.27614 11 9L11 4.70711L4.35355 11.3536C4.15829 11.5488 3.84171 11.5488 3.64645 11.3536Z" fill="currentColor" fillRule="evenodd" clipRule="evenodd"></path></svg>
@@ -1828,7 +1845,7 @@ data = res.json()`}</pre>
                         </div>
                         <div className="pt-2">
                           <Button asChild variant="outline" className="w-full">
-                            <Link href="/sdk-documentation">
+                            <Link href="/documentation/sdk">
                               <span className="flex items-center justify-center gap-2">
                                 View Rust SDK Documentation
                                 <svg width="20" height="20" viewBox="0 0 15 15" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M3.64645 11.3536C3.45118 11.1583 3.45118 10.8417 3.64645 10.6465L10.2929 4L6 4C5.72386 4 5.5 3.77614 5.5 3.5C5.5 3.22386 5.72386 3 6 3L11.5 3C11.7761 3 12 3.22386 12 3.5L12 9C12 9.27614 11.7761 9.5 11.5 9.5C11.2239 9.5 11 9.27614 11 9L11 4.70711L4.35355 11.3536C4.15829 11.5488 3.84171 11.5488 3.64645 11.3536Z" fill="currentColor" fillRule="evenodd" clipRule="evenodd"></path></svg>
@@ -1849,7 +1866,7 @@ data = res.json()`}</pre>
                     </div>
                     <div className="flex justify-center gap-4">
                       <Button asChild className="bg-gradient-to-r from-indigo-500 to-cyan-500 hover:from-indigo-600 hover:to-cyan-600">
-                        <Link href="/sdk-documentation">Complete SDK Documentation</Link>
+                        <Link href="/documentation/sdk">Complete SDK Documentation</Link>
                       </Button>
                       <Button variant="outline" asChild>
                         <Link href="/integration-examples">See Integration Examples</Link>
