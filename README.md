@@ -159,7 +159,7 @@ MIT License - see LICENSE file for details
 - **Website**: Coming soon
 - **Twitter**: [@ChronosVault](https://twitter.com/ChronosVault)
 - **Discord**: [Join our community](https://discord.gg/chronosvault)
-- **Documentation**: [docs.chronosvault.io](https://github.com/Chronos-Vault/chronos-vault-docs)
+- **Documentation**: [docs.chronosvault.org](https://github.com/Chronos-Vault/chronos-vault-docs)
 
 ---
 
