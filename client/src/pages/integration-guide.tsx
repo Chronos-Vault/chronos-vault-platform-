@@ -86,7 +86,7 @@ const IntegrationGuide = () => {
                   <Button 
                     variant="outline" 
                     className="w-full"
-                    onClick={() => window.open('https://github.com/chronos-vault/chronos-vault-docs', '_blank')}
+                    onClick={() => window.open('https://github.com/Chronos-Vault/chronos-vault-docs', '_blank')}
                   >
                     View GitHub Docs
                   </Button>
