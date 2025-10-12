@@ -1,5 +1,12 @@
 # Chronos Vault Platform
 
+
+![Version](https://img.shields.io/badge/version-1.0.0-blue)
+![Trinity Protocol](https://img.shields.io/badge/Trinity-2%2F3_Consensus-green)
+![Quantum Resistant](https://img.shields.io/badge/Quantum-Resistant-purple)
+![Formal Verification](https://img.shields.io/badge/Lean_4-35%2F35_Proven-brightgreen)
+![License](https://img.shields.io/badge/license-MIT-blue)
+
 > **Revolutionary multi-chain digital vault with Mathematical Defense Layer**
 
 ![Chronos Vault](https://img.shields.io/badge/Security-Mathematically_Proven-brightgreen)
