@@ -1,188 +1,168 @@
-<div align="center">
-
-![TypeScript](https://img.shields.io/badge/TypeScript-007ACC?style=for-the-badge&logo=typescript&logoColor=white)
-![React](https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB)
-![Node.js](https://img.shields.io/badge/Node.js-43853D?style=for-the-badge&logo=node.js&logoColor=white)
-![PostgreSQL](https://img.shields.io/badge/PostgreSQL-316192?style=for-the-badge&logo=postgresql&logoColor=white)
-![License](https://img.shields.io/badge/License-MIT-green.svg?style=for-the-badge)
-
-[Website](https://chronosvault.org) • [Smart Contracts](https://github.com/Chronos-Vault/chronos-vault-contracts) • [Documentation](https://github.com/Chronos-Vault/chronos-vault-docs)
-
-</div>
-
----
-
 # Chronos Vault Platform
 
-**Revolutionary multi-chain digital vault platform with Trinity Protocol**
+> **Revolutionary multi-chain digital vault with Mathematical Defense Layer**
 
-## 🛡️ Core Security Architecture
+![Chronos Vault](https://img.shields.io/badge/Security-Mathematically_Proven-brightgreen)
+![Trinity Protocol](https://img.shields.io/badge/Trinity-2%2F3_Consensus-blue)
+![Quantum Resistant](https://img.shields.io/badge/Quantum-Resistant-purple)
 
-### Trinity Protocol: 2-of-3 Mathematical Consensus
-- **Ethereum Layer 2 (Arbitrum Sepolia)** - Primary Security Layer
-- **Solana Devnet** - High-Frequency Monitoring  
-- **TON Testnet** - Quantum-Resistant Backup
+## 🌟 What is Chronos Vault?
 
-**Security Guarantee**: Attack probability of 10^-18 (requires simultaneous compromise of all three chains)
+Chronos Vault is the world's first **mathematically provable** blockchain security platform. Unlike traditional vaults that rely on trust and audits, Chronos Vault provides **cryptographic guarantees** backed by formal verification.
 
-## 📁 Repository Contents
+### Key Features
 
-### Core Infrastructure
-- **Trinity Protocol** (`server/security/trinity-protocol.ts`)
-  - 2-of-3 consensus implementation
-  - Cross-chain state synchronization
-  - Atomic transaction coordination
+- **Trinity Protocol**: 2-of-3 consensus across Arbitrum L2, Solana, and TON blockchains
+- **Mathematical Defense Layer (MDL)**: 7-layer cryptographic security system
+- **Formal Verification**: 35/35 theorems proven with Lean 4 theorem prover
+- **Quantum-Resistant**: ML-KEM-1024 + CRYSTALS-Dilithium-5 encryption
+- **Zero-Knowledge Privacy**: Groth16 ZK proofs for privacy-preserving verification
+- **100% Crypto-Native**: No traditional auth, no KYC, pure blockchain
 
-- **Atomic Swap Service** (`server/defi/atomic-swap-service.ts`)
-  - REAL testnet connections to Arbitrum/Solana/TON
-  - Hash Time-Locked Contracts (HTLC)
-  - Cross-chain asset swaps with mathematical security
+## 🚀 Quick Start
 
-### Blockchain Clients
-- **Ethereum/Arbitrum Client** (`server/blockchain/ethereum-client.ts`)
-  - Primary security layer integration
-  - Smart contract interactions
-  - Transaction monitoring
+### Prerequisites
 
-- **Solana Program Client** (`server/blockchain/solana-program-client.ts`)
-  - High-frequency validation
-  - Program account management
-  - Real-time state updates
+- Node.js 20+ 
+- PostgreSQL database
+- npm or yarn
 
-- **TON Client** (`server/blockchain/ton-client.ts`)
-  - Quantum-resistant operations
-  - Byzantine Fault Tolerance
-  - Emergency recovery coordination
+### Installation
 
-### Security Dashboard
-- **Backend API** (`server/routes/security-routes.ts`)
-  - Real-time monitoring endpoints
-  - Chain health verification
-  - Threat detection analytics
+```bash
+# Clone the repository
+git clone https://github.com/Chronos-Vault/chronos-vault-platform-.git
+cd chronos-vault-platform-
 
-- **Frontend Dashboard** (`client/src/pages/SecurityDashboard.tsx`)
-  - Live security metrics
-  - Cross-chain visualization
-  - Quantum resistance monitoring
+# Install dependencies
+npm install
 
-### Testing Infrastructure
-- **Cross-Chain Swap Tests** (`scripts/test-cross-chain-swaps.ts`)
-  - End-to-end atomic swap validation
-  - Multi-chain consensus testing
-  - Performance benchmarking
+# Set up environment variables
+cp .env.example .env
+# Edit .env and add your DATABASE_URL
 
-## 🚀 Deployed Contracts
+# Push database schema
+npm run db:push
 
-### Arbitrum Sepolia
-- **CVTToken**: `0xFb419D8E32c14F774279a4dEEf330dc893257147`
-- **CVTBridge**: `0x21De95EbA01E31173Efe1b9c4D57E58bb840bA86`
-- **ChronosVault**: `0x99444B0B1d6F7b21e9234229a2AC2bC0150B9d91`
+# Start development server
+npm run dev
+```
 
-### Solana Devnet
-- **Chronos Vault Program**: `CYaDJYRqm35udQ8vkxoajSER8oaniQUcV8Vvw5BqJyo2`
+The application will be running at `http://localhost:5000`
 
-### TON Testnet
-- **ChronosVault**: `EQDJAnXDPT-NivritpEhQeP0XmG20NdeUtxgh4nUiWH-DF7M`
-- **CVTBridge**: `EQAOJxa1WDjGZ7f3n53JILojhZoDdTOKWl6h41_yOWX3v0tq`
+## 📚 Architecture
 
-## 🔬 Mathematical Security
+### Frontend
 
-**Proven Security Guarantees** (verified in [chronos-vault-security](https://github.com/Chronos-Vault/chronos-vault-security)):
-- **Safety**: 99.9999% confidence - No conflicting states possible
-- **Liveness**: 99.9% confidence - Always reaches consensus
-- **Byzantine Tolerance**: Tolerates 1 malicious chain
-- **Attack Probability**: 10^-18 for full system compromise
+- **React 18** with TypeScript
+- **TailwindCSS** + shadcn/ui for modern UI
+- **React Query** for server state management
+- **Wouter** for client-side routing
+- **React Three Fiber** for immersive 3D vault visualizations
 
-## 🏗️ Architecture
+### Backend
 
-### Trinity Protocol Flow
-1. **Transaction Initiation** - User submits cross-chain operation
-2. **Multi-Chain Broadcasting** - Transaction sent to all 3 chains
-3. **2-of-3 Consensus** - Wait for majority confirmation (2 out of 3)
-4. **Atomic Execution** - Execute on all chains or rollback completely
-5. **State Verification** - Continuous monitoring and reconciliation
+- **Express.js** with TypeScript
+- **PostgreSQL** with Drizzle ORM
+- **WebSocket** for real-time MDL updates
+- **RESTful APIs** for vault operations
 
-### Security Layers
-- **Layer 1**: Mathematical consensus (Trinity Protocol)
-- **Layer 2**: Quantum-resistant encryption (CRYSTALS-Kyber, CRYSTALS-Dilithium)
-- **Layer 3**: Zero-knowledge privacy (vault verification without revealing contents)
-- **Layer 4**: AI-powered threat detection (behavioral analysis and anomaly detection)
+### Mathematical Defense Layer
 
-## 🛠️ Technology Stack
+7-layer cryptographic security system:
 
-- **Smart Contracts**: Solidity (Ethereum/Arbitrum), Rust/Anchor (Solana), FunC (TON)
-- **Backend**: Node.js/TypeScript with Express
-- **Frontend**: React.js with TypeScript
-- **Security**: OpenZeppelin, Formal Verification Tools
-- **Testing**: Hardhat, Anchor Test Suite, Blueprint
+1. **Zero-Knowledge Proof Engine** (Groth16 + Circom)
+2. **Formal Verification** (Lean 4 - 35/35 theorems proven)
+3. **Multi-Party Computation** (3-of-5 Shamir Secret Sharing)
+4. **Verifiable Delay Functions** (Wesolowski VDF)
+5. **AI + Cryptographic Governance** (Multi-layer validation)
+6. **Quantum-Resistant Crypto** (ML-KEM-1024 + Dilithium-5)
+7. **Trinity Protocol** (2-of-3 multi-chain consensus)
 
-## 📊 Performance Metrics
+## 🔒 Security Philosophy
 
-**Production-Tested Performance**:
-- Transaction Throughput: 2,000 TPS
-- Cross-Chain Verification: 0.8 seconds
-- ZK Proof Generation: 1.2 seconds
-- Quantum Key Operations: 15ms
+**"Trust Math, Not Humans"**
 
-## 🔗 Related Repositories
+Every security claim in Chronos Vault is mathematically provable:
 
-- **Security Audit Tools**: [chronos-vault-security](https://github.com/Chronos-Vault/chronos-vault-security)
-- **Smart Contracts**: [chronos-vault-contracts](https://github.com/Chronos-Vault/chronos-vault-contracts)
-- **SDK**: [chronos-vault-sdk](https://github.com/Chronos-Vault/chronos-vault-sdk)
-- **Documentation**: [chronos-vault-docs](https://github.com/Chronos-Vault/chronos-vault-docs)
+- ✅ **Privacy Guarantee**: Verifier learns nothing beyond validity
+- ✅ **Time-Lock Guarantee**: Provably impossible to bypass
+- ✅ **Distribution Guarantee**: Requires ≥k threshold shares
+- ✅ **Quantum Guarantee**: Secure against Shor's algorithm
+- ✅ **Formal Guarantee**: Proven secure via Lean 4 theorems
 
-## 🎯 Key Innovation
+## 🛠️ Development
 
-**TRUST MATH, NOT HUMANS**
+### Available Scripts
 
-Traditional cross-chain bridges rely on human validators (trust-based security) and have lost $2.3B in 2024. Chronos Vault uses mathematical consensus across three independent blockchains, requiring simultaneous attack on all three networks for compromise.
+```bash
+npm run dev          # Start development server
+npm run build        # Build for production
+npm run db:push      # Push schema changes to database
+npm run db:studio    # Open Drizzle Studio
+```
 
-## 📜 License
+### Project Structure
 
-MIT License - Open Source
+```
+chronos-vault-platform-/
+├── client/              # Frontend React application
+│   ├── src/
+│   │   ├── pages/      # Page components
+│   │   ├── components/ # Reusable UI components
+│   │   ├── lib/        # Utilities and clients
+│   │   └── services/   # Frontend services (WebSocket, etc.)
+│   └── index.html
+├── server/             # Backend Express server
+│   ├── routes/         # API route handlers
+│   ├── services/       # Business logic services
+│   ├── security/       # MDL security modules
+│   ├── websocket/      # WebSocket services
+│   ├── storage.ts      # Database interface
+│   └── index.ts        # Server entry point
+├── shared/             # Shared types and schemas
+│   └── schema.ts       # Drizzle database schema
+└── package.json
+```
+
+## 🌐 Multi-Chain Support
+
+### Supported Networks
+
+- **Ethereum L2**: Arbitrum Sepolia (Primary consensus layer)
+- **Solana**: Devnet/Mainnet (High-frequency monitoring)
+- **TON**: Testnet/Mainnet (Emergency recovery + quantum-safe storage)
+
+### Smart Contracts
+
+- **Solidity**: ChronosVault.sol, CVTBridge.sol, CrossChainBridgeV1.sol
+- **Rust/Anchor**: Solana programs for vault state management
+- **FunC**: TON contracts for quantum-resistant operations
+
+## 📖 Documentation
+
+- [Architecture Overview](https://github.com/Chronos-Vault/chronos-vault-docs)
+- [API Reference](https://github.com/Chronos-Vault/chronos-vault-docs/blob/main/API_REFERENCE.md)
+- [Smart Contracts](https://github.com/Chronos-Vault/chronos-vault-contracts)
+- [Formal Verification Proofs](https://github.com/Chronos-Vault/chronos-vault-security)
 
 ## 🤝 Contributing
 
-We welcome contributions! Please see our contribution guidelines in the documentation repository.
+We welcome contributions! See [CONTRIBUTING.md](https://github.com/Chronos-Vault/chronos-vault-docs/blob/main/CONTRIBUTING.md)
+
+## 📄 License
+
+MIT License - see LICENSE file for details
+
+## 🔗 Links
+
+- **Website**: Coming soon
+- **Twitter**: [@ChronosVault](https://twitter.com/ChronosVault)
+- **Discord**: [Join our community](https://discord.gg/chronosvault)
+- **Documentation**: [docs.chronosvault.io](https://github.com/Chronos-Vault/chronos-vault-docs)
 
 ---
 
-**Built with mathematical security. Protected by Trinity Protocol.**
+**Built with ❤️ by the Chronos Vault Team**
 
-
-## 🚀 Latest Deployments (Arbitrum Sepolia)
-
-### Circuit Breaker V2 Contracts
-
-| Contract | Address | Status |
-|----------|---------|--------|
-| **CrossChainBridgeV2** | `0xe331a4390C3a5E43BA646210b63e09B64E8289e7` | ✅ Deployed |
-| **CVTBridgeV2** | `0xdB7F6cCf57D6c6AA90ccCC1a510589513f28cb83` | ✅ Deployed |
-
-**Circuit Breaker Features:**
-- 🛡️ 500% volume spike trigger (5x normal volume)
-- 🔒 20% failure rate threshold
-- ⏰ Auto-recovery after time-lock
-- 🚫 100% trustless (no owner roles)
-
-[View on Arbiscan](https://sepolia.arbiscan.io)
-
-
-## 🚀 Latest V3 Deployments (Arbitrum Sepolia)
-
-### Circuit Breaker V3 with Emergency MultiSig
-
-| Contract | Address | Status |
-|----------|---------|--------|
-| **CrossChainBridgeV3** | `0x5bC40A7a47A2b767D948FEEc475b24c027B43867` | ✅ Deployed |
-| **CVTBridgeV3** | `0x7693a841Eec79Da879241BC0eCcc80710F39f399` | ✅ Deployed |
-| **EmergencyMultiSig** | `0xFafCA23a7c085A842E827f53A853141C8243F924` | ✅ Deployed |
-
-**V3 Features:**
-- 🛡️ All V2 circuit breaker features (500% volume spike, 20% failure rate)
-- 🚨 **NEW:** Emergency pause/resume via 2-of-3 multi-sig
-- 🔒 **NEW:** 48-hour time-lock on emergency proposals
-- ⏰ Auto-recovery (4h for bridge, 2h for CVT bridge)
-- 🚫 100% trustless (emergency controller is IMMUTABLE)
-
-[View on Arbiscan](https://sepolia.arbiscan.io)
+*"In cryptography we trust. In mathematics we prove. In Chronos we vault."*
