@@ -358,9 +358,98 @@ export default function TechnicalSpecPage() {
                 variants={containerVariants}
                 initial="hidden"
                 animate="visible"
-                className="grid grid-cols-1 md:grid-cols-2 gap-8"
+                className="space-y-8"
               >
+                {/* Formal Verification Achievement - Full Width Highlight */}
                 <motion.div variants={itemVariants}>
+                  <Card className="bg-gradient-to-br from-[#6B00D7]/10 to-[#FF5AF7]/10 border-2 border-[#6B00D7]/50 backdrop-blur">
+                    <CardHeader>
+                      <CardTitle className="flex items-center gap-2 text-2xl">
+                        <Shield className="h-7 w-7 text-[#FF5AF7]" />
+                        Formal Verification: Planned Mathematical Security Proofs
+                        <Badge className="ml-2 bg-blue-500/20 text-blue-400 border-blue-500/30">In Development</Badge>
+                      </CardTitle>
+                      <CardDescription className="text-base">
+                        Roadmap: Build a fully verified blockchain security platform where security claims are mathematically proven
+                      </CardDescription>
+                    </CardHeader>
+                    <CardContent className="space-y-4">
+                      <p className="text-gray-300">
+                        Chronos Vault's roadmap includes achieving: <strong>35 security theorems to be proven using Lean 4 theorem prover</strong>. 
+                        The goal: Unlike traditional platforms relying on audits and trust, provide security properties that are mathematically guaranteed 
+                        and cannot be violated under stated assumptions.
+                      </p>
+                      
+                      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div className="bg-[#181818] rounded-lg p-4 border border-[#333]">
+                          <h4 className="font-semibold text-[#FF5AF7] mb-2">Lean 4 Formal Proofs</h4>
+                          <div className="space-y-2">
+                            <div className="flex justify-between items-center">
+                              <span className="text-sm text-gray-400">Smart Contracts</span>
+                              <Badge className="bg-blue-500/20 text-blue-400">Target: 13</Badge>
+                            </div>
+                            <div className="flex justify-between items-center">
+                              <span className="text-sm text-gray-400">Cryptography</span>
+                              <Badge className="bg-blue-500/20 text-blue-400">Target: 13</Badge>
+                            </div>
+                            <div className="flex justify-between items-center">
+                              <span className="text-sm text-gray-400">Consensus</span>
+                              <Badge className="bg-blue-500/20 text-blue-400">Target: 9</Badge>
+                            </div>
+                            <div className="text-xs text-gray-500 mt-2">Lean 4 v4.3.0 + mathlib</div>
+                          </div>
+                        </div>
+                        
+                        <div className="bg-[#181818] rounded-lg p-4 border border-[#333]">
+                          <h4 className="font-semibold text-[#FF5AF7] mb-2">Certora Verification</h4>
+                          <div className="space-y-2">
+                            <div className="flex justify-between items-center">
+                              <span className="text-sm text-gray-400">Security Rules</span>
+                              <Badge className="bg-blue-500/20 text-blue-400">Target: 34</Badge>
+                            </div>
+                            <div className="text-sm text-gray-400 mt-3">Smart contract invariants verified using Certora Prover for Solidity contracts</div>
+                          </div>
+                        </div>
+                        
+                        <div className="bg-[#181818] rounded-lg p-4 border border-[#333]">
+                          <h4 className="font-semibold text-[#FF5AF7] mb-2">TLA+ Specification</h4>
+                          <div className="space-y-2">
+                            <div className="flex justify-between items-center">
+                              <span className="text-sm text-gray-400">Trinity Protocol</span>
+                              <Badge className="bg-blue-500/20 text-blue-400">Planned</Badge>
+                            </div>
+                            <div className="text-sm text-gray-400 mt-3">Distributed consensus model to be validated using TLA+ model checker (TLC)</div>
+                          </div>
+                        </div>
+                      </div>
+                      
+                      <div className="bg-gradient-to-r from-[#6B00D7]/10 to-[#FF5AF7]/10 p-4 rounded border border-[#6B00D7]/30">
+                        <h4 className="font-semibold mb-2">Planned: Automated CI Verification</h4>
+                        <p className="text-sm text-gray-300">
+                          Roadmap includes: Every commit to be automatically verified via GitHub Actions CI/CD pipeline. Deployments will be blocked 
+                          if formal proofs fail, ensuring the platform maintains mathematical security guarantees.
+                        </p>
+                        <div className="flex gap-2 mt-3 flex-wrap">
+                          <Badge variant="outline" className="bg-[#111]">GitHub Actions</Badge>
+                          <Badge variant="outline" className="bg-[#111]">Automatic Proof Verification</Badge>
+                          <Badge variant="outline" className="bg-[#111]">/formal-proofs/ directory</Badge>
+                        </div>
+                      </div>
+                    </CardContent>
+                    <CardFooter className="flex gap-3">
+                      <Button variant="outline" asChild className="flex-1">
+                        <Link href="/docs/formal-verification">View Verification Reports</Link>
+                      </Button>
+                      <Button asChild className="flex-1 bg-[#6B00D7] hover:bg-[#5a00b3]">
+                        <Link href="/whitepaper#formal-verification">Read Technical Whitepaper</Link>
+                      </Button>
+                    </CardFooter>
+                  </Card>
+                </motion.div>
+                
+                {/* Rest of Security Cards in Grid */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                  <motion.div variants={itemVariants}>
                   <Card className="h-full bg-gradient-to-br from-[#1D1D1D]/70 to-[#151515]/70 border border-[#333] backdrop-blur">
                     <CardHeader>
                       <CardTitle className="flex items-center gap-2 text-2xl">
@@ -585,6 +674,7 @@ export default function TechnicalSpecPage() {
                     </CardFooter>
                   </Card>
                 </motion.div>
+                </div>
               </motion.div>
             </TabsContent>
             

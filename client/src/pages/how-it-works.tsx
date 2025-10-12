@@ -175,6 +175,63 @@ const HowItWorksPage = () => {
             </Card>
           </section>
           
+          {/* Trinity Protocol Layer Roles */}
+          <section className="mb-16">
+            <div className="flex items-center gap-3 mb-5">
+              <Cpu className="w-8 h-8 text-[#FF5AF7]" />
+              <h2 className="text-3xl font-bold text-white">Trinity Protocol: Fixed Layer Roles</h2>
+            </div>
+            <Card className="bg-[#1A1A1A] border border-[#333] shadow-xl mb-8">
+              <CardContent className="pt-6">
+                <p className="text-gray-300 mb-6">
+                  Each blockchain in our Trinity Protocol serves a specific security role. The Ethereum Layer 2 deployment 
+                  provides 95% lower fees while maintaining maximum decentralization and immutable ownership records.
+                </p>
+                
+                <h3 className="text-xl font-semibold text-white mb-4">Layer Architecture:</h3>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+                  <div className="py-4 px-6 bg-[#111] rounded-lg border border-[#6B00D7]/50">
+                    <p className="font-semibold text-purple-400 mb-2 flex items-center gap-2">
+                      <span className="text-2xl">⟠</span> Ethereum Layer 2
+                    </p>
+                    <p className="text-white text-lg font-bold mb-2">Primary Security</p>
+                    <p className="text-sm text-gray-300 mb-2">Immutable ownership records via Layer 2 for 95% lower fees</p>
+                    <span className="text-xs px-2 py-0.5 bg-purple-500/20 text-purple-300 rounded-full">LAYER 2 OPTIMIZED</span>
+                  </div>
+                  
+                  <div className="py-4 px-6 bg-[#111] rounded-lg border border-[#6B00D7]/50">
+                    <p className="font-semibold text-purple-400 mb-2 flex items-center gap-2">
+                      <span className="text-2xl">◎</span> Solana
+                    </p>
+                    <p className="text-white text-lg font-bold mb-2">Rapid Validation</p>
+                    <p className="text-sm text-gray-300 mb-2">High-frequency monitoring and state verification</p>
+                    <span className="text-xs px-2 py-0.5 bg-purple-500/20 text-purple-300 rounded-full">NETWORK ACTIVE</span>
+                  </div>
+                  
+                  <div className="py-4 px-6 bg-[#111] rounded-lg border border-[#6B00D7]/50">
+                    <p className="font-semibold text-purple-400 mb-2 flex items-center gap-2">
+                      <span className="text-2xl">💎</span> TON
+                    </p>
+                    <p className="text-white text-lg font-bold mb-2">Recovery System</p>
+                    <p className="text-sm text-gray-300 mb-2">Quantum-resistant backup and recovery layer</p>
+                    <span className="text-xs px-2 py-0.5 bg-purple-500/20 text-purple-300 rounded-full">NETWORK ACTIVE</span>
+                  </div>
+                </div>
+                
+                <div className="py-4 px-6 bg-[#111] rounded-lg border border-[#6B00D7]/30">
+                  <p className="font-semibold text-[#FF5AF7] mb-2">2-of-3 Security Model:</p>
+                  <p className="text-white">Any two layers must agree for vault operations to execute. This provides 400x more resistance 
+                  to exploits compared to single-chain solutions, with Ethereum Layer 2 ensuring affordable primary security.</p>
+                </div>
+              </CardContent>
+              <CardFooter className="border-t border-[#333] flex justify-center pt-4">
+                <Button asChild className="bg-[#6B00D7] hover:bg-[#5a00b3]">
+                  <Link href="/vault-types">Create Your Secure Vault <ArrowRight className="ml-2 w-4 h-4" /></Link>
+                </Button>
+              </CardFooter>
+            </Card>
+          </section>
+          
           {/* Specialized Vault Types Section */}
           <section className="mb-16">
             <div className="flex items-center gap-3 mb-5">
@@ -609,6 +666,150 @@ const HowItWorksPage = () => {
                 </p>
               </div>
             </div>
+          </section>
+
+          {/* Trinity Protocol Real-Time Monitoring Section */}
+          <section className="mb-16">
+            <div className="flex items-center gap-3 mb-5">
+              <Workflow className="w-8 h-8 text-[#FF5AF7]" />
+              <h2 className="text-3xl font-bold text-white">Trinity Protocol: Planned Real-Time Monitoring</h2>
+            </div>
+            
+            <Card className="bg-[#1A1A1A] border border-[#333] shadow-xl mb-8">
+              <CardContent className="pt-6">
+                <p className="text-gray-300 mb-6">
+                  Our roadmap includes operating Trinity Protocol with real-time monitoring across all three blockchain networks, providing instant 
+                  threat detection, automatic circuit breaker protection, and emergency recovery capabilities. These systems are 
+                  <span className="text-blue-400 font-semibold"> IN DEVELOPMENT</span> for future 24/7 vault monitoring.
+                </p>
+                
+                <h3 className="text-xl font-semibold text-white mb-4">Planned Monitoring Components:</h3>
+                
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+                  <div className="bg-[#111] rounded-lg border border-[#6B00D7]/50 p-4">
+                    <div className="flex items-center gap-2 mb-3">
+                      <div className="h-3 w-3 rounded-full bg-blue-400"></div>
+                      <h4 className="font-semibold text-white">Arbitrum Event Listener</h4>
+                    </div>
+                    <p className="text-sm text-gray-400 mb-2">
+                      Will monitor vault operations and state changes on Arbitrum Sepolia
+                    </p>
+                    <div className="flex items-center gap-2 text-xs text-blue-400">
+                      <CheckCircle className="h-3 w-3" />
+                      <span>IN DEVELOPMENT</span>
+                    </div>
+                  </div>
+                  
+                  <div className="bg-[#111] rounded-lg border border-[#6B00D7]/50 p-4">
+                    <div className="flex items-center gap-2 mb-3">
+                      <div className="h-3 w-3 rounded-full bg-blue-400"></div>
+                      <h4 className="font-semibold text-white">Solana Event Listener</h4>
+                    </div>
+                    <p className="text-sm text-gray-400 mb-2">
+                      Will provide rapid validation and state verification on Solana Devnet
+                    </p>
+                    <div className="flex items-center gap-2 text-xs text-blue-400">
+                      <CheckCircle className="h-3 w-3" />
+                      <span>IN DEVELOPMENT</span>
+                    </div>
+                  </div>
+                  
+                  <div className="bg-[#111] rounded-lg border border-[#6B00D7]/50 p-4">
+                    <div className="flex items-center gap-2 mb-3">
+                      <div className="h-3 w-3 rounded-full bg-blue-400"></div>
+                      <h4 className="font-semibold text-white">TON Event Listener</h4>
+                    </div>
+                    <p className="text-sm text-gray-400 mb-2">
+                      Will monitor quantum-resistant backup layer and recovery capabilities
+                    </p>
+                    <div className="flex items-center gap-2 text-xs text-blue-400">
+                      <CheckCircle className="h-3 w-3" />
+                      <span>IN DEVELOPMENT</span>
+                    </div>
+                  </div>
+                </div>
+                
+                <h3 className="text-xl font-semibold text-white mb-4">Protection Systems:</h3>
+                
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                  <div className="bg-[#111] rounded-lg border border-[#333] p-4">
+                    <div className="flex items-start gap-3">
+                      <Shield className="h-5 w-5 text-[#FF5AF7] mt-1 flex-shrink-0" />
+                      <div>
+                        <h4 className="font-semibold text-white mb-2">Circuit Breaker Service</h4>
+                        <p className="text-sm text-gray-400 mb-3">
+                          Automatically halts all vault operations when anomalies are detected across Trinity networks. 
+                          Provides instant protection against coordinated attacks or system failures.
+                        </p>
+                        <div className="flex flex-col gap-1 text-xs">
+                          <div className="flex items-center gap-2">
+                            <CheckCircle className="h-3 w-3 text-green-400" />
+                            <span className="text-gray-400">Automatic threat detection</span>
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <CheckCircle className="h-3 w-3 text-green-400" />
+                            <span className="text-gray-400">Instant operation suspension</span>
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <CheckCircle className="h-3 w-3 text-green-400" />
+                            <span className="text-gray-400">Multi-chain consensus verification</span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div className="bg-[#111] rounded-lg border border-[#333] p-4">
+                    <div className="flex items-start gap-3">
+                      <AlertTriangle className="h-5 w-5 text-[#FF5AF7] mt-1 flex-shrink-0" />
+                      <div>
+                        <h4 className="font-semibold text-white mb-2">Emergency Recovery System</h4>
+                        <p className="text-sm text-gray-400 mb-3">
+                          Multi-layered recovery mechanisms providing fault tolerance even during extreme network failures. 
+                          TON network serves as quantum-resistant backup layer.
+                        </p>
+                        <div className="flex flex-col gap-1 text-xs">
+                          <div className="flex items-center gap-2">
+                            <CheckCircle className="h-3 w-3 text-green-400" />
+                            <span className="text-gray-400">Automatic failover activation</span>
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <CheckCircle className="h-3 w-3 text-green-400" />
+                            <span className="text-gray-400">State recovery across chains</span>
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <CheckCircle className="h-3 w-3 text-green-400" />
+                            <span className="text-gray-400">Quantum-resistant TON backup</span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                
+                <div className="bg-gradient-to-r from-[#6B00D7]/10 to-[#FF5AF7]/10 border border-[#6B00D7]/30 rounded-lg p-4">
+                  <div className="flex items-start gap-3">
+                    <Workflow className="h-5 w-5 text-[#FF5AF7] mt-1 flex-shrink-0" />
+                    <div>
+                      <h4 className="font-semibold text-white mb-2">Planned: State Coordinator</h4>
+                      <p className="text-sm text-gray-300">
+                        Roadmap includes a central coordination service ensuring 2-of-3 consensus across all Trinity networks. Will maintain synchronized 
+                        state and validate all cross-chain operations with mathematical guarantees. Future capability: process real-time 
+                        events from Arbitrum, Solana, and TON networks.
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </CardContent>
+              <CardFooter className="border-t border-[#333] flex justify-center pt-4 gap-3">
+                <Button asChild variant="outline">
+                  <Link href="/api-documentation#trinity-protocol">View Trinity API Endpoints <MoveRight className="ml-2 w-4 h-4" /></Link>
+                </Button>
+                <Button asChild className="bg-[#6B00D7] hover:bg-[#5a00b3]">
+                  <Link href="/developer-portal">See Deployed Contracts <ArrowRight className="ml-2 w-4 h-4" /></Link>
+                </Button>
+              </CardFooter>
+            </Card>
           </section>
           
           {/* Call to Action */}
