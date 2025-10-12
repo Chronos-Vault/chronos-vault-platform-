@@ -163,18 +163,18 @@ const documentationContent: Record<string, Documentation> = {
       }
     ]
   },
-  "/security-video-guides": {
-    title: "Security Video Guides",
-    description: "Video tutorials for secure vault management",
+  "/security-integration-guide": {
+    title: "Security Integration Guide",
+    description: "Developer guide for integrating Chronos Vault security features",
     icon: <FileText className="w-8 h-8 text-[#FF5AF7]" />,
     sections: [
       {
-        title: "Video Guides Coming Soon",
-        content: "We're currently producing comprehensive video tutorials covering all aspects of vault security and management. Check back soon for detailed video guides!"
+        title: "Integration Overview",
+        content: "Learn how to integrate Chronos Vault's Mathematical Defense Layer into your application. This guide covers Trinity Protocol (2-of-3 consensus), Quantum-Resistant Cryptography (ML-KEM-1024), MPC Key Management, VDF Time-Locks, and Zero-Knowledge Proofs."
       },
       {
-        title: "Topics to be Covered",
-        content: "• Creating and configuring secure vaults\n• Setting up multi-signature authorization\n• Implementing time-locked asset releases\n• Configuring geolocation restrictions\n• Managing cross-chain assets securely"
+        title: "Quick Start",
+        content: "• Trinity Protocol: Multi-chain consensus with <10⁻¹⁸ attack probability\n• Quantum Crypto: ML-KEM-1024 and Dilithium-5 hybrid encryption\n• MPC Keys: Shamir Secret Sharing with 3-of-5 threshold\n• VDF Locks: Wesolowski VDF for provable delays\n• ZK Proofs: Privacy-preserving verification"
       }
     ]
   },
