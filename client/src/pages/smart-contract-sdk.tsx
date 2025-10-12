@@ -20,15 +20,15 @@ const SmartContractSDK = () => {
               </h1>
               <p className="text-lg text-gray-200">
                 The Chronos Vault Smart Contract SDK provides a comprehensive set of blockchain interfaces 
-                for integrating with our multi-chain vault infrastructure. Build secure, time-locked digital 
-                vaults directly into your smart contracts across Ethereum, TON, and Solana blockchains.
+                for integrating with our Trinity Protocol multi-chain vault infrastructure. Build secure, time-locked digital 
+                vaults directly into your smart contracts across Arbitrum L2 (primary), Solana (monitor), and TON (backup) blockchains.
               </p>
               <div className="flex flex-wrap gap-4">
                 <Button asChild className="bg-gradient-to-r from-indigo-600 to-cyan-600 hover:from-indigo-700 hover:to-cyan-700">
                   <Link href="#contract-interfaces">View Interfaces</Link>
                 </Button>
                 <Button asChild variant="outline">
-                  <a href="https://github.com/chronos-vault/smart-contracts" target="_blank" rel="noopener noreferrer">
+                  <a href="https://github.com/Chronos-Vault/smart-contracts" target="_blank" rel="noopener noreferrer">
                     Visit GitHub Repository
                   </a>
                 </Button>
@@ -61,20 +61,46 @@ const SmartContractSDK = () => {
                     <path d="M16 20.573L24 16.221L16 12.872V20.573Z" fill="white" fillOpacity="0.2"/>
                     <path d="M8 16.221L16 20.573V12.872L8 16.221Z" fill="white" fillOpacity="0.6"/>
                   </svg>
-                  Ethereum
+                  Arbitrum L2
                 </CardTitle>
                 <CardDescription>
-                  Solidity smart contracts
+                  Solidity smart contracts - Primary Chain
                 </CardDescription>
               </CardHeader>
               <CardContent>
                 <p className="text-sm text-gray-400">
-                  EVM-compatible smart contracts for Ethereum and related chains (Polygon, Arbitrum, Optimism, etc).
+                  Primary security layer with 95% lower fees than Ethereum mainnet. All core vault operations run on Arbitrum Sepolia.
                 </p>
               </CardContent>
               <CardFooter>
                 <Button asChild variant="outline" className="w-full group-hover:border-[#FF5AF7]/50 group-hover:text-[#FF5AF7] transition-all">
-                  <a href="#ethereum-contracts">View Ethereum Contracts</a>
+                  <a href="#ethereum-contracts">View Arbitrum Contracts</a>
+                </Button>
+              </CardFooter>
+            </Card>
+
+            <Card className="bg-black/20 border border-gray-800 hover:border-[#FF5AF7]/50 transition-all group">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <svg className="h-6 w-6" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M21.7838 8.65446C21.6512 8.65446 21.5186 8.68736 21.3941 8.75315L10.1279 14.8206C9.63147 15.0809 9.63147 15.7831 10.1279 16.0434L21.3941 22.1108C21.7426 22.3053 22.1736 22.1697 22.3682 21.8211C22.5628 21.4726 22.4272 21.0416 22.0786 20.847L11.9474 15.4319L22.0786 10.0167C22.4272 9.82216 22.5628 9.39117 22.3682 9.04266C22.2394 9.04266 22.0118 8.65446 21.7838 8.65446Z" fill="#14F195"/>
+                    <path d="M22.7334 4.00003C27.9373 4.00003 32.1538 8.2165 32.1538 13.4204C32.1538 18.6243 27.9373 22.8408 22.7334 22.8408C21.2743 22.8407 19.8341 22.5008 18.5358 21.8484L20.7181 20.6339C21.3642 20.903 22.0443 21.0408 22.7334 21.0407C26.9441 21.0407 30.3537 17.6312 30.3537 13.4204C30.3537 9.20966 26.9442 5.80009 22.7334 5.80009C18.5227 5.80009 15.1131 9.20959 15.1131 13.4204C15.1131 14.1095 15.2508 14.7896 15.5198 15.4356L14.3095 17.6098C13.6527 16.3069 13.313 14.8666 13.313 13.4204C13.313 8.2165 17.5295 4.00003 22.7334 4.00003Z" fill="#14F195"/>
+                    <path d="M10.2536 16.5534L12.7921 15.1782L8.19575 27.9999H5.65723L10.2536 16.5534Z" fill="#14F195"/>
+                  </svg>
+                  Solana
+                </CardTitle>
+                <CardDescription>
+                  Rust programs - Monitor Layer
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <p className="text-sm text-gray-400">
+                  High-frequency monitoring layer with 2000+ TPS for rapid transaction validation and real-time verification.
+                </p>
+              </CardContent>
+              <CardFooter>
+                <Button asChild variant="outline" className="w-full group-hover:border-[#FF5AF7]/50 group-hover:text-[#FF5AF7] transition-all">
+                  <a href="#solana-contracts">View Solana Contracts</a>
                 </Button>
               </CardFooter>
             </Card>
@@ -91,43 +117,17 @@ const SmartContractSDK = () => {
                   TON
                 </CardTitle>
                 <CardDescription>
-                  FunC smart contracts
+                  FunC contracts - Backup Layer
                 </CardDescription>
               </CardHeader>
               <CardContent>
                 <p className="text-sm text-gray-400">
-                  TON-compatible smart contracts using FunC language for the fast and scalable TON blockchain.
+                  Emergency recovery and quantum-resistant storage layer using Byzantine Fault Tolerance consensus.
                 </p>
               </CardContent>
               <CardFooter>
                 <Button asChild variant="outline" className="w-full group-hover:border-[#FF5AF7]/50 group-hover:text-[#FF5AF7] transition-all">
                   <a href="#ton-contracts">View TON Contracts</a>
-                </Button>
-              </CardFooter>
-            </Card>
-
-            <Card className="bg-black/20 border border-gray-800 hover:border-[#FF5AF7]/50 transition-all group">
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <svg className="h-6 w-6" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M21.7838 8.65446C21.6512 8.65446 21.5186 8.68736 21.3941 8.75315L10.1279 14.8206C9.63147 15.0809 9.63147 15.7831 10.1279 16.0434L21.3941 22.1108C21.7426 22.3053 22.1736 22.1697 22.3682 21.8211C22.5628 21.4726 22.4272 21.0416 22.0786 20.847L11.9474 15.4319L22.0786 10.0167C22.4272 9.82216 22.5628 9.39117 22.3682 9.04266C22.2394 9.04266 22.0118 8.65446 21.7838 8.65446Z" fill="#14F195"/>
-                    <path d="M22.7334 4.00003C27.9373 4.00003 32.1538 8.2165 32.1538 13.4204C32.1538 18.6243 27.9373 22.8408 22.7334 22.8408C21.2743 22.8407 19.8341 22.5008 18.5358 21.8484L20.7181 20.6339C21.3642 20.903 22.0443 21.0408 22.7334 21.0407C26.9441 21.0407 30.3537 17.6312 30.3537 13.4204C30.3537 9.20966 26.9442 5.80009 22.7334 5.80009C18.5227 5.80009 15.1131 9.20959 15.1131 13.4204C15.1131 14.1095 15.2508 14.7896 15.5198 15.4356L14.3095 17.6098C13.6527 16.3069 13.313 14.8666 13.313 13.4204C13.313 8.2165 17.5295 4.00003 22.7334 4.00003Z" fill="#14F195"/>
-                    <path d="M10.2536 16.5534L12.7921 15.1782L8.19575 27.9999H5.65723L10.2536 16.5534Z" fill="#14F195"/>
-                  </svg>
-                  Solana
-                </CardTitle>
-                <CardDescription>
-                  Rust smart contracts
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <p className="text-sm text-gray-400">
-                  Solana programs built with Rust for high performance and low transaction costs.
-                </p>
-              </CardContent>
-              <CardFooter>
-                <Button asChild variant="outline" className="w-full group-hover:border-[#FF5AF7]/50 group-hover:text-[#FF5AF7] transition-all">
-                  <a href="#solana-contracts">View Solana Contracts</a>
                 </Button>
               </CardFooter>
             </Card>
@@ -152,27 +152,27 @@ const SmartContractSDK = () => {
               </thead>
               <tbody className="text-sm">
                 <tr className="hover:bg-gray-900/30">
-                  <td className="px-4 py-3 border border-gray-800 font-medium">Arbitrum</td>
+                  <td className="px-4 py-3 border border-gray-800 font-medium">Arbitrum L2</td>
                   <td className="px-4 py-3 border border-gray-800 text-gray-400">Sepolia Testnet</td>
                   <td className="px-4 py-3 border border-gray-800 text-purple-400">ChronosVault</td>
                   <td className="px-4 py-3 border border-gray-800">
-                    <code className="bg-gray-900 px-2 py-1 rounded text-xs">TBD - In Development</code>
+                    <code className="bg-gray-900 px-2 py-1 rounded text-xs">0x99444B0B1d6F7b21e9234229a2AC2bC0150B9d91</code>
                   </td>
                 </tr>
                 <tr className="hover:bg-gray-900/30">
-                  <td className="px-4 py-3 border border-gray-800 font-medium">Arbitrum</td>
+                  <td className="px-4 py-3 border border-gray-800 font-medium">Arbitrum L2</td>
                   <td className="px-4 py-3 border border-gray-800 text-gray-400">Sepolia Testnet</td>
                   <td className="px-4 py-3 border border-gray-800 text-purple-400">CVTBridge</td>
                   <td className="px-4 py-3 border border-gray-800">
-                    <code className="bg-gray-900 px-2 py-1 rounded text-xs">TBD - In Development</code>
+                    <code className="bg-gray-900 px-2 py-1 rounded text-xs">0x21De95EbA01E31173Efe1b9c4D57E58bb840bA86</code>
                   </td>
                 </tr>
                 <tr className="hover:bg-gray-900/30">
-                  <td className="px-4 py-3 border border-gray-800 font-medium">Arbitrum</td>
+                  <td className="px-4 py-3 border border-gray-800 font-medium">Arbitrum L2</td>
                   <td className="px-4 py-3 border border-gray-800 text-gray-400">Sepolia Testnet</td>
-                  <td className="px-4 py-3 border border-gray-800 text-purple-400">CrossChainBridgeV1</td>
+                  <td className="px-4 py-3 border border-gray-800 text-purple-400">CrossChainBridgeV3</td>
                   <td className="px-4 py-3 border border-gray-800">
-                    <code className="bg-gray-900 px-2 py-1 rounded text-xs">TBD - In Development</code>
+                    <code className="bg-gray-900 px-2 py-1 rounded text-xs">0x5bC40A7a47A2b767D948FEEc475b24c027B43867</code>
                   </td>
                 </tr>
                 <tr className="hover:bg-gray-900/30">
@@ -180,15 +180,7 @@ const SmartContractSDK = () => {
                   <td className="px-4 py-3 border border-gray-800 text-gray-400">Devnet</td>
                   <td className="px-4 py-3 border border-gray-800 text-purple-400">Chronos Vault Program</td>
                   <td className="px-4 py-3 border border-gray-800">
-                    <code className="bg-gray-900 px-2 py-1 rounded text-xs">TBD - In Development</code>
-                  </td>
-                </tr>
-                <tr className="hover:bg-gray-900/30">
-                  <td className="px-4 py-3 border border-gray-800 font-medium">Solana</td>
-                  <td className="px-4 py-3 border border-gray-800 text-gray-400">Devnet</td>
-                  <td className="px-4 py-3 border border-gray-800 text-purple-400">Cross-Chain Bridge</td>
-                  <td className="px-4 py-3 border border-gray-800">
-                    <code className="bg-gray-900 px-2 py-1 rounded text-xs">TBD - In Development</code>
+                    <code className="bg-gray-900 px-2 py-1 rounded text-xs">CYaDJYRqm35udQ8vkxoajSER8oaniQUcV8Vvw5BqJyo2</code>
                   </td>
                 </tr>
                 <tr className="hover:bg-gray-900/30">
@@ -196,7 +188,7 @@ const SmartContractSDK = () => {
                   <td className="px-4 py-3 border border-gray-800 text-gray-400">Testnet</td>
                   <td className="px-4 py-3 border border-gray-800 text-purple-400">ChronosVault</td>
                   <td className="px-4 py-3 border border-gray-800">
-                    <code className="bg-gray-900 px-2 py-1 rounded text-xs">EQAvDfYmkVV2zFXzC0Hs2e2RGWJyMXHpnMTXH4jnI2W3AwLb</code>
+                    <code className="bg-gray-900 px-2 py-1 rounded text-xs">EQDJAnXDPT-NivritpEhQeP0XmG20NdeUtxgh4nUiWH-DF7M</code>
                   </td>
                 </tr>
                 <tr className="hover:bg-gray-900/30">
@@ -204,7 +196,7 @@ const SmartContractSDK = () => {
                   <td className="px-4 py-3 border border-gray-800 text-gray-400">Testnet</td>
                   <td className="px-4 py-3 border border-gray-800 text-purple-400">CVTBridge (Jetton)</td>
                   <td className="px-4 py-3 border border-gray-800">
-                    <code className="bg-gray-900 px-2 py-1 rounded text-xs">TBD - In Development</code>
+                    <code className="bg-gray-900 px-2 py-1 rounded text-xs">EQAOJxa1WDjGZ7f3n53JILojhZoDdTOKWl6h41_yOWX3v0tq</code>
                   </td>
                 </tr>
               </tbody>
@@ -227,11 +219,10 @@ const SmartContractSDK = () => {
           
           <Alert variant="default" className="border-indigo-500 bg-indigo-500/10">
             <Info className="h-4 w-4 text-indigo-500" />
-            <AlertTitle>Triple-Chain Security Architecture</AlertTitle>
+            <AlertTitle>Trinity Protocol - 2-of-3 Consensus</AlertTitle>
             <AlertDescription>
-              Our Triple-Chain Security Architecture provides unprecedented security guarantees by 
-              leveraging cross-chain verification. Integrate with multiple blockchains to ensure the 
-              highest level of protection for your digital assets.
+              Our Trinity Protocol provides mathematically provable security through 2-of-3 consensus across Arbitrum L2 (primary), Solana (monitor), and TON (backup). 
+              Integrate with multiple blockchains to ensure the highest level of protection for your digital assets.
             </AlertDescription>
           </Alert>
           
@@ -953,7 +944,7 @@ pub fn process_instruction(
               </CardHeader>
               <CardContent>
                 <div className="bg-black/40 p-3 rounded-md font-mono text-xs mb-2 overflow-x-auto">
-                  <code>git clone https://github.com/chronos-vault/smart-contracts.git</code>
+                  <code>git clone https://github.com/Chronos-Vault/smart-contracts.git</code>
                 </div>
                 <p className="text-sm text-gray-400">
                   Clone our repository to get started with the full contract code.
