@@ -295,8 +295,8 @@ export const NavBar: React.FC = () => {
                     </Link>
                   </DropdownMenuItem>
                   <DropdownMenuItem asChild>
-                    <Link href="/security-video-guides" className="px-4 py-2 rounded-md hover:bg-[#6B00D7]/20 flex items-center">
-                      <Video className="w-4 h-4 mr-2" /> Security Video Guides
+                    <Link href="/security-integration-guide" className="px-4 py-2 rounded-md hover:bg-[#6B00D7]/20 flex items-center">
+                      <Code className="w-4 h-4 mr-2" /> Security Integration Guide
                     </Link>
                   </DropdownMenuItem>
                   <DropdownMenuItem asChild>
@@ -627,10 +627,10 @@ export const NavBar: React.FC = () => {
               />
 
               <SidebarItem 
-                icon={<Video className="h-5 w-5" />} 
-                label="Security Video Guides" 
-                href="/security-video-guides" 
-                active={location === '/security-video-guides'}
+                icon={<Code className="h-5 w-5" />} 
+                label="Security Integration Guide" 
+                href="/security-integration-guide" 
+                active={location === '/security-integration-guide'}
                 onClick={closeSidebar}
               />
 
