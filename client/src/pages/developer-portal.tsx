@@ -256,6 +256,169 @@ const DeveloperPortal = () => {
           </div>
         </section>
 
+        <Separator className="my-8 bg-gray-800" />
+
+        <section className="space-y-6">
+          <h2 className="text-2xl font-bold">GitHub Documentation Repositories</h2>
+          <p className="text-gray-400">Access complete technical documentation and implementation guides from our GitHub organization.</p>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            <Card className="bg-black/20 border border-gray-800">
+              <CardHeader>
+                <CardTitle className="text-lg">Platform Documentation</CardTitle>
+                <CardDescription>Core architecture & API guides</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <Button 
+                  asChild 
+                  variant="outline" 
+                  className="w-full"
+                  onClick={() => window.open('https://github.com/chronos-vault/chronos-vault-docs', '_blank')}
+                >
+                  <a href="https://github.com/chronos-vault/chronos-vault-docs" target="_blank" rel="noopener noreferrer">
+                    View Docs Repository
+                  </a>
+                </Button>
+              </CardContent>
+            </Card>
+
+            <Card className="bg-black/20 border border-gray-800">
+              <CardHeader>
+                <CardTitle className="text-lg">Smart Contracts</CardTitle>
+                <CardDescription>Solidity, Rust & FunC contracts</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <Button 
+                  asChild 
+                  variant="outline" 
+                  className="w-full"
+                  onClick={() => window.open('https://github.com/chronos-vault/chronos-vault-contracts', '_blank')}
+                >
+                  <a href="https://github.com/chronos-vault/chronos-vault-contracts" target="_blank" rel="noopener noreferrer">
+                    View Contracts Repository
+                  </a>
+                </Button>
+              </CardContent>
+            </Card>
+
+            <Card className="bg-black/20 border border-gray-800">
+              <CardHeader>
+                <CardTitle className="text-lg">Security Documentation</CardTitle>
+                <CardDescription>Formal verification & audits</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <Button 
+                  asChild 
+                  variant="outline" 
+                  className="w-full"
+                  onClick={() => window.open('https://github.com/chronos-vault/chronos-vault-security', '_blank')}
+                >
+                  <a href="https://github.com/chronos-vault/chronos-vault-security" target="_blank" rel="noopener noreferrer">
+                    View Security Repository
+                  </a>
+                </Button>
+              </CardContent>
+            </Card>
+
+            <Card className="bg-black/20 border border-gray-800">
+              <CardHeader>
+                <CardTitle className="text-lg">SDK Repository</CardTitle>
+                <CardDescription>Multi-language client SDKs</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <Button 
+                  asChild 
+                  variant="outline" 
+                  className="w-full"
+                  onClick={() => window.open('https://github.com/chronos-vault/chronos-vault-sdk', '_blank')}
+                >
+                  <a href="https://github.com/chronos-vault/chronos-vault-sdk" target="_blank" rel="noopener noreferrer">
+                    View SDK Repository
+                  </a>
+                </Button>
+              </CardContent>
+            </Card>
+
+            <Card className="bg-black/20 border border-gray-800">
+              <CardHeader>
+                <CardTitle className="text-lg">Platform Repository</CardTitle>
+                <CardDescription>Full platform source code</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <Button 
+                  asChild 
+                  variant="outline" 
+                  className="w-full"
+                  onClick={() => window.open('https://github.com/chronos-vault/chronos-vault-platform-', '_blank')}
+                >
+                  <a href="https://github.com/chronos-vault/chronos-vault-platform-" target="_blank" rel="noopener noreferrer">
+                    View Platform Repository
+                  </a>
+                </Button>
+              </CardContent>
+            </Card>
+          </div>
+        </section>
+
+        <Separator className="my-8 bg-gray-800" />
+
+        <section className="space-y-6">
+          <h2 className="text-2xl font-bold">Deployed Contract Addresses (Testnet)</h2>
+          <p className="text-gray-400">Current testnet deployments for development and integration testing.</p>
+          
+          <div className="overflow-x-auto">
+            <table className="w-full border-collapse">
+              <thead>
+                <tr className="bg-gray-900/50">
+                  <th className="px-4 py-3 text-left text-sm font-semibold border border-gray-800">Blockchain</th>
+                  <th className="px-4 py-3 text-left text-sm font-semibold border border-gray-800">Network</th>
+                  <th className="px-4 py-3 text-left text-sm font-semibold border border-gray-800">Contract</th>
+                  <th className="px-4 py-3 text-left text-sm font-semibold border border-gray-800">Address</th>
+                </tr>
+              </thead>
+              <tbody className="text-sm">
+                <tr className="hover:bg-gray-900/30">
+                  <td className="px-4 py-3 border border-gray-800 font-medium">Arbitrum</td>
+                  <td className="px-4 py-3 border border-gray-800 text-gray-400">Sepolia Testnet</td>
+                  <td className="px-4 py-3 border border-gray-800 text-purple-400">ChronosVault</td>
+                  <td className="px-4 py-3 border border-gray-800">
+                    <code className="bg-gray-900 px-2 py-1 rounded text-xs">TBD - In Development</code>
+                  </td>
+                </tr>
+                <tr className="hover:bg-gray-900/30">
+                  <td className="px-4 py-3 border border-gray-800 font-medium">Arbitrum</td>
+                  <td className="px-4 py-3 border border-gray-800 text-gray-400">Sepolia Testnet</td>
+                  <td className="px-4 py-3 border border-gray-800 text-purple-400">CVTBridge</td>
+                  <td className="px-4 py-3 border border-gray-800">
+                    <code className="bg-gray-900 px-2 py-1 rounded text-xs">TBD - In Development</code>
+                  </td>
+                </tr>
+                <tr className="hover:bg-gray-900/30">
+                  <td className="px-4 py-3 border border-gray-800 font-medium">Solana</td>
+                  <td className="px-4 py-3 border border-gray-800 text-gray-400">Devnet</td>
+                  <td className="px-4 py-3 border border-gray-800 text-purple-400">Chronos Vault Program</td>
+                  <td className="px-4 py-3 border border-gray-800">
+                    <code className="bg-gray-900 px-2 py-1 rounded text-xs">TBD - In Development</code>
+                  </td>
+                </tr>
+                <tr className="hover:bg-gray-900/30">
+                  <td className="px-4 py-3 border border-gray-800 font-medium">TON</td>
+                  <td className="px-4 py-3 border border-gray-800 text-gray-400">Testnet</td>
+                  <td className="px-4 py-3 border border-gray-800 text-purple-400">ChronosVault</td>
+                  <td className="px-4 py-3 border border-gray-800">
+                    <code className="bg-gray-900 px-2 py-1 rounded text-xs">EQAvDfYmkVV2zFXzC0Hs2e2RGWJyMXHpnMTXH4jnI2W3AwLb</code>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div className="bg-yellow-900/20 border border-yellow-600/30 rounded-lg p-4">
+            <p className="text-sm text-yellow-300">
+              <strong>Note:</strong> These are testnet addresses for development purposes only. Mainnet contract addresses will be published before production launch.
+            </p>
+          </div>
+        </section>
+
         <section className="space-y-6 mt-12">
           <div className="bg-gradient-to-r from-[#6B00D7]/20 to-[#FF5AF7]/20 p-8 rounded-lg border border-[#FF5AF7]/30">
             <div className="flex flex-col md:flex-row items-center justify-between gap-6">

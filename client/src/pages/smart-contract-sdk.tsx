@@ -136,6 +136,92 @@ const SmartContractSDK = () => {
 
         <Separator className="my-8 bg-gray-800" />
 
+        <section className="space-y-6">
+          <h2 className="text-2xl font-bold">Deployed Contract Addresses (Testnet)</h2>
+          <p className="text-gray-400">Use these testnet addresses for development and integration testing.</p>
+          
+          <div className="overflow-x-auto">
+            <table className="w-full border-collapse">
+              <thead>
+                <tr className="bg-gray-900/50">
+                  <th className="px-4 py-3 text-left text-sm font-semibold border border-gray-800">Blockchain</th>
+                  <th className="px-4 py-3 text-left text-sm font-semibold border border-gray-800">Network</th>
+                  <th className="px-4 py-3 text-left text-sm font-semibold border border-gray-800">Contract</th>
+                  <th className="px-4 py-3 text-left text-sm font-semibold border border-gray-800">Address</th>
+                </tr>
+              </thead>
+              <tbody className="text-sm">
+                <tr className="hover:bg-gray-900/30">
+                  <td className="px-4 py-3 border border-gray-800 font-medium">Arbitrum</td>
+                  <td className="px-4 py-3 border border-gray-800 text-gray-400">Sepolia Testnet</td>
+                  <td className="px-4 py-3 border border-gray-800 text-purple-400">ChronosVault</td>
+                  <td className="px-4 py-3 border border-gray-800">
+                    <code className="bg-gray-900 px-2 py-1 rounded text-xs">TBD - In Development</code>
+                  </td>
+                </tr>
+                <tr className="hover:bg-gray-900/30">
+                  <td className="px-4 py-3 border border-gray-800 font-medium">Arbitrum</td>
+                  <td className="px-4 py-3 border border-gray-800 text-gray-400">Sepolia Testnet</td>
+                  <td className="px-4 py-3 border border-gray-800 text-purple-400">CVTBridge</td>
+                  <td className="px-4 py-3 border border-gray-800">
+                    <code className="bg-gray-900 px-2 py-1 rounded text-xs">TBD - In Development</code>
+                  </td>
+                </tr>
+                <tr className="hover:bg-gray-900/30">
+                  <td className="px-4 py-3 border border-gray-800 font-medium">Arbitrum</td>
+                  <td className="px-4 py-3 border border-gray-800 text-gray-400">Sepolia Testnet</td>
+                  <td className="px-4 py-3 border border-gray-800 text-purple-400">CrossChainBridgeV1</td>
+                  <td className="px-4 py-3 border border-gray-800">
+                    <code className="bg-gray-900 px-2 py-1 rounded text-xs">TBD - In Development</code>
+                  </td>
+                </tr>
+                <tr className="hover:bg-gray-900/30">
+                  <td className="px-4 py-3 border border-gray-800 font-medium">Solana</td>
+                  <td className="px-4 py-3 border border-gray-800 text-gray-400">Devnet</td>
+                  <td className="px-4 py-3 border border-gray-800 text-purple-400">Chronos Vault Program</td>
+                  <td className="px-4 py-3 border border-gray-800">
+                    <code className="bg-gray-900 px-2 py-1 rounded text-xs">TBD - In Development</code>
+                  </td>
+                </tr>
+                <tr className="hover:bg-gray-900/30">
+                  <td className="px-4 py-3 border border-gray-800 font-medium">Solana</td>
+                  <td className="px-4 py-3 border border-gray-800 text-gray-400">Devnet</td>
+                  <td className="px-4 py-3 border border-gray-800 text-purple-400">Cross-Chain Bridge</td>
+                  <td className="px-4 py-3 border border-gray-800">
+                    <code className="bg-gray-900 px-2 py-1 rounded text-xs">TBD - In Development</code>
+                  </td>
+                </tr>
+                <tr className="hover:bg-gray-900/30">
+                  <td className="px-4 py-3 border border-gray-800 font-medium">TON</td>
+                  <td className="px-4 py-3 border border-gray-800 text-gray-400">Testnet</td>
+                  <td className="px-4 py-3 border border-gray-800 text-purple-400">ChronosVault</td>
+                  <td className="px-4 py-3 border border-gray-800">
+                    <code className="bg-gray-900 px-2 py-1 rounded text-xs">EQAvDfYmkVV2zFXzC0Hs2e2RGWJyMXHpnMTXH4jnI2W3AwLb</code>
+                  </td>
+                </tr>
+                <tr className="hover:bg-gray-900/30">
+                  <td className="px-4 py-3 border border-gray-800 font-medium">TON</td>
+                  <td className="px-4 py-3 border border-gray-800 text-gray-400">Testnet</td>
+                  <td className="px-4 py-3 border border-gray-800 text-purple-400">CVTBridge (Jetton)</td>
+                  <td className="px-4 py-3 border border-gray-800">
+                    <code className="bg-gray-900 px-2 py-1 rounded text-xs">TBD - In Development</code>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <Alert variant="default" className="border-yellow-500 bg-yellow-500/10">
+            <AlertCircle className="h-4 w-4 text-yellow-500" />
+            <AlertTitle>Testnet Only</AlertTitle>
+            <AlertDescription>
+              These are testnet addresses for development purposes only. Mainnet contract addresses will be published before production launch. Always verify contract addresses independently.
+            </AlertDescription>
+          </Alert>
+        </section>
+
+        <Separator className="my-8 bg-gray-800" />
+
         <section id="contract-interfaces" className="space-y-6">
           <h2 className="text-2xl font-bold">Smart Contract Interfaces</h2>
           

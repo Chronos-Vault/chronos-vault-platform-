@@ -77,6 +77,24 @@ const IntegrationGuide = () => {
               </div>
               <Card className="bg-gray-900 border-gray-800">
                 <CardHeader className="pb-2">
+                  <CardTitle className="text-base">GitHub Documentation</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-sm text-gray-400 mb-3">
+                    Access complete code examples and integration guides from our GitHub repository.
+                  </p>
+                  <Button 
+                    variant="outline" 
+                    className="w-full"
+                    onClick={() => window.open('https://github.com/chronos-vault/chronos-vault-docs', '_blank')}
+                  >
+                    View GitHub Docs
+                  </Button>
+                </CardContent>
+              </Card>
+
+              <Card className="bg-gray-900 border-gray-800">
+                <CardHeader className="pb-2">
                   <CardTitle className="text-base">Need help?</CardTitle>
                 </CardHeader>
                 <CardContent>

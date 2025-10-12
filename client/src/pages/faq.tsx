@@ -68,16 +68,16 @@ export default function FAQPage() {
           
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-6">
             <div className="p-4 rounded-lg bg-[#6B00D7]/10 border border-[#6B00D7]/30">
-              <h3 className="text-lg font-semibold text-[#FF5AF7]">Triple-Chain Security</h3>
-              <p className="text-sm text-gray-300">Primary security on Ethereum, high-speed monitoring on Solana, and backup recovery on TON</p>
+              <h3 className="text-lg font-semibold text-purple-400">Fixed Layer Architecture</h3>
+              <p className="text-sm text-gray-300">Ethereum Layer 2 for primary security, Solana for rapid validation, TON for quantum-resistant backup</p>
             </div>
             <div className="p-4 rounded-lg bg-[#6B00D7]/10 border border-[#6B00D7]/30">
-              <h3 className="text-lg font-semibold text-[#FF5AF7]">Quantum-Progressive Protection</h3>
-              <p className="text-sm text-gray-300">Adaptive security levels that scale with asset value using post-quantum cryptography</p>
+              <h3 className="text-lg font-semibold text-[#FF5AF7]">2-of-3 Mathematical Consensus</h3>
+              <p className="text-sm text-gray-300">Trinity Protocol secures your vault across all 3 layers with multi-chain verification</p>
             </div>
             <div className="p-4 rounded-lg bg-[#6B00D7]/10 border border-[#6B00D7]/30">
-              <h3 className="text-lg font-semibold text-[#FF5AF7]">Universal Chain Interoperability</h3>
-              <p className="text-sm text-gray-300">Seamless asset transfers and security verification across all major blockchain networks</p>
+              <h3 className="text-lg font-semibold text-[#FF5AF7]">Layer 2 Optimized</h3>
+              <p className="text-sm text-gray-300">Ethereum Layer 2 deployment provides 95% lower fees while maintaining maximum security</p>
             </div>
           </div>
         </motion.div>
@@ -157,30 +157,30 @@ export default function FAQPage() {
                         </p>
                         <div className="grid grid-cols-2 gap-4">
                           <div className="flex items-center gap-2">
-                            <div className="w-8 h-8 rounded-full bg-blue-700 flex items-center justify-center">
+                            <div className="w-8 h-8 rounded-full bg-purple-700 flex items-center justify-center">
                               <span>Ξ</span>
                             </div>
                             <div>
-                              <p className="font-semibold">Ethereum</p>
-                              <p className="text-xs">Primary vault ownership</p>
+                              <p className="font-semibold">Ethereum Layer 2</p>
+                              <p className="text-xs text-purple-400">Primary Security (95% lower fees)</p>
                             </div>
                           </div>
                           <div className="flex items-center gap-2">
-                            <div className="w-8 h-8 rounded-full bg-purple-700 flex items-center justify-center">
+                            <div className="w-8 h-8 rounded-full bg-purple-600 flex items-center justify-center">
                               <span>◎</span>
                             </div>
                             <div>
                               <p className="font-semibold">Solana</p>
-                              <p className="text-xs">High-speed monitoring</p>
+                              <p className="text-xs text-purple-400">Rapid Validation</p>
                             </div>
                           </div>
                           <div className="flex items-center gap-2">
-                            <div className="w-8 h-8 rounded-full bg-blue-500 flex items-center justify-center">
+                            <div className="w-8 h-8 rounded-full bg-purple-500 flex items-center justify-center">
                               <span>💎</span>
                             </div>
                             <div>
                               <p className="font-semibold">TON</p>
-                              <p className="text-xs">Backup and recovery</p>
+                              <p className="text-xs text-purple-400">Recovery System</p>
                             </div>
                           </div>
                           <div className="flex items-center gap-2">
@@ -235,30 +235,35 @@ export default function FAQPage() {
                   <motion.div variants={itemVariants}>
                     <AccordionItem value="architecture">
                       <AccordionTrigger className="text-lg font-semibold">
-                        What is Triple-Chain Security Architecture?
+                        What is Trinity Protocol?
                       </AccordionTrigger>
                       <AccordionContent className="text-gray-300">
                         <p className="mb-4">
-                          Our Triple-Chain Security Architecture distributes security responsibilities across three independent blockchain networks:
+                          Our Trinity Protocol is a fixed-role multi-chain security system where each blockchain serves a specific purpose. <strong className="text-[#FF5AF7]">Ethereum Layer 2 provides primary security with 95% lower fees</strong>, while Solana and TON provide rapid validation and quantum-resistant backup protection.
                         </p>
                         <div className="space-y-4 my-4">
-                          <div className="p-3 bg-[#1D1D1D] rounded-lg border border-[#333]">
-                            <h4 className="font-semibold text-[#FF5AF7]">Ethereum Layer (Primary)</h4>
-                            <p className="text-sm">Handles ownership records and access control through ERC-4626 compliant tokenized vaults. Provides the core security layer with smart contract-based time locks and access controls.</p>
+                          <div className="p-3 bg-[#6B00D7]/10 border border-[#6B00D7]/30 rounded-lg">
+                            <h4 className="font-semibold text-purple-400">How It Works</h4>
+                            <p className="text-sm mt-2">Each blockchain has a dedicated security role. The Trinity Protocol uses 2-of-3 mathematical consensus across all three layers, with Ethereum Layer 2 handling primary ownership records at 95% lower cost.</p>
+                          </div>
+
+                          <div className="p-3 bg-[#1D1D1D] rounded-lg border border-[#6B00D7]/30">
+                            <h4 className="font-semibold text-purple-400">Ethereum Layer 2: Primary Security</h4>
+                            <p className="text-sm">Immutable ownership records via Layer 2 deployment for 95% lower fees while maintaining maximum decentralization.</p>
                           </div>
                           
-                          <div className="p-3 bg-[#1D1D1D] rounded-lg border border-[#333]">
-                            <h4 className="font-semibold text-[#FF5AF7]">Solana Layer (Monitoring)</h4>
-                            <p className="text-sm">Provides high-frequency monitoring and rapid validation of vault status. With Solana's high throughput, this layer can quickly respond to security events and validate transactions.</p>
+                          <div className="p-3 bg-[#1D1D1D] rounded-lg border border-[#6B00D7]/30">
+                            <h4 className="font-semibold text-purple-400">Solana: Rapid Validation</h4>
+                            <p className="text-sm">High-frequency monitoring and state verification with lightning-fast transaction speeds for real-time security.</p>
                           </div>
                           
-                          <div className="p-3 bg-[#1D1D1D] rounded-lg border border-[#333]">
-                            <h4 className="font-semibold text-[#FF5AF7]">TON Layer (Backup)</h4>
-                            <p className="text-sm">Serves as a backup security system and handles emergency recovery operations. TON's resilient architecture provides fault tolerance if other networks experience issues.</p>
+                          <div className="p-3 bg-[#1D1D1D] rounded-lg border border-[#6B00D7]/30">
+                            <h4 className="font-semibold text-purple-400">TON: Recovery System</h4>
+                            <p className="text-sm">Quantum-resistant backup and recovery layer ensuring long-term asset protection.</p>
                           </div>
                         </div>
-                        <p>
-                          This multi-chain approach ensures that assets are secured by three independent blockchain networks, preventing single points of failure and providing robust protection against various attack vectors.
+                        <p className="text-purple-400 font-medium">
+                          🔒 Fixed Layer Security: 2-of-3 blockchain verification protects your vault. Even if one layer is compromised, your assets remain secure with Ethereum Layer 2 providing affordable primary security!
                         </p>
                       </AccordionContent>
                     </AccordionItem>
@@ -380,6 +385,93 @@ export default function FAQPage() {
                           <div className="p-3 bg-[#1D1D1D] rounded-lg border border-[#333]">
                             <h4 className="font-semibold text-[#FF5AF7]">Comprehensive Monitoring</h4>
                             <p className="text-sm mt-1">Real-time monitoring of all blockchain networks with automated alerts for any anomalies or failures</p>
+                          </div>
+                        </div>
+                      </AccordionContent>
+                    </AccordionItem>
+                  </motion.div>
+
+                  <motion.div variants={itemVariants}>
+                    <AccordionItem value="trinity-consensus">
+                      <AccordionTrigger className="text-lg font-semibold">
+                        How does Trinity Protocol's 2-of-3 consensus work?
+                      </AccordionTrigger>
+                      <AccordionContent className="text-gray-300">
+                        <p className="mb-4">
+                          Trinity Protocol requires agreement from at least 2 out of 3 blockchains (Arbitrum, Solana, TON) for critical vault operations, providing mathematical security guarantees.
+                        </p>
+                        <div className="space-y-3 my-4">
+                          <div className="p-3 bg-[#1D1D1D] rounded-lg border border-[#6B00D7]/30">
+                            <h4 className="font-semibold text-purple-400">Consensus Mechanism</h4>
+                            <p className="text-sm mt-1">Each vault operation is verified across all three chains. The operation succeeds only when at least 2 chains confirm validity, preventing single-point failures.</p>
+                          </div>
+                          
+                          <div className="p-3 bg-[#1D1D1D] rounded-lg border border-[#6B00D7]/30">
+                            <h4 className="font-semibold text-purple-400">State Synchronization</h4>
+                            <p className="text-sm mt-1">Cross-chain state proofs ensure all three blockchains maintain consistent vault state. Any discrepancy triggers automatic reconciliation.</p>
+                          </div>
+                          
+                          <div className="p-3 bg-[#1D1D1D] rounded-lg border border-[#6B00D7]/30">
+                            <h4 className="font-semibold text-purple-400">Attack Resistance</h4>
+                            <p className="text-sm mt-1">An attacker would need to simultaneously compromise 2 of 3 independent blockchains—mathematically negligible probability (&lt;10^-18).</p>
+                          </div>
+                        </div>
+                      </AccordionContent>
+                    </AccordionItem>
+                  </motion.div>
+
+                  <motion.div variants={itemVariants}>
+                    <AccordionItem value="circuit-breaker">
+                      <AccordionTrigger className="text-lg font-semibold">
+                        What is the Circuit Breaker mechanism?
+                      </AccordionTrigger>
+                      <AccordionContent className="text-gray-300">
+                        <p className="mb-4">
+                          The Circuit Breaker is Trinity Protocol's emergency protection system that automatically halts suspicious vault operations to prevent attacks.
+                        </p>
+                        <div className="space-y-3 my-4">
+                          <div className="p-3 bg-[#1D1D1D] rounded-lg border border-red-500/30">
+                            <h4 className="font-semibold text-red-400">Automatic Detection</h4>
+                            <p className="text-sm mt-1">Continuously monitors for anomalies: rapid withdrawals, unusual access patterns, or consensus failures across chains.</p>
+                          </div>
+                          
+                          <div className="p-3 bg-[#1D1D1D] rounded-lg border border-red-500/30">
+                            <h4 className="font-semibold text-red-400">Instant Freeze</h4>
+                            <p className="text-sm mt-1">When triggered, all vault operations are immediately frozen across all three chains until manual review confirms safety.</p>
+                          </div>
+                          
+                          <div className="p-3 bg-[#1D1D1D] rounded-lg border border-red-500/30">
+                            <h4 className="font-semibold text-red-400">Recovery Process</h4>
+                            <p className="text-sm mt-1">After investigation, vault owner can reset the circuit breaker with multi-signature approval across at least 2 chains.</p>
+                          </div>
+                        </div>
+                      </AccordionContent>
+                    </AccordionItem>
+                  </motion.div>
+
+                  <motion.div variants={itemVariants}>
+                    <AccordionItem value="trinity-events">
+                      <AccordionTrigger className="text-lg font-semibold">
+                        How do Trinity Protocol event subscriptions work?
+                      </AccordionTrigger>
+                      <AccordionContent className="text-gray-300">
+                        <p className="mb-4">
+                          Real-time event subscriptions allow monitoring of vault state changes across all three blockchains simultaneously.
+                        </p>
+                        <div className="space-y-3 my-4">
+                          <div className="p-3 bg-[#1D1D1D] rounded-lg border border-[#6B00D7]/30">
+                            <h4 className="font-semibold text-purple-400">Multi-Chain Events</h4>
+                            <p className="text-sm mt-1">Subscribe to VaultCreated, VaultUnlocked, ConsensusReached, CircuitBreakerTriggered events from any blockchain.</p>
+                          </div>
+                          
+                          <div className="p-3 bg-[#1D1D1D] rounded-lg border border-[#6B00D7]/30">
+                            <h4 className="font-semibold text-purple-400">WebSocket Streams</h4>
+                            <p className="text-sm mt-1">Low-latency WebSocket connections provide instant notifications when vault state changes on any chain.</p>
+                          </div>
+                          
+                          <div className="p-3 bg-[#1D1D1D] rounded-lg border border-[#6B00D7]/30">
+                            <h4 className="font-semibold text-purple-400">Consensus Verification</h4>
+                            <p className="text-sm mt-1">Each event includes cross-chain proof data, allowing independent verification of 2-of-3 consensus achievement.</p>
                           </div>
                         </div>
                       </AccordionContent>

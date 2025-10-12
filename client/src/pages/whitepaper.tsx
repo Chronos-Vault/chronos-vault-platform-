@@ -136,37 +136,81 @@ const WhitepaperPage = () => {
       ]
     },
     architecture: {
-      title: "Triple-Chain Security Architecture",
-      description: "The Chronos Vault platform implements a revolutionary Triple-Chain Security model where each blockchain network serves a specific security function:",
+      title: "Trinity Protocol - Fixed Layer Architecture",
+      description: "The Chronos Vault platform implements Trinity Protocol where each blockchain serves a dedicated security role. Ethereum Layer 2 (Arbitrum) deployment provides primary security with 95% lower fees, while Solana and TON provide rapid validation and quantum-resistant backup with 2-of-3 mathematical consensus protecting all operations:",
       layers: [
         {
-          name: "Ethereum Layer",
-          role: "Primary ownership records and access control",
+          name: "Ethereum Layer 2 (Arbitrum): Primary Security",
+          role: "Immutable ownership records via Arbitrum Layer 2 for affordable security",
           features: [
-            "Smart contract-based vault creation and management",
-            "ERC-4626 compliant tokenized vault system",
-            "Time-lock enforcement through consensus validation"
+            "Primary Security layer with maximum decentralization",
+            "Layer 2 deployment reduces fees by 95%",
+            "Immutable vault ownership and access control",
+            "Enterprise-grade security at affordable cost"
           ]
         },
         {
-          name: "Solana Layer",
-          role: "High-frequency monitoring and rapid validation",
+          name: "Solana: Rapid Validation",
+          role: "High-frequency monitoring and state verification",
           features: [
-            "Real-time integrity verification",
-            "High-throughput transaction validation",
-            "Parallel security checks with Merkle proofs"
+            "Lightning-fast transaction verification",
+            "Real-time security monitoring across vault operations",
+            "High-throughput state synchronization",
+            "Ultra-low latency consensus participation"
           ]
         },
         {
-          name: "TON Layer",
-          role: "Backup security system and emergency recovery",
+          name: "TON: Recovery System",
+          role: "Quantum-resistant backup and recovery layer",
           features: [
-            "Decentralized backup of critical security parameters",
-            "Mobile-friendly validation mechanisms",
-            "Emergency recovery protocol activation"
+            "Post-quantum cryptographic protection",
+            "Secure backup and recovery mechanisms",
+            "Long-term asset protection infrastructure",
+            "Cutting-edge security for future-proofing"
           ]
         }
       ]
+    },
+    formalVerification: {
+      title: "Formal Verification & Mathematical Security (In Development)",
+      description: "Our development roadmap includes building the world's first fully mathematically verified vault platform. Unlike traditional audits that find bugs, formal verification mathematically proves security properties cannot be violated.",
+      targets: {
+        lean4Theorems: 35,
+        certoraRules: 34,
+        tlaModels: 1
+      },
+      layers: [
+        {
+          name: "Lean 4 Formal Proofs",
+          description: "Target: 35 theorems covering smart contracts, cryptography, and consensus",
+          coverage: [
+            "Smart Contracts: 13 theorems (ChronosVault, CVTBridge, CrossChainBridge)",
+            "Cryptography: 13 theorems (VDF, MPC, ZK, Quantum-Resistant)",
+            "Consensus: 9 theorems (Trinity Protocol, AI Governance)"
+          ]
+        },
+        {
+          name: "Certora Verification",
+          description: "Target: 34 security rules for Solidity smart contracts",
+          coverage: [
+            "Invariant verification for vault ownership",
+            "Time-lock enforcement proofs",
+            "Multi-signature consensus validation",
+            "Cross-chain state consistency checks"
+          ]
+        },
+        {
+          name: "TLA+ Specification",
+          description: "Planned: Distributed consensus model for Trinity Protocol",
+          coverage: [
+            "2-of-3 consensus algorithm verification",
+            "Circuit breaker safety properties",
+            "State synchronization correctness",
+            "Byzantine fault tolerance validation"
+          ]
+        }
+      ],
+      guarantee: "Every security claim will be backed by cryptographic proofs, not just auditor promises"
     },
     vaultTypes: {
       title: "Specialized Vault Types",
@@ -391,7 +435,7 @@ const WhitepaperPage = () => {
                 <div className="flex flex-wrap justify-center gap-4 mb-12">
                   <Button 
                     className="bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] hover:from-[#5500AB] hover:to-[#FF46E8] text-white px-6 py-5 text-lg rounded-xl shadow-glow hover:shadow-lg hover:shadow-[#FF5AF7]/40 transition-all"
-                    onClick={() => window.open('https://example.com/chronos-vault-whitepaper.pdf', '_blank')}
+                    onClick={() => window.open('https://chronosvault.org/chronos-vault-whitepaper.pdf', '_blank')}
                   >
                     <Download className="h-5 w-5 mr-2" />
                     Download Full Whitepaper
@@ -411,7 +455,7 @@ const WhitepaperPage = () => {
             
             <div className="mb-16">
               <Tabs value={selectedTab} onValueChange={setSelectedTab} className="w-full">
-                <TabsList className="grid w-full grid-cols-3 md:grid-cols-5 mb-8">
+                <TabsList className="grid w-full grid-cols-3 md:grid-cols-6 mb-8">
                   <TabsTrigger 
                     value="overview" 
                     className="data-[state=active]:bg-[#1A1A1A] data-[state=active]:text-[#FF5AF7] data-[state=active]:shadow-[#FF5AF7]/20 data-[state=active]:border-[#FF5AF7]/50 border border-transparent"
@@ -423,6 +467,12 @@ const WhitepaperPage = () => {
                     className="data-[state=active]:bg-[#1A1A1A] data-[state=active]:text-[#FF5AF7] data-[state=active]:shadow-[#FF5AF7]/20 data-[state=active]:border-[#FF5AF7]/50 border border-transparent"
                   >
                     <Layers className="h-4 w-4 mr-2" /> Architecture
+                  </TabsTrigger>
+                  <TabsTrigger 
+                    value="formalVerification" 
+                    className="data-[state=active]:bg-[#1A1A1A] data-[state=active]:text-[#FF5AF7] data-[state=active]:shadow-[#FF5AF7]/20 data-[state=active]:border-[#FF5AF7]/50 border border-transparent"
+                  >
+                    <Shield className="h-4 w-4 mr-2" /> Formal Verification
                   </TabsTrigger>
                   <TabsTrigger 
                     value="vaultTypes" 
@@ -551,13 +601,84 @@ const WhitepaperPage = () => {
                         <h3 className="text-xl font-bold mb-4">Cross-Chain Verification Flow</h3>
                         <div className="bg-black/30 p-6 rounded-xl border border-[#6B00D7]/20">
                           <ol className="space-y-4 pl-6 list-decimal text-gray-300">
-                            <li>Primary vault is created on Ethereum with vault parameters and time-lock conditions</li>
+                            <li>Primary vault is created on Ethereum Layer 2 (Arbitrum) with vault parameters and time-lock conditions</li>
                             <li>Vault creation event is captured by Solana validators who create a shadow vault for monitoring</li>
                             <li>TON network creates backup recovery parameters in a dedicated smart contract</li>
                             <li>Assets stored in the vault are verified across all three chains through proof of existence</li>
                             <li>Vault access requires successful validation across multiple chains based on security level</li>
                             <li>Recovery mechanism activated if primary access fails, using multi-chain verification</li>
                           </ol>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                </TabsContent>
+                
+                <TabsContent value="formalVerification" className="space-y-8">
+                  <Card className="bg-[#1A1A1A]/80 border-[#6B00D7]/30">
+                    <CardHeader>
+                      <CardTitle className="text-2xl bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] inline-block text-transparent bg-clip-text">
+                        {whitepaperSections.formalVerification.title}
+                      </CardTitle>
+                      <CardDescription className="text-gray-400 text-lg">
+                        {whitepaperSections.formalVerification.description}
+                      </CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="bg-gradient-to-r from-[#6B00D7]/10 to-[#FF5AF7]/10 border border-[#6B00D7]/30 rounded-xl p-6 mb-8">
+                        <h3 className="text-xl font-semibold mb-4">Development Targets</h3>
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                          <div className="bg-black/30 p-4 rounded-lg border border-[#6B00D7]/20">
+                            <div className="text-3xl font-bold text-[#FF5AF7] mb-1">{whitepaperSections.formalVerification.targets.lean4Theorems}</div>
+                            <div className="text-sm text-gray-400">Lean 4 Theorems (Target)</div>
+                          </div>
+                          <div className="bg-black/30 p-4 rounded-lg border border-[#6B00D7]/20">
+                            <div className="text-3xl font-bold text-[#FF5AF7] mb-1">{whitepaperSections.formalVerification.targets.certoraRules}</div>
+                            <div className="text-sm text-gray-400">Certora Rules (Target)</div>
+                          </div>
+                          <div className="bg-black/30 p-4 rounded-lg border border-[#6B00D7]/20">
+                            <div className="text-3xl font-bold text-[#FF5AF7] mb-1">{whitepaperSections.formalVerification.targets.tlaModels}</div>
+                            <div className="text-sm text-gray-400">TLA+ Model (Planned)</div>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div className="space-y-6">
+                        {whitepaperSections.formalVerification.layers.map((layer, index) => (
+                          <Card key={index} className="bg-black/50 border-[#6B00D7]/20">
+                            <CardHeader>
+                              <CardTitle className="flex items-center gap-3">
+                                <div className="h-10 w-10 rounded-full bg-gradient-to-r from-[#6B00D7]/20 to-[#FF5AF7]/10 border border-[#6B00D7]/40 flex items-center justify-center">
+                                  <Shield className="h-5 w-5 text-[#FF5AF7]" />
+                                </div>
+                                {layer.name}
+                              </CardTitle>
+                              <CardDescription>{layer.description}</CardDescription>
+                            </CardHeader>
+                            <CardContent>
+                              <h4 className="text-sm font-medium text-white mb-3">Coverage Areas</h4>
+                              <ul className="space-y-2">
+                                {layer.coverage.map((item, cIndex) => (
+                                  <li key={cIndex} className="flex items-start gap-2 text-sm text-gray-300">
+                                    <div className="h-5 w-5 rounded-full bg-[#6B00D7]/20 flex items-center justify-center flex-shrink-0 mt-0.5">
+                                      <div className="h-2 w-2 rounded-full bg-[#FF5AF7]"></div>
+                                    </div>
+                                    {item}
+                                  </li>
+                                ))}
+                              </ul>
+                            </CardContent>
+                          </Card>
+                        ))}
+                      </div>
+
+                      <div className="mt-8 bg-gradient-to-r from-[#6B00D7]/10 to-[#FF5AF7]/10 border border-[#6B00D7]/30 rounded-xl p-6">
+                        <div className="flex items-start gap-3">
+                          <Shield className="h-6 w-6 text-[#FF5AF7] mt-1 flex-shrink-0" />
+                          <div>
+                            <h4 className="text-lg font-semibold mb-2">Mathematical Security Guarantee</h4>
+                            <p className="text-gray-300">{whitepaperSections.formalVerification.guarantee}</p>
+                          </div>
                         </div>
                       </div>
                     </CardContent>

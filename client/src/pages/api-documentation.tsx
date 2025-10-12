@@ -681,7 +681,7 @@ curl -X GET "https://api.chronosvault.org/api/vaults" \\
                                   </tr>
                                 </thead>
                                 <tbody>
-                                  {sampleEndpoints[selectedEndpoint].parameters.map((param, i) => (
+                                  {(sampleEndpoints[selectedEndpoint] as any).parameters?.map((param: any, i: number) => (
                                     <tr key={i} className="border-b last:border-b-0">
                                       <td className="p-2 font-mono">{param.name}</td>
                                       <td className="p-2">{param.type}</td>
@@ -884,6 +884,69 @@ curl -X GET "https://api.chronosvault.org/api/vaults" \\
                             <span className="text-sm text-slate-600 dark:text-slate-400">Delete webhook</span>
                           </li>
                         </ul>
+                      </AccordionContent>
+                    </AccordionItem>
+
+                    <AccordionItem value="trinity-protocol">
+                      <AccordionTrigger className="hover:bg-slate-100 dark:hover:bg-slate-900/50 px-4 rounded-md">
+                        <div className="flex items-center gap-2">
+                          <Globe className="h-5 w-5 text-indigo-500" />
+                          <span className="font-medium">Trinity Protocol Endpoints (In Development)</span>
+                        </div>
+                      </AccordionTrigger>
+                      <AccordionContent className="px-4">
+                        <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
+                          Trinity Protocol endpoints provide access to our 2-of-3 multi-chain consensus system across Arbitrum, Solana, and TON.
+                        </p>
+                        <ul className="space-y-2 py-2">
+                          <li className="flex items-center justify-between p-2 rounded-md hover:bg-slate-100 dark:hover:bg-slate-900/50">
+                            <div className="flex items-center gap-2">
+                              <span className="px-2 py-1 text-xs font-bold rounded bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300">GET</span>
+                              <code className="font-mono text-sm">/api/trinity/consensus/{"{vaultId}"}</code>
+                            </div>
+                            <span className="text-sm text-slate-600 dark:text-slate-400">Get consensus status across all chains</span>
+                          </li>
+                          <li className="flex items-center justify-between p-2 rounded-md hover:bg-slate-100 dark:hover:bg-slate-900/50">
+                            <div className="flex items-center gap-2">
+                              <span className="px-2 py-1 text-xs font-bold rounded bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300">POST</span>
+                              <code className="font-mono text-sm">/api/trinity/events/subscribe</code>
+                            </div>
+                            <span className="text-sm text-slate-600 dark:text-slate-400">Subscribe to cross-chain vault events</span>
+                          </li>
+                          <li className="flex items-center justify-between p-2 rounded-md hover:bg-slate-100 dark:hover:bg-slate-900/50">
+                            <div className="flex items-center gap-2">
+                              <span className="px-2 py-1 text-xs font-bold rounded bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300">GET</span>
+                              <code className="font-mono text-sm">/api/trinity/circuit-breaker/{"{vaultId}"}</code>
+                            </div>
+                            <span className="text-sm text-slate-600 dark:text-slate-400">Check circuit breaker status</span>
+                          </li>
+                          <li className="flex items-center justify-between p-2 rounded-md hover:bg-slate-100 dark:hover:bg-slate-900/50">
+                            <div className="flex items-center gap-2">
+                              <span className="px-2 py-1 text-xs font-bold rounded bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300">POST</span>
+                              <code className="font-mono text-sm">/api/trinity/circuit-breaker/{"{vaultId}"}/reset</code>
+                            </div>
+                            <span className="text-sm text-slate-600 dark:text-slate-400">Reset circuit breaker with multi-sig</span>
+                          </li>
+                          <li className="flex items-center justify-between p-2 rounded-md hover:bg-slate-100 dark:hover:bg-slate-900/50">
+                            <div className="flex items-center gap-2">
+                              <span className="px-2 py-1 text-xs font-bold rounded bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300">GET</span>
+                              <code className="font-mono text-sm">/api/trinity/state-sync/{"{vaultId}"}</code>
+                            </div>
+                            <span className="text-sm text-slate-600 dark:text-slate-400">Verify state synchronization</span>
+                          </li>
+                          <li className="flex items-center justify-between p-2 rounded-md hover:bg-slate-100 dark:hover:bg-slate-900/50">
+                            <div className="flex items-center gap-2">
+                              <span className="px-2 py-1 text-xs font-bold rounded bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300">POST</span>
+                              <code className="font-mono text-sm">/api/trinity/proof/verify</code>
+                            </div>
+                            <span className="text-sm text-slate-600 dark:text-slate-400">Verify cross-chain proof</span>
+                          </li>
+                        </ul>
+                        <div className="mt-4 p-3 bg-purple-50 dark:bg-purple-900/10 rounded-lg border border-purple-200 dark:border-purple-800">
+                          <p className="text-sm text-purple-800 dark:text-purple-300">
+                            <strong>Note:</strong> Trinity Protocol endpoints are currently in development. WebSocket support for real-time event streaming will be available in the next release.
+                          </p>
+                        </div>
                       </AccordionContent>
                     </AccordionItem>
                   </Accordion>
