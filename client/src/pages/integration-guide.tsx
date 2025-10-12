@@ -640,7 +640,7 @@ console.log(\`Webhook registered with ID: \${webhook.id}\`);`}</code>
               <div className="bg-slate-900 text-slate-50 p-4 rounded-md mt-4">
                 <pre className="text-sm overflow-x-auto">
                   <code>{`// Test environment setup - use testnet deployment
-const TESTNET_API = 'https://your-testnet-app.replit.dev';
+const TESTNET_API = 'https://testnet-api.chronosvault.com';
 
 // Authenticate with test wallet
 async function testWalletAuth() {
