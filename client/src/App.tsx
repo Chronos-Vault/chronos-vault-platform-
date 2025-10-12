@@ -59,6 +59,7 @@ import CrossChainFeesPage from '@/pages/cross-chain-fee-monitor';
 import VaultExplorerPage from '@/pages/vault-explorer';
 import DeviceManagementPage from '@/pages/device-management';
 import DeviceRecoveryPage from '@/pages/device-recovery';
+import MDLMonitoringDashboard from '@/pages/mdl-monitoring-dashboard';
 
 // Security & Verification Pages
 import TonSecurityPage from '@/pages/ton-security';
@@ -190,6 +191,7 @@ const App: React.FC = () => {
                       
                       {/* Monitoring & Management */}
                       <Route path="/monitoring" component={MonitoringPage} />
+                      <Route path="/mdl-monitor" component={MDLMonitoringDashboard} />
                       {/* Legacy routes - kept for backward compatibility */}
                       <Route path="/transaction-monitor" component={TransactionMonitorPage} />
                       <Route path="/transaction-verification" component={SecurityVerificationPage} />
