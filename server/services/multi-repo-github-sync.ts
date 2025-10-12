@@ -157,7 +157,7 @@ export class MultiRepoGitHubSync {
     await service.updateFile({
       path: filePath,
       content,
-      message: message || `Update ${filePath} from Replit`,
+      message: message || `Update ${filePath}`,
     });
 
     console.log(`✅ Synced ${filePath} → ${repoName}`);
