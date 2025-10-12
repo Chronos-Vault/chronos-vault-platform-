@@ -21,6 +21,8 @@ import { performanceOptimizer as perfOptimizer } from './security/performance-op
 import { trinityStateCoordinator } from './services/trinity-state-coordinator';
 import { circuitBreakerService } from './services/circuit-breaker-service';
 import { emergencyRecoveryProtocol } from './services/emergency-recovery-protocol';
+import { vaultMDLIntegration } from './services/vault-mdl-integration';
+import { mdlBroadcastService } from './websocket/mdl-broadcast-service';
 
 // Enhanced security: Strict authentication in all environments
 const isProduction = process.env.NODE_ENV === 'production';
@@ -1205,6 +1207,13 @@ app.get('/api/vaults/explorer', async (req, res) => {
     await emergencyRecoveryProtocol.start();
     console.log('✅ Emergency Recovery Protocol active');
     
+    // Initialize Vault Mathematical Defense Layer Integration
+    console.log('Initializing Vault Mathematical Defense Layer Integration...');
+    await vaultMDLIntegration.initialize();
+    console.log('✅ Vault Mathematical Defense Layer Integration active');
+    console.log('   - All security components initialized');
+    console.log('   - Trinity Protocol, AI Governance, MPC, VDF, ZK, Quantum Crypto ready');
+    
     // Trinity Protocol event listeners
     trinityStateCoordinator.on('consensus:reached', (data) => {
       securityLogger.info(
@@ -1244,6 +1253,15 @@ app.get('/api/vaults/explorer', async (req, res) => {
 (async () => {
   try {
     const httpServer = await registerRoutes(app);
+    
+    // Initialize WebSocket service for Mathematical Defense Layer real-time broadcasts
+    console.log('Initializing Mathematical Defense Layer WebSocket Service...');
+    mdlBroadcastService.initialize(httpServer);
+    console.log('✅ MDL WebSocket Service initialized');
+    console.log('   - Real-time Trinity Protocol consensus updates');
+    console.log('   - AI Governance decisions broadcasting');
+    console.log('   - Cross-chain verification events');
+    console.log('   - WebSocket path: /mdl-socket');
     
     const PORT = process.env.PORT || 5000;
     httpServer.listen(PORT, () => {
