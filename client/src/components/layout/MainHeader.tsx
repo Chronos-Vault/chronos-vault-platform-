@@ -156,7 +156,7 @@ const MainHeader = () => {
         { name: "Vault School Hub", href: "/vault-school", icon: "🏫", highlight: true },
         { name: "Military-Grade Security", href: "/military-grade-security", icon: "🛡️", highlight: true, isNew: true },
         { name: "Security Tutorials", href: "/security-tutorials", icon: "📚", highlight: true, isNew: true },
-        { name: "Security Video Guides", href: "/security-tutorials-video", icon: "🎬", highlight: true, isNew: true },
+        { name: "Security Integration Guide", href: "/security-integration-guide", icon: "💻", highlight: true, isNew: true },
         { name: "Technical Security Docs", href: "/security-documentation", icon: "📑", highlight: true, isNew: true },
       ]
     },
@@ -494,12 +494,12 @@ const MainHeader = () => {
                         Step-by-step guides for advanced security features
                       </ListItem>
                       <ListItem
-                        href="/security-tutorials-video"
-                        title="🎬 Security Video Guides"
+                        href="/security-integration-guide"
+                        title="💻 Security Integration Guide"
                         highlight={true}
                         isNew={true}
                       >
-                        Video tutorials for security features
+                        Developer guide for integrating security features
                       </ListItem>
                       <ListItem
                         href="/security-documentation"
