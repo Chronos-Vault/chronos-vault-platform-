@@ -27,7 +27,7 @@ router.post('/sync-file', async (req: Request, res: Response) => {
     await githubSync.updateFile({
       path: filePath,
       content,
-      message: message || `Update ${filePath} from Replit`,
+      message: message || `Update ${filePath} from development`,
     });
 
     res.json({
@@ -64,7 +64,7 @@ router.post('/sync-multiple', async (req: Request, res: Response) => {
 
     await githubSync.commitMultipleFiles(
       files,
-      message || `Update ${files.length} files from Replit`,
+      message || `Update ${files.length} files from development`,
       'main'
     );
 

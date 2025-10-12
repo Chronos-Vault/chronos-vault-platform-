@@ -84,7 +84,7 @@ const app = express();
 // Enhanced CORS configuration for production security
 const corsOptions = {
   origin: isProduction 
-    ? process.env.ALLOWED_ORIGINS?.split(',') || ['https://chronos-vault.replit.app']
+    ? process.env.ALLOWED_ORIGINS?.split(',') || ['https://chronos-vault.chronosvault.com']
     : true, // Allow all origins in development
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
@@ -142,13 +142,13 @@ app.post('/api/vault/request-nonce', (req, res) => {
   let signInMessage: string;
   if (blockchain === 'ethereum') {
     // SIWE (Sign-In with Ethereum) format
-    signInMessage = `chronos-vault.replit.app wants you to sign in with your Ethereum account:\n${address}\n\nSign in to Chronos Vault\n\nURI: https://chronos-vault.replit.app\nVersion: 1\nChain ID: 1\nNonce: ${nonce}\nIssued At: ${new Date().toISOString()}`;
+    signInMessage = `chronos-vault.chronosvault.com wants you to sign in with your Ethereum account:\n${address}\n\nSign in to Chronos Vault\n\nURI: https://chronos-vault.chronosvault.com\nVersion: 1\nChain ID: 1\nNonce: ${nonce}\nIssued At: ${new Date().toISOString()}`;
   } else if (blockchain === 'solana') {
     // Solana Sign-In format
-    signInMessage = `Chronos Vault\n\nSign in to access your vault\nWallet: ${address}\nNonce: ${nonce}\nIssued: ${new Date().toISOString()}\nDomain: chronos-vault.replit.app`;
+    signInMessage = `Chronos Vault\n\nSign in to access your vault\nWallet: ${address}\nNonce: ${nonce}\nIssued: ${new Date().toISOString()}\nDomain: chronos-vault.chronosvault.com`;
   } else if (blockchain === 'ton') {
     // TON Proof format
-    signInMessage = `ton-proof-item-v2/chronos-vault.replit.app/${new Date().getTime()}/${nonce}/${address}`;
+    signInMessage = `ton-proof-item-v2/chronos-vault.chronosvault.com/${new Date().getTime()}/${nonce}/${address}`;
   } else {
     signInMessage = `Sign in to Chronos Vault\nAddress: ${address}\nNonce: ${nonce}\nTimestamp: ${new Date().toISOString()}`;
   }
@@ -221,11 +221,11 @@ app.post('/api/vault/authorize-wallet', async (req, res) => {
   // Reconstruct the same message format for verification
   let signInMessage: string;
   if (blockchain === 'ethereum') {
-    signInMessage = `chronos-vault.replit.app wants you to sign in with your Ethereum account:\n${address}\n\nSign in to Chronos Vault\n\nURI: https://chronos-vault.replit.app\nVersion: 1\nChain ID: 1\nNonce: ${nonce}\nIssued At: ${challenge.timestamp.toISOString()}`;
+    signInMessage = `chronos-vault.chronosvault.com wants you to sign in with your Ethereum account:\n${address}\n\nSign in to Chronos Vault\n\nURI: https://chronos-vault.chronosvault.com\nVersion: 1\nChain ID: 1\nNonce: ${nonce}\nIssued At: ${challenge.timestamp.toISOString()}`;
   } else if (blockchain === 'solana') {
-    signInMessage = `Chronos Vault\n\nSign in to access your vault\nWallet: ${address}\nNonce: ${nonce}\nIssued: ${challenge.timestamp.toISOString()}\nDomain: chronos-vault.replit.app`;
+    signInMessage = `Chronos Vault\n\nSign in to access your vault\nWallet: ${address}\nNonce: ${nonce}\nIssued: ${challenge.timestamp.toISOString()}\nDomain: chronos-vault.chronosvault.com`;
   } else if (blockchain === 'ton') {
-    signInMessage = `ton-proof-item-v2/chronos-vault.replit.app/${challenge.timestamp.getTime()}/${nonce}/${address}`;
+    signInMessage = `ton-proof-item-v2/chronos-vault.chronosvault.com/${challenge.timestamp.getTime()}/${nonce}/${address}`;
   } else {
     signInMessage = `Sign in to Chronos Vault\nAddress: ${address}\nNonce: ${nonce}\nTimestamp: ${challenge.timestamp.toISOString()}`;
   }

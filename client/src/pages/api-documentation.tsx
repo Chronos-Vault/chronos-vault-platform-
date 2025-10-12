@@ -139,7 +139,7 @@ listVaults();`,
 def list_vaults():
     try:
         response = requests.get(
-            'https://your-app.replit.app/api/vaults',
+            'https://api.chronosvault.com/api/vaults',
             params={'type': 'time-lock'},
             headers={
                 'Content-Type': 'application/json',
@@ -152,7 +152,7 @@ def list_vaults():
         print(f"Error listing vaults: {e}")
 
 list_vaults()`,
-      curl: `curl -X GET "https://your-app.replit.app/api/vaults?type=time-lock" \\
+      curl: `curl -X GET "https://api.chronosvault.com/api/vaults?type=time-lock" \\
   -H "Authorization: Bearer YOUR_JWT_TOKEN" \\
   -H "Content-Type: application/json"`
     },
@@ -196,7 +196,7 @@ from datetime import datetime, timezone
 def create_vault():
     try:
         response = requests.post(
-            'https://your-app.replit.app/api/vaults',
+            'https://api.chronosvault.com/api/vaults',
             json={
                 'id': 'vault_' + str(uuid.uuid4()),
                 'name': 'My Savings Vault',
@@ -221,7 +221,7 @@ def create_vault():
         print(f"Error creating vault: {e}")
 
 create_vault()`,
-      curl: `curl -X POST "https://your-app.replit.app/api/vaults" \\
+      curl: `curl -X POST "https://api.chronosvault.com/api/vaults" \\
   -H "Authorization: Bearer YOUR_JWT_TOKEN" \\
   -H "Content-Type: application/json" \\
   -d '{
@@ -520,7 +520,7 @@ def authenticate_with_wallet(private_key):
     address = account.address
     
     # Step 1: Request nonce from server
-    nonce_res = requests.get('https://your-app.replit.app/api/auth/nonce')
+    nonce_res = requests.get('https://api.chronosvault.com/api/auth/nonce')
     nonce = nonce_res.json()['nonce']
     
     # Step 2: Sign message with wallet
@@ -530,7 +530,7 @@ def authenticate_with_wallet(private_key):
     
     # Step 3: Verify signature on server
     auth_res = requests.post(
-        'https://your-app.replit.app/api/auth/verify',
+        'https://api.chronosvault.com/api/auth/verify',
         json={
             'address': address,
             'signature': signed_message.signature.hex(),
@@ -543,7 +543,7 @@ def authenticate_with_wallet(private_key):
     
     # Step 4: Use token for authenticated requests
     vaults_res = requests.get(
-        'https://your-app.replit.app/api/vaults',
+        'https://api.chronosvault.com/api/vaults',
         headers={'Authorization': f'Bearer {token}'}
     )
     
