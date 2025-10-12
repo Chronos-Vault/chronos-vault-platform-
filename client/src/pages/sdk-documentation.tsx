@@ -8,7 +8,9 @@ import {
 } from "lucide-react";
 import { motion } from "framer-motion";
 
-const SDKDocumentation = () => {
+export default function SDKDocumentationPage() {
+  // Force cache invalidation - Oct 12, 2025 10:37 AM
+  console.log('[SDK Documentation] Page loaded successfully - Oct 12, 2025 10:37 AM');
   const [copiedCode, setCopiedCode] = useState<string | null>(null);
 
   const copyToClipboard = (text: string, id: string) => {
@@ -420,6 +422,4 @@ const authenticated = await sdk.authenticate();`, 'quickstart')}
       </div>
     </div>
   );
-};
-
-export default SDKDocumentation;
+}
