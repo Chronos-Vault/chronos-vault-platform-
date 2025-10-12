@@ -132,7 +132,7 @@ import SecurityPage from '@/pages/security';
 import SecurityDashboardPage from '@/pages/security-dashboard';
 import TripleChainSecurityDashboardPage from '@/pages/security-dashboard-page';
 import BitcoinHalvingAdvancedPage from '@/pages/bitcoin-halving';
-import SecurityTutorialsVideo from '@/pages/security-tutorials-video';
+import SecurityIntegrationGuide from '@/pages/security-integration-guide';
 import SecurityTutorials from '@/pages/security-tutorials';
 import MilitaryGradeSecurity from '@/pages/military-grade-security';
 import TokenVaultsPage from '@/pages/token-vaults-redesign';
@@ -310,7 +310,7 @@ const App: React.FC = () => {
                       <Route path="/technical-spec" component={TechnicalSpecPage} />
                       <Route path="/tokenomics" component={CvtTokenomicsPage} />
                       <Route path="/technical-security-docs" component={() => <SecurityDocumentation />} />
-                      <Route path="/security-video-guides" component={SecurityTutorialsVideo} />
+                      <Route path="/security-integration-guide" component={SecurityIntegrationGuide} />
                       <Route path="/security-tutorials" component={SecurityTutorials} />
                       <Route path="/military-grade-security" component={MilitaryGradeSecurity} />
                       <Route path="/storage" component={StoragePage} />
@@ -321,8 +321,14 @@ const App: React.FC = () => {
                       
                       {/* Vault School and Documentation Routes */}
                       <Route path="/vault-school-hub" component={VaultSchoolPage} />
+                      {/* SDK Documentation - SPECIFIC ROUTE FIRST to ensure it matches */}
+                      <Route path="/documentation/sdk" component={SDKDocumentationPage} />
                       <Route path="/documentation/:vaultType">
-                        {(params) => <DocumentationRouter vaultType={params.vaultType} />}
+                        {(params) => {
+                          console.log('[App.tsx] Documentation route matched!', params);
+                          console.log('[App.tsx] vaultType param:', params.vaultType);
+                          return <DocumentationRouter vaultType={params.vaultType} />;
+                        }}
                       </Route>
                     </Switch>
                     <Footer />
