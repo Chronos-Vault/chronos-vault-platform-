@@ -446,3 +446,20 @@ Join the Chronos Vault community and stay updated:
 
 > "The only platform where every security claim is cryptographically verifiable"
 
+---
+
+<div align="center">
+
+### Built with ❤️ for the future of mathematically provable blockchain security
+
+**"The only platform where every security claim is cryptographically verifiable"**
+
+---
+
+*Chronos Vault - Trust Math, Not Humans*
+
+**Security**: security@chronosvault.org | **General**: chronosvault@chronosvault.org
+
+[Website](https://chronosvault.org) • [Discord](https://discord.gg/WHuexYSV) • [Documentation](https://github.com/Chronos-Vault/chronos-vault-docs) • [Bug Bounty](https://github.com/Chronos-Vault/chronos-vault-security/blob/main/BUG_BOUNTY.md)
+
+</div>
