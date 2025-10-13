@@ -448,14 +448,6 @@ Join the Chronos Vault community and stay updated:
 
 ---
 
-<div align="center">
-
-### Built with ❤️ for the future of mathematically provable blockchain security
-
-**"The only platform where every security claim is cryptographically verifiable"**
-
----
-
 *Chronos Vault - Trust Math, Not Humans*
 
 **Security**: security@chronosvault.org | **General**: chronosvault@chronosvault.org
