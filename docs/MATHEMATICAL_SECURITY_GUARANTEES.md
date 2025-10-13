@@ -282,7 +282,7 @@ Smart Contract → Formal Proofs → Mathematical Guarantee → Deploy
 **Questions about our mathematical proofs?**
 - **Email**: chronosvault@chronosvault.org
 - **GitHub**: https://github.com/Chronos-Vault
-- **Security Reports**: security@chronosvault.org
+- **Security Reports**: chronosvault@chronosvault.org
 - **Bug Bounty**: Up to $50,000 for valid proof errors
 
 ---
