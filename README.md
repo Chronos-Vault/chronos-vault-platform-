@@ -370,6 +370,21 @@ For detailed contribution guidelines, visit our [Documentation Repository](https
 
 ## 🛡️ Security
 
+
+## 🛡️ Security & Bug Bounty
+
+### Security Resources
+- 🔐 [Security Policy](https://github.com/Chronos-Vault/chronos-vault-security/blob/main/SECURITY.md) - Vulnerability disclosure guidelines
+- 💰 [Bug Bounty Program](https://github.com/Chronos-Vault/chronos-vault-security/blob/main/BUG_BOUNTY.md) - Earn $500 - $50,000 for finding bugs
+- 📊 [Audit Reports](https://github.com/Chronos-Vault/chronos-vault-security/blob/main/AUDIT_REPORTS.md) - Security audit status (35/35 formally verified)
+- 🚨 [Incident Response](https://github.com/Chronos-Vault/chronos-vault-security/blob/main/INCIDENT_RESPONSE.md) - Emergency protocols
+- 🤝 [Code of Conduct](https://github.com/Chronos-Vault/chronos-vault-security/blob/main/CODE_OF_CONDUCT.md) - Security researcher ethics
+
+### Report Security Issues
+- **Email**: security@chronosvault.org
+- **Response Time**: 24-48 hours
+- **Disclosure**: 90-day coordinated disclosure
+
 ### Reporting Security Issues
 
 If you discover a security vulnerability:
