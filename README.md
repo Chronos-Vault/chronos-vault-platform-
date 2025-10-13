@@ -14,6 +14,26 @@
 
 ---
 
+## 🔐 Formal Verification
+
+**35/35 Security Theorems Proven** using Lean 4 theorem prover.
+
+### Quick Verification (5 minutes)
+```bash
+git clone https://github.com/Chronos-Vault/chronos-vault-contracts.git
+cd chronos-vault-contracts/formal-proofs
+lake build
+```
+
+**Result**: ✅ All theorems verified
+
+- [Verification Guide](./formal-proofs/VERIFY_YOURSELF.md)
+- [For Developers](./docs/formal-verification/FOR_DEVELOPERS.md)
+- [Mathematical Security](./docs/MATHEMATICAL_SECURITY_GUARANTEES.md)
+
+**"Trust Math, Not Humans"** - Every security claim is mathematically provable.
+
+
 ## 💥 What is Chronos Vault?
 
 Chronos Vault is the world's first **mathematically provable** blockchain security platform. Unlike traditional vaults that rely on trust and audits, Chronos Vault provides **cryptographic guarantees** backed by formal verification.
