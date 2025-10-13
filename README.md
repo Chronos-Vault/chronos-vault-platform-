@@ -27,9 +27,9 @@ lake build
 
 **Result**: ✅ All theorems verified
 
-- [Verification Guide](./formal-proofs/VERIFY_YOURSELF.md)
-- [For Developers](./docs/formal-verification/FOR_DEVELOPERS.md)
-- [Mathematical Security](./docs/MATHEMATICAL_SECURITY_GUARANTEES.md)
+- [Verification Guide](https://github.com/Chronos-Vault/chronos-vault-security/blob/main/formal-proofs/VERIFY_YOURSELF.md)
+- [For Developers](https://github.com/Chronos-Vault/chronos-vault-security/blob/main/docs/formal-verification/FOR_DEVELOPERS.md)
+- [Mathematical Security](https://github.com/Chronos-Vault/chronos-vault-security/blob/main/MATHEMATICAL_SECURITY_GUARANTEES.md)
 
 **"Trust Math, Not Humans"** - Every security claim is mathematically provable.
 
