@@ -394,7 +394,7 @@ If you discover a security vulnerability:
 3. Include detailed reproduction steps
 4. Allow 48 hours for initial response
 
-See our [Security Policy](https://github.com/Chronos-Vault/chronos-vault-security) for more details.
+See our [Security Policy](https://github.com/Chronos-Vault/chronos-vault-security/blob/main/SECURITY.md) for more details.
 
 ---
 
