@@ -332,6 +332,49 @@ export class EmergencyRecoveryProtocol extends EventEmitter {
   getCurrentMode(): RecoveryMode {
     return this.currentMode;
   }
+
+  /**
+   * Create emergency recovery signature for Ethereum vault
+   * FIXED: Now uses nonce-based replay protection instead of block.timestamp
+   * 
+   * @param vaultAddress - Address of the vault contract
+   * @param recoveryPrivateKey - Private key authorized for emergency recovery
+   * @param nonce - Unique nonce to prevent replay attacks (recommended: timestamp or random)
+   * @returns Signature and nonce for activateEmergencyMode function
+   */
+  async createEmergencyRecoverySignature(
+    vaultAddress: string,
+    recoveryPrivateKey: string,
+    nonce: number
+  ): Promise<{ signature: string; nonce: number }> {
+    try {
+      const { ethers } = await import('ethers');
+      
+      // Create message hash (matches Ethereum contract logic)
+      const messageHash = ethers.solidityPackedKeccak256(
+        ['string', 'address', 'uint256'],
+        ['EMERGENCY_RECOVERY', vaultAddress, nonce]
+      );
+      
+      // Sign with recovery private key
+      const wallet = new ethers.Wallet(recoveryPrivateKey);
+      const signature = await wallet.signMessage(ethers.getBytes(messageHash));
+      
+      securityLogger.info(
+        `✅ Created emergency recovery signature for vault ${vaultAddress} with nonce ${nonce}`,
+        SecurityEventType.CROSS_CHAIN_VERIFICATION
+      );
+      
+      return { signature, nonce };
+    } catch (error) {
+      securityLogger.error(
+        `❌ Failed to create emergency recovery signature`,
+        SecurityEventType.SYSTEM_ERROR,
+        error
+      );
+      throw error;
+    }
+  }
 }
 
 export const emergencyRecoveryProtocol = new EmergencyRecoveryProtocol();
