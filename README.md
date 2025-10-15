@@ -6,7 +6,6 @@
 **Quantum-resistant • Zero-knowledge privacy • Multi-chain architecture**
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
-[![Development Budget](https://img.shields.io/badge/Budget-$1.2M-green.svg)](https://github.com/Chronos-Vault)
 [![Smart Contracts](https://img.shields.io/badge/Contracts-Deployed-success.svg)](https://github.com/Chronos-Vault/chronos-vault-contracts)
 [![Ethereum](https://img.shields.io/badge/Ethereum-Arbitrum_L2-627EEA?logo=ethereum)](https://arbitrum.io/)
 [![Solana](https://img.shields.io/badge/Solana-Devnet-14F195?logo=solana)](https://solana.com/)
@@ -17,25 +16,6 @@
 [Documentation](https://github.com/Chronos-Vault/chronos-vault-docs) • [Smart Contracts](https://github.com/Chronos-Vault/chronos-vault-contracts) • [Security Audits](https://github.com/Chronos-Vault/chronos-vault-security) • [TypeScript SDK](https://github.com/Chronos-Vault/chronos-vault-sdk)
 
 </div>
-
----
-
-## 💰 Project Budget
-
-**Total Development Budget:** $1,200,000 USD
-
-| Component | Budget | Status |
-|-----------|--------|--------|
-| Smart Contract Development (3 chains) | $280,000 | ✅ Complete |
-| Frontend/Backend Platform | $180,000 | ✅ Complete |
-| Security Audits & Formal Verification | $150,000 | 🔨 In Progress |
-| Zero-Knowledge Implementation | $120,000 | ✅ Complete |
-| SDK Development | $80,000 | 🔨 In Progress |
-| Infrastructure & DevOps | $90,000 | ✅ Complete |
-| Documentation & Testing | $60,000 | ✅ Complete |
-| Team & Operations (12 months) | $240,000 | ✅ Complete |
-
-**Current Status:** Production-ready on testnet | Mainnet deployment in progress
 
 ---
 
