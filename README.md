@@ -2,8 +2,6 @@
 
 <div align="center">
 
-<img src="https://raw.githubusercontent.com/Chronos-Vault/chronos-vault-platform-/main/generated-icon.png" alt="Chronos Vault" width="200"/>
-
 **Revolutionary blockchain security platform featuring Trinity Protocol consensus**  
 **Quantum-resistant • Zero-knowledge privacy • Multi-chain architecture**
 
