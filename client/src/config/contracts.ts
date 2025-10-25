@@ -1,8 +1,8 @@
 export const CONTRACT_ADDRESSES = {
   ethereum: {
-    vault: '0xad283c52d822bcfb1a64ea89375b57f4ba9e74cb',
-    token: '0xb37255a705e95ef1870d5c601313e387d267dfde',
-    bridge: '0x78ad4f21bb082c5bf20a0f84ee3b4d9fa7f30649'
+    vault: '0x99444B0B1d6F7b21e9234229a2AC2bC0150B9d91',
+    token: '0xFb419D8E32c14F774279a4dEEf330dc893257147',
+    bridge: '0x83DeAbA0de5252c74E1ac64EDEc25aDab3c50859'
   },
   ton: {
     vault: 'EQiVU0hizNsHqqY4OpxicQHva0jxO5LGovkjWszoRS5uvQ',
@@ -17,7 +17,16 @@ export const CONTRACT_ADDRESSES = {
 };
 
 export const NETWORK_CONFIG = {
-  ethereum: 'sepolia',
+  ethereum: 'arbitrum-sepolia',
   ton: 'testnet',
   solana: 'devnet',
+};
+
+// Contract versions
+export const CONTRACT_VERSIONS = {
+  CrossChainBridgeOptimized: 'v1.4-PRODUCTION',
+  ChronosVault: 'v1.3',
+  ChronosVaultOptimized: 'v1.3',
+  CVTToken: 'v1.0',
+  CVTBridge: 'v1.0',
 };
