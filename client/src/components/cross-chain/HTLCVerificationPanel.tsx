@@ -57,76 +57,50 @@ export function HTLCVerificationPanel({
     issues: []
   });
 
-  // Function to verify the HTLC contracts
+  // Function to verify the HTLC contracts with Trinity Protocol v1.5
   const verifyContracts = async () => {
     setIsVerifying(true);
     setVerificationComplete(false);
     
     try {
-      // In a real implementation, this would call the actual HTLC contracts
-      // We'll simulate verification for now
-      await new Promise(resolve => setTimeout(resolve, 2500));
+      // Query Trinity Protocol v1.5 contract at 0x499B24225a4d15966E118bfb86B2E421d57f4e21
+      const response = await fetch('/api/htlc/verify', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          swapId,
+          sourceChain,
+          destinationChain,
+          sourceContractId,
+          destinationContractId
+        })
+      });
+
+      if (!response.ok) {
+        throw new Error(`Verification failed: ${response.statusText}`);
+      }
+
+      const data = await response.json();
       
-      // Simulate verification results based on swap status
-      let simulatedResults = {
-        sourceStatus: HTLCStatus.ACTIVE,
-        destinationStatus: HTLCStatus.ACTIVE,
-        hashMatch: true,
-        timelocksValid: true,
-        securityScore: 95,
-        issues: []
+      // Map backend response to verification results
+      const results = {
+        sourceStatus: data.sourceStatus || HTLCStatus.INACTIVE,
+        destinationStatus: data.destinationStatus || HTLCStatus.INACTIVE,
+        hashMatch: data.hashMatch ?? null,
+        timelocksValid: data.timelocksValid ?? null,
+        securityScore: data.securityScore || 0,
+        issues: data.issues || []
       };
       
-      if (swapStatus === SwapStatus.PENDING) {
-        simulatedResults = {
-          sourceStatus: HTLCStatus.INACTIVE,
-          destinationStatus: HTLCStatus.INACTIVE,
-          hashMatch: null,
-          timelocksValid: null,
-          securityScore: 0,
-          issues: ["Swap not yet initiated"]
-        };
-      } else if (swapStatus === SwapStatus.INITIATED) {
-        if (!destinationContractId) {
-          simulatedResults = {
-            sourceStatus: HTLCStatus.ACTIVE,
-            destinationStatus: null,
-            hashMatch: null,
-            timelocksValid: null,
-            securityScore: 40,
-            issues: ["Destination contract not yet created"]
-          };
+      // Add Trinity Protocol consensus verification
+      if (data.trinityConsensus) {
+        results.securityScore += 10; // Bonus for 2-of-3 consensus
+        if (data.trinityConsensus.achieved) {
+          results.issues.push(`✅ Trinity 2-of-3 Consensus: ${data.trinityConsensus.count}/3 chains`);
         }
-      } else if (swapStatus === SwapStatus.CLAIMED) {
-        simulatedResults = {
-          sourceStatus: HTLCStatus.ACTIVE,
-          destinationStatus: HTLCStatus.COMPLETED,
-          hashMatch: true,
-          timelocksValid: true,
-          securityScore: 80,
-          issues: ["Source contract not yet claimed"]
-        };
-      } else if (swapStatus === SwapStatus.REFUNDED) {
-        simulatedResults = {
-          sourceStatus: HTLCStatus.REFUNDED,
-          destinationStatus: HTLCStatus.REFUNDED,
-          hashMatch: true,
-          timelocksValid: false,
-          securityScore: 50,
-          issues: ["Swap refunded due to timeout"]
-        };
-      } else if (swapStatus === SwapStatus.FAILED) {
-        simulatedResults = {
-          sourceStatus: HTLCStatus.ACTIVE,
-          destinationStatus: HTLCStatus.INACTIVE,
-          hashMatch: false,
-          timelocksValid: false,
-          securityScore: 20,
-          issues: ["Hash mismatch between contracts", "Invalid timelock configuration"]
-        };
       }
       
-      setVerificationResults(simulatedResults);
+      setVerificationResults(results);
       setVerificationComplete(true);
       
       if (onVerify) {
