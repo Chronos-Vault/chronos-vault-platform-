@@ -2,7 +2,7 @@ export const CONTRACT_ADDRESSES = {
   ethereum: {
     vault: '0x99444B0B1d6F7b21e9234229a2AC2bC0150B9d91',
     token: '0xFb419D8E32c14F774279a4dEEf330dc893257147',
-    bridge: '0x83DeAbA0de5252c74E1ac64EDEc25aDab3c50859'
+    bridge: '0x499B24225a4d15966E118bfb86B2E421d57f4e21'
   },
   ton: {
     vault: 'EQiVU0hizNsHqqY4OpxicQHva0jxO5LGovkjWszoRS5uvQ',
@@ -24,7 +24,7 @@ export const NETWORK_CONFIG = {
 
 // Contract versions
 export const CONTRACT_VERSIONS = {
-  CrossChainBridgeOptimized: 'v1.4-PRODUCTION',
+  CrossChainBridgeOptimized: 'v1.5-PRODUCTION',
   ChronosVault: 'v1.3',
   ChronosVaultOptimized: 'v1.3',
   CVTToken: 'v1.0',
