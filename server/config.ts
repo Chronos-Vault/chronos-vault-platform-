@@ -60,7 +60,7 @@ const blockchainConfig = {
     enabled: true,
     network: ethereumNetwork, // 'arbitrum' or 'sepolia'
     rpcUrl: isArbitrum
-      ? (process.env.ARBITRUM_RPC_URL || 'https://arbitrum-sepolia-rpc.publicnode.com')
+      ? (process.env.ARBITRUM_RPC_URL || 'https://sepolia-rollup.arbitrum.io/rpc')
       : (process.env.ETHEREUM_RPC_URL || 'https://ethereum-sepolia-rpc.publicnode.com'),
     chainId: process.env.NODE_ENV === 'production'
       ? (isArbitrum ? 42161 : 1) // 42161 = Arbitrum One, 1 = Ethereum Mainnet
@@ -76,7 +76,7 @@ const blockchainConfig = {
         ? (process.env.ARBITRUM_CVT_TOKEN_ADDRESS || '0xFb419D8E32c14F774279a4dEEf330dc893257147')
         : (process.env.ETH_CVT_TOKEN_ADDRESS || '0xeb6C02FCD86B3dE11Dbae83599a002558Ace5eFc'),
       crossChainBridge: isArbitrum
-        ? (process.env.ARBITRUM_BRIDGE_ADDRESS || '0x13dc7df46c2e87E8B2010A28F13404580158Ed9A')
+        ? (process.env.ARBITRUM_BRIDGE_ADDRESS || '0x499B24225a4d15966E118bfb86B2E421d57f4e21')
         : (process.env.ETH_BRIDGE_ADDRESS || '0xFb419D8E32c14F774279a4dEEf330dc893257147'),
       cvtBridge: isArbitrum
         ? (process.env.ARBITRUM_CVT_BRIDGE_ADDRESS || '0x21De95EbA01E31173Efe1b9c4D57E58bb840bA86')
@@ -93,7 +93,7 @@ const blockchainConfig = {
         ? (process.env.ARBITRUM_CVT_TOKEN_ADDRESS || '0xFb419D8E32c14F774279a4dEEf330dc893257147')
         : (process.env.ETH_CVT_TOKEN_ADDRESS || '0xeb6C02FCD86B3dE11Dbae83599a002558Ace5eFc'),
       crossChainBridge: isArbitrum
-        ? (process.env.ARBITRUM_BRIDGE_ADDRESS || '0x13dc7df46c2e87E8B2010A28F13404580158Ed9A')
+        ? (process.env.ARBITRUM_BRIDGE_ADDRESS || '0x499B24225a4d15966E118bfb86B2E421d57f4e21')
         : (process.env.ETH_BRIDGE_ADDRESS || '0xFb419D8E32c14F774279a4dEEf330dc893257147'),
       cvtBridge: isArbitrum
         ? (process.env.ARBITRUM_CVT_BRIDGE_ADDRESS || '0x21De95EbA01E31173Efe1b9c4D57E58bb840bA86')
@@ -110,11 +110,15 @@ const blockchainConfig = {
     rpcUrl: process.env.SOLANA_RPC_URL || 'https://api.devnet.solana.com',
     isTestnet: process.env.NODE_ENV !== 'production',
     programs: {
-      // DEPLOYED SOLANA PROGRAM (October 5, 2025)
+      // DEPLOYED SOLANA PROGRAMS (October 2025)
       // ChronosVault Solana Program - High-speed monitoring for Trinity Protocol
       vaultProgram: process.env.SOL_VAULT_PROGRAM_ID || 'CYaDJYRqm35udQ8vkxoajSER8oaniQUcV8Vvw5BqJyo2',
       tokenProgram: process.env.SOL_TOKEN_PROGRAM_ID || 'TOKEN_PROGRAM_ID',
-      bridgeProgram: process.env.SOL_BRIDGE_PROGRAM_ID || 'BRIDGE_PROGRAM_ID',
+      bridgeProgram: process.env.SOL_BRIDGE_PROGRAM_ID || '6wo8Gso3uB8M6t9UGiritdGmc4UTPEtM5NhC6vbb9CdK', // Deployed Oct 5
+      vestingProgram: process.env.SOL_VESTING_PROGRAM_ID || '3dxjcEGP8MurCtodLCJi1V6JBizdRRAYg91nZkhmX1sB', // Deployed Oct 5
+      // CVT Token (Chronos Vault) - Deployed October 13, 2025
+      cvtToken: process.env.SOL_CVT_TOKEN_MINT || '5g3TkqFxyVe1ismrC5r2QD345CA1YdfWn6s6p4AYNmy4',
+      cvtMetadata: process.env.SOL_CVT_METADATA || 'D5qLqXpJnWDrfpZoePauQv8g22DbM8CbeVZcjeBhdDgF',
     },
     blockExplorerUrl: process.env.NODE_ENV === 'production'
       ? 'https://explorer.solana.com'
@@ -398,12 +402,14 @@ const crossChainVerificationConfig = {
       'https://ton.access.orbs.network/api/v2/jsonRPC'
     ],
     ethereum: [
-      'https://mainnet.infura.io/v3/your-backup-key',
-      'https://eth-mainnet.alchemyapi.io/v2/your-backup-key'
+      'https://rpc.ankr.com/arbitrum_sepolia', // Free Ankr endpoint
+      'https://sepolia-rollup.arbitrum.io/rpc', // Official Arbitrum Sepolia
+      'https://ethereum-sepolia-rpc.publicnode.com' // Sepolia fallback
     ],
     solana: [
-      'https://solana-api.projectserum.com',
-      'https://api.mainnet-beta.solana.com'
+      'https://api.devnet.solana.com',
+      'https://devnet.solana.rpcpool.com',
+      'https://solana-devnet.g.alchemy.com/v2/demo'
     ],
     bitcoin: [
       'https://btc1.trezor.io/api/v2',
