@@ -689,6 +689,7 @@ export class AtomicSwapService {
 
   /**
    * Lock funds for atomic swap
+   * FIX #1 (CRITICAL): Secret verified but NEVER stored server-side
    */
   async lockSwapFunds(orderId: string, secret: string): Promise<string> {
     const order = this.activeOrders.get(orderId);
@@ -704,11 +705,13 @@ export class AtomicSwapService {
       const lockTxHash = await this.createLockTransaction(order, secret);
       
       order.status = 'locked';
-      order.secret = secret;
+      // FIX #1 (CRITICAL): NEVER store secret server-side - user manages it
+      // Secret is only used for verification, then discarded
       order.lockTxHash = lockTxHash;
       this.activeOrders.set(orderId, order);
       
       securityLogger.info(`[AtomicSwap] Locked funds for order ${orderId}: ${lockTxHash}`, SecurityEventType.VAULT_ACCESS);
+      securityLogger.info(`[Security] Secret verified but NOT stored (user-managed only)`, SecurityEventType.VAULT_ACCESS);
       return lockTxHash;
     } catch (error) {
       securityLogger.error(`[AtomicSwap] Failed to lock funds for ${orderId}`, SecurityEventType.SYSTEM_ERROR, error);
