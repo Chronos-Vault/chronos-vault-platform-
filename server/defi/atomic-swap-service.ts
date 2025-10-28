@@ -709,7 +709,7 @@ export class AtomicSwapService {
     }
 
     try {
-      securityLogger.info(`[HTLC Claim] Claiming funds for order ${orderId} with secret reveal...`, SecurityEventType.CROSS_CHAIN_VERIFICATION);
+      securityLogger.info(`[HTLC Claim] Claiming funds for order ${orderId} (secret verified via hash match)`, SecurityEventType.CROSS_CHAIN_VERIFICATION);
       
       // Execute the Trinity Protocol operation (now that consensus is achieved)
       const txHash = await this.executeSwapTransaction(order);
@@ -719,7 +719,8 @@ export class AtomicSwapService {
       this.activeOrders.set(orderId, order);
       
       securityLogger.info(`✅ HTLC claimed successfully: ${txHash}`, SecurityEventType.CROSS_CHAIN_VERIFICATION);
-      securityLogger.info(`   Secret revealed: ${secret}`, SecurityEventType.CROSS_CHAIN_VERIFICATION);
+      // SECURITY: NEVER log plaintext secret - could leak in log files
+      securityLogger.info(`   Secret hash verified: ${order.secretHash}`, SecurityEventType.CROSS_CHAIN_VERIFICATION);
       securityLogger.info(`   Trinity Protocol operation executed on destination chain`, SecurityEventType.CROSS_CHAIN_VERIFICATION);
       
       // FIX #5: Clean up completed order after 24 hours to prevent memory leak
