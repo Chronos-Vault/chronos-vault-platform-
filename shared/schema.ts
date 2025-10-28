@@ -998,6 +998,43 @@ export const insertMultiSigWalletSchema = createInsertSchema(multiSigWallets).pi
 export type InsertMultiSigWallet = z.infer<typeof insertMultiSigWalletSchema>;
 export type MultiSigWallet = typeof multiSigWallets.$inferSelect;
 
+// Atomic Swap Orders table for HTLC swaps with database persistence
+export const atomicSwapOrders = pgTable("atomic_swap_orders", {
+  id: text("id").primaryKey(),
+  userAddress: text("user_address").notNull(),
+  fromToken: text("from_token").notNull(),
+  toToken: text("to_token").notNull(),
+  fromAmount: text("from_amount").notNull(),
+  toAmount: text("to_amount"),
+  minAmount: text("min_amount").notNull(),
+  fromNetwork: text("from_network").notNull(),
+  toNetwork: text("to_network").notNull(),
+  secretHash: text("secret_hash").notNull(),
+  lockTxHash: text("lock_tx_hash"),
+  executeTxHash: text("execute_tx_hash"),
+  timelock: integer("timelock").notNull(),
+  status: text("status").notNull().default("pending"),
+  validProofCount: integer("valid_proof_count").default(0),
+  consensusRequired: integer("consensus_required").default(2),
+  proofs: jsonb("proofs"),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+  updatedAt: timestamp("updated_at").notNull().defaultNow(),
+  completedAt: timestamp("completed_at"),
+  metadata: jsonb("metadata"),
+}, (table) => ({
+  userAddressIdx: index("atomic_swap_user_address_idx").on(table.userAddress),
+  statusIdx: index("atomic_swap_status_idx").on(table.status),
+  createdAtIdx: index("atomic_swap_created_at_idx").on(table.createdAt),
+}));
+
+export const insertAtomicSwapOrderSchema = createInsertSchema(atomicSwapOrders).omit({
+  createdAt: true,
+  updatedAt: true,
+});
+
+export type InsertAtomicSwapOrder = z.infer<typeof insertAtomicSwapOrderSchema>;
+export type AtomicSwapOrder = typeof atomicSwapOrders.$inferSelect;
+
 // Type exports for wallet integration
 export type InsertWalletRegistration = z.infer<typeof insertWalletRegistrationSchema>;
 export type WalletRegistration = typeof walletRegistrations.$inferSelect;
