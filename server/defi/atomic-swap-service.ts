@@ -99,6 +99,13 @@ export class AtomicSwapService {
   // Initialization tracking to prevent race conditions
   private isInitialized: boolean = false;
   private initializationPromise: Promise<void> | null = null;
+  
+  // PRODUCTION SECURITY: Rate limiting and cleanup
+  private userOrderCounts: Map<string, { count: number; resetTime: number }> = new Map();
+  private cleanupInterval: NodeJS.Timeout | null = null;
+  private readonly MAX_ORDERS_PER_HOUR = 10;
+  private readonly MIN_SWAP_AMOUNT_USD = 1; // $1 minimum to prevent dust attacks
+  private readonly MAX_SWAP_AMOUNT_USD = 1000000; // $1M maximum for safety
 
   // Helper to create BigInt powers of 10 (pure BigInt math to avoid precision loss)
   private pow10(exponent: number): bigint {
@@ -143,6 +150,9 @@ export class AtomicSwapService {
     this.initializeDEXes();
     this.loadLiquidityPools();
     this.initializationPromise = this.initializeBlockchainClients();
+    
+    // PRODUCTION SECURITY: Start periodic cleanup (survives server restarts)
+    this.startPeriodicCleanup();
   }
 
   /**
@@ -356,6 +366,9 @@ export class AtomicSwapService {
 
   /**
    * Create HTLC atomic swap order using Trinity Protocol
+   * PRODUCTION SECURITY: Client provides secretHash (NEVER send secret to server)
+   * 
+   * @param secretHash - Client-generated keccak256 hash of secret (0x... 32 bytes)
    */
   async createAtomicSwap(
     userAddress: string,
@@ -364,11 +377,23 @@ export class AtomicSwapService {
     fromAmount: string,
     minAmount: string,
     fromNetwork: 'ethereum' | 'solana' | 'ton',
-    toNetwork: 'ethereum' | 'solana' | 'ton'
+    toNetwork: 'ethereum' | 'solana' | 'ton',
+    secretHash: string // CLIENT provides hash, server NEVER sees secret
   ): Promise<AtomicSwapOrder> {
     await this.ensureInitialized();
+    
+    // PRODUCTION SECURITY: Rate limiting
+    this.checkRateLimit(userAddress);
+    
+    // PRODUCTION SECURITY: Validate secretHash format
+    if (!/^0x[a-fA-F0-9]{64}$/.test(secretHash)) {
+      throw new Error('Invalid secretHash format - must be 32-byte keccak256 hash (0x...)');
+    }
+    
+    // PRODUCTION SECURITY: Amount validation (prevent dust attacks)
+    this.validateSwapAmount(fromToken, fromAmount);
+    
     const orderId = this.generateOrderId();
-    const { secretHash, secret } = this.generateHTLCSecret();
     const timelock = Math.floor(Date.now() / 1000) + (24 * 60 * 60); // 24 hour refund window
     const expiresAt = new Date(Date.now() + (24 * 60 * 60 * 1000));
 
@@ -404,11 +429,119 @@ export class AtomicSwapService {
     this.activeOrders.set(orderId, order);
     
     securityLogger.info(`[HTLC Swap] Created order ${orderId}: ${fromAmount} ${fromToken} → ${toToken}`, SecurityEventType.VAULT_ACCESS);
-    securityLogger.info(`[HTLC Swap] Hash Lock: ${secretHash}`, SecurityEventType.CROSS_CHAIN_VERIFICATION);
+    securityLogger.info(`[HTLC Swap] Hash Lock: ${secretHash} (client-generated)`, SecurityEventType.CROSS_CHAIN_VERIFICATION);
     securityLogger.info(`[HTLC Swap] Timelock: ${new Date(timelock * 1000).toISOString()}`, SecurityEventType.CROSS_CHAIN_VERIFICATION);
     securityLogger.info(`[HTLC Swap] Route: ${fromNetwork} → ${toNetwork} via ${bestRoute.dexes.join(', ')}`, SecurityEventType.CROSS_CHAIN_VERIFICATION);
+    securityLogger.info(`[Security] Secret NEVER sent to server - client-managed only ✅`, SecurityEventType.CROSS_CHAIN_VERIFICATION);
     
     return order;
+  }
+  
+  /**
+   * PRODUCTION SECURITY: Rate limiting per user
+   * Prevents spam attacks and resource exhaustion
+   */
+  private checkRateLimit(userAddress: string): void {
+    const now = Date.now();
+    const userData = this.userOrderCounts.get(userAddress);
+    
+    if (!userData || now > userData.resetTime) {
+      // Reset counter every hour
+      this.userOrderCounts.set(userAddress, {
+        count: 1,
+        resetTime: now + (60 * 60 * 1000)
+      });
+      return;
+    }
+    
+    if (userData.count >= this.MAX_ORDERS_PER_HOUR) {
+      const minutesUntilReset = Math.ceil((userData.resetTime - now) / 60000);
+      throw new Error(
+        `Rate limit exceeded: Maximum ${this.MAX_ORDERS_PER_HOUR} orders per hour. ` +
+        `Try again in ${minutesUntilReset} minutes. This protects the platform and all users.`
+      );
+    }
+    
+    userData.count++;
+    this.userOrderCounts.set(userAddress, userData);
+  }
+  
+  /**
+   * PRODUCTION SECURITY: Amount validation
+   * Prevents dust attacks and unreasonably large swaps
+   */
+  private validateSwapAmount(token: string, amount: string): void {
+    const tokenPrice = this.getTokenPrice(token);
+    const amountNum = parseFloat(amount);
+    const usdValue = amountNum * tokenPrice;
+    
+    if (usdValue < this.MIN_SWAP_AMOUNT_USD) {
+      throw new Error(
+        `Swap amount too small: $${usdValue.toFixed(2)} USD. ` +
+        `Minimum: $${this.MIN_SWAP_AMOUNT_USD} USD (prevents dust attacks)`
+      );
+    }
+    
+    if (usdValue > this.MAX_SWAP_AMOUNT_USD) {
+      throw new Error(
+        `Swap amount too large: $${usdValue.toFixed(2)} USD. ` +
+        `Maximum: $${this.MAX_SWAP_AMOUNT_USD} USD (safety limit). ` +
+        `For larger amounts, please contact support.`
+      );
+    }
+  }
+  
+  /**
+   * PRODUCTION SECURITY: Periodic cleanup (survives server restarts)
+   * Runs every 6 hours, removes orders older than 48 hours
+   */
+  private startPeriodicCleanup(): void {
+    this.cleanupInterval = setInterval(() => {
+      const now = Date.now();
+      const cleanupThreshold = 48 * 60 * 60 * 1000; // 48 hours
+      let cleanedCount = 0;
+      
+      for (const [orderId, order] of this.activeOrders.entries()) {
+        const orderAge = now - order.createdAt.getTime();
+        
+        // Clean up orders that are:
+        // 1. Completed (executed/refunded) and older than 48 hours
+        // 2. Failed and older than 48 hours
+        // 3. Expired (past timelock) and older than 48 hours
+        const shouldCleanup = (
+          (order.status === 'executed' || order.status === 'refunded' || order.status === 'failed') &&
+          orderAge > cleanupThreshold
+        ) || (
+          order.timelock < Math.floor(now / 1000) &&
+          orderAge > cleanupThreshold
+        );
+        
+        if (shouldCleanup) {
+          this.activeOrders.delete(orderId);
+          cleanedCount++;
+        }
+      }
+      
+      if (cleanedCount > 0) {
+        securityLogger.info(
+          `🗑️ Periodic cleanup: Removed ${cleanedCount} old orders (current active: ${this.activeOrders.size})`,
+          SecurityEventType.SYSTEM_ERROR
+        );
+      }
+    }, 6 * 60 * 60 * 1000); // Every 6 hours
+    
+    securityLogger.info('✅ Periodic cleanup started (runs every 6 hours)', SecurityEventType.SYSTEM_ERROR);
+  }
+  
+  /**
+   * PRODUCTION: Graceful shutdown
+   */
+  public async shutdown(): Promise<void> {
+    if (this.cleanupInterval) {
+      clearInterval(this.cleanupInterval);
+      this.cleanupInterval = null;
+    }
+    securityLogger.info('✅ AtomicSwapService shutdown complete', SecurityEventType.SYSTEM_ERROR);
   }
 
   /**
@@ -760,6 +893,35 @@ export class AtomicSwapService {
   }
 
   /**
+   * PRODUCTION SECURITY: Retry helper with exponential backoff
+   * Protects against transient DEX API failures
+   */
+  private async retryWithBackoff<T>(
+    operation: () => Promise<T>,
+    maxRetries: number = 3,
+    baseDelay: number = 1000
+  ): Promise<T> {
+    for (let attempt = 0; attempt < maxRetries; attempt++) {
+      try {
+        return await operation();
+      } catch (error) {
+        if (attempt === maxRetries - 1) {
+          throw error;
+        }
+        
+        const delay = baseDelay * Math.pow(2, attempt);
+        securityLogger.warn(
+          `Operation failed (attempt ${attempt + 1}/${maxRetries}), retrying in ${delay}ms...`,
+          SecurityEventType.SYSTEM_ERROR
+        );
+        await new Promise(resolve => setTimeout(resolve, delay));
+      }
+    }
+    
+    throw new Error('Max retries exceeded');
+  }
+
+  /**
    * Private helper methods
    */
   private async calculateDEXRoute(
@@ -770,12 +932,14 @@ export class AtomicSwapService {
     dex: string
   ): Promise<SwapRoute | null> {
     try {
-      const routeId = this.generateRouteId();
-      let estimatedOutput = '0';
-      let priceImpact = 0;
-      let gasEstimate = '0';
-      
-      if (network === 'solana' && dex === 'Jupiter') {
+      // PRODUCTION SECURITY: Retry DEX queries with exponential backoff
+      return await this.retryWithBackoff(async () => {
+        const routeId = this.generateRouteId();
+        let estimatedOutput = '0';
+        let priceImpact = 0;
+        let gasEstimate = '0';
+        
+        if (network === 'solana' && dex === 'Jupiter') {
         // Use Jupiter for Solana swaps (9 decimals for SOL)
         const amountLamports = this.decimalToBigInt(amount, 9);
         const route = await jupiterDexService.getBestRoute(fromToken, toToken, amountLamports);
@@ -806,22 +970,23 @@ export class AtomicSwapService {
         priceImpact = this.calculatePriceImpact(amount);
         gasEstimate = this.estimateGas(network);
       }
-      
-      return {
-        id: routeId,
-        fromToken,
-        toToken,
-        fromNetwork: network as any,
-        toNetwork: network as any,
-        path: [fromToken, toToken],
-        dexes: [dex],
-        estimatedOutput,
-        priceImpact,
-        gasEstimate,
-        timeEstimate: 30
-      };
+        
+        return {
+          id: routeId,
+          fromToken,
+          toToken,
+          fromNetwork: network as any,
+          toNetwork: network as any,
+          path: [fromToken, toToken],
+          dexes: [dex],
+          estimatedOutput,
+          priceImpact,
+          gasEstimate,
+          timeEstimate: 30
+        };
+      });
     } catch (error) {
-      securityLogger.error(`Failed to calculate DEX route for ${dex} on ${network}`, SecurityEventType.SYSTEM_ERROR, error);
+      securityLogger.error(`Failed to calculate DEX route for ${dex} on ${network} after retries`, SecurityEventType.SYSTEM_ERROR, error);
       return null;
     }
   }
@@ -1074,15 +1239,41 @@ export class AtomicSwapService {
   }
 
   /**
-   * Generate HTLC secret and hash for atomic swap
+   * REMOVED: generateHTLCSecret() - SECURITY RISK
+   * 
+   * Clients MUST generate secrets themselves for maximum security.
+   * Server should NEVER see or generate secrets.
+   * 
+   * Client-side implementation (TypeScript/JavaScript):
+   * 
+   * ```typescript
+   * import { ethers } from 'ethers';
+   * 
+   * // Generate secret (32 random bytes)
+   * const secret = ethers.hexlify(ethers.randomBytes(32));
+   * 
+   * // Hash secret with keccak256
+   * const secretHash = ethers.keccak256(ethers.toUtf8Bytes(secret));
+   * 
+   * // Store secret securely client-side (encrypted local storage, hardware wallet, etc.)
+   * localStorage.setItem(`htlc_secret_${orderId}`, encrypt(secret));
+   * 
+   * // Send ONLY the hash to server
+   * await atomicSwapService.createAtomicSwap(
+   *   userAddress,
+   *   fromToken,
+   *   toToken,
+   *   amount,
+   *   minAmount,
+   *   fromNetwork,
+   *   toNetwork,
+   *   secretHash // Server never sees the secret!
+   * );
+   * 
+   * // Later, reveal secret to claim HTLC
+   * await atomicSwapService.claimHTLC(orderId, secret);
+   * ```
    */
-  private generateHTLCSecret(): { secret: string; secretHash: string } {
-    // Generate random 32-byte secret
-    const secret = ethers.hexlify(ethers.randomBytes(32));
-    // Hash secret with keccak256 for hash lock
-    const secretHash = ethers.keccak256(ethers.toUtf8Bytes(secret));
-    return { secret, secretHash };
-  }
 
   private async createLockTransaction(order: AtomicSwapOrder, secret: string): Promise<string> {
     const txHash = `lock_${Math.random().toString(16).substring(2, 32)}`;
