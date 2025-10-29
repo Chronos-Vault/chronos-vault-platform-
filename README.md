@@ -371,7 +371,7 @@ Chronos Vault is building the future of digital asset security through:
 - **Zero-Knowledge Privacy**: Prove ownership without revealing sensitive information
 - **Open Source**: Transparent, auditable, and community-driven development
 
-**Join us in creating the most secure digital vault platform in the world.** 🚀
+**Join us in creating the most secure digital vault platform in the world.** 
 
 ---
 
