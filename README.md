@@ -183,7 +183,7 @@ TON (FunC):
 ### Security Infrastructure
 
 - **Zero-Knowledge**: Groth16 protocol, Circom circuits
-- **Formal Verification**: Lean 4, Certora, TLA+ specifications
+- **Formal Verification**: Lean 4, Halmos, Echidna (all open-source)
 - **Quantum Cryptography**: ML-KEM-1024, Dilithium-5
 - **Storage**: Arweave, IPFS, Filecoin (triple redundancy)
 
