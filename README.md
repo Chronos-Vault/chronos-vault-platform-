@@ -167,17 +167,22 @@ Deflationary utility token with time-based economics:
 ```solidity
 // Multi-chain smart contract deployment
 Ethereum/Arbitrum (Solidity):
-├── ChronosVault.sol         // Core vault logic
-├── CVTBridge.sol            // Cross-chain token bridge
-└── CrossChainBridgeV1.sol   // HTLC atomic swaps
+├── ChronosVault.sol                // Core 22 vault types
+├── ChronosVaultOptimized.sol       // ERC-4626 investment vaults
+├── CrossChainBridgeOptimized.sol   // Trinity 2-of-3 consensus (v1.5)
+├── HTLCBridge.sol                  // Hash Time-Locked atomic swaps
+├── CVTBridge.sol                   // Cross-chain CVT token bridge
+└── EmergencyMultiSig.sol           // 3-of-5 emergency recovery
 
 Solana (Rust):
-├── chronos_vault.rs         // Vault state management
-└── cross_chain_bridge.rs    // Cross-chain verification
+├── contracts/solana/chronos_vault.rs       // Vault state management
+├── contracts/solana/cross_chain_bridge.rs  // Cross-chain verification
+└── solana-program/src/lib.rs               // Anchor program
 
 TON (FunC):
-├── ChronosVault.fc          // Vault implementation
-└── CVTBridge.fc             // Jetton bridge contract
+├── contracts/ton/ChronosVault.fc      // Vault implementation
+├── contracts/ton/CVTBridge.fc         // Jetton bridge (CVT)
+└── contracts/ton/CrossChainHelper.fc  // Trinity protocol helper
 ```
 
 ### Security Infrastructure
