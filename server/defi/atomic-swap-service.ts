@@ -183,7 +183,7 @@ export class AtomicSwapService {
    */
   private async initializeBlockchainClients() {
     try {
-      securityLogger.info('🔱 Initializing HTLC Atomic Swap Service with Trinity Protocol™ v1.5...', SecurityEventType.SYSTEM_ERROR);
+      securityLogger.info('🔱 Initializing HTLC Atomic Swap Service with Trinity Protocol™ v3.0...', SecurityEventType.SYSTEM_ERROR);
       
       await ethereumClient.initialize();
       
@@ -192,12 +192,12 @@ export class AtomicSwapService {
       
       await tonClient.initialize();
       
-      // Connect to Trinity Protocol HTLCBridge v1.5 and CrossChainBridgeOptimized v1.5
+      // Connect to Trinity Protocol HTLCBridge v2.0 and CrossChainBridgeOptimized v2.2
       const trinityRpcUrl = process.env.ARBITRUM_RPC_URL || 'https://sepolia-rollup.arbitrum.io/rpc';
       this.provider = new ethers.JsonRpcProvider(trinityRpcUrl);
       
-      const htlcBridgeAddress = '0x6cd3B1a72F67011839439f96a70290051fd66D57'; // HTLCBridge v1.5
-      const trinityBridgeAddress = config.blockchainConfig.ethereum.contracts.crossChainBridge; // CrossChainBridgeOptimized v1.5
+      const htlcBridgeAddress = '0x6cd3B1a72F67011839439f96a70290051fd66D57'; // HTLCBridge v2.0
+      const trinityBridgeAddress = config.blockchainConfig.ethereum.contracts.crossChainBridge; // CrossChainBridgeOptimized v2.2
       
       // CRITICAL FIX: Attach signer if private key available
       if (process.env.PRIVATE_KEY) {
@@ -236,8 +236,8 @@ export class AtomicSwapService {
         securityLogger.warn(`⚠️ HTLC & Trinity Protocol in READ-ONLY mode (no PRIVATE_KEY)`, SecurityEventType.CROSS_CHAIN_VERIFICATION);
       }
       
-      securityLogger.info(`✅ Connected to HTLCBridge v1.5 at ${htlcBridgeAddress}`, SecurityEventType.CROSS_CHAIN_VERIFICATION);
-      securityLogger.info(`✅ Connected to Trinity Protocol v1.5 at ${trinityBridgeAddress}`, SecurityEventType.CROSS_CHAIN_VERIFICATION);
+      securityLogger.info(`✅ Connected to HTLCBridge v2.0 at ${htlcBridgeAddress}`, SecurityEventType.CROSS_CHAIN_VERIFICATION);
+      securityLogger.info(`✅ Connected to Trinity Protocol v3.0 at ${trinityBridgeAddress}`, SecurityEventType.CROSS_CHAIN_VERIFICATION);
       securityLogger.info(`   Network: Arbitrum Sepolia (421614)`, SecurityEventType.CROSS_CHAIN_VERIFICATION);
       securityLogger.info(`   Features: 2-of-3 Consensus, HTLC Atomic Swaps, Mathematical Security ~10^-50`, SecurityEventType.CROSS_CHAIN_VERIFICATION);
       securityLogger.info('✅ HTLC Atomic Swap Service ready with Trinity Protocol!', SecurityEventType.CROSS_CHAIN_VERIFICATION);
@@ -559,7 +559,7 @@ export class AtomicSwapService {
     }
 
     try {
-      securityLogger.info(`[Trinity HTLC] Initializing HTLC for order ${orderId} on Trinity Protocol v1.5...`, SecurityEventType.CROSS_CHAIN_VERIFICATION);
+      securityLogger.info(`[Trinity HTLC] Initializing HTLC for order ${orderId} on Trinity Protocol v3.0...`, SecurityEventType.CROSS_CHAIN_VERIFICATION);
       
       // Get destination chain string (solana, ton, ethereum)
       const destChain = order.toNetwork;
