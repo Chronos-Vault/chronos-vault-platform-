@@ -316,8 +316,8 @@ git push origin feature/amazing-feature
 
 | Contract | Address | Status |
 |----------|---------|--------|
-| **CrossChainBridge (Unified)** | `0x499B24225a4d15966E118bfb86B2E421d57f4e21` | ✅ Live (Oct 15, 2025) |
-| **EmergencyMultiSig** | `0x499B24225a4d15966E118bfb86B2E421d57f4e21` | ✅ Live (Oct 15, 2025) |
+| **CrossChainBridge (Unified)** | `0x4a8Bc58f441Ae7E7eC2879e434D9D7e31CF80e30` | ✅ Live (Oct 15, 2025) |
+| **EmergencyMultiSig** | `0x4a8Bc58f441Ae7E7eC2879e434D9D7e31CF80e30` | ✅ Live (Oct 15, 2025) |
 | **ChronosVault** | `0x99444B0B1d6F7b21e9234229a2AC2bC0150B9d91` | ✅ Live |
 | **CVT Token** | `0xFb419D8E32c14F774279a4dEEf330dc893257147` | ✅ Live |
 | **CVT Bridge** | `0x21De95EbA01E31173Efe1b9c4D57E58bb840bA86` | ✅ Live |
