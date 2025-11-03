@@ -1,4 +1,4 @@
-# Chronos Vault Platform - Trinity Protocol™ v3.0
+# Chronos Vault Platform - Trinity Protocol™ v3.1
 
 <div align="center">
 
@@ -129,10 +129,10 @@ The application will be available at `http://localhost:5000`.
 ### Deployment Status ✅ PRODUCTION-READY
 
 **CrossChainBridgeOptimized v2.2**  
-- **Contract Address**: `0x4a8Bc58f441Ae7E7eC2879e434D9D7e31CF80e30`
+- **Contract Address**: `0x3E205dc9881Cf0E9377683aDd22bC1aBDBdF462D `
 - **Network**: Arbitrum Sepolia
 - **Status**: Production-Ready (November 3, 2025)
-- **Explorer**: [View Contract →](https://sepolia.arbiscan.io/address/0x4a8Bc58f441Ae7E7eC2879e434D9D7e31CF80e30)
+- **Explorer**: [View Contract →](https://sepolia.arbiscan.io/address/0x3E205dc9881Cf0E9377683aDd22bC1aBDBdF462D)
 
 **All 4 Critical Vulnerabilities Fixed:**
 - ✅ CRITICAL #1: Permanent Fund Lockup
