@@ -57,13 +57,13 @@ export function HTLCVerificationPanel({
     issues: []
   });
 
-  // Function to verify the HTLC contracts with Trinity Protocol v1.5
+  // Function to verify the HTLC contracts with Trinity Protocol v3.0
   const verifyContracts = async () => {
     setIsVerifying(true);
     setVerificationComplete(false);
     
     try {
-      // Query Trinity Protocol v1.5 contract at 0x499B24225a4d15966E118bfb86B2E421d57f4e21
+      // Query Trinity Protocol v3.0 contract at 0x4a8Bc58f441Ae7E7eC2879e434D9D7e31CF80e30
       const response = await fetch('/api/htlc/verify', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
