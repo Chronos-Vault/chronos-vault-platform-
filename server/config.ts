@@ -76,7 +76,7 @@ const blockchainConfig = {
         ? (process.env.ARBITRUM_CVT_TOKEN_ADDRESS || '0xFb419D8E32c14F774279a4dEEf330dc893257147')
         : (process.env.ETH_CVT_TOKEN_ADDRESS || '0xeb6C02FCD86B3dE11Dbae83599a002558Ace5eFc'),
       crossChainBridge: isArbitrum
-        ? (process.env.ARBITRUM_BRIDGE_ADDRESS || '0x499B24225a4d15966E118bfb86B2E421d57f4e21')
+        ? (process.env.ARBITRUM_BRIDGE_ADDRESS || '0x4a8Bc58f441Ae7E7eC2879e434D9D7e31CF80e30')
         : (process.env.ETH_BRIDGE_ADDRESS || '0xFb419D8E32c14F774279a4dEEf330dc893257147'),
       cvtBridge: isArbitrum
         ? (process.env.ARBITRUM_CVT_BRIDGE_ADDRESS || '0x21De95EbA01E31173Efe1b9c4D57E58bb840bA86')
@@ -93,7 +93,7 @@ const blockchainConfig = {
         ? (process.env.ARBITRUM_CVT_TOKEN_ADDRESS || '0xFb419D8E32c14F774279a4dEEf330dc893257147')
         : (process.env.ETH_CVT_TOKEN_ADDRESS || '0xeb6C02FCD86B3dE11Dbae83599a002558Ace5eFc'),
       crossChainBridge: isArbitrum
-        ? (process.env.ARBITRUM_BRIDGE_ADDRESS || '0x499B24225a4d15966E118bfb86B2E421d57f4e21')
+        ? (process.env.ARBITRUM_BRIDGE_ADDRESS || '0x4a8Bc58f441Ae7E7eC2879e434D9D7e31CF80e30')
         : (process.env.ETH_BRIDGE_ADDRESS || '0xFb419D8E32c14F774279a4dEEf330dc893257147'),
       cvtBridge: isArbitrum
         ? (process.env.ARBITRUM_CVT_BRIDGE_ADDRESS || '0x21De95EbA01E31173Efe1b9c4D57E58bb840bA86')
