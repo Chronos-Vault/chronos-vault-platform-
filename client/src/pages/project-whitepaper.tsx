@@ -134,7 +134,7 @@ export default function ProjectWhitepaperPage() {
             
             <ul>
               <li><strong>Method</strong>: Symbolic execution, theorem proving, SMT solving</li>
-              <li><strong>Coverage</strong>: CVTBridge, ChronosVault, CrossChainBridgeV1 contracts</li>
+              <li><strong>Coverage</strong>: CVTBridge, ChronosVault, CrossChainBridgeOptimized contracts</li>
               <li><strong>Results</strong>: 21/34 theorems proven (62%), 16/19 invariants holding (84%)</li>
               <li><strong>Guarantee</strong>: ∀ contract C: proven_secure(C) ⟹ ¬∃ exploit path in C</li>
             </ul>
@@ -239,20 +239,22 @@ export default function ProjectWhitepaperPage() {
               <div className="bg-[#121212] p-4 rounded-lg border border-[#333]">
                 <h4 className="text-[#FF5AF7] font-semibold mb-2">Solidity (Ethereum/Arbitrum)</h4>
                 <ul className="text-sm text-gray-300 space-y-1">
-                  <li>• ChronosVault.sol - Core vault logic</li>
-                  <li>• CVTBridge.sol - Token bridging</li>
-                  <li>• CrossChainBridgeV1.sol - HTLC atomic swaps</li>
-                  <li>• OpenZeppelin v5.4.0 libraries</li>
+                  <li>• ChronosVault.sol - 22 vault types</li>
+                  <li>• ChronosVaultOptimized.sol - ERC-4626 vaults</li>
+                  <li>• CrossChainBridgeOptimized.sol - Trinity consensus v3.0</li>
+                  <li>• HTLCBridge.sol - Hash Time-Locked atomic swaps</li>
+                  <li>• CVTBridge.sol - Cross-chain token bridge</li>
+                  <li>• EmergencyMultiSig.sol - 3-of-5 recovery</li>
                 </ul>
               </div>
               
               <div className="bg-[#121212] p-4 rounded-lg border border-[#333]">
                 <h4 className="text-[#FF5AF7] font-semibold mb-2">Solana Programs (Rust)</h4>
                 <ul className="text-sm text-gray-300 space-y-1">
-                  <li>• chronos_vault.rs - Vault state management</li>
-                  <li>• cross_chain_bridge.rs - Message verification</li>
-                  <li>• Anchor framework integration</li>
-                  <li>• Borsh serialization</li>
+                  <li>• contracts/solana/chronos_vault.rs - Vault state</li>
+                  <li>• contracts/solana/cross_chain_bridge.rs - Verification</li>
+                  <li>• solana-program/src/lib.rs - Anchor program</li>
+                  <li>• Borsh serialization for data</li>
                 </ul>
               </div>
               
@@ -350,7 +352,7 @@ export default function ProjectWhitepaperPage() {
                 <ul className="text-sm text-gray-300 space-y-1">
                   <li>• ChronosVault: 0x99444B...B9d91</li>
                   <li>• CVTBridge: 0x21De95...0bA86</li>
-                  <li>• CrossChainBridgeV1: Deployed</li>
+                  <li>• CrossChainBridgeOptimized v2.2: 0x499B24...f4e21</li>
                   <li>• Role: Main consensus & ownership</li>
                 </ul>
               </div>
@@ -358,9 +360,9 @@ export default function ProjectWhitepaperPage() {
               <div className="bg-[#121212] p-4 rounded-lg border border-[#333]">
                 <h4 className="text-[#FF5AF7] font-semibold mb-2">Solana Devnet (MONITOR)</h4>
                 <ul className="text-sm text-gray-300 space-y-1">
-                  <li>• chronos_vault.rs program</li>
-                  <li>• cross_chain_bridge.rs</li>
-                  <li>• Anchor framework deployment</li>
+                  <li>• contracts/solana/chronos_vault.rs</li>
+                  <li>• contracts/solana/cross_chain_bridge.rs</li>
+                  <li>• solana-program deployed via Anchor</li>
                   <li>• Role: Real-time monitoring</li>
                 </ul>
               </div>
@@ -475,8 +477,8 @@ export default function ProjectWhitepaperPage() {
                   chronos-vault-platform
                 </h4>
                 <p className="text-sm text-gray-300 mb-2">Full-stack platform with React frontend, Express backend, multi-chain integrations, and vault management</p>
-                <a href="https://github.com/Chronos-Vault/chronos-vault-platform-" target="_blank" rel="noopener noreferrer" className="text-xs text-[#6B00D7] hover:text-[#FF5AF7]">
-                  github.com/Chronos-Vault/chronos-vault-platform- →
+                <a href="https://github.com/Chronos-Vault/chronos-vault-platform" target="_blank" rel="noopener noreferrer" className="text-xs text-[#6B00D7] hover:text-[#FF5AF7]">
+                  github.com/Chronos-Vault/chronos-vault-platform →
                 </a>
               </div>
               
