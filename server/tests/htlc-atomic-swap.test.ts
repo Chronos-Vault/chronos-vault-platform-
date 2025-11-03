@@ -1,18 +1,18 @@
 /**
  * HTLC Atomic Swap Integration Tests
- * Tests Trinity Protocol v1.5 HTLC functionality on Arbitrum Sepolia testnet
+ * Tests Trinity Protocol v3.0 HTLC functionality on Arbitrum Sepolia testnet
  * 
  * @author Chronos Vault Team
- * @version v1.5-PRODUCTION
+ * @version v3.0-PRODUCTION
  */
 
 import { ethers } from 'ethers';
 import { HTLCAtomicSwapService } from '../defi/atomic-swap-service';
 
-const TRINITY_BRIDGE_ADDRESS = '0x499B24225a4d15966E118bfb86B2E421d57f4e21';
+const TRINITY_BRIDGE_ADDRESS = '0x4a8Bc58f441Ae7E7eC2879e434D9D7e31CF80e30';
 const ARBITRUM_SEPOLIA_RPC = process.env.ARBITRUM_RPC_URL || 'https://sepolia-rollup.arbitrum.io/rpc';
 
-describe('HTLC Atomic Swap Service - Trinity Protocol v1.5', () => {
+describe('HTLC Atomic Swap Service - Trinity Protocol v3.0', () => {
   let htlcService: HTLCAtomicSwapService;
   let provider: ethers.JsonRpcProvider;
 
@@ -67,7 +67,7 @@ describe('HTLC Atomic Swap Service - Trinity Protocol v1.5', () => {
   test('Trinity Protocol contract accessible', async () => {
     const code = await provider.getCode(TRINITY_BRIDGE_ADDRESS);
     expect(code).not.toBe('0x');
-    console.log(`✅ Trinity Protocol v1.5 deployed at ${TRINITY_BRIDGE_ADDRESS}`);
+    console.log(`✅ Trinity Protocol v3.0 deployed at ${TRINITY_BRIDGE_ADDRESS}`);
   });
 
   test('Mathematical security guarantees documented', () => {
