@@ -5,10 +5,9 @@
  * across Arbitrum, Solana, and TON networks with mathematical security guarantees.
  * 
  * REAL TRINITY PROTOCOL INTEGRATION - Connected to deployed contracts:
- * - Arbitrum Sepolia: HTLCBridge v1.5 at 0x6cd3B1a72F67011839439f96a70290051fd66D57
- * - Arbitrum Sepolia: CrossChainBridgeOptimized v1.5 at 0x499B24225a4d15966E118bfb86B2E421d57f4e21
- * - Solana Devnet: Program ID CYaDJYRqm35udQ8vkxoajSER8oaniQUcV8Vvw5BqJyo2
- * - TON Testnet: CVTBridge at EQAOJxa1WDjGZ7f3n53JILojhZoDdTOKWl6h41_yOWX3v0tq
+ * - Arbitrum Sepolia: CrossChainBridgeOptimized v2.2 (Trinity v3.0) at 0x4a8Bc58f441Ae7E7eC2879e434D9D7e31CF80e30
+ * - Solana Devnet: Trinity Validator Program ID 5oD8S1TtkdJbAX7qhsGticU7JKxjwY4AbEeBdnkUrrKY
+ * - TON Testnet: Trinity Validator at EQDx6yH5WH3Ex47h0PBnOBMzPCsmHdnL2snts3DZBO5CYVVJ
  * 
  * MATHEMATICAL SECURITY:
  * - HTLC Atomicity: Either both parties execute OR both parties get refunded
@@ -93,8 +92,8 @@ export class AtomicSwapService {
   
   private solanaClient: SolanaProgramClient | null = null;
   private provider: ethers.JsonRpcProvider | null = null;
-  private htlcBridgeContract: ethers.Contract | null = null; // HTLCBridge v1.5 (HTLC operations)
-  private trinityBridgeContract: ethers.Contract | null = null; // Trinity Protocol v1.5 (consensus verification)
+  private htlcBridgeContract: ethers.Contract | null = null; // HTLCBridge v3.0 (HTLC operations)
+  private trinityBridgeContract: ethers.Contract | null = null; // Trinity Protocol v3.0 (consensus verification)
   
   // Initialization tracking to prevent race conditions
   private isInitialized: boolean = false;
@@ -1391,6 +1390,43 @@ export class AtomicSwapService {
     // Default to 18 for unknown ERC-20 tokens
     securityLogger.warn(`Unknown token "${token}" - defaulting to 18 decimals. Add to decimalsMap for accuracy.`, SecurityEventType.SYSTEM_ERROR);
     return 18;
+  }
+  
+  /**
+   * Health check for monitoring systems (PRODUCTION FEATURE)
+   * 
+   * @returns Health status and system checks
+   */
+  public async healthCheck(): Promise<{
+    status: 'healthy' | 'degraded' | 'unhealthy';
+    checks: {
+      initialization: boolean;
+      trinityProtocol: boolean;
+      solanaClient: boolean;
+      tonClient: boolean;
+      activeOrders: number;
+    };
+  }> {
+    const checks = {
+      initialization: this.isInitialized,
+      trinityProtocol: this.trinityBridgeContract !== null,
+      solanaClient: this.solanaClient !== null,
+      tonClient: true, // tonClient is always initialized
+      activeOrders: this.activeOrders.size
+    };
+    
+    const allHealthy = Object.values(checks).every(v => 
+      typeof v === 'boolean' ? v : true
+    );
+    
+    // Degraded if not initialized but can recover
+    const status = allHealthy ? 'healthy' : 
+                   this.isInitialized ? 'degraded' : 'unhealthy';
+    
+    return {
+      status,
+      checks
+    };
   }
 }
 
