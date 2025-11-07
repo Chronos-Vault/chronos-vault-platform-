@@ -1,4 +1,4 @@
-# Chronos Vault Platform - Trinity Protocol™ v3.1
+# Chronos Vault Platform - Trinity Protocol™ v3.5.9
 
 
 [![Trinity Protocol](https://img.shields.io/badge/Trinity_Protocol-v3.5.9-success?style=for-the-badge)](https://github.com/Chronos-Vault/chronos-vault-contracts)
@@ -35,7 +35,7 @@
 
 ## 🎯 Overview
 
-Chronos Vault Platform is the **production-ready web application** for Trinity Protocol™ v3.0 - a mathematically provable 2-of-3 multi-chain consensus verification system with **100% formal verification** (78/78 Lean 4 theorems proven).
+Chronos Vault Platform is the **production-ready web application** for Trinity Protocol™ v3.5.9 - a mathematically provable 2-of-3 multi-chain consensus verification system with **100% formal verification** (78/78 Lean 4 theorems proven).
 
 ### What Makes This Different?
 
