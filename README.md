@@ -1,4 +1,4 @@
-# Chronos Vault Platform - Trinity Protocol™ v3.1
+# Chronos Vault Platform - Trinity Protocol™ v3.5.9
 
 
 [![Trinity Protocol](https://img.shields.io/badge/Trinity_Protocol-v3.5.9-success?style=for-the-badge)](https://github.com/Chronos-Vault/chronos-vault-contracts)
