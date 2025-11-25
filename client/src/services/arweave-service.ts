@@ -3,6 +3,8 @@
  * 
  * Client-side service for interacting with Arweave storage via the API
  */
+// Trinity Protocol v3.5.18 - Updated: 2025-11-25T19:31:58.471Z
+
 
 import { apiRequest } from '@/lib/queryClient';
 import { UploadOptions, UploadResult, StorageStatus, StorageError, FileStatus } from '../../../shared/types/storage';
