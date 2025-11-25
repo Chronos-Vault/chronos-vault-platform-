@@ -4,6 +4,8 @@
  * Client service for interacting with the chain-agnostic verification
  * and zero-knowledge proof APIs.
  */
+// Trinity Protocol v3.5.18 - Updated: 2025-11-25T19:32:16.199Z
+
 
 import { apiRequest } from '../lib/queryClient';
 import { BlockchainType } from '../types/blockchain.types';
