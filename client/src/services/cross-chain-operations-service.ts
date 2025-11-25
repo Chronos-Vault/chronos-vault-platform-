@@ -1,3 +1,4 @@
+// Trinity Protocol v3.5.18 - Updated: 2025-11-25T19:32:03.045Z
 import { BlockchainType } from '@/contexts/multi-chain-context';
 import { OperationType, TransactionStatus } from '@/components/cross-chain/CrossChainControlPanel';
 
