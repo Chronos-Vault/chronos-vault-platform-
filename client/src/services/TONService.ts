@@ -1,3 +1,4 @@
+// Trinity Protocol v3.5.18 - Updated: 2025-11-25T19:32:11.986Z
 import { TonClient } from '@tonclient/core';
 import { tonConnector } from '@/lib/ton/ton-connector';
 
