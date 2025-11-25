@@ -1,3 +1,4 @@
+// Trinity Protocol v3.5.18 - Updated: 2025-11-25T19:32:06.340Z
 import { ethers } from 'ethers';
 import { ethereumService } from '@/lib/ethereum/ethereum-service';
 
