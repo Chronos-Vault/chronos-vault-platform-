@@ -4,6 +4,8 @@
  * This service handles TON-specific functionality for the Chronos Vault platform,
  * including time-lock mechanisms, vault creation, and management.
  */
+// Trinity Protocol v3.5.18 - Updated: 2025-11-25T19:32:12.947Z
+
 
 interface VaultParams {
   name: string;
