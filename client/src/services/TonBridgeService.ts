@@ -3,6 +3,8 @@
  * 
  * This service handles cross-chain transfers and bridging between TON and other blockchains.
  */
+// Trinity Protocol v3.5.18 - Updated: 2025-11-25T19:32:11.011Z
+
 
 import { ChainType } from '@/hooks/use-blockchain';
 
