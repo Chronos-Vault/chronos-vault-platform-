@@ -3,6 +3,8 @@
  * Provides WebAuthn (Web Authentication) functionality for biometric authentication
  * including fingerprint, face ID, and other biometric verification methods.
  */
+// Trinity Protocol v3.5.18 - Updated: 2025-11-25T19:31:59.584Z
+
 
 // The base URL for biometric authentication API endpoints
 const BASE_URL = '/api/biometric';
