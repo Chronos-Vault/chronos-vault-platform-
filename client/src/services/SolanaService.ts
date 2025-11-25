@@ -1,3 +1,4 @@
+// Trinity Protocol v3.5.18 - Updated: 2025-11-25T19:32:09.892Z
 import { Connection, PublicKey, Keypair, Transaction } from '@solana/web3.js';
 import { solanaService } from '@/lib/solana/solana-service';
 import { 
