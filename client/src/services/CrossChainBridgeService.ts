@@ -3,6 +3,8 @@
  * 
  * This service provides the frontend interface for interacting with the cross-chain bridge API.
  */
+// Trinity Protocol v3.5.18 - Updated: 2025-11-25T19:32:04.179Z
+
 
 import { apiRequest } from "@/lib/queryClient";
 import type { ChainType as BlockchainType } from "@/hooks/use-blockchain";
