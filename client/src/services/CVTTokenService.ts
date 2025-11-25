@@ -4,6 +4,8 @@
  * This service handles operations related to the Chronos Vault Token (CVT),
  * including token transfers, staking, governance, and fee discounts.
  */
+// Trinity Protocol v3.5.18 - Updated: 2025-11-25T19:32:05.224Z
+
 
 import { ChainType } from '@/hooks/use-blockchain';
 
