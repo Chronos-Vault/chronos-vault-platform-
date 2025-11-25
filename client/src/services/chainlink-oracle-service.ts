@@ -4,6 +4,8 @@
  * This service provides functionality to fetch and interact with Chainlink oracle data
  * including price feeds and technical indicators.
  */
+// Trinity Protocol v3.5.18 - Updated: 2025-11-25T19:32:00.797Z
+
 
 export interface PriceFeed {
   id: string;
