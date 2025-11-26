@@ -61,37 +61,77 @@ export class ArbitrumEventListener extends EventEmitter {
   }
 
   /**
-   * Initialize the event listener
+   * Initialize the event listener with automatic RPC fallback and exponential backoff
    */
   async initialize(): Promise<void> {
     try {
       securityLogger.info('🎧 Initializing Arbitrum Event Listener...', SecurityEventType.CROSS_CHAIN_VERIFICATION);
 
-      // Initialize provider
-      const rpcUrl = config.blockchainConfig.ethereum.rpcUrl;
-      this.provider = new ethers.JsonRpcProvider(rpcUrl);
+      // Try multiple RPC endpoints with automatic fallback
+      // PRIORITY: Use free, unlimited endpoints first to avoid rate limiting
+      const rpcEndpoints = [
+        'https://arbitrum-sepolia.public.blastapi.io', // BlastAPI - Free, no rate limits
+        'https://public.stackup.sh/api/v1/node/arbitrum-sepolia', // StackUp - Free tier
+        config.blockchainConfig.ethereum.rpcUrl, // User's custom RPC
+        'https://sepolia-rollup.arbitrum.io/rpc', // Official (rate limited - last resort)
+      ];
 
-      const network = await this.provider.getNetwork();
-      securityLogger.info(`   Connected to network: ${network.name} (Chain ID: ${network.chainId})`, SecurityEventType.CROSS_CHAIN_VERIFICATION);
+      let lastError: any = null;
+      
+      for (const rpcUrl of rpcEndpoints) {
+        // EXPONENTIAL BACKOFF: Retry each endpoint with increasing delays
+        const maxRetries = 3;
+        
+        for (let attempt = 1; attempt <= maxRetries; attempt++) {
+          try {
+            securityLogger.info(`   Trying RPC endpoint (attempt ${attempt}/${maxRetries}): ${rpcUrl.substring(0, 50)}...`, SecurityEventType.CROSS_CHAIN_VERIFICATION);
+            
+            this.provider = new ethers.JsonRpcProvider(rpcUrl);
+            const network = await this.provider.getNetwork();
+            
+            securityLogger.info(`   ✅ Connected to network: ${network.name} (Chain ID: ${network.chainId})`, SecurityEventType.CROSS_CHAIN_VERIFICATION);
 
-      // Initialize ChronosVault contract
-      const vaultAddress = config.blockchainConfig.ethereum.contracts.vault;
-      this.vaultContract = new ethers.Contract(vaultAddress, this.vaultAbi, this.provider);
-      securityLogger.info(`   Monitoring ChronosVault at: ${vaultAddress}`, SecurityEventType.CROSS_CHAIN_VERIFICATION);
+            // Initialize ChronosVault contract
+            const vaultAddress = config.blockchainConfig.ethereum.contracts.vault;
+            this.vaultContract = new ethers.Contract(vaultAddress, this.vaultAbi, this.provider);
+            securityLogger.info(`   Monitoring ChronosVault at: ${vaultAddress}`, SecurityEventType.CROSS_CHAIN_VERIFICATION);
 
-      // Initialize CVTBridge contract
-      const bridgeAddress = config.blockchainConfig.ethereum.contracts.cvtBridge;
-      this.bridgeContract = new ethers.Contract(bridgeAddress, this.bridgeAbi, this.provider);
-      securityLogger.info(`   Monitoring CVTBridge at: ${bridgeAddress}`, SecurityEventType.CROSS_CHAIN_VERIFICATION);
+            // Initialize CVTBridge contract
+            const bridgeAddress = config.blockchainConfig.ethereum.contracts.cvtBridge;
+            this.bridgeContract = new ethers.Contract(bridgeAddress, this.bridgeAbi, this.provider);
+            securityLogger.info(`   Monitoring CVTBridge at: ${bridgeAddress}`, SecurityEventType.CROSS_CHAIN_VERIFICATION);
 
-      // Get current block number
-      this.lastProcessedBlock = await this.provider.getBlockNumber();
-      securityLogger.info(`   Starting from block: ${this.lastProcessedBlock}`, SecurityEventType.CROSS_CHAIN_VERIFICATION);
+            // Get current block number
+            this.lastProcessedBlock = await this.provider.getBlockNumber();
+            securityLogger.info(`   Starting from block: ${this.lastProcessedBlock}`, SecurityEventType.CROSS_CHAIN_VERIFICATION);
 
-      securityLogger.info('✅ Arbitrum Event Listener initialized successfully', SecurityEventType.CROSS_CHAIN_VERIFICATION);
+            securityLogger.info('✅ Arbitrum Event Listener initialized successfully', SecurityEventType.CROSS_CHAIN_VERIFICATION);
+            return; // Success - exit immediately
+            
+          } catch (error: any) {
+            lastError = error;
+            const is429 = error.message?.includes('429') || error.message?.includes('Too Many Requests');
+            
+            if (is429 && attempt < maxRetries) {
+              const delay = Math.pow(2, attempt) * 1000; // 2s, 4s, 8s
+              securityLogger.warn(`   ⚠️ Rate limited (429) - waiting ${delay}ms before retry...`, SecurityEventType.CROSS_CHAIN_VERIFICATION);
+              await new Promise(resolve => setTimeout(resolve, delay));
+              continue; // Retry same endpoint
+            } else {
+              securityLogger.warn(`   ⚠️ RPC endpoint failed: ${error.message}`, SecurityEventType.CROSS_CHAIN_VERIFICATION);
+              break; // Try next endpoint
+            }
+          }
+        }
+      }
+
+      // All endpoints failed - log warning but DON'T crash the server
+      securityLogger.error('❌ All Arbitrum RPC endpoints failed - Event Listener will be disabled', SecurityEventType.SYSTEM_ERROR, lastError);
+      securityLogger.info('ℹ️ Server will continue running without Arbitrum event monitoring', SecurityEventType.CROSS_CHAIN_VERIFICATION);
+      
     } catch (error) {
       securityLogger.error('❌ Failed to initialize Arbitrum Event Listener', SecurityEventType.SYSTEM_ERROR, error);
-      throw error;
+      // Don't throw - let the server continue running
     }
   }
 
@@ -145,8 +185,9 @@ export class ArbitrumEventListener extends EventEmitter {
       await this.handleCrossChainSwap(swapId, sourceChain, targetChain, amount, event);
     });
 
-    // Poll for missed events every 15 seconds
-    setInterval(() => this.pollForMissedEvents(), 15000);
+    // Poll for missed events every 5 minutes (300 seconds) to prevent RPC rate limiting
+    // Reduced from 15s to avoid "429 Too Many Requests" errors from Arbitrum Sepolia RPC
+    setInterval(() => this.pollForMissedEvents(), 300000);
   }
 
   /**
@@ -361,6 +402,7 @@ export class ArbitrumEventListener extends EventEmitter {
 
   /**
    * Poll for missed events (backup mechanism)
+   * RPC RATE LIMITING: Reduced frequency and added block range limits
    */
   private async pollForMissedEvents(): Promise<void> {
     if (!this.provider || !this.vaultContract) {
@@ -372,19 +414,26 @@ export class ArbitrumEventListener extends EventEmitter {
       
       if (currentBlock > this.lastProcessedBlock) {
         const fromBlock = this.lastProcessedBlock + 1;
-        const toBlock = currentBlock;
+        
+        // RATE LIMITING: Query max 1000 blocks at a time to avoid RPC overload
+        const toBlock = Math.min(currentBlock, fromBlock + 1000);
 
-        // Query missed vault events
+        // Query missed vault events (limit range to prevent RPC throttling)
         const vaultEvents = await this.vaultContract.queryFilter('*', fromBlock, toBlock);
         
         if (vaultEvents.length > 0) {
           securityLogger.info(`📥 Found ${vaultEvents.length} missed vault events (blocks ${fromBlock}-${toBlock})`, SecurityEventType.CROSS_CHAIN_VERIFICATION);
         }
 
-        this.lastProcessedBlock = currentBlock;
+        this.lastProcessedBlock = toBlock; // Update to toBlock, not currentBlock
       }
-    } catch (error) {
-      securityLogger.error('Error polling for missed events', SecurityEventType.SYSTEM_ERROR, error);
+    } catch (error: any) {
+      // Handle 429 rate limiting errors gracefully
+      if (error.message?.includes('429') || error.message?.includes('Too Many Requests')) {
+        securityLogger.warn('⚠️ RPC rate limited - skipping this poll cycle', SecurityEventType.CROSS_CHAIN_VERIFICATION);
+      } else {
+        securityLogger.error('Error polling for missed events', SecurityEventType.SYSTEM_ERROR, error);
+      }
     }
   }
 
