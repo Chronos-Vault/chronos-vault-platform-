@@ -16,30 +16,37 @@ import {
 import { securityLogger } from '../monitoring/security-logger';
 import config from '../config';
 
-// TON contracts - REAL DEPLOYED ADDRESSES (October 4, 2025)
-// ChronosVault: Time-locked vaults with Trinity Protocol emergency recovery
-// CVTBridge: Cross-chain HTLC swaps and atomic transfers
+// TON contracts - TRINITY PROTOCOL v3.5.20 DEPLOYED ADDRESSES (November 2025)
+// TrinityConsensus: 2-of-3 consensus verification with quantum-resistant recovery
+// ChronosVault: Time-locked vaults with per-vault accounting and Trinity consensus
+// CrossChainBridge: HTLC atomic swaps with 2-of-3 signatures
 const CONTRACT_ADDRESSES = {
   mainnet: {
-    // Main vault contract - handles time locks, emergency recovery, Trinity Protocol verification
-    chronosVault: 'EQDJAnXDPT-NivritpEhQeP0XmG20NdeUtxgh4nUiWH-DF7M',
-    vaultMaster: 'EQDJAnXDPT-NivritpEhQeP0XmG20NdeUtxgh4nUiWH-DF7M', // Alias for vault operations
+    // Trinity Consensus - 2-of-3 multi-chain validator (ML-KEM-1024, Dilithium-5)
+    trinityConsensus: 'EQeGlYzwupSROVWGucOmKyUDbSaKmPfIpHHP5mV73odL8',
     
-    // Cross-chain bridge contract - handles HTLC swaps and bridge operations
-    bridge: 'EQAOJxa1WDjGZ7f3n53JILojhZoDdTOKWl6h41_yOWX3v0tq',
-    cvtBridge: 'EQAOJxa1WDjGZ7f3n53JILojhZoDdTOKWl6h41_yOWX3v0tq', // Alias for bridge operations
+    // ChronosVault - Time-locked vaults with Trinity consensus integration
+    chronosVault: 'EQjUVidQfn4m-Rougn0fol7ECCthba2HV0M6xz9zAfax4',
+    vaultMaster: 'EQjUVidQfn4m-Rougn0fol7ECCthba2HV0M6xz9zAfax4', // Alias for vault operations
+    
+    // CrossChainBridge - HTLC atomic swaps and bridge operations
+    bridge: 'EQgWobA9D4u6Xem3B8e6Sde_NEFZYicyy7_5_XvOT18mA',
+    cvtBridge: 'EQgWobA9D4u6Xem3B8e6Sde_NEFZYicyy7_5_XvOT18mA', // Alias for bridge operations
     
     // Not yet deployed - will be added when factory pattern is needed
     vaultFactory: null,
   },
   testnet: {
-    // Main vault contract - handles time locks, emergency recovery, Trinity Protocol verification
-    chronosVault: 'EQDJAnXDPT-NivritpEhQeP0XmG20NdeUtxgh4nUiWH-DF7M',
-    vaultMaster: 'EQDJAnXDPT-NivritpEhQeP0XmG20NdeUtxgh4nUiWH-DF7M', // Alias for vault operations
+    // Trinity Consensus - 2-of-3 multi-chain validator (ML-KEM-1024, Dilithium-5)
+    trinityConsensus: 'EQeGlYzwupSROVWGucOmKyUDbSaKmPfIpHHP5mV73odL8',
     
-    // Cross-chain bridge contract - handles HTLC swaps and bridge operations
-    bridge: 'EQAOJxa1WDjGZ7f3n53JILojhZoDdTOKWl6h41_yOWX3v0tq',
-    cvtBridge: 'EQAOJxa1WDjGZ7f3n53JILojhZoDdTOKWl6h41_yOWX3v0tq', // Alias for bridge operations
+    // ChronosVault - Time-locked vaults with Trinity consensus integration
+    chronosVault: 'EQjUVidQfn4m-Rougn0fol7ECCthba2HV0M6xz9zAfax4',
+    vaultMaster: 'EQjUVidQfn4m-Rougn0fol7ECCthba2HV0M6xz9zAfax4', // Alias for vault operations
+    
+    // CrossChainBridge - HTLC atomic swaps and bridge operations
+    bridge: 'EQgWobA9D4u6Xem3B8e6Sde_NEFZYicyy7_5_XvOT18mA',
+    cvtBridge: 'EQgWobA9D4u6Xem3B8e6Sde_NEFZYicyy7_5_XvOT18mA', // Alias for bridge operations
     
     // Not yet deployed - will be added when factory pattern is needed
     vaultFactory: null,
