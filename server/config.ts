@@ -131,19 +131,23 @@ const blockchainConfig = {
     apiUrl: 'https://toncenter.com/api/v2/jsonRPC',
     isTestnet: process.env.NODE_ENV !== 'production',
     contracts: {
-      // REAL DEPLOYED CONTRACTS (October 4, 2025)
-      // ChronosVault: Handles time-locked vaults, emergency recovery, Trinity Protocol verification
-      chronosVault: process.env.TON_CHRONOS_VAULT_ADDRESS || 'EQDJAnXDPT-NivritpEhQeP0XmG20NdeUtxgh4nUiWH-DF7M',
-      vaultMaster: process.env.TON_CHRONOS_VAULT_ADDRESS || 'EQDJAnXDPT-NivritpEhQeP0XmG20NdeUtxgh4nUiWH-DF7M', // Alias for vault operations
+      // TRINITY PROTOCOL v3.5.20 - TON TESTNET DEPLOYED CONTRACTS (November 2025)
+      // TrinityConsensus: 2-of-3 consensus verification with quantum-resistant recovery (ML-KEM-1024, Dilithium-5)
+      trinityConsensus: process.env.TON_TRINITY_CONSENSUS_ADDRESS || 'EQeGlYzwupSROVWGucOmKyUDbSaKmPfIpHHP5mV73odL8',
       
-      // CVTBridge: Handles cross-chain HTLC swaps and bridge operations
-      cvtBridge: process.env.TON_CVT_BRIDGE_ADDRESS || 'EQAOJxa1WDjGZ7f3n53JILojhZoDdTOKWl6h41_yOWX3v0tq',
-      bridge: process.env.TON_CVT_BRIDGE_ADDRESS || 'EQAOJxa1WDjGZ7f3n53JILojhZoDdTOKWl6h41_yOWX3v0tq', // Alias for bridge operations
+      // ChronosVault: Time-locked vaults with per-vault accounting and Trinity consensus integration
+      chronosVault: process.env.TON_CHRONOS_VAULT_ADDRESS || 'EQjUVidQfn4m-Rougn0fol7ECCthba2HV0M6xz9zAfax4',
+      vaultMaster: process.env.TON_CHRONOS_VAULT_ADDRESS || 'EQjUVidQfn4m-Rougn0fol7ECCthba2HV0M6xz9zAfax4', // Alias for vault operations
+      
+      // CrossChainBridge: HTLC atomic swaps with 2-of-3 signatures and replay protection
+      crossChainBridge: process.env.TON_CROSS_CHAIN_BRIDGE_ADDRESS || 'EQgWobA9D4u6Xem3B8e6Sde_NEFZYicyy7_5_XvOT18mA',
+      cvtBridge: process.env.TON_CVT_BRIDGE_ADDRESS || 'EQgWobA9D4u6Xem3B8e6Sde_NEFZYicyy7_5_XvOT18mA',
+      bridge: process.env.TON_CVT_BRIDGE_ADDRESS || 'EQgWobA9D4u6Xem3B8e6Sde_NEFZYicyy7_5_XvOT18mA', // Alias for bridge operations
       
       // Note: vaultFactory and cvtToken contracts are not yet deployed
       // These will be deployed separately when needed for factory pattern and token operations
       vaultFactory: null, // Not yet deployed
-      cvtToken: null, // Not yet deployed - will use CVTBridge for now
+      cvtToken: null, // CVT token exists only on Solana as SPL token
     },
     blockExplorerUrl: process.env.NODE_ENV === 'production'
       ? 'https://tonscan.org'
