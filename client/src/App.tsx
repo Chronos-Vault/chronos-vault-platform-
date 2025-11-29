@@ -1,6 +1,7 @@
 import React from 'react';
 import { Route, Switch, Link } from 'wouter';
 import { ErrorBoundary } from '@/components/error-boundary/ErrorBoundary';
+import { TransactionErrorProvider } from '@/contexts/transaction-error-context';
 import { useAuthContext } from '@/contexts/auth-context';
 import { NavBar } from '@/components/navigation/NavBar';
 import ScrollToTop from '@/components/navigation/ScrollToTop';
@@ -20,6 +21,7 @@ import CvtTokenomicsPage from '@/pages/cvt-tokenomics';
 import CvtUtilityPage from '@/pages/cvt-utility-new';
 import TermsOfServicePage from '@/pages/terms-of-service';
 import CookiePolicyPage from '@/pages/cookie-policy';
+import PrivacyPolicyPage from '@/pages/privacy-policy';
 import DocumentationPage from '@/pages/documentation';
 import VaultSchoolPage from '@/pages/vault-school';
 import RoadmapPage from '@/pages/roadmap';
@@ -73,6 +75,9 @@ import ZkPrivacyDemoPage from '@/pages/zk-privacy-demo';
 import TripleChainSecurityPage from '@/pages/triple-chain-security';
 import HowItWorksPage from '@/pages/how-it-works';
 import TrinityProtocolDashboard from '@/pages/trinity-protocol-dashboard';
+import TrinityHTLCTest from '@/pages/trinity-htlc-test';
+import ValidatorOnboardingPage from '@/pages/validator-onboarding';
+import ValidatorDashboardPage from '@/pages/validator-dashboard';
 
 // Integration Pages
 import EthereumIntegrationPage from '@/pages/ethereum-integration';
@@ -152,12 +157,13 @@ import GiftCryptoPage from '@/pages/gift-crypto';
 
 const App: React.FC = () => {
   return (
-    <div className="min-h-screen bg-black text-white">
-      <ErrorBoundary name="App">
-        <ScrollToTop />
-        <NavBar />
-        <div className="pt-2">
-                    <Switch>
+    <TransactionErrorProvider>
+      <div className="min-h-screen bg-black text-white">
+        <ErrorBoundary name="App">
+          <ScrollToTop />
+          <NavBar />
+          <div className="pt-2">
+                      <Switch>
                       {/* Main Pages */}
                       <Route path="/" component={HomePage} />
                       <Route path="/wallet" component={WalletPage} />
@@ -177,6 +183,7 @@ const App: React.FC = () => {
                       <Route path="/vault-school" component={VaultSchoolPage} />
                       <Route path="/terms-of-service" component={TermsOfServicePage} />
                       <Route path="/cookie-policy" component={CookiePolicyPage} />
+                      <Route path="/privacy-policy" component={PrivacyPolicyPage} />
                       
                       {/* Vault Selection & Showcase */}
                       <Route path="/vault-types" component={VaultTypesPage} />
@@ -206,6 +213,9 @@ const App: React.FC = () => {
                       <Route path="/security" component={SecurityPage} />
                       {/* Legacy routes - kept for backward compatibility */}
                       <Route path="/trinity-protocol" component={TrinityProtocolDashboard} />
+                      <Route path="/trinity-htlc-test" component={TrinityHTLCTest} />
+                      <Route path="/validator-onboarding" component={ValidatorOnboardingPage} />
+                      <Route path="/validator-dashboard" component={ValidatorDashboardPage} />
                       <Route path="/security-dashboard" component={TripleChainSecurityDashboardPage} />
                       <Route path="/ton-security" component={TonSecurityPage} />
                       <Route path="/cross-chain-security" component={CrossChainSecurityPage} />
@@ -337,6 +347,7 @@ const App: React.FC = () => {
         </div>
       </ErrorBoundary>
     </div>
+    </TransactionErrorProvider>
   );
 };
 
