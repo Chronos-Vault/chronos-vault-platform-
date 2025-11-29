@@ -54,7 +54,6 @@ import SpecializedVaultCreationPage from '@/pages/specialized-vault-creation';
 import CreateTonVaultPage from '@/pages/create-ton-vault';
 
 // Monitoring Pages
-import MonitoringPage from '@/pages/monitoring';
 import TransactionMonitorPage from '@/pages/transaction-monitor';
 import CrossChainMonitorPage from '@/pages/cross-chain-monitor';
 import CrossChainFeesPage from '@/pages/cross-chain-fee-monitor';
@@ -78,6 +77,7 @@ import TrinityProtocolDashboard from '@/pages/trinity-protocol-dashboard';
 import TrinityHTLCTest from '@/pages/trinity-htlc-test';
 import ValidatorOnboardingPage from '@/pages/validator-onboarding';
 import ValidatorDashboardPage from '@/pages/validator-dashboard';
+import TrinityScannerPage from '@/pages/trinity-scanner';
 
 // Integration Pages
 import EthereumIntegrationPage from '@/pages/ethereum-integration';
@@ -196,15 +196,16 @@ const App: React.FC = () => {
                       <Route path="/specialized-vault-creation" component={SpecializedVaultCreationPage} />
                       <Route path="/create-ton-vault" component={CreateTonVaultPage} />
                       
-                      {/* Monitoring & Management */}
-                      <Route path="/monitoring" component={MonitoringPage} />
+                      {/* Monitoring & Management - Trinity Scan Blockchain Explorer */}
+                      <Route path="/monitoring" component={TrinityScannerPage} />
+                      <Route path="/monitoring/:section" component={TrinityScannerPage} />
                       <Route path="/mdl-monitor" component={MDLMonitoringDashboard} />
                       {/* Legacy routes - kept for backward compatibility */}
                       <Route path="/transaction-monitor" component={TransactionMonitorPage} />
                       <Route path="/transaction-verification" component={SecurityVerificationPage} />
                       <Route path="/cross-chain-monitor" component={CrossChainMonitorPage} />
                       <Route path="/cross-chain-fee-monitor" component={CrossChainFeesPage} />
-                      <Route path="/cross-chain-operations" component={MonitoringPage} />
+                      <Route path="/cross-chain-operations" component={TrinityScannerPage} />
                       <Route path="/vault-explorer" component={VaultExplorerPage} />
                       <Route path="/device-management" component={DeviceManagementPage} />
                       <Route path="/device-recovery" component={DeviceRecoveryPage} />
@@ -216,6 +217,10 @@ const App: React.FC = () => {
                       <Route path="/trinity-htlc-test" component={TrinityHTLCTest} />
                       <Route path="/validator-onboarding" component={ValidatorOnboardingPage} />
                       <Route path="/validator-dashboard" component={ValidatorDashboardPage} />
+                      
+                      {/* Trinity Scan - Blockchain Explorer */}
+                      <Route path="/trinity-scan" component={TrinityScannerPage} />
+                      <Route path="/trinity-scan/:section" component={TrinityScannerPage} />
                       <Route path="/security-dashboard" component={TripleChainSecurityDashboardPage} />
                       <Route path="/ton-security" component={TonSecurityPage} />
                       <Route path="/cross-chain-security" component={CrossChainSecurityPage} />
@@ -297,8 +302,7 @@ const App: React.FC = () => {
                       
                       {/* Cross-Chain Features */}
                       <Route path="/bridge" component={BridgePage} />
-                      {/* Legacy routes - kept for backward compatibility */}
-                      <Route path="/cross-chain-operations" component={MonitoringPage} />
+                      {/* Legacy routes - kept for backward compatibility - now redirects to Trinity Scan */}
                       <Route path="/cross-chain-bridge" component={CrossChainBridgePage} />
                       <Route path="/cross-chain-atomic-swap" component={CrossChainAtomicSwapPage} />
                       <Route path="/ton-wallet-cross-chain-bridge" component={TonWalletCrossChainBridgePage} />

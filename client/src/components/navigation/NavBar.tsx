@@ -179,7 +179,7 @@ export const NavBar: React.FC = () => {
                 <DropdownMenuContent className="bg-[#0E0318] border border-purple-900/30 text-gray-200 p-2 rounded-lg shadow-lg shadow-[#6B00D7]/20 min-w-[220px] z-50">
                   <DropdownMenuItem asChild>
                     <Link href="/monitoring" className="px-4 py-2 rounded-md hover:bg-[#6B00D7]/20 flex items-center">
-                      <Database className="w-4 h-4 mr-2" /> Operations & Monitoring Hub
+                      <Search className="w-4 h-4 mr-2" /> Trinity Scan
                       <span className="ml-2 bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] text-white text-[10px] px-1.5 rounded-full">NEW</span>
                     </Link>
                   </DropdownMenuItem>
