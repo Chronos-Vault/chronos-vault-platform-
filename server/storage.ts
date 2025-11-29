@@ -14,6 +14,9 @@ import {
   deviceVerifications, type DeviceVerification, type InsertDeviceVerification,
   recoveryKeys, type RecoveryKey, type InsertRecoveryKey,
   multiSigWallets, type MultiSigWallet, type InsertMultiSigWallet,
+  validators, type Validator, type InsertValidator,
+  validatorAttestations, type ValidatorAttestation, type InsertValidatorAttestation,
+  validatorStatusEvents, type ValidatorStatusEvent, type InsertValidatorStatusEvent,
   insertWalletAuthSchema, insertWalletSessionSchema
 } from "@shared/schema";
 
@@ -128,6 +131,27 @@ export interface IStorage {
   createMultiSigWallet(wallet: InsertMultiSigWallet): Promise<MultiSigWallet>;
   updateMultiSigWallet(id: number, wallet: Partial<MultiSigWallet>): Promise<MultiSigWallet | undefined>;
   deleteMultiSigWallet(id: number): Promise<boolean>;
+  
+  // Validator management methods
+  getValidator(id: number): Promise<Validator | undefined>;
+  getValidatorByWallet(walletAddress: string): Promise<Validator | undefined>;
+  getValidatorsByStatus(status: string): Promise<Validator[]>;
+  getValidatorsByRole(consensusRole: string): Promise<Validator[]>;
+  getAllValidators(): Promise<Validator[]>;
+  createValidator(validator: InsertValidator): Promise<Validator>;
+  updateValidator(id: number, validator: Partial<Validator>): Promise<Validator | undefined>;
+  updateValidatorStatus(id: number, status: string, reason?: string, actorAddress?: string): Promise<Validator | undefined>;
+  
+  // Validator attestation methods
+  getValidatorAttestation(id: number): Promise<ValidatorAttestation | undefined>;
+  getAttestationsByValidator(validatorId: number): Promise<ValidatorAttestation[]>;
+  getLatestAttestation(validatorId: number): Promise<ValidatorAttestation | undefined>;
+  createValidatorAttestation(attestation: InsertValidatorAttestation): Promise<ValidatorAttestation>;
+  updateValidatorAttestation(id: number, attestation: Partial<ValidatorAttestation>): Promise<ValidatorAttestation | undefined>;
+  
+  // Validator status events (audit log)
+  createValidatorStatusEvent(event: InsertValidatorStatusEvent): Promise<ValidatorStatusEvent>;
+  getValidatorStatusEvents(validatorId: number): Promise<ValidatorStatusEvent[]>;
 }
 
 export class MemStorage implements IStorage {
@@ -836,6 +860,67 @@ export class MemStorage implements IStorage {
 
   async deleteMultiSigWallet(id: number): Promise<boolean> {
     return false; // MemStorage does not persist multi-sig wallets
+  }
+
+  // Validator management methods (MemStorage stubs - use DatabaseStorage for persistence)
+  async getValidator(id: number): Promise<Validator | undefined> {
+    return undefined;
+  }
+
+  async getValidatorByWallet(walletAddress: string): Promise<Validator | undefined> {
+    return undefined;
+  }
+
+  async getValidatorsByStatus(status: string): Promise<Validator[]> {
+    return [];
+  }
+
+  async getValidatorsByRole(consensusRole: string): Promise<Validator[]> {
+    return [];
+  }
+
+  async getAllValidators(): Promise<Validator[]> {
+    return [];
+  }
+
+  async createValidator(validator: InsertValidator): Promise<Validator> {
+    throw new Error("MemStorage does not support validators - use DatabaseStorage");
+  }
+
+  async updateValidator(id: number, validator: Partial<Validator>): Promise<Validator | undefined> {
+    return undefined;
+  }
+
+  async updateValidatorStatus(id: number, status: string, reason?: string, actorAddress?: string): Promise<Validator | undefined> {
+    return undefined;
+  }
+
+  async getValidatorAttestation(id: number): Promise<ValidatorAttestation | undefined> {
+    return undefined;
+  }
+
+  async getAttestationsByValidator(validatorId: number): Promise<ValidatorAttestation[]> {
+    return [];
+  }
+
+  async getLatestAttestation(validatorId: number): Promise<ValidatorAttestation | undefined> {
+    return undefined;
+  }
+
+  async createValidatorAttestation(attestation: InsertValidatorAttestation): Promise<ValidatorAttestation> {
+    throw new Error("MemStorage does not support validator attestations - use DatabaseStorage");
+  }
+
+  async updateValidatorAttestation(id: number, attestation: Partial<ValidatorAttestation>): Promise<ValidatorAttestation | undefined> {
+    return undefined;
+  }
+
+  async createValidatorStatusEvent(event: InsertValidatorStatusEvent): Promise<ValidatorStatusEvent> {
+    throw new Error("MemStorage does not support validator status events - use DatabaseStorage");
+  }
+
+  async getValidatorStatusEvents(validatorId: number): Promise<ValidatorStatusEvent[]> {
+    return [];
   }
 }
 
@@ -1556,6 +1641,144 @@ export class DatabaseStorage implements IStorage {
       .where(eq(multiSigWallets.id, id))
       .returning({ id: multiSigWallets.id });
     return result.length > 0;
+  }
+
+  // Validator management methods
+  async getValidator(id: number): Promise<Validator | undefined> {
+    const [validator] = await db.select().from(validators).where(eq(validators.id, id));
+    return validator || undefined;
+  }
+
+  async getValidatorByWallet(walletAddress: string): Promise<Validator | undefined> {
+    const [validator] = await db.select().from(validators).where(eq(validators.walletAddress, walletAddress));
+    return validator || undefined;
+  }
+
+  async getValidatorsByStatus(status: string): Promise<Validator[]> {
+    return await db.select().from(validators).where(eq(validators.status, status));
+  }
+
+  async getValidatorsByRole(consensusRole: string): Promise<Validator[]> {
+    return await db.select().from(validators).where(eq(validators.consensusRole, consensusRole));
+  }
+
+  async getAllValidators(): Promise<Validator[]> {
+    return await db.select().from(validators).orderBy(desc(validators.createdAt));
+  }
+
+  async createValidator(validator: InsertValidator): Promise<Validator> {
+    const [newValidator] = await db
+      .insert(validators)
+      .values({
+        ...validator,
+        status: 'draft',
+        createdAt: new Date(),
+        updatedAt: new Date()
+      })
+      .returning();
+    return newValidator;
+  }
+
+  async updateValidator(id: number, validator: Partial<Validator>): Promise<Validator | undefined> {
+    const [updated] = await db
+      .update(validators)
+      .set({ ...validator, updatedAt: new Date() })
+      .where(eq(validators.id, id))
+      .returning();
+    return updated || undefined;
+  }
+
+  async updateValidatorStatus(id: number, status: string, reason?: string, actorAddress?: string): Promise<Validator | undefined> {
+    const current = await this.getValidator(id);
+    if (!current) return undefined;
+    
+    const [updated] = await db
+      .update(validators)
+      .set({ 
+        status, 
+        statusReason: reason,
+        updatedAt: new Date() 
+      })
+      .where(eq(validators.id, id))
+      .returning();
+    
+    if (updated) {
+      await this.createValidatorStatusEvent({
+        validatorId: id,
+        statusFrom: current.status,
+        statusTo: status,
+        reason,
+        actorAddress,
+        actorType: actorAddress ? 'admin' : 'system'
+      });
+    }
+    
+    return updated || undefined;
+  }
+
+  // Validator attestation methods
+  async getValidatorAttestation(id: number): Promise<ValidatorAttestation | undefined> {
+    const [attestation] = await db.select().from(validatorAttestations).where(eq(validatorAttestations.id, id));
+    return attestation || undefined;
+  }
+
+  async getAttestationsByValidator(validatorId: number): Promise<ValidatorAttestation[]> {
+    return await db
+      .select()
+      .from(validatorAttestations)
+      .where(eq(validatorAttestations.validatorId, validatorId))
+      .orderBy(desc(validatorAttestations.submittedAt));
+  }
+
+  async getLatestAttestation(validatorId: number): Promise<ValidatorAttestation | undefined> {
+    const [attestation] = await db
+      .select()
+      .from(validatorAttestations)
+      .where(eq(validatorAttestations.validatorId, validatorId))
+      .orderBy(desc(validatorAttestations.submittedAt))
+      .limit(1);
+    return attestation || undefined;
+  }
+
+  async createValidatorAttestation(attestation: InsertValidatorAttestation): Promise<ValidatorAttestation> {
+    const [newAttestation] = await db
+      .insert(validatorAttestations)
+      .values({
+        ...attestation,
+        submittedAt: new Date(),
+        verificationStatus: 'pending'
+      })
+      .returning();
+    return newAttestation;
+  }
+
+  async updateValidatorAttestation(id: number, attestation: Partial<ValidatorAttestation>): Promise<ValidatorAttestation | undefined> {
+    const [updated] = await db
+      .update(validatorAttestations)
+      .set(attestation)
+      .where(eq(validatorAttestations.id, id))
+      .returning();
+    return updated || undefined;
+  }
+
+  // Validator status events (audit log)
+  async createValidatorStatusEvent(event: InsertValidatorStatusEvent): Promise<ValidatorStatusEvent> {
+    const [newEvent] = await db
+      .insert(validatorStatusEvents)
+      .values({
+        ...event,
+        createdAt: new Date()
+      })
+      .returning();
+    return newEvent;
+  }
+
+  async getValidatorStatusEvents(validatorId: number): Promise<ValidatorStatusEvent[]> {
+    return await db
+      .select()
+      .from(validatorStatusEvents)
+      .where(eq(validatorStatusEvents.validatorId, validatorId))
+      .orderBy(desc(validatorStatusEvents.createdAt));
   }
 }
 
