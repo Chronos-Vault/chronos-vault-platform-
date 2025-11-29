@@ -9,12 +9,13 @@ import {
   ArrowDownUp, ArrowRightLeft, Atom, Combine, BoxSelect,
   GraduationCap, Video, BookOpen, FileText, Library,
   Lightbulb, BarChart2, Code, FileCode, GitPullRequest,
-  HelpCircle, LockKeyhole, Files
+  HelpCircle, LockKeyhole, Files, Server, LayoutDashboard
 } from 'lucide-react';
 import { useCVTToken } from '@/contexts/cvt-token-context';
 import { useMultiChain } from '@/contexts/multi-chain-context';
 import { useAuthContext } from '@/contexts/auth-context';
-import logoPath from '@assets/IMG_3753.jpeg';
+// Logo image temporarily removed
+const logoPath = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect fill='%236B00D7' width='100' height='100'/%3E%3Ctext x='50' y='50' font-family='Arial' font-size='40' fill='white' text-anchor='middle' dominant-baseline='central'%3ECV%3C/text%3E%3C/svg%3E";
 import { 
   DropdownMenu, 
   DropdownMenuContent, 
@@ -214,6 +215,17 @@ export const NavBar: React.FC = () => {
                     <Link href="/trinity-protocol" className="px-4 py-2 rounded-md hover:bg-[#6B00D7]/20 flex items-center">
                       <Shield className="w-4 h-4 mr-2" /> Trinity Protocol™
                       <span className="ml-2 bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] text-white text-[10px] px-1.5 rounded-full">NEW</span>
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem asChild>
+                    <Link href="/validator-onboarding" className="px-4 py-2 rounded-md hover:bg-[#6B00D7]/20 flex items-center">
+                      <Server className="w-4 h-4 mr-2" /> Become a Validator
+                      <span className="ml-2 bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] text-white text-[10px] px-1.5 rounded-full">NEW</span>
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem asChild>
+                    <Link href="/validator-dashboard" className="px-4 py-2 rounded-md hover:bg-[#6B00D7]/20 flex items-center">
+                      <LayoutDashboard className="w-4 h-4 mr-2" /> Validator Dashboard
                     </Link>
                   </DropdownMenuItem>
                   <DropdownMenuItem asChild>
