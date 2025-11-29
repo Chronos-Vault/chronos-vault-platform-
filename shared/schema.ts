@@ -1047,3 +1047,166 @@ export type WalletVault = typeof walletVaults.$inferSelect;
 
 export type InsertWalletTransaction = z.infer<typeof insertWalletTransactionSchema>;
 export type WalletTransaction = typeof walletTransactions.$inferSelect;
+
+// ============================================================================
+// VALIDATOR ONBOARDING SYSTEM
+// ============================================================================
+
+// Validator status enum values
+export const validatorStatusValues = [
+  'draft',           // Initial registration, not yet submitted
+  'submitted',       // Application submitted for review
+  'attesting',       // Hardware attestation in progress
+  'attestation_failed', // Attestation verification failed
+  'approved',        // Approved and active validator
+  'rejected',        // Application rejected by admin
+  'revoked',         // Previously approved, now revoked
+  'expired'          // Attestation expired, needs renewal
+] as const;
+export type ValidatorStatus = typeof validatorStatusValues[number];
+
+// TEE type enum values
+export const teeTypeValues = ['sgx', 'sev'] as const;
+export type TEEType = typeof teeTypeValues[number];
+
+// Consensus role enum values  
+export const consensusRoleValues = ['arbitrum', 'solana', 'ton'] as const;
+export type ConsensusRole = typeof consensusRoleValues[number];
+
+// Validators table - stores validator operator information
+export const validators = pgTable("validators", {
+  id: serial("id").primaryKey(),
+  operatorName: text("operator_name").notNull(),
+  operatorEmail: text("operator_email").notNull(),
+  organizationName: text("organization_name"),
+  walletAddress: text("wallet_address").notNull(),
+  teeType: text("tee_type").notNull(), // 'sgx' or 'sev'
+  hardwareVendor: text("hardware_vendor"), // 'intel', 'amd'
+  hardwareModel: text("hardware_model"),
+  region: text("region"), // Geographic region
+  consensusRole: text("consensus_role"), // 'arbitrum', 'solana', 'ton'
+  status: text("status").notNull().default("draft"),
+  statusReason: text("status_reason"), // Reason for rejection/revocation
+  approvedBy: jsonb("approved_by"), // Array of admin addresses who approved
+  mrenclave: text("mrenclave"), // SGX enclave measurement hash
+  measurement: text("measurement"), // SEV measurement hash
+  lastAttestationAt: timestamp("last_attestation_at"),
+  attestationExpiresAt: timestamp("attestation_expires_at"),
+  onChainRegistered: boolean("on_chain_registered").default(false),
+  registrationTxHash: text("registration_tx_hash"),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+  updatedAt: timestamp("updated_at"),
+  metadata: jsonb("metadata"),
+}, (table) => ({
+  walletAddressIdx: index("validator_wallet_address_idx").on(table.walletAddress),
+  statusIdx: index("validator_status_idx").on(table.status),
+  consensusRoleIdx: index("validator_consensus_role_idx").on(table.consensusRole),
+}));
+
+// Validator attestations - stores hardware attestation proofs
+export const validatorAttestations = pgTable("validator_attestations", {
+  id: serial("id").primaryKey(),
+  validatorId: integer("validator_id").notNull().references(() => validators.id),
+  teeType: text("tee_type").notNull(), // 'sgx' or 'sev'
+  quoteHash: text("quote_hash"), // SGX quote hash
+  reportHash: text("report_hash"), // Report hash for verification
+  mrenclave: text("mrenclave"), // Enclave measurement
+  measurement: text("measurement"), // SEV measurement
+  reportData: text("report_data"), // Report data binding validator address
+  attestationPayload: jsonb("attestation_payload"), // Full attestation payload
+  submittedAt: timestamp("submitted_at").notNull().defaultNow(),
+  verifiedAt: timestamp("verified_at"),
+  expiresAt: timestamp("expires_at"),
+  verificationStatus: text("verification_status").notNull().default("pending"), // pending, verified, failed
+  verifierTxHash: text("verifier_tx_hash"), // On-chain verification transaction
+  failureReason: text("failure_reason"),
+  adminNotes: text("admin_notes"),
+  metadata: jsonb("metadata"),
+}, (table) => ({
+  validatorIdIdx: index("attestation_validator_id_idx").on(table.validatorId),
+  statusIdx: index("attestation_status_idx").on(table.verificationStatus),
+}));
+
+// Validator status events - audit log for status transitions
+export const validatorStatusEvents = pgTable("validator_status_events", {
+  id: serial("id").primaryKey(),
+  validatorId: integer("validator_id").notNull().references(() => validators.id),
+  statusFrom: text("status_from").notNull(),
+  statusTo: text("status_to").notNull(),
+  reason: text("reason"),
+  actorAddress: text("actor_address"), // Admin or system that made the change
+  actorType: text("actor_type").notNull().default("system"), // 'admin', 'system', 'validator'
+  txHash: text("tx_hash"), // Related blockchain transaction
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+  metadata: jsonb("metadata"),
+}, (table) => ({
+  validatorIdIdx: index("status_event_validator_id_idx").on(table.validatorId),
+}));
+
+// Insert schemas for validators
+export const insertValidatorSchema = createInsertSchema(validators)
+  .pick({
+    operatorName: true,
+    operatorEmail: true,
+    organizationName: true,
+    walletAddress: true,
+    teeType: true,
+    hardwareVendor: true,
+    hardwareModel: true,
+    region: true,
+    consensusRole: true,
+    metadata: true,
+  })
+  .extend({
+    operatorEmail: z.string().email("Invalid email address"),
+    walletAddress: z.string().min(10, "Invalid wallet address"),
+    teeType: z.enum(teeTypeValues),
+    consensusRole: z.enum(consensusRoleValues).optional(),
+  });
+
+export const insertValidatorAttestationSchema = createInsertSchema(validatorAttestations)
+  .pick({
+    validatorId: true,
+    teeType: true,
+    quoteHash: true,
+    reportHash: true,
+    mrenclave: true,
+    measurement: true,
+    reportData: true,
+    attestationPayload: true,
+    expiresAt: true,
+    metadata: true,
+  })
+  .extend({
+    teeType: z.enum(teeTypeValues),
+    expiresAt: z.union([z.string(), z.date()])
+      .optional()
+      .transform(val => {
+        if (!val) return undefined;
+        if (val instanceof Date) return val;
+        const date = new Date(val);
+        return isNaN(date.getTime()) ? undefined : date;
+      }),
+  });
+
+export const insertValidatorStatusEventSchema = createInsertSchema(validatorStatusEvents)
+  .pick({
+    validatorId: true,
+    statusFrom: true,
+    statusTo: true,
+    reason: true,
+    actorAddress: true,
+    actorType: true,
+    txHash: true,
+    metadata: true,
+  });
+
+// Type exports for validators
+export type InsertValidator = z.infer<typeof insertValidatorSchema>;
+export type Validator = typeof validators.$inferSelect;
+
+export type InsertValidatorAttestation = z.infer<typeof insertValidatorAttestationSchema>;
+export type ValidatorAttestation = typeof validatorAttestations.$inferSelect;
+
+export type InsertValidatorStatusEvent = z.infer<typeof insertValidatorStatusEventSchema>;
+export type ValidatorStatusEvent = typeof validatorStatusEvents.$inferSelect;
