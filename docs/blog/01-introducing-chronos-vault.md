@@ -699,7 +699,7 @@ export class MathematicalDefenseLayer {
 **For Developers:**
 - GitHub: [github.com/Chronos-Vault](https://github.com/Chronos-Vault)
 - Documentation: [docs.chronosvault.org](https://docs.chronosvault.org)
-- Become a validator: [/validator-onboarding](https://chronosvault.org/validator-onboarding)
+- Become a validator: [/validator-onboarding]([[https://chronosvault.org/validator-onboarding](https://github.com/Chronos-Vault/trinity-shield/blob/main/docs/VALIDATOR_ONBOARDING.md)](https://github.com/Chronos-Vault/trinity-shield/blob/main/docs/VALIDATOR_ONBOARDING.md))
 
 **For Users:**
 - Create your first vault: [chronosvault.org](https://chronosvault.org)
