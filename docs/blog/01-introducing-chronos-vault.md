@@ -54,18 +54,18 @@ Attack probability with 8 layers:        ~10^-50 (mathematically secure)
 
 ## Trinity Protocol™: 2-of-3 Multi-Chain Consensus
 
-At the heart of Chronos Vault is **Trinity Protocol™**—a consensus verification system that requires agreement from **2 out of 3 independent blockchain networks** before any operation proceeds.
+At the heart of Chronos Vault is **Trinity Protocol™** a consensus verification system that requires agreement from **2 out of 3 independent blockchain networks** before any operation proceeds.
 
 **The Three Chains:**
 - **Arbitrum** (Layer 2 Ethereum) - Primary security & execution
-- **Solana** - High-frequency monitoring (<5s SLA)
-- **TON** - Emergency recovery with quantum-resistant cryptography
+- **Solana** High-frequency monitoring (<5s SLA)
+- **TON** Emergency recovery with quantum-resistant cryptography
 
 ### How It Works
 
 Imagine a bank vault with 3 security guards from different countries, speaking different languages, using different security systems. To open the vault, **at least 2 must independently agree**.
 
-Even if an attacker completely compromises one chain—with validator keys, full node access, everything—they still cannot execute unauthorized operations because they need agreement from a completely independent blockchain.
+Even if an attacker completely compromises one chain with validator keys, full node access, everything they still cannot execute unauthorized operations because they need agreement from a completely independent blockchain.
 
 ### The Core Contract
 
@@ -362,7 +362,7 @@ contract HTLCChronosBridge is IHTLC, IChronosVault, ReentrancyGuard, Pausable, O
 
 ## Trinity Shield™: Hardware Isolated Security
 
-Layer 8 of our Mathematical Defense Layer is **Trinity Shield™**—a custom Trusted Execution Environment (TEE) solution built on Intel SGX and AMD SEV.
+Layer 8 of our Mathematical Defense Layer is **Trinity Shield™** a custom Trusted Execution Environment (TEE) solution built on Intel SGX and AMD SEV.
 
 ### The Rust Implementation
 
@@ -512,7 +512,7 @@ Trinity Shield runs critical code inside **hardware enclaves**:
 
 ## TON Integration: Quantum-Resistant Emergency Recovery
 
-Our TON validator uses **post-quantum cryptography** for emergency recovery—protection against future quantum computers.
+Our TON validator uses **post-quantum cryptography** for emergency recovery protection against future quantum computers.
 
 ```typescript
 // contracts/ton/wrappers/TrinityConsensus.ts
@@ -572,13 +572,14 @@ export class TrinityConsensus implements Contract {
 
 ## The Mathematical Defense Layer
 
-This is what ties everything together—our 7-layer security system where every layer independently verifies security.
+This is what ties everything together—our 7 layer security system where every layer independently verifies security.
 
 ```typescript
 // server/security/mathematical-defense-layer.ts
 
 /**
- * Mathematical Defense Layer (MDL) - Chronos Vault's Security Architecture
+ * Mathematical Defense Layer (MDL)
+Chronos Vault's Security Architecture
  * 
  * "Trust Math, Not Humans"
  * 
@@ -721,7 +722,7 @@ Chronos Vault and Trinity Protocol™ represent a new paradigm:
 
 ---
 
-*Trinity Protocol™ — Mathematically Proven. Hardware Protected.*
+*Trinity Protocol™  Mathematically Proven. Hardware Protected.*
 
 Website: [chronosvault.org](https://chronosvault.org)  
 GitHub: [github.com/Chronos-Vault](https://github.com/Chronos-Vault)  
