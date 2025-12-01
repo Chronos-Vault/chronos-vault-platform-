@@ -1,21 +1,24 @@
 /**
  * Multi-Party Computation (MPC) Key Management for Chronos Vault
+ * PRODUCTION VERSION - Real Shamir Secret Sharing + Quantum-Resistant Crypto
  * 
  * Implements threshold cryptography where vault keys are split into shares
  * across multiple nodes. No single party has access to the complete key.
  * 
  * Security Model:
  * - k-of-n threshold (e.g., 3-of-5 shares required)
- * - Quantum-resistant key shares using CRYSTALS
+ * - Quantum-resistant key shares using ML-KEM-1024 + CRYSTALS-Dilithium-5
  * - Byzantine fault tolerance
  * - Distributed key generation (DKG)
  * 
  * Mathematical Guarantee: Even if k-1 nodes are compromised, vault remains secure
+ * 
+ * This is PRODUCTION code using real cryptographic libraries - NO SIMULATION
  */
 
 import crypto from 'crypto';
 import { ethers } from 'ethers';
-import { quantumCrypto } from './quantum-resistant-crypto';
+import { quantumCrypto } from './quantum-resistant-crypto-real';
 
 export interface KeyShare {
   shareId: string;
