@@ -49,9 +49,9 @@ export default function Documentation() {
                   <h4 className="text-[#FF5AF7] font-medium mb-2">Core Features</h4>
                   <ul className="space-y-2 pl-2">
                     <li>
-                      <a href="#triple-chain" className="text-gray-300 hover:text-white transition-colors flex items-center gap-2">
+                      <a href="#trinity-protocol" className="text-gray-300 hover:text-white transition-colors flex items-center gap-2">
                         <span className="w-1.5 h-1.5 rounded-full bg-[#6B00D7]"></span>
-                        Triple-Chain Security
+                        Trinity Protocol™
                       </a>
                     </li>
                     <li>
@@ -352,13 +352,13 @@ export default function Documentation() {
             </section>
 
             {/* Core Features Sections */}
-            <section id="triple-chain" className="scroll-mt-24">
+            <section id="trinity-protocol" className="scroll-mt-24">
               <div className="bg-gradient-to-br from-[#1D1D1D] to-[#151515] rounded-xl border border-[#333] p-6">
                 <h2 className="text-2xl font-bold mb-4 flex items-center gap-2">
                   <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-[#6B00D7]/30 to-[#FF5AF7]/20 flex items-center justify-center">
                     <span className="text-xl">🔗</span>
                   </div>
-                  Triple-Chain Security
+                  Trinity Protocol™
                 </h2>
                 
                 <div className="space-y-4 text-gray-300">
@@ -390,9 +390,9 @@ export default function Documentation() {
                     <Button
                       variant="outline"
                       className="border border-[#6B00D7] bg-[#1A1A1A] text-[#FF5AF7] hover:bg-[#6B00D7]/20 font-medium rounded-lg px-4 py-2 text-sm transition-all"
-                      onClick={() => setLocation("/revolutionary-features#triple-chain")}
+                      onClick={() => setLocation("/revolutionary-features#trinity-protocol")}
                     >
-                      Learn More About Triple-Chain Security
+                      Learn More About Trinity Protocol™
                     </Button>
                   </div>
                 </div>
@@ -854,7 +854,7 @@ export default function Documentation() {
                       </div>
                     </a>
                     
-                    <a href="https://github.com/Chronos-Vault/chronos-vault-platform-" target="_blank" rel="noopener noreferrer" className="block p-4 bg-[#141414] rounded-lg border border-[#333] hover:border-[#6B00D7] transition-all group">
+                    <a href="https://github.com/Chronos-Vault/chronos-vault-platform" target="_blank" rel="noopener noreferrer" className="block p-4 bg-[#141414] rounded-lg border border-[#333] hover:border-[#6B00D7] transition-all group">
                       <h4 className="font-semibold text-white mb-2 flex items-center gap-2">
                         <i className="ri-apps-line text-[#FF5AF7]"></i>
                         chronos-vault-platform
