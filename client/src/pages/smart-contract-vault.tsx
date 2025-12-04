@@ -130,7 +130,7 @@ export default function SmartContractVault() {
         <Container>
           <PageHeader
             heading="Smart Contract Vault™"
-            description="Industry-leading ERC-4626 compliant tokenized vault with Triple-Chain Security™"
+            description="Industry-leading ERC-4626 compliant tokenized vault with Trinity Protocol™"
           />
 
           <Tabs defaultValue="overview" className="mt-8" onValueChange={setActiveTab}>
@@ -187,7 +187,7 @@ export default function SmartContractVault() {
                       <div className="w-12 h-12 rounded-lg bg-[#FF5AF7] flex items-center justify-center mb-3">
                         <Shield className="h-6 w-6 text-white" />
                       </div>
-                      <CardTitle className="text-xl text-white">Triple-Chain Security™</CardTitle>
+                      <CardTitle className="text-xl text-white">Trinity Protocol™ Security</CardTitle>
                       <CardDescription className="text-gray-400">
                         Unique cross-chain verification mechanism
                       </CardDescription>
@@ -343,7 +343,7 @@ export default function SmartContractVault() {
                             </div>
                             <h3 className="text-lg font-bold text-white mb-2">Security Implementation</h3>
                             <p className="text-sm text-gray-300">
-                              Triple-Chain Security™ protocol activates, creating verification records on Ethereum, Solana, and TON. Quantum-resistant encryption is applied to access parameters.
+                              Trinity Protocol™ activates, creating verification records on Ethereum, Solana, and TON. Quantum-resistant encryption is applied to access parameters.
                             </p>
                           </div>
                           
@@ -521,7 +521,7 @@ export default function SmartContractVault() {
               >
                 <Card className="bg-[#151515] border-[#333]">
                   <CardHeader>
-                    <CardTitle className="text-2xl text-white">Triple-Chain Security Architecture</CardTitle>
+                    <CardTitle className="text-2xl text-white">Trinity Protocol™ Security Architecture</CardTitle>
                     <CardDescription className="text-gray-400">
                       How our revolutionary security model protects your assets across multiple blockchains
                     </CardDescription>
