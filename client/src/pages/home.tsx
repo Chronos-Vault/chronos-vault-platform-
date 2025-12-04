@@ -194,7 +194,7 @@ const Home = () => {
               </div>
             </motion.div>
             
-            {/* Advanced Security Cards Grid - Matching Premium Triple-Chain Style */}
+            {/* Advanced Security Cards Grid - Matching Premium Trinity Protocol Style */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto mb-16">
               
               {/* Trinity Protocol Architecture */}
@@ -943,7 +943,7 @@ const Home = () => {
           </div>
         </section>
         
-        {/* Triple-Chain Security Section */}
+        {/* Trinity Protocol Security Section */}
         <section className="py-20 bg-black">
           <div className="container mx-auto px-4">
             <div className="text-center mb-12">
@@ -1214,7 +1214,7 @@ const Home = () => {
                 </div>
                 
                 <div className="text-xs text-center text-gray-500 bg-black/50 rounded-full py-2 px-4">
-                  Chronos Vault Secure Interface • Quantum Resistant • Triple-Chain Protection • Zero-Knowledge Privacy
+                  Chronos Vault Secure Interface • Quantum Resistant • Trinity Protocol™ Protection • Zero-Knowledge Privacy
                 </div>
               </div>
               </div>
