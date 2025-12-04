@@ -1,5 +1,6 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { Link } from "wouter";
+import { useQuery } from "@tanstack/react-query";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
@@ -7,6 +8,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
+import { Badge } from "@/components/ui/badge";
+import { Skeleton } from "@/components/ui/skeleton";
 import DocumentationLayout from "@/components/layout/DocumentationLayout";
 import { 
   Code, 
@@ -25,8 +28,26 @@ import {
   BoxSelect,
   BadgeCheck,
   Filter,
-  FileText
+  FileText,
+  CheckCircle,
+  XCircle
 } from "lucide-react";
+
+interface ApiEndpoint {
+  method: string;
+  path: string;
+  description: string;
+  auth: boolean;
+}
+
+interface ApiInfoResponse {
+  success: boolean;
+  baseUrl: string;
+  version: string;
+  totalEndpoints: number;
+  categories: number;
+  endpoints: Record<string, ApiEndpoint[]>;
+}
 
 const ApiDocumentation = () => {
   type EndpointKey = "List Vaults" | "Create Vault";
@@ -35,6 +56,23 @@ const ApiDocumentation = () => {
   const [selectedEndpoint, setSelectedEndpoint] = useState<EndpointKey | null>(null);
   const [selectedLanguage, setSelectedLanguage] = useState<LanguageKey>("javascript");
   const [activeTab, setActiveTab] = useState<string>("overview");
+
+  // Fetch real API endpoint info
+  const { data: apiInfo, isLoading: loadingApiInfo } = useQuery<ApiInfoResponse>({
+    queryKey: ['/api/developer/api-info'],
+    refetchInterval: 60000,
+  });
+
+  const getMethodColor = (method: string) => {
+    switch (method) {
+      case 'GET': return 'bg-green-600';
+      case 'POST': return 'bg-blue-600';
+      case 'PUT': return 'bg-yellow-600';
+      case 'DELETE': return 'bg-red-600';
+      case 'PATCH': return 'bg-purple-600';
+      default: return 'bg-gray-600';
+    }
+  };
 
   const handleTabChange = (value: string) => {
     setActiveTab(value);
@@ -296,13 +334,13 @@ create_vault()`,
                     <li>Monitor and verify vault integrity with real-time updates</li>
                   </ul>
                   
-                  <h3 className="text-xl font-semibold mb-2 text-indigo-700 dark:text-indigo-400">Base URL</h3>
+                  <h3 className="text-xl font-semibold mb-2 text-indigo-700 dark:text-indigo-400">API Base URL (for making API calls)</h3>
                   <div className="bg-black/10 dark:bg-white/10 p-3 rounded-md font-mono mb-4">
                     https://chronosvault.org/api
                   </div>
                   <div className="bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800 rounded-md p-4 mb-4">
                     <p className="text-amber-800 dark:text-amber-400 text-sm">
-                      <strong>Important:</strong> The API is served from the same domain as the platform (chronosvault.org), not a separate subdomain.
+                      <strong>Important:</strong> This is the base URL you use when making API requests in your code (e.g., <code className="bg-amber-100 dark:bg-amber-900 px-1 rounded">https://chronosvault.org/api/vaults</code>). The API is served from the same domain as the platform (chronosvault.org), not a separate subdomain.
                     </p>
                   </div>
                   
@@ -375,6 +413,86 @@ create_vault()`,
                   Explore API Endpoints
                 </Button>
               </CardFooter>
+            </Card>
+
+            {/* Live API Reference Section */}
+            <Card className="mt-8">
+              <CardHeader>
+                <div className="flex items-center justify-between">
+                  <div>
+                    <CardTitle className="flex items-center gap-2">
+                      <FileJson className="h-6 w-6 text-indigo-500" />
+                      Live API Reference
+                    </CardTitle>
+                    <CardDescription>
+                      Real-time endpoint catalog from the backend
+                    </CardDescription>
+                  </div>
+                  {apiInfo && (
+                    <div className="flex items-center gap-2">
+                      <Badge variant="outline" className="border-green-500 text-green-500">
+                        <CheckCircle className="h-3 w-3 mr-1" /> Online
+                      </Badge>
+                      <Badge className="bg-purple-600">{apiInfo.totalEndpoints} Endpoints</Badge>
+                    </div>
+                  )}
+                </div>
+              </CardHeader>
+              <CardContent>
+                {loadingApiInfo ? (
+                  <div className="space-y-4">
+                    {[...Array(4)].map((_, i) => (
+                      <Skeleton key={i} className="h-20 w-full bg-gray-800" />
+                    ))}
+                  </div>
+                ) : apiInfo?.endpoints ? (
+                  <div className="space-y-6">
+                    <div className="flex items-center gap-4 text-sm text-gray-400">
+                      <span>Base URL: <code className="bg-gray-900 px-2 py-1 rounded">{apiInfo.baseUrl}</code></span>
+                      <span>Version: <code className="bg-gray-900 px-2 py-1 rounded">{apiInfo.version}</code></span>
+                    </div>
+                    
+                    <Accordion type="single" collapsible className="w-full">
+                      {Object.entries(apiInfo.endpoints).map(([category, endpoints]) => (
+                        <AccordionItem key={category} value={category}>
+                          <AccordionTrigger className="hover:no-underline">
+                            <div className="flex items-center gap-3">
+                              <Badge variant="outline" className="capitalize">{category}</Badge>
+                              <span className="text-gray-400">{endpoints.length} endpoints</span>
+                            </div>
+                          </AccordionTrigger>
+                          <AccordionContent>
+                            <div className="space-y-3 pt-2">
+                              {endpoints.map((endpoint, idx) => (
+                                <div key={idx} className="flex items-center gap-4 p-3 bg-gray-900/50 rounded-lg border border-gray-800">
+                                  <Badge className={`${getMethodColor(endpoint.method)} min-w-[70px] justify-center`}>
+                                    {endpoint.method}
+                                  </Badge>
+                                  <code className="text-sm text-purple-400 flex-1">{endpoint.path}</code>
+                                  <span className="text-sm text-gray-400 flex-1">{endpoint.description}</span>
+                                  {endpoint.auth ? (
+                                    <Badge variant="outline" className="border-yellow-500 text-yellow-500">
+                                      <Lock className="h-3 w-3 mr-1" /> Auth
+                                    </Badge>
+                                  ) : (
+                                    <Badge variant="outline" className="border-gray-500 text-gray-500">
+                                      Public
+                                    </Badge>
+                                  )}
+                                </div>
+                              ))}
+                            </div>
+                          </AccordionContent>
+                        </AccordionItem>
+                      ))}
+                    </Accordion>
+                  </div>
+                ) : (
+                  <div className="text-center py-8 text-gray-400">
+                    Unable to load API reference. Please try again later.
+                  </div>
+                )}
+              </CardContent>
             </Card>
           </TabsContent>
 

@@ -1,8 +1,10 @@
-import React from "react";
 import { Link } from "wouter";
+import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
+import { Badge } from "@/components/ui/badge";
+import { Skeleton } from "@/components/ui/skeleton";
 import DocumentationLayout from "@/components/layout/DocumentationLayout";
 import { 
   Code, 
@@ -16,9 +18,65 @@ import {
   Users,
   Wrench,
   Puzzle,
+  Activity,
+  BarChart3,
+  Clock,
+  Package,
+  Download,
+  ExternalLink,
 } from "lucide-react";
 
+interface DeveloperStats {
+  success: boolean;
+  stats: {
+    totalApiCalls: number;
+    activeApiKeys: number;
+    totalVaultsCreated: number;
+    totalTransactions: number;
+    avgResponseTime: number;
+    uptime: number;
+    chains: {
+      arbitrum: { transactions: number; vaults: number };
+      solana: { transactions: number; vaults: number };
+      ton: { transactions: number; vaults: number };
+    };
+    lastUpdated: string;
+  };
+}
+
+interface SDKInfo {
+  success: boolean;
+  version: string;
+  releaseDate: string;
+  changelog: string;
+  languages: Array<{
+    name: string;
+    package: string;
+    version: string;
+    install: string;
+    github: string;
+  }>;
+}
+
 const DeveloperPortal = () => {
+  // Fetch developer stats
+  const { data: statsData, isLoading: loadingStats } = useQuery<DeveloperStats>({
+    queryKey: ['/api/developer/stats'],
+    refetchInterval: 30000,
+  });
+
+  // Fetch SDK info
+  const { data: sdkData, isLoading: loadingSdk } = useQuery<SDKInfo>({
+    queryKey: ['/api/developer/sdk'],
+    refetchInterval: 60000,
+  });
+
+  const formatNumber = (num: number) => {
+    if (num >= 1000000) return (num / 1000000).toFixed(1) + 'M';
+    if (num >= 1000) return (num / 1000).toFixed(1) + 'K';
+    return num.toString();
+  };
+
   return (
     <DocumentationLayout title="Developer Portal" subtitle="Comprehensive resources for building with Chronos Vault">
       <div className="container mx-auto p-4 space-y-8">
@@ -38,7 +96,7 @@ const DeveloperPortal = () => {
                   <Link href="/api-documentation">Explore the API</Link>
                 </Button>
                 <Button asChild variant="outline">
-                  <Link href="/sdk-documentation">Get Started with SDKs</Link>
+                  <a href="https://github.com/Chronos-Vault/chronos-vault-sdk" target="_blank" rel="noopener noreferrer">Get Started with SDKs</a>
                 </Button>
               </div>
             </div>
@@ -50,6 +108,127 @@ const DeveloperPortal = () => {
               </div>
             </div>
           </div>
+        </section>
+
+        <Separator className="my-8 bg-gray-800" />
+
+        {/* Platform Statistics */}
+        <section className="space-y-6">
+          <div className="flex items-center justify-between">
+            <h2 className="text-2xl font-bold">Platform Statistics</h2>
+            {statsData && (
+              <Badge variant="outline" className="text-green-500 border-green-500">
+                <Activity className="h-3 w-3 mr-1" /> Live
+              </Badge>
+            )}
+          </div>
+          
+          {loadingStats ? (
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              {[...Array(4)].map((_, i) => (
+                <Skeleton key={i} className="h-24 bg-gray-800" />
+              ))}
+            </div>
+          ) : statsData?.stats ? (
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              <Card className="bg-gradient-to-br from-purple-900/30 to-purple-800/10 border-purple-500/20">
+                <CardContent className="pt-6">
+                  <div className="flex items-center gap-3">
+                    <BarChart3 className="h-8 w-8 text-purple-400" />
+                    <div>
+                      <p className="text-2xl font-bold">{formatNumber(statsData.stats.totalApiCalls)}</p>
+                      <p className="text-sm text-gray-400">API Calls</p>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+              
+              <Card className="bg-gradient-to-br from-blue-900/30 to-blue-800/10 border-blue-500/20">
+                <CardContent className="pt-6">
+                  <div className="flex items-center gap-3">
+                    <Users className="h-8 w-8 text-blue-400" />
+                    <div>
+                      <p className="text-2xl font-bold">{statsData.stats.activeApiKeys}</p>
+                      <p className="text-sm text-gray-400">Active API Keys</p>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+              
+              <Card className="bg-gradient-to-br from-green-900/30 to-green-800/10 border-green-500/20">
+                <CardContent className="pt-6">
+                  <div className="flex items-center gap-3">
+                    <Clock className="h-8 w-8 text-green-400" />
+                    <div>
+                      <p className="text-2xl font-bold">{statsData.stats.avgResponseTime}ms</p>
+                      <p className="text-sm text-gray-400">Avg Response</p>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+              
+              <Card className="bg-gradient-to-br from-cyan-900/30 to-cyan-800/10 border-cyan-500/20">
+                <CardContent className="pt-6">
+                  <div className="flex items-center gap-3">
+                    <Activity className="h-8 w-8 text-cyan-400" />
+                    <div>
+                      <p className="text-2xl font-bold">{statsData.stats.uptime}%</p>
+                      <p className="text-sm text-gray-400">Uptime</p>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+          ) : null}
+        </section>
+
+        <Separator className="my-8 bg-gray-800" />
+
+        {/* SDK Downloads */}
+        <section className="space-y-6">
+          <div className="flex items-center justify-between">
+            <h2 className="text-2xl font-bold">Official SDKs</h2>
+            {sdkData && (
+              <Badge className="bg-purple-600">v{sdkData.version}</Badge>
+            )}
+          </div>
+          
+          {loadingSdk ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+              {[...Array(4)].map((_, i) => (
+                <Skeleton key={i} className="h-32 bg-gray-800" />
+              ))}
+            </div>
+          ) : sdkData?.languages ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+              {sdkData.languages.map((lang) => (
+                <Card key={lang.name} className="bg-black/20 border border-gray-800 hover:border-purple-500/50 transition-all">
+                  <CardHeader className="pb-2">
+                    <CardTitle className="text-lg flex items-center gap-2">
+                      <Package className="h-5 w-5 text-purple-400" />
+                      {lang.name}
+                    </CardTitle>
+                    <CardDescription className="font-mono text-xs">{lang.package}</CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <code className="text-xs bg-gray-900 px-2 py-1 rounded block overflow-hidden text-ellipsis">
+                      {lang.install}
+                    </code>
+                  </CardContent>
+                  <CardFooter>
+                    <Button 
+                      size="sm" 
+                      variant="outline" 
+                      className="w-full"
+                      onClick={() => window.open(lang.github, '_blank')}
+                    >
+                      <ExternalLink className="h-4 w-4 mr-1" /> GitHub
+                    </Button>
+                  </CardFooter>
+                </Card>
+              ))}
+            </div>
+          ) : null}
         </section>
 
         <Separator className="my-8 bg-gray-800" />
@@ -118,7 +297,7 @@ const DeveloperPortal = () => {
               </CardContent>
               <CardFooter>
                 <Button asChild variant="outline" className="w-full">
-                  <Link href="/sdk-documentation">View SDK Documentation</Link>
+                  <a href="https://github.com/Chronos-Vault/chronos-vault-sdk" target="_blank" rel="noopener noreferrer">View SDK Documentation</a>
                 </Button>
               </CardFooter>
             </Card>
@@ -348,9 +527,9 @@ const DeveloperPortal = () => {
                   asChild 
                   variant="outline" 
                   className="w-full"
-                  onClick={() => window.open('https://github.com/chronos-vault/chronos-vault-platform-', '_blank')}
+                  onClick={() => window.open('https://github.com/chronos-vault/chronos-vault-platform', '_blank')}
                 >
-                  <a href="https://github.com/chronos-vault/chronos-vault-platform-" target="_blank" rel="noopener noreferrer">
+                  <a href="https://github.com/chronos-vault/chronos-vault-platform" target="_blank" rel="noopener noreferrer">
                     View Platform Repository
                   </a>
                 </Button>

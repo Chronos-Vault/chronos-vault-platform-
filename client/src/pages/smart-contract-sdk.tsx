@@ -1,14 +1,68 @@
-import React from "react";
+import { useState } from "react";
 import { Link } from "wouter";
+import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { ArrowRight, Download, FileCode, AlertCircle, Info, Shield, CodeXml } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import { Skeleton } from "@/components/ui/skeleton";
+import { ArrowRight, Download, FileCode, AlertCircle, Info, Shield, CodeXml, ExternalLink, Loader2, Copy, Check } from "lucide-react";
 import DocumentationLayout from "@/components/layout/DocumentationLayout";
+import { useToast } from "@/hooks/use-toast";
+
+interface ContractInfo {
+  name: string;
+  address: string;
+  description: string;
+}
+
+interface ChainContracts {
+  network: string;
+  chainId?: number;
+  explorerUrl: string;
+  params?: string;
+  contracts: ContractInfo[];
+}
+
+interface ContractsResponse {
+  success: boolean;
+  version: string;
+  lastUpdated: string;
+  contracts: {
+    arbitrum: ChainContracts;
+    solana: ChainContracts;
+    ton: ChainContracts;
+    validators: Array<{
+      chainId: number;
+      name: string;
+      address: string;
+      role: string;
+    }>;
+  };
+}
 
 const SmartContractSDK = () => {
+  const { toast } = useToast();
+  const [copiedAddress, setCopiedAddress] = useState<string | null>(null);
+
+  // Fetch real contract data from backend
+  const { data: contractsData, isLoading } = useQuery<ContractsResponse>({
+    queryKey: ['/api/developer/contracts'],
+    refetchInterval: 60000, // Refresh every minute
+  });
+
+  const copyToClipboard = (address: string) => {
+    navigator.clipboard.writeText(address);
+    setCopiedAddress(address);
+    toast({
+      title: "Address Copied",
+      description: "Contract address copied to clipboard",
+    });
+    setTimeout(() => setCopiedAddress(null), 2000);
+  };
+
   return (
     <DocumentationLayout title="Smart Contract SDK" description="Blockchain smart contract interfaces for Chronos Vault integration">
       <div className="container mx-auto p-4 space-y-8">
@@ -137,71 +191,205 @@ const SmartContractSDK = () => {
         <Separator className="my-8 bg-gray-800" />
 
         <section className="space-y-6">
-          <h2 className="text-2xl font-bold">Deployed Contract Addresses (Testnet)</h2>
-          <p className="text-gray-400">Use these testnet addresses for development and integration testing.</p>
-          
-          <div className="overflow-x-auto">
-            <table className="w-full border-collapse">
-              <thead>
-                <tr className="bg-gray-900/50">
-                  <th className="px-4 py-3 text-left text-sm font-semibold border border-gray-800">Blockchain</th>
-                  <th className="px-4 py-3 text-left text-sm font-semibold border border-gray-800">Network</th>
-                  <th className="px-4 py-3 text-left text-sm font-semibold border border-gray-800">Contract</th>
-                  <th className="px-4 py-3 text-left text-sm font-semibold border border-gray-800">Address</th>
-                </tr>
-              </thead>
-              <tbody className="text-sm">
-                <tr className="hover:bg-gray-900/30">
-                  <td className="px-4 py-3 border border-gray-800 font-medium">Arbitrum L2</td>
-                  <td className="px-4 py-3 border border-gray-800 text-gray-400">Sepolia Testnet</td>
-                  <td className="px-4 py-3 border border-gray-800 text-purple-400">ChronosVault</td>
-                  <td className="px-4 py-3 border border-gray-800">
-                    <code className="bg-gray-900 px-2 py-1 rounded text-xs">0x99444B0B1d6F7b21e9234229a2AC2bC0150B9d91</code>
-                  </td>
-                </tr>
-                <tr className="hover:bg-gray-900/30">
-                  <td className="px-4 py-3 border border-gray-800 font-medium">Arbitrum L2</td>
-                  <td className="px-4 py-3 border border-gray-800 text-gray-400">Sepolia Testnet</td>
-                  <td className="px-4 py-3 border border-gray-800 text-purple-400">CVTBridge</td>
-                  <td className="px-4 py-3 border border-gray-800">
-                    <code className="bg-gray-900 px-2 py-1 rounded text-xs">0x21De95EbA01E31173Efe1b9c4D57E58bb840bA86</code>
-                  </td>
-                </tr>
-                <tr className="hover:bg-gray-900/30">
-                  <td className="px-4 py-3 border border-gray-800 font-medium">Arbitrum L2</td>
-                  <td className="px-4 py-3 border border-gray-800 text-gray-400">Sepolia Testnet</td>
-                  <td className="px-4 py-3 border border-gray-800 text-purple-400">CrossChainBridgeV3</td>
-                  <td className="px-4 py-3 border border-gray-800">
-                    <code className="bg-gray-900 px-2 py-1 rounded text-xs">0x5bC40A7a47A2b767D948FEEc475b24c027B43867</code>
-                  </td>
-                </tr>
-                <tr className="hover:bg-gray-900/30">
-                  <td className="px-4 py-3 border border-gray-800 font-medium">Solana</td>
-                  <td className="px-4 py-3 border border-gray-800 text-gray-400">Devnet</td>
-                  <td className="px-4 py-3 border border-gray-800 text-purple-400">Chronos Vault Program</td>
-                  <td className="px-4 py-3 border border-gray-800">
-                    <code className="bg-gray-900 px-2 py-1 rounded text-xs">CYaDJYRqm35udQ8vkxoajSER8oaniQUcV8Vvw5BqJyo2</code>
-                  </td>
-                </tr>
-                <tr className="hover:bg-gray-900/30">
-                  <td className="px-4 py-3 border border-gray-800 font-medium">TON</td>
-                  <td className="px-4 py-3 border border-gray-800 text-gray-400">Testnet</td>
-                  <td className="px-4 py-3 border border-gray-800 text-purple-400">ChronosVault</td>
-                  <td className="px-4 py-3 border border-gray-800">
-                    <code className="bg-gray-900 px-2 py-1 rounded text-xs">EQDJAnXDPT-NivritpEhQeP0XmG20NdeUtxgh4nUiWH-DF7M</code>
-                  </td>
-                </tr>
-                <tr className="hover:bg-gray-900/30">
-                  <td className="px-4 py-3 border border-gray-800 font-medium">TON</td>
-                  <td className="px-4 py-3 border border-gray-800 text-gray-400">Testnet</td>
-                  <td className="px-4 py-3 border border-gray-800 text-purple-400">CVTBridge (Jetton)</td>
-                  <td className="px-4 py-3 border border-gray-800">
-                    <code className="bg-gray-900 px-2 py-1 rounded text-xs">EQAOJxa1WDjGZ7f3n53JILojhZoDdTOKWl6h41_yOWX3v0tq</code>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
+          <div className="flex items-center justify-between">
+            <div>
+              <h2 className="text-2xl font-bold">Deployed Contract Addresses (Testnet)</h2>
+              <p className="text-gray-400">Use these testnet addresses for development and integration testing.</p>
+            </div>
+            {contractsData && (
+              <Badge variant="outline" className="border-green-500 text-green-500">
+                {contractsData.version} - Updated {new Date(contractsData.lastUpdated).toLocaleDateString()}
+              </Badge>
+            )}
           </div>
+          
+          {isLoading ? (
+            <div className="space-y-4">
+              {[...Array(6)].map((_, i) => (
+                <Skeleton key={i} className="h-12 w-full bg-gray-800" />
+              ))}
+            </div>
+          ) : contractsData?.contracts ? (
+            <Tabs defaultValue="arbitrum" className="w-full">
+              <TabsList className="bg-gray-800 mb-4">
+                <TabsTrigger value="arbitrum" data-testid="tab-arbitrum">Arbitrum ({contractsData.contracts.arbitrum.contracts.length})</TabsTrigger>
+                <TabsTrigger value="solana" data-testid="tab-solana">Solana ({contractsData.contracts.solana.contracts.length})</TabsTrigger>
+                <TabsTrigger value="ton" data-testid="tab-ton">TON ({contractsData.contracts.ton.contracts.length})</TabsTrigger>
+                <TabsTrigger value="validators" data-testid="tab-validators">Validators ({contractsData.contracts.validators.length})</TabsTrigger>
+              </TabsList>
+              
+              <TabsContent value="arbitrum" className="space-y-4">
+                <div className="flex items-center gap-2 mb-4">
+                  <Badge className="bg-blue-600">{contractsData.contracts.arbitrum.network}</Badge>
+                  <span className="text-gray-400 text-sm">Chain ID: {contractsData.contracts.arbitrum.chainId}</span>
+                </div>
+                <div className="overflow-x-auto">
+                  <table className="w-full border-collapse">
+                    <thead>
+                      <tr className="bg-gray-900/50">
+                        <th className="px-4 py-3 text-left text-sm font-semibold border border-gray-800">Contract</th>
+                        <th className="px-4 py-3 text-left text-sm font-semibold border border-gray-800">Description</th>
+                        <th className="px-4 py-3 text-left text-sm font-semibold border border-gray-800">Address</th>
+                        <th className="px-4 py-3 text-left text-sm font-semibold border border-gray-800">Actions</th>
+                      </tr>
+                    </thead>
+                    <tbody className="text-sm">
+                      {contractsData.contracts.arbitrum.contracts.map((contract) => (
+                        <tr key={contract.address} className="hover:bg-gray-900/30">
+                          <td className="px-4 py-3 border border-gray-800 text-purple-400 font-medium">{contract.name}</td>
+                          <td className="px-4 py-3 border border-gray-800 text-gray-400">{contract.description}</td>
+                          <td className="px-4 py-3 border border-gray-800">
+                            <code className="bg-gray-900 px-2 py-1 rounded text-xs">{contract.address}</code>
+                          </td>
+                          <td className="px-4 py-3 border border-gray-800">
+                            <div className="flex gap-2">
+                              <Button 
+                                size="sm" 
+                                variant="ghost" 
+                                onClick={() => copyToClipboard(contract.address)}
+                                data-testid={`copy-${contract.name}`}
+                              >
+                                {copiedAddress === contract.address ? <Check className="h-4 w-4 text-green-500" /> : <Copy className="h-4 w-4" />}
+                              </Button>
+                              <Button 
+                                size="sm" 
+                                variant="ghost"
+                                onClick={() => window.open(`${contractsData.contracts.arbitrum.explorerUrl}${contract.address}`, '_blank')}
+                                data-testid={`explorer-${contract.name}`}
+                              >
+                                <ExternalLink className="h-4 w-4" />
+                              </Button>
+                            </div>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </TabsContent>
+              
+              <TabsContent value="solana" className="space-y-4">
+                <div className="flex items-center gap-2 mb-4">
+                  <Badge className="bg-green-600">{contractsData.contracts.solana.network}</Badge>
+                </div>
+                <div className="overflow-x-auto">
+                  <table className="w-full border-collapse">
+                    <thead>
+                      <tr className="bg-gray-900/50">
+                        <th className="px-4 py-3 text-left text-sm font-semibold border border-gray-800">Program</th>
+                        <th className="px-4 py-3 text-left text-sm font-semibold border border-gray-800">Description</th>
+                        <th className="px-4 py-3 text-left text-sm font-semibold border border-gray-800">Address</th>
+                        <th className="px-4 py-3 text-left text-sm font-semibold border border-gray-800">Actions</th>
+                      </tr>
+                    </thead>
+                    <tbody className="text-sm">
+                      {contractsData.contracts.solana.contracts.map((contract) => (
+                        <tr key={contract.address} className="hover:bg-gray-900/30">
+                          <td className="px-4 py-3 border border-gray-800 text-green-400 font-medium">{contract.name}</td>
+                          <td className="px-4 py-3 border border-gray-800 text-gray-400">{contract.description}</td>
+                          <td className="px-4 py-3 border border-gray-800">
+                            <code className="bg-gray-900 px-2 py-1 rounded text-xs">{contract.address}</code>
+                          </td>
+                          <td className="px-4 py-3 border border-gray-800">
+                            <div className="flex gap-2">
+                              <Button size="sm" variant="ghost" onClick={() => copyToClipboard(contract.address)}>
+                                {copiedAddress === contract.address ? <Check className="h-4 w-4 text-green-500" /> : <Copy className="h-4 w-4" />}
+                              </Button>
+                              <Button 
+                                size="sm" 
+                                variant="ghost"
+                                onClick={() => window.open(`${contractsData.contracts.solana.explorerUrl}${contract.address}${contractsData.contracts.solana.params || ''}`, '_blank')}
+                              >
+                                <ExternalLink className="h-4 w-4" />
+                              </Button>
+                            </div>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </TabsContent>
+              
+              <TabsContent value="ton" className="space-y-4">
+                <div className="flex items-center gap-2 mb-4">
+                  <Badge className="bg-cyan-600">{contractsData.contracts.ton.network}</Badge>
+                </div>
+                <div className="overflow-x-auto">
+                  <table className="w-full border-collapse">
+                    <thead>
+                      <tr className="bg-gray-900/50">
+                        <th className="px-4 py-3 text-left text-sm font-semibold border border-gray-800">Contract</th>
+                        <th className="px-4 py-3 text-left text-sm font-semibold border border-gray-800">Description</th>
+                        <th className="px-4 py-3 text-left text-sm font-semibold border border-gray-800">Address</th>
+                        <th className="px-4 py-3 text-left text-sm font-semibold border border-gray-800">Actions</th>
+                      </tr>
+                    </thead>
+                    <tbody className="text-sm">
+                      {contractsData.contracts.ton.contracts.map((contract) => (
+                        <tr key={contract.address} className="hover:bg-gray-900/30">
+                          <td className="px-4 py-3 border border-gray-800 text-cyan-400 font-medium">{contract.name}</td>
+                          <td className="px-4 py-3 border border-gray-800 text-gray-400">{contract.description}</td>
+                          <td className="px-4 py-3 border border-gray-800">
+                            <code className="bg-gray-900 px-2 py-1 rounded text-xs">{contract.address}</code>
+                          </td>
+                          <td className="px-4 py-3 border border-gray-800">
+                            <div className="flex gap-2">
+                              <Button size="sm" variant="ghost" onClick={() => copyToClipboard(contract.address)}>
+                                {copiedAddress === contract.address ? <Check className="h-4 w-4 text-green-500" /> : <Copy className="h-4 w-4" />}
+                              </Button>
+                              <Button 
+                                size="sm" 
+                                variant="ghost"
+                                onClick={() => window.open(`${contractsData.contracts.ton.explorerUrl}${contract.address}`, '_blank')}
+                              >
+                                <ExternalLink className="h-4 w-4" />
+                              </Button>
+                            </div>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </TabsContent>
+              
+              <TabsContent value="validators" className="space-y-4">
+                <p className="text-gray-400">Trinity Protocol validators responsible for 2-of-3 consensus verification.</p>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  {contractsData.contracts.validators.map((validator) => (
+                    <Card key={validator.address} className="bg-black/20 border border-gray-800">
+                      <CardHeader className="pb-2">
+                        <CardTitle className="text-base flex items-center gap-2">
+                          <Shield className="h-5 w-5 text-purple-400" />
+                          {validator.name}
+                        </CardTitle>
+                        <CardDescription>{validator.role}</CardDescription>
+                      </CardHeader>
+                      <CardContent>
+                        <div className="flex items-center gap-2">
+                          <code className="bg-gray-900 px-2 py-1 rounded text-xs flex-1 overflow-hidden text-ellipsis">
+                            {validator.address}
+                          </code>
+                          <Button size="sm" variant="ghost" onClick={() => copyToClipboard(validator.address)}>
+                            {copiedAddress === validator.address ? <Check className="h-4 w-4 text-green-500" /> : <Copy className="h-4 w-4" />}
+                          </Button>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  ))}
+                </div>
+              </TabsContent>
+            </Tabs>
+          ) : (
+            <Alert variant="default" className="border-red-500 bg-red-500/10">
+              <AlertCircle className="h-4 w-4 text-red-500" />
+              <AlertTitle>Unable to Load Contracts</AlertTitle>
+              <AlertDescription>
+                Failed to fetch contract data from the server. Please try again later.
+              </AlertDescription>
+            </Alert>
+          )}
 
           <Alert variant="default" className="border-yellow-500 bg-yellow-500/10">
             <AlertCircle className="h-4 w-4 text-yellow-500" />
