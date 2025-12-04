@@ -50,7 +50,7 @@ export default function FAQPage() {
         >
           <PageHeader
             heading="Frequently Asked Questions"
-            description="Everything you need to know about Chronos Vault's Triple-Chain Security Architecture"
+            description="Everything you need to know about Chronos Vault's Trinity Protocol™ Security Architecture"
             separator={true}
           />
         </motion.div>
@@ -378,7 +378,7 @@ export default function FAQPage() {
                           </div>
                           
                           <div className="p-3 bg-[#1D1D1D] rounded-lg border border-[#333]">
-                            <h4 className="font-semibold text-[#FF5AF7]">Triple-Chain Verification</h4>
+                            <h4 className="font-semibold text-[#FF5AF7]">Trinity Protocol™ Verification</h4>
                             <p className="text-sm mt-1">Critical operations require confirmation from multiple chains, ensuring that errors on a single chain don't compromise security</p>
                           </div>
                           
@@ -533,7 +533,7 @@ export default function FAQPage() {
                               <li>Cross-chain verification for all operations</li>
                               <li>Multi-signature requirements (configurable threshold)</li>
                               <li>Geographic restrictions option</li>
-                              <li>Full Triple-Chain security (Ethereum + Solana + TON)</li>
+                              <li>Full Trinity Protocol™ security (Ethereum + Solana + TON)</li>
                               <li>Zero-knowledge proof options for maximum privacy</li>
                             </ul>
                           </div>
@@ -577,7 +577,7 @@ export default function FAQPage() {
                               <li>CRYSTALS-Dilithium signatures</li>
                               <li>Kyber-1024 encryption</li>
                               <li>Zero-knowledge proofs</li>
-                              <li>Triple-chain verification for all operations</li>
+                              <li>Trinity Protocol™ verification for all operations</li>
                             </ul>
                           </div>
                           
@@ -910,7 +910,7 @@ export default function FAQPage() {
               <div>
                 <h4 className="font-medium mb-1">Active Features:</h4>
                 <ul className="list-disc pl-6">
-                  <li>Triple-Chain Security</li>
+                  <li>Trinity Protocol™ Security</li>
                   <li>Cross-Chain Bridge</li>
                   <li>AI-Enhanced Monitoring</li>
                 </ul>
