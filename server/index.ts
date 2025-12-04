@@ -1369,8 +1369,9 @@ async function initBlockchainServices(): Promise<void> {
     }
     
     const PORT = process.env.PORT || 5000;
-    httpServer.listen(PORT, async () => {
-      console.log(`\n🚀 Server running on port ${PORT}`);
+    const HOST = '0.0.0.0'; // Required for Cloud Run to receive external traffic
+    httpServer.listen(Number(PORT), HOST, async () => {
+      console.log(`\n🚀 Server running on ${HOST}:${PORT}`);
       securityLogger.info(
         `Server started on port ${PORT}`,
         SecurityEventType.SYSTEM_ERROR,
