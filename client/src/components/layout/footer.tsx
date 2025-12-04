@@ -1,5 +1,5 @@
 import { Link } from "wouter";
-import logoPath from '@assets/IMG_3753.jpeg';
+import chronosLogo from "@assets/IMG_3753_1764790970107.jpeg";
 
 const Footer = ({ className = '' }: { className?: string }) => {
   const currentYear = new Date().getFullYear();
@@ -16,7 +16,7 @@ const Footer = ({ className = '' }: { className?: string }) => {
           <div className="md:col-span-2">
             <Link href="/" className="flex items-center gap-3 mb-8 group">
               <div className="h-14 w-14 rounded-full flex items-center justify-center shadow-lg shadow-[#6B00D7]/20 group-hover:shadow-[#FF5AF7]/30 transition-all overflow-hidden border-2 border-white/20">
-                <img src={logoPath} alt="Chronos Vault Logo" className="w-full h-full object-cover" />
+                <img src={chronosLogo} alt="Chronos Vault Logo" className="w-full h-full object-cover" />
               </div>
               <div className="relative">
                 <h1 className="text-3xl font-poppins font-bold text-white">
@@ -95,6 +95,7 @@ const Footer = ({ className = '' }: { className?: string }) => {
               <li><Link href="/technical-spec" className="text-gray-300 hover:text-[#FF5AF7] transition-all font-poppins font-light hover:translate-x-1 inline-flex">Technical Specs</Link></li>
               <li><Link href="/project-whitepaper" className="text-gray-300 hover:text-[#FF5AF7] transition-all font-poppins font-light hover:translate-x-1 inline-flex">Project Whitepaper</Link></li>
               <li><Link href="/whitepaper" className="text-gray-300 hover:text-[#FF5AF7] transition-all font-poppins font-light hover:translate-x-1 inline-flex">CVT Whitepaper</Link></li>
+              <li><Link href="/trinity-protocol-paper" className="text-gray-300 hover:text-[#FF5AF7] transition-all font-poppins font-light hover:translate-x-1 inline-flex">Trinity Protocol Paper</Link></li>
               <li><Link href="/security-testing" className="text-gray-300 hover:text-[#FF5AF7] transition-all font-poppins font-light hover:translate-x-1 inline-flex">Security Testing</Link></li>
               <li><Link href="/cross-chain-security" className="text-gray-300 hover:text-[#FF5AF7] transition-all font-poppins font-light hover:translate-x-1 inline-flex">Cross-Chain Security</Link></li>
               <li><Link href="/security-verification-demo" className="text-gray-300 hover:text-[#FF5AF7] transition-all font-poppins font-light hover:translate-x-1 inline-flex">Triple-Chain Verification</Link></li>
@@ -120,7 +121,7 @@ const Footer = ({ className = '' }: { className?: string }) => {
         <div className="border-t border-[#6B00D7]/20 pt-10 pb-4 flex flex-col md:flex-row justify-between items-center">
           <div className="flex items-center">
             <div className="h-8 w-8 rounded-lg flex items-center justify-center mr-3 overflow-hidden shadow-inner shadow-[#6B00D7]/10 border border-white/10">
-              <img src={logoPath} alt="Chronos Vault Logo" className="w-full h-full object-cover" />
+              <img src={chronosLogo} alt="Chronos Vault Logo" className="w-full h-full object-cover" />
             </div>
             <p className="text-gray-300 font-poppins font-light">© {currentYear} <span className="text-white font-medium">Chronos Vault</span>. All rights reserved.</p>
           </div>

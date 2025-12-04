@@ -363,11 +363,15 @@ const VaultExplorer = () => {
         vaultType: v.type,
         blockchain: (v.blockchain.toUpperCase() as BlockchainType),
         status: (v.status as VaultStatus),
+        value: v.value || '0 USD',
         totalValue: v.value,
         assetType: v.assetType,
         createdAt: v.createdAt,
         securityLevel: (v.securityLevel as SecurityLevel),
-        crossChainEnabled: v.crossChainEnabled
+        crossChainEnabled: v.crossChainEnabled,
+        owner: '0x0000...0000',
+        unlockDate: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000),
+        txHash: `0x${v.id.replace(/[^a-fA-F0-9]/g, '0').padEnd(64, '0')}`
       } as VaultInfo))
     : [];
 

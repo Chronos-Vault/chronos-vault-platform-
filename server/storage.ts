@@ -39,6 +39,7 @@ export interface IStorage {
   // Vault methods
   getVault(id: number): Promise<Vault | undefined>;
   getVaultsByUser(userId: number): Promise<Vault[]>;
+  getAllVaults(): Promise<Vault[]>;
   createVault(vault: InsertVault): Promise<Vault>;
   updateVault(id: number, vault: Partial<Vault>): Promise<Vault | undefined>;
   deleteVault(id: number): Promise<boolean>;
@@ -489,6 +490,10 @@ export class MemStorage implements IStorage {
     return Array.from(this.vaults.values()).filter(
       (vault) => vault.userId === userId
     );
+  }
+
+  async getAllVaults(): Promise<Vault[]> {
+    return Array.from(this.vaults.values());
   }
 
   async createVault(insertVault: InsertVault): Promise<Vault> {
@@ -1220,6 +1225,10 @@ export class DatabaseStorage implements IStorage {
 
   async getVaultsByUser(userId: number): Promise<Vault[]> {
     return await db.select().from(vaults).where(eq(vaults.userId, userId));
+  }
+
+  async getAllVaults(): Promise<Vault[]> {
+    return await db.select().from(vaults);
   }
 
   async createVault(insertVault: InsertVault): Promise<Vault> {

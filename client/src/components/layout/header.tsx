@@ -1,6 +1,6 @@
 import { Link, useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
-import logoPath from "@assets/IMG_3753.jpeg";
+import chronosLogo from "@assets/IMG_3753_1764790970107.jpeg";
 import {
   Sheet,
   SheetContent,
@@ -124,7 +124,7 @@ const Header = () => {
         <nav className="flex justify-between items-center">
           <Link href="/" className="flex items-center gap-3 group">
             <div className="h-12 w-12 rounded-full flex items-center justify-center shadow-xl shadow-[#FF5AF7]/40 group-hover:shadow-[#FF5AF7]/50 transition-all overflow-hidden border-2 border-white/40 animate-logo-glow">
-              <img src={logoPath} alt="Chronos Vault Logo" className="w-full h-full object-cover" />
+              <img src={chronosLogo} alt="Chronos Vault Logo" className="w-full h-full object-cover" />
             </div>
             <div className="relative">
               <h1 className="text-xl md:text-2xl font-poppins font-bold text-white">
@@ -240,7 +240,7 @@ const Header = () => {
                     <div className="flex items-center gap-3">
                       <Link href="/" className="block">
                         <div className="h-12 w-12 rounded-full flex items-center justify-center shadow-xl shadow-[#FF5AF7]/40 overflow-hidden border-2 border-white/40 animate-logo-glow">
-                          <img src={logoPath} alt="Chronos Vault Logo" className="w-full h-full object-cover" />
+                          <img src={chronosLogo} alt="Chronos Vault Logo" className="w-full h-full object-cover" />
                         </div>
                       </Link>
                       <div className="relative">
@@ -302,7 +302,7 @@ const Header = () => {
                     <div className="mb-4">
                       <h3 className="text-sm font-medium text-[#FF5AF7] mb-3 flex items-center">
                         <div className="h-10 w-10 mr-2 rounded-full flex items-center justify-center shadow-xl shadow-[#FF5AF7]/40 overflow-hidden border-2 border-white/40 animate-logo-glow">
-                          <img src={logoPath} alt="Chronos Vault Logo" className="w-full h-full object-cover" />
+                          <img src={chronosLogo} alt="Chronos Vault Logo" className="w-full h-full object-cover" />
                         </div>
                         Connect Wallet
                       </h3>

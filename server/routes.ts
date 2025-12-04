@@ -16,6 +16,7 @@ import { intentInheritanceRouter } from './api/intent-inheritance-routes';
 import progressiveQuantumVaultRoutes from './api/progressive-quantum-vault-routes';
 import vaultsRoutes from './api/vaults-routes';
 import biometricRoutes from './routes/biometric-routes';
+import atomicSwapHealthRoutes from './routes/health';
 import zeroKnowledgeRoutes from './api/zero-knowledge-routes';
 import geoVaultRoutes from './api/geo-vault-routes';
 import bridgeRoutes from './api/bridge-routes';
@@ -42,8 +43,11 @@ import vaultChainRoutes from './api/vault-chain-routes';
 import vaultCreationRoutes from './api/vault-creation-routes';
 import githubSyncRoutes from './api/github-sync-routes';
 import vaultMDLRoutes from './routes/vault-mdl-routes';
+import validatorRoutes from './api/validator-routes';
+import trinityScannerRoutes from './api/trinity-scanner-routes';
 import { SolanaProgramClient, CHRONOS_VAULT_PROGRAM_ID } from './blockchain/solana-program-client';
 import config from './config';
+import { storage } from './storage';
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // Create HTTP server instance
@@ -67,6 +71,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     res.json({ status: 'success', message: 'Audit log received' });
   });
   apiRouter.use('/health', healthRoutes);
+  apiRouter.use('/health', atomicSwapHealthRoutes); // Atomic swap health endpoints
   apiRouter.use('/incidents', incidentRoutes);
   
   // Register our new device verification and TON smart contract integration routes
@@ -129,6 +134,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
   
   // Register GitHub sync routes for automatic repository updates
   apiRouter.use('/github', githubSyncRoutes);
+  
+  // Register validator onboarding and management routes
+  apiRouter.use('/validators', validatorRoutes);
+  
+  // Register Trinity Scan blockchain explorer routes
+  apiRouter.use('/scanner', trinityScannerRoutes);
   
   // Solana status endpoint - exposes deployed program data
   apiRouter.get('/solana/status', async (req: Request, res: Response) => {
@@ -405,9 +416,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const { chainAvailabilityTracker } = await import('./blockchain/chain-availability-tracker');
       
-      const ethHealth = chainAvailabilityTracker.getChainStatus('ETH');
-      const solHealth = chainAvailabilityTracker.getChainStatus('SOL');
-      const tonHealth = chainAvailabilityTracker.getChainStatus('TON');
+      const ethHealth = chainAvailabilityTracker.getChainStatus('ETH' as any);
+      const solHealth = chainAvailabilityTracker.getChainStatus('SOL' as any);
+      const tonHealth = chainAvailabilityTracker.getChainStatus('TON' as any);
       
       const ethereumConnected = ethHealth.isAvailable;
       const solanaConnected = solHealth.isAvailable;
@@ -679,7 +690,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         message: result.consensusReached 
           ? 'Emergency recovery successful - all 3 chains verified' 
           : `Recovery failed - only ${verifiedCount}/3 chains verified. All 3 chains must agree for emergency recovery.`,
-        operationId: result.operationId || `emergency-${vaultId}-${Date.now()}`,
+        operationId: (result as any).operationId || `emergency-${vaultId}-${Date.now()}`,
         timestamp: result.timestamp
       });
     } catch (error: any) {

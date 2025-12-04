@@ -146,7 +146,11 @@ router.post('/transfer', requireAuth(AuthenticationStatus.AUTHENTICATED), async 
   try {
     const transferData = transferSchema.parse(req.body);
     
-    const txId = await crossChainBridge.transferAsset(transferData);
+    const txId = await crossChainBridge.transferAsset({
+      ...transferData,
+      sourceChain: transferData.sourceChain as any,
+      targetChain: transferData.targetChain as any,
+    });
     
     securityLogger.info('Asset transfer initiated', SecurityEventType.BRIDGE_OPERATION, {
       ...transferData,
@@ -239,7 +243,11 @@ router.post('/atomic-swap', requireAuth(AuthenticationStatus.AUTHENTICATED), asy
   try {
     const swapData = atomicSwapSchema.parse(req.body);
     
-    const swapId = await crossChainBridge.createAtomicSwap(swapData);
+    const swapId = await crossChainBridge.createAtomicSwap({
+      ...swapData,
+      initiatorChain: swapData.initiatorChain as any,
+      responderChain: swapData.responderChain as any,
+    });
     
     securityLogger.info('Atomic swap initiated', SecurityEventType.BRIDGE_OPERATION, {
       ...swapData,

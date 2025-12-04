@@ -1210,3 +1210,355 @@ export type ValidatorAttestation = typeof validatorAttestations.$inferSelect;
 
 export type InsertValidatorStatusEvent = z.infer<typeof insertValidatorStatusEventSchema>;
 export type ValidatorStatusEvent = typeof validatorStatusEvents.$inferSelect;
+
+// ============================================================================
+// TRINITY SCAN - Blockchain Explorer Tables
+// ============================================================================
+
+// Chain configuration for multi-chain indexing
+export const scannerChains = pgTable("scanner_chains", {
+  id: serial("id").primaryKey(),
+  chainId: varchar("chain_id", { length: 50 }).notNull().unique(), // 'arbitrum', 'solana', 'ton'
+  chainName: text("chain_name").notNull(),
+  chainType: text("chain_type").notNull(), // 'evm', 'solana', 'ton'
+  networkId: integer("network_id"), // EVM chain ID (421614 for Arbitrum Sepolia)
+  rpcEndpoint: text("rpc_endpoint"),
+  explorerUrl: text("explorer_url"),
+  nativeToken: text("native_token").notNull(), // 'ETH', 'SOL', 'TON'
+  isActive: boolean("is_active").default(true),
+  lastIndexedBlock: text("last_indexed_block"),
+  lastIndexedAt: timestamp("last_indexed_at"),
+  blockTime: integer("block_time"), // Average block time in milliseconds
+  metadata: jsonb("metadata"),
+}, (table) => ({
+  chainIdIdx: index("scanner_chain_id_idx").on(table.chainId),
+}));
+
+// Indexed blocks from all chains
+export const scannerBlocks = pgTable("scanner_blocks", {
+  id: serial("id").primaryKey(),
+  chainId: varchar("chain_id", { length: 50 }).notNull(),
+  blockNumber: text("block_number").notNull(), // Using text for Solana slot numbers
+  blockHash: text("block_hash").notNull(),
+  parentHash: text("parent_hash"),
+  timestamp: timestamp("timestamp").notNull(),
+  transactionCount: integer("transaction_count").default(0),
+  gasUsed: text("gas_used"), // EVM specific
+  gasLimit: text("gas_limit"), // EVM specific
+  baseFeePerGas: text("base_fee_per_gas"), // EVM specific
+  validator: text("validator"), // Block producer/validator
+  rewards: text("rewards"), // Block rewards
+  size: integer("size"), // Block size in bytes
+  status: text("status").default("confirmed"), // 'pending', 'confirmed', 'finalized'
+  indexedAt: timestamp("indexed_at").notNull().defaultNow(),
+  metadata: jsonb("metadata"),
+}, (table) => ({
+  chainBlockIdx: index("scanner_block_chain_block_idx").on(table.chainId, table.blockNumber),
+  hashIdx: index("scanner_block_hash_idx").on(table.blockHash),
+  timestampIdx: index("scanner_block_timestamp_idx").on(table.timestamp),
+}));
+
+// All indexed transactions
+export const scannerTransactions = pgTable("scanner_transactions", {
+  id: serial("id").primaryKey(),
+  chainId: varchar("chain_id", { length: 50 }).notNull(),
+  txHash: text("tx_hash").notNull(),
+  blockNumber: text("block_number"),
+  blockHash: text("block_hash"),
+  fromAddress: text("from_address").notNull(),
+  toAddress: text("to_address"),
+  value: text("value").default("0"),
+  gasPrice: text("gas_price"), // EVM
+  gasUsed: text("gas_used"), // EVM
+  maxFeePerGas: text("max_fee_per_gas"), // EVM EIP-1559
+  maxPriorityFee: text("max_priority_fee"), // EVM EIP-1559
+  nonce: integer("nonce"), // EVM
+  inputData: text("input_data"), // Transaction input/calldata
+  methodId: text("method_id"), // First 4 bytes of input (function selector)
+  methodName: text("method_name"), // Decoded method name
+  status: text("status").notNull().default("pending"), // 'pending', 'success', 'failed', 'reverted'
+  errorMessage: text("error_message"), // Revert reason if failed
+  transactionType: text("transaction_type"), // 'transfer', 'contract_call', 'contract_creation', 'trinity_operation'
+  timestamp: timestamp("timestamp").notNull(),
+  confirmations: integer("confirmations").default(0),
+  fee: text("fee"), // Total transaction fee
+  feeUsd: text("fee_usd"), // Fee in USD at time of transaction
+  contractAddress: text("contract_address"), // For contract creation transactions
+  logs: jsonb("logs"), // Event logs
+  internalTxs: jsonb("internal_txs"), // Internal transactions
+  tokenTransfers: jsonb("token_transfers"), // ERC20/SPL token transfers
+  indexedAt: timestamp("indexed_at").notNull().defaultNow(),
+  metadata: jsonb("metadata"),
+}, (table) => ({
+  chainTxIdx: index("scanner_tx_chain_hash_idx").on(table.chainId, table.txHash),
+  fromIdx: index("scanner_tx_from_idx").on(table.fromAddress),
+  toIdx: index("scanner_tx_to_idx").on(table.toAddress),
+  blockIdx: index("scanner_tx_block_idx").on(table.chainId, table.blockNumber),
+  timestampIdx: index("scanner_tx_timestamp_idx").on(table.timestamp),
+  methodIdx: index("scanner_tx_method_idx").on(table.methodId),
+}));
+
+// Trinity Protocol consensus operations (2-of-3)
+export const scannerConsensusOps = pgTable("scanner_consensus_ops", {
+  id: serial("id").primaryKey(),
+  operationId: text("operation_id").notNull().unique(),
+  operationType: text("operation_type").notNull(), // 'vault_create', 'vault_withdraw', 'bridge_transfer', 'swap_execute'
+  initiatorAddress: text("initiator_address").notNull(),
+  targetContract: text("target_contract"),
+  primaryChain: varchar("primary_chain", { length: 50 }).notNull(), // Where the operation originated
+  requiredConfirmations: integer("required_confirmations").default(2),
+  currentConfirmations: integer("current_confirmations").default(0),
+  status: text("status").notNull().default("pending"), // 'pending', 'partial', 'confirmed', 'executed', 'expired', 'failed'
+  arbitrumTxHash: text("arbitrum_tx_hash"),
+  arbitrumStatus: text("arbitrum_status"), // 'pending', 'confirmed', 'failed'
+  arbitrumConfirmedAt: timestamp("arbitrum_confirmed_at"),
+  solanaTxHash: text("solana_tx_hash"),
+  solanaStatus: text("solana_status"),
+  solanaConfirmedAt: timestamp("solana_confirmed_at"),
+  tonTxHash: text("ton_tx_hash"),
+  tonStatus: text("ton_status"),
+  tonConfirmedAt: timestamp("ton_confirmed_at"),
+  dataHash: text("data_hash"), // Keccak256 of operation data
+  operationData: jsonb("operation_data"), // Full operation parameters
+  validatorSignatures: jsonb("validator_signatures"), // Array of validator signatures
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+  executedAt: timestamp("executed_at"),
+  expiresAt: timestamp("expires_at"),
+  gasUsedTotal: text("gas_used_total"),
+  feesTotal: text("fees_total"),
+  metadata: jsonb("metadata"),
+}, (table) => ({
+  opIdIdx: index("scanner_consensus_op_id_idx").on(table.operationId),
+  initiatorIdx: index("scanner_consensus_initiator_idx").on(table.initiatorAddress),
+  statusIdx: index("scanner_consensus_status_idx").on(table.status),
+  typeIdx: index("scanner_consensus_type_idx").on(table.operationType),
+  createdIdx: index("scanner_consensus_created_idx").on(table.createdAt),
+}));
+
+// ChronosVault operations and state changes
+export const scannerVaultOps = pgTable("scanner_vault_ops", {
+  id: serial("id").primaryKey(),
+  vaultAddress: text("vault_address").notNull(),
+  chainId: varchar("chain_id", { length: 50 }).notNull(),
+  operationType: text("operation_type").notNull(), // 'create', 'deposit', 'withdraw', 'lock', 'unlock', 'emergency_exit'
+  operatorAddress: text("operator_address").notNull(),
+  amount: text("amount"),
+  tokenAddress: text("token_address"),
+  tokenSymbol: text("token_symbol"),
+  txHash: text("tx_hash").notNull(),
+  blockNumber: text("block_number"),
+  status: text("status").notNull().default("pending"), // 'pending', 'success', 'failed'
+  consensusOpId: text("consensus_op_id"), // Link to consensus operation if applicable
+  vaultState: jsonb("vault_state"), // Snapshot of vault state after operation
+  timestamp: timestamp("timestamp").notNull(),
+  lockUntil: timestamp("lock_until"), // For time-locked operations
+  securityLevel: integer("security_level"), // Vault security level 1-5
+  isEmergency: boolean("is_emergency").default(false),
+  validatorApprovals: jsonb("validator_approvals"),
+  metadata: jsonb("metadata"),
+  indexedAt: timestamp("indexed_at").notNull().defaultNow(),
+}, (table) => ({
+  vaultIdx: index("scanner_vault_ops_vault_idx").on(table.vaultAddress),
+  chainIdx: index("scanner_vault_ops_chain_idx").on(table.chainId),
+  operatorIdx: index("scanner_vault_ops_operator_idx").on(table.operatorAddress),
+  typeIdx: index("scanner_vault_ops_type_idx").on(table.operationType),
+  txIdx: index("scanner_vault_ops_tx_idx").on(table.txHash),
+  timestampIdx: index("scanner_vault_ops_timestamp_idx").on(table.timestamp),
+}));
+
+// HTLC atomic swap tracking
+export const scannerHtlcSwaps = pgTable("scanner_htlc_swaps", {
+  id: serial("id").primaryKey(),
+  swapId: text("swap_id").notNull().unique(),
+  hashlock: text("hashlock").notNull(), // SHA256 hash of the secret
+  secret: text("secret"), // Revealed after completion
+  initiatorAddress: text("initiator_address").notNull(),
+  recipientAddress: text("recipient_address").notNull(),
+  sourceChain: varchar("source_chain", { length: 50 }).notNull(),
+  destinationChain: varchar("destination_chain", { length: 50 }).notNull(),
+  sourceAmount: text("source_amount").notNull(),
+  destinationAmount: text("destination_amount").notNull(),
+  sourceToken: text("source_token"),
+  destinationToken: text("destination_token"),
+  sourceTxHash: text("source_tx_hash"),
+  destinationTxHash: text("destination_tx_hash"),
+  claimTxHash: text("claim_tx_hash"),
+  refundTxHash: text("refund_tx_hash"),
+  status: text("status").notNull().default("created"), // 'created', 'locked', 'claimed', 'refunded', 'expired'
+  timelock: timestamp("timelock").notNull(), // Expiration timestamp
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+  lockedAt: timestamp("locked_at"),
+  claimedAt: timestamp("claimed_at"),
+  refundedAt: timestamp("refunded_at"),
+  consensusOpId: text("consensus_op_id"), // Trinity consensus operation
+  exchangeRate: text("exchange_rate"),
+  fees: text("fees"),
+  arbitrator: text("arbitrator"), // Optional arbitrator for disputes
+  metadata: jsonb("metadata"),
+  indexedAt: timestamp("indexed_at").notNull().defaultNow(),
+}, (table) => ({
+  swapIdIdx: index("scanner_htlc_swap_id_idx").on(table.swapId),
+  hashlockIdx: index("scanner_htlc_hashlock_idx").on(table.hashlock),
+  initiatorIdx: index("scanner_htlc_initiator_idx").on(table.initiatorAddress),
+  recipientIdx: index("scanner_htlc_recipient_idx").on(table.recipientAddress),
+  statusIdx: index("scanner_htlc_status_idx").on(table.status),
+  sourceChainIdx: index("scanner_htlc_source_chain_idx").on(table.sourceChain),
+  destChainIdx: index("scanner_htlc_dest_chain_idx").on(table.destinationChain),
+  createdIdx: index("scanner_htlc_created_idx").on(table.createdAt),
+}));
+
+// Cross-chain bridge operations
+export const scannerBridgeOps = pgTable("scanner_bridge_ops", {
+  id: serial("id").primaryKey(),
+  bridgeOpId: text("bridge_op_id").notNull().unique(),
+  bridgeContract: text("bridge_contract").notNull(),
+  sourceChain: varchar("source_chain", { length: 50 }).notNull(),
+  destinationChain: varchar("destination_chain", { length: 50 }).notNull(),
+  senderAddress: text("sender_address").notNull(),
+  recipientAddress: text("recipient_address").notNull(),
+  tokenAddress: text("token_address"),
+  tokenSymbol: text("token_symbol"),
+  amount: text("amount").notNull(),
+  sourceTxHash: text("source_tx_hash"),
+  destinationTxHash: text("destination_tx_hash"),
+  relayerAddress: text("relayer_address"),
+  status: text("status").notNull().default("initiated"), // 'initiated', 'pending_confirmation', 'relaying', 'completed', 'failed', 'stuck'
+  confirmationsRequired: integer("confirmations_required").default(2),
+  confirmationsReceived: integer("confirmations_received").default(0),
+  fee: text("fee"),
+  feeToken: text("fee_token"),
+  nonce: text("nonce"),
+  messageHash: text("message_hash"), // Cross-chain message hash
+  initiatedAt: timestamp("initiated_at").notNull().defaultNow(),
+  completedAt: timestamp("completed_at"),
+  estimatedArrival: timestamp("estimated_arrival"),
+  retryCount: integer("retry_count").default(0),
+  lastError: text("last_error"),
+  consensusOpId: text("consensus_op_id"),
+  metadata: jsonb("metadata"),
+  indexedAt: timestamp("indexed_at").notNull().defaultNow(),
+}, (table) => ({
+  bridgeOpIdIdx: index("scanner_bridge_op_id_idx").on(table.bridgeOpId),
+  senderIdx: index("scanner_bridge_sender_idx").on(table.senderAddress),
+  recipientIdx: index("scanner_bridge_recipient_idx").on(table.recipientAddress),
+  sourceChainIdx: index("scanner_bridge_source_idx").on(table.sourceChain),
+  destChainIdx: index("scanner_bridge_dest_idx").on(table.destinationChain),
+  statusIdx: index("scanner_bridge_status_idx").on(table.status),
+  initiatedIdx: index("scanner_bridge_initiated_idx").on(table.initiatedAt),
+}));
+
+// Trinity Shield validator activity tracking
+export const scannerValidatorActivity = pgTable("scanner_validator_activity", {
+  id: serial("id").primaryKey(),
+  validatorAddress: text("validator_address").notNull(),
+  chainId: varchar("chain_id", { length: 50 }).notNull(),
+  activityType: text("activity_type").notNull(), // 'attestation', 'consensus_vote', 'block_production', 'slashing'
+  operationId: text("operation_id"), // Related consensus operation
+  txHash: text("tx_hash"),
+  status: text("status").notNull(), // 'success', 'failed', 'pending'
+  responseTime: integer("response_time"), // Milliseconds to respond
+  attestationData: jsonb("attestation_data"),
+  rewardAmount: text("reward_amount"),
+  penaltyAmount: text("penalty_amount"),
+  timestamp: timestamp("timestamp").notNull(),
+  blockNumber: text("block_number"),
+  metadata: jsonb("metadata"),
+  indexedAt: timestamp("indexed_at").notNull().defaultNow(),
+}, (table) => ({
+  validatorIdx: index("scanner_validator_activity_addr_idx").on(table.validatorAddress),
+  chainIdx: index("scanner_validator_activity_chain_idx").on(table.chainId),
+  typeIdx: index("scanner_validator_activity_type_idx").on(table.activityType),
+  timestampIdx: index("scanner_validator_activity_ts_idx").on(table.timestamp),
+  opIdx: index("scanner_validator_activity_op_idx").on(table.operationId),
+}));
+
+// Address statistics and analytics
+export const scannerAddressStats = pgTable("scanner_address_stats", {
+  id: serial("id").primaryKey(),
+  address: text("address").notNull(),
+  chainId: varchar("chain_id", { length: 50 }).notNull(),
+  isContract: boolean("is_contract").default(false),
+  contractName: text("contract_name"),
+  contractType: text("contract_type"), // 'vault', 'bridge', 'htlc', 'token', 'validator'
+  balance: text("balance"),
+  balanceUsd: text("balance_usd"),
+  txCount: integer("tx_count").default(0),
+  txCountIn: integer("tx_count_in").default(0),
+  txCountOut: integer("tx_count_out").default(0),
+  firstTxAt: timestamp("first_tx_at"),
+  lastTxAt: timestamp("last_tx_at"),
+  tokenBalances: jsonb("token_balances"), // Array of token balances
+  vaultCount: integer("vault_count").default(0), // Vaults owned/managed
+  swapCount: integer("swap_count").default(0), // HTLC swaps participated
+  bridgeCount: integer("bridge_count").default(0), // Bridge operations
+  consensusParticipation: integer("consensus_participation").default(0), // Consensus ops participated
+  labels: jsonb("labels"), // Address labels ['validator', 'whale', 'contract', 'exchange']
+  riskScore: integer("risk_score"), // 0-100 risk assessment
+  updatedAt: timestamp("updated_at").notNull().defaultNow(),
+  metadata: jsonb("metadata"),
+}, (table) => ({
+  addressChainIdx: index("scanner_address_stats_addr_chain_idx").on(table.address, table.chainId),
+  balanceIdx: index("scanner_address_stats_balance_idx").on(table.balance),
+  txCountIdx: index("scanner_address_stats_tx_count_idx").on(table.txCount),
+  contractTypeIdx: index("scanner_address_stats_contract_type_idx").on(table.contractType),
+}));
+
+// Scanner indexing status and health
+export const scannerIndexerStatus = pgTable("scanner_indexer_status", {
+  id: serial("id").primaryKey(),
+  chainId: varchar("chain_id", { length: 50 }).notNull().unique(),
+  indexerType: text("indexer_type").notNull(), // 'block', 'transaction', 'event', 'contract'
+  status: text("status").notNull().default("running"), // 'running', 'paused', 'error', 'syncing'
+  currentBlock: text("current_block"),
+  targetBlock: text("target_block"),
+  blocksPerSecond: integer("blocks_per_second"),
+  lastProcessedAt: timestamp("last_processed_at"),
+  lastErrorAt: timestamp("last_error_at"),
+  lastError: text("last_error"),
+  reorgCount: integer("reorg_count").default(0),
+  totalBlocksProcessed: text("total_blocks_processed"),
+  totalTxProcessed: text("total_tx_processed"),
+  startedAt: timestamp("started_at").notNull().defaultNow(),
+  metadata: jsonb("metadata"),
+}, (table) => ({
+  chainStatusIdx: index("scanner_indexer_chain_status_idx").on(table.chainId, table.status),
+}));
+
+// Insert schemas for Trinity Scan
+export const insertScannerChainSchema = createInsertSchema(scannerChains).omit({ id: true });
+export const insertScannerBlockSchema = createInsertSchema(scannerBlocks).omit({ id: true });
+export const insertScannerTransactionSchema = createInsertSchema(scannerTransactions).omit({ id: true });
+export const insertScannerConsensusOpSchema = createInsertSchema(scannerConsensusOps).omit({ id: true });
+export const insertScannerVaultOpSchema = createInsertSchema(scannerVaultOps).omit({ id: true });
+export const insertScannerHtlcSwapSchema = createInsertSchema(scannerHtlcSwaps).omit({ id: true });
+export const insertScannerBridgeOpSchema = createInsertSchema(scannerBridgeOps).omit({ id: true });
+export const insertScannerValidatorActivitySchema = createInsertSchema(scannerValidatorActivity).omit({ id: true });
+export const insertScannerAddressStatsSchema = createInsertSchema(scannerAddressStats).omit({ id: true });
+
+// Type exports for Trinity Scan
+export type InsertScannerChain = z.infer<typeof insertScannerChainSchema>;
+export type ScannerChain = typeof scannerChains.$inferSelect;
+
+export type InsertScannerBlock = z.infer<typeof insertScannerBlockSchema>;
+export type ScannerBlock = typeof scannerBlocks.$inferSelect;
+
+export type InsertScannerTransaction = z.infer<typeof insertScannerTransactionSchema>;
+export type ScannerTransaction = typeof scannerTransactions.$inferSelect;
+
+export type InsertScannerConsensusOp = z.infer<typeof insertScannerConsensusOpSchema>;
+export type ScannerConsensusOp = typeof scannerConsensusOps.$inferSelect;
+
+export type InsertScannerVaultOp = z.infer<typeof insertScannerVaultOpSchema>;
+export type ScannerVaultOp = typeof scannerVaultOps.$inferSelect;
+
+export type InsertScannerHtlcSwap = z.infer<typeof insertScannerHtlcSwapSchema>;
+export type ScannerHtlcSwap = typeof scannerHtlcSwaps.$inferSelect;
+
+export type InsertScannerBridgeOp = z.infer<typeof insertScannerBridgeOpSchema>;
+export type ScannerBridgeOp = typeof scannerBridgeOps.$inferSelect;
+
+export type InsertScannerValidatorActivity = z.infer<typeof insertScannerValidatorActivitySchema>;
+export type ScannerValidatorActivity = typeof scannerValidatorActivity.$inferSelect;
+
+export type InsertScannerAddressStats = z.infer<typeof insertScannerAddressStatsSchema>;
+export type ScannerAddressStats = typeof scannerAddressStats.$inferSelect;
