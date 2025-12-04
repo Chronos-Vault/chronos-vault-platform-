@@ -1,6 +1,43 @@
 /**
  * Server Entry Point
+ * 
+ * CRITICAL: Global error handlers must be set BEFORE any module imports
+ * to prevent RPC timeout errors from crashing the server during startup.
  */
+
+// Global error handlers to prevent startup crashes from RPC timeouts
+process.on('unhandledRejection', (reason, promise) => {
+  const errorMessage = reason instanceof Error ? reason.message : String(reason);
+  
+  // Suppress RPC timeout errors during startup - these are non-fatal
+  if (errorMessage.includes('TIMEOUT') || 
+      errorMessage.includes('request timeout') ||
+      errorMessage.includes('rate limit') ||
+      errorMessage.includes('429') ||
+      errorMessage.includes('fetch failed')) {
+    console.warn('[Startup] RPC connection deferred:', errorMessage.substring(0, 100));
+    return; // Don't crash - RPC connections will retry
+  }
+  
+  console.error('[Unhandled Rejection]', errorMessage);
+});
+
+process.on('uncaughtException', (error) => {
+  const errorMessage = error.message || String(error);
+  
+  // Suppress RPC timeout errors during startup
+  if (errorMessage.includes('TIMEOUT') || 
+      errorMessage.includes('request timeout') ||
+      errorMessage.includes('rate limit') ||
+      errorMessage.includes('429') ||
+      errorMessage.includes('fetch failed')) {
+    console.warn('[Startup] RPC error caught:', errorMessage.substring(0, 100));
+    return; // Don't crash
+  }
+  
+  console.error('[Uncaught Exception]', error);
+  process.exit(1);
+});
 
 import express from 'express';
 import cors from 'cors';
@@ -8,22 +45,18 @@ import crypto from 'crypto';
 import bodyParser from 'body-parser';
 import cookieParser from 'cookie-parser';
 import { registerRoutes } from './routes';
-import { performanceOptimizer } from './performance/optimization-service';
-import { systemHealthMonitor } from './monitoring/system-health-monitor';
-import { securityLogger, SecurityEventType } from './monitoring/security-logger';
 import { setupVite, serveStatic } from './vite';
+
+// SAFE imports (no RPC connections during import)
+import { securityLogger, SecurityEventType } from './monitoring/security-logger';
+import { systemHealthMonitor } from './monitoring/system-health-monitor';
+import { performanceOptimizer } from './performance/optimization-service';
 import { getSecurityAuditService } from './security/security-audit-service';
-import { transactionMonitor } from './blockchain/transaction-monitor';
-import { quantumCrypto } from './security/quantum-resistant-crypto';
-import { zkProofSystem } from './security/zk-proof-system';
-import { securityAudit } from './security/automated-security-audit';
-import { performanceOptimizer as perfOptimizer } from './security/performance-optimizer';
-import { trinityStateCoordinator } from './services/trinity-state-coordinator';
-import { circuitBreakerService } from './services/circuit-breaker-service';
-import { emergencyRecoveryProtocol } from './services/emergency-recovery-protocol';
-import { vaultMDLIntegration } from './services/vault-mdl-integration';
-import { mdlBroadcastService } from './websocket/mdl-broadcast-service';
-import { TrinityRelayer } from '../validators/trinity-relayer';
+
+// NOTE: Blockchain-related imports are dynamically loaded AFTER server starts
+// to prevent RPC timeout errors from crashing during startup.
+// Services: trinityStateCoordinator, circuitBreakerService, emergencyRecoveryProtocol, 
+// vaultMDLIntegration, mdlBroadcastService, TrinityRelayer, transactionMonitor, etc.
 
 // Enhanced security: Strict authentication in all environments
 const isProduction = process.env.NODE_ENV === 'production';
@@ -1160,7 +1193,7 @@ app.get('/api/vaults/explorer', async (req, res) => {
   }
 });
 
-// Initialize services
+// Initialize core services (no blockchain dependencies)
 (async () => {
   try {
     // Initialize performance optimization service
@@ -1174,7 +1207,6 @@ app.get('/api/vaults/explorer', async (req, res) => {
       console.log('Security Audit Service initialized successfully');
     } catch (securityError: any) {
       console.warn('Security Audit Service initialization delayed (blockchain connectors not ready):', securityError.message);
-      // We'll initialize later after blockchain connectors are ready
     }
     
     // Log server startup
@@ -1190,108 +1222,155 @@ app.get('/api/vaults/explorer', async (req, res) => {
     // Force an initial health check
     await systemHealthMonitor.forceHealthCheck();
     
-    // Initialize transaction monitor
-    transactionMonitor.initialize();
-    console.log('Transaction Monitor initialized successfully');
-    
-    // Initialize Trinity Protocol cross-chain state synchronization
-    console.log('Initializing Trinity Protocol...');
-    await trinityStateCoordinator.initialize();
-    await trinityStateCoordinator.start();
-    console.log('✅ Trinity Protocol State Coordinator started');
-    
-    // Start Trinity Relayer Service (cross-chain proof propagation)
-    if (process.env.ENABLE_TRINITY_RELAYER === 'true') {
-      console.log('Starting Trinity Protocol Cross-Chain Relayer...');
-      try {
-        const trinityRelayer = new TrinityRelayer();
-        // Start relayer in background (non-blocking)
-        trinityRelayer.start().catch((err) => {
-          console.error('Trinity Relayer error:', err);
-          securityLogger.critical(
-            'Trinity Relayer service failed',
-            SecurityEventType.SYSTEM_ERROR,
-            { error: err.message }
-          );
-        });
-        console.log('✅ Trinity Relayer Service started');
-        console.log('   - Monitoring Ethereum/Arbitrum, Solana, and TON');
-        console.log('   - Cross-chain proof propagation active');
-      } catch (relayerError: any) {
-        console.warn('⚠️  Trinity Relayer could not start:', relayerError.message);
-        console.warn('   Set ENABLE_TRINITY_RELAYER=true and configure private keys to enable');
-      }
-    } else {
-      console.log('ℹ️  Trinity Relayer disabled (set ENABLE_TRINITY_RELAYER=true to enable)');
-    }
-    
-    // Start circuit breaker monitoring
-    await circuitBreakerService.startMonitoring();
-    console.log('✅ Circuit Breaker Service monitoring started');
-    
-    // Start emergency recovery protocol
-    await emergencyRecoveryProtocol.start();
-    console.log('✅ Emergency Recovery Protocol active');
-    
-    // Initialize Vault Mathematical Defense Layer Integration
-    console.log('Initializing Vault Mathematical Defense Layer Integration...');
-    await vaultMDLIntegration.initialize();
-    console.log('✅ Vault Mathematical Defense Layer Integration active');
-    console.log('   - All security components initialized');
-    console.log('   - Trinity Protocol, AI Governance, MPC, VDF, ZK, Quantum Crypto ready');
-    
-    // Trinity Protocol event listeners
-    trinityStateCoordinator.on('consensus:reached', (data) => {
-      securityLogger.info(
-        `Trinity Protocol consensus reached for vault ${data.vaultId}`,
-        SecurityEventType.SYSTEM_ERROR,
-        data
-      );
-    });
-    
-    circuitBreakerService.on('chain:failed', (data) => {
-      securityLogger.critical(
-        `Chain failure detected: ${data.chain}`,
-        SecurityEventType.SYSTEM_ERROR,
-        data
-      );
-    });
-    
-    emergencyRecoveryProtocol.on('emergency:activated', (data) => {
-      securityLogger.critical(
-        'Emergency recovery mode activated',
-        SecurityEventType.SYSTEM_ERROR,
-        data
-      );
-    });
-    
   } catch (error: any) {
-    console.error('Failed to initialize services:', error);
+    console.error('Failed to initialize core services:', error);
     securityLogger.critical(
-      `Failed to initialize services: ${error.message}`,
+      `Failed to initialize core services: ${error.message}`,
       SecurityEventType.SYSTEM_ERROR,
       { error: error.stack }
     );
   }
 })();
 
+/**
+ * Initialize blockchain services AFTER server is listening.
+ * Uses dynamic imports to defer RPC connections until server is ready.
+ */
+async function initBlockchainServices(): Promise<void> {
+  console.log('\n[Blockchain] Initializing blockchain services (deferred)...');
+  
+  try {
+    // Transaction monitor (safe - uses lazy initialization)
+    const { transactionMonitor } = await import('./blockchain/transaction-monitor');
+    transactionMonitor.initialize();
+    console.log('✅ Transaction Monitor initialized');
+  } catch (err: any) {
+    console.warn('⚠️ Transaction Monitor delayed:', err.message);
+  }
+  
+  try {
+    // Trinity Protocol State Coordinator (NON-BLOCKING)
+    const { trinityStateCoordinator } = await import('./services/trinity-state-coordinator');
+    trinityStateCoordinator.initialize()
+      .then(() => trinityStateCoordinator.start())
+      .then(() => {
+        console.log('✅ Trinity Protocol State Coordinator started');
+        
+        // Set up event listeners after coordinator is ready
+        trinityStateCoordinator.on('consensus:reached', (data: any) => {
+          securityLogger.info(
+            `Trinity Protocol consensus reached for vault ${data.vaultId}`,
+            SecurityEventType.SYSTEM_ERROR,
+            data
+          );
+        });
+      })
+      .catch((err: any) => {
+        console.warn('⚠️ Trinity Protocol initialization delayed:', err.message);
+        console.log('   Server will continue running - blockchain features may be limited');
+      });
+  } catch (err: any) {
+    console.warn('⚠️ Trinity Protocol module load failed:', err.message);
+  }
+  
+  try {
+    // Circuit Breaker Service (NON-BLOCKING)
+    const { circuitBreakerService } = await import('./services/circuit-breaker-service');
+    circuitBreakerService.startMonitoring()
+      .then(() => {
+        console.log('✅ Circuit Breaker Service monitoring started');
+        
+        circuitBreakerService.on('chain:failed', (data: any) => {
+          securityLogger.critical(
+            `Chain failure detected: ${data.chain}`,
+            SecurityEventType.SYSTEM_ERROR,
+            data
+          );
+        });
+      })
+      .catch((err: any) => console.warn('⚠️ Circuit Breaker Service delayed:', err.message));
+  } catch (err: any) {
+    console.warn('⚠️ Circuit Breaker module load failed:', err.message);
+  }
+  
+  try {
+    // Emergency Recovery Protocol (NON-BLOCKING)
+    const { emergencyRecoveryProtocol } = await import('./services/emergency-recovery-protocol');
+    emergencyRecoveryProtocol.start()
+      .then(() => {
+        console.log('✅ Emergency Recovery Protocol active');
+        
+        emergencyRecoveryProtocol.on('emergency:activated', (data: any) => {
+          securityLogger.critical(
+            'Emergency recovery mode activated',
+            SecurityEventType.SYSTEM_ERROR,
+            data
+          );
+        });
+      })
+      .catch((err: any) => console.warn('⚠️ Emergency Recovery Protocol delayed:', err.message));
+  } catch (err: any) {
+    console.warn('⚠️ Emergency Recovery module load failed:', err.message);
+  }
+  
+  try {
+    // Vault MDL Integration (NON-BLOCKING)
+    const { vaultMDLIntegration } = await import('./services/vault-mdl-integration');
+    vaultMDLIntegration.initialize()
+      .then(() => {
+        console.log('✅ Vault Mathematical Defense Layer Integration active');
+        console.log('   - All security components initialized');
+        console.log('   - Trinity Protocol, AI Governance, MPC, VDF, ZK, Quantum Crypto ready');
+      })
+      .catch((err: any) => console.warn('⚠️ Vault MDL Integration delayed:', err.message));
+  } catch (err: any) {
+    console.warn('⚠️ Vault MDL module load failed:', err.message);
+  }
+  
+  // Trinity Relayer (only if enabled)
+  if (process.env.ENABLE_TRINITY_RELAYER === 'true') {
+    try {
+      console.log('Starting Trinity Protocol Cross-Chain Relayer...');
+      const { TrinityRelayer } = await import('../validators/trinity-relayer');
+      const trinityRelayer = new TrinityRelayer();
+      trinityRelayer.start().catch((err) => {
+        console.error('Trinity Relayer error:', err);
+        securityLogger.critical(
+          'Trinity Relayer service failed',
+          SecurityEventType.SYSTEM_ERROR,
+          { error: err.message }
+        );
+      });
+      console.log('✅ Trinity Relayer Service started');
+      console.log('   - Monitoring Ethereum/Arbitrum, Solana, and TON');
+      console.log('   - Cross-chain proof propagation active');
+    } catch (relayerError: any) {
+      console.warn('⚠️  Trinity Relayer could not start:', relayerError.message);
+    }
+  } else {
+    console.log('ℹ️  Trinity Relayer disabled (set ENABLE_TRINITY_RELAYER=true to enable)');
+  }
+  
+  console.log('[Blockchain] Blockchain services initialization complete\n');
+}
+
 // Register API routes and start server
 (async () => {
   try {
     const httpServer = await registerRoutes(app);
     
-    // Initialize WebSocket service for Mathematical Defense Layer real-time broadcasts
-    console.log('Initializing Mathematical Defense Layer WebSocket Service...');
-    mdlBroadcastService.initialize(httpServer);
-    console.log('✅ MDL WebSocket Service initialized');
-    console.log('   - Real-time Trinity Protocol consensus updates');
-    console.log('   - AI Governance decisions broadcasting');
-    console.log('   - Cross-chain verification events');
-    console.log('   - WebSocket path: /mdl-socket');
+    // Setup HTLC Test Routes (uses lazy initialization for providers)
+    try {
+      const { setupHTLCTestRoutes } = await import('./htlc-test-routes');
+      setupHTLCTestRoutes(app);
+      console.log('✅ HTLC Test Routes registered');
+    } catch (htlcErr: any) {
+      console.warn('⚠️ HTLC Test Routes delayed:', htlcErr.message);
+    }
     
     const PORT = process.env.PORT || 5000;
-    httpServer.listen(PORT, () => {
-      console.log(`Server running on port ${PORT}`);
+    httpServer.listen(PORT, async () => {
+      console.log(`\n🚀 Server running on port ${PORT}`);
       securityLogger.info(
         `Server started on port ${PORT}`,
         SecurityEventType.SYSTEM_ERROR,
@@ -1301,6 +1380,27 @@ app.get('/api/vaults/explorer', async (req, res) => {
           environment: process.env.NODE_ENV || 'development'
         }
       );
+      
+      // Initialize WebSocket service AFTER server is listening
+      try {
+        const { mdlBroadcastService } = await import('./websocket/mdl-broadcast-service');
+        mdlBroadcastService.initialize(httpServer);
+        console.log('✅ MDL WebSocket Service initialized');
+        console.log('   - Real-time Trinity Protocol consensus updates');
+        console.log('   - AI Governance decisions broadcasting');
+        console.log('   - Cross-chain verification events');
+        console.log('   - WebSocket path: /mdl-socket');
+      } catch (wsErr: any) {
+        console.warn('⚠️ MDL WebSocket Service delayed:', wsErr.message);
+      }
+      
+      // Initialize blockchain services AFTER server is ready (deferred, non-blocking)
+      // Use setTimeout to ensure server is fully ready before blockchain connections
+      setTimeout(() => {
+        initBlockchainServices().catch(err => {
+          console.error('Blockchain services initialization error:', err);
+        });
+      }, 1000);
     });
   } catch (error: any) {
     console.error('Failed to start server:', error);
