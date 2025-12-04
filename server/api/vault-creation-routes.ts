@@ -50,6 +50,7 @@ router.post('/time-lock', async (req: Request, res: Response) => {
     );
 
     // Create vault using the service's createVault method
+    // Architecture: Arbitrum L2 PRIMARY, Solana MONITOR, TON BACKUP
     const result = await vaultCreationService.createVault({
       userId: 1, // TODO: Get from auth session
       walletAddress: validatedData.ownerAddress,
@@ -58,7 +59,6 @@ router.post('/time-lock', async (req: Request, res: Response) => {
       description: validatedData.vaultDescription,
       assetType: 'ETH', // TODO: Get from request
       assetAmount: validatedData.amount,
-      primaryChain: 'ethereum',
       securityLevel: 3,
       timeLockDays: Math.ceil((validatedData.unlockTimestamp - Date.now() / 1000) / 86400),
     });
@@ -99,6 +99,7 @@ router.post('/multi-sig', async (req: Request, res: Response) => {
       SecurityEventType.VAULT_CREATION
     );
 
+    // Architecture: Arbitrum L2 PRIMARY, Solana MONITOR, TON BACKUP
     const result = await vaultCreationService.createVault({
       userId: 1, // TODO: Get from auth session
       walletAddress: validatedData.signers[0],
@@ -107,7 +108,6 @@ router.post('/multi-sig', async (req: Request, res: Response) => {
       description: validatedData.vaultDescription,
       assetType: 'ETH',
       assetAmount: validatedData.amount,
-      primaryChain: 'ethereum',
       securityLevel: 4,
       signaturesRequired: validatedData.threshold,
       signerAddresses: validatedData.signers,
@@ -149,6 +149,7 @@ router.post('/fragment', async (req: Request, res: Response) => {
       SecurityEventType.VAULT_CREATION
     );
 
+    // Architecture: Arbitrum L2 PRIMARY, Solana MONITOR, TON BACKUP
     const result = await vaultCreationService.createVault({
       userId: 1, // TODO: Get from auth session
       walletAddress: validatedData.ownerAddress,
@@ -157,7 +158,6 @@ router.post('/fragment', async (req: Request, res: Response) => {
       description: validatedData.vaultDescription,
       assetType: 'ETH',
       assetAmount: validatedData.amount,
-      primaryChain: 'ethereum',
       securityLevel: 5,
       fragmentDistribution: {
         ethereum: 40,
