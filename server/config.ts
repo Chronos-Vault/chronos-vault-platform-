@@ -54,14 +54,29 @@ const featureFlags = {
 const ethereumNetwork = process.env.ETHEREUM_NETWORK || 'arbitrum';
 const isArbitrum = ethereumNetwork === 'arbitrum';
 
+// Arbitrum Sepolia RPC endpoints - prioritize paid Alchemy API
+const ALCHEMY_API_KEY = process.env.ALCHEMY_API_KEY;
+const ARBITRUM_SEPOLIA_PUBLIC_RPCS = ALCHEMY_API_KEY 
+  ? [
+      `https://arb-sepolia.g.alchemy.com/v2/${ALCHEMY_API_KEY}`, // Paid Alchemy (priority)
+      'https://sepolia-rollup.arbitrum.io/rpc',           // Official Arbitrum fallback
+      'https://arbitrum-sepolia.blockpi.network/v1/rpc/public', // BlockPI fallback
+    ]
+  : [
+      'https://sepolia-rollup.arbitrum.io/rpc',           // Official Arbitrum
+      'https://arbitrum-sepolia.blockpi.network/v1/rpc/public', // BlockPI
+      'https://arb-sepolia.g.alchemy.com/v2/demo',        // Alchemy demo
+    ];
+
 // Blockchain-specific configuration
 const blockchainConfig = {
   ethereum: {
     enabled: true,
     network: ethereumNetwork, // 'arbitrum' or 'sepolia'
     rpcUrl: isArbitrum
-      ? (process.env.ARBITRUM_RPC_URL || 'https://sepolia-rollup.arbitrum.io/rpc')
+      ? ARBITRUM_SEPOLIA_PUBLIC_RPCS[0] // Always use free official RPC
       : (process.env.ETHEREUM_RPC_URL || 'https://ethereum-sepolia-rpc.publicnode.com'),
+    rpcUrls: isArbitrum ? ARBITRUM_SEPOLIA_PUBLIC_RPCS : [], // Fallback endpoints
     chainId: process.env.NODE_ENV === 'production'
       ? (isArbitrum ? 42161 : 1) // 42161 = Arbitrum One, 1 = Ethereum Mainnet
       : (isArbitrum ? 421614 : 11155111), // 421614 = Arbitrum Sepolia, 11155111 = Sepolia
