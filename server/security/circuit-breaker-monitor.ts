@@ -4,6 +4,7 @@
  */
 
 import { ethers } from 'ethers';
+import { getArbitrumProvider } from '../blockchain/provider-factory';
 
 // V3 Contract addresses on Arbitrum Sepolia
 const CONTRACTS = {
@@ -58,34 +59,54 @@ interface EmergencyControllerStatus {
 }
 
 class CircuitBreakerMonitor {
-  private provider: ethers.JsonRpcProvider;
-  private crossChainBridgeContract: ethers.Contract;
-  private cvtBridgeContract: ethers.Contract;
-  private emergencyMultisigContract: ethers.Contract;
+  private provider: ethers.JsonRpcProvider | null = null;
+  private crossChainBridgeContract: ethers.Contract | null = null;
+  private cvtBridgeContract: ethers.Contract | null = null;
+  private emergencyMultisigContract: ethers.Contract | null = null;
 
   constructor() {
-    // Connect to Arbitrum Sepolia
-    const rpcUrl = process.env.ARBITRUM_RPC_URL || 'https://sepolia-rollup.arbitrum.io/rpc';
-    this.provider = new ethers.JsonRpcProvider(rpcUrl);
+    // LAZY INITIALIZATION - Provider will be created on first use
+  }
 
-    // Initialize contract instances
-    this.crossChainBridgeContract = new ethers.Contract(
-      CONTRACTS.CROSS_CHAIN_BRIDGE_V3,
-      CROSS_CHAIN_BRIDGE_ABI,
-      this.provider
-    );
+  // Get provider lazily using shared factory
+  private getProvider(): ethers.JsonRpcProvider {
+    if (!this.provider) {
+      this.provider = getArbitrumProvider();
+    }
+    return this.provider;
+  }
 
-    this.cvtBridgeContract = new ethers.Contract(
-      CONTRACTS.CVT_BRIDGE_V3,
-      CVT_BRIDGE_ABI,
-      this.provider
-    );
+  private getCrossChainBridgeContract(): ethers.Contract {
+    if (!this.crossChainBridgeContract) {
+      this.crossChainBridgeContract = new ethers.Contract(
+        CONTRACTS.CROSS_CHAIN_BRIDGE_V3,
+        CROSS_CHAIN_BRIDGE_ABI,
+        this.getProvider()
+      );
+    }
+    return this.crossChainBridgeContract;
+  }
 
-    this.emergencyMultisigContract = new ethers.Contract(
-      CONTRACTS.EMERGENCY_MULTISIG,
-      MULTISIG_ABI,
-      this.provider
-    );
+  private getCvtBridgeContract(): ethers.Contract {
+    if (!this.cvtBridgeContract) {
+      this.cvtBridgeContract = new ethers.Contract(
+        CONTRACTS.CVT_BRIDGE_V3,
+        CVT_BRIDGE_ABI,
+        this.getProvider()
+      );
+    }
+    return this.cvtBridgeContract;
+  }
+
+  private getEmergencyMultisigContract(): ethers.Contract {
+    if (!this.emergencyMultisigContract) {
+      this.emergencyMultisigContract = new ethers.Contract(
+        CONTRACTS.EMERGENCY_MULTISIG,
+        MULTISIG_ABI,
+        this.getProvider()
+      );
+    }
+    return this.emergencyMultisigContract;
   }
 
   /**
@@ -93,12 +114,13 @@ class CircuitBreakerMonitor {
    */
   async getCrossChainBridgeStatus(): Promise<CircuitBreakerStatus> {
     try {
+      const contract = this.getCrossChainBridgeContract();
       const [active, emergencyPause, triggeredAt, reason, resumeChainConsensus] = 
-        await this.crossChainBridgeContract.getCircuitBreakerStatus();
+        await contract.getCircuitBreakerStatus();
 
-      const volumeThreshold = await this.crossChainBridgeContract.VOLUME_SPIKE_THRESHOLD();
-      const failureRateLimit = await this.crossChainBridgeContract.MAX_FAILED_PROOF_RATE();
-      const autoRecoveryDelay = await this.crossChainBridgeContract.AUTO_RECOVERY_DELAY();
+      const volumeThreshold = await contract.VOLUME_SPIKE_THRESHOLD();
+      const failureRateLimit = await contract.MAX_FAILED_PROOF_RATE();
+      const autoRecoveryDelay = await contract.AUTO_RECOVERY_DELAY();
 
       return {
         active,
@@ -121,12 +143,13 @@ class CircuitBreakerMonitor {
    */
   async getCVTBridgeStatus(): Promise<CircuitBreakerStatus> {
     try {
+      const contract = this.getCvtBridgeContract();
       const [active, emergencyPause, triggeredAt, reason, validatorApprovals] = 
-        await this.cvtBridgeContract.getCircuitBreakerStatus();
+        await contract.getCircuitBreakerStatus();
 
-      const volumeThreshold = await this.cvtBridgeContract.VOLUME_SPIKE_THRESHOLD();
-      const failureRateLimit = await this.cvtBridgeContract.MAX_FAILED_SIG_RATE();
-      const autoRecoveryDelay = await this.cvtBridgeContract.AUTO_RECOVERY_DELAY();
+      const volumeThreshold = await contract.VOLUME_SPIKE_THRESHOLD();
+      const failureRateLimit = await contract.MAX_FAILED_SIG_RATE();
+      const autoRecoveryDelay = await contract.AUTO_RECOVERY_DELAY();
 
       return {
         active,
@@ -149,14 +172,15 @@ class CircuitBreakerMonitor {
    */
   async getEmergencyControllerStatus(): Promise<EmergencyControllerStatus> {
     try {
-      const required = await this.emergencyMultisigContract.REQUIRED_SIGNATURES();
-      const timeLockDelay = await this.emergencyMultisigContract.TIME_LOCK_DELAY();
+      const contract = this.getEmergencyMultisigContract();
+      const required = await contract.REQUIRED_SIGNATURES();
+      const timeLockDelay = await contract.TIME_LOCK_DELAY();
 
       // Fetch the 3 signer addresses
       const [signer1, signer2, signer3] = await Promise.all([
-        this.emergencyMultisigContract.signer1(),
-        this.emergencyMultisigContract.signer2(),
-        this.emergencyMultisigContract.signer3()
+        contract.signer1(),
+        contract.signer2(),
+        contract.signer3()
       ]);
 
       return {
