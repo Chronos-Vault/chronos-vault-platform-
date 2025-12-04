@@ -43,7 +43,7 @@ import SecurityDashboard from '@/pages/security-dashboard';
 import DeFiDashboard from '@/pages/defi-dashboard';
 
 // Vault Type Pages
-import VaultTypesPage from '@/pages/vault-types-new';
+import VaultTypesPage from '@/pages/vault-types';
 import VaultTypesSelector from '@/pages/vault-types-selector';
 import VaultShowcase from '@/pages/stunning-vault-showcase';
 
@@ -78,6 +78,7 @@ import TrinityHTLCTest from '@/pages/trinity-htlc-test';
 import ValidatorOnboardingPage from '@/pages/validator-onboarding';
 import ValidatorDashboardPage from '@/pages/validator-dashboard';
 import TrinityScannerPage from '@/pages/trinity-scanner';
+import TrinityProtocolPaper from '@/pages/trinity-protocol-paper';
 
 // Integration Pages
 import EthereumIntegrationPage from '@/pages/ethereum-integration';
@@ -176,6 +177,7 @@ const App: React.FC = () => {
                       <Route path="/team" component={TeamPage} />
                       <Route path="/whitepaper" component={WhitepaperPage} />
                       <Route path="/project-whitepaper" component={ProjectWhitepaperPage} />
+                      <Route path="/trinity-protocol-paper" component={TrinityProtocolPaper} />
                       <Route path="/documentation" component={DocumentationPage} />
                       {/* Important: The route below is disabled to fix conflict with multi-signature-vault-new */}
                       {/* <Route path="/documentation/multi-signature-vault" component={DocumentationPage} /> */}
