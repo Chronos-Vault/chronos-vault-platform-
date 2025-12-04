@@ -491,7 +491,7 @@ const MultiSignatureVaultNewPage: React.FC = () => {
         </div>
         
         <p className="text-gray-400 max-w-3xl">
-          Our advanced Multi-Signature Vault employs Triple-Chain technology to ensure exceptional security, 
+          Our advanced Multi-Signature Vault employs Trinity Protocol™ to ensure exceptional security, 
           requiring multiple parties to approve transactions for enhanced protection of valuable assets.
         </p>
       </div>
@@ -679,7 +679,7 @@ const MultiSignatureVaultNewPage: React.FC = () => {
                   ) : (
                     <div className="text-center max-w-md">
                       <p className="text-gray-400 mb-4">
-                        Connect your wallet to create a Multi-Signature Vault with Triple-Chain protection
+                        Connect your wallet to create a Multi-Signature Vault with Trinity Protocol™ protection
                       </p>
                     </div>
                   )}
@@ -1956,7 +1956,7 @@ const MultiSignatureVaultNewPage: React.FC = () => {
                       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                         <div className="flex items-center space-x-2">
                           <div className="h-4 w-4 rounded-full bg-[#6B00D7]"></div>
-                          <span>Triple-Chain Security</span>
+                          <span>Trinity Protocol™ Security</span>
                         </div>
                         <div className="flex items-center space-x-2">
                           <div className="h-4 w-4 rounded-full bg-[#FF5AF7]"></div>
@@ -1988,7 +1988,7 @@ const MultiSignatureVaultNewPage: React.FC = () => {
                       <div>
                         <h3 className="font-medium text-yellow-500">Important Security Notice</h3>
                         <p className="text-sm text-gray-300 mt-1">
-                          You're about to create a Multi-Signature Vault with Triple-Chain security. Once created, certain
+                          You're about to create a Multi-Signature Vault with Trinity Protocol™ security. Once created, certain
                           parameters cannot be modified. Please verify all details before continuing.
                         </p>
                       </div>
