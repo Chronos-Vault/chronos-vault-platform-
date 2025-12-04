@@ -14,6 +14,7 @@ import {
   SystemProgram,
   sendAndConfirmTransaction 
 } from '@solana/web3.js';
+import bs58 from 'bs58';
 import { BlockchainConnector } from '../../shared/interfaces/blockchain-connector';
 import { 
   VaultCreationParams, 
@@ -23,6 +24,43 @@ import {
 } from '../../shared/types/blockchain-types';
 import { securityLogger } from '../monitoring/security-logger';
 import config from '../config';
+
+/**
+ * Parse a Solana private key from various formats
+ * Supports: base58 (88 chars), hex (128 chars), JSON array
+ */
+function parsePrivateKey(key: string): Uint8Array | null {
+  try {
+    // Try base58 format first (standard Solana format, 88 chars)
+    if (key.length >= 80 && key.length <= 90) {
+      try {
+        const decoded = bs58.decode(key);
+        if (decoded.length === 64) {
+          return decoded;
+        }
+      } catch (e) {
+        // Not valid base58, try other formats
+      }
+    }
+    
+    // Try hex format (128 chars = 64 bytes)
+    if (key.length === 128 && /^[0-9a-fA-F]+$/.test(key)) {
+      return Buffer.from(key, 'hex');
+    }
+    
+    // Try JSON array format [1,2,3,...]
+    if (key.startsWith('[') && key.endsWith(']')) {
+      const arr = JSON.parse(key);
+      if (Array.isArray(arr) && arr.length === 64) {
+        return Uint8Array.from(arr);
+      }
+    }
+    
+    return null;
+  } catch (e) {
+    return null;
+  }
+}
 
 // Solana program IDs (replace with actual deployed program IDs)
 // Note: These are placeholder 44-character base58 addresses
@@ -77,38 +115,52 @@ export class SolanaConnector implements BlockchainConnector {
       this.connection = new Connection(rpcUrl, 'confirmed');
       
       // Initialize keypair from private key if available
-      if (process.env.SOLANA_PRIVATE_KEY && process.env.SOLANA_PRIVATE_KEY.length === 128) {
-        // Only use the private key if it's in the correct hex format (64 bytes = 128 hex chars)
+      const privateKeyEnv = process.env.SOLANA_PRIVATE_KEY;
+      if (privateKeyEnv && privateKeyEnv.length > 0) {
         try {
-          const privateKeyBytes = Buffer.from(process.env.SOLANA_PRIVATE_KEY, 'hex');
-          this.keypair = Keypair.fromSecretKey(privateKeyBytes);
-          this.walletAddress = this.keypair.publicKey.toString();
-          
-          securityLogger.info(`Solana connector initialized with keypair ${this.walletAddress} on ${this.networkVersion}`);
-        } catch (keyError) {
-          securityLogger.warn(`Invalid SOLANA_PRIVATE_KEY format, falling back to dev mode: ${keyError}`);
-          // Fall through to dev mode
-          if (config.isDevelopmentMode) {
-            const testKeypair = Keypair.generate();
-            this.keypair = testKeypair;
-            this.walletAddress = testKeypair.publicKey.toString();
-            securityLogger.info(`Solana connector initialized in dev mode with simulated keypair ${this.walletAddress}`);
+          const privateKeyBytes = parsePrivateKey(privateKeyEnv);
+          if (privateKeyBytes) {
+            this.keypair = Keypair.fromSecretKey(privateKeyBytes);
+            this.walletAddress = this.keypair.publicKey.toString();
+            securityLogger.info(`Solana connector initialized with keypair ${this.walletAddress} on ${this.networkVersion}`);
+          } else {
+            // Invalid format - log warning and fall back to simulated mode
+            securityLogger.warn(`SOLANA_PRIVATE_KEY has invalid format (${privateKeyEnv.length} chars), using simulated mode`);
+            this.initSimulatedKeypair();
           }
+        } catch (keyError: any) {
+          // Parse error - log and fall back to simulated mode
+          securityLogger.warn(`Invalid SOLANA_PRIVATE_KEY: ${keyError.message?.substring(0, 100)}`);
+          this.initSimulatedKeypair();
         }
-      } else if (config.isDevelopmentMode) {
-        // For development, we use a test keypair
-        // In a real environment, we'd never hardcode a keypair
-        const testKeypair = Keypair.generate();
-        this.keypair = testKeypair;
-        this.walletAddress = testKeypair.publicKey.toString();
-        
-        securityLogger.info(`Solana connector initialized in dev mode with simulated keypair ${this.walletAddress}`);
       } else {
-        securityLogger.info(`Solana connector initialized in read-only mode on ${this.networkVersion}`);
+        // No private key provided - use simulated mode
+        this.initSimulatedKeypair();
       }
-    } catch (error) {
-      securityLogger.error('Failed to initialize Solana connector', { error });
-      throw new Error(`Failed to initialize Solana connector: ${error}`);
+    } catch (error: any) {
+      // Non-fatal error - initialize in degraded mode instead of crashing
+      securityLogger.error(`Solana connector initialization warning: ${error.message}`);
+      console.warn(`⚠️ Solana connector in degraded mode: ${error.message}`);
+      // Initialize with minimal connection to prevent crashes
+      this.connection = new Connection('https://api.devnet.solana.com', 'confirmed');
+      this.initSimulatedKeypair();
+    }
+  }
+  
+  /**
+   * Initialize a simulated keypair for development/degraded mode
+   * This allows the server to continue running without crashing
+   */
+  private initSimulatedKeypair(): void {
+    try {
+      const testKeypair = Keypair.generate();
+      this.keypair = testKeypair;
+      this.walletAddress = testKeypair.publicKey.toString();
+      securityLogger.info(`Solana connector using simulated keypair ${this.walletAddress} on ${this.networkVersion}`);
+    } catch (e: any) {
+      // Even if keypair generation fails, don't crash
+      this.walletAddress = 'SimulatedSolanaWallet11111111111111111111111';
+      securityLogger.warn(`Solana connector in minimal mode: ${e.message}`);
     }
   }
   
