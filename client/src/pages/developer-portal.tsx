@@ -402,7 +402,7 @@ const DeveloperPortal = () => {
                 <div className="p-2 rounded-lg bg-indigo-500/20">
                   <ServerCog className="h-6 w-6 text-indigo-400" />
                 </div>
-                <h3 className="text-xl font-semibold">Triple-Chain Security</h3>
+                <h3 className="text-xl font-semibold">Trinity Protocol™ Security</h3>
               </div>
               <p className="text-gray-400">
                 Leverage our groundbreaking multi-blockchain verification system to offer unparalleled security guarantees.
