@@ -164,7 +164,7 @@ const CrossChainVaultPage = () => {
           </div>
           
           <div className="bg-[#1A1A1A] border border-[#333] rounded-lg p-6">
-            <h3 className="text-xl font-semibold text-white mb-4">2. Triple-Chain Security™ Architecture</h3>
+            <h3 className="text-xl font-semibold text-white mb-4">2. Trinity Protocol™ Security Architecture</h3>
             <p className="text-gray-300 mb-4">
               Our signature security model distributes verification across three chains:
             </p>
