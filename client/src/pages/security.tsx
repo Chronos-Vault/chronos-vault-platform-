@@ -114,11 +114,7 @@ const SecurityControlCenter = () => {
       totalSigners: number;
       signers: string[];
     }) => {
-      return await apiRequest('/api/security/multisig', {
-        method: 'POST',
-        body: JSON.stringify(walletData),
-        headers: { 'Content-Type': 'application/json' }
-      });
+      return await apiRequest('POST', '/api/security/multisig', walletData);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/security/multisig'] });
