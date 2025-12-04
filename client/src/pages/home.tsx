@@ -91,16 +91,16 @@ const Home = () => {
               <div className="inline-flex items-center px-3 py-1 rounded-full bg-[#6B00D7]/20 border border-[#6B00D7]/40 mb-6">
                 <span className="text-xs font-medium text-[#FF5AF7] tracking-wider uppercase flex items-center">
                   <Shield className="w-3.5 h-3.5 text-[#FF5AF7] mr-1.5" />
-                  <span>TRIPLE-CHAIN SECURITY ARCHITECTURE</span>
+                  <span>POWERED BY TRINITY PROTOCOL™</span>
                 </span>
               </div>
               
               <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-white via-[#FF5AF7] to-white">
-                Unbreakable Vault Technology
+                Chronos Vault
               </h1>
               
               <p className="text-xl text-gray-300 max-w-2xl mx-auto leading-relaxed">
-                Pioneering the most sophisticated security architecture ever developed for digital assets
+                The most sophisticated multi-chain vault ecosystem for securing, managing, and growing your digital assets
               </p>
             </div>
             
@@ -160,7 +160,7 @@ const Home = () => {
                 transition={{ duration: 0.7, delay: 0.1 }}
                 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-white via-[#FF5AF7] to-white"
               >
-                Triple-Chain Defense System
+                Trinity Protocol™ Security
               </motion.h2>
               
               <motion.p 
@@ -169,7 +169,7 @@ const Home = () => {
                 transition={{ duration: 0.7, delay: 0.2 }}
                 className="text-gray-300 max-w-3xl mx-auto"
               >
-                Our proprietary security architecture synchronizes vault protection across Ethereum, Solana, and TON, with real-time monitoring and AI-enhanced threat detection.
+                Chronos Vault's proprietary 2-of-3 consensus architecture synchronizes vault protection across Arbitrum, Solana, and TON with real-time monitoring and AI-enhanced threat detection.
               </motion.p>
             </div>
             
@@ -628,7 +628,7 @@ const Home = () => {
                 className="bg-black/50 border border-[#6B00D7]/30 rounded-full px-4 py-2 flex items-center gap-2"
               >
                 <Zap className="text-[#FF5AF7] w-4 h-4" />
-                <span className="text-sm text-white">Triple-Chain Security</span>
+                <span className="text-sm text-white">Trinity Protocol™</span>
               </motion.div>
               
               <motion.div 
@@ -948,10 +948,10 @@ const Home = () => {
           <div className="container mx-auto px-4">
             <div className="text-center mb-12">
               <div className="inline-flex mb-3 items-center justify-center space-x-2 px-6 py-2 rounded-full border border-[#6B00D7]/50 bg-gradient-to-r from-black/80 via-[#6B00D7]/20 to-black/80 shadow-[0_0_10px_rgba(107,0,215,0.6)]">
-                <span className="text-base font-bold bg-clip-text text-transparent bg-gradient-to-r from-white via-[#FF5AF7] to-white uppercase tracking-wider animate-text-shine">Triple-Chain Security Architecture</span>
+                <span className="text-base font-bold bg-clip-text text-transparent bg-gradient-to-r from-white via-[#FF5AF7] to-white uppercase tracking-wider animate-text-shine">Chronos Vault Security</span>
               </div>
-              <h2 className="text-4xl sm:text-5xl font-bold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-[#6B00D7] via-[#FF5AF7] to-[#6B00D7]">Unbreakable Vault Technology</h2>
-              <p className="text-gray-300 max-w-3xl mx-auto text-lg">Pioneering the most sophisticated security architecture ever developed for digital assets</p>
+              <h2 className="text-4xl sm:text-5xl font-bold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-[#6B00D7] via-[#FF5AF7] to-[#6B00D7]">Trinity Protocol™ Architecture</h2>
+              <p className="text-gray-300 max-w-3xl mx-auto text-lg">Chronos Vault's proprietary 2-of-3 consensus security — the most sophisticated architecture ever developed for digital assets</p>
             </div>
             
             {/* Enhanced Security Visualization */}
@@ -1130,7 +1130,7 @@ const Home = () => {
                   <div className="mt-6">
                     <Link to="/security" className="inline-flex items-center justify-center px-6 py-3 rounded-lg bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] text-white font-medium text-sm transition-all duration-300 hover:shadow-lg hover:shadow-[#6B00D7]/30 hover:-translate-y-1 cta-button">
                       <Shield className="w-4 h-4 mr-2" />
-                      Explore Triple-Chain Security
+                      Explore Trinity Protocol™
                       <ChevronRight className="w-4 h-4 ml-1" />
                     </Link>
                   </div>
@@ -1153,10 +1153,10 @@ const Home = () => {
             <div className="max-w-2xl mx-auto mb-12">
               <div className="text-center mb-8">
                 <div className="inline-flex mb-3 items-center justify-center space-x-2 px-6 py-2 rounded-full border border-[#6B00D7]/50 bg-gradient-to-r from-black/80 via-[#6B00D7]/20 to-black/80 shadow-[0_0_10px_rgba(107,0,215,0.6)]">
-                  <span className="text-base font-bold bg-clip-text text-transparent bg-gradient-to-r from-white via-[#FF5AF7] to-white uppercase tracking-wider animate-text-shine">Revolutionary Security Architecture</span>
+                  <span className="text-base font-bold bg-clip-text text-transparent bg-gradient-to-r from-white via-[#FF5AF7] to-white uppercase tracking-wider animate-text-shine">Chronos Vault Interface</span>
                 </div>
-                <h2 className="text-3xl sm:text-4xl font-bold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-[#6B00D7] via-[#FF5AF7] to-[#6B00D7]">Next-Generation Vault Visualization</h2>
-                <p className="text-gray-300 max-w-3xl mx-auto text-lg">Experience the most sophisticated visual representation of blockchain vault security ever created</p>
+                <h2 className="text-3xl sm:text-4xl font-bold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-[#6B00D7] via-[#FF5AF7] to-[#6B00D7]">Next-Generation Vault Dashboard</h2>
+                <p className="text-gray-300 max-w-3xl mx-auto text-lg">Experience Chronos Vault's sophisticated visual interface for managing your digital asset security</p>
               </div>
               
               <div className="relative mx-auto mb-8">
@@ -1186,7 +1186,7 @@ const Home = () => {
                   <div className="text-sm">
                     <div className="text-[#FF5AF7] mb-1 flex items-center gap-1">
                       <div className="h-2 w-2 bg-[#FF5AF7] rounded-full"></div>
-                      Triple-Chain Status:
+                      Trinity Protocol™:
                     </div>
                     <div className="text-white">Synced</div>
                   </div>
@@ -1237,8 +1237,8 @@ const Home = () => {
               <div className="inline-flex mb-3 items-center justify-center space-x-2 px-6 py-2 rounded-full border border-[#6B00D7]/50 bg-gradient-to-r from-black/80 via-[#6B00D7]/20 to-black/80 shadow-[0_0_10px_rgba(107,0,215,0.6)]">
                 <span className="text-base font-bold bg-clip-text text-transparent bg-gradient-to-r from-white via-[#FF5AF7] to-white uppercase tracking-wider animate-text-shine">How Chronos Vault Works</span>
               </div>
-              <h2 className="text-4xl sm:text-5xl font-bold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-[#6B00D7] via-[#FF5AF7] to-[#6B00D7]">Triple-Chain Security Architecture</h2>
-              <p className="text-gray-300 max-w-3xl mx-auto text-lg">Our advanced multi-blockchain security system utilizes TON, Ethereum, and Solana to create an impenetrable vault system</p>
+              <h2 className="text-4xl sm:text-5xl font-bold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-[#6B00D7] via-[#FF5AF7] to-[#6B00D7]">Powered by Trinity Protocol™</h2>
+              <p className="text-gray-300 max-w-3xl mx-auto text-lg">Chronos Vault's advanced multi-blockchain security utilizes Arbitrum, Solana, and TON to create an impenetrable vault system</p>
             </div>
             
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl mx-auto">
@@ -1328,7 +1328,7 @@ const Home = () => {
                   
                   <div className="mt-4 pt-4 border-t border-gray-800">
                     <div className="flex items-center space-x-2 text-sm text-gray-500">
-                      <span className="flex items-center"><ShieldCheck className="w-4 h-4 mr-1 text-[#FF5AF7]" /> Triple-chain monitoring</span>
+                      <span className="flex items-center"><ShieldCheck className="w-4 h-4 mr-1 text-[#FF5AF7]" /> Trinity Protocol™ monitoring</span>
                     </div>
                   </div>
                 </div>
