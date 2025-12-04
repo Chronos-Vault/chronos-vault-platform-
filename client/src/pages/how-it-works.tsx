@@ -69,7 +69,7 @@ const HowItWorksPage = () => {
                 </h3>
                 <p className="text-gray-300">
                   Most digital wallets use just one lock system. If someone figures out how to break that lock, all your valuables are gone. 
-                  Our vault uses three separate lock systems at once (called "Triple-Chain Security"). This means that even if one lock gets 
+                  Our vault uses Trinity Protocol™ with 2-of-3 consensus across three blockchains. This means that even if one lock gets 
                   compromised, your valuables stay safe behind the other two locks.
                 </p>
               </div>
@@ -121,65 +121,11 @@ const HowItWorksPage = () => {
             </div>
           </section>
         
-          {/* Triple-Chain Security Section */}
+          {/* Trinity Protocol Layer Roles */}
           <section id="getting-started" className="mb-16">
             <div className="flex items-center gap-3 mb-5">
-              <Shield className="w-8 h-8 text-[#FF5AF7]" />
-              <h2 className="text-3xl font-bold text-white">Triple-Chain Security™: The Foundation</h2>
-            </div>
-            <Card className="bg-[#1A1A1A] border border-[#333] shadow-xl mb-8">
-              <CardContent className="pt-6">
-                <p className="text-gray-300 mb-6">
-                  At the core of Chronos Vault is our revolutionary Triple-Chain Security™ technology that distributes 
-                  your protection across TON, Ethereum, and Solana simultaneously.
-                </p>
-                
-                <h3 className="text-xl font-semibold text-white mb-4">How It Works:</h3>
-                <ol className="space-y-4 text-gray-300 mb-6">
-                  <li className="flex gap-4">
-                    <div className="flex-shrink-0 w-8 h-8 rounded-full bg-[#6B00D7] flex items-center justify-center text-white font-semibold">1</div>
-                    <div>
-                      <p>When you create a vault, our system fragments your security credentials across three separate blockchains</p>
-                    </div>
-                  </li>
-                  <li className="flex gap-4">
-                    <div className="flex-shrink-0 w-8 h-8 rounded-full bg-[#6B00D7] flex items-center justify-center text-white font-semibold">2</div>
-                    <div>
-                      <p>Each blockchain holds only a portion of the access keys, making it impossible for attackers to compromise your assets by targeting a single chain</p>
-                    </div>
-                  </li>
-                  <li className="flex gap-4">
-                    <div className="flex-shrink-0 w-8 h-8 rounded-full bg-[#6B00D7] flex items-center justify-center text-white font-semibold">3</div>
-                    <div>
-                      <p>To access your vault, our system verifies authorization across all three chains simultaneously</p>
-                    </div>
-                  </li>
-                  <li className="flex gap-4">
-                    <div className="flex-shrink-0 w-8 h-8 rounded-full bg-[#6B00D7] flex items-center justify-center text-white font-semibold">4</div>
-                    <div>
-                      <p>Even if one blockchain experiences issues, your assets remain secure through the other two chains</p>
-                    </div>
-                  </li>
-                </ol>
-                
-                <div className="py-4 px-6 bg-[#111] rounded-lg border border-[#333]">
-                  <p className="font-semibold text-[#FF5AF7]">Result:</p>
-                  <p className="text-white">Protection that's 400x more resistant to exploits than traditional single-chain solutions.</p>
-                </div>
-              </CardContent>
-              <CardFooter className="border-t border-[#333] flex justify-center pt-4">
-                <Button asChild variant="outline" className="w-auto">
-                  <Link href="/triple-chain-security">Learn More About Triple-Chain Security <MoveRight className="ml-2 w-4 h-4" /></Link>
-                </Button>
-              </CardFooter>
-            </Card>
-          </section>
-          
-          {/* Trinity Protocol Layer Roles */}
-          <section className="mb-16">
-            <div className="flex items-center gap-3 mb-5">
               <Cpu className="w-8 h-8 text-[#FF5AF7]" />
-              <h2 className="text-3xl font-bold text-white">Trinity Protocol: Fixed Layer Roles</h2>
+              <h2 className="text-3xl font-bold text-white">Trinity Protocol™: The Foundation</h2>
             </div>
             <Card className="bg-[#1A1A1A] border border-[#333] shadow-xl mb-8">
               <CardContent className="pt-6">
@@ -322,7 +268,7 @@ const HowItWorksPage = () => {
                     <CardHeader>
                       <BarChart className="w-6 h-6 text-[#FF5AF7] mb-2" />
                       <CardTitle>Yield Optimization Vaults</CardTitle>
-                      <CardDescription>Generate returns while maintaining Triple-Chain Security™</CardDescription>
+                      <CardDescription>Generate returns while maintaining Trinity Protocol™</CardDescription>
                     </CardHeader>
                     <CardContent>
                       <p className="text-sm text-gray-400">
@@ -864,12 +810,12 @@ const HowItWorksPage = () => {
                 
                 <Card className="bg-[#1A1A1A] border border-[#333] shadow-xl overflow-hidden">
                   <CardHeader className="pb-2 bg-[#222]">
-                    <CardTitle className="text-xl">What makes Triple-Chain Security™ better than other solutions?</CardTitle>
+                    <CardTitle className="text-xl">What makes Trinity Protocol™ better than other solutions?</CardTitle>
                   </CardHeader>
                   <CardContent className="pt-4">
                     <p className="text-gray-300">
                       Think of it like this: Most security systems use one lock. If someone breaks that lock, they get all your valuables. 
-                      Our Triple-Chain Security™ uses three completely different lock systems at once (on Ethereum, TON, and Solana). Even if 
+                      Our Trinity Protocol™ uses three completely different lock systems at once (on Ethereum, TON, and Solana). Even if 
                       someone breaks one lock, they still can't access your assets because the other two locks are still intact. This makes our 
                       security 400x more resistant to attacks than standard solutions.
                     </p>
