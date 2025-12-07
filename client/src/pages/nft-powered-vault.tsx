@@ -39,7 +39,7 @@ import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { format } from "date-fns";
 
-type SupportedChain = "ethereum" | "ton" | "solana" | "polygon" | "avalanche" | "flow" | "immutablex";
+type SupportedChain = "ethereum" | "ton" | "solana" | "arbitrum" | "avalanche" | "flow" | "immutablex";
 type NftType = "static" | "dynamic" | "interactive" | "generative" | "fractional";
 type AccessType = "ownership" | "staking" | "reputation" | "multi-token" | "hybrid";
 type RarityTier = "common" | "uncommon" | "rare" | "epic" | "legendary" | "mythic" | "unique";
@@ -262,7 +262,7 @@ const NFTPoweredVault: React.FC = () => {
     // Update NFT standard based on selected chain
     switch(selectedChain) {
       case "ethereum":
-      case "polygon":
+      case "arbitrum":
         setNftStandard("ERC-721");
         break;
       case "solana":
@@ -656,7 +656,7 @@ const NFTPoweredVault: React.FC = () => {
                             <SelectItem value="ethereum">Ethereum</SelectItem>
                             <SelectItem value="ton">TON</SelectItem>
                             <SelectItem value="solana">Solana</SelectItem>
-                            <SelectItem value="polygon">Polygon</SelectItem>
+                            <SelectItem value="arbitrum">Arbitrum</SelectItem>
                             <SelectItem value="avalanche">Avalanche</SelectItem>
                             <SelectItem value="flow">Flow</SelectItem>
                             <SelectItem value="immutablex">Immutable X</SelectItem>
