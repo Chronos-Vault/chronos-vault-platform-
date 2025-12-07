@@ -96,48 +96,60 @@ export class GitHubSyncService {
   async commitMultipleFiles(
     files: FileUpdate[],
     commitMessage: string,
-    branch: string = 'main'
+    branch: string = 'main',
+    retryCount: number = 0
   ): Promise<void> {
-    const { data: ref } = await this.octokit.git.getRef({
-      owner: this.owner,
-      repo: this.repo,
-      ref: `heads/${branch}`,
-    });
+    const MAX_RETRIES = 3;
+    
+    try {
+      const { data: ref } = await this.octokit.git.getRef({
+        owner: this.owner,
+        repo: this.repo,
+        ref: `heads/${branch}`,
+      });
 
-    const { data: commit } = await this.octokit.git.getCommit({
-      owner: this.owner,
-      repo: this.repo,
-      commit_sha: ref.object.sha,
-    });
+      const { data: commit } = await this.octokit.git.getCommit({
+        owner: this.owner,
+        repo: this.repo,
+        commit_sha: ref.object.sha,
+      });
 
-    const { data: tree } = await this.octokit.git.createTree({
-      owner: this.owner,
-      repo: this.repo,
-      base_tree: commit.tree.sha,
-      tree: files.map(file => ({
-        path: file.path,
-        mode: '100644' as const,
-        type: 'blob' as const,
-        content: file.content,
-      })),
-    });
+      const { data: tree } = await this.octokit.git.createTree({
+        owner: this.owner,
+        repo: this.repo,
+        base_tree: commit.tree.sha,
+        tree: files.map(file => ({
+          path: file.path,
+          mode: '100644' as const,
+          type: 'blob' as const,
+          content: file.content,
+        })),
+      });
 
-    const { data: newCommit } = await this.octokit.git.createCommit({
-      owner: this.owner,
-      repo: this.repo,
-      message: commitMessage,
-      tree: tree.sha,
-      parents: [ref.object.sha],
-    });
+      const { data: newCommit } = await this.octokit.git.createCommit({
+        owner: this.owner,
+        repo: this.repo,
+        message: commitMessage,
+        tree: tree.sha,
+        parents: [ref.object.sha],
+      });
 
-    await this.octokit.git.updateRef({
-      owner: this.owner,
-      repo: this.repo,
-      ref: `heads/${branch}`,
-      sha: newCommit.sha,
-    });
+      await this.octokit.git.updateRef({
+        owner: this.owner,
+        repo: this.repo,
+        ref: `heads/${branch}`,
+        sha: newCommit.sha,
+      });
 
-    console.log(`✅ Committed ${files.length} files: ${commitMessage}`);
+      console.log(`✅ Committed ${files.length} files: ${commitMessage}`);
+    } catch (error: any) {
+      if (error.status === 422 && error.message?.includes('not a fast forward') && retryCount < MAX_RETRIES) {
+        console.log(`⚠️ Fast-forward conflict, retrying (attempt ${retryCount + 1}/${MAX_RETRIES})...`);
+        await new Promise(resolve => setTimeout(resolve, 1000 * (retryCount + 1)));
+        return this.commitMultipleFiles(files, commitMessage, branch, retryCount + 1);
+      }
+      throw error;
+    }
   }
 
   async getRepoInfo() {
