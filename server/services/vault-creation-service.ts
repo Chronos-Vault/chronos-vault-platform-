@@ -20,6 +20,7 @@ import { ethereumClient } from '../blockchain/ethereum-client';
 import { SolanaProgramClient } from '../blockchain/solana-program-client';
 import { tonClient } from '../blockchain/ton-client';
 import { securityLogger, SecurityEventType } from '../monitoring/security-logger';
+import { crossChainVaultRegistration } from './cross-chain-vault-registration';
 import config from '../config';
 
 export interface CreateVaultRequest {
@@ -215,23 +216,24 @@ export class VaultCreationService {
   /**
    * Create Time-Lock Vault
    * PRIMARY: Arbitrum L2 (ethereum), MONITOR: Solana, BACKUP: TON
+   * Now with REAL cross-chain registration for blockchain explorer visibility!
    */
   async createTimeLockVault(vaultData: any, request: CreateVaultRequest): Promise<any> {
     securityLogger.info(`⏱️ Creating Time-Lock Vault on Arbitrum L2 with ${request.timeLockDays} days lock`, SecurityEventType.VAULT_CREATION);
     
     const unlockTimestamp = Math.floor(Date.now() / 1000) + (request.timeLockDays! * 24 * 60 * 60);
     
-    // FIXED: Always deploy to Arbitrum L2 (ethereum client) as PRIMARY
-    const result = await ethereumClient.createTimeLockVault(
-      request.walletAddress,
-      request.assetAmount,
-      unlockTimestamp
-    );
-    const ethereumTxHash = result.txHash;
-    const ethereumContractAddress = result.vaultAddress;
+    // Register vault across all three chains (creates REAL blockchain transactions)
+    const crossChainResult = await crossChainVaultRegistration.registerVaultCrossChain({
+      vaultId: vaultData.id.toString(),
+      vaultName: request.name,
+      ownerAddress: request.walletAddress,
+      vaultType: 'timelock',
+      amount: request.assetAmount,
+      securityLevel: request.securityLevel,
+    });
     
     // Trinity Protocol verification (2-of-3 or 3-of-3 based on security level)
-    // FIXED: Always uses Arbitrum L2 PRIMARY, Solana MONITOR, TON BACKUP
     const requiredChains = request.securityLevel === 5 ? 3 : 2;
     const trinityVerification = await trinityProtocol.verifyOperation({
       operationId: `vault-create-${vaultData.id}`,
@@ -242,39 +244,43 @@ export class VaultCreationService {
         vaultType: 'timelock',
         unlockTimestamp,
         assetAmount: request.assetAmount,
+        crossChainResult: crossChainResult.explorerLinks,
       },
       requiredChains,
     });
     
     return {
-      ethereumTxHash,
-      solanaTxHash: undefined,
-      tonTxHash: undefined,
-      ethereumContractAddress,
+      ethereumTxHash: crossChainResult.arbitrumTxHash,
+      solanaTxHash: crossChainResult.solanaTxSignature,
+      tonTxHash: crossChainResult.tonTxHash,
+      ethereumContractAddress: undefined, // Contract address comes from actual deployment
       solanaContractAddress: undefined,
       tonContractAddress: undefined,
-      trinityVerificationHash: trinityVerification.proofHash,
-      trinityVerified: trinityVerification.consensusReached,
+      trinityVerificationHash: crossChainResult.trinityProofHash || trinityVerification.proofHash,
+      trinityVerified: crossChainResult.success && trinityVerification.consensusReached,
+      explorerLinks: crossChainResult.explorerLinks,
     };
   }
 
   /**
    * Create Multi-Signature Vault
    * PRIMARY: Arbitrum L2 (ethereum), MONITOR: Solana, BACKUP: TON
+   * Now with REAL cross-chain registration for blockchain explorer visibility!
    */
   async createMultiSigVault(vaultData: any, request: CreateVaultRequest): Promise<any> {
     securityLogger.info(`🔐 Creating Multi-Sig Vault on Arbitrum L2 (${request.signaturesRequired}/${request.signerAddresses?.length})`, SecurityEventType.VAULT_CREATION);
     
-    // FIXED: Always deploy to Arbitrum L2 (ethereum client) as PRIMARY
-    const result = await ethereumClient.createMultiSigVault(
-      request.signerAddresses!,
-      request.signaturesRequired!,
-      request.assetAmount
-    );
-    const ethereumTxHash = result.txHash;
-    const ethereumContractAddress = result.vaultAddress;
+    // Register vault across all three chains (creates REAL blockchain transactions)
+    const crossChainResult = await crossChainVaultRegistration.registerVaultCrossChain({
+      vaultId: vaultData.id.toString(),
+      vaultName: request.name,
+      ownerAddress: request.walletAddress,
+      vaultType: 'multisig',
+      amount: request.assetAmount,
+      securityLevel: request.securityLevel,
+    });
     
-    // Trinity Protocol verification (FIXED: no primaryChain parameter)
+    // Trinity Protocol verification
     const requiredChains = request.securityLevel === 5 ? 3 : 2;
     const trinityVerification = await trinityProtocol.verifyOperation({
       operationId: `vault-create-${vaultData.id}`,
@@ -285,24 +291,27 @@ export class VaultCreationService {
         vaultType: 'multisig',
         signers: request.signerAddresses,
         threshold: request.signaturesRequired,
+        crossChainResult: crossChainResult.explorerLinks,
       },
       requiredChains,
     });
     
     return {
-      ethereumTxHash,
-      solanaTxHash: undefined,
-      tonTxHash: undefined,
-      ethereumContractAddress,
+      ethereumTxHash: crossChainResult.arbitrumTxHash,
+      solanaTxHash: crossChainResult.solanaTxSignature,
+      tonTxHash: crossChainResult.tonTxHash,
+      ethereumContractAddress: undefined,
       solanaContractAddress: undefined,
       tonContractAddress: undefined,
-      trinityVerificationHash: trinityVerification.proofHash,
-      trinityVerified: trinityVerification.consensusReached,
+      trinityVerificationHash: crossChainResult.trinityProofHash || trinityVerification.proofHash,
+      trinityVerified: crossChainResult.success && trinityVerification.consensusReached,
+      explorerLinks: crossChainResult.explorerLinks,
     };
   }
 
   /**
    * Create Cross-Chain Fragment Vault
+   * Now with REAL cross-chain registration for blockchain explorer visibility!
    */
   async createCrossChainFragmentVault(vaultData: any, request: CreateVaultRequest): Promise<any> {
     securityLogger.info(`🧩 Creating Cross-Chain Fragment Vault`, SecurityEventType.VAULT_CREATION);
@@ -315,42 +324,17 @@ export class VaultCreationService {
     const solAmount = (totalAmount * (distribution.solana || 0) / 100).toString();
     const tonAmount = (totalAmount * (distribution.ton || 0) / 100).toString();
     
-    let ethereumTxHash, solanaTxHash, tonTxHash;
-    let ethereumContractAddress, solanaContractAddress, tonContractAddress;
-    
-    // Deploy fragments to all chains
-    if (distribution.ethereum && parseFloat(ethAmount) > 0) {
-      const result = await ethereumClient.createFragmentVault(
-        request.walletAddress,
-        ethAmount,
-        vaultData.id
-      );
-      ethereumTxHash = result.txHash;
-      ethereumContractAddress = result.vaultAddress;
-    }
-    
-    if (distribution.solana && parseFloat(solAmount) > 0) {
-      const result = await this.solanaProgramClient.createFragmentVault(
-        request.walletAddress,
-        solAmount,
-        vaultData.id
-      );
-      solanaTxHash = result.signature;
-      solanaContractAddress = result.vaultPubkey;
-    }
-    
-    if (distribution.ton && parseFloat(tonAmount) > 0) {
-      const result = await tonClient.createFragmentVault(
-        request.walletAddress,
-        tonAmount,
-        vaultData.id
-      );
-      tonTxHash = result.txHash;
-      tonContractAddress = result.vaultAddress;
-    }
+    // Register vault across all three chains (creates REAL blockchain transactions)
+    const crossChainResult = await crossChainVaultRegistration.registerVaultCrossChain({
+      vaultId: vaultData.id.toString(),
+      vaultName: request.name,
+      ownerAddress: request.walletAddress,
+      vaultType: 'fragment',
+      amount: request.assetAmount,
+      securityLevel: request.securityLevel,
+    });
     
     // Trinity Protocol verification (always 3-of-3 for fragment vaults)
-    // FIXED: Always uses Arbitrum L2 PRIMARY, Solana MONITOR, TON BACKUP
     const trinityVerification = await trinityProtocol.verifyOperation({
       operationId: `vault-create-${vaultData.id}`,
       operationType: OperationType.VAULT_CREATE,
@@ -364,19 +348,21 @@ export class VaultCreationService {
           ton: tonAmount,
         },
         recoveryThreshold: request.fragmentRecoveryThreshold,
+        crossChainResult: crossChainResult.explorerLinks,
       },
       requiredChains: 3, // All 3 chains must verify
     });
     
     return {
-      ethereumTxHash,
-      solanaTxHash,
-      tonTxHash,
-      ethereumContractAddress,
-      solanaContractAddress,
-      tonContractAddress,
-      trinityVerificationHash: trinityVerification.proofHash,
-      trinityVerified: trinityVerification.consensusReached,
+      ethereumTxHash: crossChainResult.arbitrumTxHash,
+      solanaTxHash: crossChainResult.solanaTxSignature,
+      tonTxHash: crossChainResult.tonTxHash,
+      ethereumContractAddress: undefined,
+      solanaContractAddress: undefined,
+      tonContractAddress: undefined,
+      trinityVerificationHash: crossChainResult.trinityProofHash || trinityVerification.proofHash,
+      trinityVerified: crossChainResult.success && trinityVerification.consensusReached,
+      explorerLinks: crossChainResult.explorerLinks,
     };
   }
 }

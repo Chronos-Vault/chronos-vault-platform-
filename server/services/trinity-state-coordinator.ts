@@ -51,23 +51,35 @@ export class TrinityStateCoordinator extends EventEmitter {
 
   /**
    * Initialize the Trinity Protocol State Coordinator
+   * Gracefully handles failures - server will continue running even if some chains fail
    */
   async initialize(): Promise<void> {
     try {
       securityLogger.info('🔺 Initializing Trinity Protocol State Coordinator...', SecurityEventType.CROSS_CHAIN_VERIFICATION);
 
-      // Initialize all event listeners
-      await arbitrumEventListener.initialize();
-      await solanaEventListener.initialize();
-      await tonEventListener.initialize();
+      // Initialize all event listeners (each handles its own errors gracefully)
+      await arbitrumEventListener.initialize().catch(err => {
+        securityLogger.warn('⚠️ Arbitrum listener initialization failed - will continue without it', SecurityEventType.SYSTEM_ERROR);
+      });
+      
+      await solanaEventListener.initialize().catch(err => {
+        securityLogger.warn('⚠️ Solana listener initialization failed - will continue without it', SecurityEventType.SYSTEM_ERROR);
+      });
+      
+      await tonEventListener.initialize().catch(err => {
+        securityLogger.warn('⚠️ TON listener initialization failed - will continue without it', SecurityEventType.SYSTEM_ERROR);
+      });
 
       // Initialize Trinity Protocol
-      await trinityProtocol.initialize();
+      await trinityProtocol.initialize().catch(err => {
+        securityLogger.warn('⚠️ Trinity Protocol initialization failed - basic operations will still work', SecurityEventType.SYSTEM_ERROR);
+      });
 
-      securityLogger.info('✅ Trinity Protocol State Coordinator initialized', SecurityEventType.CROSS_CHAIN_VERIFICATION);
+      securityLogger.info('✅ Trinity Protocol State Coordinator initialized (degraded mode if some chains failed)', SecurityEventType.CROSS_CHAIN_VERIFICATION);
     } catch (error) {
       securityLogger.error('❌ Failed to initialize Trinity Protocol State Coordinator', SecurityEventType.SYSTEM_ERROR, error);
-      throw error;
+      // Don't throw - let the server continue running
+      securityLogger.info('ℹ️ Server will continue running with limited cross-chain functionality', SecurityEventType.CROSS_CHAIN_VERIFICATION);
     }
   }
 
@@ -87,10 +99,16 @@ export class TrinityStateCoordinator extends EventEmitter {
     this.setupSolanaListeners();
     this.setupTONListeners();
 
-    // Start all event listeners
-    await arbitrumEventListener.startListening();
-    await solanaEventListener.startListening();
-    await tonEventListener.startListening();
+    // Start all event listeners (gracefully handle failures)
+    await arbitrumEventListener.startListening().catch(err => {
+      securityLogger.warn('⚠️ Arbitrum listener failed to start - continuing without it', SecurityEventType.SYSTEM_ERROR);
+    });
+    await solanaEventListener.startListening().catch(err => {
+      securityLogger.warn('⚠️ Solana listener failed to start - continuing without it', SecurityEventType.SYSTEM_ERROR);
+    });
+    await tonEventListener.startListening().catch(err => {
+      securityLogger.warn('⚠️ TON listener failed to start - continuing without it', SecurityEventType.SYSTEM_ERROR);
+    });
 
     this.isRunning = true;
     securityLogger.info('✅ Trinity Protocol State Coordinator is now running', SecurityEventType.CROSS_CHAIN_VERIFICATION);

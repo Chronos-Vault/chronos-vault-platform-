@@ -66,9 +66,13 @@ class TrinityCoordinatorService {
   
   constructor() {
     // Initialize blockchain connections
-    this.arbitrumProvider = new ethers.JsonRpcProvider(
-      process.env.ARBITRUM_RPC_URL || 'https://sepolia-rollup.arbitrum.io/rpc'
-    );
+    // Use Alchemy API (paid) for reliable RPC, fallback to public
+    const alchemyKey = process.env.ALCHEMY_API_KEY;
+    const arbitrumRpcUrl = alchemyKey 
+      ? `https://arb-sepolia.g.alchemy.com/v2/${alchemyKey}`
+      : (process.env.ARBITRUM_RPC_URL || 'https://sepolia-rollup.arbitrum.io/rpc');
+    
+    this.arbitrumProvider = new ethers.JsonRpcProvider(arbitrumRpcUrl);
     
     this.solanaConnection = new Connection(
       process.env.SOLANA_RPC_URL || 'https://api.devnet.solana.com',

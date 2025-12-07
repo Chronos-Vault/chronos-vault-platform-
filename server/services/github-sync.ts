@@ -149,7 +149,7 @@ export class GitHubSyncService {
   }
 }
 
-export function createGitHubSync(): GitHubSyncService | null {
+export function createGitHubSync(targetRepo?: string): GitHubSyncService | null {
   const token = process.env.GITHUB_TOKEN;
   
   if (!token) {
@@ -158,8 +158,8 @@ export function createGitHubSync(): GitHubSyncService | null {
   }
 
   return new GitHubSyncService({
-    owner: 'ChronosVault',
-    repo: 'Chronos-Vault',
+    owner: 'Chronos-Vault',
+    repo: targetRepo || 'chronos-vault-platform-',
     token,
   });
 }
