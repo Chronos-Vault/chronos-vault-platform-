@@ -142,9 +142,9 @@ const Sidebar: React.FC<{
                 isNew
               />
               <MenuItem 
-                icon={<div className="text-white text-md">🔄</div>}
-                label="Cross-Chain Bridge Hub" 
-                href="/bridge"
+                icon={<div className="text-white text-md">🔱</div>}
+                label="Trinity Bridge" 
+                href="/trinity-bridge"
                 isNew
               />
               <MenuItem 
@@ -179,9 +179,9 @@ const Sidebar: React.FC<{
                 isNew
               />
               <MenuItem 
-                icon={<div className="text-white text-md">🔄</div>}
-                label="Cross-Chain Bridge Hub" 
-                href="/bridge"
+                icon={<div className="text-white text-md">🔱</div>}
+                label="Trinity Bridge" 
+                href="/trinity-bridge"
                 isNew
               />
               <MenuItem 
