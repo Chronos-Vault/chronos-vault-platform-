@@ -50,11 +50,11 @@ export function Navbar() {
                       Create secure time-locked vaults on the TON blockchain
                     </ListItem>
                     <ListItem 
-                      href="/bridge" 
-                      title="Cross-Chain Bridge" 
+                      href="/trinity-bridge" 
+                      title="Trinity Bridge" 
                       icon={<GitBranchIcon className="h-4 w-4" />}
                     >
-                      Transfer assets between TON, Ethereum, and Solana 
+                      HTLC atomic swaps with 2-of-3 multi-chain consensus 
                     </ListItem>
                     <ListItem 
                       href="/staking" 
@@ -88,14 +88,14 @@ export function Navbar() {
               </NavigationMenuItem>
               
               <NavigationMenuItem>
-                <Link href="/bridge">
+                <Link href="/trinity-bridge">
                   <NavigationMenuLink 
                     className={cn(
                       navigationMenuTriggerStyle(),
-                      isActive('/bridge') && "bg-muted"
+                      isActive('/trinity-bridge') && "bg-muted"
                     )}
                   >
-                    Bridge
+                    Trinity Bridge
                   </NavigationMenuLink>
                 </Link>
               </NavigationMenuItem>
@@ -138,7 +138,7 @@ function MobileNav() {
             <ul className="grid w-[200px] gap-3 p-4">
               <MobileNavLink href="/" title="Home" />
               <MobileNavLink href="/create-vault" title="Create Vault" />
-              <MobileNavLink href="/bridge" title="Bridge" />
+              <MobileNavLink href="/trinity-bridge" title="Trinity Bridge" />
               <MobileNavLink href="/staking" title="Staking" />
               <MobileNavLink href="/portfolio" title="Portfolio" />
               <li className="mt-2 pt-2 border-t">

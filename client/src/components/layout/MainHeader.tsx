@@ -130,9 +130,7 @@ const MainHeader = () => {
         { name: "Cross-Chain Operations", href: "/cross-chain-operations", icon: "🔄", highlight: true, isNew: true },
         { name: "Transaction Monitor", href: "/transaction-monitor", icon: "📈" },
         { name: "Transaction Verification", href: "/transaction-verification", icon: "📝" },
-        { name: "Cross-Chain Bridge", href: "/cross-chain-bridge", icon: "🔄" },
-        { name: "Atomic Swaps", href: "/cross-chain-atomic-swap", icon: "⚛️" },
-        { name: "Bridge vs Swap", href: "/cross-chain-vs-atomic-swap", icon: "🔄", highlight: true, isNew: true },
+        { name: "Trinity Bridge", href: "/trinity-bridge", icon: "🔱", highlight: true, isNew: true },
         { name: "Security Dashboard", href: "/security-dashboard", icon: "🛡️", highlight: true, isNew: true },
         { name: "Vault Explorer", href: "/my-vaults", icon: "📚" },
       ]
