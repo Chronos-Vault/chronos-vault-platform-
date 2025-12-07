@@ -68,7 +68,7 @@ export function registerAdminRoutes(app: any) {
           rankings: {
             fastest: 'Solana',
             mostReliable: 'TON',
-            mostCostEffective: 'Polygon',
+            mostCostEffective: 'Arbitrum',
             bestOverall: 'TON'
           },
           chainResults: {
@@ -114,20 +114,19 @@ export function registerAdminRoutes(app: any) {
                 'Occasional reliability issues'
               ]
             },
-            'polygon': {
-              chainName: 'Polygon',
-              performanceScore: 88,
-              reliabilityScore: 85,
+            'arbitrum': {
+              chainName: 'Arbitrum',
+              performanceScore: 90,
+              reliabilityScore: 92,
               costEfficiencyScore: 95,
-              overallScore: 89,
+              overallScore: 92,
               strengths: [
                 'Very cost-effective with low transaction fees',
-                'Good transaction speed and throughput',
-                'Ethereum compatibility'
+                'Excellent transaction speed and throughput',
+                'Full Ethereum compatibility',
+                'Primary chain for Trinity Protocol'
               ],
-              weaknesses: [
-                'Slightly lower reliability than main chains'
-              ]
+              weaknesses: []
             },
             'bitcoin': {
               chainName: 'Bitcoin',
@@ -146,10 +145,10 @@ export function registerAdminRoutes(app: any) {
             }
           },
           overallRecommendations: [
+            'Use Arbitrum as the PRIMARY chain for Trinity Protocol operations',
             'Use Solana for time-sensitive operations like real-time updates and quick responses',
-            'Use TON for mission-critical operations where reliability is paramount',
-            'Use Polygon for frequent operations and microtransactions to minimize fees',
-            'Use TON as the default chain for balanced performance, reliability, and cost'
+            'Use TON as BACKUP for mission-critical operations where reliability is paramount',
+            'Use Arbitrum for frequent operations and microtransactions to minimize fees'
           ]
         };
       }
