@@ -5,7 +5,7 @@
  * for Trinity Protocol HTLC atomic swaps
  * 
  * @author Chronos Vault Team
- * @version v1.5-PRODUCTION
+ * @version v3.0-PRODUCTION
  */
 
 interface SwapMetrics {
