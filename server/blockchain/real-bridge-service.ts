@@ -28,7 +28,9 @@ const CONTRACTS = {
     chronosVault: process.env.ARBITRUM_VAULT_ADDRESS || '',
     crossChainBridge: process.env.ARBITRUM_BRIDGE_ADDRESS || '',
     cvtBridge: process.env.ARBITRUM_CVT_BRIDGE_ADDRESS || '',
-    rpcUrl: process.env.ARBITRUM_RPC_URL || 'https://sepolia-rollup.arbitrum.io/rpc',
+    rpcUrl: process.env.ALCHEMY_API_KEY 
+      ? `https://arb-sepolia.g.alchemy.com/v2/${process.env.ALCHEMY_API_KEY}`
+      : (process.env.ARBITRUM_RPC_URL || 'https://sepolia-rollup.arbitrum.io/rpc'),
   }
 };
 

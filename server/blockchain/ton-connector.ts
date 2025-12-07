@@ -107,10 +107,14 @@ export class TonConnector implements BlockchainConnector {
         securityLogger.info('TON_API_KEY environment variable is not set, using development mode');
       }
       
-      // In actual implementation, we would initialize TonWeb and TonClient here
-      // For now, just log the initialization in development mode
-      if (config.isDevelopmentMode) {
-        this.walletAddress = "EQD4FPq-PRDieyQKkizFTRtSDyucUIqrj0qZu4_6EKgELI-Q"; // Example TON address
+      // Use funded TON wallet from environment variable if available
+      const fundedTonWallet = process.env.TON_WALLET_ADDRESS;
+      
+      if (fundedTonWallet) {
+        this.walletAddress = fundedTonWallet;
+        securityLogger.info(`TON connector initialized with funded wallet ${this.walletAddress}`);
+      } else if (config.isDevelopmentMode) {
+        this.walletAddress = "EQD4FPq-PRDieyQKkizFTRtSDyucUIqrj0qZu4_6EKgELI-Q"; // Fallback simulated address
         securityLogger.info(`TON connector initialized in dev mode with simulated wallet ${this.walletAddress}`);
       } else {
         // Initialize real TON clients here
@@ -130,8 +134,15 @@ export class TonConnector implements BlockchainConnector {
       return this.walletAddress;
     }
     
+    // Use funded TON wallet from environment variable if available
+    const fundedTonWallet = process.env.TON_WALLET_ADDRESS;
+    if (fundedTonWallet) {
+      this.walletAddress = fundedTonWallet;
+      return this.walletAddress;
+    }
+    
     if (config.isDevelopmentMode) {
-      this.walletAddress = "EQD4FPq-PRDieyQKkizFTRtSDyucUIqrj0qZu4_6EKgELI-Q"; // Example TON address
+      this.walletAddress = "EQD4FPq-PRDieyQKkizFTRtSDyucUIqrj0qZu4_6EKgELI-Q"; // Fallback simulated address
       return this.walletAddress;
     }
     
