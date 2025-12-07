@@ -129,12 +129,7 @@ import FamilyHeritageVaultFormPage from '@/pages/family-heritage-vault-form';
 // Bitcoin Halving Vault now uses the advanced implementation
 
 // Cross-Chain Features
-import BridgePage from '@/pages/bridge';
-import CrossChainBridgePage from '@/pages/cross-chain-bridge';
-import CrossChainAtomicSwapPage from '@/pages/cross-chain-atomic-swap';
-import TonWalletCrossChainBridgePage from '@/pages/ton-wallet-cross-chain-bridge';
-import CrossChainVsAtomicSwapPage from '@/pages/cross-chain-vs-atomic-swap';
-import BridgeVsSwapPage from '@/pages/bridge-vs-swap';
+import TrinityBridgePage from '@/pages/trinity-bridge';
 import SecurityPage from '@/pages/security';
 import SecurityDashboardPage from '@/pages/security-dashboard';
 import TripleChainSecurityDashboardPage from '@/pages/security-dashboard-page';
@@ -302,14 +297,13 @@ const App: React.FC = () => {
                       {/* Switching to explicit routes instead of catch-all to avoid conflicts */}
                       {/* <Route path="/:vaultType-vault" component={CreateVaultEnhancedPage} /> */}
                       
-                      {/* Cross-Chain Features */}
-                      <Route path="/bridge" component={BridgePage} />
-                      {/* Legacy routes - kept for backward compatibility - now redirects to Trinity Scan */}
-                      <Route path="/cross-chain-bridge" component={CrossChainBridgePage} />
-                      <Route path="/cross-chain-atomic-swap" component={CrossChainAtomicSwapPage} />
-                      <Route path="/ton-wallet-cross-chain-bridge" component={TonWalletCrossChainBridgePage} />
-                      <Route path="/bridge-vs-swap" component={BridgeVsSwapPage} />
-                      <Route path="/atomic-swaps" component={BridgePage} />
+                      {/* Cross-Chain Features - Trinity Bridge is the new unified bridge */}
+                      <Route path="/trinity-bridge" component={TrinityBridgePage} />
+                      {/* Legacy routes - redirect to Trinity Bridge */}
+                      <Route path="/bridge" component={TrinityBridgePage} />
+                      <Route path="/atomic-swaps" component={TrinityBridgePage} />
+                      <Route path="/cross-chain-bridge" component={TrinityBridgePage} />
+                      <Route path="/cross-chain-atomic-swap" component={TrinityBridgePage} />
                       
                       {/* Token & Payment */}
                       <Route path="/cvt-tokenomics" component={CvtTokenomicsPage} />
