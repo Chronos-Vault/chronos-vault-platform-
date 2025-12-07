@@ -4,8 +4,6 @@
  * This service provides functionality to fetch and interact with Chainlink oracle data
  * including price feeds and technical indicators.
  */
-// Trinity Protocol v3.5.18 - Updated: 2025-11-25T19:32:00.797Z
-
 
 export interface PriceFeed {
   id: string;
@@ -346,9 +344,9 @@ const generateNetworks = (): OracleNetwork[] => {
       responseTime: 100 + Math.floor(Math.random() * 200)
     },
     {
-      id: 'polygon-1',
-      name: 'Polygon PoS',
-      networkType: 'polygon',
+      id: 'arbitrum-primary',
+      name: 'Arbitrum One (Primary)',
+      networkType: 'arbitrum',
       active: true,
       lastHeartbeat: baseTimestamp - Math.floor(Math.random() * 30000),
       nodeCount: 18 + Math.floor(Math.random() * 7),
