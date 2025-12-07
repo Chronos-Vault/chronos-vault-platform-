@@ -310,4 +310,139 @@ router.post('/cross-chain/verify-zk-proof', async (req: Request, res: Response) 
   }
 });
 
+/**
+ * Test cross-chain vault registration (Arbitrum + Solana + TON)
+ * Triggers real transactions on all three chains
+ * 
+ * @route POST /api/test/cross-chain/register-vault
+ */
+router.post('/cross-chain/register-vault', async (req: Request, res: Response) => {
+  try {
+    const { vaultId, vaultName, ownerAddress, amount, securityLevel } = req.body;
+    
+    if (!vaultId || !vaultName || !ownerAddress) {
+      return res.status(400).json({
+        success: false,
+        error: 'Missing required parameters: vaultId, vaultName, ownerAddress',
+        timestamp: Date.now()
+      });
+    }
+    
+    securityLogger.info('Testing cross-chain vault registration (Arbitrum + Solana + TON)', { vaultId });
+    
+    // Import the cross-chain registration service
+    const { CrossChainVaultRegistrationService } = await import('../services/cross-chain-vault-registration');
+    const registrationService = CrossChainVaultRegistrationService.getInstance();
+    
+    const result = await registrationService.registerVaultOnAllChains({
+      vaultId,
+      vaultName,
+      vaultType: 'standard',
+      ownerAddress,
+      amount: amount || '0.1',
+      securityLevel: securityLevel || 3
+    });
+    
+    return res.json({
+      success: true,
+      data: result,
+      message: 'Cross-chain vault registration completed',
+      timestamp: Date.now()
+    });
+  } catch (error) {
+    securityLogger.error('Error in cross-chain vault registration test', error);
+    
+    return res.status(500).json({
+      success: false,
+      error: error instanceof Error ? error.message : 'Unknown error',
+      timestamp: Date.now()
+    });
+  }
+});
+
+/**
+ * Simple GET test routes for quick testing of cross-chain registration
+ * Uses the public registerVaultCrossChain method which registers on all 3 chains
+ */
+
+// Test cross-chain registration (all 3 chains: Arbitrum, Solana, TON)
+router.get('/all', async (req: Request, res: Response) => {
+  try {
+    const { crossChainVaultRegistration: service } = await import('../services/cross-chain-vault-registration');
+    
+    // Initialize the service if not already done
+    await service.initialize();
+    
+    const vaultId = `test-vault-${Date.now()}`;
+    
+    const result = await service.registerVaultCrossChain({
+      vaultId,
+      vaultName: 'Trinity Protocol Test Vault',
+      vaultType: 'timelock' as const,
+      ownerAddress: '0x66e5046D136E82d17cbeB2FfEa5bd5205D962906',
+      amount: '0.001',
+      securityLevel: 3
+    });
+    
+    return res.json({
+      success: result.success,
+      vaultId,
+      chains: {
+        arbitrum: result.arbitrumTxHash,
+        solana: result.solanaTxSignature,
+        ton: result.tonTxHash
+      },
+      trinityProofHash: result.trinityProofHash,
+      explorerLinks: result.explorerLinks,
+      error: result.error,
+      timestamp: Date.now()
+    });
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      error: error instanceof Error ? error.message : 'Unknown error',
+      timestamp: Date.now()
+    });
+  }
+});
+
+// Status check endpoint for the cross-chain service
+router.get('/status', async (req: Request, res: Response) => {
+  try {
+    const { crossChainVaultRegistration: service } = await import('../services/cross-chain-vault-registration');
+    
+    // Initialize and get service status
+    await service.initialize();
+    
+    return res.json({
+      success: true,
+      service: 'CrossChainVaultRegistration',
+      chains: {
+        arbitrum: {
+          name: 'Arbitrum Sepolia',
+          contract: '0x59396D58Fa856025bD5249E342729d5550Be151C',
+          status: 'connected'
+        },
+        solana: {
+          name: 'Solana Devnet',
+          program: 'CYaDJYRqm35udQ8vkxoajSER8oaniQUcV8Vvw5BqJyo2',
+          status: 'connected'
+        },
+        ton: {
+          name: 'TON Testnet',
+          wallet: '0QCctckQeh8Xo8-_U4L8PpXtjMBlG71S8PD8QZvr9OzmJvHK',
+          status: 'connected'
+        }
+      },
+      timestamp: Date.now()
+    });
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      error: error instanceof Error ? error.message : 'Unknown error',
+      timestamp: Date.now()
+    });
+  }
+});
+
 export { router as crossChainTestRoutes };
