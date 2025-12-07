@@ -86,7 +86,7 @@ export default function RoadmapPage() {
                     </div>
                   </div>
                   <p className="text-gray-700 dark:text-gray-400 mb-4">
-                    Support for multiple blockchains including TON, Ethereum, Solana, and Polygon with seamless cross-chain integration.
+                    Support for multiple blockchains including TON, Ethereum, Solana, and Arbitrum with seamless cross-chain integration.
                   </p>
                 </div>
               </div>
