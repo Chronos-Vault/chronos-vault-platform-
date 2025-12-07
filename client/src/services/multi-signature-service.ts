@@ -1,4 +1,3 @@
-// Trinity Protocol v3.5.18 - Updated: 2025-11-25T19:32:07.528Z
 import { BlockchainType } from "@/components/multi-signature/multi-signature-vault";
 
 /**
