@@ -477,7 +477,7 @@ export default function TechnicalDashboard() {
             >
               <option value="all">All Blockchains</option>
               <option value="ethereum">Ethereum</option>
-              <option value="polygon">Polygon</option>
+              <option value="arbitrum">Arbitrum</option>
               <option value="solana">Solana</option>
               <option value="ton">TON</option>
               <option value="bitcoin">Bitcoin</option>

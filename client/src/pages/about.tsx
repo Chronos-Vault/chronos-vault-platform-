@@ -539,7 +539,7 @@ const About = () => {
                   <div className="bg-[#121212] p-4 rounded-lg border border-[#333333] flex items-center">
                     <i className="ri-layout-grid-line text-2xl mr-3 text-gray-400"></i>
                     <div>
-                      <div className="font-medium">Polygon</div>
+                      <div className="font-medium">Arbitrum</div>
                       <p className="text-xs text-gray-400">Layer 2 Support</p>
                     </div>
                   </div>
