@@ -5,7 +5,7 @@
  * requirements across multiple blockchains, enhancing security for high-value vaults.
  */
 
-import { ethersClient } from '../blockchain/ethereum-client';
+import { ethereumClient as ethersClient } from '../blockchain/ethereum-client';
 import { solanaClient } from '../blockchain/solana-client';
 import { tonClient } from '../blockchain/ton-client';
 import { bitcoinClient } from '../blockchain/bitcoin-client';

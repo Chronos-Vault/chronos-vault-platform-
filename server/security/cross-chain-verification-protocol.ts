@@ -7,7 +7,7 @@
  */
 
 import { securityLogger } from '../monitoring/security-logger';
-import { ethersClient } from '../blockchain/ethereum-client';
+import { ethereumClient as ethersClient } from '../blockchain/ethereum-client';
 import { solanaClient } from '../blockchain/solana-client';
 import { tonClient } from '../blockchain/ton-client';
 import { BlockchainType } from '../../shared/types';
