@@ -89,11 +89,11 @@ const mockLiquidityPools: Record<string, LiquidityPool> = {
     volume24h: 1200000,
     apr: 4.2
   },
-  'polygon-matic-cvt': {
-    id: 'polygon-matic-cvt',
-    protocol: 'QuickSwap',
-    blockchain: 'MATIC',
-    token1: 'MATIC',
+  'arbitrum-arb-cvt': {
+    id: 'arbitrum-arb-cvt',
+    protocol: 'Camelot',
+    blockchain: 'ARB',
+    token1: 'ARB',
     token2: 'CVT',
     totalLiquidity: 850000,
     fee: 0.25,
@@ -179,41 +179,41 @@ class LiquidityOptimizerService {
     // Generate routes based on priority
     const routes: RouteOption[] = [directRoute];
     
-    // Cost-optimized indirect route via Polygon
-    if (sourceChain !== 'MATIC' && targetChain !== 'MATIC') {
-      const polygonRoute: RouteOption = {
-        id: `polygon-indirect-${sourceChain}-${targetChain}`,
-        name: 'Polygon Route',
-        description: 'Cost-efficient route via Polygon',
+    // Cost-optimized indirect route via Arbitrum (PRIMARY chain)
+    if (sourceChain !== 'ARB' && targetChain !== 'ARB') {
+      const arbitrumRoute: RouteOption = {
+        id: `arbitrum-indirect-${sourceChain}-${targetChain}`,
+        name: 'Arbitrum Route',
+        description: 'Cost-efficient route via Arbitrum (Primary Chain)',
         path: [
           {
             from: { blockchain: sourceChain, token: sourceToken },
-            to: { blockchain: 'MATIC', token: 'CVT' },
+            to: { blockchain: 'ARB', token: 'CVT' },
             protocol: 'Chronos Bridge',
             estimatedFee: amount * 0.003, // 0.3%
-            estimatedGas: this.calculateGasCost(sourceChain, 'MATIC'),
-            estimatedTime: this.calculateTransferTime(sourceChain, 'MATIC', 'direct')
+            estimatedGas: this.calculateGasCost(sourceChain, 'ARB'),
+            estimatedTime: this.calculateTransferTime(sourceChain, 'ARB', 'direct')
           },
           {
-            from: { blockchain: 'MATIC', token: 'CVT' },
+            from: { blockchain: 'ARB', token: 'CVT' },
             to: { blockchain: targetChain, token: targetToken },
             protocol: 'Chronos Bridge',
             estimatedFee: amount * 0.003, // 0.3%
-            estimatedGas: this.calculateGasCost('MATIC', targetChain),
-            estimatedTime: this.calculateTransferTime('MATIC', targetChain, 'direct')
+            estimatedGas: this.calculateGasCost('ARB', targetChain),
+            estimatedTime: this.calculateTransferTime('ARB', targetChain, 'direct')
           }
         ],
         totalFee: amount * 0.006, // 0.6%
-        totalGas: this.calculateGasCost(sourceChain, 'MATIC') + this.calculateGasCost('MATIC', targetChain),
-        totalTime: this.calculateTransferTime(sourceChain, 'MATIC', 'direct') + this.calculateTransferTime('MATIC', targetChain, 'direct'),
+        totalGas: this.calculateGasCost(sourceChain, 'ARB') + this.calculateGasCost('ARB', targetChain),
+        totalTime: this.calculateTransferTime(sourceChain, 'ARB', 'direct') + this.calculateTransferTime('ARB', targetChain, 'direct'),
         priority: 'cost',
         securityScore: 75,
         recommendedFor: 'cost'
       };
       
       // Only add if it's actually more cost-efficient
-      if (polygonRoute.totalFee + polygonRoute.totalGas < directRoute.totalFee + directRoute.totalGas) {
-        routes.push(polygonRoute);
+      if (arbitrumRoute.totalFee + arbitrumRoute.totalGas < directRoute.totalFee + directRoute.totalGas) {
+        routes.push(arbitrumRoute);
       }
     }
     
@@ -300,7 +300,7 @@ class LiquidityOptimizerService {
       'ETH': 0.005,
       'TON': 0.001,
       'SOL': 0.0005,
-      'MATIC': 0.0002,
+      'ARB': 0.0002,
       'BNB': 0.0004
     };
     
@@ -364,8 +364,8 @@ class LiquidityOptimizerService {
       'CVT:TON': 1/85,
       'SOL:CVT': 70,
       'CVT:SOL': 1/70,
-      'MATIC:CVT': 2.5,
-      'CVT:MATIC': 1/2.5,
+      'ARB:CVT': 2.5,
+      'CVT:ARB': 1/2.5,
       'BNB:CVT': 120,
       'CVT:BNB': 1/120,
       'USDC:CVT': 1.5,
