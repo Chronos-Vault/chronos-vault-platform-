@@ -159,7 +159,7 @@ export const TransactionMonitoringProvider: React.FC<{ children: React.ReactNode
       
       // Create the group following the TransactionGroup interface
       const group: TransactionGroup = {
-        id: correlationId,
+        id: correlationId || `group-${Date.now()}`,
         name: `${primaryTx.type} Group`,
         description: `Cross-chain transaction group for ${primaryTx.type}`,
         transactionIds: relatedTxs.map(tx => tx.id),
@@ -168,7 +168,6 @@ export const TransactionMonitoringProvider: React.FC<{ children: React.ReactNode
         createdAt: primaryTx.timestamp,
         updatedAt: Date.now(),
         status: groupStatus,
-        vaultId: primaryTx.vaultId,
         initiator: primaryTx.fromAddress,
         // Extra properties for our components to use
         metadata: {
@@ -207,7 +206,7 @@ export const TransactionMonitoringProvider: React.FC<{ children: React.ReactNode
       const newAttempt: VerificationAttempt = {
         id: attemptId,
         txId: tx.id,
-        correlationId: tx.correlationId,
+        correlationId: tx.correlationId || tx.id,
         network: tx.network === 'Ethereum' ? 'Solana' : 'Ethereum', // Cross-verify on different chain
         timestamp: Date.now(),
         status: isSuccess ? 'success' : 'failed',
@@ -224,8 +223,7 @@ export const TransactionMonitoringProvider: React.FC<{ children: React.ReactNode
               return {
                 ...t,
                 verificationStatus: 'verified',
-                verificationTimestamp: Date.now(),
-                verifiedBy: [...(t.verifiedBy || []), newAttempt.network]
+                verifiedAt: Date.now()
               };
             }
             return t;
@@ -241,7 +239,7 @@ export const TransactionMonitoringProvider: React.FC<{ children: React.ReactNode
       const failedAttempt: VerificationAttempt = {
         id: attemptId,
         txId: tx.id,
-        correlationId: tx.correlationId,
+        correlationId: tx.correlationId || tx.id,
         network: tx.network === 'Ethereum' ? 'Solana' : 'Ethereum',
         timestamp: Date.now(),
         status: 'failed',
@@ -343,11 +341,11 @@ export const TransactionMonitoringProvider: React.FC<{ children: React.ReactNode
     return;
   }, [devModeEnabled]);
   
-  // Refresh transactions from all chains - NOW USING REAL BACKEND API
+  // Refresh transactions from all chains - NOW USING REAL SCANNER API
   const refreshTransactions = useCallback(async () => {
     try {
-      // Fetch REAL transaction data from backend API
-      const response = await fetch('/api/transactions');
+      // Fetch REAL transaction data from Trinity Scan API
+      const response = await fetch('/api/scanner/transactions?limit=50');
       
       if (!response.ok) {
         throw new Error(`Failed to fetch transactions: ${response.statusText}`);
@@ -355,31 +353,32 @@ export const TransactionMonitoringProvider: React.FC<{ children: React.ReactNode
       
       const data = await response.json();
       
-      if (data.status === 'success' && data.transactions) {
-        // Transform backend transaction data to frontend format
-        const transformedTransactions: CrossChainTransaction[] = data.transactions.map((tx: any) => ({
-          id: tx.id,
-          txHash: tx.hash,
-          correlationId: tx.id, // Use transaction ID as correlation ID
-          blockchain: tx.chain,
-          network: tx.chain === 'ETH' ? 'Ethereum' : tx.chain === 'SOL' ? 'Solana' : tx.chain === 'TON' ? 'TON' : 'Bitcoin',
-          fromAddress: tx.metadata?.from || '0x0000000000000000000000000000000000000000',
-          toAddress: tx.metadata?.to || '0x0000000000000000000000000000000000000000',
-          amount: tx.metadata?.amount || 0,
-          status: tx.status,
-          timestamp: new Date(tx.createdAt).getTime(),
-          confirmations: tx.confirmations,
-          type: tx.operation as TransactionType || 'transfer',
+      if (data.success && data.data?.transactions) {
+        // Transform Trinity Scan transaction data to frontend format
+        const transformedTransactions: CrossChainTransaction[] = data.data.transactions.map((tx: any) => ({
+          id: tx.id.toString(),
+          txHash: tx.txHash,
+          correlationId: tx.metadata?.operationId || tx.id.toString(),
+          blockchain: tx.chainId?.includes('arbitrum') ? 'ETH' : tx.chainId?.includes('solana') ? 'SOL' : tx.chainId?.includes('ton') ? 'TON' : 'BTC',
+          network: tx.chainId?.includes('arbitrum') ? 'Arbitrum Sepolia' : tx.chainId?.includes('solana') ? 'Solana Devnet' : tx.chainId?.includes('ton') ? 'TON Testnet' : 'Bitcoin',
+          fromAddress: tx.fromAddress || '0x0000000000000000000000000000000000000000',
+          toAddress: tx.toAddress || '0x0000000000000000000000000000000000000000',
+          amount: parseFloat(tx.value) || 0,
+          status: tx.status === 'success' ? 'confirmed' : tx.status,
+          timestamp: new Date(tx.timestamp).getTime(),
+          confirmations: tx.confirmations || 1,
+          type: (tx.transactionType === 'trinity_operation' ? 'vault_creation' : tx.transactionType) as TransactionType || 'transfer',
           direction: 'outgoing',
-          verificationStatus: tx.status === 'confirmed' ? 'verified' : tx.status === 'failed' ? 'failed' : 'pending',
-          securityLevel: tx.metadata?.securityLevel || 1,
+          verificationStatus: tx.status === 'success' ? 'verified' : tx.status === 'failed' ? 'failed' : 'pending',
+          securityLevel: tx.metadata?.securityLevel || 2,
           vaultId: tx.metadata?.vaultId,
-          error: tx.error
+          error: tx.errorMessage,
+          explorerUrl: tx.explorerUrl
         }));
         
         setTransactions(transformedTransactions);
-        console.log(`Fetched ${transformedTransactions.length} transactions from backend API`);
-      } else if (devModeEnabled && data.transactions.length === 0) {
+        console.log(`Fetched ${transformedTransactions.length} transactions from Trinity Scan API`);
+      } else if (devModeEnabled && data.data?.transactions?.length === 0) {
         // If no transactions in backend and dev mode, generate mock data
         if (transactions.length === 0) {
           const mockTransactions = generateMockTransactions();
