@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import logoPath from "@assets/IMG_3753.jpeg";
+import chronosLogo from "@assets/IMG_3753_1764790970107.jpeg";
 import { useMultiChain, BlockchainType } from "@/contexts/multi-chain-context";
 import { Link, useLocation } from "wouter";
 import { useState } from "react";
@@ -216,7 +216,7 @@ const MainHeader = () => {
           <nav className="flex justify-between items-center">
           <Link href="/" className="flex items-center gap-3 group">
             <div className="h-12 w-12 rounded-full flex items-center justify-center shadow-xl shadow-[#FF5AF7]/40 group-hover:shadow-[#FF5AF7]/50 transition-all overflow-hidden border-2 border-white/40 animate-logo-glow">
-              <img src={logoPath} alt="Chronos Vault Logo" className="w-full h-full object-cover" />
+              <img src={chronosLogo} alt="Chronos Vault Logo" className="w-full h-full object-cover" />
             </div>
             <div className="relative">
               <h1 className="text-xl md:text-2xl font-poppins font-bold text-white">
@@ -708,7 +708,7 @@ const MainHeader = () => {
                   <div className="flex justify-between items-center mb-6">
                     <div className="flex items-center gap-3">
                       <div className="h-10 w-10 rounded-full flex items-center justify-center shadow-xl shadow-[#FF5AF7]/40 overflow-hidden border-2 border-white/40 animate-logo-glow">
-                        <img src={logoPath} alt="Chronos Vault Logo" className="w-full h-full object-cover" />
+                        <img src={chronosLogo} alt="Chronos Vault Logo" className="w-full h-full object-cover" />
                       </div>
                       <div className="relative">
                         <h1 className="text-lg font-poppins font-bold text-white">

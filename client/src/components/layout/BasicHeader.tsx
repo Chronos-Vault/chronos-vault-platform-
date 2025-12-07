@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Link, useLocation } from "wouter";
-import logoPath from "@assets/IMG_3753.jpeg";
+// Logo image temporarily removed
+const logoPath = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect fill='%236B00D7' width='100' height='100'/%3E%3Ctext x='50' y='50' font-family='Arial' font-size='40' fill='white' text-anchor='middle' dominant-baseline='central'%3ECV%3C/text%3E%3C/svg%3E";
 import { 
   Menu, 
   X,
