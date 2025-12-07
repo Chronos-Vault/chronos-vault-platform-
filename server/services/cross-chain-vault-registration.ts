@@ -244,7 +244,9 @@ class CrossChainVaultRegistrationService {
       const tonResult = await this.registerOnTON(registration, trinityProofData);
       if (tonResult.txHash) {
         results.tonTxHash = tonResult.txHash;
-        results.explorerLinks.ton = `https://testnet.tonscan.org/tx/${tonResult.txHash}`;
+        // TON explorer links point to wallet address (external messages don't have direct tx lookups)
+        const tonWalletAddr = (tonResult as any).walletAddress || process.env.TON_WALLET_ADDRESS || '0QCctckQeh8Xo8-_U4L8PpXtjMBlG71S8PD8QZvr9OzmJvHK';
+        results.explorerLinks.ton = `https://testnet.tonscan.org/address/${tonWalletAddr}#transactions`;
         securityLogger.info(`✅ TON registration complete: ${tonResult.txHash}`, SecurityEventType.CROSS_CHAIN_VERIFICATION);
       }
 
@@ -482,21 +484,21 @@ class CrossChainVaultRegistrationService {
           const boc = await query.toBoc(false);
           const bocBase64 = Buffer.from(boc).toString('base64');
           
+          // Compute the actual message hash from the BOC (this is the transaction hash)
+          // TON uses the cell hash as the message identifier
+          const crypto = await import('crypto');
+          const bocHash = crypto.createHash('sha256').update(boc).digest();
+          const tonTxHash = bocHash.toString('base64url');
+          
           // Send via provider
           const result = await tonweb.provider.sendBoc(bocBase64);
           securityLogger.info(`📤 TON transaction sent! Result: ${JSON.stringify(result)}`, SecurityEventType.CROSS_CHAIN_VERIFICATION);
           
-          // Generate a verifiable hash based on the transaction
-          const tonHash = ethers.solidityPackedKeccak256(
-            ['string', 'string', 'bytes32', 'uint256'],
-            ['TON_VAULT_BACKUP', registration.vaultId, proofHash, seqno]
-          );
-          const tonTxHash = Buffer.from(tonHash.slice(2), 'hex').toString('base64url');
-          
-          securityLogger.info(`✅ REAL TON transaction sent! Hash: ${tonTxHash.slice(0, 30)}... (seqno: ${seqno})`, SecurityEventType.CROSS_CHAIN_VERIFICATION);
+          securityLogger.info(`✅ REAL TON transaction sent! Hash: ${tonTxHash}`, SecurityEventType.CROSS_CHAIN_VERIFICATION);
           securityLogger.info(`🔗 TON Explorer: https://testnet.tonscan.org/address/${walletAddressString}`, SecurityEventType.CROSS_CHAIN_VERIFICATION);
+          securityLogger.info(`🔗 View wallet transactions at: https://testnet.tonscan.org/address/${walletAddressString}#transactions`, SecurityEventType.CROSS_CHAIN_VERIFICATION);
           
-          return { txHash: tonTxHash, isSimulated: false };
+          return { txHash: tonTxHash, isSimulated: false, walletAddress: walletAddressString };
         } catch (txErr: any) {
           const errMsg = txErr?.message || txErr?.toString() || JSON.stringify(txErr) || 'Unknown error';
           securityLogger.warn(`⚠️ TON transaction failed: ${errMsg} - falling back to simulated`, SecurityEventType.CROSS_CHAIN_VERIFICATION);
@@ -673,16 +675,18 @@ class CrossChainVaultRegistrationService {
 
   /**
    * Get explorer links for a vault
+   * Note: TON links point to wallet address since external messages don't have direct tx lookups
    */
   getExplorerLinks(arbitrumTxHash?: string, solanaTxSignature?: string, tonTxHash?: string): {
     arbitrum?: string;
     solana?: string;
     ton?: string;
   } {
+    const tonWallet = process.env.TON_WALLET_ADDRESS || '0QCctckQeh8Xo8-_U4L8PpXtjMBlG71S8PD8QZvr9OzmJvHK';
     return {
       arbitrum: arbitrumTxHash ? `https://sepolia.arbiscan.io/tx/${arbitrumTxHash}` : undefined,
       solana: solanaTxSignature ? `https://explorer.solana.com/tx/${solanaTxSignature}?cluster=devnet` : undefined,
-      ton: tonTxHash ? `https://testnet.tonscan.org/tx/${tonTxHash}` : undefined,
+      ton: tonTxHash ? `https://testnet.tonscan.org/address/${tonWallet}#transactions` : undefined,
     };
   }
 }
