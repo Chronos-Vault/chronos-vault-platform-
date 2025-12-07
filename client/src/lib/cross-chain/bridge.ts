@@ -43,16 +43,16 @@ export const NETWORK_CONFIG: Record<BlockchainType, NetworkConfig> = {
     testnet: false,
     supportedAssets: ['SOL', 'USDC', 'CVT']
   },
-  'MATIC': {
-    name: 'Polygon',
-    icon: 'polygon',
-    color: '#8247E5',
-    nativeToken: 'MATIC',
-    blockTime: 2,
+  'ARB': {
+    name: 'Arbitrum',
+    icon: 'arbitrum',
+    color: '#28A0F0',
+    nativeToken: 'ETH',
+    blockTime: 0.25,
     confirmations: 64,
-    explorers: ['https://polygonscan.com'],
+    explorers: ['https://arbiscan.io'],
     testnet: false,
-    supportedAssets: ['MATIC', 'USDC', 'USDT', 'CVT']
+    supportedAssets: ['ETH', 'ARB', 'USDC', 'USDT', 'CVT']
   },
   'BNB': {
     name: 'BNB Chain',
@@ -74,7 +74,7 @@ export const SUPPORTED_ASSETS = {
   'ETH': { name: 'Ethereum', icon: 'ethereum', decimals: 18 },
   'TON': { name: 'TON', icon: 'ton', decimals: 9 },
   'SOL': { name: 'Solana', icon: 'solana', decimals: 9 },
-  'MATIC': { name: 'Polygon', icon: 'polygon', decimals: 18 },
+  'ARB': { name: 'Arbitrum', icon: 'arbitrum', decimals: 18 },
   'BNB': { name: 'BNB', icon: 'bnb', decimals: 18 },
   'USDC': { name: 'USD Coin', icon: 'usdc', decimals: 6 },
   'USDT': { name: 'Tether', icon: 'usdt', decimals: 6 },
