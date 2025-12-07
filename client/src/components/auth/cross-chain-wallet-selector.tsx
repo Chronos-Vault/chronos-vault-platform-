@@ -49,11 +49,13 @@ const walletOptions: WalletOption[] = [
 interface CrossChainWalletSelectorProps {
   onWalletSelect?: (wallet: WalletOption) => void;
   compact?: boolean;
+  className?: string;
 }
 
 const CrossChainWalletSelector: React.FC<CrossChainWalletSelectorProps> = ({ 
   onWalletSelect,
-  compact = false 
+  compact = false,
+  className = ''
 }) => {
   const [selectedWallet, setSelectedWallet] = useState<string>('');
   const [connecting, setConnecting] = useState(false);
