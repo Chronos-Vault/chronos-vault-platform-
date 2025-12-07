@@ -52,6 +52,7 @@ import { crossChainTestRoutes } from './api/cross-chain-test-routes';
 import { SolanaProgramClient, CHRONOS_VAULT_PROGRAM_ID } from './blockchain/solana-program-client';
 import config from './config';
 import { storage } from './storage';
+import { setupHTLCSwapRoutes } from './api/htlc-swap-routes';
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // Create HTTP server instance
@@ -724,6 +725,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.use('/api', authRoutes);
   
   app.use('/api', apiRouter);
+  
+  // Setup HTLC Swap Routes for Trinity Bridge (must be before catch-all)
+  setupHTLCSwapRoutes(app);
   
   // Add explicit API route handlers to ensure they bypass frontend routing
   app.use('/api/*', (req, res, next) => {
