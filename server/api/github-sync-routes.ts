@@ -276,7 +276,7 @@ router.post('/sync-all', async (req: Request, res: Response) => {
       }
 
       if (i + BATCH_SIZE < allFiles.length) {
-        await new Promise(resolve => setTimeout(resolve, 2000));
+        await new Promise(resolve => setTimeout(resolve, 500));
       }
     }
 
