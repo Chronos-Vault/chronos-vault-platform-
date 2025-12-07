@@ -26,6 +26,7 @@ import InheritancePlanningVaultDoc from '@/pages/documentation/inheritance-plann
 import LocationTimeVaultDoc from '@/pages/documentation/location-time-vault';
 import BiometricVaultDoc from '@/pages/documentation/biometric-vault';
 import SecurityWhitepaperDoc from '@/pages/documentation/security-whitepaper';
+import SDKDocumentationPage from '@/pages/sdk-documentation';
 
 interface DocumentationRouterProps {
   vaultType: string;
@@ -33,6 +34,10 @@ interface DocumentationRouterProps {
 
 const DocumentationRouter: React.FC<DocumentationRouterProps> = ({ vaultType }) => {
   const [location, setLocation] = useLocation();
+  
+  // Debug logging
+  console.log('[DocumentationRouter] Received vaultType:', vaultType);
+  console.log('[DocumentationRouter] Current location:', location);
   
   // Map of vault types to their corresponding components
   const vaultComponents: Record<string, React.ComponentType> = {
@@ -56,7 +61,8 @@ const DocumentationRouter: React.FC<DocumentationRouterProps> = ({ vaultType }) 
     'inheritance-planning-vault': InheritancePlanningVaultDoc,
     'location-time-vault': LocationTimeVaultDoc,
     'biometric-vault': BiometricVaultDoc,
-    'security-whitepaper': SecurityWhitepaperDoc
+    'security-whitepaper': SecurityWhitepaperDoc,
+    'sdk': SDKDocumentationPage
   };
 
   // Get the component for the requested vault type
