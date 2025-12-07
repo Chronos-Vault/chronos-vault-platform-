@@ -267,7 +267,7 @@ const Home = () => {
               </div>
               <div className="flex justify-center">
                 <div className="h-12 w-32 bg-[#1A1A1A] rounded-lg flex items-center justify-center text-gray-400 border border-[#333333] hover:border-[#6B00D7]/50 transition-all group">
-                  <i className="ri-layout-grid-line mr-2 group-hover:text-[#FF5AF7] transition-colors"></i> Polygon
+                  <i className="ri-layout-grid-line mr-2 group-hover:text-[#FF5AF7] transition-colors"></i> Arbitrum
                 </div>
               </div>
               <div className="flex justify-center">
