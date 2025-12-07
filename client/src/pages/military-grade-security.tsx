@@ -142,7 +142,7 @@ const MilitaryGradeSecurity = () => {
   return (
     <div className="container max-w-7xl mx-auto px-4 py-8">
       <PageHeader 
-        title="Triple-Chain Military-Grade Security"
+        title="Trinity Protocol™ Military-Grade Security"
         subtitle="Advanced cross-chain security infrastructure with government-level protection"
         icon={<ShieldCheck className="w-10 h-10 text-[#FF5AF7]" />}
       />
