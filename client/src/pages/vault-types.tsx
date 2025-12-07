@@ -18,8 +18,15 @@ import {
   X,
   Wallet,
   Users,
-  Calendar
+  Calendar,
+  Zap,
+  Gem,
+  MapPin,
+  Heart,
+  Brain,
+  Globe
 } from 'lucide-react';
+import { SiBitcoin as Bitcoin } from 'react-icons/si';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
@@ -593,6 +600,229 @@ const VaultTypesPage = () => {
   );
 };
 
+interface VaultFormConfig {
+  variant: 'timelock' | 'multisig' | 'fragment' | 'biometric' | 'quantum' | 'nft' | 'geo' | 'inheritance' | 'ai' | 'bitcoin' | 'social' | 'premium' | 'zk' | 'intent' | 'milestone' | 'discipline';
+  accentColor: string;
+  borderColor: string;
+  requirements: string[];
+  delivers: string[];
+  specificFields: string[];
+  isAvailable: boolean;
+}
+
+const getVaultFormConfig = (vaultId: string): VaultFormConfig => {
+  const configs: Record<string, VaultFormConfig> = {
+    'time-lock-vault': {
+      variant: 'timelock',
+      accentColor: '#3B82F6',
+      borderColor: 'border-blue-500/30',
+      requirements: ['Wallet address', 'Lock amount', 'Unlock date/time'],
+      delivers: ['Time-locked security', 'VDF-based protection', 'Automatic unlock'],
+      specificFields: ['unlockTimestamp'],
+      isAvailable: true
+    },
+    'multi-signature-vault': {
+      variant: 'multisig',
+      accentColor: '#8B5CF6',
+      borderColor: 'border-purple-500/30',
+      requirements: ['Multiple signer addresses', 'Signature threshold (M-of-N)', 'Lock amount'],
+      delivers: ['Distributed control', 'No single point of failure', 'DAO-ready governance'],
+      specificFields: ['signers', 'threshold'],
+      isAvailable: true
+    },
+    'cross-chain-fragment-vault': {
+      variant: 'fragment',
+      accentColor: '#10B981',
+      borderColor: 'border-emerald-500/30',
+      requirements: ['Wallet address', 'Total amount', 'Chain distribution (40/30/30)'],
+      delivers: ['Cross-chain redundancy', 'Fragment recovery (2-of-3)', 'Maximum security'],
+      specificFields: ['fragmentDistribution'],
+      isAvailable: true
+    },
+    'biometric-vault': {
+      variant: 'biometric',
+      accentColor: '#14B8A6',
+      borderColor: 'border-teal-500/30',
+      requirements: ['Wallet address', 'Biometric type selection', 'Device binding'],
+      delivers: ['Zero-knowledge biometric auth', 'Privacy-preserving verification', 'Hardware attestation'],
+      specificFields: ['biometricType', 'deviceBinding'],
+      isAvailable: true
+    },
+    'quantum-resistant-vault': {
+      variant: 'quantum',
+      accentColor: '#06B6D4',
+      borderColor: 'border-cyan-500/30',
+      requirements: ['Wallet address', 'Security tier', 'Quantum algorithm selection'],
+      delivers: ['ML-KEM-1024 encryption', 'CRYSTALS-Dilithium-5 signatures', 'Future-proof security'],
+      specificFields: ['quantumTier', 'algorithm'],
+      isAvailable: true
+    },
+    'quantum-progressive-vault': {
+      variant: 'quantum',
+      accentColor: '#0891B2',
+      borderColor: 'border-cyan-600/30',
+      requirements: ['Wallet address', 'Starting security tier', 'Upgrade schedule'],
+      delivers: ['Progressive quantum resistance', 'Automatic security upgrades', 'Migration path'],
+      specificFields: ['startingTier', 'upgradeSchedule'],
+      isAvailable: true
+    },
+    'nft-powered-vault': {
+      variant: 'nft',
+      accentColor: '#EC4899',
+      borderColor: 'border-pink-500/30',
+      requirements: ['NFT collection address', 'Token ID', 'Ownership proof'],
+      delivers: ['NFT-gated access', 'Transferable ownership', 'Collection-based permissions'],
+      specificFields: ['nftCollection', 'tokenId'],
+      isAvailable: true
+    },
+    'geo-location-vault': {
+      variant: 'geo',
+      accentColor: '#F59E0B',
+      borderColor: 'border-amber-500/30',
+      requirements: ['Wallet address', 'Geofence coordinates', 'Access radius'],
+      delivers: ['Location-based unlocking', 'Geofence protection', 'Travel-aware security'],
+      specificFields: ['latitude', 'longitude', 'radius'],
+      isAvailable: true
+    },
+    'family-heritage-vault': {
+      variant: 'inheritance',
+      accentColor: '#795548',
+      borderColor: 'border-amber-700/30',
+      requirements: ['Owner address', 'Beneficiary addresses', 'Release schedule'],
+      delivers: ['Multi-generational transfer', 'Scheduled inheritance', 'Family tree support'],
+      specificFields: ['beneficiaries', 'releaseSchedule'],
+      isAvailable: true
+    },
+    'time-locked-memory-vault': {
+      variant: 'inheritance',
+      accentColor: '#9CA3AF',
+      borderColor: 'border-gray-500/30',
+      requirements: ['Owner address', 'Recipients', 'Memory unlock date'],
+      delivers: ['Time-capsule storage', 'Scheduled message delivery', 'Legacy preservation'],
+      specificFields: ['recipients', 'memoryUnlockDate'],
+      isAvailable: true
+    },
+    'ai-assisted-investment-vault': {
+      variant: 'ai',
+      accentColor: '#A855F7',
+      borderColor: 'border-violet-500/30',
+      requirements: ['Wallet address', 'Risk tolerance', 'Investment strategy'],
+      delivers: ['AI-powered allocation', 'Automated rebalancing', 'Risk management'],
+      specificFields: ['riskTolerance', 'strategy'],
+      isAvailable: true
+    },
+    'bitcoin-halving-vault': {
+      variant: 'bitcoin',
+      accentColor: '#F7931A',
+      borderColor: 'border-orange-500/30',
+      requirements: ['Wallet address', 'Target halving epoch', 'Lock amount'],
+      delivers: ['Halving-aligned unlocking', 'Bitcoin cycle strategy', 'Long-term HODL support'],
+      specificFields: ['targetHalving', 'bitcoinAddress'],
+      isAvailable: true
+    },
+    'social-recovery-vault': {
+      variant: 'social',
+      accentColor: '#22C55E',
+      borderColor: 'border-green-500/30',
+      requirements: ['Owner address', 'Guardian addresses', 'Recovery threshold'],
+      delivers: ['Social recovery network', 'Guardian-based restoration', 'No seed phrase needed'],
+      specificFields: ['guardians', 'recoveryThreshold'],
+      isAvailable: true
+    },
+    'diamond-hands-vault': {
+      variant: 'timelock',
+      accentColor: '#60A5FA',
+      borderColor: 'border-blue-400/30',
+      requirements: ['Wallet address', 'Lock duration', 'No-unlock commitment'],
+      delivers: ['Unbreakable time-lock', 'HODL enforcement', 'Panic-sell prevention'],
+      specificFields: ['lockDuration', 'commitment'],
+      isAvailable: true
+    },
+    'sovereign-fortress-vault': {
+      variant: 'premium',
+      accentColor: '#FFD700',
+      borderColor: 'border-yellow-500/30',
+      requirements: ['Wallet address', 'All security layers', 'Premium activation'],
+      delivers: ['8-layer security', 'All Trinity features', 'Maximum protection'],
+      specificFields: ['allLayers'],
+      isAvailable: true
+    },
+    'chronos-vault-optimized': {
+      variant: 'premium',
+      accentColor: '#FF5AF7',
+      borderColor: 'border-pink-500/30',
+      requirements: ['Wallet address', 'ERC-4626 compliance', 'Yield strategy'],
+      delivers: ['Optimized yield', 'Gas-efficient operations', 'DeFi integration'],
+      specificFields: ['yieldStrategy'],
+      isAvailable: true
+    },
+    'smart-contract-vault': {
+      variant: 'fragment',
+      accentColor: '#3B82F6',
+      borderColor: 'border-blue-500/30',
+      requirements: ['Wallet address', 'Contract parameters', 'Lock amount'],
+      delivers: ['ERC-4626 standard', 'Programmable logic', 'DeFi compatibility'],
+      specificFields: ['contractParams'],
+      isAvailable: true
+    },
+    'cross-chain-vault': {
+      variant: 'fragment',
+      accentColor: '#8B5CF6',
+      borderColor: 'border-purple-500/30',
+      requirements: ['Wallet address', 'Target chains', 'Bridge configuration'],
+      delivers: ['Multi-chain presence', 'Unified management', 'Cross-chain transfers'],
+      specificFields: ['targetChains'],
+      isAvailable: true
+    },
+    'zk-privacy-vault': {
+      variant: 'zk',
+      accentColor: '#374151',
+      borderColor: 'border-gray-600/30',
+      requirements: ['Wallet address', 'Privacy level', 'Commitment value'],
+      delivers: ['Groth16 ZK proofs', 'Hidden transactions', 'Anonymous operations'],
+      specificFields: ['privacyLevel', 'commitmentValue'],
+      isAvailable: true
+    },
+    'intent-inheritance-vault': {
+      variant: 'intent',
+      accentColor: '#D97706',
+      borderColor: 'border-amber-600/30',
+      requirements: ['Owner address', 'Natural language intent', 'Beneficiaries'],
+      delivers: ['AI-powered intent parsing', 'Smart contract generation', 'Complex inheritance rules'],
+      specificFields: ['intentDescription', 'beneficiaries'],
+      isAvailable: true
+    },
+    'milestone-based-vault': {
+      variant: 'milestone',
+      accentColor: '#EA580C',
+      borderColor: 'border-orange-600/30',
+      requirements: ['Wallet address', 'Milestone description', 'Oracle source'],
+      delivers: ['Achievement-based unlocking', 'Third-party verification', 'Partial releases'],
+      specificFields: ['milestoneDescription', 'oracleSource', 'releasePercentage'],
+      isAvailable: true
+    },
+    'investment-discipline-vault': {
+      variant: 'discipline',
+      accentColor: '#0284C7',
+      borderColor: 'border-sky-600/30',
+      requirements: ['Wallet address', 'DCA schedule', 'Withdrawal cooldown'],
+      delivers: ['Automated DCA', 'Emotion-free investing', 'Strategy enforcement'],
+      specificFields: ['dcaSchedule', 'cooldownPeriod'],
+      isAvailable: true
+    }
+  };
+  
+  return configs[vaultId] || {
+    variant: 'fragment',
+    accentColor: '#6B00D7',
+    borderColor: 'border-purple-500/30',
+    requirements: ['Wallet address', 'Lock amount'],
+    delivers: ['Trinity Protocol security', 'Cross-chain verification'],
+    specificFields: [],
+    isAvailable: true
+  };
+};
+
 interface VaultCreationModalProps {
   vault: VaultType | null;
   isOpen: boolean;
@@ -610,67 +840,77 @@ const VaultCreationModal = ({ vault, isOpen, onClose, onSuccess, result }: Vault
     signers: [''],
     threshold: 2,
     vaultName: '',
-    vaultDescription: ''
+    vaultDescription: '',
+    biometricType: 'fingerprint',
+    quantumTier: 'standard',
+    nftCollection: '',
+    tokenId: '',
+    latitude: '',
+    longitude: '',
+    radius: '100',
+    beneficiaries: [''],
+    guardians: [''],
+    recoveryThreshold: 2,
+    riskTolerance: 'moderate',
+    targetHalving: '2028',
+    lockDuration: '365',
+    privacyLevel: 'standard',
+    intentDescription: '',
+    milestoneDescription: '',
+    oracleSource: 'chainlink',
+    releasePercentage: '25',
+    dcaSchedule: 'weekly',
+    cooldownPeriod: '7'
   });
   
   const { toast } = useToast();
+  const config = vault ? getVaultFormConfig(vault.id) : null;
   
-  const createTimeLockMutation = useMutation({
+  const createVaultMutation = useMutation({
     mutationFn: async (data: typeof formData) => {
-      const response = await apiRequest('POST', '/api/vault-creation/time-lock', {
-        ownerAddress: data.ownerAddress,
-        amount: data.amount,
-        unlockTimestamp: Math.floor(new Date(data.unlockTimestamp).getTime() / 1000),
-        vaultName: data.vaultName,
-        vaultDescription: data.vaultDescription
-      });
-      return await response.json() as VaultCreationResult;
-    },
-    onSuccess: (data) => {
-      onSuccess(data);
-      queryClient.invalidateQueries({ queryKey: ['/api/vaults'] });
-    },
-    onError: (error: Error) => {
-      toast({
-        title: "Creation Failed",
-        description: error.message,
-        variant: "destructive"
-      });
-    }
-  });
-  
-  const createMultiSigMutation = useMutation({
-    mutationFn: async (data: typeof formData) => {
-      const response = await apiRequest('POST', '/api/vault-creation/multi-sig', {
-        signers: data.signers.filter(s => s.trim() !== ''),
-        threshold: data.threshold,
-        amount: data.amount,
-        vaultName: data.vaultName,
-        vaultDescription: data.vaultDescription
-      });
-      return await response.json() as VaultCreationResult;
-    },
-    onSuccess: (data) => {
-      onSuccess(data);
-      queryClient.invalidateQueries({ queryKey: ['/api/vaults'] });
-    },
-    onError: (error: Error) => {
-      toast({
-        title: "Creation Failed",
-        description: error.message,
-        variant: "destructive"
-      });
-    }
-  });
-  
-  const createFragmentMutation = useMutation({
-    mutationFn: async (data: typeof formData) => {
-      const response = await apiRequest('POST', '/api/vault-creation/fragment', {
+      let endpoint = '/api/vault-creation/fragment';
+      let payload: Record<string, unknown> = {
         ownerAddress: data.ownerAddress,
         amount: data.amount,
         vaultName: data.vaultName,
         vaultDescription: data.vaultDescription
-      });
+      };
+      
+      if (config?.variant === 'timelock') {
+        endpoint = '/api/vault-creation/time-lock';
+        payload.unlockTimestamp = Math.floor(new Date(data.unlockTimestamp).getTime() / 1000);
+      } else if (config?.variant === 'multisig') {
+        endpoint = '/api/vault-creation/multi-sig';
+        payload = {
+          signers: data.signers.filter(s => s.trim() !== ''),
+          threshold: data.threshold,
+          amount: data.amount,
+          vaultName: data.vaultName,
+          vaultDescription: data.vaultDescription
+        };
+      } else if (config?.variant === 'biometric') {
+        payload.biometricType = data.biometricType;
+      } else if (config?.variant === 'quantum') {
+        payload.quantumTier = data.quantumTier;
+      } else if (config?.variant === 'nft') {
+        payload.nftCollection = data.nftCollection;
+        payload.tokenId = data.tokenId;
+      } else if (config?.variant === 'geo') {
+        payload.latitude = parseFloat(data.latitude);
+        payload.longitude = parseFloat(data.longitude);
+        payload.radius = parseFloat(data.radius);
+      } else if (config?.variant === 'inheritance') {
+        payload.beneficiaries = data.beneficiaries.filter(b => b.trim() !== '');
+      } else if (config?.variant === 'social') {
+        payload.guardians = data.guardians.filter(g => g.trim() !== '');
+        payload.recoveryThreshold = data.recoveryThreshold;
+      } else if (config?.variant === 'ai') {
+        payload.riskTolerance = data.riskTolerance;
+      } else if (config?.variant === 'bitcoin') {
+        payload.targetHalving = data.targetHalving;
+      }
+      
+      const response = await apiRequest('POST', endpoint, payload);
       return await response.json() as VaultCreationResult;
     },
     onSuccess: (data) => {
@@ -688,40 +928,19 @@ const VaultCreationModal = ({ vault, isOpen, onClose, onSuccess, result }: Vault
   
   const handleSubmit = () => {
     if (!vault) return;
-    
-    const vaultId = vault.id;
-    
-    if (vaultId.includes('time-lock') || vaultId.includes('timelock')) {
-      createTimeLockMutation.mutate(formData);
-    } else if (vaultId.includes('multi-sig') || vaultId.includes('multisig')) {
-      createMultiSigMutation.mutate(formData);
-    } else if (vaultId.includes('fragment') || vaultId.includes('cross-chain')) {
-      createFragmentMutation.mutate(formData);
-    } else {
-      createFragmentMutation.mutate(formData);
-    }
+    createVaultMutation.mutate(formData);
   };
   
-  const isPending = createTimeLockMutation.isPending || createMultiSigMutation.isPending || createFragmentMutation.isPending;
+  const isPending = createVaultMutation.isPending;
   
-  const addSigner = () => {
-    setFormData(prev => ({
-      ...prev,
-      signers: [...prev.signers, '']
-    }));
-  };
+  const addSigner = () => setFormData(prev => ({ ...prev, signers: [...prev.signers, ''] }));
+  const updateSigner = (index: number, value: string) => setFormData(prev => ({ ...prev, signers: prev.signers.map((s, i) => i === index ? value : s) }));
+  const addBeneficiary = () => setFormData(prev => ({ ...prev, beneficiaries: [...prev.beneficiaries, ''] }));
+  const updateBeneficiary = (index: number, value: string) => setFormData(prev => ({ ...prev, beneficiaries: prev.beneficiaries.map((b, i) => i === index ? value : b) }));
+  const addGuardian = () => setFormData(prev => ({ ...prev, guardians: [...prev.guardians, ''] }));
+  const updateGuardian = (index: number, value: string) => setFormData(prev => ({ ...prev, guardians: prev.guardians.map((g, i) => i === index ? value : g) }));
   
-  const updateSigner = (index: number, value: string) => {
-    setFormData(prev => ({
-      ...prev,
-      signers: prev.signers.map((s, i) => i === index ? value : s)
-    }));
-  };
-  
-  const isTimeLock = vault?.id.includes('time-lock') || vault?.id.includes('timelock');
-  const isMultiSig = vault?.id.includes('multi-sig') || vault?.id.includes('multisig');
-  
-  if (!vault) return null;
+  if (!vault || !config) return null;
   
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
@@ -805,6 +1024,31 @@ const VaultCreationModal = ({ vault, isOpen, onClose, onSuccess, result }: Vault
           </div>
         ) : (
           <div className="space-y-6 py-4">
+            <div className="grid grid-cols-2 gap-3 mb-4">
+              <div className="rounded-lg p-3" style={{ backgroundColor: `${config.accentColor}15`, border: `1px solid ${config.accentColor}40` }}>
+                <div className="text-xs uppercase tracking-wider opacity-60 mb-2">Requires</div>
+                <ul className="space-y-1">
+                  {config.requirements.map((req, i) => (
+                    <li key={i} className="flex items-center text-xs">
+                      <div className="w-1.5 h-1.5 rounded-full mr-2" style={{ backgroundColor: config.accentColor }} />
+                      {req}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+              <div className="rounded-lg p-3" style={{ backgroundColor: `${config.accentColor}15`, border: `1px solid ${config.accentColor}40` }}>
+                <div className="text-xs uppercase tracking-wider opacity-60 mb-2">Delivers</div>
+                <ul className="space-y-1">
+                  {config.delivers.map((del, i) => (
+                    <li key={i} className="flex items-center text-xs">
+                      <CheckCircle className="w-3 h-3 mr-2" style={{ color: config.accentColor }} />
+                      {del}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+            
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label htmlFor="vaultName">Vault Name</Label>
@@ -814,6 +1058,7 @@ const VaultCreationModal = ({ vault, isOpen, onClose, onSuccess, result }: Vault
                   value={formData.vaultName}
                   onChange={(e) => setFormData(prev => ({ ...prev, vaultName: e.target.value }))}
                   className="bg-black/40 border-gray-700"
+                  style={{ borderColor: `${config.accentColor}40` }}
                   data-testid="input-vault-name"
                 />
               </div>
@@ -827,86 +1072,557 @@ const VaultCreationModal = ({ vault, isOpen, onClose, onSuccess, result }: Vault
                   value={formData.amount}
                   onChange={(e) => setFormData(prev => ({ ...prev, amount: e.target.value }))}
                   className="bg-black/40 border-gray-700"
+                  style={{ borderColor: `${config.accentColor}40` }}
                   data-testid="input-amount"
                 />
               </div>
             </div>
             
-            <div className="space-y-2">
-              <Label htmlFor="ownerAddress">Owner Wallet Address</Label>
-              <div className="flex gap-2">
-                <Wallet className="h-5 w-5 text-gray-400 mt-2" />
-                <Input
-                  id="ownerAddress"
-                  placeholder="0x..."
-                  value={formData.ownerAddress}
-                  onChange={(e) => setFormData(prev => ({ ...prev, ownerAddress: e.target.value }))}
-                  className="bg-black/40 border-gray-700 flex-1"
-                  data-testid="input-owner-address"
-                />
-              </div>
-            </div>
-            
-            {isTimeLock && (
+            {config.variant !== 'multisig' && (
               <div className="space-y-2">
-                <Label htmlFor="unlockTimestamp">Unlock Date & Time</Label>
+                <Label htmlFor="ownerAddress">Owner Wallet Address</Label>
                 <div className="flex gap-2">
-                  <Calendar className="h-5 w-5 text-gray-400 mt-2" />
+                  <Wallet className="h-5 w-5 mt-2" style={{ color: config.accentColor }} />
                   <Input
-                    id="unlockTimestamp"
-                    type="datetime-local"
-                    value={formData.unlockTimestamp}
-                    onChange={(e) => setFormData(prev => ({ ...prev, unlockTimestamp: e.target.value }))}
+                    id="ownerAddress"
+                    placeholder="0x..."
+                    value={formData.ownerAddress}
+                    onChange={(e) => setFormData(prev => ({ ...prev, ownerAddress: e.target.value }))}
                     className="bg-black/40 border-gray-700 flex-1"
-                    data-testid="input-unlock-time"
+                    style={{ borderColor: `${config.accentColor}40` }}
+                    data-testid="input-owner-address"
                   />
                 </div>
               </div>
             )}
             
-            {isMultiSig && (
+            {config.variant === 'timelock' && (
+              <div className="space-y-2">
+                <Label htmlFor="unlockTimestamp" className="flex items-center gap-2">
+                  <Clock className="h-4 w-4" style={{ color: config.accentColor }} />
+                  Unlock Date & Time
+                </Label>
+                <Input
+                  id="unlockTimestamp"
+                  type="datetime-local"
+                  value={formData.unlockTimestamp}
+                  onChange={(e) => setFormData(prev => ({ ...prev, unlockTimestamp: e.target.value }))}
+                  className="bg-black/40 border-gray-700"
+                  style={{ borderColor: `${config.accentColor}40` }}
+                  data-testid="input-unlock-time"
+                />
+                <p className="text-xs text-gray-400">Assets will be locked until this date</p>
+              </div>
+            )}
+            
+            {config.variant === 'multisig' && (
               <>
                 <div className="space-y-2">
-                  <Label>Signer Addresses</Label>
+                  <Label className="flex items-center gap-2">
+                    <Users className="h-4 w-4" style={{ color: config.accentColor }} />
+                    Signer Addresses ({formData.signers.length} signers)
+                  </Label>
                   {formData.signers.map((signer, idx) => (
                     <div key={idx} className="flex gap-2">
-                      <Users className="h-5 w-5 text-gray-400 mt-2" />
+                      <span className="w-6 h-8 flex items-center justify-center text-xs rounded" style={{ backgroundColor: `${config.accentColor}20` }}>{idx + 1}</span>
                       <Input
                         placeholder={`Signer ${idx + 1} address (0x...)`}
                         value={signer}
                         onChange={(e) => updateSigner(idx, e.target.value)}
                         className="bg-black/40 border-gray-700 flex-1"
+                        style={{ borderColor: `${config.accentColor}40` }}
                         data-testid={`input-signer-${idx}`}
                       />
                     </div>
                   ))}
-                  <Button
-                    type="button"
-                    variant="outline"
-                    size="sm"
-                    onClick={addSigner}
-                    className="mt-2"
-                  >
+                  <Button type="button" variant="outline" size="sm" onClick={addSigner} className="mt-2" style={{ borderColor: config.accentColor, color: config.accentColor }}>
                     + Add Signer
                   </Button>
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="threshold">Required Signatures</Label>
-                  <Input
-                    id="threshold"
-                    type="number"
-                    min="1"
-                    max={formData.signers.length}
-                    value={formData.threshold}
-                    onChange={(e) => setFormData(prev => ({ ...prev, threshold: parseInt(e.target.value) || 2 }))}
-                    className="bg-black/40 border-gray-700 w-24"
-                    data-testid="input-threshold"
-                  />
-                  <p className="text-xs text-gray-400">
-                    {formData.threshold} of {formData.signers.length} signatures required
-                  </p>
+                  <Label htmlFor="threshold">Required Signatures (M-of-N)</Label>
+                  <div className="flex items-center gap-3">
+                    <Input
+                      id="threshold"
+                      type="number"
+                      min="1"
+                      max={formData.signers.length}
+                      value={formData.threshold}
+                      onChange={(e) => setFormData(prev => ({ ...prev, threshold: parseInt(e.target.value) || 2 }))}
+                      className="bg-black/40 border-gray-700 w-24"
+                      style={{ borderColor: `${config.accentColor}40` }}
+                      data-testid="input-threshold"
+                    />
+                    <p className="text-xs text-gray-400">
+                      {formData.threshold} of {formData.signers.length} signatures required
+                    </p>
+                  </div>
                 </div>
               </>
+            )}
+            
+            {config.variant === 'biometric' && (
+              <div className="space-y-3">
+                <Label className="flex items-center gap-2">
+                  <Shield className="h-4 w-4" style={{ color: config.accentColor }} />
+                  Biometric Authentication Type
+                </Label>
+                <div className="grid grid-cols-3 gap-2">
+                  {['fingerprint', 'face', 'iris'].map((type) => (
+                    <button
+                      key={type}
+                      type="button"
+                      onClick={() => setFormData(prev => ({ ...prev, biometricType: type }))}
+                      className={`p-3 rounded-lg border text-center capitalize transition-all ${
+                        formData.biometricType === type 
+                          ? 'border-teal-500 bg-teal-500/20' 
+                          : 'border-gray-700 bg-black/40 hover:border-gray-600'
+                      }`}
+                      data-testid={`btn-biometric-${type}`}
+                    >
+                      <span className="text-2xl block mb-1">{type === 'fingerprint' ? '👆' : type === 'face' ? '👤' : '👁️'}</span>
+                      <span className="text-xs">{type}</span>
+                    </button>
+                  ))}
+                </div>
+                <p className="text-xs text-gray-400">Zero-knowledge proof ensures your biometric data never leaves your device</p>
+              </div>
+            )}
+            
+            {config.variant === 'quantum' && (
+              <div className="space-y-3">
+                <Label className="flex items-center gap-2">
+                  <Zap className="h-4 w-4" style={{ color: config.accentColor }} />
+                  Quantum Security Tier
+                </Label>
+                <div className="grid grid-cols-3 gap-2">
+                  {['standard', 'enhanced', 'maximum'].map((tier) => (
+                    <button
+                      key={tier}
+                      type="button"
+                      onClick={() => setFormData(prev => ({ ...prev, quantumTier: tier }))}
+                      className={`p-3 rounded-lg border text-center capitalize transition-all ${
+                        formData.quantumTier === tier 
+                          ? 'border-cyan-500 bg-cyan-500/20' 
+                          : 'border-gray-700 bg-black/40 hover:border-gray-600'
+                      }`}
+                      data-testid={`btn-quantum-${tier}`}
+                    >
+                      <span className="text-2xl block mb-1">{tier === 'standard' ? '🔐' : tier === 'enhanced' ? '🛡️' : '⚛️'}</span>
+                      <span className="text-xs">{tier}</span>
+                    </button>
+                  ))}
+                </div>
+                <p className="text-xs text-gray-400">Uses ML-KEM-1024 and CRYSTALS-Dilithium-5 for post-quantum security</p>
+              </div>
+            )}
+            
+            {config.variant === 'nft' && (
+              <>
+                <div className="space-y-2">
+                  <Label className="flex items-center gap-2">
+                    <Gem className="h-4 w-4" style={{ color: config.accentColor }} />
+                    NFT Collection Address
+                  </Label>
+                  <Input
+                    placeholder="0x... (NFT collection contract)"
+                    value={formData.nftCollection}
+                    onChange={(e) => setFormData(prev => ({ ...prev, nftCollection: e.target.value }))}
+                    className="bg-black/40 border-gray-700"
+                    style={{ borderColor: `${config.accentColor}40` }}
+                    data-testid="input-nft-collection"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label>Token ID</Label>
+                  <Input
+                    placeholder="Token ID for access control"
+                    value={formData.tokenId}
+                    onChange={(e) => setFormData(prev => ({ ...prev, tokenId: e.target.value }))}
+                    className="bg-black/40 border-gray-700"
+                    style={{ borderColor: `${config.accentColor}40` }}
+                    data-testid="input-token-id"
+                  />
+                </div>
+                <p className="text-xs text-gray-400">Only the holder of this NFT can access the vault</p>
+              </>
+            )}
+            
+            {config.variant === 'geo' && (
+              <>
+                <div className="space-y-2">
+                  <Label className="flex items-center gap-2">
+                    <MapPin className="h-4 w-4" style={{ color: config.accentColor }} />
+                    Geofence Location
+                  </Label>
+                  <div className="grid grid-cols-2 gap-3">
+                    <Input
+                      placeholder="Latitude (e.g., 40.7128)"
+                      value={formData.latitude}
+                      onChange={(e) => setFormData(prev => ({ ...prev, latitude: e.target.value }))}
+                      className="bg-black/40 border-gray-700"
+                      style={{ borderColor: `${config.accentColor}40` }}
+                      data-testid="input-latitude"
+                    />
+                    <Input
+                      placeholder="Longitude (e.g., -74.0060)"
+                      value={formData.longitude}
+                      onChange={(e) => setFormData(prev => ({ ...prev, longitude: e.target.value }))}
+                      className="bg-black/40 border-gray-700"
+                      style={{ borderColor: `${config.accentColor}40` }}
+                      data-testid="input-longitude"
+                    />
+                  </div>
+                </div>
+                <div className="space-y-2">
+                  <Label>Access Radius (meters)</Label>
+                  <Input
+                    type="number"
+                    placeholder="100"
+                    value={formData.radius}
+                    onChange={(e) => setFormData(prev => ({ ...prev, radius: e.target.value }))}
+                    className="bg-black/40 border-gray-700 w-32"
+                    style={{ borderColor: `${config.accentColor}40` }}
+                    data-testid="input-radius"
+                  />
+                </div>
+                <p className="text-xs text-gray-400">Vault can only be unlocked within this geographic area</p>
+              </>
+            )}
+            
+            {config.variant === 'inheritance' && (
+              <>
+                <div className="space-y-2">
+                  <Label className="flex items-center gap-2">
+                    <Heart className="h-4 w-4" style={{ color: config.accentColor }} />
+                    Beneficiary Addresses
+                  </Label>
+                  {formData.beneficiaries.map((beneficiary, idx) => (
+                    <div key={idx} className="flex gap-2">
+                      <span className="w-6 h-8 flex items-center justify-center text-xs rounded" style={{ backgroundColor: `${config.accentColor}20` }}>{idx + 1}</span>
+                      <Input
+                        placeholder={`Beneficiary ${idx + 1} address (0x...)`}
+                        value={beneficiary}
+                        onChange={(e) => updateBeneficiary(idx, e.target.value)}
+                        className="bg-black/40 border-gray-700 flex-1"
+                        style={{ borderColor: `${config.accentColor}40` }}
+                        data-testid={`input-beneficiary-${idx}`}
+                      />
+                    </div>
+                  ))}
+                  <Button type="button" variant="outline" size="sm" onClick={addBeneficiary} className="mt-2" style={{ borderColor: config.accentColor, color: config.accentColor }}>
+                    + Add Beneficiary
+                  </Button>
+                </div>
+                <p className="text-xs text-gray-400">Assets will transfer to beneficiaries according to the release schedule</p>
+              </>
+            )}
+            
+            {config.variant === 'social' && (
+              <>
+                <div className="space-y-2">
+                  <Label className="flex items-center gap-2">
+                    <Users className="h-4 w-4" style={{ color: config.accentColor }} />
+                    Guardian Addresses ({formData.guardians.length} guardians)
+                  </Label>
+                  {formData.guardians.map((guardian, idx) => (
+                    <div key={idx} className="flex gap-2">
+                      <span className="w-6 h-8 flex items-center justify-center text-xs rounded" style={{ backgroundColor: `${config.accentColor}20` }}>{idx + 1}</span>
+                      <Input
+                        placeholder={`Guardian ${idx + 1} address (0x...)`}
+                        value={guardian}
+                        onChange={(e) => updateGuardian(idx, e.target.value)}
+                        className="bg-black/40 border-gray-700 flex-1"
+                        style={{ borderColor: `${config.accentColor}40` }}
+                        data-testid={`input-guardian-${idx}`}
+                      />
+                    </div>
+                  ))}
+                  <Button type="button" variant="outline" size="sm" onClick={addGuardian} className="mt-2" style={{ borderColor: config.accentColor, color: config.accentColor }}>
+                    + Add Guardian
+                  </Button>
+                </div>
+                <div className="space-y-2">
+                  <Label>Recovery Threshold</Label>
+                  <div className="flex items-center gap-3">
+                    <Input
+                      type="number"
+                      min="1"
+                      max={formData.guardians.length}
+                      value={formData.recoveryThreshold}
+                      onChange={(e) => setFormData(prev => ({ ...prev, recoveryThreshold: parseInt(e.target.value) || 2 }))}
+                      className="bg-black/40 border-gray-700 w-24"
+                      style={{ borderColor: `${config.accentColor}40` }}
+                      data-testid="input-recovery-threshold"
+                    />
+                    <p className="text-xs text-gray-400">
+                      {formData.recoveryThreshold} of {formData.guardians.length} guardians needed for recovery
+                    </p>
+                  </div>
+                </div>
+              </>
+            )}
+            
+            {config.variant === 'ai' && (
+              <div className="space-y-3">
+                <Label className="flex items-center gap-2">
+                  <Brain className="h-4 w-4" style={{ color: config.accentColor }} />
+                  Risk Tolerance
+                </Label>
+                <div className="grid grid-cols-3 gap-2">
+                  {['conservative', 'moderate', 'aggressive'].map((risk) => (
+                    <button
+                      key={risk}
+                      type="button"
+                      onClick={() => setFormData(prev => ({ ...prev, riskTolerance: risk }))}
+                      className={`p-3 rounded-lg border text-center capitalize transition-all ${
+                        formData.riskTolerance === risk 
+                          ? 'border-violet-500 bg-violet-500/20' 
+                          : 'border-gray-700 bg-black/40 hover:border-gray-600'
+                      }`}
+                      data-testid={`btn-risk-${risk}`}
+                    >
+                      <span className="text-2xl block mb-1">{risk === 'conservative' ? '🐢' : risk === 'moderate' ? '⚖️' : '🚀'}</span>
+                      <span className="text-xs">{risk}</span>
+                    </button>
+                  ))}
+                </div>
+                <p className="text-xs text-gray-400">AI will optimize your portfolio based on this risk profile</p>
+              </div>
+            )}
+            
+            {config.variant === 'bitcoin' && (
+              <div className="space-y-3">
+                <Label className="flex items-center gap-2">
+                  <Bitcoin className="h-4 w-4" style={{ color: config.accentColor }} />
+                  Target Bitcoin Halving
+                </Label>
+                <div className="grid grid-cols-3 gap-2">
+                  {['2024', '2028', '2032'].map((year) => (
+                    <button
+                      key={year}
+                      type="button"
+                      onClick={() => setFormData(prev => ({ ...prev, targetHalving: year }))}
+                      className={`p-3 rounded-lg border text-center transition-all ${
+                        formData.targetHalving === year 
+                          ? 'border-orange-500 bg-orange-500/20' 
+                          : 'border-gray-700 bg-black/40 hover:border-gray-600'
+                      }`}
+                      data-testid={`btn-halving-${year}`}
+                    >
+                      <span className="text-2xl block mb-1">₿</span>
+                      <span className="text-xs">{year} Halving</span>
+                    </button>
+                  ))}
+                </div>
+                <p className="text-xs text-gray-400">Vault unlocks at the selected Bitcoin halving event</p>
+              </div>
+            )}
+            
+            {config.variant === 'fragment' && (
+              <div className="rounded-lg p-4 border" style={{ backgroundColor: `${config.accentColor}10`, borderColor: `${config.accentColor}40` }}>
+                <Label className="flex items-center gap-2 mb-3">
+                  <Globe className="h-4 w-4" style={{ color: config.accentColor }} />
+                  Cross-Chain Distribution
+                </Label>
+                <div className="grid grid-cols-3 gap-2">
+                  <div className="text-center p-2 rounded bg-purple-500/10 border border-purple-500/30">
+                    <div className="text-lg font-bold text-purple-400">40%</div>
+                    <div className="text-xs text-gray-400">Arbitrum L2</div>
+                  </div>
+                  <div className="text-center p-2 rounded bg-green-500/10 border border-green-500/30">
+                    <div className="text-lg font-bold text-green-400">30%</div>
+                    <div className="text-xs text-gray-400">Solana</div>
+                  </div>
+                  <div className="text-center p-2 rounded bg-blue-500/10 border border-blue-500/30">
+                    <div className="text-lg font-bold text-blue-400">30%</div>
+                    <div className="text-xs text-gray-400">TON</div>
+                  </div>
+                </div>
+                <p className="text-xs text-gray-400 mt-2">2-of-3 fragments required for recovery</p>
+              </div>
+            )}
+            
+            {config.variant === 'premium' && (
+              <div className="rounded-lg p-4 border" style={{ backgroundColor: `${config.accentColor}10`, borderColor: `${config.accentColor}40` }}>
+                <Label className="flex items-center gap-2 mb-3">
+                  <Shield className="h-4 w-4" style={{ color: config.accentColor }} />
+                  8-Layer Security Stack
+                </Label>
+                <div className="grid grid-cols-4 gap-2">
+                  {['ZK Proofs', 'Formal Verify', 'MPC Keys', 'VDF Locks', 'AI Guard', 'Quantum', 'Trinity', 'TEE'].map((layer, i) => (
+                    <div key={layer} className="text-center p-2 rounded bg-yellow-500/10 border border-yellow-500/30">
+                      <div className="text-xs font-bold" style={{ color: config.accentColor }}>L{i + 1}</div>
+                      <div className="text-[10px] text-gray-400">{layer}</div>
+                    </div>
+                  ))}
+                </div>
+                <p className="text-xs text-gray-400 mt-2">Maximum protection with all Trinity Protocol layers</p>
+              </div>
+            )}
+            
+            {config.variant === 'zk' && (
+              <div className="space-y-4">
+                <div className="space-y-3">
+                  <Label className="flex items-center gap-2">
+                    <Lock className="h-4 w-4" style={{ color: config.accentColor }} />
+                    Privacy Level
+                  </Label>
+                  <div className="grid grid-cols-3 gap-2">
+                    {['standard', 'enhanced', 'maximum'].map((level) => (
+                      <button
+                        key={level}
+                        type="button"
+                        onClick={() => setFormData(prev => ({ ...prev, privacyLevel: level }))}
+                        className={`p-3 rounded-lg border text-center capitalize transition-all ${
+                          formData.privacyLevel === level 
+                            ? 'border-gray-500 bg-gray-500/20' 
+                            : 'border-gray-700 bg-black/40 hover:border-gray-600'
+                        }`}
+                        data-testid={`btn-privacy-${level}`}
+                      >
+                        <span className="text-2xl block mb-1">{level === 'standard' ? '🕶️' : level === 'enhanced' ? '👻' : '🔮'}</span>
+                        <span className="text-xs">{level}</span>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+                <div className="rounded-lg p-3 bg-gray-800/50 border border-gray-700">
+                  <div className="flex items-center gap-2 text-sm font-medium text-gray-300 mb-2">
+                    <Shield className="h-4 w-4" /> Groth16 ZK-SNARK Protection
+                  </div>
+                  <p className="text-xs text-gray-400">Transaction amounts, sender, and recipient are hidden using zero-knowledge proofs</p>
+                </div>
+              </div>
+            )}
+            
+            {config.variant === 'intent' && (
+              <div className="space-y-4">
+                <div className="space-y-2">
+                  <Label className="flex items-center gap-2">
+                    <Sparkles className="h-4 w-4" style={{ color: config.accentColor }} />
+                    Inheritance Intent (Natural Language)
+                  </Label>
+                  <textarea
+                    placeholder="Describe your inheritance wishes in plain English. Example: 'Give 50% to my daughter when she turns 25, and split the rest between my children when I'm gone for 2 years...'"
+                    value={formData.intentDescription}
+                    onChange={(e) => setFormData(prev => ({ ...prev, intentDescription: e.target.value }))}
+                    className="w-full min-h-[100px] p-3 rounded-lg bg-black/40 border border-gray-700 text-sm resize-none"
+                    style={{ borderColor: `${config.accentColor}40` }}
+                    data-testid="input-intent-description"
+                  />
+                </div>
+                <div className="rounded-lg p-3 bg-amber-900/20 border border-amber-700/30">
+                  <div className="flex items-center gap-2 text-sm font-medium text-amber-400 mb-2">
+                    <Brain className="h-4 w-4" /> AI-Powered Intent Parsing
+                  </div>
+                  <p className="text-xs text-gray-400">Claude AI will convert your wishes into enforceable smart contract logic</p>
+                </div>
+              </div>
+            )}
+            
+            {config.variant === 'milestone' && (
+              <div className="space-y-4">
+                <div className="space-y-2">
+                  <Label className="flex items-center gap-2">
+                    <CheckCircle className="h-4 w-4" style={{ color: config.accentColor }} />
+                    Milestone Description
+                  </Label>
+                  <Input
+                    placeholder="e.g., Graduate from university, Launch product, Reach $1M revenue..."
+                    value={formData.milestoneDescription}
+                    onChange={(e) => setFormData(prev => ({ ...prev, milestoneDescription: e.target.value }))}
+                    className="bg-black/40 border-gray-700"
+                    style={{ borderColor: `${config.accentColor}40` }}
+                    data-testid="input-milestone-description"
+                  />
+                </div>
+                <div className="grid grid-cols-2 gap-3">
+                  <div className="space-y-2">
+                    <Label>Oracle Source</Label>
+                    <div className="grid grid-cols-2 gap-2">
+                      {['chainlink', 'custom'].map((source) => (
+                        <button
+                          key={source}
+                          type="button"
+                          onClick={() => setFormData(prev => ({ ...prev, oracleSource: source }))}
+                          className={`p-2 rounded-lg border text-center capitalize transition-all text-sm ${
+                            formData.oracleSource === source 
+                              ? 'border-orange-500 bg-orange-500/20' 
+                              : 'border-gray-700 bg-black/40 hover:border-gray-600'
+                          }`}
+                          data-testid={`btn-oracle-${source}`}
+                        >
+                          {source === 'chainlink' ? '🔗 Chainlink' : '⚙️ Custom'}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                  <div className="space-y-2">
+                    <Label>Release %</Label>
+                    <Input
+                      type="number"
+                      min="1"
+                      max="100"
+                      value={formData.releasePercentage}
+                      onChange={(e) => setFormData(prev => ({ ...prev, releasePercentage: e.target.value }))}
+                      className="bg-black/40 border-gray-700"
+                      style={{ borderColor: `${config.accentColor}40` }}
+                      data-testid="input-release-percentage"
+                    />
+                  </div>
+                </div>
+                <p className="text-xs text-gray-400">Oracle will verify milestone completion before releasing {formData.releasePercentage}% of funds</p>
+              </div>
+            )}
+            
+            {config.variant === 'discipline' && (
+              <div className="space-y-4">
+                <div className="space-y-3">
+                  <Label className="flex items-center gap-2">
+                    <Clock className="h-4 w-4" style={{ color: config.accentColor }} />
+                    DCA Schedule
+                  </Label>
+                  <div className="grid grid-cols-4 gap-2">
+                    {['daily', 'weekly', 'biweekly', 'monthly'].map((schedule) => (
+                      <button
+                        key={schedule}
+                        type="button"
+                        onClick={() => setFormData(prev => ({ ...prev, dcaSchedule: schedule }))}
+                        className={`p-2 rounded-lg border text-center capitalize transition-all text-sm ${
+                          formData.dcaSchedule === schedule 
+                            ? 'border-sky-500 bg-sky-500/20' 
+                            : 'border-gray-700 bg-black/40 hover:border-gray-600'
+                        }`}
+                        data-testid={`btn-dca-${schedule}`}
+                      >
+                        {schedule}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+                <div className="space-y-2">
+                  <Label>Withdrawal Cooldown (days)</Label>
+                  <div className="flex items-center gap-3">
+                    <Input
+                      type="number"
+                      min="1"
+                      max="365"
+                      value={formData.cooldownPeriod}
+                      onChange={(e) => setFormData(prev => ({ ...prev, cooldownPeriod: e.target.value }))}
+                      className="bg-black/40 border-gray-700 w-24"
+                      style={{ borderColor: `${config.accentColor}40` }}
+                      data-testid="input-cooldown-period"
+                    />
+                    <p className="text-xs text-gray-400">
+                      You must wait {formData.cooldownPeriod} days between withdrawals
+                    </p>
+                  </div>
+                </div>
+                <div className="rounded-lg p-3 bg-sky-900/20 border border-sky-700/30">
+                  <p className="text-xs text-gray-400">This vault prevents emotional trading by enforcing your investment strategy</p>
+                </div>
+              </div>
             )}
             
             <div className="space-y-2">
