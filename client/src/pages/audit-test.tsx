@@ -136,7 +136,7 @@ export default function SmartContractAuditTest() {
                       <SelectItem value="ETH">Ethereum</SelectItem>
                       <SelectItem value="SOL">Solana</SelectItem>
                       <SelectItem value="TON">TON</SelectItem>
-                      <SelectItem value="POLYGON">Polygon</SelectItem>
+                      <SelectItem value="ARB">Arbitrum</SelectItem>
                       <SelectItem value="BTC">Bitcoin</SelectItem>
                     </SelectContent>
                   </Select>
