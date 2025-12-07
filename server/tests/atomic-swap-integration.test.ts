@@ -5,7 +5,7 @@
  * Tests all security features, rate limiting, and edge cases
  * 
  * @author Chronos Vault Team
- * @version v1.5-PRODUCTION
+ * @version v3.0-PRODUCTION
  */
 
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
