@@ -14,8 +14,7 @@ import {
 import { useCVTToken } from '@/contexts/cvt-token-context';
 import { useMultiChain } from '@/contexts/multi-chain-context';
 import { useAuthContext } from '@/contexts/auth-context';
-// Logo image temporarily removed
-const logoPath = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect fill='%236B00D7' width='100' height='100'/%3E%3Ctext x='50' y='50' font-family='Arial' font-size='40' fill='white' text-anchor='middle' dominant-baseline='central'%3ECV%3C/text%3E%3C/svg%3E";
+import chronosLogo from '@assets/IMG_3753_1764790970107.jpeg';
 import { 
   DropdownMenu, 
   DropdownMenuContent, 
@@ -78,7 +77,7 @@ export const NavBar: React.FC = () => {
                   <div className="absolute inset-0 bg-gradient-to-r from-[#6B00D7]/30 to-[#FF5AF7]/50 opacity-0 group-hover:opacity-100 transition-all duration-500 animate-ping"></div>
                   <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-[#FF5AF7]/10 to-transparent opacity-0 group-hover:opacity-100 group-hover:animate-pulse"></div>
                   <img 
-                    src={logoPath} 
+                    src={chronosLogo} 
                     alt="Chronos Vault Logo" 
                     className="w-full h-full object-cover transition-all duration-500 group-hover:brightness-150 group-hover:saturate-200 group-hover:rotate-6" 
                   />
@@ -393,7 +392,7 @@ export const NavBar: React.FC = () => {
               <div className="h-14 w-14 rounded-full flex items-center justify-center shadow-lg shadow-[#6B00D7]/30 hover:shadow-[#FF5AF7] hover:shadow-xl transition-all duration-500 overflow-hidden border-2 border-[#9333EA]/30 hover:border-[#FF5AF7] transform hover:scale-110 mr-3 relative animate-pulse hover:animate-none">
                 <div className="absolute inset-0 bg-gradient-to-r from-[#6B00D7]/40 to-[#FF5AF7]/60 opacity-0 hover:opacity-100 transition-all duration-500 animate-ping"></div>
                 <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-[#FF5AF7]/20 to-transparent opacity-0 hover:opacity-100 hover:animate-pulse"></div>
-                <img src={logoPath} alt="Chronos Vault Logo" className="w-full h-full object-cover transition-all duration-500 hover:brightness-150 hover:saturate-200 hover:rotate-12" />
+                <img src={chronosLogo} alt="Chronos Vault Logo" className="w-full h-full object-cover transition-all duration-500 hover:brightness-150 hover:saturate-200 hover:rotate-12" />
               </div>
               
               <div className="relative">
@@ -461,8 +460,8 @@ export const NavBar: React.FC = () => {
             {/* Explore Section */}
             <SidebarSection icon={<Search className="h-5 w-5" />} title="Explore">
               <SidebarItem 
-                icon={<Database className="h-5 w-5" />} 
-                label="Operations & Monitoring Hub" 
+                icon={<Search className="h-5 w-5" />} 
+                label="Trinity Scan" 
                 href="/monitoring" 
                 active={location === '/monitoring'}
                 onClick={closeSidebar}

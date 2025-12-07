@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useLocation } from "wouter";
-// Logo image temporarily removed
-const logoPath = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect fill='%236B00D7' width='100' height='100'/%3E%3Ctext x='50' y='50' font-family='Arial' font-size='40' fill='white' text-anchor='middle' dominant-baseline='central'%3ECV%3C/text%3E%3C/svg%3E";
+import chronosLogo from '@assets/IMG_3753_1764790970107.jpeg';
 import { X } from 'lucide-react';
 
 // Interface for menu items
@@ -90,7 +89,7 @@ const Sidebar: React.FC<{
             <div className="relative w-10 h-10">
               <div className="absolute inset-0 rounded-full bg-gradient-to-br from-[#6B00D7] to-[#FF5AF7] opacity-80 blur-sm"></div>
               <div className="absolute inset-0.5 rounded-full bg-black flex items-center justify-center overflow-hidden">
-                <img src={logoPath} alt="Chronos Vault Logo" className="w-full h-full object-cover" />
+                <img src={chronosLogo} alt="Chronos Vault Logo" className="w-full h-full object-cover" />
               </div>
             </div>
             <div className="relative">
