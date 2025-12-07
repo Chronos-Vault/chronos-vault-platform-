@@ -98,7 +98,7 @@ export function getRegionalElements(country: string | null): RegionalData | null
       blockchainStats: {
         userPercentage: 7,
         growthRate: 14,
-        popularChains: ['Ethereum', 'Bitcoin', 'Polygon']
+        popularChains: ['Ethereum', 'Bitcoin', 'Arbitrum']
       }
     },
     'India': {
@@ -106,7 +106,7 @@ export function getRegionalElements(country: string | null): RegionalData | null
       blockchainStats: {
         userPercentage: 14,
         growthRate: 35,
-        popularChains: ['Ethereum', 'Polygon', 'TON']
+        popularChains: ['Ethereum', 'Arbitrum', 'TON']
       }
     },
     'Brazil': {
