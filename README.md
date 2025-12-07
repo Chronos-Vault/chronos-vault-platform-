@@ -10,7 +10,7 @@
 **✅ Trinity Protocol v3.5.9 is LIVE on Arbitrum Sepolia!**
 
 - **TrinityConsensusVerifier**: [`0xcb56CD751453d15adc699b5D4DED8EC02D725AEB`](https://sepolia.arbiscan.io/address/0xcb56CD751453d15adc699b5D4DED8EC02D725AEB)
-- **HTLCChronosBridge**: [`0xC8E4aB4Af3746b415cBABEcDe4070eE1dAbC0db3`](https://sepolia.arbiscan.io/address/0xbaC4f0283Fa9542c01CAA086334AEc33F86a7839)
+- **HTLCChronosBridge**: [`0x82C3AbF6036cEE41E151A90FE00181f6b18af8ca`](https://sepolia.arbiscan.io/address/0xbaC4f0283Fa9542c01CAA086334AEc33F86a7839)
 - **First Swap Proof**: [View Transaction](https://sepolia.arbiscan.io/tx/0x1987e62d565d6430a916140db3ecd81e7cb644758d0e2e3b913e6f3db190a9db)
 
 📖 [Full On-Chain Proof Documentation](https://github.com/Chronos-Vault/chronos-vault-contracts/blob/main/docs/deployments/TRINITY_ON-CHAIN_PROOF_v3.5.9.md)
