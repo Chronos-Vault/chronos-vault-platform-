@@ -82,10 +82,10 @@ export const DEFAULT_TESTNET_CONFIG: TestnetConfig = {
     maximum: 30 // 30% maximum security
   },
   blockchainDistribution: {
-    'ethereum': 30, // 30% Ethereum
-    'solana': 25, // 25% Solana
-    'ton': 25, // 25% TON
-    'polygon': 15, // 15% Polygon
+    'arbitrum': 30, // 30% Arbitrum (PRIMARY)
+    'solana': 25, // 25% Solana (MONITOR)
+    'ton': 25, // 25% TON (BACKUP)
+    'ethereum': 15, // 15% Ethereum
     'bitcoin': 5 // 5% Bitcoin
   },
   simulateErrors: true,

@@ -68,7 +68,7 @@ export class ChainBenchmarker {
     'SOL': 100,  // 1 SOL = $100 USD
     'TON': 5,    // 1 TON = $5 USD
     'BTC': 50000, // 1 BTC = $50000 USD
-    'MATIC': 1.5 // 1 MATIC = $1.5 USD
+    'ARB': 1.2 // 1 ARB = $1.2 USD (Arbitrum)
   };
   
   constructor(
