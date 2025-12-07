@@ -12,6 +12,7 @@ import {
 } from "@/components/ui/navigation-menu";
 import { cn } from '@/lib/utils';
 import { Briefcase, GitBranchIcon, CoinsIcon, LockIcon } from 'lucide-react';
+import chronosLogo from '@assets/IMG_3753_1764790970107.jpeg';
 
 export function Navbar() {
   const [location] = useLocation();
@@ -25,9 +26,11 @@ export function Navbar() {
       <div className="container flex h-16 items-center justify-between">
         <div className="flex items-center gap-2">
           <Link href="/">
-            <a className="flex items-center space-x-2">
-              <LockIcon className="h-6 w-6 text-primary" />
-              <span className="hidden font-bold sm:inline-block bg-gradient-to-r from-purple-600 to-pink-500 text-transparent bg-clip-text">
+            <a className="flex items-center space-x-2" data-testid="link-home-logo">
+              <div className="h-9 w-9 rounded-lg overflow-hidden border border-[#6B00D7]/30 shadow-lg shadow-[#6B00D7]/20">
+                <img src={chronosLogo} alt="Chronos Vault Logo" className="w-full h-full object-cover" />
+              </div>
+              <span className="hidden font-bold sm:inline-block bg-gradient-to-r from-[#6B00D7] via-[#FF5AF7] to-[#0098EA] text-transparent bg-clip-text">
                 Chronos Vault
               </span>
             </a>
