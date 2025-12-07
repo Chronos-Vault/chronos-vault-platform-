@@ -194,7 +194,7 @@ export default function FAQPage() {
                           </div>
                         </div>
                         <p className="mt-4">
-                          Our expansion roadmap includes Avalanche and Polygon in Phase 1, followed by Cardano and Polkadot in Phase 2.
+                          Our expansion roadmap includes Avalanche and Base in Phase 1, followed by Cardano and Polkadot in Phase 2.
                         </p>
                       </AccordionContent>
                     </AccordionItem>
