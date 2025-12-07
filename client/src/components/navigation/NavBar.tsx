@@ -183,8 +183,8 @@ export const NavBar: React.FC = () => {
                     </Link>
                   </DropdownMenuItem>
                   <DropdownMenuItem asChild>
-                    <Link href="/bridge" className="px-4 py-2 rounded-md hover:bg-[#6B00D7]/20 flex items-center">
-                      <Combine className="w-4 h-4 mr-2" /> Cross-Chain Bridge Hub
+                    <Link href="/trinity-bridge" className="px-4 py-2 rounded-md hover:bg-[#6B00D7]/20 flex items-center">
+                      <Combine className="w-4 h-4 mr-2" /> Trinity Bridge
                       <span className="ml-2 bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] text-white text-[10px] px-1.5 rounded-full">NEW</span>
                     </Link>
                   </DropdownMenuItem>
@@ -470,9 +470,9 @@ export const NavBar: React.FC = () => {
               
               <SidebarItem 
                 icon={<Combine className="h-5 w-5" />} 
-                label="Cross-Chain Bridge Hub" 
-                href="/bridge" 
-                active={location === '/bridge'}
+                label="Trinity Bridge" 
+                href="/trinity-bridge" 
+                active={location === '/trinity-bridge'}
                 onClick={closeSidebar}
                 isNew
               />
