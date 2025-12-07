@@ -329,7 +329,7 @@ const CrossChainFragmentVaultDocumentation = () => {
                         <ul className="list-disc pl-5 space-y-1 text-muted-foreground">
                           <li>Networks: Mainnet, Sepolia Testnet</li>
                           <li>Smart Contract Standards: ERC-4337 Account Abstraction</li>
-                          <li>Security Verification: Formal verification via Certora Prover</li>
+                          <li>Security Verification: Formal verification via Lean 4, Halmos, Echidna (73 properties proven)</li>
                           <li>Gas Optimization: EIP-1559 transaction strategy with fee bumping</li>
                           <li>Transaction Signing: ECDSA with secp256k1 curve (standard)</li>
                         </ul>
