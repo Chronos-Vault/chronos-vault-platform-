@@ -106,7 +106,7 @@ class MetricsCalculator {
 type SecurityLayer = 'blockchain' | 'quantum' | 'biometric' | 'zkp' | 'enclave' | 'timelock' | 'mpc' | 'post-quantum' | 'social' | 'identity' | 'hardware';
 type RecoveryMethod = 'seedPhrase' | 'social' | 'biometric' | 'hardware' | 'sharded' | 'legal' | 'quantum';
 type VaultBackupStrategy = 'distributed' | 'encrypted' | 'sharded' | 'quantum' | 'offline' | 'hierarchical';
-type Chain = 'ethereum' | 'ton' | 'solana' | 'bitcoin' | 'polygon' | 'avalanche' | 'polkadot' | 'cosmos' | 'arbitrum';
+type Chain = 'ethereum' | 'ton' | 'solana' | 'bitcoin' | 'avalanche' | 'polkadot' | 'cosmos' | 'arbitrum' | 'base';
 type AccessMethod = 'standard' | 'multisig' | 'guardians' | 'timelock' | 'zkproof' | 'mpc' | 'biometric' | 'device-based' | 'passwordless';
 type IdentityProvider = 'self-sovereign' | 'decentralized' | 'blockchain' | 'federated' | 'social' | 'kyc' | 'biometric';
 type EncryptionAlgorithm = 'aes256' | 'rsa4096' | 'ecc' | 'lattice' | 'blowfish' | 'kyber' | 'dilithium' | 'falcon';
@@ -789,8 +789,8 @@ function UniqueSecurityVault() {
           case 'bitcoin':
             blockchainConfig.bitcoinAddress = 'pending-derivation';
             break;
-          case 'polygon':
-            blockchainConfig.polygonContractAddress = 'pending-deployment';
+          case 'base':
+            blockchainConfig.baseContractAddress = 'pending-deployment';
             break;
           case 'avalanche':
             blockchainConfig.avalancheContractAddress = 'pending-deployment';
@@ -1009,7 +1009,7 @@ function UniqueSecurityVault() {
                 { id: 'ton', name: 'TON', icon: '💎', color: 'from-blue-400/30 to-blue-600/30 border-blue-400/30' },
                 { id: 'solana', name: 'Solana', icon: '◎', color: 'from-purple-600/30 to-fuchsia-600/30 border-purple-500/30' },
                 { id: 'bitcoin', name: 'Bitcoin', icon: '₿', color: 'from-orange-600/30 to-amber-600/30 border-orange-500/30' },
-                { id: 'polygon', name: 'Polygon', icon: '⬡', color: 'from-indigo-600/30 to-violet-600/30 border-indigo-500/30' },
+                { id: 'base', name: 'Base', icon: '🔵', color: 'from-indigo-600/30 to-violet-600/30 border-indigo-500/30' },
                 { id: 'avalanche', name: 'Avalanche', icon: '❄️', color: 'from-red-600/30 to-rose-600/30 border-red-500/30' },
                 { id: 'polkadot', name: 'Polkadot', icon: '●', color: 'from-pink-600/30 to-rose-600/30 border-pink-500/30' },
                 { id: 'cosmos', name: 'Cosmos', icon: '✧', color: 'from-cyan-600/30 to-blue-600/30 border-cyan-500/30' },
