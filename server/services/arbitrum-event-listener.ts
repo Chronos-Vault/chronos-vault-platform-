@@ -68,26 +68,44 @@ export class ArbitrumEventListener extends EventEmitter {
       securityLogger.info('🎧 Initializing Arbitrum Event Listener...', SecurityEventType.CROSS_CHAIN_VERIFICATION);
 
       // Try multiple RPC endpoints with automatic fallback
-      // PRIORITY: Use free, unlimited endpoints first to avoid rate limiting
-      const rpcEndpoints = [
-        'https://arbitrum-sepolia.public.blastapi.io', // BlastAPI - Free, no rate limits
-        'https://public.stackup.sh/api/v1/node/arbitrum-sepolia', // StackUp - Free tier
-        config.blockchainConfig.ethereum.rpcUrl, // User's custom RPC
-        'https://sepolia-rollup.arbitrum.io/rpc', // Official (rate limited - last resort)
-      ];
+      // PRIORITY: Use paid Alchemy API first, then free fallbacks
+      const alchemyKey = process.env.ALCHEMY_API_KEY;
+      const rpcEndpoints = alchemyKey 
+        ? [
+            `https://arb-sepolia.g.alchemy.com/v2/${alchemyKey}`, // Paid Alchemy (priority)
+            'https://sepolia-rollup.arbitrum.io/rpc',           // Official Arbitrum fallback
+            'https://arbitrum-sepolia.blockpi.network/v1/rpc/public', // BlockPI fallback
+          ]
+        : [
+            'https://sepolia-rollup.arbitrum.io/rpc',           // Official Arbitrum (FREE)
+            'https://arbitrum-sepolia.blockpi.network/v1/rpc/public', // BlockPI public (FREE)
+            'https://arb-sepolia.g.alchemy.com/v2/demo',        // Alchemy demo key
+            config.blockchainConfig.ethereum.rpcUrl,            // Fallback to config
+          ];
 
       let lastError: any = null;
       
       for (const rpcUrl of rpcEndpoints) {
-        // EXPONENTIAL BACKOFF: Retry each endpoint with increasing delays
-        const maxRetries = 3;
+        // EXPONENTIAL BACKOFF: Retry each endpoint with increasing delays (reduced for faster startup)
+        const maxRetries = 1;
         
         for (let attempt = 1; attempt <= maxRetries; attempt++) {
           try {
             securityLogger.info(`   Trying RPC endpoint (attempt ${attempt}/${maxRetries}): ${rpcUrl.substring(0, 50)}...`, SecurityEventType.CROSS_CHAIN_VERIFICATION);
             
-            this.provider = new ethers.JsonRpcProvider(rpcUrl);
-            const network = await this.provider.getNetwork();
+            // Create provider with 10-second timeout
+            this.provider = new ethers.JsonRpcProvider(rpcUrl, undefined, {
+              staticNetwork: true,
+              polling: true,
+              pollingInterval: 4000,
+            });
+            
+            // Race against a 10-second timeout
+            const networkPromise = this.provider.getNetwork();
+            const timeoutPromise = new Promise((_, reject) => 
+              setTimeout(() => reject(new Error('RPC connection timeout')), 10000)
+            );
+            const network = await Promise.race([networkPromise, timeoutPromise]) as any;
             
             securityLogger.info(`   ✅ Connected to network: ${network.name} (Chain ID: ${network.chainId})`, SecurityEventType.CROSS_CHAIN_VERIFICATION);
 
