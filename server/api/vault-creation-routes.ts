@@ -70,7 +70,12 @@ router.post('/time-lock', async (req: Request, res: Response) => {
       solanaTxHash: result.solanaTxHash,
       tonTxHash: result.tonTxHash,
       trinityHash: result.trinityVerificationHash,
-      message: 'Time-Lock Vault created successfully',
+      explorerLinks: (result.vaultData as any)?.explorerLinks || {
+        arbitrum: result.ethereumTxHash ? `https://sepolia.arbiscan.io/tx/${result.ethereumTxHash}` : undefined,
+        solana: result.solanaTxHash ? `https://explorer.solana.com/tx/${result.solanaTxHash}?cluster=devnet` : undefined,
+        ton: result.tonTxHash ? `https://testnet.tonscan.org/tx/${result.tonTxHash}` : undefined,
+      },
+      message: 'Time-Lock Vault created successfully with cross-chain registration',
     });
   } catch (error) {
     securityLogger.error(
@@ -120,7 +125,12 @@ router.post('/multi-sig', async (req: Request, res: Response) => {
       solanaTxHash: result.solanaTxHash,
       tonTxHash: result.tonTxHash,
       trinityHash: result.trinityVerificationHash,
-      message: 'Multi-Sig Vault created successfully',
+      explorerLinks: (result.vaultData as any)?.explorerLinks || {
+        arbitrum: result.ethereumTxHash ? `https://sepolia.arbiscan.io/tx/${result.ethereumTxHash}` : undefined,
+        solana: result.solanaTxHash ? `https://explorer.solana.com/tx/${result.solanaTxHash}?cluster=devnet` : undefined,
+        ton: result.tonTxHash ? `https://testnet.tonscan.org/tx/${result.tonTxHash}` : undefined,
+      },
+      message: 'Multi-Sig Vault created successfully with cross-chain registration',
     });
   } catch (error) {
     securityLogger.error(
@@ -174,7 +184,12 @@ router.post('/fragment', async (req: Request, res: Response) => {
       solanaTxHash: result.solanaTxHash,
       tonTxHash: result.tonTxHash,
       trinityHash: result.trinityVerificationHash,
-      message: 'Cross-Chain Fragment Vault created successfully',
+      explorerLinks: (result.vaultData as any)?.explorerLinks || {
+        arbitrum: result.ethereumTxHash ? `https://sepolia.arbiscan.io/tx/${result.ethereumTxHash}` : undefined,
+        solana: result.solanaTxHash ? `https://explorer.solana.com/tx/${result.solanaTxHash}?cluster=devnet` : undefined,
+        ton: result.tonTxHash ? `https://testnet.tonscan.org/tx/${result.tonTxHash}` : undefined,
+      },
+      message: 'Cross-Chain Fragment Vault created successfully with cross-chain registration',
     });
   } catch (error) {
     securityLogger.error(
