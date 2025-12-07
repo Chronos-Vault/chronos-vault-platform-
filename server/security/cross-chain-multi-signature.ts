@@ -9,7 +9,6 @@ import { ethereumClient as ethersClient } from '../blockchain/ethereum-client';
 import { solanaClient } from '../blockchain/solana-client';
 import { tonClient } from '../blockchain/ton-client';
 import { bitcoinClient } from '../blockchain/bitcoin-client';
-import { polygonClient } from '../blockchain/polygon-client';
 import { zeroKnowledgeShield, ProofType, CompleteProof } from '../privacy/zero-knowledge-shield';
 import { securityLogger } from '../monitoring/security-logger';
 import config from '../config';
@@ -46,6 +45,8 @@ class CrossChainMultiSignature {
   private getClient(blockchain: BlockchainType) {
     switch (blockchain) {
       case 'ETH':
+      case 'ARB':
+      case 'ARBITRUM':
         return ethersClient;
       case 'SOL':
         return solanaClient;
@@ -53,8 +54,6 @@ class CrossChainMultiSignature {
         return tonClient;
       case 'BTC':
         return bitcoinClient;
-      case 'POLYGON':
-        return polygonClient;
       default:
         throw new Error(`Unsupported blockchain: ${blockchain}`);
     }
