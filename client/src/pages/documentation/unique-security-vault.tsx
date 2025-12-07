@@ -133,7 +133,7 @@ const UniqueSecurityVaultDocumentation = () => {
                       <h3 className="text-xl font-semibold">Multi-Chain Security Matrix</h3>
                     </div>
                     <p>
-                      Distribute your security verification across multiple independent blockchains for unprecedented protection. Select any combination of Ethereum, TON, Solana, Bitcoin, Polygon, Avalanche, Polkadot, Cosmos, and Arbitrum as security verification layers, with the ability to designate a primary chain for core functionality while using others for additional validation. This creates a security matrix that would require simultaneous compromise of multiple blockchain networks to breach—a virtually impossible scenario.
+                      Distribute your security verification across multiple independent blockchains for unprecedented protection. Select any combination of Ethereum, TON, Solana, Bitcoin, Avalanche, Polkadot, Cosmos, Arbitrum, and Base as security verification layers, with the ability to designate a primary chain for core functionality while using others for additional validation. This creates a security matrix that would require simultaneous compromise of multiple blockchain networks to breach—a virtually impossible scenario.
                     </p>
                   </div>
                   
