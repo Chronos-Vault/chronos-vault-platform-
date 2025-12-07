@@ -4,7 +4,7 @@
  * Provides monitoring and health status for Trinity Protocol HTLC swaps
  * 
  * @author Chronos Vault Team
- * @version v1.5-PRODUCTION
+ * @version v3.0-PRODUCTION
  */
 
 import { Router } from 'express';

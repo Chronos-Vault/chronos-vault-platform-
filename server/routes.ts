@@ -45,6 +45,10 @@ import githubSyncRoutes from './api/github-sync-routes';
 import vaultMDLRoutes from './routes/vault-mdl-routes';
 import validatorRoutes from './api/validator-routes';
 import trinityScannerRoutes from './api/trinity-scanner-routes';
+import developerRoutes from './api/developer-routes';
+import vaultCatalogRoutes from './api/vault-catalog-routes';
+import securityDocsRoutes from './api/security-docs-routes';
+import { crossChainTestRoutes } from './api/cross-chain-test-routes';
 import { SolanaProgramClient, CHRONOS_VAULT_PROGRAM_ID } from './blockchain/solana-program-client';
 import config from './config';
 import { storage } from './storage';
@@ -140,6 +144,18 @@ export async function registerRoutes(app: Express): Promise<Server> {
   
   // Register Trinity Scan blockchain explorer routes
   apiRouter.use('/scanner', trinityScannerRoutes);
+  
+  // Register developer documentation routes
+  apiRouter.use('/developer', developerRoutes);
+  
+  // Register vault catalog routes for Vault School Hub
+  apiRouter.use('/vault-catalog', vaultCatalogRoutes);
+  
+  // Register security documentation routes
+  apiRouter.use('/security-docs', securityDocsRoutes);
+  
+  // Cross-chain test routes (for testing TON, Arbitrum, Solana)
+  apiRouter.use('/test', crossChainTestRoutes);
   
   // Solana status endpoint - exposes deployed program data
   apiRouter.get('/solana/status', async (req: Request, res: Response) => {
