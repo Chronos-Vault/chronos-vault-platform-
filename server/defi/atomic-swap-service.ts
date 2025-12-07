@@ -1348,9 +1348,9 @@ export class AtomicSwapService {
       '1INCH': 18,
       
       // Layer 2 tokens
-      'ARB': 18, // Arbitrum
+      'ARB': 18, // Arbitrum (PRIMARY)
       'OP': 18, // Optimism
-      'MATIC': 18, // Polygon
+      'MATIC': 18, // Legacy L2 token
       
       // Solana ecosystem
       'USDC.SOL': 6, // Solana USDC
