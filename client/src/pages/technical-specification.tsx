@@ -420,7 +420,7 @@ export default function TechnicalSpecification() {
                         <li>• Ethereum (EVM-compatible chains)</li>
                         <li>• TON (The Open Network)</li>
                         <li>• Solana</li>
-                        <li>• Polygon</li>
+                        <li>• Arbitrum</li>
                       </ul>
                     </div>
                     
