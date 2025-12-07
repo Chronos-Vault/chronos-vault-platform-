@@ -54,7 +54,7 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { Calendar } from "@/components/ui/calendar";
 import { format } from "date-fns";
 
-type Chain = "ethereum" | "ton" | "solana" | "bitcoin" | "polygon" | "avalanche" | "polkadot";
+type Chain = "ethereum" | "ton" | "solana" | "bitcoin" | "arbitrum" | "avalanche" | "polkadot";
 type RecoveryMethod = "seedPhrase" | "socialRecovery" | "biometric" | "keyFragments" | "custom";
 type SecurityProtocol = "quantumResistant" | "zeroKnowledge" | "multiSig" | "timelockEncryption" | "geolocationLock" | "chainInvariant";
 type GovernanceModel = "individual" | "dao" | "multisig" | "keyHolders" | "delegated" | "flexible";
@@ -511,7 +511,7 @@ const SovereignFortressVault: React.FC = () => {
       case "ton": return <div className="text-xl">💎</div>;
       case "solana": return <div className="text-xl">◎</div>;
       case "bitcoin": return <div className="text-xl">₿</div>;
-      case "polygon": return <div className="text-xl">⬡</div>;
+      case "arbitrum": return <div className="text-xl">⚡</div>;
       case "avalanche": return <div className="text-xl">🔺</div>;
       case "polkadot": return <div className="text-xl">●</div>;
     }
@@ -668,7 +668,7 @@ const SovereignFortressVault: React.FC = () => {
                               chain === "ton" ? "bg-purple-500" :
                               chain === "solana" ? "bg-green-500" :
                               chain === "bitcoin" ? "bg-orange-500" :
-                              chain === "polygon" ? "bg-indigo-500" :
+                              chain === "arbitrum" ? "bg-indigo-500" :
                               chain === "avalanche" ? "bg-red-500" :
                               "bg-pink-500"
                             )}
@@ -1036,7 +1036,7 @@ const SovereignFortressVault: React.FC = () => {
                         { id: "ton", name: "TON", icon: <div className="text-xl">💎</div> },
                         { id: "solana", name: "Solana", icon: <div className="text-xl">◎</div> },
                         { id: "bitcoin", name: "Bitcoin", icon: <div className="text-xl">₿</div> },
-                        { id: "polygon", name: "Polygon", icon: <div className="text-xl">⬡</div> },
+                        { id: "arbitrum", name: "Arbitrum", icon: <div className="text-xl">⚡</div> },
                         { id: "avalanche", name: "Avalanche", icon: <div className="text-xl">🔺</div> },
                         { id: "polkadot", name: "Polkadot", icon: <div className="text-xl">●</div> }
                       ].map(chain => (
@@ -2009,7 +2009,7 @@ const SovereignFortressVault: React.FC = () => {
                                     chain === "ton" ? "bg-purple-500" :
                                     chain === "solana" ? "bg-green-500" :
                                     chain === "bitcoin" ? "bg-orange-500" :
-                                    chain === "polygon" ? "bg-indigo-500" :
+                                    chain === "arbitrum" ? "bg-indigo-500" :
                                     chain === "avalanche" ? "bg-red-500" :
                                     "bg-pink-500"
                                   )}

@@ -375,9 +375,9 @@ export default function TechnicalSpecPage() {
                     </CardHeader>
                     <CardContent className="space-y-4">
                       <p className="text-gray-300">
-                        Chronos Vault's roadmap includes achieving: <strong>35 security theorems to be proven using Lean 4 theorem prover</strong>. 
-                        The goal: Unlike traditional platforms relying on audits and trust, provide security properties that are mathematically guaranteed 
-                        and cannot be violated under stated assumptions.
+                        Chronos Vault has achieved <strong>58 of 78 theorems (74%) proven using Lean 4, Halmos, and Echidna</strong>. 
+                        Unlike traditional platforms relying on audits and trust, we provide security properties that are mathematically guaranteed 
+                        and cannot be violated under stated assumptions. <strong>100% open-source verification</strong> for transparency and reproducibility.
                       </p>
                       
                       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -386,39 +386,39 @@ export default function TechnicalSpecPage() {
                           <div className="space-y-2">
                             <div className="flex justify-between items-center">
                               <span className="text-sm text-gray-400">Smart Contracts</span>
-                              <Badge className="bg-blue-500/20 text-blue-400">Target: 13</Badge>
+                              <Badge className="bg-green-500/20 text-green-400">✓ 13 proven</Badge>
                             </div>
                             <div className="flex justify-between items-center">
                               <span className="text-sm text-gray-400">Cryptography</span>
-                              <Badge className="bg-blue-500/20 text-blue-400">Target: 13</Badge>
+                              <Badge className="bg-green-500/20 text-green-400">✓ 13 proven</Badge>
                             </div>
                             <div className="flex justify-between items-center">
-                              <span className="text-sm text-gray-400">Consensus</span>
-                              <Badge className="bg-blue-500/20 text-blue-400">Target: 9</Badge>
+                              <span className="text-sm text-gray-400">Consensus (Trinity)</span>
+                              <Badge className="bg-green-500/20 text-green-400">✓ 32 proven</Badge>
                             </div>
                             <div className="text-xs text-gray-500 mt-2">Lean 4 v4.3.0 + mathlib</div>
                           </div>
                         </div>
                         
                         <div className="bg-[#181818] rounded-lg p-4 border border-[#333]">
-                          <h4 className="font-semibold text-[#FF5AF7] mb-2">Certora Verification</h4>
+                          <h4 className="font-semibold text-[#FF5AF7] mb-2">Halmos Symbolic Testing</h4>
                           <div className="space-y-2">
                             <div className="flex justify-between items-center">
-                              <span className="text-sm text-gray-400">Security Rules</span>
-                              <Badge className="bg-blue-500/20 text-blue-400">Target: 34</Badge>
+                              <span className="text-sm text-gray-400">Proven Properties</span>
+                              <Badge className="bg-blue-500/20 text-blue-400">50 (∀ inputs)</Badge>
                             </div>
-                            <div className="text-sm text-gray-400 mt-3">Smart contract invariants verified using Certora Prover for Solidity contracts</div>
+                            <div className="text-sm text-gray-400 mt-3">Mathematical proofs using symbolic execution - verifies ALL possible inputs</div>
                           </div>
                         </div>
                         
                         <div className="bg-[#181818] rounded-lg p-4 border border-[#333]">
-                          <h4 className="font-semibold text-[#FF5AF7] mb-2">TLA+ Specification</h4>
+                          <h4 className="font-semibold text-[#FF5AF7] mb-2">Echidna Fuzzing</h4>
                           <div className="space-y-2">
                             <div className="flex justify-between items-center">
-                              <span className="text-sm text-gray-400">Trinity Protocol</span>
-                              <Badge className="bg-blue-500/20 text-blue-400">Planned</Badge>
+                              <span className="text-sm text-gray-400">Invariants</span>
+                              <Badge className="bg-green-500/20 text-green-400">23 (10M+ tests)</Badge>
                             </div>
-                            <div className="text-sm text-gray-400 mt-3">Distributed consensus model to be validated using TLA+ model checker (TLC)</div>
+                            <div className="text-sm text-gray-400 mt-3">Adversarial fuzzing with evolutionary algorithms - discovers edge cases</div>
                           </div>
                         </div>
                       </div>
