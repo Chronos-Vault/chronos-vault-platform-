@@ -66,7 +66,7 @@ import { VaultDeploymentMonitor } from '@/components/monitoring/vault-deployment
 import { AdvancedFeaturesDashboard } from '@/components/advanced-features-dashboard';
 
 // Enhanced types
-type Chain = 'ethereum' | 'ton' | 'solana' | 'bitcoin' | 'polygon' | 'avalanche' | 'polkadot';
+type Chain = 'ethereum' | 'ton' | 'solana' | 'bitcoin' | 'arbitrum' | 'avalanche' | 'polkadot';
 type AssetClass = 'crypto' | 'stocks' | 'commodities' | 'forex' | 'indices' | 'nft' | 'stable';
 type ProtectionMechanism = 'quantum' | 'zkp' | 'multisig' | 'timelock' | 'ai' | 'dualchain' | 'triplechain';
 type InvestmentAlgorithm = 'market_neutral' | 'momentum' | 'mean_reversion' | 'dca' | 'value' | 'growth' | 'hybrid';
@@ -250,7 +250,7 @@ function InvestmentDisciplineVaultAdvanced() {
       'ton': 30,
       'solana': 30,
       'bitcoin': 0,
-      'polygon': 0,
+      'arbitrum': 0,
       'avalanche': 0,
       'polkadot': 0
     },
@@ -758,8 +758,8 @@ function InvestmentDisciplineVaultAdvanced() {
           case 'bitcoin':
             blockchainConfig.bitcoinAddress = 'pending-derivation';
             break;
-          case 'polygon':
-            blockchainConfig.polygonContractAddress = 'pending-deployment';
+          case 'arbitrum':
+            blockchainConfig.arbitrumContractAddress = 'pending-deployment';
             break;
           case 'avalanche':
             blockchainConfig.avalancheContractAddress = 'pending-deployment';
@@ -1791,7 +1791,7 @@ function InvestmentDisciplineVaultAdvanced() {
                   <SelectItem value="TON">Toncoin (TON)</SelectItem>
                   <SelectItem value="AVAX">Avalanche (AVAX)</SelectItem>
                   <SelectItem value="DOT">Polkadot (DOT)</SelectItem>
-                  <SelectItem value="MATIC">Polygon (MATIC)</SelectItem>
+                  <SelectItem value="ARB">Arbitrum (ARB)</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -1896,7 +1896,7 @@ function InvestmentDisciplineVaultAdvanced() {
                 { id: 'ton', name: 'TON', icon: '💎', color: 'from-blue-400/30 to-blue-600/30 border-blue-400/30' },
                 { id: 'solana', name: 'Solana', icon: '◎', color: 'from-purple-600/30 to-fuchsia-600/30 border-purple-500/30' },
                 { id: 'bitcoin', name: 'Bitcoin', icon: '₿', color: 'from-orange-600/30 to-amber-600/30 border-orange-500/30' },
-                { id: 'polygon', name: 'Polygon', icon: '⬡', color: 'from-indigo-600/30 to-violet-600/30 border-indigo-500/30' },
+                { id: 'arbitrum', name: 'Arbitrum', icon: '⚡', color: 'from-indigo-600/30 to-violet-600/30 border-indigo-500/30' },
                 { id: 'avalanche', name: 'Avalanche', icon: '❄️', color: 'from-red-600/30 to-rose-600/30 border-red-500/30' },
                 { id: 'polkadot', name: 'Polkadot', icon: '●', color: 'from-pink-600/30 to-rose-600/30 border-pink-500/30' }
               ].map(chain => (
@@ -2399,7 +2399,7 @@ function InvestmentDisciplineVaultAdvanced() {
                         ton: 'bg-blue-400',
                         solana: 'bg-purple-500',
                         bitcoin: 'bg-orange-500',
-                        polygon: 'bg-indigo-500',
+                        arbitrum: 'bg-indigo-500',
                         avalanche: 'bg-red-500',
                         polkadot: 'bg-pink-500'
                       };

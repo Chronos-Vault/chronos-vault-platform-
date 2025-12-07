@@ -271,7 +271,7 @@ export function useChronosWebSocket(client) {
               </CardContent>
               <CardFooter className="border-t pt-6 flex justify-between">
                 <Button variant="outline" asChild>
-                  <a href="https://github.com/chronos-vault/web-integration-example" target="_blank" rel="noopener noreferrer">
+                  <a href="https://github.com/Chronos-Vault/chronos-vault-sdk/tree/main/examples" target="_blank" rel="noopener noreferrer">
                     <Github className="mr-2 h-4 w-4" />
                     View Complete Example
                   </a>
@@ -471,7 +471,7 @@ export default VaultDashboard;`}</code>
               </CardContent>
               <CardFooter className="border-t pt-6">
                 <Button asChild className="bg-gradient-to-r from-indigo-500 to-cyan-500 hover:from-indigo-600 hover:to-cyan-600">
-                  <a href="https://github.com/chronos-vault/mobile-integration-example" target="_blank" rel="noopener noreferrer">
+                  <a href="https://github.com/Chronos-Vault/chronos-vault-sdk/blob/main/examples/SDK-Usage-Example.tsx" target="_blank" rel="noopener noreferrer">
                     <ExternalLink className="mr-2 h-4 w-4" />
                     View Mobile Example Repository
                   </a>
@@ -650,7 +650,7 @@ contract DeFiProtocolWithChronosVault is Ownable {
               </CardContent>
               <CardFooter className="border-t pt-6">
                 <Button variant="outline" asChild className="mr-4">
-                  <a href="https://github.com/chronos-vault/defi-integration-example" target="_blank" rel="noopener noreferrer">
+                  <a href="https://github.com/Chronos-Vault/chronos-vault-sdk/tree/main/examples" target="_blank" rel="noopener noreferrer">
                     <Github className="mr-2 h-4 w-4" />
                     View Example Repository
                   </a>
@@ -860,7 +860,7 @@ public class SecurityVaultController {
               </CardContent>
               <CardFooter className="border-t pt-6">
                 <Button asChild className="bg-gradient-to-r from-indigo-500 to-cyan-500 hover:from-indigo-600 hover:to-cyan-600">
-                  <a href="https://github.com/chronos-vault/enterprise-integration-example" target="_blank" rel="noopener noreferrer">
+                  <a href="https://github.com/Chronos-Vault/chronos-vault-sdk/blob/main/INTEGRATION_EXAMPLES.md" target="_blank" rel="noopener noreferrer">
                     <ExternalLink className="mr-2 h-4 w-4" />
                     View Enterprise Example Repository
                   </a>
@@ -1025,7 +1025,7 @@ if __name__ == "__main__":
               </CardContent>
               <CardFooter className="border-t pt-6">
                 <Button asChild className="bg-gradient-to-r from-indigo-500 to-cyan-500 hover:from-indigo-600 hover:to-cyan-600">
-                  <a href="https://github.com/chronos-vault/cross-chain-transfer-example" target="_blank" rel="noopener noreferrer">
+                  <a href="https://github.com/Chronos-Vault/chronos-vault-sdk/blob/main/examples/v3-integration-example.ts" target="_blank" rel="noopener noreferrer">
                     <ExternalLink className="mr-2 h-4 w-4" />
                     View Cross-Chain Example Repository
                   </a>
@@ -1240,7 +1240,7 @@ app.listen(PORT, () => {
               </CardContent>
               <CardFooter className="border-t pt-6">
                 <Button asChild className="bg-gradient-to-r from-indigo-500 to-cyan-500 hover:from-indigo-600 hover:to-cyan-600">
-                  <a href="https://github.com/chronos-vault/digital-estate-example" target="_blank" rel="noopener noreferrer">
+                  <a href="https://github.com/Chronos-Vault/chronos-vault-sdk/tree/main/examples" target="_blank" rel="noopener noreferrer">
                     <ExternalLink className="mr-2 h-4 w-4" />
                     View Digital Estate Example Repository
                   </a>

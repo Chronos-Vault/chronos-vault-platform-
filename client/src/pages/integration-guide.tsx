@@ -247,7 +247,7 @@ def authenticate_wallet(private_key):
     address = account.address
     
     # Request nonce
-    nonce_res = requests.get('https://api.chronosvault.com/api/auth/nonce')
+    nonce_res = requests.get('https://api.chronosvault.org/api/auth/nonce')
     nonce = nonce_res.json()['nonce']
     
     # Sign with wallet
@@ -257,7 +257,7 @@ def authenticate_wallet(private_key):
     
     # Verify and get JWT token
     auth_res = requests.post(
-        'https://api.chronosvault.com/api/auth/verify',
+        'https://api.chronosvault.org/api/auth/verify',
         json={'address': address, 'signature': signed_msg.signature.hex(), 'nonce': nonce}
     )
     
@@ -266,7 +266,7 @@ def authenticate_wallet(private_key):
 # 2. Use token for API requests
 def create_vault(token):
     res = requests.post(
-        'https://api.chronosvault.com/api/vaults',
+        'https://api.chronosvault.org/api/vaults',
         headers={'Authorization': f'Bearer {token}', 'Content-Type': 'application/json'},
         json={
             'id': 'vault_' + str(uuid.uuid4()),
@@ -308,7 +308,7 @@ public String authenticateWallet(String address, String signature, String nonce)
     );
     
     HttpRequest request = HttpRequest.newBuilder()
-        .uri(URI.create("https://api.chronosvault.com/api/auth/verify"))
+        .uri(URI.create("https://api.chronosvault.org/api/auth/verify"))
         .header("Content-Type", "application/json")
         .POST(HttpRequest.BodyPublishers.ofString(gson.toJson(authData)))
         .build();
@@ -766,7 +766,7 @@ async function testVaultCreation(token) {
               <div className="bg-slate-900 text-slate-50 p-4 rounded-md mt-4">
                 <pre className="text-sm overflow-x-auto">
                   <code>{`// Production environment setup - point to mainnet deployment
-const MAINNET_API = 'https://mainnet-api.chronosvault.com';
+const MAINNET_API = 'https://mainnet-api.chronosvault.org';
 
 // All wallet authentication and API calls same as testnet
 // Just change the base URL to your mainnet deployment
