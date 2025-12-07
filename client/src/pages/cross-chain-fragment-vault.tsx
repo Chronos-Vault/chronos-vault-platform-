@@ -37,7 +37,7 @@ import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { format } from "date-fns";
 
-type SupportedChain = "ethereum" | "ton" | "solana" | "bitcoin" | "polygon" | "avalanche" | "tezos";
+type SupportedChain = "ethereum" | "ton" | "solana" | "bitcoin" | "arbitrum" | "avalanche" | "tezos";
 type FragmentStrategy = "equal" | "dynamic" | "threshold" | "custom";
 type AccessControl = "standard" | "multi-sig" | "time-locked" | "geo-restricted" | "dual-factor";
 type RecoveryMode = "social" | "algorithmic" | "identity-based" | "emergency";
@@ -140,7 +140,7 @@ const CrossChainFragmentVault: React.FC = () => {
     
     // Find an unused chain
     const usedChains = fragments.map(f => f.chain);
-    const availableChains: SupportedChain[] = ["ethereum", "ton", "solana", "bitcoin", "polygon", "avalanche", "tezos"];
+    const availableChains: SupportedChain[] = ["ethereum", "ton", "solana", "bitcoin", "arbitrum", "avalanche", "tezos"];
     const unusedChain = availableChains.find(c => !usedChains.includes(c));
     
     if (!unusedChain) return;
@@ -235,7 +235,7 @@ const CrossChainFragmentVault: React.FC = () => {
       case "ton": return "bg-blue-600 dark:bg-blue-700";
       case "solana": return "bg-green-600 dark:bg-green-700";
       case "bitcoin": return "bg-orange-600 dark:bg-orange-700";
-      case "polygon": return "bg-indigo-600 dark:bg-indigo-700";
+      case "arbitrum": return "bg-indigo-600 dark:bg-indigo-700";
       case "avalanche": return "bg-red-600 dark:bg-red-700";
       case "tezos": return "bg-cyan-600 dark:bg-cyan-700";
     }
@@ -749,7 +749,7 @@ const CrossChainFragmentVault: React.FC = () => {
                                     <SelectItem value="ton">TON</SelectItem>
                                     <SelectItem value="solana">Solana</SelectItem>
                                     <SelectItem value="bitcoin">Bitcoin</SelectItem>
-                                    <SelectItem value="polygon">Polygon</SelectItem>
+                                    <SelectItem value="arbitrum">Arbitrum</SelectItem>
                                     <SelectItem value="avalanche">Avalanche</SelectItem>
                                     <SelectItem value="tezos">Tezos</SelectItem>
                                   </SelectContent>

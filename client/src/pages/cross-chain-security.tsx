@@ -15,7 +15,7 @@ export default function CrossChainSecurityPage() {
   const [txHash, setTxHash] = useState('0x7f23c5bd38b3f3402e168cf4133cf05d5be18dcbd0ffb364ae1b66e19c1c0d33');
   const [sourceChain, setSourceChain] = useState('Ethereum');
   const [requiredChains, setRequiredChains] = useState(['ETH', 'SOL', 'TON']);
-  const [selectedPreset, setSelectedPreset] = useState('triple-chain');
+  const [selectedPreset, setSelectedPreset] = useState('trinity-protocol');
   
   return (
     <div className="min-h-screen flex flex-col bg-black">
@@ -32,7 +32,7 @@ export default function CrossChainSecurityPage() {
           </div>
           <div className="flex items-center gap-1.5">
             <Shield className="h-5 w-5 text-[#FF5AF7]" />
-            <span className="text-sm text-[#FF5AF7]">Triple-Chain Security™</span>
+            <span className="text-sm text-[#FF5AF7]">Trinity Protocol™</span>
           </div>
         </div>
         
@@ -105,16 +105,16 @@ export default function CrossChainSecurityPage() {
                     variant="outline"
                     onClick={() => {
                       setRequiredChains(['ETH', 'SOL', 'TON']);
-                      setSelectedPreset('triple-chain');
+                      setSelectedPreset('trinity-protocol');
                     }}
                     className={`w-full flex justify-between items-center border transition-all ${
-                      selectedPreset === 'triple-chain'
+                      selectedPreset === 'trinity-protocol'
                         ? 'bg-[#6B00D7]/20 border-[#6B00D7] text-white'
                         : 'bg-gray-900/20 border-gray-800 text-gray-300 hover:bg-gray-800/30'
                     }`}
                   >
                     <div className="text-left">
-                      <p className="font-medium">Triple-Chain</p>
+                      <p className="font-medium">Trinity Protocol™</p>
                       <p className="text-xs text-gray-400">ETH + SOL + TON</p>
                     </div>
                     <Shield className="h-4 w-4 ml-2" />

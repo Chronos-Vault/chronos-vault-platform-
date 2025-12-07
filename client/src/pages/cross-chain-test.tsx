@@ -104,7 +104,7 @@ export default function CrossChainTestPage() {
     ETH: "",
     SOL: "",
     TON: "",
-    POLYGON: "",
+    ARB: "",
     BTC: ""
   });
   
