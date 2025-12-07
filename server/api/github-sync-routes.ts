@@ -8,6 +8,7 @@ const EXCLUDED_FILES = [
   "replit.md",
   ".replit",
   "replit.nix",
+  "DEVELOPMENT.md",
   ".env",
   ".env.local",
   "node_modules",
@@ -21,6 +22,7 @@ const EXCLUDED_FILES = [
 
 const EXCLUDED_PATTERNS = [
   /replit/i,
+  /DEVELOPMENT\.md$/i,
   /\.d\.ts$/,
   /node_modules/,
   /\.log$/,
@@ -82,7 +84,7 @@ router.post('/sync-file', async (req: Request, res: Response) => {
     await githubSync.updateFile({
       path: filePath,
       content,
-      message: message || `Update ${filePath} from development`,
+      message: message || `[Chronos Vault Team] Update ${filePath}`,
     });
 
     res.json({
@@ -119,7 +121,7 @@ router.post('/sync-multiple', async (req: Request, res: Response) => {
 
     await githubSync.commitMultipleFiles(
       files,
-      message || `Update ${files.length} files from development`,
+      message || `[Chronos Vault Team] Update ${files.length} files`,
       'main'
     );
 

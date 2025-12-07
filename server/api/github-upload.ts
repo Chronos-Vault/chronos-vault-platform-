@@ -11,6 +11,7 @@ const EXCLUDED_FILES = [
   "replit.md",
   ".replit",
   "replit.nix",
+  "DEVELOPMENT.md",
   ".env",
   ".env.local",
   "node_modules",
@@ -24,6 +25,7 @@ const EXCLUDED_FILES = [
 
 const EXCLUDED_PATTERNS = [
   /replit/i,
+  /DEVELOPMENT\.md$/i,
   /\.d\.ts$/,
   /node_modules/,
   /\.log$/,
@@ -153,7 +155,7 @@ export async function uploadToGitHub(directories: string[] = ["server", "client"
       batch.map(async (file) => {
         const localPath = file;
         const repoPath = file;
-        const message = `[Trinity Protocol v3.5.22] Update ${file}`;
+        const message = `[Chronos Vault Team] Update ${file}`;
         return uploadFile(octokit, localPath, repoPath, message);
       })
     );
@@ -202,7 +204,7 @@ export async function uploadSpecificFiles(files: string[]): Promise<{
       continue;
     }
     
-    const message = `[Trinity Protocol v3.5.22] Update ${file}`;
+    const message = `[Chronos Vault Team] Update ${file}`;
     const result = await uploadFile(octokit, file, file, message);
     results.push(result);
     
@@ -217,3 +219,59 @@ export async function uploadSpecificFiles(files: string[]): Promise<{
 
   return { success: failed === 0, uploaded, failed, results };
 }
+
+export async function deleteFilesFromGitHub(filePaths: string[]): Promise<{
+  success: boolean;
+  deleted: number;
+  failed: number;
+  results: Array<{ path: string; action: string; success: boolean }>;
+}> {
+  if (!GITHUB_TOKEN) {
+    throw new Error("GITHUB_TOKEN not configured");
+  }
+
+  const octokit = new Octokit({ auth: GITHUB_TOKEN });
+  
+  const results: Array<{ path: string; action: string; success: boolean }> = [];
+  let deleted = 0;
+  let failed = 0;
+
+  for (const filePath of filePaths) {
+    try {
+      const sha = await getFileSha(octokit, filePath);
+      if (!sha) {
+        results.push({ path: filePath, action: "not found", success: true });
+        continue;
+      }
+
+      await octokit.repos.deleteFile({
+        owner: OWNER,
+        repo: REPO,
+        path: filePath,
+        message: `[Chronos Vault Team] Remove deprecated file: ${filePath}`,
+        sha,
+        branch: BRANCH,
+      });
+
+      results.push({ path: filePath, action: "deleted", success: true });
+      deleted++;
+      console.log(`🗑️ Deleted: ${filePath}`);
+    } catch (e: any) {
+      console.error(`Failed to delete ${filePath}:`, e.message);
+      results.push({ path: filePath, action: "failed", success: false });
+      failed++;
+    }
+    
+    await new Promise((resolve) => setTimeout(resolve, 500));
+  }
+
+  console.log(`\n🗑️ Delete complete: ${deleted} deleted, ${failed} failed`);
+  return { success: failed === 0, deleted, failed, results };
+}
+
+export const POLYGON_DEPRECATED_FILES = [
+  "server/blockchain/polygon-service.ts",
+  "server/blockchain/polygon-connector.ts",
+  "contracts/polygon/",
+  "docs/POLYGON_DEPLOYMENT.md",
+];
