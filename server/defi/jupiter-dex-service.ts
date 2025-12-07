@@ -45,8 +45,10 @@ export const SOLANA_TOKEN_MINTS = {
   USDT: 'Es9vMFrzaCERmJfrF4H2FYD4KCoNkY11McCe8BenwNYB',
   BONK: 'DezXAZ8z7PnrnRJjz3wXBoRgixCa6xjnB7YaB1pPB263',
   JUP: 'JUPyiwrYJFskUPiHa7hkeR8VUtAeFoSYbKedZNsDvCN',
-  // Add CVT mint when deployed on Solana
-  CVT: 'CVT_MINT_TO_BE_DEPLOYED' // TODO: Replace with actual CVT mint
+  // CVT Token - Deploy with: npm run deploy:cvt
+  // See: contracts/solana/cvt_token/deploy-cvt-spl.ts
+  // After deployment, update this with the mint address from cvt-deployment.json
+  CVT: process.env.SOLANA_CVT_MINT || 'CVT_MINT_PENDING_DEPLOYMENT'
 };
 
 /**

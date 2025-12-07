@@ -5,7 +5,7 @@
  * across Arbitrum, Solana, and TON networks with mathematical security guarantees.
  * 
  * REAL TRINITY PROTOCOL INTEGRATION - Connected to deployed contracts:
- * - Arbitrum Sepolia: CrossChainBridgeOptimized v2.2 (Trinity v3.0) at 0x4a8Bc58f441Ae7E7eC2879e434D9D7e31CF80e30
+ * - Arbitrum Sepolia: TrinityConsensusVerifier v3.5.1 at 0x5e7D8B46E46c9D45aF90383964Bf19C61F73e525
  * - Solana Devnet: Trinity Validator Program ID 5oD8S1TtkdJbAX7qhsGticU7JKxjwY4AbEeBdnkUrrKY
  * - TON Testnet: Trinity Validator at EQDx6yH5WH3Ex47h0PBnOBMzPCsmHdnL2snts3DZBO5CYVVJ
  * 
@@ -23,8 +23,8 @@ import config from '../config';
 import { ethereumClient } from '../blockchain/ethereum-client';
 import { SolanaProgramClient, CHRONOS_VAULT_PROGRAM_ID } from '../blockchain/solana-program-client';
 import { tonClient } from '../blockchain/ton-client';
-import CrossChainBridgeOptimizedABI from '../../artifacts/contracts/ethereum/CrossChainBridgeOptimized.sol/CrossChainBridgeOptimized.json';
-import HTLCBridgeABI from '../../artifacts/contracts/ethereum/HTLCBridge.sol/HTLCBridge.json';
+import TrinityConsensusVerifierABI from '../../artifacts/contracts/ethereum/TrinityConsensusVerifier.sol/TrinityConsensusVerifier.json';
+import HTLCChronosBridgeABI from '../../artifacts/contracts/ethereum/HTLCChronosBridge.sol/HTLCChronosBridge.json';
 import { securityLogger, SecurityEventType } from '../monitoring/security-logger';
 import { jupiterDexService } from './jupiter-dex-service';
 import { uniswapV3Service } from './uniswap-v3-service';
@@ -192,28 +192,31 @@ export class AtomicSwapService {
       
       await tonClient.initialize();
       
-      // Connect to Trinity Protocol HTLCBridge v2.0 and CrossChainBridgeOptimized v2.2
-      const trinityRpcUrl = process.env.ARBITRUM_RPC_URL || 'https://sepolia-rollup.arbitrum.io/rpc';
+      // Connect to Trinity Protocol v3.5.1 - Use Alchemy API (paid) for reliable RPC
+      const alchemyKey = process.env.ALCHEMY_API_KEY;
+      const trinityRpcUrl = alchemyKey 
+        ? `https://arb-sepolia.g.alchemy.com/v2/${alchemyKey}`
+        : (process.env.ARBITRUM_RPC_URL || 'https://sepolia-rollup.arbitrum.io/rpc');
       this.provider = new ethers.JsonRpcProvider(trinityRpcUrl);
       
       const htlcBridgeAddress = '0x6cd3B1a72F67011839439f96a70290051fd66D57'; // HTLCBridge v2.0
-      const trinityBridgeAddress = config.blockchainConfig.ethereum.contracts.crossChainBridge; // CrossChainBridgeOptimized v2.2
+      const trinityBridgeAddress = '0x5e7D8B46E46c9D45aF90383964Bf19C61F73e525'; // TrinityConsensusVerifier v3.5.1
       
       // CRITICAL FIX: Attach signer if private key available
       if (process.env.PRIVATE_KEY) {
         const wallet = new ethers.Wallet(process.env.PRIVATE_KEY, this.provider);
         
-        // HTLCBridge contract (for HTLC operations: create, lock, claim, refund)
+        // HTLCChronosBridge contract (for HTLC operations: create, lock, claim, refund)
         this.htlcBridgeContract = new ethers.Contract(
           htlcBridgeAddress,
-          HTLCBridgeABI.abi,
+          HTLCChronosBridgeABI.abi,
           wallet
         );
         
         // Trinity Protocol contract (for consensus verification)
         this.trinityBridgeContract = new ethers.Contract(
           trinityBridgeAddress,
-          CrossChainBridgeOptimizedABI.abi,
+          TrinityConsensusVerifierABI.abi,
           wallet
         );
         
@@ -223,13 +226,13 @@ export class AtomicSwapService {
         // Fallback: Read-only mode (transactions will be simulated)
         this.htlcBridgeContract = new ethers.Contract(
           htlcBridgeAddress,
-          HTLCBridgeABI.abi,
+          HTLCChronosBridgeABI.abi,
           this.provider
         );
         
         this.trinityBridgeContract = new ethers.Contract(
           trinityBridgeAddress,
-          CrossChainBridgeOptimizedABI.abi,
+          TrinityConsensusVerifierABI.abi,
           this.provider
         );
         
@@ -237,9 +240,9 @@ export class AtomicSwapService {
       }
       
       securityLogger.info(`✅ Connected to HTLCBridge v2.0 at ${htlcBridgeAddress}`, SecurityEventType.CROSS_CHAIN_VERIFICATION);
-      securityLogger.info(`✅ Connected to Trinity Protocol v3.0 at ${trinityBridgeAddress}`, SecurityEventType.CROSS_CHAIN_VERIFICATION);
+      securityLogger.info(`✅ Connected to TrinityConsensusVerifier v3.5.1 at ${trinityBridgeAddress}`, SecurityEventType.CROSS_CHAIN_VERIFICATION);
       securityLogger.info(`   Network: Arbitrum Sepolia (421614)`, SecurityEventType.CROSS_CHAIN_VERIFICATION);
-      securityLogger.info(`   Features: 2-of-3 Consensus, HTLC Atomic Swaps, Mathematical Security ~10^-50`, SecurityEventType.CROSS_CHAIN_VERIFICATION);
+      securityLogger.info(`   Features: 2-of-3 Consensus, Enhanced Security, Reentrancy Protection`, SecurityEventType.CROSS_CHAIN_VERIFICATION);
       securityLogger.info('✅ HTLC Atomic Swap Service ready with Trinity Protocol!', SecurityEventType.CROSS_CHAIN_VERIFICATION);
       
       this.isInitialized = true;
