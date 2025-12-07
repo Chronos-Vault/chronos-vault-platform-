@@ -3,7 +3,7 @@ import { Container } from '@/components/ui/container';
 import { PageHeader } from '@/components/page-header';
 import { Helmet } from 'react-helmet';
 import { Button } from '@/components/ui/button';
-import { ArrowRight, Download, FileText } from 'lucide-react';
+import { ArrowRight, Download, FileText, Shield } from 'lucide-react';
 import { Link } from 'wouter';
 
 export default function ProjectWhitepaperPage() {
@@ -31,6 +31,13 @@ export default function ProjectWhitepaperPage() {
                 <Button variant="outline" className="bg-purple-900/20 border-purple-700/30 hover:bg-purple-800/30">
                   <FileText className="mr-2 h-4 w-4" />
                   View CVT Token Whitepaper
+                  <ArrowRight className="ml-2 h-4 w-4" />
+                </Button>
+              </Link>
+              <Link href="/trinity-protocol-paper">
+                <Button variant="outline" className="bg-[#6B00D7]/20 border-[#6B00D7]/50 hover:bg-[#6B00D7]/30">
+                  <Shield className="mr-2 h-4 w-4" />
+                  Trinity Protocol Paper v3.5.20
                   <ArrowRight className="ml-2 h-4 w-4" />
                 </Button>
               </Link>
@@ -512,7 +519,7 @@ export default function ProjectWhitepaperPage() {
               <li>🚀 <strong>Mainnet Launch</strong>: Full production deployment on Arbitrum, Solana, TON mainnet</li>
               <li>🚀 <strong>CVT Token</strong>: Public launch with staking and governance activation</li>
               <li>🚀 <strong>Enterprise Solutions</strong>: Institutional vault management and compliance tools</li>
-              <li>🚀 <strong>Additional Chains</strong>: Expansion to Polygon, Base, and other L2s</li>
+              <li>🚀 <strong>Additional Chains</strong>: Expansion to Avalanche, Base, and other L2s</li>
               <li>🚀 <strong>DAO Governance</strong>: Full decentralization with on-chain voting</li>
             </ul>
             
