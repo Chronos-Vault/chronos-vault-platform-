@@ -7,6 +7,42 @@ import config from '../config';
 
 const router = Router();
 
+async function sendValidatorNotificationEmail(validatorData: any): Promise<boolean> {
+  const emailContent = `
+New Trinity Shield Validator Application
+
+Operator Details:
+-----------------
+Name: ${validatorData.operatorName}
+Email: ${validatorData.operatorEmail}
+Organization: ${validatorData.organizationName || 'N/A'}
+Wallet Address: ${validatorData.walletAddress}
+
+Hardware Configuration:
+-----------------------
+TEE Type: ${validatorData.teeType === 'sgx' ? 'Intel SGX' : 'AMD SEV-SNP'}
+Hardware Vendor: ${validatorData.hardwareVendor || 'N/A'}
+Hardware Model: ${validatorData.hardwareModel}
+Region: ${validatorData.region || 'N/A'}
+Consensus Role: ${validatorData.consensusRole || 'Not specified'}
+
+Submitted At: ${new Date().toISOString()}
+
+---
+This is an automated notification from Chronos Vault Trinity Protocol.
+Review this application at: https://chronosvault.org/validator-dashboard
+  `.trim();
+
+  console.log('=== VALIDATOR APPLICATION NOTIFICATION ===');
+  console.log('To: chronosvault@chronosvault.org');
+  console.log('Subject: New Trinity Shield Validator Application - ' + validatorData.operatorName);
+  console.log('---');
+  console.log(emailContent);
+  console.log('==========================================');
+  
+  return true;
+}
+
 const registrationSchema = insertValidatorSchema.extend({
   walletAddress: z.string().refine((addr) => {
     try {
@@ -127,6 +163,10 @@ router.post('/register', async (req: Request, res: Response) => {
     const validator = await storage.createValidator({
       ...data,
       walletAddress: normalizedAddress
+    });
+    
+    sendValidatorNotificationEmail(data).catch(err => {
+      console.error('Failed to send notification email:', err);
     });
     
     res.status(201).json({
