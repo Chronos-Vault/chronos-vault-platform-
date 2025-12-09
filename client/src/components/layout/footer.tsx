@@ -57,7 +57,7 @@ const Footer = ({ className = '' }: { className?: string }) => {
               <li><Link href="/smart-contract-vault" className="text-gray-300 hover:text-[#FF5AF7] transition-all font-poppins font-light hover:translate-x-1 inline-flex relative group">
                 Smart Contract Vault
               </Link></li>
-              <li><Link href="/documentation/multi-signature-vault" className="text-gray-300 hover:text-[#FF5AF7] transition-all font-poppins font-light hover:translate-x-1 inline-flex">Multi-Signature Vault</Link></li>
+              <li><Link href="/multi-signature-vault-new" className="text-gray-300 hover:text-[#FF5AF7] transition-all font-poppins font-light hover:translate-x-1 inline-flex">Multi-Signature Vault</Link></li>
               <li><Link href="/cross-chain-vault" className="text-gray-300 hover:text-[#FF5AF7] transition-all font-poppins font-light hover:translate-x-1 inline-flex">Cross-Chain Vault</Link></li>
               <li><Link href="/token-vaults" className="text-gray-300 hover:text-[#FF5AF7] transition-all font-poppins font-light hover:translate-x-1 inline-flex">Token Vaults</Link></li>
               <li><Link href="/bitcoin-halving-vault" className="text-gray-300 hover:text-[#FF5AF7] transition-all font-poppins font-light hover:translate-x-1 inline-flex">Bitcoin Halving Vault</Link></li>
@@ -98,7 +98,7 @@ const Footer = ({ className = '' }: { className?: string }) => {
               <li><Link href="/trinity-protocol-paper" className="text-gray-300 hover:text-[#FF5AF7] transition-all font-poppins font-light hover:translate-x-1 inline-flex">Trinity Protocol Paper</Link></li>
               <li><Link href="/security-testing" className="text-gray-300 hover:text-[#FF5AF7] transition-all font-poppins font-light hover:translate-x-1 inline-flex">Security Testing</Link></li>
               <li><Link href="/cross-chain-security" className="text-gray-300 hover:text-[#FF5AF7] transition-all font-poppins font-light hover:translate-x-1 inline-flex">Cross-Chain Security</Link></li>
-              <li><Link href="/security-verification-demo" className="text-gray-300 hover:text-[#FF5AF7] transition-all font-poppins font-light hover:translate-x-1 inline-flex">Triple-Chain Verification</Link></li>
+              <li><Link href="/monitoring" className="text-gray-300 hover:text-[#FF5AF7] transition-all font-poppins font-light hover:translate-x-1 inline-flex">Trinity Scan</Link></li>
               <li><a href="https://dev.to/chronosvault" target="_blank" rel="noopener noreferrer" className="text-gray-300 hover:text-[#FF5AF7] transition-all font-poppins font-light hover:translate-x-1 inline-flex">Dev.to Articles</a></li>
             </ul>
           </div>
@@ -108,8 +108,8 @@ const Footer = ({ className = '' }: { className?: string }) => {
             <ul className="space-y-4">
               <li><Link href="/about" className="text-gray-300 hover:text-[#FF5AF7] transition-all font-poppins font-light hover:translate-x-1 inline-flex">About Us</Link></li>
               <li><Link href="/roadmap" className="text-gray-300 hover:text-[#FF5AF7] transition-all font-poppins font-light hover:translate-x-1 inline-flex">Roadmap</Link></li>
+              <li><Link href="/validator-onboarding" className="text-gray-300 hover:text-[#FF5AF7] transition-all font-poppins font-light hover:translate-x-1 inline-flex">Become a Validator</Link></li>
               <li><Link href="/project-whitepaper" className="text-gray-300 hover:text-[#FF5AF7] transition-all font-poppins font-light hover:translate-x-1 inline-flex">Project Whitepaper</Link></li>
-              <li><Link href="/whitepaper" className="text-gray-300 hover:text-[#FF5AF7] transition-all font-poppins font-light hover:translate-x-1 inline-flex">CVT Whitepaper</Link></li>
               <li><a href="https://x.com/chronosvaultx?s=21" target="_blank" rel="noopener noreferrer" className="text-gray-300 hover:text-[#FF5AF7] transition-all font-poppins font-light hover:translate-x-1 inline-flex">Twitter (X)</a></li>
               <li><a href="https://t.me/chronosvaultnetwork" target="_blank" rel="noopener noreferrer" className="text-gray-300 hover:text-[#FF5AF7] transition-all font-poppins font-light hover:translate-x-1 inline-flex">Telegram</a></li>
               <li><a href="https://discord.gg/MfjVbbgX" target="_blank" rel="noopener noreferrer" className="text-gray-300 hover:text-[#FF5AF7] transition-all font-poppins font-light hover:translate-x-1 inline-flex">Discord</a></li>
