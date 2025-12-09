@@ -1,486 +1,346 @@
 /**
- * Enhanced Storage Page
+ * Chronos Vault Locked Storage Page
  * 
- * This page demonstrates the advanced permanent storage capabilities 
- * with multi-chain support (Arweave, IPFS, and Filecoin),
- * cross-chain verification, and quantum-resistant encryption
+ * Secure file and asset storage with advanced locking mechanisms
+ * powered by Trinity Protocol™ 2-of-3 validator consensus
  */
 
-import { useState, useEffect } from 'react';
-import { FileUploader } from '@/components/storage/FileUploader';
+import { useState } from 'react';
+import { Link } from 'wouter';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
-import { Alert, AlertTitle, AlertDescription } from '@/components/ui/alert';
-import { Info, HardDrive, Database, AlertTriangle, Shield, Layers, Lock, Network } from 'lucide-react';
-import { arweaveStorage } from '@/services/arweave-service';
+import { 
+  Shield, Lock, Network, Clock, Key, Users, Fingerprint, 
+  Calendar, ArrowRight, Vault, CheckCircle2, Layers, 
+  FileKey, FolderLock, Sparkles, Zap
+} from 'lucide-react';
 import { motion } from 'framer-motion';
-import type { StorageStatus } from '../../../shared/types/storage';
 
 const StoragePage = () => {
-  const [storageStatus, setStorageStatus] = useState<StorageStatus | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  
-  // Fetch storage status on page load
-  useEffect(() => {
-    const fetchStatus = async () => {
-      try {
-        setLoading(true);
-        const status = await arweaveStorage.getStatus();
-        setStorageStatus(status);
-        setError(null);
-      } catch (err) {
-        console.error('Error fetching storage status:', err);
-        setError('Failed to connect to storage service');
-      } finally {
-        setLoading(false);
-      }
-    };
-    
-    fetchStatus();
-    
-    // Refresh status every 30 seconds
-    const interval = setInterval(fetchStatus, 30000);
-    
-    return () => clearInterval(interval);
-  }, []);
-  
-  // Format winston to AR
-  const formatBalance = (winston?: string) => {
-    if (!winston) return '0';
-    
-    // Convert winston to AR (1 AR = 1000000000000 winston)
-    const ar = Number(winston) / 1000000000000;
-    return ar.toFixed(6);
-  };
-  
-  // Format cost per MB
-  const formatCostPerMb = (costPerMb?: string) => {
-    if (!costPerMb) return '0';
-    
-    // Convert winston to AR
-    const ar = Number(costPerMb) / 1000000000000;
-    return ar.toFixed(6);
-  };
-  
-  // Storage network options
-  const storageNetworks = [
-    { 
-      id: 'arweave', 
-      name: 'Arweave', 
-      description: 'Permanent, decentralized storage with one-time payment', 
-      icon: <Database className="h-5 w-5 text-fuchsia-500" />,
-      available: true,
-      status: 'Active',
-      costPerMb: '0.000015'
+  const [selectedVaultType, setSelectedVaultType] = useState<string | null>(null);
+
+  // Locked Storage Vault Types
+  const lockedStorageTypes = [
+    {
+      id: 'time-locked',
+      name: 'Time-Locked Storage',
+      description: 'Files remain encrypted and inaccessible until a specific date/time. Perfect for scheduled releases, embargoed content, or future reveals.',
+      icon: <Clock className="h-8 w-8" />,
+      features: ['Set unlock date/time', 'Automatic decryption', 'Trinity Protocol verified'],
+      link: '/time-lock-vault',
+      gradient: 'from-blue-500 to-cyan-500',
+      bgGlow: 'bg-blue-500/20'
     },
-    { 
-      id: 'ipfs', 
-      name: 'IPFS', 
-      description: 'InterPlanetary File System for content-addressed storage', 
-      icon: <Network className="h-5 w-5 text-blue-500" />,
-      available: true,
-      status: 'Active',
-      costPerMb: '0.000005'
+    {
+      id: 'multi-sig',
+      name: 'Multi-Signature Storage',
+      description: 'Require multiple wallet signatures to unlock files. Ideal for shared ownership, legal documents, or corporate assets.',
+      icon: <Users className="h-8 w-8" />,
+      features: ['2-of-3 or custom threshold', 'Cross-chain signers', 'Audit trail'],
+      link: '/multi-signature-vault-new',
+      gradient: 'from-green-500 to-emerald-500',
+      bgGlow: 'bg-green-500/20'
     },
-    { 
-      id: 'filecoin', 
-      name: 'Filecoin', 
-      description: 'Long-term storage with economic incentives', 
-      icon: <HardDrive className="h-5 w-5 text-green-500" />,
-      available: true,
-      status: 'Active',
-      costPerMb: '0.000010'
+    {
+      id: 'biometric',
+      name: 'Biometric-Locked Storage',
+      description: 'Secure files with biometric verification. Only you can access with fingerprint or face recognition.',
+      icon: <Fingerprint className="h-8 w-8" />,
+      features: ['Fingerprint/FaceID', 'Device-bound keys', 'Zero-knowledge proof'],
+      link: '/biometric-vault',
+      gradient: 'from-pink-500 to-rose-500',
+      bgGlow: 'bg-pink-500/20'
     },
+    {
+      id: 'condition-based',
+      name: 'Smart Contract Storage',
+      description: 'Files unlock when specific on-chain conditions are met. Link access to smart contract events or oracle data.',
+      icon: <Key className="h-8 w-8" />,
+      features: ['Smart contract triggers', 'Oracle integration', 'Automatic execution'],
+      link: '/smart-contract-vault',
+      gradient: 'from-amber-500 to-orange-500',
+      bgGlow: 'bg-amber-500/20'
+    },
+    {
+      id: 'inheritance',
+      name: 'Inheritance Vault',
+      description: 'Securely pass digital assets to beneficiaries. Includes dead-man switch and proof-of-life protocols.',
+      icon: <Calendar className="h-8 w-8" />,
+      features: ['Beneficiary management', 'Inactivity triggers', 'Legal compliance'],
+      link: '/intent-inheritance-vault',
+      gradient: 'from-purple-500 to-violet-500',
+      bgGlow: 'bg-purple-500/20'
+    },
+    {
+      id: 'cross-chain',
+      name: 'Cross-Chain Fragment',
+      description: 'Split files across multiple blockchains. Reconstruct only with keys from all chains - ultimate security.',
+      icon: <Network className="h-8 w-8" />,
+      features: ['Arbitrum + Solana + TON', 'Shamir secret sharing', 'Geographic distribution'],
+      link: '/cross-chain-fragment-vault',
+      gradient: 'from-cyan-500 to-teal-500',
+      bgGlow: 'bg-cyan-500/20'
+    }
   ];
 
   // Security features
   const securityFeatures = [
     {
-      title: 'Quantum-Resistant Encryption',
-      description: 'Files are encrypted with lattice-based cryptography resistant to quantum attacks',
-      icon: <Shield className="h-10 w-10 text-purple-500" />,
-      animation: 'fade-right'
+      icon: <Shield className="h-6 w-6 text-[#FF5AF7]" />,
+      title: 'Quantum-Resistant',
+      description: 'ML-KEM-1024 encryption'
     },
     {
-      title: 'Multi-Chain Verification',
-      description: 'Storage proofs are verified across ETH, TON, and Solana for maximum security',
-      icon: <Layers className="h-10 w-10 text-fuchsia-600" />,
-      animation: 'fade-up'
+      icon: <Layers className="h-6 w-6 text-[#FF5AF7]" />,
+      title: '2-of-3 Consensus',
+      description: 'Trinity validator approval'
     },
     {
-      title: 'Zero-Knowledge Privacy',
-      description: 'Access control using ZK-proofs to maintain privacy while ensuring security',
-      icon: <Lock className="h-10 w-10 text-purple-400" />,
-      animation: 'fade-left'
+      icon: <Lock className="h-6 w-6 text-[#FF5AF7]" />,
+      title: 'Zero-Knowledge',
+      description: 'Privacy-preserving proofs'
+    },
+    {
+      icon: <Zap className="h-6 w-6 text-[#FF5AF7]" />,
+      title: 'Instant Unlock',
+      description: 'When conditions are met'
     }
   ];
 
   return (
-    <div className="container mx-auto py-8 space-y-12">
-      <motion.div 
-        className="text-center mb-8"
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.8 }}
-      >
-        <h1 className="text-4xl font-bold mb-4 bg-gradient-to-r from-purple-500 via-fuchsia-500 to-pink-500 text-transparent bg-clip-text">Triple-Chain Decentralized Storage</h1>
-        <p className="text-muted-foreground max-w-3xl mx-auto text-lg">
-          Experience unprecedented security with our revolutionary cross-chain permanent storage technology,
-          leveraging Arweave, IPFS, and Filecoin with quantum-resistant encryption
-        </p>
-      </motion.div>
+    <div className="min-h-screen bg-black text-white">
+      {/* Hero Section */}
+      <section className="relative py-20 overflow-hidden">
+        {/* Background effects */}
+        <div className="absolute inset-0 bg-gradient-to-b from-[#6B00D7]/10 via-black to-black" />
+        <div className="absolute top-20 left-1/4 w-96 h-96 bg-[#6B00D7]/20 rounded-full blur-[120px]" />
+        <div className="absolute bottom-20 right-1/4 w-80 h-80 bg-[#FF5AF7]/15 rounded-full blur-[100px]" />
+        
+        <div className="container mx-auto px-4 relative z-10">
+          <motion.div 
+            className="text-center max-w-4xl mx-auto"
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8 }}
+          >
+            {/* Status Badge */}
+            <motion.div 
+              className="inline-flex items-center gap-2 bg-black/50 border border-[#6B00D7]/30 rounded-full px-5 py-2 mb-8"
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.5, delay: 0.2 }}
+            >
+              <div className="h-2 w-2 rounded-full bg-[#FF5AF7] animate-pulse" />
+              <span className="text-sm text-gray-300">Secured by <span className="text-[#FF5AF7] font-medium">Trinity Protocol™</span></span>
+            </motion.div>
+            
+            <h1 className="text-5xl md:text-6xl font-bold mb-6">
+              <span className="bg-clip-text text-transparent bg-gradient-to-r from-white via-[#FF5AF7] to-white">
+                Locked Storage Vaults
+              </span>
+            </h1>
+            
+            <p className="text-xl text-gray-300 mb-8 leading-relaxed">
+              Secure your files, documents, and digital assets with advanced locking mechanisms.
+              Only accessible when your conditions are met — verified by 2-of-3 validator consensus.
+            </p>
+            
+            {/* Security Features Row */}
+            <div className="flex flex-wrap justify-center gap-4 mb-12">
+              {securityFeatures.map((feature, index) => (
+                <motion.div
+                  key={feature.title}
+                  className="flex items-center gap-3 bg-black/60 border border-[#6B00D7]/20 rounded-full px-5 py-3"
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.5, delay: 0.3 + index * 0.1 }}
+                >
+                  {feature.icon}
+                  <div className="text-left">
+                    <div className="text-sm font-medium text-white">{feature.title}</div>
+                    <div className="text-xs text-gray-400">{feature.description}</div>
+                  </div>
+                </motion.div>
+              ))}
+            </div>
+          </motion.div>
+        </div>
+      </section>
       
-      {/* Security Feature Highlights */}
-      <motion.div 
-        className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: 0.8, delay: 0.2 }}
-      >
-        {securityFeatures.map((feature, index) => (
-          <motion.div
-            key={feature.title}
-            className="flex flex-col items-center text-center space-y-4 p-6 rounded-xl bg-gradient-to-b from-background/80 to-background border border-border/50 shadow-lg"
+      {/* Vault Types Grid */}
+      <section className="py-16 bg-gradient-to-b from-black via-[#0a0014] to-black">
+        <div className="container mx-auto px-4">
+          <motion.div 
+            className="text-center mb-12"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.7, delay: 0.1 * (index + 1) }}
+            transition={{ duration: 0.6 }}
           >
-            <div className="p-3 rounded-full bg-purple-950/30">
-              {feature.icon}
-            </div>
-            <h3 className="text-xl font-semibold">{feature.title}</h3>
-            <p className="text-muted-foreground">{feature.description}</p>
+            <h2 className="text-3xl md:text-4xl font-bold mb-4">
+              Choose Your <span className="text-[#FF5AF7]">Lock Type</span>
+            </h2>
+            <p className="text-gray-400 max-w-2xl mx-auto">
+              Select the security mechanism that fits your needs. All vaults feature military-grade encryption and cross-chain verification.
+            </p>
           </motion.div>
-        ))}
-      </motion.div>
-      
-      {/* Storage Networks Status */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.8, delay: 0.4 }}
-      >
-        <Card className="border-border/40 shadow-lg overflow-hidden">
-          <CardHeader className="bg-gradient-to-r from-purple-900/30 to-fuchsia-900/20">
-            <CardTitle className="flex items-center gap-2">
-              <Database className="h-5 w-5 text-purple-500" />
-              <span>Storage Network Status</span>
-            </CardTitle>
-            <CardDescription>
-              Real-time status of our integrated decentralized storage networks
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="p-6">
-            {loading ? (
-              <div className="flex items-center justify-center p-8">
-                <div className="animate-spin w-8 h-8 border-3 border-purple-500 border-t-transparent rounded-full" />
-                <span className="ml-3 text-lg">Connecting to storage networks...</span>
-              </div>
-            ) : error ? (
-              <Alert variant="destructive">
-                <AlertTriangle className="h-4 w-4" />
-                <AlertTitle>Connection Error</AlertTitle>
-                <AlertDescription>{error}</AlertDescription>
-              </Alert>
-            ) : (
-              <div className="space-y-6">
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                  {storageNetworks.map((network) => (
-                    <motion.div 
-                      key={network.id}
-                      className="relative overflow-hidden rounded-xl border border-border p-6 shadow-md"
-                      whileHover={{ 
-                        scale: 1.03,
-                        boxShadow: "0 10px 30px -10px rgba(120, 0, 240, 0.2)",
-                        borderColor: "rgba(180, 20, 240, 0.3)" 
-                      }}
-                      transition={{ duration: 0.5 }}
-                    >
-                      <div className="absolute top-0 right-0 m-2">
-                        <Badge variant={network.available ? 'default' : 'destructive'} className="font-semibold">
-                          {network.status}
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl mx-auto">
+            {lockedStorageTypes.map((vault, index) => (
+              <motion.div
+                key={vault.id}
+                initial={{ opacity: 0, y: 30 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: 0.1 * index }}
+              >
+                <Link href={vault.link}>
+                  <Card 
+                    className="group h-full bg-black/60 border-[#6B00D7]/20 hover:border-[#FF5AF7]/50 transition-all duration-300 cursor-pointer hover:shadow-[0_0_40px_rgba(255,90,247,0.2)] overflow-hidden"
+                    data-testid={`card-storage-${vault.id}`}
+                    onMouseEnter={() => setSelectedVaultType(vault.id)}
+                    onMouseLeave={() => setSelectedVaultType(null)}
+                  >
+                    {/* Glow effect on hover */}
+                    <div className={`absolute inset-0 ${vault.bgGlow} opacity-0 group-hover:opacity-100 transition-opacity duration-500 blur-xl`} />
+                    
+                    <CardHeader className="relative pb-3">
+                      <div className="flex items-start justify-between">
+                        <div className={`p-4 rounded-2xl bg-gradient-to-br ${vault.gradient} text-white group-hover:scale-110 transition-transform duration-300 shadow-lg`}>
+                          {vault.icon}
+                        </div>
+                        <Badge className="bg-[#6B00D7]/20 text-[#FF5AF7] border-[#6B00D7]/30 hover:bg-[#6B00D7]/30">
+                          <FolderLock className="w-3 h-3 mr-1" />
+                          Locked
                         </Badge>
                       </div>
-                      <div className="flex flex-col justify-between h-full pt-6">
-                        <div>
-                          <div className="flex items-center gap-2 mb-3">
-                            {network.icon}
-                            <h3 className="text-lg font-semibold">{network.name}</h3>
+                      <CardTitle className="text-xl mt-5 text-white group-hover:text-[#FF5AF7] transition-colors">
+                        {vault.name}
+                      </CardTitle>
+                      <CardDescription className="text-gray-400 text-sm leading-relaxed">
+                        {vault.description}
+                      </CardDescription>
+                    </CardHeader>
+                    
+                    <CardContent className="relative">
+                      <div className="space-y-2 mb-4">
+                        {vault.features.map((feature, i) => (
+                          <div key={i} className="flex items-center gap-2 text-sm text-gray-300">
+                            <CheckCircle2 className="w-4 h-4 text-[#FF5AF7] flex-shrink-0" />
+                            <span>{feature}</span>
                           </div>
-                          <p className="text-muted-foreground text-sm mb-4">{network.description}</p>
-                        </div>
-                        
-                        <div className="grid grid-cols-2 gap-3 text-sm">
-                          <div className="space-y-1">
-                            <div className="font-medium text-muted-foreground">Storage Cost</div>
-                            <div className="font-semibold text-purple-400">{network.costPerMb} USD/MB</div>
-                          </div>
-                          <div className="space-y-1">
-                            <div className="font-medium text-muted-foreground">Redundancy</div>
-                            <div>Triple verified</div>
-                          </div>
+                        ))}
+                      </div>
+                      
+                      <div className="flex items-center justify-between pt-4 border-t border-[#6B00D7]/20">
+                        <span className="text-xs text-gray-500">Trinity Verified</span>
+                        <div className="flex items-center gap-1 text-[#FF5AF7] opacity-0 group-hover:opacity-100 transition-opacity">
+                          <span className="text-sm font-medium">Create Vault</span>
+                          <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
                         </div>
                       </div>
-                    </motion.div>
-                  ))}
-                </div>
-                
-                {storageStatus && storageStatus.avgUploadTime && (
-                  <div className="flex justify-center items-center p-4 bg-purple-950/20 rounded-lg border border-purple-500/20">
-                    <div className="space-y-1 text-center">
-                      <div className="text-sm font-medium text-muted-foreground">Average Upload Time</div>
-                      <div className="text-lg font-semibold text-purple-400">{storageStatus.avgUploadTime} seconds</div>
-                    </div>
-                  </div>
-                )}
-              </div>
-            )}
-          </CardContent>
-        </Card>
-      </motion.div>
+                    </CardContent>
+                  </Card>
+                </Link>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
       
-      {/* Storage Features Tab */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.8, delay: 0.6 }}
-      >
-        <Tabs defaultValue="upload" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-3 mb-8 p-1 bg-background border border-border rounded-lg">
-            <TabsTrigger value="upload" className="py-3 text-base font-medium">Upload Files</TabsTrigger>
-            <TabsTrigger value="manage" className="py-3 text-base font-medium">Manage Storage</TabsTrigger>
-            <TabsTrigger value="info" className="py-3 text-base font-medium">About Storage Technology</TabsTrigger>
-          </TabsList>
+      {/* How It Works Section */}
+      <section className="py-20 bg-black">
+        <div className="container mx-auto px-4">
+          <motion.div 
+            className="text-center mb-16"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+          >
+            <h2 className="text-3xl md:text-4xl font-bold mb-4">
+              How <span className="text-[#FF5AF7]">Locked Storage</span> Works
+            </h2>
+            <p className="text-gray-400 max-w-2xl mx-auto">
+              Your files are protected by smart contracts and validated by our cross-chain consensus network
+            </p>
+          </motion.div>
           
-          {/* File Uploader Tab */}
-          <TabsContent value="upload" className="pt-2">
-            <FileUploader 
-              vaultId={1} // This would normally come from the selected vault
-              maxFileSize={50 * 1024 * 1024} // 50MB limit for testing
-              acceptedFileTypes="image/*,application/pdf,.doc,.docx,.xls,.xlsx,.csv,text/plain"
-            />
-          </TabsContent>
-          
-          {/* Storage Management Tab */}
-          <TabsContent value="manage" className="pt-2">
-            <Card className="border-border/40 shadow-lg overflow-hidden">
-              <CardHeader className="bg-gradient-to-r from-purple-900/30 to-fuchsia-900/20">
-                <CardTitle>Manage Your Storage</CardTitle>
-                <CardDescription>
-                  View and manage your permanently stored files across multiple networks
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="p-8">
-                <div className="flex flex-col items-center justify-center py-12 text-center">
-                  <motion.div
-                    initial={{ scale: 0.8, opacity: 0 }}
-                    animate={{ scale: 1, opacity: 1 }}
-                    transition={{ duration: 0.7, delay: 0.2 }}
-                  >
-                    <HardDrive className="h-16 w-16 text-purple-400 mb-5" />
-                  </motion.div>
-                  <h3 className="text-xl font-semibold mb-3">No Files Found</h3>
-                  <p className="text-muted-foreground max-w-md mb-6 text-base">
-                    You haven't stored any files permanently yet. Files stored through our system are 
-                    replicated across multiple networks with quantum-resistant encryption.
-                  </p>
-                  <Button 
-                    size="lg"
-                    className="bg-gradient-to-r from-purple-600 to-fuchsia-600 hover:from-purple-700 hover:to-fuchsia-700 text-white"
-                    onClick={() => {
-                      const tabTrigger = document.querySelector('[data-value="upload"]');
-                      if (tabTrigger && 'click' in tabTrigger) {
-                        (tabTrigger as HTMLElement).click();
-                      }
-                    }}>
-                    Start Storing Files
-                  </Button>
-                </div>
-              </CardContent>
-            </Card>
-          </TabsContent>
-          
-          {/* Technology Information Tab */}
-          <TabsContent value="info" className="pt-2">
-            <Card className="border-border/40 shadow-lg">
-              <CardHeader className="bg-gradient-to-r from-purple-900/30 to-fuchsia-900/20">
-                <CardTitle>Chronos Vault Storage Technology</CardTitle>
-                <CardDescription>
-                  Understanding our revolutionary multi-chain decentralized storage
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-8 p-8">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                  <div>
-                    <h3 className="text-xl font-semibold mb-3">Triple-Chain Architecture</h3>
-                    <motion.div 
-                      className="relative h-52 rounded-xl overflow-hidden border border-purple-500/30 bg-gradient-to-br from-purple-950/20 to-fuchsia-950/10"
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      transition={{ duration: 0.8 }}
-                    >
-                      <motion.div className="absolute top-1/2 left-1/4 transform -translate-x-1/2 -translate-y-1/2 w-20 h-20 rounded-full bg-purple-500/20 flex items-center justify-center border border-purple-500/30"
-                        animate={{ scale: [1, 1.05, 1], opacity: [0.7, 1, 0.7] }}
-                        transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
-                      >
-                        <Database className="h-8 w-8 text-purple-400" />
-                      </motion.div>
-                      <motion.div className="absolute top-1/4 right-1/4 transform -translate-x-1/2 -translate-y-1/2 w-16 h-16 rounded-full bg-fuchsia-500/20 flex items-center justify-center border border-fuchsia-500/30"
-                        animate={{ scale: [1, 1.08, 1], opacity: [0.7, 1, 0.7] }}
-                        transition={{ duration: 4, repeat: Infinity, ease: "easeInOut", delay: 0.5 }}
-                      >
-                        <Network className="h-6 w-6 text-fuchsia-400" />
-                      </motion.div>
-                      <motion.div className="absolute bottom-1/4 right-1/3 transform -translate-x-1/2 -translate-y-1/2 w-18 h-18 rounded-full bg-blue-500/20 flex items-center justify-center border border-blue-500/30"
-                        animate={{ scale: [1, 1.1, 1], opacity: [0.7, 1, 0.7] }}
-                        transition={{ duration: 3.5, repeat: Infinity, ease: "easeInOut", delay: 1 }}
-                      >
-                        <HardDrive className="h-7 w-7 text-blue-400" />
-                      </motion.div>
-                      <motion.span 
-                        className="absolute top-1/2 left-1/2 w-[80%] h-0.5 bg-gradient-to-r from-purple-500/50 to-transparent"
-                        style={{ transformOrigin: "0% 0%" }}
-                        animate={{ rotate: [0, 360] }}
-                        transition={{ duration: 40, repeat: Infinity, ease: "linear" }}
-                      />
-                      <motion.span 
-                        className="absolute top-1/2 left-1/2 w-[60%] h-0.5 bg-gradient-to-r from-fuchsia-500/30 to-transparent"
-                        style={{ transformOrigin: "0% 0%" }}
-                        animate={{ rotate: [0, -360] }}
-                        transition={{ duration: 30, repeat: Infinity, ease: "linear" }}
-                      />
-                    </motion.div>
-                    <p className="text-muted-foreground mt-4">
-                      Our system utilizes a revolutionary approach that stores your data across three complementary decentralized networks simultaneously: Arweave, IPFS, and Filecoin. This ensures maximum resilience and permanent availability.
-                    </p>
-                  </div>
-                  
-                  <div>
-                    <h3 className="text-xl font-semibold mb-3">Benefits of Chronos Storage</h3>
-                    <ul className="space-y-3 text-muted-foreground">
-                      <motion.li 
-                        className="flex items-start gap-2 p-3 rounded-lg bg-gradient-to-r from-purple-950/20 to-transparent border border-purple-500/20"
-                        initial={{ opacity: 0, x: 20 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        transition={{ duration: 0.5, delay: 0.1 }}
-                      >
-                        <div className="mt-1 text-purple-500">✓</div>
-                        <div><strong className="text-foreground">Perpetual Storage:</strong> One-time payment for truly permanent data storage</div>
-                      </motion.li>
-                      <motion.li 
-                        className="flex items-start gap-2 p-3 rounded-lg bg-gradient-to-r from-purple-950/20 to-transparent border border-purple-500/20"
-                        initial={{ opacity: 0, x: 20 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        transition={{ duration: 0.5, delay: 0.2 }}
-                      >
-                        <div className="mt-1 text-purple-500">✓</div>
-                        <div><strong className="text-foreground">Quantum Security:</strong> Advanced lattice-based encryption immune to quantum computing attacks</div>
-                      </motion.li>
-                      <motion.li 
-                        className="flex items-start gap-2 p-3 rounded-lg bg-gradient-to-r from-purple-950/20 to-transparent border border-purple-500/20"
-                        initial={{ opacity: 0, x: 20 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        transition={{ duration: 0.5, delay: 0.3 }}
-                      >
-                        <div className="mt-1 text-purple-500">✓</div>
-                        <div><strong className="text-foreground">Triple Redundancy:</strong> Data is verified and stored on three separate blockchain networks</div>
-                      </motion.li>
-                      <motion.li 
-                        className="flex items-start gap-2 p-3 rounded-lg bg-gradient-to-r from-purple-950/20 to-transparent border border-purple-500/20"
-                        initial={{ opacity: 0, x: 20 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        transition={{ duration: 0.5, delay: 0.4 }}
-                      >
-                        <div className="mt-1 text-purple-500">✓</div>
-                        <div><strong className="text-foreground">Zero-Knowledge Access:</strong> Privacy-preserving protocols that protect sensitive data</div>
-                      </motion.li>
-                    </ul>
-                  </div>
-                </div>
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-6 max-w-5xl mx-auto">
+            {[
+              { step: '1', title: 'Upload & Encrypt', desc: 'Files are encrypted with quantum-resistant algorithms', icon: <FileKey className="h-8 w-8" /> },
+              { step: '2', title: 'Set Lock Conditions', desc: 'Define time, signatures, or smart contract triggers', icon: <Lock className="h-8 w-8" /> },
+              { step: '3', title: 'Validator Consensus', desc: '2-of-3 validators verify and secure your vault', icon: <Shield className="h-8 w-8" /> },
+              { step: '4', title: 'Automatic Unlock', desc: 'Access granted when conditions are verified', icon: <Sparkles className="h-8 w-8" /> }
+            ].map((item, index) => (
+              <motion.div
+                key={item.step}
+                className="relative text-center"
+                initial={{ opacity: 0, y: 30 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: 0.1 * index }}
+              >
+                {/* Connector line */}
+                {index < 3 && (
+                  <div className="hidden md:block absolute top-12 left-1/2 w-full h-[2px] bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7]/30" />
+                )}
                 
-                <div>
-                  <h3 className="text-xl font-semibold mb-3">How Cross-Chain Storage Works</h3>
-                  <div className="space-y-4 text-muted-foreground">
-                    <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-                      <motion.div 
-                        className="p-4 border border-purple-500/20 rounded-lg bg-purple-950/10 relative overflow-hidden"
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.5, delay: 0.1 }}
-                      >
-                        <div className="absolute -right-3 -top-3 w-12 h-12 bg-purple-500/10 rounded-full" />
-                        <div className="text-xl text-center font-bold text-purple-400 mb-2">1</div>
-                        <h4 className="font-medium text-center mb-2">Quantum Encryption</h4>
-                        <p className="text-sm">Your file is first encrypted using quantum-resistant algorithms</p>
-                      </motion.div>
-                      
-                      <motion.div 
-                        className="p-4 border border-purple-500/20 rounded-lg bg-fuchsia-950/10 relative overflow-hidden"
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.5, delay: 0.2 }}
-                      >
-                        <div className="absolute -right-3 -top-3 w-12 h-12 bg-fuchsia-500/10 rounded-full" />
-                        <div className="text-xl text-center font-bold text-fuchsia-400 mb-2">2</div>
-                        <h4 className="font-medium text-center mb-2">Multi-Chain Upload</h4>
-                        <p className="text-sm">Data is simultaneously uploaded to three decentralized networks</p>
-                      </motion.div>
-                      
-                      <motion.div 
-                        className="p-4 border border-purple-500/20 rounded-lg bg-purple-950/10 relative overflow-hidden"
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.5, delay: 0.3 }}
-                      >
-                        <div className="absolute -right-3 -top-3 w-12 h-12 bg-purple-500/10 rounded-full" />
-                        <div className="text-xl text-center font-bold text-purple-400 mb-2">3</div>
-                        <h4 className="font-medium text-center mb-2">Cross-Chain Verification</h4>
-                        <p className="text-sm">Proofs of storage are verified on Ethereum, TON and Solana</p>
-                      </motion.div>
-                      
-                      <motion.div 
-                        className="p-4 border border-purple-500/20 rounded-lg bg-fuchsia-950/10 relative overflow-hidden"
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.5, delay: 0.4 }}
-                      >
-                        <div className="absolute -right-3 -top-3 w-12 h-12 bg-fuchsia-500/10 rounded-full" />
-                        <div className="text-xl text-center font-bold text-fuchsia-400 mb-2">4</div>
-                        <h4 className="font-medium text-center mb-2">Access Control</h4>
-                        <p className="text-sm">ZK-proofs enable secure access without compromising privacy</p>
-                      </motion.div>
+                <div className="relative z-10 bg-black">
+                  <div className="w-24 h-24 mx-auto rounded-2xl bg-gradient-to-br from-[#6B00D7]/30 to-[#FF5AF7]/10 border border-[#6B00D7]/30 flex items-center justify-center mb-4 group hover:border-[#FF5AF7]/50 transition-colors">
+                    <div className="text-[#FF5AF7]">
+                      {item.icon}
                     </div>
-                    
-                    <p className="mt-4 text-base">
-                      This revolutionary approach ensures your data is:
-                    </p>
-                    <ul className="list-disc pl-5 space-y-1">
-                      <li>Stored permanently with one-time payment</li>
-                      <li>Secure against both classical and quantum threats</li>
-                      <li>Verified across multiple blockchains for maximum security</li>
-                      <li>Accessible only to authorized entities using zero-knowledge technology</li>
-                      <li>Resistant to censorship, tampering, and single points of failure</li>
-                    </ul>
                   </div>
+                  <div className="text-xs text-[#FF5AF7] font-bold mb-2">STEP {item.step}</div>
+                  <h3 className="text-lg font-semibold text-white mb-2">{item.title}</h3>
+                  <p className="text-sm text-gray-400">{item.desc}</p>
                 </div>
-                
-                <Alert className="bg-gradient-to-r from-purple-950/30 to-fuchsia-950/20 border-purple-500/30">
-                  <Shield className="h-5 w-5 text-purple-400" />
-                  <AlertTitle>Maximum Security Guarantee</AlertTitle>
-                  <AlertDescription>
-                    Files stored through Chronos Vault's triple-chain system benefit from our quantum-resistant 
-                    encryption and zero-knowledge privacy features. Perfect for long-term storage of valuable 
-                    digital assets and documents requiring the highest level of security.
-                  </AlertDescription>
-                </Alert>
-              </CardContent>
-            </Card>
-          </TabsContent>
-        </Tabs>
-      </motion.div>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+      
+      {/* CTA Section */}
+      <section className="py-20 bg-gradient-to-b from-black via-[#6B00D7]/10 to-black">
+        <div className="container mx-auto px-4 text-center">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+            className="max-w-3xl mx-auto"
+          >
+            <h2 className="text-4xl font-bold mb-6">
+              Ready to <span className="text-[#FF5AF7]">Secure Your Assets</span>?
+            </h2>
+            <p className="text-gray-300 text-lg mb-10">
+              Create your first locked storage vault and experience military-grade security with cross-chain verification.
+            </p>
+            
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <Link href="/vault-types">
+                <Button 
+                  size="lg" 
+                  className="bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] hover:from-[#7B10E7] hover:to-[#FF6AF7] text-white px-10 py-6 text-lg shadow-lg shadow-[#6B00D7]/40 hover:shadow-[#FF5AF7]/40 transition-all"
+                  data-testid="button-explore-vaults"
+                >
+                  <Vault className="w-5 h-5 mr-2" />
+                  Explore All Vaults
+                </Button>
+              </Link>
+              <Link href="/gift-crypto">
+                <Button 
+                  size="lg" 
+                  variant="outline"
+                  className="border-[#6B00D7]/50 text-white hover:bg-[#6B00D7]/20 px-10 py-6 text-lg"
+                  data-testid="button-gift-crypto"
+                >
+                  <Sparkles className="w-5 h-5 mr-2" />
+                  Gift Crypto
+                </Button>
+              </Link>
+            </div>
+          </motion.div>
+        </div>
+      </section>
     </div>
   );
 };
