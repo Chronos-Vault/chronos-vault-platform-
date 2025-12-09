@@ -1,959 +1,376 @@
-import { useState, useEffect } from "react";
-import { PageHeader } from "@/components/page-header";
-import { Container } from "@/components/ui/container";
-import {
-  Tabs,
-  TabsContent,
-  TabsList,
-  TabsTrigger,
-} from "@/components/ui/tabs";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { motion } from "framer-motion";
+/**
+ * Smart Contract Vault Page
+ * 
+ * Programmable vault with condition-based unlocking
+ * powered by Trinity Protocol™ 2-of-3 validator consensus
+ */
+
+import { useState } from 'react';
+import { Link } from 'wouter';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
 import { 
-  Copy, 
-  ExternalLink, 
-  Lock, 
-  Clock, 
-  KeyRound, 
-  Users, 
-  Shield, 
-  Zap,
-  LifeBuoy,
-  Coins,
-  ArrowRightLeft,
-  Loader,
-  CheckCircle2,
-  Code,
-  DollarSign,
-  Layers,
-  HardDrive,
-  Network
-} from "lucide-react";
-import { useToast } from "@/hooks/use-toast";
-import { Helmet } from "react-helmet";
-import { Separator } from "@/components/ui/separator";
-import { 
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from "@/components/ui/accordion";
-import { Progress } from "@/components/ui/progress";
+  Shield, Lock, Code, Key, Zap, ArrowRight, CheckCircle2, 
+  Layers, FileCode, Settings, Clock, AlertTriangle, 
+  Wallet, RefreshCcw, Eye, Terminal, Sparkles
+} from 'lucide-react';
+import { motion } from 'framer-motion';
+import { Helmet } from 'react-helmet';
 
 export default function SmartContractVault() {
-  const [activeTab, setActiveTab] = useState("overview");
-  const { toast } = useToast();
-  
-  const handleCopyAddress = (address: string) => {
-    navigator.clipboard.writeText(address);
-    toast({
-      title: "Address copied",
-      description: "Smart contract address copied to clipboard",
-    });
-  };
-  
-  // Animation variants
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: { 
-      opacity: 1,
-      transition: { 
-        when: "beforeChildren",
-        staggerChildren: 0.1,
-        duration: 0.3
-      }
+  const [hoveredFeature, setHoveredFeature] = useState<string | null>(null);
+
+  // Vault features
+  const features = [
+    {
+      id: 'programmable',
+      icon: <Code className="h-7 w-7" />,
+      title: 'Programmable Conditions',
+      description: 'Define custom unlock conditions using smart contract logic. Trigger vault access based on on-chain events, oracle data, or time-based rules.',
+      gradient: 'from-blue-500 to-cyan-500'
+    },
+    {
+      id: 'multi-trigger',
+      icon: <Zap className="h-7 w-7" />,
+      title: 'Multi-Trigger Support',
+      description: 'Combine multiple conditions with AND/OR logic. Create complex unlock scenarios that require multiple events to occur.',
+      gradient: 'from-amber-500 to-orange-500'
+    },
+    {
+      id: 'oracle',
+      icon: <RefreshCcw className="h-7 w-7" />,
+      title: 'Oracle Integration',
+      description: 'Connect to external data feeds for price-based, weather-based, or any real-world condition triggers.',
+      gradient: 'from-green-500 to-emerald-500'
+    },
+    {
+      id: 'erc4626',
+      icon: <FileCode className="h-7 w-7" />,
+      title: 'ERC-4626 Compliant',
+      description: 'Fully compatible with the tokenized vault standard for seamless DeFi integration and composability.',
+      gradient: 'from-purple-500 to-violet-500'
+    },
+    {
+      id: 'audit-trail',
+      icon: <Eye className="h-7 w-7" />,
+      title: 'Complete Audit Trail',
+      description: 'Every condition check and state change is recorded on-chain for full transparency and compliance.',
+      gradient: 'from-pink-500 to-rose-500'
+    },
+    {
+      id: 'emergency',
+      icon: <AlertTriangle className="h-7 w-7" />,
+      title: 'Emergency Recovery',
+      description: 'Built-in emergency recovery with multi-sig override. Never lose access to your assets.',
+      gradient: 'from-red-500 to-orange-500'
     }
-  };
-  
-  const itemVariants = {
-    hidden: { y: 20, opacity: 0 },
-    visible: { 
-      y: 0, 
-      opacity: 1,
-      transition: { 
-        type: "spring", 
-        stiffness: 100 
-      }
+  ];
+
+  // Use cases
+  const useCases = [
+    {
+      title: 'DeFi Yield Vaults',
+      description: 'Automatically compound yields when certain APY thresholds are met',
+      icon: <Wallet className="h-6 w-6 text-[#FF5AF7]" />
+    },
+    {
+      title: 'Escrow Services',
+      description: 'Release funds when specific milestones or deliverables are confirmed',
+      icon: <Lock className="h-6 w-6 text-[#FF5AF7]" />
+    },
+    {
+      title: 'DAO Treasury',
+      description: 'Require governance votes to unlock treasury funds',
+      icon: <Settings className="h-6 w-6 text-[#FF5AF7]" />
+    },
+    {
+      title: 'Vesting Schedules',
+      description: 'Token releases based on time + performance conditions',
+      icon: <Clock className="h-6 w-6 text-[#FF5AF7]" />
     }
-  };
+  ];
 
-  const [securityStats, setSecurityStats] = useState({
-    activeVaults: 0,
-    assetsSecured: 0,
-    crossChainVerifications: 0
-  });
-
-  // Simulate loading security stats
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setSecurityStats({
-        activeVaults: 73201,
-        assetsSecured: 429500000,
-        crossChainVerifications: 984627
-      });
-    }, 1500);
-    
-    return () => clearTimeout(timer);
-  }, []);
-
-  const formatNumber = (num: number) => {
-    return new Intl.NumberFormat('en-US', { 
-      maximumFractionDigits: 0 
-    }).format(num);
-  };
-
-  const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat('en-US', {
-      style: 'currency',
-      currency: 'USD',
-      maximumFractionDigits: 0
-    }).format(amount);
-  };
+  // Security layers
+  const securityLayers = [
+    { name: 'Trinity Consensus', desc: '2-of-3 validator approval' },
+    { name: 'Quantum Encryption', desc: 'ML-KEM-1024 protection' },
+    { name: 'Formal Verification', desc: 'Lean 4 proven contracts' },
+    { name: 'Audit Trail', desc: 'Immutable event logging' }
+  ];
 
   return (
     <>
       <Helmet>
         <title>Smart Contract Vault - Chronos Vault</title>
-        <meta name="description" content="The industry-leading Smart Contract Vault with ERC-4626 compliance, quantum-resistant encryption, and cross-chain verification." />
+        <meta name="description" content="Programmable vault with condition-based unlocking powered by Trinity Protocol. ERC-4626 compliant with oracle integration." />
       </Helmet>
       
-      <div className="min-h-screen bg-gradient-to-b from-[#0A0A0A] to-[#121212]">
-        <Container>
-          <PageHeader
-            heading="Smart Contract Vault™"
-            description="Industry-leading ERC-4626 compliant tokenized vault with Trinity Protocol™"
-          />
-
-          <Tabs defaultValue="overview" className="mt-8" onValueChange={setActiveTab}>
-            <TabsList className="grid w-full grid-cols-4">
-              <TabsTrigger value="overview">Overview</TabsTrigger>
-              <TabsTrigger value="features">Advanced Features</TabsTrigger>
-              <TabsTrigger value="security">Security Architecture</TabsTrigger>
-              <TabsTrigger value="implementation">Implementation</TabsTrigger>
-            </TabsList>
-
-            <TabsContent value="overview" className="py-6">
-              <motion.div
-                variants={containerVariants}
-                initial="hidden"
-                animate="visible"
-                className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10"
+      <div className="min-h-screen bg-black text-white">
+        {/* Hero Section */}
+        <section className="relative py-20 overflow-hidden">
+          <div className="absolute inset-0 bg-gradient-to-b from-[#6B00D7]/15 via-black to-black" />
+          <div className="absolute top-20 left-1/4 w-96 h-96 bg-[#6B00D7]/20 rounded-full blur-[120px]" />
+          <div className="absolute bottom-20 right-1/4 w-80 h-80 bg-[#FF5AF7]/15 rounded-full blur-[100px]" />
+          
+          <div className="container mx-auto px-4 relative z-10">
+            <motion.div 
+              className="text-center max-w-4xl mx-auto"
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8 }}
+            >
+              {/* Badge */}
+              <motion.div 
+                className="inline-flex items-center gap-2 bg-black/50 border border-[#6B00D7]/30 rounded-full px-5 py-2 mb-8"
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 0.5, delay: 0.2 }}
               >
-                <motion.div variants={itemVariants}>
-                  <Card className="bg-[#151515] border-[#333] h-full">
-                    <CardHeader className="pb-2">
-                      <div className="w-12 h-12 rounded-lg bg-[#6B00D7] flex items-center justify-center mb-3">
-                        <Code className="h-6 w-6 text-white" />
-                      </div>
-                      <CardTitle className="text-xl text-white">ERC-4626 Compliant</CardTitle>
-                      <CardDescription className="text-gray-400">
-                        Fully compatible with the tokenized vault standard
-                      </CardDescription>
-                    </CardHeader>
-                    <CardContent>
-                      <p className="text-sm text-gray-300">
-                        Our Smart Contract Vault implements the ERC-4626 standard, providing a unified interface for tokenized yield-bearing vaults that represent shares of a single underlying ERC-20 token.
-                      </p>
-                      <div className="mt-4 space-y-2">
-                        <div className="flex items-center">
-                          <CheckCircle2 className="h-4 w-4 text-green-500 mr-2" />
-                          <span className="text-sm text-gray-300">Standard-compliant methods</span>
-                        </div>
-                        <div className="flex items-center">
-                          <CheckCircle2 className="h-4 w-4 text-green-500 mr-2" />
-                          <span className="text-sm text-gray-300">Composable with DeFi protocols</span>
-                        </div>
-                        <div className="flex items-center">
-                          <CheckCircle2 className="h-4 w-4 text-green-500 mr-2" />
-                          <span className="text-sm text-gray-300">Battle-tested implementation</span>
-                        </div>
-                      </div>
-                    </CardContent>
-                  </Card>
-                </motion.div>
-
-                <motion.div variants={itemVariants}>
-                  <Card className="bg-[#151515] border-[#333] h-full">
-                    <CardHeader className="pb-2">
-                      <div className="w-12 h-12 rounded-lg bg-[#FF5AF7] flex items-center justify-center mb-3">
-                        <Shield className="h-6 w-6 text-white" />
-                      </div>
-                      <CardTitle className="text-xl text-white">Trinity Protocol™ Security</CardTitle>
-                      <CardDescription className="text-gray-400">
-                        Unique cross-chain verification mechanism
-                      </CardDescription>
-                    </CardHeader>
-                    <CardContent>
-                      <p className="text-sm text-gray-300">
-                        Our proprietary Trinity Protocol: 2-of-3 Chain Security distributes security responsibilities across three independent blockchain networks with fixed roles, creating an unprecedented security model.
-                      </p>
-                      <div className="mt-4 space-y-2">
-                        <div className="flex items-center">
-                          <CheckCircle2 className="h-4 w-4 text-green-500 mr-2" />
-                          <span className="text-sm text-gray-300">Ethereum Layer - Primary Security (via Layer 2 for 95% lower fees)</span>
-                        </div>
-                        <div className="flex items-center">
-                          <CheckCircle2 className="h-4 w-4 text-green-500 mr-2" />
-                          <span className="text-sm text-gray-300">Solana Layer - Rapid Validation with millisecond confirmation</span>
-                        </div>
-                        <div className="flex items-center">
-                          <CheckCircle2 className="h-4 w-4 text-green-500 mr-2" />
-                          <span className="text-sm text-gray-300">TON Layer - Recovery System with quantum-resistant backup</span>
-                        </div>
-                      </div>
-                    </CardContent>
-                  </Card>
-                </motion.div>
-
-                <motion.div variants={itemVariants}>
-                  <Card className="bg-[#151515] border-[#333] h-full">
-                    <CardHeader className="pb-2">
-                      <div className="w-12 h-12 rounded-lg bg-[#00E5A0] flex items-center justify-center mb-3">
-                        <Lock className="h-6 w-6 text-white" />
-                      </div>
-                      <CardTitle className="text-xl text-white">Quantum-Resistant</CardTitle>
-                      <CardDescription className="text-gray-400">
-                        Post-quantum cryptographic algorithms
-                      </CardDescription>
-                    </CardHeader>
-                    <CardContent>
-                      <p className="text-sm text-gray-300">
-                        Future-proof your assets with quantum-resistant encryption that protects against potential threats from quantum computing advancements.
-                      </p>
-                      <div className="mt-4 space-y-2">
-                        <div className="flex items-center">
-                          <CheckCircle2 className="h-4 w-4 text-green-500 mr-2" />
-                          <span className="text-sm text-gray-300">CRYSTALS-Dilithium signatures</span>
-                        </div>
-                        <div className="flex items-center">
-                          <CheckCircle2 className="h-4 w-4 text-green-500 mr-2" />
-                          <span className="text-sm text-gray-300">Kyber-1024 key encapsulation</span>
-                        </div>
-                        <div className="flex items-center">
-                          <CheckCircle2 className="h-4 w-4 text-green-500 mr-2" />
-                          <span className="text-sm text-gray-300">SPHINCS+ hash-based signatures</span>
-                        </div>
-                      </div>
-                    </CardContent>
-                  </Card>
-                </motion.div>
-              </motion.div>
-
-              <motion.div
-                variants={containerVariants}
-                initial="hidden"
-                animate="visible"
-                className="mb-10"
-              >
-                <motion.div variants={itemVariants}>
-                  <Card className="bg-[#151515] border-[#333]">
-                    <CardHeader>
-                      <CardTitle className="text-2xl text-white">Global Security Statistics</CardTitle>
-                      <CardDescription className="text-gray-400">
-                        Real-time metrics from our Smart Contract Vault ecosystem
-                      </CardDescription>
-                    </CardHeader>
-                    <CardContent>
-                      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                        <div className="bg-[#1A1A1A] rounded-lg p-4 border border-[#333]">
-                          <div className="text-sm text-gray-500 mb-1">Active Vaults</div>
-                          <div className="text-3xl font-bold text-white">
-                            {securityStats.activeVaults === 0 ? (
-                              <Loader className="h-5 w-5 animate-spin" />
-                            ) : (
-                              formatNumber(securityStats.activeVaults)
-                            )}
-                          </div>
-                          <div className="mt-2 text-sm text-gray-400">
-                            Smart Contract Vaults currently securing assets
-                          </div>
-                        </div>
-                        
-                        <div className="bg-[#1A1A1A] rounded-lg p-4 border border-[#333]">
-                          <div className="text-sm text-gray-500 mb-1">Total Value Secured</div>
-                          <div className="text-3xl font-bold text-white">
-                            {securityStats.assetsSecured === 0 ? (
-                              <Loader className="h-5 w-5 animate-spin" />
-                            ) : (
-                              formatCurrency(securityStats.assetsSecured)
-                            )}
-                          </div>
-                          <div className="mt-2 text-sm text-gray-400">
-                            Combined value of all assets protected
-                          </div>
-                        </div>
-                        
-                        <div className="bg-[#1A1A1A] rounded-lg p-4 border border-[#333]">
-                          <div className="text-sm text-gray-500 mb-1">Cross-Chain Verifications</div>
-                          <div className="text-3xl font-bold text-white">
-                            {securityStats.crossChainVerifications === 0 ? (
-                              <Loader className="h-5 w-5 animate-spin" />
-                            ) : (
-                              formatNumber(securityStats.crossChainVerifications)
-                            )}
-                          </div>
-                          <div className="mt-2 text-sm text-gray-400">
-                            Security verifications across multiple chains
-                          </div>
-                        </div>
-                      </div>
-                    </CardContent>
-                  </Card>
-                </motion.div>
+                <Code className="h-4 w-4 text-[#FF5AF7]" />
+                <span className="text-sm text-gray-300">ERC-4626 Compliant</span>
+                <span className="text-gray-500">•</span>
+                <span className="text-sm text-[#FF5AF7]">Trinity Protocol™</span>
               </motion.div>
               
-              <motion.div
-                variants={containerVariants}
-                initial="hidden"
-                animate="visible"
-              >
-                <motion.div variants={itemVariants}>
-                  <Card className="bg-[#151515] border-[#333]">
+              <h1 className="text-5xl md:text-6xl font-bold mb-6">
+                <span className="bg-clip-text text-transparent bg-gradient-to-r from-white via-[#FF5AF7] to-white">
+                  Smart Contract Vault
+                </span>
+              </h1>
+              
+              <p className="text-xl text-gray-300 mb-8 leading-relaxed max-w-3xl mx-auto">
+                Programmable vault with condition-based unlocking. Define custom rules using smart contract logic,
+                oracle data, and on-chain events — all verified by 2-of-3 validator consensus.
+              </p>
+              
+              {/* CTA Buttons */}
+              <div className="flex flex-col sm:flex-row gap-4 justify-center mb-12">
+                <Link href="/create-vault">
+                  <Button 
+                    size="lg" 
+                    className="bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] hover:from-[#7B10E7] hover:to-[#FF6AF7] text-white px-8 py-6 text-lg shadow-lg shadow-[#6B00D7]/40"
+                    data-testid="button-create-smart-vault"
+                  >
+                    <Terminal className="w-5 h-5 mr-2" />
+                    Create Smart Vault
+                    <ArrowRight className="w-5 h-5 ml-2" />
+                  </Button>
+                </Link>
+                <Link href="/documentation">
+                  <Button 
+                    size="lg" 
+                    variant="outline"
+                    className="border-[#6B00D7]/50 text-white hover:bg-[#6B00D7]/20 px-8 py-6 text-lg"
+                    data-testid="button-view-docs"
+                  >
+                    <FileCode className="w-5 h-5 mr-2" />
+                    View Documentation
+                  </Button>
+                </Link>
+              </div>
+              
+              {/* Security Badges */}
+              <div className="flex flex-wrap justify-center gap-3">
+                {securityLayers.map((layer, index) => (
+                  <motion.div
+                    key={layer.name}
+                    className="flex items-center gap-2 bg-black/60 border border-[#6B00D7]/20 rounded-full px-4 py-2"
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.5, delay: 0.3 + index * 0.1 }}
+                  >
+                    <CheckCircle2 className="h-4 w-4 text-[#FF5AF7]" />
+                    <span className="text-sm text-white">{layer.name}</span>
+                  </motion.div>
+                ))}
+              </div>
+            </motion.div>
+          </div>
+        </section>
+        
+        {/* Features Grid */}
+        <section className="py-20 bg-gradient-to-b from-black via-[#0a0014] to-black">
+          <div className="container mx-auto px-4">
+            <motion.div 
+              className="text-center mb-16"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6 }}
+            >
+              <h2 className="text-3xl md:text-4xl font-bold mb-4">
+                Powerful <span className="text-[#FF5AF7]">Features</span>
+              </h2>
+              <p className="text-gray-400 max-w-2xl mx-auto">
+                Everything you need to create sophisticated, programmable vaults with military-grade security
+              </p>
+            </motion.div>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl mx-auto">
+              {features.map((feature, index) => (
+                <motion.div
+                  key={feature.id}
+                  initial={{ opacity: 0, y: 30 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.5, delay: 0.1 * index }}
+                  onMouseEnter={() => setHoveredFeature(feature.id)}
+                  onMouseLeave={() => setHoveredFeature(null)}
+                >
+                  <Card 
+                    className={`h-full bg-black/60 border-[#6B00D7]/20 transition-all duration-300 ${
+                      hoveredFeature === feature.id ? 'border-[#FF5AF7]/50 shadow-[0_0_40px_rgba(255,90,247,0.2)]' : ''
+                    }`}
+                    data-testid={`card-feature-${feature.id}`}
+                  >
                     <CardHeader>
-                      <CardTitle className="text-2xl text-white">How It Works</CardTitle>
-                      <CardDescription className="text-gray-400">
-                        Understanding the Smart Contract Vault architecture
-                      </CardDescription>
+                      <div className={`w-14 h-14 rounded-2xl bg-gradient-to-br ${feature.gradient} text-white flex items-center justify-center mb-4 transition-transform duration-300 ${
+                        hoveredFeature === feature.id ? 'scale-110' : ''
+                      }`}>
+                        {feature.icon}
+                      </div>
+                      <CardTitle className="text-xl text-white">{feature.title}</CardTitle>
                     </CardHeader>
                     <CardContent>
-                      <div className="space-y-8">
-                        <div className="flex flex-col md:flex-row gap-6">
-                          <div className="w-full md:w-1/3 rounded-lg bg-[#1A1A1A] p-5 border border-[#333]">
-                            <div className="w-12 h-12 rounded-full bg-[#6B00D7] flex items-center justify-center mb-4">
-                              <span className="text-xl font-bold text-white">1</span>
-                            </div>
-                            <h3 className="text-lg font-bold text-white mb-2">Asset Deposit</h3>
-                            <p className="text-sm text-gray-300">
-                              Your assets are converted to vault shares using the ERC-4626 deposit mechanism. This creates a tokenized representation of your deposited assets with time-lock functionality.
-                            </p>
-                          </div>
-                          
-                          <div className="w-full md:w-1/3 rounded-lg bg-[#1A1A1A] p-5 border border-[#333]">
-                            <div className="w-12 h-12 rounded-full bg-[#FF5AF7] flex items-center justify-center mb-4">
-                              <span className="text-xl font-bold text-white">2</span>
-                            </div>
-                            <h3 className="text-lg font-bold text-white mb-2">Security Implementation</h3>
-                            <p className="text-sm text-gray-300">
-                              Trinity Protocol™ activates, creating verification records on Ethereum, Solana, and TON. Quantum-resistant encryption is applied to access parameters.
-                            </p>
-                          </div>
-                          
-                          <div className="w-full md:w-1/3 rounded-lg bg-[#1A1A1A] p-5 border border-[#333]">
-                            <div className="w-12 h-12 rounded-full bg-[#00E5A0] flex items-center justify-center mb-4">
-                              <span className="text-xl font-bold text-white">3</span>
-                            </div>
-                            <h3 className="text-lg font-bold text-white mb-2">Time-Locked Access</h3>
-                            <p className="text-sm text-gray-300">
-                              Access is governed by time-lock mechanisms and optional multi-signature approval. When conditions are met, cross-chain verification confirms legitimacy before asset release.
-                            </p>
-                          </div>
-                        </div>
-                        
-                        <div className="mt-8 text-center">
-                          <Button className="bg-[#6B00D7] text-white hover:bg-[#5600AD]">
-                            Create Smart Contract Vault
-                          </Button>
-                        </div>
-                      </div>
+                      <p className="text-gray-400 leading-relaxed">{feature.description}</p>
                     </CardContent>
                   </Card>
                 </motion.div>
-              </motion.div>
-            </TabsContent>
-
-            <TabsContent value="features" className="py-6">
-              <motion.div
-                variants={containerVariants}
-                initial="hidden"
-                animate="visible"
-                className="space-y-6"
-              >
-                <Card className="bg-[#151515] border-[#333]">
-                  <CardHeader>
-                    <CardTitle className="text-2xl text-white">Industry-Leading Features</CardTitle>
-                    <CardDescription className="text-gray-400">
-                      What makes our Smart Contract Vault the most advanced solution in the blockchain space
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                      <motion.div variants={itemVariants} className="bg-[#1A1A1A] rounded-lg p-5 border border-[#333]">
-                        <div className="flex items-start mb-4">
-                          <div className="w-10 h-10 rounded-lg bg-[#6B00D7] flex items-center justify-center mr-4">
-                            <DollarSign className="h-5 w-5 text-white" />
-                          </div>
-                          <div>
-                            <h3 className="font-semibold text-white text-lg">Tokenized Yield Strategy</h3>
-                            <p className="text-sm text-gray-400">ERC-4626 compliant yield generation</p>
-                          </div>
-                        </div>
-                        <p className="text-sm text-gray-300">
-                          Our Smart Contract Vault automatically implements optimal yield strategies based on market conditions while maintaining strict security parameters. Assets can grow in value during the lock period.
-                        </p>
-                        <div className="mt-4">
-                          <Badge className="bg-[#6B00D7] text-white">Premium Feature</Badge>
-                        </div>
-                      </motion.div>
-                      
-                      <motion.div variants={itemVariants} className="bg-[#1A1A1A] rounded-lg p-5 border border-[#333]">
-                        <div className="flex items-start mb-4">
-                          <div className="w-10 h-10 rounded-lg bg-[#FF5AF7] flex items-center justify-center mr-4">
-                            <Network className="h-5 w-5 text-white" />
-                          </div>
-                          <div>
-                            <h3 className="font-semibold text-white text-lg">Cross-Chain Interoperability</h3>
-                            <p className="text-sm text-gray-400">Seamless multi-chain asset management</p>
-                          </div>
-                        </div>
-                        <p className="text-sm text-gray-300">
-                          Manage assets across Ethereum, Solana, TON, and other supported blockchains through a unified interface. Our proprietary bridge technology ensures security during cross-chain operations.
-                        </p>
-                        <div className="mt-4">
-                          <Badge className="bg-[#FF5AF7] text-white">Advanced</Badge>
-                        </div>
-                      </motion.div>
-                      
-                      <motion.div variants={itemVariants} className="bg-[#1A1A1A] rounded-lg p-5 border border-[#333]">
-                        <div className="flex items-start mb-4">
-                          <div className="w-10 h-10 rounded-lg bg-[#00E5A0] flex items-center justify-center mr-4">
-                            <Users className="h-5 w-5 text-white" />
-                          </div>
-                          <div>
-                            <h3 className="font-semibold text-white text-lg">Programmable Access Control</h3>
-                            <p className="text-sm text-gray-400">Customizable permission systems</p>
-                          </div>
-                        </div>
-                        <p className="text-sm text-gray-300">
-                          Define complex access conditions combining time-locks, multi-signature requirements, on-chain events, and even external data through oracles. Perfect for inheritance planning and corporate treasuries.
-                        </p>
-                        <div className="mt-4">
-                          <Badge className="bg-[#00E5A0] text-white">Enterprise</Badge>
-                        </div>
-                      </motion.div>
-                      
-                      <motion.div variants={itemVariants} className="bg-[#1A1A1A] rounded-lg p-5 border border-[#333]">
-                        <div className="flex items-start mb-4">
-                          <div className="w-10 h-10 rounded-lg bg-[#47A0FF] flex items-center justify-center mr-4">
-                            <Layers className="h-5 w-5 text-white" />
-                          </div>
-                          <div>
-                            <h3 className="font-semibold text-white text-lg">Quantum Security Tiers</h3>
-                            <p className="text-sm text-gray-400">Adaptive security levels</p>
-                          </div>
-                        </div>
-                        <p className="text-sm text-gray-300">
-                          Choose from four progressive security tiers: Standard, Enhanced, Maximum, and Fortress™. Each tier implements increasingly robust quantum-resistant algorithms and verification requirements.
-                        </p>
-                        <div className="mt-4">
-                          <Badge className="bg-[#47A0FF] text-white">Exclusive</Badge>
-                        </div>
-                      </motion.div>
+              ))}
+            </div>
+          </div>
+        </section>
+        
+        {/* Use Cases Section */}
+        <section className="py-20 bg-black">
+          <div className="container mx-auto px-4">
+            <motion.div 
+              className="text-center mb-16"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6 }}
+            >
+              <h2 className="text-3xl md:text-4xl font-bold mb-4">
+                Built for <span className="text-[#FF5AF7]">Every Use Case</span>
+              </h2>
+              <p className="text-gray-400 max-w-2xl mx-auto">
+                From DeFi protocols to enterprise treasury management
+              </p>
+            </motion.div>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-5xl mx-auto">
+              {useCases.map((useCase, index) => (
+                <motion.div
+                  key={useCase.title}
+                  className="bg-gradient-to-b from-[#6B00D7]/10 to-transparent border border-[#6B00D7]/20 rounded-2xl p-6 text-center hover:border-[#FF5AF7]/40 transition-all duration-300"
+                  initial={{ opacity: 0, y: 30 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.5, delay: 0.1 * index }}
+                  data-testid={`card-usecase-${index}`}
+                >
+                  <div className="w-12 h-12 mx-auto rounded-xl bg-[#6B00D7]/20 flex items-center justify-center mb-4">
+                    {useCase.icon}
+                  </div>
+                  <h3 className="text-lg font-semibold text-white mb-2">{useCase.title}</h3>
+                  <p className="text-sm text-gray-400">{useCase.description}</p>
+                </motion.div>
+              ))}
+            </div>
+          </div>
+        </section>
+        
+        {/* How It Works */}
+        <section className="py-20 bg-gradient-to-b from-black via-[#0a0014] to-black">
+          <div className="container mx-auto px-4">
+            <motion.div 
+              className="text-center mb-16"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6 }}
+            >
+              <h2 className="text-3xl md:text-4xl font-bold mb-4">
+                How It <span className="text-[#FF5AF7]">Works</span>
+              </h2>
+              <p className="text-gray-400 max-w-2xl mx-auto">
+                Create programmable vaults in minutes with our intuitive workflow
+              </p>
+            </motion.div>
+            
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-6 max-w-5xl mx-auto">
+              {[
+                { step: '1', title: 'Define Conditions', desc: 'Set unlock rules using our visual builder or custom code', icon: <Settings className="h-8 w-8" /> },
+                { step: '2', title: 'Deposit Assets', desc: 'Lock ETH, tokens, or NFTs in your smart contract vault', icon: <Wallet className="h-8 w-8" /> },
+                { step: '3', title: 'Validator Consensus', desc: '2-of-3 validators verify and secure your conditions', icon: <Shield className="h-8 w-8" /> },
+                { step: '4', title: 'Automatic Execution', desc: 'Vault unlocks when all conditions are verified', icon: <Sparkles className="h-8 w-8" /> }
+              ].map((item, index) => (
+                <motion.div
+                  key={item.step}
+                  className="relative text-center"
+                  initial={{ opacity: 0, y: 30 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.5, delay: 0.1 * index }}
+                  data-testid={`step-${item.step}`}
+                >
+                  {index < 3 && (
+                    <div className="hidden md:block absolute top-12 left-1/2 w-full h-[2px] bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7]/30" />
+                  )}
+                  
+                  <div className="relative z-10 bg-black">
+                    <div className="w-24 h-24 mx-auto rounded-2xl bg-gradient-to-br from-[#6B00D7]/30 to-[#FF5AF7]/10 border border-[#6B00D7]/30 flex items-center justify-center mb-4">
+                      <div className="text-[#FF5AF7]">{item.icon}</div>
                     </div>
-                    
-                    <div className="mt-8 space-y-6">
-                      <motion.div variants={itemVariants}>
-                        <h3 className="text-xl font-bold text-white mb-4">Premium Vault Features</h3>
-                        <div className="bg-[#1A1A1A] rounded-lg p-6 border border-[#333]">
-                          <div className="space-y-4">
-                            <div className="flex items-center justify-between">
-                              <div className="flex items-center">
-                                <div className="w-8 h-8 rounded-lg bg-[#6B00D7] flex items-center justify-center mr-3">
-                                  <HardDrive className="h-4 w-4 text-white" />
-                                </div>
-                                <span className="text-white font-medium">Deep Cold Storage Integration</span>
-                              </div>
-                              <Badge className="bg-[#6B00D7]/20 text-[#FF5AF7]">Fortress™ Tier</Badge>
-                            </div>
-                            
-                            <div className="flex items-center justify-between">
-                              <div className="flex items-center">
-                                <div className="w-8 h-8 rounded-lg bg-[#6B00D7] flex items-center justify-center mr-3">
-                                  <Shield className="h-4 w-4 text-white" />
-                                </div>
-                                <span className="text-white font-medium">Catastrophe Recovery Protocol</span>
-                              </div>
-                              <Badge className="bg-[#6B00D7]/20 text-[#FF5AF7]">Fortress™ Tier</Badge>
-                            </div>
-                            
-                            <div className="flex items-center justify-between">
-                              <div className="flex items-center">
-                                <div className="w-8 h-8 rounded-lg bg-[#6B00D7] flex items-center justify-center mr-3">
-                                  <Layers className="h-4 w-4 text-white" />
-                                </div>
-                                <span className="text-white font-medium">SPHINCS+ Hash-Based Signatures</span>
-                              </div>
-                              <Badge className="bg-[#6B00D7]/20 text-[#FF5AF7]">Fortress™ Tier</Badge>
-                            </div>
-                            
-                            <div className="flex items-center justify-between">
-                              <div className="flex items-center">
-                                <div className="w-8 h-8 rounded-lg bg-[#6B00D7] flex items-center justify-center mr-3">
-                                  <KeyRound className="h-4 w-4 text-white" />
-                                </div>
-                                <span className="text-white font-medium">FrodoKEM-1344 Key Encapsulation</span>
-                              </div>
-                              <Badge className="bg-[#6B00D7]/20 text-[#FF5AF7]">Fortress™ Tier</Badge>
-                            </div>
-                          </div>
-                        </div>
-                      </motion.div>
-                    </div>
-                  </CardContent>
-                </Card>
-              </motion.div>
-            </TabsContent>
-
-            <TabsContent value="security" className="py-6">
-              <motion.div
-                variants={containerVariants}
-                initial="hidden"
-                animate="visible"
-                className="space-y-6"
-              >
-                <Card className="bg-[#151515] border-[#333]">
-                  <CardHeader>
-                    <CardTitle className="text-2xl text-white">Trinity Protocol™ Security Architecture</CardTitle>
-                    <CardDescription className="text-gray-400">
-                      How our revolutionary security model protects your assets across multiple blockchains
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="space-y-6">
-                      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                        <motion.div variants={itemVariants} className="bg-[#1A1A1A] rounded-lg p-5 border border-[#6B00D7]/30">
-                          <div className="flex justify-between items-start mb-4">
-                            <div className="w-12 h-12 rounded-lg bg-blue-700 flex items-center justify-center">
-                              <span className="text-xl font-bold text-white">Ξ</span>
-                            </div>
-                            <Badge className="bg-blue-700">Primary Chain</Badge>
-                          </div>
-                          <h3 className="text-lg font-bold text-white mb-2">Ethereum Layer</h3>
-                          <p className="text-sm text-gray-300 mb-4">
-                            Primary ownership records and vault creation. ERC-4626 tokenized vault implementation with secure time-lock mechanisms.
-                          </p>
-                          <div className="space-y-2">
-                            <div className="flex items-center">
-                              <CheckCircle2 className="h-4 w-4 text-green-500 mr-2" />
-                              <span className="text-sm text-gray-300">Access control management</span>
-                            </div>
-                            <div className="flex items-center">
-                              <CheckCircle2 className="h-4 w-4 text-green-500 mr-2" />
-                              <span className="text-sm text-gray-300">Smart contract ownership</span>
-                            </div>
-                            <div className="flex items-center">
-                              <CheckCircle2 className="h-4 w-4 text-green-500 mr-2" />
-                              <span className="text-sm text-gray-300">Definitive transaction record</span>
-                            </div>
-                          </div>
-                        </motion.div>
-                        
-                        <motion.div variants={itemVariants} className="bg-[#1A1A1A] rounded-lg p-5 border border-[#FF5AF7]/30">
-                          <div className="flex justify-between items-start mb-4">
-                            <div className="w-12 h-12 rounded-lg bg-purple-600 flex items-center justify-center">
-                              <span className="text-xl font-bold text-white">S</span>
-                            </div>
-                            <Badge className="bg-purple-600">Verification Chain</Badge>
-                          </div>
-                          <h3 className="text-lg font-bold text-white mb-2">Solana Layer</h3>
-                          <p className="text-sm text-gray-300 mb-4">
-                            High-frequency monitoring and rapid validation. Provides real-time security checks and anomaly detection.
-                          </p>
-                          <div className="space-y-2">
-                            <div className="flex items-center">
-                              <CheckCircle2 className="h-4 w-4 text-green-500 mr-2" />
-                              <span className="text-sm text-gray-300">High-speed monitoring</span>
-                            </div>
-                            <div className="flex items-center">
-                              <CheckCircle2 className="h-4 w-4 text-green-500 mr-2" />
-                              <span className="text-sm text-gray-300">Continuous validation</span>
-                            </div>
-                            <div className="flex items-center">
-                              <CheckCircle2 className="h-4 w-4 text-green-500 mr-2" />
-                              <span className="text-sm text-gray-300">Transaction verification</span>
-                            </div>
-                          </div>
-                        </motion.div>
-                        
-                        <motion.div variants={itemVariants} className="bg-[#1A1A1A] rounded-lg p-5 border border-[#00E5A0]/30">
-                          <div className="flex justify-between items-start mb-4">
-                            <div className="w-12 h-12 rounded-lg bg-[#0088CC] flex items-center justify-center">
-                              <span className="text-xl font-bold text-white">T</span>
-                            </div>
-                            <Badge className="bg-[#0088CC]">Recovery Chain</Badge>
-                          </div>
-                          <h3 className="text-lg font-bold text-white mb-2">TON Layer</h3>
-                          <p className="text-sm text-gray-300 mb-4">
-                            Emergency recovery system and backup security. Provides alternative access path if primary systems are compromised.
-                          </p>
-                          <div className="space-y-2">
-                            <div className="flex items-center">
-                              <CheckCircle2 className="h-4 w-4 text-green-500 mr-2" />
-                              <span className="text-sm text-gray-300">Backup recovery system</span>
-                            </div>
-                            <div className="flex items-center">
-                              <CheckCircle2 className="h-4 w-4 text-green-500 mr-2" />
-                              <span className="text-sm text-gray-300">Emergency access protocol</span>
-                            </div>
-                            <div className="flex items-center">
-                              <CheckCircle2 className="h-4 w-4 text-green-500 mr-2" />
-                              <span className="text-sm text-gray-300">Cross-chain communication</span>
-                            </div>
-                          </div>
-                        </motion.div>
-                      </div>
-                      
-                      <motion.div variants={itemVariants} className="mt-8">
-                        <h3 className="text-xl font-bold text-white mb-4">Quantum Resistance Tiers</h3>
-                        <div className="space-y-4">
-                          <div className="bg-[#1A1A1A] rounded-lg p-5 border border-[#333]">
-                            <div className="flex items-center justify-between mb-3">
-                              <div className="flex items-center">
-                                <div className="w-8 h-8 rounded-lg bg-green-600 flex items-center justify-center mr-3">
-                                  <span className="text-sm font-bold text-white">1</span>
-                                </div>
-                                <h4 className="font-semibold text-white">Standard Security</h4>
-                              </div>
-                              <Badge className="bg-green-600/20 text-green-500">Level 1</Badge>
-                            </div>
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
-                              <div>
-                                <span className="text-gray-400">Signature Algorithm:</span>
-                                <span className="ml-2 text-white">Falcon-512</span>
-                              </div>
-                              <div>
-                                <span className="text-gray-400">Key Encapsulation:</span>
-                                <span className="ml-2 text-white">Kyber-512</span>
-                              </div>
-                            </div>
-                            <div className="mt-2">
-                              <span className="text-gray-400 text-sm">Recommended for assets up to:</span>
-                              <span className="ml-2 text-white text-sm">$10,000 USD</span>
-                            </div>
-                          </div>
-                          
-                          <div className="bg-[#1A1A1A] rounded-lg p-5 border border-[#333]">
-                            <div className="flex items-center justify-between mb-3">
-                              <div className="flex items-center">
-                                <div className="w-8 h-8 rounded-lg bg-blue-600 flex items-center justify-center mr-3">
-                                  <span className="text-sm font-bold text-white">2</span>
-                                </div>
-                                <h4 className="font-semibold text-white">Enhanced Security</h4>
-                              </div>
-                              <Badge className="bg-blue-600/20 text-blue-500">Level 2</Badge>
-                            </div>
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
-                              <div>
-                                <span className="text-gray-400">Signature Algorithm:</span>
-                                <span className="ml-2 text-white">Falcon-1024</span>
-                              </div>
-                              <div>
-                                <span className="text-gray-400">Key Encapsulation:</span>
-                                <span className="ml-2 text-white">Kyber-768</span>
-                              </div>
-                            </div>
-                            <div className="mt-2">
-                              <span className="text-gray-400 text-sm">Recommended for assets up to:</span>
-                              <span className="ml-2 text-white text-sm">$100,000 USD</span>
-                            </div>
-                          </div>
-                          
-                          <div className="bg-[#1A1A1A] rounded-lg p-5 border border-[#333]">
-                            <div className="flex items-center justify-between mb-3">
-                              <div className="flex items-center">
-                                <div className="w-8 h-8 rounded-lg bg-purple-600 flex items-center justify-center mr-3">
-                                  <span className="text-sm font-bold text-white">3</span>
-                                </div>
-                                <h4 className="font-semibold text-white">Maximum Security</h4>
-                              </div>
-                              <Badge className="bg-purple-600/20 text-purple-400">Level 3</Badge>
-                            </div>
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
-                              <div>
-                                <span className="text-gray-400">Signature Algorithm:</span>
-                                <span className="ml-2 text-white">CRYSTALS-Dilithium</span>
-                              </div>
-                              <div>
-                                <span className="text-gray-400">Key Encapsulation:</span>
-                                <span className="ml-2 text-white">Kyber-1024</span>
-                              </div>
-                            </div>
-                            <div className="mt-2">
-                              <span className="text-gray-400 text-sm">Recommended for assets up to:</span>
-                              <span className="ml-2 text-white text-sm">$1,000,000 USD</span>
-                            </div>
-                          </div>
-                          
-                          <div className="bg-[#1A1A1A] rounded-lg p-5 border border-[#6B00D7]">
-                            <div className="flex items-center justify-between mb-3">
-                              <div className="flex items-center">
-                                <div className="w-8 h-8 rounded-lg bg-[#6B00D7] flex items-center justify-center mr-3">
-                                  <span className="text-sm font-bold text-white">F</span>
-                                </div>
-                                <h4 className="font-semibold text-white">Fortress™ Security</h4>
-                              </div>
-                              <Badge className="bg-[#6B00D7]/20 text-[#FF5AF7]">Military Grade</Badge>
-                            </div>
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
-                              <div>
-                                <span className="text-gray-400">Signature Algorithm:</span>
-                                <span className="ml-2 text-white">SPHINCS+</span>
-                              </div>
-                              <div>
-                                <span className="text-gray-400">Key Encapsulation:</span>
-                                <span className="ml-2 text-white">FrodoKEM-1344</span>
-                              </div>
-                            </div>
-                            <div className="mt-2">
-                              <span className="text-gray-400 text-sm">Recommended for assets up to:</span>
-                              <span className="ml-2 text-white text-sm">$10,000,000+ USD</span>
-                            </div>
-                          </div>
-                        </div>
-                      </motion.div>
-                    </div>
-                  </CardContent>
-                </Card>
-              </motion.div>
-            </TabsContent>
-
-            <TabsContent value="implementation" className="py-6">
-              <motion.div
-                variants={containerVariants}
-                initial="hidden"
-                animate="visible"
-                className="space-y-6"
-              >
-                <Card className="bg-[#151515] border-[#333]">
-                  <CardHeader>
-                    <CardTitle className="text-2xl text-white">Technical Implementation</CardTitle>
-                    <CardDescription className="text-gray-400">
-                      Smart contract specifications and blockchain implementation details
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="space-y-6">
-                      <motion.div variants={itemVariants}>
-                        <h3 className="text-xl font-bold text-white mb-4">ERC-4626 Tokenized Vault</h3>
-                        <div className="bg-[#0F0F0F] p-4 rounded-lg border border-[#333] font-mono text-sm text-gray-300 overflow-x-auto">
-                          <pre>{`// SPDX-License-Identifier: MIT
-pragma solidity ^0.8.20;
-
-import "@openzeppelin/contracts/token/ERC20/extensions/ERC4626.sol";
-import "@openzeppelin/contracts/access/Ownable.sol";
-import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
-
-/**
- * @title ChronosVault
- * @dev ERC-4626 compliant tokenized vault with time-lock functionality
- */
-contract ChronosVault is ERC4626, Ownable, ReentrancyGuard {
-    struct VaultData {
-        address owner;
-        uint256 unlockTime;
-        bytes32 securityHash;
-        uint8 securityLevel;
-        bool isMultiSig;
-        address[] beneficiaries;
-    }
-    
-    mapping(uint256 => VaultData) public vaults;
-    uint256 public vaultCounter;
-    
-    // Security verification contracts on other chains
-    address public solanaVerifier;
-    address public tonVerifier;
-    
-    // Events
-    event VaultCreated(address indexed creator, uint256 indexed vaultId, uint256 unlockTime, uint8 securityLevel);
-    event VaultUnlocked(uint256 indexed vaultId, address indexed retriever);
-    event SecurityVerificationUpdated(uint256 indexed vaultId, bytes32 verificationHash);
-    
-    // ... additional contract implementation
-}`}</pre>
-                        </div>
-                      </motion.div>
-                      
-                      <motion.div variants={itemVariants}>
-                        <h3 className="text-xl font-bold text-white mb-4">Cross-Chain Verification</h3>
-                        <div className="bg-[#0F0F0F] p-4 rounded-lg border border-[#333] font-mono text-sm text-gray-300 overflow-x-auto">
-                          <pre>{`/**
- * @title ChronosVaultVerifier
- * @dev Cross-chain verification for the Smart Contract Vault
- */
-contract ChronosVaultVerifier {
-    struct VerificationRecord {
-        bytes32 vaultHash;
-        uint256 timestamp;
-        bytes32 securityProof;
-        bool isValid;
-    }
-    
-    mapping(bytes32 => VerificationRecord) public verifications;
-    
-    event VerificationCreated(bytes32 indexed vaultId, bytes32 securityProof);
-    event VerificationConfirmed(bytes32 indexed vaultId, bool isValid);
-    
-    // ... verification implementation
-}`}</pre>
-                        </div>
-                      </motion.div>
-                      
-                      <motion.div variants={itemVariants}>
-                        <Accordion type="single" collapsible className="w-full">
-                          <AccordionItem value="item-1" className="border-[#333]">
-                            <AccordionTrigger className="text-white hover:text-white hover:no-underline">
-                              Ethereum Deployment Information
-                            </AccordionTrigger>
-                            <AccordionContent className="text-gray-300">
-                              <div className="space-y-4">
-                                <div className="bg-[#1A1A1A] p-4 rounded-lg border border-[#333]">
-                                  <div className="flex justify-between">
-                                    <h4 className="font-medium text-[#FF5AF7]">ChronosVault.sol</h4>
-                                    <div className="flex items-center space-x-2">
-                                      <Badge className="bg-green-600">Active</Badge>
-                                      <Button variant="ghost" size="sm" className="h-8 w-8 p-0" onClick={() => handleCopyAddress("0x4B3aBcB789e6Bc7D6209c4603C52f433a4c84520")}>
-                                        <Copy className="h-4 w-4" />
-                                      </Button>
-                                    </div>
-                                  </div>
-                                  <p className="text-sm text-gray-400 my-2">Mainnet: 0x4B3aBcB789e6Bc7D6209c4603C52f433a4c84520</p>
-                                  <div className="flex items-center text-sm text-gray-400">
-                                    <Clock className="h-3 w-3 mr-1" />
-                                    <span>Deployed: May 10, 2025</span>
-                                  </div>
-                                </div>
-                                
-                                <div className="bg-[#1A1A1A] p-4 rounded-lg border border-[#333]">
-                                  <div className="flex justify-between">
-                                    <h4 className="font-medium text-[#FF5AF7]">ChronosVaultVerifier.sol</h4>
-                                    <div className="flex items-center space-x-2">
-                                      <Badge className="bg-green-600">Active</Badge>
-                                      <Button variant="ghost" size="sm" className="h-8 w-8 p-0" onClick={() => handleCopyAddress("0xD8a394E2F8e4A28B8685c1b24C5C17b6498031Ff")}>
-                                        <Copy className="h-4 w-4" />
-                                      </Button>
-                                    </div>
-                                  </div>
-                                  <p className="text-sm text-gray-400 my-2">Mainnet: 0xD8a394E2F8e4A28B8685c1b24C5C17b6498031Ff</p>
-                                  <div className="flex items-center text-sm text-gray-400">
-                                    <Clock className="h-3 w-3 mr-1" />
-                                    <span>Deployed: May 10, 2025</span>
-                                  </div>
-                                </div>
-                              </div>
-                            </AccordionContent>
-                          </AccordionItem>
-                          
-                          <AccordionItem value="item-2" className="border-[#333]">
-                            <AccordionTrigger className="text-white hover:text-white hover:no-underline">
-                              Solana Deployment Information
-                            </AccordionTrigger>
-                            <AccordionContent className="text-gray-300">
-                              <div className="space-y-4">
-                                <div className="bg-[#1A1A1A] p-4 rounded-lg border border-[#333]">
-                                  <div className="flex justify-between">
-                                    <h4 className="font-medium text-[#FF5AF7]">chronos_vault_verifier.rs</h4>
-                                    <div className="flex items-center space-x-2">
-                                      <Badge className="bg-green-600">Active</Badge>
-                                      <Button variant="ghost" size="sm" className="h-8 w-8 p-0" onClick={() => handleCopyAddress("ChVr1vLMkBmBKVJqUJRXUPnpyZf2ZM4twuVczLH9RcUU")}>
-                                        <Copy className="h-4 w-4" />
-                                      </Button>
-                                    </div>
-                                  </div>
-                                  <p className="text-sm text-gray-400 my-2">Program ID: ChVr1vLMkBmBKVJqUJRXUPnpyZf2ZM4twuVczLH9RcUU</p>
-                                  <div className="flex items-center text-sm text-gray-400">
-                                    <Clock className="h-3 w-3 mr-1" />
-                                    <span>Deployed: May 10, 2025</span>
-                                  </div>
-                                </div>
-                              </div>
-                            </AccordionContent>
-                          </AccordionItem>
-                          
-                          <AccordionItem value="item-3" className="border-[#333]">
-                            <AccordionTrigger className="text-white hover:text-white hover:no-underline">
-                              TON Deployment Information
-                            </AccordionTrigger>
-                            <AccordionContent className="text-gray-300">
-                              <div className="space-y-4">
-                                <div className="bg-[#1A1A1A] p-4 rounded-lg border border-[#333]">
-                                  <div className="flex justify-between">
-                                    <h4 className="font-medium text-[#FF5AF7]">ChronosVaultRecovery.fc</h4>
-                                    <div className="flex items-center space-x-2">
-                                      <Badge className="bg-green-600">Active</Badge>
-                                      <Button variant="ghost" size="sm" className="h-8 w-8 p-0" onClick={() => handleCopyAddress("EQB0gCDoGJNTfoPUSCgBxLuZ_O-7aYUccU0P1Vj_QdO6rQTf")}>
-                                        <Copy className="h-4 w-4" />
-                                      </Button>
-                                    </div>
-                                  </div>
-                                  <p className="text-sm text-gray-400 my-2">Address: EQB0gCDoGJNTfoPUSCgBxLuZ_O-7aYUccU0P1Vj_QdO6rQTf</p>
-                                  <div className="flex items-center text-sm text-gray-400">
-                                    <Clock className="h-3 w-3 mr-1" />
-                                    <span>Deployed: May 10, 2025</span>
-                                  </div>
-                                </div>
-                              </div>
-                            </AccordionContent>
-                          </AccordionItem>
-                        </Accordion>
-                      </motion.div>
-                      
-                      <motion.div variants={itemVariants} className="mt-8">
-                        <h3 className="text-xl font-bold text-white mb-4">Audits and Security Verification</h3>
-                        <div className="bg-[#1A1A1A] p-5 rounded-lg border border-[#333]">
-                          <div className="space-y-4">
-                            <div className="flex items-center justify-between">
-                              <div className="flex items-center">
-                                <Badge className="bg-green-600 mr-3">Completed</Badge>
-                                <h4 className="font-medium text-white">CertiK Security Audit</h4>
-                              </div>
-                              <span className="text-sm text-gray-400">April 28, 2025</span>
-                            </div>
-                            <div className="flex items-center justify-between">
-                              <div className="flex items-center">
-                                <Badge className="bg-green-600 mr-3">Completed</Badge>
-                                <h4 className="font-medium text-white">Trail of Bits Formal Verification</h4>
-                              </div>
-                              <span className="text-sm text-gray-400">May 2, 2025</span>
-                            </div>
-                            <div className="flex items-center justify-between">
-                              <div className="flex items-center">
-                                <Badge className="bg-green-600 mr-3">Completed</Badge>
-                                <h4 className="font-medium text-white">Quantum Computing Resistance Testing</h4>
-                              </div>
-                              <span className="text-sm text-gray-400">May 5, 2025</span>
-                            </div>
-                            <div className="flex items-center justify-between">
-                              <div className="flex items-center">
-                                <Badge className="bg-green-600 mr-3">Completed</Badge>
-                                <h4 className="font-medium text-white">Cross-Chain Communication Verification</h4>
-                              </div>
-                              <span className="text-sm text-gray-400">May 8, 2025</span>
-                            </div>
-                          </div>
-                        </div>
-                      </motion.div>
-                    </div>
-                    
-                    <div className="mt-8 text-center">
-                      <Button className="bg-[#6B00D7] text-white hover:bg-[#5600AD]">
-                        Create Smart Contract Vault
-                      </Button>
-                    </div>
-                  </CardContent>
-                </Card>
-              </motion.div>
-            </TabsContent>
-          </Tabs>
-        </Container>
+                    <div className="text-xs text-[#FF5AF7] font-bold mb-2">STEP {item.step}</div>
+                    <h3 className="text-lg font-semibold text-white mb-2">{item.title}</h3>
+                    <p className="text-sm text-gray-400">{item.desc}</p>
+                  </div>
+                </motion.div>
+              ))}
+            </div>
+          </div>
+        </section>
+        
+        {/* CTA Section */}
+        <section className="py-20 bg-gradient-to-b from-[#0a0014] via-[#6B00D7]/10 to-black">
+          <div className="container mx-auto px-4 text-center">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6 }}
+              className="max-w-3xl mx-auto"
+            >
+              <h2 className="text-4xl font-bold mb-6">
+                Ready to Build Your <span className="text-[#FF5AF7]">Smart Vault</span>?
+              </h2>
+              <p className="text-gray-300 text-lg mb-10">
+                Create a programmable vault with custom conditions and military-grade security in minutes.
+              </p>
+              
+              <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                <Link href="/create-vault">
+                  <Button 
+                    size="lg" 
+                    className="bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] hover:from-[#7B10E7] hover:to-[#FF6AF7] text-white px-10 py-6 text-lg shadow-lg shadow-[#6B00D7]/40"
+                    data-testid="button-get-started"
+                  >
+                    <Key className="w-5 h-5 mr-2" />
+                    Get Started
+                    <ArrowRight className="w-5 h-5 ml-2" />
+                  </Button>
+                </Link>
+                <Link href="/vault-types">
+                  <Button 
+                    size="lg" 
+                    variant="outline"
+                    className="border-[#6B00D7]/50 text-white hover:bg-[#6B00D7]/20 px-10 py-6 text-lg"
+                    data-testid="button-explore-vaults"
+                  >
+                    <Layers className="w-5 h-5 mr-2" />
+                    Explore All Vaults
+                  </Button>
+                </Link>
+              </div>
+            </motion.div>
+          </div>
+        </section>
       </div>
     </>
   );
