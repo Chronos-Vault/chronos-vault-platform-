@@ -57,7 +57,6 @@ import CreateTonVaultPage from '@/pages/create-ton-vault';
 import TransactionMonitorPage from '@/pages/transaction-monitor';
 import CrossChainMonitorPage from '@/pages/cross-chain-monitor';
 import CrossChainFeesPage from '@/pages/cross-chain-fee-monitor';
-import VaultExplorerPage from '@/pages/vault-explorer';
 import DeviceManagementPage from '@/pages/device-management';
 import DeviceRecoveryPage from '@/pages/device-recovery';
 import MDLMonitoringDashboard from '@/pages/mdl-monitoring-dashboard';
@@ -66,7 +65,6 @@ import MDLMonitoringDashboard from '@/pages/mdl-monitoring-dashboard';
 import TonSecurityPage from '@/pages/ton-security';
 import CrossChainSecurityPage from '@/pages/cross-chain-security';
 import SecurityVerificationPage from '@/pages/security-verification';
-import SecurityVerificationDemoPage from '@/pages/security-verification-demo';
 import SecurityTestingPage from '@/pages/security-testing';
 import BehavioralAuthenticationPage from '@/pages/behavioral-authentication';
 import ZeroKnowledgeVerificationPage from '@/pages/zero-knowledge-verification-page';
@@ -79,6 +77,7 @@ import ValidatorOnboardingPage from '@/pages/validator-onboarding';
 import ValidatorDashboardPage from '@/pages/validator-dashboard';
 import TrinityScannerPage from '@/pages/trinity-scanner';
 import TrinityProtocolPaper from '@/pages/trinity-protocol-paper';
+import DeveloperBlog from '@/pages/developer-blog';
 
 // Integration Pages
 import EthereumIntegrationPage from '@/pages/ethereum-integration';
@@ -148,6 +147,7 @@ import CvtTokenPage from '@/pages/cvt-token';
 import CvtPaymentPage from '@/pages/cvt-payment';
 import SubscriptionPage from '@/pages/subscription';
 import GiftCryptoPage from '@/pages/gift-crypto';
+import GiftClaimPage from '@/pages/gift-claim';
 
 
 
@@ -203,7 +203,6 @@ const App: React.FC = () => {
                       <Route path="/cross-chain-monitor" component={CrossChainMonitorPage} />
                       <Route path="/cross-chain-fee-monitor" component={CrossChainFeesPage} />
                       <Route path="/cross-chain-operations" component={TrinityScannerPage} />
-                      <Route path="/vault-explorer" component={VaultExplorerPage} />
                       <Route path="/device-management" component={DeviceManagementPage} />
                       <Route path="/device-recovery" component={DeviceRecoveryPage} />
                       
@@ -222,7 +221,6 @@ const App: React.FC = () => {
                       <Route path="/ton-security" component={TonSecurityPage} />
                       <Route path="/cross-chain-security" component={CrossChainSecurityPage} />
                       <Route path="/security-verification" component={SecurityVerificationPage} />
-                      <Route path="/security-verification-demo" component={SecurityVerificationDemoPage} />
                       <Route path="/security-testing" component={SecurityTestingPage} />
                       <Route path="/behavioral-authentication">
                         {(params) => <BehavioralAuthenticationPage tab="overview" />}
@@ -288,6 +286,8 @@ const App: React.FC = () => {
                       <Route path="/sdk-documentation" component={SDKDocumentationPage} />
                       <Route path="/integration-examples" component={IntegrationExamplesPage} />
                       <Route path="/developer-portal" component={DeveloperPortalPage} />
+                      <Route path="/developer-blog" component={DeveloperBlog} />
+                      <Route path="/dev-docs" component={DeveloperBlog} />
                       <Route path="/integration-guide" component={IntegrationGuidePage} />
                       <Route path="/smart-contract-sdk" component={SmartContractSDKPage} />
                       <Route path="/developer-api-keys" component={DeveloperAPIKeysPage} />
@@ -306,21 +306,19 @@ const App: React.FC = () => {
                       <Route path="/cross-chain-atomic-swap" component={TrinityBridgePage} />
                       
                       {/* Token & Payment */}
-                      <Route path="/cvt-tokenomics" component={CvtTokenomicsPage} />
-                      <Route path="/cvt-utility" component={CvtUtilityPage} />
                       <Route path="/cvt-token" component={CvtTokenPage} />
                       <Route path="/cvt-staking" component={CvtStakingPage} />
                       <Route path="/cvt-payment" component={CvtPaymentPage} />
                       <Route path="/subscription" component={SubscriptionPage} />
                       <Route path="/token-vaults" component={TokenVaultsPage} />
                       <Route path="/gift-crypto" component={GiftCryptoPage} />
+                      <Route path="/gift-claim/:claimCode" component={GiftClaimPage} />
                       
                       {/* Documentation Pages */}
                       <Route path="/docs" component={DocumentationPage} />
                       <Route path="/roadmap" component={RoadmapPage} />
                       <Route path="/smart-contracts" component={SmartContractsPage} />
                       <Route path="/technical-spec" component={TechnicalSpecPage} />
-                      <Route path="/tokenomics" component={CvtTokenomicsPage} />
                       <Route path="/technical-security-docs" component={() => <SecurityDocumentation />} />
                       <Route path="/security-integration-guide" component={SecurityIntegrationGuide} />
                       <Route path="/security-tutorials" component={SecurityTutorials} />
