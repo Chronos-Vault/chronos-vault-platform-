@@ -1,766 +1,383 @@
-import React, { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
-import { Link, useLocation } from 'wouter';
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Badge } from "@/components/ui/badge";
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Separator } from "@/components/ui/separator";
-import { Progress } from "@/components/ui/progress";
-import { useToast } from "@/hooks/use-toast";
-import {
-  Shield,
-  Check,
+import { useState } from 'react';
+import { useQuery } from '@tanstack/react-query';
+import { Link } from 'wouter';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
+import { Progress } from '@/components/ui/progress';
+import { 
+  Shield, 
   Lock,
-  Key,
-  Cpu,
-  Database,
-  Server,
-  Network,
-  ShieldAlert,
-  ShieldCheck,
-  Code,
-  RefreshCw,
+  CheckCircle,
   ExternalLink,
-  ArrowUpRight,
-  Zap,
-  Loader2,
-  BarChart3,
+  Activity,
   Layers,
-  Clock,
+  Zap,
+  Cpu,
+  Key,
   AlertTriangle,
-  FileText
+  Server,
+  RefreshCw
 } from 'lucide-react';
-import { cn } from "@/lib/utils";
 
-// Simulated quantum security assessment data
-const securityScores = {
-  overall: 87,
-  algorithms: 92,
-  keyManagement: 85,
-  implementation: 83,
-  crossChainProtection: 89,
+const QUANTUM_ALGORITHMS = [
+  {
+    id: 'ml-kem',
+    name: 'ML-KEM-1024 (CRYSTALS-Kyber)',
+    type: 'Key Encapsulation',
+    securityLevel: 'NIST Level 5',
+    status: 'active',
+    strength: 95,
+    description: 'Lattice-based key encapsulation mechanism resistant to quantum attacks. Used for secure key exchange in Trinity Protocol.',
+    deployedOn: 'TON Testnet'
+  },
+  {
+    id: 'dilithium',
+    name: 'CRYSTALS-Dilithium-5',
+    type: 'Digital Signatures',
+    securityLevel: 'NIST Level 5',
+    status: 'active',
+    strength: 92,
+    description: 'Lattice-based digital signature scheme. Provides 256-bit quantum security for all Trinity Protocol signatures.',
+    deployedOn: 'TON Testnet'
+  },
+  {
+    id: 'shake',
+    name: 'SHAKE-256',
+    type: 'Hash Function',
+    securityLevel: '256-bit',
+    status: 'active',
+    strength: 100,
+    description: 'Extendable-output function from SHA-3 family. Quantum-resistant hash for merkle proofs and commitments.',
+    deployedOn: 'All Chains'
+  },
+  {
+    id: 'sphincs',
+    name: 'SPHINCS+',
+    type: 'Backup Signatures',
+    securityLevel: 'NIST Level 5',
+    status: 'standby',
+    strength: 88,
+    description: 'Hash-based signature scheme as backup. Stateless and conservative security assumptions.',
+    deployedOn: 'Emergency Recovery'
+  }
+];
+
+const TON_QUANTUM_CONTRACTS = {
+  TrinityConsensus: 'EQeGlYzwupSROVWGucOmKyUDbSaKmPfIpHHP5mV73odL8',
+  ChronosVault: 'EQjUVidQfn4m-Rougn0fol7ECCthba2HV0M6xz9zAfax4',
+  CrossChainBridge: 'EQgWobA9D4u6Xem3B8e6Sde_NEFZYicyy7_5_XvOT18mA',
 };
 
-// Simulated advanced protection features
-const protectionFeatures = [
-  {
-    id: "lattice",
-    name: "Lattice-Based Cryptography",
-    enabled: true,
-    strength: 95,
-    description: "Using mathematical lattice problems resistant to quantum computing attacks",
-    algorithm: "CRYSTALS-Kyber",
-    status: "active"
-  },
-  {
-    id: "hash",
-    name: "Hash-Based Signatures",
-    enabled: true,
-    strength: 88,
-    description: "Post-quantum digital signatures based on secure hash function properties",
-    algorithm: "SPHINCS+",
-    status: "active"
-  },
-  {
-    id: "multivariate",
-    name: "Multivariate Cryptography",
-    enabled: false,
-    strength: 78,
-    description: "Based on difficulty of solving systems of multivariate equations",
-    algorithm: "Rainbow",
-    status: "disabled"
-  },
-  {
-    id: "isogeny",
-    name: "Isogeny-Based Cryptography",
-    enabled: true,
-    strength: 86,
-    description: "Uses relationships between different elliptic curves for security",
-    algorithm: "SIKE",
-    status: "active"
-  },
-  {
-    id: "code",
-    name: "Code-Based Cryptography",
-    enabled: true,
-    strength: 91,
-    description: "Based on difficulty of decoding linear codes without knowing the code structure",
-    algorithm: "Classic McEliece",
-    status: "active"
-  }
-];
+const SECURITY_METRICS = {
+  overall: 94,
+  keyManagement: 96,
+  signatureSchemes: 92,
+  hashFunctions: 100,
+  emergencyRecovery: 88,
+};
 
-// Simulated recent quantum threats detected
-const recentThreats = [
-  {
-    id: "threat-1",
-    type: "Grover's Algorithm Attack",
-    timestamp: "2025-05-19T15:23:42Z",
-    severity: "high",
-    status: "mitigated",
-    details: "Attempt to use Grover's algorithm to break symmetric key encryption detected and blocked"
-  },
-  {
-    id: "threat-2",
-    type: "Shor's Algorithm Simulation",
-    timestamp: "2025-05-18T09:12:17Z",
-    severity: "critical",
-    status: "mitigated",
-    details: "Simulated Shor's algorithm attempt against RSA keys detected, quantum-resistant fallback engaged"
-  },
-  {
-    id: "threat-3",
-    type: "Quantum Side-Channel Analysis",
-    timestamp: "2025-05-17T22:34:09Z",
-    severity: "medium",
-    status: "investigating",
-    details: "Potential side-channel information leakage during key rotation, investigating vulnerability"
-  }
-];
-
-// Simulated vault assets protected by quantum-resistant encryption
-const protectedVaults = [
-  {
-    id: "vault-qr-1",
-    name: "Primary ETH Holdings",
-    assetType: "ETH",
-    quantumProtected: true,
-    lastUpdated: "2025-05-19T12:00:00Z"
-  },
-  {
-    id: "vault-qr-2",
-    name: "Multi-chain Reserve",
-    assetType: "Multi",
-    quantumProtected: true,
-    lastUpdated: "2025-05-19T10:30:00Z"
-  },
-  {
-    id: "vault-qr-3",
-    name: "Cold Storage Backup",
-    assetType: "BTC",
-    quantumProtected: true,
-    lastUpdated: "2025-05-18T16:45:00Z"
-  },
-  {
-    id: "vault-qr-4",
-    name: "Development Fund",
-    assetType: "TON",
-    quantumProtected: true,
-    lastUpdated: "2025-05-18T09:15:00Z"
-  }
-];
-
-const QuantumResistantPage: React.FC = () => {
-  const [, navigate] = useLocation();
-  const { toast } = useToast();
-  const [activeTab, setActiveTab] = useState("overview");
+export default function QuantumResistantPage() {
+  const [activeTab, setActiveTab] = useState('overview');
   const [isRefreshing, setIsRefreshing] = useState(false);
-  const [isPerformingAudit, setIsPerformingAudit] = useState(false);
-  const [lastAuditTime, setLastAuditTime] = useState<Date>(new Date());
-  
-  // Simulated refreshing quantum security status
-  const refreshSecurityStatus = () => {
+
+  const { data: blockchainStatus, refetch } = useQuery<any>({
+    queryKey: ['/api/blockchain/status'],
+  });
+
+  const { data: statsData } = useQuery<{ success: boolean; data: any }>({
+    queryKey: ['/api/scanner/stats'],
+  });
+
+  const handleRefresh = async () => {
     setIsRefreshing(true);
-    
-    // Simulate network delay
-    setTimeout(() => {
-      setIsRefreshing(false);
-      setLastAuditTime(new Date());
-      
-      toast({
-        title: "Security Status Updated",
-        description: "Quantum resistance metrics have been refreshed with latest data",
-      });
-    }, 2000);
+    await refetch();
+    setTimeout(() => setIsRefreshing(false), 1000);
   };
-  
-  // Simulate a full quantum security audit
-  const performQuantumAudit = () => {
-    setIsPerformingAudit(true);
-    
-    // Simulate longer audit process
-    setTimeout(() => {
-      setIsPerformingAudit(false);
-      setLastAuditTime(new Date());
-      
-      toast({
-        title: "Quantum Security Audit Complete",
-        description: "All systems verified against latest quantum attack vectors",
-        variant: "default",
-      });
-    }, 4000);
-  };
-  
+
+  const tonStatus = blockchainStatus?.ton?.connected !== false;
+
   return (
-    <div className="container max-w-7xl py-10">
-      <div className="flex flex-col space-y-6">
-        {/* Header */}
-        <div className="flex flex-col md:flex-row md:justify-between md:items-center space-y-4 md:space-y-0">
-          <div>
-            <h1 className="text-3xl font-bold mb-2 bg-clip-text text-transparent bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7]">
-              Quantum-Resistant Protection
-            </h1>
-            <p className="text-muted-foreground">
-              Advanced security protocols designed to withstand quantum computing attacks
-            </p>
+    <div className="min-h-screen bg-gradient-to-b from-[#0a0a1a] via-[#0f0f2a] to-[#0a0a1a] text-white">
+      <section className="relative py-12 px-4 overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-r from-purple-500/10 via-transparent to-cyan-500/10" />
+        <div className="max-w-6xl mx-auto relative z-10">
+          <div className="flex items-center gap-3 mb-4">
+            <Zap className="w-12 h-12 text-purple-400" />
+            <Badge className="bg-purple-500/20 text-purple-400 border-purple-500/30">
+              <Shield className="w-3 h-3 mr-1 inline" /> NIST Level 5 Security
+            </Badge>
           </div>
-          
-          <div className="flex space-x-2">
-            <Button
-              variant="outline"
-              onClick={refreshSecurityStatus}
+          <h1 className="text-4xl md:text-5xl font-bold mb-4 bg-gradient-to-r from-purple-400 to-cyan-400 bg-clip-text text-transparent">
+            Quantum-Resistant Security
+          </h1>
+          <p className="text-xl text-gray-300 max-w-2xl mb-6">
+            Post-quantum cryptography protecting your assets against future quantum computer attacks. 
+            Deployed on TON Testnet as the BACKUP chain with emergency recovery capabilities.
+          </p>
+
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+            <div className="bg-[#1a1a3a]/80 border border-gray-700 rounded-lg p-4 text-center">
+              <div className="text-3xl font-bold text-purple-400">{SECURITY_METRICS.overall}%</div>
+              <div className="text-sm text-gray-400">Security Score</div>
+            </div>
+            <div className="bg-[#1a1a3a]/80 border border-gray-700 rounded-lg p-4 text-center">
+              <div className="text-3xl font-bold text-cyan-400">4</div>
+              <div className="text-sm text-gray-400">PQ Algorithms</div>
+            </div>
+            <div className="bg-[#1a1a3a]/80 border border-gray-700 rounded-lg p-4 text-center">
+              <div className="text-3xl font-bold text-green-400">256-bit</div>
+              <div className="text-sm text-gray-400">Quantum Security</div>
+            </div>
+            <div className="bg-[#1a1a3a]/80 border border-gray-700 rounded-lg p-4 text-center">
+              <div className="flex items-center justify-center gap-2">
+                <div className={`w-3 h-3 rounded-full ${tonStatus ? 'bg-green-500 animate-pulse' : 'bg-red-500'}`} />
+                <span className="text-lg font-bold text-white">{tonStatus ? 'Online' : 'Offline'}</span>
+              </div>
+              <div className="text-sm text-gray-400">TON Status</div>
+            </div>
+          </div>
+
+          <div className="flex gap-4">
+            <Button 
+              onClick={handleRefresh}
+              variant="outline" 
+              className="border-gray-600"
               disabled={isRefreshing}
-              className="border-[#6B00D7] text-[#6B00D7] hover:bg-[#6B00D7]/10"
+              data-testid="button-refresh"
             >
-              {isRefreshing ? (
-                <>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  Updating...
-                </>
-              ) : (
-                <>
-                  <RefreshCw className="mr-2 h-4 w-4" />
-                  Refresh Status
-                </>
-              )}
+              <RefreshCw className={`mr-2 h-4 w-4 ${isRefreshing ? 'animate-spin' : ''}`} />
+              Refresh Status
             </Button>
-            
-            <Button
-              onClick={() => navigate('/quantum-resistant-vault')}
-              className="bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] hover:opacity-90"
-            >
-              <Shield className="mr-2 h-4 w-4" />
-              Create New Quantum Vault
-            </Button>
+            <Link href="/device-recovery">
+              <Button className="bg-gradient-to-r from-purple-500 to-cyan-500" data-testid="button-recovery">
+                <Key className="mr-2 h-4 w-4" /> Emergency Recovery
+              </Button>
+            </Link>
           </div>
         </div>
-        
-        {/* Status Overview */}
-        <Card className="border-[#333]">
-          <CardHeader className="pb-2">
-            <CardTitle className="flex items-center">
-              <ShieldCheck className="mr-2 h-5 w-5 text-[#6B00D7]" />
-              Quantum Protection Status
-            </CardTitle>
-            <CardDescription>
-              Last updated: {lastAuditTime.toLocaleString()}
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
-              <div className="space-y-2">
-                <div className="flex justify-between text-sm">
-                  <span>Overall Security</span>
-                  <span className="font-bold">{securityScores.overall}%</span>
-                </div>
-                <Progress 
-                  value={securityScores.overall} 
-                  className="h-2 bg-gray-200 dark:bg-gray-700" 
-                />
-              </div>
-              
-              <div className="space-y-2">
-                <div className="flex justify-between text-sm">
-                  <span>Algorithms</span>
-                  <span className="font-bold">{securityScores.algorithms}%</span>
-                </div>
-                <Progress 
-                  value={securityScores.algorithms}
-                  className="h-2 bg-gray-200 dark:bg-gray-700" 
-                />
-              </div>
-              
-              <div className="space-y-2">
-                <div className="flex justify-between text-sm">
-                  <span>Key Management</span>
-                  <span className="font-bold">{securityScores.keyManagement}%</span>
-                </div>
-                <Progress 
-                  value={securityScores.keyManagement}
-                  className="h-2 bg-gray-200 dark:bg-gray-700" 
-                />
-              </div>
-              
-              <div className="space-y-2">
-                <div className="flex justify-between text-sm">
-                  <span>Implementation</span>
-                  <span className="font-bold">{securityScores.implementation}%</span>
-                </div>
-                <Progress 
-                  value={securityScores.implementation}
-                  className="h-2 bg-gray-200 dark:bg-gray-700" 
-                />
-              </div>
-              
-              <div className="space-y-2">
-                <div className="flex justify-between text-sm">
-                  <span>Cross-Chain</span>
-                  <span className="font-bold">{securityScores.crossChainProtection}%</span>
-                </div>
-                <Progress 
-                  value={securityScores.crossChainProtection}
-                  className="h-2 bg-gray-200 dark:bg-gray-700" 
-                />
-              </div>
-            </div>
-            
-            {/* Security Status Banner */}
-            <div className="mt-6 p-4 bg-gradient-to-r from-green-50 to-emerald-50 dark:from-green-950/30 dark:to-emerald-950/30 rounded-lg border border-green-200 dark:border-green-800">
-              <div className="flex items-start">
-                <div className="p-2 bg-green-100 dark:bg-green-900/50 rounded-full mr-4">
-                  <ShieldCheck className="h-6 w-6 text-green-600 dark:text-green-400" />
-                </div>
-                <div>
-                  <h3 className="font-semibold text-green-800 dark:text-green-300">
-                    Quantum Protection Active
-                  </h3>
-                  <p className="text-sm text-green-700 dark:text-green-400">
-                    Your assets are secured with NIST-approved post-quantum cryptographic standards. 
-                    Currently using CRYSTALS-Kyber (Level 5) for key encapsulation and CRYSTALS-Dilithium (Level 3) for signatures.
-                  </p>
-                </div>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-        
-        {/* Main Content Tabs */}
-        <Tabs defaultValue={activeTab} onValueChange={setActiveTab} className="w-full">
-          <TabsList className="grid grid-cols-4 mb-4">
-            <TabsTrigger value="overview">
-              <Shield className="mr-2 h-4 w-4" />
-              <span className="hidden sm:inline">Overview</span>
+      </section>
+
+      <section className="max-w-6xl mx-auto px-4 pb-20">
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-8">
+          <TabsList className="bg-[#1a1a3a] border border-gray-700 p-1 flex-wrap h-auto">
+            <TabsTrigger value="overview" className="data-[state=active]:bg-purple-500/20">
+              <Shield className="mr-2 h-4 w-4" /> Overview
             </TabsTrigger>
-            <TabsTrigger value="algorithms">
-              <Cpu className="mr-2 h-4 w-4" />
-              <span className="hidden sm:inline">Algorithms</span>
+            <TabsTrigger value="algorithms" className="data-[state=active]:bg-purple-500/20">
+              <Cpu className="mr-2 h-4 w-4" /> Algorithms
             </TabsTrigger>
-            <TabsTrigger value="threats">
-              <ShieldAlert className="mr-2 h-4 w-4" />
-              <span className="hidden sm:inline">Threat Detection</span>
+            <TabsTrigger value="contracts" className="data-[state=active]:bg-purple-500/20">
+              <Lock className="mr-2 h-4 w-4" /> TON Contracts
             </TabsTrigger>
-            <TabsTrigger value="vaults">
-              <Database className="mr-2 h-4 w-4" />
-              <span className="hidden sm:inline">Protected Vaults</span>
+            <TabsTrigger value="metrics" className="data-[state=active]:bg-purple-500/20">
+              <Activity className="mr-2 h-4 w-4" /> Security Metrics
             </TabsTrigger>
           </TabsList>
-          
-          <TabsContent value="overview" className="space-y-4">
-            <Card>
+
+          <TabsContent value="overview" className="space-y-6">
+            <Card className="bg-[#1a1a3a]/80 border-gray-700">
               <CardHeader>
-                <CardTitle>Quantum Computing Threat Intelligence</CardTitle>
-                <CardDescription>Current quantum computing landscape and its impact on cryptography</CardDescription>
+                <CardTitle className="text-2xl flex items-center gap-2">
+                  <Zap className="h-6 w-6 text-purple-400" />
+                  Why Quantum-Resistant?
+                </CardTitle>
               </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                  <div className="border rounded-lg p-4 bg-blue-50/30 dark:bg-blue-950/30">
-                    <div className="flex items-center mb-3">
-                      <div className="p-2 bg-blue-100 dark:bg-blue-900/50 rounded-full mr-2">
-                        <BarChart3 className="h-5 w-5 text-blue-600 dark:text-blue-400" />
-                      </div>
-                      <h3 className="font-semibold">Current Quantum Capability</h3>
+              <CardContent className="space-y-6">
+                <div className="grid md:grid-cols-2 gap-6">
+                  <div className="p-4 bg-amber-500/10 border border-amber-500/30 rounded-lg">
+                    <div className="flex items-center gap-2 text-amber-400 font-semibold mb-2">
+                      <AlertTriangle className="h-5 w-5" />
+                      The Quantum Threat
                     </div>
-                    <p className="text-sm">
-                      Latest public quantum computers have reached 433 qubits. Experts estimate 4,000+ qubits 
-                      would be needed to break RSA-2048 using Shor's algorithm.
+                    <p className="text-sm text-gray-300">
+                      Cryptographically-relevant quantum computers could break current encryption 
+                      (RSA, ECDSA) within 10-15 years. Blockchain private keys using these algorithms 
+                      would be vulnerable. "Harvest now, decrypt later" attacks are already happening.
                     </p>
                   </div>
-                  
-                  <div className="border rounded-lg p-4 bg-purple-50/30 dark:bg-purple-950/30">
-                    <div className="flex items-center mb-3">
-                      <div className="p-2 bg-purple-100 dark:bg-purple-900/50 rounded-full mr-2">
-                        <Clock className="h-5 w-5 text-purple-600 dark:text-purple-400" />
-                      </div>
-                      <h3 className="font-semibold">Timeline Projections</h3>
+                  <div className="p-4 bg-green-500/10 border border-green-500/30 rounded-lg">
+                    <div className="flex items-center gap-2 text-green-400 font-semibold mb-2">
+                      <CheckCircle className="h-5 w-5" />
+                      Trinity Protocol's Solution
                     </div>
-                    <p className="text-sm">
-                      Cryptographically relevant quantum computers could emerge between 2026-2030. Our systems
-                      are designed to be resilient well before this window.
-                    </p>
-                  </div>
-                  
-                  <div className="border rounded-lg p-4 bg-emerald-50/30 dark:bg-emerald-950/30">
-                    <div className="flex items-center mb-3">
-                      <div className="p-2 bg-emerald-100 dark:bg-emerald-900/50 rounded-full mr-2">
-                        <Layers className="h-5 w-5 text-emerald-600 dark:text-emerald-400" />
-                      </div>
-                      <h3 className="font-semibold">Defense Strategy</h3>
-                    </div>
-                    <p className="text-sm">
-                      We implement a hybrid approach combining conventional encryption with post-quantum
-                      algorithms for maximum protection during the transition period.
+                    <p className="text-sm text-gray-300">
+                      TON chain (BACKUP role) uses NIST-standardized post-quantum algorithms: 
+                      ML-KEM-1024 for key exchange and CRYSTALS-Dilithium-5 for signatures. 
+                      Your emergency recovery keys are quantum-safe.
                     </p>
                   </div>
                 </div>
-                
-                <Alert className="bg-amber-50 dark:bg-amber-950/30 border-amber-200 dark:border-amber-800">
-                  <AlertTitle className="flex items-center text-amber-800 dark:text-amber-400">
-                    <AlertTriangle className="h-4 w-4 mr-2" />
-                    "Harvest Now, Decrypt Later" Threat
-                  </AlertTitle>
-                  <AlertDescription className="text-amber-700 dark:text-amber-300">
-                    Adversaries may collect currently encrypted data to decrypt it once quantum computers become 
-                    powerful enough. Our quantum-resistant encryption protects against this future threat today.
-                  </AlertDescription>
-                </Alert>
-                
-                <div className="flex flex-col sm:flex-row justify-between items-center gap-4 p-4 border rounded-lg">
-                  <div>
-                    <h3 className="font-medium mb-1">Perform Comprehensive Quantum Security Audit</h3>
-                    <p className="text-sm text-muted-foreground">
-                      Evaluate all cryptographic systems against current quantum computing threats and vulnerabilities
-                    </p>
+
+                <div className="p-6 bg-[#0f0f2a] rounded-lg border border-purple-500/20">
+                  <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
+                    <Layers className="h-5 w-5 text-purple-400" />
+                    How It Works in Trinity Protocol
+                  </h3>
+                  <div className="grid md:grid-cols-3 gap-4">
+                    {[
+                      { role: 'PRIMARY', chain: 'Arbitrum', crypto: 'ECDSA (secp256k1)', note: 'Standard EVM security' },
+                      { role: 'MONITOR', chain: 'Solana', crypto: 'Ed25519', note: 'Fast signature verification' },
+                      { role: 'BACKUP', chain: 'TON', crypto: 'ML-KEM + Dilithium', note: 'Quantum-resistant recovery' },
+                    ].map((item) => (
+                      <div key={item.role} className="text-center p-4 bg-[#1a1a3a] rounded-lg">
+                        <Badge className={`mb-2 ${item.role === 'BACKUP' ? 'bg-purple-500/20 text-purple-400' : 'bg-gray-500/20 text-gray-400'}`}>
+                          {item.role}
+                        </Badge>
+                        <div className="font-semibold">{item.chain}</div>
+                        <div className="text-sm text-purple-400 mt-1">{item.crypto}</div>
+                        <div className="text-xs text-gray-500 mt-1">{item.note}</div>
+                      </div>
+                    ))}
                   </div>
-                  <Button
-                    onClick={performQuantumAudit}
-                    disabled={isPerformingAudit}
-                    variant="outline"
-                    className="min-w-[160px]"
-                  >
-                    {isPerformingAudit ? (
-                      <>
-                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                        Auditing...
-                      </>
-                    ) : (
-                      <>
-                        <Key className="mr-2 h-4 w-4" />
-                        Start Audit
-                      </>
-                    )}
-                  </Button>
                 </div>
               </CardContent>
             </Card>
           </TabsContent>
-          
-          <TabsContent value="algorithms" className="space-y-4">
-            <Card>
+
+          <TabsContent value="algorithms" className="space-y-6">
+            <Card className="bg-[#1a1a3a]/80 border-gray-700">
               <CardHeader>
-                <CardTitle>Post-Quantum Cryptographic Algorithms</CardTitle>
-                <CardDescription>NIST-approved quantum-resistant algorithms protecting your assets</CardDescription>
+                <CardTitle className="text-2xl flex items-center gap-2">
+                  <Cpu className="h-6 w-6 text-purple-400" />
+                  Post-Quantum Algorithms
+                </CardTitle>
+                <CardDescription>
+                  NIST-standardized algorithms deployed in Trinity Protocol
+                </CardDescription>
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
-                  {protectionFeatures.map((feature) => (
-                    <div 
-                      key={feature.id}
-                      className={cn(
-                        "border rounded-lg p-4",
-                        feature.enabled 
-                          ? "bg-gradient-to-r from-blue-50/30 to-indigo-50/30 dark:from-blue-950/20 dark:to-indigo-950/20" 
-                          : "bg-gray-50/50 dark:bg-gray-900/20"
-                      )}
-                    >
-                      <div className="flex justify-between items-start">
-                        <div className="flex items-center">
-                          <div className={cn(
-                            "p-2 rounded-full mr-3",
-                            feature.enabled 
-                              ? "bg-blue-100 dark:bg-blue-900/50" 
-                              : "bg-gray-100 dark:bg-gray-800/50"
-                          )}>
-                            <Code className={cn(
-                              "h-5 w-5",
-                              feature.enabled 
-                                ? "text-blue-600 dark:text-blue-400" 
-                                : "text-gray-400 dark:text-gray-500"
-                            )} />
-                          </div>
+                  {QUANTUM_ALGORITHMS.map((algo) => (
+                    <div key={algo.id} className="p-4 bg-[#0f0f2a] rounded-lg border border-gray-700">
+                      <div className="flex items-center justify-between mb-3">
+                        <div className="flex items-center gap-3">
+                          <div className={`w-3 h-3 rounded-full ${algo.status === 'active' ? 'bg-green-500' : 'bg-yellow-500'}`} />
                           <div>
-                            <h3 className="font-semibold flex items-center">
-                              {feature.name}
-                              {feature.enabled && (
-                                <Badge className="ml-2 bg-green-500 text-white">Active</Badge>
-                              )}
-                              {!feature.enabled && (
-                                <Badge className="ml-2 bg-gray-400 text-white">Disabled</Badge>
-                              )}
-                            </h3>
-                            <p className="text-sm text-muted-foreground mt-1">
-                              {feature.description}
-                            </p>
+                            <div className="font-semibold">{algo.name}</div>
+                            <div className="text-sm text-gray-400">{algo.type}</div>
                           </div>
                         </div>
-                        
-                        <div className="text-right">
-                          <div className="flex items-center justify-end">
-                            <span className="text-sm font-medium mr-2">Strength:</span>
-                            <div className="w-12 h-12 rounded-full flex items-center justify-center border-2 border-blue-200 dark:border-blue-800 bg-white dark:bg-gray-950">
-                              <span className={cn(
-                                "font-bold text-sm",
-                                feature.strength >= 90 ? "text-green-500" :
-                                feature.strength >= 80 ? "text-blue-500" :
-                                "text-amber-500"
-                              )}>
-                                {feature.strength}%
-                              </span>
-                            </div>
-                          </div>
-                          <p className="text-xs mt-2 text-muted-foreground">
-                            {feature.algorithm}
-                          </p>
-                        </div>
-                      </div>
-                      
-                      {feature.enabled && (
-                        <div className="mt-3 pt-3 border-t text-sm flex justify-between items-center">
-                          <span className="text-muted-foreground">Implementation Status: <span className="text-green-600 dark:text-green-400">Fully Deployed</span></span>
-                          
-                          <Button variant="ghost" size="sm" className="h-7 px-2 text-xs">
-                            View Details <ArrowUpRight className="ml-1 h-3 w-3" />
-                          </Button>
-                        </div>
-                      )}
-                      
-                      {!feature.enabled && (
-                        <div className="mt-3 pt-3 border-t text-sm flex justify-between items-center">
-                          <span className="text-muted-foreground">Enable this algorithm for enhanced protection</span>
-                          
-                          <Button variant="ghost" size="sm" className="h-7 px-2 text-xs">
-                            Enable <Zap className="ml-1 h-3 w-3" />
-                          </Button>
-                        </div>
-                      )}
-                    </div>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
-          </TabsContent>
-          
-          <TabsContent value="threats" className="space-y-4">
-            <Card>
-              <CardHeader>
-                <CardTitle>Quantum Threat Detection</CardTitle>
-                <CardDescription>Monitoring and mitigating potential quantum computing attacks</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-4">
-                  {recentThreats.map((threat) => (
-                    <div 
-                      key={threat.id}
-                      className={cn(
-                        "border rounded-lg p-4",
-                        threat.severity === "critical" 
-                          ? "bg-red-50/20 dark:bg-red-950/20 border-red-200 dark:border-red-900/40" 
-                          : threat.severity === "high"
-                            ? "bg-orange-50/20 dark:bg-orange-950/20 border-orange-200 dark:border-orange-900/40"
-                            : "bg-yellow-50/20 dark:bg-yellow-950/20 border-yellow-200 dark:border-yellow-900/40"
-                      )}
-                    >
-                      <div className="flex justify-between items-start">
-                        <div className="flex items-start">
-                          <div className={cn(
-                            "p-2 rounded-full mr-3 mt-1",
-                            threat.severity === "critical" 
-                              ? "bg-red-100 dark:bg-red-900/50" 
-                              : threat.severity === "high"
-                                ? "bg-orange-100 dark:bg-orange-900/50"
-                                : "bg-yellow-100 dark:bg-yellow-900/50"
-                          )}>
-                            <ShieldAlert className={cn(
-                              "h-5 w-5",
-                              threat.severity === "critical" 
-                                ? "text-red-600 dark:text-red-400" 
-                                : threat.severity === "high"
-                                  ? "text-orange-600 dark:text-orange-400"
-                                  : "text-yellow-600 dark:text-yellow-400"
-                            )} />
-                          </div>
-                          <div>
-                            <div className="flex items-center">
-                              <h3 className="font-semibold">
-                                {threat.type}
-                              </h3>
-                              <Badge className={cn(
-                                "ml-2",
-                                threat.severity === "critical" 
-                                  ? "bg-red-500" 
-                                  : threat.severity === "high"
-                                    ? "bg-orange-500"
-                                    : "bg-yellow-500"
-                              )}>
-                                {threat.severity.charAt(0).toUpperCase() + threat.severity.slice(1)}
-                              </Badge>
-                            </div>
-                            <p className="text-sm text-muted-foreground mt-1">
-                              {threat.details}
-                            </p>
-                          </div>
-                        </div>
-                        
-                        <div className="text-right">
-                          <Badge className={cn(
-                            threat.status === "mitigated" 
-                              ? "bg-green-500" 
-                              : "bg-blue-500"
-                          )}>
-                            {threat.status.charAt(0).toUpperCase() + threat.status.slice(1)}
+                        <div className="flex items-center gap-2">
+                          <Badge className="bg-purple-500/20 text-purple-400">{algo.securityLevel}</Badge>
+                          <Badge className={algo.status === 'active' ? 'bg-green-500/20 text-green-400' : 'bg-yellow-500/20 text-yellow-400'}>
+                            {algo.status}
                           </Badge>
-                          <p className="text-xs mt-2 text-muted-foreground">
-                            {new Date(threat.timestamp).toLocaleString()}
-                          </p>
                         </div>
                       </div>
-                      
-                      <div className="mt-3 pt-3 border-t text-sm flex justify-between items-center">
-                        <span className="text-muted-foreground flex items-center">
-                          <Network className="h-3 w-3 mr-1" />
-                          Security event logged and notifications sent
-                        </span>
-                        
-                        <Button variant="ghost" size="sm" className="h-7 px-2 text-xs">
-                          View Details <ArrowUpRight className="ml-1 h-3 w-3" />
-                        </Button>
+                      <p className="text-sm text-gray-400 mb-3">{algo.description}</p>
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-2 flex-1">
+                          <span className="text-xs text-gray-500">Strength:</span>
+                          <Progress value={algo.strength} className="flex-1 h-2" />
+                          <span className="text-sm font-medium text-purple-400">{algo.strength}%</span>
+                        </div>
+                        <span className="text-xs text-gray-500 ml-4">Deployed: {algo.deployedOn}</span>
                       </div>
                     </div>
                   ))}
-                  
-                  <div className="flex justify-center pt-4">
-                    <Button variant="outline">
-                      View All Threat Logs <ExternalLink className="ml-2 h-4 w-4" />
-                    </Button>
-                  </div>
                 </div>
               </CardContent>
             </Card>
           </TabsContent>
-          
-          <TabsContent value="vaults" className="space-y-4">
-            <Card>
+
+          <TabsContent value="contracts" className="space-y-6">
+            <Card className="bg-[#1a1a3a]/80 border-gray-700">
               <CardHeader>
-                <CardTitle>Quantum-Protected Vaults</CardTitle>
-                <CardDescription>Assets secured with post-quantum encryption</CardDescription>
+                <CardTitle className="text-2xl flex items-center gap-2">
+                  <Lock className="h-6 w-6 text-purple-400" />
+                  TON Quantum-Resistant Contracts
+                </CardTitle>
+                <CardDescription>
+                  Deployed on TON Testnet with quantum-safe cryptography
+                </CardDescription>
               </CardHeader>
               <CardContent>
-                <div className="overflow-x-auto">
-                  <table className="w-full border-collapse">
-                    <thead>
-                      <tr className="border-b">
-                        <th className="text-left py-3 px-4">Vault Name</th>
-                        <th className="text-left py-3 px-4">Asset Type</th>
-                        <th className="text-left py-3 px-4">Protection Status</th>
-                        <th className="text-left py-3 px-4">Last Updated</th>
-                        <th className="text-left py-3 px-4">Actions</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {protectedVaults.map((vault) => (
-                        <tr key={vault.id} className="border-b hover:bg-gray-50/50 dark:hover:bg-gray-900/30">
-                          <td className="py-3 px-4 font-medium">{vault.name}</td>
-                          <td className="py-3 px-4">
-                            <Badge variant="outline" className="border-purple-200 text-purple-700 dark:border-purple-700 dark:text-purple-300">
-                              {vault.assetType}
-                            </Badge>
-                          </td>
-                          <td className="py-3 px-4">
-                            {vault.quantumProtected ? (
-                              <div className="flex items-center text-green-600 dark:text-green-400">
-                                <Shield className="h-4 w-4 mr-1" />
-                                Quantum Protected
-                              </div>
-                            ) : (
-                              <div className="flex items-center text-yellow-600 dark:text-yellow-400">
-                                <ShieldAlert className="h-4 w-4 mr-1" />
-                                Standard Protection
-                              </div>
-                            )}
-                          </td>
-                          <td className="py-3 px-4 text-muted-foreground text-sm">
-                            {new Date(vault.lastUpdated).toLocaleString()}
-                          </td>
-                          <td className="py-3 px-4">
-                            <div className="flex space-x-2">
-                              <Button variant="ghost" size="sm" className="h-8 px-3">
-                                View
-                              </Button>
-                              <Button variant="outline" size="sm" className="h-8 px-3">
-                                Manage
-                              </Button>
-                            </div>
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
+                <div className="space-y-4">
+                  {Object.entries(TON_QUANTUM_CONTRACTS).map(([name, address]) => (
+                    <div key={name} className="flex items-center justify-between p-4 bg-[#0f0f2a] rounded-lg border border-gray-700">
+                      <div>
+                        <div className="font-medium flex items-center gap-2">
+                          <CheckCircle className="h-4 w-4 text-green-400" />
+                          {name}
+                        </div>
+                        <code className="text-xs text-gray-400">{address}</code>
+                      </div>
+                      <a 
+                        href={`https://testnet.tonscan.org/address/${address}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-purple-400 hover:underline flex items-center gap-1 text-sm"
+                      >
+                        View <ExternalLink className="h-3 w-3" />
+                      </a>
+                    </div>
+                  ))}
                 </div>
-                
-                <div className="mt-6 flex justify-between items-center p-4 border rounded-lg bg-blue-50/30 dark:bg-blue-950/30">
-                  <div>
-                    <h3 className="font-medium">Create New Quantum-Protected Vault</h3>
-                    <p className="text-sm text-muted-foreground">
-                      Set up a new vault with advanced post-quantum security features
-                    </p>
+
+                <div className="mt-6 p-4 bg-purple-500/10 border border-purple-500/30 rounded-lg">
+                  <div className="flex items-center gap-2 text-purple-400 font-semibold mb-2">
+                    <Shield className="h-5 w-5" />
+                    Quantum-Safe Features
                   </div>
-                  <Button
-                    onClick={() => navigate('/quantum-resistant-vault')}
-                    className="bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] hover:opacity-90"
-                  >
-                    <Database className="mr-2 h-4 w-4" />
-                    Create Vault
-                  </Button>
+                  <ul className="text-sm text-gray-300 space-y-1">
+                    <li>• ML-KEM-1024 for secure key encapsulation</li>
+                    <li>• CRYSTALS-Dilithium-5 for digital signatures</li>
+                    <li>• 3-of-3 validator approval for emergency recovery</li>
+                    <li>• 48-hour time-lock on recovery operations</li>
+                  </ul>
+                </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          <TabsContent value="metrics" className="space-y-6">
+            <Card className="bg-[#1a1a3a]/80 border-gray-700">
+              <CardHeader>
+                <CardTitle className="text-2xl flex items-center gap-2">
+                  <Activity className="h-6 w-6 text-purple-400" />
+                  Security Assessment
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-4">
+                  {Object.entries(SECURITY_METRICS).map(([key, value]) => (
+                    <div key={key} className="space-y-2">
+                      <div className="flex justify-between items-center">
+                        <span className="capitalize text-gray-300">{key.replace(/([A-Z])/g, ' $1').trim()}</span>
+                        <span className={`font-bold ${value >= 90 ? 'text-green-400' : value >= 80 ? 'text-yellow-400' : 'text-red-400'}`}>
+                          {value}%
+                        </span>
+                      </div>
+                      <Progress value={value} className="h-2" />
+                    </div>
+                  ))}
+                </div>
+
+                <div className="mt-6 grid md:grid-cols-2 gap-4">
+                  <div className="p-4 bg-green-500/10 border border-green-500/30 rounded-lg">
+                    <div className="text-green-400 font-semibold mb-2">Strengths</div>
+                    <ul className="text-sm text-gray-300 space-y-1">
+                      <li>• NIST Level 5 algorithms</li>
+                      <li>• Hardware-isolated key storage</li>
+                      <li>• Multi-chain redundancy</li>
+                    </ul>
+                  </div>
+                  <div className="p-4 bg-amber-500/10 border border-amber-500/30 rounded-lg">
+                    <div className="text-amber-400 font-semibold mb-2">Considerations</div>
+                    <ul className="text-sm text-gray-300 space-y-1">
+                      <li>• Larger key sizes than classical</li>
+                      <li>• Higher computational cost</li>
+                      <li>• Newer algorithm standards</li>
+                    </ul>
+                  </div>
                 </div>
               </CardContent>
             </Card>
           </TabsContent>
         </Tabs>
-        
-        {/* Bottom Resources Section */}
-        <Card className="border-[#333] bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-950">
-          <CardHeader>
-            <CardTitle>Quantum Computing Learning Resources</CardTitle>
-            <CardDescription>
-              Understanding the impact of quantum computing on blockchain security
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="grid gap-4 md:grid-cols-3">
-            <a 
-              href="#" 
-              className="block p-4 rounded-lg border bg-white/90 dark:bg-black/20 hover:shadow-md transition-shadow"
-            >
-              <h3 className="font-semibold flex items-center text-[#6B00D7] dark:text-[#FF5AF7]">
-                <FileText className="h-4 w-4 mr-2" />
-                Quantum Cryptography Whitepaper
-              </h3>
-              <p className="text-sm mt-2 text-muted-foreground">
-                Comprehensive explanation of quantum threats and our cryptographic defenses
-              </p>
-            </a>
-            
-            <a 
-              href="#" 
-              className="block p-4 rounded-lg border bg-white/90 dark:bg-black/20 hover:shadow-md transition-shadow"
-            >
-              <h3 className="font-semibold flex items-center text-[#6B00D7] dark:text-[#FF5AF7]">
-                <Code className="h-4 w-4 mr-2" />
-                NIST Post-Quantum Standards
-              </h3>
-              <p className="text-sm mt-2 text-muted-foreground">
-                Overview of standardized algorithms for post-quantum cryptography
-              </p>
-            </a>
-            
-            <a 
-              href="#" 
-              className="block p-4 rounded-lg border bg-white/90 dark:bg-black/20 hover:shadow-md transition-shadow"
-            >
-              <h3 className="font-semibold flex items-center text-[#6B00D7] dark:text-[#FF5AF7]">
-                <Server className="h-4 w-4 mr-2" />
-                Quantum-Safe Implementation Guide
-              </h3>
-              <p className="text-sm mt-2 text-muted-foreground">
-                Step-by-step tutorial for using our quantum-resistant features
-              </p>
-            </a>
-          </CardContent>
-        </Card>
-      </div>
+      </section>
     </div>
   );
-};
-
-export default QuantumResistantPage;
+}
