@@ -1,46 +1,82 @@
 import { useState } from 'react';
-import { useLocation } from 'wouter';
+import { Link } from 'wouter';
+import { useQuery } from '@tanstack/react-query';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Shield, AlertTriangle, Lock, Check, X, Loader2, KeyRound } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
-import { apiRequest } from '@/lib/queryClient';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { 
+  Shield, 
+  AlertTriangle, 
+  Lock, 
+  Check, 
+  X, 
+  Loader2, 
+  KeyRound,
+  ExternalLink,
+  Activity,
+  Zap,
+  Search
+} from "lucide-react";
+
+const TON_CONTRACTS = {
+  TrinityConsensus: 'EQeGlYzwupSROVWGucOmKyUDbSaKmPfIpHHP5mV73odL8',
+  ChronosVault: 'EQjUVidQfn4m-Rougn0fol7ECCthba2HV0M6xz9zAfax4',
+  CrossChainBridge: 'EQgWobA9D4u6Xem3B8e6Sde_NEFZYicyy7_5_XvOT18mA',
+};
+
+const QUANTUM_ALGORITHMS = {
+  keyEncapsulation: 'ML-KEM-1024 (CRYSTALS-Kyber)',
+  signatures: 'CRYSTALS-Dilithium-5',
+  hashFunction: 'SHAKE-256',
+  securityLevel: 'NIST Level 5 (256-bit quantum)',
+};
 
 interface RecoveryVerification {
-  chain: 'ethereum' | 'solana' | 'ton';
+  chain: 'arbitrum' | 'solana' | 'ton';
   verified: boolean;
-  timestamp: number;
-  status: 'pending' | 'success' | 'failed';
+  status: 'pending' | 'verifying' | 'success' | 'failed';
 }
 
-/**
- * TON Emergency Recovery Page
- * 
- * Uses the Trinity Protocol's emergency recovery system which requires
- * ALL 3 chains to verify the recovery request. Fixed-role architecture ensures
- * maximum security: Ethereum (Primary), Solana (Rapid Validation), TON (Recovery System).
- */
-const DeviceRecoveryPage = () => {
-  const [, navigate] = useLocation();
+interface HtlcSwap {
+  id: number;
+  swapId: string;
+  sourceChain: string;
+  destChain: string;
+  amount: string;
+  status: string;
+  createdAt: string;
+}
+
+export default function DeviceRecoveryPage() {
   const { toast } = useToast();
-  
-  // Recovery form state
   const [vaultId, setVaultId] = useState('');
   const [recoveryKey, setRecoveryKey] = useState('');
   const [isRecovering, setIsRecovering] = useState(false);
   const [recoveryStep, setRecoveryStep] = useState<'input' | 'verifying' | 'complete'>('input');
-  
-  // Verification status for all 3 chains
   const [chainVerifications, setChainVerifications] = useState<RecoveryVerification[]>([
-    { chain: 'ethereum', verified: false, timestamp: 0, status: 'pending' },
-    { chain: 'solana', verified: false, timestamp: 0, status: 'pending' },
-    { chain: 'ton', verified: false, timestamp: 0, status: 'pending' }
+    { chain: 'arbitrum', verified: false, status: 'pending' },
+    { chain: 'solana', verified: false, status: 'pending' },
+    { chain: 'ton', verified: false, status: 'pending' }
   ]);
+
+  const { data: swapsData } = useQuery<{ success: boolean; data: { swaps: HtlcSwap[] } }>({
+    queryKey: ['/api/scanner/swaps'],
+  });
+
+  const { data: blockchainStatus } = useQuery<any>({
+    queryKey: ['/api/blockchain/status'],
+  });
+
+  const swaps = swapsData?.data?.swaps || [];
+
+  const handleSelectVault = (swapId: string) => {
+    setVaultId(swapId);
+  };
 
   const handleEmergencyRecovery = async () => {
     if (!vaultId || !recoveryKey) {
@@ -54,50 +90,26 @@ const DeviceRecoveryPage = () => {
 
     setIsRecovering(true);
     setRecoveryStep('verifying');
+    setChainVerifications([
+      { chain: 'arbitrum', verified: false, status: 'verifying' },
+      { chain: 'solana', verified: false, status: 'pending' },
+      { chain: 'ton', verified: false, status: 'pending' }
+    ]);
 
     try {
-      // Reset verification status
-      setChainVerifications([
-        { chain: 'ethereum', verified: false, timestamp: 0, status: 'pending' },
-        { chain: 'solana', verified: false, timestamp: 0, status: 'pending' },
-        { chain: 'ton', verified: false, timestamp: 0, status: 'pending' }
-      ]);
-
-      // Call Trinity Protocol emergency recovery endpoint
       const response = await fetch('/api/trinity/emergency-recovery', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          vaultId,
-          recoveryKey
-        })
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ vaultId, recoveryKey })
       });
 
       if (response.ok) {
         const result = await response.json();
         
-        // Update chain verification status from response
         const updatedVerifications: RecoveryVerification[] = [
-          {
-            chain: 'ethereum',
-            verified: result.verifications?.find((v: any) => v.chain === 'ethereum')?.verified || false,
-            timestamp: Date.now(),
-            status: result.verifications?.find((v: any) => v.chain === 'ethereum')?.verified ? 'success' : 'failed'
-          },
-          {
-            chain: 'solana',
-            verified: result.verifications?.find((v: any) => v.chain === 'solana')?.verified || false,
-            timestamp: Date.now(),
-            status: result.verifications?.find((v: any) => v.chain === 'solana')?.verified ? 'success' : 'failed'
-          },
-          {
-            chain: 'ton',
-            verified: result.verifications?.find((v: any) => v.chain === 'ton')?.verified || false,
-            timestamp: Date.now(),
-            status: result.verifications?.find((v: any) => v.chain === 'ton')?.verified ? 'success' : 'failed'
-          }
+          { chain: 'arbitrum', verified: result.verifications?.find((v: any) => v.chain === 'ethereum')?.verified || false, status: result.verifications?.find((v: any) => v.chain === 'ethereum')?.verified ? 'success' : 'failed' },
+          { chain: 'solana', verified: result.verifications?.find((v: any) => v.chain === 'solana')?.verified || false, status: result.verifications?.find((v: any) => v.chain === 'solana')?.verified ? 'success' : 'failed' },
+          { chain: 'ton', verified: result.verifications?.find((v: any) => v.chain === 'ton')?.verified || false, status: result.verifications?.find((v: any) => v.chain === 'ton')?.verified ? 'success' : 'failed' }
         ];
         
         setChainVerifications(updatedVerifications);
@@ -105,13 +117,13 @@ const DeviceRecoveryPage = () => {
         if (result.success && result.consensusReached) {
           setRecoveryStep('complete');
           toast({
-            title: "🎉 Recovery Successful!",
+            title: "Recovery Successful!",
             description: "All 3 chains verified your recovery. Access restored!",
           });
         } else {
           toast({
             title: "Recovery Failed",
-            description: `Only ${result.verifications?.filter((v: any) => v.verified).length}/3 chains verified. All 3 required for emergency recovery.`,
+            description: `Only ${result.verifications?.filter((v: any) => v.verified).length || 0}/3 chains verified. All 3 required for emergency recovery.`,
             variant: "destructive"
           });
         }
@@ -125,264 +137,215 @@ const DeviceRecoveryPage = () => {
         description: "Failed to process emergency recovery. Please try again.",
         variant: "destructive"
       });
-      
-      setChainVerifications(prev => prev.map(v => ({ ...v, status: 'failed' })));
+      setChainVerifications(prev => prev.map(v => ({ ...v, status: 'failed' as const })));
     } finally {
       setIsRecovering(false);
     }
   };
 
-  const getChainIcon = (chain: string) => {
-    switch (chain) {
-      case 'ethereum': return '⟠';
-      case 'solana': return '◎';
-      case 'ton': return '💎';
-      default: return '🔗';
-    }
-  };
-
-  const getChainRole = (chain: string) => {
-    switch (chain) {
-      case 'ethereum': return 'PRIMARY';
-      case 'solana': return 'MONITOR';
-      case 'ton': return 'BACKUP';
-      default: return '';
-    }
-  };
-
   return (
-    <div className="container mx-auto px-4 py-8">
-      <div className="max-w-4xl mx-auto">
-        {/* Header */}
-        <div className="text-center mb-8">
-          <div className="inline-flex items-center justify-center p-3 bg-gradient-to-r from-purple-600 to-pink-600 rounded-full mb-4">
-            <Shield className="h-8 w-8 text-white" />
+    <div className="min-h-screen bg-gradient-to-b from-[#0a0a1a] via-[#0f0f2a] to-[#0a0a1a] text-white">
+      <section className="relative py-12 px-4 overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-r from-cyan-500/5 via-transparent to-purple-500/5" />
+        <div className="max-w-4xl mx-auto relative z-10">
+          <div className="flex items-center gap-3 mb-4">
+            <Shield className="w-12 h-12 text-cyan-400" />
+            <Badge className="bg-cyan-500/20 text-cyan-400 border-cyan-500/30">
+              <Zap className="w-3 h-3 mr-1 inline" /> Quantum-Safe Recovery
+            </Badge>
           </div>
-          <h1 className="text-4xl font-bold mb-2 bg-gradient-to-r from-purple-400 via-pink-400 to-blue-400 bg-clip-text text-transparent">
+          <h1 className="text-4xl md:text-5xl font-bold mb-4 bg-gradient-to-r from-cyan-400 to-purple-400 bg-clip-text text-transparent">
             TON Emergency Recovery
           </h1>
-          <p className="text-muted-foreground text-lg">
-            Trinity Protocol™ 3-Chain Verification System
+          <p className="text-xl text-gray-300 mb-6">
+            Trinity Protocol™ 3-of-3 chain verification with quantum-resistant cryptography.
           </p>
-          <Badge variant="outline" className="mt-2 border-purple-500 text-purple-300">
-            Requires ALL 3 Chains • Maximum Security
-          </Badge>
+
+          <Alert className="mb-6 border-amber-500/30 bg-amber-500/10">
+            <AlertTriangle className="h-4 w-4 text-amber-500" />
+            <AlertTitle className="text-amber-500">Maximum Security Protocol</AlertTitle>
+            <AlertDescription className="text-gray-300">
+              Emergency recovery requires ALL 3 chains to verify. This is the highest security 
+              level in Trinity Protocol, designed for recovering access to your vault when 
+              standard 2-of-3 consensus is insufficient.
+            </AlertDescription>
+          </Alert>
         </div>
+      </section>
 
-        {/* Security Warning */}
-        <Alert className="mb-6 border-amber-500/30 bg-amber-500/10">
-          <AlertTriangle className="h-4 w-4 text-amber-500" />
-          <AlertTitle className="text-amber-500">Maximum Security Protocol</AlertTitle>
-          <AlertDescription className="text-amber-400/80">
-            Emergency recovery requires mathematical consensus from ALL 3 blockchains (Ethereum + Solana + TON). 
-            This ensures your vault cannot be recovered by compromising just one or two chains.
-          </AlertDescription>
-        </Alert>
-
-        {recoveryStep === 'input' && (
-          <Card className="border-purple-500/30 bg-black/50 backdrop-blur-sm">
+      <section className="max-w-4xl mx-auto px-4 pb-20">
+        <div className="grid md:grid-cols-2 gap-6">
+          <Card className="bg-[#1a1a3a]/80 border-gray-700">
             <CardHeader>
-              <CardTitle className="text-2xl text-white">Initiate Emergency Recovery</CardTitle>
-              <CardDescription className="text-gray-400">
-                Enter your vault credentials to begin the Trinity Protocol verification process
+              <CardTitle className="flex items-center gap-2">
+                <KeyRound className="h-5 w-5 text-cyan-400" />
+                Recovery Form
+              </CardTitle>
+              <CardDescription>
+                Select a vault from Trinity Scan or enter manually
               </CardDescription>
             </CardHeader>
-            <CardContent className="space-y-6">
-              <div className="space-y-2">
-                <Label htmlFor="vaultId" className="text-white">Vault ID</Label>
-                <Input
-                  id="vaultId"
-                  placeholder="vault-1234567890-primary"
-                  value={vaultId}
-                  onChange={(e) => setVaultId(e.target.value)}
-                  className="bg-black/50 border-gray-700 text-white"
-                />
-                <p className="text-sm text-gray-400">
-                  Your unique vault identifier
-                </p>
+            <CardContent className="space-y-4">
+              <div>
+                <Label>Select from Trinity Scan ({swaps.length} swaps available)</Label>
+                <Select onValueChange={handleSelectVault}>
+                  <SelectTrigger className="bg-[#0f0f2a] border-gray-600" data-testid="select-vault">
+                    <SelectValue placeholder="Select a vault/swap ID..." />
+                  </SelectTrigger>
+                  <SelectContent className="bg-[#1a1a3a] border-gray-600">
+                    {swaps.slice(0, 10).map((swap) => (
+                      <SelectItem key={swap.id} value={swap.swapId || `swap-${swap.id}`}>
+                        <div className="flex items-center gap-2">
+                          <span className="font-mono text-xs">{swap.swapId?.slice(0, 16) || `ID: ${swap.id}`}...</span>
+                          <Badge className="text-xs">{swap.sourceChain} → {swap.destChain}</Badge>
+                        </div>
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <Link href="/monitoring" className="text-xs text-cyan-400 hover:underline mt-1 inline-flex items-center gap-1">
+                  <Search className="h-3 w-3" /> View all in Trinity Scan
+                </Link>
               </div>
 
-              <div className="space-y-2">
-                <Label htmlFor="recoveryKey" className="text-white">Recovery Key</Label>
+              <div>
+                <Label htmlFor="vaultId">Vault/Swap ID</Label>
+                <Input
+                  id="vaultId"
+                  placeholder="0x... or swap-..."
+                  value={vaultId}
+                  onChange={(e) => setVaultId(e.target.value)}
+                  className="bg-[#0f0f2a] border-gray-600 font-mono text-sm"
+                  data-testid="input-vault-id"
+                />
+              </div>
+              <div>
+                <Label htmlFor="recoveryKey">Recovery Key</Label>
                 <Input
                   id="recoveryKey"
                   type="password"
-                  placeholder="Enter your recovery key"
+                  placeholder="Your recovery key..."
                   value={recoveryKey}
                   onChange={(e) => setRecoveryKey(e.target.value)}
-                  className="bg-black/50 border-gray-700 text-white"
+                  className="bg-[#0f0f2a] border-gray-600"
+                  data-testid="input-recovery-key"
                 />
-                <p className="text-sm text-gray-400">
-                  The secure recovery key provided when you created your vault
-                </p>
               </div>
-
               <Button 
                 onClick={handleEmergencyRecovery}
                 disabled={isRecovering || !vaultId || !recoveryKey}
-                className="w-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700"
+                className="w-full bg-gradient-to-r from-cyan-500 to-purple-500"
+                data-testid="button-recover"
               >
                 {isRecovering ? (
-                  <>
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    Verifying Across 3 Chains...
-                  </>
+                  <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Verifying...</>
                 ) : (
-                  <>
-                    <KeyRound className="mr-2 h-4 w-4" />
-                    Start Emergency Recovery
-                  </>
+                  <><Lock className="mr-2 h-4 w-4" /> Initiate Recovery</>
                 )}
               </Button>
             </CardContent>
           </Card>
-        )}
 
-        {recoveryStep === 'verifying' && (
-          <Card className="border-purple-500/30 bg-black/50 backdrop-blur-sm">
+          <Card className="bg-[#1a1a3a]/80 border-gray-700">
             <CardHeader>
-              <CardTitle className="text-2xl text-white">Trinity Protocol Verification</CardTitle>
-              <CardDescription className="text-gray-400">
-                Verifying your recovery request across all 3 blockchains
+              <CardTitle className="flex items-center gap-2">
+                <Activity className="h-5 w-5 text-cyan-400" />
+                Chain Verification Status
+              </CardTitle>
+              <CardDescription>
+                All 3 chains must verify for recovery
               </CardDescription>
             </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
-                {chainVerifications.map((verification, index) => (
-                  <div 
-                    key={verification.chain}
-                    className={`flex items-center justify-between p-4 rounded-lg border ${
-                      verification.status === 'success' ? 'border-green-500/30 bg-green-500/10' :
-                      verification.status === 'failed' ? 'border-red-500/30 bg-red-500/10' :
-                      'border-gray-700 bg-black/30'
-                    }`}
-                  >
-                    <div className="flex items-center space-x-3">
-                      <div className="text-3xl">{getChainIcon(verification.chain)}</div>
-                      <div>
-                        <p className="text-white font-semibold capitalize">
-                          {verification.chain}
-                        </p>
-                        <p className="text-sm text-gray-400">
-                          Role: {getChainRole(verification.chain)}
-                        </p>
-                      </div>
-                    </div>
-                    <div>
-                      {verification.status === 'pending' && (
-                        <Loader2 className="h-6 w-6 text-purple-400 animate-spin" />
-                      )}
-                      {verification.status === 'success' && (
-                        <div className="flex items-center text-green-400">
-                          <Check className="h-6 w-6 mr-2" />
-                          <span>Verified</span>
-                        </div>
-                      )}
-                      {verification.status === 'failed' && (
-                        <div className="flex items-center text-red-400">
-                          <X className="h-6 w-6 mr-2" />
-                          <span>Failed</span>
-                        </div>
-                      )}
-                    </div>
+            <CardContent className="space-y-4">
+              {chainVerifications.map((chain) => (
+                <div key={chain.chain} className="flex items-center justify-between p-3 bg-[#0f0f2a] rounded-lg border border-gray-700">
+                  <div className="flex items-center gap-3">
+                    <div className={`w-3 h-3 rounded-full ${
+                      chain.status === 'success' ? 'bg-green-500' :
+                      chain.status === 'verifying' ? 'bg-yellow-500 animate-pulse' :
+                      chain.status === 'failed' ? 'bg-red-500' : 'bg-gray-500'
+                    }`} />
+                    <span className="capitalize font-medium">{chain.chain}</span>
                   </div>
-                ))}
-              </div>
+                  <div className="flex items-center gap-2">
+                    {chain.status === 'success' && <Check className="h-4 w-4 text-green-400" />}
+                    {chain.status === 'failed' && <X className="h-4 w-4 text-red-400" />}
+                    {chain.status === 'verifying' && <Loader2 className="h-4 w-4 text-yellow-400 animate-spin" />}
+                    <Badge className={`text-xs ${
+                      chain.status === 'success' ? 'bg-green-500/20 text-green-400' :
+                      chain.status === 'failed' ? 'bg-red-500/20 text-red-400' :
+                      chain.status === 'verifying' ? 'bg-yellow-500/20 text-yellow-400' : 'bg-gray-500/20 text-gray-400'
+                    }`}>
+                      {chain.status}
+                    </Badge>
+                  </div>
+                </div>
+              ))}
+              
+              {recoveryStep === 'complete' && (
+                <Alert className="border-green-500/30 bg-green-500/10">
+                  <Check className="h-4 w-4 text-green-500" />
+                  <AlertTitle className="text-green-400">Recovery Complete!</AlertTitle>
+                  <AlertDescription className="text-gray-300">
+                    Your vault access has been restored.
+                  </AlertDescription>
+                </Alert>
+              )}
             </CardContent>
           </Card>
-        )}
+        </div>
 
-        {recoveryStep === 'complete' && (
-          <Card className="border-green-500/30 bg-green-500/10 backdrop-blur-sm">
-            <CardHeader>
-              <div className="text-center">
-                <div className="inline-flex items-center justify-center p-4 bg-green-600 rounded-full mb-4">
-                  <Check className="h-12 w-12 text-white" />
-                </div>
-                <CardTitle className="text-3xl text-green-400 mb-2">Recovery Successful!</CardTitle>
-                <CardDescription className="text-gray-300 text-lg">
-                  All 3 blockchains verified your recovery request
-                </CardDescription>
-              </div>
-            </CardHeader>
-            <CardContent className="space-y-6">
-              <div className="text-center space-y-4">
-                <p className="text-white">
-                  Your vault has been successfully recovered using the Trinity Protocol™.
-                </p>
-                <div className="flex justify-center gap-4">
-                  {chainVerifications.map((v) => (
-                    <div key={v.chain} className="flex items-center text-green-400">
-                      <span className="text-2xl mr-2">{getChainIcon(v.chain)}</span>
-                      <Check className="h-5 w-5" />
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              <div className="flex gap-4">
-                <Button 
-                  onClick={() => navigate("/my-vaults")}
-                  className="flex-1 bg-gradient-to-r from-purple-600 to-pink-600"
-                >
-                  Access My Vaults
-                </Button>
-                <Button 
-                  onClick={() => {
-                    setRecoveryStep('input');
-                    setVaultId('');
-                    setRecoveryKey('');
-                  }}
-                  variant="outline"
-                  className="flex-1 border-gray-700"
-                >
-                  Recover Another Vault
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
-        )}
-
-        {/* How It Works Section */}
-        <Card className="mt-6 border-blue-500/30 bg-black/50 backdrop-blur-sm">
+        <Card className="mt-6 bg-[#1a1a3a]/80 border-gray-700">
           <CardHeader>
-            <CardTitle className="text-xl text-white">How Trinity Protocol Recovery Works</CardTitle>
+            <CardTitle className="flex items-center gap-2">
+              <Zap className="h-5 w-5 text-purple-400" />
+              Quantum-Resistant Algorithms (TON)
+            </CardTitle>
+            <CardDescription>
+              Post-quantum cryptography protecting your recovery
+            </CardDescription>
           </CardHeader>
-          <CardContent className="space-y-4 text-gray-300">
-            <div className="flex items-start gap-3">
-              <div className="w-8 h-8 bg-purple-600 rounded-full flex items-center justify-center flex-shrink-0 text-white font-bold">
-                1
-              </div>
-              <div>
-                <p className="font-semibold text-white">All 3 Chains Required</p>
-                <p>Emergency recovery requires verification from Ethereum (PRIMARY), Solana (MONITOR), and TON (BACKUP). This is more secure than standard operations.</p>
-              </div>
-            </div>
-            
-            <div className="flex items-start gap-3">
-              <div className="w-8 h-8 bg-purple-600 rounded-full flex items-center justify-center flex-shrink-0 text-white font-bold">
-                2
-              </div>
-              <div>
-                <p className="font-semibold text-white">Mathematical Verification</p>
-                <p>Each blockchain independently verifies your recovery key against its records. No human operators, only mathematical proof.</p>
-              </div>
-            </div>
-            
-            <div className="flex items-start gap-3">
-              <div className="w-8 h-8 bg-purple-600 rounded-full flex items-center justify-center flex-shrink-0 text-white font-bold">
-                3
-              </div>
-              <div>
-                <p className="font-semibold text-white">Consensus Required</p>
-                <p>Only when all 3 chains agree is access granted. This ensures maximum security even in emergency situations.</p>
-              </div>
+          <CardContent>
+            <div className="grid md:grid-cols-2 gap-4">
+              {Object.entries(QUANTUM_ALGORITHMS).map(([key, value]) => (
+                <div key={key} className="p-3 bg-[#0f0f2a] rounded-lg border border-gray-700">
+                  <div className="text-sm text-gray-400 capitalize">{key.replace(/([A-Z])/g, ' $1').trim()}</div>
+                  <div className="font-medium text-purple-400">{value}</div>
+                </div>
+              ))}
             </div>
           </CardContent>
         </Card>
-      </div>
+
+        <Card className="mt-6 bg-[#1a1a3a]/80 border-gray-700">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Lock className="h-5 w-5 text-cyan-400" />
+              TON Recovery Contracts
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-3">
+              {Object.entries(TON_CONTRACTS).map(([name, address]) => (
+                <div key={name} className="flex items-center justify-between p-3 bg-[#0f0f2a] rounded-lg border border-gray-700">
+                  <div>
+                    <div className="font-medium">{name}</div>
+                    <code className="text-xs text-gray-400">{address}</code>
+                  </div>
+                  <a 
+                    href={`https://testnet.tonscan.org/address/${address}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-cyan-400 hover:underline flex items-center gap-1 text-sm"
+                  >
+                    View <ExternalLink className="h-3 w-3" />
+                  </a>
+                </div>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+      </section>
     </div>
   );
-};
-
-export default DeviceRecoveryPage;
+}

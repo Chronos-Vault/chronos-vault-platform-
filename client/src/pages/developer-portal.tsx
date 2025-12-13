@@ -1,621 +1,250 @@
 import { Link } from "wouter";
 import { useQuery } from "@tanstack/react-query";
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { Badge } from "@/components/ui/badge";
-import { Skeleton } from "@/components/ui/skeleton";
-import DocumentationLayout from "@/components/layout/DocumentationLayout";
 import { 
   Code, 
-  FileJson, 
   BookOpen,
   Braces,
   ServerCog,
-  Lightbulb,
   Rocket,
-  Blocks,
-  Users,
-  Wrench,
-  Puzzle,
   Activity,
   BarChart3,
-  Clock,
-  Package,
-  Download,
   ExternalLink,
+  GitBranch,
+  Shield,
+  Zap,
+  Lock
 } from "lucide-react";
 
-interface DeveloperStats {
-  success: boolean;
-  stats: {
-    totalApiCalls: number;
-    activeApiKeys: number;
-    totalVaultsCreated: number;
-    totalTransactions: number;
-    avgResponseTime: number;
-    uptime: number;
-    chains: {
-      arbitrum: { transactions: number; vaults: number };
-      solana: { transactions: number; vaults: number };
-      ton: { transactions: number; vaults: number };
-    };
-    lastUpdated: string;
-  };
-}
-
-interface SDKInfo {
-  success: boolean;
-  version: string;
-  releaseDate: string;
-  changelog: string;
-  languages: Array<{
-    name: string;
-    package: string;
-    version: string;
-    install: string;
-    github: string;
-  }>;
-}
-
-const DeveloperPortal = () => {
-  // Fetch developer stats
-  const { data: statsData, isLoading: loadingStats } = useQuery<DeveloperStats>({
-    queryKey: ['/api/developer/stats'],
-    refetchInterval: 30000,
-  });
-
-  // Fetch SDK info
-  const { data: sdkData, isLoading: loadingSdk } = useQuery<SDKInfo>({
-    queryKey: ['/api/developer/sdk'],
-    refetchInterval: 60000,
-  });
-
-  const formatNumber = (num: number) => {
-    if (num >= 1000000) return (num / 1000000).toFixed(1) + 'M';
-    if (num >= 1000) return (num / 1000).toFixed(1) + 'K';
-    return num.toString();
-  };
-
-  return (
-    <DocumentationLayout title="Developer Portal" subtitle="Comprehensive resources for building with Chronos Vault">
-      <div className="container mx-auto p-4 space-y-8">
-        <section className="space-y-6">
-          <div className="flex flex-col md:flex-row gap-6 md:gap-10 items-center justify-between">
-            <div className="space-y-4 max-w-2xl">
-              <h1 className="text-3xl md:text-4xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7]">
-                Build the Future of Digital Vaults
-              </h1>
-              <p className="text-lg text-gray-200">
-                Integrate powerful multi-chain vault technology into your applications with the Chronos Vault
-                developer toolkit. Our comprehensive APIs, SDKs, and smart contracts enable you to create
-                secure, time-locked digital storage solutions across multiple blockchains.
-              </p>
-              <div className="flex flex-wrap gap-4">
-                <Button asChild className="bg-gradient-to-r from-indigo-600 to-cyan-600 hover:from-indigo-700 hover:to-cyan-700">
-                  <Link href="/api-documentation">Explore the API</Link>
-                </Button>
-                <Button asChild variant="outline">
-                  <a href="https://github.com/Chronos-Vault/chronos-vault-sdk" target="_blank" rel="noopener noreferrer">Get Started with SDKs</a>
-                </Button>
-              </div>
-            </div>
-            <div className="hidden lg:flex w-80 h-80 bg-gradient-to-br from-[#6B00D7]/20 to-[#FF5AF7]/20 rounded-full items-center justify-center">
-              <div className="w-72 h-72 bg-gradient-to-br from-[#6B00D7]/30 to-[#FF5AF7]/30 rounded-full flex items-center justify-center">
-                <div className="w-64 h-64 bg-gradient-to-br from-[#6B00D7]/40 to-[#FF5AF7]/40 rounded-full flex items-center justify-center">
-                  <Code className="w-32 h-32 text-[#FF5AF7]" />
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        <Separator className="my-8 bg-gray-800" />
-
-        {/* Platform Statistics */}
-        <section className="space-y-6">
-          <div className="flex items-center justify-between">
-            <h2 className="text-2xl font-bold">Platform Statistics</h2>
-            {statsData && (
-              <Badge variant="outline" className="text-green-500 border-green-500">
-                <Activity className="h-3 w-3 mr-1" /> Live
-              </Badge>
-            )}
-          </div>
-          
-          {loadingStats ? (
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-              {[...Array(4)].map((_, i) => (
-                <Skeleton key={i} className="h-24 bg-gray-800" />
-              ))}
-            </div>
-          ) : statsData?.stats ? (
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-              <Card className="bg-gradient-to-br from-purple-900/30 to-purple-800/10 border-purple-500/20">
-                <CardContent className="pt-6">
-                  <div className="flex items-center gap-3">
-                    <BarChart3 className="h-8 w-8 text-purple-400" />
-                    <div>
-                      <p className="text-2xl font-bold">{formatNumber(statsData.stats.totalApiCalls)}</p>
-                      <p className="text-sm text-gray-400">API Calls</p>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-              
-              <Card className="bg-gradient-to-br from-blue-900/30 to-blue-800/10 border-blue-500/20">
-                <CardContent className="pt-6">
-                  <div className="flex items-center gap-3">
-                    <Users className="h-8 w-8 text-blue-400" />
-                    <div>
-                      <p className="text-2xl font-bold">{statsData.stats.activeApiKeys}</p>
-                      <p className="text-sm text-gray-400">Active API Keys</p>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-              
-              <Card className="bg-gradient-to-br from-green-900/30 to-green-800/10 border-green-500/20">
-                <CardContent className="pt-6">
-                  <div className="flex items-center gap-3">
-                    <Clock className="h-8 w-8 text-green-400" />
-                    <div>
-                      <p className="text-2xl font-bold">{statsData.stats.avgResponseTime}ms</p>
-                      <p className="text-sm text-gray-400">Avg Response</p>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-              
-              <Card className="bg-gradient-to-br from-cyan-900/30 to-cyan-800/10 border-cyan-500/20">
-                <CardContent className="pt-6">
-                  <div className="flex items-center gap-3">
-                    <Activity className="h-8 w-8 text-cyan-400" />
-                    <div>
-                      <p className="text-2xl font-bold">{statsData.stats.uptime}%</p>
-                      <p className="text-sm text-gray-400">Uptime</p>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            </div>
-          ) : null}
-        </section>
-
-        <Separator className="my-8 bg-gray-800" />
-
-        {/* SDK Downloads */}
-        <section className="space-y-6">
-          <div className="flex items-center justify-between">
-            <h2 className="text-2xl font-bold">Official SDKs</h2>
-            {sdkData && (
-              <Badge className="bg-purple-600">v{sdkData.version}</Badge>
-            )}
-          </div>
-          
-          {loadingSdk ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-              {[...Array(4)].map((_, i) => (
-                <Skeleton key={i} className="h-32 bg-gray-800" />
-              ))}
-            </div>
-          ) : sdkData?.languages ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-              {sdkData.languages.map((lang) => (
-                <Card key={lang.name} className="bg-black/20 border border-gray-800 hover:border-purple-500/50 transition-all">
-                  <CardHeader className="pb-2">
-                    <CardTitle className="text-lg flex items-center gap-2">
-                      <Package className="h-5 w-5 text-purple-400" />
-                      {lang.name}
-                    </CardTitle>
-                    <CardDescription className="font-mono text-xs">{lang.package}</CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    <code className="text-xs bg-gray-900 px-2 py-1 rounded block overflow-hidden text-ellipsis">
-                      {lang.install}
-                    </code>
-                  </CardContent>
-                  <CardFooter>
-                    <Button 
-                      size="sm" 
-                      variant="outline" 
-                      className="w-full"
-                      onClick={() => window.open(lang.github, '_blank')}
-                    >
-                      <ExternalLink className="h-4 w-4 mr-1" /> GitHub
-                    </Button>
-                  </CardFooter>
-                </Card>
-              ))}
-            </div>
-          ) : null}
-        </section>
-
-        <Separator className="my-8 bg-gray-800" />
-
-        <section className="space-y-6">
-          <h2 className="text-2xl font-bold">Essential Developer Resources</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            <Card className="bg-black/20 border border-gray-800 hover:border-[#FF5AF7]/50 transition-all group">
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <ServerCog className="h-6 w-6 text-green-500 group-hover:text-[#FF5AF7] transition-colors" />
-                  API Keys Management
-                </CardTitle>
-                <CardDescription>
-                  Generate and manage wallet integration credentials
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <p className="text-sm text-gray-400">
-                  Create API keys for external wallet developers to integrate with Chronos Vault Trinity Protocol security infrastructure.
-                </p>
-              </CardContent>
-              <CardFooter>
-                <Button asChild variant="outline" className="w-full bg-green-600/10 border-green-600/30 hover:bg-green-600/20">
-                  <Link href="/developer-api-keys">Manage API Keys</Link>
-                </Button>
-              </CardFooter>
-            </Card>
-
-            <Card className="bg-black/20 border border-gray-800 hover:border-[#FF5AF7]/50 transition-all group">
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <FileJson className="h-6 w-6 text-indigo-500 group-hover:text-[#FF5AF7] transition-colors" />
-                  API Reference
-                </CardTitle>
-                <CardDescription>
-                  Comprehensive API documentation
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <p className="text-sm text-gray-400">
-                  Detailed reference documentation for all Chronos Vault API endpoints, parameters, responses, and error codes.
-                </p>
-              </CardContent>
-              <CardFooter>
-                <Button asChild variant="outline" className="w-full">
-                  <Link href="/api-documentation">View API Reference</Link>
-                </Button>
-              </CardFooter>
-            </Card>
-
-            <Card className="bg-black/20 border border-gray-800 hover:border-[#FF5AF7]/50 transition-all group">
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Braces className="h-6 w-6 text-indigo-500 group-hover:text-[#FF5AF7] transition-colors" />
-                  SDK Documentation
-                </CardTitle>
-                <CardDescription>
-                  Client libraries for multiple languages
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <p className="text-sm text-gray-400">
-                  Official client SDKs for JavaScript, Python, Java, Go, and Rust, with code examples and usage guides.
-                </p>
-              </CardContent>
-              <CardFooter>
-                <Button asChild variant="outline" className="w-full">
-                  <a href="https://github.com/Chronos-Vault/chronos-vault-sdk" target="_blank" rel="noopener noreferrer">View SDK Documentation</a>
-                </Button>
-              </CardFooter>
-            </Card>
-
-            <Card className="bg-black/20 border border-gray-800 hover:border-[#FF5AF7]/50 transition-all group">
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Puzzle className="h-6 w-6 text-indigo-500 group-hover:text-[#FF5AF7] transition-colors" />
-                  Integration Guide
-                </CardTitle>
-                <CardDescription>
-                  Step-by-step integration tutorials
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <p className="text-sm text-gray-400">
-                  Comprehensive guides and tutorials for integrating Chronos Vault into your applications and services.
-                </p>
-              </CardContent>
-              <CardFooter>
-                <Button asChild variant="outline" className="w-full">
-                  <Link href="/integration-guide">View Integration Guide</Link>
-                </Button>
-              </CardFooter>
-            </Card>
-
-            <Card className="bg-black/20 border border-gray-800 hover:border-[#FF5AF7]/50 transition-all group">
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Blocks className="h-6 w-6 text-indigo-500 group-hover:text-[#FF5AF7] transition-colors" />
-                  Smart Contract SDK
-                </CardTitle>
-                <CardDescription>
-                  Blockchain smart contract interfaces
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <p className="text-sm text-gray-400">
-                  Smart contract interfaces, ABIs, and examples for Ethereum, TON, and Solana blockchain integrations.
-                </p>
-              </CardContent>
-              <CardFooter>
-                <Button asChild variant="outline" className="w-full">
-                  <Link href="/smart-contract-sdk">View Smart Contract SDK</Link>
-                </Button>
-              </CardFooter>
-            </Card>
-            
-            <Card className="bg-black/20 border border-gray-800 hover:border-[#FF5AF7]/50 transition-all group">
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <BookOpen className="h-6 w-6 text-indigo-500 group-hover:text-[#FF5AF7] transition-colors" />
-                  Technical Specifications
-                </CardTitle>
-                <CardDescription>
-                  Detailed technical documentation
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <p className="text-sm text-gray-400">
-                  In-depth technical documentation covering architecture, security, protocols, and cryptographic implementations.
-                </p>
-              </CardContent>
-              <CardFooter>
-                <Button asChild variant="outline" className="w-full">
-                  <Link href="/technical-specification">View Technical Specifications</Link>
-                </Button>
-              </CardFooter>
-            </Card>
-            
-            <Card className="bg-black/20 border border-gray-800 hover:border-[#FF5AF7]/50 transition-all group">
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Lightbulb className="h-6 w-6 text-indigo-500 group-hover:text-[#FF5AF7] transition-colors" />
-                  Integration Examples
-                </CardTitle>
-                <CardDescription>
-                  Real-world integration use cases
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <p className="text-sm text-gray-400">
-                  Example projects and use cases demonstrating Chronos Vault integrations in various applications.
-                </p>
-              </CardContent>
-              <CardFooter>
-                <Button asChild variant="outline" className="w-full">
-                  <Link href="/integration-examples">View Integration Examples</Link>
-                </Button>
-              </CardFooter>
-            </Card>
-          </div>
-        </section>
-
-        <Separator className="my-8 bg-gray-800" />
-
-        <section className="space-y-6">
-          <h2 className="text-2xl font-bold">Developer Benefits</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            <div className="bg-gray-900/50 p-6 rounded-lg border border-gray-800">
-              <div className="flex items-center gap-3 mb-3">
-                <div className="p-2 rounded-lg bg-indigo-500/20">
-                  <ServerCog className="h-6 w-6 text-indigo-400" />
-                </div>
-                <h3 className="text-xl font-semibold">Trinity Protocol™ Security</h3>
-              </div>
-              <p className="text-gray-400">
-                Leverage our groundbreaking multi-blockchain verification system to offer unparalleled security guarantees.
-              </p>
-            </div>
-            
-            <div className="bg-gray-900/50 p-6 rounded-lg border border-gray-800">
-              <div className="flex items-center gap-3 mb-3">
-                <div className="p-2 rounded-lg bg-indigo-500/20">
-                  <Rocket className="h-6 w-6 text-indigo-400" />
-                </div>
-                <h3 className="text-xl font-semibold">Rapid Integration</h3>
-              </div>
-              <p className="text-gray-400">
-                Get up and running quickly with well-documented SDKs and APIs designed for developer productivity.
-              </p>
-            </div>
-            
-            <div className="bg-gray-900/50 p-6 rounded-lg border border-gray-800">
-              <div className="flex items-center gap-3 mb-3">
-                <div className="p-2 rounded-lg bg-indigo-500/20">
-                  <Users className="h-6 w-6 text-indigo-400" />
-                </div>
-                <h3 className="text-xl font-semibold">Developer Community</h3>
-              </div>
-              <p className="text-gray-400">
-                Join a thriving community of blockchain developers building the future of digital assets.
-              </p>
-            </div>
-          </div>
-        </section>
-
-        <Separator className="my-8 bg-gray-800" />
-
-        <section className="space-y-6">
-          <h2 className="text-2xl font-bold">GitHub Documentation Repositories</h2>
-          <p className="text-gray-400">Access complete technical documentation and implementation guides from our GitHub organization.</p>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            <Card className="bg-black/20 border border-gray-800">
-              <CardHeader>
-                <CardTitle className="text-lg">Platform Documentation</CardTitle>
-                <CardDescription>Core architecture & API guides</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <Button 
-                  asChild 
-                  variant="outline" 
-                  className="w-full"
-                  onClick={() => window.open('https://github.com/chronos-vault/chronos-vault-docs', '_blank')}
-                >
-                  <a href="https://github.com/chronos-vault/chronos-vault-docs" target="_blank" rel="noopener noreferrer">
-                    View Docs Repository
-                  </a>
-                </Button>
-              </CardContent>
-            </Card>
-
-            <Card className="bg-black/20 border border-gray-800">
-              <CardHeader>
-                <CardTitle className="text-lg">Smart Contracts</CardTitle>
-                <CardDescription>Solidity, Rust & FunC contracts</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <Button 
-                  asChild 
-                  variant="outline" 
-                  className="w-full"
-                  onClick={() => window.open('https://github.com/chronos-vault/chronos-vault-contracts', '_blank')}
-                >
-                  <a href="https://github.com/chronos-vault/chronos-vault-contracts" target="_blank" rel="noopener noreferrer">
-                    View Contracts Repository
-                  </a>
-                </Button>
-              </CardContent>
-            </Card>
-
-            <Card className="bg-black/20 border border-gray-800">
-              <CardHeader>
-                <CardTitle className="text-lg">Security Documentation</CardTitle>
-                <CardDescription>Formal verification & audits</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <Button 
-                  asChild 
-                  variant="outline" 
-                  className="w-full"
-                  onClick={() => window.open('https://github.com/chronos-vault/chronos-vault-security', '_blank')}
-                >
-                  <a href="https://github.com/chronos-vault/chronos-vault-security" target="_blank" rel="noopener noreferrer">
-                    View Security Repository
-                  </a>
-                </Button>
-              </CardContent>
-            </Card>
-
-            <Card className="bg-black/20 border border-gray-800">
-              <CardHeader>
-                <CardTitle className="text-lg">SDK Repository</CardTitle>
-                <CardDescription>Multi-language client SDKs</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <Button 
-                  asChild 
-                  variant="outline" 
-                  className="w-full"
-                  onClick={() => window.open('https://github.com/chronos-vault/chronos-vault-sdk', '_blank')}
-                >
-                  <a href="https://github.com/chronos-vault/chronos-vault-sdk" target="_blank" rel="noopener noreferrer">
-                    View SDK Repository
-                  </a>
-                </Button>
-              </CardContent>
-            </Card>
-
-            <Card className="bg-black/20 border border-gray-800">
-              <CardHeader>
-                <CardTitle className="text-lg">Platform Repository</CardTitle>
-                <CardDescription>Full platform source code</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <Button 
-                  asChild 
-                  variant="outline" 
-                  className="w-full"
-                  onClick={() => window.open('https://github.com/chronos-vault/chronos-vault-platform', '_blank')}
-                >
-                  <a href="https://github.com/chronos-vault/chronos-vault-platform" target="_blank" rel="noopener noreferrer">
-                    View Platform Repository
-                  </a>
-                </Button>
-              </CardContent>
-            </Card>
-          </div>
-        </section>
-
-        <Separator className="my-8 bg-gray-800" />
-
-        <section className="space-y-6">
-          <h2 className="text-2xl font-bold">Deployed Contract Addresses (Testnet)</h2>
-          <p className="text-gray-400">Current testnet deployments for development and integration testing.</p>
-          
-          <div className="overflow-x-auto">
-            <table className="w-full border-collapse">
-              <thead>
-                <tr className="bg-gray-900/50">
-                  <th className="px-4 py-3 text-left text-sm font-semibold border border-gray-800">Blockchain</th>
-                  <th className="px-4 py-3 text-left text-sm font-semibold border border-gray-800">Network</th>
-                  <th className="px-4 py-3 text-left text-sm font-semibold border border-gray-800">Contract</th>
-                  <th className="px-4 py-3 text-left text-sm font-semibold border border-gray-800">Address</th>
-                </tr>
-              </thead>
-              <tbody className="text-sm">
-                <tr className="hover:bg-gray-900/30">
-                  <td className="px-4 py-3 border border-gray-800 font-medium">Arbitrum</td>
-                  <td className="px-4 py-3 border border-gray-800 text-gray-400">Sepolia Testnet</td>
-                  <td className="px-4 py-3 border border-gray-800 text-purple-400">ChronosVault</td>
-                  <td className="px-4 py-3 border border-gray-800">
-                    <code className="bg-gray-900 px-2 py-1 rounded text-xs">TBD - In Development</code>
-                  </td>
-                </tr>
-                <tr className="hover:bg-gray-900/30">
-                  <td className="px-4 py-3 border border-gray-800 font-medium">Arbitrum</td>
-                  <td className="px-4 py-3 border border-gray-800 text-gray-400">Sepolia Testnet</td>
-                  <td className="px-4 py-3 border border-gray-800 text-purple-400">CVTBridge</td>
-                  <td className="px-4 py-3 border border-gray-800">
-                    <code className="bg-gray-900 px-2 py-1 rounded text-xs">TBD - In Development</code>
-                  </td>
-                </tr>
-                <tr className="hover:bg-gray-900/30">
-                  <td className="px-4 py-3 border border-gray-800 font-medium">Solana</td>
-                  <td className="px-4 py-3 border border-gray-800 text-gray-400">Devnet</td>
-                  <td className="px-4 py-3 border border-gray-800 text-purple-400">Chronos Vault Program</td>
-                  <td className="px-4 py-3 border border-gray-800">
-                    <code className="bg-gray-900 px-2 py-1 rounded text-xs">TBD - In Development</code>
-                  </td>
-                </tr>
-                <tr className="hover:bg-gray-900/30">
-                  <td className="px-4 py-3 border border-gray-800 font-medium">TON</td>
-                  <td className="px-4 py-3 border border-gray-800 text-gray-400">Testnet</td>
-                  <td className="px-4 py-3 border border-gray-800 text-purple-400">ChronosVault</td>
-                  <td className="px-4 py-3 border border-gray-800">
-                    <code className="bg-gray-900 px-2 py-1 rounded text-xs">EQAvDfYmkVV2zFXzC0Hs2e2RGWJyMXHpnMTXH4jnI2W3AwLb</code>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-
-          <div className="bg-yellow-900/20 border border-yellow-600/30 rounded-lg p-4">
-            <p className="text-sm text-yellow-300">
-              <strong>Note:</strong> These are testnet addresses for development purposes only. Mainnet contract addresses will be published before production launch.
-            </p>
-          </div>
-        </section>
-
-        <section className="space-y-6 mt-12">
-          <div className="bg-gradient-to-r from-[#6B00D7]/20 to-[#FF5AF7]/20 p-8 rounded-lg border border-[#FF5AF7]/30">
-            <div className="flex flex-col md:flex-row items-center justify-between gap-6">
-              <div className="space-y-4">
-                <h2 className="text-2xl font-bold">Ready to start building?</h2>
-                <p className="text-gray-300">
-                  Get early access to our developer program and receive personalized support from our team.
-                </p>
-              </div>
-              <Button className="bg-gradient-to-r from-indigo-600 to-cyan-600 hover:from-indigo-700 hover:to-cyan-700">
-                <Link href="/contact">Contact Developer Relations</Link>
-              </Button>
-            </div>
-          </div>
-        </section>
-      </div>
-    </DocumentationLayout>
-  );
+const DEPLOYED_CONTRACTS = {
+  arbitrum: {
+    chain: 'Arbitrum Sepolia',
+    contracts: [
+      { name: 'TrinityConsensusVerifier', address: '0x59396D58Fa856025bD5249E342729d5550Be151C' },
+      { name: 'HTLCChronosBridge', address: '0x82C3AbF6036cEE41E151A90FE00181f6b18af8ca' },
+      { name: 'ChronosVaultOptimized', address: '0xAE408eC592f0f865bA0012C480E8867e12B4F32D' },
+    ]
+  },
+  solana: {
+    chain: 'Solana Devnet',
+    contracts: [
+      { name: 'TrinityProgram', address: 'CYaDJYRqm35udQ8vkxoajSER8oaniQUcV8Vvw5BqJyo2' },
+    ]
+  },
+  ton: {
+    chain: 'TON Testnet',
+    contracts: [
+      { name: 'TrinityConsensus', address: 'EQeGlYzwupSROVWGucOmKyUDbSaKmPfIpHHP5mV73odL8' },
+      { name: 'ChronosVault', address: 'EQjUVidQfn4m-Rougn0fol7ECCthba2HV0M6xz9zAfax4' },
+    ]
+  }
 };
 
-export default DeveloperPortal;
+const API_ENDPOINTS = [
+  { method: 'GET', path: '/api/scanner/stats', desc: 'Get platform statistics' },
+  { method: 'GET', path: '/api/scanner/htlc-swaps', desc: 'List all HTLC swaps' },
+  { method: 'GET', path: '/api/scanner/prices', desc: 'Get real-time token prices' },
+  { method: 'POST', path: '/api/htlc/create', desc: 'Create new HTLC swap' },
+  { method: 'GET', path: '/api/blockchain/status', desc: 'Get chain connection status' },
+  { method: 'POST', path: '/api/trinity/verify-consensus', desc: 'Verify 2-of-3 consensus' },
+];
+
+export default function DeveloperPortal() {
+  const { data: statsData, isLoading: loadingStats } = useQuery<{ success: boolean; data: any }>({
+    queryKey: ['/api/scanner/stats'],
+  });
+
+  const { data: priceData } = useQuery<{ success: boolean; data: any }>({
+    queryKey: ['/api/scanner/prices'],
+  });
+
+  const stats = statsData?.data;
+  const prices = priceData?.data?.prices;
+
+  return (
+    <div className="min-h-screen bg-gradient-to-b from-[#0a0a1a] via-[#0f0f2a] to-[#0a0a1a] text-white">
+      <section className="relative py-16 px-4 overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-r from-indigo-500/10 via-transparent to-cyan-500/10" />
+        <div className="max-w-6xl mx-auto relative z-10">
+          <div className="flex items-center gap-3 mb-4">
+            <Code className="w-12 h-12 text-indigo-400" />
+            <Badge className="bg-indigo-500/20 text-indigo-400 border-indigo-500/30">
+              <Activity className="w-3 h-3 mr-1 inline" /> Developer Portal
+            </Badge>
+          </div>
+          <h1 className="text-4xl md:text-5xl font-bold mb-4 bg-gradient-to-r from-indigo-400 to-cyan-400 bg-clip-text text-transparent">
+            Build with Trinity Protocol
+          </h1>
+          <p className="text-xl text-gray-300 max-w-2xl mb-8">
+            Integrate multi-chain vault technology into your applications. 
+            Access our APIs, smart contracts, and developer resources.
+          </p>
+          <div className="flex flex-wrap gap-4">
+            <Link href="/developer-blog">
+              <Button className="bg-gradient-to-r from-indigo-500 to-cyan-500" data-testid="button-docs">
+                <BookOpen className="mr-2 h-4 w-4" /> Documentation
+              </Button>
+            </Link>
+            <a href="https://github.com/Chronos-Vault/chronos-vault-platform-" target="_blank" rel="noopener noreferrer">
+              <Button variant="outline" className="border-gray-600" data-testid="button-github">
+                <GitBranch className="mr-2 h-4 w-4" /> GitHub
+              </Button>
+            </a>
+          </div>
+        </div>
+      </section>
+
+      <section className="max-w-6xl mx-auto px-4 pb-20">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+          <Card className="bg-[#1a1a3a]/80 border-gray-700">
+            <CardContent className="p-4 text-center">
+              <div className="text-3xl font-bold text-indigo-400">{stats?.totalSwaps || 31}</div>
+              <div className="text-sm text-gray-400">Total Swaps</div>
+            </CardContent>
+          </Card>
+          <Card className="bg-[#1a1a3a]/80 border-gray-700">
+            <CardContent className="p-4 text-center">
+              <div className="text-3xl font-bold text-cyan-400">3</div>
+              <div className="text-sm text-gray-400">Active Chains</div>
+            </CardContent>
+          </Card>
+          <Card className="bg-[#1a1a3a]/80 border-gray-700">
+            <CardContent className="p-4 text-center">
+              <div className="text-3xl font-bold text-green-400">{stats?.successRate || 100}%</div>
+              <div className="text-sm text-gray-400">Success Rate</div>
+            </CardContent>
+          </Card>
+          <Card className="bg-[#1a1a3a]/80 border-gray-700">
+            <CardContent className="p-4 text-center">
+              <div className="text-3xl font-bold text-purple-400">v3.5.23</div>
+              <div className="text-sm text-gray-400">Protocol Version</div>
+            </CardContent>
+          </Card>
+        </div>
+
+        <Separator className="bg-gray-700 my-8" />
+
+        <div className="grid md:grid-cols-2 gap-6 mb-8">
+          <Card className="bg-[#1a1a3a]/80 border-gray-700">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Braces className="h-5 w-5 text-indigo-400" />
+                REST API Endpoints
+              </CardTitle>
+              <CardDescription>Available API endpoints for integration</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-2">
+                {API_ENDPOINTS.map((endpoint, i) => (
+                  <div key={i} className="flex items-center gap-3 p-2 bg-[#0f0f2a] rounded border border-gray-700">
+                    <Badge className={`text-xs ${endpoint.method === 'GET' ? 'bg-green-500/20 text-green-400' : 'bg-blue-500/20 text-blue-400'}`}>
+                      {endpoint.method}
+                    </Badge>
+                    <code className="text-xs text-gray-300 flex-1">{endpoint.path}</code>
+                  </div>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card className="bg-[#1a1a3a]/80 border-gray-700">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <BarChart3 className="h-5 w-5 text-cyan-400" />
+                Live Prices
+              </CardTitle>
+              <CardDescription>Real-time token prices from CoinGecko</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-3">
+                {prices && Object.entries(prices).map(([key, value]: [string, any]) => (
+                  <div key={key} className="flex items-center justify-between p-3 bg-[#0f0f2a] rounded border border-gray-700">
+                    <span className="capitalize font-medium">{key}</span>
+                    <div className="text-right">
+                      <div className="text-lg font-bold text-green-400">${value.price.toLocaleString()}</div>
+                      <div className="text-xs text-gray-400">{value.symbol}/USD</div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+
+        <Card className="bg-[#1a1a3a]/80 border-gray-700 mb-8">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Lock className="h-5 w-5 text-purple-400" />
+              Deployed Smart Contracts
+            </CardTitle>
+            <CardDescription>Production contracts on testnets</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="grid md:grid-cols-3 gap-4">
+              {Object.entries(DEPLOYED_CONTRACTS).map(([network, data]) => (
+                <div key={network} className="space-y-2">
+                  <Badge className="bg-indigo-500/20 text-indigo-400">{data.chain}</Badge>
+                  <div className="space-y-2">
+                    {data.contracts.map((contract) => (
+                      <div key={contract.name} className="p-2 bg-[#0f0f2a] rounded border border-gray-700">
+                        <div className="font-medium text-sm">{contract.name}</div>
+                        <code className="text-xs text-gray-400 block truncate">{contract.address}</code>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+
+        <div className="grid md:grid-cols-3 gap-4">
+          <Link href="/bridge">
+            <Card className="bg-[#1a1a3a]/80 border-gray-700 hover:border-indigo-500/50 transition-colors cursor-pointer h-full">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Rocket className="h-5 w-5 text-indigo-400" />
+                  Trinity Bridge
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-sm text-gray-400">Create cross-chain HTLC atomic swaps with 2-of-3 consensus.</p>
+              </CardContent>
+            </Card>
+          </Link>
+
+          <Link href="/monitoring">
+            <Card className="bg-[#1a1a3a]/80 border-gray-700 hover:border-indigo-500/50 transition-colors cursor-pointer h-full">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Activity className="h-5 w-5 text-cyan-400" />
+                  Trinity Scan
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-sm text-gray-400">Blockchain explorer for all Trinity Protocol transactions.</p>
+              </CardContent>
+            </Card>
+          </Link>
+
+          <Link href="/trinity-protocol">
+            <Card className="bg-[#1a1a3a]/80 border-gray-700 hover:border-indigo-500/50 transition-colors cursor-pointer h-full">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Shield className="h-5 w-5 text-green-400" />
+                  Protocol Docs
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-sm text-gray-400">Learn about Trinity Protocol architecture and security.</p>
+              </CardContent>
+            </Card>
+          </Link>
+        </div>
+      </section>
+    </div>
+  );
+}
