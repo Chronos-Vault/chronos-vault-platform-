@@ -51,11 +51,10 @@ enum PrimaryBlockchain {
   TON = 'ton'
 }
 
-// Enum for verification requirements
+// Enum for verification requirements (Trinity Protocol: 3 validators only)
 enum VerificationRequirement {
   TWO_OF_THREE = 'two_of_three',
   THREE_OF_THREE = 'three_of_three',
-  THREE_OF_FOUR = 'three_of_four',
   CUSTOM = 'custom'
 }
 
@@ -114,9 +113,6 @@ const CrossChainVaultForm: React.FC = () => {
     if (chains < 3 && verificationRequirement === VerificationRequirement.THREE_OF_THREE) {
       setVerificationRequirement(VerificationRequirement.TWO_OF_THREE);
     }
-    if (chains < 4 && verificationRequirement === VerificationRequirement.THREE_OF_FOUR) {
-      setVerificationRequirement(VerificationRequirement.THREE_OF_THREE);
-    }
   }, [useEthereum, useSolana, useTon, useBitcoin, customThreshold, verificationRequirement]);
   
   // Update security score based on settings
@@ -131,8 +127,7 @@ const CrossChainVaultForm: React.FC = () => {
     if (totalChains >= 4) score += 15;
     else if (totalChains === 3) score += 10;
     
-    if (verificationRequirement === VerificationRequirement.THREE_OF_THREE) score += 10;
-    if (verificationRequirement === VerificationRequirement.THREE_OF_FOUR) score += 15;
+    if (verificationRequirement === VerificationRequirement.THREE_OF_THREE) score += 15;
     
     if (emergencyRecovery) score += 5;
     if (autoFallback) score += 5;
@@ -239,13 +234,11 @@ const CrossChainVaultForm: React.FC = () => {
   const getVerificationDescription = (requirement: VerificationRequirement) => {
     switch(requirement) {
       case VerificationRequirement.TWO_OF_THREE:
-        return "Any 2 blockchains must verify access requests (balanced security and convenience)";
+        return "Any 2 of 3 validators must verify (Trinity Protocol standard)";
       case VerificationRequirement.THREE_OF_THREE:
-        return "All 3 blockchains must verify access requests (maximum security)";
-      case VerificationRequirement.THREE_OF_FOUR:
-        return "Any 3 out of 4 blockchains must verify access requests (high security with fallback)";
+        return "All 3 validators must verify access requests (maximum security)";
       case VerificationRequirement.CUSTOM:
-        return `Any ${customThreshold} out of ${totalChains} blockchains must verify (custom threshold)`;
+        return `Any ${customThreshold} out of ${totalChains} validators must verify (custom threshold)`;
       default:
         return "";
     }
@@ -310,10 +303,9 @@ const CrossChainVaultForm: React.FC = () => {
                 <div>
                   <p className="text-gray-500">Verification Requirement</p>
                   <p className="text-white">
-                    {verificationRequirement === VerificationRequirement.TWO_OF_THREE ? '2 of 3 chains' :
-                     verificationRequirement === VerificationRequirement.THREE_OF_THREE ? 'All chains' :
-                     verificationRequirement === VerificationRequirement.THREE_OF_FOUR ? '3 of 4 chains' :
-                     `${customThreshold} of ${totalChains} chains`}
+                    {verificationRequirement === VerificationRequirement.TWO_OF_THREE ? '2 of 3 validators' :
+                     verificationRequirement === VerificationRequirement.THREE_OF_THREE ? '3 of 3 validators' :
+                     `${customThreshold} of ${totalChains} validators`}
                   </p>
                 </div>
                 <div>
@@ -765,25 +757,6 @@ const CrossChainVaultForm: React.FC = () => {
                               {totalChains < 3 
                                 ? 'Requires at least 3 blockchains to be enabled' 
                                 : getVerificationDescription(VerificationRequirement.THREE_OF_THREE)}
-                            </span>
-                          </div>
-                        </Label>
-                      </div>
-                      
-                      <div className="flex items-center space-x-2 border border-gray-800 rounded-lg p-3 hover:bg-[#00E5A0]/5 cursor-pointer">
-                        <RadioGroupItem 
-                          value={VerificationRequirement.THREE_OF_FOUR} 
-                          id="three_of_four" 
-                          className="text-[#00E5A0]"
-                          disabled={totalChains < 4}
-                        />
-                        <Label htmlFor="three_of_four" className={`cursor-pointer flex-1 ${totalChains < 4 ? 'opacity-50' : ''}`}>
-                          <div className="flex flex-col">
-                            <span className="font-medium">3 of 4 Verification</span>
-                            <span className="text-sm text-gray-400">
-                              {totalChains < 4 
-                                ? 'Requires all 4 blockchains to be enabled' 
-                                : getVerificationDescription(VerificationRequirement.THREE_OF_FOUR)}
                             </span>
                           </div>
                         </Label>
