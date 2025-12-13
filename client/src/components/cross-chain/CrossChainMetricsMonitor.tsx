@@ -322,7 +322,7 @@ const CrossChainMetricsMonitor: React.FC = () => {
                       <Progress 
                         value={chain.performanceScore} 
                         className="h-2 bg-[#333]" 
-                        indicatorClassName={getStatusColor(chain.performanceScore)}
+                        data-indicator-class={getStatusColor(chain.performanceScore)}
                       />
                     </div>
                   </div>
@@ -351,7 +351,7 @@ const CrossChainMetricsMonitor: React.FC = () => {
                           <Progress 
                             value={100 - (chain.averageBlockTime / Math.max(...chainData.map(c => c.averageBlockTime)) * 100)} 
                             className="h-2 bg-[#333]"
-                            indicatorClassName="bg-[#6B00D7]"
+                            data-indicator-class="bg-[#6B00D7]"
                           />
                         </div>
                       ))}
@@ -386,7 +386,7 @@ const CrossChainMetricsMonitor: React.FC = () => {
                           <Progress 
                             value={chain.congestionLevel} 
                             className="h-2 bg-[#333]"
-                            indicatorClassName={getStatusColor(chain.congestionLevel, true)}
+                            data-indicator-class={getStatusColor(chain.congestionLevel, true)}
                           />
                         </div>
                       ))}
@@ -438,7 +438,7 @@ const CrossChainMetricsMonitor: React.FC = () => {
                         <Progress 
                           value={chain.performanceScore} 
                           className="h-2 bg-[#333]"
-                          indicatorClassName={getStatusColor(chain.performanceScore)}
+                          data-indicator-class={getStatusColor(chain.performanceScore)}
                         />
                       </div>
                     ))}
@@ -468,7 +468,7 @@ const CrossChainMetricsMonitor: React.FC = () => {
                           <Progress 
                             value={100 - (chain.transactionFee / Math.max(...chainData.map(c => c.transactionFee)) * 100)} 
                             className="h-2 bg-[#333]"
-                            indicatorClassName="bg-[#6B00D7]"
+                            data-indicator-class="bg-[#6B00D7]"
                           />
                         </div>
                       ))}
@@ -575,7 +575,7 @@ const CrossChainMetricsMonitor: React.FC = () => {
                         <Progress 
                           value={chain.securityScore} 
                           className="h-2 bg-[#333]"
-                          indicatorClassName={getStatusColor(chain.securityScore)}
+                          data-indicator-class={getStatusColor(chain.securityScore)}
                         />
                         
                         <div className="text-xs text-gray-400 mt-1">
@@ -627,7 +627,7 @@ const CrossChainMetricsMonitor: React.FC = () => {
                             <span className="text-white">Security considerations</span>
                           </div>
                           <p className="text-gray-400 text-sm">
-                            For high-value transactions (>$10,000), prioritize security over transaction costs.
+                            For high-value transactions (&gt;$10,000), prioritize security over transaction costs.
                             For transactions requiring maximum security, 
                             {chainData.sort((a, b) => b.securityScore - a.securityScore)[0].chainName} 
                             is recommended despite higher fees.
