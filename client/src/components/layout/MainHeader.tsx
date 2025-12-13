@@ -192,9 +192,7 @@ const MainHeader = () => {
       icon: "📚",
       items: [
         { name: "How It Works", href: "/how-it-works", icon: "🔍", highlight: true, isNew: true },
-        { name: "CVT Token", href: "/cvt-token", icon: "🪙" },
-        { name: "CVT Utility", href: "/cvt-utility", icon: "⚡", highlight: true },
-        { name: "Tokenomics", href: "/cvt-tokenomics", icon: "📊" },
+        { name: "CVT Token", href: "/cvt-token", icon: "🪙", highlight: true },
         { name: "Whitepaper", href: "/whitepaper", icon: "📑" },
         { name: "Technical Spec", href: "/technical-specification", icon: "🔧", highlight: true },
         { name: "Smart Contracts", href: "/smart-contracts", icon: "📜" },
@@ -575,21 +573,9 @@ const MainHeader = () => {
                       <ListItem 
                         href="/cvt-token" 
                         title="🪙 CVT Token"
-                      >
-                        Platform native utility token
-                      </ListItem>
-                      <ListItem 
-                        href="/cvt-utility" 
-                        title="⚡ CVT Utility"
                         highlight={true}
                       >
-                        Token use cases and benefits
-                      </ListItem>
-                      <ListItem 
-                        href="/cvt-tokenomics" 
-                        title="📊 Tokenomics"
-                      >
-                        Token distribution and economics
+                        Token utility, tokenomics, and staking
                       </ListItem>
                       <ListItem 
                         href="/whitepaper" 

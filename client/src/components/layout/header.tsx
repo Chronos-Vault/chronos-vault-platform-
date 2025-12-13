@@ -38,6 +38,7 @@ const Header = () => {
       { name: "📈 Transaction Monitor", href: "/transaction-monitor" },
       { name: "📝 Transaction Verification", href: "/transaction-verification" }, 
       { name: "🔱 Trinity Bridge", href: "/trinity-bridge" },
+      { name: "🔍 Trinity Scan", href: "/monitoring", highlight: true, isNew: true },
       { name: "🛡️ Security Dashboard", href: "/cross-chain-security" },
       { name: "📚 Vault Explorer", href: "/my-vaults" }
     ]},
@@ -53,6 +54,7 @@ const Header = () => {
     { name: "Security", href: "/security-verification-demo", icon: "🔒" },
     { name: "CVT Token", href: "/cvt-token", icon: "🪙" },
     { name: "Docs", href: "/documentation", icon: "📄" },
+    { name: "Dev Blog", href: "/developer-blog", icon: "📝", highlight: true, isNew: true },
   ];
   
   // Mobile navigation with streamlined categories for better UX
@@ -76,6 +78,7 @@ const Header = () => {
         { name: "Transaction Monitor", href: "/transaction-monitor", icon: "📈" },
         { name: "Transaction Verification", href: "/transaction-verification", icon: "📝" },
         { name: "Trinity Bridge", href: "/trinity-bridge", icon: "🔱", highlight: true, isNew: true },
+        { name: "Trinity Scan", href: "/monitoring", icon: "🔍", highlight: true, isNew: true },
         { name: "Security Dashboard", href: "/cross-chain-security", icon: "🛡️" },
         { name: "Vault Explorer", href: "/my-vaults", icon: "📚" },
       ]
@@ -111,6 +114,7 @@ const Header = () => {
       items: [
         { name: "CVT Token", href: "/cvt-token", icon: "🪙" },
         { name: "Docs", href: "/documentation", icon: "📄" },
+        { name: "Dev Blog", href: "/developer-blog", icon: "📝", highlight: true, isNew: true },
         { name: "About", href: "/about", icon: "ℹ️" },
       ]
     }

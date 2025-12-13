@@ -319,16 +319,6 @@ const BasicHeader = () => {
             href="/cvt-token"
           />
           <RoundMenuItem 
-            icon={<div className="text-white text-md">⚡</div>}
-            label="CVT Utility" 
-            href="/cvt-utility"
-          />
-          <RoundMenuItem 
-            icon={<div className="text-white text-md">📊</div>}
-            label="Tokenomics" 
-            href="/tokenomics"
-          />
-          <RoundMenuItem 
             icon={<div className="text-white text-md">📄</div>}
             label="Whitepaper" 
             href="/whitepaper"
