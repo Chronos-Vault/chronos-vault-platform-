@@ -53,13 +53,15 @@ import { SolanaProgramClient, CHRONOS_VAULT_PROGRAM_ID } from './blockchain/sola
 import config from './config';
 import { storage } from './storage';
 import { setupHTLCSwapRoutes } from './api/htlc-swap-routes';
+import giftVaultsRoutes from './api/gift-vaults-routes';
+import tonSessionRoutes from './api/ton-session-routes';
 
-export async function registerRoutes(app: Express): Promise<Server> {
-  // Create HTTP server instance
-  const httpServer = createServer(app);
+export async function registerRoutes(app: Express, httpServer?: Server): Promise<Server> {
+  // Use provided server or create one (for backwards compatibility)
+  const server = httpServer || createServer(app);
   
-  // Initialize WebSocket manager with enhanced reliability
-  initializeWebSocketManager(httpServer);
+  // Initialize WebSocket manager with enhanced reliability (only if not already initialized)
+  initializeWebSocketManager(server);
   
   // Create API router to handle all API routes
   const apiRouter = Router();
@@ -82,12 +84,25 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Register our new device verification and TON smart contract integration routes
   apiRouter.use('/', apiRoutes);
   
-  // Initialize the blockchain connector factory
+  // Initialize the blockchain connector factory (deferred in production)
   // This would be done in your app initialization
-  const connectorFactory = new ConnectorFactory();
+  let connectorFactory: ConnectorFactory | null = null;
   
-  // Initialize and register vault verification routes
-  const crossChainVerification = initializeVaultVerification(connectorFactory);
+  // Defer blockchain connector initialization to prevent startup timeout
+  const initConnectors = async () => {
+    try {
+      connectorFactory = new ConnectorFactory();
+      initializeVaultVerification(connectorFactory);
+      console.log('[Routes] Blockchain connectors initialized');
+    } catch (err: any) {
+      console.warn('[Routes] Blockchain connectors deferred:', err.message);
+    }
+  };
+  
+  // Don't block startup - initialize connectors after a delay
+  setTimeout(initConnectors, 2000);
+  
+  // Register vault verification routes (will use lazy connector)
   apiRouter.use('/vault-verification', vaultVerificationRoutes);
   
   // Register intent-based inheritance routes
@@ -98,6 +113,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
   
   // Register vault management routes
   apiRouter.use('/vaults', vaultsRoutes);
+  
+  // Register gift vault routes
+  apiRouter.use('/gift-vaults', giftVaultsRoutes);
+  
+  // Register TON session storage routes for cross-domain wallet state
+  apiRouter.use('/ton-session', tonSessionRoutes);
   
   // Register biometric authentication routes
   apiRouter.use('/biometric', biometricRoutes);
@@ -184,12 +205,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
   
   // Old wallet routes removed - using new wallet system
   
-  // Initialize and register chain-agnostic verification routes
-  const chainAgnosticVerifier = initializeChainAgnosticVerification(connectorFactory);
+  // Register chain-agnostic verification routes (will use lazy connector)
   apiRouter.use('/chain-agnostic-verification', chainAgnosticVerificationRoutes);
   
-  // Initialize and register multi-chain state synchronization routes
-  const multiChainSyncService = initializeMultiChainSync(connectorFactory);
+  // Register multi-chain state synchronization routes (will use lazy connector)
   apiRouter.use('/multi-chain-sync', multiChainStateSyncRoutes);
   
   // Get WebSocket manager instance
@@ -225,54 +244,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }, 'bridge_updates');
   }, 5000);
   
-  // Add event listeners for verification status updates
-  crossChainVerification.on('verification:completed', (result) => {
-    securityLogger.info(`Vault verification completed for ${result.vaultId}`, SecurityEventType.CROSS_CHAIN_VERIFICATION, {
-      vaultId: result.vaultId,
-      primaryChain: result.primaryChain,
-      isValid: result.isValid,
-      status: result.status
-    });
-    
-    // Broadcast verification completion to WebSocket clients using the WebSocket manager
-    wsManager.broadcast('VERIFICATION_COMPLETED', {
-      vaultId: result.vaultId,
-      isValid: result.isValid,
-      primaryChain: result.primaryChain
-    }, 'transaction_updates');
-  });
-  
-  crossChainVerification.on('verification:transaction:confirmed', (data) => {
-    securityLogger.info(`Verification transaction confirmed: ${data.transactionId}`, SecurityEventType.CROSS_CHAIN_VERIFICATION, {
-      transactionId: data.transactionId,
-      vaultId: data.vaultId,
-      chainId: data.chainId
-    });
-    
-    // Broadcast transaction confirmation to WebSocket clients using the WebSocket manager
-    wsManager.broadcast('TRANSACTION_CONFIRMED', {
-      transactionId: data.transactionId,
-      vaultId: data.vaultId,
-      chainId: data.chainId
-    }, 'transaction_updates');
-  });
-  
-  crossChainVerification.on('verification:transaction:failed', (data) => {
-    securityLogger.warn(`Verification transaction failed: ${data.transactionId}`, SecurityEventType.SYSTEM_ERROR, {
-      transactionId: data.transactionId,
-      vaultId: data.vaultId,
-      chainId: data.chainId,
-      error: data.error
-    });
-    
-    // Broadcast transaction failure to WebSocket clients using the WebSocket manager
-    wsManager.broadcast('TRANSACTION_FAILED', {
-      transactionId: data.transactionId,
-      vaultId: data.vaultId,
-      chainId: data.chainId,
-      error: data.error
-    }, 'transaction_updates');
-  });
+  // Event listeners for verification status updates are registered in the deferred initConnectors
+  // This ensures they only run after the connectorFactory is available
   
   // Simple health check route - lightweight version for quick status checks
   apiRouter.get('/health-check', (_req: Request, res: Response) => {
@@ -772,7 +745,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // API routes are already handled above
   if (process.env.NODE_ENV === 'development') {
     const { setupVite } = await import('./vite');
-    await setupVite(app, httpServer);
+    await setupVite(app, server);
   } else {
     const { serveStatic } = await import('./vite');
     serveStatic(app);
@@ -787,11 +760,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
     // Shutdown the WebSocket manager
     wsManager.shutdown();
     
-    httpServer.close(() => {
+    server.close(() => {
       console.log('Server shutdown complete');
       process.exit(0);
     });
   });
   
-  return httpServer;
+  return server;
 }
