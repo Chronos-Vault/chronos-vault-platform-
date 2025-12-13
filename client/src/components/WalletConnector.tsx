@@ -132,7 +132,11 @@ export function WalletConnector({ onConnect }: WalletConnectorProps) {
       const { TonConnectUI } = await import('@tonconnect/ui');
       
       const tonConnectUI = new TonConnectUI({
-        manifestUrl: `${window.location.origin}/tonconnect-manifest.json`
+        manifestUrl: `${window.location.origin}/tonconnect-manifest.json`,
+        actionsConfiguration: {
+          returnStrategy: 'https://chronosvault.org',
+          twaReturnUrl: 'https://chronosvault.org'
+        }
       });
 
       // Connect to wallet
