@@ -73,7 +73,7 @@ router.post('/time-lock', async (req: Request, res: Response) => {
       explorerLinks: (result.vaultData as any)?.explorerLinks || {
         arbitrum: result.ethereumTxHash ? `https://sepolia.arbiscan.io/tx/${result.ethereumTxHash}` : undefined,
         solana: result.solanaTxHash ? `https://explorer.solana.com/tx/${result.solanaTxHash}?cluster=devnet` : undefined,
-        ton: result.tonTxHash ? `https://testnet.tonscan.org/tx/${result.tonTxHash}` : undefined,
+        ton: result.tonTxHash ? `https://testnet.tonviewer.com/transaction/${result.tonTxHash}` : undefined,
       },
       message: 'Time-Lock Vault created successfully with cross-chain registration',
     });
@@ -128,7 +128,7 @@ router.post('/multi-sig', async (req: Request, res: Response) => {
       explorerLinks: (result.vaultData as any)?.explorerLinks || {
         arbitrum: result.ethereumTxHash ? `https://sepolia.arbiscan.io/tx/${result.ethereumTxHash}` : undefined,
         solana: result.solanaTxHash ? `https://explorer.solana.com/tx/${result.solanaTxHash}?cluster=devnet` : undefined,
-        ton: result.tonTxHash ? `https://testnet.tonscan.org/tx/${result.tonTxHash}` : undefined,
+        ton: result.tonTxHash ? `https://testnet.tonviewer.com/transaction/${result.tonTxHash}` : undefined,
       },
       message: 'Multi-Sig Vault created successfully with cross-chain registration',
     });
@@ -187,7 +187,7 @@ router.post('/fragment', async (req: Request, res: Response) => {
       explorerLinks: (result.vaultData as any)?.explorerLinks || {
         arbitrum: result.ethereumTxHash ? `https://sepolia.arbiscan.io/tx/${result.ethereumTxHash}` : undefined,
         solana: result.solanaTxHash ? `https://explorer.solana.com/tx/${result.solanaTxHash}?cluster=devnet` : undefined,
-        ton: result.tonTxHash ? `https://testnet.tonscan.org/tx/${result.tonTxHash}` : undefined,
+        ton: result.tonTxHash ? `https://testnet.tonviewer.com/transaction/${result.tonTxHash}` : undefined,
       },
       message: 'Cross-Chain Fragment Vault created successfully with cross-chain registration',
     });

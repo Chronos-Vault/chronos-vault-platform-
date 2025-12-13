@@ -1,9 +1,10 @@
 import { Router, Request, Response } from 'express';
 import { storage } from '../storage';
 import { db } from '../db';
-import { scannerTransactions, scannerConsensusOps, crossChainTransactions, vaults } from '@shared/schema';
+import { scannerTransactions, scannerConsensusOps, scannerHtlcSwaps, crossChainTransactions, vaults } from '@shared/schema';
 import { z } from 'zod';
 import { desc, eq, or, like, sql } from 'drizzle-orm';
+import { chainFeeService } from '../blockchain/chain-fee-service';
 
 const router = Router();
 
@@ -90,7 +91,9 @@ router.get('/stats', async (req: Request, res: Response) => {
     const lockedValueResult = await db.select({ total: sql<string>`COALESCE(SUM(CAST(asset_amount AS NUMERIC)), 0)` }).from(vaults);
     const lockedValueWei = lockedValueResult[0]?.total || '0';
     const lockedValueEth = parseFloat(lockedValueWei) / 1e18;
-    const lockedValueUsd = lockedValueEth * 3500; // ETH price estimate
+    // Get real-time prices from CoinGecko
+    const prices = await chainFeeService.getAllPrices();
+    const lockedValueUsd = lockedValueEth * prices.ethereum;
     
     // Count transactions per chain in last 24 hours
     const oneDayAgo = new Date(Date.now() - 24 * 60 * 60 * 1000);
@@ -154,20 +157,57 @@ router.get('/stats', async (req: Request, res: Response) => {
         lockedValue: lockedValueWei,
         lockedValueUsd: lockedValueUsd.toFixed(2),
       },
-      swaps: {
-        totalSwaps: 0,
-        activeSwaps: 0,
-        completedSwaps: 0,
-        volume24h: '0',
-        volumeUsd24h: '0',
-      },
+      swaps: await (async () => {
+        try {
+          const totalSwapsResult = await db.select({ count: sql<number>`COUNT(*)` }).from(scannerHtlcSwaps);
+          const totalSwaps = totalSwapsResult[0]?.count || 0;
+          
+          const activeSwapsResult = await db.select({ count: sql<number>`COUNT(*)` })
+            .from(scannerHtlcSwaps)
+            .where(or(
+              eq(scannerHtlcSwaps.status, 'pending'),
+              eq(scannerHtlcSwaps.status, 'locked'),
+              eq(scannerHtlcSwaps.status, 'pending_source_lock'),
+              eq(scannerHtlcSwaps.status, 'created')
+            ));
+          const activeSwaps = activeSwapsResult[0]?.count || 0;
+          
+          const completedSwapsResult = await db.select({ count: sql<number>`COUNT(*)` })
+            .from(scannerHtlcSwaps)
+            .where(or(
+              eq(scannerHtlcSwaps.status, 'completed'),
+              eq(scannerHtlcSwaps.status, 'claimed')
+            ));
+          const completedSwaps = completedSwapsResult[0]?.count || 0;
+          
+          const volumeResult = await db.select({ 
+            total: sql<string>`COALESCE(SUM(CAST(source_amount AS NUMERIC)), 0)` 
+          }).from(scannerHtlcSwaps);
+          const volume24h = volumeResult[0]?.total || '0';
+          
+          return {
+            totalSwaps,
+            activeSwaps,
+            completedSwaps,
+            volume24h,
+            volumeUsd24h: (parseFloat(volume24h) * prices.ethereum).toFixed(2),
+          };
+        } catch (e) {
+          return { totalSwaps: 0, activeSwaps: 0, completedSwaps: 0, volume24h: '0', volumeUsd24h: '0' };
+        }
+      })(),
       validators: {
-        totalValidators: allValidators.length + 3,
-        activeValidators: approvedValidators.length + 3,
+        totalValidators: 3,
+        activeValidators: 3,
         pendingValidators: pendingValidators.length,
         averageResponseTime: 1200,
         consensusSuccessRate: 99.2,
         onChainValidators: Object.values(TRINITY_VALIDATORS),
+        roles: {
+          arbitrum: 'PRIMARY',
+          solana: 'MONITOR', 
+          ton: 'BACKUP'
+        }
       },
       bridge: {
         totalBridgeOps: totalTransactions,
@@ -176,12 +216,88 @@ router.get('/stats', async (req: Request, res: Response) => {
         volume24h: lockedValueWei,
       },
       deployedContracts: DEPLOYED_CONTRACTS,
-      protocolVersion: 'v3.5.22',
+      protocolVersion: 'v3.5.24',
     };
     
     res.json({ success: true, data: stats });
   } catch (error: any) {
     console.error('Scanner stats error:', error);
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+// GET /api/scanner/prices - Real-time token prices from CoinGecko
+router.get('/prices', async (req: Request, res: Response) => {
+  try {
+    const prices = await chainFeeService.getAllPrices();
+    const trinityFeeEth = 0.001; // 0.001 ETH flat fee
+    const trinityFeeUsd = trinityFeeEth * prices.ethereum;
+    const minimumSwapEth = 0.01; // 0.01 ETH minimum
+    const minimumSwapUsd = minimumSwapEth * prices.ethereum;
+    
+    res.json({
+      success: true,
+      data: {
+        prices: {
+          ethereum: { symbol: 'ETH', price: prices.ethereum, currency: 'USD' },
+          solana: { symbol: 'SOL', price: prices.solana, currency: 'USD' },
+          ton: { symbol: 'TON', price: prices.ton, currency: 'USD' },
+        },
+        updatedAt: new Date().toISOString(),
+        source: 'CoinGecko',
+        
+        // Trinity Protocol Fee Economics (from dev.to blog)
+        feeEconomics: {
+          trinityFee: {
+            amount: trinityFeeEth,
+            symbol: 'ETH',
+            usd: trinityFeeUsd.toFixed(2),
+            description: 'Flat fee per swap regardless of size'
+          },
+          feeBreakdown: {
+            arbitrumGasCreation: { usd: '0.50', description: 'Operation creation' },
+            arbitrumGasConsensus: { usd: '0.30', description: 'Consensus confirmation' },
+            solanaTransaction: { usd: '0.01', description: 'Solana tx fee' },
+            tonTransaction: { usd: '0.05', description: 'TON tx fee' },
+            relayerInfrastructure: { usd: '0.50', description: 'Relayer infrastructure' },
+            validatorCompute: { usd: '0.50', description: 'Validator compute (3 chains)' },
+            securityMargin: { usd: '1.14', description: 'Security margin' },
+            total: { usd: trinityFeeUsd.toFixed(2) }
+          },
+          feePercentageBySize: [
+            { swapUsd: minimumSwapUsd.toFixed(0), feePercent: ((trinityFeeUsd / minimumSwapUsd) * 100).toFixed(1) + '%' },
+            { swapUsd: '100', feePercent: ((trinityFeeUsd / 100) * 100).toFixed(1) + '%' },
+            { swapUsd: '300', feePercent: ((trinityFeeUsd / 300) * 100).toFixed(2) + '%' },
+            { swapUsd: '1000', feePercent: ((trinityFeeUsd / 1000) * 100).toFixed(2) + '%' },
+            { swapUsd: '10000', feePercent: ((trinityFeeUsd / 10000) * 100).toFixed(3) + '%' },
+            { swapUsd: '100000', feePercent: ((trinityFeeUsd / 100000) * 100).toFixed(4) + '%' },
+          ]
+        },
+        
+        // Minimum swap amounts (dust attack prevention)
+        minimums: {
+          arbitrum: { 
+            amount: 0.01, 
+            symbol: 'ETH', 
+            usd: (0.01 * prices.ethereum).toFixed(2),
+            reason: 'Dust attack prevention - balance between accessibility and security'
+          },
+          solana: { 
+            amount: 0.1, 
+            symbol: 'SOL', 
+            usd: (0.1 * prices.solana).toFixed(2),
+            reason: 'Proportional to ETH minimum based on relative value'
+          },
+          ton: { 
+            amount: 1, 
+            symbol: 'TON', 
+            usd: (1 * prices.ton).toFixed(2),
+            reason: 'Low absolute value but prevents micro-spam'
+          }
+        }
+      }
+    });
+  } catch (error: any) {
     res.status(500).json({ success: false, error: error.message });
   }
 });
@@ -205,6 +321,7 @@ router.get('/chains', async (req: Request, res: Response) => {
         chainId: 'solana',
         chainName: 'Solana Devnet',
         chainType: 'solana',
+        networkId: 103,
         nativeToken: 'SOL',
         explorerUrl: 'https://explorer.solana.com/?cluster=devnet',
         isActive: true,
@@ -215,6 +332,7 @@ router.get('/chains', async (req: Request, res: Response) => {
         chainId: 'ton',
         chainName: 'TON Testnet',
         chainType: 'ton',
+        networkId: -3,
         nativeToken: 'TON',
         explorerUrl: 'https://testnet.tonscan.org',
         isActive: true,
@@ -305,7 +423,7 @@ function getExplorerUrl(chainId: string, txHash: string): string {
       return `https://explorer.solana.com/tx/${txHash}?cluster=devnet`;
     case 'ton-testnet':
     case 'ton':
-      return `https://testnet.tonscan.org/tx/${txHash}`;
+      return `https://testnet.tonviewer.com/transaction/${txHash}`;
     default:
       return '';
   }
@@ -385,7 +503,7 @@ router.get('/consensus', async (req: Request, res: Response) => {
           explorerLinks: {
             arbitrum: op.arbitrumTxHash ? `https://sepolia.arbiscan.io/tx/${op.arbitrumTxHash}` : null,
             solana: op.solanaTxHash ? `https://explorer.solana.com/tx/${op.solanaTxHash}?cluster=devnet` : null,
-            ton: op.tonTxHash ? `https://testnet.tonscan.org/tx/${op.tonTxHash}` : null,
+            ton: op.tonTxHash ? `https://testnet.tonviewer.com/transaction/${op.tonTxHash}` : null,
           },
         })),
         pagination: {
@@ -580,58 +698,41 @@ router.get('/vaults/:address', async (req: Request, res: Response) => {
   }
 });
 
-// GET /api/scanner/swaps - List HTLC swaps
+// GET /api/scanner/swaps - List HTLC swaps (REAL DATA)
 router.get('/swaps', async (req: Request, res: Response) => {
   try {
     const { sourceChain, destChain, status, initiator, page = '1', limit = '20' } = req.query;
     
-    const swaps = [
-      {
-        id: 1,
-        swapId: 'swap-001-arb-sol-1234567890',
-        hashlock: '0xhashlock1...',
-        initiatorAddress: '0x3A92fD5b39Ec9598225DB5b9f15af0523445E3d8',
-        recipientAddress: 'AjWeKXXgLpb2Cy3LfmqPjms3UkN1nAi596qBi8fRdLLQ',
-        sourceChain: 'arbitrum',
-        destinationChain: 'solana',
-        sourceAmount: '1000000000000000000',
-        destinationAmount: '50000000000', // lamports
-        sourceToken: 'ETH',
-        destinationToken: 'SOL',
-        status: 'claimed',
-        timelock: new Date(Date.now() + 86400000),
-        createdAt: new Date(Date.now() - 3600000),
-        claimedAt: new Date(Date.now() - 1800000),
-        exchangeRate: '0.05',
-      },
-      {
-        id: 2,
-        swapId: 'swap-002-sol-arb-9876543210',
-        hashlock: '0xhashlock2...',
-        initiatorAddress: 'BjWeKXXgLpb2Cy3LfmqPjms3UkN1nAi596qBi8fRdLLR',
-        recipientAddress: '0x2554324ae222673F4C36D1Ae0E58C19fFFf69cd5',
-        sourceChain: 'solana',
-        destinationChain: 'arbitrum',
-        sourceAmount: '25000000000',
-        destinationAmount: '500000000000000000',
-        sourceToken: 'SOL',
-        destinationToken: 'ETH',
-        status: 'locked',
-        timelock: new Date(Date.now() + 43200000),
-        createdAt: new Date(Date.now() - 600000),
-        exchangeRate: '20',
-      },
-    ];
+    const allSwaps = await db.select().from(scannerHtlcSwaps).orderBy(desc(scannerHtlcSwaps.createdAt));
+    
+    let filteredSwaps = allSwaps;
+    if (sourceChain) {
+      filteredSwaps = filteredSwaps.filter(s => s.sourceChain === sourceChain);
+    }
+    if (destChain) {
+      filteredSwaps = filteredSwaps.filter(s => s.destinationChain === destChain);
+    }
+    if (status) {
+      filteredSwaps = filteredSwaps.filter(s => s.status === status);
+    }
+    if (initiator) {
+      filteredSwaps = filteredSwaps.filter(s => s.initiatorAddress === initiator);
+    }
+    
+    const pageNum = parseInt(page as string);
+    const limitNum = parseInt(limit as string);
+    const offset = (pageNum - 1) * limitNum;
+    const paginatedSwaps = filteredSwaps.slice(offset, offset + limitNum);
     
     res.json({
       success: true,
       data: {
-        swaps,
+        swaps: paginatedSwaps,
         pagination: {
-          page: parseInt(page as string),
-          limit: parseInt(limit as string),
-          total: swaps.length,
-          hasMore: false,
+          page: pageNum,
+          limit: limitNum,
+          total: filteredSwaps.length,
+          hasMore: offset + limitNum < filteredSwaps.length,
         },
       },
     });
@@ -952,7 +1053,7 @@ router.get('/search', async (req: Request, res: Response) => {
       explorerLinks: {
         arbitrum: op.arbitrumTxHash ? `https://sepolia.arbiscan.io/tx/${op.arbitrumTxHash}` : null,
         solana: op.solanaTxHash ? `https://explorer.solana.com/tx/${op.solanaTxHash}?cluster=devnet` : null,
-        ton: op.tonTxHash ? `https://testnet.tonscan.org/tx/${op.tonTxHash}` : null,
+        ton: op.tonTxHash ? `https://testnet.tonviewer.com/transaction/${op.tonTxHash}` : null,
       },
     }));
     
