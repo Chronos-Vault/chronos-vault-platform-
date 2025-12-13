@@ -183,7 +183,7 @@ export class AtomicSwapService {
    */
   private async initializeBlockchainClients() {
     try {
-      securityLogger.info('🔱 Initializing HTLC Atomic Swap Service with Trinity Protocol™ v3.0...', SecurityEventType.SYSTEM_ERROR);
+      securityLogger.info('🔱 Initializing HTLC Atomic Swap Service with Trinity Protocol™ v3.0...', SecurityEventType.SYSTEM_STARTUP);
       
       await ethereumClient.initialize();
       
@@ -285,7 +285,7 @@ export class AtomicSwapService {
    * REAL DEX INTEGRATION: Jupiter (Solana), Uniswap V3 (Arbitrum), DeDust (TON)
    */
   private async loadLiquidityPools() {
-    securityLogger.info('🔄 Loading real liquidity pools from DEX services...', SecurityEventType.SYSTEM_ERROR);
+    securityLogger.info('🔄 Loading real liquidity pools from DEX services...', SecurityEventType.SYSTEM_STARTUP);
     
     const ethereumPools: LiquidityPool[] = [];
     const solanaPools: LiquidityPool[] = [];
@@ -295,7 +295,7 @@ export class AtomicSwapService {
     this.liquidityPools.set('solana', solanaPools);
     this.liquidityPools.set('ton', tonPools);
     
-    securityLogger.info('✅ Liquidity pools loaded - using real-time DEX quotes', SecurityEventType.SYSTEM_ERROR);
+    securityLogger.info('✅ Liquidity pools loaded - using real-time DEX quotes', SecurityEventType.SYSTEM_STARTUP);
   }
 
   /**
@@ -532,7 +532,7 @@ export class AtomicSwapService {
       }
     }, 6 * 60 * 60 * 1000); // Every 6 hours
     
-    securityLogger.info('✅ Periodic cleanup started (runs every 6 hours)', SecurityEventType.SYSTEM_ERROR);
+    securityLogger.info('✅ Periodic cleanup started (runs every 6 hours)', SecurityEventType.SYSTEM_STARTUP);
   }
   
   /**

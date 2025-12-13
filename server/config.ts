@@ -427,8 +427,8 @@ const crossChainVerificationConfig = {
     ],
     solana: [
       'https://api.devnet.solana.com',
-      'https://devnet.solana.rpcpool.com',
-      'https://solana-devnet.g.alchemy.com/v2/demo'
+      'https://devnet.helius-rpc.com/?api-key=1d8740dc-e5f4-421c-b823-e1bad1889eff',
+      'https://rpc.ankr.com/solana_devnet'
     ],
     bitcoin: [
       'https://btc1.trezor.io/api/v2',
