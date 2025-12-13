@@ -125,19 +125,19 @@ const IntegrationGuide = () => {
                 <Info className="h-4 w-4 text-indigo-500" />
                 <AlertTitle>Integration Prerequisites</AlertTitle>
                 <AlertDescription>
-                  Before you begin, make sure you have an API key and access to the developer portal.
-                  If you don't have these yet, contact our team to get started.
+                  Before you begin, make sure you have a compatible blockchain wallet (MetaMask, Phantom, or TON Keeper).
+                  Chronos Vault uses 100% wallet-based authentication - no traditional API keys required.
                 </AlertDescription>
               </Alert>
               
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 pt-4">
                 <Card className="bg-black/20 border border-gray-800">
                   <CardHeader className="pb-2">
-                    <CardTitle className="text-base">1. Register API Keys</CardTitle>
+                    <CardTitle className="text-base">1. Connect Your Wallet</CardTitle>
                   </CardHeader>
                   <CardContent>
                     <p className="text-sm text-gray-400">
-                      Set up your developer account and generate API credentials.
+                      Install MetaMask, Phantom, or TON Keeper and authenticate with signature.
                     </p>
                   </CardContent>
                 </Card>
@@ -360,8 +360,8 @@ public JsonObject createVault(String token) {
               <h2 className="text-2xl font-bold">Authentication</h2>
               
               <p className="text-gray-300">
-                Chronos Vault supports two authentication methods: API key authentication for server-side
-                applications and wallet-based authentication for client-side applications.
+                Chronos Vault is 100% crypto-native and uses wallet-based authentication exclusively.
+                All authentication is done via blockchain wallet signatures (MetaMask, Phantom, TON Keeper).
               </p>
               
               <Accordion type="single" collapsible className="w-full">
@@ -707,9 +707,9 @@ async function testVaultCreation(token) {
                     <CheckCircle2 className="h-4 w-4 text-green-500" />
                   </div>
                   <div>
-                    <h3 className="text-base font-medium">Generate Production API Keys</h3>
+                    <h3 className="text-base font-medium">Set Up Production Wallet</h3>
                     <p className="text-gray-400 text-sm">
-                      Create a separate set of API keys for production in the developer portal.
+                      Configure your production wallet for mainnet deployment (Ethereum, Solana, or TON).
                     </p>
                   </div>
                 </div>
@@ -911,21 +911,23 @@ await client.assets.deposit(defiVault.id, {
                     </p>
                     
                     <ul className="list-disc list-inside text-gray-300 space-y-2">
-                      <li>Verify your API key is correct and active</li>
-                      <li>Ensure you're using the correct environment (testnet vs. mainnet)</li>
-                      <li>Check that your API key has the necessary permissions</li>
-                      <li>For wallet authentication, ensure the user has connected their wallet</li>
+                      <li>Ensure the user has connected their wallet (MetaMask, Phantom, or TON Keeper)</li>
+                      <li>Verify you're using the correct environment (testnet vs. mainnet)</li>
+                      <li>Check that the wallet signature is valid and not expired</li>
+                      <li>Ensure the JWT token hasn't expired (typical lifetime: 24 hours)</li>
                     </ul>
                     
                     <div className="bg-slate-900 text-slate-50 p-4 rounded-md">
                       <pre className="text-sm overflow-x-auto">
-                        <code>{`// API key troubleshooting
+                        <code>{`// Wallet authentication troubleshooting
 try {
-  const vaults = await client.vaults.list();
+  const vaults = await fetch('/api/vaults', {
+    headers: { 'Authorization': \`Bearer \${token}\` }
+  });
 } catch (error) {
-  if (error.code === 'AUTHENTICATION_FAILED') {
-    console.error('API key authentication failed', error.message);
-    // Prompt user to re-authenticate or check API key
+  if (error.status === 401) {
+    console.error('Wallet authentication failed', error.message);
+    // Prompt user to reconnect wallet and re-sign
   }
 }`}</code>
                       </pre>
