@@ -1,8 +1,7 @@
 import { createConfig, http } from 'wagmi';
-import { mainnet, sepolia, goerli } from 'wagmi/chains';
-import { injected } from 'wagmi/connectors';
+import { mainnet, sepolia, arbitrumSepolia } from 'wagmi/chains';
+import { injected, walletConnect } from 'wagmi/connectors';
 
-// Blockchain types supported by the platform
 export enum BlockchainType {
   ETHEREUM = "ethereum",
   SOLANA = "solana",
@@ -10,31 +9,34 @@ export enum BlockchainType {
   BITCOIN = "bitcoin"
 }
 
-// Define available chains with testnet focus for development
-export const chains = [sepolia, goerli, mainnet];
+const projectId = import.meta.env.VITE_WALLETCONNECT_PROJECT_ID || '3e8a6b60fc41c88a30e73ad3a2b03d92';
 
-// Get Ethereum RPC URL from environment
-const getEthereumRpcUrl = (chainId: number) => {
-  const rpcUrl = import.meta.env.VITE_ETHEREUM_RPC_URL;
-  return rpcUrl ? http(rpcUrl) : http();
-};
+export const chains = [arbitrumSepolia, sepolia, mainnet] as const;
 
-// Create wagmi config with testnet-first connectors
 export const wagmiConfig = createConfig({
-  chains: [sepolia, goerli, mainnet], // Prioritize testnets for development
+  chains: [arbitrumSepolia, sepolia, mainnet],
   transports: {
-    [sepolia.id]: getEthereumRpcUrl(sepolia.id),
-    [goerli.id]: getEthereumRpcUrl(goerli.id),
-    [mainnet.id]: getEthereumRpcUrl(mainnet.id),
+    [arbitrumSepolia.id]: http(),
+    [sepolia.id]: http(),
+    [mainnet.id]: http(),
   },
   connectors: [
-    injected(),
+    injected({ shimDisconnect: true }),
+    walletConnect({ 
+      projectId,
+      showQrModal: true,
+      metadata: {
+        name: 'Chronos Vault - Trinity Protocol™',
+        description: 'Enterprise-grade multi-chain vault system powered by Trinity Protocol™ v3.5.23. 2-of-3 consensus security across Arbitrum, Solana, and TON.',
+        url: 'https://chronosvault.org',
+        icons: ['https://chronosvault.org/logo.png']
+      }
+    }),
   ],
 });
 
-// Chain IDs for reference
 export const chainIds = {
+  arbitrumSepolia: arbitrumSepolia.id,
   sepolia: sepolia.id,
-  goerli: goerli.id,
   mainnet: mainnet.id
 };

@@ -1,4 +1,5 @@
 import { TonConnectUI } from '@tonconnect/ui';
+import { getTonSessionStorage } from './ton-session-storage';
 import { TON_VAULT_FACTORY_ABI, formatTONVaultParams } from '@/lib/contract-interfaces';
 
 /**
@@ -141,9 +142,8 @@ class TONService {
       // Otherwise, try to create a new instance
       if (!this.tonConnectUI) {
         try {
-          // Get the current URL for manifest resolution
-          const currentUrl = window.location.origin;
-          const manifestUrl = `${currentUrl}/tonconnect-manifest.json`;
+          // Use local manifest URL (must be accessible from current origin)
+          const manifestUrl = `${window.location.origin}/tonconnect-manifest.json`;
           
           console.log(`TON service initialization attempt ${this.initAttempts}/${this.maxInitAttempts}`);
           console.log('Initializing TonConnectUI with manifest URL:', manifestUrl);
@@ -167,8 +167,17 @@ class TONService {
               }
             }
             
+            const sessionStorage = getTonSessionStorage();
+            await sessionStorage.ensureSession();
+            const returnUrl = sessionStorage.getReturnUrlWithSession('https://chronosvault.org/trinity-bridge');
+            
             this.tonConnectUI = new TonConnectUI({
-              manifestUrl: manifestUrl
+              manifestUrl: manifestUrl,
+              actionsConfiguration: {
+                returnStrategy: returnUrl as any,
+                twaReturnUrl: returnUrl as any
+              },
+              storage: sessionStorage as any
             });
             
             // Store the successful instance in the static variable for future reuse
