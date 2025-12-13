@@ -52,12 +52,12 @@ class EthereumClient {
     }
     
     try {
-      securityLogger.info('Initializing Ethereum client', SecurityEventType.SYSTEM_ERROR);
+      securityLogger.info('Initializing Ethereum client', SecurityEventType.SYSTEM_STARTUP);
       
       // Check if we should simulate Ethereum
       if (config.shouldSimulateBlockchain('ethereum')) {
         this.initialized = true;
-        securityLogger.info('Ethereum client initialized in SIMULATION mode', SecurityEventType.SYSTEM_ERROR);
+        securityLogger.info('Ethereum client initialized in SIMULATION mode', SecurityEventType.SYSTEM_STARTUP);
         return;
       }
       
