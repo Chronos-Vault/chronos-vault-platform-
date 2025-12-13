@@ -1,7 +1,8 @@
 import { useState } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { Link } from "wouter";
 import { useDevMode } from "@/contexts/dev-mode-context";
 import { useMultiChain } from "@/contexts/multi-chain-context";
-import { PageHeader } from "@/components/page-header";
 import {
   Accordion,
   AccordionContent,
@@ -10,15 +11,36 @@ import {
 } from "@/components/ui/accordion";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
-import { Separator } from "@/components/ui/separator";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Helmet } from "react-helmet";
 import { motion } from "framer-motion";
+import { 
+  HelpCircle, Shield, Code, Coins, Search, ArrowRight, 
+  BookOpen, MessageCircle, Network, Lock 
+} from "lucide-react";
 
 export default function FAQPage() {
   const [activeTab, setActiveTab] = useState("general");
+  const [searchQuery, setSearchQuery] = useState("");
   const { devModeEnabled } = useDevMode();
   const { walletInfo } = useMultiChain();
+
+  const { data: overviewData } = useQuery<{
+    success: boolean;
+    metrics: {
+      protocolVersion: string;
+      attackProbability: string;
+      activeValidators: number;
+      chainsProtected: number;
+      totalSecurityLayers: number;
+    };
+  }>({
+    queryKey: ['/api/security-docs/overview'],
+  });
+
+  const metrics = overviewData?.metrics;
   
-  // Animation variants for fade-in effect
   const containerVariants = {
     hidden: { opacity: 0 },
     visible: {
@@ -41,50 +63,89 @@ export default function FAQPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-[#121212] to-[#1A1A1A] text-white pb-20">
-      <div className="container mx-auto px-4 py-12">
-        <motion.div
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
-        >
-          <PageHeader
-            heading="Frequently Asked Questions"
-            description="Everything you need to know about Chronos Vault's Trinity Protocol™ Security Architecture"
-            separator={true}
-          />
-        </motion.div>
+    <>
+      <Helmet>
+        <title>FAQ | Chronos Vault - Trinity Protocol™</title>
+        <meta name="description" content="Frequently asked questions about Chronos Vault's Trinity Protocol™, 2-of-3 consensus security, multi-chain vaults, and CVT token." />
+      </Helmet>
 
-        <motion.div 
-          className="mt-10 mb-16 p-6 rounded-xl bg-gradient-to-br from-[#6B00D7]/10 to-[#FF5AF7]/5 border border-[#6B00D7]/20 backdrop-blur-sm"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.3, duration: 0.8 }}
-        >
-          <h2 className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7]">Chronos Vault: The Future of Secure Asset Vaults</h2>
-          <p className="mt-2 text-gray-300">
-            Our revolutionary multi-chain architecture secures your digital assets across Ethereum, Solana, TON, and Bitcoin with military-grade encryption and time-locked controls.
-          </p>
-          
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-6">
-            <div className="p-4 rounded-lg bg-[#6B00D7]/10 border border-[#6B00D7]/30">
-              <h3 className="text-lg font-semibold text-purple-400">Fixed Layer Architecture</h3>
-              <p className="text-sm text-gray-300">Ethereum Layer 2 for primary security, Solana for rapid validation, TON for quantum-resistant backup</p>
-            </div>
-            <div className="p-4 rounded-lg bg-[#6B00D7]/10 border border-[#6B00D7]/30">
-              <h3 className="text-lg font-semibold text-[#FF5AF7]">2-of-3 Mathematical Consensus</h3>
-              <p className="text-sm text-gray-300">Trinity Protocol secures your vault across all 3 layers with multi-chain verification</p>
-            </div>
-            <div className="p-4 rounded-lg bg-[#6B00D7]/10 border border-[#6B00D7]/30">
-              <h3 className="text-lg font-semibold text-[#FF5AF7]">Layer 2 Optimized</h3>
-              <p className="text-sm text-gray-300">Ethereum Layer 2 deployment provides 95% lower fees while maintaining maximum security</p>
-            </div>
+      <div className="min-h-screen bg-gradient-to-b from-[#0a0a0f] via-[#121218] to-[#0a0a0f] text-white pb-20">
+        <div className="relative overflow-hidden">
+          <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-purple-900/20 via-transparent to-transparent" />
+          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[400px] bg-gradient-to-b from-[#FF5AF7]/10 to-transparent blur-3xl" />
+
+          <div className="container mx-auto px-4 py-16 relative z-10">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6 }}
+              className="text-center mb-8"
+            >
+              <Badge className="mb-4 bg-gradient-to-r from-purple-600 to-pink-600 text-white border-0">
+                Knowledge Base
+              </Badge>
+              <h1 className="text-4xl md:text-6xl font-bold mb-4 bg-gradient-to-r from-white via-purple-200 to-[#FF5AF7] bg-clip-text text-transparent">
+                Frequently Asked Questions
+              </h1>
+              <p className="text-xl text-gray-400 max-w-3xl mx-auto">
+                Everything you need to know about Trinity Protocol™ and Chronos Vault
+              </p>
+            </motion.div>
+
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.2, duration: 0.6 }}
+              className="max-w-xl mx-auto mb-8"
+            >
+              <div className="relative">
+                <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
+                <Input
+                  placeholder="Search questions..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="pl-12 bg-gray-900/50 border-gray-700 text-white placeholder:text-gray-500 h-12"
+                  data-testid="input-faq-search"
+                />
+              </div>
+            </motion.div>
+
+            <motion.div 
+              className="mb-12 p-6 rounded-2xl bg-gradient-to-br from-purple-900/30 to-pink-900/20 border border-purple-500/20"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.3, duration: 0.8 }}
+            >
+              <h2 className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] mb-2">Trinity Protocol™ Security at a Glance</h2>
+              <p className="text-gray-300 mb-6">
+                Our revolutionary multi-chain architecture secures digital assets across Arbitrum, Solana, and TON with 2-of-3 consensus verification.
+              </p>
+              
+              <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+                <div className="p-4 rounded-xl bg-gray-900/50 border border-cyan-500/20 text-center">
+                  <div className="text-2xl font-bold text-cyan-400">{metrics?.chainsProtected || 3}</div>
+                  <div className="text-sm text-gray-400">Protected Chains</div>
+                </div>
+                <div className="p-4 rounded-xl bg-gray-900/50 border border-purple-500/20 text-center">
+                  <div className="text-2xl font-bold text-purple-400">{metrics?.totalSecurityLayers || 8}</div>
+                  <div className="text-sm text-gray-400">Security Layers</div>
+                </div>
+                <div className="p-4 rounded-xl bg-gray-900/50 border border-pink-500/20 text-center">
+                  <div className="text-2xl font-bold text-pink-400">{metrics?.activeValidators || 3}</div>
+                  <div className="text-sm text-gray-400">Active Validators</div>
+                </div>
+                <div className="p-4 rounded-xl bg-gray-900/50 border border-amber-500/20 text-center">
+                  <div className="text-2xl font-bold text-amber-400">{metrics?.attackProbability || '<10⁻¹⁸'}</div>
+                  <div className="text-sm text-gray-400">Attack Probability</div>
+                </div>
+              </div>
+            </motion.div>
           </div>
-        </motion.div>
+        </div>
 
-        <div className="mt-12">
+        <div className="container mx-auto px-4">
           <Tabs defaultValue="general" onValueChange={setActiveTab}>
-            <TabsList className="grid grid-cols-4 mb-8 bg-[#1A1A1A]">
+            <TabsList className="grid grid-cols-4 md:grid-cols-4 gap-2 mb-8 bg-gray-900/50 border border-gray-800 p-2 rounded-xl">
               <TabsTrigger value="general" className="data-[state=active]:bg-[#6B00D7]/20 data-[state=active]:text-white">
                 General
               </TabsTrigger>
@@ -888,45 +949,7 @@ export default function FAQPage() {
             </TabsContent>
           </Tabs>
         </div>
-        
-        {/* Development Mode Indicator */}
-        {devModeEnabled && (
-          <div className="mt-12 p-4 rounded-lg bg-yellow-500/10 border border-yellow-500/30 text-yellow-300">
-            <h3 className="text-lg font-semibold mb-2">
-              <span className="mr-2">⚙️</span>
-              Developer Mode Active
-            </h3>
-            <p className="text-sm mb-3">You're viewing this site in developer mode. Some features may be simulated.</p>
-            
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
-              <div>
-                <h4 className="font-medium mb-1">Connected Wallets:</h4>
-                <ul className="list-disc pl-6">
-                  <li>ETH: {walletInfo.ethereum.isConnected ? walletInfo.ethereum.address.substring(0, 8) + '...' : 'Not Connected'}</li>
-                  <li>SOL: {walletInfo.solana.isConnected ? walletInfo.solana.address.substring(0, 8) + '...' : 'Not Connected'}</li>
-                  <li>TON: {walletInfo.ton.isConnected ? walletInfo.ton.address.substring(0, 8) + '...' : 'Not Connected'}</li>
-                </ul>
-              </div>
-              <div>
-                <h4 className="font-medium mb-1">Active Features:</h4>
-                <ul className="list-disc pl-6">
-                  <li>Trinity Protocol™ Security</li>
-                  <li>Cross-Chain Bridge</li>
-                  <li>AI-Enhanced Monitoring</li>
-                </ul>
-              </div>
-              <div>
-                <h4 className="font-medium mb-1">Test Networks:</h4>
-                <ul className="list-disc pl-6">
-                  <li>Ethereum Sepolia</li>
-                  <li>Solana Devnet</li>
-                  <li>TON Testnet</li>
-                </ul>
-              </div>
-            </div>
-          </div>
-        )}
       </div>
-    </div>
+    </>
   );
 }
