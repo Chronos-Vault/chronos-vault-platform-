@@ -189,8 +189,8 @@ export const NavBar: React.FC = () => {
                     </Link>
                   </DropdownMenuItem>
                   <DropdownMenuItem asChild>
-                    <Link href="/vault-explorer" className="px-4 py-2 rounded-md hover:bg-[#6B00D7]/20 flex items-center">
-                      <ListChecks className="w-4 h-4 mr-2" /> Vault Explorer
+                    <Link href="/my-vaults" className="px-4 py-2 rounded-md hover:bg-[#6B00D7]/20 flex items-center">
+                      <ListChecks className="w-4 h-4 mr-2" /> My Vaults
                     </Link>
                   </DropdownMenuItem>
                 </DropdownMenuContent>
@@ -488,9 +488,9 @@ export const NavBar: React.FC = () => {
 
               <SidebarItem 
                 icon={<BoxSelect className="h-5 w-5" />} 
-                label="Vault Explorer" 
-                href="/vault-explorer" 
-                active={location === '/vault-explorer'}
+                label="My Vaults" 
+                href="/my-vaults" 
+                active={location === '/my-vaults'}
                 onClick={closeSidebar}
               />
             </SidebarSection>
@@ -661,22 +661,6 @@ export const NavBar: React.FC = () => {
                 label="CVT Token" 
                 href="/cvt-token" 
                 active={location === '/cvt-token'}
-                onClick={closeSidebar}
-              />
-
-              <SidebarItem 
-                icon={<Lightbulb className="h-5 w-5" />} 
-                label="CVT Utility" 
-                href="/cvt-utility" 
-                active={location === '/cvt-utility'}
-                onClick={closeSidebar}
-              />
-
-              <SidebarItem 
-                icon={<BarChart2 className="h-5 w-5" />} 
-                label="Tokenomics" 
-                href="/tokenomics" 
-                active={location === '/tokenomics'}
                 onClick={closeSidebar}
               />
 

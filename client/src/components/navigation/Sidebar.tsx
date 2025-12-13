@@ -191,9 +191,9 @@ const Sidebar: React.FC<{
                 isNew
               />
               <MenuItem 
-                icon={<div className="text-white text-md">🔍</div>}
-                label="Vault Explorer" 
-                href="/vault-explorer" 
+                icon={<div className="text-white text-md">📦</div>}
+                label="My Vaults" 
+                href="/my-vaults" 
               />
 
               <MenuItem 
@@ -403,18 +403,6 @@ const Sidebar: React.FC<{
                   icon={<div className="text-white text-md">🪙</div>}
                   label="CVT Token" 
                   href="/cvt-token"
-                  circleStyle
-                />
-                <MenuItem 
-                  icon={<div className="text-white text-md">⚡</div>}
-                  label="CVT Utility" 
-                  href="/cvt-utility"
-                  circleStyle
-                />
-                <MenuItem 
-                  icon={<div className="text-white text-md">📊</div>}
-                  label="Tokenomics" 
-                  href="/tokenomics"
                   circleStyle
                 />
                 <MenuItem 
