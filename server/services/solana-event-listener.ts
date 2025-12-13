@@ -50,7 +50,6 @@ export class SolanaEventListener extends EventEmitter {
         process.env.SOLANA_RPC_URL,
         config.blockchainConfig.solana.rpcUrl,
         'https://api.devnet.solana.com',
-        'https://devnet.solana.rpcpool.com',
         'https://rpc.ankr.com/solana_devnet',
       ].filter(Boolean) as string[];
 

@@ -40,7 +40,7 @@ const SOLANA_PROGRAMS = {
 // Multiple Solana RPC endpoints for reliability
 const SOLANA_RPC_ENDPOINTS = [
   'https://api.devnet.solana.com',
-  'https://devnet.solana.rpcpool.com',
+  'https://rpc.ankr.com/solana_devnet',
 ];
 
 export interface CrossChainVaultRegistration {
@@ -246,7 +246,7 @@ class CrossChainVaultRegistrationService {
         results.tonTxHash = tonResult.txHash;
         // TON explorer links point to wallet address (external messages don't have direct tx lookups)
         const tonWalletAddr = (tonResult as any).walletAddress || process.env.TON_WALLET_ADDRESS || '0QCctckQeh8Xo8-_U4L8PpXtjMBlG71S8PD8QZvr9OzmJvHK';
-        results.explorerLinks.ton = `https://testnet.tonscan.org/address/${tonWalletAddr}#transactions`;
+        results.explorerLinks.ton = `https://testnet.tonviewer.com/${tonWalletAddr}`;
         securityLogger.info(`✅ TON registration complete: ${tonResult.txHash}`, SecurityEventType.CROSS_CHAIN_VERIFICATION);
       }
 
@@ -495,8 +495,8 @@ class CrossChainVaultRegistrationService {
           securityLogger.info(`📤 TON transaction sent! Result: ${JSON.stringify(result)}`, SecurityEventType.CROSS_CHAIN_VERIFICATION);
           
           securityLogger.info(`✅ REAL TON transaction sent! Hash: ${tonTxHash}`, SecurityEventType.CROSS_CHAIN_VERIFICATION);
-          securityLogger.info(`🔗 TON Explorer: https://testnet.tonscan.org/address/${walletAddressString}`, SecurityEventType.CROSS_CHAIN_VERIFICATION);
-          securityLogger.info(`🔗 View wallet transactions at: https://testnet.tonscan.org/address/${walletAddressString}#transactions`, SecurityEventType.CROSS_CHAIN_VERIFICATION);
+          securityLogger.info(`🔗 TON Explorer: https://testnet.tonviewer.com/${walletAddressString}`, SecurityEventType.CROSS_CHAIN_VERIFICATION);
+          securityLogger.info(`🔗 View wallet transactions at: https://testnet.tonviewer.com/${walletAddressString}`, SecurityEventType.CROSS_CHAIN_VERIFICATION);
           
           return { txHash: tonTxHash, isSimulated: false, walletAddress: walletAddressString };
         } catch (txErr: any) {
@@ -686,7 +686,7 @@ class CrossChainVaultRegistrationService {
     return {
       arbitrum: arbitrumTxHash ? `https://sepolia.arbiscan.io/tx/${arbitrumTxHash}` : undefined,
       solana: solanaTxSignature ? `https://explorer.solana.com/tx/${solanaTxSignature}?cluster=devnet` : undefined,
-      ton: tonTxHash ? `https://testnet.tonscan.org/address/${tonWallet}#transactions` : undefined,
+      ton: tonTxHash ? `https://testnet.tonviewer.com/${tonWallet}` : undefined,
     };
   }
 }
