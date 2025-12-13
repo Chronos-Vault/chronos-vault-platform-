@@ -1,5 +1,6 @@
 import { Router, Request, Response } from 'express';
-import { createGitHubSync } from '../services/github-sync';
+import { createGitHubSync, GitHubSyncService } from '../services/github-sync';
+import { Octokit } from '@octokit/rest';
 import fs from 'fs/promises';
 import fsSync from 'fs';
 import path from 'path';
@@ -8,9 +9,13 @@ const EXCLUDED_FILES = [
   "replit.md",
   ".replit",
   "replit.nix",
+  ".replit.nix",
   "DEVELOPMENT.md",
   ".env",
   ".env.local",
+  ".env.development",
+  ".env.production",
+  ".env.test",
   "node_modules",
   ".git",
   "dist",
@@ -18,14 +23,41 @@ const EXCLUDED_FILES = [
   "package-lock.json",
   ".upm",
   ".config",
+  ".local",
+  ".breakpoints",
+  ".pythonlibs",
+  "generated-icon.png",
+  "persisted_information.md",
 ];
 
 const EXCLUDED_PATTERNS = [
   /replit/i,
+  /\.replit/i,
   /DEVELOPMENT\.md$/i,
   /\.d\.ts$/,
   /node_modules/,
   /\.log$/,
+  /\.env/i,
+  /\.local\//,
+  /\.breakpoints/,
+  /\.pythonlibs/,
+  /persisted_information/i,
+  /secrets?\.json$/i,
+  /\.secret/i,
+  /dev[-_]?config/i,
+  /test[-_]?secrets/i,
+];
+
+// Files to delete from GitHub (Replit references and deprecated files) - NEVER upload these
+const FILES_TO_DELETE_FROM_GITHUB = [
+  "replit.md",
+  ".replit",
+  "replit.nix",
+  ".replit.nix",
+  "DEVELOPMENT.md",
+  "replit-deploy.md",
+  ".local/state/memory/persisted_information.md",
+  ".breakpoints",
 ];
 
 function shouldExclude(filePath: string): boolean {
@@ -84,7 +116,7 @@ router.post('/sync-file', async (req: Request, res: Response) => {
     await githubSync.updateFile({
       path: filePath,
       content,
-      message: message || `[Chronos Vault Team] Update ${filePath}`,
+      message: message || `[Trinity Protocol™ | Chronos Vault] Update ${filePath}`,
     });
 
     res.json({
@@ -121,7 +153,7 @@ router.post('/sync-multiple', async (req: Request, res: Response) => {
 
     await githubSync.commitMultipleFiles(
       files,
-      message || `[Chronos Vault Team] Update ${files.length} files`,
+      message || `[Trinity Protocol™ | Chronos Vault] Update ${files.length} files`,
       'main'
     );
 
@@ -166,7 +198,7 @@ router.post('/sync-documentation', async (req: Request, res: Response) => {
 
     await githubSync.commitMultipleFiles(
       files,
-      '📝 Update developer documentation - Remove SDK references, add REST API integration',
+      '[Trinity Protocol™ | Chronos Vault] Update developer documentation',
       'main'
     );
 
@@ -264,7 +296,7 @@ router.post('/sync-all', async (req: Request, res: Response) => {
         try {
           await githubSync.commitMultipleFiles(
             validFiles,
-            `[Trinity Protocol v3.5.22] Batch ${Math.floor(i / BATCH_SIZE) + 1}: Update ${validFiles.length} files`,
+            `[Trinity Protocol™ | Chronos Vault] Update ${validFiles.length} files - v3.5.23`,
             'main'
           );
           uploaded += validFiles.length;
@@ -316,6 +348,253 @@ router.get('/list-files', async (req: Request, res: Response) => {
       files: allFiles,
     });
   } catch (error: any) {
+    res.status(500).json({
+      success: false,
+      error: error.message,
+    });
+  }
+});
+
+router.post('/cleanup-replit-files', async (req: Request, res: Response) => {
+  try {
+    const token = process.env.GITHUB_TOKEN;
+    if (!token) {
+      return res.status(503).json({
+        success: false,
+        error: 'GitHub token not configured',
+      });
+    }
+
+    const octokit = new Octokit({ auth: token });
+    const owner = 'Chronos-Vault';
+    const repo = 'chronos-vault-platform-';
+    const branch = 'main';
+
+    const deleted: string[] = [];
+    const notFound: string[] = [];
+    const failed: string[] = [];
+
+    for (const filePath of FILES_TO_DELETE_FROM_GITHUB) {
+      try {
+        const { data: fileData } = await octokit.repos.getContent({
+          owner,
+          repo,
+          path: filePath,
+          ref: branch,
+        });
+
+        if (!Array.isArray(fileData) && fileData.sha) {
+          await octokit.repos.deleteFile({
+            owner,
+            repo,
+            path: filePath,
+            message: `[Trinity Protocol™ | Chronos Vault] Remove deprecated file: ${filePath}`,
+            sha: fileData.sha,
+            branch,
+          });
+          deleted.push(filePath);
+          console.log(`🗑️ Deleted from GitHub: ${filePath}`);
+        }
+      } catch (error: any) {
+        if (error.status === 404) {
+          notFound.push(filePath);
+        } else {
+          failed.push(filePath);
+          console.error(`Failed to delete ${filePath}:`, error.message);
+        }
+      }
+    }
+
+    res.json({
+      success: true,
+      message: `Cleanup complete: ${deleted.length} deleted, ${notFound.length} not found, ${failed.length} failed`,
+      deleted,
+      notFound,
+      failed,
+    });
+  } catch (error: any) {
+    console.error('GitHub cleanup error:', error);
+    res.status(500).json({
+      success: false,
+      error: error.message,
+    });
+  }
+});
+
+// Sync contracts to the contracts repository
+router.post('/sync-contracts', async (req: Request, res: Response) => {
+  try {
+    const token = process.env.GITHUB_TOKEN;
+    if (!token) {
+      return res.status(503).json({
+        success: false,
+        error: 'GitHub token not configured',
+      });
+    }
+
+    const octokit = new Octokit({ auth: token });
+    const owner = 'Chronos-Vault';
+    const contractsRepo = 'chronos-vault-contracts';
+    const branch = 'main';
+
+    // Collect all contract files from contracts directory
+    const contractDirs = ['contracts/ethereum', 'contracts/solana', 'contracts/ton'];
+    const contractFiles: Array<{ path: string; content: string }> = [];
+
+    for (const dir of contractDirs) {
+      if (fsSync.existsSync(dir)) {
+        const files = getAllFilesSync(dir, dir);
+        for (const filePath of files) {
+          try {
+            const content = await fs.readFile(filePath, 'utf-8');
+            contractFiles.push({ path: filePath, content });
+          } catch (e) {
+            console.error(`Failed to read ${filePath}:`, e);
+          }
+        }
+      }
+    }
+
+    if (contractFiles.length === 0) {
+      return res.json({
+        success: true,
+        message: 'No contract files found to sync',
+        uploaded: 0,
+      });
+    }
+
+    // Get current ref
+    const { data: ref } = await octokit.git.getRef({
+      owner,
+      repo: contractsRepo,
+      ref: `heads/${branch}`,
+    });
+
+    const { data: commit } = await octokit.git.getCommit({
+      owner,
+      repo: contractsRepo,
+      commit_sha: ref.object.sha,
+    });
+
+    // Create tree with all files
+    const { data: tree } = await octokit.git.createTree({
+      owner,
+      repo: contractsRepo,
+      base_tree: commit.tree.sha,
+      tree: contractFiles.map(file => ({
+        path: file.path,
+        mode: '100644' as const,
+        type: 'blob' as const,
+        content: file.content,
+      })),
+    });
+
+    // Create commit
+    const { data: newCommit } = await octokit.git.createCommit({
+      owner,
+      repo: contractsRepo,
+      message: `[Trinity Protocol™ | Chronos Vault] Update ${contractFiles.length} smart contracts - v3.5.23`,
+      tree: tree.sha,
+      parents: [ref.object.sha],
+    });
+
+    // Update ref
+    await octokit.git.updateRef({
+      owner,
+      repo: contractsRepo,
+      ref: `heads/${branch}`,
+      sha: newCommit.sha,
+    });
+
+    console.log(`✅ Synced ${contractFiles.length} contracts to ${contractsRepo}`);
+
+    res.json({
+      success: true,
+      message: `Successfully synced ${contractFiles.length} contracts to GitHub`,
+      uploaded: contractFiles.length,
+      files: contractFiles.map(f => f.path),
+    });
+  } catch (error: any) {
+    console.error('GitHub contracts sync error:', error);
+    res.status(500).json({
+      success: false,
+      error: error.message,
+    });
+  }
+});
+
+// Sync a specific contract file
+router.post('/sync-contract-file', async (req: Request, res: Response) => {
+  try {
+    const { filePath, message } = req.body;
+
+    if (!filePath) {
+      return res.status(400).json({
+        success: false,
+        error: 'filePath is required',
+      });
+    }
+
+    const token = process.env.GITHUB_TOKEN;
+    if (!token) {
+      return res.status(503).json({
+        success: false,
+        error: 'GitHub token not configured',
+      });
+    }
+
+    // Read the file content
+    let content: string;
+    try {
+      content = await fs.readFile(filePath, 'utf-8');
+    } catch (e) {
+      return res.status(404).json({
+        success: false,
+        error: `File not found: ${filePath}`,
+      });
+    }
+
+    const octokit = new Octokit({ auth: token });
+    const owner = 'Chronos-Vault';
+    const repo = 'chronos-vault-contracts';
+
+    // Check if file exists to get SHA
+    let sha: string | undefined;
+    try {
+      const { data: existingFile } = await octokit.repos.getContent({
+        owner,
+        repo,
+        path: filePath,
+      });
+
+      if (!Array.isArray(existingFile) && existingFile.sha) {
+        sha = existingFile.sha;
+      }
+    } catch (error: any) {
+      if (error.status !== 404) {
+        throw error;
+      }
+    }
+
+    const contentBase64 = Buffer.from(content).toString('base64');
+
+    await octokit.repos.createOrUpdateFileContents({
+      owner,
+      repo,
+      path: filePath,
+      message: message || `[Trinity Protocol™ | Chronos Vault] Update ${path.basename(filePath)}`,
+      content: contentBase64,
+      sha,
+    });
+
+    console.log(`✅ Synced ${filePath} to contracts repo`);
+
+    res.json({
+      success: true,
+      message: `Successfully synced ${filePath} to GitHub contracts repo`,
+    });
+  } catch (error: any) {
+    console.error('GitHub contract file sync error:', error);
     res.status(500).json({
       success: false,
       error: error.message,

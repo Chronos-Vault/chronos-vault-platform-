@@ -155,7 +155,7 @@ export async function uploadToGitHub(directories: string[] = ["server", "client"
       batch.map(async (file) => {
         const localPath = file;
         const repoPath = file;
-        const message = `[Chronos Vault Team] Update ${file}`;
+        const message = `🔺 [Chronos Vault] ${file} - Trinity Protocol™ v3.5.22`;
         return uploadFile(octokit, localPath, repoPath, message);
       })
     );
@@ -204,7 +204,7 @@ export async function uploadSpecificFiles(files: string[]): Promise<{
       continue;
     }
     
-    const message = `[Chronos Vault Team] Update ${file}`;
+    const message = `🔺 [Chronos Vault] ${file} - Trinity Protocol™ v3.5.22`;
     const result = await uploadFile(octokit, file, file, message);
     results.push(result);
     
@@ -248,7 +248,7 @@ export async function deleteFilesFromGitHub(filePaths: string[]): Promise<{
         owner: OWNER,
         repo: REPO,
         path: filePath,
-        message: `[Chronos Vault Team] Remove deprecated file: ${filePath}`,
+        message: `🔺 [Chronos Vault] Remove ${filePath}`,
         sha,
         branch: BRANCH,
       });
