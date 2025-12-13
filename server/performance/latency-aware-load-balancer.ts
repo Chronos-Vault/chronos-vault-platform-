@@ -150,7 +150,7 @@ export class LatencyAwareLoadBalancer {
         errorCount: 0
       },
       {
-        url: 'https://devnet.solana.rpcpool.com',
+        url: 'https://rpc.ankr.com/solana_devnet',
         chain: 'solana',
         region: 'us-west',
         currentLatency: 0,
