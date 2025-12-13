@@ -1,5 +1,6 @@
 import { TonClient } from '@tonclient/core';
 import { TonConnectUI } from '@tonconnect/ui';
+import { getTonSessionStorage } from './ton-session-storage';
 
 /**
  * TON connector service for Chronos Vault
@@ -55,9 +56,18 @@ class TonConnector {
             }
           }
           
-          // Create new instance
+          // Create new instance with Chronos Vault return URL and session storage
+          const sessionStorage = getTonSessionStorage();
+          await sessionStorage.ensureSession();
+          const returnUrl = sessionStorage.getReturnUrlWithSession('https://chronosvault.org/trinity-bridge');
+          
           this.tonConnectUI = new TonConnectUI({
-            manifestUrl
+            manifestUrl,
+            actionsConfiguration: {
+              returnStrategy: returnUrl as any,
+              twaReturnUrl: returnUrl as any
+            },
+            storage: sessionStorage as any
           });
           
           // Store as global instance

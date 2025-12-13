@@ -24,7 +24,7 @@ const DEFAULT_RPC_ENDPOINTS: Record<SolanaCluster, string[]> = {
   ],
   [SolanaCluster.DEVNET]: [
     'https://api.devnet.solana.com',
-    'https://devnet.solana.rpcpool.com'
+    'https://rpc.ankr.com/solana_devnet'
   ],
   [SolanaCluster.TESTNET]: [
     'https://api.testnet.solana.com'

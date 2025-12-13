@@ -1,4 +1,5 @@
-import { TonConnectUI, WalletInfoInjected, WalletInfoRemote } from '@tonconnect/ui';
+import { TonConnectUI, WalletInfoInjected, WalletInfoRemote, THEME } from '@tonconnect/ui';
+import { getTonSessionStorage, TonSessionStorage } from './ton-session-storage';
 
 // Chain identifiers
 export const CHAIN_TON = 'TON';
@@ -121,10 +122,12 @@ export class EnhancedTonConnector {
   private walletInfo: WalletInfo | null = null;
   private connectionListeners: ((status: ConnectionStatus, wallet: WalletInfo | null) => void)[] = [];
   private debugMode: boolean = false;
+  private sessionStorage: TonSessionStorage;
 
   constructor(options: Partial<TonConnectorOptions> = {}) {
     this.options = { ...defaultOptions, ...options };
     this.debugMode = this.options.enableDevMode || false;
+    this.sessionStorage = getTonSessionStorage();
     
     if (!this.options.delayInit) {
       this.initialize();
@@ -138,9 +141,23 @@ export class EnhancedTonConnector {
     try {
       this.debug('Initializing enhanced TON connector');
       
-      // Determine manifest URL - use the provided one or construct from origin
+      // Ensure we have a session for cross-domain state persistence
+      await this.sessionStorage.ensureSession();
+      const sessionId = this.sessionStorage.getSessionId();
+      this.debug('Session ID:', sessionId);
+      
+      // Sync wallet data from server if coming from a redirect
+      await this.sessionStorage.syncFromServer();
+      
+      // Use local manifest URL for development (the manifest must be accessible)
+      // The return URL will still redirect to chronosvault.org via actionsConfiguration
       const manifestUrl = this.options.manifestUrl || `${window.location.origin}/tonconnect-manifest.json`;
       this.debug(`Using manifest URL: ${manifestUrl}`);
+      
+      // Build return URL with session ID for cross-domain state persistence
+      const baseReturnUrl = 'https://chronosvault.org/trinity-bridge';
+      const returnUrl = this.sessionStorage.getReturnUrlWithSession(baseReturnUrl);
+      this.debug('Return URL with session:', returnUrl);
       
       // Check if there's already an instance in the window object to avoid duplicates
       const existingTonConnectUI = (window as any).__tonConnectUIInstance;
@@ -150,17 +167,25 @@ export class EnhancedTonConnector {
         this.tonConnectUI = existingTonConnectUI;
       } else {
         try {
-          // Initialize TON Connect UI
+          // Initialize TON Connect UI with custom storage for cross-domain persistence
           this.debug('Creating new TonConnectUI instance');
           this.tonConnectUI = new TonConnectUI({
             manifestUrl,
             uiPreferences: {
-              theme: this.options.walletStyle || 'dark'
-            }
+              theme: this.options.walletStyle === 'light' ? THEME.LIGHT : THEME.DARK
+            },
+            actionsConfiguration: {
+              returnStrategy: returnUrl as any,
+              twaReturnUrl: returnUrl as any
+            },
+            storage: this.sessionStorage as any
           });
           
           // Store globally to prevent duplicates
           (window as any).__tonConnectUIInstance = this.tonConnectUI;
+          
+          // Patch window.open to intercept TON Connect links and fix return URL
+          this.patchWindowOpenForChronosRedirect();
         } catch (error) {
           this.debug('Error creating TonConnectUI:', error);
           console.error('Failed to create TonConnectUI:', error);
@@ -446,6 +471,64 @@ export class EnhancedTonConnector {
    */
   public getTonConnectUI(): TonConnectUI | null {
     return this.tonConnectUI;
+  }
+
+  /**
+   * Patch window.open to intercept TON Connect links and replace the return URL
+   * with chronosvault.org instead of the current origin (for development)
+   */
+  private patchWindowOpenForChronosRedirect(): void {
+    const originalOpen = window.open.bind(window);
+    const chronosBaseUrl = 'https://chronosvault.org';
+    const self = this;
+    
+    (window as any).__tonConnectWindowOpenPatched = true;
+    
+    window.open = function(url?: string | URL, target?: string, features?: string): WindowProxy | null {
+      if (url) {
+        const urlStr = url.toString();
+        
+        // Check if this is a TON Connect link (tonkeeper, ton-connect, etc.)
+        if (urlStr.includes('ton-connect') || urlStr.includes('tonkeeper') || urlStr.includes('tonhub')) {
+          self.debug('Intercepted TON Connect link:', urlStr);
+          
+          try {
+            const urlObj = new URL(urlStr);
+            const retParam = urlObj.searchParams.get('ret');
+            
+            if (retParam) {
+              // Replace the current origin with chronosvault.org in the return URL
+              // Also add the session ID for cross-domain state persistence
+              const currentOrigin = window.location.origin;
+              let newRetUrl = retParam.replace(currentOrigin, chronosBaseUrl);
+              
+              // Add session ID to return URL for state persistence
+              const sessionId = self.sessionStorage.getSessionId();
+              if (sessionId && !newRetUrl.includes('tonSession=')) {
+                const retUrlObj = new URL(newRetUrl);
+                retUrlObj.searchParams.set('tonSession', sessionId);
+                newRetUrl = retUrlObj.toString();
+              }
+              
+              if (newRetUrl !== retParam) {
+                urlObj.searchParams.set('ret', newRetUrl);
+                self.debug('Modified return URL from', retParam, 'to', newRetUrl);
+                
+                const modifiedUrl = urlObj.toString();
+                self.debug('Opening modified TON Connect URL:', modifiedUrl);
+                return originalOpen(modifiedUrl, target, features);
+              }
+            }
+          } catch (e) {
+            self.debug('Error modifying TON Connect URL:', e);
+          }
+        }
+      }
+      
+      return originalOpen(url, target, features);
+    };
+    
+    this.debug('Window.open patched for Chronos Vault redirect');
   }
 
   /**
