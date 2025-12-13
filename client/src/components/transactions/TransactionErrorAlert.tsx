@@ -110,7 +110,7 @@ function getExplorerUrl(txHash: string, blockchain?: string): string | null {
     case 'solana':
       return `https://explorer.solana.com/tx/${txHash}?cluster=devnet`;
     case 'ton':
-      return `https://testnet.tonscan.org/tx/${txHash}`;
+      return `https://testnet.tonviewer.com/transaction/${txHash}`;
     case 'bitcoin':
       return `https://www.blockchain.com/explorer/transactions/btc-testnet/${txHash}`;
     default:
