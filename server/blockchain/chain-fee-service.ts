@@ -179,16 +179,57 @@ export class ChainFeeService {
       return cached.price;
     }
 
-    const prices = {
-      ethereum: 3800,
-      solana: 180,
-      ton: 5.5
+    // Default fallback prices (updated December 2024)
+    const fallbackPrices: Record<string, number> = {
+      ethereum: 3125,
+      solana: 135,
+      ton: 1.65
     };
 
-    const price = prices[token];
+    try {
+      // CoinGecko API - free tier, no API key needed
+      const coinIds: Record<string, string> = {
+        ethereum: 'ethereum',
+        solana: 'solana',
+        ton: 'the-open-network'
+      };
+      
+      const response = await fetch(
+        `https://api.coingecko.com/api/v3/simple/price?ids=${coinIds[token]}&vs_currencies=usd`,
+        { 
+          headers: { 'Accept': 'application/json' },
+          signal: AbortSignal.timeout(5000) // 5 second timeout
+        }
+      );
+      
+      if (response.ok) {
+        const data = await response.json();
+        const coinId = coinIds[token];
+        const price = data[coinId]?.usd;
+        
+        if (price && typeof price === 'number') {
+          this.cachedPrices.set(cacheKey, { price, timestamp: Date.now() });
+          console.log(`[PRICE] ${token.toUpperCase()}: $${price.toFixed(2)} (live from CoinGecko)`);
+          return price;
+        }
+      }
+    } catch (error) {
+      console.log(`[PRICE] Using fallback for ${token}: $${fallbackPrices[token]}`);
+    }
+
+    const price = fallbackPrices[token];
     this.cachedPrices.set(cacheKey, { price, timestamp: Date.now() });
-    
     return price;
+  }
+  
+  // Public method to get all current prices
+  async getAllPrices(): Promise<{ ethereum: number; solana: number; ton: number }> {
+    const [ethereum, solana, ton] = await Promise.all([
+      this.getTokenPrice('ethereum'),
+      this.getTokenPrice('solana'),
+      this.getTokenPrice('ton')
+    ]);
+    return { ethereum, solana, ton };
   }
 
   private getGasLimitForOperation(operationType: string): number {
