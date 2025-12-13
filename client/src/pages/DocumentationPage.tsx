@@ -1,333 +1,439 @@
-import React, { useEffect, useState } from 'react';
-import { useLocation } from 'wouter';
-import DocumentationLayout from '@/components/layout/DocumentationLayout';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Button } from "@/components/ui/button";
-import { Link } from "wouter";
+import { useQuery } from '@tanstack/react-query';
+import { Link } from 'wouter';
+import { motion } from 'framer-motion';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Skeleton } from '@/components/ui/skeleton';
 import { 
-  BookOpen, 
-  FileText, 
-  Shield, 
-  Code, 
-  Timer, 
-  Zap,
-  ArrowRight,
-  Server,
-  Key,
-  Lock
+  BookOpen, Shield, Code, Lock, Zap, ArrowRight, ExternalLink, Terminal,
+  FileText, Users, Coins, Map, HelpCircle, GraduationCap, Cpu, Eye,
+  Network, Key, Clock, Globe, Fingerprint, Database, Wallet, Search
 } from 'lucide-react';
+import { SiEthereum, SiSolana } from 'react-icons/si';
+import { Helmet } from 'react-helmet';
 
-interface Documentation {
-  title: string;
+interface SecurityLayer {
+  id: string;
+  layer: number;
+  name: string;
+  protocol: string;
   description: string;
-  icon: React.ReactNode;
-  sections: {
-    title: string;
-    content: string;
-  }[];
+  status: string;
 }
 
-// Documentation content mapped by route
-const documentationContent: Record<string, Documentation> = {
-  "/docs": {
-    title: "Documentation",
-    description: "Complete documentation for Chronos Vault platform",
-    icon: <BookOpen className="w-8 h-8 text-[#FF5AF7]" />,
-    sections: [
-      {
-        title: "Introduction",
-        content: "Chronos Vault is a revolutionary multi-chain digital vault platform that provides secure storage and time-locked functionality for digital assets. Our platform leverages advanced blockchain technologies across Ethereum, TON, Solana, and Bitcoin to offer unparalleled security and flexibility."
-      },
-      {
-        title: "Getting Started",
-        content: "To get started with Chronos Vault, create an account and connect your preferred wallet. You can then create your first vault by selecting from our range of specialized vault types, each designed for different security needs and use cases."
-      },
-      {
-        title: "Key Features",
-        content: "• Multi-Chain Support: Store assets across multiple blockchains\n• Time-Locked Vaults: Schedule asset releases for future dates\n• Zero-Knowledge Security: Enhanced privacy protection\n• Multi-Signature Authorization: Require multiple approvals for vault access\n• Quantum-Resistant Encryption: Future-proof your digital assets"
-      }
-    ]
-  },
-  "/roadmap": {
-    title: "Roadmap",
-    description: "Future developments and planned features",
-    icon: <Timer className="w-8 h-8 text-[#FF5AF7]" />,
-    sections: [
-      {
-        title: "Q3 2025",
-        content: "• CVT Token Launch on Major Exchanges\n• Cross-Chain Bridge Enhancement\n• Dynamic Fee Optimization System"
-      },
-      {
-        title: "Q4 2025",
-        content: "• Mobile App Release (iOS & Android)\n• AI-Powered Vault Analytics\n• Advanced Security Protocol Implementation"
-      },
-      {
-        title: "Q1 2026",
-        content: "• Institutional Vault Solutions\n• Layer 2 Scaling Implementation\n• Enhanced Multi-Chain Compatibility"
-      },
-      {
-        title: "Q2 2026",
-        content: "• Governance Protocol Launch\n• Cross-Chain Staking Optimization\n• Enterprise API Access"
-      }
-    ]
-  },
-  "/smart-contracts": {
-    title: "Smart Contracts",
-    description: "Technical details about our deployed contracts",
-    icon: <Code className="w-8 h-8 text-[#FF5AF7]" />,
-    sections: [
-      {
-        title: "Ethereum Contracts",
-        content: "Our Ethereum contracts are deployed on the Ethereum mainnet and various testnets. They handle the core vault functionality, time-locking mechanisms, and cross-chain validation. All contracts have undergone rigorous security audits by leading blockchain security firms."
-      },
-      {
-        title: "TON Contracts",
-        content: "The TON blockchain contracts handle high-speed transactions and provide an additional security layer through our proprietary cross-chain validation protocol. These contracts are optimized for minimal gas fees while maintaining maximum security."
-      },
-      {
-        title: "Solana Program",
-        content: "Our Solana program leverages the high throughput and low transaction costs of the Solana blockchain to provide efficient operations for frequent vault interactions and complex multi-signature schemes."
-      },
-      {
-        title: "Bitcoin Integration",
-        content: "Chronos Vault integrates with Bitcoin through specialized solutions that provide the security of Bitcoin while offering advanced vault functionality not natively available on the Bitcoin blockchain."
-      }
-    ]
-  },
-  "/technical-spec": {
-    title: "Technical Specifications",
-    description: "Detailed technical architecture and specifications",
-    icon: <Server className="w-8 h-8 text-[#FF5AF7]" />,
-    sections: [
-      {
-        title: "Architecture Overview",
-        content: "Chronos Vault employs a multi-layered architecture with specialized components for security, cross-chain operations, and user interface. The system utilizes a microservices approach for maximum flexibility and resilience."
-      },
-      {
-        title: "Security Infrastructure",
-        content: "Our security infrastructure includes multiple layers of protection, including zero-knowledge proofs, quantum-resistant encryption, behavioral analysis, and multi-signature authorization. Each security layer operates independently to provide defense in depth."
-      },
-      {
-        title: "Cross-Chain Protocol",
-        content: "The proprietary Cross-Chain Protocol enables seamless asset transfer and validation across supported blockchains. This protocol maintains full transaction traceability while optimizing for gas efficiency and transaction speed."
-      },
-      {
-        title: "Performance Specifications",
-        content: "• Transaction Throughput: Up to 500 TPS\n• Average Confirmation Time: 2-15 seconds (chain-dependent)\n• Security Audit Frequency: Continuous with quarterly formal audits\n• System Uptime Target: 99.99%"
-      }
-    ]
-  },
-  "/security-tutorials": {
-    title: "Security Tutorials",
-    description: "Learn how to maximize your vault security",
-    icon: <Shield className="w-8 h-8 text-[#FF5AF7]" />,
-    sections: [
-      {
-        title: "Multi-Signature Setup",
-        content: "Learn how to configure multi-signature authorization for your vaults to require approval from multiple trusted parties before assets can be accessed or transferred."
-      },
-      {
-        title: "Key Management",
-        content: "Proper key management is essential for vault security. This tutorial covers best practices for secure key storage, recovery procedures, and rotation policies."
-      },
-      {
-        title: "Security Alert Configuration",
-        content: "Configure custom security alerts to monitor your vaults for suspicious activity. Set up notifications for unusual access patterns, failed authentication attempts, or unexpected transfer requests."
-      },
-      {
-        title: "Regular Security Audits",
-        content: "Learn how to perform regular security audits of your vaults, including checking access logs, reviewing authorization settings, and verifying transaction history."
-      }
-    ]
-  },
-  "/technical-security-docs": {
-    title: "Technical Security Documentation",
-    description: "In-depth technical security information",
-    icon: <Lock className="w-8 h-8 text-[#FF5AF7]" />,
-    sections: [
-      {
-        title: "Zero-Knowledge Authentication",
-        content: "Our zero-knowledge authentication system allows users to prove ownership of assets without revealing sensitive information. This documentation explains the cryptographic principles and implementation details."
-      },
-      {
-        title: "Quantum-Resistant Algorithms",
-        content: "Chronos Vault implements post-quantum cryptographic algorithms to protect against threats from future quantum computers. This section covers the specific algorithms used and their security parameters."
-      },
-      {
-        title: "Cross-Chain Security Model",
-        content: "The cross-chain security model ensures consistent security policies across all supported blockchains. This documentation explains how validation occurs across chains and how cross-chain attacks are prevented."
-      },
-      {
-        title: "Security Incident Response",
-        content: "Our security incident response protocol ensures rapid detection and mitigation of potential security threats. This section covers detection mechanisms, response procedures, and recovery processes."
-      }
-    ]
-  },
-  "/security-integration-guide": {
-    title: "Security Integration Guide",
-    description: "Developer guide for integrating Chronos Vault security features",
-    icon: <FileText className="w-8 h-8 text-[#FF5AF7]" />,
-    sections: [
-      {
-        title: "Integration Overview",
-        content: "Learn how to integrate Chronos Vault's Mathematical Defense Layer into your application. This guide covers Trinity Protocol (2-of-3 consensus), Quantum-Resistant Cryptography (ML-KEM-1024), MPC Key Management, VDF Time-Locks, and Zero-Knowledge Proofs."
-      },
-      {
-        title: "Quick Start",
-        content: "• Trinity Protocol: Multi-chain consensus with <10⁻¹⁸ attack probability\n• Quantum Crypto: ML-KEM-1024 and Dilithium-5 hybrid encryption\n• MPC Keys: Shamir Secret Sharing with 3-of-5 threshold\n• VDF Locks: Wesolowski VDF for provable delays\n• ZK Proofs: Privacy-preserving verification"
-      }
-    ]
-  },
-  "/military-grade-security": {
-    title: "Military-Grade Security",
-    description: "Understanding our highest security standards",
-    icon: <Key className="w-8 h-8 text-[#FF5AF7]" />,
-    sections: [
-      {
-        title: "What is Military-Grade Security?",
-        content: "Military-grade security refers to the implementation of security standards similar to those used by military organizations. In Chronos Vault, this includes AES-256 encryption, multi-factor authentication, behavioral analysis, and quantum-resistant algorithms."
-      },
-      {
-        title: "Key Security Features",
-        content: "• AES-256 Encryption: Industry-leading symmetric encryption\n• Multi-Layer Authentication: Multiple verification factors required\n• Continuous Security Monitoring: 24/7 automated threat detection\n• Tamper-Evident Logs: Cryptographically secured audit trails\n• Zero-Knowledge Architecture: Minimal data exposure"
-      },
-      {
-        title: "Implementation in Chronos Vault",
-        content: "All vault types implement military-grade security to varying degrees, with our premium vaults utilizing the full spectrum of security features. This ensures that even our basic vaults provide exceptional security while our premium offerings deliver the highest possible protection."
-      },
-      {
-        title: "Regular Security Assessments",
-        content: "Our security infrastructure undergoes regular assessment by leading cybersecurity firms. This includes penetration testing, code audits, and compliance verification to ensure we maintain the highest security standards."
-      }
-    ]
-  }
-};
+interface VaultType {
+  id: string;
+  name: string;
+  shortDescription: string;
+  category: string;
+}
 
-// Page that handles various documentation routes
-const DocumentationPage: React.FC = () => {
-  const [location] = useLocation();
-  const [doc, setDoc] = useState<Documentation | null>(null);
-  
-  useEffect(() => {
-    // Get documentation content based on current route
-    const content = documentationContent[location];
-    if (content) {
-      setDoc(content);
-    } else {
-      // Default to main docs if route not found
-      setDoc(documentationContent['/docs']);
+const DocumentationPage = () => {
+  const { data: overviewData, isLoading: overviewLoading } = useQuery<{
+    success: boolean;
+    metrics: {
+      protocolVersion: string;
+      attackProbability: string;
+      activeValidators: number;
+      chainsProtected: number;
+      totalSecurityLayers: number;
+    };
+  }>({
+    queryKey: ['/api/security-docs/overview'],
+  });
+
+  const { data: layersData, isLoading: layersLoading } = useQuery<{
+    success: boolean;
+    layers: SecurityLayer[];
+  }>({
+    queryKey: ['/api/security-docs/layers'],
+  });
+
+  const { data: vaultData, isLoading: vaultLoading } = useQuery<{
+    success: boolean;
+    totalVaults: number;
+    vaultTypes: VaultType[];
+  }>({
+    queryKey: ['/api/vault-catalog'],
+  });
+
+  const metrics = overviewData?.metrics;
+  const layers = layersData?.layers || [];
+  const vaultTypes = vaultData?.vaultTypes || [];
+
+  const docCategories = [
+    {
+      title: 'Getting Started',
+      description: 'New to Chronos Vault? Start here',
+      icon: <BookOpen className="h-8 w-8" />,
+      color: 'from-purple-600 to-violet-600',
+      links: [
+        { label: 'Introduction', href: '/documentation', desc: 'Platform overview' },
+        { label: 'Vault School', href: '/vault-school', desc: 'Learn vault basics' },
+        { label: 'FAQ', href: '/faq', desc: 'Common questions' },
+        { label: 'Quick Start Guide', href: '/vault-school-hub', desc: 'Create your first vault' },
+      ]
+    },
+    {
+      title: 'Security & Protocol',
+      description: 'Trinity Protocol™ and MDL security layers',
+      icon: <Shield className="h-8 w-8" />,
+      color: 'from-pink-600 to-rose-600',
+      links: [
+        { label: 'Trinity Protocol', href: '/trinity-protocol-dashboard', desc: '2-of-3 consensus' },
+        { label: 'Security Layers', href: '/security-documentation', desc: '8 MDL layers' },
+        { label: 'Military-Grade Security', href: '/military-grade-security', desc: 'Enterprise security' },
+        { label: 'Security Tutorials', href: '/security-tutorials', desc: 'Learn security' },
+      ]
+    },
+    {
+      title: 'Smart Contracts',
+      description: 'Deployed contracts across 3 chains',
+      icon: <Code className="h-8 w-8" />,
+      color: 'from-cyan-600 to-blue-600',
+      links: [
+        { label: 'Contract Addresses', href: '/smart-contracts', desc: 'Arbitrum, Solana, TON' },
+        { label: 'API Documentation', href: '/api-documentation', desc: 'REST & WebSocket' },
+        { label: 'SDK Access', href: '/sdk-documentation', desc: 'Developer SDK' },
+        { label: 'Integration Guide', href: '/security-integration-guide', desc: 'For developers' },
+      ]
+    },
+    {
+      title: 'Vault Types',
+      description: `${vaultData?.totalVaults || 22} specialized vault types`,
+      icon: <Lock className="h-8 w-8" />,
+      color: 'from-emerald-600 to-teal-600',
+      links: [
+        { label: 'All Vault Types', href: '/vault-school-hub', desc: 'Browse catalog' },
+        { label: 'Time-Lock Vaults', href: '/time-lock-vault', desc: 'Schedule releases' },
+        { label: 'Multi-Sig Vaults', href: '/multi-signature-vault-doc', desc: 'Shared control' },
+        { label: 'Quantum Vaults', href: '/quantum-resistant-vault', desc: 'Future-proof' },
+      ]
+    },
+    {
+      title: 'CVT Token',
+      description: 'Tokenomics and utility',
+      icon: <Coins className="h-8 w-8" />,
+      color: 'from-amber-600 to-orange-600',
+      links: [
+        { label: 'Token Overview', href: '/cvt-token', desc: 'CVT features' },
+        { label: 'Tokenomics', href: '/cvt-tokenomics', desc: 'Distribution' },
+        { label: 'Staking', href: '/cvt-staking', desc: 'Earn rewards' },
+        { label: 'Utility', href: '/cvt-utility', desc: 'Token utility' },
+      ]
+    },
+    {
+      title: 'Resources',
+      description: 'Whitepaper, roadmap, and team',
+      icon: <FileText className="h-8 w-8" />,
+      color: 'from-indigo-600 to-purple-600',
+      links: [
+        { label: 'Whitepaper', href: '/whitepaper', desc: 'Full whitepaper' },
+        { label: 'Technical Spec', href: '/technical-specification', desc: 'Architecture' },
+        { label: 'Roadmap', href: '/roadmap', desc: '2024-2026 plans' },
+        { label: 'Team', href: '/team', desc: 'Our team' },
+      ]
+    },
+  ];
+
+  const quickLinks = [
+    { icon: <Network className="h-5 w-5" />, label: 'Trinity Scan', href: '/monitoring', badge: 'Explorer' },
+    { icon: <Wallet className="h-5 w-5" />, label: 'Connect Wallet', href: '/wallet', badge: 'Start' },
+    { icon: <Zap className="h-5 w-5" />, label: 'HTLC Bridge', href: '/htlc-bridge', badge: 'Swap' },
+    { icon: <GraduationCap className="h-5 w-5" />, label: 'Vault School', href: '/vault-school', badge: 'Learn' },
+  ];
+
+  const getLayerIcon = (layerId: string) => {
+    switch (layerId) {
+      case 'zk-proofs': return <Eye className="h-5 w-5" />;
+      case 'formal-verification': return <FileText className="h-5 w-5" />;
+      case 'mpc-keys': return <Key className="h-5 w-5" />;
+      case 'vdf-timelocks': return <Clock className="h-5 w-5" />;
+      case 'ai-governance': return <Cpu className="h-5 w-5" />;
+      case 'quantum-crypto': return <Lock className="h-5 w-5" />;
+      case 'trinity-protocol': return <Network className="h-5 w-5" />;
+      case 'trinity-shield': return <Shield className="h-5 w-5" />;
+      default: return <Shield className="h-5 w-5" />;
     }
-  }, [location]);
-  
-  if (!doc || !doc.icon) {
-    return <div>Loading...</div>;
-  }
-  
+  };
+
   return (
-    <DocumentationLayout
-      title={doc.title}
-      description={doc.description}
-      icon={doc.icon ? String(doc.icon) : undefined}
-    >
-      <div className="max-w-4xl mx-auto">
-        <Tabs defaultValue="overview" className="w-full mb-8">
-          <TabsList className="grid grid-cols-3 w-full mb-8">
-            <TabsTrigger value="overview">Overview</TabsTrigger>
-            <TabsTrigger value="details">Details</TabsTrigger>
-            <TabsTrigger value="related">Related</TabsTrigger>
-          </TabsList>
+    <>
+      <Helmet>
+        <title>Documentation | Chronos Vault - Trinity Protocol™</title>
+        <meta name="description" content="Complete documentation for Chronos Vault's Trinity Protocol™ multi-chain security platform. Learn about 2-of-3 consensus, 8 MDL security layers, and 22+ vault types." />
+      </Helmet>
+
+      <div className="min-h-screen bg-gradient-to-b from-[#0a0a0f] via-[#121218] to-[#0a0a0f]">
+        <div className="relative overflow-hidden">
+          <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-purple-900/20 via-transparent to-transparent" />
+          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[400px] bg-gradient-to-b from-[#FF5AF7]/10 to-transparent blur-3xl" />
           
-          <TabsContent value="overview" className="space-y-8">
-            {doc.sections.map((section, index) => (
-              <div key={index} className="bg-black/30 border border-purple-900/20 rounded-lg p-6 hover:border-purple-900/40 transition-all duration-300">
-                <h2 className="text-2xl font-bold text-[#FF5AF7] mb-3">{section.title}</h2>
-                <div className="text-gray-300 whitespace-pre-line">
-                  {section.content}
-                </div>
-              </div>
-            ))}
-            
-            <div className="flex justify-center mt-8">
-              <Button asChild className="bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] hover:from-[#FF5AF7] hover:to-[#6B00D7]">
-                <Link href="/my-vaults">
-                  Create Your Vault <ArrowRight className="ml-2 h-4 w-4" />
-                </Link>
-              </Button>
-            </div>
-          </TabsContent>
-          
-          <TabsContent value="details">
-            <div className="bg-black/30 border border-purple-900/20 rounded-lg p-6">
-              <h2 className="text-2xl font-bold text-[#FF5AF7] mb-4">Additional Information</h2>
-              <p className="text-gray-300 mb-4">
-                For more detailed information about {doc.title.toLowerCase()}, please visit our comprehensive
-                knowledge base or contact our support team.
+          <div className="container mx-auto px-4 py-16 relative z-10">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6 }}
+              className="text-center mb-12"
+            >
+              <Badge className="mb-4 bg-gradient-to-r from-purple-600 to-pink-600 text-white border-0">
+                {metrics?.protocolVersion || 'v3.5.23'} Documentation
+              </Badge>
+              <h1 className="text-4xl md:text-6xl font-bold mb-4 bg-gradient-to-r from-white via-purple-200 to-[#FF5AF7] bg-clip-text text-transparent">
+                Chronos Vault Documentation
+              </h1>
+              <p className="text-xl text-gray-400 max-w-3xl mx-auto">
+                Complete guide to Trinity Protocol™ multi-chain security. {metrics?.totalSecurityLayers || 8} security layers, 
+                {metrics?.chainsProtected || 3} chains, {metrics?.activeValidators || 3} validators.
               </p>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
-                <Button variant="outline" className="border-purple-900/50 hover:bg-purple-900/20">
-                  <Link href="/vault-school-hub">Visit Vault School Hub</Link>
-                </Button>
-                <Button variant="outline" className="border-purple-900/50 hover:bg-purple-900/20">
-                  <Link href="/support">Contact Support</Link>
-                </Button>
-              </div>
+            </motion.div>
+
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.2, duration: 0.6 }}
+              className="flex flex-wrap justify-center gap-3 mb-12"
+            >
+              {quickLinks.map((link, i) => (
+                <Link key={i} href={link.href}>
+                  <Button 
+                    variant="outline" 
+                    className="border-purple-500/30 bg-purple-900/10 hover:bg-purple-900/30 hover:border-purple-500/50"
+                    data-testid={`quick-link-${link.label.toLowerCase().replace(' ', '-')}`}
+                  >
+                    {link.icon}
+                    <span className="ml-2">{link.label}</span>
+                    <Badge variant="secondary" className="ml-2 text-xs">{link.badge}</Badge>
+                  </Button>
+                </Link>
+              ))}
+            </motion.div>
+
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-12">
+              <motion.div
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ delay: 0.3 }}
+                className="bg-gradient-to-br from-purple-900/30 to-pink-900/20 border border-purple-500/20 rounded-xl p-6 text-center"
+              >
+                <div className="text-3xl font-bold text-[#FF5AF7]">{metrics?.totalSecurityLayers || 8}</div>
+                <div className="text-sm text-gray-400">Security Layers</div>
+              </motion.div>
+              <motion.div
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ delay: 0.4 }}
+                className="bg-gradient-to-br from-cyan-900/30 to-blue-900/20 border border-cyan-500/20 rounded-xl p-6 text-center"
+              >
+                <div className="text-3xl font-bold text-cyan-400">{metrics?.chainsProtected || 3}</div>
+                <div className="text-sm text-gray-400">Protected Chains</div>
+              </motion.div>
+              <motion.div
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ delay: 0.5 }}
+                className="bg-gradient-to-br from-emerald-900/30 to-teal-900/20 border border-emerald-500/20 rounded-xl p-6 text-center"
+              >
+                <div className="text-3xl font-bold text-emerald-400">{vaultData?.totalVaults || 22}</div>
+                <div className="text-sm text-gray-400">Vault Types</div>
+              </motion.div>
+              <motion.div
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ delay: 0.6 }}
+                className="bg-gradient-to-br from-amber-900/30 to-orange-900/20 border border-amber-500/20 rounded-xl p-6 text-center"
+              >
+                <div className="text-3xl font-bold text-amber-400">{metrics?.attackProbability || '<10⁻¹⁸'}</div>
+                <div className="text-sm text-gray-400">Attack Probability</div>
+              </motion.div>
             </div>
-          </TabsContent>
-          
-          <TabsContent value="related">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="bg-black/30 border border-purple-900/20 rounded-lg p-6 hover:border-purple-900/40 transition-all duration-300">
-                <h3 className="text-xl font-bold text-[#FF5AF7] mb-3">Security Documentation</h3>
-                <p className="text-gray-300 mb-4">
-                  Learn about our advanced security features and protocols.
-                </p>
-                <Button variant="link" asChild className="text-[#FF5AF7] p-0">
-                  <Link href="/technical-security-docs">
-                    View Security Docs <ArrowRight className="ml-1 h-4 w-4" />
-                  </Link>
-                </Button>
+          </div>
+        </div>
+
+        <div className="container mx-auto px-4 pb-20">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-16">
+            {docCategories.map((category, index) => (
+              <motion.div
+                key={category.title}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.1 * index }}
+              >
+                <Card className="h-full bg-gray-900/50 border-gray-800 hover:border-purple-500/30 transition-all duration-300 group" data-testid={`doc-category-${category.title.toLowerCase().replace(/\s+/g, '-')}`}>
+                  <CardHeader>
+                    <div className={`w-14 h-14 rounded-xl bg-gradient-to-br ${category.color} flex items-center justify-center text-white mb-4 group-hover:scale-110 transition-transform`}>
+                      {category.icon}
+                    </div>
+                    <CardTitle className="text-xl text-white">{category.title}</CardTitle>
+                    <CardDescription className="text-gray-400">{category.description}</CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="space-y-2">
+                      {category.links.map((link, i) => (
+                        <Link key={i} href={link.href}>
+                          <div className="flex items-center justify-between p-3 rounded-lg bg-gray-800/50 hover:bg-purple-900/30 transition-colors cursor-pointer group/link" data-testid={`doc-link-${link.label.toLowerCase().replace(/\s+/g, '-')}`}>
+                            <div>
+                              <div className="text-sm font-medium text-white group-hover/link:text-[#FF5AF7]">{link.label}</div>
+                              <div className="text-xs text-gray-500">{link.desc}</div>
+                            </div>
+                            <ArrowRight className="h-4 w-4 text-gray-500 group-hover/link:text-[#FF5AF7] group-hover/link:translate-x-1 transition-all" />
+                          </div>
+                        </Link>
+                      ))}
+                    </div>
+                  </CardContent>
+                </Card>
+              </motion.div>
+            ))}
+          </div>
+
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.8 }}
+            className="mb-16"
+          >
+            <h2 className="text-2xl font-bold text-white mb-6 flex items-center gap-3">
+              <Shield className="h-6 w-6 text-[#FF5AF7]" />
+              Mathematical Defense Layer (MDL)
+            </h2>
+            
+            {layersLoading ? (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                {[...Array(8)].map((_, i) => (
+                  <Skeleton key={i} className="h-32 bg-gray-800" />
+                ))}
               </div>
-              
-              <div className="bg-black/30 border border-purple-900/20 rounded-lg p-6 hover:border-purple-900/40 transition-all duration-300">
-                <h3 className="text-xl font-bold text-[#FF5AF7] mb-3">Vault Types</h3>
-                <p className="text-gray-300 mb-4">
-                  Explore our various vault types and their specialized features.
-                </p>
-                <Button variant="link" asChild className="text-[#FF5AF7] p-0">
-                  <Link href="/vault-types">
-                    View Vault Types <ArrowRight className="ml-1 h-4 w-4" />
-                  </Link>
-                </Button>
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                {layers.map((layer) => (
+                  <div
+                    key={layer.id}
+                    className="bg-gray-900/50 border border-gray-800 rounded-xl p-4 hover:border-purple-500/30 transition-all group"
+                    data-testid={`security-layer-${layer.id}`}
+                  >
+                    <div className="flex items-center gap-3 mb-2">
+                      <div className="w-8 h-8 rounded-lg bg-purple-900/50 flex items-center justify-center text-[#FF5AF7]">
+                        {getLayerIcon(layer.id)}
+                      </div>
+                      <Badge variant="outline" className="text-xs">Layer {layer.layer}</Badge>
+                    </div>
+                    <h3 className="font-semibold text-white text-sm mb-1">{layer.name}</h3>
+                    <p className="text-xs text-gray-500">{layer.protocol}</p>
+                  </div>
+                ))}
               </div>
-              
-              <div className="bg-black/30 border border-purple-900/20 rounded-lg p-6 hover:border-purple-900/40 transition-all duration-300">
-                <h3 className="text-xl font-bold text-[#FF5AF7] mb-3">Tokenomics</h3>
-                <p className="text-gray-300 mb-4">
-                  Understand the CVT token economics and utility.
-                </p>
-                <Button variant="link" asChild className="text-[#FF5AF7] p-0">
-                  <Link href="/tokenomics">
-                    View Tokenomics <ArrowRight className="ml-1 h-4 w-4" />
-                  </Link>
-                </Button>
-              </div>
-              
-              <div className="bg-black/30 border border-purple-900/20 rounded-lg p-6 hover:border-purple-900/40 transition-all duration-300">
-                <h3 className="text-xl font-bold text-[#FF5AF7] mb-3">Developer Resources</h3>
-                <p className="text-gray-300 mb-4">
-                  Access technical documentation and API references.
-                </p>
-                <Button variant="link" asChild className="text-[#FF5AF7] p-0">
-                  <Link href="/smart-contracts">
-                    View Developer Docs <ArrowRight className="ml-1 h-4 w-4" />
-                  </Link>
-                </Button>
-              </div>
+            )}
+          </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.9 }}
+            className="mb-16"
+          >
+            <h2 className="text-2xl font-bold text-white mb-6 flex items-center gap-3">
+              <Globe className="h-6 w-6 text-cyan-400" />
+              Multi-Chain Architecture
+            </h2>
+            
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <Card className="bg-gradient-to-br from-cyan-900/20 to-blue-900/10 border-cyan-500/20">
+                <CardHeader>
+                  <div className="flex items-center gap-3">
+                    <div className="w-12 h-12 rounded-xl bg-cyan-600 flex items-center justify-center">
+                      <SiEthereum className="h-6 w-6 text-white" />
+                    </div>
+                    <div>
+                      <CardTitle className="text-lg text-white">Arbitrum Sepolia</CardTitle>
+                      <Badge className="bg-cyan-600 text-white">PRIMARY</Badge>
+                    </div>
+                  </div>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-sm text-gray-400 mb-3">Main execution layer with 95% lower fees than Ethereum mainnet.</p>
+                  <div className="text-xs text-gray-500 font-mono">Chain ID: 421614</div>
+                </CardContent>
+              </Card>
+
+              <Card className="bg-gradient-to-br from-purple-900/20 to-violet-900/10 border-purple-500/20">
+                <CardHeader>
+                  <div className="flex items-center gap-3">
+                    <div className="w-12 h-12 rounded-xl bg-purple-600 flex items-center justify-center">
+                      <SiSolana className="h-6 w-6 text-white" />
+                    </div>
+                    <div>
+                      <CardTitle className="text-lg text-white">Solana Devnet</CardTitle>
+                      <Badge className="bg-purple-600 text-white">MONITOR</Badge>
+                    </div>
+                  </div>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-sm text-gray-400 mb-3">High-frequency monitoring with 2000+ TPS and &lt;5s SLA.</p>
+                  <div className="text-xs text-gray-500 font-mono">Network ID: 103</div>
+                </CardContent>
+              </Card>
+
+              <Card className="bg-gradient-to-br from-blue-900/20 to-cyan-900/10 border-blue-500/20">
+                <CardHeader>
+                  <div className="flex items-center gap-3">
+                    <div className="w-12 h-12 rounded-xl bg-blue-500 flex items-center justify-center">
+                      <div className="text-white font-bold text-xl">💎</div>
+                    </div>
+                    <div>
+                      <CardTitle className="text-lg text-white">TON Testnet</CardTitle>
+                      <Badge className="bg-blue-500 text-white">BACKUP</Badge>
+                    </div>
+                  </div>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-sm text-gray-400 mb-3">Quantum-resistant recovery with ML-KEM-1024 and Dilithium-5.</p>
+                  <div className="text-xs text-gray-500 font-mono">Network ID: -3</div>
+                </CardContent>
+              </Card>
             </div>
-          </TabsContent>
-        </Tabs>
+          </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 1.0 }}
+            className="text-center"
+          >
+            <Card className="bg-gradient-to-r from-purple-900/30 via-pink-900/20 to-purple-900/30 border-purple-500/20">
+              <CardContent className="py-12">
+                <h2 className="text-2xl font-bold text-white mb-4">Ready to Get Started?</h2>
+                <p className="text-gray-400 mb-6 max-w-xl mx-auto">
+                  Connect your wallet and create your first secure vault with Trinity Protocol™ protection.
+                </p>
+                <div className="flex flex-wrap justify-center gap-4">
+                  <Link href="/wallet">
+                    <Button className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500" data-testid="button-connect-wallet">
+                      <Wallet className="h-4 w-4 mr-2" />
+                      Connect Wallet
+                    </Button>
+                  </Link>
+                  <Link href="/vault-school-hub">
+                    <Button variant="outline" className="border-purple-500/50 hover:bg-purple-900/30" data-testid="button-explore-vaults">
+                      <Lock className="h-4 w-4 mr-2" />
+                      Explore Vault Types
+                    </Button>
+                  </Link>
+                  <Link href="/faq">
+                    <Button variant="ghost" className="hover:bg-purple-900/30" data-testid="button-faq">
+                      <HelpCircle className="h-4 w-4 mr-2" />
+                      FAQ
+                    </Button>
+                  </Link>
+                </div>
+              </CardContent>
+            </Card>
+          </motion.div>
+        </div>
       </div>
-    </DocumentationLayout>
+    </>
   );
 };
 

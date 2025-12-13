@@ -1,444 +1,164 @@
 import { Link } from "wouter";
-import { 
-  Card, 
-  CardContent,
-  CardHeader,
-  CardTitle,
-  CardDescription,
-  CardFooter
-} from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Separator } from "@/components/ui/separator";
-import { ArrowRight, Shield, Lock, Timer, UserCheck, Globe, Layers } from "lucide-react";
+import { Card, CardContent } from "@/components/ui/card";
+import { 
+  Shield, 
+  Lock, 
+  Timer, 
+  Globe, 
+  Layers, 
+  ArrowRight, 
+  CheckCircle2,
+  Zap,
+  Users,
+  Award,
+  Target,
+  Cpu,
+  Network
+} from "lucide-react";
 
 const About = () => {
   return (
-    <>
+    <div className="min-h-screen bg-[#0A0A0A]">
       {/* Hero Section */}
-      <section className="py-20 relative overflow-hidden">
-        <div className="absolute top-0 left-0 right-0 h-80 bg-gradient-to-b from-[#6B00D7]/10 to-transparent"></div>
-        <div className="absolute -top-40 -right-40 w-80 h-80 rounded-full bg-[#FF5AF7]/5 blur-3xl"></div>
-        <div className="absolute -bottom-40 -left-40 w-80 h-80 rounded-full bg-[#6B00D7]/5 blur-3xl"></div>
+      <section className="relative py-24 overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-b from-[#6B00D7]/10 via-transparent to-transparent" />
+        <div className="absolute top-20 left-1/4 w-96 h-96 bg-[#6B00D7]/20 rounded-full blur-[120px]" />
+        <div className="absolute bottom-20 right-1/4 w-96 h-96 bg-[#FF5AF7]/15 rounded-full blur-[120px]" />
         
         <div className="container mx-auto px-4 relative z-10">
-          <div className="text-center max-w-3xl mx-auto">
-            <h1 className="font-poppins font-bold text-4xl md:text-5xl mb-6">
-              <span className="text-[#6B00D7]">Redefining</span> Digital Asset Security
+          <div className="text-center max-w-4xl mx-auto">
+            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[#6B00D7]/10 border border-[#6B00D7]/30 mb-6">
+              <Shield className="h-4 w-4 text-[#6B00D7]" />
+              <span className="text-sm text-[#6B00D7] font-medium">Powered by Trinity Protocol™ v3.5.23</span>
+            </div>
+            
+            <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold mb-6 leading-tight">
+              <span className="bg-gradient-to-r from-white via-white to-gray-400 bg-clip-text text-transparent">
+                The Future of
+              </span>
+              <br />
+              <span className="bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] bg-clip-text text-transparent">
+                Digital Asset Security
+              </span>
             </h1>
-            <p className="text-gray-300 text-lg mb-10">
-              Chronos Vault redefines time-locked assets for the decentralized world, combining 
-              military-grade security with elegant design and trustless operation.
+            
+            <p className="text-xl text-gray-400 mb-10 max-w-2xl mx-auto leading-relaxed">
+              Chronos Vault combines military-grade cryptography with multi-chain consensus 
+              to deliver mathematically provable security for your digital assets.
             </p>
             
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <div className="flex flex-wrap gap-4 justify-center">
               <Link href="/vault-types">
-                <Button className="cta-button bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] px-8 py-6 rounded-lg font-poppins font-medium text-white shadow-lg hover:shadow-xl hover:shadow-[#6B00D7]/20 transition-all">
-                  Start Creating Your Vault
+                <Button size="lg" className="bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] hover:opacity-90 text-white px-8 py-6 text-lg">
+                  Explore Vaults
                   <ArrowRight className="ml-2 h-5 w-5" />
+                </Button>
+              </Link>
+              <Link href="/monitoring">
+                <Button size="lg" variant="outline" className="border-[#333] hover:border-[#6B00D7] px-8 py-6 text-lg">
+                  View Trinity Scan
                 </Button>
               </Link>
             </div>
           </div>
         </div>
       </section>
-      
-      {/* Mission Section */}
-      <section className="py-16 bg-[#121212]">
+
+      {/* Stats Section */}
+      <section className="py-16 border-y border-[#1a1a1a]">
         <div className="container mx-auto px-4">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
-            <div className="order-2 md:order-1">
-              <h2 className="font-poppins font-bold text-3xl mb-6">Our <span className="text-[#6B00D7]">Mission</span></h2>
-              <p className="text-gray-300 mb-6">
-                Our mission is to empower individuals and organizations to secure their digital assets with 
-                unbreakable time-locked vaults, providing peace of mind and strategic control over their 
-                blockchain wealth.
-              </p>
-              <p className="text-gray-300 mb-6">
-                We are building a decentralized future where financial security transcends time, enabling 
-                generational wealth preservation, strategic investment discipline, and transparent fund management.
-              </p>
-              <div className="flex items-center gap-3">
-                <div className="h-1 w-12 bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] rounded-full"></div>
-                <p className="text-lg font-poppins font-medium">Transforming time into a strategic asset</p>
-              </div>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
+            <div className="text-center">
+              <div className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] bg-clip-text text-transparent mb-2">3</div>
+              <div className="text-gray-400">Active Chains</div>
             </div>
-            
-            <div className="order-1 md:order-2 flex justify-center">
-              <div className="relative w-[300px] h-[300px] md:w-[400px] md:h-[400px]">
-                <div className="absolute inset-0 rounded-full border-4 border-dashed border-[#6B00D7]/30 animate-spin opacity-70" style={{animationDuration: '40s'}}></div>
-                <div className="absolute inset-10 rounded-full border-4 border-dashed border-[#FF5AF7]/20 animate-spin opacity-70" style={{animationDuration: '30s', animationDirection: 'reverse'}}></div>
-                
-                <div className="absolute inset-0 flex items-center justify-center">
-                  <div className="w-40 h-40 md:w-48 md:h-48 bg-gradient-to-br from-[#6B00D7]/20 to-[#FF5AF7]/20 rounded-3xl border border-[#333333] glow-border flex items-center justify-center animate-float">
-                    <div className="text-center p-6">
-                      <div className="font-poppins font-semibold text-2xl text-white mb-2">Chronos</div>
-                      <div className="h-1 w-12 mx-auto bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] rounded-full mb-2"></div>
-                      <p className="text-gray-300 text-sm">Commanding time through blockchain technology</p>
-                    </div>
-                  </div>
-                </div>
-              </div>
+            <div className="text-center">
+              <div className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] bg-clip-text text-transparent mb-2">8</div>
+              <div className="text-gray-400">Security Layers</div>
+            </div>
+            <div className="text-center">
+              <div className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] bg-clip-text text-transparent mb-2">2-of-3</div>
+              <div className="text-gray-400">Consensus Required</div>
+            </div>
+            <div className="text-center">
+              <div className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] bg-clip-text text-transparent mb-2">100%</div>
+              <div className="text-gray-400">Wallet-Based Auth</div>
             </div>
           </div>
         </div>
       </section>
 
-      {/* Core Values Section */}
-      <section className="py-20 bg-[#1A1A1A]">
+      {/* Trinity Protocol Section */}
+      <section className="py-24">
         <div className="container mx-auto px-4">
           <div className="text-center mb-16">
-            <h2 className="font-poppins font-bold text-3xl">Our Core <span className="text-[#6B00D7]">Values</span></h2>
-            <p className="text-gray-400 mt-3 max-w-2xl mx-auto">
-              The principles that guide our vision and development of the most secure vault system on the blockchain.
-            </p>
-          </div>
-          
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <Card className="vault-card bg-[#1E1E1E] border border-[#333333] rounded-xl overflow-hidden hover:border-[#6B00D7]/50 transition-all">
-              <CardHeader className="pb-4">
-                <div className="h-14 w-14 flex items-center justify-center rounded-lg bg-[#6B00D7]/10 mb-4">
-                  <Shield className="h-6 w-6 text-[#6B00D7]" />
-                </div>
-                <CardTitle>Uncompromising Security</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-gray-400">
-                  We prioritize security above all else, utilizing battle-tested smart contracts, thorough audits, and 
-                  decentralized architecture to ensure your assets remain protected in all circumstances.
-                </p>
-              </CardContent>
-            </Card>
-            
-            <Card className="vault-card bg-[#1E1E1E] border border-[#333333] rounded-xl overflow-hidden hover:border-[#6B00D7]/50 transition-all">
-              <CardHeader className="pb-4">
-                <div className="h-14 w-14 flex items-center justify-center rounded-lg bg-[#6B00D7]/10 mb-4">
-                  <Lock className="h-6 w-6 text-[#6B00D7]" />
-                </div>
-                <CardTitle>True Decentralization</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-gray-400">
-                  We believe in the power of trustless systems, creating a vault network that operates without reliance 
-                  on central authorities, ensuring your assets remain in your control.
-                </p>
-              </CardContent>
-            </Card>
-            
-            <Card className="vault-card bg-[#1E1E1E] border border-[#333333] rounded-xl overflow-hidden hover:border-[#6B00D7]/50 transition-all">
-              <CardHeader className="pb-4">
-                <div className="h-14 w-14 flex items-center justify-center rounded-lg bg-[#6B00D7]/10 mb-4">
-                  <Timer className="h-6 w-6 text-[#6B00D7]" />
-                </div>
-                <CardTitle>Time as an Asset</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-gray-400">
-                  We recognize the strategic value of time constraints in wealth management, enabling users to 
-                  harness the power of time-locking for generational planning and investment discipline.
-                </p>
-              </CardContent>
-            </Card>
-            
-            <Card className="vault-card bg-[#1E1E1E] border border-[#333333] rounded-xl overflow-hidden hover:border-[#6B00D7]/50 transition-all">
-              <CardHeader className="pb-4">
-                <div className="h-14 w-14 flex items-center justify-center rounded-lg bg-[#6B00D7]/10 mb-4">
-                  <UserCheck className="h-6 w-6 text-[#6B00D7]" />
-                </div>
-                <CardTitle>User Empowerment</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-gray-400">
-                  We design intuitive, accessible interfaces that make sophisticated vault technology available to 
-                  everyone, regardless of their technical expertise in blockchain systems.
-                </p>
-              </CardContent>
-            </Card>
-            
-            <Card className="vault-card bg-[#1E1E1E] border border-[#333333] rounded-xl overflow-hidden hover:border-[#6B00D7]/50 transition-all">
-              <CardHeader className="pb-4">
-                <div className="h-14 w-14 flex items-center justify-center rounded-lg bg-[#6B00D7]/10 mb-4">
-                  <Layers className="h-6 w-6 text-[#6B00D7]" />
-                </div>
-                <CardTitle>Elegant Innovation</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-gray-400">
-                  We believe security can be beautiful, merging cutting-edge blockchain technology with luxurious design 
-                  to create an experience that feels both powerful and refined.
-                </p>
-              </CardContent>
-            </Card>
-            
-            <Card className="vault-card bg-[#1E1E1E] border border-[#333333] rounded-xl overflow-hidden hover:border-[#6B00D7]/50 transition-all">
-              <CardHeader className="pb-4">
-                <div className="h-14 w-14 flex items-center justify-center rounded-lg bg-[#6B00D7]/10 mb-4">
-                  <Globe className="h-6 w-6 text-[#6B00D7]" />
-                </div>
-                <CardTitle>Global Accessibility</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-gray-400">
-                  We are building a borderless vault system that enables anyone, anywhere to secure their digital assets 
-                  without reliance on traditional financial systems or geographic limitations.
-                </p>
-              </CardContent>
-            </Card>
-          </div>
-        </div>
-      </section>
-
-      {/* Mathematical Defense Layer Section */}
-      <section className="py-20 bg-[#0F0F0F] relative overflow-hidden">
-        <div className="absolute -top-20 -left-20 w-80 h-80 rounded-full bg-[#6B00D7]/10 blur-3xl"></div>
-        <div className="absolute -bottom-20 -right-20 w-80 h-80 rounded-full bg-[#FF5AF7]/10 blur-3xl"></div>
-        
-        <div className="container mx-auto px-4 relative z-10">
-          <div className="text-center mb-16">
-            <h2 className="font-poppins font-bold text-3xl">Mathematical <span className="text-[#6B00D7]">Defense Layer</span> <span className="text-sm text-gray-500">(In Development)</span></h2>
-            <p className="text-gray-400 mt-3 max-w-2xl mx-auto">
-              Our vision: Build the world's first fully integrated cryptographic security system where every security claim is mathematically provable, not just audited.
+            <h2 className="text-4xl md:text-5xl font-bold mb-4">
+              <span className="text-white">Trinity Protocol</span>
+              <span className="text-[#6B00D7]">™</span>
+            </h2>
+            <p className="text-gray-400 text-lg max-w-2xl mx-auto">
+              A mathematically provable 2-of-3 consensus verification system across three independent blockchains
             </p>
           </div>
 
-          <div className="max-w-6xl mx-auto mb-12">
-            <div className="bg-gradient-to-r from-[#6B00D7]/10 to-[#FF5AF7]/10 border border-[#6B00D7]/30 rounded-xl p-6">
-              <div className="flex items-start gap-3">
-                <Shield className="h-6 w-6 text-[#FF5AF7] mt-1 flex-shrink-0" />
-                <div>
-                  <h3 className="text-xl font-semibold text-white mb-2">Planned: 100% Formally Verified Security</h3>
-                  <p className="text-gray-300">
-                    Our roadmap includes combining <strong>7 cryptographic layers</strong> to provide mathematically provable security properties. 
-                    The goal: Unlike traditional platforms relying on audits and trust, provide <strong>cryptographic proofs</strong> that security claims cannot be violated.
-                  </p>
+          <div className="grid md:grid-cols-3 gap-6 max-w-5xl mx-auto mb-12">
+            <Card className="bg-gradient-to-br from-[#1a1a1a] to-[#0f0f0f] border-[#2a2a2a] hover:border-[#6B00D7]/50 transition-all group">
+              <CardContent className="p-8 text-center">
+                <div className="w-16 h-16 mx-auto mb-6 rounded-2xl bg-gradient-to-br from-blue-500/20 to-blue-600/10 flex items-center justify-center group-hover:scale-110 transition-transform">
+                  <span className="text-3xl">⟠</span>
                 </div>
-              </div>
-            </div>
-          </div>
-          
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-12">
-            {/* Layer 1: Zero-Knowledge Proofs */}
-            <Card className="bg-[#1A1A1A] border border-[#333333] hover:border-[#6B00D7]/50 transition-all">
-              <CardHeader>
-                <div className="flex items-start gap-3 mb-2">
-                  <div className="h-10 w-10 flex items-center justify-center rounded-lg bg-[#6B00D7]/10">
-                    <Lock className="h-5 w-5 text-[#6B00D7]" />
-                  </div>
-                  <div>
-                    <CardTitle className="text-lg">1. Zero-Knowledge Proof Engine</CardTitle>
-                    <CardDescription className="text-xs text-gray-500">Groth16 Protocol with Circom Circuits</CardDescription>
-                  </div>
-                </div>
-              </CardHeader>
-              <CardContent className="space-y-3">
-                <p className="text-sm text-gray-400">
-                  Privacy-preserving verification where the verifier learns nothing beyond validity. Proof generation in ~5-20ms, verification in ~2-10ms.
-                </p>
-                <div className="bg-[#121212] p-3 rounded-lg border border-[#333333]">
-                  <div className="text-xs text-gray-500 mb-1">Guarantee:</div>
-                  <div className="text-xs text-gray-300 font-mono">∀ proof P: verified(P) ⟹ verifier_learns_nothing_beyond_validity(P)</div>
-                </div>
-                <div className="flex items-center gap-2 text-xs">
-                  <span className="px-2 py-1 bg-blue-500/10 text-blue-400 rounded">In Development</span>
-                  <span className="text-gray-500">vault_ownership.circom, multisig_verification.circom</span>
+                <h3 className="text-xl font-semibold mb-2 text-white">Arbitrum Sepolia</h3>
+                <p className="text-sm text-gray-400 mb-4">Primary Security & Smart Contracts</p>
+                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-green-500/10 text-green-400 text-xs">
+                  <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
+                  Live on Testnet
                 </div>
               </CardContent>
             </Card>
 
-            {/* Layer 2: Formal Verification */}
-            <Card className="bg-[#1A1A1A] border border-[#333333] hover:border-[#6B00D7]/50 transition-all">
-              <CardHeader>
-                <div className="flex items-start gap-3 mb-2">
-                  <div className="h-10 w-10 flex items-center justify-center rounded-lg bg-[#6B00D7]/10">
-                    <Shield className="h-5 w-5 text-[#6B00D7]" />
-                  </div>
-                  <div>
-                    <CardTitle className="text-lg">2. Formal Verification Pipeline</CardTitle>
-                    <CardDescription className="text-xs text-gray-500">Lean 4 Theorem Prover with Mathlib</CardDescription>
-                  </div>
+            <Card className="bg-gradient-to-br from-[#1a1a1a] to-[#0f0f0f] border-[#2a2a2a] hover:border-[#FF5AF7]/50 transition-all group">
+              <CardContent className="p-8 text-center">
+                <div className="w-16 h-16 mx-auto mb-6 rounded-2xl bg-gradient-to-br from-purple-500/20 to-purple-600/10 flex items-center justify-center group-hover:scale-110 transition-transform">
+                  <span className="text-3xl">◎</span>
                 </div>
-              </CardHeader>
-              <CardContent className="space-y-3">
-                <p className="text-sm text-gray-400">
-                  Mathematical proofs that security properties cannot be violated. Automated CI verification on every commit via GitHub Actions.
-                </p>
-                <div className="bg-[#121212] p-3 rounded-lg border border-[#333333]">
-                  <div className="text-xs text-gray-500 mb-1">Coverage:</div>
-                  <div className="text-xs text-gray-300">35/35 theorems proven (100% COMPLETE) ✅</div>
-                  <div className="text-xs text-gray-400 mt-1">Smart Contracts: 13/13 • Cryptography: 13/13 • Consensus: 9/9</div>
-                </div>
-                <div className="flex items-center gap-2 text-xs">
-                  <span className="px-2 py-1 bg-green-500/10 text-green-400 rounded">✓ Complete</span>
-                  <span className="text-gray-500">Lean 4 v4.3.0, /formal-proofs/</span>
+                <h3 className="text-xl font-semibold mb-2 text-white">Solana Devnet</h3>
+                <p className="text-sm text-gray-400 mb-4">High-Frequency Monitoring</p>
+                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-green-500/10 text-green-400 text-xs">
+                  <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
+                  Live on Devnet
                 </div>
               </CardContent>
             </Card>
 
-            {/* Layer 3: MPC Key Management */}
-            <Card className="bg-[#1A1A1A] border border-[#333333] hover:border-[#6B00D7]/50 transition-all">
-              <CardHeader>
-                <div className="flex items-start gap-3 mb-2">
-                  <div className="h-10 w-10 flex items-center justify-center rounded-lg bg-[#6B00D7]/10">
-                    <UserCheck className="h-5 w-5 text-[#6B00D7]" />
-                  </div>
-                  <div>
-                    <CardTitle className="text-lg">3. Multi-Party Computation (MPC)</CardTitle>
-                    <CardDescription className="text-xs text-gray-500">Shamir Secret Sharing over Finite Fields</CardDescription>
-                  </div>
+            <Card className="bg-gradient-to-br from-[#1a1a1a] to-[#0f0f0f] border-[#2a2a2a] hover:border-cyan-500/50 transition-all group">
+              <CardContent className="p-8 text-center">
+                <div className="w-16 h-16 mx-auto mb-6 rounded-2xl bg-gradient-to-br from-cyan-500/20 to-cyan-600/10 flex items-center justify-center group-hover:scale-110 transition-transform">
+                  <span className="text-3xl">💎</span>
                 </div>
-              </CardHeader>
-              <CardContent className="space-y-3">
-                <p className="text-sm text-gray-400">
-                  3-of-5 threshold signatures across Trinity nodes with CRYSTALS-Kyber hybrid encryption for key shares. Secure against k-1 malicious nodes.
-                </p>
-                <div className="bg-[#121212] p-3 rounded-lg border border-[#333333]">
-                  <div className="text-xs text-gray-500 mb-1">Guarantee:</div>
-                  <div className="text-xs text-gray-300 font-mono">∀ key K: reconstruct(K) requires ≥ 3 threshold shares</div>
-                </div>
-                <div className="flex items-center gap-2 text-xs">
-                  <span className="px-2 py-1 bg-blue-500/10 text-blue-400 rounded">In Development</span>
-                  <span className="text-gray-500">Byzantine Fault Tolerance enabled</span>
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* Layer 4: Verifiable Delay Functions */}
-            <Card className="bg-[#1A1A1A] border border-[#333333] hover:border-[#6B00D7]/50 transition-all">
-              <CardHeader>
-                <div className="flex items-start gap-3 mb-2">
-                  <div className="h-10 w-10 flex items-center justify-center rounded-lg bg-[#6B00D7]/10">
-                    <Timer className="h-5 w-5 text-[#6B00D7]" />
-                  </div>
-                  <div>
-                    <CardTitle className="text-lg">4. Verifiable Delay Functions (VDF)</CardTitle>
-                    <CardDescription className="text-xs text-gray-500">Wesolowski VDF with RSA-2048 Groups</CardDescription>
-                  </div>
-                </div>
-              </CardHeader>
-              <CardContent className="space-y-3">
-                <p className="text-sm text-gray-400">
-                  Time-locks provably cannot be bypassed - even by vault creators. Sequential squaring (non-parallelizable) with Fiat-Shamir proofs.
-                </p>
-                <div className="bg-[#121212] p-3 rounded-lg border border-[#333333]">
-                  <div className="text-xs text-gray-500 mb-1">Guarantee:</div>
-                  <div className="text-xs text-gray-300 font-mono">∀ VDF: unlock_before_T_iterations = impossible</div>
-                </div>
-                <div className="flex items-center gap-2 text-xs">
-                  <span className="px-2 py-1 bg-blue-500/10 text-blue-400 rounded">In Development</span>
-                  <span className="text-gray-500">O(log T) fast verification</span>
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* Layer 5: AI + Cryptographic Governance */}
-            <Card className="bg-[#1A1A1A] border border-[#333333] hover:border-[#6B00D7]/50 transition-all">
-              <CardHeader>
-                <div className="flex items-start gap-3 mb-2">
-                  <div className="h-10 w-10 flex items-center justify-center rounded-lg bg-[#6B00D7]/10">
-                    <Layers className="h-5 w-5 text-[#6B00D7]" />
-                  </div>
-                  <div>
-                    <CardTitle className="text-lg">5. AI + Cryptographic Governance</CardTitle>
-                    <CardDescription className="text-xs text-gray-500">Zero-Trust Automation Model</CardDescription>
-                  </div>
-                </div>
-              </CardHeader>
-              <CardContent className="space-y-3">
-                <p className="text-sm text-gray-400">
-                  "AI decides, Math proves, Chain executes" - AI cannot execute without mathematical proof of validity. Multi-layer cryptographic validation.
-                </p>
-                <div className="bg-[#121212] p-3 rounded-lg border border-[#333333]">
-                  <div className="text-xs text-gray-500 mb-1">Guarantee:</div>
-                  <div className="text-xs text-gray-300 font-mono">∀ AI proposal P: executed(P) ⟹ proven(P) ∧ consensus(P, 2/3)</div>
-                </div>
-                <div className="flex items-center gap-2 text-xs">
-                  <span className="px-2 py-1 bg-blue-500/10 text-blue-400 rounded">In Development</span>
-                  <span className="text-gray-500">4 governance rules with ZK validation</span>
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* Layer 6: Quantum-Resistant Crypto */}
-            <Card className="bg-[#1A1A1A] border border-[#333333] hover:border-[#6B00D7]/50 transition-all">
-              <CardHeader>
-                <div className="flex items-start gap-3 mb-2">
-                  <div className="h-10 w-10 flex items-center justify-center rounded-lg bg-[#6B00D7]/10">
-                    <Globe className="h-5 w-5 text-[#6B00D7]" />
-                  </div>
-                  <div>
-                    <CardTitle className="text-lg">6. Quantum-Resistant Cryptography</CardTitle>
-                    <CardDescription className="text-xs text-gray-500">NIST FIPS 203 + CRYSTALS-Dilithium-5</CardDescription>
-                  </div>
-                </div>
-              </CardHeader>
-              <CardContent className="space-y-3">
-                <p className="text-sm text-gray-400">
-                  ML-KEM-1024 key exchange, CRYSTALS-Dilithium-5 signatures (highest security level), RSA-4096 + ML-KEM-1024 hybrid model for defense-in-depth.
-                </p>
-                <div className="bg-[#121212] p-3 rounded-lg border border-[#333333]">
-                  <div className="text-xs text-gray-500 mb-1">Guarantee:</div>
-                  <div className="text-xs text-gray-300 font-mono">∀ attack A using Shor's algorithm: P(success) = negligible</div>
-                </div>
-                <div className="flex items-center gap-2 text-xs">
-                  <span className="px-2 py-1 bg-blue-500/10 text-blue-400 rounded">In Development</span>
-                  <span className="text-gray-500">Secure against quantum computers</span>
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* Layer 7: Trinity Protocol */}
-            <Card className="bg-[#1A1A1A] border border-[#333333] hover:border-[#6B00D7]/50 transition-all">
-              <CardHeader>
-                <div className="flex items-start gap-3 mb-2">
-                  <div className="h-10 w-10 flex items-center justify-center rounded-lg bg-[#6B00D7]/10">
-                    <Shield className="h-5 w-5 text-[#6B00D7]" />
-                  </div>
-                  <div>
-                    <CardTitle className="text-lg">7. Trinity Protocol Multi-Chain Consensus</CardTitle>
-                    <CardDescription className="text-xs text-gray-500">2-of-3 Consensus Across Arbitrum, Solana, TON</CardDescription>
-                  </div>
-                </div>
-              </CardHeader>
-              <CardContent className="space-y-3">
-                <p className="text-sm text-gray-400">
-                  Cross-chain ZK proofs with Merkle verification. Requires simultaneous compromise of 2+ blockchains. Probability of compromise: &lt;10⁻¹⁸.
-                </p>
-                <div className="bg-[#121212] p-3 rounded-lg border border-[#333333]">
-                  <div className="text-xs text-gray-500 mb-1">Guarantee:</div>
-                  <div className="text-xs text-gray-300 font-mono">∀ operation O: valid(O) ⟹ approved_by_2_of_3_chains(O)</div>
-                </div>
-                <div className="flex items-center gap-2 text-xs">
-                  <span className="px-2 py-1 bg-green-500/10 text-green-400 rounded">✓ Live</span>
-                  <span className="text-gray-500">Real-time monitoring active</span>
+                <h3 className="text-xl font-semibold mb-2 text-white">TON Testnet</h3>
+                <p className="text-sm text-gray-400 mb-4">Quantum-Resistant Recovery</p>
+                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-green-500/10 text-green-400 text-xs">
+                  <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
+                  Live on Testnet
                 </div>
               </CardContent>
             </Card>
           </div>
 
-          <div className="max-w-5xl mx-auto">
-            <Card className="bg-gradient-to-br from-[#6B00D7]/5 to-[#FF5AF7]/5 border-[#6B00D7]/30">
+          <div className="max-w-3xl mx-auto">
+            <Card className="bg-gradient-to-r from-[#6B00D7]/10 to-[#FF5AF7]/10 border-[#6B00D7]/30">
               <CardContent className="p-6">
-                <h3 className="text-xl font-semibold text-white mb-4 flex items-center gap-2">
-                  <Shield className="h-5 w-5 text-[#FF5AF7]" />
-                  Security Philosophy: Mathematical Guarantees Over Human Promises
-                </h3>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div className="bg-[#121212]/50 p-4 rounded-lg">
-                    <div className="text-xs text-gray-500 mb-2">TRADITIONAL PLATFORMS</div>
-                    <ul className="text-sm text-gray-400 space-y-1">
-                      <li>• Rely on audits and trust</li>
-                      <li>• Human promises of security</li>
-                      <li>• Potential security vulnerabilities</li>
-                      <li>• No mathematical proofs</li>
-                    </ul>
+                <div className="flex items-start gap-4">
+                  <div className="w-12 h-12 rounded-xl bg-[#6B00D7]/20 flex items-center justify-center flex-shrink-0">
+                    <CheckCircle2 className="h-6 w-6 text-[#6B00D7]" />
                   </div>
-                  <div className="bg-[#121212]/50 p-4 rounded-lg border border-[#6B00D7]/30">
-                    <div className="text-xs text-[#FF5AF7] mb-2">CHRONOS VAULT</div>
-                    <ul className="text-sm text-gray-300 space-y-1">
-                      <li>• Mathematically proven security</li>
-                      <li>• Cryptographic guarantees</li>
-                      <li>• Formally verified - 35/35 theorems ✅</li>
-                      <li>• Trust math, not humans</li>
-                    </ul>
+                  <div>
+                    <h4 className="text-lg font-semibold text-white mb-2">Verified On-Chain Operations</h4>
+                    <p className="text-gray-400 text-sm">
+                      All critical operations require cryptographic proof from at least 2 of 3 validator chains before execution. 
+                      This multi-chain consensus makes single-point failures mathematically impossible.
+                    </p>
                   </div>
                 </div>
               </CardContent>
@@ -446,500 +166,208 @@ const About = () => {
           </div>
         </div>
       </section>
-      
-      {/* Technology Section */}
-      <section className="py-20 bg-[#121212] relative overflow-hidden">
-        <div className="absolute -top-20 -left-20 w-80 h-80 rounded-full bg-[#6B00D7]/5 blur-3xl"></div>
-        <div className="absolute -bottom-20 -right-20 w-80 h-80 rounded-full bg-[#FF5AF7]/5 blur-3xl"></div>
-        
-        <div className="container mx-auto px-4 relative z-10">
-          <div className="text-center mb-16">
-            <h2 className="font-poppins font-bold text-3xl">Advanced <span className="text-[#6B00D7]">Technology</span></h2>
-            <p className="text-gray-400 mt-3 max-w-2xl mx-auto">
-              The technical foundation that powers our revolutionary time-locked vault system.
-            </p>
-          </div>
-          
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
-            <Card className="bg-[#1E1E1E] border border-[#333333]">
-              <CardHeader>
-                <CardTitle className="text-2xl">Smart Contract Architecture</CardTitle>
-                <CardDescription>
-                  The backbone of our secure vault system
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <p className="text-gray-300">
-                  Chronos Vault is built on a foundation of thoroughly audited, non-custodial smart contracts 
-                  that enforce time-locks at the protocol level, making them impossible to bypass.
-                </p>
-                
-                <div className="bg-[#121212] p-4 rounded-lg border border-[#333333]">
-                  <div className="flex items-start mb-4">
-                    <div className="p-2 rounded-full bg-[#6B00D7]/10 mr-3">
-                      <i className="ri-fingerprint-line text-[#6B00D7]"></i>
-                    </div>
-                    <div>
-                      <div className="font-medium">Non-Custodial Design</div>
-                      <p className="text-sm text-gray-400">
-                        Your assets remain under your control at all times, with vault operations executed entirely on-chain.
-                      </p>
-                    </div>
-                  </div>
-                  
-                  <div className="flex items-start mb-4">
-                    <div className="p-2 rounded-full bg-[#6B00D7]/10 mr-3">
-                      <i className="ri-lock-line text-[#6B00D7]"></i>
-                    </div>
-                    <div>
-                      <div className="font-medium">Time Lock Mechanism</div>
-                      <p className="text-sm text-gray-400">
-                        Cryptographically enforced time constraints that cannot be manipulated or overridden.
-                      </p>
-                    </div>
-                  </div>
-                  
-                  <div className="flex items-start">
-                    <div className="p-2 rounded-full bg-[#6B00D7]/10 mr-3">
-                      <i className="ri-shield-check-line text-[#6B00D7]"></i>
-                    </div>
-                    <div>
-                      <div className="font-medium">Security Audits</div>
-                      <p className="text-sm text-gray-400">
-                        Multiple independent security audits by leading blockchain security firms.
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-            
-            <Card className="bg-[#1E1E1E] border border-[#333333]">
-              <CardHeader>
-                <CardTitle className="text-2xl">Blockchain Compatibility</CardTitle>
-                <CardDescription>
-                  Cross-chain support for maximum flexibility
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <p className="text-gray-300">
-                  Our vault system is designed to work across multiple blockchain networks, providing 
-                  flexibility and future-proofing your assets against network-specific risks.
-                </p>
-                
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="bg-[#121212] p-4 rounded-lg border border-[#333333] flex items-center">
-                    <i className="ri-ethereum-line text-2xl mr-3 text-gray-400"></i>
-                    <div>
-                      <div className="font-medium">Ethereum</div>
-                      <p className="text-xs text-gray-400">Primary Network</p>
-                    </div>
-                  </div>
-                  
-                  <div className="bg-[#121212] p-4 rounded-lg border border-[#333333] flex items-center">
-                    <i className="ri-layout-grid-line text-2xl mr-3 text-gray-400"></i>
-                    <div>
-                      <div className="font-medium">Arbitrum</div>
-                      <p className="text-xs text-gray-400">Layer 2 Support</p>
-                    </div>
-                  </div>
-                  
-                  <div className="bg-[#121212] p-4 rounded-lg border border-[#333333] flex items-center">
-                    <i className="ri-bit-coin-line text-2xl mr-3 text-gray-400"></i>
-                    <div>
-                      <div className="font-medium">Bitcoin</div>
-                      <p className="text-xs text-gray-400">Via Wrapped Assets</p>
-                    </div>
-                  </div>
-                  
-                  <div className="bg-[#121212] p-4 rounded-lg border border-[#333333] flex items-center">
-                    <i className="ri-seedling-line text-2xl mr-3 text-gray-400"></i>
-                    <div>
-                      <div className="font-medium">Solana</div>
-                      <p className="text-xs text-gray-400">Coming Soon</p>
-                    </div>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-        </div>
-      </section>
-      
-      {/* How It Works Section */}
-      <section id="how-it-works" className="py-20 bg-[#0F0F0F] relative overflow-hidden">
-        <div className="absolute -bottom-20 -left-20 w-80 h-80 rounded-full bg-[#6B00D7]/5 blur-3xl"></div>
-        <div className="container mx-auto px-4 relative z-10">
-          <div className="text-center mb-16">
-            <h2 className="font-poppins font-bold text-3xl">How <span className="text-[#6B00D7]">Chronos Vault</span> Works</h2>
-            <p className="text-gray-400 mt-3 max-w-2xl mx-auto">
-              Understanding the revolutionary blockchain architecture that powers our secure time-locked vaults.
-            </p>
-          </div>
-          
-          <div className="max-w-4xl mx-auto">
-            <div className="mb-16 bg-[#1A1A1A] border border-[#333] p-6 rounded-xl relative">
-              <div className="absolute -inset-0.5 bg-gradient-to-r from-[#6B00D7]/50 to-[#FF5AF7]/50 rounded-xl blur opacity-30"></div>
-              <div className="relative">
-                <h3 className="text-2xl font-bold mb-4 text-white">Trinity Protocol: 2-of-3 Chain Security</h3>
-                <p className="text-gray-300 mb-6">
-                  At the heart of Chronos Vault is our Trinity Protocol - a fixed-role multi-chain security system where each blockchain serves a specific purpose. Ethereum Layer 2 deployment provides primary security with 95% lower fees, while Solana and TON provide rapid validation and quantum-resistant backup with 2-of-3 mathematical consensus protecting all operations.
-                </p>
-                
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-                  <div className="bg-[#151515] p-4 rounded-lg border border-[#6B00D7]/50 hover:border-[#6B00D7] transition-all">
-                    <div className="flex items-center mb-3">
-                      <div className="w-8 h-8 rounded-full bg-purple-500/10 flex items-center justify-center mr-3">
-                        <i className="ri-ethereum-line text-purple-400"></i>
-                      </div>
-                      <h4 className="font-medium text-white">Ethereum Layer 2</h4>
-                    </div>
-                    <p className="text-sm text-gray-400 mb-2">
-                      Primary Security layer with immutable ownership records. Deployed via Layer 2 for 95% lower fees.
-                    </p>
-                    <div className="flex justify-between text-xs">
-                      <span className="text-gray-500">Role:</span>
-                      <span className="text-purple-400">Primary Security</span>
-                    </div>
-                  </div>
-                  
-                  <div className="bg-[#151515] p-4 rounded-lg border border-[#6B00D7]/50 hover:border-[#6B00D7] transition-all">
-                    <div className="flex items-center mb-3">
-                      <div className="w-8 h-8 rounded-full bg-purple-500/10 flex items-center justify-center mr-3">
-                        <i className="ri-speed-line text-purple-400"></i>
-                      </div>
-                      <h4 className="font-medium text-white">Solana</h4>
-                    </div>
-                    <p className="text-sm text-gray-400 mb-2">
-                      Rapid Validation layer providing high-frequency monitoring and state verification with ultra-fast speeds.
-                    </p>
-                    <div className="flex justify-between text-xs">
-                      <span className="text-gray-500">Role:</span>
-                      <span className="text-purple-400">Rapid Validation</span>
-                    </div>
-                  </div>
-                  
-                  <div className="bg-[#151515] p-4 rounded-lg border border-[#6B00D7]/50 hover:border-[#6B00D7] transition-all">
-                    <div className="flex items-center mb-3">
-                      <div className="w-8 h-8 rounded-full bg-purple-500/10 flex items-center justify-center mr-3">
-                        <i className="ri-database-2-line text-purple-400"></i>
-                      </div>
-                      <h4 className="font-medium text-white">TON</h4>
-                    </div>
-                    <p className="text-sm text-gray-400 mb-2">
-                      Recovery System layer with quantum-resistant backup and recovery capabilities.
-                    </p>
-                    <div className="flex justify-between text-xs">
-                      <span className="text-gray-500">Role:</span>
-                      <span className="text-purple-400">Recovery System</span>
-                    </div>
-                  </div>
-                </div>
 
-                <div className="bg-[#6B00D7]/10 border border-[#6B00D7]/30 p-4 rounded-lg">
-                  <div className="flex items-start gap-2">
-                    <Shield className="h-5 w-5 text-purple-400 mt-0.5" />
-                    <div>
-                      <h4 className="font-medium text-purple-400 mb-1">Fixed Layer Architecture</h4>
-                      <p className="text-sm text-gray-300">
-                        Your vault requires 2-of-3 blockchain layer verification for all operations. This fixed-role architecture ensures maximum security with Ethereum Layer 2 providing affordable primary security, even if one blockchain is compromised.
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-            
-            <div className="space-y-12">
-              <div className="relative">
-                <div className="absolute left-10 top-0 ml-0.5 h-full w-0.5 bg-gradient-to-b from-[#6B00D7] via-[#FF5AF7] to-[#00C9FF]"></div>
-                  
-                <div className="relative flex">
-                  <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-br from-[#6B00D7] to-[#FF5AF7] text-white z-10">1</div>
-                  <div className="ml-6">
-                    <h3 className="font-semibold text-xl text-white mb-3">Vault Creation & Asset Deposit</h3>
-                    <p className="text-gray-300 mb-4">
-                      When you create a vault, Chronos Vault initializes parallel vault instances on Ethereum, Solana, and TON. Your assets are secured using threshold signature schemes that require consensus from multiple blockchain networks to access.
-                    </p>
-                    <div className="bg-[#151515] p-4 rounded-lg border border-[#333]">
-                      <div className="font-medium text-[#FF5AF7] mb-2">Secure Key Management</div>
-                      <p className="text-sm text-gray-400">
-                        Your vault keys are cryptographically split using Shamir's Secret Sharing algorithm, with fragments distributed across all three blockchains. This ensures no single blockchain compromise can affect your assets.
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              
-              <div className="relative">
-                <div className="relative flex">
-                  <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-br from-[#6B00D7] to-[#FF5AF7] text-white z-10">2</div>
-                  <div className="ml-6">
-                    <h3 className="font-semibold text-xl text-white mb-3">Time-Lock Enforcement</h3>
-                    <p className="text-gray-300 mb-4">
-                      Time-locks are enforced through a consensus mechanism where multiple blockchain oracles must agree on the current time. This prevents any single blockchain's time manipulation from affecting your vault's lock period.
-                    </p>
-                    <div className="bg-[#151515] p-4 rounded-lg border border-[#333]">
-                      <div className="font-medium text-[#FF5AF7] mb-2">Multi-Chain Verification</div>
-                      <p className="text-sm text-gray-400">
-                        At least two of the three chains must confirm the time-lock expiration before assets can be accessed, providing protection against blockchain-specific vulnerabilities.
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              
-              <div className="relative">
-                <div className="relative flex">
-                  <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-br from-[#6B00D7] to-[#FF5AF7] text-white z-10">3</div>
-                  <div className="ml-6">
-                    <h3 className="font-semibold text-xl text-white mb-3">Continuous Synchronization</h3>
-                    <p className="text-gray-300 mb-4">
-                      Our Cross-Chain Validator Network continuously monitors all three blockchains, ensuring data consistency and integrity. This network of decentralized validators manages checkpoint synchronization across chains.
-                    </p>
-                    <div className="bg-[#151515] p-4 rounded-lg border border-[#333]">
-                      <div className="font-medium text-[#FF5AF7] mb-2">Automatic Failover</div>
-                      <p className="text-sm text-gray-400">
-                        If any blockchain becomes unavailable or compromised, the system automatically falls back to the remaining chains without any user intervention required.
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              
-              <div className="relative">
-                <div className="relative flex">
-                  <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-br from-[#6B00D7] to-[#FF5AF7] text-white z-10">4</div>
-                  <div className="ml-6">
-                    <h3 className="font-semibold text-xl text-white mb-3">Vault Unlocking & Asset Withdrawal</h3>
-                    <p className="text-gray-300 mb-4">
-                      When your time-lock expires, the multi-chain consensus mechanism verifies the unlock conditions across all active chains. Upon verification, your assets are released back to your control with the same security guarantees.
-                    </p>
-                    <div className="bg-[#151515] p-4 rounded-lg border border-[#333]">
-                      <div className="font-medium text-[#FF5AF7] mb-2">User Experience</div>
-                      <p className="text-sm text-gray-400">
-                        While the underlying technology is complex, our user interface abstracts away this complexity. You interact with a single, unified vault experience while benefiting from multi-chain security behind the scenes.
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-      
-      {/* Ecosystem Partners Section */}
-      <section className="py-20 bg-[#1A1A1A] relative overflow-hidden">
-        <div className="absolute top-20 -left-40 w-80 h-80 rounded-full bg-[#6B00D7]/10 blur-[100px]"></div>
-        <div className="absolute bottom-20 -right-40 w-80 h-80 rounded-full bg-[#FF5AF7]/10 blur-[100px]"></div>
-        
-        <div className="container mx-auto px-4 relative z-10">
+      {/* Mathematical Defense Layer */}
+      <section className="py-24 bg-gradient-to-b from-[#0A0A0A] via-[#0f0f0f] to-[#0A0A0A]">
+        <div className="container mx-auto px-4">
           <div className="text-center mb-16">
-            <h2 className="font-poppins font-bold text-3xl">Blockchain <span className="text-[#6B00D7]">Ecosystem</span></h2>
-            <p className="text-gray-400 mt-3 max-w-2xl mx-auto">
-              Chronos Vault integrates with leading blockchain networks to provide secure, cross-chain vault functionality.
+            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[#FF5AF7]/10 border border-[#FF5AF7]/30 mb-6">
+              <Layers className="h-4 w-4 text-[#FF5AF7]" />
+              <span className="text-sm text-[#FF5AF7] font-medium">8 Cryptographic Layers</span>
+            </div>
+            <h2 className="text-4xl md:text-5xl font-bold mb-4 text-white">
+              Mathematical Defense Layer™
+            </h2>
+            <p className="text-gray-400 text-lg max-w-2xl mx-auto">
+              Every security claim is mathematically provable, not just audited
             </p>
           </div>
-          
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10 max-w-5xl mx-auto">
-            <div className="group relative">
-              <div className="absolute inset-0 bg-gradient-to-r from-[#6B00D7]/20 to-[#FF5AF7]/20 rounded-xl blur-md opacity-50 group-hover:opacity-70 transition-opacity"></div>
-              <Card className="bg-[#1E1E1E]/80 backdrop-blur-sm border border-[#333333] overflow-hidden relative z-10 h-full transition-all group-hover:border-[#6B00D7]/50">
-                <CardHeader className="pb-2">
-                  <div className="flex items-center gap-4">
-                    <div className="p-3 rounded-full bg-[#1E1E1E] flex items-center justify-center">
-                      <i className="ri-ethereum-line text-2xl text-[#627EEA]"></i>
+
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4 max-w-6xl mx-auto">
+            {[
+              { icon: Lock, title: "Zero-Knowledge Proofs", desc: "Groth16 ZK-SNARKs", status: "active" },
+              { icon: Shield, title: "Formal Verification", desc: "Lean 4 Theorem Prover", status: "complete" },
+              { icon: Users, title: "MPC Key Management", desc: "Shamir + CRYSTALS-Kyber", status: "active" },
+              { icon: Timer, title: "VDF Time-Locks", desc: "Wesolowski VDF", status: "active" },
+              { icon: Cpu, title: "AI + Crypto Governance", desc: "Zero-Trust Automation", status: "active" },
+              { icon: Globe, title: "Quantum-Resistant", desc: "ML-KEM + Dilithium-5", status: "active" },
+              { icon: Network, title: "Trinity Protocol™", desc: "2-of-3 Multi-Chain", status: "live" },
+              { icon: Shield, title: "Trinity Shield™", desc: "Hardware TEE (SGX/SEV)", status: "active" },
+            ].map((layer, idx) => (
+              <Card key={idx} className="bg-[#141414] border-[#252525] hover:border-[#6B00D7]/50 transition-all">
+                <CardContent className="p-5">
+                  <div className="flex items-start gap-3">
+                    <div className="w-10 h-10 rounded-lg bg-[#6B00D7]/10 flex items-center justify-center flex-shrink-0">
+                      <layer.icon className="h-5 w-5 text-[#6B00D7]" />
                     </div>
-                    <div>
-                      <CardTitle>Ethereum Network</CardTitle>
-                      <CardDescription>Industry Standard</CardDescription>
+                    <div className="flex-1 min-w-0">
+                      <h4 className="font-semibold text-white text-sm mb-1 truncate">{layer.title}</h4>
+                      <p className="text-xs text-gray-500 mb-2">{layer.desc}</p>
+                      <div className={`inline-flex items-center gap-1.5 px-2 py-0.5 rounded text-xs ${
+                        layer.status === 'live' 
+                          ? 'bg-green-500/10 text-green-400' 
+                          : layer.status === 'complete'
+                          ? 'bg-blue-500/10 text-blue-400'
+                          : 'bg-[#6B00D7]/10 text-[#6B00D7]'
+                      }`}>
+                        <span className={`w-1.5 h-1.5 rounded-full ${
+                          layer.status === 'live' ? 'bg-green-400 animate-pulse' : 
+                          layer.status === 'complete' ? 'bg-blue-400' : 'bg-[#6B00D7]'
+                        }`} />
+                        {layer.status === 'live' ? 'Live' : layer.status === 'complete' ? 'Complete' : 'Active'}
+                      </div>
                     </div>
-                  </div>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-gray-400 mb-4">
-                    Our primary network, enabling secure time-locked vaults with precise execution on the most established smart contract platform.
-                  </p>
-                  <div className="flex items-center text-sm text-[#FF5AF7]">
-                    <span className="inline-block w-2 h-2 rounded-full bg-[#FF5AF7] mr-2"></span>
-                    <span>Sepolia Testnet Integration Complete</span>
                   </div>
                 </CardContent>
               </Card>
-            </div>
-            
-            <div className="group relative">
-              <div className="absolute inset-0 bg-gradient-to-r from-[#6B00D7]/20 to-[#FF5AF7]/20 rounded-xl blur-md opacity-50 group-hover:opacity-70 transition-opacity"></div>
-              <Card className="bg-[#1E1E1E]/80 backdrop-blur-sm border border-[#333333] overflow-hidden relative z-10 h-full transition-all group-hover:border-[#6B00D7]/50">
-                <CardHeader className="pb-2">
-                  <div className="flex items-center gap-4">
-                    <div className="p-3 rounded-full bg-[#1E1E1E] flex items-center justify-center">
-                      <i className="ri-circle-line text-2xl text-[#9945FF]"></i>
-                    </div>
-                    <div>
-                      <CardTitle>Solana Network</CardTitle>
-                      <CardDescription>High Performance</CardDescription>
-                    </div>
-                  </div>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-gray-400 mb-4">
-                    Ultra-fast transaction processing with minimal fees, ideal for high-frequency vault operations and specialized use cases.
-                  </p>
-                  <div className="flex items-center text-sm text-[#FF5AF7]">
-                    <span className="inline-block w-2 h-2 rounded-full bg-[#FF5AF7] mr-2"></span>
-                    <span>Devnet Integration Complete</span>
-                  </div>
-                </CardContent>
-              </Card>
-            </div>
-            
-            <div className="group relative">
-              <div className="absolute inset-0 bg-gradient-to-r from-[#6B00D7]/20 to-[#FF5AF7]/20 rounded-xl blur-md opacity-50 group-hover:opacity-70 transition-opacity"></div>
-              <Card className="bg-[#1E1E1E]/80 backdrop-blur-sm border border-[#333333] overflow-hidden relative z-10 h-full transition-all group-hover:border-[#6B00D7]/50">
-                <CardHeader className="pb-2">
-                  <div className="flex items-center gap-4">
-                    <div className="p-3 rounded-full bg-[#1E1E1E] flex items-center justify-center">
-                      <i className="ri-bring-forward text-2xl text-[#0098EA]"></i>
-                    </div>
-                    <div>
-                      <CardTitle>TON Network</CardTitle>
-                      <CardDescription>Mass Adoption</CardDescription>
-                    </div>
-                  </div>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-gray-400 mb-4">
-                    Reach hundreds of millions of users through the Telegram-integrated blockchain, enabling user-friendly vault solutions.
-                  </p>
-                  <div className="flex items-center text-sm text-[#FF5AF7]">
-                    <span className="inline-block w-2 h-2 rounded-full bg-[#FF5AF7] mr-2"></span>
-                    <span>Testnet Implementation Live</span>
-                  </div>
-                </CardContent>
-              </Card>
-            </div>
-          </div>
-          
-          <div className="mt-16 text-center">
-            <Link href="/cross-chain-security">
-              <Button variant="outline" className="border-[#6B00D7]/50 text-white hover:bg-[#6B00D7]/10 transition-colors">
-                Explore Cross-Chain Security
-                <ArrowRight className="ml-2 h-4 w-4" />
-              </Button>
-            </Link>
+            ))}
           </div>
         </div>
       </section>
-      
-      {/* Testimonials Section */}
-      <section className="py-20 bg-[#121212] relative overflow-hidden">
-        <div className="absolute top-20 -right-40 w-80 h-80 rounded-full bg-[#6B00D7]/10 blur-[100px]"></div>
-        <div className="absolute bottom-20 -left-40 w-80 h-80 rounded-full bg-[#FF5AF7]/10 blur-[100px]"></div>
-        
-        <div className="container mx-auto px-4 relative z-10">
-          <div className="text-center mb-12">
-            <h2 className="font-poppins font-bold text-3xl">What Users <span className="text-[#6B00D7]">Say</span></h2>
-            <p className="text-gray-400 mt-3 max-w-2xl mx-auto">
-              Hear from pioneers who are already using Chronos Vault to secure their digital assets.
+
+      {/* Core Features */}
+      <section className="py-24">
+        <div className="container mx-auto px-4">
+          <div className="text-center mb-16">
+            <h2 className="text-4xl md:text-5xl font-bold mb-4 text-white">
+              Why Chronos Vault?
+            </h2>
+            <p className="text-gray-400 text-lg max-w-2xl mx-auto">
+              Enterprise-grade security meets beautiful design
             </p>
           </div>
-          
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-5xl mx-auto">
-            <Card className="bg-[#1A1A1A] border border-[#333333] overflow-hidden relative">
-              <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7]"></div>
-              <CardContent className="p-8">
-                <div className="flex justify-between items-start mb-6">
-                  <div className="flex items-center gap-4">
-                    <div className="w-14 h-14 rounded-full bg-[#6B00D7]/20 flex items-center justify-center text-xl font-bold text-[#FF5AF7]">
-                      E
-                    </div>
-                    <div>
-                      <h4 className="font-poppins font-semibold text-lg">Ethan Chen</h4>
-                      <p className="text-[#FF5AF7] text-sm">DeFi Portfolio Manager</p>
-                    </div>
-                  </div>
-                  <div>
-                    <i className="ri-double-quotes-l text-4xl text-[#6B00D7]/40"></i>
-                  </div>
-                </div>
-                <p className="text-gray-300 italic mb-6">
-                  "The multi-signature vault feature has transformed how our DAO manages treasury assets. The cross-chain compatibility gives us unmatched flexibility while maintaining military-grade security."
-                </p>
-                <div className="flex gap-1">
-                  {Array(5).fill(0).map((_, i) => (
-                    <i key={i} className="ri-star-fill text-[#FF5AF7]"></i>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
-            
-            <Card className="bg-[#1A1A1A] border border-[#333333] overflow-hidden relative">
-              <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7]"></div>
-              <CardContent className="p-8">
-                <div className="flex justify-between items-start mb-6">
-                  <div className="flex items-center gap-4">
-                    <div className="w-14 h-14 rounded-full bg-[#6B00D7]/20 flex items-center justify-center text-xl font-bold text-[#FF5AF7]">
-                      S
-                    </div>
-                    <div>
-                      <h4 className="font-poppins font-semibold text-lg">Sophia Rodriguez</h4>
-                      <p className="text-[#FF5AF7] text-sm">Family Office Director</p>
-                    </div>
-                  </div>
-                  <div>
-                    <i className="ri-double-quotes-l text-4xl text-[#6B00D7]/40"></i>
-                  </div>
-                </div>
-                <p className="text-gray-300 italic mb-6">
-                  "Setting up long-term inheritance plans for our clients was always complicated until we discovered Chronos Vault. The time-lock functionality with advanced security protocols is exactly what we needed."
-                </p>
-                <div className="flex gap-1">
-                  {Array(5).fill(0).map((_, i) => (
-                    <i key={i} className="ri-star-fill text-[#FF5AF7]"></i>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
+
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
+            <div className="p-8 rounded-2xl bg-gradient-to-br from-[#1a1a1a] to-[#0f0f0f] border border-[#252525]">
+              <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-[#6B00D7]/20 to-[#FF5AF7]/10 flex items-center justify-center mb-6">
+                <Lock className="h-7 w-7 text-[#6B00D7]" />
+              </div>
+              <h3 className="text-xl font-semibold text-white mb-3">Time-Locked Vaults</h3>
+              <p className="text-gray-400">
+                Create immutable time-locks that even you cannot bypass. Perfect for generational wealth, 
+                scheduled distributions, and investment discipline.
+              </p>
+            </div>
+
+            <div className="p-8 rounded-2xl bg-gradient-to-br from-[#1a1a1a] to-[#0f0f0f] border border-[#252525]">
+              <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-[#6B00D7]/20 to-[#FF5AF7]/10 flex items-center justify-center mb-6">
+                <Zap className="h-7 w-7 text-[#FF5AF7]" />
+              </div>
+              <h3 className="text-xl font-semibold text-white mb-3">HTLC Atomic Swaps</h3>
+              <p className="text-gray-400">
+                Trustless cross-chain swaps powered by Hash Time-Locked Contracts. 
+                Trade between Arbitrum, Solana, and TON with Trinity consensus.
+              </p>
+            </div>
+
+            <div className="p-8 rounded-2xl bg-gradient-to-br from-[#1a1a1a] to-[#0f0f0f] border border-[#252525]">
+              <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-[#6B00D7]/20 to-[#FF5AF7]/10 flex items-center justify-center mb-6">
+                <Users className="h-7 w-7 text-[#6B00D7]" />
+              </div>
+              <h3 className="text-xl font-semibold text-white mb-3">Multi-Sig Security</h3>
+              <p className="text-gray-400">
+                Add beneficiaries, emergency contacts, and multi-signature requirements. 
+                Configure complex access rules for enterprise needs.
+              </p>
+            </div>
+
+            <div className="p-8 rounded-2xl bg-gradient-to-br from-[#1a1a1a] to-[#0f0f0f] border border-[#252525]">
+              <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-[#6B00D7]/20 to-[#FF5AF7]/10 flex items-center justify-center mb-6">
+                <Award className="h-7 w-7 text-[#FF5AF7]" />
+              </div>
+              <h3 className="text-xl font-semibold text-white mb-3">Gift Crypto Vaults</h3>
+              <p className="text-gray-400">
+                Send crypto gifts for birthdays, holidays, and special occasions. 
+                Beautiful unwrapping experience with time-locks and recovery options.
+              </p>
+            </div>
+
+            <div className="p-8 rounded-2xl bg-gradient-to-br from-[#1a1a1a] to-[#0f0f0f] border border-[#252525]">
+              <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-[#6B00D7]/20 to-[#FF5AF7]/10 flex items-center justify-center mb-6">
+                <Target className="h-7 w-7 text-[#6B00D7]" />
+              </div>
+              <h3 className="text-xl font-semibold text-white mb-3">Trinity Scan Explorer</h3>
+              <p className="text-gray-400">
+                Full visibility into all cross-chain operations. Monitor transactions, 
+                consensus status, and validator activity in real-time.
+              </p>
+            </div>
+
+            <div className="p-8 rounded-2xl bg-gradient-to-br from-[#1a1a1a] to-[#0f0f0f] border border-[#252525]">
+              <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-[#6B00D7]/20 to-[#FF5AF7]/10 flex items-center justify-center mb-6">
+                <Globe className="h-7 w-7 text-[#FF5AF7]" />
+              </div>
+              <h3 className="text-xl font-semibold text-white mb-3">7+ Cryptocurrencies</h3>
+              <p className="text-gray-400">
+                Support for ETH, ARB, SOL, TON, CVT, USDC, and USDT. 
+                Network selection for stablecoins across Ethereum, Tron, Arbitrum, and more.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Mission Statement */}
+      <section className="py-24 bg-gradient-to-b from-[#0A0A0A] to-[#0f0f0f]">
+        <div className="container mx-auto px-4">
+          <div className="max-w-4xl mx-auto text-center">
+            <h2 className="text-4xl md:text-5xl font-bold mb-8 text-white">
+              Our Mission
+            </h2>
+            <p className="text-xl text-gray-300 mb-8 leading-relaxed">
+              We're building a decentralized future where digital asset security transcends time, 
+              enabling generational wealth preservation, strategic investment discipline, 
+              and transparent fund management — all protected by mathematically provable security.
+            </p>
+            <div className="inline-flex items-center gap-3">
+              <div className="h-1 w-16 bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] rounded-full" />
+              <p className="text-lg font-medium text-[#6B00D7]">Transforming time into a strategic asset</p>
+              <div className="h-1 w-16 bg-gradient-to-r from-[#FF5AF7] to-[#6B00D7] rounded-full" />
+            </div>
           </div>
         </div>
       </section>
 
       {/* CTA Section */}
-      <section className="py-20 bg-[#0F0F0F] relative overflow-hidden">
-        <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7]"></div>
-        <div className="absolute top-1/4 -left-10 w-60 h-60 rounded-full bg-[#6B00D7]/10 blur-3xl"></div>
-        <div className="absolute bottom-1/4 -right-20 w-80 h-80 rounded-full bg-[#FF5AF7]/5 blur-3xl"></div>
+      <section className="py-24 relative overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-r from-[#6B00D7]/20 to-[#FF5AF7]/20" />
+        <div className="absolute top-0 left-1/3 w-96 h-96 bg-[#6B00D7]/30 rounded-full blur-[150px]" />
+        <div className="absolute bottom-0 right-1/3 w-96 h-96 bg-[#FF5AF7]/20 rounded-full blur-[150px]" />
         
         <div className="container mx-auto px-4 relative z-10">
-          <Card className="max-w-3xl mx-auto bg-[#1E1E1E] border border-[#333333] rounded-2xl p-8 md:p-12 shadow-xl">
-            <CardContent className="p-0">
-              <div className="text-center mb-8">
-                <h2 className="font-poppins font-bold text-3xl mb-4">Join the Future of Digital Asset Security</h2>
-                <p className="text-gray-400">
-                  Start building your time-locked vault today and become part of the movement 
-                  redefining how assets are secured and transferred in the blockchain era.
-                </p>
-              </div>
-              
-              <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                <Link href="/vault-types">
-                  <Button className="cta-button bg-gradient-to-r from-[#6B00D7] to-[#FF5AF7] px-8 py-4 rounded-lg font-poppins font-medium text-white shadow-lg hover:shadow-xl hover:shadow-[#6B00D7]/20 transition-all">
-                    Create Your First Vault
-                  </Button>
-                </Link>
-                <Link href="/#how-it-works">
-                  <Button variant="outline" className="px-8 py-4 rounded-lg bg-[#1A1A1A] border border-[#6B00D7]/30 text-white font-poppins font-medium hover:border-[#6B00D7] transition-all">
-                    Learn How It Works
-                  </Button>
-                </Link>
-              </div>
-            </CardContent>
-          </Card>
+          <div className="max-w-3xl mx-auto text-center">
+            <h2 className="text-4xl md:text-5xl font-bold mb-6 text-white">
+              Ready to Secure Your Assets?
+            </h2>
+            <p className="text-xl text-gray-300 mb-10">
+              Join the future of decentralized asset security with Chronos Vault
+            </p>
+            <div className="flex flex-wrap gap-4 justify-center">
+              <Link href="/vault-types">
+                <Button size="lg" className="bg-white text-black hover:bg-gray-100 px-8 py-6 text-lg font-semibold">
+                  Create Your First Vault
+                  <ArrowRight className="ml-2 h-5 w-5" />
+                </Button>
+              </Link>
+              <Link href="/gift-crypto">
+                <Button size="lg" variant="outline" className="border-white/30 hover:border-white text-white px-8 py-6 text-lg">
+                  Send a Crypto Gift
+                </Button>
+              </Link>
+            </div>
+          </div>
         </div>
       </section>
-    </>
+
+      {/* Footer Tagline */}
+      <section className="py-12 border-t border-[#1a1a1a]">
+        <div className="container mx-auto px-4 text-center">
+          <p className="text-gray-500 text-sm">
+            <span className="text-[#6B00D7]">Chronos Vault</span> — Mathematically Proven. Hardware Protected.
+          </p>
+        </div>
+      </section>
+    </div>
   );
 };
 
