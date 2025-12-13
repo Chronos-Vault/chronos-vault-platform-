@@ -42,7 +42,7 @@ export class WebSocketManager {
       const client = this.setupClient(ws as ExtendedWebSocket, req);
       
       // Log connection
-      securityLogger.info(`WebSocket client connected: ${client.id}`, SecurityEventType.SYSTEM_ERROR, {
+      securityLogger.info(`WebSocket client connected: ${client.id}`, SecurityEventType.SYSTEM_INFO, {
         clientId: client.id,
         clientAddress: client.clientAddress
       });
@@ -73,7 +73,7 @@ export class WebSocketManager {
       // If circuit breaker is active but error count is low enough, reset it
       if (this.hasCircuitBreaker && this.errorCounter < this.circuitBreakThreshold / 2) {
         this.hasCircuitBreaker = false;
-        securityLogger.info('WebSocket circuit breaker reset', SecurityEventType.SYSTEM_ERROR, {
+        securityLogger.info('WebSocket circuit breaker reset', SecurityEventType.SYSTEM_INFO, {
           errorCount: this.errorCounter
         });
       }
@@ -159,7 +159,7 @@ export class WebSocketManager {
   private setupCloseHandler(client: ExtendedWebSocket) {
     client.on('close', () => {
       this.clients.delete(client.id);
-      securityLogger.info(`WebSocket client disconnected: ${client.id}`, SecurityEventType.SYSTEM_ERROR, {
+      securityLogger.info(`WebSocket client disconnected: ${client.id}`, SecurityEventType.SYSTEM_INFO, {
         clientId: client.id,
         sessionDuration: new Date().getTime() - client.connectedAt.getTime()
       });
