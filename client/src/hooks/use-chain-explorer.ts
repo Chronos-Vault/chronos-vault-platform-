@@ -50,13 +50,13 @@ const explorers: Record<BlockchainType, ChainExplorer> = {
     }
   },
   TON: {
-    name: 'TONscan',
+    name: 'TON Viewer',
     logo: '/blockchain/tonscan.svg',
-    baseUrl: 'https://testnet.tonscan.org',
-    getAddressUrl: (address) => `https://testnet.tonscan.org/address/${address}`,
-    getTransactionUrl: (txHash) => `https://testnet.tonscan.org/tx/${txHash}`,
-    getTokenUrl: (tokenAddress) => `https://testnet.tonscan.org/jetton/${tokenAddress}`,
-    getBlockUrl: (blockNumber) => `https://testnet.tonscan.org/block/${blockNumber}`,
+    baseUrl: 'https://testnet.tonviewer.com',
+    getAddressUrl: (address) => `https://testnet.tonviewer.com/${address}`,
+    getTransactionUrl: (txHash) => `https://testnet.tonviewer.com/transaction/${txHash}`,
+    getTokenUrl: (tokenAddress) => `https://testnet.tonviewer.com/${tokenAddress}`,
+    getBlockUrl: (blockNumber) => `https://testnet.tonviewer.com/block/${blockNumber}`,
     formatAddress: (address) => {
       if (!address) return '';
       if (address.length <= 13) return address;
