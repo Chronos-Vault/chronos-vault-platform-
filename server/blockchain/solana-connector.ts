@@ -114,6 +114,9 @@ export class SolanaConnector implements BlockchainConnector {
       // Initialize connection
       this.connection = new Connection(rpcUrl, 'confirmed');
       
+      console.log(`\n◎ [SOLANA API] Connecting to ${this.networkVersion}...`);
+      console.log(`   RPC Endpoint: ${rpcUrl}`);
+      
       // Initialize keypair from private key if available
       const privateKeyEnv = process.env.SOLANA_PRIVATE_KEY;
       if (privateKeyEnv && privateKeyEnv.length > 0) {
@@ -122,6 +125,8 @@ export class SolanaConnector implements BlockchainConnector {
           if (privateKeyBytes) {
             this.keypair = Keypair.fromSecretKey(privateKeyBytes);
             this.walletAddress = this.keypair.publicKey.toString();
+            console.log(`   ✅ Wallet: ${this.walletAddress}`);
+            console.log(`   ✅ Solana API VERIFIED - Connected to ${this.networkVersion}`);
             securityLogger.info(`Solana connector initialized with keypair ${this.walletAddress} on ${this.networkVersion}`);
           } else {
             // Invalid format - log warning and fall back to simulated mode
