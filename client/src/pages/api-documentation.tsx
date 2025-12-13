@@ -512,23 +512,23 @@ create_vault()`,
                   <div className="rounded-lg border bg-card shadow p-6">
                     <div className="flex items-center gap-3 mb-4">
                       <Key className="h-8 w-8 text-indigo-500" />
-                      <h3 className="text-xl font-semibold">API Key Authentication</h3>
+                      <h3 className="text-xl font-semibold">JWT Token Authentication</h3>
                     </div>
                     <p className="mb-4">
-                      The simplest authentication method uses API keys for programmatic access.
-                      Include your API key in the Authorization header:
+                      After wallet signature verification, you receive a JWT token for API access.
+                      Include the JWT token in the Authorization header:
                     </p>
                     <div className="bg-black/10 dark:bg-white/10 p-3 rounded-md font-mono text-sm mb-4">
-                      Authorization: Bearer YOUR_API_KEY
+                      Authorization: Bearer YOUR_JWT_TOKEN
                     </div>
                     <div className="bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800 rounded-md p-4 mb-4">
                       <p className="text-amber-800 dark:text-amber-400 text-sm">
-                        <strong>Security Note:</strong> Store your API keys securely and never expose them 
-                        in client-side code. Use environment variables or a secure key management system.
+                        <strong>100% Crypto-Native:</strong> Chronos Vault uses wallet-based authentication only.
+                        There are no traditional API keys - authenticate with MetaMask, Phantom, or TON Keeper.
                       </p>
                     </div>
                     <Button variant="outline" asChild>
-                      <Link href="/developer-portal">Manage API Keys</Link>
+                      <Link href="/integration-guide">View Authentication Guide</Link>
                     </Button>
                   </div>
                   
