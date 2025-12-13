@@ -54,19 +54,29 @@ const giftFormSchema = z.object({
     .refine(addr => addr.startsWith("0x") || addr.length >= 10, {
       message: "Invalid wallet address format",
     }),
+  recipientName: z.string().optional(),
+  recipientEmail: z.string().email().optional().or(z.literal("")),
+  recoveryWalletAddress: z.string()
+    .optional()
+    .refine(addr => !addr || addr.startsWith("0x") || addr.length >= 10, {
+      message: "Invalid recovery wallet address format",
+    }),
+  occasion: z.enum(["birthday", "holiday", "anniversary", "wedding", "graduation", "thank_you", "custom"]).default("birthday"),
+  customOccasion: z.string().optional(),
   cryptoType: z.string().min(1, { message: "Cryptocurrency type is required" }),
+  network: z.string().optional(),
   amount: z.string()
     .min(1, { message: "Amount is required" })
     .refine(amount => !isNaN(parseFloat(amount)) && parseFloat(amount) > 0, {
       message: "Amount must be a positive number",
     }),
-  message: z.string().optional(),
-  lockInVault: z.boolean().default(false),
+  message: z.string().max(500).optional(),
+  lockInVault: z.boolean().default(true),
   lockDuration: z.number().min(1).optional(),
   includeAttachments: z.boolean().default(false),
   securityLevel: z.enum(["standard", "premium", "military"]).default("standard"),
   crossChainProtection: z.boolean().default(false),
-  visualTheme: z.enum(["elegant", "luxury", "minimalist", "futuristic"]).default("elegant"),
+  visualTheme: z.enum(["elegant", "luxury", "minimalist", "futuristic", "birthday", "holiday"]).default("elegant"),
   giftTracking: z.boolean().default(true),
 });
 
@@ -74,11 +84,89 @@ type GiftFormValues = z.infer<typeof giftFormSchema>;
 
 // The list of supported cryptocurrencies for gifting
 const SUPPORTED_CRYPTOS = [
-  { id: "ETH", name: "Ethereum", icon: "⟠", chainId: 1 },
-  { id: "TON", name: "Toncoin", icon: "💎", chainId: null },
-  { id: "SOL", name: "Solana", icon: "◎", chainId: null },
-  { id: "BTC", name: "Bitcoin", icon: "₿", chainId: null },
-  { id: "CVT", name: "Chronos Vault Token", icon: "🔒", chainId: null },
+  { id: "ETH", name: "Ethereum", icon: "⟠", chainId: 1, comingSoon: false, hasNetworks: false },
+  { id: "USDC", name: "USD Coin", icon: "💵", chainId: 1, comingSoon: false, hasNetworks: true },
+  { id: "USDT", name: "Tether USD", icon: "💲", chainId: 1, comingSoon: false, hasNetworks: true },
+  { id: "ARB", name: "Arbitrum ETH", icon: "⟁", chainId: 42161, comingSoon: false, hasNetworks: false },
+  { id: "SOL", name: "Solana", icon: "◎", chainId: null, comingSoon: false, hasNetworks: false },
+  { id: "TON", name: "Toncoin", icon: "💎", chainId: null, comingSoon: false, hasNetworks: false },
+  { id: "CVT", name: "Chronos Vault Token", icon: "🔒", chainId: null, comingSoon: false, hasNetworks: false },
+];
+
+// Network options for stablecoins
+const STABLECOIN_NETWORKS = {
+  USDC: [
+    { id: "ethereum", name: "Ethereum (ERC-20)", chainId: 1 },
+    { id: "arbitrum", name: "Arbitrum One", chainId: 42161 },
+    { id: "polygon", name: "Polygon (MATIC)", chainId: 137 },
+    { id: "optimism", name: "Optimism", chainId: 10 },
+  ],
+  USDT: [
+    { id: "ethereum", name: "Ethereum (ERC-20)", chainId: 1 },
+    { id: "tron", name: "Tron (TRC-20)", chainId: null },
+    { id: "arbitrum", name: "Arbitrum One", chainId: 42161 },
+    { id: "polygon", name: "Polygon (MATIC)", chainId: 137 },
+  ],
+};
+
+// Occasion templates for gift vaults
+const OCCASION_TEMPLATES = [
+  { 
+    id: "birthday", 
+    name: "Birthday Gift", 
+    icon: "🎂",
+    description: "Celebrate with a crypto gift that unlocks on their special day",
+    suggestedLockDays: 365,
+    theme: "birthday" as const
+  },
+  { 
+    id: "holiday", 
+    name: "Holiday Gift", 
+    icon: "🎄",
+    description: "Holiday cheer with digital assets",
+    suggestedLockDays: 30,
+    theme: "holiday" as const
+  },
+  { 
+    id: "anniversary", 
+    name: "Anniversary", 
+    icon: "💝",
+    description: "Commemorate your special milestone",
+    suggestedLockDays: 365,
+    theme: "luxury" as const
+  },
+  { 
+    id: "wedding", 
+    name: "Wedding Gift", 
+    icon: "💒",
+    description: "A lasting gift for newlyweds",
+    suggestedLockDays: 365,
+    theme: "luxury" as const
+  },
+  { 
+    id: "graduation", 
+    name: "Graduation", 
+    icon: "🎓",
+    description: "Celebrate their achievement",
+    suggestedLockDays: 180,
+    theme: "futuristic" as const
+  },
+  { 
+    id: "thank_you", 
+    name: "Thank You", 
+    icon: "🙏",
+    description: "Express your gratitude",
+    suggestedLockDays: 7,
+    theme: "elegant" as const
+  },
+  { 
+    id: "custom", 
+    name: "Custom Occasion", 
+    icon: "✨",
+    description: "Create your own special gift",
+    suggestedLockDays: 30,
+    theme: "elegant" as const
+  },
 ];
 
 export interface CryptoGiftSystemProps {
@@ -106,11 +194,15 @@ export function CryptoGiftSystem({ userId, onGiftSent, onAdvancedGift }: CryptoG
     resolver: zodResolver(giftFormSchema),
     defaultValues: {
       recipientAddress: "",
+      recipientName: "",
+      recipientEmail: "",
+      occasion: "birthday",
+      customOccasion: "",
       cryptoType: "",
       amount: "",
       message: "",
-      lockInVault: false,
-      lockDuration: 30, // Default lock duration of 30 days
+      lockInVault: true,
+      lockDuration: 365, // Default lock duration of 1 year for gifts
       includeAttachments: false,
       securityLevel: "standard",
       crossChainProtection: false,
@@ -148,11 +240,57 @@ export function CryptoGiftSystem({ userId, onGiftSent, onAdvancedGift }: CryptoG
         }
       }
       
-      // Different handling based on crypto type
+      // Use the new gift vault API for all crypto types when locking in vault
+      if (values.lockInVault) {
+        const giftVaultData = {
+          senderWallet: walletInfo?.address || "",
+          recipientWallet: values.recipientAddress,
+          recipientName: values.recipientName,
+          recipientEmail: values.recipientEmail,
+          assetType: values.cryptoType,
+          assetAmount: values.amount,
+          occasion: values.occasion,
+          customOccasion: values.customOccasion,
+          giftMessage: values.message,
+          timeLockDays: values.lockDuration || 30,
+          securityLevel: values.securityLevel,
+          visualTheme: values.visualTheme,
+          crossChainEnabled: values.crossChainProtection,
+          primaryChain: values.cryptoType === "ETH" || values.cryptoType === "USDC" || values.cryptoType === "USDT" ? "ethereum" : 
+                        values.cryptoType === "SOL" ? "solana" : 
+                        values.cryptoType === "TON" ? "ton" : "ethereum",
+        };
+
+        try {
+          const response = await apiRequest("POST", "/api/gift-vaults", giftVaultData);
+          
+          toast({
+            title: "🎁 Gift Vault Created!",
+            description: `Your ${values.cryptoType} gift for ${values.recipientName || values.recipientAddress.slice(0, 8)} is ready!`,
+          });
+
+          if (onGiftSent) {
+            onGiftSent({
+              ...response,
+              recipientAddress: values.recipientAddress,
+              amount: values.amount,
+              cryptoType: values.cryptoType,
+            });
+          }
+
+          // Reset form
+          form.reset();
+          return;
+        } catch (err: any) {
+          throw new Error(err.message || "Failed to create gift vault");
+        }
+      }
+
+      // For direct transfers (not locked in vault)
       switch (values.cryptoType) {
         case "ETH":
-          // Send ETH directly or create a vault with it
-          if (values.lockInVault) {
+          // Send ETH directly
+          if (!values.lockInVault) {
             // Create a new time-locked vault with ETH for the recipient
             const vaultData = {
               userId,
@@ -257,12 +395,16 @@ export function CryptoGiftSystem({ userId, onGiftSent, onAdvancedGift }: CryptoG
           }
           break;
           
-        case "TON":
+        case "USDC":
+        case "USDT":
+        case "ARB":
         case "SOL":
+        case "TON":
         case "CVT":
-          // Display message that these are coming soon
-          setError(`${values.cryptoType} gifting will be available in the next update!`);
-          // TODO: Implement for other crypto types
+          // All supported now! Will be handled by the vault system
+          if (!values.lockInVault) {
+            setError(`${values.cryptoType} direct transfers coming soon! Please use time-locked vault gifts for now.`);
+          }
           break;
           
         default:
@@ -343,6 +485,107 @@ export function CryptoGiftSystem({ userId, onGiftSent, onAdvancedGift }: CryptoG
         
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+            {/* Occasion Selector - Beautiful Template Cards */}
+            <FormField
+              control={form.control}
+              name="occasion"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="text-lg font-semibold">Choose Gift Occasion</FormLabel>
+                  <FormControl>
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mt-2">
+                      {OCCASION_TEMPLATES.map((template) => (
+                        <button
+                          key={template.id}
+                          type="button"
+                          data-testid={`occasion-${template.id}`}
+                          onClick={() => {
+                            field.onChange(template.id);
+                            form.setValue("lockDuration", template.suggestedLockDays);
+                            form.setValue("visualTheme", template.theme);
+                          }}
+                          className={`
+                            relative p-4 rounded-lg border-2 transition-all duration-200 text-center
+                            ${field.value === template.id 
+                              ? 'border-purple-500 bg-purple-50 dark:bg-purple-900/20' 
+                              : 'border-gray-200 hover:border-purple-300 bg-white dark:bg-gray-800'
+                            }
+                          `}
+                        >
+                          <div className="text-3xl mb-2">{template.icon}</div>
+                          <div className="font-medium text-sm">{template.name}</div>
+                          {field.value === template.id && (
+                            <div className="absolute top-1 right-1">
+                              <Check className="h-4 w-4 text-purple-500" />
+                            </div>
+                          )}
+                        </button>
+                      ))}
+                    </div>
+                  </FormControl>
+                  <FormDescription>
+                    {OCCASION_TEMPLATES.find(t => t.id === field.value)?.description}
+                  </FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            {/* Custom Occasion Input (if custom selected) */}
+            {form.watch("occasion") === "custom" && (
+              <FormField
+                control={form.control}
+                name="customOccasion"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Custom Occasion Name</FormLabel>
+                    <FormControl>
+                      <Input 
+                        placeholder="Enter your custom occasion (e.g., House Warming, Retirement)" 
+                        {...field}
+                        data-testid="input-custom-occasion"
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            )}
+
+            {/* Recipient Details */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <FormField
+                control={form.control}
+                name="recipientName"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Recipient Name (Optional)</FormLabel>
+                    <FormControl>
+                      <Input placeholder="John Doe" {...field} data-testid="input-recipient-name" />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              
+              <FormField
+                control={form.control}
+                name="recipientEmail"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Recipient Email (Optional)</FormLabel>
+                    <FormControl>
+                      <Input type="email" placeholder="john@example.com" {...field} data-testid="input-recipient-email" />
+                    </FormControl>
+                    <FormDescription className="text-xs">
+                      We'll notify them when the gift is ready
+                    </FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+            
             <FormField
               control={form.control}
               name="recipientAddress"
@@ -350,10 +593,30 @@ export function CryptoGiftSystem({ userId, onGiftSent, onAdvancedGift }: CryptoG
                 <FormItem>
                   <FormLabel>Recipient Wallet Address</FormLabel>
                   <FormControl>
-                    <Input placeholder="0x..." {...field} />
+                    <Input placeholder="0x..." {...field} data-testid="input-recipient-address" />
                   </FormControl>
                   <FormDescription>
                     Enter the wallet address of the gift recipient
+                  </FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="recoveryWalletAddress"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="flex items-center gap-2">
+                    <Shield className="h-4 w-4 text-orange-600" />
+                    Recovery Wallet Address (Optional)
+                  </FormLabel>
+                  <FormControl>
+                    <Input placeholder="0x..." {...field} data-testid="input-recovery-address" />
+                  </FormControl>
+                  <FormDescription className="text-xs">
+                    This wallet can open the vault to withdraw assets or download contents if the recipient doesn't claim it
                   </FormDescription>
                   <FormMessage />
                 </FormItem>
@@ -367,11 +630,15 @@ export function CryptoGiftSystem({ userId, onGiftSent, onAdvancedGift }: CryptoG
                 <FormItem>
                   <FormLabel>Cryptocurrency</FormLabel>
                   <Select 
-                    onValueChange={field.onChange} 
+                    onValueChange={(value) => {
+                      field.onChange(value);
+                      // Reset network selection when crypto changes
+                      form.setValue("network", "");
+                    }} 
                     defaultValue={field.value}
                   >
                     <FormControl>
-                      <SelectTrigger>
+                      <SelectTrigger data-testid="select-crypto-type">
                         <SelectValue placeholder="Select cryptocurrency" />
                       </SelectTrigger>
                     </FormControl>
@@ -381,9 +648,6 @@ export function CryptoGiftSystem({ userId, onGiftSent, onAdvancedGift }: CryptoG
                           <div className="flex items-center">
                             <span className="mr-2">{crypto.icon}</span>
                             {crypto.name} ({crypto.id})
-                            {crypto.id !== "ETH" && (
-                              <span className="ml-2 text-xs text-gray-500">Coming soon</span>
-                            )}
                           </div>
                         </SelectItem>
                       ))}
@@ -396,6 +660,44 @@ export function CryptoGiftSystem({ userId, onGiftSent, onAdvancedGift }: CryptoG
                 </FormItem>
               )}
             />
+
+            {/* Network Selection for USDC/USDT */}
+            {(selectedCrypto === "USDC" || selectedCrypto === "USDT") && (
+              <FormField
+                control={form.control}
+                name="network"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Network</FormLabel>
+                    <Select 
+                      onValueChange={field.onChange} 
+                      defaultValue={field.value}
+                    >
+                      <FormControl>
+                        <SelectTrigger data-testid="select-network">
+                          <SelectValue placeholder="Select network" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent data-testid="network-options">
+                        {STABLECOIN_NETWORKS[selectedCrypto as "USDC" | "USDT"]?.map((network) => (
+                          <SelectItem 
+                            key={network.id} 
+                            value={network.id}
+                            data-testid={`option-network-${network.id}`}
+                          >
+                            {network.name}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    <FormDescription>
+                      Select which blockchain network to use for this {selectedCrypto}
+                    </FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            )}
             
             <FormField
               control={form.control}
