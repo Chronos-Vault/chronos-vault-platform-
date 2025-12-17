@@ -377,7 +377,7 @@ export default function TrinityScannerPage() {
                               </a>
                             )}
                             {vault.tonTxHash && (
-                              <a href={`https://testnet.tonscan.org/tx/${vault.tonTxHash}`} target="_blank" rel="noopener noreferrer"
+                              <a href={`https://testnet.tonviewer.com/transaction/${vault.tonTxHash}`} target="_blank" rel="noopener noreferrer"
                                 className="text-blue-400 hover:underline flex items-center gap-1">
                                 <Globe className="w-3 h-3" /> TON <ExternalLink className="w-3 h-3" />
                               </a>
@@ -760,7 +760,7 @@ export default function TrinityScannerPage() {
                             )}
                           </div>
                           {op.tonTxHash && (
-                            <a href={`https://testnet.tonscan.org/tx/${op.tonTxHash}`} target="_blank" rel="noopener noreferrer"
+                            <a href={`https://testnet.tonviewer.com/transaction/${op.tonTxHash}`} target="_blank" rel="noopener noreferrer"
                               className="text-xs text-blue-400 hover:underline flex items-center gap-1 ml-7">
                               {op.tonTxHash.slice(0, 8)}... <ExternalLink className="w-3 h-3" />
                             </a>
@@ -896,7 +896,7 @@ export default function TrinityScannerPage() {
                             </div>
                             <div>
                               <span className="text-gray-400">Amount:</span>
-                              <div className="font-medium mt-1">{swap.amount}</div>
+                              <div className="font-medium mt-1">{swap.amount} ETH</div>
                             </div>
                             <div>
                               <span className="text-gray-400">Consensus:</span>
@@ -910,6 +910,28 @@ export default function TrinityScannerPage() {
                               </div>
                             </div>
                           </div>
+                          {swap.transactionHash && (
+                            <div className="mt-3 pt-3 border-t border-gray-700/50">
+                              <div className="flex items-center justify-between">
+                                <div className="flex items-center gap-2">
+                                  <span className="text-xs text-gray-400">Tx Hash:</span>
+                                  <span className="font-mono text-xs text-cyan-400">
+                                    {swap.transactionHash.slice(0, 10)}...{swap.transactionHash.slice(-8)}
+                                  </span>
+                                </div>
+                                <a 
+                                  href={swap.explorerUrl || `https://sepolia.arbiscan.io/tx/${swap.transactionHash}`}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="flex items-center gap-1 text-xs text-cyan-400 hover:text-cyan-300 transition-colors"
+                                  data-testid="link-explorer"
+                                >
+                                  <ExternalLink className="w-3 h-3" />
+                                  View on Explorer
+                                </a>
+                              </div>
+                            </div>
+                          )}
                         </div>
                       ))}
                     </div>

@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useLocation } from 'wouter';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { useWallet } from '@/contexts/wallet-context';
+import { useWallet, ChainType, isMobile, MOBILE_WALLET_DEEP_LINKS } from '@/contexts/wallet-context';
 import { useToast } from "@/hooks/use-toast";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -11,6 +11,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import { Separator } from '@/components/ui/separator';
+import { SiEthereum, SiSolana } from 'react-icons/si';
 import { 
   AlertCircle, 
   ArrowLeftRight, 
@@ -28,7 +29,10 @@ import {
   RefreshCw,
   AlertTriangle,
   Timer,
-  Eye
+  Eye,
+  Link2,
+  Unlink,
+  PenTool
 } from 'lucide-react';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 
@@ -107,7 +111,7 @@ const CHAIN_CONFIG: Record<ChainId, {
     color: 'text-cyan-400 bg-cyan-500/10 border-cyan-500/30',
     icon: '💎',
     role: 'BACKUP',
-    explorer: 'https://testnet.tonscan.org',
+    explorer: 'https://testnet.tonviewer.com',
     tokens: [
       { symbol: 'TON', name: 'Toncoin' },
       { symbol: 'CVT', name: 'Chronos Vault Token' },
@@ -124,12 +128,40 @@ const SWAP_STATUS_LABELS: Record<string, { label: string; color: string }> = {
   expired: { label: 'Expired', color: 'text-red-400' },
 };
 
+const WALLET_ICONS: Record<string, JSX.Element> = {
+  ethereum: <SiEthereum className="h-4 w-4" />,
+  solana: <SiSolana className="h-4 w-4" />,
+  ton: <span className="text-sm">💎</span>,
+};
+
+const WALLET_NAMES: Record<string, string> = {
+  ethereum: 'MetaMask',
+  solana: 'Phantom',
+  ton: 'TON Keeper',
+};
+
+function getExplorerTxUrl(chain: ChainId, txHash: string): string {
+  const baseUrl = CHAIN_CONFIG[chain].explorer;
+  switch (chain) {
+    case 'arbitrum':
+      return `${baseUrl}/tx/${txHash}`;
+    case 'solana':
+      return `${baseUrl}/tx/${txHash}?cluster=devnet`;
+    case 'ton':
+      return `${baseUrl}/transaction/${txHash}`;
+    default:
+      return `${baseUrl}/tx/${txHash}`;
+  }
+}
+
 export default function TrinityBridge() {
   const { toast } = useToast();
   const [, setLocation] = useLocation();
   const wallet = useWallet();
   const queryClient = useQueryClient();
   
+  const [isSigningMessage, setIsSigningMessage] = useState(false);
+  const [signatureResult, setSignatureResult] = useState<string | null>(null);
   const [currentScreen, setCurrentScreen] = useState<SwapScreen>('configuration');
   const [swapConfig, setSwapConfig] = useState<SwapConfig>({
     sourceChain: 'arbitrum',
@@ -151,6 +183,49 @@ export default function TrinityBridge() {
   const getWalletAddress = (chain: ChainId): string | undefined => {
     const chainKey = chain === 'arbitrum' ? 'ethereum' : chain;
     return wallet.connectedWallets[chainKey]?.address;
+  };
+
+  const getWalletBalance = (chain: ChainId): string | undefined => {
+    const chainKey = chain === 'arbitrum' ? 'ethereum' : chain;
+    return wallet.connectedWallets[chainKey]?.balance?.formatted;
+  };
+
+  const handleConnectWallet = async (chainType: ChainType) => {
+    try {
+      await wallet.connect(chainType);
+    } catch (error) {
+      console.error('Failed to connect wallet:', error);
+    }
+  };
+
+  const handleDisconnectWallet = async (chainType: ChainType) => {
+    try {
+      await wallet.disconnect(chainType);
+    } catch (error) {
+      console.error('Failed to disconnect wallet:', error);
+    }
+  };
+
+  const handleSignMessage = async (chainType: ChainType) => {
+    setIsSigningMessage(true);
+    setSignatureResult(null);
+    try {
+      const message = `Chronos Vault Trinity Protocol\n\nSign this message to verify your wallet ownership.\n\nChain: ${chainType.toUpperCase()}\nTimestamp: ${new Date().toISOString()}`;
+      const signature = await wallet.signMessage(chainType, message);
+      setSignatureResult(signature);
+      toast({
+        title: "Message Signed",
+        description: `Signature: ${signature.substring(0, 20)}...`,
+      });
+    } catch (error: any) {
+      toast({
+        title: "Signing Failed",
+        description: error.message || "Failed to sign message",
+        variant: "destructive",
+      });
+    } finally {
+      setIsSigningMessage(false);
+    }
   };
 
   const { data: swapQuote, isLoading: isQuoteLoading } = useQuery<{
@@ -342,25 +417,303 @@ export default function TrinityBridge() {
     }
   };
 
-  const ConfigurationScreen = () => (
-    <Card className="border border-[#333] bg-[#121212]">
-      <CardHeader>
+  const [walletAvailability, setWalletAvailability] = useState<Record<ChainType, boolean>>({
+    ethereum: false,
+    solana: false,
+    ton: false,
+    bitcoin: false,
+  });
+
+  const [isMobileDevice, setIsMobileDevice] = useState(false);
+
+  useEffect(() => {
+    const mobile = isMobile();
+    setIsMobileDevice(mobile);
+
+    const checkWallets = () => {
+      const phantomProvider = (window as any).phantom?.solana || (window as any).solana;
+      
+      setWalletAvailability({
+        ethereum: mobile || (typeof window !== 'undefined' && typeof (window as any).ethereum !== 'undefined'),
+        solana: mobile || (typeof window !== 'undefined' && phantomProvider?.isPhantom),
+        ton: true,
+        bitcoin: false,
+      });
+    };
+    
+    checkWallets();
+    const timer = setTimeout(checkWallets, 1000);
+    const timer2 = setTimeout(checkWallets, 2000);
+    window.addEventListener('load', checkWallets);
+    
+    return () => {
+      clearTimeout(timer);
+      clearTimeout(timer2);
+      window.removeEventListener('load', checkWallets);
+    };
+  }, []);
+
+  const WALLET_INSTALL_LINKS: Record<string, string> = {
+    ethereum: 'https://metamask.io/download/',
+    solana: 'https://phantom.app/download',
+    ton: 'https://tonkeeper.com/',
+  };
+
+  const WalletConnectionPanel = () => {
+    const chains: { id: ChainType; label: string; chainId: ChainId; network: string; color: string }[] = [
+      { id: 'ethereum', label: 'Arbitrum', chainId: 'arbitrum', network: 'Sepolia Testnet', color: 'from-blue-500 to-blue-700' },
+      { id: 'solana', label: 'Solana', chainId: 'solana', network: 'Devnet', color: 'from-purple-500 to-purple-700' },
+      { id: 'ton', label: 'TON', chainId: 'ton', network: 'Testnet', color: 'from-cyan-500 to-cyan-700' },
+    ];
+
+    const connectedCount = chains.filter(c => isWalletConnected(c.chainId)).length;
+
+    const isInIframe = window.self !== window.top;
+    const appUrl = window.location.href;
+
+    return (
+      <div className="mb-6 space-y-4">
+        {isInIframe && !wallet.isDevelopmentMode && (
+          <Alert className="bg-amber-500/10 border-amber-500/30">
+            <AlertTriangle className="h-4 w-4 text-amber-400" />
+            <AlertTitle className="text-amber-400">Open in Browser for Real Wallets</AlertTitle>
+            <AlertDescription className="text-amber-300/80">
+              <p className="mb-2">Wallet extensions like MetaMask and Phantom work best when opened in a new browser tab.</p>
+              <div className="flex gap-2 flex-wrap">
+                <Button 
+                  size="sm" 
+                  className="bg-amber-500 hover:bg-amber-600 text-black"
+                  onClick={() => window.open(appUrl, '_blank')}
+                  data-testid="button-open-new-tab"
+                >
+                  <ExternalLink className="h-4 w-4 mr-2" />
+                  Open in New Tab
+                </Button>
+                <Button 
+                  size="sm" 
+                  variant="outline"
+                  className="border-amber-500/50 text-amber-400 hover:bg-amber-500/10"
+                  onClick={() => wallet.toggleDevelopmentMode()}
+                  data-testid="button-use-dev-mode"
+                >
+                  🧪 Use Dev Mode Instead
+                </Button>
+              </div>
+            </AlertDescription>
+          </Alert>
+        )}
+
         <div className="flex items-center justify-between">
-          <div>
-            <CardTitle className="text-2xl bg-gradient-to-r from-white via-[#FF5AF7] to-[#6B00D7] bg-clip-text text-transparent">
-              Trinity Bridge
-            </CardTitle>
-            <CardDescription className="mt-1">
-              Cross-chain atomic swaps secured by 2-of-3 Trinity Protocol consensus
-            </CardDescription>
+          <div className="flex items-center gap-3">
+            <div className="p-2 rounded-lg bg-gradient-to-r from-[#FF5AF7] to-[#6B00D7]">
+              <Wallet className="h-5 w-5 text-white" />
+            </div>
+            <div>
+              <h3 className="font-semibold text-white">Wallet Connections</h3>
+              <p className="text-xs text-gray-400">
+                {connectedCount === 0 ? 'Connect wallets to start swapping' : 
+                 connectedCount === 3 ? 'All wallets connected!' : 
+                 `${connectedCount}/3 wallets connected`}
+              </p>
+            </div>
           </div>
-          <Badge className="bg-green-500/10 text-green-500 border-green-500/30">
-            <Shield className="h-3 w-3 mr-1" />
-            HTLC Protected
-          </Badge>
+          <div className="flex items-center gap-2">
+            <Badge 
+              variant="outline" 
+              className={`${wallet.isDevelopmentMode ? 'bg-yellow-500/10 text-yellow-400 border-yellow-500/30' : 'bg-gray-500/10 text-gray-400 border-gray-500/30'} cursor-pointer`}
+              onClick={() => wallet.toggleDevelopmentMode()}
+              data-testid="toggle-dev-mode"
+            >
+              {wallet.isDevelopmentMode ? '🧪 Dev Mode ON' : '🔗 Live Mode'}
+            </Badge>
+          </div>
         </div>
-      </CardHeader>
-      <CardContent className="space-y-6">
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+          {chains.map(({ id, label, chainId, network, color }) => {
+            const isConnected = isWalletConnected(chainId);
+            const address = getWalletAddress(chainId);
+            const balance = getWalletBalance(chainId);
+            const status = wallet.status[id];
+            const isAvailable = walletAvailability[id] || wallet.isDevelopmentMode;
+
+            return (
+              <div 
+                key={id} 
+                className={`relative rounded-xl border overflow-hidden transition-all duration-300 ${
+                  isConnected 
+                    ? 'border-green-500/40 bg-gradient-to-br from-green-500/10 to-transparent' 
+                    : 'border-[#333] bg-[#0a0a0a] hover:border-[#444]'
+                }`}
+              >
+                <div className={`absolute top-0 left-0 right-0 h-1 bg-gradient-to-r ${color} ${isConnected ? 'opacity-100' : 'opacity-30'}`} />
+                
+                <div className="p-4">
+                  <div className="flex items-center justify-between mb-3">
+                    <div className="flex items-center gap-2">
+                      <div className={`p-1.5 rounded-lg bg-gradient-to-r ${color}`}>
+                        {WALLET_ICONS[id]}
+                      </div>
+                      <div>
+                        <p className="font-medium text-sm">{label}</p>
+                        <p className="text-[10px] text-gray-500">{network}</p>
+                      </div>
+                    </div>
+                    {isConnected && (
+                      <div className="flex items-center gap-1 text-green-400">
+                        <span className="relative flex h-2 w-2">
+                          <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+                          <span className="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
+                        </span>
+                      </div>
+                    )}
+                  </div>
+
+                  {isConnected && address ? (
+                    <div className="space-y-2 mb-3">
+                      <div className="flex items-center justify-between p-2 bg-black/40 rounded-lg">
+                        <div className="min-w-0 flex-1">
+                          <p className="font-mono text-xs truncate text-white">{address.slice(0, 6)}...{address.slice(-4)}</p>
+                        </div>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          className="h-6 w-6 p-0 ml-2"
+                          onClick={() => handleCopy(address, `address-${id}`)}
+                        >
+                          {copiedField === `address-${id}` ? (
+                            <CheckCircle className="h-3 w-3 text-green-400" />
+                          ) : (
+                            <Copy className="h-3 w-3 text-gray-400" />
+                          )}
+                        </Button>
+                      </div>
+                      {balance && (
+                        <div className="text-center">
+                          <span className="text-lg font-bold bg-gradient-to-r from-[#FF5AF7] to-[#6B00D7] bg-clip-text text-transparent">
+                            {balance}
+                          </span>
+                          <span className="text-xs text-gray-400 ml-1">
+                            {chainId === 'arbitrum' ? 'ETH' : chainId === 'solana' ? 'SOL' : 'TON'}
+                          </span>
+                        </div>
+                      )}
+                    </div>
+                  ) : !isAvailable && !isMobileDevice ? (
+                    <div className="mb-3 p-2 bg-orange-500/10 border border-orange-500/20 rounded-lg">
+                      <p className="text-xs text-orange-400 mb-2">
+                        {WALLET_NAMES[id]} not detected
+                      </p>
+                      <a 
+                        href={WALLET_INSTALL_LINKS[id]}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-xs text-[#FF5AF7] hover:underline flex items-center gap-1"
+                      >
+                        Install {WALLET_NAMES[id]}
+                        <ExternalLink className="h-3 w-3" />
+                      </a>
+                    </div>
+                  ) : isMobileDevice && !isConnected ? (
+                    <div className="mb-3 p-2 bg-blue-500/10 border border-blue-500/20 rounded-lg">
+                      <p className="text-xs text-blue-400">
+                        📱 Tap to open {WALLET_NAMES[id]} app
+                      </p>
+                    </div>
+                  ) : null}
+
+                  <div className="flex gap-2">
+                    {isConnected ? (
+                      <>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          className="flex-1 text-xs h-8 border-[#FF5AF7]/30 text-[#FF5AF7] hover:bg-[#FF5AF7]/10"
+                          onClick={() => handleSignMessage(id)}
+                          disabled={isSigningMessage}
+                          data-testid={`button-sign-${id}`}
+                        >
+                          {isSigningMessage ? (
+                            <Loader2 className="h-3 w-3 mr-1 animate-spin" />
+                          ) : (
+                            <PenTool className="h-3 w-3 mr-1" />
+                          )}
+                          Verify
+                        </Button>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          className="flex-1 text-xs h-8 border-red-500/30 text-red-400 hover:bg-red-500/10"
+                          onClick={() => handleDisconnectWallet(id)}
+                          data-testid={`button-disconnect-${id}`}
+                        >
+                          <Unlink className="h-3 w-3 mr-1" />
+                          Disconnect
+                        </Button>
+                      </>
+                    ) : (
+                      <Button
+                        className={`w-full h-8 text-xs ${(isAvailable || isMobileDevice) ? 'bg-gradient-to-r from-[#FF5AF7] to-[#6B00D7] hover:opacity-90' : 'bg-gray-700 cursor-not-allowed'}`}
+                        size="sm"
+                        onClick={() => (isAvailable || isMobileDevice) && handleConnectWallet(id)}
+                        disabled={status === 'connecting' || (!isAvailable && !isMobileDevice)}
+                        data-testid={`button-connect-${id}`}
+                      >
+                        {status === 'connecting' ? (
+                          <Loader2 className="h-3 w-3 mr-2 animate-spin" />
+                        ) : isMobileDevice ? (
+                          <ExternalLink className="h-3 w-3 mr-2" />
+                        ) : (
+                          <Link2 className="h-3 w-3 mr-2" />
+                        )}
+                        {isMobileDevice 
+                          ? `Open ${WALLET_NAMES[id]} App` 
+                          : isAvailable 
+                            ? `Connect ${WALLET_NAMES[id]}` 
+                            : 'Install Wallet'}
+                      </Button>
+                    )}
+                  </div>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+
+        {signatureResult && (
+          <div className="p-3 bg-green-500/5 border border-green-500/20 rounded-lg">
+            <div className="flex items-center gap-2 mb-1">
+              <CheckCircle className="h-4 w-4 text-green-400" />
+              <p className="text-sm font-medium text-green-400">Wallet Verified</p>
+            </div>
+            <p className="font-mono text-xs break-all text-gray-400">{signatureResult.substring(0, 66)}...</p>
+          </div>
+        )}
+      </div>
+    );
+  };
+
+  const ConfigurationScreen = () => (
+    <>
+      <WalletConnectionPanel />
+      <Card className="border border-[#333] bg-[#121212]">
+        <CardHeader>
+          <div className="flex items-center justify-between">
+            <div>
+              <CardTitle className="text-2xl bg-gradient-to-r from-white via-[#FF5AF7] to-[#6B00D7] bg-clip-text text-transparent">
+                Trinity Bridge
+              </CardTitle>
+              <CardDescription className="mt-1">
+                Cross-chain atomic swaps secured by 2-of-3 Trinity Protocol consensus
+              </CardDescription>
+            </div>
+            <Badge className="bg-green-500/10 text-green-500 border-green-500/30">
+              <Shield className="h-3 w-3 mr-1" />
+              HTLC Protected
+            </Badge>
+          </div>
+        </CardHeader>
+        <CardContent className="space-y-6">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div className="space-y-4">
             <div className="space-y-2">
@@ -415,13 +768,34 @@ export default function TrinityBridge() {
             <div className="space-y-2">
               <Label>Amount</Label>
               <Input
-                type="number"
-                placeholder="0.00"
+                type="text"
+                inputMode="decimal"
+                pattern="[0-9]*\.?[0-9]*"
+                placeholder="0.1"
                 value={swapConfig.amount}
-                onChange={(e) => setSwapConfig(prev => ({ ...prev, amount: e.target.value }))}
-                className="bg-black border-[#333] text-lg"
+                onChange={(e) => {
+                  const value = e.target.value;
+                  if (value === '' || /^[0-9]*\.?[0-9]*$/.test(value)) {
+                    setSwapConfig(prev => ({ ...prev, amount: value }));
+                  }
+                }}
+                className={`bg-black border-[#333] text-lg ${
+                  swapConfig.amount && parseFloat(swapConfig.amount) < 0.01 
+                    ? 'border-red-500' 
+                    : ''
+                }`}
                 data-testid="input-amount"
               />
+              <div className="flex justify-between text-xs">
+                <span className="text-gray-400">
+                  Min: 0.01 {swapConfig.sourceToken} + 0.001 fee
+                </span>
+                {swapConfig.amount && parseFloat(swapConfig.amount) < 0.01 && (
+                  <span className="text-red-500">
+                    Amount below minimum (0.01)
+                  </span>
+                )}
+              </div>
               {isWalletConnected(swapConfig.sourceChain) && (
                 <p className="text-xs text-gray-500">
                   Balance: Loading...
@@ -595,14 +969,15 @@ export default function TrinityBridge() {
         <Button 
           className="flex-1 bg-gradient-to-r from-[#FF5AF7] to-[#6B00D7] hover:opacity-90"
           onClick={() => setCurrentScreen('confirmation')}
-          disabled={!swapConfig.amount || !swapConfig.recipientAddress || parseFloat(swapConfig.amount) <= 0}
+          disabled={!swapConfig.amount || !swapConfig.recipientAddress || parseFloat(swapConfig.amount) < 0.01}
           data-testid="button-review-swap"
         >
-          Review Swap
+          {parseFloat(swapConfig.amount || '0') < 0.01 ? 'Min 0.01 ETH Required' : 'Review Swap'}
           <ArrowRight className="h-4 w-4 ml-2" />
         </Button>
       </CardFooter>
     </Card>
+    </>
   );
 
   const ConfirmationScreen = () => (
@@ -903,7 +1278,7 @@ export default function TrinityBridge() {
                       variant="ghost" 
                       size="icon" 
                       className="h-6 w-6"
-                      onClick={() => window.open(`${CHAIN_CONFIG[activeSwap.sourceChain].explorer}/tx/${activeSwap.txHash}`, '_blank')}
+                      onClick={() => window.open(getExplorerTxUrl(activeSwap.sourceChain, activeSwap.txHash!), '_blank')}
                     >
                       <ExternalLink className="h-3 w-3" />
                     </Button>
@@ -1008,7 +1383,7 @@ export default function TrinityBridge() {
         {currentScreen === 'tracking' && <TrackingScreen />}
         
         <div className="mt-6 text-center text-xs text-gray-600">
-          <p>Powered by Trinity Protocol™ v3.5.22</p>
+          <p>Powered by <span className="text-[#FF5AF7]">Chronos Vault</span> Trinity Protocol™ v3.5.24</p>
           <p className="mt-1">Arbitrum (PRIMARY) • Solana (MONITOR) • TON (BACKUP)</p>
         </div>
       </div>
