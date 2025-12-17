@@ -66,10 +66,10 @@ class CrossChainVaultVerification extends EventEmitter {
   
   // Define the roles of each chain in our Triple-Chain Security model
   private chainRoles: Record<BlockchainType, string> = {
-    ethereum: 'ownership',       // Primary ownership records
-    solana: 'monitoring',        // High-speed monitoring and validation
-    ton: 'recovery',             // Backup and recovery operations
-    bitcoin: 'timestamping'      // Immutable timestamping
+    Ethereum: 'ownership',       // Primary ownership records
+    Solana: 'monitoring',        // High-speed monitoring and validation
+    TON: 'recovery',             // Backup and recovery operations
+    Bitcoin: 'timestamping'      // Immutable timestamping
   };
   
   private constructor(connectorFactory: ConnectorFactory) {
@@ -89,7 +89,7 @@ class CrossChainVaultVerification extends EventEmitter {
       }
     });
     
-    securityLogger.info('Cross-Chain Vault Verification service initialized', {
+    securityLogger.info('Cross-Chain Vault Verification service initialized', SecurityEventType.SYSTEM_INFO, {
       supportedChains: Object.keys(this.chainRoles)
     });
   }
@@ -119,7 +119,7 @@ class CrossChainVaultVerification extends EventEmitter {
       const cachedResult = this.verificationCache.get(cacheKey);
       
       if (cachedResult && this.isVerificationRecent(cachedResult)) {
-        securityLogger.info(`Using cached verification for vault ${vaultId}`, {
+        securityLogger.info(`Using cached verification for vault ${vaultId}`, SecurityEventType.CROSS_CHAIN_VERIFICATION, {
           vaultId,
           primaryChain,
           cacheAge: Date.now() - cachedResult.timestamp.getTime()
