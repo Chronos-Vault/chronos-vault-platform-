@@ -328,16 +328,16 @@ export class TrinityShieldService {
 
   private async signWithEnclaveKey(data: string, chainId: ChainId): Promise<string> {
     const config = VALIDATORS[chainId];
+    const keyType = config.keyType;
     
-    switch (config.keyType) {
-      case 'secp256k1':
-        return this.signSecp256k1(data);
-      case 'ed25519':
-        return this.signEd25519(data);
-      case 'dilithium5':
-        return this.signDilithium5(data);
-      default:
-        throw new Error(`Unsupported key type: ${config.keyType}`);
+    if (keyType === 'secp256k1') {
+      return this.signSecp256k1(data);
+    } else if (keyType === 'ed25519') {
+      return this.signEd25519(data);
+    } else if (keyType === 'dilithium5') {
+      return this.signDilithium5(data);
+    } else {
+      throw new Error(`Unsupported key type: ${keyType}`);
     }
   }
 
