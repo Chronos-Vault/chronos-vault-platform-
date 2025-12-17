@@ -308,7 +308,11 @@ const WalletPage: React.FC = () => {
       if (!tonConnect) {
         console.log('[Wallet Page] Creating new TON Connect instance');
         tonConnect = new TonConnectUI({
-          manifestUrl: `${window.location.origin}/tonconnect-manifest.json`
+          manifestUrl: `${window.location.origin}/tonconnect-manifest.json`,
+          actionsConfiguration: {
+            returnStrategy: 'https://chronosvault.org/wallet',
+            twaReturnUrl: 'https://chronosvault.org/wallet'
+          }
         });
         (window as any).__tonConnectUIInstance = tonConnect;
       } else {
